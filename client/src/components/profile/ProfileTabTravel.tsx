@@ -113,15 +113,26 @@ const getStatusColor = (status: string) => {
 
 const getCityImageUrl = (city: string, country?: string): string => {
   const cityPhotos: Record<string, string> = {
-    'buenos aires': 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&h=600&auto=format&fit=crop',
-    'paris': 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=800&h=600&auto=format&fit=crop',
-    'berlin': 'https://images.unsplash.com/photo-1560626569-15ae4d75f6f7?w=800&h=600&auto=format&fit=crop',
-    'madrid': 'https://images.unsplash.com/photo-1479145082178-d9f2300a59b0?w=800&h=600&auto=format&fit=crop',
-    'barcelona': 'https://images.unsplash.com/photo-1583422409516-2895a77efded?w=800&h=600&auto=format&fit=crop',
-    'lisbon': 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=800&h=600&auto=format&fit=crop',
+    'buenos aires': 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=600&h=600&auto=format&fit=crop',
+    'paris': 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=600&h=600&auto=format&fit=crop',
+    'berlin': 'https://images.unsplash.com/photo-1560626569-15ae4d75f6f7?w=600&h=600&auto=format&fit=crop',
+    'madrid': 'https://images.unsplash.com/photo-1479145082178-d9f2300a59b0?w=600&h=600&auto=format&fit=crop',
+    'barcelona': 'https://images.unsplash.com/photo-1583422409516-2895a77efded?w=600&h=600&auto=format&fit=crop',
+    'lisbon': 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&h=600&auto=format&fit=crop',
+    'new york': 'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=600&h=600&auto=format&fit=crop',
+    'london': 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=600&h=600&auto=format&fit=crop',
+    'tokyo': 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=600&h=600&auto=format&fit=crop',
+    'bangkok': 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=600&h=600&auto=format&fit=crop',
+    'istanbul': 'https://images.unsplash.com/photo-1524678606370-a47ad25cb82a?w=600&h=600&auto=format&fit=crop',
+    'mexico city': 'https://images.unsplash.com/photo-1518136247453-74e7b5265980?w=600&h=600&auto=format&fit=crop',
+    'rio de janeiro': 'https://images.unsplash.com/photo-1483729558449-99daa71afcc8?w=600&h=600&auto=format&fit=crop',
+    'buenos aires argentina': 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=600&h=600&auto=format&fit=crop',
+    'rome': 'https://images.unsplash.com/photo-1552832860-cfb67165eaf0?w=600&h=600&auto=format&fit=crop',
+    'amsterdam': 'https://images.unsplash.com/photo-1517430879604-3e1fa32c52c1?w=600&h=600&auto=format&fit=crop',
+    'venice': 'https://images.unsplash.com/photo-1514565131-fce0801e5785?w=600&h=600&auto=format&fit=crop',
   };
   const cityKey = city.toLowerCase();
-  return cityPhotos[cityKey] || 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&h=600&auto=format&fit=crop';
+  return cityPhotos[cityKey] || 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=600&h=600&auto=format&fit=crop';
 };
 
 export default function ProfileTabTravel({ profileId, isOwnProfile = false }: ProfileTabTravelProps) {
@@ -355,17 +366,19 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
         </Card>
       )}
 
-      {/* Trip Cards with Full Features */}
-      {travelPlans && travelPlans.length > 0 && travelPlans.map((trip, index) => {
-        const budgetStats = calculateBudgetStats(trip);
-        const activeTab = tripTabs[trip.id] || "overview";
+      {/* Trip Cards with Full Features - 2 Column Grid */}
+      {travelPlans && travelPlans.length > 0 && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {travelPlans.map((trip, index) => {
+            const budgetStats = calculateBudgetStats(trip);
+            const activeTab = tripTabs[trip.id] || "overview";
 
-        return (
-          <Collapsible key={trip.id || index} open={expandedTrips.has(index)} onOpenChange={() => toggleTrip(index)}>
-            <Card data-testid={`card-travel-plan-${index}`} className="overflow-hidden">
-              {/* Hero Header */}
-              <div className="relative h-36 bg-gradient-to-br from-primary/20 via-secondary/20 to-accent/20" style={{ backgroundImage: `url('${getCityImageUrl(trip.city, trip.country)}')`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
+            return (
+              <Collapsible key={trip.id || index} open={expandedTrips.has(index)} onOpenChange={() => toggleTrip(index)}>
+                <Card data-testid={`card-travel-plan-${index}`} className="overflow-hidden flex flex-col">
+                  {/* Hero Header - Square Image */}
+                  <div className="relative aspect-square bg-gradient-to-br from-primary/20 via-secondary/20 to-accent/20" style={{ backgroundImage: `url('${getCityImageUrl(trip.city, trip.country)}')`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
                 <div className="absolute top-3 right-3 flex gap-2">
                   {trip.status && <Badge className={getStatusColor(trip.status)}>{trip.status.charAt(0).toUpperCase() + trip.status.slice(1)}</Badge>}
                 </div>
@@ -565,8 +578,10 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
               </CollapsibleContent>
             </Card>
           </Collapsible>
-        );
-      })}
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
