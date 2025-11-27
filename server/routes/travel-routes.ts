@@ -242,7 +242,7 @@ router.patch("/plans/:id", authenticateToken, async (req: AuthRequest, res: Resp
   try {
     const userId = req.user!.id;
     const { id } = req.params;
-    const { name, description, startDate, endDate, budget, currency, isPublic } = req.body;
+    const { name, description, startDate, endDate, budget, currency, isPublic, status, notes } = req.body;
 
     // Verify ownership
     const existing = await db.select()
@@ -265,6 +265,8 @@ router.patch("/plans/:id", authenticateToken, async (req: AuthRequest, res: Resp
     if (budget !== undefined) updateData.budget = budget;
     if (currency !== undefined) updateData.currency = currency;
     if (isPublic !== undefined) updateData.isPublic = isPublic;
+    if (status !== undefined) updateData.status = status;
+    if (notes !== undefined) updateData.notes = notes;
 
     const result = await db.update(travelPlans)
       .set(updateData)
