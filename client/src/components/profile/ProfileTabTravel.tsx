@@ -617,7 +617,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
                   {/* Card Footer with Actions */}
                   {isOwnProfile && (
                     <div className="pt-4 mt-4 border-t border-border flex flex-wrap items-center gap-3">
-                      <Button variant="outline" size="sm" data-testid={`button-edit-trip-${index}`}><Edit className="h-4 w-4 mr-2" />Edit Trip</Button>
+                      <Button variant="outline" size="sm" onClick={() => setEditingTripId(editingTripId === trip.id ? null : trip.id)} data-testid={`button-edit-trip-${index}`}><Edit className="h-4 w-4 mr-2" />Edit Trip</Button>
                       <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive" onClick={() => deleteTripMutation.mutate(trip.id)} data-testid={`button-delete-trip-${index}`}><Trash2 className="h-4 w-4 mr-2" />Delete</Button>
                     </div>
                   )}
