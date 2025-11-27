@@ -68,10 +68,50 @@ const tripPlannerSchema = z.object({
   budget: z.number().min(0).optional(),
   travelStyle: z.string().optional(),
   notes: z.string().optional(),
+  cities: z.array(z.object({
+    city: z.string(),
+    country: z.string().optional(),
+  })).optional(),
 }).refine((data) => data.endDate >= data.startDate, {
   message: "End date must be after start date",
   path: ["endDate"],
 });
+
+const cityCountryDatabase: Record<string, string> = {
+  'buenos aires': 'Argentina',
+  'salta': 'Argentina',
+  'mendoza': 'Argentina',
+  'cordoba': 'Argentina',
+  'paris': 'France',
+  'lyon': 'France',
+  'marseille': 'France',
+  'milan': 'Italy',
+  'rome': 'Italy',
+  'venice': 'Italy',
+  'florence': 'Italy',
+  'barcelona': 'Spain',
+  'madrid': 'Spain',
+  'seville': 'Spain',
+  'london': 'United Kingdom',
+  'berlin': 'Germany',
+  'vienna': 'Austria',
+  'prague': 'Czech Republic',
+  'lisbon': 'Portugal',
+  'amsterdam': 'Netherlands',
+  'istanbul': 'Turkey',
+  'buenos aires': 'Argentina',
+  'mexico city': 'Mexico',
+  'new york': 'United States',
+  'los angeles': 'United States',
+  'chicago': 'United States',
+  'toronto': 'Canada',
+  'sao paulo': 'Brazil',
+  'rio de janeiro': 'Brazil',
+  'tokyo': 'Japan',
+  'bangkok': 'Thailand',
+  'sydney': 'Australia',
+  'auckland': 'New Zealand',
+};
 
 const itineraryItemSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -128,18 +168,52 @@ const getCityImageUrl = (city: string, country?: string): string => {
   return cityImages[cityKey] || defaultCityImage;
 };
 
+interface CityOption {
+  city: string;
+  country: string;
+}
+
 export default function ProfileTabTravel({ profileId, isOwnProfile = false }: ProfileTabTravelProps) {
   const [expandedTrips, setExpandedTrips] = useState<Set<number>>(new Set([0]));
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editingTripId, setEditingTripId] = useState<number | null>(null);
   const [addingItemToTrip, setAddingItemToTrip] = useState<number | null>(null);
   const [tripTabs, setTripTabs] = useState<Record<number, string>>({});
+  const [cityInput, setCityInput] = useState("");
+  const [citySuggestions, setCitySuggestions] = useState<CityOption[]>([]);
+  const [selectedCities, setSelectedCities] = useState<CityOption[]>([]);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
+  const handleCityInput = (input: string) => {
+    setCityInput(input);
+    if (input.length > 0) {
+      const lower = input.toLowerCase();
+      const matches = Object.entries(cityCountryDatabase)
+        .filter(([city]) => city.toLowerCase().includes(lower))
+        .slice(0, 8)
+        .map(([city, country]) => ({ city: city.charAt(0).toUpperCase() + city.slice(1), country }));
+      setCitySuggestions(matches);
+    } else {
+      setCitySuggestions([]);
+    }
+  };
+
+  const addCity = (option: CityOption) => {
+    if (!selectedCities.find(c => c.city.toLowerCase() === option.city.toLowerCase())) {
+      setSelectedCities([...selectedCities, option]);
+      setCityInput("");
+      setCitySuggestions([]);
+    }
+  };
+
+  const removeCity = (idx: number) => {
+    setSelectedCities(selectedCities.filter((_, i) => i !== idx));
+  };
+
   const form = useForm<TripPlannerForm>({
     resolver: zodResolver(tripPlannerSchema),
-    defaultValues: { city: "", country: "", notes: "" },
+    defaultValues: { city: "", country: "", notes: "", cities: [] },
   });
 
   const itemForm = useForm<ItineraryItemForm>({
@@ -283,35 +357,70 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
               </CardHeader>
               <CardContent>
                 <Form {...form}>
-                  <form onSubmit={form.handleSubmit((data) => createTripMutation.mutate(data))} className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <form onSubmit={form.handleSubmit((data) => createTripMutation.mutate({...data, cities: selectedCities}))} className="space-y-6">
+                    {/* City Autocomplete and Multi-City Selection */}
+                    <div className="space-y-2">
+                      <FormLabel className="text-base font-semibold">Cities *</FormLabel>
+                      <div className="relative">
+                        <div className="flex gap-2">
+                          <div className="flex-1 relative">
+                            <Input placeholder="Type city name (e.g., Buenos Aires, Salta)..." value={cityInput} onChange={(e) => handleCityInput(e.target.value)} data-testid="input-city-search" className="pr-10" />
+                            {citySuggestions.length > 0 && (
+                              <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-card border border-border rounded-md shadow-lg max-h-56 overflow-y-auto">
+                                {citySuggestions.map((option, idx) => (
+                                  <button key={idx} type="button" onClick={() => addCity(option)} className="w-full text-left px-4 py-2 hover:bg-muted flex justify-between items-center border-b border-border last:border-b-0 transition-colors" data-testid={`city-option-${idx}`}>
+                                    <span className="font-medium">{option.city}</span>
+                                    <span className="text-xs text-muted-foreground">{option.country}</span>
+                                  </button>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                          <Button type="button" variant="outline" size="sm" onClick={() => handleCityInput("")} data-testid="button-clear-search">Clear</Button>
+                        </div>
+                      </div>
+                      {selectedCities.length > 0 && (
+                        <div className="flex flex-wrap gap-2 mt-3">
+                          {selectedCities.map((city, idx) => (
+                            <Badge key={idx} variant="secondary" className="pl-3 pr-1 py-1.5 flex items-center gap-1" data-testid={`badge-city-${idx}`}>
+                              <span>{city.city}, {city.country}</span>
+                              <Button type="button" variant="ghost" size="sm" className="h-auto w-auto p-0 ml-1 hover:bg-transparent" onClick={() => removeCity(idx)} data-testid={`button-remove-city-${idx}`}>
+                                <X className="h-3 w-3" />
+                              </Button>
+                            </Badge>
+                          ))}
+                        </div>
+                      )}
+                      {selectedCities.length === 0 && <p className="text-sm text-destructive">Add at least one city</p>}
+                    </div>
+
+                    {/* City, Country, Start Date, End Date on One Line */}
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
                       <FormField control={form.control} name="city" render={({ field }) => (
-                        <FormItem><FormLabel>City *</FormLabel><FormControl><Input placeholder="Buenos Aires" {...field} data-testid="input-trip-city" /></FormControl><FormMessage /></FormItem>
+                        <FormItem><FormLabel className="text-xs">Primary City</FormLabel><FormControl><Input placeholder="Buenos Aires" value={selectedCities[0]?.city || ""} {...field} readOnly data-testid="input-primary-city" className="text-sm" /></FormControl><FormMessage className="text-xs" /></FormItem>
                       )} />
                       <FormField control={form.control} name="country" render={({ field }) => (
-                        <FormItem><FormLabel>Country</FormLabel><FormControl><Input placeholder="Argentina" {...field} data-testid="input-trip-country" /></FormControl><FormMessage /></FormItem>
+                        <FormItem><FormLabel className="text-xs">Country</FormLabel><FormControl><Input placeholder="Argentina" value={selectedCities[0]?.country || ""} {...field} readOnly data-testid="input-primary-country" className="text-sm" /></FormControl><FormMessage className="text-xs" /></FormItem>
                       )} />
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <FormField control={form.control} name="startDate" render={({ field }) => (
-                        <FormItem className="flex flex-col"><FormLabel>Start Date *</FormLabel>
+                        <FormItem className="flex flex-col"><FormLabel className="text-xs">Start Date *</FormLabel>
                           <Popover><PopoverTrigger asChild><FormControl>
-                            <Button variant="outline" className={cn("justify-start text-left font-normal", !field.value && "text-muted-foreground")} data-testid="input-trip-start-date">
-                              <CalendarIcon className="mr-2 h-4 w-4" />{field.value ? format(field.value, "PPP") : "Pick a date"}
+                            <Button variant="outline" className={cn("justify-start text-left font-normal text-sm h-9", !field.value && "text-muted-foreground")} data-testid="input-trip-start-date">
+                              <CalendarIcon className="mr-1 h-3 w-3" />{field.value ? format(field.value, "MMM d") : "Date"}
                             </Button>
                           </FormControl></PopoverTrigger>
                           <PopoverContent className="w-auto p-0"><Calendar mode="single" selected={field.value} onSelect={field.onChange} initialFocus /></PopoverContent>
-                          </Popover><FormMessage /></FormItem>
+                          </Popover><FormMessage className="text-xs" /></FormItem>
                       )} />
                       <FormField control={form.control} name="endDate" render={({ field }) => (
-                        <FormItem className="flex flex-col"><FormLabel>End Date *</FormLabel>
+                        <FormItem className="flex flex-col"><FormLabel className="text-xs">End Date *</FormLabel>
                           <Popover><PopoverTrigger asChild><FormControl>
-                            <Button variant="outline" className={cn("justify-start text-left font-normal", !field.value && "text-muted-foreground")} data-testid="input-trip-end-date">
-                              <CalendarIcon className="mr-2 h-4 w-4" />{field.value ? format(field.value, "PPP") : "Pick a date"}
+                            <Button variant="outline" className={cn("justify-start text-left font-normal text-sm h-9", !field.value && "text-muted-foreground")} data-testid="input-trip-end-date">
+                              <CalendarIcon className="mr-1 h-3 w-3" />{field.value ? format(field.value, "MMM d") : "Date"}
                             </Button>
                           </FormControl></PopoverTrigger>
                           <PopoverContent className="w-auto p-0"><Calendar mode="single" selected={field.value} onSelect={field.onChange} initialFocus /></PopoverContent>
-                          </Popover><FormMessage /></FormItem>
+                          </Popover><FormMessage className="text-xs" /></FormItem>
                       )} />
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

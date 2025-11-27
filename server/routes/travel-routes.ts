@@ -80,7 +80,7 @@ router.get("/plans/:id", authenticateToken, async (req: AuthRequest, res: Respon
 router.post("/plans", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user!.id;
-    const { city, country, startDate, endDate, tripDuration, budget, interests, travelStyle, status, notes } = req.body;
+    const { city, country, startDate, endDate, tripDuration, budget, interests, travelStyle, status, notes, cities } = req.body;
 
     if (!city || !startDate || !endDate) {
       return res.status(400).json({ message: "City, start date, and end date are required" });
@@ -90,6 +90,7 @@ router.post("/plans", authenticateToken, async (req: AuthRequest, res: Response)
       userId,
       city,
       country: country || null,
+      cities: cities && cities.length > 0 ? JSON.stringify(cities) : JSON.stringify([]),
       startDate,
       endDate,
       tripDuration: tripDuration || Math.ceil((new Date(endDate).getTime() - new Date(startDate).getTime()) / (1000 * 60 * 60 * 24)),
