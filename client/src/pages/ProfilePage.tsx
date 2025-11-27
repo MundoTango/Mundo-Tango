@@ -867,7 +867,7 @@ export default function ProfilePage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <ProfileTabTravel profileId={user.id} />
+            <ProfileTabTravel profileId={user.id} isOwnProfile={isOwnProfile} />
           </motion.div>
         )}
 

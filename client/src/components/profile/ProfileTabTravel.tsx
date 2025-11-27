@@ -1,8 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Plane, Calendar, MapPin, DollarSign, Sparkles, FileText, Briefcase, Home, Utensils, Heart } from "lucide-react";
+import { Plane, Calendar, MapPin, DollarSign, Sparkles, FileText, Briefcase, Home, Utensils, Heart, Plus, LayoutDashboard, ExternalLink } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
+import { Link } from "wouter";
 
 interface TravelPlan {
   id: number;
@@ -33,6 +34,7 @@ interface TravelPlanItem {
 
 interface ProfileTabTravelProps {
   profileId: number;
+  isOwnProfile?: boolean;
 }
 
 const getItemIcon = (type: string) => {
@@ -71,7 +73,7 @@ const getStatusColor = (status: string) => {
   }
 };
 
-export default function ProfileTabTravel({ profileId }: ProfileTabTravelProps) {
+export default function ProfileTabTravel({ profileId, isOwnProfile = false }: ProfileTabTravelProps) {
   const { data: travelPlans, isLoading } = useQuery({
     queryKey: ['/api/travel/plans', profileId],
     queryFn: async () => {
@@ -93,18 +95,52 @@ export default function ProfileTabTravel({ profileId }: ProfileTabTravelProps) {
     return (
       <div className="text-center py-12">
         <Plane className="w-12 h-12 mx-auto text-muted-foreground mb-4 opacity-50" />
-        <p className="text-muted-foreground text-lg" data-testid="text-no-plans">
+        <p className="text-muted-foreground text-lg mb-6" data-testid="text-no-plans">
           No upcoming travel plans.
         </p>
+        {isOwnProfile && (
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <Button asChild data-testid="button-plan-trip-empty">
+              <Link href="/travel/planner">
+                <Plus className="h-4 w-4 mr-2" />
+                Plan Your First Trip
+              </Link>
+            </Button>
+            <Button variant="outline" asChild data-testid="button-travel-dashboard-empty">
+              <Link href="/travel">
+                <LayoutDashboard className="h-4 w-4 mr-2" />
+                View Travel Dashboard
+              </Link>
+            </Button>
+          </div>
+        )}
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-4xl font-bold mb-2">Travel Plans</h1>
-        <p className="text-muted-foreground">All upcoming and past trips</p>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-4xl font-bold mb-2">Travel Plans</h1>
+          <p className="text-muted-foreground">All upcoming and past trips</p>
+        </div>
+        {isOwnProfile && (
+          <div className="flex flex-wrap items-center gap-3">
+            <Button asChild data-testid="button-plan-new-trip">
+              <Link href="/travel/planner">
+                <Plus className="h-4 w-4 mr-2" />
+                Plan New Trip
+              </Link>
+            </Button>
+            <Button variant="outline" asChild data-testid="button-travel-dashboard">
+              <Link href="/travel">
+                <LayoutDashboard className="h-4 w-4 mr-2" />
+                Dashboard
+              </Link>
+            </Button>
+          </div>
+        )}
       </div>
 
       {travelPlans.map((trip, index) => (
@@ -276,6 +312,24 @@ export default function ProfileTabTravel({ profileId }: ProfileTabTravelProps) {
                 </div>
               </div>
             )}
+
+            {/* Card Footer with Actions */}
+            <div className="pt-4 mt-4 border-t border-border flex flex-wrap items-center gap-3">
+              <Button asChild variant="outline" size="sm" data-testid={`button-view-trip-${index}`}>
+                <Link href={`/travel/trip/${trip.id}`}>
+                  <ExternalLink className="h-4 w-4 mr-2" />
+                  View Trip Details
+                </Link>
+              </Button>
+              {isOwnProfile && (
+                <Button asChild variant="ghost" size="sm" data-testid={`button-edit-trip-${index}`}>
+                  <Link href={`/travel/trip/${trip.id}/expenses`}>
+                    <DollarSign className="h-4 w-4 mr-2" />
+                    Manage Expenses
+                  </Link>
+                </Button>
+              )}
+            </div>
           </CardContent>
         </Card>
       ))}
