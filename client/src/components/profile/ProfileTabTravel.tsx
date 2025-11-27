@@ -314,15 +314,21 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
     setIsScrapingAccommodation(true);
     try {
       const res = await apiRequest("POST", "/api/travel/scrape-accommodation", { url });
-      const data = await res.json();
-      if (data.title) {
-        itemForm.setValue('title', data.title);
-        itemForm.setValue('location', data.address || data.city || '');
-        if (data.priceNumeric) itemForm.setValue('cost', data.priceNumeric);
-        if (data.description) itemForm.setValue('description', data.description);
+      const response = await res.json();
+      // API returns { success: true, data: {...} }
+      const scraped = response.data || response;
+      if (scraped.title) {
+        itemForm.setValue('title', scraped.title);
+        itemForm.setValue('location', scraped.address || scraped.city || '');
+        if (scraped.pricePerNight) itemForm.setValue('cost', scraped.pricePerNight);
+        if (scraped.description) itemForm.setValue('description', scraped.description);
+        if (url) itemForm.setValue('bookingUrl', url);
         toast({ title: "Data imported!", description: "Accommodation details filled from link" });
+      } else {
+        toast({ title: "No data found", description: "The link didn't contain extractable info. Please fill manually.", variant: "destructive" });
       }
     } catch (err) {
+      console.error("Scrape accommodation error:", err);
       toast({ title: "Couldn't fetch data", description: "Please fill in details manually", variant: "destructive" });
     } finally {
       setIsScrapingAccommodation(false);
@@ -334,13 +340,22 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
     setIsScrapingTransport(true);
     try {
       const res = await apiRequest("POST", "/api/travel/scrape-transport", { url });
-      const data = await res.json();
-      if (data.provider || data.departureLocation) {
-        itemForm.setValue('title', data.provider || 'Transport');
-        if (data.priceNumeric) itemForm.setValue('cost', data.priceNumeric);
+      const response = await res.json();
+      // API returns { success: true, data: {...} }
+      const scraped = response.data || response;
+      if (scraped.provider || scraped.departure?.location) {
+        itemForm.setValue('title', scraped.provider || 'Transport');
+        if (scraped.priceValue) itemForm.setValue('cost', scraped.priceValue);
+        if (scraped.departure?.location && scraped.arrival?.location) {
+          itemForm.setValue('location', `${scraped.departure.location} → ${scraped.arrival.location}`);
+        }
+        if (url) itemForm.setValue('bookingUrl', url);
         toast({ title: "Data imported!", description: "Transport details filled from link" });
+      } else {
+        toast({ title: "No data found", description: "The link didn't contain extractable info. Please fill manually.", variant: "destructive" });
       }
     } catch (err) {
+      console.error("Scrape transport error:", err);
       toast({ title: "Couldn't fetch data", description: "Please fill in details manually", variant: "destructive" });
     } finally {
       setIsScrapingTransport(false);

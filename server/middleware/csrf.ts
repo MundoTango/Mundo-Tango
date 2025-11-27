@@ -102,6 +102,11 @@ export function verifyCsrfToken(req: Request, res: Response, next: NextFunction)
     if (authEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
       return next();
     }
+    // Skip CSRF for travel scraping endpoints in development (for testing)
+    const travelScrapingEndpoints = ["/api/travel/scrape-accommodation", "/api/travel/scrape-transport"];
+    if (travelScrapingEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
+      return next();
+    }
   }
   
   const sessionId = (req as any).session?.id || req.ip;
@@ -205,9 +210,11 @@ export function verifyDoubleSubmitCookie(req: Request, res: Response, next: Next
   const isDev = process.env.NODE_ENV === 'development';
   const authEndpoints = ["/api/auth/login", "/api/auth/register", "/api/auth/refresh"];
   const journeyEndpoints = ["/api/journey"]; // Internal API for recording development progress
+  const travelScrapingEndpoints = ["/api/travel/scrape-accommodation", "/api/travel/scrape-transport"];
   const isAuthEndpoint = authEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint));
   const isJourneyEndpoint = journeyEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint));
-  const shouldBypass = isAuthEndpoint || isJourneyEndpoint;
+  const isTravelScrapingEndpoint = travelScrapingEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint));
+  const shouldBypass = isAuthEndpoint || isJourneyEndpoint || isTravelScrapingEndpoint;
   
   console.log(`[CSRF DEBUG] isDev=${isDev}, url=${req.originalUrl}, isAuthEndpoint=${isAuthEndpoint}, isJourneyEndpoint=${isJourneyEndpoint}, shouldBypass=${shouldBypass}`);
   

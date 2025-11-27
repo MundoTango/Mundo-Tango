@@ -556,6 +556,20 @@ router.post("/scrape-accommodation", async (req: AuthRequest, res: Response) => 
       }
     }
 
+    console.log('[DEBUG] Accommodation scraping results:', {
+      url,
+      htmlLength: html.length,
+      title: accommodation.title,
+      price: accommodation.price,
+      pricePerNight: accommodation.pricePerNight,
+      currency: accommodation.currency,
+      address: accommodation.address,
+      city: accommodation.city,
+      country: accommodation.country,
+      imagesCount: accommodation.images.length,
+      amenitiesCount: accommodation.amenities.length,
+    });
+
     res.json({
       success: true,
       data: accommodation,
@@ -837,6 +851,19 @@ router.post("/scrape-transport", async (req: AuthRequest, res: Response) => {
       else if (transport.price.includes('¥')) transport.currency = 'JPY';
       else if (transport.price.includes('$')) transport.currency = 'USD';
     }
+
+    console.log('[DEBUG] Transport scraping results:', {
+      url,
+      htmlLength: html.length,
+      type: transport.type,
+      provider: transport.provider,
+      price: transport.price,
+      priceValue: transport.priceValue,
+      currency: transport.currency,
+      departure: transport.departure,
+      arrival: transport.arrival,
+      duration: transport.duration,
+    });
 
     res.json({
       success: true,
