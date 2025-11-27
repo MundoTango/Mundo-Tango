@@ -14,6 +14,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Plane, Calendar as CalendarIcon, MapPin, DollarSign, Sparkles, FileText, Briefcase, Home, Utensils, Heart, Plus, ChevronDown, ChevronUp, TrendingUp, X, Edit, Users, Trash2, Clock, Check, PieChart, Download } from "lucide-react";
+
+import buenosAiresImg from "@assets/stock_images/buenos_aires_argenti_afa3bd1f.jpg";
+import milanImg from "@assets/stock_images/milan_italy_duomo_ca_513cf7b4.jpg";
+import parisImg from "@assets/stock_images/paris_france_eiffel__a404573c.jpg";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -111,9 +115,17 @@ const getStatusColor = (status: string) => {
   }
 };
 
+const cityImages: Record<string, string> = {
+  'buenos aires': buenosAiresImg,
+  'milan': milanImg,
+  'paris': parisImg,
+};
+
+const defaultCityImage = 'https://images.pexels.com/photos/466685/pexels-photo-466685.jpeg?auto=compress&cs=tinysrgb&w=600&h=600&dpr=1';
+
 const getCityImageUrl = (city: string, country?: string): string => {
-  const searchTerms = encodeURIComponent(`${city}${country ? `,${country}` : ''} city skyline landmark`);
-  return `https://source.unsplash.com/600x600/?${searchTerms}`;
+  const cityKey = city.toLowerCase().trim();
+  return cityImages[cityKey] || defaultCityImage;
 };
 
 export default function ProfileTabTravel({ profileId, isOwnProfile = false }: ProfileTabTravelProps) {
