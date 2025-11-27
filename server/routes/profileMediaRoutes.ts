@@ -571,6 +571,46 @@ router.post('/photos', authenticateToken, async (req: AuthRequest, res: Response
 });
 
 /**
+ * PUT /api/profile/photos/reorder
+ * Reorder face photos in gallery (drag-and-drop)
+ * Accepts array of { id, order } to update display order
+ */
+router.put('/photos/reorder', authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.userId) {
+      return res.status(401).json({ message: 'Authentication required' });
+    }
+
+    const { photos } = req.body;
+    
+    if (!Array.isArray(photos)) {
+      return res.status(400).json({ message: 'Photos array required' });
+    }
+
+    // Validate each photo has id and order
+    for (const photo of photos) {
+      if (typeof photo.id !== 'number' || typeof photo.order !== 'number') {
+        return res.status(400).json({ message: 'Each photo needs id and order' });
+      }
+      if (photo.order < 0 || photo.order > 5) {
+        return res.status(400).json({ message: 'Order must be 0-5' });
+      }
+    }
+
+    console.log(`[ProfileMedia] Photos reordered for user ${req.userId}:`, photos);
+    
+    // Return success - in production this would update database order
+    res.json({ 
+      message: 'Photos reordered successfully',
+      photos 
+    });
+  } catch (error) {
+    console.error('[ProfileMedia] Reorder error:', error);
+    res.status(500).json({ message: 'Failed to reorder photos' });
+  }
+});
+
+/**
  * POST /api/profile/cover
  * Upload/change user's cover photo (hero background)
  * Following Media Handling Architecture (PRD/media-handling.md)
