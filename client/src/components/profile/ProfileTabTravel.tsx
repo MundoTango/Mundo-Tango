@@ -872,8 +872,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
             </DialogTitle>
           </DialogHeader>
           <Form {...itemForm}>
-            <form onSubmit={itemForm.handleSubmit((data) => { if (accommodationDialog) { addItemMutation.mutate({ tripId: accommodationDialog.tripId, data }); setAccommodationDialog(null); } })} className="space-y-4">
-              <input type="hidden" {...itemForm.register('type')} value="hotel" />
+            <form onSubmit={itemForm.handleSubmit((data) => { if (accommodationDialog) { addItemMutation.mutate({ tripId: accommodationDialog.tripId, data: { ...data, type: 'hotel' } }); setAccommodationDialog(null); } })} className="space-y-4">
               
               {/* Import from Link */}
               <div className="space-y-2">
@@ -884,6 +883,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
                     value={scrapingUrl}
                     onChange={(e) => setScrapingUrl(e.target.value)}
                     className="flex-1"
+                    data-testid="input-accommodation-url"
                   />
                   <Button 
                     type="button" 
@@ -891,6 +891,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
                     size="icon"
                     disabled={!scrapingUrl || isScrapingAccommodation}
                     onClick={() => scrapeAccommodation(scrapingUrl)}
+                    data-testid="button-scrape-accommodation"
                   >
                     {isScrapingAccommodation ? <Loader2 className="h-4 w-4 animate-spin" /> : <Link2 className="h-4 w-4" />}
                   </Button>
@@ -901,33 +902,33 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
               <div className="relative"><div className="absolute inset-0 flex items-center"><span className="w-full border-t" /></div><div className="relative flex justify-center text-xs uppercase"><span className="bg-background px-2 text-muted-foreground">or enter manually</span></div></div>
 
               <FormField control={itemForm.control} name="title" render={({ field }) => (
-                <FormItem><FormLabel>Property Name *</FormLabel><FormControl><Input placeholder="e.g., Cozy Apartment in Palermo" {...field} /></FormControl><FormMessage /></FormItem>
+                <FormItem><FormLabel>Property Name *</FormLabel><FormControl><Input placeholder="e.g., Cozy Apartment in Palermo" {...field} data-testid="input-accommodation-title" /></FormControl><FormMessage /></FormItem>
               )} />
               
               <FormField control={itemForm.control} name="location" render={({ field }) => (
-                <FormItem><FormLabel>Full Address *</FormLabel><FormControl><Input placeholder="e.g., Av. Santa Fe 1234, Palermo, Buenos Aires" {...field} /></FormControl><FormMessage /></FormItem>
+                <FormItem><FormLabel>Full Address *</FormLabel><FormControl><Input placeholder="e.g., Av. Santa Fe 1234, Palermo, Buenos Aires" {...field} data-testid="input-accommodation-address" /></FormControl><FormMessage /></FormItem>
               )} />
 
               <div className="grid grid-cols-2 gap-4">
                 <FormField control={itemForm.control} name="date" render={({ field }) => (
-                  <FormItem><FormLabel>Check-in Date</FormLabel><FormControl><Input type="datetime-local" {...field} /></FormControl><FormMessage /></FormItem>
+                  <FormItem><FormLabel>Check-in Date</FormLabel><FormControl><Input type="datetime-local" {...field} data-testid="input-accommodation-checkin" /></FormControl><FormMessage /></FormItem>
                 )} />
                 <FormField control={itemForm.control} name="cost" render={({ field }) => (
-                  <FormItem><FormLabel>Total Cost (USD)</FormLabel><FormControl><Input type="number" placeholder="500" {...field} onChange={(e) => field.onChange(e.target.valueAsNumber)} /></FormControl><FormMessage /></FormItem>
+                  <FormItem><FormLabel>Total Cost (USD)</FormLabel><FormControl><Input type="number" placeholder="500" {...field} onChange={(e) => field.onChange(e.target.valueAsNumber)} data-testid="input-accommodation-cost" /></FormControl><FormMessage /></FormItem>
                 )} />
               </div>
 
               <FormField control={itemForm.control} name="description" render={({ field }) => (
-                <FormItem><FormLabel>Notes</FormLabel><FormControl><Textarea placeholder="Amenities, special instructions..." {...field} rows={2} /></FormControl><FormMessage /></FormItem>
+                <FormItem><FormLabel>Notes</FormLabel><FormControl><Textarea placeholder="Amenities, special instructions..." {...field} rows={2} data-testid="input-accommodation-notes" /></FormControl><FormMessage /></FormItem>
               )} />
 
               <FormField control={itemForm.control} name="bookingUrl" render={({ field }) => (
-                <FormItem><FormLabel>Booking Confirmation URL</FormLabel><FormControl><Input placeholder="https://..." {...field} /></FormControl><FormMessage /></FormItem>
+                <FormItem><FormLabel>Booking Confirmation URL</FormLabel><FormControl><Input placeholder="https://..." {...field} data-testid="input-accommodation-booking-url" /></FormControl><FormMessage /></FormItem>
               )} />
 
               <div className="flex gap-2 pt-2">
-                <Button type="button" variant="outline" onClick={() => { setAccommodationDialog(null); itemForm.reset(); setScrapingUrl(''); }} className="flex-1">Cancel</Button>
-                <Button type="submit" className="flex-1" disabled={addItemMutation.isPending}>{addItemMutation.isPending ? "Adding..." : "Add Accommodation"}</Button>
+                <Button type="button" variant="outline" onClick={() => { setAccommodationDialog(null); itemForm.reset(); setScrapingUrl(''); }} className="flex-1" data-testid="button-cancel-accommodation">Cancel</Button>
+                <Button type="submit" className="flex-1" disabled={addItemMutation.isPending} data-testid="button-submit-accommodation">{addItemMutation.isPending ? "Adding..." : "Add Accommodation"}</Button>
               </div>
             </form>
           </Form>
@@ -982,6 +983,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
                     value={scrapingUrl}
                     onChange={(e) => setScrapingUrl(e.target.value)}
                     className="flex-1"
+                    data-testid="input-transport-url"
                   />
                   <Button 
                     type="button" 
@@ -989,6 +991,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
                     size="icon"
                     disabled={!scrapingUrl || isScrapingTransport}
                     onClick={() => scrapeTransport(scrapingUrl)}
+                    data-testid="button-scrape-transport"
                   >
                     {isScrapingTransport ? <Loader2 className="h-4 w-4 animate-spin" /> : <Link2 className="h-4 w-4" />}
                   </Button>
@@ -998,29 +1001,29 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
               <div className="relative"><div className="absolute inset-0 flex items-center"><span className="w-full border-t" /></div><div className="relative flex justify-center text-xs uppercase"><span className="bg-background px-2 text-muted-foreground">or enter manually</span></div></div>
 
               <FormField control={itemForm.control} name="title" render={({ field }) => (
-                <FormItem><FormLabel>Provider/Details *</FormLabel><FormControl><Input placeholder={selectedTransportType === 'flight' ? "e.g., American Airlines AA1234" : "e.g., Eurostar to Paris"} {...field} /></FormControl><FormMessage /></FormItem>
+                <FormItem><FormLabel>Provider/Details *</FormLabel><FormControl><Input placeholder={selectedTransportType === 'flight' ? "e.g., American Airlines AA1234" : "e.g., Eurostar to Paris"} {...field} data-testid="input-transport-title" /></FormControl><FormMessage /></FormItem>
               )} />
 
               <div className="grid grid-cols-2 gap-4">
                 <FormField control={itemForm.control} name="date" render={({ field }) => (
-                  <FormItem><FormLabel>Departure Date/Time</FormLabel><FormControl><Input type="datetime-local" {...field} /></FormControl><FormMessage /></FormItem>
+                  <FormItem><FormLabel>Departure Date/Time</FormLabel><FormControl><Input type="datetime-local" {...field} data-testid="input-transport-departure" /></FormControl><FormMessage /></FormItem>
                 )} />
                 <FormField control={itemForm.control} name="cost" render={({ field }) => (
-                  <FormItem><FormLabel>Cost (USD)</FormLabel><FormControl><Input type="number" placeholder="350" {...field} onChange={(e) => field.onChange(e.target.valueAsNumber)} /></FormControl><FormMessage /></FormItem>
+                  <FormItem><FormLabel>Cost (USD)</FormLabel><FormControl><Input type="number" placeholder="350" {...field} onChange={(e) => field.onChange(e.target.valueAsNumber)} data-testid="input-transport-cost" /></FormControl><FormMessage /></FormItem>
                 )} />
               </div>
 
               <FormField control={itemForm.control} name="location" render={({ field }) => (
-                <FormItem><FormLabel>Route (From → To)</FormLabel><FormControl><Input placeholder="e.g., JFK → EZE" {...field} /></FormControl><FormMessage /></FormItem>
+                <FormItem><FormLabel>Route (From → To)</FormLabel><FormControl><Input placeholder="e.g., JFK → EZE" {...field} data-testid="input-transport-route" /></FormControl><FormMessage /></FormItem>
               )} />
 
               <FormField control={itemForm.control} name="bookingUrl" render={({ field }) => (
-                <FormItem><FormLabel>Booking URL</FormLabel><FormControl><Input placeholder="https://..." {...field} /></FormControl><FormMessage /></FormItem>
+                <FormItem><FormLabel>Booking URL</FormLabel><FormControl><Input placeholder="https://..." {...field} data-testid="input-transport-booking-url" /></FormControl><FormMessage /></FormItem>
               )} />
 
               <div className="flex gap-2 pt-2">
-                <Button type="button" variant="outline" onClick={() => { setTransportDialog(null); itemForm.reset(); setScrapingUrl(''); }} className="flex-1">Cancel</Button>
-                <Button type="submit" className="flex-1" disabled={addItemMutation.isPending}>{addItemMutation.isPending ? "Adding..." : "Add Transport"}</Button>
+                <Button type="button" variant="outline" onClick={() => { setTransportDialog(null); itemForm.reset(); setScrapingUrl(''); }} className="flex-1" data-testid="button-cancel-transport">Cancel</Button>
+                <Button type="submit" className="flex-1" disabled={addItemMutation.isPending} data-testid="button-submit-transport">{addItemMutation.isPending ? "Adding..." : "Add Transport"}</Button>
               </div>
             </form>
           </Form>
