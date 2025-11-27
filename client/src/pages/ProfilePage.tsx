@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRoute, Link, useSearch } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -86,6 +86,48 @@ export default function ProfilePage() {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<string>('feed');
   const [viewMode, setViewMode] = useState<'dashboard' | 'customer'>('dashboard');
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+
+  // Upload profile photo mutation
+  const uploadPhotoMutation = useMutation({
+    mutationFn: async (file: File) => {
+      const formData = new FormData();
+      formData.append('file', file);
+      
+      const res = await fetch('/api/profile/photo', {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Authorization': `Bearer ${currentUser?.id}`,
+        }
+      });
+      
+      if (!res.ok) throw new Error('Failed to upload photo');
+      return res.json();
+    },
+    onSuccess: () => {
+      toast({ title: "Success", description: "Profile photo updated!" });
+      queryClient.invalidateQueries({ queryKey: ["user", profileIdentifier] });
+      setUploadingPhoto(false);
+    },
+    onError: () => {
+      toast({ title: "Error", description: "Failed to upload photo", variant: "destructive" });
+      setUploadingPhoto(false);
+    }
+  });
+
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    setUploadingPhoto(true);
+    uploadPhotoMutation.mutate(file);
+    
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
   
   // Read tab from URL query params (e.g., /profile?tab=memories)
   useEffect(() => {
