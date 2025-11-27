@@ -92,10 +92,12 @@ function RoleIconDisplay({ tangoRoles, leaderLevel, followerLevel }: any) {
 interface SidebarProps {
   isOpen?: boolean;
   setIsOpen?: (open: boolean) => void;
+  isMobile?: boolean;
 }
 
-export default function Sidebar({ isOpen: externalIsOpen, setIsOpen: externalSetIsOpen }: SidebarProps = {}) {
-  const [internalIsOpen, setInternalIsOpen] = useState(false);
+export default function Sidebar({ isOpen: externalIsOpen, setIsOpen: externalSetIsOpen, isMobile: externalIsMobile }: SidebarProps = {}) {
+  const [internalIsOpen, setInternalIsOpen] = useState(true);
+  const [internalIsMobile, setInternalIsMobile] = useState(false);
   const [location] = useLocation();
   const { t, i18n } = useTranslation();
   const { user, profile } = useAuth();
@@ -103,6 +105,7 @@ export default function Sidebar({ isOpen: externalIsOpen, setIsOpen: externalSet
   // Use external state if provided, otherwise use internal
   const isOpen = externalIsOpen !== undefined ? externalIsOpen : internalIsOpen;
   const setIsOpen = externalSetIsOpen || setInternalIsOpen;
+  const isMobile = externalIsMobile !== undefined ? externalIsMobile : internalIsMobile;
 
   // Fetch global statistics
   const { data: statsData } = useQuery({
@@ -192,21 +195,20 @@ export default function Sidebar({ isOpen: externalIsOpen, setIsOpen: externalSet
     },
   ];
 
-  // Auto-open sidebar on desktop
+  // Only handle resize for internal mobile state if no external isMobile prop
   useEffect(() => {
+    if (externalIsMobile !== undefined) return;
+    
     const handleResize = () => {
-      if (window.innerWidth >= 1024) {
-        setIsOpen(true);
-      } else {
-        setIsOpen(false);
-      }
+      const mobile = window.innerWidth < 1024;
+      setInternalIsMobile(mobile);
     };
 
     window.addEventListener("resize", handleResize);
     handleResize();
 
     return () => window.removeEventListener("resize", handleResize);
-  }, [setIsOpen]);
+  }, [externalIsMobile]);
 
   // Scroll sidebar to top when it opens
   useEffect(() => {
@@ -231,16 +233,16 @@ export default function Sidebar({ isOpen: externalIsOpen, setIsOpen: externalSet
 
   return (
     <>
-      {/* Mobile overlay */}
-      {isOpen && (
+      {/* Mobile overlay - only show on mobile when sidebar is open */}
+      {isMobile && isOpen && (
         <div 
-          className="fixed inset-0 bg-black/50 z-30 lg:hidden"
+          className="fixed inset-0 bg-black/50 z-30"
           onClick={() => setIsOpen(false)}
           data-testid="sidebar-overlay"
         />
       )}
 
-      {/* Sidebar */}
+      {/* Sidebar - fixed positioning for both mobile and desktop */}
       <aside
         className={`
           fixed top-16 left-0 z-30 w-64
