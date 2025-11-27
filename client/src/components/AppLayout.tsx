@@ -4,10 +4,9 @@ import UnifiedTopBar from "./navigation/UnifiedTopBar";
 import TourGuide from "./mrBlue/TourGuide";
 import { useQuery } from "@tanstack/react-query";
 import { SelfHealingStatus } from "@/components/SelfHealingStatus";
-import { Sheet, SheetContent } from "@/components/ui/sheet";
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const { data: userData } = useQuery<{ user: { id: number; role: string } }>({
     queryKey: ['/api/auth/me']
@@ -17,26 +16,26 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="relative flex flex-col h-screen w-full bg-background">
+      {/* Top Bar - Fixed */}
       <UnifiedTopBar 
         onMenuToggle={() => setSidebarOpen(!sidebarOpen)}
         showMenuButton={true}
       />
       
-      <main 
-        className="w-full flex-1 overflow-y-auto pt-16 transition-all duration-300 ease-in-out"
-        style={{
-          transform: sidebarOpen ? 'translateX(256px)' : 'translateX(0)',
-        }}
-      >
-        {children}
-      </main>
-
-      {/* Pop-out Sidebar Drawer */}
-      <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
-        <SheetContent side="left" className="w-64 p-0 border-r">
-          <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
-        </SheetContent>
-      </Sheet>
+      {/* Content Area - Below Top Bar */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* Persistent Sidebar */}
+        {sidebarOpen && (
+          <aside className="w-64 border-r overflow-y-auto transition-all duration-300 ease-in-out flex-shrink-0">
+            <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
+          </aside>
+        )}
+        
+        {/* Main Content */}
+        <main className="flex-1 overflow-y-auto transition-all duration-300 ease-in-out">
+          {children}
+        </main>
+      </div>
 
       {user && (
         <TourGuide
