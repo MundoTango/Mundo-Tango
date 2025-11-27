@@ -17,12 +17,25 @@ router.get("/plans", async (req: AuthRequest, res: Response) => {
       return res.status(400).json({ message: "userId query parameter required for public access" });
     }
 
-    const result = await db.select()
+    const plans = await db.select()
       .from(travelPlans)
       .where(eq(travelPlans.userId, userId))
       .orderBy(desc(travelPlans.startDate));
 
-    res.json(result);
+    // Fetch items for each plan
+    const plansWithItems = await Promise.all(
+      plans.map(async (plan) => {
+        const items = await db.select()
+          .from(travelPlanItems)
+          .where(eq(travelPlanItems.travelPlanId, plan.id));
+        return {
+          ...plan,
+          items,
+        };
+      })
+    );
+
+    res.json(plansWithItems);
   } catch (error) {
     console.error("Error fetching travel plans:", error);
     res.status(500).json({ message: "Failed to fetch travel plans" });
