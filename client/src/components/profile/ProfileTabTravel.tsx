@@ -150,6 +150,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
   const [addingItemToTrip, setAddingItemToTrip] = useState<number | null>(null);
   const [tripTabs, setTripTabs] = useState<Record<number, string>>({});
   const [selectedCities, setSelectedCities] = useState<CityOption[]>([]);
+  const [activeRangePickerIdx, setActiveRangePickerIdx] = useState<number | null>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -338,25 +339,46 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
                                   <MapPin className="h-4 w-4 text-primary flex-shrink-0" />
                                   <span className="font-medium text-sm">{city.city}{city.country ? `, ${city.country}` : ''}</span>
                                 </div>
-                                <div className="flex items-center gap-2 flex-1">
-                                  <Popover>
-                                    <PopoverTrigger asChild>
-                                      <Button variant="outline" size="sm" className={cn("h-8 text-xs", !city.startDate && "text-muted-foreground")} data-testid={`city-start-date-${idx}`}>
-                                        <CalendarIcon className="mr-1 h-3 w-3" />{city.startDate ? format(city.startDate, "MMM d") : "Start"}
-                                      </Button>
-                                    </PopoverTrigger>
-                                    <PopoverContent className="w-auto p-0"><Calendar mode="single" selected={city.startDate} onSelect={(d) => updateCityDate(idx, 'startDate', d)} initialFocus /></PopoverContent>
-                                  </Popover>
-                                  <span className="text-muted-foreground text-xs">→</span>
-                                  <Popover>
-                                    <PopoverTrigger asChild>
-                                      <Button variant="outline" size="sm" className={cn("h-8 text-xs", !city.endDate && "text-muted-foreground")} data-testid={`city-end-date-${idx}`}>
-                                        <CalendarIcon className="mr-1 h-3 w-3" />{city.endDate ? format(city.endDate, "MMM d") : "End"}
-                                      </Button>
-                                    </PopoverTrigger>
-                                    <PopoverContent className="w-auto p-0"><Calendar mode="single" selected={city.endDate} onSelect={(d) => updateCityDate(idx, 'endDate', d)} initialFocus /></PopoverContent>
-                                  </Popover>
-                                </div>
+                                <Popover open={activeRangePickerIdx === idx} onOpenChange={(open) => setActiveRangePickerIdx(open ? idx : null)}>
+                                  <PopoverTrigger asChild>
+                                    <Button variant="outline" size="sm" className={cn("h-8 text-xs", !city.startDate && "text-muted-foreground")} data-testid={`city-range-date-${idx}`}>
+                                      <CalendarIcon className="mr-1 h-3 w-3" />
+                                      {city.startDate && city.endDate 
+                                        ? `${format(city.startDate, "MMM d")} → ${format(city.endDate, "MMM d")}`
+                                        : city.startDate 
+                                        ? `${format(city.startDate, "MMM d")} → End`
+                                        : "Select Dates"}
+                                    </Button>
+                                  </PopoverTrigger>
+                                  <PopoverContent className="w-auto p-0">
+                                    <div className="p-4 space-y-3">
+                                      <div className="text-sm font-medium">
+                                        {!city.startDate ? "Select start date" : !city.endDate ? "Select end date" : "Date range confirmed"}
+                                      </div>
+                                      <Calendar 
+                                        mode="range"
+                                        selected={{
+                                          from: city.startDate,
+                                          to: city.endDate,
+                                        }}
+                                        onSelect={(range: any) => {
+                                          if (range?.from) {
+                                            updateCityDate(idx, 'startDate', range.from);
+                                          }
+                                          if (range?.to) {
+                                            updateCityDate(idx, 'endDate', range.to);
+                                            setActiveRangePickerIdx(null);
+                                          }
+                                        }}
+                                        disabled={(date) => {
+                                          if (!city.startDate || !city.endDate) return false;
+                                          return date < city.startDate || date > city.endDate;
+                                        }}
+                                        initialFocus
+                                      />
+                                    </div>
+                                  </PopoverContent>
+                                </Popover>
                                 <Button type="button" variant="ghost" size="icon" className="h-7 w-7" onClick={() => removeCity(idx)} data-testid={`button-remove-city-${idx}`}>
                                   <X className="h-3 w-3" />
                                 </Button>
@@ -376,26 +398,45 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
                       <FormField control={form.control} name="country" render={({ field }) => (
                         <FormItem><FormLabel className="text-xs">Country</FormLabel><FormControl><Input placeholder="Argentina" value={selectedCities[0]?.country || ""} {...field} readOnly data-testid="input-primary-country" className="text-sm bg-muted/50" /></FormControl><FormMessage className="text-xs" /></FormItem>
                       )} />
-                      <FormField control={form.control} name="startDate" render={({ field }) => (
-                        <FormItem className="flex flex-col"><FormLabel className="text-xs">Trip Start *</FormLabel>
-                          <Popover><PopoverTrigger asChild><FormControl>
-                            <Button variant="outline" className={cn("justify-start text-left font-normal text-sm h-9", !field.value && "text-muted-foreground")} data-testid="input-trip-start-date">
-                              <CalendarIcon className="mr-1 h-3 w-3" />{field.value ? format(field.value, "MMM d") : "Date"}
-                            </Button>
-                          </FormControl></PopoverTrigger>
-                          <PopoverContent className="w-auto p-0"><Calendar mode="single" selected={field.value} onSelect={field.onChange} initialFocus /></PopoverContent>
-                          </Popover><FormMessage className="text-xs" /></FormItem>
-                      )} />
-                      <FormField control={form.control} name="endDate" render={({ field }) => (
-                        <FormItem className="flex flex-col"><FormLabel className="text-xs">Trip End *</FormLabel>
-                          <Popover><PopoverTrigger asChild><FormControl>
-                            <Button variant="outline" className={cn("justify-start text-left font-normal text-sm h-9", !field.value && "text-muted-foreground")} data-testid="input-trip-end-date">
-                              <CalendarIcon className="mr-1 h-3 w-3" />{field.value ? format(field.value, "MMM d") : "Date"}
-                            </Button>
-                          </FormControl></PopoverTrigger>
-                          <PopoverContent className="w-auto p-0"><Calendar mode="single" selected={field.value} onSelect={field.onChange} initialFocus /></PopoverContent>
-                          </Popover><FormMessage className="text-xs" /></FormItem>
-                      )} />
+                      <div className="md:col-span-2">
+                        <FormField control={form.control} name="startDate" render={({ field }) => (
+                          <FormItem className="flex flex-col"><FormLabel className="text-xs">Trip Dates (Start → End) *</FormLabel>
+                            <Popover><PopoverTrigger asChild><FormControl>
+                              <Button variant="outline" className={cn("justify-start text-left font-normal text-sm h-9", !field.value && "text-muted-foreground")} data-testid="input-trip-date-range">
+                                <CalendarIcon className="mr-1 h-3 w-3" />
+                                {field.value && form.getValues('endDate') 
+                                  ? `${format(field.value, "MMM d")} → ${format(form.getValues('endDate'), "MMM d")}`
+                                  : field.value
+                                  ? `${format(field.value, "MMM d")} → End`
+                                  : "Select range"}
+                              </Button>
+                            </FormControl></PopoverTrigger>
+                            <PopoverContent className="w-auto p-0">
+                              <div className="p-4 space-y-3">
+                                <div className="text-sm font-medium">
+                                  {!field.value ? "Select start date" : !form.getValues('endDate') ? "Select end date" : "Date range confirmed"}
+                                </div>
+                                <Calendar 
+                                  mode="range"
+                                  selected={{
+                                    from: field.value,
+                                    to: form.getValues('endDate'),
+                                  }}
+                                  onSelect={(range: any) => {
+                                    if (range?.from) {
+                                      field.onChange(range.from);
+                                    }
+                                    if (range?.to) {
+                                      form.setValue('endDate', range.to);
+                                    }
+                                  }}
+                                  initialFocus
+                                />
+                              </div>
+                            </PopoverContent>
+                            </Popover><FormMessage className="text-xs" /></FormItem>
+                        )} />
+                      </div>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <FormField control={form.control} name="budget" render={({ field }) => (
