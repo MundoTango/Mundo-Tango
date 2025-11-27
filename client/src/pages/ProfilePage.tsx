@@ -236,6 +236,20 @@ export default function ProfilePage() {
         {/* Editorial Gradient Overlay (bottom 40%) */}
         <div className="absolute bottom-0 left-0 right-0 h-[60%] bg-gradient-to-t from-black/80 via-black/60 to-transparent" />
         
+        {/* Profile Photo & Action Buttons - Top Right */}
+        <div className="absolute top-6 left-6 z-20 flex gap-3">
+          {isOwnProfile && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button size="icon" variant="outline" className="text-white border-white/30 bg-black/20 backdrop-blur-sm hover:bg-black/30 absolute" style={{bottom: '80px'}} data-testid="button-upload-profile-photo">
+                  <Camera className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Change Profile Photo</TooltipContent>
+            </Tooltip>
+          )}
+        </div>
+
         {/* Action Buttons - Top Right */}
         <div className="absolute top-6 right-6 z-20 flex gap-3">
           {isOwnProfile && (
@@ -297,9 +311,9 @@ export default function ProfilePage() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="absolute bottom-0 left-0 right-0 p-6"
+          className="absolute bottom-0 left-0 right-0 p-6 flex justify-center"
         >
-          <div className="backdrop-blur-md bg-white/10 dark:bg-black/20 border border-white/20 rounded-t-2xl p-6 shadow-2xl">
+          <div className="backdrop-blur-md bg-white/10 dark:bg-black/20 border border-white/20 rounded-t-2xl p-6 shadow-2xl max-w-2xl w-full">
             {/* Name & Verification */}
             <div className="flex items-center gap-3 mb-2">
               <h1 className="text-3xl font-bold text-white drop-shadow-lg" data-testid="text-username">
@@ -321,23 +335,49 @@ export default function ProfilePage() {
               <p className="text-white/80 text-sm mb-4" data-testid="text-bio">{user.bio}</p>
             )}
             
-            {/* Tango Roles */}
+            {/* Tango Roles - Icons with Tooltips */}
             {user.tangoRoles && user.tangoRoles.length > 0 && (
-              <div className="flex flex-wrap gap-2 mb-4">
-                {user.tangoRoles.map((role, index) => (
-                  <Badge 
-                    key={index} 
-                    variant="outline" 
-                    className="bg-white/20 text-white border-white/30 backdrop-blur-sm"
-                    data-testid={`badge-role-${role}`}
-                  >
-                    {role.replace(/_/g, ' ')}
-                  </Badge>
-                ))}
+              <div className="flex flex-wrap gap-1 mb-4">
+                <TooltipProvider>
+                  {user.tangoRoles.map((role, index) => {
+                    const roleIconMap: Record<string, any> = {
+                      'teacher': { icon: BookOpen, label: 'Teacher' },
+                      'dancer': { icon: Users, label: 'Dancer' },
+                      'dj': { icon: Music, label: 'DJ' },
+                      'photographer': { icon: Camera, label: 'Photographer' },
+                      'organizer': { icon: Home, label: 'Organizer' },
+                      'performer': { icon: Mic2, label: 'Performer' },
+                      'vendor': { icon: Briefcase, label: 'Vendor' },
+                      'musician': { icon: Music, label: 'Musician' },
+                      'choreographer': { icon: Heart, label: 'Choreographer' },
+                      'school': { icon: BookOpen, label: 'School' },
+                      'hotel': { icon: Home, label: 'Hotel' },
+                      'wellness': { icon: Heart, label: 'Wellness' },
+                      'tour_operator': { icon: Plane, label: 'Tour Operator' },
+                      'guide': { icon: MapPin, label: 'Guide' },
+                      'content_creator': { icon: Camera, label: 'Content Creator' },
+                    };
+                    
+                    const roleKey = role.toLowerCase();
+                    const roleInfo = roleIconMap[roleKey];
+                    const Icon = roleInfo?.icon || Briefcase;
+                    
+                    return (
+                      <Tooltip key={index}>
+                        <TooltipTrigger asChild>
+                          <div className="p-1.5 rounded-lg bg-white/20 border border-white/30 backdrop-blur-sm cursor-help" data-testid={`icon-role-${role}`}>
+                            <Icon className="w-4 h-4 text-white" />
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent>{roleInfo?.label || role.replace(/_/g, ' ')}</TooltipContent>
+                      </Tooltip>
+                    );
+                  })}
+                </TooltipProvider>
               </div>
             )}
 
-            {/* Professional Score */}
+            {/* Professional Score - Only show if yearsOfDancing > 0 */}
             {user.yearsOfDancing && user.yearsOfDancing > 0 && (
               <div className="bg-primary/20 border border-primary/30 rounded-lg p-3 backdrop-blur-sm mb-3" data-testid="section-professional-score">
                 <div className="flex items-center gap-2">
