@@ -18,9 +18,18 @@ The Unified Top Bar (UnifiedTopBar) is the primary navigation header for the Mun
 
 ### Component Structure
 ```
+AppLayout (client/src/components/AppLayout.tsx)
+├── UnifiedTopBar (fixed height: 64px / h-16)
+│   └── Menu Button toggles sidebar state
+└── Content Area (flex layout, below top bar)
+    ├── Sidebar (persistent, w-64)
+    │   └── Navigation, user stats, menu items
+    └── Main Content (flex-1, expands to fill)
+        └── Route pages (children)
+
 UnifiedTopBar (client/src/components/navigation/UnifiedTopBar.tsx)
 ├── Left Section
-│   ├── Menu Button (Mobile only)
+│   ├── Menu Button (toggles persistent sidebar)
 │   └── Brand Logo
 ├── Center Section
 │   └── InlineSearchInput (Desktop only)
@@ -32,7 +41,20 @@ UnifiedTopBar (client/src/components/navigation/UnifiedTopBar.tsx)
 │   ├── Messages Button (with badge)
 │   ├── Notifications Dropdown (with badge)
 │   └── User Profile Dropdown
-└── Global Search (Mobile)
+```
+
+### Layout Structure
+```
+┌─────────────────────────────────────┐
+│      Unified Top Bar (h-16)         │ Always visible
+├──────────────┬──────────────────────┤
+│              │                      │
+│   Sidebar    │   Main Content       │
+│  (w-64px)    │   (flex-1)           │ Three-tier view below top bar
+│              │                      │
+│ Persistent   │  Page Routes         │
+│              │                      │
+└──────────────┴──────────────────────┘
 ```
 
 ### Dependencies
