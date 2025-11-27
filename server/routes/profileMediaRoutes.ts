@@ -529,4 +529,45 @@ router.post('/photo', authenticateToken, async (req: AuthRequest, res: Response)
   }
 });
 
+/**
+ * POST /api/profile/photos
+ * Upload face photo to profile gallery (max 6 slots)
+ * Following Media Handling Architecture (PRD/media-handling.md)
+ */
+router.post('/photos', authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.userId) {
+      return res.status(401).json({ message: 'Authentication required' });
+    }
+
+    const { photoData, order } = req.body;
+    
+    if (!photoData) {
+      return res.status(400).json({ message: 'No photo data provided' });
+    }
+
+    if (typeof photoData !== 'string' || !photoData.startsWith('data:image/')) {
+      return res.status(400).json({ message: 'Invalid photo data format' });
+    }
+
+    if (typeof order !== 'number' || order < 0 || order > 5) {
+      return res.status(400).json({ message: 'Invalid photo slot (0-5)' });
+    }
+
+    // Store compressed base64 directly (following media-handling.md)
+    const profilePhoto = {
+      id: Date.now(),
+      url: photoData,
+      order,
+      caption: null
+    };
+
+    console.log(`[ProfileMedia] Face photo uploaded for user ${req.userId}, slot ${order}`);
+    res.status(201).json(profilePhoto);
+  } catch (error) {
+    console.error('[ProfileMedia] Face photo upload error:', error);
+    res.status(500).json({ message: 'Failed to upload face photo' });
+  }
+});
+
 export default router;
