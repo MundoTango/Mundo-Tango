@@ -479,7 +479,7 @@ export default function ProfilePage() {
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-3">
-                      {upcomingTravel.map((trip: any, index: number) => (
+                      {upcomingTravel.slice(0, 2).map((trip: any, index: number) => (
                         <div 
                           key={trip.id || index} 
                           className="p-3 bg-muted rounded-lg border border-border/50 hover-elevate"
@@ -496,7 +496,7 @@ export default function ProfilePage() {
                           </div>
                         </div>
                       ))}
-                      {upcomingTravel.length > 3 && (
+                      {upcomingTravel.length > 2 && (
                         <Button
                           variant="outline"
                           size="sm"
@@ -504,7 +504,7 @@ export default function ProfilePage() {
                           onClick={() => setActiveTab('travel')}
                           data-testid="button-view-all-travel"
                         >
-                          View All Trips
+                          See {upcomingTravel.length - 2} more trip{upcomingTravel.length - 2 !== 1 ? 's' : ''} →
                         </Button>
                       )}
                     </div>
