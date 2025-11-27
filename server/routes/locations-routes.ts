@@ -62,13 +62,14 @@ router.get("/search", async (req, res: Response) => {
     }
 
     // Call Nominatim API (free, no API key required)
-    const nominatimUrl = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=8&addressdetails=1`;
+    // Optimized: limit=6, reduce timeout to 2s, focus on cities
+    const nominatimUrl = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=6&addressdetails=0`;
 
     const response = await fetch(nominatimUrl, {
       headers: {
         "User-Agent": "MundoTango/1.0 (tango social platform)",
       },
-      timeout: 4000,
+      timeout: 2000,
     });
 
     if (!response.ok) {
