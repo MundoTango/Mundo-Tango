@@ -84,6 +84,7 @@ import { DataCompletenessValidator } from "./services/validation/DataCompletenes
 import { ComponentPRDRegistry } from "./services/validation/ComponentPRDRegistry";
 import userSearchRoutes from "./routes/user-search";
 import locationRoutes from "./routes/locations";
+import locationsRoutes from "./routes/locations-routes";
 import { registerAIArbitrageRoutes } from "./routes/ai-arbitrage-routes";
 import { registerDPOTrainingRoutes } from "./routes/dpo-training-routes";
 import housingRoutes from "./routes/housing-routes";
