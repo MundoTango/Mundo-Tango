@@ -297,7 +297,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
       return trips;
     },
     onSuccess: (trips: any[]) => {
-      queryClient.invalidateQueries({ queryKey: ["/api/travel/plans"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/travel/plans", profileId] });
       toast({ title: "Trips created!", description: `${trips.length} city trip${trips.length > 1 ? 's' : ''} created successfully.` });
       setShowCreateForm(false);
       setSelectedCities([]);
@@ -314,7 +314,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
       return await res.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/travel/plans"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/travel/plans", profileId] });
       toast({ title: "Item added!" });
       setAddingItemToTrip(null);
       itemForm.reset();
@@ -326,7 +326,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
       await apiRequest("DELETE", `/api/travel/plans/${tripId}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/travel/plans"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/travel/plans", profileId] });
       toast({ title: "Trip deleted" });
     },
   });
@@ -340,8 +340,8 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
       return await res.json();
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ["/api/travel/plans"] });
-      await queryClient.refetchQueries({ queryKey: ["/api/travel/plans"] });
+      await queryClient.invalidateQueries({ queryKey: ["/api/travel/plans", profileId] });
+      await queryClient.refetchQueries({ queryKey: ["/api/travel/plans", profileId] });
       toast({ title: "Trip status updated!" });
       setStatusDropdownOpen(null);
       setUpdatingTripId(null);
@@ -378,7 +378,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
       return await res.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/travel/plans"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/travel/plans", profileId] });
       toast({ title: "Item updated!" });
       setEditingItem(null);
       itemForm.reset();
@@ -394,7 +394,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
       await apiRequest("DELETE", `/api/travel/plans/${tripId}/items/${itemId}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/travel/plans"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/travel/plans", profileId] });
       toast({ title: "Item deleted" });
     },
     onError: () => {
