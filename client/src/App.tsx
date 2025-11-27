@@ -85,8 +85,6 @@ const InvoiceManagementPage = lazy(() => import("@/pages/InvoiceManagement"));
 
 const NotificationsPage = lazy(() => import("@/pages/NotificationsPage"));
 const SearchPage = lazy(() => import("@/pages/SearchPage"));
-const MemoriesPage = lazy(() => import("@/pages/MemoriesPage"));
-const MemoryStatsPage = lazy(() => import("@/pages/MemoryStatsPage"));
 const CommunityWorldMapPage = lazy(() => import("@/pages/CommunityWorldMapPage"));
 const RecommendationsPage = lazy(() => import("@/pages/RecommendationsPage"));
 const InvitationsPage = lazy(() => import("@/pages/InvitationsPage"));
@@ -515,25 +513,6 @@ function Router() {
       <Route path="/feed">
         <ProtectedRoute>
           <FeedPage />
-        </ProtectedRoute>
-      </Route>
-
-      <Route path="/memories">
-        <ProtectedRoute>
-          {() => {
-            window.location.href = '/profile?tab=memories';
-            return null;
-          }}
-        </ProtectedRoute>
-      </Route>
-
-      <Route path="/memory-stats">
-        <ProtectedRoute>
-          <AppLayout>
-            <Suspense fallback={<LoadingFallback />}>
-              <MemoryStatsPage />
-            </Suspense>
-          </AppLayout>
         </ProtectedRoute>
       </Route>
 

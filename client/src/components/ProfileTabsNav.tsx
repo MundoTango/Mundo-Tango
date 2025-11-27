@@ -25,8 +25,7 @@ import {
   Map,
   BookOpen,
   Lightbulb,
-  Car,
-  Sparkles
+  Car
 } from "lucide-react";
 
 interface User {
@@ -45,7 +44,6 @@ interface ProfileTabsNavProps {
 // Tab configuration with icons and labels
 const BASE_TABS = [
   { id: 'feed', label: 'Posts', icon: FileText },
-  { id: 'memories', label: 'Memories', icon: Sparkles },
   { id: 'travel', label: 'Travel', icon: Plane },
   { id: 'events', label: 'Events', icon: Calendar },
   { id: 'friends', label: 'Friends', icon: Users },
