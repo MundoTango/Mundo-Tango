@@ -26,6 +26,7 @@ interface PostActionsMenuProps {
   onDelete?: () => void;
   onReport?: () => void;
   onBlock?: () => void;
+  isDeleteLoading?: boolean;
 }
 
 export const PostActionsMenu = ({
@@ -35,6 +36,7 @@ export const PostActionsMenu = ({
   onDelete,
   onReport,
   onBlock,
+  isDeleteLoading = false,
 }: PostActionsMenuProps) => {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
@@ -134,14 +136,24 @@ export const PostActionsMenu = ({
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel data-testid="button-cancel-delete">Cancel</AlertDialogCancel>
+            <AlertDialogCancel data-testid="button-cancel-delete" disabled={isDeleteLoading}>Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDelete}
-              className="bg-red-600 hover:bg-red-700 text-white"
+              disabled={isDeleteLoading}
+              className="bg-red-600 hover:bg-red-700 text-white disabled:opacity-50"
               data-testid="button-confirm-delete"
             >
-              <Trash2 className="w-4 h-4 mr-2" />
-              Delete
+              {isDeleteLoading ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                  Deleting...
+                </>
+              ) : (
+                <>
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  Delete
+                </>
+              )}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

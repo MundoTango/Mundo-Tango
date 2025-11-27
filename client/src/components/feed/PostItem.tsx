@@ -10,7 +10,8 @@ import { ReactionSelector } from "@/components/ui/ReactionSelector";
 import { PostActionsMenu } from "@/components/ui/PostActionsMenu";
 import { ShareModal } from "@/components/modals/ShareModal";
 import { ReportModal } from "@/components/modals/ReportModal";
-import { useReactToPost, useSharePost, useSavePost, useUnsavePost } from "@/hooks/usePostInteractions";
+import { useReactToPost, useSharePost, useSavePost, useUnsavePost, useDeletePost, useReportPost } from "@/hooks/usePostInteractions";
+import { EditPostDialog } from "@/components/modals/EditPostDialog";
 import { useAuth } from "@/contexts/AuthContext";
 import { CommentsSection } from "./CommentsSection";
 import { renderMentionPills } from "@/utils/renderMentionPills";
@@ -73,6 +74,7 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
   const [showComments, setShowComments] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const [showReportModal, setShowReportModal] = useState(false);
+  const [showEditDialog, setShowEditDialog] = useState(false);
   const [videoBlobUrl, setVideoBlobUrl] = useState<string | null>(null);
 
   // Convert base64 video to Blob URL for better mobile playback
@@ -116,11 +118,14 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
   const shareMutation = useSharePost();
   const saveMutation = useSavePost();
   const unsaveMutation = useUnsavePost();
+  const deleteMutation = useDeletePost();
+  const reportMutation = useReportPost();
 
   const isAuthor = user?.id === post.userId;
   const isSaved = post.isSaved || false;
   const isSaveLoading = saveMutation.isPending || unsaveMutation.isPending;
   const isReactLoading = reactMutation.isPending;
+  const isDeleteLoading = deleteMutation.isPending;
 
   const handleReaction = async (reactionId: string) => {
     await reactMutation.mutateAsync({ postId: post.id, reactionType: reactionId });
@@ -136,6 +141,20 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
     } else {
       await saveMutation.mutateAsync({ postId: post.id });
     }
+  };
+
+  const handleEdit = () => {
+    setShowEditDialog(true);
+    onEdit?.(post.id);
+  };
+
+  const handleDelete = async () => {
+    await deleteMutation.mutateAsync({ postId: post.id });
+    onDelete?.(post.id);
+  };
+
+  const handleReport = (category: string, description: string) => {
+    reportMutation.mutateAsync({ postId: post.id, category, description });
   };
 
 
@@ -202,11 +221,10 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
           <PostActionsMenu
             postId={post.id}
             isAuthor={isAuthor}
-            isSaved={isSaved}
-            onEdit={() => onEdit?.(post.id)}
-            onDelete={() => onDelete?.(post.id)}
-            onSave={handleSave}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
             onReport={() => setShowReportModal(true)}
+            isDeleteLoading={isDeleteLoading}
           />
         </div>
 
@@ -364,6 +382,13 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
         onOpenChange={setShowReportModal}
         postId={post.id}
         contentType="post"
+      />
+
+      <EditPostDialog
+        open={showEditDialog}
+        onOpenChange={setShowEditDialog}
+        postId={post.id}
+        initialContent={post.content}
       />
     </>
   );

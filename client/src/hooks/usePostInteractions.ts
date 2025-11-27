@@ -246,6 +246,33 @@ export const useReportPost = () => {
   });
 };
 
+// DELETE
+export const useDeletePost = () => {
+  const { toast } = useToast();
+  
+  return useMutation({
+    mutationFn: async ({ postId }: SaveMutation) => {
+      return apiRequest('DELETE', `/api/posts/${postId}`);
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['/api/posts'] });
+      queryClient.invalidateQueries({ queryKey: ['infinite-feed'] });
+      queryClient.removeQueries({ queryKey: ['/api/posts', variables.postId] });
+      toast({
+        title: "Post deleted",
+        description: "Your post has been removed",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Delete failed",
+        description: "Could not delete post",
+        variant: "destructive",
+      });
+    },
+  });
+};
+
 // COMMENT LIKES
 export const useLikeComment = () => {
   return useMutation({
