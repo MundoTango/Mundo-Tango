@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Image, Plus, X } from "lucide-react";
@@ -13,7 +13,7 @@ import { useAuth } from "@/contexts/AuthContext";
  * Following Media Handling Architecture (see PRD/media-handling.md):
  * - Client-side image compression
  * - Base64 transmission
- * - Unified mutation pattern
+ * - Unified mutation pattern for 6 SIMULTANEOUS uploads
  * - Cache invalidation via queryKey hierarchy
  */
 
@@ -28,8 +28,8 @@ export default function ProfileTabPhotos() {
   const { user: currentUser } = useAuth();
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [uploadingIndex, setUploadingIndex] = useState<number | null>(null);
-  const [photos, setPhotos] = useState<ProfilePhoto[]>([]);
+  const [uploadingIndices, setUploadingIndices] = useState<Set<number>>(new Set());
+  const [photos, setPhotos] = useState<(ProfilePhoto | null)[]>(Array(6).fill(null));
 
   // Compress image (matching PostCreator pattern - see media-handling.md)
   const compressImage = (file: File): Promise<string> => {
@@ -114,30 +114,57 @@ export default function ProfileTabPhotos() {
         return updated;
       });
       toast({ title: "Success", description: "Photo uploaded!" });
-      // Cache invalidation - hierarchical key (see media-handling.md)
       queryClient.invalidateQueries({ queryKey: ['user', currentUser?.id, 'photos'] });
-      setUploadingIndex(null);
+      
+      setUploadingIndices(prev => {
+        const next = new Set(prev);
+        next.delete(variables.index);
+        return next;
+      });
     },
-    onError: () => {
+    onError: (err, variables) => {
       toast({ title: "Error", description: "Failed to upload photo", variant: "destructive" });
-      setUploadingIndex(null);
+      setUploadingIndices(prev => {
+        const next = new Set(prev);
+        next.delete(variables.index);
+        return next;
+      });
     }
   });
 
-  // Handle photo upload for specific slot
-  const handlePhotoUpload = async (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  // Handle multiple photo uploads (6 files at once)
+  const handleMultiplePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
     
-    setUploadingIndex(index);
+    const fileArray = Array.from(files).slice(0, 6);
+    const newUploading = new Set(uploadingIndices);
     
-    try {
-      const compressedBase64 = await compressImage(file);
-      uploadPhotoMutation.mutate({ base64Data: compressedBase64, index });
-    } catch (err) {
-      toast({ title: "Error", description: "Failed to process image", variant: "destructive" });
-      setUploadingIndex(null);
-    }
+    // Start all uploads immediately (in parallel)
+    fileArray.forEach((file, arrayIndex) => {
+      // Find first empty slot starting from arrayIndex
+      let targetSlot = arrayIndex;
+      while (targetSlot < 6 && photos[targetSlot]) {
+        targetSlot++;
+      }
+      
+      if (targetSlot < 6) {
+        newUploading.add(targetSlot);
+        
+        compressImage(file)
+          .then(compressedBase64 => {
+            uploadPhotoMutation.mutate({ base64Data: compressedBase64, index: targetSlot });
+          })
+          .catch(err => {
+            console.error(`Failed to compress image ${arrayIndex}:`, err);
+            newUploading.delete(targetSlot);
+            setUploadingIndices(new Set(newUploading));
+            toast({ title: "Error", description: `Failed to process image ${arrayIndex + 1}`, variant: "destructive" });
+          });
+      }
+    });
+    
+    setUploadingIndices(newUploading);
     
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
@@ -146,9 +173,15 @@ export default function ProfileTabPhotos() {
 
   // Remove photo
   const handleRemovePhoto = (index: number) => {
-    setPhotos(prev => prev.filter((_, i) => i !== index));
+    setPhotos(prev => {
+      const updated = [...prev];
+      updated[index] = null;
+      return updated;
+    });
     toast({ title: "Success", description: "Photo removed" });
   };
+
+  const uploadedCount = photos.filter(p => p !== null).length;
 
   return (
     <Card>
@@ -170,7 +203,7 @@ export default function ProfileTabPhotos() {
                 {photos[index] ? (
                   <>
                     <img 
-                      src={photos[index].url} 
+                      src={photos[index]!.url} 
                       alt={`Photo ${index + 1}`} 
                       className="w-full h-full object-cover"
                     />
@@ -188,39 +221,50 @@ export default function ProfileTabPhotos() {
                   <button
                     onClick={() => fileInputRef.current?.click()}
                     className="w-full h-full flex items-center justify-center hover-elevate cursor-pointer"
-                    disabled={uploadingIndex === index}
+                    disabled={uploadingIndices.has(index)}
                     data-testid={`button-upload-photo-slot-${index}`}
                   >
-                    {uploadingIndex === index ? (
+                    {uploadingIndices.has(index) ? (
                       <div className="text-xs text-muted-foreground">Uploading...</div>
                     ) : (
                       <Plus className="w-6 h-6 text-muted-foreground" />
                     )}
                   </button>
                 )}
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/jpeg,image/png,image/gif,image/webp"
-                  onChange={(e) => handlePhotoUpload(index, e)}
-                  className="hidden"
-                  data-testid={`input-photo-${index}`}
-                />
               </div>
             ))}
           </div>
 
+          {/* Multi-file input - accepts up to 6 files */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/gif,image/webp"
+            onChange={handleMultiplePhotoUpload}
+            multiple
+            className="hidden"
+            data-testid="input-multi-photo"
+          />
+
           {/* Info */}
           <div className="p-3 bg-muted rounded-lg text-sm text-muted-foreground">
-            <p>Add up to 6 photos to your profile. Face photos help dancers recognize you better on the dance floor!</p>
+            <p>Add up to 6 photos to your profile. Click any empty slot or the button below to upload multiple photos at once. Face photos help dancers recognize you better on the dance floor!</p>
           </div>
 
-          {/* Stats */}
-          {photos.length > 0 && (
+          {/* Stats & Upload Button */}
+          <div className="flex items-center justify-between">
             <div className="text-sm text-muted-foreground">
-              {photos.length} of 6 photos uploaded
+              {uploadedCount} of 6 photos uploaded
             </div>
-          )}
+            <Button 
+              variant="default"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={uploadedCount === 6 || uploadingIndices.size > 0}
+              data-testid="button-upload-photos-bulk"
+            >
+              {uploadingIndices.size > 0 ? `Uploading ${uploadingIndices.size}...` : uploadedCount === 6 ? 'Gallery Full' : 'Upload Photos'}
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>

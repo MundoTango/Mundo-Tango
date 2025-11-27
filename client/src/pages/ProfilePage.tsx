@@ -47,6 +47,7 @@ interface User {
   username: string;
   name: string;
   profileImage?: string | null;
+  coverImage?: string | null;
   bio?: string | null;
   city?: string | null;
   country?: string | null;
@@ -381,12 +382,12 @@ export default function ProfilePage() {
       
       {/* PART_4: Hero Profile Photo Section - Editorial Glassmorphic Design */}
       <div className="relative w-full h-[400px] overflow-hidden">
-        {/* Profile Photo as Hero Image */}
+        {/* Cover Photo as Hero Image */}
         <img 
-          src={user.profileImage || 'https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?w=1600&auto=format&fit=crop'} 
-          alt={`${user.name}'s profile`}
+          src={user.coverImage || 'https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?w=1600&auto=format&fit=crop'} 
+          alt={`${user.name}'s cover`}
           className="w-full h-full object-cover"
-          data-testid="img-hero-profile"
+          data-testid="img-hero-cover"
         />
         
         {/* Editorial Gradient Overlay (bottom 40%) */}
@@ -412,12 +413,20 @@ export default function ProfilePage() {
             <>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button size="icon" variant="outline" className="text-white border-white/30 bg-black/20 backdrop-blur-sm hover:bg-black/30" data-testid="button-upload-hero">
+                  <Button size="icon" variant="outline" className="text-white border-white/30 bg-black/20 backdrop-blur-sm hover:bg-black/30" onClick={() => coverPhotoInputRef.current?.click()} disabled={uploadingCover} data-testid="button-upload-cover">
                     <ImageIcon className="h-4 w-4" />
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent>Change Hero Image</TooltipContent>
+                <TooltipContent>{uploadingCover ? 'Uploading...' : 'Change Cover Photo'}</TooltipContent>
               </Tooltip>
+              <input
+                ref={coverPhotoInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/gif,image/webp"
+                onChange={handleCoverPhotoUpload}
+                className="hidden"
+                data-testid="input-cover-photo"
+              />
               <Button asChild variant="outline" className="gap-2 text-white border-white/30 bg-black/20 backdrop-blur-sm hover:bg-black/30" data-testid="button-edit-profile">
                 <Link href="/profile/edit">
                   <Settings className="h-4 w-4" />

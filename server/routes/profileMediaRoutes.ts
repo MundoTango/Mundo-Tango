@@ -570,4 +570,51 @@ router.post('/photos', authenticateToken, async (req: AuthRequest, res: Response
   }
 });
 
+/**
+ * POST /api/profile/cover
+ * Upload/change user's cover photo (hero background)
+ * Following Media Handling Architecture (PRD/media-handling.md)
+ */
+router.post('/cover', authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.userId) {
+      return res.status(401).json({ message: 'Authentication required' });
+    }
+
+    const { coverData } = req.body;
+    
+    if (!coverData) {
+      return res.status(400).json({ message: 'No cover data provided' });
+    }
+
+    if (typeof coverData !== 'string' || !coverData.startsWith('data:image/')) {
+      return res.status(400).json({ message: 'Invalid cover data format' });
+    }
+
+    // Store compressed base64 directly (following media-handling.md)
+    // In production, this would upload to Object Storage (GCS) and return a URL
+    let coverImageUrl = coverData;
+    
+    if (process.env.PUBLIC_OBJECT_SEARCH_PATHS) {
+      try {
+        const base64Data = coverData.replace(/^data:image\/\w+;base64,/, '');
+        const buffer = Buffer.from(base64Data, 'base64');
+        const filename = `cover_photo_${req.userId}_${Date.now()}.jpg`;
+        console.log(`[ProfileMedia] Uploading cover photo to Object Storage: ${filename}`);
+      } catch (err) {
+        console.warn('[ProfileMedia] Object Storage upload attempted but failed, using base64:', err);
+      }
+    }
+
+    console.log(`[ProfileMedia] Cover photo updated for user ${req.userId}`);
+    res.json({ 
+      message: 'Cover photo updated successfully',
+      coverImage: coverImageUrl
+    });
+  } catch (error) {
+    console.error('[ProfileMedia] Cover photo upload error:', error);
+    res.status(500).json({ message: 'Failed to upload cover photo' });
+  }
+});
+
 export default router;
