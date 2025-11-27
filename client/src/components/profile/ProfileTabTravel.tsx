@@ -224,6 +224,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
   const [completionPrompts, setCompletionPrompts] = useState<Set<number>>(new Set());
   const [completionNotes, setCompletionNotes] = useState<string>('');
   const [statusDropdownOpen, setStatusDropdownOpen] = useState<number | null>(null);
+  const [updatingTripId, setUpdatingTripId] = useState<number | null>(null);
   const [completionDialogTrip, setCompletionDialogTrip] = useState<TravelPlan | null>(null);
   
   const { toast } = useToast();
@@ -332,6 +333,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
 
   const updateStatusMutation = useMutation({
     mutationFn: async ({ tripId, status, notes }: { tripId: number; status: string; notes?: string }) => {
+      setUpdatingTripId(tripId);
       const payload: { status: string; notes?: string } = { status };
       if (notes !== undefined) payload.notes = notes;
       const res = await apiRequest("PATCH", `/api/travel/plans/${tripId}`, payload);
@@ -342,11 +344,13 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
       await queryClient.refetchQueries({ queryKey: ["/api/travel/plans"] });
       toast({ title: "Trip status updated!" });
       setStatusDropdownOpen(null);
+      setUpdatingTripId(null);
       setCompletionDialogTrip(null);
       setCompletionNotes('');
     },
     onError: (error) => {
       toast({ title: "Failed to update status", description: "Please try again.", variant: "destructive" });
+      setUpdatingTripId(null);
     },
   });
 
@@ -804,9 +808,9 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
                               statusOptions.find(s => s.value === (trip.status || 'planning'))?.color || 'bg-white/20 text-white border-white/30'
                             )}
                             data-testid={`button-status-${index}`}
-                            disabled={updateStatusMutation.isPending}
+                            disabled={updatingTripId === trip.id}
                           >
-                            {updateStatusMutation.isPending ? (
+                            {updatingTripId === trip.id ? (
                               <Loader2 className="h-3 w-3 animate-spin mr-1" />
                             ) : null}
                             {(trip.status || 'planning').charAt(0).toUpperCase() + (trip.status || 'planning').slice(1)}
