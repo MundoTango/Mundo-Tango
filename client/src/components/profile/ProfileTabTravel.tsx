@@ -221,6 +221,9 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
   
   // Trip status and completion tracking
   const [completionPrompts, setCompletionPrompts] = useState<Set<number>>(new Set());
+  const [completionNotes, setCompletionNotes] = useState<string>('');
+  const [statusDropdownOpen, setStatusDropdownOpen] = useState<number | null>(null);
+  const [completionDialogTrip, setCompletionDialogTrip] = useState<TravelPlan | null>(null);
   
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -327,20 +330,41 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
   });
 
   const updateStatusMutation = useMutation({
-    mutationFn: async ({ tripId, status }: { tripId: number; status: string }) => {
-      const res = await apiRequest("PATCH", `/api/travel/plans/${tripId}`, { status });
+    mutationFn: async ({ tripId, status, notes }: { tripId: number; status: string; notes?: string }) => {
+      const payload: { status: string; notes?: string } = { status };
+      if (notes !== undefined) payload.notes = notes;
+      const res = await apiRequest("PATCH", `/api/travel/plans/${tripId}`, payload);
       return await res.json();
     },
     onSuccess: async () => {
-      // Invalidate and immediately refetch to ensure UI updates
       await queryClient.invalidateQueries({ queryKey: ["/api/travel/plans"] });
       await queryClient.refetchQueries({ queryKey: ["/api/travel/plans"] });
       toast({ title: "Trip status updated!" });
+      setStatusDropdownOpen(null);
+      setCompletionDialogTrip(null);
+      setCompletionNotes('');
     },
     onError: (error) => {
       toast({ title: "Failed to update status", description: "Please try again.", variant: "destructive" });
     },
   });
+
+  // Status change handler - shows notes dialog for completion
+  const handleStatusChange = (trip: TravelPlan, newStatus: string) => {
+    if (newStatus === 'completed') {
+      setCompletionDialogTrip(trip);
+      setStatusDropdownOpen(null);
+    } else {
+      updateStatusMutation.mutate({ tripId: trip.id, status: newStatus });
+    }
+  };
+
+  // Status options for button-based UI
+  const statusOptions = [
+    { value: 'planning', label: 'Planning', color: 'bg-yellow-500/20 text-yellow-100 border-yellow-500/40' },
+    { value: 'confirmed', label: 'Confirmed', color: 'bg-blue-500/20 text-blue-100 border-blue-500/40' },
+    { value: 'completed', label: 'Completed', color: 'bg-green-500/20 text-green-100 border-green-500/40' },
+  ];
 
   // Update item mutation
   const updateItemMutation = useMutation({
@@ -689,15 +713,61 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
 
       {/* Post-trip completion prompt - show only once per page */}
       {isOwnProfile && tripNeedingCompletion && (
-        <Dialog open={true} onOpenChange={(open) => { if (!open) setCompletionPrompts(new Set([...completionPrompts, tripNeedingCompletion.id])); }}>
+        <Dialog open={true} onOpenChange={(open) => { if (!open) { setCompletionPrompts(new Set([...completionPrompts, tripNeedingCompletion.id])); setCompletionNotes(''); } }}>
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Mark Trip as Completed?</DialogTitle>
             </DialogHeader>
             <p className="text-sm text-muted-foreground">Your trip to {tripNeedingCompletion.city} ended on {new Date(tripNeedingCompletion.endDate).toLocaleDateString()}. Would you like to mark it as completed?</p>
-            <div className="flex gap-2 pt-4">
-              <Button variant="outline" onClick={() => setCompletionPrompts(new Set([...completionPrompts, tripNeedingCompletion.id]))} className="flex-1">Not Now</Button>
-              <Button onClick={() => { updateStatusMutation.mutate({ tripId: tripNeedingCompletion.id, status: 'completed' }); setCompletionPrompts(new Set([...completionPrompts, tripNeedingCompletion.id])); }} className="flex-1">Mark Completed</Button>
+            <div className="space-y-4 pt-2">
+              <div>
+                <label className="text-sm font-medium">Trip Notes (optional)</label>
+                <Textarea
+                  placeholder="How was your trip? Any memorable moments, places you discovered, or tips for others?"
+                  value={completionNotes}
+                  onChange={(e) => setCompletionNotes(e.target.value)}
+                  className="mt-1.5"
+                  rows={3}
+                />
+              </div>
+            </div>
+            <div className="flex gap-2 pt-2">
+              <Button variant="outline" onClick={() => { setCompletionPrompts(new Set([...completionPrompts, tripNeedingCompletion.id])); setCompletionNotes(''); }} className="flex-1">Not Now</Button>
+              <Button onClick={() => { updateStatusMutation.mutate({ tripId: tripNeedingCompletion.id, status: 'completed', notes: completionNotes || undefined }); setCompletionPrompts(new Set([...completionPrompts, tripNeedingCompletion.id])); }} className="flex-1" disabled={updateStatusMutation.isPending}>
+                {updateStatusMutation.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Check className="h-4 w-4 mr-2" />}
+                Mark Completed
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
+
+      {/* Completion dialog when user manually selects "completed" status */}
+      {completionDialogTrip && (
+        <Dialog open={true} onOpenChange={(open) => { if (!open) { setCompletionDialogTrip(null); setCompletionNotes(''); } }}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Complete Your Trip</DialogTitle>
+            </DialogHeader>
+            <p className="text-sm text-muted-foreground">You're marking your trip to {completionDialogTrip.city} as completed. Add any notes about your experience!</p>
+            <div className="space-y-4 pt-2">
+              <div>
+                <label className="text-sm font-medium">Trip Notes (optional)</label>
+                <Textarea
+                  placeholder="How was your trip? Any memorable moments, places you discovered, or tips for others?"
+                  value={completionNotes}
+                  onChange={(e) => setCompletionNotes(e.target.value)}
+                  className="mt-1.5"
+                  rows={3}
+                />
+              </div>
+            </div>
+            <div className="flex gap-2 pt-2">
+              <Button variant="outline" onClick={() => { setCompletionDialogTrip(null); setCompletionNotes(''); }} className="flex-1">Cancel</Button>
+              <Button onClick={() => updateStatusMutation.mutate({ tripId: completionDialogTrip.id, status: 'completed', notes: completionNotes || undefined })} className="flex-1" disabled={updateStatusMutation.isPending}>
+                {updateStatusMutation.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Check className="h-4 w-4 mr-2" />}
+                Mark Completed
+              </Button>
             </div>
           </DialogContent>
         </Dialog>
@@ -723,19 +793,46 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
                     <span>{new Date(trip.startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - {new Date(trip.endDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                     <span>({trip.tripDuration} {trip.tripDuration === 1 ? 'day' : 'days'})</span>
                     {isOwnProfile && (
-                      <Select value={trip.status || 'planning'} onValueChange={(status) => {
-                        // Always trigger mutation, even if value is the same (allows re-selecting)
-                        updateStatusMutation.mutate({ tripId: trip.id, status });
-                      }} disabled={updateStatusMutation.isPending} key={`${trip.id}-${trip.status}`}>
-                        <SelectTrigger className="w-auto h-6 text-xs bg-white/20 border-white/30 text-white" data-testid={`select-status-${index}`}>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="planning">Planning</SelectItem>
-                          <SelectItem value="confirmed">Confirmed</SelectItem>
-                          <SelectItem value="completed">Completed</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <Popover open={statusDropdownOpen === trip.id} onOpenChange={(open) => setStatusDropdownOpen(open ? trip.id : null)}>
+                        <PopoverTrigger asChild>
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className={cn(
+                              "h-6 text-xs border px-2 py-0",
+                              statusOptions.find(s => s.value === (trip.status || 'planning'))?.color || 'bg-white/20 text-white border-white/30'
+                            )}
+                            data-testid={`button-status-${index}`}
+                            disabled={updateStatusMutation.isPending}
+                          >
+                            {updateStatusMutation.isPending ? (
+                              <Loader2 className="h-3 w-3 animate-spin mr-1" />
+                            ) : null}
+                            {(trip.status || 'planning').charAt(0).toUpperCase() + (trip.status || 'planning').slice(1)}
+                            <ChevronDown className="h-3 w-3 ml-1" />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-1" align="start">
+                          <div className="flex flex-col gap-1">
+                            {statusOptions.map((option) => (
+                              <Button
+                                key={option.value}
+                                variant="ghost"
+                                size="sm"
+                                className={cn(
+                                  "justify-start text-xs h-7",
+                                  (trip.status || 'planning') === option.value && "bg-accent"
+                                )}
+                                onClick={() => handleStatusChange(trip, option.value)}
+                                data-testid={`button-status-option-${option.value}`}
+                              >
+                                {(trip.status || 'planning') === option.value && <Check className="h-3 w-3 mr-1" />}
+                                {option.label}
+                              </Button>
+                            ))}
+                          </div>
+                        </PopoverContent>
+                      </Popover>
                     )}
                     {!isOwnProfile && trip.status && (
                       <Badge variant="outline" className="text-xs bg-white/20 text-white border-white/30">{trip.status.charAt(0).toUpperCase() + trip.status.slice(1)}</Badge>
