@@ -31,16 +31,13 @@ import { motion, AnimatePresence } from "framer-motion";
 
 interface TravelPlan {
   id: number;
+  tripName?: string;
   city: string;
   country?: string;
   startDate: string;
   endDate: string;
   tripDuration: number;
-  budget?: string;
-  interests?: string[];
-  travelStyle?: string;
   status: string;
-  notes?: string;
   items?: TravelPlanItem[];
 }
 
@@ -62,13 +59,11 @@ interface ProfileTabTravelProps {
 }
 
 const tripPlannerSchema = z.object({
+  tripName: z.string().min(1, "Trip name is required"),
   city: z.string().min(1, "City is required"),
   country: z.string().optional(),
   startDate: z.date({ required_error: "Start date is required" }),
   endDate: z.date({ required_error: "End date is required" }),
-  budget: z.number().min(0).optional(),
-  travelStyle: z.string().optional(),
-  notes: z.string().optional(),
   cities: z.array(z.object({
     city: z.string(),
     country: z.string().optional(),
@@ -321,9 +316,14 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
               <CardContent>
                 <Form {...form}>
                   <form onSubmit={form.handleSubmit((data) => createTripMutation.mutate({...data, cities: selectedCities}))} className="space-y-6">
+                    {/* Trip Name */}
+                    <FormField control={form.control} name="tripName" render={({ field }) => (
+                      <FormItem><FormLabel>Trip Name *</FormLabel><FormControl><Input placeholder="Buenos Aires 2025" {...field} data-testid="input-trip-name" /></FormControl><FormMessage /></FormItem>
+                    )} />
+                    
                     {/* City Autocomplete with Live Map Data */}
                     <div className="space-y-2">
-                      <FormLabel className="text-base font-semibold">Cities (Live Map Data) *</FormLabel>
+                      <FormLabel className="text-base font-semibold">Cities *</FormLabel>
                       <UnifiedLocationPicker 
                         onChange={addCity}
                         placeholder="Search any city (e.g., Buenos Aires, Tokyo, Paris)..."
@@ -390,25 +390,6 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
                       {selectedCities.length === 0 && <p className="text-sm text-destructive">Add at least one city</p>}
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <FormField control={form.control} name="budget" render={({ field }) => (
-                        <FormItem><FormLabel>Budget (USD)</FormLabel><FormControl>
-                          <Input type="number" placeholder="2000" {...field} onChange={(e) => field.onChange(e.target.valueAsNumber)} data-testid="input-trip-budget" />
-                        </FormControl><FormMessage /></FormItem>
-                      )} />
-                      <FormField control={form.control} name="travelStyle" render={({ field }) => (
-                        <FormItem><FormLabel>Travel Style</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}><FormControl><SelectTrigger data-testid="select-trip-style"><SelectValue placeholder="Select style" /></SelectTrigger></FormControl>
-                            <SelectContent>
-                              <SelectItem value="budget">Budget</SelectItem><SelectItem value="comfort">Comfort</SelectItem>
-                              <SelectItem value="luxury">Luxury</SelectItem><SelectItem value="adventure">Adventure</SelectItem>
-                            </SelectContent>
-                          </Select><FormMessage /></FormItem>
-                      )} />
-                    </div>
-                    <FormField control={form.control} name="notes" render={({ field }) => (
-                      <FormItem><FormLabel>Notes</FormLabel><FormControl><Textarea placeholder="Any special requirements..." {...field} rows={3} data-testid="input-trip-notes" /></FormControl><FormMessage /></FormItem>
-                    )} />
                     <div className="flex gap-3">
                       <Button type="button" variant="outline" onClick={() => { setShowCreateForm(false); form.reset(); }} className="flex-1">Cancel</Button>
                       <Button type="submit" className="flex-1" disabled={createTripMutation.isPending} data-testid="button-create-trip-submit">
