@@ -1306,7 +1306,10 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
                 updateItemMutation.mutate({ 
                   tripId: editingItem.tripId, 
                   itemId: editingItem.item.id, 
-                  data 
+                  data: {
+                    ...data,
+                    type: editingItem.item.type
+                  }
                 }); 
               } 
             })} className="space-y-4">
