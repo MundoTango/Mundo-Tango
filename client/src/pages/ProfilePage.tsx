@@ -273,36 +273,38 @@ export default function ProfilePage() {
           {!isOwnProfile && (
             <>
               {isFriend ? (
-            <Button 
-              variant="outline"
-              className="gap-2 text-white border-white/30 bg-black/20 backdrop-blur-sm hover:bg-black/30"
-              onClick={() => removeFriendMutation.mutate()}
-              disabled={removeFriendMutation.isPending}
-              data-testid={`button-remove-friend-${user.id}`}
-            >
-              <UserMinus className="h-4 w-4" />
-              {removeFriendMutation.isPending ? 'Removing...' : 'Remove Friend'}
-            </Button>
-          ) : hasPendingRequest ? (
-            <Button 
-              variant="outline"
-              className="gap-2 text-white border-white/30 bg-black/20 backdrop-blur-sm"
-              disabled
-              data-testid="button-request-pending"
-            >
-              <UserCheck className="h-4 w-4" />
-              Request Sent
-            </Button>
-          ) : (
-            <Button 
-              className="gap-2 text-white bg-primary/80 backdrop-blur-sm hover:bg-primary"
-              onClick={() => sendFriendRequestMutation.mutate()}
-              disabled={sendFriendRequestMutation.isPending}
-              data-testid={`button-add-friend-${user.id}`}
-            >
-              <UserPlus className="h-4 w-4" />
-              {sendFriendRequestMutation.isPending ? 'Sending...' : 'Add Friend'}
-            </Button>
+                <Button 
+                  variant="outline"
+                  className="gap-2 text-white border-white/30 bg-black/20 backdrop-blur-sm hover:bg-black/30"
+                  onClick={() => removeFriendMutation.mutate()}
+                  disabled={removeFriendMutation.isPending}
+                  data-testid={`button-remove-friend-${user.id}`}
+                >
+                  <UserMinus className="h-4 w-4" />
+                  {removeFriendMutation.isPending ? 'Removing...' : 'Remove Friend'}
+                </Button>
+              ) : hasPendingRequest ? (
+                <Button 
+                  variant="outline"
+                  className="gap-2 text-white border-white/30 bg-black/20 backdrop-blur-sm"
+                  disabled
+                  data-testid="button-request-pending"
+                >
+                  <UserCheck className="h-4 w-4" />
+                  Request Sent
+                </Button>
+              ) : (
+                <Button 
+                  className="gap-2 text-white bg-primary/80 backdrop-blur-sm hover:bg-primary"
+                  onClick={() => sendFriendRequestMutation.mutate()}
+                  disabled={sendFriendRequestMutation.isPending}
+                  data-testid={`button-add-friend-${user.id}`}
+                >
+                  <UserPlus className="h-4 w-4" />
+                  {sendFriendRequestMutation.isPending ? 'Sending...' : 'Add Friend'}
+                </Button>
+              )}
+            </>
           )}
         </div>
         
