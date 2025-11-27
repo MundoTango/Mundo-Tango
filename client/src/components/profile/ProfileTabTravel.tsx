@@ -114,11 +114,13 @@ const getStatusColor = (status: string) => {
 const getCityImageUrl = (city: string, country?: string): string => {
   const cityPhotos: Record<string, string> = {
     'buenos aires': 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=600&h=600&auto=format&fit=crop',
+    'buenos aires argentina': 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=600&h=600&auto=format&fit=crop',
     'paris': 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=600&h=600&auto=format&fit=crop',
     'berlin': 'https://images.unsplash.com/photo-1560626569-15ae4d75f6f7?w=600&h=600&auto=format&fit=crop',
     'madrid': 'https://images.unsplash.com/photo-1479145082178-d9f2300a59b0?w=600&h=600&auto=format&fit=crop',
     'barcelona': 'https://images.unsplash.com/photo-1583422409516-2895a77efded?w=600&h=600&auto=format&fit=crop',
     'lisbon': 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&h=600&auto=format&fit=crop',
+    'milan': 'https://images.unsplash.com/photo-1535368633066-42cc74d27b4e?w=600&h=600&auto=format&fit=crop',
     'new york': 'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=600&h=600&auto=format&fit=crop',
     'london': 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=600&h=600&auto=format&fit=crop',
     'tokyo': 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=600&h=600&auto=format&fit=crop',
@@ -126,10 +128,13 @@ const getCityImageUrl = (city: string, country?: string): string => {
     'istanbul': 'https://images.unsplash.com/photo-1524678606370-a47ad25cb82a?w=600&h=600&auto=format&fit=crop',
     'mexico city': 'https://images.unsplash.com/photo-1518136247453-74e7b5265980?w=600&h=600&auto=format&fit=crop',
     'rio de janeiro': 'https://images.unsplash.com/photo-1483729558449-99daa71afcc8?w=600&h=600&auto=format&fit=crop',
-    'buenos aires argentina': 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=600&h=600&auto=format&fit=crop',
     'rome': 'https://images.unsplash.com/photo-1552832860-cfb67165eaf0?w=600&h=600&auto=format&fit=crop',
     'amsterdam': 'https://images.unsplash.com/photo-1517430879604-3e1fa32c52c1?w=600&h=600&auto=format&fit=crop',
     'venice': 'https://images.unsplash.com/photo-1514565131-fce0801e5785?w=600&h=600&auto=format&fit=crop',
+    'vienna': 'https://images.unsplash.com/photo-1516811496518-6a240ecf298a?w=600&h=600&auto=format&fit=crop',
+    'prague': 'https://images.unsplash.com/photo-1508550691545-4e8b52b6b47d?w=600&h=600&auto=format&fit=crop',
+    'buenos aires, argentina': 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=600&h=600&auto=format&fit=crop',
+    'buenos aires (argentina)': 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=600&h=600&auto=format&fit=crop',
   };
   const cityKey = city.toLowerCase();
   return cityPhotos[cityKey] || 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=600&h=600&auto=format&fit=crop';
