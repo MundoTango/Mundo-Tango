@@ -390,54 +390,6 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
                       {selectedCities.length === 0 && <p className="text-sm text-destructive">Add at least one city</p>}
                     </div>
 
-                    {/* Trip-level dates (auto-calculated from cities or manual override) */}
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-                      <FormField control={form.control} name="city" render={({ field }) => (
-                        <FormItem><FormLabel className="text-xs">Primary City</FormLabel><FormControl><Input placeholder="Buenos Aires" value={selectedCities[0]?.city || ""} {...field} readOnly data-testid="input-primary-city" className="text-sm bg-muted/50" /></FormControl><FormMessage className="text-xs" /></FormItem>
-                      )} />
-                      <FormField control={form.control} name="country" render={({ field }) => (
-                        <FormItem><FormLabel className="text-xs">Country</FormLabel><FormControl><Input placeholder="Argentina" value={selectedCities[0]?.country || ""} {...field} readOnly data-testid="input-primary-country" className="text-sm bg-muted/50" /></FormControl><FormMessage className="text-xs" /></FormItem>
-                      )} />
-                      <div className="md:col-span-2">
-                        <FormField control={form.control} name="startDate" render={({ field }) => (
-                          <FormItem className="flex flex-col"><FormLabel className="text-xs">Trip Dates (Start → End) *</FormLabel>
-                            <Popover><PopoverTrigger asChild><FormControl>
-                              <Button variant="outline" className={cn("justify-start text-left font-normal text-sm h-9", !field.value && "text-muted-foreground")} data-testid="input-trip-date-range">
-                                <CalendarIcon className="mr-1 h-3 w-3" />
-                                {field.value && form.getValues('endDate') 
-                                  ? `${format(field.value, "MMM d")} → ${format(form.getValues('endDate'), "MMM d")}`
-                                  : field.value
-                                  ? `${format(field.value, "MMM d")} → End`
-                                  : "Select range"}
-                              </Button>
-                            </FormControl></PopoverTrigger>
-                            <PopoverContent className="w-auto p-0">
-                              <div className="p-4 space-y-3">
-                                <div className="text-sm font-medium">
-                                  {!field.value ? "Select start date" : !form.getValues('endDate') ? "Select end date" : "Date range confirmed"}
-                                </div>
-                                <Calendar 
-                                  mode="range"
-                                  selected={{
-                                    from: field.value,
-                                    to: form.getValues('endDate'),
-                                  }}
-                                  onSelect={(range: any) => {
-                                    if (range?.from) {
-                                      field.onChange(range.from);
-                                    }
-                                    if (range?.to) {
-                                      form.setValue('endDate', range.to);
-                                    }
-                                  }}
-                                  initialFocus
-                                />
-                              </div>
-                            </PopoverContent>
-                            </Popover><FormMessage className="text-xs" /></FormItem>
-                        )} />
-                      </div>
-                    </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <FormField control={form.control} name="budget" render={({ field }) => (
                         <FormItem><FormLabel>Budget (USD)</FormLabel><FormControl>
