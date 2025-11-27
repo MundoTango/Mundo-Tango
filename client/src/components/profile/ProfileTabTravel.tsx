@@ -485,42 +485,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
 
               <CollapsibleContent>
                 <CardContent className="space-y-6 pt-0">
-                  {/* Tabs for different views */}
-                  <Tabs value={activeTab} onValueChange={(v) => setTripTabs(prev => ({ ...prev, [trip.id]: v }))} className="w-full">
-                    <TabsList className="grid w-full grid-cols-4">
-                      <TabsTrigger value="overview"><Briefcase className="h-4 w-4 mr-2" />Overview</TabsTrigger>
-                      <TabsTrigger value="itinerary"><CalendarIcon className="h-4 w-4 mr-2" />Itinerary</TabsTrigger>
-                      <TabsTrigger value="budget"><DollarSign className="h-4 w-4 mr-2" />Budget</TabsTrigger>
-                      <TabsTrigger value="travelers"><Users className="h-4 w-4 mr-2" />Travelers</TabsTrigger>
-                    </TabsList>
-
-                    {/* Overview Tab */}
-                    <TabsContent value="overview" className="space-y-4 mt-4">
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        {trip.budget && <div className="p-3 rounded-lg bg-muted"><div className="flex items-center gap-2 mb-1"><DollarSign className="w-4 h-4 text-primary" /><p className="text-xs font-semibold text-muted-foreground">Budget</p></div><p className="font-medium">${trip.budget}</p></div>}
-                        {trip.travelStyle && <div className="p-3 rounded-lg bg-muted"><div className="flex items-center gap-2 mb-1"><Plane className="w-4 h-4 text-primary" /><p className="text-xs font-semibold text-muted-foreground">Travel Style</p></div><p className="font-medium capitalize">{trip.travelStyle}</p></div>}
-                        {trip.interests && trip.interests.length > 0 && <div className="p-3 rounded-lg bg-muted"><div className="flex items-center gap-2 mb-2"><Sparkles className="w-4 h-4 text-primary" /><p className="text-xs font-semibold text-muted-foreground">Interests</p></div><div className="flex flex-wrap gap-1">{trip.interests.map((interest, i) => <Badge key={i} variant="secondary" className="text-xs">{interest}</Badge>)}</div></div>}
-                      </div>
-                      {trip.notes && <div className="p-4 rounded-lg border border-border bg-card/50"><div className="flex items-center gap-2 mb-2"><FileText className="w-4 h-4 text-primary" /><h4 className="font-semibold text-sm">Notes</h4></div><p className="text-sm text-muted-foreground">{trip.notes}</p></div>}
-                      
-                      {/* Quick Budget Summary */}
-                      {trip.budget && (
-                        <div className="p-4 rounded-lg border border-border">
-                          <div className="flex items-center justify-between mb-2">
-                            <span className="text-sm text-muted-foreground">Budget Usage</span>
-                            <span className="text-sm font-medium">{budgetStats.percentageUsed.toFixed(0)}% used</span>
-                          </div>
-                          <Progress value={Math.min(budgetStats.percentageUsed, 100)} className="h-2" />
-                          <div className="flex justify-between mt-2 text-xs text-muted-foreground">
-                            <span>${budgetStats.totalExpenses.toFixed(0)} spent</span>
-                            <span className={budgetStats.remaining >= 0 ? "text-green-600" : "text-destructive"}>${budgetStats.remaining.toFixed(0)} remaining</span>
-                          </div>
-                        </div>
-                      )}
-                    </TabsContent>
-
-                    {/* Itinerary Tab - Organized by Category */}
-                    <TabsContent value="itinerary" className="space-y-6 mt-4">
+                  {/* Itinerary - Organized by Category - All Inline */}
                       {(() => {
                         const accommodationItems = trip.items?.filter(i => i.type === 'hotel') || [];
                         const transportItems = trip.items?.filter(i => ['flight', 'transport'].includes(i.type)) || [];
@@ -743,57 +708,6 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
                           </>
                         );
                       })()}
-                    </TabsContent>
-
-                    {/* Budget Tab */}
-                    <TabsContent value="budget" className="space-y-4 mt-4">
-                      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                        <div className="space-y-1"><p className="text-sm text-muted-foreground">Total Budget</p><p className="text-2xl font-bold">${budgetStats.totalBudget.toFixed(2)}</p></div>
-                        <div className="space-y-1"><p className="text-sm text-muted-foreground">Total Expenses</p><p className="text-2xl font-bold text-primary">${budgetStats.totalExpenses.toFixed(2)}</p></div>
-                        <div className="space-y-1"><p className="text-sm text-muted-foreground">Remaining</p><p className={`text-2xl font-bold ${budgetStats.remaining >= 0 ? "text-green-600" : "text-destructive"}`}>${budgetStats.remaining.toFixed(2)}</p></div>
-                        <div className="space-y-1"><p className="text-sm text-muted-foreground">Items</p><p className="text-2xl font-bold">{trip.items?.length || 0}</p></div>
-                      </div>
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between text-sm"><span className="text-muted-foreground">Budget Usage</span><span className="font-medium">{budgetStats.percentageUsed.toFixed(1)}%</span></div>
-                        <Progress value={Math.min(budgetStats.percentageUsed, 100)} className="h-2" />
-                        {budgetStats.percentageUsed > 100 && <p className="text-sm text-destructive">Over budget by ${(budgetStats.totalExpenses - budgetStats.totalBudget).toFixed(2)}</p>}
-                      </div>
-                      {Object.keys(budgetStats.categoryTotals).length > 0 && (
-                        <Card>
-                          <CardHeader><CardTitle className="flex items-center gap-2 text-lg"><PieChart className="h-5 w-5 text-primary" />Expenses by Category</CardTitle></CardHeader>
-                          <CardContent className="space-y-3">
-                            {Object.entries(budgetStats.categoryTotals).sort(([, a], [, b]) => b - a).map(([category, amount]) => {
-                              const percentage = budgetStats.totalExpenses > 0 ? (amount / budgetStats.totalExpenses) * 100 : 0;
-                              return (
-                                <div key={category} className="space-y-1">
-                                  <div className="flex items-center justify-between text-sm">
-                                    <div className="flex items-center gap-2"><div className={`w-3 h-3 rounded-full ${categoryColors[category] || "bg-gray-500"}`} /><span className="capitalize">{category}</span></div>
-                                    <div className="flex items-center gap-2"><span className="font-medium">${amount.toFixed(2)}</span><Badge variant="outline" className="text-xs">{percentage.toFixed(0)}%</Badge></div>
-                                  </div>
-                                  <Progress value={percentage} className="h-1" />
-                                </div>
-                              );
-                            })}
-                          </CardContent>
-                        </Card>
-                      )}
-                    </TabsContent>
-
-                    {/* Travelers Tab */}
-                    <TabsContent value="travelers" className="space-y-4 mt-4">
-                      <Card>
-                        <CardHeader><CardTitle className="flex items-center gap-2 text-lg"><Users className="h-5 w-5 text-primary" />Travel Companions</CardTitle></CardHeader>
-                        <CardContent className="space-y-4">
-                          <div className="flex items-center gap-3 p-3 rounded-lg bg-muted">
-                            <Avatar className="h-10 w-10"><AvatarFallback>You</AvatarFallback></Avatar>
-                            <div><p className="font-medium">You</p><p className="text-xs text-muted-foreground">Organizer</p></div>
-                            <Badge className="ml-auto">Organizer</Badge>
-                          </div>
-                          {isOwnProfile && <Button variant="outline" className="w-full" data-testid={`button-invite-travelers-${index}`}><Plus className="h-4 w-4 mr-2" />Invite Travelers</Button>}
-                        </CardContent>
-                      </Card>
-                    </TabsContent>
-                  </Tabs>
 
                   {/* Edit Mode */}
                   {editingTripId === trip.id && isOwnProfile && (
