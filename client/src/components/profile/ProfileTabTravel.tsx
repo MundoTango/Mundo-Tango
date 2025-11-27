@@ -326,6 +326,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/travel/plans"] });
+      queryClient.refetchQueries({ queryKey: ["/api/travel/plans"] });
       toast({ title: "Trip status updated!" });
     },
   });
