@@ -614,10 +614,47 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
                     </TabsContent>
                   </Tabs>
 
+                  {/* Edit Mode */}
+                  {editingTripId === trip.id && isOwnProfile && (
+                    <Card className="border-amber-500/30 bg-amber-500/5 mt-4">
+                      <CardHeader>
+                        <CardTitle className="text-base flex items-center gap-2"><Edit className="h-4 w-4" />Edit Trip Details</CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <div className="grid grid-cols-2 gap-4">
+                          <FormItem>
+                            <FormLabel>Budget (USD)</FormLabel>
+                            <Input type="number" placeholder={trip.budget || "5000"} defaultValue={trip.budget || ""} disabled className="opacity-50" />
+                          </FormItem>
+                          <FormItem>
+                            <FormLabel>Travel Style</FormLabel>
+                            <Select defaultValue={trip.travelStyle || ""} disabled>
+                              <SelectTrigger className="opacity-50"><SelectValue placeholder="Select style" /></SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="luxury">Luxury</SelectItem>
+                                <SelectItem value="standard">Standard</SelectItem>
+                                <SelectItem value="budget">Budget</SelectItem>
+                                <SelectItem value="adventure">Adventure</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </FormItem>
+                        </div>
+                        <FormItem>
+                          <FormLabel>Notes</FormLabel>
+                          <Textarea placeholder="Trip notes..." defaultValue={trip.notes || ""} disabled rows={2} className="opacity-50" />
+                        </FormItem>
+                        <p className="text-xs text-muted-foreground">Advanced editing coming soon</p>
+                        <div className="flex gap-2">
+                          <Button variant="outline" size="sm" onClick={() => setEditingTripId(null)} className="flex-1">Done</Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
+
                   {/* Card Footer with Actions */}
                   {isOwnProfile && (
                     <div className="pt-4 mt-4 border-t border-border flex flex-wrap items-center gap-3">
-                      <Button variant="outline" size="sm" onClick={() => setEditingTripId(editingTripId === trip.id ? null : trip.id)} data-testid={`button-edit-trip-${index}`}><Edit className="h-4 w-4 mr-2" />Edit Trip</Button>
+                      <Button variant="outline" size="sm" onClick={() => setEditingTripId(editingTripId === trip.id ? null : trip.id)} data-testid={`button-edit-trip-${index}`}><Edit className="h-4 w-4 mr-2" />{editingTripId === trip.id ? "Close Edit" : "Edit Trip"}</Button>
                       <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive" onClick={() => deleteTripMutation.mutate(trip.id)} data-testid={`button-delete-trip-${index}`}><Trash2 className="h-4 w-4 mr-2" />Delete</Button>
                     </div>
                   )}
