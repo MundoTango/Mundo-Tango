@@ -89,17 +89,15 @@ export default function ProfilePage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
 
-  // Upload profile photo mutation
+  // Upload profile photo mutation (send compressed base64)
   const uploadPhotoMutation = useMutation({
-    mutationFn: async (file: File) => {
-      const formData = new FormData();
-      formData.append('file', file);
-      
+    mutationFn: async (base64Data: string) => {
       const res = await fetch('/api/profile/photo', {
         method: 'POST',
-        body: formData,
+        body: JSON.stringify({ photoData: base64Data }),
         headers: {
-          'Authorization': `Bearer ${currentUser?.id}`,
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
         }
       });
       
@@ -117,12 +115,81 @@ export default function ProfilePage() {
     }
   });
 
+  // Compress image (matching PostCreator pattern)
+  const compressImage = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          
+          const fileSizeMB = file.size / (1024 * 1024);
+          let maxDimension: number;
+          let quality: number;
+          
+          if (fileSizeMB > 10) {
+            maxDimension = 800;
+            quality = 0.7;
+          } else if (fileSizeMB > 5) {
+            maxDimension = 1024;
+            quality = 0.75;
+          } else if (fileSizeMB > 2) {
+            maxDimension = 1280;
+            quality = 0.8;
+          } else {
+            maxDimension = 1600;
+            quality = 0.85;
+          }
+          
+          if (width > height) {
+            if (width > maxDimension) {
+              height = Math.round((height * maxDimension) / width);
+              width = maxDimension;
+            }
+          } else {
+            if (height > maxDimension) {
+              width = Math.round((width * maxDimension) / height);
+              height = maxDimension;
+            }
+          }
+          
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          if (!ctx) {
+            reject(new Error('Could not get canvas context'));
+            return;
+          }
+          ctx.drawImage(img, 0, 0, width, height);
+          
+          const result = canvas.toDataURL('image/jpeg', quality);
+          resolve(result);
+        };
+        img.onerror = () => reject(new Error('Could not load image'));
+        img.src = e.target?.result as string;
+      };
+      reader.onerror = () => reject(new Error('Could not read file'));
+      reader.readAsDataURL(file);
+    });
+  };
+
   const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     
     setUploadingPhoto(true);
-    uploadPhotoMutation.mutate(file);
+    
+    try {
+      // Compress image first (matching PostCreator pattern)
+      const compressedBase64 = await compressImage(file);
+      uploadPhotoMutation.mutate(compressedBase64);
+    } catch (err) {
+      toast({ title: "Error", description: "Failed to process image", variant: "destructive" });
+      setUploadingPhoto(false);
+    }
     
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
