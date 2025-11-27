@@ -31,20 +31,20 @@ export function InlineSearchInput() {
   const [location, setLocation] = useLocation();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResponse>({});
-  const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Debounce search
   useEffect(() => {
     if (!query.trim()) {
       setResults({});
-      setIsOpen(false);
+      setIsDropdownOpen(false);
       return;
     }
 
+    setIsLoading(true);
     const timer = setTimeout(async () => {
-      setIsLoading(true);
       try {
         const token = localStorage.getItem('accessToken');
         const headers: Record<string, string> = {};
@@ -63,7 +63,7 @@ export function InlineSearchInput() {
         if (response.ok) {
           const data = await response.json();
           setResults(data);
-          setIsOpen(true);
+          setIsDropdownOpen(true);
         }
       } catch (error) {
         console.error("Search error:", error);
@@ -78,7 +78,7 @@ export function InlineSearchInput() {
   const handleResultClick = (type: string, id: string | number) => {
     setQuery("");
     setResults({});
-    setIsOpen(false);
+    setIsDropdownOpen(false);
 
     switch (type) {
       case "post":
@@ -103,7 +103,7 @@ export function InlineSearchInput() {
     (results.groups?.length || 0);
 
   return (
-    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+    <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
       <DropdownMenuTrigger asChild>
         <div className="w-full">
           <div className="relative flex items-center">
@@ -114,7 +114,11 @@ export function InlineSearchInput() {
               placeholder="Search posts, events, people, groups..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              onFocus={() => query && setIsOpen(true)}
+              onFocus={() => {
+                if (query.trim()) {
+                  setIsDropdownOpen(true);
+                }
+              }}
               className="pl-10 pr-8"
               data-testid="input-search"
             />
@@ -123,7 +127,7 @@ export function InlineSearchInput() {
                 onClick={() => {
                   setQuery("");
                   setResults({});
-                  setIsOpen(false);
+                  setIsDropdownOpen(false);
                   inputRef.current?.focus();
                 }}
                 className="absolute right-3 text-muted-foreground hover:text-foreground"
@@ -135,7 +139,7 @@ export function InlineSearchInput() {
         </div>
       </DropdownMenuTrigger>
 
-      {isOpen && query && (
+      {query && (
         <DropdownMenuContent align="start" className="w-80 max-h-96 overflow-y-auto">
           {isLoading ? (
             <div className="px-4 py-8 text-center text-sm text-muted-foreground">
