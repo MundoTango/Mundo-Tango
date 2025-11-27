@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PostItem } from "@/components/feed/PostItem";
@@ -7,24 +6,39 @@ import { motion } from "framer-motion";
 import { Camera } from "lucide-react";
 import { PostCreator } from "@/components/universal/PostCreator";
 
+interface Post {
+  id: number;
+  userId: number;
+  content: string;
+  imageUrl?: string;
+  videoUrl?: string;
+  videoThumbnail?: string;
+  visibility: string;
+  createdAt: string;
+  likes: number;
+  comments: number;
+  isSaved?: boolean;
+  currentReaction?: string | null;
+  reactions?: Record<string, number>;
+  tags?: string[] | null;
+  user?: {
+    id: number;
+    name: string;
+    username: string;
+    profileImage?: string | null;
+    friendshipStatus?: 'accepted' | 'pending' | 'none' | null;
+    tangoRoles?: string[] | null;
+  };
+}
+
 interface ProfileTabFeedProps {
-  userId?: number;
+  posts: Post[];
+  isLoading: boolean;
   isOwnProfile: boolean;
 }
 
-export default function ProfileTabFeed({ userId, isOwnProfile }: ProfileTabFeedProps) {
+export default function ProfileTabFeed({ posts, isLoading, isOwnProfile }: ProfileTabFeedProps) {
   const [editingPost, setEditingPost] = useState<number | null>(null);
-
-  const { data: posts = [], isLoading } = useQuery({
-    queryKey: ["user-posts", userId],
-    queryFn: async () => {
-      if (!userId) return [];
-      const res = await fetch(`/api/posts?userId=${userId}&limit=50`);
-      if (!res.ok) throw new Error("Failed to load posts");
-      return res.json();
-    },
-    enabled: !!userId,
-  });
 
   const handleEdit = (postId: number) => {
     setEditingPost(postId);
