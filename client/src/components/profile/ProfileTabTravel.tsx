@@ -315,20 +315,19 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
             <Card className="border-primary/50" data-testid="card-create-trip-form">
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="flex items-center gap-2"><Plane className="h-5 w-5 text-primary" />Plan Your Trip</CardTitle>
-                <Button variant="ghost" size="icon" onClick={() => { setShowCreateForm(false); form.reset(); }}><X className="h-4 w-4" /></Button>
+                <Button variant="ghost" size="icon" onClick={() => { setShowCreateForm(false); setSelectedCities([]); setPickerKey(0); }}><X className="h-4 w-4" /></Button>
               </CardHeader>
               <CardContent>
-                <Form {...form}>
-                  <form onSubmit={form.handleSubmit(() => createTripMutation.mutate())} className="space-y-6">
-                    {/* City Autocomplete with Live Map Data */}
-                    <div className="space-y-2">
-                      <FormLabel className="text-base font-semibold">Cities *</FormLabel>
-                      <UnifiedLocationPicker 
-                        key={pickerKey}
-                        onChange={addCity}
-                        placeholder="Search any city (e.g., Buenos Aires, Tokyo, Paris)..."
-                        data-testid="location-picker-travel"
-                      />
+                <div className="space-y-6">
+                  {/* City Autocomplete with Live Map Data */}
+                  <div className="space-y-2">
+                    <FormLabel className="text-base font-semibold">Cities *</FormLabel>
+                    <UnifiedLocationPicker 
+                      key={pickerKey}
+                      onChange={addCity}
+                      placeholder="Search any city (e.g., Buenos Aires, Tokyo, Paris)..."
+                      data-testid="location-picker-travel"
+                    />
                       {/* MB.MD Agent 2: Per-City Cards with Individual Date Pickers */}
                       {selectedCities.length > 0 && (
                         <div className="space-y-3 mt-3">
@@ -390,14 +389,13 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
                       {selectedCities.length === 0 && <p className="text-sm text-destructive">Add at least one city</p>}
                     </div>
 
-                    <div className="flex gap-3">
-                      <Button type="button" variant="outline" onClick={() => { setShowCreateForm(false); form.reset(); setSelectedCities([]); setPickerKey(0); }} className="flex-1">Cancel</Button>
-                      <Button type="submit" className="flex-1" disabled={createTripMutation.isPending || selectedCities.length === 0} data-testid="button-create-trip-submit">
-                        <Plane className="h-4 w-4 mr-2" />{createTripMutation.isPending ? "Creating..." : "Create Trip"}
-                      </Button>
-                    </div>
-                  </form>
-                </Form>
+                  <div className="flex gap-3">
+                    <Button type="button" variant="outline" onClick={() => { setShowCreateForm(false); setSelectedCities([]); setPickerKey(0); }} className="flex-1">Cancel</Button>
+                    <Button type="button" className="flex-1" disabled={createTripMutation.isPending || selectedCities.length === 0} onClick={() => createTripMutation.mutate()} data-testid="button-create-trip-submit">
+                      <Plane className="h-4 w-4 mr-2" />{createTripMutation.isPending ? "Creating..." : "Create Trip"}
+                    </Button>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </motion.div>
