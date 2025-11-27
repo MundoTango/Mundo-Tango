@@ -302,6 +302,12 @@ export default function ProfilePage() {
     enabled: !!user?.id,
   });
 
+  // Fetch face photos for this user
+  const { data: facePhotos = [] } = useQuery<{ id: number; url: string; order: number }[]>({
+    queryKey: ['/api/profile/photos', user?.id],
+    enabled: !!user?.id,
+  });
+
   const isOwnProfile = currentUser?.id === user?.id;
   
   // Check friendship status
@@ -772,28 +778,54 @@ export default function ProfilePage() {
                 </Card>
               )}
 
-              {/* Face Photos Section - Encourage Users to Upload */}
+              {/* Face Photos Section - Show Uploaded Photos */}
               <Card data-testid="card-face-photos">
                 <CardHeader className="pb-3">
                   <div className="flex items-center gap-2">
                     <Camera className="w-5 h-5 text-primary" />
                     <h3 className="font-semibold text-lg">Face Photos</h3>
+                    {facePhotos.length > 0 && (
+                      <Badge variant="secondary" className="ml-auto text-xs">
+                        {facePhotos.length}/6
+                      </Badge>
+                    )}
                   </div>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Add face photos to your profile - people dance better when they know you!
-                  </p>
+                  {facePhotos.length === 0 && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {isOwnProfile 
+                        ? "Add face photos to your profile - people dance better when they know you!"
+                        : "No face photos uploaded yet."
+                      }
+                    </p>
+                  )}
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-3 gap-2 mb-4">
-                    {[0, 1, 2, 3, 4, 5].map((index) => (
-                      <div
-                        key={index}
-                        className="aspect-square bg-muted rounded-lg border-2 border-dashed border-border/50 flex items-center justify-center hover:bg-muted/60 hover-elevate cursor-pointer transition-colors"
-                        data-testid={`photo-slot-${index}`}
-                      >
-                        <Plus className="w-5 h-5 text-muted-foreground" />
-                      </div>
-                    ))}
+                    {[0, 1, 2, 3, 4, 5].map((index) => {
+                      const photo = facePhotos.find(p => p.order === index);
+                      return (
+                        <div
+                          key={index}
+                          onClick={isOwnProfile ? () => setActiveTab('photos') : undefined}
+                          className={`aspect-square rounded-lg overflow-hidden ${
+                            photo 
+                              ? 'border border-border' 
+                              : 'bg-muted border-2 border-dashed border-border/50 flex items-center justify-center'
+                          } ${isOwnProfile ? 'hover:opacity-90 cursor-pointer' : ''} transition-all`}
+                          data-testid={`photo-slot-${index}`}
+                        >
+                          {photo ? (
+                            <img 
+                              src={photo.url} 
+                              alt={`Face photo ${index + 1}`}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <Plus className="w-5 h-5 text-muted-foreground" />
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
                   {isOwnProfile && (
                     <Button
@@ -803,7 +835,7 @@ export default function ProfilePage() {
                       onClick={() => setActiveTab('photos')}
                       data-testid="button-upload-photos"
                     >
-                      Upload Photos
+                      {facePhotos.length === 0 ? 'Upload Photos' : 'Manage Photos'}
                     </Button>
                   )}
                 </CardContent>

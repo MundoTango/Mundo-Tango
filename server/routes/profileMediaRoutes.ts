@@ -530,9 +530,49 @@ router.post('/photo', authenticateToken, async (req: AuthRequest, res: Response)
 });
 
 /**
+ * GET /api/profile/photos/:userId
+ * Get user's face photos from gallery
+ */
+router.get('/photos/:userId', async (req, res: Response) => {
+  try {
+    const userId = parseInt(req.params.userId);
+    
+    if (isNaN(userId)) {
+      return res.status(400).json({ message: 'Invalid user ID' });
+    }
+
+    // Fetch face photos from profileMedia table
+    const photos = await db.select()
+      .from(profileMedia)
+      .where(
+        and(
+          eq(profileMedia.userId, userId),
+          eq(profileMedia.category, 'face_photos')
+        )
+      )
+      .orderBy(profileMedia.displayOrder);
+
+    // Transform to expected format
+    const formattedPhotos = photos.map(p => ({
+      id: p.id,
+      url: p.url,
+      order: p.displayOrder || 0,
+      caption: p.caption
+    }));
+
+    console.log(`[ProfileMedia] Fetched ${formattedPhotos.length} face photos for user ${userId}`);
+    res.json(formattedPhotos);
+  } catch (error) {
+    console.error('[ProfileMedia] Get photos error:', error);
+    res.status(500).json({ message: 'Failed to fetch photos' });
+  }
+});
+
+/**
  * POST /api/profile/photos
  * Upload face photo to profile gallery (max 6 slots)
  * Following Media Handling Architecture (PRD/media-handling.md)
+ * Persists to profileMedia table with category 'face_photos'
  */
 router.post('/photos', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
@@ -554,16 +594,50 @@ router.post('/photos', authenticateToken, async (req: AuthRequest, res: Response
       return res.status(400).json({ message: 'Invalid photo slot (0-5)' });
     }
 
-    // Store compressed base64 directly (following media-handling.md)
-    const profilePhoto = {
-      id: Date.now(),
-      url: photoData,
-      order,
-      caption: null
+    // Check how many face photos user already has
+    const existingPhotos = await db.select()
+      .from(profileMedia)
+      .where(
+        and(
+          eq(profileMedia.userId, req.userId),
+          eq(profileMedia.category, 'face_photos')
+        )
+      );
+
+    if (existingPhotos.length >= 6) {
+      return res.status(400).json({ message: 'Maximum 6 face photos allowed' });
+    }
+
+    // Check if slot is already taken
+    const slotTaken = existingPhotos.find(p => p.displayOrder === order);
+    if (slotTaken) {
+      // Remove old photo from this slot
+      await db.delete(profileMedia).where(eq(profileMedia.id, slotTaken.id));
+      console.log(`[ProfileMedia] Replaced existing photo in slot ${order}`);
+    }
+
+    // Insert new photo into profileMedia table
+    const [newPhoto] = await db.insert(profileMedia)
+      .values({
+        userId: req.userId,
+        type: 'photo',
+        url: photoData,
+        category: 'face_photos',
+        displayOrder: order,
+        isPublic: true,
+        isFeatured: order === 0, // First photo is featured
+      })
+      .returning();
+
+    const response = {
+      id: newPhoto.id,
+      url: newPhoto.url,
+      order: newPhoto.displayOrder || 0,
+      caption: newPhoto.caption
     };
 
-    console.log(`[ProfileMedia] Face photo uploaded for user ${req.userId}, slot ${order}`);
-    res.status(201).json(profilePhoto);
+    console.log(`[ProfileMedia] Face photo saved for user ${req.userId}, slot ${order}, id ${newPhoto.id}`);
+    res.status(201).json(response);
   } catch (error) {
     console.error('[ProfileMedia] Face photo upload error:', error);
     res.status(500).json({ message: 'Failed to upload face photo' });
@@ -571,9 +645,51 @@ router.post('/photos', authenticateToken, async (req: AuthRequest, res: Response
 });
 
 /**
+ * DELETE /api/profile/photos/:photoId
+ * Delete a face photo from gallery
+ */
+router.delete('/photos/:photoId', authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.userId) {
+      return res.status(401).json({ message: 'Authentication required' });
+    }
+
+    const photoId = parseInt(req.params.photoId);
+    
+    if (isNaN(photoId)) {
+      return res.status(400).json({ message: 'Invalid photo ID' });
+    }
+
+    // Check ownership
+    const [photo] = await db.select()
+      .from(profileMedia)
+      .where(
+        and(
+          eq(profileMedia.id, photoId),
+          eq(profileMedia.userId, req.userId),
+          eq(profileMedia.category, 'face_photos')
+        )
+      )
+      .limit(1);
+
+    if (!photo) {
+      return res.status(404).json({ message: 'Photo not found' });
+    }
+
+    await db.delete(profileMedia).where(eq(profileMedia.id, photoId));
+    
+    console.log(`[ProfileMedia] Face photo ${photoId} deleted for user ${req.userId}`);
+    res.json({ message: 'Photo deleted successfully' });
+  } catch (error) {
+    console.error('[ProfileMedia] Delete photo error:', error);
+    res.status(500).json({ message: 'Failed to delete photo' });
+  }
+});
+
+/**
  * PUT /api/profile/photos/reorder
  * Reorder face photos in gallery (drag-and-drop)
- * Accepts array of { id, order } to update display order
+ * Persists order changes to database
  */
 router.put('/photos/reorder', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
@@ -597,9 +713,25 @@ router.put('/photos/reorder', authenticateToken, async (req: AuthRequest, res: R
       }
     }
 
-    console.log(`[ProfileMedia] Photos reordered for user ${req.userId}:`, photos);
+    // Update each photo's displayOrder in database
+    for (const photo of photos) {
+      await db.update(profileMedia)
+        .set({ 
+          displayOrder: photo.order,
+          isFeatured: photo.order === 0, // First photo is featured
+          updatedAt: new Date()
+        })
+        .where(
+          and(
+            eq(profileMedia.id, photo.id),
+            eq(profileMedia.userId, req.userId),
+            eq(profileMedia.category, 'face_photos')
+          )
+        );
+    }
+
+    console.log(`[ProfileMedia] Photos reordered for user ${req.userId}:`, photos.map(p => `id:${p.id}→slot:${p.order}`).join(', '));
     
-    // Return success - in production this would update database order
     res.json({ 
       message: 'Photos reordered successfully',
       photos 

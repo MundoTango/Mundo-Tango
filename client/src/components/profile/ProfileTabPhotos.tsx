@@ -1,8 +1,8 @@
 import { useState, useRef, useCallback, useEffect } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Image, X, GripVertical, Check, Upload } from "lucide-react";
+import { Image, X, GripVertical, Check, Upload, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient } from "@/lib/queryClient";
 import { useAuth } from "@/contexts/AuthContext";
@@ -14,6 +14,7 @@ import { DragDropContext, Droppable, Draggable, type DropResult } from "react-be
  * - Immediate thumbnail preview before upload
  * - Circular progress indicators during upload
  * - Drag-and-drop reordering after upload
+ * - Database persistence
  * 
  * Following Media Handling Architecture (see PRD/media-handling.md)
  */
@@ -21,11 +22,18 @@ import { DragDropContext, Droppable, Draggable, type DropResult } from "react-be
 interface PhotoSlot {
   id: number;
   url: string;
-  caption?: string;
+  caption?: string | null;
   order: number;
   status: 'uploaded' | 'uploading' | 'preview' | 'empty';
   progress: number;
   previewUrl?: string;
+}
+
+interface FetchedPhoto {
+  id: number;
+  url: string;
+  order: number;
+  caption?: string | null;
 }
 
 export default function ProfileTabPhotos() {
@@ -43,6 +51,43 @@ export default function ProfileTabPhotos() {
       progress: 0,
     }))
   );
+
+  // Fetch existing photos from database
+  const { data: existingPhotos, isLoading } = useQuery<FetchedPhoto[]>({
+    queryKey: ['/api/profile/photos', currentUser?.id],
+    enabled: !!currentUser?.id,
+  });
+
+  // Load existing photos into slots when data arrives
+  useEffect(() => {
+    if (existingPhotos && existingPhotos.length > 0) {
+      setPhotoSlots(prev => {
+        const newSlots = Array.from({ length: 6 }, (_, i) => ({
+          id: 0,
+          url: '',
+          order: i,
+          status: 'empty' as const,
+          progress: 0,
+        }));
+        
+        existingPhotos.forEach(photo => {
+          const slotIndex = photo.order;
+          if (slotIndex >= 0 && slotIndex < 6) {
+            newSlots[slotIndex] = {
+              id: photo.id,
+              url: photo.url,
+              caption: photo.caption,
+              order: photo.order,
+              status: 'uploaded',
+              progress: 100,
+            };
+          }
+        });
+        
+        return newSlots;
+      });
+    }
+  }, [existingPhotos]);
 
   // Compress image (matching PostCreator pattern)
   const compressImage = (file: File): Promise<string> => {
@@ -141,7 +186,7 @@ export default function ProfileTabPhotos() {
             } 
           : slot
       ));
-      queryClient.invalidateQueries({ queryKey: ['user', currentUser?.id, 'photos'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/profile/photos', currentUser?.id] });
     },
     onError: (err, variables) => {
       toast({ title: "Error", description: "Failed to upload photo", variant: "destructive" });
@@ -150,6 +195,27 @@ export default function ProfileTabPhotos() {
           ? { ...slot, status: 'empty' as const, progress: 0, previewUrl: undefined } 
           : slot
       ));
+    }
+  });
+
+  // Delete mutation
+  const deletePhotoMutation = useMutation({
+    mutationFn: async (photoId: number) => {
+      const res = await fetch(`/api/profile/photos/${photoId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+        }
+      });
+      
+      if (!res.ok) throw new Error('Failed to delete photo');
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/profile/photos', currentUser?.id] });
+    },
+    onError: () => {
+      toast({ title: "Error", description: "Failed to delete photo", variant: "destructive" });
     }
   });
 
@@ -216,6 +282,14 @@ export default function ProfileTabPhotos() {
 
   // Remove photo
   const handleRemovePhoto = (index: number) => {
+    const photo = photoSlots[index];
+    
+    if (photo.status === 'uploaded' && photo.id > 0) {
+      // Delete from database
+      deletePhotoMutation.mutate(photo.id);
+    }
+    
+    // Update local state immediately
     setPhotoSlots(prev => prev.map((slot, i) => 
       i === index 
         ? { id: 0, url: '', order: i, status: 'empty' as const, progress: 0, previewUrl: undefined }
@@ -233,38 +307,48 @@ export default function ProfileTabPhotos() {
     
     if (sourceIndex === destIndex) return;
 
-    // Only allow reordering uploaded photos
-    const uploadedSlots = photoSlots.filter(s => s.status === 'uploaded');
-    if (uploadedSlots.length < 2) return;
-
+    // Swap the two slots
     setPhotoSlots(prev => {
       const newSlots = [...prev];
-      const [movedSlot] = newSlots.splice(sourceIndex, 1);
-      newSlots.splice(destIndex, 0, movedSlot);
+      const sourceSlot = { ...newSlots[sourceIndex] };
+      const destSlot = { ...newSlots[destIndex] };
       
-      // Update order property
-      return newSlots.map((slot, idx) => ({ ...slot, order: idx }));
+      // Swap positions but keep order values matching indices
+      newSlots[sourceIndex] = { ...destSlot, order: sourceIndex };
+      newSlots[destIndex] = { ...sourceSlot, order: destIndex };
+      
+      return newSlots;
     });
 
-    // Save new order to backend
-    const photosToReorder = photoSlots
-      .filter(s => s.status === 'uploaded')
-      .map((s, idx) => ({ id: s.id, order: idx }));
-
-    try {
-      await fetch('/api/profile/photos/reorder', {
-        method: 'PUT',
-        body: JSON.stringify({ photos: photosToReorder }),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-        }
-      });
-      toast({ title: "Photos reordered" });
-    } catch (err) {
-      toast({ title: "Failed to save order", variant: "destructive" });
+    // Get the photos that need reordering (both swapped items)
+    const sourcePhoto = photoSlots[sourceIndex];
+    const destPhoto = photoSlots[destIndex];
+    
+    const photosToReorder = [];
+    if (sourcePhoto.status === 'uploaded' && sourcePhoto.id > 0) {
+      photosToReorder.push({ id: sourcePhoto.id, order: destIndex });
     }
-  }, [photoSlots, toast]);
+    if (destPhoto.status === 'uploaded' && destPhoto.id > 0) {
+      photosToReorder.push({ id: destPhoto.id, order: sourceIndex });
+    }
+
+    if (photosToReorder.length > 0) {
+      try {
+        await fetch('/api/profile/photos/reorder', {
+          method: 'PUT',
+          body: JSON.stringify({ photos: photosToReorder }),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+          }
+        });
+        toast({ title: "Photos reordered" });
+        queryClient.invalidateQueries({ queryKey: ['/api/profile/photos', currentUser?.id] });
+      } catch (err) {
+        toast({ title: "Failed to save order", variant: "destructive" });
+      }
+    }
+  }, [photoSlots, toast, currentUser?.id]);
 
   // Cleanup preview URLs on unmount
   useEffect(() => {
@@ -324,6 +408,24 @@ export default function ProfileTabPhotos() {
       </div>
     );
   };
+
+  if (isLoading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Image className="w-5 h-5" />
+            Face Photos
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card>
