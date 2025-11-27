@@ -6,7 +6,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Settings, UserPlus, UserMinus, UserCheck, Plane, Calendar, CheckCircle, Instagram, Facebook, Twitter, Linkedin, Youtube, Globe, Award, Plus, Camera } from "lucide-react";
+import { MapPin, Settings, UserPlus, UserMinus, UserCheck, Plane, Calendar, CheckCircle, Instagram, Facebook, Twitter, Linkedin, Youtube, Globe, Award, Plus, Camera, Music, Users, ImageIcon, Mic2, Home, Briefcase, BookOpen, Heart } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useAuth } from "@/contexts/AuthContext";
 import { SEO } from "@/components/SEO";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
@@ -237,14 +238,27 @@ export default function ProfilePage() {
         
         {/* Action Buttons - Top Right */}
         <div className="absolute top-6 right-6 z-20 flex gap-3">
-          {isOwnProfile ? (
-            <Button asChild variant="outline" className="gap-2 text-white border-white/30 bg-black/20 backdrop-blur-sm hover:bg-black/30" data-testid="button-edit-profile">
-              <Link href="/profile/edit">
-                <Settings className="h-4 w-4" />
-                Edit Profile
-              </Link>
-            </Button>
-          ) : isFriend ? (
+          {isOwnProfile && (
+            <>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button size="icon" variant="outline" className="text-white border-white/30 bg-black/20 backdrop-blur-sm hover:bg-black/30" data-testid="button-upload-hero">
+                    <ImageIcon className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Change Hero Image</TooltipContent>
+              </Tooltip>
+              <Button asChild variant="outline" className="gap-2 text-white border-white/30 bg-black/20 backdrop-blur-sm hover:bg-black/30" data-testid="button-edit-profile">
+                <Link href="/profile/edit">
+                  <Settings className="h-4 w-4" />
+                  Edit Profile
+                </Link>
+              </Button>
+            </>
+          )}
+          {!isOwnProfile && (
+            <>
+              {isFriend ? (
             <Button 
               variant="outline"
               className="gap-2 text-white border-white/30 bg-black/20 backdrop-blur-sm hover:bg-black/30"
