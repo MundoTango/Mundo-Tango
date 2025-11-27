@@ -219,6 +219,9 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
   // Edit item state
   const [editingItem, setEditingItem] = useState<{ tripId: number; item: TravelPlanItem; itemType: 'accommodation' | 'transport' | 'event' } | null>(null);
   
+  // Trip status and completion tracking
+  const [completionPrompts, setCompletionPrompts] = useState<Set<number>>(new Set());
+  
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
