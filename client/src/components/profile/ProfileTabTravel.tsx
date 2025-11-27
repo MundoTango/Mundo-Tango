@@ -297,11 +297,15 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
       return trips;
     },
     onSuccess: (trips: any[]) => {
-      queryClient.invalidateQueries({ queryKey: ["/api/travel/plans", profileId] });
-      toast({ title: "Trips created!", description: `${trips.length} city trip${trips.length > 1 ? 's' : ''} created successfully.` });
       setShowCreateForm(false);
       setSelectedCities([]);
       setPickerKey(prev => prev + 1);
+      queryClient.invalidateQueries({ queryKey: ["/api/travel/plans", profileId] });
+      queryClient.refetchQueries({ 
+        queryKey: ["/api/travel/plans", profileId],
+        type: 'active'
+      });
+      toast({ title: "Trips created!", description: `${trips.length} city trip${trips.length > 1 ? 's' : ''} created successfully.` });
     },
     onError: () => {
       toast({ title: "Failed to create trips", description: "Please try again.", variant: "destructive" });
@@ -314,10 +318,14 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
       return await res.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/travel/plans", profileId] });
-      toast({ title: "Item added!" });
       setAddingItemToTrip(null);
       itemForm.reset();
+      queryClient.invalidateQueries({ queryKey: ["/api/travel/plans", profileId] });
+      queryClient.refetchQueries({ 
+        queryKey: ["/api/travel/plans", profileId],
+        type: 'active'
+      });
+      toast({ title: "Item added!" });
     },
   });
 
@@ -340,13 +348,16 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
       return await res.json();
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ["/api/travel/plans", profileId] });
-      await queryClient.refetchQueries({ queryKey: ["/api/travel/plans", profileId] });
-      toast({ title: "Trip status updated!" });
       setStatusDropdownOpen(null);
       setUpdatingTripId(null);
       setCompletionDialogTrip(null);
       setCompletionNotes('');
+      await queryClient.invalidateQueries({ queryKey: ["/api/travel/plans", profileId] });
+      await queryClient.refetchQueries({ 
+        queryKey: ["/api/travel/plans", profileId],
+        type: 'active'
+      });
+      toast({ title: "Trip status updated!" });
     },
     onError: (error) => {
       toast({ title: "Failed to update status", description: "Please try again.", variant: "destructive" });
