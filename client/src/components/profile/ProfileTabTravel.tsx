@@ -203,9 +203,8 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
       queryClient.invalidateQueries({ queryKey: ["/api/travel/plans"] });
       toast({ title: "Trips created!", description: `${trips.length} city trip${trips.length > 1 ? 's' : ''} created successfully.` });
       setShowCreateForm(false);
-      form.reset();
       setSelectedCities([]);
-      setPickerKey(0);
+      setPickerKey(prev => prev + 1);
     },
     onError: () => {
       toast({ title: "Failed to create trips", description: "Please try again.", variant: "destructive" });
