@@ -222,13 +222,6 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
   // Trip status and completion tracking
   const [completionPrompts, setCompletionPrompts] = useState<Set<number>>(new Set());
   
-  // Find first past trip that needs completion prompt
-  const tripNeedingCompletion = travelPlans?.find(t => 
-    new Date(t.endDate) < new Date() && 
-    t.status !== 'completed' && 
-    !completionPrompts.has(t.id)
-  );
-  
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -274,6 +267,13 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
       return response.json() as Promise<TravelPlan[]>;
     }
   });
+
+  // Find first past trip that needs completion prompt (after travelPlans is defined)
+  const tripNeedingCompletion = travelPlans?.find(t => 
+    new Date(t.endDate) < new Date() && 
+    t.status !== 'completed' && 
+    !completionPrompts.has(t.id)
+  );
 
   const createTripMutation = useMutation({
     mutationFn: async () => {
