@@ -405,13 +405,7 @@ function Router() {
   return (
     <Switch>
       <Route path="/">
-        <ProtectedRoute>
-          <AppLayout>
-            <Suspense fallback={<LoadingFallback />}>
-              <FeedPage />
-            </Suspense>
-          </AppLayout>
-        </ProtectedRoute>
+        <Redirect to="/profile/admin" />
       </Route>
       <Route path="/landing" component={LandingPage} />
       <Route path="/dashboard">
