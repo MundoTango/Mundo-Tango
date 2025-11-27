@@ -22,13 +22,18 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         showMenuButton={true}
       />
       
-      <main className="w-full flex-1 overflow-y-auto pt-16">
+      <main 
+        className="w-full flex-1 overflow-y-auto pt-16 transition-all duration-300 ease-in-out"
+        style={{
+          transform: sidebarOpen ? 'translateX(256px)' : 'translateX(0)',
+        }}
+      >
         {children}
       </main>
 
       {/* Pop-out Sidebar Drawer */}
       <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
-        <SheetContent side="left" className="w-64 p-0">
+        <SheetContent side="left" className="w-64 p-0 border-r">
           <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
         </SheetContent>
       </Sheet>
