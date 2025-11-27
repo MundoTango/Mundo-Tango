@@ -46,8 +46,19 @@ export function InlineSearchInput() {
     const timer = setTimeout(async () => {
       setIsLoading(true);
       try {
+        const token = localStorage.getItem('accessToken');
+        const headers: Record<string, string> = {};
+        
+        if (token) {
+          headers["Authorization"] = `Bearer ${token}`;
+        }
+        
         const response = await fetch(
-          `/api/user/global-search?q=${encodeURIComponent(query)}`
+          `/api/user/global-search?q=${encodeURIComponent(query)}`,
+          {
+            headers,
+            credentials: "include",
+          }
         );
         if (response.ok) {
           const data = await response.json();
