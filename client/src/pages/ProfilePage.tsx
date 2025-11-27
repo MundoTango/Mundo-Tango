@@ -423,37 +423,6 @@ export default function ProfilePage() {
               </div>
             )}
             
-            {/* UPCOMING TRAVEL - CRITICAL FEATURE */}
-            {upcomingTravel && upcomingTravel.length > 0 && (
-              <div className="bg-primary/20 border border-primary/30 rounded-lg p-3 backdrop-blur-sm mb-3" data-testid="section-upcoming-travel">
-                <div className="flex items-center gap-2 mb-2">
-                  <Plane className="w-4 h-4 text-primary" />
-                  <span className="text-sm font-semibold text-white">Upcoming Travel</span>
-                </div>
-                <div className="space-y-1">
-                  {upcomingTravel.slice(0, 2).map((trip: any, index: number) => (
-                    <div key={trip.id || index} className="flex items-center gap-2 text-xs text-white/90" data-testid={`trip-${index}`}>
-                      <Calendar className="w-3 h-3 text-primary" />
-                      <span className="font-medium">{trip.city}</span>
-                      <span className="text-white/70">
-                        ({new Date(trip.startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}-
-                        {new Date(trip.endDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })})
-                      </span>
-                    </div>
-                  ))}
-                  {upcomingTravel.length > 2 && (
-                    <button 
-                      className="text-primary text-xs p-0 h-auto hover:text-primary/80 underline cursor-pointer bg-transparent border-none"
-                      onClick={() => setActiveTab('travel')}
-                      data-testid="button-more-trips"
-                    >
-                      +{upcomingTravel.length - 2} more trips →
-                    </button>
-                  )}
-                </div>
-              </div>
-            )}
-            
             {/* Current Location */}
             {(user.city || user.country) && (
               <div className="flex items-center gap-2 text-white/80 text-sm" data-testid="text-location">
