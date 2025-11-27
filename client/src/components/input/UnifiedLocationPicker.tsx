@@ -79,7 +79,8 @@ export function UnifiedLocationPicker({
       }
     };
 
-    const debounce = setTimeout(searchLocations, 500);
+    // MB.MD: Reduced debounce from 500ms to 250ms for faster response
+    const debounce = setTimeout(searchLocations, 250);
     return () => clearTimeout(debounce);
   }, [searchQuery]);
 

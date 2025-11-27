@@ -134,10 +134,13 @@ const getCityImageUrl = (city: string, country?: string): string => {
   return cityImages[cityKey] || defaultCityImage;
 };
 
+// MB.MD Agent 2: Per-City Date Tracking
 interface CityOption {
   city: string;
   country: string;
   coordinates?: { lat: number; lng: number };
+  startDate?: Date;
+  endDate?: Date;
 }
 
 export default function ProfileTabTravel({ profileId, isOwnProfile = false }: ProfileTabTravelProps) {
@@ -157,12 +160,17 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
     const country = parts[1] || '';
     
     if (!selectedCities.find(c => c.city.toLowerCase() === city.toLowerCase())) {
-      setSelectedCities([...selectedCities, { city, country, coordinates }]);
+      setSelectedCities([...selectedCities, { city, country, coordinates, startDate: undefined, endDate: undefined }]);
     }
   };
 
   const removeCity = (idx: number) => {
     setSelectedCities(selectedCities.filter((_, i) => i !== idx));
+  };
+
+  // MB.MD Agent 2: Per-city date management
+  const updateCityDate = (idx: number, field: 'startDate' | 'endDate', date: Date | undefined) => {
+    setSelectedCities(prev => prev.map((c, i) => i === idx ? { ...c, [field]: date } : c));
   };
 
   const form = useForm<TripPlannerForm>({
@@ -320,31 +328,56 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
                         placeholder="Search any city (e.g., Buenos Aires, Tokyo, Paris)..."
                         data-testid="location-picker-travel"
                       />
+                      {/* MB.MD Agent 2: Per-City Cards with Individual Date Pickers */}
                       {selectedCities.length > 0 && (
-                        <div className="flex flex-wrap gap-2 mt-3">
+                        <div className="space-y-3 mt-3">
                           {selectedCities.map((city, idx) => (
-                            <Badge key={idx} variant="secondary" className="pl-3 pr-1 py-1.5 flex items-center gap-1" data-testid={`badge-city-${idx}`}>
-                              <span>{city.city}{city.country ? ', ' + city.country : ''}</span>
-                              <Button type="button" variant="ghost" size="sm" className="h-auto w-auto p-0 ml-1 hover:bg-transparent" onClick={() => removeCity(idx)} data-testid={`button-remove-city-${idx}`}>
-                                <X className="h-3 w-3" />
-                              </Button>
-                            </Badge>
+                            <Card key={idx} className="p-3 bg-primary/5 border-primary/20" data-testid={`card-city-${idx}`}>
+                              <div className="flex flex-wrap items-center gap-3">
+                                <div className="flex items-center gap-2 min-w-[140px]">
+                                  <MapPin className="h-4 w-4 text-primary flex-shrink-0" />
+                                  <span className="font-medium text-sm">{city.city}{city.country ? `, ${city.country}` : ''}</span>
+                                </div>
+                                <div className="flex items-center gap-2 flex-1">
+                                  <Popover>
+                                    <PopoverTrigger asChild>
+                                      <Button variant="outline" size="sm" className={cn("h-8 text-xs", !city.startDate && "text-muted-foreground")} data-testid={`city-start-date-${idx}`}>
+                                        <CalendarIcon className="mr-1 h-3 w-3" />{city.startDate ? format(city.startDate, "MMM d") : "Start"}
+                                      </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-auto p-0"><Calendar mode="single" selected={city.startDate} onSelect={(d) => updateCityDate(idx, 'startDate', d)} initialFocus /></PopoverContent>
+                                  </Popover>
+                                  <span className="text-muted-foreground text-xs">→</span>
+                                  <Popover>
+                                    <PopoverTrigger asChild>
+                                      <Button variant="outline" size="sm" className={cn("h-8 text-xs", !city.endDate && "text-muted-foreground")} data-testid={`city-end-date-${idx}`}>
+                                        <CalendarIcon className="mr-1 h-3 w-3" />{city.endDate ? format(city.endDate, "MMM d") : "End"}
+                                      </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-auto p-0"><Calendar mode="single" selected={city.endDate} onSelect={(d) => updateCityDate(idx, 'endDate', d)} initialFocus /></PopoverContent>
+                                  </Popover>
+                                </div>
+                                <Button type="button" variant="ghost" size="icon" className="h-7 w-7" onClick={() => removeCity(idx)} data-testid={`button-remove-city-${idx}`}>
+                                  <X className="h-3 w-3" />
+                                </Button>
+                              </div>
+                            </Card>
                           ))}
                         </div>
                       )}
                       {selectedCities.length === 0 && <p className="text-sm text-destructive">Add at least one city</p>}
                     </div>
 
-                    {/* City, Country, Start Date, End Date on One Line */}
+                    {/* Trip-level dates (auto-calculated from cities or manual override) */}
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
                       <FormField control={form.control} name="city" render={({ field }) => (
-                        <FormItem><FormLabel className="text-xs">Primary City</FormLabel><FormControl><Input placeholder="Buenos Aires" value={selectedCities[0]?.city || ""} {...field} readOnly data-testid="input-primary-city" className="text-sm" /></FormControl><FormMessage className="text-xs" /></FormItem>
+                        <FormItem><FormLabel className="text-xs">Primary City</FormLabel><FormControl><Input placeholder="Buenos Aires" value={selectedCities[0]?.city || ""} {...field} readOnly data-testid="input-primary-city" className="text-sm bg-muted/50" /></FormControl><FormMessage className="text-xs" /></FormItem>
                       )} />
                       <FormField control={form.control} name="country" render={({ field }) => (
-                        <FormItem><FormLabel className="text-xs">Country</FormLabel><FormControl><Input placeholder="Argentina" value={selectedCities[0]?.country || ""} {...field} readOnly data-testid="input-primary-country" className="text-sm" /></FormControl><FormMessage className="text-xs" /></FormItem>
+                        <FormItem><FormLabel className="text-xs">Country</FormLabel><FormControl><Input placeholder="Argentina" value={selectedCities[0]?.country || ""} {...field} readOnly data-testid="input-primary-country" className="text-sm bg-muted/50" /></FormControl><FormMessage className="text-xs" /></FormItem>
                       )} />
                       <FormField control={form.control} name="startDate" render={({ field }) => (
-                        <FormItem className="flex flex-col"><FormLabel className="text-xs">Start Date *</FormLabel>
+                        <FormItem className="flex flex-col"><FormLabel className="text-xs">Trip Start *</FormLabel>
                           <Popover><PopoverTrigger asChild><FormControl>
                             <Button variant="outline" className={cn("justify-start text-left font-normal text-sm h-9", !field.value && "text-muted-foreground")} data-testid="input-trip-start-date">
                               <CalendarIcon className="mr-1 h-3 w-3" />{field.value ? format(field.value, "MMM d") : "Date"}
@@ -354,7 +387,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
                           </Popover><FormMessage className="text-xs" /></FormItem>
                       )} />
                       <FormField control={form.control} name="endDate" render={({ field }) => (
-                        <FormItem className="flex flex-col"><FormLabel className="text-xs">End Date *</FormLabel>
+                        <FormItem className="flex flex-col"><FormLabel className="text-xs">Trip End *</FormLabel>
                           <Popover><PopoverTrigger asChild><FormControl>
                             <Button variant="outline" className={cn("justify-start text-left font-normal text-sm h-9", !field.value && "text-muted-foreground")} data-testid="input-trip-end-date">
                               <CalendarIcon className="mr-1 h-3 w-3" />{field.value ? format(field.value, "MMM d") : "Date"}

@@ -664,6 +664,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/ai", aiEnhanceRoutes);
   app.use("/api/user", userSearchRoutes);
   app.use("/api/locations", locationRoutes);
+  app.use("/api/locations", locationsRoutes); // MB.MD Agent 1: Live city search with caching
   
   // ============================================================================
   // GDPR COMPLIANCE & PRIVACY ROUTES

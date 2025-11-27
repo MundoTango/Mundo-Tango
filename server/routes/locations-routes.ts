@@ -3,6 +3,34 @@ import fetch from "node-fetch";
 
 const router = Router();
 
+// ============================================================================
+// MB.MD AGENT 1: PERFORMANCE OPTIMIZATION - In-Memory Cache (5 min TTL)
+// ============================================================================
+interface CacheEntry {
+  data: LocationResult[];
+  timestamp: number;
+}
+
+const locationCache = new Map<string, CacheEntry>();
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+function getCachedResults(query: string): LocationResult[] | null {
+  const entry = locationCache.get(query.toLowerCase());
+  if (entry && Date.now() - entry.timestamp < CACHE_TTL) {
+    return entry.data;
+  }
+  return null;
+}
+
+function setCachedResults(query: string, data: LocationResult[]): void {
+  locationCache.set(query.toLowerCase(), { data, timestamp: Date.now() });
+  // Cleanup old entries (keep cache size manageable)
+  if (locationCache.size > 500) {
+    const oldestKey = locationCache.keys().next().value;
+    if (oldestKey) locationCache.delete(oldestKey);
+  }
+}
+
 interface LocationResult {
   place_id: string;
   display_name: string;
@@ -13,6 +41,7 @@ interface LocationResult {
 }
 
 // GET /api/locations/search - Search locations via OpenStreetMap Nominatim API
+// MB.MD: Optimized with server-side caching for faster repeated searches
 router.get("/search", async (req, res: Response) => {
   try {
     const { q } = req.query;
@@ -21,18 +50,25 @@ router.get("/search", async (req, res: Response) => {
       return res.status(400).json({ message: "Search query required" });
     }
 
-    if (q.trim().length < 2) {
+    const query = q.trim();
+    if (query.length < 2) {
       return res.json([]);
     }
 
+    // Check cache first (MB.MD Performance Optimization)
+    const cached = getCachedResults(query);
+    if (cached) {
+      return res.json(cached);
+    }
+
     // Call Nominatim API (free, no API key required)
-    const nominatimUrl = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=8`;
+    const nominatimUrl = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=8&addressdetails=1`;
 
     const response = await fetch(nominatimUrl, {
       headers: {
-        "User-Agent": "MundoTango/1.0",
+        "User-Agent": "MundoTango/1.0 (tango social platform)",
       },
-      timeout: 5000,
+      timeout: 4000,
     });
 
     if (!response.ok) {
@@ -52,6 +88,9 @@ router.get("/search", async (req, res: Response) => {
         lon: item.lon,
         type: item.type,
       }));
+
+    // Cache the results
+    setCachedResults(query, results);
 
     res.json(results);
   } catch (error) {
