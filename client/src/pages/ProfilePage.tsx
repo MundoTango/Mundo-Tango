@@ -308,8 +308,8 @@ export default function ProfilePage() {
           )}
         </div>
         
-        {/* Profile Photo Circle - Above Info Card */}
-        <div className="absolute bottom-56 right-6 z-10">
+        {/* Profile Photo Circle - Bottom Left */}
+        <div className="absolute bottom-0 left-6 z-10">
           <div className="relative">
             <Avatar className="w-32 h-32 border-4 border-white/30 shadow-lg">
               <AvatarImage src={user.profileImage || undefined} alt={user.name} />
