@@ -261,7 +261,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
 
   const itemForm = useForm<ItineraryItemForm>({
     resolver: zodResolver(itineraryItemSchema),
-    defaultValues: { title: "", type: "", description: "", location: "" },
+    defaultValues: { title: "", type: "", description: "", location: "", cost: undefined, bookingUrl: "" },
   });
 
   const { data: travelPlans, isLoading } = useQuery({
