@@ -36,6 +36,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { LanguageSelectorButton } from "@/components/LanguageSelector";
+import { InlineSearchInput } from "@/components/navigation/InlineSearchInput";
 import { cn } from "@/lib/utils";
 
 interface UnifiedTopBarProps {
@@ -225,12 +226,7 @@ function UnifiedTopBar({
 
         {/* Center Section - Global Search (Desktop) */}
         <div className="flex-1 max-w-2xl mx-4 hidden md:flex items-center justify-center">
-          <Link href="/search">
-            <Button variant="outline" size="sm" className="w-64 justify-start text-muted-foreground" data-testid="button-search-open">
-              <Search className="h-4 w-4 mr-2" />
-              <span>Search posts, events, people, groups...</span>
-            </Button>
-          </Link>
+          <InlineSearchInput />
         </div>
 
         {/* Right Section - Actions & Profile */}
