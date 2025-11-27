@@ -85,6 +85,31 @@ interface CityEvent {
   numericPrice: number;
 }
 
+// MT Host housing listing from City Groups
+interface MTHostListing {
+  id: number;
+  hostId: number;
+  title: string;
+  description: string;
+  propertyType: string;
+  bedrooms?: number;
+  bathrooms?: number;
+  maxGuests?: number;
+  pricePerNight: number;
+  currency?: string;
+  address: string;
+  city: string;
+  country: string;
+  amenities?: string[];
+  images?: string[];
+  coverPhotoUrl?: string;
+  hostName?: string;
+  hostProfileImage?: string;
+  nights: number;
+  totalCost: number;
+  isMTHost: boolean;
+}
+
 interface ProfileTabTravelProps {
   profileId: number;
   isOwnProfile?: boolean;
@@ -180,7 +205,8 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
   const [activeRangePickerIdx, setActiveRangePickerIdx] = useState<number | null>(null);
   
   // Enhanced dialog states
-  const [accommodationDialog, setAccommodationDialog] = useState<{ tripId: number; city: string } | null>(null);
+  const [accommodationDialog, setAccommodationDialog] = useState<{ tripId: number; city: string; startDate: string; endDate: string } | null>(null);
+  const [accommodationTab, setAccommodationTab] = useState<'mthost' | 'manual'>('mthost');
   const [transportDialog, setTransportDialog] = useState<{ tripId: number; city: string } | null>(null);
   const [eventsDialog, setEventsDialog] = useState<{ tripId: number; city: string; startDate: string; endDate: string } | null>(null);
   const [selectedTransportType, setSelectedTransportType] = useState<string>('flight');
@@ -352,6 +378,31 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
     },
     enabled: !!eventsDialog,
   });
+
+  // Query for MT Host housing listings when accommodation dialog opens
+  const { data: mtHostListings, isLoading: mtHostLoading } = useQuery({
+    queryKey: ['/api/travel/housing-by-city', accommodationDialog?.city, accommodationDialog?.startDate, accommodationDialog?.endDate],
+    queryFn: async () => {
+      if (!accommodationDialog) return [];
+      const params = new URLSearchParams({ city: accommodationDialog.city });
+      if (accommodationDialog.startDate) params.append('startDate', accommodationDialog.startDate);
+      if (accommodationDialog.endDate) params.append('endDate', accommodationDialog.endDate);
+      const res = await fetch(`/api/travel/housing-by-city?${params}`);
+      if (!res.ok) return [];
+      return res.json() as Promise<MTHostListing[]>;
+    },
+    enabled: !!accommodationDialog,
+  });
+
+  // Handle MT Host listing selection - auto-fill form
+  const selectMTHostListing = (listing: MTHostListing) => {
+    itemForm.setValue('title', `${listing.title} (MT Host)`);
+    itemForm.setValue('location', listing.address);
+    itemForm.setValue('cost', listing.totalCost);
+    itemForm.setValue('description', `${listing.propertyType} hosted by ${listing.hostName || 'MT Host'} - ${listing.bedrooms || 0} bed, ${listing.bathrooms || 0} bath, ${listing.maxGuests || 2} guests. ${listing.amenities?.slice(0, 5).join(', ') || ''}`);
+    setAccommodationTab('manual');
+    toast({ title: "MT Host selected!", description: `${listing.title} added to your trip` });
+  };
 
   // Filter events by search query
   const filteredEvents = cityEvents?.filter(event => 
@@ -733,7 +784,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
                                   </div>
                                 )}
                                 {isOwnProfile && (
-                                  <Button variant="outline" size="sm" className="w-full" onClick={() => { itemForm.setValue('type', 'hotel'); setAccommodationDialog({ tripId: trip.id, city: trip.city }); }} data-testid={`button-add-accommodation-${index}`}>
+                                  <Button variant="outline" size="sm" className="w-full" onClick={() => { itemForm.setValue('type', 'hotel'); setAccommodationDialog({ tripId: trip.id, city: trip.city, startDate: trip.startDate, endDate: trip.endDate }); setAccommodationTab('mthost'); }} data-testid={`button-add-accommodation-${index}`}>
                                     <Plus className="h-4 w-4 mr-2" />Add Accommodation
                                   </Button>
                                 )}
@@ -958,76 +1009,175 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
         </div>
       )}
 
-      {/* Enhanced Accommodation Dialog */}
-      <Dialog open={!!accommodationDialog} onOpenChange={(open) => { if (!open) { setAccommodationDialog(null); itemForm.reset(); setScrapingUrl(''); } }}>
-        <DialogContent className="max-w-lg">
+      {/* Enhanced Accommodation Dialog with MT Host Integration */}
+      <Dialog open={!!accommodationDialog} onOpenChange={(open) => { if (!open) { setAccommodationDialog(null); itemForm.reset(); setScrapingUrl(''); setAccommodationTab('mthost'); } }}>
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-hidden flex flex-col">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Building2 className="h-5 w-5 text-purple-600" />
               Add Accommodation in {accommodationDialog?.city}
             </DialogTitle>
           </DialogHeader>
-          <Form {...itemForm}>
-            <form onSubmit={itemForm.handleSubmit((data) => { if (accommodationDialog) { addItemMutation.mutate({ tripId: accommodationDialog.tripId, data: { ...data, type: 'hotel' } }); setAccommodationDialog(null); } })} className="space-y-4">
-              
-              {/* Import from Link */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Import from Airbnb/Booking link</label>
-                <div className="flex gap-2">
-                  <Input 
-                    placeholder="Paste Airbnb or booking link..." 
-                    value={scrapingUrl}
-                    onChange={(e) => setScrapingUrl(e.target.value)}
-                    className="flex-1"
-                    data-testid="input-accommodation-url"
-                  />
-                  <Button 
-                    type="button" 
-                    variant="outline" 
-                    size="icon"
-                    disabled={!scrapingUrl || isScrapingAccommodation}
-                    onClick={() => scrapeAccommodation(scrapingUrl)}
-                    data-testid="button-scrape-accommodation"
-                  >
-                    {isScrapingAccommodation ? <Loader2 className="h-4 w-4 animate-spin" /> : <Link2 className="h-4 w-4" />}
-                  </Button>
-                </div>
-                <p className="text-xs text-muted-foreground">Auto-fill details from your booking link</p>
-              </div>
+          
+          <Tabs value={accommodationTab} onValueChange={(v) => setAccommodationTab(v as 'mthost' | 'manual')} className="flex-1 flex flex-col overflow-hidden">
+            <TabsList className="grid w-full grid-cols-2 mb-4">
+              <TabsTrigger value="mthost" className="flex items-center gap-2" data-testid="tab-mthost">
+                <Heart className="h-4 w-4" />
+                MT Hosts ({mtHostListings?.length || 0})
+              </TabsTrigger>
+              <TabsTrigger value="manual" className="flex items-center gap-2" data-testid="tab-manual">
+                <Plus className="h-4 w-4" />
+                Manual Entry
+              </TabsTrigger>
+            </TabsList>
 
-              <div className="relative"><div className="absolute inset-0 flex items-center"><span className="w-full border-t" /></div><div className="relative flex justify-center text-xs uppercase"><span className="bg-background px-2 text-muted-foreground">or enter manually</span></div></div>
+            {/* MT Host Listings Tab */}
+            <TabsContent value="mthost" className="flex-1 overflow-hidden mt-0">
+              <ScrollArea className="h-[400px]">
+                {mtHostLoading ? (
+                  <div className="flex items-center justify-center h-32">
+                    <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                  </div>
+                ) : mtHostListings && mtHostListings.length > 0 ? (
+                  <div className="space-y-3 pr-4">
+                    {mtHostListings.map((listing) => (
+                      <Card key={listing.id} className="hover-elevate cursor-pointer" onClick={() => selectMTHostListing(listing)} data-testid={`mthost-listing-${listing.id}`}>
+                        <CardContent className="p-4">
+                          <div className="flex gap-4">
+                            {/* Property Image */}
+                            <div className="w-24 h-24 rounded-lg overflow-hidden flex-shrink-0 bg-muted">
+                              {listing.coverPhotoUrl || listing.images?.[0] ? (
+                                <img 
+                                  src={listing.coverPhotoUrl || listing.images?.[0]} 
+                                  alt={listing.title}
+                                  className="w-full h-full object-cover"
+                                />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center">
+                                  <Home className="h-8 w-8 text-muted-foreground" />
+                                </div>
+                              )}
+                            </div>
+                            
+                            {/* Property Details */}
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-start justify-between gap-2">
+                                <div>
+                                  <h4 className="font-semibold truncate">{listing.title}</h4>
+                                  <div className="flex items-center gap-2 mt-1">
+                                    <Badge variant="secondary" className="text-xs bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300">
+                                      <Heart className="h-3 w-3 mr-1" />MT Host
+                                    </Badge>
+                                    <span className="text-xs text-muted-foreground">{listing.propertyType}</span>
+                                  </div>
+                                </div>
+                                <div className="text-right flex-shrink-0">
+                                  <p className="font-bold text-primary">${listing.totalCost}</p>
+                                  <p className="text-xs text-muted-foreground">${listing.pricePerNight}/night</p>
+                                </div>
+                              </div>
+                              
+                              <p className="text-sm text-muted-foreground mt-2 flex items-center gap-1 truncate">
+                                <MapPin className="h-3 w-3 flex-shrink-0" />{listing.address}
+                              </p>
+                              
+                              <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
+                                <span>{listing.bedrooms || 0} bed</span>
+                                <span>{listing.bathrooms || 0} bath</span>
+                                <span><Users className="h-3 w-3 inline mr-1" />{listing.maxGuests || 2}</span>
+                              </div>
+                              
+                              {/* Host Info */}
+                              <div className="flex items-center gap-2 mt-3">
+                                <Avatar className="h-6 w-6">
+                                  <AvatarImage src={listing.hostProfileImage} />
+                                  <AvatarFallback>{listing.hostName?.charAt(0) || 'H'}</AvatarFallback>
+                                </Avatar>
+                                <span className="text-xs text-muted-foreground">Hosted by {listing.hostName || 'MT Host'}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center h-32 text-muted-foreground">
+                    <Home className="h-8 w-8 mb-2 opacity-50" />
+                    <p className="text-sm">No MT Hosts available in {accommodationDialog?.city}</p>
+                    <Button variant="link" size="sm" onClick={() => setAccommodationTab('manual')} className="mt-2">
+                      Add manually instead
+                    </Button>
+                  </div>
+                )}
+              </ScrollArea>
+            </TabsContent>
 
-              <FormField control={itemForm.control} name="title" render={({ field }) => (
-                <FormItem><FormLabel>Property Name *</FormLabel><FormControl><Input placeholder="e.g., Cozy Apartment in Palermo" {...field} data-testid="input-accommodation-title" /></FormControl><FormMessage /></FormItem>
-              )} />
-              
-              <FormField control={itemForm.control} name="location" render={({ field }) => (
-                <FormItem><FormLabel>Full Address *</FormLabel><FormControl><Input placeholder="e.g., Av. Santa Fe 1234, Palermo, Buenos Aires" {...field} data-testid="input-accommodation-address" /></FormControl><FormMessage /></FormItem>
-              )} />
+            {/* Manual Entry Tab */}
+            <TabsContent value="manual" className="flex-1 overflow-auto mt-0">
+              <Form {...itemForm}>
+                <form onSubmit={itemForm.handleSubmit((data) => { if (accommodationDialog) { addItemMutation.mutate({ tripId: accommodationDialog.tripId, data: { ...data, type: 'hotel' } }); setAccommodationDialog(null); } })} className="space-y-4">
+                  
+                  {/* Import from Link */}
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Import from Airbnb/Booking link</label>
+                    <div className="flex gap-2">
+                      <Input 
+                        placeholder="Paste Airbnb or booking link..." 
+                        value={scrapingUrl}
+                        onChange={(e) => setScrapingUrl(e.target.value)}
+                        className="flex-1"
+                        data-testid="input-accommodation-url"
+                      />
+                      <Button 
+                        type="button" 
+                        variant="outline" 
+                        size="icon"
+                        disabled={!scrapingUrl || isScrapingAccommodation}
+                        onClick={() => scrapeAccommodation(scrapingUrl)}
+                        data-testid="button-scrape-accommodation"
+                      >
+                        {isScrapingAccommodation ? <Loader2 className="h-4 w-4 animate-spin" /> : <Link2 className="h-4 w-4" />}
+                      </Button>
+                    </div>
+                    <p className="text-xs text-muted-foreground">Auto-fill details from your booking link</p>
+                  </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <FormField control={itemForm.control} name="date" render={({ field }) => (
-                  <FormItem><FormLabel>Check-in Date</FormLabel><FormControl><Input type="datetime-local" {...field} data-testid="input-accommodation-checkin" /></FormControl><FormMessage /></FormItem>
-                )} />
-                <FormField control={itemForm.control} name="cost" render={({ field }) => (
-                  <FormItem><FormLabel>Total Cost (USD)</FormLabel><FormControl><Input type="number" placeholder="500" {...field} onChange={(e) => field.onChange(e.target.valueAsNumber)} data-testid="input-accommodation-cost" /></FormControl><FormMessage /></FormItem>
-                )} />
-              </div>
+                  <div className="relative"><div className="absolute inset-0 flex items-center"><span className="w-full border-t" /></div><div className="relative flex justify-center text-xs uppercase"><span className="bg-background px-2 text-muted-foreground">or enter manually</span></div></div>
 
-              <FormField control={itemForm.control} name="description" render={({ field }) => (
-                <FormItem><FormLabel>Notes</FormLabel><FormControl><Textarea placeholder="Amenities, special instructions..." {...field} rows={2} data-testid="input-accommodation-notes" /></FormControl><FormMessage /></FormItem>
-              )} />
+                  <FormField control={itemForm.control} name="title" render={({ field }) => (
+                    <FormItem><FormLabel>Property Name *</FormLabel><FormControl><Input placeholder="e.g., Cozy Apartment in Palermo" {...field} data-testid="input-accommodation-title" /></FormControl><FormMessage /></FormItem>
+                  )} />
+                  
+                  <FormField control={itemForm.control} name="location" render={({ field }) => (
+                    <FormItem><FormLabel>Full Address *</FormLabel><FormControl><Input placeholder="e.g., Av. Santa Fe 1234, Palermo, Buenos Aires" {...field} data-testid="input-accommodation-address" /></FormControl><FormMessage /></FormItem>
+                  )} />
 
-              <FormField control={itemForm.control} name="bookingUrl" render={({ field }) => (
-                <FormItem><FormLabel>Booking Confirmation URL</FormLabel><FormControl><Input placeholder="https://..." {...field} data-testid="input-accommodation-booking-url" /></FormControl><FormMessage /></FormItem>
-              )} />
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField control={itemForm.control} name="date" render={({ field }) => (
+                      <FormItem><FormLabel>Check-in Date</FormLabel><FormControl><Input type="datetime-local" {...field} data-testid="input-accommodation-checkin" /></FormControl><FormMessage /></FormItem>
+                    )} />
+                    <FormField control={itemForm.control} name="cost" render={({ field }) => (
+                      <FormItem><FormLabel>Total Cost (USD)</FormLabel><FormControl><Input type="number" placeholder="500" {...field} onChange={(e) => field.onChange(e.target.valueAsNumber)} data-testid="input-accommodation-cost" /></FormControl><FormMessage /></FormItem>
+                    )} />
+                  </div>
 
-              <div className="flex gap-2 pt-2">
-                <Button type="button" variant="outline" onClick={() => { setAccommodationDialog(null); itemForm.reset(); setScrapingUrl(''); }} className="flex-1" data-testid="button-cancel-accommodation">Cancel</Button>
-                <Button type="submit" className="flex-1" disabled={addItemMutation.isPending} data-testid="button-submit-accommodation">{addItemMutation.isPending ? "Adding..." : "Add Accommodation"}</Button>
-              </div>
-            </form>
-          </Form>
+                  <FormField control={itemForm.control} name="description" render={({ field }) => (
+                    <FormItem><FormLabel>Notes</FormLabel><FormControl><Textarea placeholder="Amenities, special instructions..." {...field} rows={2} data-testid="input-accommodation-notes" /></FormControl><FormMessage /></FormItem>
+                  )} />
+
+                  <FormField control={itemForm.control} name="bookingUrl" render={({ field }) => (
+                    <FormItem><FormLabel>Booking Confirmation URL</FormLabel><FormControl><Input placeholder="https://..." {...field} data-testid="input-accommodation-booking-url" /></FormControl><FormMessage /></FormItem>
+                  )} />
+
+                  <div className="flex gap-2 pt-2">
+                    <Button type="button" variant="outline" onClick={() => { setAccommodationDialog(null); itemForm.reset(); setScrapingUrl(''); }} className="flex-1" data-testid="button-cancel-accommodation">Cancel</Button>
+                    <Button type="submit" className="flex-1" disabled={addItemMutation.isPending} data-testid="button-submit-accommodation">{addItemMutation.isPending ? "Adding..." : "Add Accommodation"}</Button>
+                  </div>
+                </form>
+              </Form>
+            </TabsContent>
+          </Tabs>
         </DialogContent>
       </Dialog>
 
