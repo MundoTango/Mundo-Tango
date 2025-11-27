@@ -236,10 +236,45 @@ export const useReportPost = () => {
         description: "Thank you for helping keep our community safe",
       });
     },
-    onError: () => {
+    onError: (err: any) => {
+      console.error('Report error:', err);
       toast({
         title: "Report failed",
         description: "Could not submit report",
+        variant: "destructive",
+      });
+    },
+  });
+};
+
+// EDIT
+export const useEditPost = () => {
+  const { toast } = useToast();
+  
+  return useMutation({
+    mutationFn: async ({ postId, data }: { postId: number; data: any }) => {
+      return apiRequest('PATCH', `/api/posts/${postId}`, data);
+    },
+    onSuccess: (_, variables) => {
+      queryClient.removeQueries({ queryKey: ['/api/posts'] });
+      queryClient.removeQueries({ queryKey: ['infinite-feed'] });
+      queryClient.removeQueries({ queryKey: ['/api/posts', variables.postId] });
+      
+      setTimeout(() => {
+        queryClient.refetchQueries({ queryKey: ['/api/posts'] });
+        queryClient.refetchQueries({ queryKey: ['infinite-feed'] });
+      }, 100);
+      
+      toast({
+        title: "Post updated",
+        description: "Your changes have been saved",
+      });
+    },
+    onError: (err: any) => {
+      console.error('Edit error:', err);
+      toast({
+        title: "Update failed",
+        description: "Could not update post",
         variant: "destructive",
       });
     },
@@ -255,9 +290,17 @@ export const useDeletePost = () => {
       return apiRequest('DELETE', `/api/posts/${postId}`);
     },
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['/api/posts'] });
-      queryClient.invalidateQueries({ queryKey: ['infinite-feed'] });
+      // Clear all feed-related caches
+      queryClient.removeQueries({ queryKey: ['/api/posts'] });
+      queryClient.removeQueries({ queryKey: ['infinite-feed'] });
       queryClient.removeQueries({ queryKey: ['/api/posts', variables.postId] });
+      
+      // Also refetch to ensure consistency
+      setTimeout(() => {
+        queryClient.refetchQueries({ queryKey: ['/api/posts'] });
+        queryClient.refetchQueries({ queryKey: ['infinite-feed'] });
+      }, 100);
+      
       toast({
         title: "Post deleted",
         description: "Your post has been removed",
