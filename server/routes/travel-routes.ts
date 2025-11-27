@@ -86,14 +86,18 @@ router.post("/plans", authenticateToken, async (req: AuthRequest, res: Response)
       return res.status(400).json({ message: "City, start date, and end date are required" });
     }
 
+    // Convert ISO string dates to Date objects for Drizzle ORM timestamp columns
+    const startDateObj = new Date(startDate);
+    const endDateObj = new Date(endDate);
+    
     const result = await db.insert(travelPlans).values({
       userId,
       city,
       country: country || null,
       cities: cities && cities.length > 0 ? JSON.stringify(cities) : JSON.stringify([]),
-      startDate,
-      endDate,
-      tripDuration: tripDuration || Math.ceil((new Date(endDate).getTime() - new Date(startDate).getTime()) / (1000 * 60 * 60 * 24)),
+      startDate: startDateObj,
+      endDate: endDateObj,
+      tripDuration: tripDuration || Math.ceil((endDateObj.getTime() - startDateObj.getTime()) / (1000 * 60 * 60 * 24)),
       budget: budget || null,
       interests: interests || [],
       travelStyle: travelStyle || null,
