@@ -331,10 +331,14 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
       const res = await apiRequest("PATCH", `/api/travel/plans/${tripId}`, { status });
       return await res.json();
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/travel/plans"] });
-      queryClient.refetchQueries({ queryKey: ["/api/travel/plans"] });
+    onSuccess: async () => {
+      // Invalidate and immediately refetch to ensure UI updates
+      await queryClient.invalidateQueries({ queryKey: ["/api/travel/plans"] });
+      await queryClient.refetchQueries({ queryKey: ["/api/travel/plans"] });
       toast({ title: "Trip status updated!" });
+    },
+    onError: (error) => {
+      toast({ title: "Failed to update status", description: "Please try again.", variant: "destructive" });
     },
   });
 
@@ -719,7 +723,10 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
                     <span>{new Date(trip.startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - {new Date(trip.endDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                     <span>({trip.tripDuration} {trip.tripDuration === 1 ? 'day' : 'days'})</span>
                     {isOwnProfile && (
-                      <Select value={trip.status || 'planning'} onValueChange={(status) => updateStatusMutation.mutate({ tripId: trip.id, status })} disabled={updateStatusMutation.isPending}>
+                      <Select value={trip.status || 'planning'} onValueChange={(status) => {
+                        // Always trigger mutation, even if value is the same (allows re-selecting)
+                        updateStatusMutation.mutate({ tripId: trip.id, status });
+                      }} disabled={updateStatusMutation.isPending} key={`${trip.id}-${trip.status}`}>
                         <SelectTrigger className="w-auto h-6 text-xs bg-white/20 border-white/30 text-white" data-testid={`select-status-${index}`}>
                           <SelectValue />
                         </SelectTrigger>
