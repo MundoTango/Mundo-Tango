@@ -39,6 +39,7 @@ interface TravelPlan {
   endDate: string;
   tripDuration: number;
   status: string;
+  notes?: string;
   items?: TravelPlanItem[];
 }
 
@@ -892,6 +893,30 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
                                 </div>
                               </CardContent>
                             </Card>
+
+                            {/* Trip Notes - Show for completed trips with notes */}
+                            {trip.notes && (
+                              <Card className="border-green-500/20 bg-green-500/5">
+                                <CardContent className="py-4">
+                                  <div className="flex items-start gap-3">
+                                    <div className="p-2 rounded-full bg-green-500/10">
+                                      <FileText className="h-5 w-5 text-green-600" />
+                                    </div>
+                                    <div className="flex-1">
+                                      <div className="flex items-center gap-2 mb-2">
+                                        <h4 className="font-semibold text-green-700 dark:text-green-400">Trip Notes</h4>
+                                        {trip.status === 'completed' && (
+                                          <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/30 text-xs">
+                                            <Check className="h-3 w-3 mr-1" />Completed
+                                          </Badge>
+                                        )}
+                                      </div>
+                                      <p className="text-sm text-muted-foreground whitespace-pre-wrap" data-testid={`text-trip-notes-${index}`}>{trip.notes}</p>
+                                    </div>
+                                  </div>
+                                </CardContent>
+                              </Card>
+                            )}
 
                             {/* Accommodation Section */}
                             <Card>
