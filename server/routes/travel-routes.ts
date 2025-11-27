@@ -1,8 +1,81 @@
 import { Router, Response } from "express";
 import { db } from "@shared/db";
-import { travelPlans, travelPlanItems, users, events } from "@shared/schema";
-import { eq, desc, and, gte, lte, or, ilike } from "drizzle-orm";
+import { travelPlans, travelPlanItems, users, events, housingListings } from "@shared/schema";
+import { eq, desc, and, gte, lte, or, ilike, isNotNull } from "drizzle-orm";
 import { authenticateToken, AuthRequest } from "../middleware/auth";
+import * as cheerio from "cheerio";
+import axios from "axios";
+
+// TypeScript types for scraping responses
+interface ScrapedAccommodation {
+  title: string;
+  price: string | null;
+  pricePerNight: number | null;
+  currency: string;
+  address: string | null;
+  city: string | null;
+  country: string | null;
+  images: string[];
+  amenities: string[];
+  description: string | null;
+  rating: number | null;
+  reviewCount: number | null;
+  hostName: string | null;
+  propertyType: string | null;
+  maxGuests: number | null;
+  bedrooms: number | null;
+  bathrooms: number | null;
+  url: string;
+  scrapedAt: string;
+}
+
+interface ScrapedTransport {
+  type: 'flight' | 'train' | 'bus' | 'ferry' | 'unknown';
+  provider: string | null;
+  departure: {
+    location: string | null;
+    time: string | null;
+    date: string | null;
+  };
+  arrival: {
+    location: string | null;
+    time: string | null;
+    date: string | null;
+  };
+  duration: string | null;
+  price: string | null;
+  priceValue: number | null;
+  currency: string;
+  bookingUrl: string | null;
+  stops: number | null;
+  class: string | null;
+  url: string;
+  scrapedAt: string;
+}
+
+interface MTHost {
+  id: number;
+  name: string;
+  username: string;
+  profileImage: string | null;
+  city: string | null;
+  country: string | null;
+  bio: string | null;
+  tangoRoles: string[] | null;
+  languages: string[] | null;
+  listings: {
+    id: number;
+    title: string;
+    propertyType: string;
+    pricePerNight: number;
+    currency: string | null;
+    bedrooms: number | null;
+    maxGuests: number | null;
+    images: string[] | null;
+    amenities: string[] | null;
+    rating: number | null;
+  }[];
+}
 
 const router = Router();
 
@@ -332,5 +405,524 @@ router.get("/events-by-city", async (req: AuthRequest, res: Response) => {
     res.status(500).json({ message: "Failed to fetch events" });
   }
 });
+
+// POST /api/travel/scrape-accommodation - Scrape accommodation details from URL
+router.post("/scrape-accommodation", async (req: AuthRequest, res: Response) => {
+  try {
+    const { url } = req.body;
+
+    if (!url) {
+      return res.status(400).json({ message: "URL is required" });
+    }
+
+    // Validate URL format
+    let parsedUrl: URL;
+    try {
+      parsedUrl = new URL(url);
+    } catch {
+      return res.status(400).json({ message: "Invalid URL format" });
+    }
+
+    // Fetch the page HTML
+    let html: string;
+    try {
+      const response = await axios.get(url, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+          'Accept-Language': 'en-US,en;q=0.5',
+        },
+        timeout: 15000,
+      });
+      html = response.data;
+    } catch (fetchError: any) {
+      console.error("Error fetching accommodation URL:", fetchError.message);
+      return res.status(422).json({ 
+        message: "Failed to fetch the URL. The site may be blocking requests or the URL is inaccessible.",
+        error: fetchError.message
+      });
+    }
+
+    const $ = cheerio.load(html);
+    
+    // Generic accommodation scraping patterns for various booking sites
+    const accommodation: ScrapedAccommodation = {
+      title: extractText($, [
+        'h1[data-testid="listing-title"]',
+        'h1._fecoyn4',
+        'h1[data-section-id="TITLE"]',
+        'h1.listing-title',
+        'h1[itemprop="name"]',
+        'meta[property="og:title"]',
+        'h1',
+      ], 'attr:content'),
+      price: extractText($, [
+        'span[data-testid="price-per-night"]',
+        'span._tyxjp1',
+        '.price-amount',
+        '[data-testid="price"]',
+        '.listing-price',
+        'span[itemprop="price"]',
+      ]),
+      pricePerNight: null,
+      currency: 'USD',
+      address: extractText($, [
+        '[data-testid="location-text"]',
+        'address',
+        '.location-text',
+        '[itemprop="address"]',
+        'meta[property="og:locality"]',
+      ], 'attr:content'),
+      city: null,
+      country: null,
+      images: extractImages($, [
+        'img[data-testid="photo-viewer-image"]',
+        'img._6tbg2q',
+        '.listing-image img',
+        '[data-testid="listing-image"] img',
+        'meta[property="og:image"]',
+      ]),
+      amenities: extractListItems($, [
+        '[data-testid="amenity-row"]',
+        '.amenities-list li',
+        '[data-section-id="AMENITIES"] li',
+        '.amenity-item',
+      ]),
+      description: extractText($, [
+        '[data-section-id="DESCRIPTION"]',
+        '.listing-description',
+        '[itemprop="description"]',
+        'meta[property="og:description"]',
+      ], 'attr:content'),
+      rating: extractNumber($, [
+        '[data-testid="rating-value"]',
+        '.rating-value',
+        '[itemprop="ratingValue"]',
+        'span._17p6nbba',
+      ]),
+      reviewCount: extractNumber($, [
+        '[data-testid="review-count"]',
+        '.review-count',
+        '[itemprop="reviewCount"]',
+      ]),
+      hostName: extractText($, [
+        '[data-testid="host-name"]',
+        '.host-name',
+        '.hosted-by-name',
+      ]),
+      propertyType: extractText($, [
+        '[data-testid="property-type"]',
+        '.property-type',
+        '.listing-type',
+      ]),
+      maxGuests: extractNumber($, [
+        '[data-testid="guest-capacity"]',
+        '.max-guests',
+        '.guest-count',
+      ]),
+      bedrooms: extractNumber($, [
+        '[data-testid="bedroom-count"]',
+        '.bedroom-count',
+        '.bedrooms',
+      ]),
+      bathrooms: extractNumber($, [
+        '[data-testid="bathroom-count"]',
+        '.bathroom-count',
+        '.bathrooms',
+      ]),
+      url,
+      scrapedAt: new Date().toISOString(),
+    };
+
+    // Extract price value
+    if (accommodation.price) {
+      const priceMatch = accommodation.price.match(/[\d,]+\.?\d*/);
+      if (priceMatch) {
+        accommodation.pricePerNight = parseFloat(priceMatch[0].replace(/,/g, ''));
+      }
+      // Detect currency
+      if (accommodation.price.includes('€')) accommodation.currency = 'EUR';
+      else if (accommodation.price.includes('£')) accommodation.currency = 'GBP';
+      else if (accommodation.price.includes('¥')) accommodation.currency = 'JPY';
+      else if (accommodation.price.includes('$')) accommodation.currency = 'USD';
+    }
+
+    // Parse location into city/country if address available
+    if (accommodation.address) {
+      const locationParts = accommodation.address.split(',').map(s => s.trim());
+      if (locationParts.length >= 2) {
+        accommodation.city = locationParts[locationParts.length - 2] || null;
+        accommodation.country = locationParts[locationParts.length - 1] || null;
+      }
+    }
+
+    res.json({
+      success: true,
+      data: accommodation,
+    });
+  } catch (error) {
+    console.error("Error scraping accommodation:", error);
+    res.status(500).json({ message: "Failed to scrape accommodation data" });
+  }
+});
+
+// GET /api/travel/mt-hosts - Get Mundo Tango hosts in a city
+router.get("/mt-hosts", async (req: AuthRequest, res: Response) => {
+  try {
+    const { city, country, roles, limit = 20, offset = 0 } = req.query;
+
+    if (!city) {
+      return res.status(400).json({ message: "City parameter is required" });
+    }
+
+    const cityName = city as string;
+    const countryName = country as string | undefined;
+    const roleFilter = roles ? (roles as string).split(',') : null;
+    const limitNum = Math.min(parseInt(limit as string) || 20, 50);
+    const offsetNum = parseInt(offset as string) || 0;
+
+    // First, get users who have housing listings in the specified city
+    const hostListings = await db.select({
+      hostId: housingListings.hostId,
+      listingId: housingListings.id,
+      title: housingListings.title,
+      propertyType: housingListings.propertyType,
+      pricePerNight: housingListings.pricePerNight,
+      currency: housingListings.currency,
+      bedrooms: housingListings.bedrooms,
+      maxGuests: housingListings.maxGuests,
+      images: housingListings.images,
+      amenities: housingListings.amenities,
+      listingCity: housingListings.city,
+      listingCountry: housingListings.country,
+    })
+    .from(housingListings)
+    .where(and(
+      ilike(housingListings.city, `%${cityName}%`),
+      eq(housingListings.isActive, true),
+      countryName ? ilike(housingListings.country, `%${countryName}%`) : undefined,
+    ));
+
+    // Get unique host IDs
+    const hostIds = [...new Set(hostListings.map(l => l.hostId))];
+
+    if (hostIds.length === 0) {
+      return res.json({
+        hosts: [],
+        total: 0,
+        city: cityName,
+        country: countryName || null,
+      });
+    }
+
+    // Fetch host user profiles
+    let hostsQuery = db.select({
+      id: users.id,
+      name: users.name,
+      username: users.username,
+      profileImage: users.profileImage,
+      city: users.city,
+      country: users.country,
+      bio: users.bio,
+      tangoRoles: users.tangoRoles,
+      languages: users.languages,
+    })
+    .from(users)
+    .where(and(
+      eq(users.isActive, true),
+      ...hostIds.length > 0 ? [or(...hostIds.map(id => eq(users.id, id)))] : [],
+    ))
+    .limit(limitNum)
+    .offset(offsetNum);
+
+    const hostUsers = await hostsQuery;
+
+    // Build response with listings attached to each host
+    const hosts: MTHost[] = hostUsers
+      .filter(host => {
+        // Filter by roles if specified
+        if (roleFilter && roleFilter.length > 0) {
+          if (!host.tangoRoles) return false;
+          return roleFilter.some(role => host.tangoRoles?.includes(role));
+        }
+        return true;
+      })
+      .map(host => ({
+        id: host.id,
+        name: host.name,
+        username: host.username,
+        profileImage: host.profileImage,
+        city: host.city,
+        country: host.country,
+        bio: host.bio,
+        tangoRoles: host.tangoRoles,
+        languages: host.languages,
+        listings: hostListings
+          .filter(l => l.hostId === host.id)
+          .map(l => ({
+            id: l.listingId,
+            title: l.title,
+            propertyType: l.propertyType,
+            pricePerNight: l.pricePerNight,
+            currency: l.currency,
+            bedrooms: l.bedrooms,
+            maxGuests: l.maxGuests,
+            images: l.images,
+            amenities: l.amenities,
+            rating: null,
+          })),
+      }));
+
+    res.json({
+      hosts,
+      total: hosts.length,
+      city: cityName,
+      country: countryName || null,
+    });
+  } catch (error) {
+    console.error("Error fetching MT hosts:", error);
+    res.status(500).json({ message: "Failed to fetch hosts" });
+  }
+});
+
+// POST /api/travel/scrape-transport - Scrape transport details from booking sites
+router.post("/scrape-transport", async (req: AuthRequest, res: Response) => {
+  try {
+    const { url } = req.body;
+
+    if (!url) {
+      return res.status(400).json({ message: "URL is required" });
+    }
+
+    // Validate URL format
+    let parsedUrl: URL;
+    try {
+      parsedUrl = new URL(url);
+    } catch {
+      return res.status(400).json({ message: "Invalid URL format" });
+    }
+
+    // Detect transport type from URL
+    const hostname = parsedUrl.hostname.toLowerCase();
+    let transportType: ScrapedTransport['type'] = 'unknown';
+    
+    if (hostname.includes('flight') || hostname.includes('airline') || 
+        hostname.includes('skyscanner') || hostname.includes('kayak') ||
+        hostname.includes('expedia') || hostname.includes('google.com/flights')) {
+      transportType = 'flight';
+    } else if (hostname.includes('train') || hostname.includes('rail') || 
+               hostname.includes('amtrak') || hostname.includes('eurostar') ||
+               hostname.includes('trainline') || hostname.includes('renfe')) {
+      transportType = 'train';
+    } else if (hostname.includes('bus') || hostname.includes('greyhound') || 
+               hostname.includes('flixbus') || hostname.includes('megabus')) {
+      transportType = 'bus';
+    } else if (hostname.includes('ferry') || hostname.includes('cruise')) {
+      transportType = 'ferry';
+    }
+
+    // Fetch the page HTML
+    let html: string;
+    try {
+      const response = await axios.get(url, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+          'Accept-Language': 'en-US,en;q=0.5',
+        },
+        timeout: 15000,
+      });
+      html = response.data;
+    } catch (fetchError: any) {
+      console.error("Error fetching transport URL:", fetchError.message);
+      return res.status(422).json({ 
+        message: "Failed to fetch the URL. The site may be blocking requests or the URL is inaccessible.",
+        error: fetchError.message
+      });
+    }
+
+    const $ = cheerio.load(html);
+    
+    // Generic transport scraping patterns
+    const transport: ScrapedTransport = {
+      type: transportType,
+      provider: extractText($, [
+        '[data-testid="airline-name"]',
+        '.carrier-name',
+        '.provider-name',
+        '.airline-name',
+        '.operator-name',
+        'meta[property="og:site_name"]',
+      ], 'attr:content'),
+      departure: {
+        location: extractText($, [
+          '[data-testid="departure-city"]',
+          '.departure-city',
+          '.origin-name',
+          '.from-location',
+          '[itemprop="departureStation"]',
+        ]),
+        time: extractText($, [
+          '[data-testid="departure-time"]',
+          '.departure-time',
+          '.depart-time',
+          '[itemprop="departureTime"]',
+        ]),
+        date: extractText($, [
+          '[data-testid="departure-date"]',
+          '.departure-date',
+          '.depart-date',
+        ]),
+      },
+      arrival: {
+        location: extractText($, [
+          '[data-testid="arrival-city"]',
+          '.arrival-city',
+          '.destination-name',
+          '.to-location',
+          '[itemprop="arrivalStation"]',
+        ]),
+        time: extractText($, [
+          '[data-testid="arrival-time"]',
+          '.arrival-time',
+          '.arrive-time',
+          '[itemprop="arrivalTime"]',
+        ]),
+        date: extractText($, [
+          '[data-testid="arrival-date"]',
+          '.arrival-date',
+          '.arrive-date',
+        ]),
+      },
+      duration: extractText($, [
+        '[data-testid="duration"]',
+        '.trip-duration',
+        '.flight-duration',
+        '.journey-time',
+      ]),
+      price: extractText($, [
+        '[data-testid="price"]',
+        '.price-amount',
+        '.total-price',
+        '.fare-price',
+        '[itemprop="price"]',
+      ]),
+      priceValue: null,
+      currency: 'USD',
+      bookingUrl: url,
+      stops: extractNumber($, [
+        '[data-testid="stops"]',
+        '.stops-count',
+        '.num-stops',
+      ]),
+      class: extractText($, [
+        '[data-testid="cabin-class"]',
+        '.cabin-class',
+        '.travel-class',
+        '.service-class',
+      ]),
+      url,
+      scrapedAt: new Date().toISOString(),
+    };
+
+    // Extract price value
+    if (transport.price) {
+      const priceMatch = transport.price.match(/[\d,]+\.?\d*/);
+      if (priceMatch) {
+        transport.priceValue = parseFloat(priceMatch[0].replace(/,/g, ''));
+      }
+      // Detect currency
+      if (transport.price.includes('€')) transport.currency = 'EUR';
+      else if (transport.price.includes('£')) transport.currency = 'GBP';
+      else if (transport.price.includes('¥')) transport.currency = 'JPY';
+      else if (transport.price.includes('$')) transport.currency = 'USD';
+    }
+
+    res.json({
+      success: true,
+      data: transport,
+    });
+  } catch (error) {
+    console.error("Error scraping transport:", error);
+    res.status(500).json({ message: "Failed to scrape transport data" });
+  }
+});
+
+// Helper function to extract text from multiple selectors
+function extractText($: cheerio.CheerioAPI, selectors: string[], fallbackAttr?: string): string | null {
+  for (const selector of selectors) {
+    const element = $(selector).first();
+    if (element.length) {
+      // Check for meta tags that use content attribute
+      if (selector.startsWith('meta[') || fallbackAttr === 'attr:content') {
+        const content = element.attr('content');
+        if (content) return content.trim();
+      }
+      const text = element.text().trim();
+      if (text) return text;
+    }
+  }
+  return null;
+}
+
+// Helper function to extract number from multiple selectors
+function extractNumber($: cheerio.CheerioAPI, selectors: string[]): number | null {
+  for (const selector of selectors) {
+    const element = $(selector).first();
+    if (element.length) {
+      const text = element.text().trim();
+      const match = text.match(/[\d.]+/);
+      if (match) return parseFloat(match[0]);
+      
+      // Check content attribute for meta tags
+      const content = element.attr('content');
+      if (content) {
+        const contentMatch = content.match(/[\d.]+/);
+        if (contentMatch) return parseFloat(contentMatch[0]);
+      }
+    }
+  }
+  return null;
+}
+
+// Helper function to extract images from multiple selectors
+function extractImages($: cheerio.CheerioAPI, selectors: string[]): string[] {
+  const images: string[] = [];
+  const seenUrls = new Set<string>();
+  
+  for (const selector of selectors) {
+    $(selector).each((_, element) => {
+      let src = $(element).attr('src') || $(element).attr('data-src') || $(element).attr('content');
+      if (src && !seenUrls.has(src)) {
+        // Handle relative URLs
+        if (src.startsWith('//')) src = 'https:' + src;
+        seenUrls.add(src);
+        images.push(src);
+      }
+    });
+    if (images.length >= 10) break;
+  }
+  
+  return images.slice(0, 10);
+}
+
+// Helper function to extract list items
+function extractListItems($: cheerio.CheerioAPI, selectors: string[]): string[] {
+  const items: string[] = [];
+  const seenItems = new Set<string>();
+  
+  for (const selector of selectors) {
+    $(selector).each((_, element) => {
+      const text = $(element).text().trim();
+      if (text && !seenItems.has(text) && text.length < 100) {
+        seenItems.add(text);
+        items.push(text);
+      }
+    });
+    if (items.length >= 20) break;
+  }
+  
+  return items.slice(0, 20);
+}
 
 export default router;

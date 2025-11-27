@@ -13,7 +13,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Plane, Calendar as CalendarIcon, MapPin, DollarSign, Sparkles, FileText, Briefcase, Home, Utensils, Heart, Plus, ChevronDown, ChevronUp, TrendingUp, X, Edit, Users, Trash2, Clock, Check, PieChart, Download, Train, Ship, Bus, Car, Music, Ticket, Building2 } from "lucide-react";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Plane, Calendar as CalendarIcon, MapPin, DollarSign, Sparkles, FileText, Briefcase, Home, Utensils, Heart, Plus, ChevronDown, ChevronUp, TrendingUp, X, Edit, Users, Trash2, Clock, Check, PieChart, Download, Train, Ship, Bus, Car, Music, Ticket, Building2, Link2, Search, ExternalLink, Loader2, Anchor } from "lucide-react";
 
 import buenosAiresImg from "@assets/stock_images/buenos_aires_argenti_afa3bd1f.jpg";
 import milanImg from "@assets/stock_images/milan_italy_duomo_ca_513cf7b4.jpg";
@@ -160,6 +161,15 @@ interface CityOption {
   endDate?: Date;
 }
 
+// Transport type icons for icon-based selection
+const transportTypes = [
+  { id: 'flight', label: 'Flight', icon: Plane, color: 'bg-blue-500/10 text-blue-600 border-blue-500/30' },
+  { id: 'train', label: 'Train', icon: Train, color: 'bg-green-500/10 text-green-600 border-green-500/30' },
+  { id: 'bus', label: 'Bus', icon: Bus, color: 'bg-orange-500/10 text-orange-600 border-orange-500/30' },
+  { id: 'car', label: 'Car', icon: Car, color: 'bg-purple-500/10 text-purple-600 border-purple-500/30' },
+  { id: 'boat', label: 'Boat', icon: Anchor, color: 'bg-cyan-500/10 text-cyan-600 border-cyan-500/30' },
+];
+
 export default function ProfileTabTravel({ profileId, isOwnProfile = false }: ProfileTabTravelProps) {
   const [expandedTrips, setExpandedTrips] = useState<Set<number>>(new Set([0]));
   const [showCreateForm, setShowCreateForm] = useState(false);
@@ -168,6 +178,18 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
   const [tripTabs, setTripTabs] = useState<Record<number, string>>({});
   const [selectedCities, setSelectedCities] = useState<CityOption[]>([]);
   const [activeRangePickerIdx, setActiveRangePickerIdx] = useState<number | null>(null);
+  
+  // Enhanced dialog states
+  const [accommodationDialog, setAccommodationDialog] = useState<{ tripId: number; city: string } | null>(null);
+  const [transportDialog, setTransportDialog] = useState<{ tripId: number; city: string } | null>(null);
+  const [eventsDialog, setEventsDialog] = useState<{ tripId: number; city: string; startDate: string; endDate: string } | null>(null);
+  const [selectedTransportType, setSelectedTransportType] = useState<string>('flight');
+  const [scrapingUrl, setScrapingUrl] = useState('');
+  const [isScrapingAccommodation, setIsScrapingAccommodation] = useState(false);
+  const [isScrapingTransport, setIsScrapingTransport] = useState(false);
+  const [eventSearchQuery, setEventSearchQuery] = useState('');
+  const [selectedEvent, setSelectedEvent] = useState<CityEvent | null>(null);
+  
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -264,6 +286,84 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
       toast({ title: "Trip deleted" });
     },
   });
+
+  // Query for city events when dialog opens
+  const { data: cityEvents, isLoading: eventsLoading } = useQuery({
+    queryKey: ['/api/travel/events-by-city', eventsDialog?.city, eventsDialog?.startDate, eventsDialog?.endDate],
+    queryFn: async () => {
+      if (!eventsDialog) return [];
+      const params = new URLSearchParams({ city: eventsDialog.city });
+      if (eventsDialog.startDate) params.append('startDate', eventsDialog.startDate);
+      if (eventsDialog.endDate) params.append('endDate', eventsDialog.endDate);
+      const res = await fetch(`/api/travel/events-by-city?${params}`);
+      if (!res.ok) return [];
+      return res.json() as Promise<CityEvent[]>;
+    },
+    enabled: !!eventsDialog,
+  });
+
+  // Filter events by search query
+  const filteredEvents = cityEvents?.filter(event => 
+    !eventSearchQuery || 
+    event.title.toLowerCase().includes(eventSearchQuery.toLowerCase()) ||
+    event.eventType.toLowerCase().includes(eventSearchQuery.toLowerCase())
+  ) || [];
+
+  // Scrape accommodation data from URL
+  const scrapeAccommodation = async (url: string) => {
+    setIsScrapingAccommodation(true);
+    try {
+      const res = await apiRequest("POST", "/api/travel/scrape-accommodation", { url });
+      const data = await res.json();
+      if (data.title) {
+        itemForm.setValue('title', data.title);
+        itemForm.setValue('location', data.address || data.city || '');
+        if (data.priceNumeric) itemForm.setValue('cost', data.priceNumeric);
+        if (data.description) itemForm.setValue('description', data.description);
+        toast({ title: "Data imported!", description: "Accommodation details filled from link" });
+      }
+    } catch (err) {
+      toast({ title: "Couldn't fetch data", description: "Please fill in details manually", variant: "destructive" });
+    } finally {
+      setIsScrapingAccommodation(false);
+    }
+  };
+
+  // Scrape transport data from URL
+  const scrapeTransport = async (url: string) => {
+    setIsScrapingTransport(true);
+    try {
+      const res = await apiRequest("POST", "/api/travel/scrape-transport", { url });
+      const data = await res.json();
+      if (data.provider || data.departureLocation) {
+        itemForm.setValue('title', data.provider || 'Transport');
+        if (data.priceNumeric) itemForm.setValue('cost', data.priceNumeric);
+        toast({ title: "Data imported!", description: "Transport details filled from link" });
+      }
+    } catch (err) {
+      toast({ title: "Couldn't fetch data", description: "Please fill in details manually", variant: "destructive" });
+    } finally {
+      setIsScrapingTransport(false);
+    }
+  };
+
+  // Add event from MT platform
+  const addEventToTrip = (tripId: number, event: CityEvent) => {
+    addItemMutation.mutate({
+      tripId,
+      data: {
+        title: event.title,
+        type: event.eventType === 'milonga' ? 'milonga' : 'event',
+        description: event.description || '',
+        date: event.startDate,
+        location: event.venue || event.location,
+        cost: event.numericPrice || 0,
+        bookingUrl: event.ticketUrl || '',
+      }
+    });
+    setEventsDialog(null);
+    setSelectedEvent(null);
+  };
 
   const toggleTrip = (index: number) => {
     setExpandedTrips(prev => {
@@ -557,7 +657,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
                                   </div>
                                 )}
                                 {isOwnProfile && (
-                                  <Button variant="outline" size="sm" className="w-full" onClick={() => { itemForm.setValue('type', 'hotel'); setAddingItemToTrip(trip.id); }} data-testid={`button-add-accommodation-${index}`}>
+                                  <Button variant="outline" size="sm" className="w-full" onClick={() => { itemForm.setValue('type', 'hotel'); setAccommodationDialog({ tripId: trip.id, city: trip.city }); }} data-testid={`button-add-accommodation-${index}`}>
                                     <Plus className="h-4 w-4 mr-2" />Add Accommodation
                                   </Button>
                                 )}
@@ -623,7 +723,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
                                   </div>
                                 )}
                                 {isOwnProfile && (
-                                  <Button variant="outline" size="sm" className="w-full" onClick={() => { itemForm.setValue('type', 'flight'); setAddingItemToTrip(trip.id); }} data-testid={`button-add-transport-${index}`}>
+                                  <Button variant="outline" size="sm" className="w-full" onClick={() => { itemForm.setValue('type', 'flight'); setTransportDialog({ tripId: trip.id, city: trip.city }); setSelectedTransportType('flight'); }} data-testid={`button-add-transport-${index}`}>
                                     <Plus className="h-4 w-4 mr-2" />Add Transport
                                   </Button>
                                 )}
@@ -664,7 +764,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
                                   </div>
                                 )}
                                 {isOwnProfile && (
-                                  <Button variant="outline" size="sm" className="w-full" onClick={() => { itemForm.setValue('type', 'milonga'); setAddingItemToTrip(trip.id); }} data-testid={`button-add-event-${index}`}>
+                                  <Button variant="outline" size="sm" className="w-full" onClick={() => { setEventsDialog({ tripId: trip.id, city: trip.city, startDate: trip.startDate, endDate: trip.endDate }); setEventSearchQuery(''); }} data-testid={`button-add-event-${index}`}>
                                     <Plus className="h-4 w-4 mr-2" />Add Event / Milonga
                                   </Button>
                                 )}
@@ -761,6 +861,336 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
           })}
         </div>
       )}
+
+      {/* Enhanced Accommodation Dialog */}
+      <Dialog open={!!accommodationDialog} onOpenChange={(open) => { if (!open) { setAccommodationDialog(null); itemForm.reset(); setScrapingUrl(''); } }}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Building2 className="h-5 w-5 text-purple-600" />
+              Add Accommodation in {accommodationDialog?.city}
+            </DialogTitle>
+          </DialogHeader>
+          <Form {...itemForm}>
+            <form onSubmit={itemForm.handleSubmit((data) => { if (accommodationDialog) { addItemMutation.mutate({ tripId: accommodationDialog.tripId, data }); setAccommodationDialog(null); } })} className="space-y-4">
+              <input type="hidden" {...itemForm.register('type')} value="hotel" />
+              
+              {/* Import from Link */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Import from Airbnb/Booking link</label>
+                <div className="flex gap-2">
+                  <Input 
+                    placeholder="Paste Airbnb or booking link..." 
+                    value={scrapingUrl}
+                    onChange={(e) => setScrapingUrl(e.target.value)}
+                    className="flex-1"
+                  />
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    size="icon"
+                    disabled={!scrapingUrl || isScrapingAccommodation}
+                    onClick={() => scrapeAccommodation(scrapingUrl)}
+                  >
+                    {isScrapingAccommodation ? <Loader2 className="h-4 w-4 animate-spin" /> : <Link2 className="h-4 w-4" />}
+                  </Button>
+                </div>
+                <p className="text-xs text-muted-foreground">Auto-fill details from your booking link</p>
+              </div>
+
+              <div className="relative"><div className="absolute inset-0 flex items-center"><span className="w-full border-t" /></div><div className="relative flex justify-center text-xs uppercase"><span className="bg-background px-2 text-muted-foreground">or enter manually</span></div></div>
+
+              <FormField control={itemForm.control} name="title" render={({ field }) => (
+                <FormItem><FormLabel>Property Name *</FormLabel><FormControl><Input placeholder="e.g., Cozy Apartment in Palermo" {...field} /></FormControl><FormMessage /></FormItem>
+              )} />
+              
+              <FormField control={itemForm.control} name="location" render={({ field }) => (
+                <FormItem><FormLabel>Full Address *</FormLabel><FormControl><Input placeholder="e.g., Av. Santa Fe 1234, Palermo, Buenos Aires" {...field} /></FormControl><FormMessage /></FormItem>
+              )} />
+
+              <div className="grid grid-cols-2 gap-4">
+                <FormField control={itemForm.control} name="date" render={({ field }) => (
+                  <FormItem><FormLabel>Check-in Date</FormLabel><FormControl><Input type="datetime-local" {...field} /></FormControl><FormMessage /></FormItem>
+                )} />
+                <FormField control={itemForm.control} name="cost" render={({ field }) => (
+                  <FormItem><FormLabel>Total Cost (USD)</FormLabel><FormControl><Input type="number" placeholder="500" {...field} onChange={(e) => field.onChange(e.target.valueAsNumber)} /></FormControl><FormMessage /></FormItem>
+                )} />
+              </div>
+
+              <FormField control={itemForm.control} name="description" render={({ field }) => (
+                <FormItem><FormLabel>Notes</FormLabel><FormControl><Textarea placeholder="Amenities, special instructions..." {...field} rows={2} /></FormControl><FormMessage /></FormItem>
+              )} />
+
+              <FormField control={itemForm.control} name="bookingUrl" render={({ field }) => (
+                <FormItem><FormLabel>Booking Confirmation URL</FormLabel><FormControl><Input placeholder="https://..." {...field} /></FormControl><FormMessage /></FormItem>
+              )} />
+
+              <div className="flex gap-2 pt-2">
+                <Button type="button" variant="outline" onClick={() => { setAccommodationDialog(null); itemForm.reset(); setScrapingUrl(''); }} className="flex-1">Cancel</Button>
+                <Button type="submit" className="flex-1" disabled={addItemMutation.isPending}>{addItemMutation.isPending ? "Adding..." : "Add Accommodation"}</Button>
+              </div>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Enhanced Transport Dialog with Icon Selection */}
+      <Dialog open={!!transportDialog} onOpenChange={(open) => { if (!open) { setTransportDialog(null); itemForm.reset(); setScrapingUrl(''); setSelectedTransportType('flight'); } }}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Plane className="h-5 w-5 text-blue-600" />
+              Add Transport to {transportDialog?.city}
+            </DialogTitle>
+          </DialogHeader>
+          <Form {...itemForm}>
+            <form onSubmit={itemForm.handleSubmit((data) => { if (transportDialog) { addItemMutation.mutate({ tripId: transportDialog.tripId, data: { ...data, type: selectedTransportType === 'flight' ? 'flight' : 'transport' } }); setTransportDialog(null); } })} className="space-y-4">
+              
+              {/* Transport Type Icon Selector */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Transport Type *</label>
+                <div className="flex gap-2 flex-wrap">
+                  {transportTypes.map((type) => {
+                    const Icon = type.icon;
+                    return (
+                      <Button
+                        key={type.id}
+                        type="button"
+                        variant="outline"
+                        className={cn(
+                          "flex flex-col items-center gap-1 h-auto py-3 px-4 transition-all",
+                          selectedTransportType === type.id && type.color,
+                          selectedTransportType === type.id && "ring-2 ring-offset-2"
+                        )}
+                        onClick={() => setSelectedTransportType(type.id)}
+                        data-testid={`button-transport-${type.id}`}
+                      >
+                        <Icon className="h-6 w-6" />
+                        <span className="text-xs">{type.label}</span>
+                      </Button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Import from Link */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Import from booking link</label>
+                <div className="flex gap-2">
+                  <Input 
+                    placeholder="Paste booking link..." 
+                    value={scrapingUrl}
+                    onChange={(e) => setScrapingUrl(e.target.value)}
+                    className="flex-1"
+                  />
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    size="icon"
+                    disabled={!scrapingUrl || isScrapingTransport}
+                    onClick={() => scrapeTransport(scrapingUrl)}
+                  >
+                    {isScrapingTransport ? <Loader2 className="h-4 w-4 animate-spin" /> : <Link2 className="h-4 w-4" />}
+                  </Button>
+                </div>
+              </div>
+
+              <div className="relative"><div className="absolute inset-0 flex items-center"><span className="w-full border-t" /></div><div className="relative flex justify-center text-xs uppercase"><span className="bg-background px-2 text-muted-foreground">or enter manually</span></div></div>
+
+              <FormField control={itemForm.control} name="title" render={({ field }) => (
+                <FormItem><FormLabel>Provider/Details *</FormLabel><FormControl><Input placeholder={selectedTransportType === 'flight' ? "e.g., American Airlines AA1234" : "e.g., Eurostar to Paris"} {...field} /></FormControl><FormMessage /></FormItem>
+              )} />
+
+              <div className="grid grid-cols-2 gap-4">
+                <FormField control={itemForm.control} name="date" render={({ field }) => (
+                  <FormItem><FormLabel>Departure Date/Time</FormLabel><FormControl><Input type="datetime-local" {...field} /></FormControl><FormMessage /></FormItem>
+                )} />
+                <FormField control={itemForm.control} name="cost" render={({ field }) => (
+                  <FormItem><FormLabel>Cost (USD)</FormLabel><FormControl><Input type="number" placeholder="350" {...field} onChange={(e) => field.onChange(e.target.valueAsNumber)} /></FormControl><FormMessage /></FormItem>
+                )} />
+              </div>
+
+              <FormField control={itemForm.control} name="location" render={({ field }) => (
+                <FormItem><FormLabel>Route (From → To)</FormLabel><FormControl><Input placeholder="e.g., JFK → EZE" {...field} /></FormControl><FormMessage /></FormItem>
+              )} />
+
+              <FormField control={itemForm.control} name="bookingUrl" render={({ field }) => (
+                <FormItem><FormLabel>Booking URL</FormLabel><FormControl><Input placeholder="https://..." {...field} /></FormControl><FormMessage /></FormItem>
+              )} />
+
+              <div className="flex gap-2 pt-2">
+                <Button type="button" variant="outline" onClick={() => { setTransportDialog(null); itemForm.reset(); setScrapingUrl(''); }} className="flex-1">Cancel</Button>
+                <Button type="submit" className="flex-1" disabled={addItemMutation.isPending}>{addItemMutation.isPending ? "Adding..." : "Add Transport"}</Button>
+              </div>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Enhanced Events Dialog with MT Event Search */}
+      <Dialog open={!!eventsDialog} onOpenChange={(open) => { if (!open) { setEventsDialog(null); setSelectedEvent(null); setEventSearchQuery(''); itemForm.reset(); } }}>
+        <DialogContent className="max-w-2xl max-h-[80vh]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Music className="h-5 w-5 text-pink-600" />
+              Add Event in {eventsDialog?.city}
+            </DialogTitle>
+          </DialogHeader>
+
+          <Tabs defaultValue="search" className="w-full">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="search" data-testid="tab-search-events">Search Events</TabsTrigger>
+              <TabsTrigger value="manual" data-testid="tab-manual-event">Add Manually</TabsTrigger>
+              <TabsTrigger value="create" data-testid="tab-create-event">Create New</TabsTrigger>
+            </TabsList>
+
+            {/* Search MT Events Tab */}
+            <TabsContent value="search" className="space-y-4">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input 
+                  placeholder="Search milongas, events..." 
+                  value={eventSearchQuery}
+                  onChange={(e) => setEventSearchQuery(e.target.value)}
+                  className="pl-10"
+                  data-testid="input-event-search"
+                />
+              </div>
+
+              <ScrollArea className="h-[300px] pr-4">
+                {eventsLoading ? (
+                  <div className="flex items-center justify-center py-8">
+                    <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                  </div>
+                ) : filteredEvents.length > 0 ? (
+                  <div className="space-y-2">
+                    {filteredEvents.map((event) => (
+                      <div 
+                        key={event.id}
+                        className={cn(
+                          "p-3 rounded-lg border cursor-pointer hover-elevate transition-all",
+                          selectedEvent?.id === event.id && "border-primary bg-primary/5"
+                        )}
+                        onClick={() => setSelectedEvent(event)}
+                        data-testid={`event-result-${event.id}`}
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <h5 className="font-medium">{event.title}</h5>
+                              <Badge variant="outline" className={event.eventType === 'milonga' ? 'bg-red-500/10 text-red-600' : 'bg-pink-500/10 text-pink-600'}>
+                                {event.eventType}
+                              </Badge>
+                            </div>
+                            <p className="text-sm text-muted-foreground flex items-center gap-1 mt-1">
+                              <MapPin className="h-3 w-3" />{event.venue || event.location}
+                            </p>
+                            <p className="text-sm text-muted-foreground flex items-center gap-1">
+                              <CalendarIcon className="h-3 w-3" />
+                              {new Date(event.startDate).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            {event.isFree ? (
+                              <Badge variant="outline" className="bg-green-500/10 text-green-600">Free</Badge>
+                            ) : event.price ? (
+                              <p className="font-bold text-primary">{event.price}</p>
+                            ) : null}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <Music className="h-8 w-8 mx-auto mb-2 opacity-30" />
+                    <p className="text-sm">No events found in {eventsDialog?.city}</p>
+                    <p className="text-xs mt-1">Try the manual entry or create a new event</p>
+                  </div>
+                )}
+              </ScrollArea>
+
+              {selectedEvent && (
+                <div className="flex gap-2 pt-2 border-t">
+                  <Button type="button" variant="outline" onClick={() => setSelectedEvent(null)} className="flex-1">Cancel</Button>
+                  <Button 
+                    onClick={() => eventsDialog && addEventToTrip(eventsDialog.tripId, selectedEvent)} 
+                    className="flex-1"
+                    disabled={addItemMutation.isPending}
+                  >
+                    {addItemMutation.isPending ? "Adding..." : "Add to Trip"}
+                  </Button>
+                </div>
+              )}
+            </TabsContent>
+
+            {/* Manual Entry Tab */}
+            <TabsContent value="manual">
+              <Form {...itemForm}>
+                <form onSubmit={itemForm.handleSubmit((data) => { if (eventsDialog) { addItemMutation.mutate({ tripId: eventsDialog.tripId, data }); setEventsDialog(null); } })} className="space-y-4">
+                  <FormField control={itemForm.control} name="type" render={({ field }) => (
+                    <FormItem><FormLabel>Event Type *</FormLabel>
+                      <Select value={field.value} onValueChange={field.onChange}>
+                        <FormControl><SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger></FormControl>
+                        <SelectContent>
+                          <SelectItem value="milonga">Milonga</SelectItem>
+                          <SelectItem value="event">Tango Event</SelectItem>
+                          <SelectItem value="activity">Activity</SelectItem>
+                          <SelectItem value="dining">Dining</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+
+                  <FormField control={itemForm.control} name="title" render={({ field }) => (
+                    <FormItem><FormLabel>Event Name *</FormLabel><FormControl><Input placeholder="e.g., La Catedral Milonga" {...field} /></FormControl><FormMessage /></FormItem>
+                  )} />
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField control={itemForm.control} name="date" render={({ field }) => (
+                      <FormItem><FormLabel>Date/Time</FormLabel><FormControl><Input type="datetime-local" {...field} /></FormControl><FormMessage /></FormItem>
+                    )} />
+                    <FormField control={itemForm.control} name="cost" render={({ field }) => (
+                      <FormItem><FormLabel>Entry Fee (USD)</FormLabel><FormControl><Input type="number" placeholder="15" {...field} onChange={(e) => field.onChange(e.target.valueAsNumber)} /></FormControl><FormMessage /></FormItem>
+                    )} />
+                  </div>
+
+                  <FormField control={itemForm.control} name="location" render={({ field }) => (
+                    <FormItem><FormLabel>Venue/Location</FormLabel><FormControl><Input placeholder="e.g., La Catedral, Sarmiento 4006" {...field} /></FormControl><FormMessage /></FormItem>
+                  )} />
+
+                  <FormField control={itemForm.control} name="description" render={({ field }) => (
+                    <FormItem><FormLabel>Notes</FormLabel><FormControl><Textarea placeholder="Dress code, DJ, special notes..." {...field} rows={2} /></FormControl><FormMessage /></FormItem>
+                  )} />
+
+                  <div className="flex gap-2 pt-2">
+                    <Button type="button" variant="outline" onClick={() => { setEventsDialog(null); itemForm.reset(); }} className="flex-1">Cancel</Button>
+                    <Button type="submit" className="flex-1" disabled={addItemMutation.isPending}>{addItemMutation.isPending ? "Adding..." : "Add Event"}</Button>
+                  </div>
+                </form>
+              </Form>
+            </TabsContent>
+
+            {/* Create New Event Tab */}
+            <TabsContent value="create" className="space-y-4">
+              <div className="text-center py-8">
+                <Sparkles className="h-12 w-12 mx-auto mb-4 text-primary opacity-50" />
+                <h3 className="font-semibold mb-2">Create a New Event</h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Use our event creation platform to add a new milonga or tango event to the Mundo Tango community.
+                </p>
+                <Button asChild>
+                  <a href="/events/create" target="_blank" rel="noopener noreferrer" data-testid="link-create-event">
+                    <ExternalLink className="h-4 w-4 mr-2" />
+                    Open Event Creator
+                  </a>
+                </Button>
+              </div>
+            </TabsContent>
+          </Tabs>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
