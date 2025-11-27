@@ -122,7 +122,6 @@ const LiveStreamPage = lazy(() => import("@/pages/LiveStreamPage"));
 const SavedPostsPage = lazy(() => import("@/pages/SavedPostsPage"));
 
 // Travel Integration
-const TravelDashboardPage = lazy(() => import("@/pages/travel/TravelDashboardPage"));
 const TravelTripPlannerPage = lazy(() => import("@/pages/travel/TravelTripPlannerPage"));
 const TravelItineraryPage = lazy(() => import("@/pages/travel/TravelItineraryPage"));
 const TravelExpensesPage = lazy(() => import("@/pages/travel/TravelExpensesPage"));
@@ -681,14 +680,6 @@ function Router() {
         <ProtectedRoute>
           <AppLayout>
             <EventDetailsPage />
-          </AppLayout>
-        </ProtectedRoute>
-      </Route>
-
-      <Route path="/travel">
-        <ProtectedRoute>
-          <AppLayout>
-            <TravelDashboardPage />
           </AppLayout>
         </ProtectedRoute>
       </Route>
