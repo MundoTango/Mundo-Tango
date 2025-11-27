@@ -18,6 +18,7 @@ import { Plane, Calendar as CalendarIcon, MapPin, DollarSign, Sparkles, FileText
 import buenosAiresImg from "@assets/stock_images/buenos_aires_argenti_afa3bd1f.jpg";
 import milanImg from "@assets/stock_images/milan_italy_duomo_ca_513cf7b4.jpg";
 import parisImg from "@assets/stock_images/paris_france_eiffel__a404573c.jpg";
+import { UnifiedLocationPicker } from "@/components/input/UnifiedLocationPicker";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -71,47 +72,12 @@ const tripPlannerSchema = z.object({
   cities: z.array(z.object({
     city: z.string(),
     country: z.string().optional(),
+    coordinates: z.object({ lat: z.number(), lng: z.number() }).optional(),
   })).optional(),
 }).refine((data) => data.endDate >= data.startDate, {
   message: "End date must be after start date",
   path: ["endDate"],
 });
-
-const cityCountryDatabase: Record<string, string> = {
-  'buenos aires': 'Argentina',
-  'salta': 'Argentina',
-  'mendoza': 'Argentina',
-  'cordoba': 'Argentina',
-  'paris': 'France',
-  'lyon': 'France',
-  'marseille': 'France',
-  'milan': 'Italy',
-  'rome': 'Italy',
-  'venice': 'Italy',
-  'florence': 'Italy',
-  'barcelona': 'Spain',
-  'madrid': 'Spain',
-  'seville': 'Spain',
-  'london': 'United Kingdom',
-  'berlin': 'Germany',
-  'vienna': 'Austria',
-  'prague': 'Czech Republic',
-  'lisbon': 'Portugal',
-  'amsterdam': 'Netherlands',
-  'istanbul': 'Turkey',
-  'buenos aires': 'Argentina',
-  'mexico city': 'Mexico',
-  'new york': 'United States',
-  'los angeles': 'United States',
-  'chicago': 'United States',
-  'toronto': 'Canada',
-  'sao paulo': 'Brazil',
-  'rio de janeiro': 'Brazil',
-  'tokyo': 'Japan',
-  'bangkok': 'Thailand',
-  'sydney': 'Australia',
-  'auckland': 'New Zealand',
-};
 
 const itineraryItemSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -171,6 +137,7 @@ const getCityImageUrl = (city: string, country?: string): string => {
 interface CityOption {
   city: string;
   country: string;
+  coordinates?: { lat: number; lng: number };
 }
 
 export default function ProfileTabTravel({ profileId, isOwnProfile = false }: ProfileTabTravelProps) {
@@ -179,31 +146,18 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
   const [editingTripId, setEditingTripId] = useState<number | null>(null);
   const [addingItemToTrip, setAddingItemToTrip] = useState<number | null>(null);
   const [tripTabs, setTripTabs] = useState<Record<number, string>>({});
-  const [cityInput, setCityInput] = useState("");
-  const [citySuggestions, setCitySuggestions] = useState<CityOption[]>([]);
   const [selectedCities, setSelectedCities] = useState<CityOption[]>([]);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const handleCityInput = (input: string) => {
-    setCityInput(input);
-    if (input.length > 0) {
-      const lower = input.toLowerCase();
-      const matches = Object.entries(cityCountryDatabase)
-        .filter(([city]) => city.toLowerCase().includes(lower))
-        .slice(0, 8)
-        .map(([city, country]) => ({ city: city.charAt(0).toUpperCase() + city.slice(1), country }));
-      setCitySuggestions(matches);
-    } else {
-      setCitySuggestions([]);
-    }
-  };
-
-  const addCity = (option: CityOption) => {
-    if (!selectedCities.find(c => c.city.toLowerCase() === option.city.toLowerCase())) {
-      setSelectedCities([...selectedCities, option]);
-      setCityInput("");
-      setCitySuggestions([]);
+  const addCity = (location: string, coordinates: { lat: number; lng: number }) => {
+    const cityCountry = location.split(',').slice(0, 2).map(s => s.trim()).join(', ');
+    const parts = cityCountry.split(',');
+    const city = parts[0] || location;
+    const country = parts[1] || '';
+    
+    if (!selectedCities.find(c => c.city.toLowerCase() === city.toLowerCase())) {
+      setSelectedCities([...selectedCities, { city, country, coordinates }]);
     }
   };
 
@@ -358,32 +312,19 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
               <CardContent>
                 <Form {...form}>
                   <form onSubmit={form.handleSubmit((data) => createTripMutation.mutate({...data, cities: selectedCities}))} className="space-y-6">
-                    {/* City Autocomplete and Multi-City Selection */}
+                    {/* City Autocomplete with Live Map Data */}
                     <div className="space-y-2">
-                      <FormLabel className="text-base font-semibold">Cities *</FormLabel>
-                      <div className="relative">
-                        <div className="flex gap-2">
-                          <div className="flex-1 relative">
-                            <Input placeholder="Type city name (e.g., Buenos Aires, Salta)..." value={cityInput} onChange={(e) => handleCityInput(e.target.value)} data-testid="input-city-search" className="pr-10" />
-                            {citySuggestions.length > 0 && (
-                              <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-card border border-border rounded-md shadow-lg max-h-56 overflow-y-auto">
-                                {citySuggestions.map((option, idx) => (
-                                  <button key={idx} type="button" onClick={() => addCity(option)} className="w-full text-left px-4 py-2 hover:bg-muted flex justify-between items-center border-b border-border last:border-b-0 transition-colors" data-testid={`city-option-${idx}`}>
-                                    <span className="font-medium">{option.city}</span>
-                                    <span className="text-xs text-muted-foreground">{option.country}</span>
-                                  </button>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                          <Button type="button" variant="outline" size="sm" onClick={() => handleCityInput("")} data-testid="button-clear-search">Clear</Button>
-                        </div>
-                      </div>
+                      <FormLabel className="text-base font-semibold">Cities (Live Map Data) *</FormLabel>
+                      <UnifiedLocationPicker 
+                        onChange={addCity}
+                        placeholder="Search any city (e.g., Buenos Aires, Tokyo, Paris)..."
+                        data-testid="location-picker-travel"
+                      />
                       {selectedCities.length > 0 && (
                         <div className="flex flex-wrap gap-2 mt-3">
                           {selectedCities.map((city, idx) => (
                             <Badge key={idx} variant="secondary" className="pl-3 pr-1 py-1.5 flex items-center gap-1" data-testid={`badge-city-${idx}`}>
-                              <span>{city.city}, {city.country}</span>
+                              <span>{city.city}{city.country ? ', ' + city.country : ''}</span>
                               <Button type="button" variant="ghost" size="sm" className="h-auto w-auto p-0 ml-1 hover:bg-transparent" onClick={() => removeCity(idx)} data-testid={`button-remove-city-${idx}`}>
                                 <X className="h-3 w-3" />
                               </Button>

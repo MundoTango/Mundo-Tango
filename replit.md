@@ -178,39 +178,54 @@ npx playwright show-report test-results/html-report
 - Vite HMR WebSocket error (`wss://localhost:undefined`) - Development-only, doesn't affect functionality
 - This is a Replit infrastructure/Vite config limitation, not our code
 
-## Recent Changes (Nov 27, 2025)
+## Recent Changes (Nov 27, 2025 - Session 3)
 
-### Sidebar Architecture Refactoring - COMPLETE ✅
+### Travel Planning Page Overhaul - COMPLETE ✅
 
-**Issue Fixed:**
-- Duplicate `<aside>` elements causing positioning conflicts
-- AppLayout wrapped Sidebar in an `<aside>`, while Sidebar rendered its own fixed `<aside>`
-- No state persistence - sidebar reset on page refresh
+**Features Implemented:**
+1. **Live Map Data City Autocomplete** - Uses UnifiedLocationPicker component (same as registration form)
+   - User types any city name and queries live OpenStreetMap data
+   - Shows full location details with coordinates (latitude/longitude)
+   - No hardcoded city database - queries global map data
+   
+2. **Multi-City Trip Support** - Add multiple cities to single trip
+   - User can search and add Buenos Aires, Salta, etc. in same trip
+   - Each city stored with coordinates for mapping
+   - Easy remove with X button on badges
+   - Cities stored in JSONB array in database
 
-**Architecture (Fixed):**
-- **AppLayout.tsx** - Manages sidebar state with cookie persistence
-  - `isMobile` state detects screen width < 1024px
-  - Cookie persistence: `sidebar_state` cookie (7-day expiry)
-  - Removed duplicate aside wrapper - Sidebar renders its own
-  - Main content adjusts with `lg:ml-64` margin when sidebar is open on desktop
+3. **Compact 4-Column Form Layout**
+   - City, Country, Start Date, End Date on one line (responsive: stacks on mobile)
+   - Primary city/country auto-populate from first selected city
+   - Date format shortened (e.g., "Nov 27") to fit compact layout
+   - Dates use calendar popover for easy selection
 
-- **Sidebar.tsx** - Self-contained fixed sidebar
-  - Accepts `isOpen`, `setIsOpen`, `isMobile` props from AppLayout
-  - Fixed positioning at `top-16 left-0` (below topbar)
-  - Uses `translate-x-0` / `-translate-x-full` for show/hide animation
-  - Mobile overlay only shows when `isMobile && isOpen`
-  - No longer auto-closes on resize (controlled by AppLayout)
+**Architecture Changes:**
+- **ProfileTabTravel.tsx** - Integrated UnifiedLocationPicker for city search
+  - `addCity(location, coordinates)` - Parses location string into city/country/coords
+  - `removeCity(idx)` - Removes city from selectedCities array
+  - Multi-city state management with selectedCities array
+  
+- **travel-routes.ts** - Backend updated to save cities array
+  - POST `/api/travel/plans` now accepts `cities` parameter
+  - Cities stored as JSONB array in database
+  
+- **shared/schema.ts** - Database schema updated
+  - Added `cities` column to travelPlans table (JSONB type)
+  - Schema supports array of city objects with coordinates
 
-**Cookie Persistence:**
-```javascript
-// Sidebar state persists across refreshes
-document.cookie = "sidebar_state=true; path=/; max-age=604800";
-```
+**UnifiedLocationPicker Integration:**
+- Same component used in registration form, PostCreator, and now Travel planner
+- Queries `/api/locations/search?q={city}` endpoint
+- Returns live OpenStreetMap data with coordinates
+- Debounced search (500ms) for performance
+- Smooth autocomplete dropdown with city details
 
 **Important Files:**
-- `client/src/components/AppLayout.tsx` - Main layout wrapper with sidebar state management
-- `client/src/components/Sidebar.tsx` - Fixed sidebar with mobile/desktop responsive behavior
-- `client/src/components/navigation/UnifiedTopBar.tsx` - Topbar with hamburger menu toggle
+- `client/src/components/profile/ProfileTabTravel.tsx` - Travel form with live city picker
+- `client/src/components/input/UnifiedLocationPicker.tsx` - Reusable location search component
+- `server/routes/travel-routes.ts` - Backend API for travel plans
+- `shared/schema.ts` - Database schema with cities JSONB array
 
 ## Previous Changes (Nov 25, 2025)
 
