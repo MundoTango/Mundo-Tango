@@ -4837,6 +4837,7 @@ export const travelPlans = pgTable("travel_plans", {
   cityId: integer("city_id"),
   city: varchar("city", { length: 255 }).notNull(),
   country: varchar("country", { length: 255 }),
+  cities: jsonb("cities").default(sql`'[]'::jsonb`),
   startDate: timestamp("start_date").notNull(),
   endDate: timestamp("end_date").notNull(),
   tripDuration: integer("trip_duration").notNull(),
