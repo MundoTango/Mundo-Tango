@@ -111,6 +111,19 @@ const getStatusColor = (status: string) => {
   }
 };
 
+const getCityImageUrl = (city: string, country?: string): string => {
+  const cityPhotos: Record<string, string> = {
+    'buenos aires': 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&h=600&auto=format&fit=crop',
+    'paris': 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=800&h=600&auto=format&fit=crop',
+    'berlin': 'https://images.unsplash.com/photo-1560626569-15ae4d75f6f7?w=800&h=600&auto=format&fit=crop',
+    'madrid': 'https://images.unsplash.com/photo-1479145082178-d9f2300a59b0?w=800&h=600&auto=format&fit=crop',
+    'barcelona': 'https://images.unsplash.com/photo-1583422409516-2895a77efded?w=800&h=600&auto=format&fit=crop',
+    'lisbon': 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=800&h=600&auto=format&fit=crop',
+  };
+  const cityKey = city.toLowerCase();
+  return cityPhotos[cityKey] || 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&h=600&auto=format&fit=crop';
+};
+
 export default function ProfileTabTravel({ profileId, isOwnProfile = false }: ProfileTabTravelProps) {
   const [expandedTrips, setExpandedTrips] = useState<Set<number>>(new Set([0]));
   const [showCreateForm, setShowCreateForm] = useState(false);
@@ -351,8 +364,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
           <Collapsible key={trip.id || index} open={expandedTrips.has(index)} onOpenChange={() => toggleTrip(index)}>
             <Card data-testid={`card-travel-plan-${index}`} className="overflow-hidden">
               {/* Hero Header */}
-              <div className="relative h-36 bg-gradient-to-br from-primary/20 via-secondary/20 to-accent/20">
-                <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&auto=format&fit=crop')] bg-cover bg-center opacity-30" />
+              <div className="relative h-36 bg-gradient-to-br from-primary/20 via-secondary/20 to-accent/20" style={{ backgroundImage: `url('${getCityImageUrl(trip.city, trip.country)}')`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
                 <div className="absolute top-3 right-3 flex gap-2">
                   {trip.status && <Badge className={getStatusColor(trip.status)}>{trip.status.charAt(0).toUpperCase() + trip.status.slice(1)}</Badge>}
