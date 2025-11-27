@@ -896,17 +896,14 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
                                   <div className="flex flex-col items-center p-3 rounded bg-purple-500/10">
                                     <Building2 className="h-5 w-5 text-purple-600 mb-2" />
                                     <span className="font-bold text-lg text-purple-600">${accommodationTotal.toFixed(0)}</span>
-                                    <span className="text-xs text-muted-foreground mt-1">Accommodation</span>
                                   </div>
                                   <div className="flex flex-col items-center p-3 rounded bg-blue-500/10">
                                     <Plane className="h-5 w-5 text-blue-600 mb-2" />
                                     <span className="font-bold text-lg text-blue-600">${transportTotal.toFixed(0)}</span>
-                                    <span className="text-xs text-muted-foreground mt-1">Transport</span>
                                   </div>
                                   <div className="flex flex-col items-center p-3 rounded bg-pink-500/10">
                                     <Music className="h-5 w-5 text-pink-600 mb-2" />
                                     <span className="font-bold text-lg text-pink-600">${eventsTotal.toFixed(0)}</span>
-                                    <span className="text-xs text-muted-foreground mt-1">Events</span>
                                   </div>
                                 </div>
                               </CardContent>
