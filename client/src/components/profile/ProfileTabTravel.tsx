@@ -13,7 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Plane, Calendar as CalendarIcon, MapPin, DollarSign, Sparkles, FileText, Briefcase, Home, Utensils, Heart, Plus, ChevronDown, ChevronUp, TrendingUp, X, Edit, Users, Trash2, Clock, Check, PieChart, Download } from "lucide-react";
+import { Plane, Calendar as CalendarIcon, MapPin, DollarSign, Sparkles, FileText, Briefcase, Home, Utensils, Heart, Plus, ChevronDown, ChevronUp, TrendingUp, X, Edit, Users, Trash2, Clock, Check, PieChart, Download, Train, Ship, Bus, Car, Music, Ticket, Building2 } from "lucide-react";
 
 import buenosAiresImg from "@assets/stock_images/buenos_aires_argenti_afa3bd1f.jpg";
 import milanImg from "@assets/stock_images/milan_italy_duomo_ca_513cf7b4.jpg";
@@ -47,10 +47,41 @@ interface TravelPlanItem {
   title: string;
   description?: string;
   date?: string;
+  endDate?: string;
   location?: string;
   cost?: number;
+  costPerNight?: number;
+  nights?: number;
   bookingUrl?: string;
   isBooked: boolean;
+  transportType?: string;
+  departureTime?: string;
+  arrivalTime?: string;
+  departureLocation?: string;
+  arrivalLocation?: string;
+  linkedEventId?: number;
+}
+
+interface CityEvent {
+  id: number;
+  title: string;
+  description?: string;
+  eventType: string;
+  category?: string;
+  startDate: string;
+  endDate?: string;
+  location: string;
+  venue?: string;
+  venueName?: string;
+  city?: string;
+  country?: string;
+  isPaid?: boolean;
+  isFree?: boolean;
+  price?: string;
+  currency?: string;
+  imageUrl?: string;
+  ticketUrl?: string;
+  numericPrice: number;
 }
 
 interface ProfileTabTravelProps {
@@ -488,80 +519,230 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
                       )}
                     </TabsContent>
 
-                    {/* Itinerary Tab */}
-                    <TabsContent value="itinerary" className="space-y-4 mt-4">
-                      {isOwnProfile && (
-                        <Dialog open={addingItemToTrip === trip.id} onOpenChange={(open) => setAddingItemToTrip(open ? trip.id : null)}>
-                          <DialogTrigger asChild>
-                            <Button variant="outline" className="w-full" data-testid={`button-add-item-${index}`}><Plus className="h-4 w-4 mr-2" />Add Itinerary Item</Button>
-                          </DialogTrigger>
-                          <DialogContent>
-                            <DialogHeader><DialogTitle>Add Itinerary Item</DialogTitle></DialogHeader>
-                            <Form {...itemForm}>
-                              <form onSubmit={itemForm.handleSubmit((data) => addItemMutation.mutate({ tripId: trip.id, data }))} className="space-y-4">
-                                <FormField control={itemForm.control} name="title" render={({ field }) => (<FormItem><FormLabel>Title *</FormLabel><FormControl><Input placeholder="Milonga at La Catedral" {...field} /></FormControl><FormMessage /></FormItem>)} />
-                                <FormField control={itemForm.control} name="type" render={({ field }) => (
-                                  <FormItem><FormLabel>Type *</FormLabel><Select onValueChange={field.onChange}><FormControl><SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger></FormControl>
-                                    <SelectContent>
-                                      <SelectItem value="flight">Flight</SelectItem><SelectItem value="hotel">Accommodation</SelectItem>
-                                      <SelectItem value="milonga">Milonga</SelectItem><SelectItem value="event">Event</SelectItem>
-                                      <SelectItem value="dining">Dining</SelectItem><SelectItem value="activity">Activity</SelectItem>
-                                      <SelectItem value="transport">Transport</SelectItem>
-                                    </SelectContent></Select><FormMessage /></FormItem>
-                                )} />
-                                <div className="grid grid-cols-2 gap-4">
-                                  <FormField control={itemForm.control} name="date" render={({ field }) => (<FormItem><FormLabel>Date</FormLabel><FormControl><Input type="datetime-local" {...field} /></FormControl><FormMessage /></FormItem>)} />
-                                  <FormField control={itemForm.control} name="cost" render={({ field }) => (<FormItem><FormLabel>Cost (USD)</FormLabel><FormControl><Input type="number" placeholder="50" {...field} onChange={(e) => field.onChange(e.target.valueAsNumber)} /></FormControl><FormMessage /></FormItem>)} />
-                                </div>
-                                <FormField control={itemForm.control} name="location" render={({ field }) => (<FormItem><FormLabel>Location</FormLabel><FormControl><Input placeholder="La Catedral, Buenos Aires" {...field} /></FormControl><FormMessage /></FormItem>)} />
-                                <FormField control={itemForm.control} name="description" render={({ field }) => (<FormItem><FormLabel>Description</FormLabel><FormControl><Textarea placeholder="Details..." {...field} rows={2} /></FormControl><FormMessage /></FormItem>)} />
-                                <FormField control={itemForm.control} name="bookingUrl" render={({ field }) => (<FormItem><FormLabel>Booking URL</FormLabel><FormControl><Input placeholder="https://..." {...field} /></FormControl><FormMessage /></FormItem>)} />
-                                <div className="flex gap-2 pt-2">
-                                  <Button type="button" variant="outline" onClick={() => { setAddingItemToTrip(null); itemForm.reset(); }} className="flex-1">Cancel</Button>
-                                  <Button type="submit" className="flex-1" disabled={addItemMutation.isPending}>{addItemMutation.isPending ? "Adding..." : "Add Item"}</Button>
-                                </div>
-                              </form>
-                            </Form>
-                          </DialogContent>
-                        </Dialog>
-                      )}
+                    {/* Itinerary Tab - Organized by Category */}
+                    <TabsContent value="itinerary" className="space-y-6 mt-4">
+                      {(() => {
+                        const accommodationItems = trip.items?.filter(i => i.type === 'hotel') || [];
+                        const transportItems = trip.items?.filter(i => ['flight', 'transport'].includes(i.type)) || [];
+                        const eventItems = trip.items?.filter(i => ['milonga', 'event', 'activity', 'dining'].includes(i.type)) || [];
+                        
+                        const accommodationTotal = accommodationItems.reduce((sum, i) => sum + (Number(i.cost) || 0), 0);
+                        const transportTotal = transportItems.reduce((sum, i) => sum + (Number(i.cost) || 0), 0);
+                        const eventsTotal = eventItems.reduce((sum, i) => sum + (Number(i.cost) || 0), 0);
+                        const grandTotal = accommodationTotal + transportTotal + eventsTotal;
 
-                      {/* Timeline View */}
-                      {trip.items && trip.items.length > 0 ? (
-                        <div className="space-y-4">
-                          {trip.items.map((item, itemIndex) => (
-                            <div key={item.id || itemIndex} className="relative pl-14" data-testid={`trip-item-${index}-${itemIndex}`}>
-                              <div className="absolute left-0 top-2 flex items-center justify-center w-12 h-12 rounded-full bg-card border-2 border-primary text-2xl">
-                                {typeIcons[item.type] || "📍"}
-                              </div>
-                              <Card className="hover-elevate">
-                                <CardHeader className="pb-3">
-                                  <div className="flex items-start justify-between gap-4">
-                                    <div className="flex-1">
-                                      <div className="flex items-center gap-2 mb-2">
-                                        <CardTitle className="text-lg">{item.title}</CardTitle>
-                                        <Badge className={typeColors[item.type] || "bg-gray-500/10 text-gray-600"}>{item.type}</Badge>
-                                        {item.isBooked && <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/20"><Check className="h-3 w-3 mr-1" />Booked</Badge>}
+                        return (
+                          <>
+                            {/* Auto-calculated Budget Summary */}
+                            <Card className="border-primary/20 bg-primary/5">
+                              <CardContent className="py-4">
+                                <div className="flex items-center justify-between mb-3">
+                                  <h4 className="font-semibold flex items-center gap-2"><DollarSign className="h-5 w-5 text-primary" />Trip Budget Summary</h4>
+                                  <Badge variant="outline" className="text-lg font-bold">${grandTotal.toFixed(0)} Total</Badge>
+                                </div>
+                                <div className="grid grid-cols-3 gap-4 text-sm">
+                                  <div className="flex items-center justify-between p-2 rounded bg-purple-500/10">
+                                    <span className="flex items-center gap-1"><Building2 className="h-4 w-4" />Accommodation</span>
+                                    <span className="font-medium">${accommodationTotal.toFixed(0)}</span>
+                                  </div>
+                                  <div className="flex items-center justify-between p-2 rounded bg-blue-500/10">
+                                    <span className="flex items-center gap-1"><Plane className="h-4 w-4" />Transport</span>
+                                    <span className="font-medium">${transportTotal.toFixed(0)}</span>
+                                  </div>
+                                  <div className="flex items-center justify-between p-2 rounded bg-pink-500/10">
+                                    <span className="flex items-center gap-1"><Music className="h-4 w-4" />Events</span>
+                                    <span className="font-medium">${eventsTotal.toFixed(0)}</span>
+                                  </div>
+                                </div>
+                              </CardContent>
+                            </Card>
+
+                            {/* Accommodation Section */}
+                            <Card>
+                              <CardHeader className="pb-3">
+                                <div className="flex items-center justify-between">
+                                  <CardTitle className="flex items-center gap-2 text-lg"><Building2 className="h-5 w-5 text-purple-600" />Accommodation</CardTitle>
+                                  <Badge variant="outline">${accommodationTotal.toFixed(0)}</Badge>
+                                </div>
+                              </CardHeader>
+                              <CardContent className="space-y-3">
+                                {accommodationItems.length > 0 ? accommodationItems.map((item, idx) => (
+                                  <div key={item.id || idx} className="p-3 rounded-lg border bg-card hover-elevate" data-testid={`accommodation-item-${idx}`}>
+                                    <div className="flex items-start justify-between gap-3">
+                                      <div className="flex-1">
+                                        <h5 className="font-medium">{item.title}</h5>
+                                        {item.location && <p className="text-sm text-muted-foreground flex items-center gap-1"><MapPin className="h-3 w-3" />{item.location}</p>}
+                                        {item.description && <p className="text-sm text-muted-foreground mt-1">{item.description}</p>}
+                                        <div className="flex items-center gap-3 mt-2 text-sm">
+                                          {item.date && <span className="flex items-center gap-1"><CalendarIcon className="h-3 w-3" />{new Date(item.date).toLocaleDateString()}</span>}
+                                          {item.nights && <span>{item.nights} nights</span>}
+                                        </div>
                                       </div>
-                                      {item.description && <p className="text-sm text-muted-foreground">{item.description}</p>}
+                                      <div className="text-right">
+                                        {item.cost && <p className="font-bold text-primary">${Number(item.cost).toFixed(0)}</p>}
+                                        {item.costPerNight && <p className="text-xs text-muted-foreground">${item.costPerNight}/night</p>}
+                                        {item.isBooked && <Badge variant="outline" className="mt-1 bg-green-500/10 text-green-600 text-xs"><Check className="h-3 w-3 mr-1" />Booked</Badge>}
+                                      </div>
                                     </div>
                                   </div>
-                                </CardHeader>
-                                <CardContent className="space-y-2">
-                                  <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-                                    {item.date && <div className="flex items-center gap-1"><Clock className="h-4 w-4" />{new Date(item.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</div>}
-                                    {item.location && <div className="flex items-center gap-1"><MapPin className="h-4 w-4" />{item.location}</div>}
-                                    {item.cost && <div className="flex items-center gap-1 font-medium text-primary"><DollarSign className="h-4 w-4" />${item.cost.toFixed(2)}</div>}
+                                )) : (
+                                  <div className="text-center py-4 text-muted-foreground">
+                                    <Building2 className="h-8 w-8 mx-auto mb-2 opacity-30" />
+                                    <p className="text-sm">No accommodation added yet</p>
                                   </div>
-                                  {item.bookingUrl && <Button size="sm" variant="outline" asChild><a href={item.bookingUrl} target="_blank" rel="noopener noreferrer">{item.isBooked ? "View Booking" : "Book Now"}</a></Button>}
-                                </CardContent>
-                              </Card>
-                            </div>
-                          ))}
-                        </div>
-                      ) : (
-                        <Card className="p-8 text-center"><p className="text-muted-foreground">No itinerary items yet. Start planning your trip!</p></Card>
-                      )}
+                                )}
+                                {isOwnProfile && (
+                                  <Button variant="outline" size="sm" className="w-full" onClick={() => { itemForm.setValue('type', 'hotel'); setAddingItemToTrip(trip.id); }} data-testid={`button-add-accommodation-${index}`}>
+                                    <Plus className="h-4 w-4 mr-2" />Add Accommodation
+                                  </Button>
+                                )}
+                              </CardContent>
+                            </Card>
+
+                            {/* Transport Section */}
+                            <Card>
+                              <CardHeader className="pb-3">
+                                <div className="flex items-center justify-between">
+                                  <CardTitle className="flex items-center gap-2 text-lg"><Plane className="h-5 w-5 text-blue-600" />Transport</CardTitle>
+                                  <Badge variant="outline">${transportTotal.toFixed(0)}</Badge>
+                                </div>
+                              </CardHeader>
+                              <CardContent className="space-y-3">
+                                {transportItems.length > 0 ? transportItems.map((item, idx) => {
+                                  const transportIcon = item.transportType === 'train' ? <Train className="h-4 w-4" /> :
+                                    item.transportType === 'boat' ? <Ship className="h-4 w-4" /> :
+                                    item.transportType === 'bus' ? <Bus className="h-4 w-4" /> :
+                                    item.transportType === 'car' ? <Car className="h-4 w-4" /> :
+                                    <Plane className="h-4 w-4" />;
+                                  return (
+                                    <div key={item.id || idx} className="p-3 rounded-lg border bg-card hover-elevate" data-testid={`transport-item-${idx}`}>
+                                      <div className="flex items-start justify-between gap-3">
+                                        <div className="flex-1">
+                                          <div className="flex items-center gap-2">
+                                            {transportIcon}
+                                            <h5 className="font-medium">{item.title}</h5>
+                                            <Badge variant="outline" className="text-xs capitalize">{item.transportType || item.type}</Badge>
+                                          </div>
+                                          <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
+                                            {item.departureLocation && (
+                                              <span className="flex items-center gap-1">
+                                                <span className="font-medium">{item.departureLocation}</span>
+                                                {item.departureTime && <span className="text-xs">({new Date(item.departureTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })})</span>}
+                                              </span>
+                                            )}
+                                            {item.arrivalLocation && (
+                                              <>
+                                                <span className="text-muted-foreground">→</span>
+                                                <span className="flex items-center gap-1">
+                                                  <span className="font-medium">{item.arrivalLocation}</span>
+                                                  {item.arrivalTime && <span className="text-xs">({new Date(item.arrivalTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })})</span>}
+                                                </span>
+                                              </>
+                                            )}
+                                          </div>
+                                          {item.date && !item.departureTime && (
+                                            <p className="text-sm text-muted-foreground mt-1 flex items-center gap-1"><CalendarIcon className="h-3 w-3" />{new Date(item.date).toLocaleDateString()}</p>
+                                          )}
+                                        </div>
+                                        <div className="text-right">
+                                          {item.cost && <p className="font-bold text-primary">${Number(item.cost).toFixed(0)}</p>}
+                                          {item.isBooked && <Badge variant="outline" className="mt-1 bg-green-500/10 text-green-600 text-xs"><Check className="h-3 w-3 mr-1" />Booked</Badge>}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  );
+                                }) : (
+                                  <div className="text-center py-4 text-muted-foreground">
+                                    <Plane className="h-8 w-8 mx-auto mb-2 opacity-30" />
+                                    <p className="text-sm">No transport added yet</p>
+                                  </div>
+                                )}
+                                {isOwnProfile && (
+                                  <Button variant="outline" size="sm" className="w-full" onClick={() => { itemForm.setValue('type', 'flight'); setAddingItemToTrip(trip.id); }} data-testid={`button-add-transport-${index}`}>
+                                    <Plus className="h-4 w-4 mr-2" />Add Transport
+                                  </Button>
+                                )}
+                              </CardContent>
+                            </Card>
+
+                            {/* Events Section */}
+                            <Card>
+                              <CardHeader className="pb-3">
+                                <div className="flex items-center justify-between">
+                                  <CardTitle className="flex items-center gap-2 text-lg"><Music className="h-5 w-5 text-pink-600" />Events & Milongas</CardTitle>
+                                  <Badge variant="outline">${eventsTotal.toFixed(0)}</Badge>
+                                </div>
+                              </CardHeader>
+                              <CardContent className="space-y-3">
+                                {eventItems.length > 0 ? eventItems.map((item, idx) => (
+                                  <div key={item.id || idx} className="p-3 rounded-lg border bg-card hover-elevate" data-testid={`event-item-${idx}`}>
+                                    <div className="flex items-start justify-between gap-3">
+                                      <div className="flex-1">
+                                        <div className="flex items-center gap-2">
+                                          <h5 className="font-medium">{item.title}</h5>
+                                          <Badge className={typeColors[item.type] || "bg-gray-500/10 text-gray-600"} variant="outline">{item.type}</Badge>
+                                        </div>
+                                        {item.location && <p className="text-sm text-muted-foreground flex items-center gap-1 mt-1"><MapPin className="h-3 w-3" />{item.location}</p>}
+                                        {item.date && <p className="text-sm text-muted-foreground flex items-center gap-1 mt-1"><Clock className="h-3 w-3" />{new Date(item.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>}
+                                      </div>
+                                      <div className="text-right">
+                                        {item.cost && <p className="font-bold text-primary">${Number(item.cost).toFixed(0)}</p>}
+                                        {item.isBooked && <Badge variant="outline" className="mt-1 bg-green-500/10 text-green-600 text-xs"><Check className="h-3 w-3 mr-1" />Attending</Badge>}
+                                      </div>
+                                    </div>
+                                  </div>
+                                )) : (
+                                  <div className="text-center py-4 text-muted-foreground">
+                                    <Music className="h-8 w-8 mx-auto mb-2 opacity-30" />
+                                    <p className="text-sm">No events added yet</p>
+                                    <p className="text-xs mt-1">Add milongas and events during your trip</p>
+                                  </div>
+                                )}
+                                {isOwnProfile && (
+                                  <Button variant="outline" size="sm" className="w-full" onClick={() => { itemForm.setValue('type', 'milonga'); setAddingItemToTrip(trip.id); }} data-testid={`button-add-event-${index}`}>
+                                    <Plus className="h-4 w-4 mr-2" />Add Event / Milonga
+                                  </Button>
+                                )}
+                              </CardContent>
+                            </Card>
+
+                            {/* Add Item Dialog */}
+                            <Dialog open={addingItemToTrip === trip.id} onOpenChange={(open) => setAddingItemToTrip(open ? trip.id : null)}>
+                              <DialogContent className="max-w-lg">
+                                <DialogHeader><DialogTitle>Add Itinerary Item</DialogTitle></DialogHeader>
+                                <Form {...itemForm}>
+                                  <form onSubmit={itemForm.handleSubmit((data) => addItemMutation.mutate({ tripId: trip.id, data }))} className="space-y-4">
+                                    <FormField control={itemForm.control} name="type" render={({ field }) => (
+                                      <FormItem><FormLabel>Category *</FormLabel><Select value={field.value} onValueChange={field.onChange}><FormControl><SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger></FormControl>
+                                        <SelectContent>
+                                          <SelectItem value="hotel">Accommodation</SelectItem>
+                                          <SelectItem value="flight">Flight</SelectItem>
+                                          <SelectItem value="transport">Other Transport (Train/Bus/Car)</SelectItem>
+                                          <SelectItem value="milonga">Milonga</SelectItem>
+                                          <SelectItem value="event">Event</SelectItem>
+                                          <SelectItem value="activity">Activity</SelectItem>
+                                          <SelectItem value="dining">Dining</SelectItem>
+                                        </SelectContent></Select><FormMessage /></FormItem>
+                                    )} />
+                                    <FormField control={itemForm.control} name="title" render={({ field }) => (<FormItem><FormLabel>Title *</FormLabel><FormControl><Input placeholder="e.g., Airbnb in Palermo, Flight to EZE" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                                    <div className="grid grid-cols-2 gap-4">
+                                      <FormField control={itemForm.control} name="date" render={({ field }) => (<FormItem><FormLabel>Date/Time</FormLabel><FormControl><Input type="datetime-local" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                                      <FormField control={itemForm.control} name="cost" render={({ field }) => (<FormItem><FormLabel>Total Cost (USD)</FormLabel><FormControl><Input type="number" placeholder="500" {...field} onChange={(e) => field.onChange(e.target.valueAsNumber)} /></FormControl><FormMessage /></FormItem>)} />
+                                    </div>
+                                    <FormField control={itemForm.control} name="location" render={({ field }) => (<FormItem><FormLabel>Location/Venue</FormLabel><FormControl><Input placeholder="e.g., La Catedral, Buenos Aires" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                                    <FormField control={itemForm.control} name="description" render={({ field }) => (<FormItem><FormLabel>Notes</FormLabel><FormControl><Textarea placeholder="Additional details..." {...field} rows={2} /></FormControl><FormMessage /></FormItem>)} />
+                                    <FormField control={itemForm.control} name="bookingUrl" render={({ field }) => (<FormItem><FormLabel>Booking URL</FormLabel><FormControl><Input placeholder="https://..." {...field} /></FormControl><FormMessage /></FormItem>)} />
+                                    <div className="flex gap-2 pt-2">
+                                      <Button type="button" variant="outline" onClick={() => { setAddingItemToTrip(null); itemForm.reset(); }} className="flex-1">Cancel</Button>
+                                      <Button type="submit" className="flex-1" disabled={addItemMutation.isPending}>{addItemMutation.isPending ? "Adding..." : "Add Item"}</Button>
+                                    </div>
+                                  </form>
+                                </Form>
+                              </DialogContent>
+                            </Dialog>
+                          </>
+                        );
+                      })()}
                     </TabsContent>
 
                     {/* Budget Tab */}
