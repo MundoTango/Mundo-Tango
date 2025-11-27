@@ -321,7 +321,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
                 <div className="space-y-6">
                   {/* City Autocomplete with Live Map Data */}
                   <div className="space-y-2">
-                    <FormLabel className="text-base font-semibold">Cities *</FormLabel>
+                    <label className="text-base font-semibold">Cities *</label>
                     <UnifiedLocationPicker 
                       key={pickerKey}
                       onChange={addCity}
