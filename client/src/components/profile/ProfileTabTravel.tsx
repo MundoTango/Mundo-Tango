@@ -222,6 +222,13 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
   // Trip status and completion tracking
   const [completionPrompts, setCompletionPrompts] = useState<Set<number>>(new Set());
   
+  // Find first past trip that needs completion prompt
+  const tripNeedingCompletion = travelPlans?.find(t => 
+    new Date(t.endDate) < new Date() && 
+    t.status !== 'completed' && 
+    !completionPrompts.has(t.id)
+  );
+  
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -676,6 +683,22 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
         </Card>
       )}
 
+      {/* Post-trip completion prompt - show only once per page */}
+      {isOwnProfile && tripNeedingCompletion && (
+        <Dialog open={true} onOpenChange={(open) => { if (!open) setCompletionPrompts(new Set([...completionPrompts, tripNeedingCompletion.id])); }}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Mark Trip as Completed?</DialogTitle>
+            </DialogHeader>
+            <p className="text-sm text-muted-foreground">Your trip to {tripNeedingCompletion.city} ended on {new Date(tripNeedingCompletion.endDate).toLocaleDateString()}. Would you like to mark it as completed?</p>
+            <div className="flex gap-2 pt-4">
+              <Button variant="outline" onClick={() => setCompletionPrompts(new Set([...completionPrompts, tripNeedingCompletion.id]))} className="flex-1">Not Now</Button>
+              <Button onClick={() => { updateStatusMutation.mutate({ tripId: tripNeedingCompletion.id, status: 'completed' }); setCompletionPrompts(new Set([...completionPrompts, tripNeedingCompletion.id])); }} className="flex-1">Mark Completed</Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
+
       {/* Trip Cards with Full Features - 2 Column Grid */}
       {travelPlans && travelPlans.length > 0 && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -689,21 +712,6 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
                   {/* Hero Header - Square Image */}
                   <div className="relative aspect-square bg-gradient-to-br from-primary/20 via-secondary/20 to-accent/20" style={{ backgroundImage: `url('${getCityImageUrl(trip.city, trip.country)}')`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
-                    {/* Post-trip completion prompt */}
-                    {isOwnProfile && new Date(trip.endDate) < new Date() && trip.status !== 'completed' && !completionPrompts.has(trip.id) && (
-                      <Dialog open={true} onOpenChange={(open) => { if (!open) setCompletionPrompts(new Set([...completionPrompts, trip.id])); }}>
-                        <DialogContent>
-                          <DialogHeader>
-                            <DialogTitle>Mark Trip as Completed?</DialogTitle>
-                          </DialogHeader>
-                          <p className="text-sm text-muted-foreground">Your trip to {trip.city} ended on {new Date(trip.endDate).toLocaleDateString()}. Would you like to mark it as completed?</p>
-                          <div className="flex gap-2 pt-4">
-                            <Button variant="outline" onClick={() => setCompletionPrompts(new Set([...completionPrompts, trip.id]))} className="flex-1">Not Now</Button>
-                            <Button onClick={() => { updateStatusMutation.mutate({ tripId: trip.id, status: 'completed' }); setCompletionPrompts(new Set([...completionPrompts, trip.id])); }} className="flex-1">Mark Completed</Button>
-                          </div>
-                        </DialogContent>
-                      </Dialog>
-                    )}
                 <div className="absolute bottom-3 left-4 right-4">
                   <h3 className="text-xl font-serif font-bold text-white">{trip.city}{trip.country && <span className="text-white/80 text-base ml-2">• {trip.country}</span>}</h3>
                   <div className="flex items-center gap-2 text-white/80 text-sm mt-2 flex-wrap">
