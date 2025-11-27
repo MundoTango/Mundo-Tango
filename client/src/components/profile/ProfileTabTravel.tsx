@@ -319,6 +319,17 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
     },
   });
 
+  const updateStatusMutation = useMutation({
+    mutationFn: async ({ tripId, status }: { tripId: number; status: string }) => {
+      const res = await apiRequest("PATCH", `/api/travel/plans/${tripId}`, { status });
+      return await res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/travel/plans"] });
+      toast({ title: "Trip status updated!" });
+    },
+  });
+
   // Update item mutation
   const updateItemMutation = useMutation({
     mutationFn: async ({ tripId, itemId, data }: { tripId: number; itemId: number; data: ItineraryItemForm }) => {
@@ -677,15 +688,42 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
                   {/* Hero Header - Square Image */}
                   <div className="relative aspect-square bg-gradient-to-br from-primary/20 via-secondary/20 to-accent/20" style={{ backgroundImage: `url('${getCityImageUrl(trip.city, trip.country)}')`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
-                <div className="absolute top-3 right-3 flex gap-2">
-                  {trip.status && <Badge className={getStatusColor(trip.status)}>{trip.status.charAt(0).toUpperCase() + trip.status.slice(1)}</Badge>}
-                </div>
+                    {/* Post-trip completion prompt */}
+                    {isOwnProfile && new Date(trip.endDate) < new Date() && trip.status !== 'completed' && !completionPrompts.has(trip.id) && (
+                      <Dialog open={true} onOpenChange={(open) => { if (!open) setCompletionPrompts(new Set([...completionPrompts, trip.id])); }}>
+                        <DialogContent>
+                          <DialogHeader>
+                            <DialogTitle>Mark Trip as Completed?</DialogTitle>
+                          </DialogHeader>
+                          <p className="text-sm text-muted-foreground">Your trip to {trip.city} ended on {new Date(trip.endDate).toLocaleDateString()}. Would you like to mark it as completed?</p>
+                          <div className="flex gap-2 pt-4">
+                            <Button variant="outline" onClick={() => setCompletionPrompts(new Set([...completionPrompts, trip.id]))} className="flex-1">Not Now</Button>
+                            <Button onClick={() => { updateStatusMutation.mutate({ tripId: trip.id, status: 'completed' }); setCompletionPrompts(new Set([...completionPrompts, trip.id])); }} className="flex-1">Mark Completed</Button>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
+                    )}
                 <div className="absolute bottom-3 left-4 right-4">
                   <h3 className="text-xl font-serif font-bold text-white">{trip.city}{trip.country && <span className="text-white/80 text-base ml-2">• {trip.country}</span>}</h3>
-                  <div className="flex items-center gap-2 text-white/80 text-sm mt-1">
-                    <CalendarIcon className="w-3 h-3" />
+                  <div className="flex items-center gap-2 text-white/80 text-sm mt-2 flex-wrap">
+                    <CalendarIcon className="w-3 h-3 flex-shrink-0" />
                     <span>{new Date(trip.startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - {new Date(trip.endDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                     <span>({trip.tripDuration} {trip.tripDuration === 1 ? 'day' : 'days'})</span>
+                    {isOwnProfile && (
+                      <Select value={trip.status || 'planning'} onValueChange={(status) => updateStatusMutation.mutate({ tripId: trip.id, status })} disabled={updateStatusMutation.isPending}>
+                        <SelectTrigger className="w-auto h-6 text-xs bg-white/20 border-white/30 text-white" data-testid={`select-status-${index}`}>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="planning">Planning</SelectItem>
+                          <SelectItem value="confirmed">Confirmed</SelectItem>
+                          <SelectItem value="completed">Completed</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
+                    {!isOwnProfile && trip.status && (
+                      <Badge variant="outline" className="text-xs bg-white/20 text-white border-white/30">{trip.status.charAt(0).toUpperCase() + trip.status.slice(1)}</Badge>
+                    )}
                   </div>
                 </div>
               </div>
