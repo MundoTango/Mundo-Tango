@@ -57,6 +57,7 @@ export const users = pgTable("users", {
   apiToken: text("api_token"),
   replitId: varchar("replit_id"),
   nickname: varchar("nickname"),
+  primaryLanguage: varchar("primary_language"),
   languages: text("languages").array(),
   tangoRoles: text("tango_roles").array(),
   leaderLevel: integer("leader_level").default(0),
