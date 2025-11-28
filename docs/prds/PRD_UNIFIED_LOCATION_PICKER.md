@@ -347,3 +347,33 @@ const { city, country } = extractCityCountry(location);
 - `button-clear-location` - Clear location button
 - `location-results-dropdown` - Results dropdown card
 - `location-result-{place_id}` - Individual result items
+
+---
+
+## 11. Integration Audit (November 28, 2025)
+
+### Files Successfully Integrated: 27
+
+| Category | File Count | Files |
+|----------|------------|-------|
+| **Pages (city mode)** | 14 | CommunityMapPage, VenuesPage, CityGroupsPage, HostHomesPage, HousingMarketplacePage, HousingSearchPage, EventCreationPage, TangoResume, ProfilePrototypePage, ProfileEditPage, OnboardingPage, SubscriptionOnboarding, CitySelectionPage, FeedPage |
+| **Pages (address mode)** | 5 | CreateEventPage, CheckoutPage, VenueRecommendationsPage, EventCreationPage, CreateListingPage |
+| **Components (city mode)** | 5 | ProfileTabAbout, ProfileTabPro, EventFilters, SmartPostFeed, GroupSettingsPanel, GroupCreationModal |
+| **Components (address mode)** | 3 | ProfileTabPro, CheckoutWizard, PostCreator |
+
+### Future Improvement Candidates
+
+**ProfileTabTravel.tsx (4 location fields):**
+- Line 1360: Add Item dialog location (low priority - text field sufficient)
+- Line 1569: Accommodation address (medium priority - could use mode="address")
+- Line 1825: Event venue location (medium priority - could use mode="address")  
+- Line 2163: Edit dialog location (complex - context-dependent field)
+
+*Note: Transport items use "Route (From → To)" descriptions which are not suitable for location picker.*
+
+### Key Technical Fixes Applied
+
+1. **Portal Rendering:** Dropdown uses `createPortal` to document.body with `z-[9999]` to escape dialog overflow clipping
+2. **Click-Outside Handler:** Changed from 'mousedown' to 'click' event in capture phase to allow onClick handlers to fire first
+3. **State Update Order:** `setResults([])` and `setShowResults(false)` fire before other state updates to ensure immediate dropdown closure
+4. **External Value Sync:** `lastExternalValueRef` prevents state reset loops when parent updates the value prop
