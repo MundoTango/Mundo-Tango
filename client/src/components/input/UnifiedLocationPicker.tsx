@@ -103,8 +103,9 @@ export function UnifiedLocationPicker({
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    // Use 'click' instead of 'mousedown' to allow onClick handlers to fire first
+    document.addEventListener('click', handleClickOutside, true);
+    return () => document.removeEventListener('click', handleClickOutside, true);
   }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -276,21 +277,26 @@ export function UnifiedLocationPicker({
               onMouseDown={(e) => e.stopPropagation()}
             >
               <Card
-                className="p-2 max-h-80 overflow-y-auto shadow-xl"
+                className="p-2 max-h-80 overflow-y-auto shadow-xl pointer-events-auto"
                 style={{
                   background: 'linear-gradient(135deg, rgba(64, 224, 208, 0.95), rgba(30, 144, 255, 0.9))',
                   backdropFilter: 'blur(12px)',
                   borderColor: 'rgba(64, 224, 208, 0.6)',
+                  pointerEvents: 'auto',
                 }}
                 data-testid="location-results-dropdown"
               >
-                <div className="space-y-1">
+                <div className="space-y-1 pointer-events-auto">
                   {results.map((location) => (
                     <button
                       key={location.place_id}
                       type="button"
-                      onClick={() => selectLocation(location)}
-                      className="w-full flex items-start gap-3 p-3 rounded-lg text-left hover:bg-white/20 transition-colors text-white"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        selectLocation(location);
+                      }}
+                      className="w-full flex items-start gap-3 p-3 rounded-lg text-left hover:bg-white/20 transition-colors text-white pointer-events-auto"
                       data-testid={`location-result-${location.place_id}`}
                     >
                       <Icon className="w-4 h-4 mt-0.5 text-white flex-shrink-0" />
