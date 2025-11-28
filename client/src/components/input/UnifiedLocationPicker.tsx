@@ -273,6 +273,7 @@ export function UnifiedLocationPicker({
                 left: dropdownPosition.left,
                 width: dropdownPosition.width,
               }}
+              onMouseDown={(e) => e.stopPropagation()}
             >
               <Card
                 className="p-2 max-h-80 overflow-y-auto shadow-xl"
