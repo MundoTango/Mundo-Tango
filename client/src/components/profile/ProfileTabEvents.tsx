@@ -28,8 +28,8 @@ interface Event {
 
 export default function ProfileTabEvents() {
   const { data: events = [], isLoading } = useQuery<Event[]>({
-    queryKey: ["/api/events", "my-events"],
-    queryFn: () => fetch("/api/events?category=my-events").then(r => r.json()),
+    queryKey: ["/api/events"],
+    queryFn: () => fetch("/api/events").then(r => r.json()),
   });
 
   if (isLoading) {
@@ -48,12 +48,12 @@ export default function ProfileTabEvents() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Calendar className="w-5 h-5" />
-            Your Events
+            Events
           </CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-muted-foreground">
-            No events created yet. Create your first event to get started!
+            No events available.
           </p>
         </CardContent>
       </Card>
@@ -62,7 +62,7 @@ export default function ProfileTabEvents() {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-3xl font-bold">Your Events ({events.length})</h2>
+      <h2 className="text-3xl font-bold">Events ({events.length})</h2>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {events.map((item) => {
