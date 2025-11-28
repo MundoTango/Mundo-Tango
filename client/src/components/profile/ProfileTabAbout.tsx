@@ -338,32 +338,7 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
             
             {isEditing ? (
               <div className="space-y-4">
-                <div>
-                  <label className="text-xs text-muted-foreground block mb-2">When did you start tango? (defaults all roles)</label>
-                  <div className="flex items-end gap-3">
-                    <div className="flex-1 max-w-[200px]">
-                      <Select
-                        value={editValues.tangoStartYear?.toString() || ''}
-                        onValueChange={(value) => {
-                          const year = parseInt(value);
-                          setEditValues({ ...editValues, tangoStartYear: year });
-                        }}
-                      >
-                        <SelectTrigger data-testid="select-tango-start-year">
-                          <SelectValue placeholder="Select year" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {yearOptions.map((year) => (
-                            <SelectItem key={year} value={year.toString()}>
-                              {year}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <p className="text-xs text-muted-foreground pb-2">Click roles below to set individual years</p>
-                  </div>
-                </div>
+                <p className="text-xs text-muted-foreground">Select your roles below. Choose a year for each role, and add skill levels for dancer roles.</p>
 
                 {/* Unified Role Selection + Year Grid */}
                 <div className="space-y-3">
