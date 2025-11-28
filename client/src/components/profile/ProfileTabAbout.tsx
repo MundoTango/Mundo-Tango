@@ -205,7 +205,7 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
     setEditValues({ ...editValues, tangoRoleExperience: updatedExperience });
   };
 
-  const getRoleStartYear = (roleValue: string): number => {
+  const getEditModeRoleStartYear = (roleValue: string): number => {
     const experience = editValues.tangoRoleExperience || [];
     const roleExp = experience.find((exp: TangoRoleExperience) => exp.role === roleValue);
     return roleExp?.startYear || editValues.tangoStartYear || new Date().getFullYear();
@@ -222,7 +222,7 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
     const tangoRoleExperience = roles.length > 0 
       ? roles.map((role: string) => ({
           role,
-          startYear: getRoleStartYear(role)
+          startYear: getEditModeRoleStartYear(role)
         }))
       : null;
     
@@ -368,7 +368,7 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
                   {TANGO_ROLES.map((role) => {
                     const IconComponent = role.icon;
                     const isSelected = selectedRoles.includes(role.value);
-                    const startYear = getRoleStartYear(role.value);
+                    const startYear = getEditModeRoleStartYear(role.value);
                     const isDancerLeader = role.value === 'dancer-leader';
                     const isDancerFollower = role.value === 'dancer-follower';
                     
