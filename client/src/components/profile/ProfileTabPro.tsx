@@ -761,7 +761,7 @@ function ProDashboardView({
             Manage your professional activities and bookings
           </p>
         </div>
-        <Button className="gap-2" data-testid="button-add-content">
+        <Button className="gap-2" onClick={() => handleOpenAddDialog()} data-testid="button-add-content">
           <Plus className="w-4 h-4" />
           Add Content
         </Button>
@@ -815,7 +815,7 @@ function ProDashboardView({
                 {role.icon && <role.icon className="w-5 h-5" style={{ color: role.color }} />}
                 <h3 className="text-xl font-serif font-bold">{portfolioTitle}</h3>
               </div>
-              <Button size="sm" variant="outline" className="gap-1" data-testid={`button-add-${role.value}`}>
+              <Button size="sm" variant="outline" className="gap-1" onClick={() => handleOpenAddDialog(role)} data-testid={`button-add-${role.value}`}>
                 <Plus className="w-4 h-4" />
                 Add
               </Button>
@@ -848,7 +848,7 @@ function ProDashboardView({
               <Card>
                 <CardContent className="p-8 text-center">
                   <p className="text-sm text-muted-foreground mb-4">No {portfolioTitle.toLowerCase()} added yet</p>
-                  <Button size="sm" className="gap-2" data-testid={`button-create-${role.value}`}>
+                  <Button size="sm" className="gap-2" onClick={() => handleOpenAddDialog(role)} data-testid={`button-create-${role.value}`}>
                     <Plus className="w-4 h-4" />
                     Create Your First {role.label} {portfolioTitle.split(' ')[0]}
                   </Button>
@@ -898,6 +898,13 @@ function ProDashboardView({
           />
         </div>
       </div>
+
+      <AddPortfolioDialog
+        isOpen={isAddDialogOpen}
+        onClose={handleCloseAddDialog}
+        role={selectedRoleForAdd}
+        onSubmit={handleAddPortfolioItem}
+      />
     </div>
   );
 }
