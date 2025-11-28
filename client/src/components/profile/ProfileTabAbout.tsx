@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -39,11 +39,36 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isEditing, setIsEditing] = useState(false);
-  const [editValues, setEditValues] = useState<Record<string, any>>({});
+  const [editValues, setEditValues] = useState<Record<string, any>>({
+    bio: user.bio || '',
+    city: user.city || '',
+    country: user.country || '',
+    tangoRoles: user.tangoRoles || [],
+    yearsOfDancing: user.yearsOfDancing || '',
+    leaderLevel: user.leaderLevel || '',
+    followerLevel: user.followerLevel || '',
+    primaryLanguage: user.primaryLanguage || '',
+    languages: (user.languages || []).join(', '),
+  });
   const previousLocationRef = useRef<{ city?: string; country?: string }>({
     city: user.city || undefined,
     country: user.country || undefined,
   });
+
+  // Sync editValues when user data or editing mode changes
+  useEffect(() => {
+    setEditValues({
+      bio: user.bio || '',
+      city: user.city || '',
+      country: user.country || '',
+      tangoRoles: user.tangoRoles || [],
+      yearsOfDancing: user.yearsOfDancing || '',
+      leaderLevel: user.leaderLevel || '',
+      followerLevel: user.followerLevel || '',
+      primaryLanguage: user.primaryLanguage || '',
+      languages: (user.languages || []).join(', '),
+    });
+  }, [user.id, user.bio, user.city, user.country, user.tangoRoles, user.yearsOfDancing, user.leaderLevel, user.followerLevel, user.primaryLanguage, user.languages]);
 
   const updateProfileMutation = useMutation({
     mutationFn: async (updates: Record<string, any>) => {
@@ -101,7 +126,17 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
       }
       
       setIsEditing(false);
-      setEditValues({});
+      setEditValues({
+        bio: editValues.bio || '',
+        city: editValues.city || '',
+        country: editValues.country || '',
+        tangoRoles: editValues.tangoRoles || [],
+        yearsOfDancing: editValues.yearsOfDancing || '',
+        leaderLevel: editValues.leaderLevel || '',
+        followerLevel: editValues.followerLevel || '',
+        primaryLanguage: editValues.primaryLanguage || '',
+        languages: editValues.languages || '',
+      });
     },
     onError: () => {
       toast({ title: "Failed to update profile", variant: "destructive" });
@@ -109,17 +144,6 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
   });
 
   const handleEdit = () => {
-    setEditValues({
-      bio: user.bio || '',
-      city: user.city || '',
-      country: user.country || '',
-      tangoRoles: user.tangoRoles || [],
-      yearsOfDancing: user.yearsOfDancing || '',
-      leaderLevel: user.leaderLevel || '',
-      followerLevel: user.followerLevel || '',
-      primaryLanguage: user.primaryLanguage || '',
-      languages: (user.languages || []).join(', '),
-    });
     setIsEditing(true);
   };
 
@@ -151,7 +175,17 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
 
   const handleCancel = () => {
     setIsEditing(false);
-    setEditValues({});
+    setEditValues({
+      bio: user.bio || '',
+      city: user.city || '',
+      country: user.country || '',
+      tangoRoles: user.tangoRoles || [],
+      yearsOfDancing: user.yearsOfDancing || '',
+      leaderLevel: user.leaderLevel || '',
+      followerLevel: user.followerLevel || '',
+      primaryLanguage: user.primaryLanguage || '',
+      languages: (user.languages || []).join(', '),
+    });
   };
 
   return (
