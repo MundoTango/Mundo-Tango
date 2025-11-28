@@ -211,6 +211,159 @@ function getRolePortfolioItems(roleValue: string): PortfolioItem[] {
   return portfolioMap[roleValue] || [];
 }
 
+interface FormFieldDef {
+  name: string;
+  label: string;
+  type: "text" | "textarea" | "select";
+  placeholder?: string;
+  required?: boolean;
+  options?: { label: string; value: string }[];
+}
+
+function getRoleFormFields(roleValue: string): FormFieldDef[] {
+  const formFieldMap: Record<string, FormFieldDef[]> = {
+    "dj": [
+      { name: "type", label: "Set Type *", type: "select", required: true, options: [
+        { label: "60-minute set", value: "60-min" },
+        { label: "90-minute compilation", value: "90-min" },
+        { label: "Pure instrumental", value: "instrumental" },
+      ]},
+      { name: "title", label: "Set Title *", type: "text", placeholder: "e.g., Golden Age Mix" },
+      { name: "duration", label: "Duration", type: "text", placeholder: "e.g., 60 minutes" },
+      { name: "description", label: "Description", type: "textarea", placeholder: "Describe your DJ set..." },
+    ],
+    "teacher": [
+      { name: "type", label: "Teaching Format *", type: "select", required: true, options: [
+        { label: "Structured course", value: "course" },
+        { label: "Video lessons", value: "video" },
+        { label: "Live sessions", value: "live" },
+        { label: "Workshop", value: "workshop" },
+      ]},
+      { name: "title", label: "Course Title *", type: "text", placeholder: "e.g., Tango Fundamentals" },
+      { name: "level", label: "Level", type: "select", options: [
+        { label: "Beginner", value: "beginner" },
+        { label: "Intermediate", value: "intermediate" },
+        { label: "Advanced", value: "advanced" },
+      ]},
+      { name: "description", label: "Description", type: "textarea", placeholder: "What will students learn?" },
+    ],
+    "performer": [
+      { name: "type", label: "Performance Type *", type: "select", required: true, options: [
+        { label: "Stage performance", value: "stage" },
+        { label: "Showcase reel", value: "reel" },
+        { label: "Choreography demo", value: "choreography" },
+      ]},
+      { name: "title", label: "Performance Title *", type: "text", placeholder: "e.g., Summer Festival 2024" },
+      { name: "date", label: "Performance Date", type: "text", placeholder: "e.g., June 2024" },
+      { name: "description", label: "Description", type: "textarea", placeholder: "Describe your performance..." },
+    ],
+    "photographer": [
+      { name: "type", label: "Photography Type *", type: "select", required: true, options: [
+        { label: "Event coverage", value: "event" },
+        { label: "Portrait series", value: "portrait" },
+        { label: "Festival highlights", value: "festival" },
+      ]},
+      { name: "title", label: "Album Title *", type: "text", placeholder: "e.g., Festival Highlights" },
+      { name: "photoCount", label: "Number of Photos", type: "text", placeholder: "e.g., 120" },
+      { name: "description", label: "Description", type: "textarea", placeholder: "Describe your photography..." },
+    ],
+    "musician": [
+      { name: "type", label: "Recording Type *", type: "select", required: true, options: [
+        { label: "Solo recordings", value: "solo" },
+        { label: "Album/arrangement", value: "album" },
+        { label: "Live performance", value: "live" },
+      ]},
+      { name: "title", label: "Recording Title *", type: "text", placeholder: "e.g., Bandoneon Solos" },
+      { name: "instrument", label: "Primary Instrument", type: "text", placeholder: "e.g., Bandoneon, Guitar" },
+      { name: "description", label: "Description", type: "textarea", placeholder: "Describe your music..." },
+    ],
+    "organizer": [
+      { name: "type", label: "Event Type *", type: "select", required: true, options: [
+        { label: "Major festival", value: "festival" },
+        { label: "Regular series", value: "series" },
+        { label: "Workshops", value: "workshops" },
+      ]},
+      { name: "title", label: "Event Series Title *", type: "text", placeholder: "e.g., Summer Tango Festival" },
+      { name: "frequency", label: "Frequency", type: "text", placeholder: "e.g., Annual, Weekly" },
+      { name: "description", label: "Description", type: "textarea", placeholder: "Describe your events..." },
+    ],
+    "venue-owner": [
+      { name: "type", label: "Venue Type *", type: "select", required: true, options: [
+        { label: "Ballroom", value: "ballroom" },
+        { label: "Theater", value: "theater" },
+        { label: "Outdoor space", value: "outdoor" },
+      ]},
+      { name: "title", label: "Venue Name *", type: "text", placeholder: "e.g., Downtown Ballroom" },
+      { name: "capacity", label: "Seating Capacity", type: "text", placeholder: "e.g., 200" },
+      { name: "description", label: "Description", type: "textarea", placeholder: "Describe your venue..." },
+    ],
+    "coach": [
+      { name: "type", label: "Coaching Format *", type: "select", required: true, options: [
+        { label: "1-on-1 sessions", value: "personal" },
+        { label: "Group classes", value: "group" },
+        { label: "Online courses", value: "online" },
+      ]},
+      { name: "title", label: "Program Title *", type: "text", placeholder: "e.g., Advanced Technique Program" },
+      { name: "level", label: "Level", type: "select", options: [
+        { label: "Beginner", value: "beginner" },
+        { label: "Intermediate", value: "intermediate" },
+        { label: "Advanced", value: "advanced" },
+      ]},
+      { name: "description", label: "Description", type: "textarea", placeholder: "What will clients learn?" },
+    ],
+    "mc": [
+      { name: "type", label: "MC Activity *", type: "select", required: true, options: [
+        { label: "Festival hosting", value: "festival" },
+        { label: "Regular show", value: "show" },
+        { label: "Special event", value: "special" },
+      ]},
+      { name: "title", label: "Event/Show Title *", type: "text", placeholder: "e.g., Festival Hosting" },
+      { name: "frequency", label: "Frequency", type: "text", placeholder: "e.g., Monthly, Weekly" },
+      { name: "description", label: "Description", type: "textarea", placeholder: "Describe your MC work..." },
+    ],
+    "community-builder": [
+      { name: "type", label: "Initiative Type *", type: "select", required: true, options: [
+        { label: "Meetup group", value: "meetup" },
+        { label: "Mentorship", value: "mentorship" },
+        { label: "Content/blog", value: "content" },
+      ]},
+      { name: "title", label: "Initiative Title *", type: "text", placeholder: "e.g., Tango Meetup Group" },
+      { name: "reach", label: "Reach (members/followers)", type: "text", placeholder: "e.g., 450" },
+      { name: "description", label: "Description", type: "textarea", placeholder: "Describe your initiative..." },
+    ],
+    "business": [
+      { name: "type", label: "Business Type *", type: "select", required: true, options: [
+        { label: "Product line", value: "product" },
+        { label: "Handcrafted goods", value: "craft" },
+        { label: "Services", value: "services" },
+      ]},
+      { name: "title", label: "Business/Service Title *", type: "text", placeholder: "e.g., Tango Apparel Line" },
+      { name: "description", label: "Description", type: "textarea", placeholder: "Describe your business..." },
+    ],
+    "artist": [
+      { name: "type", label: "Art Type *", type: "select", required: true, options: [
+        { label: "Paintings", value: "painting" },
+        { label: "Sculpture", value: "sculpture" },
+        { label: "Design", value: "design" },
+      ]},
+      { name: "title", label: "Artwork/Collection Title *", type: "text", placeholder: "e.g., Tango Paintings" },
+      { name: "medium", label: "Medium/Technique", type: "text", placeholder: "e.g., Oil on canvas" },
+      { name: "description", label: "Description", type: "textarea", placeholder: "Describe your artwork..." },
+    ],
+    "journalist": [
+      { name: "type", label: "Content Type *", type: "select", required: true, options: [
+        { label: "Magazine/publication", value: "magazine" },
+        { label: "Interview series", value: "interview" },
+        { label: "Blog/column", value: "blog" },
+      ]},
+      { name: "title", label: "Publication/Series Title *", type: "text", placeholder: "e.g., Tango Culture Magazine" },
+      { name: "frequency", label: "Frequency", type: "text", placeholder: "e.g., Monthly, Weekly" },
+      { name: "description", label: "Description", type: "textarea", placeholder: "Describe your content..." },
+    ],
+  };
+  return formFieldMap[roleValue] || [];
+}
+
 function ProRoleCard({
   role,
   userExperience,
@@ -595,28 +748,45 @@ function AddPortfolioDialog({
   isOpen: boolean;
   onClose: () => void;
   role?: TangoRole;
-  onSubmit: (data: { title: string; subtitle: string; role: TangoRole }) => void;
+  onSubmit: (data: { title: string; subtitle: string; role: TangoRole; formData: Record<string, string> }) => void;
   availableRoles: TangoRole[];
 }) {
-  const [title, setTitle] = useState("");
-  const [subtitle, setSubtitle] = useState("");
   const [selectedRole, setSelectedRole] = useState<TangoRole | undefined>(role);
+  const [formData, setFormData] = useState<Record<string, string>>({});
+
+  const roleFormFields = selectedRole ? getRoleFormFields(selectedRole.value) : [];
+  const portfolioLabel = selectedRole ? getRolePortfolioTitle(selectedRole.value) : "Portfolio";
+
+  const handleFieldChange = (fieldName: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [fieldName]: value }));
+  };
+
+  const handleRoleChange = (roleValue: string) => {
+    const foundRole = availableRoles.find((r) => r.value === roleValue);
+    setSelectedRole(foundRole);
+    setFormData({});
+  };
 
   const handleSubmit = () => {
-    if (title.trim() && selectedRole) {
-      onSubmit({ title, subtitle, role: selectedRole });
-      setTitle("");
-      setSubtitle("");
+    const titleField = formData["title"] || "";
+    if (titleField.trim() && selectedRole) {
+      onSubmit({ 
+        title: titleField, 
+        subtitle: formData["description"] || "", 
+        role: selectedRole,
+        formData 
+      });
+      setFormData({});
       setSelectedRole(undefined);
       onClose();
     }
   };
 
-  const portfolioLabel = selectedRole ? getRolePortfolioTitle(selectedRole.value) : "Portfolio";
+  const isValid = selectedRole && formData["title"]?.trim();
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent data-testid="dialog-add-portfolio">
+      <DialogContent data-testid="dialog-add-portfolio" className="max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Add {portfolioLabel}</DialogTitle>
           <DialogDescription>
@@ -626,10 +796,7 @@ function AddPortfolioDialog({
         <div className="space-y-4 py-4">
           <div className="space-y-2">
             <label className="text-sm font-medium">Role *</label>
-            <Select value={selectedRole?.value || ""} onValueChange={(roleValue) => {
-              const foundRole = availableRoles.find((r) => r.value === roleValue);
-              setSelectedRole(foundRole);
-            }}>
+            <Select value={selectedRole?.value || ""} onValueChange={handleRoleChange}>
               <SelectTrigger data-testid="select-portfolio-role">
                 <SelectValue placeholder="Select a role" />
               </SelectTrigger>
@@ -642,31 +809,49 @@ function AddPortfolioDialog({
               </SelectContent>
             </Select>
           </div>
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Title *</label>
-            <Input
-              placeholder={`e.g., My Awesome ${portfolioLabel.split(" ")[0]}`}
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              data-testid="input-portfolio-title"
-            />
-          </div>
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Description</label>
-            <Textarea
-              placeholder="Describe this item..."
-              value={subtitle}
-              onChange={(e) => setSubtitle(e.target.value)}
-              className="resize-none"
-              data-testid="textarea-portfolio-description"
-            />
-          </div>
+
+          {roleFormFields.map((field) => (
+            <div key={field.name} className="space-y-2">
+              <label className="text-sm font-medium">{field.label}</label>
+              {field.type === "text" && (
+                <Input
+                  placeholder={field.placeholder}
+                  value={formData[field.name] || ""}
+                  onChange={(e) => handleFieldChange(field.name, e.target.value)}
+                  data-testid={`input-${field.name}`}
+                />
+              )}
+              {field.type === "textarea" && (
+                <Textarea
+                  placeholder={field.placeholder}
+                  value={formData[field.name] || ""}
+                  onChange={(e) => handleFieldChange(field.name, e.target.value)}
+                  className="resize-none"
+                  data-testid={`textarea-${field.name}`}
+                />
+              )}
+              {field.type === "select" && field.options && (
+                <Select value={formData[field.name] || ""} onValueChange={(value) => handleFieldChange(field.name, value)}>
+                  <SelectTrigger data-testid={`select-${field.name}`}>
+                    <SelectValue placeholder={field.placeholder || `Select ${field.label.toLowerCase()}`} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {field.options.map((opt) => (
+                      <SelectItem key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            </div>
+          ))}
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={onClose} data-testid="button-cancel">
             Cancel
           </Button>
-          <Button onClick={handleSubmit} disabled={!selectedRole || !title.trim()} data-testid="button-save-portfolio">
+          <Button onClick={handleSubmit} disabled={!isValid} data-testid="button-save-portfolio">
             Add {portfolioLabel.split(" ")[0]}
           </Button>
         </DialogFooter>
@@ -738,8 +923,8 @@ function ProDashboardView({
     setSelectedRoleForAdd(undefined);
   };
 
-  const handleAddPortfolioItem = (data: { title: string; subtitle: string; role: TangoRole }) => {
-    console.log("Adding portfolio item:", { role: data.role.value, title: data.title, subtitle: data.subtitle });
+  const handleAddPortfolioItem = (data: { title: string; subtitle: string; role: TangoRole; formData: Record<string, string> }) => {
+    console.log("Adding portfolio item:", { role: data.role.value, title: data.title, subtitle: data.subtitle, formData: data.formData });
     handleCloseAddDialog();
   };
 
