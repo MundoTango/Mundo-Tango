@@ -329,16 +329,6 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
             )}
           </div>
 
-          {/* When did you start tango? - Standalone Section */}
-          {!isEditing && (
-            <div>
-              <p className="text-xs text-muted-foreground mb-1">When did you start tango?</p>
-              <p className="text-base font-medium" data-testid="text-tango-start-year">
-                {user.tangoStartYear ? new Date(user.tangoStartYear, 0, 1).toLocaleDateString('en-US', { year: 'numeric' }) : <span className="text-muted-foreground italic">Not set</span>}
-              </p>
-            </div>
-          )}
-
           {/* Tango Roles & Experience - Combined Section */}
           <div>
             <h3 className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-1">
@@ -407,39 +397,80 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
                     })}
                   </div>
 
-                  {/* Per-Role Year Selectors - Integrated Below */}
+                  {/* Per-Role Year Selectors + Skill Levels - Integrated Below */}
                   {selectedRoles.length > 0 && (
-                    <div className="space-y-2">
+                    <div className="space-y-3">
                       {selectedRoles.map((roleValue: string) => {
                         const role = getRoleByValue(roleValue);
                         const IconComponent = role?.icon;
                         const startYear = getRoleStartYear(roleValue);
+                        const isDancerRole = roleValue === 'dancer-leader' || roleValue === 'dancer-follower';
+                        const isDancerLeader = roleValue === 'dancer-leader';
                         
                         return (
-                          <div key={roleValue} className="flex items-center justify-between gap-3 p-2 rounded-md bg-muted/20">
-                            <div className="flex items-center gap-2 min-w-0">
-                              {IconComponent && (
-                                <div className="p-1 rounded-md shrink-0" style={{ backgroundColor: `${role?.color}20` }}>
-                                  <IconComponent className="w-3.5 h-3.5" style={{ color: role?.color }} />
-                                </div>
-                              )}
-                              <span className="text-xs font-medium truncate">{role?.label || roleValue}</span>
+                          <div key={roleValue} className="space-y-2 p-3 rounded-lg border border-muted bg-muted/10">
+                            {/* Role header with year selector */}
+                            <div className="flex items-center justify-between gap-3">
+                              <div className="flex items-center gap-2 min-w-0">
+                                {IconComponent && (
+                                  <div className="p-1 rounded-md shrink-0" style={{ backgroundColor: `${role?.color}20` }}>
+                                    <IconComponent className="w-3.5 h-3.5" style={{ color: role?.color }} />
+                                  </div>
+                                )}
+                                <span className="text-xs font-medium truncate">{role?.label || roleValue}</span>
+                              </div>
+                              <Select
+                                value={startYear.toString()}
+                                onValueChange={(value) => updateRoleStartYear(roleValue, parseInt(value))}
+                              >
+                                <SelectTrigger className="w-[100px] shrink-0 h-8" data-testid={`select-role-year-${roleValue}`}>
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {yearOptions.map((year) => (
+                                    <SelectItem key={year} value={year.toString()}>
+                                      {year}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
                             </div>
-                            <Select
-                              value={startYear.toString()}
-                              onValueChange={(value) => updateRoleStartYear(roleValue, parseInt(value))}
-                            >
-                              <SelectTrigger className="w-[100px] shrink-0 h-8" data-testid={`select-role-year-${roleValue}`}>
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {yearOptions.map((year) => (
-                                  <SelectItem key={year} value={year.toString()}>
-                                    {year}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
+                            
+                            {/* Skill levels for dancer roles */}
+                            {isDancerRole && (
+                              <div className="grid grid-cols-2 gap-2 pt-2 border-t border-muted">
+                                {isDancerLeader && (
+                                  <div>
+                                    <label className="text-xs text-muted-foreground block mb-1">Leader Level (1-10)</label>
+                                    <Input 
+                                      type="number" 
+                                      min="1" 
+                                      max="10" 
+                                      placeholder="e.g., 7" 
+                                      value={editValues.leaderLevel || ''} 
+                                      onChange={(e) => setEditValues({ ...editValues, leaderLevel: e.target.value })}
+                                      data-testid="input-leader-level"
+                                      className="h-8"
+                                    />
+                                  </div>
+                                )}
+                                {!isDancerLeader && (
+                                  <div>
+                                    <label className="text-xs text-muted-foreground block mb-1">Follower Level (1-10)</label>
+                                    <Input 
+                                      type="number" 
+                                      min="1" 
+                                      max="10" 
+                                      placeholder="e.g., 8" 
+                                      value={editValues.followerLevel || ''} 
+                                      onChange={(e) => setEditValues({ ...editValues, followerLevel: e.target.value })}
+                                      data-testid="input-follower-level"
+                                      className="h-8"
+                                    />
+                                  </div>
+                                )}
+                              </div>
+                            )}
                           </div>
                         );
                       })}
@@ -475,60 +506,6 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
                   </div>
                 ) : (
                   <span className="text-muted-foreground italic">No roles set</span>
-                )}
-              </div>
-            )}
-          </div>
-
-          {/* Skill Levels (separate from experience) */}
-          <div>
-            <h3 className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-1">
-              <Users className="w-4 h-4" />
-              Skill Levels
-            </h3>
-            {isEditing ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div>
-                  <label className="text-xs text-muted-foreground block mb-1">Leader Level (1-10)</label>
-                  <Input 
-                    type="number" 
-                    min="1" 
-                    max="10" 
-                    placeholder="e.g., 7" 
-                    value={editValues.leaderLevel || ''} 
-                    onChange={(e) => setEditValues({ ...editValues, leaderLevel: e.target.value })}
-                    data-testid="input-leader-level"
-                  />
-                </div>
-                <div>
-                  <label className="text-xs text-muted-foreground block mb-1">Follower Level (1-10)</label>
-                  <Input 
-                    type="number" 
-                    min="1" 
-                    max="10" 
-                    placeholder="e.g., 8" 
-                    value={editValues.followerLevel || ''} 
-                    onChange={(e) => setEditValues({ ...editValues, followerLevel: e.target.value })}
-                    data-testid="input-follower-level"
-                  />
-                </div>
-              </div>
-            ) : (
-              <div className="space-y-2">
-                {user.leaderLevel !== undefined && user.leaderLevel > 0 && (
-                  <div>
-                    <p className="text-xs text-muted-foreground">Leader Level</p>
-                    <p className="text-sm font-medium">Level {user.leaderLevel}</p>
-                  </div>
-                )}
-                {user.followerLevel !== undefined && user.followerLevel > 0 && (
-                  <div>
-                    <p className="text-xs text-muted-foreground">Follower Level</p>
-                    <p className="text-sm font-medium">Level {user.followerLevel}</p>
-                  </div>
-                )}
-                {!user.leaderLevel && !user.followerLevel && (
-                  <span className="text-muted-foreground italic">No skill levels set</span>
                 )}
               </div>
             )}
