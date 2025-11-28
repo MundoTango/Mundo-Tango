@@ -338,7 +338,29 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
             
             {isEditing ? (
               <div className="space-y-4">
-                <p className="text-xs text-muted-foreground">Select your roles below. When selected, choose start year and skill level (for dancer roles).</p>
+                {/* When did you start tango? - Global default */}
+                <div>
+                  <label className="text-xs text-muted-foreground block mb-1.5">When did you start tango?</label>
+                  <Select
+                    value={editValues.tangoStartYear?.toString() || ''}
+                    onValueChange={(value) => {
+                      const year = parseInt(value);
+                      setEditValues({ ...editValues, tangoStartYear: year });
+                    }}
+                  >
+                    <SelectTrigger className="w-[150px]" data-testid="select-tango-start-year">
+                      <SelectValue placeholder="Select year" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {yearOptions.map((year) => (
+                        <SelectItem key={year} value={year.toString()}>
+                          {year}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <p className="text-[10px] text-muted-foreground mt-1">This sets the default year for all roles. Override per-role below.</p>
+                </div>
 
                 {/* Unified Role Selection - Each role expands inline when selected */}
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2" data-testid="input-tango-roles">
@@ -439,6 +461,14 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
               </div>
             ) : (
               <div className="space-y-3">
+                {/* When did you start tango? - View mode */}
+                {user.tangoStartYear && (
+                  <div className="pb-2 border-b border-muted/50">
+                    <p className="text-xs text-muted-foreground mb-1">Started Tango</p>
+                    <p className="text-sm font-medium">{user.tangoStartYear}</p>
+                  </div>
+                )}
+                
                 {/* Per-Role Experience Cards */}
                 {user.tangoRoles && user.tangoRoles.length > 0 ? (
                   <div className="flex flex-wrap gap-2">
