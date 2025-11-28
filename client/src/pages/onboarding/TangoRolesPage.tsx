@@ -4,41 +4,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { 
-  Loader2, Check, Heart, ChevronRight,
-  Users, User, GraduationCap, Music, Drama,
-  Calendar, Building2, Camera, Palette, Briefcase,
-  Mic, PenLine, BookOpen, Target, Shirt,
-  Globe, Piano, Eye
-} from "lucide-react";
+import { Loader2, Check, Heart, ChevronRight } from "lucide-react";
 import { SEO } from "@/components/SEO";
 import { useAuth } from "@/contexts/AuthContext";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { motion } from "framer-motion";
 import heroImage from "@assets/stock_images/elegant_professional_29e89c1e.jpg";
-
-const TANGO_ROLES = [
-  { id: "dancer-leader", icon: Users, name: "Dancer (Leader)", description: "I lead in tango dancing", color: "#1E90FF" },
-  { id: "dancer-follower", icon: User, name: "Dancer (Follower)", description: "I follow in tango dancing", color: "#EC4899" },
-  { id: "teacher", icon: GraduationCap, name: "Teacher", description: "I teach tango", color: "#10B981" },
-  { id: "dj", icon: Music, name: "DJ", description: "I DJ tango music", color: "#8B5CF6" },
-  { id: "performer", icon: Drama, name: "Performer", description: "I perform tango shows", color: "#F59E0B" },
-  { id: "organizer", icon: Calendar, name: "Organizer", description: "I organize tango events", color: "#3B82F6" },
-  { id: "venue-owner", icon: Building2, name: "Venue Owner", description: "I own/manage a tango venue", color: "#6B7280" },
-  { id: "photographer", icon: Camera, name: "Photographer/Videographer", description: "I capture tango moments", color: "#EF4444" },
-  { id: "artist", icon: Palette, name: "Designer/Artist", description: "I create tango art/graphics", color: "#EC4899" },
-  { id: "business", icon: Briefcase, name: "Business/Vendor", description: "I run a tango-related business", color: "#6366F1" },
-  { id: "mc", icon: Mic, name: "MC/Host", description: "I host/MC tango events", color: "#F97316" },
-  { id: "journalist", icon: PenLine, name: "Journalist/Blogger", description: "I write about tango", color: "#14B8A6" },
-  { id: "historian", icon: BookOpen, name: "Historian", description: "I study tango history", color: "#8B5CF6" },
-  { id: "coach", icon: Target, name: "Coach/Mentor", description: "I coach/mentor tango dancers", color: "#10B981" },
-  { id: "clothing-designer", icon: Shirt, name: "Clothing/Shoe Designer", description: "I design tango clothing/shoes", color: "#EC4899" },
-  { id: "community-builder", icon: Globe, name: "Community Builder", description: "I build tango communities", color: "#40E0D0" },
-  { id: "musician", icon: Piano, name: "Musician", description: "I play tango music", color: "#A855F7" },
-  { id: "fan", icon: Eye, name: "Fan/Enthusiast", description: "I'm a tango enthusiast", color: "#F59E0B" },
-  { id: "other", icon: Heart, name: "Other", description: "My tango role is unique", color: "#EF4444" },
-];
+import { TANGO_ROLES } from "@/lib/tangoRoles";
 
 export default function TangoRolesPage() {
   const [, navigate] = useLocation();
@@ -163,19 +136,19 @@ export default function TangoRolesPage() {
                     const IconComponent = role.icon;
                     return (
                       <motion.button
-                        key={role.id}
-                        onClick={() => toggleRole(role.id)}
+                        key={role.value}
+                        onClick={() => toggleRole(role.value)}
                         className={`relative flex flex-col items-center gap-3 p-6 rounded-xl border-2 transition-all hover-elevate active-elevate-2 ${
-                          selectedRoles.includes(role.id)
+                          selectedRoles.includes(role.value)
                             ? "border-primary bg-primary/10"
                             : "border-muted"
                         }`}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: index * 0.03 }}
-                        data-testid={`role-${role.id}`}
+                        data-testid={`role-${role.value}`}
                       >
-                        {selectedRoles.includes(role.id) && (
+                        {selectedRoles.includes(role.value) && (
                           <motion.div 
                             className="absolute top-3 right-3 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground"
                             initial={{ scale: 0 }}
@@ -189,7 +162,7 @@ export default function TangoRolesPage() {
                           <IconComponent className="w-8 h-8" style={{ color: role.color }} />
                         </div>
                         <span className="text-sm font-medium text-center leading-tight">
-                          {role.name}
+                          {role.label}
                         </span>
                       </motion.button>
                     );
@@ -204,13 +177,13 @@ export default function TangoRolesPage() {
                   >
                     <p className="text-sm font-medium mb-3">Selected roles ({selectedRoles.length}):</p>
                     <div className="flex flex-wrap gap-2">
-                      {selectedRoles.map((roleId) => {
-                        const role = TANGO_ROLES.find(r => r.id === roleId);
+                      {selectedRoles.map((roleValue) => {
+                        const role = TANGO_ROLES.find(r => r.value === roleValue);
                         const IconComponent = role?.icon || Heart;
                         return (
-                          <Badge key={roleId} variant="secondary" className="gap-2 py-1.5 px-3">
+                          <Badge key={roleValue} variant="secondary" className="gap-2 py-1.5 px-3">
                             <IconComponent className="w-4 h-4" style={{ color: role?.color || '#EF4444' }} />
-                            <span>{role?.name}</span>
+                            <span>{role?.label}</span>
                           </Badge>
                         );
                       })}
