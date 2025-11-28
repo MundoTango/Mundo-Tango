@@ -865,7 +865,7 @@ function AddPortfolioDialog({
           )}
 
           {roleFormFields.map((field) => {
-            // Use UnifiedLocationPicker for location, city, country fields
+            // Use UnifiedLocationPicker for location, city, country fields in event-creating roles
             if (field.name === "location" && isEventCreatingRole) {
               return (
                 <div key={field.name} className="space-y-2">
@@ -875,14 +875,13 @@ function AddPortfolioDialog({
                     value={formData["location"] || ""}
                     onChange={handleLocationChange}
                     placeholder={field.placeholder || "Search for a venue or address..."}
-                    data-testid={`location-picker-${field.name}`}
                   />
                 </div>
               );
             }
             
-            // Skip city and country if they're rendered through location picker
-            if ((field.name === "city" || field.name === "country") && isEventCreatingRole && formData["location"]) {
+            // Skip city and country fields if they're being handled by location picker
+            if ((field.name === "city" || field.name === "country") && isEventCreatingRole) {
               return null;
             }
 

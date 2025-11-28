@@ -76,9 +76,11 @@ export default function CreateEventPage() {
     const { city, country } = extractCityCountry(location);
     setSelectedLocation({ city, country, address: location });
     form.setValue("location", location);
-    form.setValue("city", city);
-    form.setValue("country", country);
-    if (parsed?.street) {
+    form.setValue("city", city || "");
+    form.setValue("country", country || "");
+    if (parsed?.fullAddress) {
+      form.setValue("address", parsed.fullAddress);
+    } else if (parsed?.street) {
       form.setValue("address", parsed.street);
     }
   };
