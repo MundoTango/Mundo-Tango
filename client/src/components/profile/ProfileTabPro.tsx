@@ -12,6 +12,16 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { motion } from "framer-motion";
 import {
   Calendar,
@@ -575,6 +585,74 @@ function ProBookingRequests({
   );
 }
 
+function AddPortfolioDialog({
+  isOpen,
+  onClose,
+  role,
+  onSubmit,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  role?: TangoRole;
+  onSubmit: (data: { title: string; subtitle: string }) => void;
+}) {
+  const [title, setTitle] = useState("");
+  const [subtitle, setSubtitle] = useState("");
+
+  const handleSubmit = () => {
+    if (title.trim()) {
+      onSubmit({ title, subtitle });
+      setTitle("");
+      setSubtitle("");
+      onClose();
+    }
+  };
+
+  const portfolioLabel = role ? getRolePortfolioTitle(role.value) : "Portfolio";
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent data-testid="dialog-add-portfolio">
+        <DialogHeader>
+          <DialogTitle>Add {portfolioLabel}</DialogTitle>
+          <DialogDescription>
+            {role ? `Add a new ${portfolioLabel.toLowerCase()} item to your ${role.label} portfolio.` : "Add a new portfolio item."}
+          </DialogDescription>
+        </DialogHeader>
+        <div className="space-y-4 py-4">
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Title *</label>
+            <Input
+              placeholder={`e.g., My Awesome ${portfolioLabel.split(" ")[0]}`}
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              data-testid="input-portfolio-title"
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Description</label>
+            <Textarea
+              placeholder="Describe this item..."
+              value={subtitle}
+              onChange={(e) => setSubtitle(e.target.value)}
+              className="resize-none"
+              data-testid="textarea-portfolio-description"
+            />
+          </div>
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={onClose} data-testid="button-cancel">
+            Cancel
+          </Button>
+          <Button onClick={handleSubmit} data-testid="button-save-portfolio">
+            Add {portfolioLabel.split(" ")[0]}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 function ProDashboardView({
   userId,
   proRoles,
@@ -587,6 +665,8 @@ function ProDashboardView({
   const [selectedRoles, setSelectedRoles] = useState<string[]>(
     proRoles.map((r) => r.value)
   );
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [selectedRoleForAdd, setSelectedRoleForAdd] = useState<TangoRole | undefined>();
 
   const selectedRolesInfo = useMemo(
     () => proRoles.filter((r) => selectedRoles.includes(r.value)),
@@ -624,6 +704,21 @@ function ProDashboardView({
         ? prev.filter((r) => r !== roleValue)
         : [...prev, roleValue]
     );
+  };
+
+  const handleOpenAddDialog = (role?: TangoRole) => {
+    setSelectedRoleForAdd(role);
+    setIsAddDialogOpen(true);
+  };
+
+  const handleCloseAddDialog = () => {
+    setIsAddDialogOpen(false);
+    setSelectedRoleForAdd(undefined);
+  };
+
+  const handleAddPortfolioItem = (data: { title: string; subtitle: string }) => {
+    console.log("Adding portfolio item:", { role: selectedRoleForAdd?.value, ...data });
+    handleCloseAddDialog();
   };
 
   const handleAcceptBooking = (id: number) => {
