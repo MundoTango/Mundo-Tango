@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -22,6 +22,8 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 import { motion } from "framer-motion";
 import {
   Calendar,
@@ -220,42 +222,67 @@ interface FormFieldDef {
   options?: { label: string; value: string }[];
 }
 
+// Roles that auto-create events when portfolio items are submitted
+const EVENT_CREATING_ROLES = ["organizer", "teacher", "coach", "performer", "musician", "mc", "venue-owner"];
+
+// Mapping from role to event type
+function getRoleEventType(roleValue: string): string {
+  const roleEventTypeMap: Record<string, string> = {
+    "teacher": "class",
+    "organizer": "milonga",
+    "coach": "workshop",
+    "performer": "performance",
+    "musician": "concert",
+    "mc": "social",
+    "venue-owner": "milonga",
+  };
+  return roleEventTypeMap[roleValue] || "milonga";
+}
+
 function getRoleFormFields(roleValue: string): FormFieldDef[] {
+  // Standard event fields that all event-creating roles should have
+  const eventFields = EVENT_CREATING_ROLES.includes(roleValue) ? [
+    { name: "startDate", label: "Start Date & Time *", type: "text", placeholder: "e.g., 2024-12-15T19:00" },
+    { name: "endDate", label: "End Date & Time", type: "text", placeholder: "e.g., 2024-12-15T23:00" },
+    { name: "location", label: "Venue Name *", type: "text", placeholder: "e.g., La Catedral Club" },
+    { name: "address", label: "Street Address", type: "text", placeholder: "123 Main Street" },
+    { name: "city", label: "City *", type: "text", placeholder: "Buenos Aires" },
+    { name: "country", label: "Country *", type: "text", placeholder: "Argentina" },
+    { name: "price", label: "Price (if paid)", type: "text", placeholder: "0" },
+    { name: "maxAttendees", label: "Max Attendees", type: "text", placeholder: "Leave blank for unlimited" },
+  ] : [];
+
   const formFieldMap: Record<string, FormFieldDef[]> = {
     "dj": [
+      ...eventFields,
       { name: "type", label: "Set Type *", type: "select", required: true, options: [
         { label: "60-minute set", value: "60-min" },
         { label: "90-minute compilation", value: "90-min" },
         { label: "Pure instrumental", value: "instrumental" },
       ]},
-      { name: "title", label: "Set Title *", type: "text", placeholder: "e.g., Golden Age Mix" },
       { name: "duration", label: "Duration", type: "text", placeholder: "e.g., 60 minutes" },
-      { name: "description", label: "Description", type: "textarea", placeholder: "Describe your DJ set..." },
     ],
     "teacher": [
+      ...eventFields,
       { name: "type", label: "Teaching Format *", type: "select", required: true, options: [
         { label: "Structured course", value: "course" },
         { label: "Video lessons", value: "video" },
         { label: "Live sessions", value: "live" },
         { label: "Workshop", value: "workshop" },
       ]},
-      { name: "title", label: "Course Title *", type: "text", placeholder: "e.g., Tango Fundamentals" },
       { name: "level", label: "Level", type: "select", options: [
         { label: "Beginner", value: "beginner" },
         { label: "Intermediate", value: "intermediate" },
         { label: "Advanced", value: "advanced" },
       ]},
-      { name: "description", label: "Description", type: "textarea", placeholder: "What will students learn?" },
     ],
     "performer": [
+      ...eventFields,
       { name: "type", label: "Performance Type *", type: "select", required: true, options: [
         { label: "Stage performance", value: "stage" },
         { label: "Showcase reel", value: "reel" },
         { label: "Choreography demo", value: "choreography" },
       ]},
-      { name: "title", label: "Performance Title *", type: "text", placeholder: "e.g., Summer Festival 2024" },
-      { name: "date", label: "Performance Date", type: "text", placeholder: "e.g., June 2024" },
-      { name: "description", label: "Description", type: "textarea", placeholder: "Describe your performance..." },
     ],
     "photographer": [
       { name: "type", label: "Photography Type *", type: "select", required: true, options: [
@@ -268,58 +295,53 @@ function getRoleFormFields(roleValue: string): FormFieldDef[] {
       { name: "description", label: "Description", type: "textarea", placeholder: "Describe your photography..." },
     ],
     "musician": [
+      ...eventFields,
       { name: "type", label: "Recording Type *", type: "select", required: true, options: [
         { label: "Solo recordings", value: "solo" },
         { label: "Album/arrangement", value: "album" },
         { label: "Live performance", value: "live" },
       ]},
-      { name: "title", label: "Recording Title *", type: "text", placeholder: "e.g., Bandoneon Solos" },
       { name: "instrument", label: "Primary Instrument", type: "text", placeholder: "e.g., Bandoneon, Guitar" },
-      { name: "description", label: "Description", type: "textarea", placeholder: "Describe your music..." },
     ],
     "organizer": [
+      ...eventFields,
       { name: "type", label: "Event Type *", type: "select", required: true, options: [
         { label: "Major festival", value: "festival" },
         { label: "Regular series", value: "series" },
         { label: "Workshops", value: "workshops" },
       ]},
-      { name: "title", label: "Event Series Title *", type: "text", placeholder: "e.g., Summer Tango Festival" },
       { name: "frequency", label: "Frequency", type: "text", placeholder: "e.g., Annual, Weekly" },
-      { name: "description", label: "Description", type: "textarea", placeholder: "Describe your events..." },
     ],
     "venue-owner": [
+      ...eventFields,
       { name: "type", label: "Venue Type *", type: "select", required: true, options: [
         { label: "Ballroom", value: "ballroom" },
         { label: "Theater", value: "theater" },
         { label: "Outdoor space", value: "outdoor" },
       ]},
-      { name: "title", label: "Venue Name *", type: "text", placeholder: "e.g., Downtown Ballroom" },
       { name: "capacity", label: "Seating Capacity", type: "text", placeholder: "e.g., 200" },
-      { name: "description", label: "Description", type: "textarea", placeholder: "Describe your venue..." },
     ],
     "coach": [
+      ...eventFields,
       { name: "type", label: "Coaching Format *", type: "select", required: true, options: [
         { label: "1-on-1 sessions", value: "personal" },
         { label: "Group classes", value: "group" },
         { label: "Online courses", value: "online" },
       ]},
-      { name: "title", label: "Program Title *", type: "text", placeholder: "e.g., Advanced Technique Program" },
       { name: "level", label: "Level", type: "select", options: [
         { label: "Beginner", value: "beginner" },
         { label: "Intermediate", value: "intermediate" },
         { label: "Advanced", value: "advanced" },
       ]},
-      { name: "description", label: "Description", type: "textarea", placeholder: "What will clients learn?" },
     ],
     "mc": [
+      ...eventFields,
       { name: "type", label: "MC Activity *", type: "select", required: true, options: [
         { label: "Festival hosting", value: "festival" },
         { label: "Regular show", value: "show" },
         { label: "Special event", value: "special" },
       ]},
-      { name: "title", label: "Event/Show Title *", type: "text", placeholder: "e.g., Festival Hosting" },
       { name: "frequency", label: "Frequency", type: "text", placeholder: "e.g., Monthly, Weekly" },
-      { name: "description", label: "Description", type: "textarea", placeholder: "Describe your MC work..." },
     ],
     "community-builder": [
       { name: "type", label: "Initiative Type *", type: "select", required: true, options: [
@@ -327,7 +349,6 @@ function getRoleFormFields(roleValue: string): FormFieldDef[] {
         { label: "Mentorship", value: "mentorship" },
         { label: "Content/blog", value: "content" },
       ]},
-      { name: "title", label: "Initiative Title *", type: "text", placeholder: "e.g., Tango Meetup Group" },
       { name: "reach", label: "Reach (members/followers)", type: "text", placeholder: "e.g., 450" },
       { name: "description", label: "Description", type: "textarea", placeholder: "Describe your initiative..." },
     ],
@@ -337,7 +358,6 @@ function getRoleFormFields(roleValue: string): FormFieldDef[] {
         { label: "Handcrafted goods", value: "craft" },
         { label: "Services", value: "services" },
       ]},
-      { name: "title", label: "Business/Service Title *", type: "text", placeholder: "e.g., Tango Apparel Line" },
       { name: "description", label: "Description", type: "textarea", placeholder: "Describe your business..." },
     ],
     "artist": [
@@ -346,7 +366,6 @@ function getRoleFormFields(roleValue: string): FormFieldDef[] {
         { label: "Sculpture", value: "sculpture" },
         { label: "Design", value: "design" },
       ]},
-      { name: "title", label: "Artwork/Collection Title *", type: "text", placeholder: "e.g., Tango Paintings" },
       { name: "medium", label: "Medium/Technique", type: "text", placeholder: "e.g., Oil on canvas" },
       { name: "description", label: "Description", type: "textarea", placeholder: "Describe your artwork..." },
     ],
@@ -356,7 +375,6 @@ function getRoleFormFields(roleValue: string): FormFieldDef[] {
         { label: "Interview series", value: "interview" },
         { label: "Blog/column", value: "blog" },
       ]},
-      { name: "title", label: "Publication/Series Title *", type: "text", placeholder: "e.g., Tango Culture Magazine" },
       { name: "frequency", label: "Frequency", type: "text", placeholder: "e.g., Monthly, Weekly" },
       { name: "description", label: "Description", type: "textarea", placeholder: "Describe your content..." },
     ],
@@ -748,14 +766,16 @@ function AddPortfolioDialog({
   isOpen: boolean;
   onClose: () => void;
   role?: TangoRole;
-  onSubmit: (data: { title: string; subtitle: string; role: TangoRole; formData: Record<string, string> }) => void;
+  onSubmit: (data: { title: string; subtitle: string; role: TangoRole; formData: Record<string, string> }) => Promise<void> | void;
   availableRoles: TangoRole[];
 }) {
   const [selectedRole, setSelectedRole] = useState<TangoRole | undefined>(role);
   const [formData, setFormData] = useState<Record<string, string>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const roleFormFields = selectedRole ? getRoleFormFields(selectedRole.value) : [];
   const portfolioLabel = selectedRole ? getRolePortfolioTitle(selectedRole.value) : "Portfolio";
+  const isEventCreatingRole = selectedRole && EVENT_CREATING_ROLES.includes(selectedRole.value);
 
   const handleFieldChange = (fieldName: string, value: string) => {
     setFormData((prev) => ({ ...prev, [fieldName]: value }));
@@ -767,18 +787,23 @@ function AddPortfolioDialog({
     setFormData({});
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const titleField = formData["title"] || "";
     if (titleField.trim() && selectedRole) {
-      onSubmit({ 
-        title: titleField, 
-        subtitle: formData["description"] || "", 
-        role: selectedRole,
-        formData 
-      });
-      setFormData({});
-      setSelectedRole(undefined);
-      onClose();
+      setIsSubmitting(true);
+      try {
+        await onSubmit({ 
+          title: titleField, 
+          subtitle: formData["description"] || "", 
+          role: selectedRole,
+          formData 
+        });
+        setFormData({});
+        setSelectedRole(undefined);
+        onClose();
+      } finally {
+        setIsSubmitting(false);
+      }
     }
   };
 
@@ -790,7 +815,12 @@ function AddPortfolioDialog({
         <DialogHeader>
           <DialogTitle>Add {portfolioLabel}</DialogTitle>
           <DialogDescription>
-            {selectedRole ? `Add a new ${portfolioLabel.toLowerCase()} item to your ${selectedRole.label} portfolio.` : "Select a role and add a portfolio item."}
+            {selectedRole ? (
+              <>
+                Add a new {portfolioLabel.toLowerCase()} item to your {selectedRole.label} portfolio.
+                {isEventCreatingRole && " This will also create an event linked to your portfolio."}
+              </>
+            ) : "Select a role and add a portfolio item."}
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-4">
@@ -810,6 +840,15 @@ function AddPortfolioDialog({
             </Select>
           </div>
 
+          {isEventCreatingRole && (
+            <div className="bg-primary/10 border border-primary/20 rounded-lg p-3">
+              <p className="text-sm text-primary font-medium">Event Information</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Fill in event details below to auto-create and publish an event for your portfolio.
+              </p>
+            </div>
+          )}
+
           {roleFormFields.map((field) => (
             <div key={field.name} className="space-y-2">
               <label className="text-sm font-medium">{field.label}</label>
@@ -819,6 +858,7 @@ function AddPortfolioDialog({
                   value={formData[field.name] || ""}
                   onChange={(e) => handleFieldChange(field.name, e.target.value)}
                   data-testid={`input-${field.name}`}
+                  type={field.name.includes("date") || field.name === "startDate" || field.name === "endDate" ? "datetime-local" : "text"}
                 />
               )}
               {field.type === "textarea" && (
@@ -848,11 +888,11 @@ function AddPortfolioDialog({
           ))}
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={onClose} data-testid="button-cancel">
+          <Button variant="outline" onClick={onClose} data-testid="button-cancel" disabled={isSubmitting}>
             Cancel
           </Button>
-          <Button onClick={handleSubmit} disabled={!isValid} data-testid="button-save-portfolio">
-            Add {portfolioLabel.split(" ")[0]}
+          <Button onClick={handleSubmit} disabled={!isValid || isSubmitting} data-testid="button-save-portfolio">
+            {isSubmitting ? "Creating..." : `Add ${portfolioLabel.split(" ")[0]}`}
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -923,8 +963,59 @@ function ProDashboardView({
     setSelectedRoleForAdd(undefined);
   };
 
-  const handleAddPortfolioItem = (data: { title: string; subtitle: string; role: TangoRole; formData: Record<string, string> }) => {
-    console.log("Adding portfolio item:", { role: data.role.value, title: data.title, subtitle: data.subtitle, formData: data.formData });
+  const { toast } = useToast();
+
+  const createEventMutation = useMutation({
+    mutationFn: async (eventData: Record<string, any>) => {
+      const response = await apiRequest("POST", "/api/events", eventData);
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/events"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/users", userId, "event-history"] });
+      toast({
+        title: "Event created!",
+        description: "Your event has been published and added to your portfolio.",
+      });
+    },
+    onError: (error: any) => {
+      console.error("Event creation error:", error);
+      toast({
+        title: "Event creation failed",
+        description: "The portfolio item was not created as an event. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleAddPortfolioItem = async (data: { title: string; subtitle: string; role: TangoRole; formData: Record<string, string> }) => {
+    console.log("Adding portfolio item:", { role: data.role.value, title: data.title, formData: data.formData });
+    
+    // If this role creates events, create an event
+    if (EVENT_CREATING_ROLES.includes(data.role.value)) {
+      const eventType = getRoleEventType(data.role.value);
+      const startDateStr = data.formData["startDate"] || new Date().toISOString();
+      
+      const eventData = {
+        title: data.title,
+        description: data.subtitle || data.formData["description"] || "",
+        eventType,
+        category: eventType,
+        location: data.formData["location"] || data.role.label,
+        city: data.formData["city"] || "",
+        country: data.formData["country"] || "",
+        address: data.formData["address"] || "",
+        startDate: startDateStr,
+        endDate: data.formData["endDate"] || undefined,
+        isPaid: data.formData["isPaid"] === "true" || false,
+        price: data.formData["price"] ? parseFloat(data.formData["price"]) : 0,
+        maxAttendees: data.formData["maxAttendees"] ? parseInt(data.formData["maxAttendees"]) : undefined,
+        tags: [data.role.value, "portfolio"],
+      };
+      
+      createEventMutation.mutate(eventData);
+    }
+    
     handleCloseAddDialog();
   };
 
