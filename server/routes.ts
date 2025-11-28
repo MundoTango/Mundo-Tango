@@ -3573,6 +3573,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         followerLevel,
         primaryLanguage,
         languages,
+        occupation,
+        portfolioUrls,
+        communityWebsiteUrl,
       } = req.body;
 
       // Update user in database
@@ -3593,6 +3596,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
           followerLevel,
           primaryLanguage,
           languages,
+          occupation,
+          portfolioUrls,
+          communityWebsiteUrl,
           updatedAt: new Date(),
         })
         .where(eq(users.id, userId))

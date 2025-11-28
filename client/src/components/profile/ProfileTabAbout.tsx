@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Slider } from "@/components/ui/slider";
-import { Info, MapPin, Calendar as CalendarIcon, Users, Award, Edit, Check, X, Languages, Star, Drama } from "lucide-react";
+import { Info, MapPin, Calendar as CalendarIcon, Users, Award, Edit, Check, X, Languages, Star, Drama, Briefcase, Link as LinkIcon, Globe, Plus, Trash2, ExternalLink } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
@@ -27,6 +27,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { SiInstagram, SiFacebook, SiYoutube, SiTiktok, SiTwitter, SiLinkedin } from "react-icons/si";
+
+interface SocialLinks {
+  instagram?: string;
+  facebook?: string;
+  youtube?: string;
+  tiktok?: string;
+  twitter?: string;
+  linkedin?: string;
+  website?: string;
+}
 
 interface User {
   id: number;
@@ -44,6 +55,10 @@ interface User {
   followerLevel?: number;
   primaryLanguage?: string | null;
   languages?: string[] | null;
+  occupation?: string | null;
+  socialLinks?: SocialLinks | null;
+  portfolioUrls?: string[] | null;
+  communityWebsiteUrl?: string | null;
   createdAt?: string;
   [key: string]: any;
 }
@@ -80,6 +95,10 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
     followerLevel: user.followerLevel || '',
     primaryLanguage: user.primaryLanguage || '',
     languages: user.languages || [],
+    occupation: user.occupation || '',
+    socialLinks: user.socialLinks || {},
+    portfolioUrls: user.portfolioUrls || [],
+    communityWebsiteUrl: user.communityWebsiteUrl || '',
   });
   
   const previousLocationRef = useRef<{ city?: string; country?: string }>({
@@ -100,8 +119,12 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
       followerLevel: user.followerLevel || '',
       primaryLanguage: user.primaryLanguage || '',
       languages: user.languages || [],
+      occupation: user.occupation || '',
+      socialLinks: user.socialLinks || {},
+      portfolioUrls: user.portfolioUrls || [],
+      communityWebsiteUrl: user.communityWebsiteUrl || '',
     });
-  }, [user.id, user.bio, user.city, user.country, user.tangoRoles, user.tangoStartYear, user.tangoRoleExperience, user.yearsOfDancing, user.leaderLevel, user.followerLevel, user.primaryLanguage, user.languages]);
+  }, [user.id, user.bio, user.city, user.country, user.tangoRoles, user.tangoStartYear, user.tangoRoleExperience, user.yearsOfDancing, user.leaderLevel, user.followerLevel, user.primaryLanguage, user.languages, user.occupation, user.socialLinks, user.portfolioUrls, user.communityWebsiteUrl]);
 
   const updateProfileMutation = useMutation({
     mutationFn: async (updates: Record<string, any>) => {
@@ -227,6 +250,12 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
         }))
       : null;
     
+    const cleanedSocialLinks = Object.fromEntries(
+      Object.entries(editValues.socialLinks || {}).filter(([_, v]) => v && (v as string).trim() !== '')
+    );
+    
+    const cleanedPortfolioUrls = (editValues.portfolioUrls || []).filter((url: string) => url && url.trim() !== '');
+    
     updateProfileMutation.mutate({
       bio: editValues.bio || null,
       city: editValues.city || null,
@@ -239,6 +268,10 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
       followerLevel: editValues.followerLevel ? parseInt(editValues.followerLevel) : 0,
       primaryLanguage: editValues.primaryLanguage || null,
       languages: additionalLangs,
+      occupation: editValues.occupation || null,
+      socialLinks: Object.keys(cleanedSocialLinks).length > 0 ? cleanedSocialLinks : null,
+      portfolioUrls: cleanedPortfolioUrls.length > 0 ? cleanedPortfolioUrls : null,
+      communityWebsiteUrl: editValues.communityWebsiteUrl || null,
     });
   };
 
@@ -256,8 +289,50 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
       followerLevel: user.followerLevel || '',
       primaryLanguage: user.primaryLanguage || '',
       languages: user.languages || [],
+      occupation: user.occupation || '',
+      socialLinks: user.socialLinks || {},
+      portfolioUrls: user.portfolioUrls || [],
+      communityWebsiteUrl: user.communityWebsiteUrl || '',
     });
   };
+
+  const updateSocialLink = (platform: keyof SocialLinks, value: string) => {
+    setEditValues({
+      ...editValues,
+      socialLinks: {
+        ...editValues.socialLinks,
+        [platform]: value,
+      },
+    });
+  };
+
+  const addPortfolioUrl = () => {
+    setEditValues({
+      ...editValues,
+      portfolioUrls: [...(editValues.portfolioUrls || []), ''],
+    });
+  };
+
+  const updatePortfolioUrl = (index: number, value: string) => {
+    const updated = [...(editValues.portfolioUrls || [])];
+    updated[index] = value;
+    setEditValues({ ...editValues, portfolioUrls: updated });
+  };
+
+  const removePortfolioUrl = (index: number) => {
+    const updated = (editValues.portfolioUrls || []).filter((_: string, i: number) => i !== index);
+    setEditValues({ ...editValues, portfolioUrls: updated });
+  };
+
+  const socialPlatforms: { key: keyof SocialLinks; label: string; icon: typeof SiInstagram; placeholder: string }[] = [
+    { key: 'instagram', label: 'Instagram', icon: SiInstagram, placeholder: 'https://instagram.com/username' },
+    { key: 'facebook', label: 'Facebook', icon: SiFacebook, placeholder: 'https://facebook.com/username' },
+    { key: 'youtube', label: 'YouTube', icon: SiYoutube, placeholder: 'https://youtube.com/@channel' },
+    { key: 'tiktok', label: 'TikTok', icon: SiTiktok, placeholder: 'https://tiktok.com/@username' },
+    { key: 'twitter', label: 'Twitter/X', icon: SiTwitter, placeholder: 'https://twitter.com/username' },
+    { key: 'linkedin', label: 'LinkedIn', icon: SiLinkedin, placeholder: 'https://linkedin.com/in/username' },
+    { key: 'website', label: 'Website', icon: Globe, placeholder: 'https://yourwebsite.com' },
+  ];
 
   const selectedRoles = editValues.tangoRoles || [];
 
@@ -305,6 +380,26 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
               />
             ) : (
               <p className="text-base leading-relaxed">{user.bio || <span className="text-muted-foreground italic">No bio yet</span>}</p>
+            )}
+          </div>
+
+          {/* Occupation */}
+          <div>
+            <h3 className="text-sm font-medium text-muted-foreground mb-2 flex items-center gap-1">
+              <Briefcase className="w-4 h-4" />
+              Occupation
+            </h3>
+            {isEditing ? (
+              <Input
+                value={editValues.occupation || ''}
+                onChange={(e) => setEditValues({ ...editValues, occupation: e.target.value })}
+                placeholder="e.g., Tango Teacher & Performer"
+                data-testid="input-occupation"
+              />
+            ) : (
+              <p className="text-base">
+                {user.occupation || <span className="text-muted-foreground italic">No occupation set</span>}
+              </p>
             )}
           </div>
 
@@ -573,6 +668,158 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
                   <span className="text-muted-foreground italic">No languages set</span>
                 )}
               </div>
+            )}
+          </div>
+
+          {/* Social Links */}
+          <div>
+            <h3 className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-1">
+              <LinkIcon className="w-4 h-4" />
+              Social Links
+            </h3>
+            {isEditing ? (
+              <div className="space-y-3">
+                {socialPlatforms.map((platform) => {
+                  const IconComponent = platform.icon;
+                  return (
+                    <div key={platform.key} className="flex items-center gap-3">
+                      <div className="w-8 flex justify-center">
+                        <IconComponent className="w-5 h-5 text-muted-foreground" />
+                      </div>
+                      <Input
+                        value={(editValues.socialLinks as SocialLinks)?.[platform.key] || ''}
+                        onChange={(e) => updateSocialLink(platform.key, e.target.value)}
+                        placeholder={platform.placeholder}
+                        className="flex-1"
+                        data-testid={`input-social-${platform.key}`}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="flex flex-wrap gap-3">
+                {(() => {
+                  const links = user.socialLinks as SocialLinks | null;
+                  const filledLinks = socialPlatforms.filter(p => links?.[p.key]);
+                  
+                  if (filledLinks.length === 0) {
+                    return <span className="text-muted-foreground italic">No social links set</span>;
+                  }
+                  
+                  return filledLinks.map((platform) => {
+                    const IconComponent = platform.icon;
+                    const url = links?.[platform.key];
+                    return (
+                      <a
+                        key={platform.key}
+                        href={url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 px-3 py-2 rounded-lg bg-muted/50 hover-elevate transition-colors"
+                        data-testid={`link-social-${platform.key}`}
+                      >
+                        <IconComponent className="w-5 h-5" />
+                        <span className="text-sm">{platform.label}</span>
+                      </a>
+                    );
+                  });
+                })()}
+              </div>
+            )}
+          </div>
+
+          {/* Portfolio URLs */}
+          <div>
+            <h3 className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-1">
+              <Award className="w-4 h-4" />
+              Portfolio
+            </h3>
+            {isEditing ? (
+              <div className="space-y-3">
+                {(editValues.portfolioUrls || []).map((url: string, index: number) => (
+                  <div key={index} className="flex items-center gap-2">
+                    <Input
+                      value={url}
+                      onChange={(e) => updatePortfolioUrl(index, e.target.value)}
+                      placeholder="https://yourportfolio.com/work"
+                      className="flex-1"
+                      data-testid={`input-portfolio-${index}`}
+                    />
+                    <Button
+                      type="button"
+                      size="icon"
+                      variant="ghost"
+                      onClick={() => removePortfolioUrl(index)}
+                      data-testid={`button-remove-portfolio-${index}`}
+                    >
+                      <Trash2 className="w-4 h-4 text-destructive" />
+                    </Button>
+                  </div>
+                ))}
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  onClick={addPortfolioUrl}
+                  className="mt-2"
+                  data-testid="button-add-portfolio"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Portfolio Link
+                </Button>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {user.portfolioUrls && user.portfolioUrls.length > 0 ? (
+                  user.portfolioUrls.map((url, index) => (
+                    <a
+                      key={index}
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 text-primary hover:underline"
+                      data-testid={`link-portfolio-${index}`}
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                      <span className="text-sm truncate">{url}</span>
+                    </a>
+                  ))
+                ) : (
+                  <span className="text-muted-foreground italic">No portfolio links set</span>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Community Website */}
+          <div>
+            <h3 className="text-sm font-medium text-muted-foreground mb-2 flex items-center gap-1">
+              <Globe className="w-4 h-4" />
+              Community Website
+            </h3>
+            {isEditing ? (
+              <Input
+                value={editValues.communityWebsiteUrl || ''}
+                onChange={(e) => setEditValues({ ...editValues, communityWebsiteUrl: e.target.value })}
+                placeholder="https://yourcommunity.com"
+                data-testid="input-community-website"
+              />
+            ) : (
+              user.communityWebsiteUrl ? (
+                <a
+                  href={user.communityWebsiteUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 text-primary hover:underline"
+                  data-testid="link-community-website"
+                >
+                  <ExternalLink className="w-4 h-4" />
+                  <span className="text-sm">{user.communityWebsiteUrl}</span>
+                </a>
+              ) : (
+                <span className="text-muted-foreground italic">No website set</span>
+              )
             )}
           </div>
 
