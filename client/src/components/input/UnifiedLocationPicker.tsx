@@ -1,8 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { MapPin, Loader2, X, Search } from "lucide-react";
+import { MapPin, Loader2, X, Home } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface LocationResult {
@@ -13,26 +12,44 @@ interface LocationResult {
   type?: string;
   address?: {
     road?: string;
+    house_number?: string;
     city?: string;
     state?: string;
     country?: string;
+    postcode?: string;
   };
+}
+
+interface ParsedLocation {
+  fullAddress: string;
+  street?: string;
+  city?: string;
+  state?: string;
+  country?: string;
+  postalCode?: string;
+  coordinates: { lat: number; lng: number };
 }
 
 interface UnifiedLocationPickerProps {
   value?: string;
   coordinates?: { lat: number; lng: number };
-  onChange: (location: string, coordinates: { lat: number; lng: number }) => void;
+  onChange: (location: string, coordinates: { lat: number; lng: number }, parsed?: ParsedLocation) => void;
   placeholder?: string;
   className?: string;
+  mode?: "city" | "address";
+  showCoordinates?: boolean;
+  label?: string;
 }
 
 export function UnifiedLocationPicker({
   value = "",
   coordinates,
   onChange,
-  placeholder = "Search for a location...",
+  placeholder,
   className = "",
+  mode = "city",
+  showCoordinates = false,
+  label,
 }: UnifiedLocationPickerProps) {
   const [searchQuery, setSearchQuery] = useState(value);
   const [isSearching, setIsSearching] = useState(false);
@@ -42,7 +59,17 @@ export function UnifiedLocationPicker({
   const searchRef = useRef<HTMLDivElement>(null);
   const clientCacheRef = useRef<Map<string, LocationResult[]>>(new Map());
 
-  // Close dropdown when clicking outside
+  const defaultPlaceholder = mode === "address" 
+    ? "Search for an address..." 
+    : "Search for a city...";
+
+  useEffect(() => {
+    if (value !== searchQuery && value) {
+      setSearchQuery(value);
+      setSelectedLocation(value);
+    }
+  }, [value]);
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
@@ -54,17 +81,15 @@ export function UnifiedLocationPicker({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Search locations with client-side cache for instant repeated searches
   useEffect(() => {
-    if (searchQuery.trim().length < 3) {
+    if (searchQuery.trim().length < 2) {
       setResults([]);
       return;
     }
 
     const searchLocations = async () => {
-      const queryKey = searchQuery.toLowerCase().trim();
+      const queryKey = `${mode}_${searchQuery.toLowerCase().trim()}`;
       
-      // Check client-side cache first - instant results for repeated searches
       const cached = clientCacheRef.current.get(queryKey);
       if (cached) {
         setResults(cached);
@@ -74,15 +99,14 @@ export function UnifiedLocationPicker({
 
       setIsSearching(true);
       try {
+        const addressDetail = mode === "address" ? "&addressdetails=1" : "";
         const response = await fetch(
-          `/api/locations/search?q=${encodeURIComponent(searchQuery)}`
+          `/api/locations/search?q=${encodeURIComponent(searchQuery)}${addressDetail}`
         );
 
         if (response.ok) {
           const data = await response.json();
-          // Store in client cache for instant future lookups
           clientCacheRef.current.set(queryKey, data);
-          // Limit cache size to 50 queries
           if (clientCacheRef.current.size > 50) {
             const firstKey = clientCacheRef.current.keys().next().value;
             if (firstKey) clientCacheRef.current.delete(firstKey);
@@ -97,43 +121,88 @@ export function UnifiedLocationPicker({
       }
     };
 
-    // MB.MD: Aggressive debounce - 50ms + client cache for instant feedback
     const debounce = setTimeout(searchLocations, 50);
     return () => clearTimeout(debounce);
-  }, [searchQuery]);
+  }, [searchQuery, mode]);
 
-  const selectLocation = (location: LocationResult) => {
-    const locationName = location.display_name;
+  const parseLocationResult = (location: LocationResult): ParsedLocation => {
+    const parts = location.display_name.split(',').map(p => p.trim());
     const coords = {
       lat: parseFloat(location.lat),
       lng: parseFloat(location.lon),
     };
 
-    setSelectedLocation(locationName);
-    setSearchQuery(locationName);
+    if (mode === "address" && location.address) {
+      return {
+        fullAddress: location.display_name,
+        street: location.address.house_number 
+          ? `${location.address.house_number} ${location.address.road || ''}`
+          : location.address.road,
+        city: location.address.city,
+        state: location.address.state,
+        country: location.address.country,
+        postalCode: location.address.postcode,
+        coordinates: coords,
+      };
+    }
+
+    const city = parts[0];
+    const country = parts[parts.length - 1];
+    
+    return {
+      fullAddress: location.display_name,
+      city,
+      country,
+      coordinates: coords,
+    };
+  };
+
+  const getDisplayName = (location: LocationResult): string => {
+    if (mode === "city") {
+      const parts = location.display_name.split(',').map(p => p.trim());
+      if (parts.length >= 2) {
+        return `${parts[0]}, ${parts[parts.length - 1]}`;
+      }
+    }
+    return location.display_name;
+  };
+
+  const selectLocation = (location: LocationResult) => {
+    const parsed = parseLocationResult(location);
+    const displayName = mode === "city" ? getDisplayName(location) : location.display_name;
+
+    setSelectedLocation(displayName);
+    setSearchQuery(displayName);
     setShowResults(false);
-    onChange(locationName, coords);
+    onChange(displayName, parsed.coordinates, parsed);
   };
 
   const clearLocation = () => {
     setSelectedLocation("");
     setSearchQuery("");
     setResults([]);
-    onChange("", { lat: 0, lng: 0 });
+    onChange("", { lat: 0, lng: 0 }, undefined);
   };
+
+  const Icon = mode === "address" ? Home : MapPin;
 
   return (
     <div ref={searchRef} className={`relative ${className}`}>
+      {label && (
+        <label className="text-sm font-medium text-muted-foreground mb-1.5 block">
+          {label}
+        </label>
+      )}
       <div className="relative">
-        <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+        <Icon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
         <Input
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           onFocus={() => {
             if (results.length > 0) setShowResults(true);
           }}
-          placeholder={placeholder}
-          className="pl-10 pr-10 bg-white/50 dark:bg-black/20"
+          placeholder={placeholder || defaultPlaceholder}
+          className="pl-10 pr-10"
           data-testid="input-location-search"
         />
         {isSearching && (
@@ -141,6 +210,7 @@ export function UnifiedLocationPicker({
         )}
         {selectedLocation && !isSearching && (
           <button
+            type="button"
             onClick={clearLocation}
             className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
             data-testid="button-clear-location"
@@ -150,7 +220,6 @@ export function UnifiedLocationPicker({
         )}
       </div>
 
-      {/* Location Results Dropdown */}
       <AnimatePresence>
         {showResults && results.length > 0 && (
           <motion.div
@@ -172,17 +241,18 @@ export function UnifiedLocationPicker({
                 {results.map((location) => (
                   <button
                     key={location.place_id}
+                    type="button"
                     onClick={() => selectLocation(location)}
                     className="w-full flex items-start gap-3 p-3 rounded-lg text-left hover:bg-gradient-to-r hover:from-cyan-500/10 hover:to-blue-500/10 transition-colors"
                     data-testid={`location-result-${location.place_id}`}
                   >
-                    <MapPin className="w-4 h-4 mt-0.5 text-cyan-500 flex-shrink-0" />
+                    <Icon className="w-4 h-4 mt-0.5 text-cyan-500 flex-shrink-0" />
                     <div className="flex-1 min-w-0">
                       <div className="font-medium text-sm truncate">
                         {location.display_name.split(',')[0]}
                       </div>
                       <div className="text-xs text-muted-foreground truncate">
-                        {location.display_name}
+                        {mode === "city" ? getDisplayName(location) : location.display_name}
                       </div>
                     </div>
                   </button>
@@ -193,11 +263,10 @@ export function UnifiedLocationPicker({
         )}
       </AnimatePresence>
 
-      {/* Selected Location Display */}
-      {selectedLocation && coordinates && (
+      {showCoordinates && selectedLocation && coordinates && coordinates.lat !== 0 && (
         <div className="mt-2 p-2 rounded-lg bg-gradient-to-r from-cyan-500/10 to-blue-500/10 border border-cyan-500/20">
           <div className="flex items-center gap-2 text-sm">
-            <MapPin className="w-4 h-4 text-cyan-500" />
+            <Icon className="w-4 h-4 text-cyan-500" />
             <span className="flex-1 truncate">{selectedLocation}</span>
             <span className="text-xs text-muted-foreground">
               {coordinates.lat.toFixed(4)}, {coordinates.lng.toFixed(4)}
@@ -207,4 +276,12 @@ export function UnifiedLocationPicker({
       )}
     </div>
   );
+}
+
+export function extractCityCountry(fullLocation: string): { city: string; country: string } {
+  const parts = fullLocation.split(',').map(p => p.trim());
+  return {
+    city: parts[0] || '',
+    country: parts[parts.length - 1] || '',
+  };
 }
