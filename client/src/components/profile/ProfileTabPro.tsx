@@ -503,7 +503,7 @@ function ProDashboardView({
   });
 
   const currentStats = useMemo(
-    () => statsData?.find((s) => s.role === selectedRole),
+    () => Array.isArray(statsData) ? statsData.find((s) => s.role === selectedRole) : undefined,
     [statsData, selectedRole]
   );
 
@@ -600,7 +600,7 @@ function ProDashboardView({
             </Button>
           </div>
           <ProEventHistoryList
-            events={eventHistory || []}
+            events={Array.isArray(eventHistory) ? eventHistory : []}
             isLoading={eventsLoading}
             selectedRole={selectedRole}
           />
@@ -610,15 +610,15 @@ function ProDashboardView({
           <div className="flex items-center justify-between">
             <h3 className="text-xl font-serif font-bold">
               Booking Requests
-              {(bookingRequests?.filter((r) => r.status === "pending").length || 0) > 0 && (
+              {Array.isArray(bookingRequests) && bookingRequests.filter((r) => r.status === "pending").length > 0 && (
                 <Badge variant="secondary" className="ml-2">
-                  {bookingRequests?.filter((r) => r.status === "pending").length}
+                  {bookingRequests.filter((r) => r.status === "pending").length}
                 </Badge>
               )}
             </h3>
           </div>
           <ProBookingRequests
-            requests={bookingRequests || []}
+            requests={Array.isArray(bookingRequests) ? bookingRequests : []}
             isLoading={bookingsLoading}
             onAccept={handleAcceptBooking}
             onDecline={handleDeclineBooking}
@@ -651,7 +651,7 @@ function ProPublicView({
   });
 
   const publicEvents = useMemo(
-    () => (eventHistory || []).filter((e) => e.isPubliclyListed && e.status === "confirmed"),
+    () => (Array.isArray(eventHistory) ? eventHistory : []).filter((e) => e.isPubliclyListed && e.status === "confirmed"),
     [eventHistory]
   );
 
@@ -695,7 +695,7 @@ function ProPublicView({
         <h3 className="text-xl font-serif font-bold mb-4">Active Roles</h3>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {proRoles.map((role, index) => {
-            const roleStats = statsData?.find((s) => s.role === role.value);
+            const roleStats = Array.isArray(statsData) ? statsData.find((s) => s.role === role.value) : undefined;
             return (
               <motion.div
                 key={role.value}
