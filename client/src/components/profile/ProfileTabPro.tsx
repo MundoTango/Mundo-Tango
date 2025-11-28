@@ -555,33 +555,30 @@ function ProDashboardView({
       </div>
 
       {proRoles.length > 1 && (
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-wrap">
           <span className="text-sm font-medium text-muted-foreground">Role:</span>
-          <Select value={selectedRole} onValueChange={setSelectedRole}>
-            <SelectTrigger className="w-[200px]" data-testid="select-role-trigger">
-              <SelectValue placeholder="Select role" />
-            </SelectTrigger>
-            <SelectContent>
-              {proRoles.map((role) => {
-                const IconComponent = role.icon;
-                return (
-                  <SelectItem
-                    key={role.value}
-                    value={role.value}
-                    data-testid={`select-role-${role.value}`}
-                  >
-                    <div className="flex items-center gap-2">
-                      <IconComponent
-                        className="w-4 h-4"
-                        style={{ color: role.color }}
-                      />
-                      <span>{role.label}</span>
-                    </div>
-                  </SelectItem>
-                );
-              })}
-            </SelectContent>
-          </Select>
+          <div className="flex gap-2 flex-wrap">
+            {proRoles.map((role) => {
+              const IconComponent = role.icon;
+              const isSelected = selectedRole === role.value;
+              return (
+                <Button
+                  key={role.value}
+                  variant={isSelected ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setSelectedRole(role.value)}
+                  className="gap-2"
+                  data-testid={`button-role-${role.value}`}
+                >
+                  <IconComponent
+                    className="w-4 h-4"
+                    style={{ color: isSelected ? 'currentColor' : role.color }}
+                  />
+                  <span>{role.label}</span>
+                </Button>
+              );
+            })}
+          </div>
         </div>
       )}
 
