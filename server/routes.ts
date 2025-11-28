@@ -3565,6 +3565,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         tangoRoles,
         socialLinks,
         profileImage,
+        leaderLevel,
+        followerLevel,
+        primaryLanguage,
+        languages,
       } = req.body;
 
       // Update user in database
@@ -3579,6 +3583,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
           tangoRoles,
           socialLinks,
           profileImage,
+          leaderLevel,
+          followerLevel,
+          primaryLanguage,
+          languages,
           updatedAt: new Date(),
         })
         .where(eq(users.id, userId))

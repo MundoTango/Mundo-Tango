@@ -45,6 +45,8 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
       return res.json();
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["user", user.id] });
+      queryClient.invalidateQueries({ queryKey: ["user", user.username] });
       queryClient.invalidateQueries({ queryKey: ["/api/users"] });
       setIsEditing(false);
       setEditValues({});
