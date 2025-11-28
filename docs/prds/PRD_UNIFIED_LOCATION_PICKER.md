@@ -13,9 +13,9 @@ The **UnifiedLocationPicker** is a smart location search component that provides
 **Key Features:**
 - Instant matching for 76+ popular cities worldwide
 - Server-side caching with 5-minute TTL for performance
-- Two modes: `city` (city+country) and `address` (full street address)
-- Real-time debounced search with 50ms delay
-- Glassmorphic dropdown UI with smooth animations
+- Three modes: `city` (city+country), `address` (full street address), and `venue` (3-tier venue search)
+- Real-time debounced search with 50ms delay (150ms for venue mode)
+- Glassmorphic dropdown UI with smooth animations and tier badges
 - Coordinate extraction and parsed location data
 - Client-side result caching (50 entries max)
 
@@ -87,13 +87,39 @@ interface UnifiedLocationPickerProps {
   onChange: (                                                  // Callback when location selected
     location: string, 
     coordinates: { lat: number; lng: number }, 
-    parsed?: ParsedLocation
+    parsed?: ParsedLocation | ParsedVenue
   ) => void;
   placeholder?: string;                                        // Custom placeholder text
   className?: string;                                          // Additional CSS classes
-  mode?: "city" | "address";                                   // Search mode (default: "city")
+  mode?: "city" | "address" | "venue";                         // Search mode (default: "city")
   showCoordinates?: boolean;                                   // Display coordinates below input
   label?: string;                                              // Label above input
+  // Venue mode specific props
+  userId?: number;                                             // Current user ID (for Tier 1 search)
+  userCity?: string;                                           // User's city (for Tier 2 search)
+  onVenueSelect?: (venue: VenueSearchResult) => void;          // Callback with full venue data
+}
+
+// Venue mode types
+interface VenueSearchResult {
+  id: string;
+  name: string;
+  address: string;
+  city: string;
+  country: string;
+  source: 'user_events' | 'city_venues' | 'database' | 'google_maps';
+  verified?: boolean;
+  rating?: number;
+  placeId?: string;
+  coordinates?: { lat: number; lng: number };
+}
+
+interface ParsedVenue extends ParsedLocation {
+  venueName?: string;
+  venueId?: string;
+  source?: string;
+  verified?: boolean;
+  rating?: number;
 }
 ```
 
@@ -130,6 +156,88 @@ interface UnifiedLocationPickerProps {
 │  ├─ Results cached for future queries                               │
 │  └─ Response time: 200ms-2s                                         │
 └─────────────────────────────────────────────────────────────────────┘
+```
+
+### 3.4 Venue Mode: 3-Tier Intelligent Search (MB.MD v9.6)
+
+The venue mode implements a specialized 3-tier search specifically designed for tango venues:
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                     USER TYPES VENUE QUERY                           │
+└───────────────────────────────┬─────────────────────────────────────┘
+                                │
+                                ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│  TIER 1: User's Previously Hosted Events (Highest Priority)         │
+│  ├─ Searches events table where userId = current user               │
+│  ├─ Matches venueName and venue fields                              │
+│  ├─ Deduplicates by venue name (case-insensitive)                   │
+│  ├─ Badge: "Your Venue" (emerald)                                   │
+│  └─ Response time: <50ms                                            │
+└───────────────────────────────┬─────────────────────────────────────┘
+                                │ All tiers searched in parallel
+                                ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│  TIER 2: City Group Venues (Database)                               │
+│  ├─ Searches venues table with city filter                          │
+│  ├─ Prioritizes verified venues and high ratings                    │
+│  ├─ Falls back to sample venues if database empty                   │
+│  ├─ Badge: "{City}" (blue) or "Database" (purple)                   │
+│  └─ Response time: <100ms                                           │
+└───────────────────────────────┬─────────────────────────────────────┘
+                                │ If Tier 1+2 have <3 results
+                                ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│  TIER 3: Google Places API Fallback                                  │
+│  ├─ Searches Google Maps Text Search API                            │
+│  ├─ Filters by establishment type                                   │
+│  ├─ Returns up to 5 results                                         │
+│  ├─ Badge: "Google Maps" (red)                                      │
+│  ├─ Response time: 200ms-1s                                         │
+│  └─ Requires GOOGLE_MAPS_API_KEY or GOOGLE_PLACES_API_KEY           │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+**Venue Mode API Endpoint:**
+
+| Endpoint | Method | Purpose |
+|----------|--------|---------|
+| `/api/venues/search` | GET | 3-tier venue search with prioritization |
+
+**Query Parameters:**
+- `q` (required): Venue name search query (min 2 characters)
+- `userId` (optional): Current user ID for Tier 1 search
+- `city` (optional): User's city for Tier 2 filtering
+
+**Response Format:**
+```json
+{
+  "userVenues": [
+    {
+      "id": "user_La_Viruta",
+      "name": "La Viruta Tango",
+      "address": "Armenia 1366, Palermo",
+      "city": "Buenos Aires",
+      "country": "Argentina",
+      "source": "user_events",
+      "coordinates": { "lat": -34.5889, "lng": -58.4246 }
+    }
+  ],
+  "cityVenues": [
+    {
+      "id": "db_1",
+      "name": "El Beso",
+      "address": "Riobamba 416",
+      "city": "Buenos Aires",
+      "country": "Argentina",
+      "source": "city_venues",
+      "verified": true,
+      "rating": 4.7
+    }
+  ],
+  "googleVenues": []
+}
 ```
 
 **Client-Side Caching:**
@@ -306,6 +414,45 @@ function ProfileEdit() {
   showCoordinates={true}
 />
 ```
+
+### Venue Mode (Event Creation / PRO Tab)
+```typescript
+import { UnifiedLocationPicker } from "@/components/input/UnifiedLocationPicker";
+import type { VenueSearchResult, ParsedVenue } from "@/components/input/UnifiedLocationPicker";
+
+function EventVenueSelection({ userId, userCity }: { userId: number; userCity: string }) {
+  const [venue, setVenue] = useState("");
+  const [venueData, setVenueData] = useState<ParsedVenue | null>(null);
+
+  return (
+    <UnifiedLocationPicker
+      value={venue}
+      onChange={(location, coords, parsed) => {
+        setVenue(location);
+        if (parsed && 'venueName' in parsed) {
+          setVenueData(parsed as ParsedVenue);
+          // Auto-fill: parsed.venueName, parsed.city, parsed.country, parsed.source
+        }
+      }}
+      mode="venue"
+      userId={userId}
+      userCity={userCity}
+      placeholder="Search for a venue"
+      label="Event Venue"
+      onVenueSelect={(venue: VenueSearchResult) => {
+        // Full venue data: venue.name, venue.address, venue.verified, venue.rating
+        console.log(`Selected ${venue.source} venue:`, venue);
+      }}
+    />
+  );
+}
+```
+
+**Tier Badges in Dropdown:**
+- **Your Venue** (emerald): Venues from user's past events
+- **{City}** (blue): Venues from local city group
+- **Database** (purple): All verified database venues
+- **Google Maps** (red): External Google Places results
 
 ### Using extractCityCountry Helper
 ```typescript
