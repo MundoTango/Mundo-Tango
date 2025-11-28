@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { MessageCircle, Send, Users } from "lucide-react";
 import { apiRequest, queryClient } from "@/lib/queryClient";
+import { UserRoleBadges } from "@/components/UserRoleBadges";
 
 interface ChatMessage {
   id: number;
@@ -15,6 +16,7 @@ interface ChatMessage {
   createdAt: string;
   username: string;
   profileImage?: string;
+  tangoRoles?: string[];
 }
 
 interface LiveStreamChatProps {
@@ -174,8 +176,9 @@ export default function LiveStreamChat({ streamId, isLive, currentUserId }: Live
                   <AvatarFallback>{msg.username?.[0]?.toUpperCase() || 'U'}</AvatarFallback>
                 </Avatar>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-baseline gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <span className="font-medium text-sm">{msg.username || 'Anonymous'}</span>
+                    <UserRoleBadges roles={msg.tangoRoles} size="xs" maxDisplay={2} />
                     <span className="text-xs text-muted-foreground">
                       {new Date(msg.createdAt).toLocaleTimeString([], { 
                         hour: '2-digit', 

@@ -5,6 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Sparkles, Heart, MessageCircle } from "lucide-react";
 import { Link } from "wouter";
 import { safeDateDistance } from "@/lib/safeDateFormat";
+import { UserRoleBadges } from "@/components/UserRoleBadges";
 
 interface RecommendedPost {
   id: number;
@@ -15,6 +16,7 @@ interface RecommendedPost {
     name: string;
     username: string;
     profileImage?: string | null;
+    tangoRoles?: string[] | null;
   };
   likes: number;
   comments: number;
@@ -86,9 +88,14 @@ export function RecommendedPosts() {
                     <AvatarFallback>{post.user.name[0]}</AvatarFallback>
                   </Avatar>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">
-                      {post.user.name}
-                    </p>
+                    <div className="flex items-center gap-1">
+                      <p className="text-sm font-medium truncate">
+                        {post.user.name}
+                      </p>
+                      {post.user.tangoRoles && post.user.tangoRoles.length > 0 && (
+                        <UserRoleBadges roles={post.user.tangoRoles} size="xs" maxDisplay={2} />
+                      )}
+                    </div>
                     <p className="text-xs text-foreground/60">
                       {safeDateDistance(post.createdAt)}
                     </p>

@@ -7,6 +7,7 @@ import { Plus, X } from "lucide-react";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
+import { UserRoleBadges } from "@/components/UserRoleBadges";
 
 type Story = {
   id: number;
@@ -21,6 +22,7 @@ type Story = {
     name: string;
     username: string;
     profileImage?: string | null;
+    tangoRoles?: string[] | null;
   };
 };
 
@@ -28,6 +30,7 @@ type GroupedStories = {
   userId: number;
   userName: string;
   userImage?: string | null;
+  userTangoRoles?: string[] | null;
   stories: Story[];
   hasUnviewed?: boolean;
 };
@@ -49,6 +52,7 @@ export function StoriesCarousel() {
         userId,
         userName: story.user?.name || "Unknown",
         userImage: story.user?.profileImage,
+        userTangoRoles: story.user?.tangoRoles,
         stories: [],
         hasUnviewed: true,
       };
@@ -148,7 +152,12 @@ export function StoriesCarousel() {
                   </Avatar>
                 </div>
               </div>
-              <span className="text-xs font-medium text-center line-clamp-1">{group.userName}</span>
+              <div className="flex flex-col items-center gap-0.5">
+                <span className="text-xs font-medium text-center line-clamp-1">{group.userName}</span>
+                {group.userTangoRoles && group.userTangoRoles.length > 0 && (
+                  <UserRoleBadges roles={group.userTangoRoles} size="xs" maxDisplay={2} />
+                )}
+              </div>
             </button>
           ))}
         </div>
@@ -188,7 +197,12 @@ export function StoriesCarousel() {
                       <AvatarFallback>{selectedStoryGroup.userName[0]}</AvatarFallback>
                     </Avatar>
                     <div>
-                      <p className="text-white font-semibold text-sm">{selectedStoryGroup.userName}</p>
+                      <div className="flex items-center gap-2">
+                        <p className="text-white font-semibold text-sm">{selectedStoryGroup.userName}</p>
+                        {selectedStoryGroup.userTangoRoles && selectedStoryGroup.userTangoRoles.length > 0 && (
+                          <UserRoleBadges roles={selectedStoryGroup.userTangoRoles} size="xs" maxDisplay={2} />
+                        )}
+                      </div>
                       <p className="text-white/70 text-xs">
                         {new Date(selectedStoryGroup.stories[currentStoryIndex].createdAt).toLocaleTimeString([], { 
                           hour: '2-digit', 

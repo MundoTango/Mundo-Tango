@@ -8,6 +8,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/hooks/use-theme";
 import { SearchBar } from "./SearchBar";
 import { LanguageSelectorButton } from "./LanguageSelector";
+import { UserRoleBadges } from "@/components/UserRoleBadges";
 
 export function GlobalTopbar() {
   const { user, logout } = useAuth();
@@ -139,8 +140,9 @@ export function GlobalTopbar() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
-              <div className="px-2 py-1.5 text-sm font-semibold" data-testid="text-user-name">
-                {user?.name || user?.username}
+              <div className="px-2 py-1.5 flex items-center gap-2" data-testid="text-user-name">
+                <span className="text-sm font-semibold">{user?.name || user?.username}</span>
+                <UserRoleBadges roles={user?.tangoRoles} size="xs" maxDisplay={2} />
               </div>
               <div className="px-2 py-1 text-xs text-muted-foreground" data-testid="text-user-email">
                 {user?.email}

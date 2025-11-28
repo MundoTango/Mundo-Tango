@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { MapPin, Hash, Eye } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import DOMPurify from 'dompurify';
+import { UserRoleBadges } from "@/components/UserRoleBadges";
 
 interface PostPreviewProps {
   content: string;
@@ -49,7 +50,12 @@ export function PostPreview({
             <AvatarFallback>{user?.name?.[0] || 'U'}</AvatarFallback>
           </Avatar>
           <div>
-            <p className="font-semibold">{user?.name || 'Your Name'}</p>
+            <div className="flex items-center gap-1">
+              <p className="font-semibold">{user?.name || 'Your Name'}</p>
+              {user?.tangoRoles && user.tangoRoles.length > 0 && (
+                <UserRoleBadges roles={user.tangoRoles} size="xs" maxDisplay={2} />
+              )}
+            </div>
             <p className="text-sm text-muted-foreground">Just now</p>
           </div>
         </div>

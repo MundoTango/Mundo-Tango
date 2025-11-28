@@ -12,11 +12,13 @@ import {
 import { SelectGroupPost } from "@shared/schema";
 import { safeDateDistance } from "@/lib/safeDateFormat";
 import { renderMentionPills } from "@/utils/renderMentionPills";
+import { UserRoleBadges } from "@/components/UserRoleBadges";
 
 interface GroupPostCardProps {
   post: SelectGroupPost;
   authorName?: string;
   authorAvatar?: string;
+  authorTangoRoles?: string[];
   onPin?: (postId: number) => void;
   onUnpin?: (postId: number) => void;
   onDelete?: (postId: number) => void;
@@ -28,6 +30,7 @@ export function GroupPostCard({
   post, 
   authorName, 
   authorAvatar,
+  authorTangoRoles,
   onPin,
   onUnpin,
   onDelete,
@@ -51,6 +54,7 @@ export function GroupPostCard({
                 <span className="font-semibold text-sm" data-testid={`text-post-author-${post.id}`}>
                   {authorName || 'Unknown'}
                 </span>
+                <UserRoleBadges roles={authorTangoRoles} size="xs" maxDisplay={2} />
                 {post.isPinned && (
                   <Badge variant="secondary" className="gap-1" data-testid={`badge-pinned-${post.id}`}>
                     <Pin className="h-3 w-3" />

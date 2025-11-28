@@ -6,6 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { TrendingUp, Heart, MessageCircle, Share2 } from "lucide-react";
 import { Link } from "wouter";
 import { safeDateDistance } from "@/lib/safeDateFormat";
+import { UserRoleBadges } from "@/components/UserRoleBadges";
 
 interface TrendingPost {
   id: number;
@@ -15,6 +16,7 @@ interface TrendingPost {
     name: string;
     username: string;
     profileImage?: string | null;
+    tangoRoles?: string[] | null;
   };
   likes: number;
   comments: number;
@@ -70,6 +72,9 @@ export function TrendingPosts() {
                       <span className="text-sm font-medium truncate">
                         {post.user.name}
                       </span>
+                      {post.user.tangoRoles && post.user.tangoRoles.length > 0 && (
+                        <UserRoleBadges roles={post.user.tangoRoles} size="xs" maxDisplay={2} />
+                      )}
                     </div>
                     <p className="text-sm text-foreground/80 line-clamp-2 mb-2">
                       {post.content}

@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Home, Calendar, Users, MessageSquare, Settings, Bookmark, TrendingUp, MapPin, Music, Globe } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { UserRoleBadges } from "@/components/UserRoleBadges";
 
 export function FeedLeftSidebar() {
   const { user } = useAuth();
@@ -33,9 +34,14 @@ export function FeedLeftSidebar() {
               </AvatarFallback>
             </Avatar>
             <div className="flex-1 min-w-0">
-              <p className="font-semibold truncate" data-testid="text-sidebar-user-name">
-                {user?.name || user?.username}
-              </p>
+              <div className="flex items-center gap-1">
+                <p className="font-semibold truncate" data-testid="text-sidebar-user-name">
+                  {user?.name || user?.username}
+                </p>
+                {user?.tangoRoles && user.tangoRoles.length > 0 && (
+                  <UserRoleBadges roles={user.tangoRoles} size="xs" maxDisplay={2} />
+                )}
+              </div>
               <p className="text-sm text-muted-foreground truncate" data-testid="text-sidebar-user-username">
                 @{user?.username}
               </p>

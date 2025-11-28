@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/tooltip";
 import { Badge } from "@/components/ui/badge";
 import { Crown } from "lucide-react";
+import { UserRoleBadges } from "@/components/UserRoleBadges";
 
 interface ParticipantAvatarProps {
   participant: {
@@ -14,6 +15,7 @@ interface ParticipantAvatarProps {
     name: string;
     profileImage?: string;
     email?: string;
+    tangoRoles?: string[];
   };
   isOrganizer?: boolean;
   showName?: boolean;
@@ -60,7 +62,10 @@ export function ParticipantAvatar({
       <div className="flex items-center gap-3">
         {avatarContent}
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium truncate">{participant.name}</p>
+          <div className="flex items-center gap-2">
+            <p className="text-sm font-medium truncate">{participant.name}</p>
+            <UserRoleBadges roles={participant.tangoRoles} size="xs" maxDisplay={2} />
+          </div>
           {isOrganizer && (
             <Badge variant="outline" className="text-xs bg-primary/10">
               Organizer
@@ -78,7 +83,10 @@ export function ParticipantAvatar({
           {avatarContent}
         </TooltipTrigger>
         <TooltipContent>
-          <p className="font-medium">{participant.name}</p>
+          <div className="flex items-center gap-2">
+            <p className="font-medium">{participant.name}</p>
+            <UserRoleBadges roles={participant.tangoRoles} size="xs" maxDisplay={2} />
+          </div>
           {isOrganizer && <p className="text-xs text-muted-foreground">Trip Organizer</p>}
         </TooltipContent>
       </Tooltip>

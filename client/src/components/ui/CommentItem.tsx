@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Heart, MessageCircle, Trash2, Loader2 } from "lucide-react";
 import { safeDateDistance } from "@/lib/safeDateFormat";
+import { UserRoleBadges } from "@/components/UserRoleBadges";
 
 export interface CommentData {
   id: number;
@@ -18,6 +19,7 @@ export interface CommentData {
     name?: string;
     username?: string;
     profileImage?: string;
+    tangoRoles?: string[];
   };
   replies?: CommentData[];
 }
@@ -101,6 +103,9 @@ export const CommentItem = ({
             <span className="font-semibold text-sm">
               {comment.user?.name || comment.user?.username || "Unknown User"}
             </span>
+            {comment.user?.tangoRoles && comment.user.tangoRoles.length > 0 && (
+              <UserRoleBadges roles={comment.user.tangoRoles} size="xs" maxDisplay={2} />
+            )}
             <span className="text-xs text-muted-foreground">
               {safeDateDistance(comment.createdAt, { addSuffix: true })}
             </span>

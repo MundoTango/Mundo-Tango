@@ -21,8 +21,7 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { safeDateDistance } from "@/lib/safeDateFormat";
 import type { SelectGroupMember } from "@shared/schema";
-import { RoleIcon } from "@/components/RoleIcon";
-import { getRoleByValue } from "@/lib/tangoRoles";
+import { UserRoleBadges } from "@/components/UserRoleBadges";
 
 interface GroupMembersListProps {
   groupId: number;
@@ -185,28 +184,7 @@ export function GroupMembersList({ groupId, canModerate = false, currentUserId }
                       {member.user?.name || `User #${member.userId}`}
                     </p>
                     {member.user?.tangoRoles && member.user.tangoRoles.length > 0 && (
-                      <div className="flex items-center gap-1" data-testid={`member-tango-roles-${member.userId}`}>
-                        {member.user.tangoRoles.slice(0, 3).map((role, i) => {
-                          const roleData = getRoleByValue(role);
-                          return (
-                            <Tooltip key={i}>
-                              <TooltipTrigger asChild>
-                                <span className="text-primary">
-                                  <RoleIcon role={role} size={14} className="text-primary" />
-                                </span>
-                              </TooltipTrigger>
-                              <TooltipContent side="top">
-                                <p>{roleData?.label || role}</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          );
-                        })}
-                        {member.user.tangoRoles.length > 3 && (
-                          <Badge variant="secondary" className="text-xs px-1.5 py-0">
-                            +{member.user.tangoRoles.length - 3}
-                          </Badge>
-                        )}
-                      </div>
+                      <UserRoleBadges roles={member.user.tangoRoles} size="xs" maxDisplay={3} />
                     )}
                   </div>
                   <p className="text-sm text-muted-foreground truncate">
