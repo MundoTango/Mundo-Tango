@@ -14,7 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Plane, Calendar as CalendarIcon, MapPin, DollarSign, Sparkles, FileText, Briefcase, Home, Utensils, Heart, Plus, ChevronDown, ChevronUp, TrendingUp, X, Edit, Users, Trash2, Clock, Check, PieChart, Download, Train, Ship, Bus, Car, Music, Ticket, Building2, Link2, Search, ExternalLink, Loader2, Anchor } from "lucide-react";
+import { Plane, Calendar as CalendarIcon, MapPin, DollarSign, Sparkles, FileText, Briefcase, Home, Utensils, Heart, Plus, ChevronDown, ChevronUp, TrendingUp, X, Edit, Users, Trash2, Clock, Check, PieChart, Download, Train, Ship, Bus, Car, Music, Ticket, Building2, Link2, Search, ExternalLink, Loader2, Anchor, ArrowRight, Send } from "lucide-react";
 
 import buenosAiresImg from "@assets/stock_images/buenos_aires_argenti_afa3bd1f.jpg";
 import milanImg from "@assets/stock_images/milan_italy_duomo_ca_513cf7b4.jpg";
@@ -230,6 +230,55 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
   // Travel Companions dialogs
   const [findCompanionsDialog, setFindCompanionsDialog] = useState<{ tripId: number; city: string } | null>(null);
   const [inviteFriendsDialog, setInviteFriendsDialog] = useState<{ tripId: number; city: string } | null>(null);
+  const [groupChatDialog, setGroupChatDialog] = useState<{ tripId: number; city: string; companions: TravelCompanion[] } | null>(null);
+  
+  // Travel Companion types and state management
+  type TravelCompanion = {
+    id: string;
+    name: string;
+    avatar: string;
+    initials: string;
+    matchScore: number;
+    details: string;
+    status: 'pending_incoming' | 'pending_outgoing' | 'confirmed';
+  };
+  
+  // Per-trip companion state (keyed by trip ID)
+  const [tripCompanions, setTripCompanions] = useState<Record<number, TravelCompanion[]>>(() => ({
+    // Default test data for trip ID 0 (first trip)
+    0: [
+      { id: 'sc1', name: 'Sofia Chen', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop', initials: 'SC', matchScore: 92, details: 'Loves milongas', status: 'pending_incoming' },
+      { id: 'mr1', name: 'Marco Rodriguez', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop', initials: 'MR', matchScore: 85, details: 'Intermediate dancer', status: 'pending_incoming' },
+      { id: 'al1', name: "Ana Lucia", avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop', initials: 'AL', matchScore: 88, details: 'Her trip to Buenos Aires', status: 'pending_outgoing' },
+      { id: 'jt1', name: 'James Thompson', avatar: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=100&h=100&fit=crop', initials: 'JT', matchScore: 90, details: 'Advanced dancer • Sharing accommodation', status: 'confirmed' },
+      { id: 'ek1', name: 'Elena Kowalski', avatar: 'https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=100&h=100&fit=crop', initials: 'EK', matchScore: 87, details: 'Beginner-friendly • Same milonga schedule', status: 'confirmed' },
+    ]
+  }));
+  
+  // Get companions for a specific trip
+  const getCompanionsForTrip = (tripId: number) => tripCompanions[tripId] || [];
+  
+  // Accept a companion request - moves from pending_incoming to confirmed
+  const acceptCompanionRequest = (tripId: number, companionId: string) => {
+    setTripCompanions(prev => ({
+      ...prev,
+      [tripId]: (prev[tripId] || []).map(c => 
+        c.id === companionId ? { ...c, status: 'confirmed' as const } : c
+      )
+    }));
+    const companion = getCompanionsForTrip(tripId).find(c => c.id === companionId);
+    toast({ title: "Request Accepted!", description: `${companion?.name || 'Companion'} has been added to your trip.` });
+  };
+  
+  // Decline a companion request - removes from list
+  const declineCompanionRequest = (tripId: number, companionId: string) => {
+    const companion = getCompanionsForTrip(tripId).find(c => c.id === companionId);
+    setTripCompanions(prev => ({
+      ...prev,
+      [tripId]: (prev[tripId] || []).filter(c => c.id !== companionId)
+    }));
+    toast({ title: "Request Declined", description: `${companion?.name || 'Request'} has been declined.` });
+  };
   
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -1129,136 +1178,131 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
                                 </div>
                               </CardHeader>
                               <CardContent className="space-y-4">
-                                {/* Pending Invitations Received - Test Data */}
-                                <div className="space-y-2">
-                                  <h5 className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                                    <Heart className="h-4 w-4 text-pink-500" />
-                                    Requests to Join Your Trip
-                                  </h5>
-                                  {isOwnProfile ? (
-                                    <div className="space-y-2">
-                                      <div className="flex items-center justify-between p-3 bg-pink-500/5 border border-pink-500/20 rounded-lg">
-                                        <div className="flex items-center gap-3">
-                                          <Avatar className="h-10 w-10 border-2 border-pink-500/30">
-                                            <AvatarImage src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop" />
-                                            <AvatarFallback>SC</AvatarFallback>
-                                          </Avatar>
-                                          <div>
-                                            <p className="font-medium text-sm">Sofia Chen</p>
-                                            <p className="text-xs text-muted-foreground">92% match • Loves milongas</p>
+                                {/* Pending Invitations Received - Dynamic */}
+                                {(() => {
+                                  const companions = getCompanionsForTrip(trip.id);
+                                  const pendingIncoming = companions.filter(c => c.status === 'pending_incoming');
+                                  const pendingOutgoing = companions.filter(c => c.status === 'pending_outgoing');
+                                  const confirmed = companions.filter(c => c.status === 'confirmed');
+                                  
+                                  return (
+                                    <>
+                                      <div className="space-y-2">
+                                        <h5 className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                                          <Heart className="h-4 w-4 text-pink-500" />
+                                          Requests to Join Your Trip
+                                          {pendingIncoming.length > 0 && <Badge variant="outline" className="bg-pink-500/10 text-pink-600 border-pink-500/30 text-xs">{pendingIncoming.length}</Badge>}
+                                        </h5>
+                                        {isOwnProfile && pendingIncoming.length > 0 ? (
+                                          <div className="space-y-2">
+                                            {pendingIncoming.map((companion, idx) => (
+                                              <div key={companion.id} className="flex items-center justify-between p-3 bg-pink-500/5 border border-pink-500/20 rounded-lg">
+                                                <div className="flex items-center gap-3">
+                                                  <Avatar className="h-10 w-10 border-2 border-pink-500/30">
+                                                    <AvatarImage src={companion.avatar} />
+                                                    <AvatarFallback>{companion.initials}</AvatarFallback>
+                                                  </Avatar>
+                                                  <div>
+                                                    <p className="font-medium text-sm">{companion.name}</p>
+                                                    <p className="text-xs text-muted-foreground">{companion.matchScore}% match • {companion.details}</p>
+                                                  </div>
+                                                </div>
+                                                <div className="flex gap-1">
+                                                  <Button size="sm" variant="outline" className="h-8 text-green-600 border-green-500/30 hover:bg-green-500/10" data-testid={`button-accept-request-${idx}`} onClick={() => acceptCompanionRequest(trip.id, companion.id)}>
+                                                    <Check className="h-3 w-3 mr-1" />Accept
+                                                  </Button>
+                                                  <Button size="sm" variant="ghost" className="h-8 text-muted-foreground" data-testid={`button-decline-request-${idx}`} onClick={() => declineCompanionRequest(trip.id, companion.id)}>
+                                                    <X className="h-3 w-3" />
+                                                  </Button>
+                                                </div>
+                                              </div>
+                                            ))}
                                           </div>
-                                        </div>
-                                        <div className="flex gap-1">
-                                          <Button size="sm" variant="outline" className="h-8 text-green-600 border-green-500/30 hover:bg-green-500/10" data-testid={`button-accept-request-0`}>
-                                            <Check className="h-3 w-3 mr-1" />Accept
-                                          </Button>
-                                          <Button size="sm" variant="ghost" className="h-8 text-muted-foreground" data-testid={`button-decline-request-0`}>
-                                            <X className="h-3 w-3" />
-                                          </Button>
-                                        </div>
-                                      </div>
-                                      <div className="flex items-center justify-between p-3 bg-pink-500/5 border border-pink-500/20 rounded-lg">
-                                        <div className="flex items-center gap-3">
-                                          <Avatar className="h-10 w-10 border-2 border-pink-500/30">
-                                            <AvatarImage src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop" />
-                                            <AvatarFallback>MR</AvatarFallback>
-                                          </Avatar>
-                                          <div>
-                                            <p className="font-medium text-sm">Marco Rodriguez</p>
-                                            <p className="text-xs text-muted-foreground">85% match • Intermediate dancer</p>
+                                        ) : (
+                                          <div className="text-center py-3 text-muted-foreground bg-muted/30 rounded-lg">
+                                            <Users className="h-6 w-6 mx-auto mb-1 opacity-30" />
+                                            <p className="text-xs">No pending requests</p>
                                           </div>
-                                        </div>
-                                        <div className="flex gap-1">
-                                          <Button size="sm" variant="outline" className="h-8 text-green-600 border-green-500/30 hover:bg-green-500/10" data-testid={`button-accept-request-1`}>
-                                            <Check className="h-3 w-3 mr-1" />Accept
-                                          </Button>
-                                          <Button size="sm" variant="ghost" className="h-8 text-muted-foreground" data-testid={`button-decline-request-1`}>
-                                            <X className="h-3 w-3" />
-                                          </Button>
-                                        </div>
+                                        )}
                                       </div>
-                                    </div>
-                                  ) : (
-                                    <div className="text-center py-3 text-muted-foreground bg-muted/30 rounded-lg">
-                                      <Users className="h-6 w-6 mx-auto mb-1 opacity-30" />
-                                      <p className="text-xs">No pending requests</p>
-                                    </div>
-                                  )}
-                                </div>
 
-                                {/* Your Pending Requests - Test Data */}
-                                <div className="space-y-2">
-                                  <h5 className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                                    <Sparkles className="h-4 w-4 text-amber-500" />
-                                    Your Requests to Join Others
-                                  </h5>
-                                  {isOwnProfile ? (
-                                    <div className="space-y-2">
-                                      <div className="flex items-center justify-between p-3 bg-amber-500/5 border border-amber-500/20 rounded-lg">
-                                        <div className="flex items-center gap-3">
-                                          <Avatar className="h-10 w-10 border-2 border-amber-500/30">
-                                            <AvatarImage src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop" />
-                                            <AvatarFallback>AL</AvatarFallback>
-                                          </Avatar>
-                                          <div>
-                                            <p className="font-medium text-sm">Ana Lucia's Trip</p>
-                                            <p className="text-xs text-muted-foreground">Waiting for response...</p>
+                                      {/* Your Pending Requests - Dynamic */}
+                                      <div className="space-y-2">
+                                        <h5 className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                                          <Sparkles className="h-4 w-4 text-amber-500" />
+                                          Your Requests to Join Others
+                                          {pendingOutgoing.length > 0 && <Badge variant="outline" className="bg-amber-500/10 text-amber-600 border-amber-500/30 text-xs">{pendingOutgoing.length}</Badge>}
+                                        </h5>
+                                        {isOwnProfile && pendingOutgoing.length > 0 ? (
+                                          <div className="space-y-2">
+                                            {pendingOutgoing.map((companion) => (
+                                              <div key={companion.id} className="flex items-center justify-between p-3 bg-amber-500/5 border border-amber-500/20 rounded-lg">
+                                                <div className="flex items-center gap-3">
+                                                  <Avatar className="h-10 w-10 border-2 border-amber-500/30">
+                                                    <AvatarImage src={companion.avatar} />
+                                                    <AvatarFallback>{companion.initials}</AvatarFallback>
+                                                  </Avatar>
+                                                  <div>
+                                                    <p className="font-medium text-sm">{companion.name}'s Trip</p>
+                                                    <p className="text-xs text-muted-foreground">Waiting for response...</p>
+                                                  </div>
+                                                </div>
+                                                <Badge variant="outline" className="bg-amber-500/10 text-amber-600 border-amber-500/30">Pending</Badge>
+                                              </div>
+                                            ))}
                                           </div>
-                                        </div>
-                                        <Badge variant="outline" className="bg-amber-500/10 text-amber-600 border-amber-500/30">Pending</Badge>
+                                        ) : (
+                                          <div className="text-center py-3 text-muted-foreground bg-muted/30 rounded-lg">
+                                            <Clock className="h-6 w-6 mx-auto mb-1 opacity-30" />
+                                            <p className="text-xs">No pending requests</p>
+                                          </div>
+                                        )}
                                       </div>
-                                    </div>
-                                  ) : (
-                                    <div className="text-center py-3 text-muted-foreground bg-muted/30 rounded-lg">
-                                      <Clock className="h-6 w-6 mx-auto mb-1 opacity-30" />
-                                      <p className="text-xs">No pending requests</p>
-                                    </div>
-                                  )}
-                                </div>
 
-                                {/* Confirmed Companions - Test Data */}
-                                <div className="space-y-2">
-                                  <h5 className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                                    <Check className="h-4 w-4 text-green-500" />
-                                    Confirmed Companions
-                                  </h5>
-                                  <div className="space-y-2">
-                                    <div className="flex items-center justify-between p-3 bg-green-500/5 border border-green-500/20 rounded-lg">
-                                      <div className="flex items-center gap-3">
-                                        <Avatar className="h-10 w-10 border-2 border-green-500/30">
-                                          <AvatarImage src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=100&h=100&fit=crop" />
-                                          <AvatarFallback>JT</AvatarFallback>
-                                        </Avatar>
-                                        <div>
-                                          <p className="font-medium text-sm">James Thompson</p>
-                                          <p className="text-xs text-muted-foreground">Advanced dancer • Sharing accommodation</p>
-                                        </div>
+                                      {/* Confirmed Companions - Dynamic */}
+                                      <div className="space-y-2">
+                                        <h5 className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                                          <Check className="h-4 w-4 text-green-500" />
+                                          Confirmed Companions
+                                          {confirmed.length > 0 && <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/30 text-xs">{confirmed.length}</Badge>}
+                                        </h5>
+                                        {confirmed.length > 0 ? (
+                                          <div className="space-y-2">
+                                            {confirmed.map((companion) => (
+                                              <div key={companion.id} className="flex items-center justify-between p-3 bg-green-500/5 border border-green-500/20 rounded-lg">
+                                                <div className="flex items-center gap-3">
+                                                  <Avatar className="h-10 w-10 border-2 border-green-500/30">
+                                                    <AvatarImage src={companion.avatar} />
+                                                    <AvatarFallback>{companion.initials}</AvatarFallback>
+                                                  </Avatar>
+                                                  <div>
+                                                    <p className="font-medium text-sm">{companion.name}</p>
+                                                    <p className="text-xs text-muted-foreground">{companion.details}</p>
+                                                  </div>
+                                                </div>
+                                                <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/30">
+                                                  <Check className="h-3 w-3 mr-1" />Confirmed
+                                                </Badge>
+                                              </div>
+                                            ))}
+                                          </div>
+                                        ) : (
+                                          <div className="text-center py-3 text-muted-foreground bg-muted/30 rounded-lg">
+                                            <Users className="h-6 w-6 mx-auto mb-1 opacity-30" />
+                                            <p className="text-xs">No companions yet</p>
+                                            <p className="text-xs mt-1">Find compatible travel buddies!</p>
+                                          </div>
+                                        )}
+                                        {/* Message Group Button - only show when there are confirmed companions */}
+                                        {confirmed.length > 0 && (
+                                          <Button variant="outline" size="sm" className="w-full mt-2 border-cyan-500/30 text-cyan-600 hover:bg-cyan-500/10" data-testid={`button-message-group-${index}`} onClick={() => setGroupChatDialog({ tripId: trip.id, city: trip.city, companions: confirmed })}>
+                                            <Users className="h-4 w-4 mr-2" />View Group Chat ({confirmed.length + 1} participants)
+                                          </Button>
+                                        )}
                                       </div>
-                                      <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/30">
-                                        <Check className="h-3 w-3 mr-1" />Confirmed
-                                      </Badge>
-                                    </div>
-                                    <div className="flex items-center justify-between p-3 bg-green-500/5 border border-green-500/20 rounded-lg">
-                                      <div className="flex items-center gap-3">
-                                        <Avatar className="h-10 w-10 border-2 border-green-500/30">
-                                          <AvatarImage src="https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=100&h=100&fit=crop" />
-                                          <AvatarFallback>EK</AvatarFallback>
-                                        </Avatar>
-                                        <div>
-                                          <p className="font-medium text-sm">Elena Kowalski</p>
-                                          <p className="text-xs text-muted-foreground">Beginner-friendly • Same milonga schedule</p>
-                                        </div>
-                                      </div>
-                                      <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/30">
-                                        <Check className="h-3 w-3 mr-1" />Confirmed
-                                      </Badge>
-                                    </div>
-                                  </div>
-                                  {/* Message Group Button */}
-                                  <Button variant="outline" size="sm" className="w-full mt-2 border-cyan-500/30 text-cyan-600 hover:bg-cyan-500/10" data-testid={`button-message-group-${index}`} onClick={() => toast({ title: "Group Chat", description: "Opening group chat with James and Elena..." })}>
-                                    <Users className="h-4 w-4 mr-2" />View Group Chat (3 participants)
-                                  </Button>
-                                </div>
+                                    </>
+                                  );
+                                })()}
 
                                 {/* Action Buttons */}
                                 {isOwnProfile && (
@@ -1886,6 +1930,110 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
             <p className="text-xs text-center text-muted-foreground">
               Click a profile to send a travel companion request
             </p>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Group Chat Dialog */}
+      <Dialog open={!!groupChatDialog} onOpenChange={(open) => { if (!open) setGroupChatDialog(null); }}>
+        <DialogContent className="max-w-lg max-h-[80vh] flex flex-col">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Users className="h-5 w-5 text-cyan-600" />
+              Trip to {groupChatDialog?.city} - Group Chat
+            </DialogTitle>
+          </DialogHeader>
+          <div className="flex-1 flex flex-col min-h-0">
+            {/* Participants Header */}
+            <div className="flex items-center gap-2 pb-3 border-b">
+              <div className="flex -space-x-2">
+                {groupChatDialog?.companions.slice(0, 4).map((c) => (
+                  <Avatar key={c.id} className="h-8 w-8 border-2 border-background">
+                    <AvatarImage src={c.avatar} />
+                    <AvatarFallback>{c.initials}</AvatarFallback>
+                  </Avatar>
+                ))}
+                <Avatar className="h-8 w-8 border-2 border-background bg-primary">
+                  <AvatarFallback className="text-primary-foreground text-xs">You</AvatarFallback>
+                </Avatar>
+              </div>
+              <span className="text-sm text-muted-foreground">
+                {(groupChatDialog?.companions.length || 0) + 1} participants
+              </span>
+            </div>
+            
+            {/* Chat Messages Area */}
+            <div className="flex-1 overflow-y-auto py-4 space-y-4 min-h-[250px]">
+              {/* Sample chat messages */}
+              <div className="flex gap-3">
+                <Avatar className="h-8 w-8 flex-shrink-0">
+                  <AvatarImage src={groupChatDialog?.companions[0]?.avatar} />
+                  <AvatarFallback>{groupChatDialog?.companions[0]?.initials}</AvatarFallback>
+                </Avatar>
+                <div className="flex-1">
+                  <div className="flex items-baseline gap-2">
+                    <span className="font-medium text-sm">{groupChatDialog?.companions[0]?.name}</span>
+                    <span className="text-xs text-muted-foreground">2 hours ago</span>
+                  </div>
+                  <p className="text-sm mt-1 bg-muted/50 rounded-lg p-3">
+                    Hey everyone! So excited for our trip to {groupChatDialog?.city}! Has anyone started looking at milongas yet?
+                  </p>
+                </div>
+              </div>
+              
+              {groupChatDialog?.companions[1] && (
+                <div className="flex gap-3">
+                  <Avatar className="h-8 w-8 flex-shrink-0">
+                    <AvatarImage src={groupChatDialog?.companions[1]?.avatar} />
+                    <AvatarFallback>{groupChatDialog?.companions[1]?.initials}</AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1">
+                    <div className="flex items-baseline gap-2">
+                      <span className="font-medium text-sm">{groupChatDialog?.companions[1]?.name}</span>
+                      <span className="text-xs text-muted-foreground">1 hour ago</span>
+                    </div>
+                    <p className="text-sm mt-1 bg-muted/50 rounded-lg p-3">
+                      Yes! I found a few good ones. Should we meet at the hotel first or go straight there?
+                    </p>
+                  </div>
+                </div>
+              )}
+              
+              <div className="flex gap-3 justify-end">
+                <div className="flex-1 max-w-[80%]">
+                  <div className="flex items-baseline gap-2 justify-end">
+                    <span className="text-xs text-muted-foreground">30 min ago</span>
+                    <span className="font-medium text-sm">You</span>
+                  </div>
+                  <p className="text-sm mt-1 bg-primary/10 rounded-lg p-3 text-right">
+                    Let's meet at the hotel lobby at 9pm. I'll share my flight details soon!
+                  </p>
+                </div>
+                <Avatar className="h-8 w-8 flex-shrink-0 bg-primary">
+                  <AvatarFallback className="text-primary-foreground text-xs">You</AvatarFallback>
+                </Avatar>
+              </div>
+            </div>
+            
+            {/* Message Input */}
+            <div className="pt-3 border-t">
+              <div className="flex gap-2">
+                <Input 
+                  placeholder="Type a message..." 
+                  className="flex-1" 
+                  data-testid="input-group-chat-message"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && (e.target as HTMLInputElement).value.trim()) {
+                      toast({ title: "Message Sent", description: "Your message has been sent to the group." });
+                      (e.target as HTMLInputElement).value = '';
+                    }
+                  }}
+                />
+                <Button size="icon" onClick={() => toast({ title: "Message Sent", description: "Your message has been sent to the group." })} data-testid="button-send-message">
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
