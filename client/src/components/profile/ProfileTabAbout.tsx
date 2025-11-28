@@ -337,32 +337,35 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
             
             {isEditing ? (
               <div className="space-y-4">
-                {/* When did you start tango? */}
                 <div>
-                  <label className="text-xs text-muted-foreground block mb-1">When did you start tango?</label>
-                  <Select
-                    value={editValues.tangoStartYear?.toString() || ''}
-                    onValueChange={(value) => {
-                      const year = parseInt(value);
-                      setEditValues({ ...editValues, tangoStartYear: year });
-                    }}
-                  >
-                    <SelectTrigger className="w-full max-w-[200px]" data-testid="select-tango-start-year">
-                      <SelectValue placeholder="Select year" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {yearOptions.map((year) => (
-                        <SelectItem key={year} value={year.toString()}>
-                          {year}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <label className="text-xs text-muted-foreground block mb-2">When did you start tango? (defaults all roles)</label>
+                  <div className="flex items-end gap-3">
+                    <div className="flex-1 max-w-[200px]">
+                      <Select
+                        value={editValues.tangoStartYear?.toString() || ''}
+                        onValueChange={(value) => {
+                          const year = parseInt(value);
+                          setEditValues({ ...editValues, tangoStartYear: year });
+                        }}
+                      >
+                        <SelectTrigger data-testid="select-tango-start-year">
+                          <SelectValue placeholder="Select year" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {yearOptions.map((year) => (
+                            <SelectItem key={year} value={year.toString()}>
+                              {year}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <p className="text-xs text-muted-foreground pb-2">Click roles below to set individual years</p>
+                  </div>
                 </div>
 
-                {/* Role Selection */}
-                <div>
-                  <p className="text-xs text-muted-foreground mb-2">Click to select/deselect roles</p>
+                {/* Unified Role Selection + Year Grid */}
+                <div className="space-y-3">
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2" data-testid="input-tango-roles">
                     {TANGO_ROLES.map((role) => {
                       const IconComponent = role.icon;
@@ -392,33 +395,30 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
                       );
                     })}
                   </div>
-                </div>
 
-                {/* Per-Role Start Year Customization */}
-                {selectedRoles.length > 0 && (
-                  <div className="border rounded-lg p-4 bg-muted/30">
-                    <p className="text-xs text-muted-foreground mb-3">Customize when you started each role (defaults to your tango start year):</p>
-                    <div className="space-y-3">
+                  {/* Per-Role Year Selectors - Integrated Below */}
+                  {selectedRoles.length > 0 && (
+                    <div className="space-y-2">
                       {selectedRoles.map((roleValue: string) => {
                         const role = getRoleByValue(roleValue);
                         const IconComponent = role?.icon;
                         const startYear = getRoleStartYear(roleValue);
                         
                         return (
-                          <div key={roleValue} className="flex items-center justify-between gap-4">
+                          <div key={roleValue} className="flex items-center justify-between gap-3 p-2 rounded-md bg-muted/20">
                             <div className="flex items-center gap-2 min-w-0">
                               {IconComponent && (
-                                <div className="p-1.5 rounded-md shrink-0" style={{ backgroundColor: `${role?.color}20` }}>
-                                  <IconComponent className="w-4 h-4" style={{ color: role?.color }} />
+                                <div className="p-1 rounded-md shrink-0" style={{ backgroundColor: `${role?.color}20` }}>
+                                  <IconComponent className="w-3.5 h-3.5" style={{ color: role?.color }} />
                                 </div>
                               )}
-                              <span className="text-sm font-medium truncate">{role?.label || roleValue}</span>
+                              <span className="text-xs font-medium truncate">{role?.label || roleValue}</span>
                             </div>
                             <Select
                               value={startYear.toString()}
                               onValueChange={(value) => updateRoleStartYear(roleValue, parseInt(value))}
                             >
-                              <SelectTrigger className="w-[120px] shrink-0" data-testid={`select-role-year-${roleValue}`}>
+                              <SelectTrigger className="w-[100px] shrink-0 h-8" data-testid={`select-role-year-${roleValue}`}>
                                 <SelectValue />
                               </SelectTrigger>
                               <SelectContent>
@@ -433,14 +433,8 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
                         );
                       })}
                     </div>
-                  </div>
-                )}
-
-                {selectedRoles.length > 0 && (
-                  <p className="text-xs text-muted-foreground">
-                    Selected: {selectedRoles.length} role{selectedRoles.length !== 1 ? 's' : ''}
-                  </p>
-                )}
+                  )}
+                </div>
               </div>
             ) : (
               <div className="space-y-3">
