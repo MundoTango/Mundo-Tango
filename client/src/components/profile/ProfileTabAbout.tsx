@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Slider } from "@/components/ui/slider";
 import { Info, MapPin, Calendar as CalendarIcon, Users, Award, Edit, Check, X, Languages, Star, Drama } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -424,31 +425,35 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
                             {/* Skill level for dancer roles */}
                             {isDancerLeader && (
                               <div>
-                                <label className="text-[10px] text-muted-foreground block mb-1">Level (1-10)</label>
-                                <Input 
-                                  type="number" 
-                                  min="1" 
-                                  max="10" 
-                                  placeholder="7" 
-                                  value={editValues.leaderLevel || ''} 
-                                  onChange={(e) => setEditValues({ ...editValues, leaderLevel: e.target.value })}
-                                  data-testid="input-leader-level"
-                                  className="h-7 text-xs"
+                                <div className="flex items-center justify-between mb-2">
+                                  <label className="text-[10px] text-muted-foreground">Leader Level</label>
+                                  <span className="text-xs font-medium">{editValues.leaderLevel || 5}</span>
+                                </div>
+                                <Slider
+                                  min={1}
+                                  max={10}
+                                  step={1}
+                                  value={[editValues.leaderLevel ? parseInt(editValues.leaderLevel) : 5]}
+                                  onValueChange={(value) => setEditValues({ ...editValues, leaderLevel: value[0] })}
+                                  data-testid="slider-leader-level"
+                                  className="w-full"
                                 />
                               </div>
                             )}
                             {isDancerFollower && (
                               <div>
-                                <label className="text-[10px] text-muted-foreground block mb-1">Level (1-10)</label>
-                                <Input 
-                                  type="number" 
-                                  min="1" 
-                                  max="10" 
-                                  placeholder="8" 
-                                  value={editValues.followerLevel || ''} 
-                                  onChange={(e) => setEditValues({ ...editValues, followerLevel: e.target.value })}
-                                  data-testid="input-follower-level"
-                                  className="h-7 text-xs"
+                                <div className="flex items-center justify-between mb-2">
+                                  <label className="text-[10px] text-muted-foreground">Follower Level</label>
+                                  <span className="text-xs font-medium">{editValues.followerLevel || 5}</span>
+                                </div>
+                                <Slider
+                                  min={1}
+                                  max={10}
+                                  step={1}
+                                  value={[editValues.followerLevel ? parseInt(editValues.followerLevel) : 5]}
+                                  onValueChange={(value) => setEditValues({ ...editValues, followerLevel: value[0] })}
+                                  data-testid="slider-follower-level"
+                                  className="w-full"
                                 />
                               </div>
                             )}
