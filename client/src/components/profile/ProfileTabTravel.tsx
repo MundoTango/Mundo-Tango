@@ -227,6 +227,10 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
   const [updatingTripId, setUpdatingTripId] = useState<number | null>(null);
   const [completionDialogTrip, setCompletionDialogTrip] = useState<TravelPlan | null>(null);
   
+  // Travel Companions dialogs
+  const [findCompanionsDialog, setFindCompanionsDialog] = useState<{ tripId: number; city: string } | null>(null);
+  const [inviteFriendsDialog, setInviteFriendsDialog] = useState<{ tripId: number; city: string } | null>(null);
+  
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -804,8 +808,8 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
             return (
               <Collapsible key={trip.id || index} open={isExpanded} onOpenChange={() => toggleTrip(index)} className={cn(isExpanded && "lg:col-span-2")}>
                 <Card data-testid={`card-travel-plan-${index}`} className="overflow-hidden flex flex-col">
-                  {/* Hero Header - Square Image */}
-                  <div className="relative aspect-square bg-gradient-to-br from-primary/20 via-secondary/20 to-accent/20" style={{ backgroundImage: `url('${getCityImageUrl(trip.city, trip.country)}')`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
+                  {/* Hero Header - Aspect ratio changes when expanded */}
+                  <div className={cn("relative bg-gradient-to-br from-primary/20 via-secondary/20 to-accent/20", isExpanded ? "aspect-[3/1]" : "aspect-square")} style={{ backgroundImage: `url('${getCityImageUrl(trip.city, trip.country)}')`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
                 <div className="absolute bottom-3 left-4 right-4">
                   <h3 className="text-xl font-serif font-bold text-white">{trip.city}{trip.country && <span className="text-white/80 text-base ml-2">• {trip.country}</span>}</h3>
@@ -1125,50 +1129,144 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
                                 </div>
                               </CardHeader>
                               <CardContent className="space-y-4">
-                                {/* Pending Invitations Received */}
+                                {/* Pending Invitations Received - Test Data */}
                                 <div className="space-y-2">
                                   <h5 className="text-sm font-medium text-muted-foreground flex items-center gap-2">
                                     <Heart className="h-4 w-4 text-pink-500" />
                                     Requests to Join Your Trip
                                   </h5>
-                                  <div className="text-center py-3 text-muted-foreground bg-muted/30 rounded-lg">
-                                    <Users className="h-6 w-6 mx-auto mb-1 opacity-30" />
-                                    <p className="text-xs">No pending requests</p>
-                                  </div>
+                                  {isOwnProfile ? (
+                                    <div className="space-y-2">
+                                      <div className="flex items-center justify-between p-3 bg-pink-500/5 border border-pink-500/20 rounded-lg">
+                                        <div className="flex items-center gap-3">
+                                          <Avatar className="h-10 w-10 border-2 border-pink-500/30">
+                                            <AvatarImage src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop" />
+                                            <AvatarFallback>SC</AvatarFallback>
+                                          </Avatar>
+                                          <div>
+                                            <p className="font-medium text-sm">Sofia Chen</p>
+                                            <p className="text-xs text-muted-foreground">92% match • Loves milongas</p>
+                                          </div>
+                                        </div>
+                                        <div className="flex gap-1">
+                                          <Button size="sm" variant="outline" className="h-8 text-green-600 border-green-500/30 hover:bg-green-500/10" data-testid={`button-accept-request-0`}>
+                                            <Check className="h-3 w-3 mr-1" />Accept
+                                          </Button>
+                                          <Button size="sm" variant="ghost" className="h-8 text-muted-foreground" data-testid={`button-decline-request-0`}>
+                                            <X className="h-3 w-3" />
+                                          </Button>
+                                        </div>
+                                      </div>
+                                      <div className="flex items-center justify-between p-3 bg-pink-500/5 border border-pink-500/20 rounded-lg">
+                                        <div className="flex items-center gap-3">
+                                          <Avatar className="h-10 w-10 border-2 border-pink-500/30">
+                                            <AvatarImage src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop" />
+                                            <AvatarFallback>MR</AvatarFallback>
+                                          </Avatar>
+                                          <div>
+                                            <p className="font-medium text-sm">Marco Rodriguez</p>
+                                            <p className="text-xs text-muted-foreground">85% match • Intermediate dancer</p>
+                                          </div>
+                                        </div>
+                                        <div className="flex gap-1">
+                                          <Button size="sm" variant="outline" className="h-8 text-green-600 border-green-500/30 hover:bg-green-500/10" data-testid={`button-accept-request-1`}>
+                                            <Check className="h-3 w-3 mr-1" />Accept
+                                          </Button>
+                                          <Button size="sm" variant="ghost" className="h-8 text-muted-foreground" data-testid={`button-decline-request-1`}>
+                                            <X className="h-3 w-3" />
+                                          </Button>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  ) : (
+                                    <div className="text-center py-3 text-muted-foreground bg-muted/30 rounded-lg">
+                                      <Users className="h-6 w-6 mx-auto mb-1 opacity-30" />
+                                      <p className="text-xs">No pending requests</p>
+                                    </div>
+                                  )}
                                 </div>
 
-                                {/* Your Pending Requests */}
+                                {/* Your Pending Requests - Test Data */}
                                 <div className="space-y-2">
                                   <h5 className="text-sm font-medium text-muted-foreground flex items-center gap-2">
                                     <Sparkles className="h-4 w-4 text-amber-500" />
                                     Your Requests to Join Others
                                   </h5>
-                                  <div className="text-center py-3 text-muted-foreground bg-muted/30 rounded-lg">
-                                    <Clock className="h-6 w-6 mx-auto mb-1 opacity-30" />
-                                    <p className="text-xs">No pending requests</p>
-                                  </div>
+                                  {isOwnProfile ? (
+                                    <div className="space-y-2">
+                                      <div className="flex items-center justify-between p-3 bg-amber-500/5 border border-amber-500/20 rounded-lg">
+                                        <div className="flex items-center gap-3">
+                                          <Avatar className="h-10 w-10 border-2 border-amber-500/30">
+                                            <AvatarImage src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop" />
+                                            <AvatarFallback>AL</AvatarFallback>
+                                          </Avatar>
+                                          <div>
+                                            <p className="font-medium text-sm">Ana Lucia's Trip</p>
+                                            <p className="text-xs text-muted-foreground">Waiting for response...</p>
+                                          </div>
+                                        </div>
+                                        <Badge variant="outline" className="bg-amber-500/10 text-amber-600 border-amber-500/30">Pending</Badge>
+                                      </div>
+                                    </div>
+                                  ) : (
+                                    <div className="text-center py-3 text-muted-foreground bg-muted/30 rounded-lg">
+                                      <Clock className="h-6 w-6 mx-auto mb-1 opacity-30" />
+                                      <p className="text-xs">No pending requests</p>
+                                    </div>
+                                  )}
                                 </div>
 
-                                {/* Confirmed Companions */}
+                                {/* Confirmed Companions - Test Data */}
                                 <div className="space-y-2">
                                   <h5 className="text-sm font-medium text-muted-foreground flex items-center gap-2">
                                     <Check className="h-4 w-4 text-green-500" />
                                     Confirmed Companions
                                   </h5>
-                                  <div className="text-center py-3 text-muted-foreground bg-muted/30 rounded-lg">
-                                    <Users className="h-6 w-6 mx-auto mb-1 opacity-30" />
-                                    <p className="text-xs">No companions yet</p>
-                                    <p className="text-xs mt-1">Find compatible travel buddies!</p>
+                                  <div className="space-y-2">
+                                    <div className="flex items-center justify-between p-3 bg-green-500/5 border border-green-500/20 rounded-lg">
+                                      <div className="flex items-center gap-3">
+                                        <Avatar className="h-10 w-10 border-2 border-green-500/30">
+                                          <AvatarImage src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=100&h=100&fit=crop" />
+                                          <AvatarFallback>JT</AvatarFallback>
+                                        </Avatar>
+                                        <div>
+                                          <p className="font-medium text-sm">James Thompson</p>
+                                          <p className="text-xs text-muted-foreground">Advanced dancer • Sharing accommodation</p>
+                                        </div>
+                                      </div>
+                                      <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/30">
+                                        <Check className="h-3 w-3 mr-1" />Confirmed
+                                      </Badge>
+                                    </div>
+                                    <div className="flex items-center justify-between p-3 bg-green-500/5 border border-green-500/20 rounded-lg">
+                                      <div className="flex items-center gap-3">
+                                        <Avatar className="h-10 w-10 border-2 border-green-500/30">
+                                          <AvatarImage src="https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=100&h=100&fit=crop" />
+                                          <AvatarFallback>EK</AvatarFallback>
+                                        </Avatar>
+                                        <div>
+                                          <p className="font-medium text-sm">Elena Kowalski</p>
+                                          <p className="text-xs text-muted-foreground">Beginner-friendly • Same milonga schedule</p>
+                                        </div>
+                                      </div>
+                                      <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/30">
+                                        <Check className="h-3 w-3 mr-1" />Confirmed
+                                      </Badge>
+                                    </div>
                                   </div>
+                                  {/* Message Group Button */}
+                                  <Button variant="outline" size="sm" className="w-full mt-2 border-cyan-500/30 text-cyan-600 hover:bg-cyan-500/10" data-testid={`button-message-group-${index}`} onClick={() => toast({ title: "Group Chat", description: "Opening group chat with James and Elena..." })}>
+                                    <Users className="h-4 w-4 mr-2" />View Group Chat (3 participants)
+                                  </Button>
                                 </div>
 
                                 {/* Action Buttons */}
                                 {isOwnProfile && (
                                   <div className="flex gap-2 pt-2">
-                                    <Button variant="outline" size="sm" className="flex-1" data-testid={`button-find-companions-${index}`} onClick={() => toast({ title: "Finding Companions", description: "Searching for compatible travelers to " + trip.city + "..." })}>
+                                    <Button variant="outline" size="sm" className="flex-1" data-testid={`button-find-companions-${index}`} onClick={() => setFindCompanionsDialog({ tripId: trip.id, city: trip.city })}>
                                       <Search className="h-4 w-4 mr-2" />Find Compatible Travelers
                                     </Button>
-                                    <Button variant="outline" size="sm" className="flex-1" data-testid={`button-invite-friends-${index}`} onClick={() => toast({ title: "Invite Friends", description: "Share your trip to " + trip.city + " with friends!" })}>
+                                    <Button variant="outline" size="sm" className="flex-1" data-testid={`button-invite-friends-${index}`} onClick={() => setInviteFriendsDialog({ tripId: trip.id, city: trip.city })}>
                                       <Plus className="h-4 w-4 mr-2" />Invite Friends
                                     </Button>
                                   </div>
@@ -1700,6 +1798,171 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
               </div>
             </TabsContent>
           </Tabs>
+        </DialogContent>
+      </Dialog>
+
+      {/* Find Compatible Travelers Dialog */}
+      <Dialog open={!!findCompanionsDialog} onOpenChange={(open) => { if (!open) setFindCompanionsDialog(null); }}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Search className="h-5 w-5 text-cyan-600" />
+              Find Compatible Travelers to {findCompanionsDialog?.city}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <p className="text-sm text-muted-foreground">
+              Our AI matches you with compatible travelers based on your dance level, travel style, schedule, and interests.
+            </p>
+            
+            {/* AI Match Results */}
+            <div className="space-y-3">
+              <h4 className="text-sm font-medium">Top Matches</h4>
+              
+              <div className="p-4 border rounded-lg space-y-3 hover-elevate cursor-pointer" onClick={() => { toast({ title: "Request Sent!", description: "Your travel request has been sent to Isabella." }); setFindCompanionsDialog(null); }}>
+                <div className="flex items-center gap-3">
+                  <Avatar className="h-12 w-12 border-2 border-cyan-500/30">
+                    <AvatarImage src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop" />
+                    <AvatarFallback>IM</AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <p className="font-medium">Isabella Martinez</p>
+                      <Badge className="bg-green-500/10 text-green-600 border-green-500/30">95% Match</Badge>
+                    </div>
+                    <p className="text-xs text-muted-foreground">Advanced dancer • Same dates • Budget-friendly</p>
+                  </div>
+                </div>
+                <div className="flex flex-wrap gap-1">
+                  <Badge variant="outline" className="text-xs">Milongas</Badge>
+                  <Badge variant="outline" className="text-xs">Traditional</Badge>
+                  <Badge variant="outline" className="text-xs">Sharing OK</Badge>
+                </div>
+              </div>
+
+              <div className="p-4 border rounded-lg space-y-3 hover-elevate cursor-pointer" onClick={() => { toast({ title: "Request Sent!", description: "Your travel request has been sent to David." }); setFindCompanionsDialog(null); }}>
+                <div className="flex items-center gap-3">
+                  <Avatar className="h-12 w-12 border-2 border-cyan-500/30">
+                    <AvatarImage src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop" />
+                    <AvatarFallback>DK</AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <p className="font-medium">David Kim</p>
+                      <Badge className="bg-blue-500/10 text-blue-600 border-blue-500/30">87% Match</Badge>
+                    </div>
+                    <p className="text-xs text-muted-foreground">Intermediate dancer • Overlapping week • Similar budget</p>
+                  </div>
+                </div>
+                <div className="flex flex-wrap gap-1">
+                  <Badge variant="outline" className="text-xs">Nuevo</Badge>
+                  <Badge variant="outline" className="text-xs">Workshops</Badge>
+                  <Badge variant="outline" className="text-xs">Photography</Badge>
+                </div>
+              </div>
+
+              <div className="p-4 border rounded-lg space-y-3 hover-elevate cursor-pointer" onClick={() => { toast({ title: "Request Sent!", description: "Your travel request has been sent to Maria." }); setFindCompanionsDialog(null); }}>
+                <div className="flex items-center gap-3">
+                  <Avatar className="h-12 w-12 border-2 border-cyan-500/30">
+                    <AvatarImage src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop" />
+                    <AvatarFallback>MG</AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <p className="font-medium">Maria Gonzalez</p>
+                      <Badge className="bg-amber-500/10 text-amber-600 border-amber-500/30">78% Match</Badge>
+                    </div>
+                    <p className="text-xs text-muted-foreground">Beginner dancer • Same flight • Looking for group</p>
+                  </div>
+                </div>
+                <div className="flex flex-wrap gap-1">
+                  <Badge variant="outline" className="text-xs">Learning</Badge>
+                  <Badge variant="outline" className="text-xs">Group Travel</Badge>
+                  <Badge variant="outline" className="text-xs">Food Tours</Badge>
+                </div>
+              </div>
+            </div>
+
+            <p className="text-xs text-center text-muted-foreground">
+              Click a profile to send a travel companion request
+            </p>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Invite Friends Dialog */}
+      <Dialog open={!!inviteFriendsDialog} onOpenChange={(open) => { if (!open) setInviteFriendsDialog(null); }}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Plus className="h-5 w-5 text-primary" />
+              Invite Friends to {inviteFriendsDialog?.city}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input placeholder="Search by name or email..." className="pl-9" data-testid="input-search-friends" />
+            </div>
+            
+            <div className="space-y-2">
+              <h4 className="text-sm font-medium text-muted-foreground">Your Connections</h4>
+              
+              <div className="flex items-center justify-between p-3 border rounded-lg hover-elevate">
+                <div className="flex items-center gap-3">
+                  <Avatar className="h-10 w-10">
+                    <AvatarImage src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop" />
+                    <AvatarFallback>RJ</AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <p className="font-medium text-sm">Robert Johnson</p>
+                    <p className="text-xs text-muted-foreground">Friend • Last active 2h ago</p>
+                  </div>
+                </div>
+                <Button size="sm" variant="outline" onClick={() => { toast({ title: "Invitation Sent!", description: "Robert has been invited to your trip." }); }} data-testid="button-invite-friend-0">
+                  <Plus className="h-3 w-3 mr-1" />Invite
+                </Button>
+              </div>
+
+              <div className="flex items-center justify-between p-3 border rounded-lg hover-elevate">
+                <div className="flex items-center gap-3">
+                  <Avatar className="h-10 w-10">
+                    <AvatarImage src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=100&h=100&fit=crop" />
+                    <AvatarFallback>LW</AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <p className="font-medium text-sm">Lisa Wang</p>
+                    <p className="text-xs text-muted-foreground">Friend • Online now</p>
+                  </div>
+                </div>
+                <Button size="sm" variant="outline" onClick={() => { toast({ title: "Invitation Sent!", description: "Lisa has been invited to your trip." }); }} data-testid="button-invite-friend-1">
+                  <Plus className="h-3 w-3 mr-1" />Invite
+                </Button>
+              </div>
+
+              <div className="flex items-center justify-between p-3 border rounded-lg hover-elevate">
+                <div className="flex items-center gap-3">
+                  <Avatar className="h-10 w-10">
+                    <AvatarImage src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop" />
+                    <AvatarFallback>AS</AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <p className="font-medium text-sm">Alex Smith</p>
+                    <p className="text-xs text-muted-foreground">Dance Partner • Last active 1d ago</p>
+                  </div>
+                </div>
+                <Button size="sm" variant="outline" onClick={() => { toast({ title: "Invitation Sent!", description: "Alex has been invited to your trip." }); }} data-testid="button-invite-friend-2">
+                  <Plus className="h-3 w-3 mr-1" />Invite
+                </Button>
+              </div>
+            </div>
+
+            <div className="pt-2 border-t">
+              <Button variant="outline" className="w-full" onClick={() => { navigator.clipboard.writeText(`https://mundotango.app/trips/${inviteFriendsDialog?.tripId}`); toast({ title: "Link Copied!", description: "Share this link with anyone to invite them to your trip." }); }} data-testid="button-copy-invite-link">
+                <Link2 className="h-4 w-4 mr-2" />Copy Invite Link
+              </Button>
+            </div>
+          </div>
         </DialogContent>
       </Dialog>
 
