@@ -1,29 +1,29 @@
 /**
- * TANGO ROLES CONFIGURATION - P0 #10
- * Complete 20-role system with icons
+ * TANGO ROLES CONFIGURATION - UNIFIED SYSTEM
+ * Complete 19-role system matching onboarding IDs
+ * Used throughout app for consistent role display
  */
 
 import {
+  Users,
+  User,
   GraduationCap,
   Music,
-  Camera,
-  Star,
+  Drama,
   Calendar,
-  ShoppingBag,
-  Music2,
-  Layout,
-  School,
-  Hotel,
-  Heart,
-  Plane,
-  Home,
-  Map,
-  Video,
+  Building2,
+  Camera,
+  Palette,
+  Briefcase,
+  Mic,
+  PenLine,
   BookOpen,
-  Users2,
-  User,
+  Target,
+  Shirt,
   Globe,
-  UserCheck,
+  Piano,
+  Eye,
+  Heart,
   type LucideIcon
 } from 'lucide-react';
 
@@ -31,174 +31,190 @@ export interface TangoRole {
   value: string;
   label: string;
   icon: LucideIcon;
+  color: string;
+  description: string;
   bookable: boolean;
-  description?: string;
-  category: 'business' | 'social';
+  category: 'dance' | 'professional' | 'creative' | 'community';
 }
 
 export const TANGO_ROLES: readonly TangoRole[] = [
-  // ========== BUSINESS ROLES (17) ==========
+  // ========== DANCE ROLES ==========
+  {
+    value: 'dancer-leader',
+    label: 'Dancer (Leader)',
+    icon: Users,
+    color: '#1E90FF',
+    description: 'I lead in tango dancing',
+    bookable: false,
+    category: 'dance'
+  },
+  {
+    value: 'dancer-follower',
+    label: 'Dancer (Follower)',
+    icon: User,
+    color: '#EC4899',
+    description: 'I follow in tango dancing',
+    bookable: false,
+    category: 'dance'
+  },
+  
+  // ========== PROFESSIONAL ROLES ==========
   {
     value: 'teacher',
     label: 'Teacher',
     icon: GraduationCap,
+    color: '#10B981',
+    description: 'I teach tango',
     bookable: true,
-    category: 'business',
-    description: 'Professional tango instructor offering private or group classes'
+    category: 'professional'
   },
   {
     value: 'dj',
     label: 'DJ',
     icon: Music,
+    color: '#8B5CF6',
+    description: 'I DJ tango music',
     bookable: true,
-    category: 'business',
-    description: 'Tango DJ available for milongas and events'
-  },
-  {
-    value: 'photographer',
-    label: 'Photographer',
-    icon: Camera,
-    bookable: true,
-    category: 'business',
-    description: 'Professional photographer specializing in tango events'
+    category: 'professional'
   },
   {
     value: 'performer',
     label: 'Performer',
-    icon: Star,
+    icon: Drama,
+    color: '#F59E0B',
+    description: 'I perform tango shows',
     bookable: true,
-    category: 'business',
-    description: 'Tango performer available for shows and demonstrations'
+    category: 'professional'
   },
   {
     value: 'organizer',
     label: 'Organizer',
     icon: Calendar,
+    color: '#3B82F6',
+    description: 'I organize tango events',
     bookable: false,
-    category: 'business',
-    description: 'Event organizer hosting milongas and festivals'
+    category: 'professional'
   },
   {
-    value: 'vendor',
-    label: 'Vendor',
-    icon: ShoppingBag,
+    value: 'venue-owner',
+    label: 'Venue Owner',
+    icon: Building2,
+    color: '#6B7280',
+    description: 'I own/manage a tango venue',
     bookable: true,
-    category: 'business',
-    description: 'Seller of tango shoes, clothing, and accessories'
+    category: 'professional'
+  },
+  {
+    value: 'coach',
+    label: 'Coach/Mentor',
+    icon: Target,
+    color: '#10B981',
+    description: 'I coach/mentor tango dancers',
+    bookable: true,
+    category: 'professional'
+  },
+  {
+    value: 'mc',
+    label: 'MC/Host',
+    icon: Mic,
+    color: '#F97316',
+    description: 'I host/MC tango events',
+    bookable: true,
+    category: 'professional'
+  },
+  {
+    value: 'business',
+    label: 'Business/Vendor',
+    icon: Briefcase,
+    color: '#6366F1',
+    description: 'I run a tango-related business',
+    bookable: true,
+    category: 'professional'
+  },
+  
+  // ========== CREATIVE ROLES ==========
+  {
+    value: 'photographer',
+    label: 'Photographer/Videographer',
+    icon: Camera,
+    color: '#EF4444',
+    description: 'I capture tango moments',
+    bookable: true,
+    category: 'creative'
+  },
+  {
+    value: 'artist',
+    label: 'Designer/Artist',
+    icon: Palette,
+    color: '#EC4899',
+    description: 'I create tango art/graphics',
+    bookable: true,
+    category: 'creative'
+  },
+  {
+    value: 'journalist',
+    label: 'Journalist/Blogger',
+    icon: PenLine,
+    color: '#14B8A6',
+    description: 'I write about tango',
+    bookable: false,
+    category: 'creative'
+  },
+  {
+    value: 'historian',
+    label: 'Historian',
+    icon: BookOpen,
+    color: '#8B5CF6',
+    description: 'I study tango history',
+    bookable: false,
+    category: 'creative'
+  },
+  {
+    value: 'clothing-designer',
+    label: 'Clothing/Shoe Designer',
+    icon: Shirt,
+    color: '#EC4899',
+    description: 'I design tango clothing/shoes',
+    bookable: true,
+    category: 'creative'
   },
   {
     value: 'musician',
     label: 'Musician',
-    icon: Music2,
+    icon: Piano,
+    color: '#A855F7',
+    description: 'I play tango music',
     bookable: true,
-    category: 'business',
-    description: 'Live tango musician or orchestra member'
+    category: 'creative'
   },
+  
+  // ========== COMMUNITY ROLES ==========
   {
-    value: 'choreographer',
-    label: 'Choreographer',
-    icon: Layout,
-    bookable: true,
-    category: 'business',
-    description: 'Professional choreographer for shows and performances'
-  },
-  {
-    value: 'tango_school',
-    label: 'Tango School',
-    icon: School,
-    bookable: true,
-    category: 'business',
-    description: 'Tango school or academy offering structured programs'
-  },
-  {
-    value: 'tango_hotel',
-    label: 'Tango Hotel',
-    icon: Hotel,
-    bookable: true,
-    category: 'business',
-    description: 'Accommodation specialized for tango travelers'
-  },
-  {
-    value: 'wellness_provider',
-    label: 'Wellness Provider',
-    icon: Heart,
-    bookable: true,
-    category: 'business',
-    description: 'Massage, physical therapy, or wellness services for dancers'
-  },
-  {
-    value: 'tour_operator',
-    label: 'Tour Operator',
-    icon: Plane,
-    bookable: true,
-    category: 'business',
-    description: 'Organize tango tours and travel packages'
-  },
-  {
-    value: 'host_venue_owner',
-    label: 'Host/Venue Owner',
-    icon: Home,
-    bookable: true,
-    category: 'business',
-    description: 'Owner or manager of milonga venues'
-  },
-  {
-    value: 'tango_guide',
-    label: 'Tango Guide',
-    icon: Map,
-    bookable: true,
-    category: 'business',
-    description: 'Local guide for tango experiences in your city'
-  },
-  {
-    value: 'content_creator',
-    label: 'Content Creator',
-    icon: Video,
-    bookable: true,
-    category: 'business',
-    description: 'Create tango videos, tutorials, or social media content'
-  },
-  {
-    value: 'learning_resource',
-    label: 'Learning Resource',
-    icon: BookOpen,
-    bookable: true,
-    category: 'business',
-    description: 'Educational content, courses, or learning materials'
-  },
-  {
-    value: 'taxi_dancer',
-    label: 'Taxi Dancer',
-    icon: Users2,
-    bookable: true,
-    category: 'business',
-    description: 'Professional dancer available for hire to dance with guests'
-  },
-
-  // ========== SOCIAL ROLES (3) ==========
-  {
-    value: 'dancer',
-    label: 'Dancer',
-    icon: User,
-    bookable: false,
-    category: 'social',
-    description: 'Tango enthusiast and social dancer'
-  },
-  {
-    value: 'tango_traveler',
-    label: 'Tango Traveler',
+    value: 'community-builder',
+    label: 'Community Builder',
     icon: Globe,
+    color: '#40E0D0',
+    description: 'I build tango communities',
     bookable: false,
-    category: 'social',
-    description: 'Travel the world to experience different tango communities'
+    category: 'community'
   },
   {
-    value: 'student',
-    label: 'Student',
-    icon: UserCheck,
+    value: 'fan',
+    label: 'Fan/Enthusiast',
+    icon: Eye,
+    color: '#F59E0B',
+    description: "I'm a tango enthusiast",
     bookable: false,
-    category: 'social',
-    description: 'Learning tango and improving skills'
+    category: 'community'
+  },
+  {
+    value: 'other',
+    label: 'Other',
+    icon: Heart,
+    color: '#EF4444',
+    description: 'My tango role is unique',
+    bookable: false,
+    category: 'community'
   }
 ] as const;
 
@@ -213,12 +229,8 @@ export function getRoleByValue(value: string): TangoRole | undefined {
   return TANGO_ROLES.find(role => normalizeRoleValue(role.value) === normalized);
 }
 
-export function getBusinessRoles(): readonly TangoRole[] {
-  return TANGO_ROLES.filter(role => role.category === 'business');
-}
-
-export function getSocialRoles(): readonly TangoRole[] {
-  return TANGO_ROLES.filter(role => role.category === 'social');
+export function getRolesByCategory(category: TangoRole['category']): readonly TangoRole[] {
+  return TANGO_ROLES.filter(role => role.category === category);
 }
 
 export function getBookableRoles(): readonly TangoRole[] {
@@ -232,5 +244,38 @@ export function getRoleIcon(roleValue: string): LucideIcon {
 
 export function getRoleLabel(roleValue: string): string {
   const role = getRoleByValue(roleValue);
-  return role?.label || roleValue;
+  return role?.label || roleValue.replace(/-/g, ' ');
+}
+
+export function getRoleColor(roleValue: string): string {
+  const role = getRoleByValue(roleValue);
+  return role?.color || '#6B7280';
+}
+
+// Legacy compatibility - map old role values to new ones
+const LEGACY_ROLE_MAP: Record<string, string> = {
+  'dancer': 'dancer-leader',
+  'student': 'fan',
+  'tango_traveler': 'community-builder',
+  'vendor': 'business',
+  'choreographer': 'performer',
+  'tango_school': 'teacher',
+  'tango_hotel': 'venue-owner',
+  'wellness_provider': 'coach',
+  'tour_operator': 'organizer',
+  'host_venue_owner': 'venue-owner',
+  'tango_guide': 'community-builder',
+  'content_creator': 'photographer',
+  'learning_resource': 'teacher',
+  'taxi_dancer': 'dancer-leader',
+};
+
+export function normalizeRole(roleValue: string): string {
+  const normalized = normalizeRoleValue(roleValue);
+  return LEGACY_ROLE_MAP[normalized] || normalized;
+}
+
+export function getRoleByValueWithLegacy(value: string): TangoRole | undefined {
+  const normalized = normalizeRole(value);
+  return getRoleByValue(normalized);
 }
