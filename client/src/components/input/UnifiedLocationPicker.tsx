@@ -80,7 +80,7 @@ export function UnifiedLocationPicker({
     : "Search for a city...";
 
   useEffect(() => {
-    if (value !== searchQuery && value) {
+    if (value) {
       setSearchQuery(value);
       setSelectedLocation(value);
       setShowResults(false);
@@ -206,6 +206,7 @@ export function UnifiedLocationPicker({
     setSelectedLocation(displayName);
     setSearchQuery(displayName);
     setShowResults(false);
+    setResults([]);
     onChange(displayName, parsed.coordinates, parsed);
   };
 
