@@ -213,6 +213,7 @@ export function UnifiedLocationPicker({
           onChange={(e) => {
             userHasTypedRef.current = true;
             setSearchQuery(e.target.value);
+            setShowResults(true);
           }}
           placeholder={placeholder || defaultPlaceholder}
           className="pl-10 pr-10"
@@ -239,7 +240,7 @@ export function UnifiedLocationPicker({
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="absolute z-50 mt-2 w-full"
+            className="absolute z-[100] mt-2 w-full"
           >
             <Card
               className="p-2 max-h-80 overflow-y-auto"
