@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
+import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/UnifiedLocationPicker";
 import { motion } from "framer-motion";
 import {
   Calendar,
@@ -772,6 +773,7 @@ function AddPortfolioDialog({
   const [selectedRole, setSelectedRole] = useState<TangoRole | undefined>(role);
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [locationCoordinates, setLocationCoordinates] = useState<{ lat: number; lng: number } | undefined>();
 
   const roleFormFields = selectedRole ? getRoleFormFields(selectedRole.value) : [];
   const portfolioLabel = selectedRole ? getRolePortfolioTitle(selectedRole.value) : "Portfolio";
@@ -781,10 +783,22 @@ function AddPortfolioDialog({
     setFormData((prev) => ({ ...prev, [fieldName]: value }));
   };
 
+  const handleLocationChange = (location: string, coordinates: { lat: number; lng: number }) => {
+    const { city, country } = extractCityCountry(location);
+    setFormData((prev) => ({ 
+      ...prev, 
+      location: location,
+      city: city || prev["city"] || "",
+      country: country || prev["country"] || ""
+    }));
+    setLocationCoordinates(coordinates);
+  };
+
   const handleRoleChange = (roleValue: string) => {
     const foundRole = availableRoles.find((r) => r.value === roleValue);
     setSelectedRole(foundRole);
     setFormData({});
+    setLocationCoordinates(undefined);
   };
 
   const handleSubmit = async () => {
@@ -800,6 +814,7 @@ function AddPortfolioDialog({
         });
         setFormData({});
         setSelectedRole(undefined);
+        setLocationCoordinates(undefined);
         onClose();
       } finally {
         setIsSubmitting(false);
@@ -849,43 +864,66 @@ function AddPortfolioDialog({
             </div>
           )}
 
-          {roleFormFields.map((field) => (
-            <div key={field.name} className="space-y-2">
-              <label className="text-sm font-medium">{field.label}</label>
-              {field.type === "text" && (
-                <Input
-                  placeholder={field.placeholder}
-                  value={formData[field.name] || ""}
-                  onChange={(e) => handleFieldChange(field.name, e.target.value)}
-                  data-testid={`input-${field.name}`}
-                  type={field.name.includes("date") || field.name === "startDate" || field.name === "endDate" ? "datetime-local" : "text"}
-                />
-              )}
-              {field.type === "textarea" && (
-                <Textarea
-                  placeholder={field.placeholder}
-                  value={formData[field.name] || ""}
-                  onChange={(e) => handleFieldChange(field.name, e.target.value)}
-                  className="resize-none"
-                  data-testid={`textarea-${field.name}`}
-                />
-              )}
-              {field.type === "select" && field.options && (
-                <Select value={formData[field.name] || ""} onValueChange={(value) => handleFieldChange(field.name, value)}>
-                  <SelectTrigger data-testid={`select-${field.name}`}>
-                    <SelectValue placeholder={field.placeholder || `Select ${field.label.toLowerCase()}`} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {field.options.map((opt) => (
-                      <SelectItem key={opt.value} value={opt.value}>
-                        {opt.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-            </div>
-          ))}
+          {roleFormFields.map((field) => {
+            // Use UnifiedLocationPicker for location, city, country fields
+            if (field.name === "location" && isEventCreatingRole) {
+              return (
+                <div key={field.name} className="space-y-2">
+                  <label className="text-sm font-medium">{field.label}</label>
+                  <UnifiedLocationPicker
+                    mode="address"
+                    value={formData["location"] || ""}
+                    onChange={handleLocationChange}
+                    placeholder={field.placeholder || "Search for a venue or address..."}
+                    data-testid={`location-picker-${field.name}`}
+                  />
+                </div>
+              );
+            }
+            
+            // Skip city and country if they're rendered through location picker
+            if ((field.name === "city" || field.name === "country") && isEventCreatingRole && formData["location"]) {
+              return null;
+            }
+
+            return (
+              <div key={field.name} className="space-y-2">
+                <label className="text-sm font-medium">{field.label}</label>
+                {field.type === "text" && (
+                  <Input
+                    placeholder={field.placeholder}
+                    value={formData[field.name] || ""}
+                    onChange={(e) => handleFieldChange(field.name, e.target.value)}
+                    data-testid={`input-${field.name}`}
+                    type={field.name.includes("date") || field.name === "startDate" || field.name === "endDate" ? "datetime-local" : "text"}
+                  />
+                )}
+                {field.type === "textarea" && (
+                  <Textarea
+                    placeholder={field.placeholder}
+                    value={formData[field.name] || ""}
+                    onChange={(e) => handleFieldChange(field.name, e.target.value)}
+                    className="resize-none"
+                    data-testid={`textarea-${field.name}`}
+                  />
+                )}
+                {field.type === "select" && field.options && (
+                  <Select value={formData[field.name] || ""} onValueChange={(value) => handleFieldChange(field.name, value)}>
+                    <SelectTrigger data-testid={`select-${field.name}`}>
+                      <SelectValue placeholder={field.placeholder || `Select ${field.label.toLowerCase()}`} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {field.options.map((opt) => (
+                        <SelectItem key={opt.value} value={opt.value}>
+                          {opt.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              </div>
+            );
+          })}
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={onClose} data-testid="button-cancel" disabled={isSubmitting}>

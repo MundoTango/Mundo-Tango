@@ -16,6 +16,7 @@ import { useToast } from "@/hooks/use-toast";
 import { SEO } from "@/components/SEO";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
+import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/UnifiedLocationPicker";
 import { Calendar, MapPin, DollarSign, Users, Plus } from "lucide-react";
 
 const eventFormSchema = z.object({
@@ -46,6 +47,7 @@ export default function CreateEventPage() {
   const { user } = useAuth();
   const [, setLocation] = useLocation();
   const { toast } = useToast();
+  const [selectedLocation, setSelectedLocation] = useState({ city: "", country: "", address: "" });
 
   const form = useForm<EventFormValues>({
     resolver: zodResolver(eventFormSchema),
@@ -69,6 +71,17 @@ export default function CreateEventPage() {
       tags: [],
     },
   });
+
+  const handleLocationChange = (location: string, coordinates: { lat: number; lng: number }, parsed?: any) => {
+    const { city, country } = extractCityCountry(location);
+    setSelectedLocation({ city, country, address: location });
+    form.setValue("location", location);
+    form.setValue("city", city);
+    form.setValue("country", country);
+    if (parsed?.street) {
+      form.setValue("address", parsed.street);
+    }
+  };
 
   const createEventMutation = useMutation({
     mutationFn: async (data: EventFormValues) => {
@@ -254,79 +267,29 @@ export default function CreateEventPage() {
                       />
                     </div>
 
-                    {/* Location */}
+                    {/* Location using Unified Location Picker */}
                     <FormField
                       control={form.control}
                       name="location"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Venue Name *</FormLabel>
+                          <FormLabel>Venue Location *</FormLabel>
                           <FormControl>
-                            <Input 
-                              placeholder="e.g., La Catedral Club" 
-                              {...field} 
-                              data-testid="input-location"
+                            <UnifiedLocationPicker
+                              mode="address"
+                              value={field.value}
+                              onChange={handleLocationChange}
+                              placeholder="Search for venue, address, or city..."
+                              data-testid="location-picker"
                             />
                           </FormControl>
+                          <FormDescription>
+                            Search for a venue name, street address, or city to auto-fill location details
+                          </FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
-
-                    <FormField
-                      control={form.control}
-                      name="address"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Street Address</FormLabel>
-                          <FormControl>
-                            <Input 
-                              placeholder="123 Main Street" 
-                              {...field} 
-                              data-testid="input-address"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <FormField
-                        control={form.control}
-                        name="city"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>City *</FormLabel>
-                            <FormControl>
-                              <Input 
-                                placeholder="Buenos Aires" 
-                                {...field} 
-                                data-testid="input-city"
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="country"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Country *</FormLabel>
-                            <FormControl>
-                              <Input 
-                                placeholder="Argentina" 
-                                {...field} 
-                                data-testid="input-country"
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
 
                     {/* Pricing */}
                     <FormField
