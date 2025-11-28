@@ -85,13 +85,17 @@ export function UnifiedLocationPicker({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchQuery(value);
+    userHasTypedRef.current = true;
+    setShowResults(!!value);
+  };
+
   useEffect(() => {
     if (searchQuery.trim().length < 2) {
       setResults([]);
-      return;
-    }
-
-    if (!userHasTypedRef.current) {
+      setShowResults(false);
       return;
     }
 
