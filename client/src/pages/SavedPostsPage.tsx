@@ -1,24 +1,26 @@
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Bookmark } from "lucide-react";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
-import { PostItem, type PostItemData } from "@/components/feed/PostItem";
-import { Skeleton } from "@/components/ui/skeleton";
-import { SEO } from "@/components/SEO";
+import { type PostItemData } from "@/components/feed/PostItem";
+import { UnifiedMemoriesFeed } from "@/components/feed/UnifiedMemoriesFeed";
 
 export default function SavedPostsPage() {
   const { data: savedPosts, isLoading } = useQuery<PostItemData[]>({
     queryKey: ["/api/saved-posts"],
   });
 
+  const postsWithSavedFlag = (savedPosts || []).map(post => ({
+    ...post,
+    isSaved: true,
+  }));
+
   return (
     <SelfHealingErrorBoundary pageName="Saved Posts" fallbackRoute="/feed">
       <PageLayout title="Saved Posts" showBreadcrumbs>
         <div className="min-h-screen bg-background">
-          {/* Editorial Hero Section - 16:9 */}
           <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">
             <div 
               className="absolute inset-0 bg-cover bg-center"
@@ -50,67 +52,17 @@ export default function SavedPostsPage() {
             </div>
           </div>
 
-          {/* Editorial Content Layout */}
           <div className="container mx-auto max-w-4xl px-6 py-16">
-            {isLoading ? (
-              <div className="space-y-8">
-                {[1, 2, 3].map((i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.1 }}
-                  >
-                    <Card className="overflow-hidden">
-                      <CardContent className="p-6">
-                        <div className="flex items-start gap-4">
-                          <Skeleton className="h-12 w-12 rounded-full" />
-                          <div className="flex-1 space-y-3">
-                            <Skeleton className="h-4 w-32" />
-                            <Skeleton className="h-20 w-full" />
-                            <Skeleton className="h-4 w-full" />
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                ))}
-              </div>
-            ) : savedPosts && savedPosts.length > 0 ? (
-              <div className="space-y-8">
-                {savedPosts.map((post, index) => (
-                  <motion.div
-                    key={post.id}
-                    initial={{ opacity: 0, y: 40 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: "-100px" }}
-                    transition={{ duration: 0.6, delay: index * 0.1 }}
-                  >
-                    <PostItem 
-                      post={{ ...post, isSaved: true }} 
-                    />
-                  </motion.div>
-                ))}
-              </div>
-            ) : (
-              <motion.div
-                initial={{ opacity: 0, y: 40 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8 }}
-              >
-                <Card className="overflow-hidden hover-elevate">
-                  <div className="relative aspect-[16/9] bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center">
-                    <div className="text-center p-12">
-                      <Bookmark className="mx-auto h-16 w-16 mb-6 text-primary opacity-50" />
-                      <h2 className="text-2xl font-serif font-bold mb-3">No Saved Posts Yet</h2>
-                      <p className="text-muted-foreground">
-                        Posts you bookmark will appear here
-                      </p>
-                    </div>
-                  </div>
-                </Card>
-              </motion.div>
-            )}
+            <UnifiedMemoriesFeed
+              posts={postsWithSavedFlag}
+              isLoading={isLoading}
+              context={{ type: 'memory' }}
+              showPostCreator={false}
+              showFilters={true}
+              emptyMessage="No saved posts yet. Bookmark posts to see them here!"
+              emptyIcon={Bookmark}
+              data-testid="saved-posts-feed"
+            />
           </div>
         </div>
       </PageLayout>

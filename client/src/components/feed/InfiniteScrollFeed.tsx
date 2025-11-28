@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useInView } from "react-intersection-observer";
 import { PostItem } from "./PostItem";
+import { UnifiedMemoriesFeed } from "./UnifiedMemoriesFeed";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AlertCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -240,17 +241,19 @@ export function InfiniteScrollFeed({ feedType, filter, onRefresh }: InfiniteScro
 
   return (
     <div className="space-y-6" data-testid="infinite-scroll-feed">
-      {allPosts.map((post) => (
-        <PostItem 
-          key={post.id} 
-          post={post} 
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-        />
-      ))}
+      {/* Use UnifiedMemoriesFeed for consistent post rendering */}
+      <UnifiedMemoriesFeed
+        posts={allPosts}
+        isLoading={false}
+        context={{ type: 'feed' }}
+        showPostCreator={false}
+        showFilters={false}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+      />
 
       {/* Infinite scroll trigger */}
-      <div ref={ref} className="w-full py-4">
+      <div ref={ref} className="w-full py-4" data-testid="infinite-scroll-trigger">
         {isFetchingNextPage ? (
           <div className="space-y-3">
             <div className="flex items-center gap-3">
@@ -267,7 +270,7 @@ export function InfiniteScrollFeed({ feedType, filter, onRefresh }: InfiniteScro
             Scroll for more posts...
           </div>
         ) : (
-          <div className="text-center py-8 text-sm text-foreground/60">
+          <div className="text-center py-8 text-sm text-foreground/60" data-testid="text-end-of-feed">
             <p className="font-medium">You've reached the end!</p>
             <p className="mt-1">No more posts to show</p>
           </div>

@@ -11,6 +11,8 @@ import { PostCreator } from "@/components/universal/PostCreator";
 import { SmartPostFeed } from "@/components/feed/SmartPostFeed";
 import { UpcomingEventsSidebar } from "@/components/feed/UpcomingEventsSidebar";
 import { RoleIconBadge } from "@/components/feed/RoleIconBadge";
+import { UnifiedMemoriesFeed } from "@/components/feed/UnifiedMemoriesFeed";
+import { queryClient } from "@/lib/queryClient";
 import { 
   Heart, MessageCircle, Share2, Bookmark, MoreHorizontal,
   MapPin, Star, TrendingUp, Sun, Moon
@@ -116,21 +118,15 @@ export default function FeedPrototypePage() {
         <div className="flex gap-12">
           {/* Main Feed Column - Editorial Style */}
           <div className="flex-1 max-w-4xl space-y-12">
-            {/* Post Creator - Integrated */}
-            <PostCreator 
-              onPostCreated={() => {}}
-              className="border-0 shadow-sm"
+            {/* UnifiedMemoriesFeed with integrated Post Creator and Filters */}
+            <UnifiedMemoriesFeed
+              posts={mockPosts as any}
+              isLoading={false}
+              context={{ type: 'feed' }}
+              showPostCreator={true}
+              showFilters={true}
+              onPostCreated={() => queryClient.invalidateQueries({ queryKey: ['/api/posts'] })}
             />
-
-            {/* Smart Feed Search & Filters */}
-            <SmartPostFeed posts={mockPosts as any}>
-              {/* Post Feed - Magazine Style */}
-              <div className="space-y-16 mt-8">
-                {mockPosts.map((post) => (
-                  <PostCard key={post.id} post={post} />
-                ))}
-              </div>
-            </SmartPostFeed>
           </div>
 
           {/* Sidebar - Elevated Design */}

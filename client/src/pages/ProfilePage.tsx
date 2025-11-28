@@ -734,7 +734,7 @@ export default function ProfilePage() {
               <h2 className="text-3xl md:text-4xl font-serif font-bold mb-8" data-testid="text-posts-title">
                 {isOwnProfile ? 'Your Posts' : 'Posts'}
               </h2>
-              <ProfileTabFeed posts={posts} isLoading={postsLoading} isOwnProfile={isOwnProfile} />
+              <ProfileTabFeed posts={posts} isLoading={postsLoading} isOwnProfile={isOwnProfile} userId={user.id} />
             </div>
 
             {/* Right Column - Sidebar */}

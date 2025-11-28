@@ -34,6 +34,7 @@ import { EditPostDialog } from "@/components/modals/EditPostDialog";
 import { StoriesCarousel } from "@/components/feed/StoriesCarousel";
 import { FeedTabs } from "@/components/feed/FeedTabs";
 import { InfiniteScrollFeed } from "@/components/feed/InfiniteScrollFeed";
+import { UnifiedMemoriesFeed } from "@/components/feed/UnifiedMemoriesFeed";
 import { NewPostsBanner } from "@/components/feed/NewPostsBanner";
 import { Link } from "wouter";
 import { FeedAd } from "@/components/ads/FeedAd";
