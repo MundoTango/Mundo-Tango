@@ -58,6 +58,7 @@ export function UnifiedLocationPicker({
   const [selectedLocation, setSelectedLocation] = useState<string>(value);
   const searchRef = useRef<HTMLDivElement>(null);
   const clientCacheRef = useRef<Map<string, LocationResult[]>>(new Map());
+  const userHasTypedRef = useRef(false);
 
   const defaultPlaceholder = mode === "address" 
     ? "Search for an address..." 
@@ -69,6 +70,7 @@ export function UnifiedLocationPicker({
       setSelectedLocation(value);
       setShowResults(false);
       setResults([]);
+      userHasTypedRef.current = false;
     }
   }, [value]);
 
@@ -86,6 +88,10 @@ export function UnifiedLocationPicker({
   useEffect(() => {
     if (searchQuery.trim().length < 2) {
       setResults([]);
+      return;
+    }
+
+    if (!userHasTypedRef.current) {
       return;
     }
 
@@ -173,6 +179,7 @@ export function UnifiedLocationPicker({
     const parsed = parseLocationResult(location);
     const displayName = mode === "city" ? getDisplayName(location) : location.display_name;
 
+    userHasTypedRef.current = false;
     setSelectedLocation(displayName);
     setSearchQuery(displayName);
     setShowResults(false);
@@ -199,7 +206,10 @@ export function UnifiedLocationPicker({
         <Icon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
         <Input
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          onChange={(e) => {
+            userHasTypedRef.current = true;
+            setSearchQuery(e.target.value);
+          }}
           placeholder={placeholder || defaultPlaceholder}
           className="pl-10 pr-10"
           data-testid="input-location-search"
