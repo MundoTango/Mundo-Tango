@@ -10,6 +10,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/UnifiedLocationPicker";
+import { UnifiedLanguagePicker, getLanguageByCode, getLanguageByName } from "@/components/input/UnifiedLanguagePicker";
 import { triggerLocationChangeEffects, detectLocationChange, formatWelcomeMessage, LocationChangeEvent } from '@/lib/locationChangeEffects';
 import { TANGO_ROLES, getRoleByValue } from "@/lib/tangoRoles";
 import { 
@@ -78,7 +79,7 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
     leaderLevel: user.leaderLevel || '',
     followerLevel: user.followerLevel || '',
     primaryLanguage: user.primaryLanguage || '',
-    languages: (user.languages || []).join(', '),
+    languages: user.languages || [],
   });
   
   const previousLocationRef = useRef<{ city?: string; country?: string }>({
@@ -98,7 +99,7 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
       leaderLevel: user.leaderLevel || '',
       followerLevel: user.followerLevel || '',
       primaryLanguage: user.primaryLanguage || '',
-      languages: (user.languages || []).join(', '),
+      languages: user.languages || [],
     });
   }, [user.id, user.bio, user.city, user.country, user.tangoRoles, user.tangoStartYear, user.tangoRoleExperience, user.yearsOfDancing, user.leaderLevel, user.followerLevel, user.primaryLanguage, user.languages]);
 
@@ -213,7 +214,7 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
 
   const handleSave = () => {
     const roles = editValues.tangoRoles || [];
-    const additionalLangs = (editValues.languages || '').split(',').map((l: string) => l.trim()).filter(Boolean);
+    const additionalLangs = editValues.languages || [];
     
     const currentYear = new Date().getFullYear();
     const tangoStartYear = editValues.tangoStartYear || null;
@@ -254,7 +255,7 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
       leaderLevel: user.leaderLevel || '',
       followerLevel: user.followerLevel || '',
       primaryLanguage: user.primaryLanguage || '',
-      languages: (user.languages || []).join(', '),
+      languages: user.languages || [],
     });
   };
 
@@ -512,24 +513,28 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
               Languages
             </h3>
             {isEditing ? (
-              <div className="space-y-3">
+              <div className="space-y-4">
                 <div>
-                  <label className="text-xs text-muted-foreground flex items-center gap-1 mb-1">
+                  <label className="text-xs text-muted-foreground flex items-center gap-1 mb-2">
                     <Star className="w-3 h-3 text-yellow-500" /> Primary Language
                   </label>
-                  <Input 
-                    placeholder="e.g., English" 
-                    value={editValues.primaryLanguage || ''} 
-                    onChange={(e) => setEditValues({ ...editValues, primaryLanguage: e.target.value })}
+                  <UnifiedLanguagePicker
+                    mode="primary"
+                    value={editValues.primaryLanguage || ''}
+                    onChange={(value) => setEditValues({ ...editValues, primaryLanguage: value as string })}
+                    syncI18n={true}
+                    placeholder="Select your primary language"
                     data-testid="input-primary-language"
                   />
+                  <p className="text-[10px] text-muted-foreground mt-1">This will also set your site display language</p>
                 </div>
                 <div>
-                  <label className="text-xs text-muted-foreground block mb-1">Additional Languages</label>
-                  <Input 
-                    placeholder="e.g., Spanish, Italian (comma-separated)" 
-                    value={editValues.languages || ''} 
-                    onChange={(e) => setEditValues({ ...editValues, languages: e.target.value })}
+                  <label className="text-xs text-muted-foreground block mb-2">Additional Languages</label>
+                  <UnifiedLanguagePicker
+                    mode="additional"
+                    value={editValues.languages || []}
+                    onChange={(value) => setEditValues({ ...editValues, languages: value as string[] })}
+                    excludeLanguages={editValues.primaryLanguage ? [editValues.primaryLanguage] : []}
                     data-testid="input-languages"
                   />
                 </div>
@@ -538,20 +543,30 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
               <div className="space-y-2">
                 {user.primaryLanguage && (
                   <div className="flex items-center gap-2">
-                    <Badge variant="default" className="flex items-center gap-1" data-testid="badge-primary-language">
-                      <Star className="w-3 h-3" />
-                      {user.primaryLanguage}
-                    </Badge>
+                    {(() => {
+                      const lang = getLanguageByCode(user.primaryLanguage) || getLanguageByName(user.primaryLanguage);
+                      return (
+                        <Badge variant="default" className="flex items-center gap-1" data-testid="badge-primary-language">
+                          <Star className="w-3 h-3" />
+                          {lang?.flag && <span>{lang.flag}</span>}
+                          {lang?.nativeName || user.primaryLanguage}
+                        </Badge>
+                      );
+                    })()}
                     <span className="text-xs text-muted-foreground">Primary</span>
                   </div>
                 )}
                 {user.languages && user.languages.length > 0 && (
                   <div className="flex flex-wrap gap-2">
-                    {user.languages.map((lang) => (
-                      <Badge key={lang} variant="outline" data-testid={`badge-lang-${lang.toLowerCase()}`}>
-                        {lang}
-                      </Badge>
-                    ))}
+                    {user.languages.map((langCode) => {
+                      const lang = getLanguageByCode(langCode) || getLanguageByName(langCode);
+                      return (
+                        <Badge key={langCode} variant="outline" data-testid={`badge-lang-${langCode.toLowerCase()}`}>
+                          {lang?.flag && <span className="mr-1">{lang.flag}</span>}
+                          {lang?.nativeName || langCode}
+                        </Badge>
+                      );
+                    })}
                   </div>
                 )}
                 {!user.primaryLanguage && (!user.languages || user.languages.length === 0) && (

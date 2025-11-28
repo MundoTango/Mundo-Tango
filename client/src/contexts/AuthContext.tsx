@@ -3,6 +3,7 @@ import { useLocation } from "wouter";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";
 import type { SelectUser } from "@shared/schema";
+import i18n from "@/lib/i18n";
 
 const API_BASE_URL = "";
 
@@ -166,6 +167,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         country: userData.country,
       });
 
+      // Sync site language with user's primary language preference
+      if (userData.primaryLanguage) {
+        i18n.changeLanguage(userData.primaryLanguage);
+        localStorage.setItem('i18nextLng', userData.primaryLanguage);
+      }
+
       const accessToken = localStorage.getItem("accessToken");
       if (accessToken) {
         setSession({ accessToken });
@@ -259,6 +266,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         city: data.user.city,
         country: data.user.country,
       });
+
+      // Sync site language with user's primary language preference
+      if (data.user.primaryLanguage) {
+        i18n.changeLanguage(data.user.primaryLanguage);
+        localStorage.setItem('i18nextLng', data.user.primaryLanguage);
+      }
 
       // Redirect to feed after successful login
       // Use setTimeout to ensure state updates complete before navigation (fixes race condition)
