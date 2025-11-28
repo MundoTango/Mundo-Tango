@@ -201,7 +201,84 @@ export function UnifiedLocationPicker({
         return;
       }
 
-      // City/Address mode - existing logic
+      // City mode - use 3-tier City Group priority search
+      if (mode === "city") {
+        const cached = clientCacheRef.current.get(queryKey);
+        if (cached) {
+          setResults(cached);
+          setShowResults(true);
+          return;
+        }
+
+        setIsSearching(true);
+        try {
+          const response = await fetch(`/api/cities/search?q=${encodeURIComponent(searchQuery)}`);
+          if (response.ok) {
+            const data = await response.json();
+            // Transform City Group priority results into LocationResult format
+            const transformedResults: LocationResult[] = [];
+            
+            // Tier 1: MT City Groups (highest priority - with member count badge)
+            data.cityGroups?.forEach((city: any) => {
+              transformedResults.push({
+                place_id: city.id,
+                display_name: `${city.name}, ${city.country}`,
+                lat: city.coordinates?.lat?.toString() || '0',
+                lon: city.coordinates?.lng?.toString() || '0',
+                type: 'city_group',
+                address: { city: city.name, country: city.country },
+                // @ts-ignore - adding custom fields for tier display
+                _memberCount: city.memberCount,
+                _groupId: city.groupId,
+                _source: 'city_group',
+              });
+            });
+            
+            // Tier 2: Popular Cities
+            data.popularCities?.forEach((city: any) => {
+              transformedResults.push({
+                place_id: city.id,
+                display_name: `${city.name}, ${city.country}`,
+                lat: city.coordinates?.lat?.toString() || '0',
+                lon: city.coordinates?.lng?.toString() || '0',
+                type: 'popular',
+                address: { city: city.name, country: city.country },
+                // @ts-ignore
+                _source: 'popular',
+              });
+            });
+            
+            // Tier 3: Nominatim fallback
+            data.nominatimResults?.forEach((city: any) => {
+              transformedResults.push({
+                place_id: city.id,
+                display_name: `${city.name}, ${city.country}`,
+                lat: city.coordinates?.lat?.toString() || '0',
+                lon: city.coordinates?.lng?.toString() || '0',
+                type: 'nominatim',
+                address: { city: city.name, country: city.country },
+                // @ts-ignore
+                _source: 'nominatim',
+              });
+            });
+            
+            clientCacheRef.current.set(queryKey, transformedResults);
+            if (clientCacheRef.current.size > 50) {
+              const firstKey = clientCacheRef.current.keys().next().value;
+              if (firstKey) clientCacheRef.current.delete(firstKey);
+            }
+            setResults(transformedResults);
+            setShowResults(true);
+          }
+        } catch (error) {
+          console.error('City search failed:', error);
+        } finally {
+          setIsSearching(false);
+        }
+        return;
+      }
+
+      // Address mode - use standard Nominatim API
       const cached = clientCacheRef.current.get(queryKey);
       if (cached) {
         setResults(cached);
@@ -211,9 +288,8 @@ export function UnifiedLocationPicker({
 
       setIsSearching(true);
       try {
-        const addressDetail = mode === "address" ? "&addressdetails=1" : "";
         const response = await fetch(
-          `/api/locations/search?q=${encodeURIComponent(searchQuery)}${addressDetail}`
+          `/api/locations/search?q=${encodeURIComponent(searchQuery)}&addressdetails=1`
         );
 
         if (response.ok) {
@@ -502,29 +578,46 @@ export function UnifiedLocationPicker({
                 data-testid="location-results-dropdown"
               >
                 <div className="space-y-1 pointer-events-auto">
-                  {results.map((location) => (
-                    <button
-                      key={location.place_id}
-                      type="button"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        selectLocation(location);
-                      }}
-                      className="w-full flex items-start gap-3 p-3 rounded-lg text-left hover:bg-white/20 transition-colors text-white pointer-events-auto"
-                      data-testid={`location-result-${location.place_id}`}
-                    >
-                      <Icon className="w-4 h-4 mt-0.5 text-white flex-shrink-0" />
-                      <div className="flex-1 min-w-0">
-                        <div className="font-medium text-sm truncate">
-                          {location.display_name.split(',')[0]}
+                  {results.map((location) => {
+                    // @ts-ignore - check for custom tier fields
+                    const source = location._source;
+                    // @ts-ignore
+                    const memberCount = location._memberCount;
+                    
+                    return (
+                      <button
+                        key={location.place_id}
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          selectLocation(location);
+                        }}
+                        className="w-full flex items-start gap-3 p-3 rounded-lg text-left hover:bg-white/20 transition-colors text-white pointer-events-auto"
+                        data-testid={`location-result-${location.place_id}`}
+                      >
+                        <Icon className="w-4 h-4 mt-0.5 text-white flex-shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium text-sm truncate">
+                              {location.display_name.split(',')[0]}
+                            </span>
+                            {source === 'city_group' && (
+                              <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4 bg-emerald-500/30 text-emerald-100 border-emerald-400/50 shrink-0">
+                                {memberCount} dancers
+                              </Badge>
+                            )}
+                            {source === 'popular' && (
+                              <Star className="w-3 h-3 text-amber-300 shrink-0" />
+                            )}
+                          </div>
+                          <div className="text-xs text-white/80 truncate">
+                            {mode === "city" ? getDisplayName(location) : location.display_name}
+                          </div>
                         </div>
-                        <div className="text-xs text-white/80 truncate">
-                          {mode === "city" ? getDisplayName(location) : location.display_name}
-                        </div>
-                      </div>
-                    </button>
-                  ))}
+                      </button>
+                    );
+                  })}
                 </div>
               </Card>
             </motion.div>

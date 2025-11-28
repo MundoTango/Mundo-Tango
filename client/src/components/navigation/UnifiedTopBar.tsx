@@ -89,19 +89,33 @@ function UnifiedTopBar({
 
   const notificationCount = notificationData?.count || 0;
 
-  // Fetch recent notifications (most recent 10)
-  const { data: recentNotifications = [] } = useQuery<any[]>({
-    queryKey: ['/api/notifications/recent'],
-    queryFn: async () => {
-      const response = await fetch('/api/notifications?limit=10&offset=0', {
-        credentials: 'include',
-      });
-      if (!response.ok) return [];
-      return response.json();
-    },
+  // Fetch recent notifications (most recent 10) - uses proper auth headers
+  const { data: recentNotifications = [], refetch: refetchNotifications } = useQuery<any[]>({
+    queryKey: ['/api/notifications', { limit: 10 }],
     refetchInterval: 15000,
     enabled: !!user,
   });
+
+  // Mark notifications as read when dropdown opens
+  const handleNotificationDropdownOpen = async (open: boolean) => {
+    if (open && recentNotifications.length > 0 && notificationCount > 0) {
+      try {
+        const token = localStorage.getItem('accessToken');
+        await fetch('/api/notifications/mark-all-read', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+        });
+        queryClient.invalidateQueries({ queryKey: ['/api/notifications/count'] });
+        queryClient.invalidateQueries({ queryKey: ['/api/notifications'] });
+      } catch (error) {
+        console.error('[Notifications] Failed to mark as read:', error);
+      }
+    }
+  };
 
   // Fetch message count - uses default queryFn which includes auth headers
   const { data: messageData } = useQuery<{ count: number }>({
@@ -274,7 +288,7 @@ function UnifiedTopBar({
           </Link>
 
           {/* Notifications Dropdown - MT Ocean Badge */}
-          <DropdownMenu>
+          <DropdownMenu onOpenChange={handleNotificationDropdownOpen}>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="relative transition-all duration-200" data-testid="button-notifications">
                 {notificationCount > 0 ? (

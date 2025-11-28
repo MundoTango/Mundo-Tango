@@ -55,6 +55,42 @@ router.post("/change-effects", authenticateToken, async (req: AuthRequest, res: 
           console.error(`[LocationChangeEffects] Failed to join group:`, joinError);
         }
       }
+    } else {
+      // Auto-create city group if none exists
+      console.log(`[LocationChangeEffects] No city group found for ${newCity}, creating new group...`);
+      try {
+        const slug = newCity.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+        const [newGroup] = await db.insert(groups).values({
+          name: newCity,
+          slug: `city-${slug}-${Date.now()}`,
+          description: `Welcome to the ${newCity} tango community! Connect with local dancers, find events, and share your tango journey.`,
+          type: 'city',
+          city: newCity,
+          country: newCountry || null,
+          visibility: 'public',
+          joinApproval: 'open',
+          allowEvents: true,
+          allowPosts: true,
+          allowDiscussions: true,
+          createdBy: userId,
+          ownerId: userId,
+          memberCount: 1,
+        }).returning();
+
+        if (newGroup) {
+          // Auto-join the creator to the new group
+          await storage.joinGroup(newGroup.id, userId);
+          autoJoinedGroup = {
+            groupId: newGroup.id,
+            groupName: newGroup.name,
+            memberCount: 1,
+            created: true
+          };
+          console.log(`[LocationChangeEffects] Created and joined new city group: ${newGroup.id} (${newGroup.name})`);
+        }
+      } catch (createError) {
+        console.error(`[LocationChangeEffects] Failed to create city group:`, createError);
+      }
     }
 
     const suggestedGroupsRaw = await db
