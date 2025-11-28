@@ -428,7 +428,9 @@ WHERE 'es' = ANY(hostLanguages)
 | `client/src/lib/i18n.ts` | i18n configuration |
 | `server/services/TalentMatchService.ts` | AI talent matching |
 | `client/src/components/ai/NaturalLanguageTalentSearch.tsx` | Natural language query UI |
-| `client/src/components/events/EventCard.tsx` | Event language badges |
+| `client/src/components/events/EventFilters.tsx` | Event language filter UI |
+| `client/src/pages/EventsPage.tsx` | Event language badges and search params |
+| `server/routes/event-routes.ts` | Event search API with language filtering |
 
 ## Props Reference
 
@@ -469,9 +471,35 @@ Spanish (standard), Arabic, Hindi, Dutch, Swedish, Norwegian, Danish, Finnish, P
 | UnifiedLanguagePicker component | ✅ Complete | Supports primary + additional modes |
 | Argentine Spanish (es-AR) as #2 | ✅ Complete | Implemented in TOP_10_LANGUAGES |
 | Platform i18n sync | ✅ Complete | Works on login and profile update |
-| Talent Match AI language parsing | 🔄 Planned | Query parsing for language extraction |
-| Event language badges | 🔄 Planned | Visual language indicators on event cards |
+| Talent Match AI language parsing | ✅ Complete | Query parsing for language extraction |
+| Event language filter UI | ✅ Complete | Language filter with multi-select in EventFilters.tsx |
+| Event language badges | ✅ Complete | Visual language indicators on event cards with flags |
+| Event search API language params | ✅ Complete | Backend supports `?languages=es,en&languageMatchOnly=true` |
+| Event hostLanguages schema field | ⚠️ Migration Needed | Requires `hostLanguages TEXT[]` field on events table |
 | Teacher language filtering | 🔄 Planned | Filter by teaching language capability |
+
+### Event Language Filter Schema Migration
+
+**Required Schema Update:**
+```sql
+-- Add hostLanguages field to events table
+ALTER TABLE events 
+ADD COLUMN host_languages TEXT[];
+
+-- Example usage after migration
+INSERT INTO events (title, host_languages, ...) 
+VALUES ('Milonga Night', ARRAY['es-AR', 'en'], ...);
+
+-- Query events by host language
+SELECT * FROM events 
+WHERE host_languages && ARRAY['es-AR', 'en'];
+```
+
+**Drizzle Schema Update (shared/schema.ts):**
+```typescript
+// Add to events table definition
+hostLanguages: text("host_languages").array(),
+```
 
 ## Related PRDs
 

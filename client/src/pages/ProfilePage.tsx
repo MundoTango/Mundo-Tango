@@ -21,24 +21,8 @@ import ProfileTabEvents from "@/components/profile/ProfileTabEvents";
 import ProfileTabFriends from "@/components/profile/ProfileTabFriends";
 import ProfileTabPhotos from "@/components/profile/ProfileTabPhotos";
 import ProfileTabAbout from "@/components/profile/ProfileTabAbout";
-import ProfileTabTeacher from "@/components/profile/ProfileTabTeacher";
-import ProfileTabDJ from "@/components/profile/ProfileTabDJ";
-import ProfileTabPhotographer from "@/components/profile/ProfileTabPhotographer";
-import ProfileTabPerformer from "@/components/profile/ProfileTabPerformer";
-import ProfileTabVendor from "@/components/profile/ProfileTabVendor";
-import ProfileTabMusician from "@/components/profile/ProfileTabMusician";
-import ProfileTabChoreographer from "@/components/profile/ProfileTabChoreographer";
-import ProfileTabTangoSchool from "@/components/profile/ProfileTabTangoSchool";
-import ProfileTabTangoHotel from "@/components/profile/ProfileTabTangoHotel";
-import ProfileTabWellness from "@/components/profile/ProfileTabWellness";
-import ProfileTabTourOperator from "@/components/profile/ProfileTabTourOperator";
-import ProfileTabHostVenue from "@/components/profile/ProfileTabHostVenue";
-import ProfileTabTangoGuide from "@/components/profile/ProfileTabTangoGuide";
-import ProfileTabContentCreator from "@/components/profile/ProfileTabContentCreator";
-import ProfileTabLearningResource from "@/components/profile/ProfileTabLearningResource";
-import ProfileTabTaxiDancer from "@/components/profile/ProfileTabTaxiDancer";
-import ProfileTabOrganizer from "@/components/profile/ProfileTabOrganizer";
 import ProfileTabMemories from "@/components/profile/ProfileTabMemories";
+import ProfileTabPro from "@/components/profile/ProfileTabPro";
 import DashboardCustomerToggle from "@/components/profile/DashboardCustomerToggle";
 
 interface User {
@@ -715,9 +699,8 @@ export default function ProfilePage() {
 
       {/* Tab Content */}
       <div className="max-w-5xl mx-auto px-6 py-12">
-        {/* Dashboard/Customer Toggle for Role Tabs */}
-        {activeTab !== 'feed' && activeTab !== 'memories' && activeTab !== 'travel' && activeTab !== 'events' && 
-         activeTab !== 'friends' && activeTab !== 'photos' && activeTab !== 'about' && (
+        {/* Dashboard/Customer Toggle for PRO Tab */}
+        {activeTab === 'pro' && (
           <DashboardCustomerToggle isOwnProfile={isOwnProfile} onViewChange={setViewMode} />
         )}
 
@@ -915,190 +898,19 @@ export default function ProfilePage() {
           </motion.div>
         )}
 
-        {/* Teacher Tab (Classes) */}
-        {activeTab === 'classes' && (
+        {/* PRO Tab - Unified Professional Roles */}
+        {activeTab === 'pro' && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <ProfileTabTeacher isOwnProfile={isOwnProfile} viewMode={viewMode} />
-          </motion.div>
-        )}
-
-        {/* DJ Tab (Music) */}
-        {activeTab === 'music' && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <ProfileTabDJ isOwnProfile={isOwnProfile} viewMode={viewMode} />
-          </motion.div>
-        )}
-
-        {/* Photographer Tab (Gallery) */}
-        {activeTab === 'gallery' && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <ProfileTabPhotographer isOwnProfile={isOwnProfile} viewMode={viewMode} />
-          </motion.div>
-        )}
-
-        {/* Organizer Tab (Events Organized) */}
-        {activeTab === 'events-organized' && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <ProfileTabOrganizer isOwnProfile={isOwnProfile} viewMode={viewMode} />
-          </motion.div>
-        )}
-
-        {/* Performer Tab (Performances) */}
-        {activeTab === 'performances' && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <ProfileTabPerformer isOwnProfile={isOwnProfile} viewMode={viewMode} />
-          </motion.div>
-        )}
-
-        {/* Vendor Tab (Shop) */}
-        {activeTab === 'shop' && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <ProfileTabVendor isOwnProfile={isOwnProfile} viewMode={viewMode} />
-          </motion.div>
-        )}
-
-        {/* Musician Tab (Orchestra) */}
-        {activeTab === 'orchestra' && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <ProfileTabMusician isOwnProfile={isOwnProfile} viewMode={viewMode} />
-          </motion.div>
-        )}
-
-        {/* Choreographer Tab (Choreographies) */}
-        {activeTab === 'choreographies' && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <ProfileTabChoreographer isOwnProfile={isOwnProfile} viewMode={viewMode} />
-          </motion.div>
-        )}
-
-        {/* Tango School Tab (School) */}
-        {activeTab === 'school' && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <ProfileTabTangoSchool isOwnProfile={isOwnProfile} viewMode={viewMode} />
-          </motion.div>
-        )}
-
-        {/* Tango Hotel Tab (Accommodation) */}
-        {activeTab === 'accommodation' && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <ProfileTabTangoHotel isOwnProfile={isOwnProfile} viewMode={viewMode} />
-          </motion.div>
-        )}
-
-        {/* Wellness Provider Tab (Wellness) */}
-        {activeTab === 'wellness' && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <ProfileTabWellness isOwnProfile={isOwnProfile} viewMode={viewMode} />
-          </motion.div>
-        )}
-
-        {/* Tour Operator Tab (Tours) */}
-        {activeTab === 'tours' && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <ProfileTabTourOperator isOwnProfile={isOwnProfile} viewMode={viewMode} />
-          </motion.div>
-        )}
-
-        {/* Host/Venue Tab (Venue) */}
-        {activeTab === 'venue' && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <ProfileTabHostVenue isOwnProfile={isOwnProfile} viewMode={viewMode} />
-          </motion.div>
-        )}
-
-        {/* Tango Guide Tab (Guide Services) */}
-        {activeTab === 'guide-services' && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <ProfileTabTangoGuide isOwnProfile={isOwnProfile} viewMode={viewMode} />
-          </motion.div>
-        )}
-
-        {/* Content Creator Tab (Content) */}
-        {activeTab === 'content' && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <ProfileTabContentCreator isOwnProfile={isOwnProfile} viewMode={viewMode} />
-          </motion.div>
-        )}
-
-        {/* Learning Resource Tab (Resources) */}
-        {activeTab === 'resources' && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <ProfileTabLearningResource isOwnProfile={isOwnProfile} viewMode={viewMode} />
-          </motion.div>
-        )}
-
-        {/* Taxi Dancer Tab (Taxi Services) */}
-        {activeTab === 'taxi-services' && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <ProfileTabTaxiDancer isOwnProfile={isOwnProfile} viewMode={viewMode} />
+            <ProfileTabPro 
+              userId={user.id}
+              isOwner={isOwnProfile}
+              tangoRoles={user.tangoRoles || []}
+              tangoRoleExperience={null}
+            />
           </motion.div>
         )}
       </div>

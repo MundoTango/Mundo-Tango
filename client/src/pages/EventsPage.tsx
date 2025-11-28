@@ -9,7 +9,8 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar as CalendarIcon, MapPin, Search, Users, Plus, Map as MapIconLucide, List, ChevronRight, Database, Download, ChevronLeft, SlidersHorizontal, Check } from "lucide-react";
+import { Calendar as CalendarIcon, MapPin, Search, Users, Plus, Map as MapIconLucide, List, ChevronRight, Database, Download, ChevronLeft, SlidersHorizontal, Check, Languages } from "lucide-react";
+import { getLanguageByCode } from "@/components/input/UnifiedLanguagePicker";
 import { safeDateFormat } from "@/lib/safeDateFormat";
 import { SEO } from "@/components/SEO";
 import { useQuery, useMutation } from "@tanstack/react-query";
@@ -167,6 +168,32 @@ function EventCard({ event, index = 0 }: { event: any; index?: number }) {
               {eventData.maxAttendees && ` / ${eventData.maxAttendees}`}
             </span>
           </div>
+
+          {eventData.hostLanguages && eventData.hostLanguages.length > 0 && (
+            <div className="flex items-center gap-2 text-sm flex-wrap" data-testid={`languages-${eventData.id}`}>
+              <Languages className="h-4 w-4 flex-shrink-0 text-primary" />
+              <div className="flex flex-wrap gap-1">
+                {eventData.hostLanguages.slice(0, 3).map((code: string) => {
+                  const lang = getLanguageByCode(code);
+                  return (
+                    <Badge 
+                      key={code} 
+                      variant="secondary" 
+                      className="text-xs gap-1"
+                      data-testid={`badge-language-${eventData.id}-${code}`}
+                    >
+                      {lang?.flag} {lang?.name || code}
+                    </Badge>
+                  );
+                })}
+                {eventData.hostLanguages.length > 3 && (
+                  <Badge variant="outline" className="text-xs" data-testid={`badge-languages-more-${eventData.id}`}>
+                    +{eventData.hostLanguages.length - 3} more
+                  </Badge>
+                )}
+              </div>
+            </div>
+          )}
         </CardContent>
 
         <CardFooter className="flex gap-2 pt-0 px-6 pb-6">
@@ -266,6 +293,8 @@ export default function EventsPage() {
     if (filters.online !== null && filters.online !== undefined) params.append("online", String(filters.online));
     if (filters.verified) params.append("verified", "true");
     if (filters.tags && filters.tags.length > 0) params.append("tags", filters.tags.join(","));
+    if (filters.languages && filters.languages.length > 0) params.append("languages", filters.languages.join(","));
+    if (filters.languageMatchOnly) params.append("languageMatchOnly", "true");
     params.append("sortBy", sortBy);
     params.append("page", String(page));
     params.append("limit", "20");

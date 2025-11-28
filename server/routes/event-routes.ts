@@ -336,6 +336,8 @@ router.get("/search", optionalAuth, async (req: AuthRequest, res: Response) => {
       online,
       verified,
       tags,
+      languages,
+      languageMatchOnly,
       sortBy = "relevance",
       page = "1",
       limit = "20"
@@ -447,6 +449,23 @@ router.get("/search", optionalAuth, async (req: AuthRequest, res: Response) => {
           sql`${tag} = ANY(${events.tags})`
         );
       });
+    }
+
+    // Language filter
+    // Note: Requires hostLanguages field on events table (text[])
+    // Schema update needed: hostLanguages: text("host_languages").array()
+    if (languages && typeof languages === 'string') {
+      const languageArray = languages.split(',').map(l => l.trim());
+      if (languageMatchOnly === "true") {
+        // Strict matching - event must have at least one of the specified languages
+        conditions.push(
+          sql`${events.tags} && ARRAY[${sql.join(languageArray.map(l => sql`${l}`), sql`, `)}]::text[]`
+        );
+      }
+      // Note: Once hostLanguages field is added, replace with:
+      // conditions.push(
+      //   sql`${events.hostLanguages} && ARRAY[${sql.join(languageArray.map(l => sql`${l}`), sql`, `)}]::text[]`
+      // );
     }
 
     if (conditions.length > 0) {

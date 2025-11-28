@@ -9,23 +9,7 @@ import {
   Users, 
   Image, 
   Info,
-  GraduationCap,
-  Music,
-  Camera,
-  Briefcase,
-  Theater,
-  ShoppingBag,
-  Mic,
-  Palette,
-  School,
-  Hotel,
-  Heart,
-  MapPin,
-  Building,
-  Map,
-  BookOpen,
-  Lightbulb,
-  Car
+  Briefcase
 } from "lucide-react";
 
 interface User {
@@ -41,7 +25,20 @@ interface ProfileTabsNavProps {
   isOwnProfile: boolean;
 }
 
-// Tab configuration with icons and labels
+const PROFESSIONAL_ROLES = [
+  'teacher', 'dj', 'performer', 'organizer', 'photographer', 'musician',
+  'choreographer', 'content_creator', 'tango_guide', 'taxi_dancer', 
+  'tour_operator', 'host_venue', 'tango_school', 'tango_hotel', 'vendor',
+  'wellness', 'learning_resource', 'host', 'guide', 'wellness_provider',
+  'learning_source', 'venue-owner', 'coach', 'mc', 'business', 'artist',
+  'journalist', 'historian', 'clothing-designer'
+];
+
+export function hasProfessionalRoles(roles: string[] | null | undefined): boolean {
+  if (!roles || roles.length === 0) return false;
+  return roles.some(role => PROFESSIONAL_ROLES.includes(role.toLowerCase()));
+}
+
 const BASE_TABS = [
   { id: 'feed', label: 'Posts', icon: FileText },
   { id: 'travel', label: 'Travel', icon: Plane },
@@ -51,42 +48,14 @@ const BASE_TABS = [
   { id: 'about', label: 'About', icon: Info },
 ];
 
-// Conditional role-based tabs (from handoff doc A10.2)
-const ROLE_TABS: Record<string, { id: string; label: string; icon: any }> = {
-  'teacher': { id: 'classes', label: 'Classes', icon: GraduationCap },
-  'dj': { id: 'music', label: 'Music', icon: Music },
-  'photographer': { id: 'gallery', label: 'Gallery', icon: Camera },
-  'organizer': { id: 'events-organized', label: 'Events', icon: Briefcase },
-  'performer': { id: 'performances', label: 'Performances', icon: Theater },
-  'vendor': { id: 'shop', label: 'Shop', icon: ShoppingBag },
-  'musician': { id: 'orchestra', label: 'Orchestra', icon: Mic },
-  'choreographer': { id: 'choreographies', label: 'Choreographies', icon: Palette },
-  'tango_school': { id: 'school', label: 'School', icon: School },
-  'tango_hotel': { id: 'accommodation', label: 'Accommodation', icon: Hotel },
-  'wellness_provider': { id: 'wellness', label: 'Wellness', icon: Heart },
-  'tour_operator': { id: 'tours', label: 'Tours', icon: MapPin },
-  'host': { id: 'venue', label: 'Venue', icon: Building },
-  'guide': { id: 'guide-services', label: 'Guide', icon: Map },
-  'content_creator': { id: 'content', label: 'Content', icon: BookOpen },
-  'learning_source': { id: 'resources', label: 'Resources', icon: Lightbulb },
-  'taxi_dancer': { id: 'taxi-services', label: 'Taxi Services', icon: Car },
-};
+const PRO_TAB = { id: 'pro', label: 'PRO', icon: Briefcase };
 
-// Get visible tabs based on user's tango roles (from handoff doc A10.2)
 export const getVisibleTabs = (user: User): Array<{ id: string; label: string; icon: any }> => {
   const allTabs = [...BASE_TABS];
   
-  if (!user.tangoRoles || user.tangoRoles.length === 0) {
-    return allTabs;
+  if (hasProfessionalRoles(user.tangoRoles)) {
+    allTabs.push(PRO_TAB);
   }
-  
-  // Add role-specific tabs
-  user.tangoRoles.forEach((role) => {
-    const roleTab = ROLE_TABS[role];
-    if (roleTab) {
-      allTabs.push(roleTab);
-    }
-  });
   
   return allTabs;
 };
