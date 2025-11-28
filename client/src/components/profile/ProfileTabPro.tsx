@@ -27,6 +27,14 @@ import {
   ChevronRight,
   Send,
   BadgeCheck,
+  Music,
+  Video,
+  Book,
+  Image,
+  Headphones,
+  Zap,
+  Heart,
+  Play,
 } from "lucide-react";
 import {
   TANGO_ROLES,
@@ -603,6 +611,61 @@ function ProDashboardView({
           })}
         </div>
       )}
+
+      {selectedRolesInfo.map((role) => {
+        const portfolioTitle = getRolePortfolioTitle(role.value);
+        const portfolioItems = getRolePortfolioItems(role.value);
+        
+        return (
+          <div key={role.value} className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                {role.icon && <role.icon className="w-5 h-5" style={{ color: role.color }} />}
+                <h3 className="text-xl font-serif font-bold">{portfolioTitle}</h3>
+              </div>
+              <Button size="sm" variant="outline" className="gap-1" data-testid={`button-add-${role.value}`}>
+                <Plus className="w-4 h-4" />
+                Add
+              </Button>
+            </div>
+            
+            {portfolioItems.length > 0 ? (
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {portfolioItems.map((item, idx) => (
+                  <Card key={idx} className="hover-elevate" data-testid={`card-portfolio-${role.value}-${idx}`}>
+                    <CardContent className="p-4">
+                      <div className="flex items-start gap-3 mb-3">
+                        {item.icon && <item.icon className="w-5 h-5 text-muted-foreground flex-shrink-0 mt-0.5" />}
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-semibold truncate">{item.title}</h4>
+                          <p className="text-xs text-muted-foreground">{item.subtitle}</p>
+                        </div>
+                      </div>
+                      {item.stats && (
+                        <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                          {item.stats.map((stat, i) => (
+                            <span key={i}>{stat}</span>
+                          ))}
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              <Card>
+                <CardContent className="p-8 text-center">
+                  <p className="text-sm text-muted-foreground mb-4">No {portfolioTitle.toLowerCase()} added yet</p>
+                  <Button size="sm" className="gap-2" data-testid={`button-create-${role.value}`}>
+                    <Plus className="w-4 h-4" />
+                    Create Your First {role.label} {portfolioTitle.split(' ')[0]}
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        );
+      })}
 
       <div className="grid lg:grid-cols-2 gap-8">
         <div className="space-y-4">
