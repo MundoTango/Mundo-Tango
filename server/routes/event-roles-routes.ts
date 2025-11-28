@@ -593,4 +593,202 @@ router.delete("/events/:id/updates/:updateId", authenticateToken, async (req, re
   }
 });
 
+// ============================================================================
+// PARTICIPANT SELF-MANAGEMENT - PRO Tab Integration
+// ============================================================================
+
+/**
+ * GET /api/events/:id/my-participation
+ * Get current user's participation details for an event
+ */
+router.get("/events/:id/my-participation", authenticateToken, async (req, res) => {
+  try {
+    const eventId = parseInt(req.params.id);
+    const userId = (req as any).userId;
+
+    const [participation] = await db
+      .select({
+        participant: eventParticipants,
+        event: {
+          id: events.id,
+          title: events.title,
+          startDate: events.startDate,
+          venue: events.venue,
+          city: events.city,
+        }
+      })
+      .from(eventParticipants)
+      .leftJoin(events, eq(eventParticipants.eventId, events.id))
+      .where(
+        and(
+          eq(eventParticipants.eventId, eventId),
+          eq(eventParticipants.userId, userId)
+        )
+      )
+      .limit(1);
+
+    if (!participation) {
+      return res.status(404).json({ error: "You are not a participant in this event" });
+    }
+
+    res.json({ participation });
+  } catch (error: any) {
+    console.error("Error fetching participation:", error);
+    res.status(500).json({ error: "Failed to fetch participation details" });
+  }
+});
+
+/**
+ * PATCH /api/events/:id/my-participation
+ * Self-update participation status (confirm, decline) and PRO visibility
+ * Body: { status?: 'confirmed' | 'declined', isPubliclyListed?: boolean }
+ * 
+ * This endpoint allows participants to:
+ * 1. Accept/decline their role invitation
+ * 2. Toggle whether this participation shows in their public PRO portfolio
+ */
+router.patch("/events/:id/my-participation", authenticateToken, async (req, res) => {
+  try {
+    const eventId = parseInt(req.params.id);
+    const userId = (req as any).userId;
+    const { status, isPubliclyListed } = req.body;
+
+    // Validate status if provided
+    if (status && !['confirmed', 'declined', 'pending'].includes(status)) {
+      return res.status(400).json({ 
+        error: "Invalid status. Must be 'confirmed', 'declined', or 'pending'" 
+      });
+    }
+
+    // Find user's participation
+    const [existing] = await db
+      .select()
+      .from(eventParticipants)
+      .where(
+        and(
+          eq(eventParticipants.eventId, eventId),
+          eq(eventParticipants.userId, userId)
+        )
+      )
+      .limit(1);
+
+    if (!existing) {
+      return res.status(404).json({ error: "You are not a participant in this event" });
+    }
+
+    // Cannot change status if already declined or cancelled
+    if (status && ['declined', 'cancelled'].includes(existing.status) && status === 'confirmed') {
+      return res.status(400).json({ 
+        error: "Cannot confirm participation that was already declined or cancelled" 
+      });
+    }
+
+    const updateData: any = {
+      updatedAt: new Date()
+    };
+
+    if (status !== undefined) {
+      updateData.status = status;
+      
+      // Set confirmedAt when confirming
+      if (status === 'confirmed' && !existing.confirmedAt) {
+        updateData.confirmedAt = new Date();
+      }
+    }
+
+    if (isPubliclyListed !== undefined) {
+      updateData.isPubliclyListed = isPubliclyListed;
+    }
+
+    const [updated] = await db
+      .update(eventParticipants)
+      .set(updateData)
+      .where(
+        and(
+          eq(eventParticipants.eventId, eventId),
+          eq(eventParticipants.userId, userId)
+        )
+      )
+      .returning();
+
+    // Fetch event details for response
+    const [event] = await db
+      .select({
+        id: events.id,
+        title: events.title,
+        startDate: events.startDate,
+        venue: events.venue,
+        city: events.city,
+      })
+      .from(events)
+      .where(eq(events.id, eventId))
+      .limit(1);
+
+    res.json({ 
+      participant: updated,
+      event,
+      message: status === 'confirmed' 
+        ? "Participation confirmed! This event will appear in your PRO profile event history."
+        : status === 'declined'
+        ? "Participation declined."
+        : "Participation updated."
+    });
+  } catch (error: any) {
+    console.error("Error updating participation:", error);
+    res.status(500).json({ error: "Failed to update participation" });
+  }
+});
+
+/**
+ * GET /api/users/:userId/participations
+ * Get all event participations for a user (for PRO tab)
+ * Query params: ?status=confirmed&role=teacher&publicOnly=true
+ */
+router.get("/users/:userId/participations", async (req, res) => {
+  try {
+    const userId = parseInt(req.params.userId);
+    const { status, role, publicOnly } = req.query;
+
+    const conditions = [eq(eventParticipants.userId, userId)];
+
+    if (status) {
+      conditions.push(sql`${eventParticipants.status} = ${status}`);
+    }
+
+    if (role) {
+      conditions.push(sql`${eventParticipants.role} = ${role}`);
+    }
+
+    if (publicOnly === 'true') {
+      conditions.push(eq(eventParticipants.isPubliclyListed, true));
+    }
+
+    const participations = await db
+      .select({
+        id: eventParticipants.id,
+        eventId: eventParticipants.eventId,
+        role: eventParticipants.role,
+        status: eventParticipants.status,
+        customTitle: eventParticipants.customTitle,
+        isPubliclyListed: eventParticipants.isPubliclyListed,
+        confirmedAt: eventParticipants.confirmedAt,
+        createdAt: eventParticipants.createdAt,
+        eventTitle: events.title,
+        eventDate: events.startDate,
+        eventVenue: events.venue,
+        eventCity: events.city,
+        eventType: events.eventType,
+      })
+      .from(eventParticipants)
+      .leftJoin(events, eq(eventParticipants.eventId, events.id))
+      .where(and(...conditions))
+      .orderBy(desc(events.startDate));
+
+    res.json({ participations });
+  } catch (error: any) {
+    console.error("Error fetching user participations:", error);
+    res.status(500).json({ error: "Failed to fetch participations" });
+  }
+});
+
 export default router;

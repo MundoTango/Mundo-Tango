@@ -116,6 +116,7 @@ import serviceProviderProfileRoutes from "./routes/serviceProviderProfileRoutes"
 import serviceProfileRoutes from "./routes/serviceProfileRoutes";
 import specialtyProfileRoutes from "./routes/specialtyProfileRoutes";
 import contentProfileRoutes from "./routes/contentProfileRoutes";
+import proRoutes from "./routes/pro";
 import healthRoutes from "./routes/health";
 import financialGoalsRoutes from "./routes/financial-goals-routes";
 import budgetRoutes from "./routes/budget-routes";
@@ -2495,6 +2496,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // BATCH 08: Content/Organizer Profile Routes
   app.use("/api/profiles", contentProfileRoutes);
+  
+  // WAVE 3A: PRO API Endpoints (pro-stats, event-history, booking-requests)
+  app.use("/api/users", proRoutes);
   
   // Enhanced Health Check Routes (Production Monitoring)
   app.use(healthRoutes);
@@ -9557,10 +9561,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/talent-match/search", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const searchService = new NaturalLanguageTalentSearch();
+      
+      let languages: string[] = [];
+      if (req.body.languages) {
+        if (typeof req.body.languages === 'string') {
+          languages = req.body.languages.split(',').map((l: string) => l.trim()).filter(Boolean);
+        } else if (Array.isArray(req.body.languages)) {
+          languages = req.body.languages;
+        }
+      }
+      
       const results = await searchService.search({
         query: req.body.query,
         userId: req.user!.id,
-        limit: req.body.limit || 20
+        limit: req.body.limit || 20,
+        languages: languages.length > 0 ? languages : undefined,
+        primaryLanguage: req.body.primaryLanguage || undefined,
+        languageMatchMode: req.body.languageMatchMode || 'any'
       });
       res.json(results);
     } catch (error) {
