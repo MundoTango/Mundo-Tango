@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { MapPin, Loader2, X, Home } from "lucide-react";
@@ -56,9 +57,22 @@ export function UnifiedLocationPicker({
   const [showResults, setShowResults] = useState(false);
   const [results, setResults] = useState<LocationResult[]>([]);
   const [selectedLocation, setSelectedLocation] = useState<string>(value);
+  const [dropdownPosition, setDropdownPosition] = useState<{ top: number; left: number; width: number }>({ top: 0, left: 0, width: 0 });
   const searchRef = useRef<HTMLDivElement>(null);
+  const inputContainerRef = useRef<HTMLDivElement>(null);
   const clientCacheRef = useRef<Map<string, LocationResult[]>>(new Map());
   const userHasTypedRef = useRef(false);
+
+  const updateDropdownPosition = useCallback(() => {
+    if (inputContainerRef.current) {
+      const rect = inputContainerRef.current.getBoundingClientRect();
+      setDropdownPosition({
+        top: rect.bottom + window.scrollY + 8,
+        left: rect.left + window.scrollX,
+        width: rect.width,
+      });
+    }
+  }, []);
 
   const defaultPlaceholder = mode === "address" 
     ? "Search for an address..." 
@@ -206,7 +220,7 @@ export function UnifiedLocationPicker({
           {label}
         </label>
       )}
-      <div className="relative">
+      <div className="relative" ref={inputContainerRef}>
         <Icon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
         <Input
           value={searchQuery}
@@ -214,7 +228,9 @@ export function UnifiedLocationPicker({
             userHasTypedRef.current = true;
             setSearchQuery(e.target.value);
             setShowResults(true);
+            updateDropdownPosition();
           }}
+          onFocus={updateDropdownPosition}
           placeholder={placeholder || defaultPlaceholder}
           className="pl-10 pr-10"
           data-testid="input-location-search"
@@ -234,48 +250,56 @@ export function UnifiedLocationPicker({
         )}
       </div>
 
-      <AnimatePresence>
-        {showResults && results.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="absolute z-[100] mt-2 w-full"
-          >
-            <Card
-              className="p-2 max-h-80 overflow-y-auto"
+      {typeof document !== 'undefined' && createPortal(
+        <AnimatePresence>
+          {showResults && results.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="fixed z-[9999]"
               style={{
-                background: 'linear-gradient(135deg, rgba(64, 224, 208, 0.25), rgba(30, 144, 255, 0.2))',
-                backdropFilter: 'blur(12px)',
-                borderColor: 'rgba(64, 224, 208, 0.6)',
+                top: dropdownPosition.top,
+                left: dropdownPosition.left,
+                width: dropdownPosition.width,
               }}
-              data-testid="location-results-dropdown"
             >
-              <div className="space-y-1">
-                {results.map((location) => (
-                  <button
-                    key={location.place_id}
-                    type="button"
-                    onClick={() => selectLocation(location)}
-                    className="w-full flex items-start gap-3 p-3 rounded-lg text-left hover:bg-gradient-to-r hover:from-cyan-500/10 hover:to-blue-500/10 transition-colors"
-                    data-testid={`location-result-${location.place_id}`}
-                  >
-                    <Icon className="w-4 h-4 mt-0.5 text-cyan-500 flex-shrink-0" />
-                    <div className="flex-1 min-w-0">
-                      <div className="font-medium text-sm truncate">
-                        {location.display_name.split(',')[0]}
+              <Card
+                className="p-2 max-h-80 overflow-y-auto shadow-xl"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(64, 224, 208, 0.95), rgba(30, 144, 255, 0.9))',
+                  backdropFilter: 'blur(12px)',
+                  borderColor: 'rgba(64, 224, 208, 0.6)',
+                }}
+                data-testid="location-results-dropdown"
+              >
+                <div className="space-y-1">
+                  {results.map((location) => (
+                    <button
+                      key={location.place_id}
+                      type="button"
+                      onClick={() => selectLocation(location)}
+                      className="w-full flex items-start gap-3 p-3 rounded-lg text-left hover:bg-white/20 transition-colors text-white"
+                      data-testid={`location-result-${location.place_id}`}
+                    >
+                      <Icon className="w-4 h-4 mt-0.5 text-white flex-shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <div className="font-medium text-sm truncate">
+                          {location.display_name.split(',')[0]}
+                        </div>
+                        <div className="text-xs text-white/80 truncate">
+                          {mode === "city" ? getDisplayName(location) : location.display_name}
+                        </div>
                       </div>
-                      <div className="text-xs text-muted-foreground truncate">
-                        {mode === "city" ? getDisplayName(location) : location.display_name}
-                      </div>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </Card>
-          </motion.div>
-        )}
-      </AnimatePresence>
+                    </button>
+                  ))}
+                </div>
+              </Card>
+            </motion.div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
 
       {showCoordinates && selectedLocation && coordinates && coordinates.lat !== 0 && (
         <div className="mt-2 p-2 rounded-lg bg-gradient-to-r from-cyan-500/10 to-blue-500/10 border border-cyan-500/20">
