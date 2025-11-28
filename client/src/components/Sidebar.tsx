@@ -57,7 +57,7 @@ function RoleIconDisplay({ tangoRoles, leaderLevel, followerLevel }: any) {
   
   return (
     <div className="flex gap-2">
-      {tangoRoles.includes('leader') && (
+      {tangoRoles.includes('leader') && leaderLevel > 3 && (
         <div 
           className="flex items-center gap-1 px-2 py-1 rounded-md"
           style={{
@@ -71,7 +71,7 @@ function RoleIconDisplay({ tangoRoles, leaderLevel, followerLevel }: any) {
           <span className="text-xs font-medium" style={{ color: '#1E90FF' }}>Leader</span>
         </div>
       )}
-      {tangoRoles.includes('follower') && (
+      {tangoRoles.includes('follower') && followerLevel > 3 && (
         <div 
           className="flex items-center gap-1 px-2 py-1 rounded-md"
           style={{
