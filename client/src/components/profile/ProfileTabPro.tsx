@@ -104,6 +104,103 @@ function getProRoles(tangoRoles: string[]): TangoRole[] {
     );
 }
 
+interface PortfolioItem {
+  title: string;
+  subtitle: string;
+  icon?: React.ComponentType<{ className?: string }>;
+  stats?: string[];
+}
+
+function getRolePortfolioTitle(roleValue: string): string {
+  const portfolioTitles: Record<string, string> = {
+    "dj": "DJ Sets",
+    "teacher": "Teaching Materials",
+    "performer": "Performance Videos",
+    "photographer": "Photography & Videos",
+    "musician": "Music Recordings",
+    "organizer": "Events Organized",
+    "venue-owner": "Venue Highlights",
+    "coach": "Coaching Programs",
+    "mc": "MC Appearances",
+    "community-builder": "Community Projects",
+    "business": "Business Services",
+    "artist": "Artwork & Design",
+    "journalist": "Articles & Blog Posts",
+  };
+  return portfolioTitles[roleValue] || "Portfolio";
+}
+
+function getRolePortfolioItems(roleValue: string): PortfolioItem[] {
+  const portfolioMap: Record<string, PortfolioItem[]> = {
+    "dj": [
+      { title: "Golden Age Mix", subtitle: "60-minute set", icon: Headphones, stats: ["342 plays", "89 favorites"] },
+      { title: "Neo-Tango Night", subtitle: "90-minute compilation", icon: Music, stats: ["567 plays", "156 favorites"] },
+      { title: "Vals Collection", subtitle: "Pure instrumental", icon: Music, stats: ["234 plays", "67 favorites"] },
+    ],
+    "teacher": [
+      { title: "Tango Fundamentals", subtitle: "8-week course", icon: Book, stats: ["24 students", "⭐ 5.0"] },
+      { title: "Advanced Technique", subtitle: "Video lessons", icon: Video, stats: ["156 students", "⭐ 4.9"] },
+      { title: "Choreography Workshop", subtitle: "Live sessions", icon: Book, stats: ["12 students", "⭐ 5.0"] },
+    ],
+    "performer": [
+      { title: "Summer Festival 2024", subtitle: "Stage performance", icon: Video, stats: ["250 attendees", "⭐ 4.9"] },
+      { title: "Showcase Reel", subtitle: "2-minute highlight", icon: Play, stats: ["1.2k views", "89 likes"] },
+      { title: "Choreography Demo", subtitle: "Original routine", icon: Video, stats: ["567 views", "156 likes"] },
+    ],
+    "photographer": [
+      { title: "Festival Highlights", subtitle: "120 high-res photos", icon: Image, stats: ["450 downloads", "⭐ 4.8"] },
+      { title: "Event Coverage", subtitle: "Complete album", icon: Image, stats: ["234 downloads", "⭐ 5.0"] },
+      { title: "Portrait Series", subtitle: "Professional shoots", icon: Image, stats: ["112 downloads", "⭐ 4.9"] },
+    ],
+    "musician": [
+      { title: "Bandoneon Solos", subtitle: "15 recordings", icon: Music, stats: ["890 plays", "234 likes"] },
+      { title: "Traditional Tangos", subtitle: "Arrangement album", icon: Music, stats: ["456 plays", "123 likes"] },
+      { title: "Live Performance", subtitle: "Concert recording", icon: Music, stats: ["234 plays", "67 likes"] },
+    ],
+    "organizer": [
+      { title: "Summer Tango Festival", subtitle: "500+ attendees", icon: Calendar, stats: ["5 events", "⭐ 4.9"] },
+      { title: "Weekly Milongas", subtitle: "52 events/year", icon: Calendar, stats: ["2,500+ total attendees"] },
+      { title: "Workshops Series", subtitle: "12 expert sessions", icon: Calendar, stats: ["480 attendees", "⭐ 4.8"] },
+    ],
+    "venue-owner": [
+      { title: "Downtown Ballroom", subtitle: "200-seat capacity", icon: Briefcase, stats: ["52 events/year", "⭐ 4.9"] },
+      { title: "Historic Theater", subtitle: "500-seat capacity", icon: Briefcase, stats: ["24 events/year", "⭐ 5.0"] },
+      { title: "Garden Venue", subtitle: "Outdoor space", icon: Briefcase, stats: ["15 events/year", "⭐ 4.8"] },
+    ],
+    "coach": [
+      { title: "1-on-1 Sessions", subtitle: "Personalized training", icon: Users, stats: ["45 clients", "⭐ 4.9"] },
+      { title: "Group Classes", subtitle: "8-week programs", icon: Users, stats: ["120 students", "⭐ 4.8"] },
+      { title: "Online Courses", subtitle: "Self-paced learning", icon: Book, stats: ["234 enrolled", "⭐ 4.7"] },
+    ],
+    "mc": [
+      { title: "Festival Hosting", subtitle: "5 appearances", icon: Headphones, stats: ["500+ attendees", "⭐ 5.0"] },
+      { title: "Weekly Show", subtitle: "52 episodes", icon: Headphones, stats: ["1,000+ regular listeners"] },
+      { title: "Grand Opening", subtitle: "Special event", icon: Zap, stats: ["300 attendees", "⭐ 4.9"] },
+    ],
+    "community-builder": [
+      { title: "Tango Meetup Group", subtitle: "450 members", icon: Users, stats: ["2,000+ total attendees"] },
+      { title: "Mentorship Program", subtitle: "12 mentees", icon: Users, stats: ["⭐ 4.9 satisfaction"] },
+      { title: "Community Blog", subtitle: "Monthly articles", icon: Book, stats: ["8,500 subscribers"] },
+    ],
+    "business": [
+      { title: "Tango Apparel Line", subtitle: "Premium designs", icon: Image, stats: ["$5k+ revenue", "⭐ 4.8"] },
+      { title: "Custom Shoes", subtitle: "Handcrafted", icon: Briefcase, stats: ["120 pairs sold", "⭐ 5.0"] },
+      { title: "Consulting Services", subtitle: "Business growth", icon: Zap, stats: ["15 clients", "⭐ 4.9"] },
+    ],
+    "artist": [
+      { title: "Tango Paintings", subtitle: "Oil on canvas", icon: Image, stats: ["12 sold", "⭐ 5.0"] },
+      { title: "Abstract Series", subtitle: "Modern interpretation", icon: Image, stats: ["8 pieces", "⭐ 4.9"] },
+      { title: "Design Portfolio", subtitle: "20+ projects", icon: Image, stats: ["450 favorites"] },
+    ],
+    "journalist": [
+      { title: "Tango Culture Magazine", subtitle: "20+ articles", icon: Book, stats: ["15k subscribers", "⭐ 4.8"] },
+      { title: "Interview Series", subtitle: "10 features", icon: Book, stats: ["2k average reads"] },
+      { title: "Travel Blog", subtitle: "Tango around the world", icon: Book, stats: ["8k followers", "⭐ 4.9"] },
+    ],
+  };
+  return portfolioMap[roleValue] || [];
+}
+
 function ProRoleCard({
   role,
   userExperience,
