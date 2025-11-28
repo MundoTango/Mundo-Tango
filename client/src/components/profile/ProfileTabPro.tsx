@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -776,7 +776,7 @@ function AddPortfolioDialog({
   const [locationCoordinates, setLocationCoordinates] = useState<{ lat: number; lng: number } | undefined>();
 
   // Sync role prop to state when dialog opens or role changes
-  React.useEffect(() => {
+  useEffect(() => {
     if (isOpen && role) {
       setSelectedRole(role);
     }
