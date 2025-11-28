@@ -198,9 +198,6 @@ export function UnifiedLocationPicker({
         <Input
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          onFocus={() => {
-            if (searchQuery && results.length > 0) setShowResults(true);
-          }}
           placeholder={placeholder || defaultPlaceholder}
           className="pl-10 pr-10"
           data-testid="input-location-search"
