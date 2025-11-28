@@ -871,10 +871,32 @@ function AddPortfolioDialog({
                 <div key={field.name} className="space-y-2">
                   <label className="text-sm font-medium">{field.label}</label>
                   <UnifiedLocationPicker
-                    mode="address"
+                    mode="city"
                     value={formData["location"] || ""}
                     onChange={handleLocationChange}
-                    placeholder={field.placeholder || "Search for a venue or address..."}
+                    placeholder={field.placeholder || "Search for a venue..."}
+                  />
+                </div>
+              );
+            }
+            
+            // Render address picker for address field
+            if (field.name === "address") {
+              return (
+                <div key={field.name} className="space-y-2">
+                  <label className="text-sm font-medium">{field.label}</label>
+                  <UnifiedLocationPicker
+                    mode="address"
+                    value={formData["address"] || ""}
+                    onChange={(location, coordinates, parsed) => {
+                      handleFieldChange("address", location);
+                      if (parsed) {
+                        if (parsed.city) handleFieldChange("city", parsed.city);
+                        if (parsed.country) handleFieldChange("country", parsed.country);
+                      }
+                      setLocationCoordinates(coordinates);
+                    }}
+                    placeholder={field.placeholder || "Search for a street address..."}
                   />
                 </div>
               );
