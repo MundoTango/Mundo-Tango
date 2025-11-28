@@ -63,6 +63,7 @@ export function UnifiedLocationPicker({
   const dropdownRef = useRef<HTMLDivElement>(null);
   const clientCacheRef = useRef<Map<string, LocationResult[]>>(new Map());
   const userHasTypedRef = useRef(false);
+  const lastExternalValueRef = useRef(value);
 
   const updateDropdownPosition = useCallback(() => {
     if (inputContainerRef.current) {
@@ -80,7 +81,9 @@ export function UnifiedLocationPicker({
     : "Search for a city...";
 
   useEffect(() => {
-    if (value) {
+    // Only sync if value changed from an external source (not from our own onChange)
+    if (value && value !== lastExternalValueRef.current) {
+      lastExternalValueRef.current = value;
       setSearchQuery(value);
       setSelectedLocation(value);
       setShowResults(false);
