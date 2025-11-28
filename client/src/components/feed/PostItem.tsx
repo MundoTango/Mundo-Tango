@@ -18,7 +18,7 @@ import { renderMentionPills } from "@/utils/renderMentionPills";
 import { motion } from "framer-motion";
 import { RoleIcon } from "@/components/RoleIcon";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { getRoleLabel } from "@/lib/tangoRoles";
+import { getRoleLabel, getRoleByValue } from "@/lib/tangoRoles";
 
 const MEMORY_TAGS = [
   { id: "travel", label: "Travel", icon: Plane, gradient: "from-cyan-500 to-blue-500" },
@@ -193,22 +193,28 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
                 </span>
                 {/* Tango Role Icons */}
                 {post.user?.tangoRoles && post.user.tangoRoles.length > 0 && (
-                  <div className="flex items-center gap-1" data-testid={`user-roles-${post.userId}`}>
-                    {post.user.tangoRoles.slice(0, 3).map((role) => (
-                      <Tooltip key={role}>
-                        <TooltipTrigger asChild>
-                          <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-primary/10 text-primary">
-                            <RoleIcon role={role} size={12} />
-                          </span>
-                        </TooltipTrigger>
-                        <TooltipContent side="right" className="text-xs" sideOffset={8}>
-                          {getRoleLabel(role)}
-                        </TooltipContent>
-                      </Tooltip>
-                    ))}
-                    {post.user.tangoRoles.length > 3 && (
-                      <span className="text-xs text-muted-foreground">+{post.user.tangoRoles.length - 3}</span>
-                    )}
+                  <div className="flex items-center gap-1 flex-wrap" data-testid={`user-roles-${post.userId}`}>
+                    {post.user.tangoRoles.map((role) => {
+                      const roleData = getRoleByValue(role);
+                      return (
+                        <Tooltip key={role}>
+                          <TooltipTrigger asChild>
+                            <span 
+                              className="inline-flex items-center justify-center w-5 h-5 rounded-full"
+                              style={{ 
+                                backgroundColor: `${roleData?.color}20`,
+                                color: roleData?.color
+                              }}
+                            >
+                              <RoleIcon role={role} size={12} />
+                            </span>
+                          </TooltipTrigger>
+                          <TooltipContent side="right" className="text-xs" sideOffset={8}>
+                            {getRoleLabel(role)}
+                          </TooltipContent>
+                        </Tooltip>
+                      );
+                    })}
                   </div>
                 )}
               </div>
