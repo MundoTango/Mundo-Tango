@@ -775,6 +775,13 @@ function AddPortfolioDialog({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [locationCoordinates, setLocationCoordinates] = useState<{ lat: number; lng: number } | undefined>();
 
+  // Sync role prop to state when dialog opens or role changes
+  React.useEffect(() => {
+    if (isOpen && role) {
+      setSelectedRole(role);
+    }
+  }, [isOpen, role]);
+
   const roleFormFields = selectedRole ? getRoleFormFields(selectedRole.value) : [];
   const portfolioLabel = selectedRole ? getRolePortfolioTitle(selectedRole.value) : "Portfolio";
   const isEventCreatingRole = selectedRole && EVENT_CREATING_ROLES.includes(selectedRole.value);
