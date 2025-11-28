@@ -85,6 +85,7 @@ import { ComponentPRDRegistry } from "./services/validation/ComponentPRDRegistry
 import userSearchRoutes from "./routes/user-search";
 import locationRoutes from "./routes/locations";
 import locationsRoutes from "./routes/locations-routes";
+import locationChangeRoutes from "./routes/location-change-routes";
 import { registerAIArbitrageRoutes } from "./routes/ai-arbitrage-routes";
 import { registerDPOTrainingRoutes } from "./routes/dpo-training-routes";
 import housingRoutes from "./routes/housing-routes";
@@ -665,6 +666,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/user", userSearchRoutes);
   app.use("/api/locations", locationRoutes);
   app.use("/api/locations", locationsRoutes); // MB.MD Agent 1: Live city search with caching
+  app.use("/api/location", locationChangeRoutes); // Location change effects endpoint
   
   // ============================================================================
   // GDPR COMPLIANCE & PRIVACY ROUTES

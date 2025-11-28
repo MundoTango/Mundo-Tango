@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,6 +9,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/UnifiedLocationPicker";
+import { triggerLocationChangeEffects, detectLocationChange, formatWelcomeMessage, LocationChangeEvent } from '@/lib/locationChangeEffects';
 
 interface User {
   id: number;
@@ -38,19 +39,68 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
   const queryClient = useQueryClient();
   const [isEditing, setIsEditing] = useState(false);
   const [editValues, setEditValues] = useState<Record<string, any>>({});
+  const previousLocationRef = useRef<{ city?: string; country?: string }>({
+    city: user.city || undefined,
+    country: user.country || undefined,
+  });
 
   const updateProfileMutation = useMutation({
     mutationFn: async (updates: Record<string, any>) => {
       const res = await apiRequest("PATCH", `/api/users/${user.id}`, updates);
       return res.json();
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: ["user", user.id] });
       queryClient.invalidateQueries({ queryKey: ["user", user.username] });
       queryClient.invalidateQueries({ queryKey: ["/api/users"] });
+      
+      const newCity = editValues.city || '';
+      const newCountry = editValues.country || '';
+      const previousLocation = previousLocationRef.current;
+      
+      const hasLocationChanged = detectLocationChange(
+        previousLocation.city || previousLocation.country ? previousLocation : null,
+        newCity,
+        newCountry
+      );
+      
+      if (hasLocationChanged && newCity) {
+        try {
+          const event: LocationChangeEvent = {
+            previousCity: previousLocation.city,
+            previousCountry: previousLocation.country,
+            newCity,
+            newCountry,
+            userId: user.id,
+            timestamp: new Date(),
+          };
+          
+          const effects = await triggerLocationChangeEffects(event);
+          const welcomeMessage = formatWelcomeMessage(effects, newCity);
+          
+          toast({ 
+            title: "Location Updated", 
+            description: welcomeMessage 
+          });
+          
+          previousLocationRef.current = { city: newCity, country: newCountry };
+        } catch (error) {
+          console.error('[ProfileTabAbout] Failed to trigger location effects:', error);
+          toast({ 
+            title: "Profile updated!", 
+            description: `Welcome to ${newCity}!` 
+          });
+        }
+      } else {
+        toast({ title: "Profile updated!" });
+      }
+      
+      if (newCity || newCountry) {
+        previousLocationRef.current = { city: newCity || undefined, country: newCountry || undefined };
+      }
+      
       setIsEditing(false);
       setEditValues({});
-      toast({ title: "Profile updated!" });
     },
     onError: () => {
       toast({ title: "Failed to update profile", variant: "destructive" });

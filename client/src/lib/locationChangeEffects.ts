@@ -91,3 +91,15 @@ export function formatWelcomeMessage(effects: LocationChangeEffects, cityName: s
   
   return parts.join(' ');
 }
+
+export function showLocationChangeToast(
+  toast: (options: { title: string; description: string; duration?: number }) => void,
+  effects: LocationChangeEffects,
+  cityName: string
+): void {
+  toast({
+    title: `Welcome to ${cityName}!`,
+    description: formatWelcomeMessage(effects, cityName),
+    duration: 5000,
+  });
+}

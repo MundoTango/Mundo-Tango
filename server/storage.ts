@@ -1560,6 +1560,10 @@ export interface IStorage {
   createFacebookFriend(data: any): Promise<any>;
   getFacebookPostsByUserId(userId: number): Promise<any[]>;
   getFacebookFriendsByUserId(userId: number): Promise<any[]>;
+  
+  // Location Change Effects helpers
+  countUsersByCity(city: string): Promise<number>;
+  countVenuesByCity(city: string): Promise<number>;
 }
 
 export class DbStorage implements IStorage {
@@ -7953,6 +7957,27 @@ export class DbStorage implements IStorage {
       .from(placeRecommendations)
       .where(eq(placeRecommendations.id, id));
     return result;
+  }
+
+  // ==================== LOCATION CHANGE EFFECTS ====================
+
+  async countUsersByCity(city: string): Promise<number> {
+    const result = await db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(users)
+      .where(and(
+        ilike(users.city, city),
+        eq(users.isActive, true)
+      ));
+    return result[0]?.count || 0;
+  }
+
+  async countVenuesByCity(city: string): Promise<number> {
+    const result = await db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(venues)
+      .where(ilike(venues.city, city));
+    return result[0]?.count || 0;
   }
 }
 
