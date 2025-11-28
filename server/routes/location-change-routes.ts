@@ -6,6 +6,36 @@ import { eq, and, ilike, sql } from "drizzle-orm";
 
 const router = Router();
 
+const CITYSCAPE_IMAGES: Record<string, string> = {
+  'buenos aires': 'https://images.unsplash.com/photo-1589909202802-8f4aadce1849?w=800&q=80',
+  'new york': 'https://images.unsplash.com/photo-1534430480872-3498386e7856?w=800&q=80',
+  'paris': 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=800&q=80',
+  'london': 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=800&q=80',
+  'tokyo': 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=800&q=80',
+  'barcelona': 'https://images.unsplash.com/photo-1583422409516-2895a77efded?w=800&q=80',
+  'berlin': 'https://images.unsplash.com/photo-1560969184-10fe8719e047?w=800&q=80',
+  'san francisco': 'https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=800&q=80',
+  'los angeles': 'https://images.unsplash.com/photo-1580655653885-65763b2597d0?w=800&q=80',
+  'miami': 'https://images.unsplash.com/photo-1506966953602-c20cc11f75e3?w=800&q=80',
+  'sydney': 'https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?w=800&q=80',
+  'melbourne': 'https://images.unsplash.com/photo-1514395462725-fb4566210144?w=800&q=80',
+  'amsterdam': 'https://images.unsplash.com/photo-1468436139062-f60a71c5c892?w=800&q=80',
+  'rome': 'https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=800&q=80',
+  'madrid': 'https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=800&q=80',
+  'lisbon': 'https://images.unsplash.com/photo-1536663815808-535e2280d2c2?w=800&q=80',
+  'montevideo': 'https://images.unsplash.com/photo-1597376537717-c99e19cd0b0e?w=800&q=80',
+  'mexico city': 'https://images.unsplash.com/photo-1585464231875-d9ef1f5ad396?w=800&q=80',
+  'chicago': 'https://images.unsplash.com/photo-1494522855154-9297ac14b55f?w=800&q=80',
+  'toronto': 'https://images.unsplash.com/photo-1517090504586-fde19ea6066f?w=800&q=80',
+};
+
+const DEFAULT_CITYSCAPE = 'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=800&q=80';
+
+function getCityscapeImage(cityName: string): string {
+  const normalizedCity = cityName.toLowerCase().trim();
+  return CITYSCAPE_IMAGES[normalizedCity] || DEFAULT_CITYSCAPE;
+}
+
 router.post("/change-effects", authenticateToken, async (req: AuthRequest, res: Response) => {
   const userId = req.userId!;
   const { previousCity, previousCountry, newCity, newCountry } = req.body;
@@ -75,6 +105,7 @@ router.post("/change-effects", authenticateToken, async (req: AuthRequest, res: 
           createdBy: userId,
           ownerId: userId,
           memberCount: 1,
+          coverImage: getCityscapeImage(newCity),
         }).returning();
 
         if (newGroup) {
