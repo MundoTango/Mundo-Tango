@@ -16,11 +16,21 @@ Mundo Tango is a production-ready social platform connecting the global tango co
 
 ## System Architecture
 
+### Standardized Components (PRDs: `docs/prds/`)
+| Component | PRD | Files Using | Purpose |
+|-----------|-----|-------------|---------|
+| **TangoRoles** | [PRD_TANGO_ROLES_SYSTEM.md](docs/prds/PRD_TANGO_ROLES_SYSTEM.md) | 15 files | 19 unified role definitions with `value`/`label` properties |
+| **UnifiedLocationPicker** | [PRD_UNIFIED_LOCATION_PICKER.md](docs/prds/PRD_UNIFIED_LOCATION_PICKER.md) | 26 files | 3-tier search: popular cities → server cache → Nominatim API |
+| **UnifiedMemoriesFeed** | [PRD_UNIFIED_FEEDS_SYSTEM.md](docs/prds/PRD_UNIFIED_FEEDS_SYSTEM.md) | 20+ files | Consistent post/memory display with SmartPostFeed + PostCreator |
+| **LocationChangeCascade** | [PRD_LOCATION_CHANGE_CASCADE.md](docs/prds/PRD_LOCATION_CHANGE_CASCADE.md) | 5 files | Auto-join groups, notifications, cache refresh on city change |
+
+See [docs/prds/INDEX.md](docs/prds/INDEX.md) for complete PRD index with cross-references.
+
 ### UI/UX
 The platform uses the "MT Ocean Theme" with ocean blues and warm accents, supporting dark mode via Tailwind CSS. Components are built with `shadcn/ui` and Radix UI, using Lucide React and React Icons for iconography. It supports 68 languages via `i18next` and Wouter for routing. Layouts include `AppLayout` (public), `DashboardLayout` (authenticated), and `AdminLayout` (administrative). A Visual Editor provides wisprflow.ai-style inline editing with direct text editing, element manipulation, toast notifications, tooltips, and voice commands. A manual save system tracks changes, and context-awareness provides smart suggestions. Key features include:
-- **UnifiedLocationPicker** - Smart location search across 27 files with 3-tier system: popular cities instant match, server-side cache (5 min TTL), Nominatim API fallback. Modes: `city` (city+country) and `address` (full street address).
-- **UnifiedMemoriesFeed** - Consistent post/memory display across 8 files (ProfileTabFeed, FeedPage, FeedPrototypePage, InfiniteScrollFeed, GroupPostFeed, SavedPostsPage, FavoritesPage). Wraps SmartPostFeed + PostItem with context-aware modes (feed/group/event/profile/memory).
-- **PostCreator** - Universal post creation with context modes (feed/event/group/memory), AI enhancement, location tagging, cross-posting, and 15 memory tags.
+- **UnifiedLocationPicker** - Smart location search across 27 files with 3-tier system: popular cities instant match, server-side cache (5 min TTL), Nominatim API fallback. Modes: `city` (city+country) and `address` (full street address). See [PRD](docs/prds/PRD_UNIFIED_LOCATION_PICKER.md).
+- **UnifiedMemoriesFeed** - Consistent post/memory display across 8 files (ProfileTabFeed, FeedPage, FeedPrototypePage, InfiniteScrollFeed, GroupPostFeed, SavedPostsPage, FavoritesPage). Wraps SmartPostFeed + PostItem with context-aware modes (feed/group/event/profile/memory). See [PRD](docs/prds/PRD_UNIFIED_FEEDS_SYSTEM.md).
+- **PostCreator** - Universal post creation with context modes (feed/event/group/memory), AI enhancement, location tagging, cross-posting, and 15 memory tags. See [PRD](docs/prds/PRD_UNIFIED_FEEDS_SYSTEM.md).
 - Multi-city trip support in travel planning.
 
 ### Backend
