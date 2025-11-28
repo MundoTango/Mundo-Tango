@@ -775,6 +775,7 @@ export default function ProfileTabPro({
   tangoRoleExperience,
   tangoStartYear,
   yearsOfDancing,
+  viewMode = 'dashboard',
 }: ProfileTabProProps) {
   const proRoles = useMemo(() => getProRoles(tangoRoles), [tangoRoles]);
 
@@ -787,7 +788,10 @@ export default function ProfileTabPro({
     [tangoRoleExperience, tangoStartYear, yearsOfDancing]
   );
 
-  if (isOwner) {
+  // When viewing own profile, respect viewMode toggle. Otherwise always show public view
+  const shouldShowDashboard = isOwner && viewMode === 'dashboard';
+
+  if (shouldShowDashboard) {
     return (
       <ProDashboardView
         userId={userId}
