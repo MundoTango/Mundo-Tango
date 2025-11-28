@@ -338,24 +338,31 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
             
             {isEditing ? (
               <div className="space-y-4">
-                <p className="text-xs text-muted-foreground">Select your roles below. Choose a year for each role, and add skill levels for dancer roles.</p>
+                <p className="text-xs text-muted-foreground">Select your roles below. When selected, choose start year and skill level (for dancer roles).</p>
 
-                {/* Unified Role Selection + Year Grid */}
-                <div className="space-y-3">
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2" data-testid="input-tango-roles">
-                    {TANGO_ROLES.map((role) => {
-                      const IconComponent = role.icon;
-                      const isSelected = selectedRoles.includes(role.value);
-                      return (
+                {/* Unified Role Selection - Each role expands inline when selected */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2" data-testid="input-tango-roles">
+                  {TANGO_ROLES.map((role) => {
+                    const IconComponent = role.icon;
+                    const isSelected = selectedRoles.includes(role.value);
+                    const startYear = getRoleStartYear(role.value);
+                    const isDancerLeader = role.value === 'dancer-leader';
+                    const isDancerFollower = role.value === 'dancer-follower';
+                    
+                    return (
+                      <div
+                        key={role.value}
+                        className={`rounded-lg border transition-all ${
+                          isSelected
+                            ? "border-primary bg-primary/10"
+                            : "border-muted hover:border-muted-foreground/30"
+                        }`}
+                      >
+                        {/* Role toggle button */}
                         <button
-                          key={role.value}
                           type="button"
                           onClick={() => toggleRole(role.value)}
-                          className={`relative flex items-center gap-2 p-2 rounded-lg border transition-all text-left ${
-                            isSelected
-                              ? "border-primary bg-primary/10"
-                              : "border-muted hover:border-muted-foreground/30"
-                          }`}
+                          className="relative flex items-center gap-2 p-2 w-full text-left"
                           data-testid={`role-${role.value}`}
                         >
                           {isSelected && (
@@ -368,37 +375,18 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
                           </div>
                           <span className="text-xs font-medium truncate pr-4">{role.label}</span>
                         </button>
-                      );
-                    })}
-                  </div>
-
-                  {/* Per-Role Year Selectors + Skill Levels - Integrated Below */}
-                  {selectedRoles.length > 0 && (
-                    <div className="space-y-3">
-                      {selectedRoles.map((roleValue: string) => {
-                        const role = getRoleByValue(roleValue);
-                        const IconComponent = role?.icon;
-                        const startYear = getRoleStartYear(roleValue);
-                        const isDancerRole = roleValue === 'dancer-leader' || roleValue === 'dancer-follower';
-                        const isDancerLeader = roleValue === 'dancer-leader';
                         
-                        return (
-                          <div key={roleValue} className="space-y-2 p-3 rounded-lg border border-muted bg-muted/10">
-                            {/* Role header with year selector */}
-                            <div className="flex items-center justify-between gap-3">
-                              <div className="flex items-center gap-2 min-w-0">
-                                {IconComponent && (
-                                  <div className="p-1 rounded-md shrink-0" style={{ backgroundColor: `${role?.color}20` }}>
-                                    <IconComponent className="w-3.5 h-3.5" style={{ color: role?.color }} />
-                                  </div>
-                                )}
-                                <span className="text-xs font-medium truncate">{role?.label || roleValue}</span>
-                              </div>
+                        {/* Expanded section for selected roles */}
+                        {isSelected && (
+                          <div className="px-2 pb-2 space-y-2 border-t border-muted/50">
+                            {/* Year selector */}
+                            <div className="pt-2">
+                              <label className="text-[10px] text-muted-foreground block mb-1">Started</label>
                               <Select
                                 value={startYear.toString()}
-                                onValueChange={(value) => updateRoleStartYear(roleValue, parseInt(value))}
+                                onValueChange={(value) => updateRoleStartYear(role.value, parseInt(value))}
                               >
-                                <SelectTrigger className="w-[100px] shrink-0 h-8" data-testid={`select-role-year-${roleValue}`}>
+                                <SelectTrigger className="w-full h-7 text-xs" data-testid={`select-role-year-${role.value}`}>
                                   <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -411,46 +399,42 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
                               </Select>
                             </div>
                             
-                            {/* Skill levels for dancer roles */}
-                            {isDancerRole && (
-                              <div className="grid grid-cols-2 gap-2 pt-2 border-t border-muted">
-                                {isDancerLeader && (
-                                  <div>
-                                    <label className="text-xs text-muted-foreground block mb-1">Leader Level (1-10)</label>
-                                    <Input 
-                                      type="number" 
-                                      min="1" 
-                                      max="10" 
-                                      placeholder="e.g., 7" 
-                                      value={editValues.leaderLevel || ''} 
-                                      onChange={(e) => setEditValues({ ...editValues, leaderLevel: e.target.value })}
-                                      data-testid="input-leader-level"
-                                      className="h-8"
-                                    />
-                                  </div>
-                                )}
-                                {!isDancerLeader && (
-                                  <div>
-                                    <label className="text-xs text-muted-foreground block mb-1">Follower Level (1-10)</label>
-                                    <Input 
-                                      type="number" 
-                                      min="1" 
-                                      max="10" 
-                                      placeholder="e.g., 8" 
-                                      value={editValues.followerLevel || ''} 
-                                      onChange={(e) => setEditValues({ ...editValues, followerLevel: e.target.value })}
-                                      data-testid="input-follower-level"
-                                      className="h-8"
-                                    />
-                                  </div>
-                                )}
+                            {/* Skill level for dancer roles */}
+                            {isDancerLeader && (
+                              <div>
+                                <label className="text-[10px] text-muted-foreground block mb-1">Level (1-10)</label>
+                                <Input 
+                                  type="number" 
+                                  min="1" 
+                                  max="10" 
+                                  placeholder="7" 
+                                  value={editValues.leaderLevel || ''} 
+                                  onChange={(e) => setEditValues({ ...editValues, leaderLevel: e.target.value })}
+                                  data-testid="input-leader-level"
+                                  className="h-7 text-xs"
+                                />
+                              </div>
+                            )}
+                            {isDancerFollower && (
+                              <div>
+                                <label className="text-[10px] text-muted-foreground block mb-1">Level (1-10)</label>
+                                <Input 
+                                  type="number" 
+                                  min="1" 
+                                  max="10" 
+                                  placeholder="8" 
+                                  value={editValues.followerLevel || ''} 
+                                  onChange={(e) => setEditValues({ ...editValues, followerLevel: e.target.value })}
+                                  data-testid="input-follower-level"
+                                  className="h-7 text-xs"
+                                />
                               </div>
                             )}
                           </div>
-                        );
-                      })}
-                    </div>
-                  )}
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             ) : (
