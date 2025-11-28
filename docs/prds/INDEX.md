@@ -1,7 +1,7 @@
 # PRD Index - Mundo Tango
 
 > **Last Updated:** 2025-11-28  
-> **Total PRDs:** 13  
+> **Total PRDs:** 14  
 
 ---
 
@@ -16,6 +16,7 @@ This index links all Product Requirement Documents (PRDs) in the Mundo Tango pla
 | PRD | Purpose | Key Files | Pages/Features Using |
 |-----|---------|-----------|---------------------|
 | [PRD_TANGO_ROLES_SYSTEM.md](./PRD_TANGO_ROLES_SYSTEM.md) | 19 unified tango role definitions | `lib/tangoRoles.ts`, `UserRoleBadges.tsx` | Onboarding, Profile, Search, Cards (15 files) |
+| [PRD_PER_ROLE_EXPERIENCE.md](./PRD_PER_ROLE_EXPERIENCE.md) | Per-role experience tracking (JSONB) | `roleExperience.ts`, `schema.ts` | Registration, Profile, Matching, Talent Search (25+ files) |
 | [PRD_UNIFIED_LOCATION_PICKER.md](./PRD_UNIFIED_LOCATION_PICKER.md) | 3-tier smart location search | `UnifiedLocationPicker.tsx` | Travel, Profile, Events, Groups, Onboarding (26 files) |
 | [PRD_UNIFIED_FEEDS_SYSTEM.md](./PRD_UNIFIED_FEEDS_SYSTEM.md) | Unified post/memory display & creation | `UnifiedMemoriesFeed.tsx`, `PostCreator.tsx`, `SmartPostFeed.tsx` | Feed, Profile, Groups, Events, Saved Posts (20+ files) |
 | [PRD_LOCATION_CHANGE_CASCADE.md](./PRD_LOCATION_CHANGE_CASCADE.md) | Location change effects cascade | `locationChangeEffects.ts`, `LocationChangeWelcome.tsx` | Profile Edit, Notifications, Groups |
@@ -59,14 +60,14 @@ This index links all Product Requirement Documents (PRDs) in the Mundo Tango pla
 | Page/Feature | Related PRDs |
 |--------------|--------------|
 | **Feed** (`/feed`) | Unified Feeds, Tango Roles |
-| **Profile** (`/profile/:id`) | Tango Roles, Unified Feeds, Location Picker, Location Change Cascade |
+| **Profile** (`/profile/:id`) | Tango Roles, Unified Feeds, Location Picker, Location Change Cascade, Per-Role Experience |
 | **Events** (`/events`) | Location Picker, Unified Feeds |
 | **Groups** (`/groups`) | Location Picker, Unified Feeds, Location Change Cascade |
-| **Onboarding** (`/onboarding`) | Tango Roles, Location Picker |
+| **Onboarding** (`/onboarding`) | Tango Roles, Location Picker, Per-Role Experience |
 | **Travel** (`/profile/:id/travel`) | Location Picker, Location Change Cascade |
 | **Visual Editor** | Mr. Blue PRDs, Content Studio |
 | **Life CEO** | Finance Enhanced, Productivity 2.0 |
-| **Search/Discovery** | Tango Roles, Talent Match |
+| **Search/Discovery** | Tango Roles, Talent Match, Per-Role Experience |
 | **Settings** | Privacy Hub |
 
 ### By Component Type

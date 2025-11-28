@@ -20,6 +20,7 @@ Mundo Tango is a production-ready social platform connecting the global tango co
 | Component | PRD | Files Using | Purpose |
 |-----------|-----|-------------|---------|
 | **TangoRoles** | [PRD_TANGO_ROLES_SYSTEM.md](docs/prds/PRD_TANGO_ROLES_SYSTEM.md) | 15 files | 19 unified role definitions with `value`/`label` properties |
+| **PerRoleExperience** | [PRD_PER_ROLE_EXPERIENCE.md](docs/prds/PRD_PER_ROLE_EXPERIENCE.md) | 25+ files | Per-role start years with `calculateYearsInRole()` helper |
 | **UnifiedLocationPicker** | [PRD_UNIFIED_LOCATION_PICKER.md](docs/prds/PRD_UNIFIED_LOCATION_PICKER.md) | 26 files | 3-tier search: popular cities → server cache → Nominatim API |
 | **UnifiedMemoriesFeed** | [PRD_UNIFIED_FEEDS_SYSTEM.md](docs/prds/PRD_UNIFIED_FEEDS_SYSTEM.md) | 20+ files | Consistent post/memory display with SmartPostFeed + PostCreator |
 | **LocationChangeCascade** | [PRD_LOCATION_CHANGE_CASCADE.md](docs/prds/PRD_LOCATION_CHANGE_CASCADE.md) | 5 files | Auto-join groups, notifications, cache refresh on city change |
