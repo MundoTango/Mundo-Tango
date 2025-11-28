@@ -60,6 +60,7 @@ export function UnifiedLocationPicker({
   const [dropdownPosition, setDropdownPosition] = useState<{ top: number; left: number; width: number }>({ top: 0, left: 0, width: 0 });
   const searchRef = useRef<HTMLDivElement>(null);
   const inputContainerRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const clientCacheRef = useRef<Map<string, LocationResult[]>>(new Map());
   const userHasTypedRef = useRef(false);
 
@@ -90,7 +91,11 @@ export function UnifiedLocationPicker({
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+      const target = event.target as Node;
+      const isInSearchRef = searchRef.current && searchRef.current.contains(target);
+      const isInDropdownRef = dropdownRef.current && dropdownRef.current.contains(target);
+      
+      if (!isInSearchRef && !isInDropdownRef) {
         setShowResults(false);
       }
     };
@@ -107,7 +112,7 @@ export function UnifiedLocationPicker({
   };
 
   useEffect(() => {
-    if (searchQuery.trim().length < 2) {
+    if (searchQuery.trim().length < 1) {
       setResults([]);
       setShowResults(false);
       return;
@@ -254,6 +259,7 @@ export function UnifiedLocationPicker({
         <AnimatePresence>
           {showResults && results.length > 0 && (
             <motion.div
+              ref={dropdownRef}
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
