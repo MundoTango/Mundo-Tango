@@ -380,7 +380,7 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
         open={showShareModal}
         onOpenChange={setShowShareModal}
         postId={post.id}
-        postTitle={post.content.substring(0, 100)}
+        postTitle={(post.content || "").substring(0, 100)}
       />
 
       <ReportModal
@@ -394,7 +394,7 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
         open={showEditDialog}
         onOpenChange={setShowEditDialog}
         postId={post.id}
-        initialContent={post.content}
+        initialContent={post.content || ""}
       />
     </>
   );

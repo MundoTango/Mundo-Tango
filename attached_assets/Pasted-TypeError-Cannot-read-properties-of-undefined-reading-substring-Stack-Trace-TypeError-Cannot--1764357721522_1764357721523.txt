@@ -1,0 +1,14 @@
+TypeError: Cannot read properties of undefined (reading 'substring')
+Stack Trace:
+TypeError: Cannot read properties of undefined (reading 'substring')
+    at PostItem (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/feed/PostItem.tsx:576:33)
+    at renderWithHooks (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-NFC5BX5N.js?v=9ea95b04:11548:26)
+    at mountIndeterminateComponent (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-NFC5BX5N.js?v=9ea95b04:14926:21)
+    at beginWork (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-NFC5BX5N.js?v=9ea95b04:15914:22)
+    at beginWork$1 (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-NFC5BX5N.js?v=9ea95b04:19753:22)
+    at performUnitOfWork (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-NFC5BX5N.js?v=9ea95b04:19198:20)
+    at workLoopSync (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-NFC5BX5N.js?v=9ea95b04:19137:13)
+    at renderRootSync (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-NFC5BX5N.js?v=9ea95b04:19116:15)
+    at recoverFromConcurrentError (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-NFC5BX5N.js?v=9ea95b04:18736:28)
+    at performSyncWorkOnRoot (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-NFC5BX5N.js?v=9ea95b04:18879:28)
+Reload Page
