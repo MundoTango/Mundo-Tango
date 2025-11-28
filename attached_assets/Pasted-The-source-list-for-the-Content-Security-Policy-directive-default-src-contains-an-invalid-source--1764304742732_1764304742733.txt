@@ -1,0 +1,1499 @@
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+MundoTango:1 The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+MundoTango:1 The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+MundoTango:1 The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+ [Coframe] Replit Enterprise watcher loaded
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_monitoring/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/session_result/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ 
+      /////////////////////
+   ///////////////////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////        Curious and driven?
+  ///////////////@@@@@@@///////        Work with us!
+  ///////////////@@@@@@@///////
+  ///////////////@@@@@@@///////        https://join.replit.com/hack.with.us
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@#//////////////
+   ///////////////////////////
+      /////////////////////
+      
+ Download the Apollo DevTools for a better development experience: https://chrome.google.com/webstore/detail/apollo-client-developer-t/jdkknkkbebbapilgoeccciglkfbmbnfm
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764301505011&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764301505011&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1517&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ content loaded
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764301505135&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ Content Script: Initializing
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764301505648&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1517&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ [LaunchDarkly] LaunchDarkly client initialized
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764301505842&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764301506345&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764301507874&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1517&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ [Intervention] Slow network is detected. See https://www.chromestatus.com/feature/5636954674692096 for more details. Fallback font will be used while loading: https://replit.com/public/fonts/replit-icons.woff
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764301508147&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+ Unrecognized feature: 'ambient-light-sensor'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'battery'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'execution-while-not-rendered'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'execution-while-out-of-viewport'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'layout-animations'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'legacy-image-formats'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'navigation-override'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'oversized-images'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'publickey-credentials'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'speaker-selection'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'unoptimized-images'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'unsized-media'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'pointer-lock'.
+z @ ed1e693c96a75807.js:2
+ Allow attribute will take precedence over 'allowfullscreen'.
+z @ ed1e693c96a75807.js:2
+ Allow attribute will take precedence over 'allowpaymentrequest'.
+z @ ed1e693c96a75807.js:2
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764301508382&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764301512390&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1517&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764301512390&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1517&gz=1. TypeError: Failed to fetch 
+(anonymous) @ dc2be9da89e05d8d.js:2
+   WARN  [Statsig] Failed to flush events.
+(anonymous) @ dc2be9da89e05d8d.js:2
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764301512767&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764301512767&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=2&gz=1. TypeError: Failed to fetch 
+(anonymous) @ dc2be9da89e05d8d.js:2
+   WARN  [Statsig] Failed to flush events.
+(anonymous) @ dc2be9da89e05d8d.js:2
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764301512887&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764301512887&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1. TypeError: Failed to fetch 
+(anonymous) @ dc2be9da89e05d8d.js:2
+   WARN  [Statsig] Failed to flush events.
+(anonymous) @ dc2be9da89e05d8d.js:2
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764301514950&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764301515454&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764301517459&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+web-client-content-script.js:2 Uncaught 
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764301521965&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764301521965&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=2&gz=1. TypeError: Failed to fetch 
+(anonymous) @ dc2be9da89e05d8d.js:2
+   WARN  [Statsig] Failed to flush events.
+(anonymous) @ dc2be9da89e05d8d.js:2
+events.launchdarkly.com/events/diagnostic/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/diagnostic/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764301975662&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=505&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764301976187&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=505&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764301978189&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=505&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764301979540&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764301979944&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=505&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764301980051&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764301980497&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=505&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764301982057&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764301982499&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=505&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764301982696&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=505&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764301982696&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=505&gz=1. TypeError: Failed to fetch 
+(anonymous) @ dc2be9da89e05d8d.js:2
+   WARN  [Statsig] Failed to flush events.
+(anonymous) @ dc2be9da89e05d8d.js:2
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764301986564&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764301986564&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=2&gz=1. TypeError: Failed to fetch 
+(anonymous) @ dc2be9da89e05d8d.js:2
+   WARN  [Statsig] Failed to flush events.
+(anonymous) @ dc2be9da89e05d8d.js:2
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764301987003&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=505&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764301987003&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=505&gz=1. TypeError: Failed to fetch 
+(anonymous) @ dc2be9da89e05d8d.js:2
+   WARN  [Statsig] Failed to flush events.
+(anonymous) @ dc2be9da89e05d8d.js:2
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught 
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/diagnostic/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/diagnostic/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught 
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764302454946&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught 
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764302455456&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764302457464&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764302461969&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764302461969&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1. TypeError: Failed to fetch 
+(anonymous) @ dc2be9da89e05d8d.js:2
+   WARN  [Statsig] Failed to flush events.
+(anonymous) @ dc2be9da89e05d8d.js:2
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764302524949&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764302525451&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764302527456&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764302531960&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764302531960&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1. TypeError: Failed to fetch 
+(anonymous) @ dc2be9da89e05d8d.js:2
+   WARN  [Statsig] Failed to flush events.
+(anonymous) @ dc2be9da89e05d8d.js:2
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught 
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764302793346&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1509&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught 
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764302793916&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1509&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764302794949&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764302795453&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764302795921&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1509&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764302796985&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1509&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught 
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764302797459&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764302797521&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1509&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764302799526&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1509&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764302800425&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1509&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764302800425&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1509&gz=1. TypeError: Failed to fetch 
+(anonymous) @ dc2be9da89e05d8d.js:2
+   WARN  [Statsig] Failed to flush events.
+(anonymous) @ dc2be9da89e05d8d.js:2
+   WARN  [Statsig] Unable to save failed logs to storage
+(anonymous) @ dc2be9da89e05d8d.js:2
+content.js:10 Uncaught 
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764302802367&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764302802367&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1. TypeError: Failed to fetch 
+(anonymous) @ dc2be9da89e05d8d.js:2
+   WARN  [Statsig] Failed to flush events.
+(anonymous) @ dc2be9da89e05d8d.js:2
+content.js:10 Uncaught 
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764302804030&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1509&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764302804030&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1509&gz=1. TypeError: Failed to fetch 
+(anonymous) @ dc2be9da89e05d8d.js:2
+   WARN  [Statsig] Failed to flush events.
+(anonymous) @ dc2be9da89e05d8d.js:2
+   WARN  [Statsig] Unable to save failed logs to storage
+(anonymous) @ dc2be9da89e05d8d.js:2
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764302804950&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught 
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764302805454&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764302807457&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764302811976&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764302811976&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1. TypeError: Failed to fetch 
+(anonymous) @ dc2be9da89e05d8d.js:2
+   WARN  [Statsig] Failed to flush events.
+(anonymous) @ dc2be9da89e05d8d.js:2
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught 
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764302944949&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764302945457&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764302947463&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764302951965&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764302951965&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1. TypeError: Failed to fetch 
+(anonymous) @ dc2be9da89e05d8d.js:2
+   WARN  [Statsig] Failed to flush events.
+(anonymous) @ dc2be9da89e05d8d.js:2
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://mb.me/&size=32:1  Failed to load resource: the server responded with a status of 404 ()
+t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://mb.me&size=32:1  Failed to load resource: the server responded with a status of 404 ()
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764303024958&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught 
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764303025465&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764303027467&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught 
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764303031973&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764303031973&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1. TypeError: Failed to fetch 
+(anonymous) @ dc2be9da89e05d8d.js:2
+   WARN  [Statsig] Failed to flush events.
+(anonymous) @ dc2be9da89e05d8d.js:2
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764303054947&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764303055450&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764303057456&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764303061962&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764303061962&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1. TypeError: Failed to fetch 
+(anonymous) @ dc2be9da89e05d8d.js:2
+   WARN  [Statsig] Failed to flush events.
+(anonymous) @ dc2be9da89e05d8d.js:2
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught 
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764303064946&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764303065487&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught 
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764303067506&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764303072010&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764303072010&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1. TypeError: Failed to fetch 
+(anonymous) @ dc2be9da89e05d8d.js:2
+   WARN  [Statsig] Failed to flush events.
+(anonymous) @ dc2be9da89e05d8d.js:2
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught 
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764303094946&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764303095452&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught 
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764303097479&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught 
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764303101985&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764303101985&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=2&gz=1. TypeError: Failed to fetch 
+(anonymous) @ dc2be9da89e05d8d.js:2
+   WARN  [Statsig] Failed to flush events.
+(anonymous) @ dc2be9da89e05d8d.js:2
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764303104947&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764303105451&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764303107456&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764303111960&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764303111960&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1. TypeError: Failed to fetch 
+(anonymous) @ dc2be9da89e05d8d.js:2
+   WARN  [Statsig] Failed to flush events.
+(anonymous) @ dc2be9da89e05d8d.js:2
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught 
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/diagnostic/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/diagnostic/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ [Coframe] Mutation callback infinite loop protection triggered, disconnecting mutation observer Object
+(anonymous) @ dc2be9da89e05d8d.js:2
+ingest.app.coframe.com/ingest/v2/batched_monitoring/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764303697374&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764303697877&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764303699882&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764303704387&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764303704387&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1. TypeError: Failed to fetch 
+(anonymous) @ dc2be9da89e05d8d.js:2
+   WARN  [Statsig] Failed to flush events.
+(anonymous) @ dc2be9da89e05d8d.js:2
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+workspace_iframe.html?initialPath=%2F&id=%3Ar33h%3A:32 Unrecognized feature: 'ambient-light-sensor'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar33h%3A:32 Unrecognized feature: 'battery'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar33h%3A:32 Unrecognized feature: 'execution-while-not-rendered'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar33h%3A:32 Unrecognized feature: 'execution-while-out-of-viewport'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar33h%3A:32 Unrecognized feature: 'layout-animations'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar33h%3A:32 Unrecognized feature: 'legacy-image-formats'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar33h%3A:32 Unrecognized feature: 'navigation-override'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar33h%3A:32 Unrecognized feature: 'oversized-images'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar33h%3A:32 Unrecognized feature: 'publickey-credentials'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar33h%3A:32 Unrecognized feature: 'speaker-selection'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar33h%3A:32 Unrecognized feature: 'unoptimized-images'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar33h%3A:32 Unrecognized feature: 'unsized-media'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar33h%3A:32 Allow attribute will take precedence over 'allowfullscreen'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar33h%3A:32 Allow attribute will take precedence over 'allowpaymentrequest'.
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/?token=b5bKfXLBaUHM' failed: 
+setupWebSocket @ client:536
+client:536 Uncaught (in promise) 
+ [App] Initializing Proactive Error Detection...
+ [ProactiveErrorDetector] Initializing...
+ [ProactiveErrorDetector] ✅ Started - monitoring all errors
+ [App] Initializing HTTP Interceptor...
+ [HttpInterceptor] ✅ Initialized - monitoring all HTTP requests
+ [App] Initializing Component Health Monitor...
+ [ComponentHealthMonitor] Initializing...
+ [ComponentHealthMonitor] Registered health check: UnifiedLocationPicker
+ [ComponentHealthMonitor] Running 1 health checks...
+ [ComponentHealthMonitor] ✅ Started - checking every 60 seconds
+ [App] Initializing Navigation Interceptor...
+ ✅ MB.MD v9.2: Navigation interceptor enabled - contextual agents will activate on page changes
+ Loading the script 'https://replit.com/public/js/beacon.js' violates the following Content Security Policy directive: "script-src-elem 'self' 'unsafe-inline' https://js.stripe.com https://cdn.jsdelivr.net https://unpkg.com". The action has been blocked.
+onIframeLoad @ workspace_iframe.htm…F&id=%3Ar33h%3A:142
+ i18next::backendConnector: loaded namespace common for language en Object
+ i18next::backendConnector: loaded namespace navigation for language en Object
+ i18next::backendConnector: loaded namespace pages for language en Object
+ i18next::backendConnector: loaded namespace errors for language en Object
+ i18next: languageChanged en
+ i18next: initialized Object
+content.js:10 Uncaught 
+ [ComponentHealthMonitor] ✅ Component health check passed: UnifiedLocationPicker
+ [apiRequest] POST /api/predictive/warm-cache starting...
+ [apiRequest] Stringifying payload...
+ [apiRequest] Payload size: 0.0MB, stringify took 0ms
+ [apiRequest] Sending fetch request...
+notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+ [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+ [QueryClient] Expected JSON but got text/html; charset=utf-8: Object
+(anonymous) @ injected.js:37
+ [ProactiveErrorDetector] Captured console.error: [QueryClient] Expected JSON but got text/html; charset=utf-8: [object Object]...
+(anonymous) @ injected.js:37
+ [apiRequest] Response: 200 in 489ms
+ [apiRequest] GET /api/mr-blue/agents/tour/app-onboarding starting...
+ [apiRequest] Sending fetch request...
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/mr-blue/agents/tour/app-onboarding:1  Failed to load resource: the server responded with a status of 404 (Not Found)
+ [ProactiveErrorDetector] Captured http.error: HTTP 404 Not Found: GET /api/mr-blue/agents/tour/app-onboarding...
+(anonymous) @ injected.js:37
+ [HttpInterceptor] Captured http.error: GET /api/mr-blue/agents/tour/app-onboarding - 404 Not Found
+ [apiRequest] Response: 404 in 224ms
+ [ERROR] Query failed Object
+(anonymous) @ injected.js:37
+ [ProactiveErrorDetector] Captured console.error: [ERROR] Query failed [object Object]...
+(anonymous) @ injected.js:37
+ [QueryClient] Expected JSON but got text/html; charset=utf-8: Object
+(anonymous) @ injected.js:37
+ [ProactiveErrorDetector] Captured console.error: [QueryClient] Expected JSON but got text/html; charset=utf-8: [object Object]...
+(anonymous) @ injected.js:37
+ [ERROR] Query failed Object
+(anonymous) @ injected.js:37
+ [ProactiveErrorDetector] Captured console.error: [ERROR] Query failed [object Object]...
+(anonymous) @ injected.js:37
+ [Video 219] Converting base64 to blob URL...
+ [Video 219] Blob URL created: blob:https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-...
+ [Video 219] Load started (blob URL)
+ [Video 219] Data loaded successfully
+ [Video 219] Can play
+ [ProactiveErrorDetector] Sending batch of 6 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+ [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+ [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+ [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+ [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+ [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+ [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+ [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+ [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+ [ComponentHealthMonitor] Running 1 health checks...
+ [ComponentHealthMonitor] ✅ Component health check passed: UnifiedLocationPicker
+ [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+ [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+ [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+ [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+ [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+ [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+ [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+ [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+ [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+ [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+ [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+ [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+ [ComponentHealthMonitor] Running 1 health checks...
+ [ComponentHealthMonitor] ✅ Component health check passed: UnifiedLocationPicker
+ [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+ [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+ [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+ [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+ [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+ [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+ [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+ [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+ [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+ [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+ [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+ [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+ [ComponentHealthMonitor] Running 1 health checks...
+ [ComponentHealthMonitor] ✅ Component health check passed: UnifiedLocationPicker
+ [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+ [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+ [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+ [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+ [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+ [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+ [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+ [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+ [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+ [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+ [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+ [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+ [ComponentHealthMonitor] Running 1 health checks...
+ [ComponentHealthMonitor] ✅ Component health check passed: UnifiedLocationPicker
+ [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+ [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+ [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+ [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+ [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+ [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+ [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+ [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+ [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+ [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+ [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+ [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+ [ComponentHealthMonitor] Running 1 health checks...
+ [ComponentHealthMonitor] ✅ Component health check passed: UnifiedLocationPicker
+ [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+ [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+ [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+ [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+ [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+ [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+ [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+ [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+ [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+ [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+ [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+ [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+ [ComponentHealthMonitor] Running 1 health checks...
+ [ComponentHealthMonitor] ✅ Component health check passed: UnifiedLocationPicker
+ [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+ [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+ [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+ [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+ [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+ [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+ [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+ [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+ [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+ [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+ [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+ [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+ [ComponentHealthMonitor] Running 1 health checks...
+ [ComponentHealthMonitor] ✅ Component health check passed: UnifiedLocationPicker
+ [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+ [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+ [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+ [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+ [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+events.launchdarkly.com/events/diagnostic/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/diagnostic/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+ [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+ [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+ [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+ [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+ [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+ [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+ [ComponentHealthMonitor] Running 1 health checks...
+ [ComponentHealthMonitor] ✅ Component health check passed: UnifiedLocationPicker
+ [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+ [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+ [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+ [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+ [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+ [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+ [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+ [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+ [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+ [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+ [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+ [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+ [ComponentHealthMonitor] Running 1 health checks...
+ [ComponentHealthMonitor] ✅ Component health check passed: UnifiedLocationPicker
+ [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+ [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+ [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+ [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+ [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+ [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+ [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+ [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+ [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+ [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+ [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+ [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+ [ComponentHealthMonitor] Running 1 health checks...
+ [ComponentHealthMonitor] ✅ Component health check passed: UnifiedLocationPicker
+ [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+injected.js:37 [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+injected.js:37 [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+injected.js:37 [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+injected.js:37 [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+injected.js:37 [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+injected.js:37 [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+injected.js:37 [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+injected.js:37 [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+injected.js:37 [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+injected.js:37 [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+injected.js:37 [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+injected.js:37 [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+injected.js:37 [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+injected.js:37 [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+injected.js:37 [ComponentHealthMonitor] Running 1 health checks...
+injected.js:37 [ComponentHealthMonitor] ✅ Component health check passed: UnifiedLocationPicker
+injected.js:37 [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+injected.js:37 [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+injected.js:37 [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+injected.js:37 [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+injected.js:37 [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+injected.js:37 [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+injected.js:37 [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+injected.js:37 [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+injected.js:37 [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+injected.js:37 [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+injected.js:37 [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+injected.js:37 [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+injected.js:37 [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+injected.js:37 [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+injected.js:37 [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+injected.js:37 [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+injected.js:37 [ComponentHealthMonitor] Running 1 health checks...
+injected.js:37 [ComponentHealthMonitor] ✅ Component health check passed: UnifiedLocationPicker
+injected.js:37 [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+injected.js:37 [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+injected.js:37 [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+injected.js:37 [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+injected.js:37 [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+injected.js:37 [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+injected.js:37 [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+injected.js:37 [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+injected.js:37 [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+injected.js:37 [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+injected.js:37 [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+injected.js:37 [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+injected.js:37 [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+injected.js:37 [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+injected.js:37 [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+injected.js:37 [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+injected.js:37 [ComponentHealthMonitor] Running 1 health checks...
+injected.js:37 [ComponentHealthMonitor] ✅ Component health check passed: UnifiedLocationPicker
+injected.js:37 [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+injected.js:37 [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+injected.js:37 [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+injected.js:37 [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+injected.js:37 [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+injected.js:37 [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+injected.js:37 [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+injected.js:37 [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+injected.js:37 [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+injected.js:37 [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+injected.js:37 [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+injected.js:37 [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+injected.js:37 [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+injected.js:37 [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+injected.js:37 [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+injected.js:37 [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+injected.js:37 [ComponentHealthMonitor] Running 1 health checks...
+injected.js:37 [ComponentHealthMonitor] ✅ Component health check passed: UnifiedLocationPicker
+injected.js:37 [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+injected.js:37 [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+injected.js:37 [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+injected.js:37 [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+injected.js:37 [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+injected.js:37 [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+injected.js:37 [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+injected.js:37 [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+injected.js:37 [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+injected.js:37 [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+injected.js:37 [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+injected.js:37 [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+injected.js:37 [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+logs.browser-intake-us5-datadoghq.com/api/v2/logs?ddsource=browser&ddtags=sdk_version%3A4.46.0%2Capi%3Abeacon%2Cenv%3Aproduction%2Cservice%3Awebsite%2Cversion%3Abd2408f3&dd-api-key=pub31a5047a3a4692afb84a423db984dc57&dd-evp-origin-version=4.46.0&dd-evp-origin=browser&dd-request-id=324c7471-f427-42aa-a373-ea123935a8a0:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_monitoring/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+injected.js:37 [ComponentHealthMonitor] Running 1 health checks...
+injected.js:37 [ComponentHealthMonitor] ✅ Component health check passed: UnifiedLocationPicker
+injected.js:37 [apiRequest] GET /api/mr-blue/agents/tour/app-onboarding starting...
+injected.js:37 [apiRequest] Sending fetch request...
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764304681549&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1519&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/auth/me:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+injected.js:37 [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/auth/me...
+(anonymous) @ injected.js:37
+injected.js:37 [HttpInterceptor] Captured http.error: GET /api/auth/me - 401 Unauthorized
+injected.js:37 [QueryClient] Expected JSON but got text/html; charset=utf-8: Object
+(anonymous) @ injected.js:37
+injected.js:37 [ProactiveErrorDetector] Captured console.error: [QueryClient] Expected JSON but got text/html; charset=utf-8: [object Object]...
+(anonymous) @ injected.js:37
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764304682072&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1519&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/mr-blue/agents/tour/app-onboarding:1  Failed to load resource: the server responded with a status of 404 (Not Found)
+injected.js:37 [ProactiveErrorDetector] Captured http.error: HTTP 404 Not Found: GET /api/mr-blue/agents/tour/app-onboarding...
+(anonymous) @ injected.js:37
+injected.js:37 [HttpInterceptor] Captured http.error: GET /api/mr-blue/agents/tour/app-onboarding - 404 Not Found
+injected.js:37 [apiRequest] Response: 404 in 656ms
+injected.js:37 [ERROR] Query failed Object
+(anonymous) @ injected.js:37
+injected.js:37 [ProactiveErrorDetector] Captured console.error: [ERROR] Query failed [object Object]...
+(anonymous) @ injected.js:37
+injected.js:37 [QueryClient] Expected JSON but got text/html; charset=utf-8: Object
+(anonymous) @ injected.js:37
+injected.js:37 [ProactiveErrorDetector] Captured console.error: [QueryClient] Expected JSON but got text/html; charset=utf-8: [object Object]...
+(anonymous) @ injected.js:37
+injected.js:37 [ERROR] Query failed Object
+(anonymous) @ injected.js:37
+injected.js:37 [ProactiveErrorDetector] Captured console.error: [ERROR] Query failed [object Object]...
+(anonymous) @ injected.js:37
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764304684077&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1519&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764304684941&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764304685444&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764304687450&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764304688579&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1519&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+dc2be9da89e05d8d.js:2  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764304688579&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1519&gz=1. TypeError: Failed to fetch TypeError: Failed to fetch
+    at dc2be9da89e05d8d.js:2:106527
+    at t.<anonymous> (06e68893bdd5c424.js:2:45850)
+    at Object.next (aef1f2c6f8544e95.js:2:11778)
+    at 06e68893bdd5c424.js:2:42952
+    at new Promise (<anonymous>)
+    at u (06e68893bdd5c424.js:2:42706)
+    at t.value (06e68893bdd5c424.js:2:44940)
+    at 06e68893bdd5c424.js:2:31768
+    at e.value (06e68893bdd5c424.js:2:32175)
+    at e.<computed> [as _sendRequest] (06e68893bdd5c424.js:2:31708)
+    at t.<anonymous> (06e68893bdd5c424.js:2:47326)
+    at Object.next (aef1f2c6f8544e95.js:2:11778)
+    at s (06e68893bdd5c424.js:2:42762)
+(anonymous) @ dc2be9da89e05d8d.js:2
+dc2be9da89e05d8d.js:2   WARN  [Statsig] Failed to flush events.
+(anonymous) @ dc2be9da89e05d8d.js:2
+dc2be9da89e05d8d.js:2   WARN  [Statsig] Unable to save failed logs to storage
+(anonymous) @ dc2be9da89e05d8d.js:2
+injected.js:37 [ProactiveErrorDetector] Sending batch of 6 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+injected.js:37 [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764304691953&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+dc2be9da89e05d8d.js:2  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764304691953&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1. TypeError: Failed to fetch TypeError: Failed to fetch
+    at dc2be9da89e05d8d.js:2:106527
+    at t.<anonymous> (06e68893bdd5c424.js:2:45850)
+    at Object.next (aef1f2c6f8544e95.js:2:11778)
+    at 06e68893bdd5c424.js:2:42952
+    at new Promise (<anonymous>)
+    at u (06e68893bdd5c424.js:2:42706)
+    at t.value (06e68893bdd5c424.js:2:44940)
+    at 06e68893bdd5c424.js:2:31768
+    at e.value (06e68893bdd5c424.js:2:32175)
+    at e.<computed> [as _sendRequest] (06e68893bdd5c424.js:2:31708)
+    at t.<anonymous> (06e68893bdd5c424.js:2:47326)
+    at Object.next (aef1f2c6f8544e95.js:2:11778)
+    at s (06e68893bdd5c424.js:2:42762)
+(anonymous) @ dc2be9da89e05d8d.js:2
+dc2be9da89e05d8d.js:2   WARN  [Statsig] Failed to flush events.
+(anonymous) @ dc2be9da89e05d8d.js:2
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+injected.js:37 [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+injected.js:37 [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/notifications/count:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+injected.js:37 [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications/count...
+(anonymous) @ injected.js:37
+injected.js:37 [HttpInterceptor] Captured http.error: GET /api/notifications/count - 401 Unauthorized
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/messages/unread-count:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+injected.js:37 [ProactiveErrorDetector] Rate limit exceeded (10/min). Error not captured.
+(anonymous) @ injected.js:37
+injected.js:37 [HttpInterceptor] Captured http.error: GET /api/messages/unread-count - 401 Unauthorized
+injected.js:37 [ProactiveErrorDetector] Sending batch of 2 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+injected.js:37 [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/locations/search?q=Buenos%20Aires%20s:1  Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+injected.js:37 [ProactiveErrorDetector] Rate limit exceeded (10/min). Error not captured.
+(anonymous) @ injected.js:37
+injected.js:37 [HttpInterceptor] Captured http.error: GET /api/locations/search?q=Buenos%20Aires%20s - 500 Internal Server Error
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+injected.js:37 [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+injected.js:37 [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+injected.js:37 [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+injected.js:37 [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764304711667&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1520&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5807)
+    at content.js:10:5718
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764304712197&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1520&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5807)
+    at content.js:10:5718
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764304714204&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1520&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5807)
+    at content.js:10:5718
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764304715446&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5807)
+    at content.js:10:5718
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764304715964&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5807)
+    at content.js:10:5718
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5807)
+    at content.js:10:5718
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764304717966&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5807)
+    at content.js:10:5718
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5807)
+    at content.js:10:5718
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764304718706&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1520&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+dc2be9da89e05d8d.js:2  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764304718706&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1520&gz=1. TypeError: Failed to fetch TypeError: Failed to fetch
+    at dc2be9da89e05d8d.js:2:106527
+    at t.<anonymous> (06e68893bdd5c424.js:2:45850)
+    at Object.next (aef1f2c6f8544e95.js:2:11778)
+    at 06e68893bdd5c424.js:2:42952
+    at new Promise (<anonymous>)
+    at u (06e68893bdd5c424.js:2:42706)
+    at t.value (06e68893bdd5c424.js:2:44940)
+    at 06e68893bdd5c424.js:2:31768
+    at e.value (06e68893bdd5c424.js:2:32175)
+    at e.<computed> [as _sendRequest] (06e68893bdd5c424.js:2:31708)
+    at t.<anonymous> (06e68893bdd5c424.js:2:47326)
+    at Object.next (aef1f2c6f8544e95.js:2:11778)
+    at s (06e68893bdd5c424.js:2:42762)
+(anonymous) @ dc2be9da89e05d8d.js:2
+dc2be9da89e05d8d.js:2   WARN  [Statsig] Failed to flush events.
+(anonymous) @ dc2be9da89e05d8d.js:2
+dc2be9da89e05d8d.js:2   WARN  [Statsig] Unable to save failed logs to storage
+(anonymous) @ dc2be9da89e05d8d.js:2
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5807)
+    at content.js:10:5718
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5807)
+    at content.js:10:5718
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5807)
+    at content.js:10:5718
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5807)
+    at content.js:10:5718
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5807)
+    at content.js:10:5718
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5807)
+    at content.js:10:5718
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5807)
+    at content.js:10:5718
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5807)
+    at content.js:10:5718
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5807)
+    at content.js:10:5718
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764304722487&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+dc2be9da89e05d8d.js:2  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1764304722487&sid=6b0abb66-adcc-4ba3-8fb6-3d593c878420&ec=1&gz=1. TypeError: Failed to fetch TypeError: Failed to fetch
+    at dc2be9da89e05d8d.js:2:106527
+    at t.<anonymous> (06e68893bdd5c424.js:2:45850)
+    at Object.next (aef1f2c6f8544e95.js:2:11778)
+    at 06e68893bdd5c424.js:2:42952
+    at new Promise (<anonymous>)
+    at u (06e68893bdd5c424.js:2:42706)
+    at t.value (06e68893bdd5c424.js:2:44940)
+    at 06e68893bdd5c424.js:2:31768
+    at e.value (06e68893bdd5c424.js:2:32175)
+    at e.<computed> [as _sendRequest] (06e68893bdd5c424.js:2:31708)
+    at t.<anonymous> (06e68893bdd5c424.js:2:47326)
+    at Object.next (aef1f2c6f8544e95.js:2:11778)
+    at s (06e68893bdd5c424.js:2:42762)
+(anonymous) @ dc2be9da89e05d8d.js:2
+dc2be9da89e05d8d.js:2   WARN  [Statsig] Failed to flush events.
+(anonymous) @ dc2be9da89e05d8d.js:2
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5807)
+    at content.js:10:5718
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5807)
+    at content.js:10:5718
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/notifications?limit=10&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+injected.js:37 [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications?limit=10&offset=0...
+(anonymous) @ injected.js:37
+injected.js:37 [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5807)
+    at content.js:10:5718
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5807)
+    at content.js:10:5718
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5807)
+    at content.js:10:5718
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/notifications/count:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+injected.js:37 [ProactiveErrorDetector] Rate limit exceeded (10/min). Error not captured.
+(anonymous) @ injected.js:37
+injected.js:37 [HttpInterceptor] Captured http.error: GET /api/notifications/count - 401 Unauthorized
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/messages/unread-count:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+injected.js:37 [ProactiveErrorDetector] Rate limit exceeded (10/min). Error not captured.
+(anonymous) @ injected.js:37
+injected.js:37 [HttpInterceptor] Captured http.error: GET /api/messages/unread-count - 401 Unauthorized
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5807)
+    at content.js:10:5718
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5807)
+    at content.js:10:5718
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5807)
+    at content.js:10:5718
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5807)
+    at content.js:10:5718
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5807)
+    at content.js:10:5718
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5807)
+    at content.js:10:5718
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5807)
+    at content.js:10:5718
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5807)
+    at content.js:10:5718
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5807)
+    at content.js:10:5718
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5807)
+    at content.js:10:5718
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5807)
+    at content.js:10:5718
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5807)
+    at content.js:10:5718
+injected.js:37 [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5807)
+    at content.js:10:5718
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5807)
+    at content.js:10:5718
+injected.js:37 [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5807)
+    at content.js:10:5718
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5807)
+    at content.js:10:5718
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5807)
+    at content.js:10:5718
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5807)
+    at content.js:10:5718
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5807)
+    at content.js:10:5718
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5807)
+    at content.js:10:5718
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5807)
+    at content.js:10:5718
+injected.js:214  GET https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/notifications?limit=10&offset=0 401 (Unauthorized)
+apply @ injected.js:214
+window.fetch @ httpInterceptor.ts:38
+queryFn @ UnifiedTopBar.tsx:96
+fetchFn @ @tanstack_react-query.js?v=9ea95b04:840
+run @ @tanstack_react-query.js?v=9ea95b04:494
+start @ @tanstack_react-query.js?v=9ea95b04:536
+fetch @ @tanstack_react-query.js?v=9ea95b04:926
+executeFetch_fn @ @tanstack_react-query.js?v=9ea95b04:2211
+(anonymous) @ @tanstack_react-query.js?v=9ea95b04:2245
+injected.js:37 [ProactiveErrorDetector] Rate limit exceeded (10/min). Error not captured.
+(anonymous) @ injected.js:37
+captureError @ proactiveErrorDetection.ts:220
+reportError @ proactiveErrorDetection.ts:397
+window.fetch @ httpInterceptor.ts:50
+await in window.fetch
+queryFn @ UnifiedTopBar.tsx:96
+fetchFn @ @tanstack_react-query.js?v=9ea95b04:840
+run @ @tanstack_react-query.js?v=9ea95b04:494
+start @ @tanstack_react-query.js?v=9ea95b04:536
+fetch @ @tanstack_react-query.js?v=9ea95b04:926
+executeFetch_fn @ @tanstack_react-query.js?v=9ea95b04:2211
+(anonymous) @ @tanstack_react-query.js?v=9ea95b04:2245
+injected.js:37 [HttpInterceptor] Captured http.error: GET /api/notifications?limit=10&offset=0 - 401 Unauthorized
+injected.js:37 [ComponentHealthMonitor] Running 1 health checks...
+dc2be9da89e05d8d.js:2  POST https://events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820 net::ERR_BLOCKED_BY_CLIENT
+(anonymous) @ dc2be9da89e05d8d.js:2
+(anonymous) @ dc2be9da89e05d8d.js:2
+promise @ 52785b3d6a238a05.js:2
+(anonymous) @ 52785b3d6a238a05.js:2
+n.httpRequest @ 52785b3d6a238a05.js:2
+t @ 52785b3d6a238a05.js:2
+a.sendChunk @ 52785b3d6a238a05.js:2
+a.sendEvents @ 52785b3d6a238a05.js:2
+s.flush @ 52785b3d6a238a05.js:2
+e @ 52785b3d6a238a05.js:2
+o @ dc2be9da89e05d8d.js:2
+setTimeout
+(anonymous) @ dc2be9da89e05d8d.js:2
+e @ 52785b3d6a238a05.js:2
+o @ dc2be9da89e05d8d.js:2
+dc2be9da89e05d8d.js:2  POST https://events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820 net::ERR_BLOCKED_BY_CLIENT
+(anonymous) @ dc2be9da89e05d8d.js:2
+(anonymous) @ dc2be9da89e05d8d.js:2
+promise @ 52785b3d6a238a05.js:2
+(anonymous) @ 52785b3d6a238a05.js:2
+n.httpRequest @ 52785b3d6a238a05.js:2
+t @ 52785b3d6a238a05.js:2
+(anonymous) @ 52785b3d6a238a05.js:2
+Promise.catch
+t @ 52785b3d6a238a05.js:2
+a.sendChunk @ 52785b3d6a238a05.js:2
+a.sendEvents @ 52785b3d6a238a05.js:2
+s.flush @ 52785b3d6a238a05.js:2
+e @ 52785b3d6a238a05.js:2
+o @ dc2be9da89e05d8d.js:2
+setTimeout
+(anonymous) @ dc2be9da89e05d8d.js:2
+e @ 52785b3d6a238a05.js:2
+o @ dc2be9da89e05d8d.js:2
+injected.js:37 [ComponentHealthMonitor] ✅ Component health check passed: UnifiedLocationPicker
