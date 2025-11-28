@@ -32,6 +32,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/UnifiedLocationPicker";
 const formSchema = z.object({
   name: z.string().min(3, "Name must be at least 3 characters"),
   slug: z.string().min(3, "Slug must be at least 3 characters").regex(/^[a-z0-9-]+$/, "Slug must be lowercase letters, numbers, and hyphens only"),
@@ -282,63 +283,22 @@ export function GroupCreationModal({ open, onOpenChange }: GroupCreationModalPro
               />
             </div>
 
-            <div className="grid grid-cols-3 gap-4">
-              <FormField
-                control={form.control}
-                name="city"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>City</FormLabel>
-                    <FormControl>
-                      <Input 
-                        placeholder="Barcelona" 
-                        {...field} 
-                        value={field.value || ""}
-                        data-testid="input-group-city"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="region"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Region/State</FormLabel>
-                    <FormControl>
-                      <Input 
-                        placeholder="Catalonia" 
-                        {...field}
-                        value={field.value || ""}
-                        data-testid="input-group-region"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="country"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Country</FormLabel>
-                    <FormControl>
-                      <Input 
-                        placeholder="Spain" 
-                        {...field}
-                        value={field.value || ""}
-                        data-testid="input-group-country"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+            <div className="space-y-4">
+              <FormItem>
+                <FormLabel>Home City</FormLabel>
+                <FormDescription>Select the city for your group</FormDescription>
+                <UnifiedLocationPicker
+                  mode="city"
+                  value={form.getValues("city") ? `${form.getValues("city")}, ${form.getValues("country") || ""}`.replace(/, $/, "") : ""}
+                  placeholder="Search for a city..."
+                  onChange={(location, coords, parsed) => {
+                    const { city, country } = extractCityCountry(location);
+                    form.setValue("city", city);
+                    form.setValue("country", country);
+                    form.setValue("region", parsed?.state || "");
+                  }}
+                />
+              </FormItem>
             </div>
 
             {/* Privacy & Permissions */}

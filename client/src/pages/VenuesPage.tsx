@@ -10,6 +10,7 @@ import { MapPin, Star, Clock, Phone, Globe, Search, Music, Navigation } from "lu
 import { Link } from "wouter";
 import { AppLayout } from "@/components/AppLayout";
 import { motion } from "framer-motion";
+import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/UnifiedLocationPicker";
 
 export default function VenuesPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -87,12 +88,15 @@ export default function VenuesPage() {
                   data-testid="input-search-venues"
                 />
               </div>
-              <Input
-                placeholder="Filter by city..."
+              <UnifiedLocationPicker
+                mode="city"
                 value={cityFilter}
-                onChange={(e) => setCityFilter(e.target.value)}
+                placeholder="Filter by city..."
+                onChange={(location, coords, parsed) => {
+                  const { city } = extractCityCountry(location);
+                  setCityFilter(city || location);
+                }}
                 className="h-12"
-                data-testid="input-filter-city"
               />
               <Select value={venueTypeFilter} onValueChange={setVenueTypeFilter}>
                 <SelectTrigger className="h-12" data-testid="select-venue-type">

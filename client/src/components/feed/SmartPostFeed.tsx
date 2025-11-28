@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Search, SlidersHorizontal, Calendar, MapPin, Image as ImageIcon, Video, TrendingUp, Clock, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { formatDistanceToNow } from "date-fns";
+import { UnifiedLocationPicker } from "@/components/input/UnifiedLocationPicker";
 
 interface Post {
   id: number;
@@ -317,12 +318,12 @@ function SmartPostFeedComponent({ posts, onFilterChange, children }: SmartPostFe
                     <MapPin className="w-3.5 h-3.5" style={{ color: '#40E0D0' }} />
                     Location
                   </label>
-                  <Input
+                  <UnifiedLocationPicker
+                    mode="city"
+                    placeholder="Filter by city..."
                     value={locationFilter}
-                    onChange={(e) => setLocationFilter(e.target.value)}
-                    placeholder="Filter by location..."
                     className="bg-white/50 dark:bg-black/20"
-                    data-testid="input-location-filter"
+                    onChange={(location) => setLocationFilter(location)}
                   />
                 </div>
               </div>

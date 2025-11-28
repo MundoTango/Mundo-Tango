@@ -16,6 +16,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useLocation } from "wouter";
+import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/UnifiedLocationPicker";
 
 interface UserData {
   id: number;
@@ -249,32 +250,23 @@ export default function ProfileEditPage() {
                       />
                     </div>
 
-                    <div className="grid gap-4 sm:grid-cols-2">
-                      <div>
-                        <Label htmlFor="city" className="text-base font-medium">
-                          <div className="flex items-center gap-2">
-                            <MapPin className="h-4 w-4" />
-                            City
-                          </div>
-                        </Label>
-                        <Input 
-                          id="city" 
-                          value={city}
-                          onChange={(e) => setCity(e.target.value)}
-                          data-testid="input-city" 
-                          className="h-12" 
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="country" className="text-base font-medium">Country</Label>
-                        <Input 
-                          id="country" 
-                          value={country}
-                          onChange={(e) => setCountry(e.target.value)}
-                          data-testid="input-country" 
-                          className="h-12" 
-                        />
-                      </div>
+                    <div>
+                      <Label className="text-base font-medium">
+                        <div className="flex items-center gap-2">
+                          <MapPin className="h-4 w-4" />
+                          Location
+                        </div>
+                      </Label>
+                      <UnifiedLocationPicker
+                        mode="city"
+                        value={[city, country].filter(Boolean).join(', ')}
+                        onChange={(loc, coords, parsed) => {
+                          const { city: newCity, country: newCountry } = extractCityCountry(loc);
+                          setCity(newCity);
+                          setCountry(newCountry);
+                        }}
+                        placeholder="Search for your city..."
+                      />
                     </div>
                   </CardContent>
                 </Card>

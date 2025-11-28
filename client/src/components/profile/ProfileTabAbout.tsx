@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/UnifiedLocationPicker";
 
 interface User {
   id: number;
@@ -145,20 +146,15 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
               Location
             </h3>
             {isEditing ? (
-              <div className="space-y-2">
-                <Input 
-                  placeholder="City" 
-                  value={editValues.city || ''} 
-                  onChange={(e) => setEditValues({ ...editValues, city: e.target.value })}
-                  data-testid="input-city"
-                />
-                <Input 
-                  placeholder="Country" 
-                  value={editValues.country || ''} 
-                  onChange={(e) => setEditValues({ ...editValues, country: e.target.value })}
-                  data-testid="input-country"
-                />
-              </div>
+              <UnifiedLocationPicker
+                mode="city"
+                value={[editValues.city, editValues.country].filter(Boolean).join(', ')}
+                onChange={(loc, coords, parsed) => {
+                  const { city, country } = extractCityCountry(loc);
+                  setEditValues({ ...editValues, city, country });
+                }}
+                placeholder="Search for your city..."
+              />
             ) : (
               <p className="text-base">
                 {[user.city, user.country].filter(Boolean).join(', ') || <span className="text-muted-foreground italic">No location set</span>}

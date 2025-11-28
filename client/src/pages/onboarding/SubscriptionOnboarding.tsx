@@ -13,6 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
+import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/UnifiedLocationPicker";
 import {
   CheckCircle2,
   ArrowRight,
@@ -29,6 +30,7 @@ import {
   Lock,
   X,
   AlertCircle,
+  MapPin,
 } from "lucide-react";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY || '');
@@ -411,12 +413,14 @@ function ProfileCompletionStep({
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
+    location: '',
     city: '',
+    country: '',
     tangoRoles: [] as string[],
   });
 
   const completionPercentage = Math.round(
-    (Object.values(formData).filter((v) => Array.isArray(v) ? v.length > 0 : v.trim()).length / 4) * 100
+    (Object.values(formData).filter((v) => Array.isArray(v) ? v.length > 0 : (typeof v === 'string' && v.trim())).length / 5) * 100
   );
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -467,14 +471,26 @@ function ProfileCompletionStep({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="city">City</Label>
-              <Input
-                id="city"
-                value={formData.city}
-                onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                placeholder="Buenos Aires"
-                data-testid="input-city"
+              <Label htmlFor="location">Location</Label>
+              <UnifiedLocationPicker
+                mode="city"
+                value={formData.location}
+                onChange={(loc, coords, parsed) => {
+                  setFormData({
+                    ...formData,
+                    location: loc,
+                    city: parsed?.city || '',
+                    country: parsed?.country || ''
+                  });
+                }}
+                placeholder="Search for your city..."
               />
+              {formData.city && formData.country && (
+                <div className="flex items-center gap-2 p-3 rounded-lg bg-primary/10 border border-primary/20 mt-2">
+                  <MapPin className="h-4 w-4 text-primary" />
+                  <span className="text-sm font-medium">{formData.city}, {formData.country}</span>
+                </div>
+              )}
             </div>
 
             <div className="space-y-2">

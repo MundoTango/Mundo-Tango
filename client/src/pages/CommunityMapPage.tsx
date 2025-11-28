@@ -1,14 +1,13 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Search, Layers, Users, Calendar, Building2 } from "lucide-react";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapPin, Layers, Users, Calendar, Building2 } from "lucide-react";
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
+import { UnifiedLocationPicker } from "@/components/input/UnifiedLocationPicker";
 
 // Fix leaflet default icon issue
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -18,8 +17,17 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
+function MapCenterController({ center }: { center: { lat: number; lng: number } | null }) {
+  const map = useMap();
+  if (center && center.lat !== 0 && center.lng !== 0) {
+    map.setView([center.lat, center.lng], 10);
+  }
+  return null;
+}
+
 export default function CommunityMapPage() {
   const [searchLocation, setSearchLocation] = useState("");
+  const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number } | null>(null);
   const [activeFilters, setActiveFilters] = useState<string[]>(["users", "events", "venues"]);
 
   const { data: markers, isLoading } = useQuery<any[]>({
@@ -42,14 +50,16 @@ export default function CommunityMapPage() {
           </div>
           
           <div className="flex gap-2">
-            <div className="relative w-full md:w-64">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search location..."
+            <div className="w-full md:w-72">
+              <UnifiedLocationPicker
+                mode="city"
+                placeholder="Search for a city..."
                 value={searchLocation}
-                onChange={(e) => setSearchLocation(e.target.value)}
-                className="pl-10"
-                data-testid="input-search-location"
+                coordinates={mapCenter || undefined}
+                onChange={(location, coordinates) => {
+                  setSearchLocation(location);
+                  setMapCenter(coordinates);
+                }}
               />
             </div>
           </div>
@@ -104,14 +114,15 @@ export default function CommunityMapPage() {
             ) : (
               <div className="h-[600px] rounded-lg overflow-hidden" data-testid="map-container">
                 <MapContainer
-                  center={[0, 0]}
-                  zoom={2}
+                  center={mapCenter ? [mapCenter.lat, mapCenter.lng] : [0, 0]}
+                  zoom={mapCenter ? 10 : 2}
                   style={{ height: "100%", width: "100%" }}
                 >
                   <TileLayer
                     url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
                     attribution='&copy; <a href="https://carto.com/attributions">CARTO</a>'
                   />
+                  <MapCenterController center={mapCenter} />
                   <MarkerClusterGroup chunkedLoading>
                     {markers?.map((marker) => (
                       <Marker

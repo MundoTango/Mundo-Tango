@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Search, Users, MapPin, Plus, TrendingUp } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
+import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/UnifiedLocationPicker";
 
 export default function CityGroupsPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -59,14 +60,15 @@ export default function CityGroupsPage() {
         </div>
 
         <div className="flex flex-col md:flex-row gap-4">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search city groups..."
+          <div className="flex-1">
+            <UnifiedLocationPicker
+              mode="city"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10"
-              data-testid="input-search-groups"
+              placeholder="Search city groups..."
+              onChange={(location, coords, parsed) => {
+                const { city } = extractCityCountry(location);
+                setSearchQuery(city || location);
+              }}
             />
           </div>
         </div>

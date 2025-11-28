@@ -16,6 +16,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Award, Star, Users, TrendingUp, CheckCircle, Edit, Save, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useUser } from "@/hooks/use-user";
+import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/UnifiedLocationPicker";
 
 const resumeSchema = z.object({
   headline: z.string().optional(),
@@ -457,10 +458,44 @@ export default function TangoResume() {
                         name="teachingLocations"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Teaching Locations (comma-separated)</FormLabel>
+                            <FormLabel>Teaching Location</FormLabel>
                             <FormControl>
-                              <Input {...field} placeholder="Buenos Aires, New York" data-testid="input-locations" />
+                              <UnifiedLocationPicker
+                                mode="city"
+                                value={field.value || ''}
+                                onChange={(loc) => {
+                                  const currentLocations = field.value ? field.value.split(',').map(s => s.trim()).filter(Boolean) : [];
+                                  if (loc && !currentLocations.includes(loc)) {
+                                    const newValue = [...currentLocations, loc].join(', ');
+                                    field.onChange(newValue);
+                                  }
+                                }}
+                                placeholder="Search to add a location..."
+                              />
                             </FormControl>
+                            {field.value && (
+                              <div className="flex flex-wrap gap-1 mt-2">
+                                {field.value.split(',').map((loc: string, idx: number) => {
+                                  const trimmedLoc = loc.trim();
+                                  if (!trimmedLoc) return null;
+                                  return (
+                                    <Badge 
+                                      key={idx} 
+                                      variant="secondary" 
+                                      className="cursor-pointer"
+                                      onClick={() => {
+                                        const locs = field.value.split(',').map((s: string) => s.trim()).filter(Boolean);
+                                        const filtered = locs.filter((_: string, i: number) => i !== idx);
+                                        field.onChange(filtered.join(', '));
+                                      }}
+                                    >
+                                      {trimmedLoc}
+                                      <X className="w-3 h-3 ml-1" />
+                                    </Badge>
+                                  );
+                                })}
+                              </div>
+                            )}
                             <FormMessage />
                           </FormItem>
                         )}

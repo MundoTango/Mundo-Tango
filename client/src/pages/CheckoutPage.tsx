@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -7,8 +8,20 @@ import { CreditCard, Lock, ShoppingCart } from "lucide-react";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { motion } from "framer-motion";
 import { SEO } from "@/components/SEO";
+import { UnifiedLocationPicker } from "@/components/input/UnifiedLocationPicker";
+
+interface BillingAddress {
+  fullAddress: string;
+  street?: string;
+  city?: string;
+  state?: string;
+  country?: string;
+  postalCode?: string;
+  coordinates: { lat: number; lng: number };
+}
 
 export default function CheckoutPage() {
+  const [billingAddress, setBillingAddress] = useState<BillingAddress | null>(null);
   return (
     <SelfHealingErrorBoundary pageName="Checkout" fallbackRoute="/pricing">
       <SEO 
@@ -90,19 +103,39 @@ export default function CheckoutPage() {
                       <Input id="name" data-testid="input-name" />
                     </div>
                     <div>
-                      <Label htmlFor="address">Address</Label>
-                      <Input id="address" data-testid="input-address" />
+                      <UnifiedLocationPicker
+                        mode="address"
+                        label="Billing Address"
+                        placeholder="Start typing your address..."
+                        value={billingAddress?.fullAddress || ""}
+                        onChange={(location, coordinates, parsed) => {
+                          if (parsed) {
+                            setBillingAddress({
+                              fullAddress: parsed.fullAddress,
+                              street: parsed.street,
+                              city: parsed.city,
+                              state: parsed.state,
+                              country: parsed.country,
+                              postalCode: parsed.postalCode,
+                              coordinates: parsed.coordinates,
+                            });
+                          } else {
+                            setBillingAddress(null);
+                          }
+                        }}
+                      />
                     </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="city">City</Label>
-                        <Input id="city" data-testid="input-city" />
+                    {billingAddress && (
+                      <div className="text-sm text-muted-foreground p-3 bg-muted/30 rounded-lg space-y-1">
+                        {billingAddress.street && <p>{billingAddress.street}</p>}
+                        <p>
+                          {billingAddress.city && `${billingAddress.city}, `}
+                          {billingAddress.state && `${billingAddress.state} `}
+                          {billingAddress.postalCode && billingAddress.postalCode}
+                        </p>
+                        {billingAddress.country && <p>{billingAddress.country}</p>}
                       </div>
-                      <div>
-                        <Label htmlFor="zip">ZIP Code</Label>
-                        <Input id="zip" data-testid="input-zip" />
-                      </div>
-                    </div>
+                    )}
                   </CardContent>
                 </Card>
               </div>

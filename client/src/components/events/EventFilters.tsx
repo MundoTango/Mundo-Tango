@@ -32,6 +32,7 @@ import {
   Search
 } from "lucide-react";
 import { format } from "date-fns";
+import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/UnifiedLocationPicker";
 
 interface EventFiltersProps {
   onFilterChange: (filters: EventFilterValues) => void;
@@ -194,11 +195,14 @@ export function EventFilters({ onFilterChange, initialFilters = {} }: EventFilte
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <Input
-            placeholder="City or location..."
+          <UnifiedLocationPicker
             value={filters.city}
-            onChange={(e) => updateFilters({ city: e.target.value })}
-            data-testid="input-city"
+            onChange={(location, coordinates, parsed) => {
+              const { city } = extractCityCountry(location);
+              updateFilters({ city: city || location });
+            }}
+            mode="city"
+            placeholder="Search for a city..."
           />
         </CardContent>
       </Card>

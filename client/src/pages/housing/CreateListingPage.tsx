@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { apiRequest } from "@/lib/queryClient";
 import { PhotoUpload } from "@/components/housing/PhotoUpload";
+import { UnifiedLocationPicker } from "@/components/input/UnifiedLocationPicker";
 import {
   Form,
   FormControl,
@@ -299,23 +300,35 @@ export default function CreateListingPage() {
                     />
                   </div>
 
-                  <FormField
-                    control={form.control}
-                    name="address"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Address</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="Street address"
-                            data-testid="input-address"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
+                  <FormItem>
+                    <FormLabel>Property Address</FormLabel>
+                    <FormControl>
+                      <UnifiedLocationPicker
+                        mode="address"
+                        value={form.watch("address")}
+                        placeholder="Search for property address..."
+                        onChange={(location, coordinates, parsed) => {
+                          if (parsed) {
+                            form.setValue("address", parsed.street || location);
+                            form.setValue("city", parsed.city || "");
+                            form.setValue("country", parsed.country || "");
+                          } else {
+                            form.setValue("address", location);
+                          }
+                        }}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Search for your property address to auto-fill location details
+                    </FormDescription>
+                    {(form.formState.errors.address || form.formState.errors.city || form.formState.errors.country) && (
+                      <p className="text-sm font-medium text-destructive">
+                        {form.formState.errors.address?.message || 
+                         form.formState.errors.city?.message || 
+                         form.formState.errors.country?.message}
+                      </p>
                     )}
-                  />
+                  </FormItem>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <FormField
@@ -325,7 +338,7 @@ export default function CreateListingPage() {
                         <FormItem>
                           <FormLabel>City</FormLabel>
                           <FormControl>
-                            <Input data-testid="input-city" {...field} />
+                            <Input data-testid="input-city" {...field} readOnly className="bg-muted" />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -339,7 +352,7 @@ export default function CreateListingPage() {
                         <FormItem>
                           <FormLabel>Country</FormLabel>
                           <FormControl>
-                            <Input data-testid="input-country" {...field} />
+                            <Input data-testid="input-country" {...field} readOnly className="bg-muted" />
                           </FormControl>
                           <FormMessage />
                         </FormItem>

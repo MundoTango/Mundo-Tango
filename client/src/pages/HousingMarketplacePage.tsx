@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search, MapPin, DollarSign, Users, Heart, Home, Plus } from "lucide-react";
+import { UnifiedLocationPicker } from "@/components/input/UnifiedLocationPicker";
 
 export default function HousingMarketplacePage() {
   const [city, setCity] = useState("");
@@ -38,16 +39,18 @@ export default function HousingMarketplacePage() {
         <Card>
           <CardContent className="pt-6">
             <div className="grid md:grid-cols-4 gap-4">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="City..."
-                  value={city}
-                  onChange={(e) => setCity(e.target.value)}
-                  className="pl-10"
-                  data-testid="input-search-city"
-                />
-              </div>
+              <UnifiedLocationPicker
+                mode="city"
+                value={city}
+                placeholder="Search city..."
+                onChange={(location, coordinates, parsed) => {
+                  if (parsed) {
+                    setCity(parsed.city || location);
+                  } else {
+                    setCity(location);
+                  }
+                }}
+              />
               
               <Select value={propertyType} onValueChange={setPropertyType}>
                 <SelectTrigger data-testid="select-property-type">

@@ -16,6 +16,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
+import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/UnifiedLocationPicker";
 import heroImage from "@assets/stock_images/elegant_professional_9405e610.jpg";
 
 const tangoRoles = [
@@ -43,6 +44,7 @@ const tangoRoles = [
 export default function OnboardingPage() {
   const [, setLocation] = useLocation();
   const [currentStep, setCurrentStep] = useState(1);
+  const [location, setLocationValue] = useState("");
   const [city, setCity] = useState("");
   const [country, setCountry] = useState("");
   const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
@@ -187,27 +189,31 @@ export default function OnboardingPage() {
                       
                       <div className="space-y-6 max-w-md mx-auto">
                         <div className="space-y-3">
-                          <Label htmlFor="city" className="text-base font-medium">City</Label>
-                          <Input
-                            id="city"
-                            value={city}
-                            onChange={(e) => setCity(e.target.value)}
-                            placeholder="Buenos Aires"
-                            className="h-12 text-base"
-                            data-testid="input-city"
+                          <Label htmlFor="location" className="text-base font-medium">Your Location</Label>
+                          <UnifiedLocationPicker
+                            mode="city"
+                            value={location}
+                            onChange={(loc, coords, parsed) => {
+                              setLocationValue(loc);
+                              setCity(parsed?.city || '');
+                              setCountry(parsed?.country || '');
+                            }}
+                            placeholder="Search for your city..."
                           />
                         </div>
-                        <div className="space-y-3">
-                          <Label htmlFor="country" className="text-base font-medium">Country</Label>
-                          <Input
-                            id="country"
-                            value={country}
-                            onChange={(e) => setCountry(e.target.value)}
-                            placeholder="Argentina"
-                            className="h-12 text-base"
-                            data-testid="input-country"
-                          />
-                        </div>
+                        {city && country && (
+                          <motion.div 
+                            className="flex items-center gap-2 p-4 rounded-xl bg-primary/10 border border-primary/20"
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                          >
+                            <MapPin className="h-5 w-5 text-primary" />
+                            <div>
+                              <p className="font-medium">{city}</p>
+                              <p className="text-sm text-muted-foreground">{country}</p>
+                            </div>
+                          </motion.div>
+                        )}
                       </div>
                     </div>
                   )}

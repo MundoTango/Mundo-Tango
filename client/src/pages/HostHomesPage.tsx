@@ -25,6 +25,7 @@ import { useToast } from "@/hooks/use-toast";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { motion } from "framer-motion";
 import { SEO } from "@/components/SEO";
+import { UnifiedLocationPicker } from "@/components/input/UnifiedLocationPicker";
 import type { SelectHousingListing } from "@shared/schema";
 import heroImage from "@assets/stock_images/professional_office__9e53fcce.jpg";
 
@@ -365,17 +366,21 @@ function HostHomesPageContent() {
                 {/* Location Filters */}
                 <div className="space-y-3">
                   <Label className="text-sm font-semibold">Location</Label>
-                  <Input
-                    placeholder="City"
-                    value={filters.city}
-                    onChange={(e) => setFilters({ ...filters, city: e.target.value })}
-                    data-testid="input-filter-city"
-                  />
-                  <Input
-                    placeholder="Country"
-                    value={filters.country}
-                    onChange={(e) => setFilters({ ...filters, country: e.target.value })}
-                    data-testid="input-filter-country"
+                  <UnifiedLocationPicker
+                    mode="city"
+                    value={filters.city ? `${filters.city}${filters.country ? `, ${filters.country}` : ''}` : ''}
+                    placeholder="Search city..."
+                    onChange={(location, coordinates, parsed) => {
+                      if (parsed) {
+                        setFilters({ 
+                          ...filters, 
+                          city: parsed.city || '',
+                          country: parsed.country || ''
+                        });
+                      } else {
+                        setFilters({ ...filters, city: location, country: '' });
+                      }
+                    }}
                   />
                 </div>
 
@@ -767,14 +772,29 @@ function HostHomesPageContent() {
                 <h3 className="text-lg font-semibold">Location</h3>
                 <div className="space-y-4">
                   <div>
-                    <Label htmlFor="address">Street Address *</Label>
-                    <Input
-                      id="address"
-                      placeholder="e.g., Calle Defensa 755"
+                    <Label>Property Address *</Label>
+                    <UnifiedLocationPicker
+                      mode="address"
                       value={formData.address}
-                      onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                      data-testid="input-address"
+                      placeholder="Search for your property address..."
+                      onChange={(location, coordinates, parsed) => {
+                        if (parsed) {
+                          setFormData({ 
+                            ...formData, 
+                            address: parsed.street || location,
+                            city: parsed.city || '',
+                            country: parsed.country || '',
+                            latitude: coordinates.lat.toString(),
+                            longitude: coordinates.lng.toString(),
+                          });
+                        } else {
+                          setFormData({ ...formData, address: location });
+                        }
+                      }}
                     />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Search for your address to auto-fill location details
+                    </p>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
@@ -783,7 +803,8 @@ function HostHomesPageContent() {
                         id="city"
                         placeholder="e.g., Buenos Aires"
                         value={formData.city}
-                        onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                        readOnly
+                        className="bg-muted"
                         data-testid="input-city"
                       />
                     </div>
@@ -793,29 +814,32 @@ function HostHomesPageContent() {
                         id="country"
                         placeholder="e.g., Argentina"
                         value={formData.country}
-                        onChange={(e) => setFormData({ ...formData, country: e.target.value })}
+                        readOnly
+                        className="bg-muted"
                         data-testid="input-country"
                       />
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="latitude">Latitude (optional)</Label>
+                      <Label htmlFor="latitude">Latitude</Label>
                       <Input
                         id="latitude"
-                        placeholder="e.g., -34.6214"
+                        placeholder="Auto-filled from address"
                         value={formData.latitude}
-                        onChange={(e) => setFormData({ ...formData, latitude: e.target.value })}
+                        readOnly
+                        className="bg-muted"
                         data-testid="input-latitude"
                       />
                     </div>
                     <div>
-                      <Label htmlFor="longitude">Longitude (optional)</Label>
+                      <Label htmlFor="longitude">Longitude</Label>
                       <Input
                         id="longitude"
-                        placeholder="e.g., -58.3731"
+                        placeholder="Auto-filled from address"
                         value={formData.longitude}
-                        onChange={(e) => setFormData({ ...formData, longitude: e.target.value })}
+                        readOnly
+                        className="bg-muted"
                         data-testid="input-longitude"
                       />
                     </div>

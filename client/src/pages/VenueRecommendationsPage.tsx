@@ -15,6 +15,7 @@ import { useToast } from "@/hooks/use-toast";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { motion } from "framer-motion";
 import { SEO } from "@/components/SEO";
+import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/UnifiedLocationPicker";
 
 interface VenueRecommendation {
   id: number;
@@ -284,34 +285,35 @@ export default function VenueRecommendationsPage() {
 
                     <div className="col-span-2">
                       <Label htmlFor="address">Address *</Label>
-                      <Input
-                        id="address"
-                        placeholder="Full street address"
+                      <UnifiedLocationPicker
+                        mode="address"
                         value={newVenue.address}
-                        onChange={(e) => setNewVenue({ ...newVenue, address: e.target.value })}
-                        data-testid="input-address"
+                        placeholder="Search for a street address..."
+                        onChange={(location, coords, parsed) => {
+                          setNewVenue({
+                            ...newVenue,
+                            address: parsed?.street || location,
+                            city: parsed?.city || newVenue.city,
+                            country: parsed?.country || newVenue.country,
+                          });
+                        }}
                       />
                     </div>
 
-                    <div>
-                      <Label htmlFor="city">City *</Label>
-                      <Input
-                        id="city"
-                        placeholder="e.g., Buenos Aires"
-                        value={newVenue.city}
-                        onChange={(e) => setNewVenue({ ...newVenue, city: e.target.value })}
-                        data-testid="input-city"
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="country">Country</Label>
-                      <Input
-                        id="country"
-                        placeholder="e.g., Argentina"
-                        value={newVenue.country}
-                        onChange={(e) => setNewVenue({ ...newVenue, country: e.target.value })}
-                        data-testid="input-country"
+                    <div className="col-span-2">
+                      <Label>City & Country</Label>
+                      <UnifiedLocationPicker
+                        mode="city"
+                        value={newVenue.city ? `${newVenue.city}, ${newVenue.country || ""}`.replace(/, $/, "") : ""}
+                        placeholder="Search for a city..."
+                        onChange={(location, coords, parsed) => {
+                          const { city, country } = extractCityCountry(location);
+                          setNewVenue({
+                            ...newVenue,
+                            city: city,
+                            country: country,
+                          });
+                        }}
                       />
                     </div>
 
@@ -437,11 +439,14 @@ export default function VenueRecommendationsPage() {
                   data-testid="filter-cuisine"
                 />
 
-                <Input
-                  placeholder="City..."
+                <UnifiedLocationPicker
+                  mode="city"
                   value={filters.city}
-                  onChange={(e) => setFilters({ ...filters, city: e.target.value })}
-                  data-testid="filter-city"
+                  placeholder="Filter by city..."
+                  onChange={(location, coords, parsed) => {
+                    const { city } = extractCityCountry(location);
+                    setFilters({ ...filters, city: city || location });
+                  }}
                 />
 
                 <Select value={filters.priceLevel || "all"} onValueChange={(val) => setFilters({ ...filters, priceLevel: val === 'all' ? '' : val })}>
@@ -628,16 +633,34 @@ export default function VenueRecommendationsPage() {
                     </div>
                     <div className="col-span-2">
                       <Label>Address</Label>
-                      <Input
+                      <UnifiedLocationPicker
+                        mode="address"
                         value={editingVenue.address}
-                        onChange={(e) => setEditingVenue({ ...editingVenue, address: e.target.value })}
+                        placeholder="Search for a street address..."
+                        onChange={(location, coords, parsed) => {
+                          setEditingVenue({
+                            ...editingVenue,
+                            address: parsed?.street || location,
+                            city: parsed?.city || editingVenue.city,
+                            country: parsed?.country || editingVenue.country,
+                          });
+                        }}
                       />
                     </div>
-                    <div>
+                    <div className="col-span-2">
                       <Label>City</Label>
-                      <Input
-                        value={editingVenue.city}
-                        onChange={(e) => setEditingVenue({ ...editingVenue, city: e.target.value })}
+                      <UnifiedLocationPicker
+                        mode="city"
+                        value={editingVenue.city ? `${editingVenue.city}, ${editingVenue.country || ""}`.replace(/, $/, "") : ""}
+                        placeholder="Search for a city..."
+                        onChange={(location, coords, parsed) => {
+                          const { city, country } = extractCityCountry(location);
+                          setEditingVenue({
+                            ...editingVenue,
+                            city: city,
+                            country: country || editingVenue.country,
+                          });
+                        }}
                       />
                     </div>
                     <div>

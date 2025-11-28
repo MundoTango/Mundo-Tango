@@ -14,6 +14,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Search, MapPin, DollarSign, Users, Heart, Home, Calendar as CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { apiRequest } from "@/lib/queryClient";
+import { UnifiedLocationPicker } from "@/components/input/UnifiedLocationPicker";
 
 export default function HousingSearchPage() {
   const [checkInDate, setCheckInDate] = useState<Date>();
@@ -100,13 +101,22 @@ export default function HousingSearchPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="city">City</Label>
-                  <Input
-                    id="city"
-                    placeholder="Buenos Aires"
+                  <Label>Location</Label>
+                  <UnifiedLocationPicker
+                    mode="city"
                     value={searchCriteria.city}
-                    onChange={(e) => setSearchCriteria({ ...searchCriteria, city: e.target.value })}
-                    data-testid="input-city"
+                    placeholder="Search for a city..."
+                    onChange={(location, coordinates, parsed) => {
+                      if (parsed) {
+                        setSearchCriteria({ 
+                          ...searchCriteria, 
+                          city: parsed.city || location,
+                          country: parsed.country || ""
+                        });
+                      } else {
+                        setSearchCriteria({ ...searchCriteria, city: location });
+                      }
+                    }}
                   />
                 </div>
 

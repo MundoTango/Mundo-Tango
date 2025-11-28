@@ -41,6 +41,7 @@ import { Settings, Trash2, Shield } from "lucide-react";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import type { SelectGroup } from "@shared/schema";
+import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/UnifiedLocationPicker";
 
 const settingsFormSchema = z.object({
   name: z.string().min(3, "Name must be at least 3 characters"),
@@ -351,47 +352,21 @@ export function GroupSettingsPanel({ group, canManage = false }: GroupSettingsPa
                 </TabsContent>
 
                 <TabsContent value="location" className="space-y-4 mt-4">
-                  <FormField
-                    control={form.control}
-                    name="city"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>City</FormLabel>
-                        <FormControl>
-                          <Input {...field} value={field.value || ""} data-testid="input-settings-city" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="region"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Region/State</FormLabel>
-                        <FormControl>
-                          <Input {...field} value={field.value || ""} data-testid="input-settings-region" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="country"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Country</FormLabel>
-                        <FormControl>
-                          <Input {...field} value={field.value || ""} data-testid="input-settings-country" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  <FormItem>
+                    <FormLabel>Home City</FormLabel>
+                    <FormDescription>Select the city for your group</FormDescription>
+                    <UnifiedLocationPicker
+                      mode="city"
+                      value={form.getValues("city") ? `${form.getValues("city")}, ${form.getValues("country") || ""}`.replace(/, $/, "") : ""}
+                      placeholder="Search for a city..."
+                      onChange={(location, coords, parsed) => {
+                        const { city, country } = extractCityCountry(location);
+                        form.setValue("city", city);
+                        form.setValue("country", country);
+                        form.setValue("region", parsed?.state || "");
+                      }}
+                    />
+                  </FormItem>
                 </TabsContent>
               </Tabs>
 

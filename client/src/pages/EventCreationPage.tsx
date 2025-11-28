@@ -15,6 +15,7 @@ import { Calendar as CalendarIcon, MapPin, DollarSign, Users, Image as ImageIcon
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/UnifiedLocationPicker";
 
 export default function EventCreationPage() {
   const [, navigate] = useLocation();
@@ -27,8 +28,10 @@ export default function EventCreationPage() {
     eventType: "milonga",
     venue: "",
     address: "",
+    location: "",
     city: "",
     country: "",
+    coordinates: { lat: 0, lng: 0 },
     isFree: true,
     price: "",
     maxCapacity: "",
@@ -50,17 +53,23 @@ export default function EventCreationPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.title || !startDate || !formData.city) {
+    if (!formData.title || !startDate || !formData.location) {
       toast({ title: "Please fill in all required fields", variant: "destructive" });
       return;
     }
 
+    const { city, country } = extractCityCountry(formData.location);
+
     createMutation.mutate({
       ...formData,
+      city,
+      country,
       startDate: startDate.toISOString(),
       endDate: endDate?.toISOString() || startDate.toISOString(),
       price: formData.isFree ? null : parseFloat(formData.price),
       maxCapacity: formData.maxCapacity ? parseInt(formData.maxCapacity) : null,
+      latitude: formData.coordinates.lat || null,
+      longitude: formData.coordinates.lng || null,
     });
   };
 
@@ -176,40 +185,34 @@ export default function EventCreationPage() {
                 </div>
               </div>
 
-              <div className="grid md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="city">City *</Label>
-                  <Input
-                    id="city"
-                    placeholder="Buenos Aires"
-                    value={formData.city}
-                    onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                    required
-                    data-testid="input-city"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="country">Country *</Label>
-                  <Input
-                    id="country"
-                    placeholder="Argentina"
-                    value={formData.country}
-                    onChange={(e) => setFormData({ ...formData, country: e.target.value })}
-                    required
-                    data-testid="input-country"
-                  />
-                </div>
+              <div className="space-y-2">
+                <Label>Event Location *</Label>
+                <UnifiedLocationPicker
+                  value={formData.location}
+                  coordinates={formData.coordinates}
+                  onChange={(location, coordinates, parsed) => {
+                    setFormData({ 
+                      ...formData, 
+                      location,
+                      city: parsed?.city || "",
+                      country: parsed?.country || "",
+                      coordinates 
+                    });
+                  }}
+                  mode="city"
+                  placeholder="Search for a city (e.g., Buenos Aires, Argentina)"
+                />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="address">Address</Label>
-                <Input
-                  id="address"
-                  placeholder="Full address"
+                <Label>Venue Address</Label>
+                <UnifiedLocationPicker
                   value={formData.address}
-                  onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                  data-testid="input-address"
+                  onChange={(address, coordinates) => {
+                    setFormData({ ...formData, address });
+                  }}
+                  mode="address"
+                  placeholder="Search for venue address"
                 />
               </div>
 

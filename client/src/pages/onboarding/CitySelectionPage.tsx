@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -9,12 +8,12 @@ import { useToast } from "@/hooks/use-toast";
 import { MapPin, Loader2, ChevronRight } from "lucide-react";
 import { SEO } from "@/components/SEO";
 import { useAuth } from "@/contexts/AuthContext";
-import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { motion } from "framer-motion";
+import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/UnifiedLocationPicker";
 import heroImage from "@assets/stock_images/global_world_map_con_854a9c2d.jpg";
 
-interface CitySuggestion {
+interface SelectedCity {
   display_name: string;
   name: string;
   country: string;
@@ -25,10 +24,8 @@ export default function CitySelectionPage() {
   const { user } = useAuth();
   const { toast } = useToast();
   const [citySearch, setCitySearch] = useState("");
-  const [suggestions, setSuggestions] = useState<CitySuggestion[]>([]);
-  const [selectedCity, setSelectedCity] = useState<CitySuggestion | null>(null);
+  const [selectedCity, setSelectedCity] = useState<SelectedCity | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [isSearching, setIsSearching] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -37,60 +34,6 @@ export default function CitySelectionPage() {
       navigate("/feed");
     }
   }, [user, navigate]);
-
-  useEffect(() => {
-    const searchCities = async () => {
-      if (citySearch.length < 2) {
-        setSuggestions([]);
-        return;
-      }
-
-      setIsSearching(true);
-      try {
-        const response = await fetch(
-          `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
-            citySearch
-          )}&format=json&limit=5&addressdetails=1&featuretype=city`,
-          {
-            headers: {
-              'User-Agent': 'MundoTango/1.0'
-            }
-          }
-        );
-        
-        if (!response.ok) {
-          console.error("Nominatim API error:", response.status);
-          setSuggestions([]);
-          return;
-        }
-        
-        const data = await response.json();
-        console.log("City search results:", data);
-        
-        const cities = data.map((result: any) => ({
-          display_name: result.display_name,
-          name: result.address?.city || result.address?.town || result.address?.village || result.name,
-          country: result.address?.country || "Unknown",
-        })).filter((city: any) => city.name);
-        
-        setSuggestions(cities);
-      } catch (error) {
-        console.error("City search error:", error);
-        setSuggestions([]);
-      } finally {
-        setIsSearching(false);
-      }
-    };
-
-    const debounce = setTimeout(searchCities, 300);
-    return () => clearTimeout(debounce);
-  }, [citySearch]);
-
-  const handleCitySelect = (city: CitySuggestion) => {
-    setSelectedCity(city);
-    setCitySearch(city.name);
-    setSuggestions([]);
-  };
 
   const handleContinue = async () => {
     if (!selectedCity) {
@@ -203,43 +146,21 @@ export default function CitySelectionPage() {
               <CardContent className="p-8 space-y-6">
                 <div className="space-y-3">
                   <Label htmlFor="city" className="text-base font-medium">Search for your city</Label>
-                  <div className="relative">
-                    <Input
-                      id="city"
-                      type="text"
-                      placeholder="Enter city name..."
-                      value={citySearch}
-                      onChange={(e) => setCitySearch(e.target.value)}
-                      disabled={isLoading}
-                      className="h-12 text-base"
-                      data-testid="input-city-search"
-                    />
-                    {isSearching && (
-                      <Loader2 className="absolute right-3 top-4 h-4 w-4 animate-spin text-muted-foreground" />
-                    )}
-                  </div>
+                  <UnifiedLocationPicker
+                    mode="city"
+                    value={citySearch}
+                    onChange={(loc, coords, parsed) => {
+                      setSelectedCity({
+                        display_name: loc,
+                        name: parsed?.city || '',
+                        country: parsed?.country || ''
+                      });
+                      setCitySearch(loc);
+                    }}
+                    placeholder="Search for your city..."
+                  />
 
-                  {suggestions.length > 0 && (
-                    <motion.div 
-                      className="border rounded-xl bg-card shadow-lg max-h-60 overflow-y-auto"
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                    >
-                      {suggestions.map((city, index) => (
-                        <button
-                          key={index}
-                          onClick={() => handleCitySelect(city)}
-                          className="w-full text-left px-6 py-4 hover-elevate active-elevate-2 border-b last:border-b-0"
-                          data-testid={`city-suggestion-${index}`}
-                        >
-                          <div className="font-medium text-base">{city.name}</div>
-                          <div className="text-sm text-muted-foreground">{city.country}</div>
-                        </button>
-                      ))}
-                    </motion.div>
-                  )}
-
-                  {selectedCity && (
+                  {selectedCity && selectedCity.name && (
                     <motion.div 
                       className="flex items-center gap-2 p-4 rounded-xl bg-primary/10 border border-primary/20"
                       initial={{ opacity: 0, scale: 0.95 }}

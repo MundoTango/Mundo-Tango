@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ChevronRight, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { UnifiedLocationPicker } from "@/components/input/UnifiedLocationPicker";
 
 type Step = "shipping" | "payment" | "review";
 
@@ -150,79 +151,48 @@ export function CheckoutWizard({ onComplete, isProcessing = false }: CheckoutWiz
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="address">Address</Label>
-                <Input
-                  id="address"
+                <UnifiedLocationPicker
+                  mode="address"
+                  label="Shipping Address"
+                  placeholder="Start typing your address..."
                   value={formData.shipping.address}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      shipping: { ...formData.shipping, address: e.target.value },
-                    })
-                  }
-                  data-testid="input-address"
+                  onChange={(location, coordinates, parsed) => {
+                    if (parsed) {
+                      setFormData({
+                        ...formData,
+                        shipping: {
+                          ...formData.shipping,
+                          address: parsed.street || location,
+                          city: parsed.city || "",
+                          state: parsed.state || "",
+                          zipCode: parsed.postalCode || "",
+                          country: parsed.country || "USA",
+                        },
+                      });
+                    } else {
+                      setFormData({
+                        ...formData,
+                        shipping: {
+                          ...formData.shipping,
+                          address: location,
+                        },
+                      });
+                    }
+                  }}
                 />
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="city">City</Label>
-                  <Input
-                    id="city"
-                    value={formData.shipping.city}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        shipping: { ...formData.shipping, city: e.target.value },
-                      })
-                    }
-                    data-testid="input-city"
-                  />
+              {formData.shipping.city && (
+                <div className="text-sm text-muted-foreground p-3 bg-white/5 border border-white/10 rounded-lg space-y-1">
+                  <p className="font-medium text-foreground">Parsed Address:</p>
+                  {formData.shipping.address && <p>{formData.shipping.address}</p>}
+                  <p>
+                    {formData.shipping.city && `${formData.shipping.city}, `}
+                    {formData.shipping.state && `${formData.shipping.state} `}
+                    {formData.shipping.zipCode && formData.shipping.zipCode}
+                  </p>
+                  {formData.shipping.country && <p>{formData.shipping.country}</p>}
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="state">State</Label>
-                  <Input
-                    id="state"
-                    value={formData.shipping.state}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        shipping: { ...formData.shipping, state: e.target.value },
-                      })
-                    }
-                    data-testid="input-state"
-                  />
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="zipCode">ZIP Code</Label>
-                  <Input
-                    id="zipCode"
-                    value={formData.shipping.zipCode}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        shipping: { ...formData.shipping, zipCode: e.target.value },
-                      })
-                    }
-                    data-testid="input-zip"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="country">Country</Label>
-                  <Input
-                    id="country"
-                    value={formData.shipping.country}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        shipping: { ...formData.shipping, country: e.target.value },
-                      })
-                    }
-                    data-testid="input-country"
-                  />
-                </div>
-              </div>
+              )}
             </>
           )}
 

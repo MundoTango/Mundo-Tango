@@ -14,6 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { SiTiktok } from "react-icons/si";
+import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/UnifiedLocationPicker";
 
 const TANGO_ROLES = [
   { value: "dancer", label: "Dancer", icon: UserCircle },
@@ -570,28 +571,18 @@ export default function ProfilePrototypePage() {
               </Select>
             </div>
 
-            {/* City & Country */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="city" className="text-base font-semibold">City</Label>
-                <Input
-                  id="city"
-                  value={editData.city}
-                  onChange={(e) => setEditData(prev => ({ ...prev, city: e.target.value }))}
-                  placeholder="Buenos Aires"
-                  data-testid="input-city"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="country" className="text-base font-semibold">Country</Label>
-                <Input
-                  id="country"
-                  value={editData.country}
-                  onChange={(e) => setEditData(prev => ({ ...prev, country: e.target.value }))}
-                  placeholder="Argentina"
-                  data-testid="input-country"
-                />
-              </div>
+            {/* Location */}
+            <div className="space-y-2">
+              <Label className="text-base font-semibold">Location</Label>
+              <UnifiedLocationPicker
+                mode="city"
+                value={[editData.city, editData.country].filter(Boolean).join(', ')}
+                onChange={(loc, coords, parsed) => {
+                  const { city, country } = extractCityCountry(loc);
+                  setEditData(prev => ({ ...prev, city, country }));
+                }}
+                placeholder="Search for your city..."
+              />
             </div>
 
             {/* Social Links */}
