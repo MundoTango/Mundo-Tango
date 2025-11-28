@@ -35,7 +35,7 @@ interface ProfileTabAboutProps {
 export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [editingField, setEditingField] = useState<string | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
   const [editValues, setEditValues] = useState<Record<string, any>>({});
 
   const updateProfileMutation = useMutation({
@@ -45,7 +45,8 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/users"] });
-      setEditingField(null);
+      setIsEditing(false);
+      setEditValues({});
       toast({ title: "Profile updated!" });
     },
     onError: () => {
@@ -53,38 +54,78 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
     },
   });
 
-  const handleEdit = (field: string, value: any) => {
-    setEditingField(field);
-    setEditValues({ ...editValues, [field]: value });
+  const handleEdit = () => {
+    setEditValues({
+      bio: user.bio || '',
+      city: user.city || '',
+      country: user.country || '',
+      tangoRoles: (user.tangoRoles || []).join(', '),
+      yearsOfDancing: user.yearsOfDancing || '',
+      leaderLevel: user.leaderLevel || '',
+      followerLevel: user.followerLevel || '',
+      primaryLanguage: user.primaryLanguage || '',
+      languages: (user.languages || []).join(', '),
+    });
+    setIsEditing(true);
   };
 
-  const handleSave = (field: string) => {
-    updateProfileMutation.mutate({ [field]: editValues[field] });
+  const handleSave = () => {
+    const roles = (editValues.tangoRoles || '').split(',').map((r: string) => r.trim().toLowerCase()).filter(Boolean);
+    const additionalLangs = (editValues.languages || '').split(',').map((l: string) => l.trim()).filter(Boolean);
+    
+    updateProfileMutation.mutate({
+      bio: editValues.bio || null,
+      city: editValues.city || null,
+      country: editValues.country || null,
+      tangoRoles: roles,
+      yearsOfDancing: editValues.yearsOfDancing ? parseInt(editValues.yearsOfDancing) : 0,
+      leaderLevel: editValues.leaderLevel ? parseInt(editValues.leaderLevel) : 0,
+      followerLevel: editValues.followerLevel ? parseInt(editValues.followerLevel) : 0,
+      primaryLanguage: editValues.primaryLanguage || null,
+      languages: additionalLangs,
+    });
   };
 
   const handleCancel = () => {
-    setEditingField(null);
+    setIsEditing(false);
     setEditValues({});
   };
 
   return (
     <div className="space-y-6">
-      {/* Bio Section */}
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
+        <CardHeader className="flex flex-row items-center justify-between gap-4">
           <CardTitle className="flex items-center gap-2">
             <Info className="w-5 h-5" />
             About
           </CardTitle>
-          {isOwnProfile && editingField !== 'bio' && (
-            <Button size="sm" variant="ghost" onClick={() => handleEdit('bio', user.bio || '')} data-testid="button-edit-bio">
-              <Edit className="w-4 h-4" />
+          {isOwnProfile && (
+            <Button 
+              size="sm" 
+              variant={isEditing ? "default" : "ghost"} 
+              onClick={isEditing ? handleSave : handleEdit}
+              disabled={updateProfileMutation.isPending}
+              data-testid="button-edit-about"
+            >
+              {isEditing ? (
+                <>
+                  <Check className="w-4 h-4 mr-2" />
+                  Save
+                </>
+              ) : (
+                <>
+                  <Edit className="w-4 h-4" />
+                </>
+              )}
             </Button>
           )}
         </CardHeader>
-        <CardContent>
-          {editingField === 'bio' ? (
-            <div className="space-y-3">
+        
+        <CardContent className="space-y-6">
+          {/* Bio */}
+          <div>
+            <h3 className="text-sm font-medium text-muted-foreground mb-2">Bio</h3>
+            {isEditing ? (
               <Textarea 
                 value={editValues.bio || ''} 
                 onChange={(e) => setEditValues({ ...editValues, bio: e.target.value })}
@@ -92,277 +133,206 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
                 rows={4}
                 data-testid="input-bio"
               />
-              <div className="flex gap-2">
-                <Button size="sm" onClick={() => handleSave('bio')} disabled={updateProfileMutation.isPending} data-testid="button-save-bio">
-                  <Check className="w-4 h-4 mr-2" />Save
-                </Button>
-                <Button size="sm" variant="outline" onClick={handleCancel} data-testid="button-cancel-bio">
-                  <X className="w-4 h-4 mr-2" />Cancel
-                </Button>
-              </div>
-            </div>
-          ) : (
-            <p className="text-base leading-relaxed">{user.bio || <span className="text-muted-foreground italic">No bio yet</span>}</p>
-          )}
-        </CardContent>
-      </Card>
+            ) : (
+              <p className="text-base leading-relaxed">{user.bio || <span className="text-muted-foreground italic">No bio yet</span>}</p>
+            )}
+          </div>
 
-      {/* Location */}
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
-            <MapPin className="w-5 h-5" />
-            Location
-          </CardTitle>
-          {isOwnProfile && editingField !== 'location' && (
-            <Button size="sm" variant="ghost" onClick={() => handleEdit('location', `${user.city || ''},${user.country || ''}`)} data-testid="button-edit-location">
-              <Edit className="w-4 h-4" />
-            </Button>
-          )}
-        </CardHeader>
-        <CardContent>
-          {editingField === 'location' ? (
-            <div className="space-y-3">
-              <Input 
-                placeholder="City" 
-                value={editValues.city || user.city || ''} 
-                onChange={(e) => setEditValues({ ...editValues, city: e.target.value })}
-                data-testid="input-city"
-              />
-              <Input 
-                placeholder="Country" 
-                value={editValues.country || user.country || ''} 
-                onChange={(e) => setEditValues({ ...editValues, country: e.target.value })}
-                data-testid="input-country"
-              />
-              <div className="flex gap-2">
-                <Button size="sm" onClick={() => handleSave('location')} disabled={updateProfileMutation.isPending} data-testid="button-save-location">
-                  <Check className="w-4 h-4 mr-2" />Save
-                </Button>
-                <Button size="sm" variant="outline" onClick={handleCancel} data-testid="button-cancel-location">
-                  <X className="w-4 h-4 mr-2" />Cancel
-                </Button>
+          {/* Location */}
+          <div>
+            <h3 className="text-sm font-medium text-muted-foreground mb-2 flex items-center gap-1">
+              <MapPin className="w-4 h-4" />
+              Location
+            </h3>
+            {isEditing ? (
+              <div className="space-y-2">
+                <Input 
+                  placeholder="City" 
+                  value={editValues.city || ''} 
+                  onChange={(e) => setEditValues({ ...editValues, city: e.target.value })}
+                  data-testid="input-city"
+                />
+                <Input 
+                  placeholder="Country" 
+                  value={editValues.country || ''} 
+                  onChange={(e) => setEditValues({ ...editValues, country: e.target.value })}
+                  data-testid="input-country"
+                />
               </div>
-            </div>
-          ) : (
-            <p className="text-base">
-              {[user.city, user.country].filter(Boolean).join(', ') || <span className="text-muted-foreground italic">No location set</span>}
-            </p>
-          )}
-        </CardContent>
-      </Card>
+            ) : (
+              <p className="text-base">
+                {[user.city, user.country].filter(Boolean).join(', ') || <span className="text-muted-foreground italic">No location set</span>}
+              </p>
+            )}
+          </div>
 
-      {/* Tango Roles */}
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
-            <Award className="w-5 h-5" />
-            Tango Roles
-          </CardTitle>
-          {isOwnProfile && editingField !== 'tangoRoles' && (
-            <Button size="sm" variant="ghost" onClick={() => handleEdit('tangoRoles', (user.tangoRoles || []).join(', '))} data-testid="button-edit-roles">
-              <Edit className="w-4 h-4" />
-            </Button>
-          )}
-        </CardHeader>
-        <CardContent>
-          {editingField === 'tangoRoles' ? (
-            <div className="space-y-3">
+          {/* Tango Roles */}
+          <div>
+            <h3 className="text-sm font-medium text-muted-foreground mb-2 flex items-center gap-1">
+              <Award className="w-4 h-4" />
+              Tango Roles
+            </h3>
+            {isEditing ? (
               <Input 
                 placeholder="e.g., teacher, dancer-leader, organizer (comma-separated)" 
                 value={editValues.tangoRoles || ''} 
                 onChange={(e) => setEditValues({ ...editValues, tangoRoles: e.target.value })}
                 data-testid="input-tango-roles"
               />
-              <div className="flex gap-2">
-                <Button size="sm" onClick={() => {
-                  const roles = (editValues.tangoRoles || '').split(',').map((r: string) => r.trim().toLowerCase()).filter(Boolean);
-                  updateProfileMutation.mutate({ tangoRoles: roles });
-                }} disabled={updateProfileMutation.isPending} data-testid="button-save-roles">
-                  <Check className="w-4 h-4 mr-2" />Save
-                </Button>
-                <Button size="sm" variant="outline" onClick={handleCancel} data-testid="button-cancel-roles">
-                  <X className="w-4 h-4 mr-2" />Cancel
-                </Button>
-              </div>
-            </div>
-          ) : (
-            <div className="flex flex-wrap gap-2">
-              {user.tangoRoles && user.tangoRoles.length > 0 ? (
-                user.tangoRoles.map((role) => (
-                  <Badge key={role} variant="secondary" className="capitalize">
-                    {role.replace(/_/g, ' ')}
-                  </Badge>
-                ))
-              ) : (
-                <span className="text-muted-foreground italic">No roles set</span>
-              )}
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Dance Experience */}
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
-            <Users className="w-5 h-5" />
-            Dance Experience
-          </CardTitle>
-          {isOwnProfile && editingField !== 'dance' && (
-            <Button size="sm" variant="ghost" onClick={() => handleEdit('dance', null)} data-testid="button-edit-dance">
-              <Edit className="w-4 h-4" />
-            </Button>
-          )}
-        </CardHeader>
-        <CardContent>
-          {editingField === 'dance' ? (
-            <div className="space-y-3">
-              <div>
-                <label className="text-sm text-muted-foreground">Years of Dancing</label>
-                <Input 
-                  type="number" 
-                  placeholder="e.g., 5" 
-                  value={editValues.yearsOfDancing || user.yearsOfDancing || ''} 
-                  onChange={(e) => setEditValues({ ...editValues, yearsOfDancing: parseInt(e.target.value) || 0 })}
-                  data-testid="input-years-dancing"
-                />
-              </div>
-              <div>
-                <label className="text-sm text-muted-foreground">Leader Level (1-10)</label>
-                <Input 
-                  type="number" 
-                  min="1" 
-                  max="10" 
-                  placeholder="e.g., 7" 
-                  value={editValues.leaderLevel || user.leaderLevel || ''} 
-                  onChange={(e) => setEditValues({ ...editValues, leaderLevel: parseInt(e.target.value) || 0 })}
-                  data-testid="input-leader-level"
-                />
-              </div>
-              <div>
-                <label className="text-sm text-muted-foreground">Follower Level (1-10)</label>
-                <Input 
-                  type="number" 
-                  min="1" 
-                  max="10" 
-                  placeholder="e.g., 8" 
-                  value={editValues.followerLevel || user.followerLevel || ''} 
-                  onChange={(e) => setEditValues({ ...editValues, followerLevel: parseInt(e.target.value) || 0 })}
-                  data-testid="input-follower-level"
-                />
-              </div>
-              <div className="flex gap-2">
-                <Button size="sm" onClick={() => handleSave('dance')} disabled={updateProfileMutation.isPending} data-testid="button-save-dance">
-                  <Check className="w-4 h-4 mr-2" />Save
-                </Button>
-                <Button size="sm" variant="outline" onClick={handleCancel} data-testid="button-cancel-dance">
-                  <X className="w-4 h-4 mr-2" />Cancel
-                </Button>
-              </div>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {user.yearsOfDancing && (
-                <div>
-                  <p className="text-sm text-muted-foreground">Years of Dancing</p>
-                  <p className="text-base font-medium">{user.yearsOfDancing} years</p>
-                </div>
-              )}
-              {user.leaderLevel !== undefined && user.leaderLevel > 0 && (
-                <div>
-                  <p className="text-sm text-muted-foreground">Leader Level</p>
-                  <p className="text-base font-medium">Level {user.leaderLevel}</p>
-                </div>
-              )}
-              {user.followerLevel !== undefined && user.followerLevel > 0 && (
-                <div>
-                  <p className="text-sm text-muted-foreground">Follower Level</p>
-                  <p className="text-base font-medium">Level {user.followerLevel}</p>
-                </div>
-              )}
-              {!user.yearsOfDancing && !user.leaderLevel && !user.followerLevel && (
-                <span className="text-muted-foreground italic">No dance experience set</span>
-              )}
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Languages */}
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
-            <Languages className="w-5 h-5" />
-            Languages
-          </CardTitle>
-          {isOwnProfile && editingField !== 'languages' && (
-            <Button size="sm" variant="ghost" onClick={() => handleEdit('languages', { primary: user.primaryLanguage || '', additional: (user.languages || []).join(', ') })} data-testid="button-edit-languages">
-              <Edit className="w-4 h-4" />
-            </Button>
-          )}
-        </CardHeader>
-        <CardContent>
-          {editingField === 'languages' ? (
-            <div className="space-y-4">
-              <div>
-                <label className="text-sm text-muted-foreground flex items-center gap-1 mb-2">
-                  <Star className="w-3 h-3 text-yellow-500" /> Primary Language
-                </label>
-                <Input 
-                  placeholder="e.g., English" 
-                  value={editValues.primaryLanguage || user.primaryLanguage || ''} 
-                  onChange={(e) => setEditValues({ ...editValues, primaryLanguage: e.target.value })}
-                  data-testid="input-primary-language"
-                />
-              </div>
-              <div>
-                <label className="text-sm text-muted-foreground mb-2 block">Additional Languages</label>
-                <Input 
-                  placeholder="e.g., Spanish, Italian (comma-separated)" 
-                  value={editValues.languages || (user.languages || []).join(', ')} 
-                  onChange={(e) => setEditValues({ ...editValues, languages: e.target.value })}
-                  data-testid="input-languages"
-                />
-              </div>
-              <div className="flex gap-2">
-                <Button size="sm" onClick={() => {
-                  const additionalLangs = (editValues.languages || '').split(',').map((l: string) => l.trim()).filter(Boolean);
-                  updateProfileMutation.mutate({ 
-                    primaryLanguage: editValues.primaryLanguage || user.primaryLanguage,
-                    languages: additionalLangs 
-                  });
-                }} disabled={updateProfileMutation.isPending} data-testid="button-save-languages">
-                  <Check className="w-4 h-4 mr-2" />Save
-                </Button>
-                <Button size="sm" variant="outline" onClick={handleCancel} data-testid="button-cancel-languages">
-                  <X className="w-4 h-4 mr-2" />Cancel
-                </Button>
-              </div>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {user.primaryLanguage && (
-                <div className="flex items-center gap-2">
-                  <Badge variant="default" className="flex items-center gap-1" data-testid="badge-primary-language">
-                    <Star className="w-3 h-3" />
-                    {user.primaryLanguage}
-                  </Badge>
-                  <span className="text-xs text-muted-foreground">Primary</span>
-                </div>
-              )}
-              {user.languages && user.languages.length > 0 && (
-                <div className="flex flex-wrap gap-2">
-                  {user.languages.map((lang) => (
-                    <Badge key={lang} variant="outline" data-testid={`badge-lang-${lang.toLowerCase()}`}>
-                      {lang}
+            ) : (
+              <div className="flex flex-wrap gap-2">
+                {user.tangoRoles && user.tangoRoles.length > 0 ? (
+                  user.tangoRoles.map((role) => (
+                    <Badge key={role} variant="secondary" className="capitalize">
+                      {role.replace(/_/g, ' ')}
                     </Badge>
-                  ))}
+                  ))
+                ) : (
+                  <span className="text-muted-foreground italic">No roles set</span>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Dance Experience */}
+          <div>
+            <h3 className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-1">
+              <Users className="w-4 h-4" />
+              Dance Experience
+            </h3>
+            {isEditing ? (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div>
+                  <label className="text-xs text-muted-foreground block mb-1">Years of Dancing</label>
+                  <Input 
+                    type="number" 
+                    placeholder="e.g., 5" 
+                    value={editValues.yearsOfDancing || ''} 
+                    onChange={(e) => setEditValues({ ...editValues, yearsOfDancing: e.target.value })}
+                    data-testid="input-years-dancing"
+                  />
                 </div>
-              )}
-              {!user.primaryLanguage && (!user.languages || user.languages.length === 0) && (
-                <span className="text-muted-foreground italic">No languages set</span>
-              )}
+                <div>
+                  <label className="text-xs text-muted-foreground block mb-1">Leader Level (1-10)</label>
+                  <Input 
+                    type="number" 
+                    min="1" 
+                    max="10" 
+                    placeholder="e.g., 7" 
+                    value={editValues.leaderLevel || ''} 
+                    onChange={(e) => setEditValues({ ...editValues, leaderLevel: e.target.value })}
+                    data-testid="input-leader-level"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs text-muted-foreground block mb-1">Follower Level (1-10)</label>
+                  <Input 
+                    type="number" 
+                    min="1" 
+                    max="10" 
+                    placeholder="e.g., 8" 
+                    value={editValues.followerLevel || ''} 
+                    onChange={(e) => setEditValues({ ...editValues, followerLevel: e.target.value })}
+                    data-testid="input-follower-level"
+                  />
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {user.yearsOfDancing && (
+                  <div>
+                    <p className="text-xs text-muted-foreground">Years of Dancing</p>
+                    <p className="text-sm font-medium">{user.yearsOfDancing} years</p>
+                  </div>
+                )}
+                {user.leaderLevel !== undefined && user.leaderLevel > 0 && (
+                  <div>
+                    <p className="text-xs text-muted-foreground">Leader Level</p>
+                    <p className="text-sm font-medium">Level {user.leaderLevel}</p>
+                  </div>
+                )}
+                {user.followerLevel !== undefined && user.followerLevel > 0 && (
+                  <div>
+                    <p className="text-xs text-muted-foreground">Follower Level</p>
+                    <p className="text-sm font-medium">Level {user.followerLevel}</p>
+                  </div>
+                )}
+                {!user.yearsOfDancing && !user.leaderLevel && !user.followerLevel && (
+                  <span className="text-muted-foreground italic">No dance experience set</span>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Languages */}
+          <div>
+            <h3 className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-1">
+              <Languages className="w-4 h-4" />
+              Languages
+            </h3>
+            {isEditing ? (
+              <div className="space-y-3">
+                <div>
+                  <label className="text-xs text-muted-foreground flex items-center gap-1 mb-1">
+                    <Star className="w-3 h-3 text-yellow-500" /> Primary Language
+                  </label>
+                  <Input 
+                    placeholder="e.g., English" 
+                    value={editValues.primaryLanguage || ''} 
+                    onChange={(e) => setEditValues({ ...editValues, primaryLanguage: e.target.value })}
+                    data-testid="input-primary-language"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs text-muted-foreground block mb-1">Additional Languages</label>
+                  <Input 
+                    placeholder="e.g., Spanish, Italian (comma-separated)" 
+                    value={editValues.languages || ''} 
+                    onChange={(e) => setEditValues({ ...editValues, languages: e.target.value })}
+                    data-testid="input-languages"
+                  />
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {user.primaryLanguage && (
+                  <div className="flex items-center gap-2">
+                    <Badge variant="default" className="flex items-center gap-1" data-testid="badge-primary-language">
+                      <Star className="w-3 h-3" />
+                      {user.primaryLanguage}
+                    </Badge>
+                    <span className="text-xs text-muted-foreground">Primary</span>
+                  </div>
+                )}
+                {user.languages && user.languages.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {user.languages.map((lang) => (
+                      <Badge key={lang} variant="outline" data-testid={`badge-lang-${lang.toLowerCase()}`}>
+                        {lang}
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+                {!user.primaryLanguage && (!user.languages || user.languages.length === 0) && (
+                  <span className="text-muted-foreground italic">No languages set</span>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Cancel Button */}
+          {isEditing && (
+            <div className="flex gap-2 pt-2">
+              <Button 
+                size="sm" 
+                variant="outline" 
+                onClick={handleCancel}
+                disabled={updateProfileMutation.isPending}
+                data-testid="button-cancel-about"
+              >
+                <X className="w-4 h-4 mr-2" />
+                Cancel
+              </Button>
             </div>
           )}
         </CardContent>
