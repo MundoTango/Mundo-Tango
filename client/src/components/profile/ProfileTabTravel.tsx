@@ -384,11 +384,23 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
 
   const deleteTripMutation = useMutation({
     mutationFn: async (tripId: number) => {
-      await apiRequest("DELETE", `/api/travel/plans/${tripId}`);
+      const res = await apiRequest("DELETE", `/api/travel/plans/${tripId}`);
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(errorText || "Failed to delete trip");
+      }
+      return res.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/travel/plans", profileId] });
-      toast({ title: "Trip deleted" });
+      queryClient.refetchQueries({ 
+        queryKey: ["/api/travel/plans", profileId],
+        type: 'active'
+      });
+      toast({ title: "Trip deleted", description: "Your travel plan has been removed." });
+    },
+    onError: (error: Error) => {
+      toast({ title: "Failed to delete trip", description: error.message || "Please try again.", variant: "destructive" });
     },
   });
 
