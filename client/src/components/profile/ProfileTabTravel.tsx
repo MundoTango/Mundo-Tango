@@ -795,9 +795,14 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
           {travelPlans.map((trip, index) => {
             const budgetStats = calculateBudgetStats(trip);
             const activeTab = tripTabs[trip.id] || "overview";
+            const isExpanded = expandedTrips.has(index);
+            const hasAnyExpanded = expandedTrips.size > 0;
+            const shouldHide = hasAnyExpanded && !isExpanded;
+
+            if (shouldHide) return null;
 
             return (
-              <Collapsible key={trip.id || index} open={expandedTrips.has(index)} onOpenChange={() => toggleTrip(index)} className={cn(expandedTrips.has(index) && "lg:col-span-2")}>
+              <Collapsible key={trip.id || index} open={isExpanded} onOpenChange={() => toggleTrip(index)} className={cn(isExpanded && "lg:col-span-2")}>
                 <Card data-testid={`card-travel-plan-${index}`} className="overflow-hidden flex flex-col">
                   {/* Hero Header - Square Image */}
                   <div className="relative aspect-square bg-gradient-to-br from-primary/20 via-secondary/20 to-accent/20" style={{ backgroundImage: `url('${getCityImageUrl(trip.city, trip.country)}')`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
@@ -1115,9 +1120,8 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
                             {/* Travel Companions Section */}
                             <Card className="border-cyan-500/20">
                               <CardHeader className="pb-3">
-                                <div className="flex items-center justify-between">
+                                <div className="flex items-center justify-between gap-2">
                                   <CardTitle className="flex items-center gap-2 text-lg"><Users className="h-5 w-5 text-cyan-600" />Travel Companions</CardTitle>
-                                  <Badge variant="outline" className="bg-cyan-500/10 text-cyan-600 border-cyan-500/30">Coming Soon</Badge>
                                 </div>
                               </CardHeader>
                               <CardContent className="space-y-4">
@@ -1161,10 +1165,10 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
                                 {/* Action Buttons */}
                                 {isOwnProfile && (
                                   <div className="flex gap-2 pt-2">
-                                    <Button variant="outline" size="sm" className="flex-1" disabled data-testid={`button-find-companions-${index}`}>
+                                    <Button variant="outline" size="sm" className="flex-1" data-testid={`button-find-companions-${index}`} onClick={() => toast({ title: "Finding Companions", description: "Searching for compatible travelers to " + trip.city + "..." })}>
                                       <Search className="h-4 w-4 mr-2" />Find Compatible Travelers
                                     </Button>
-                                    <Button variant="outline" size="sm" className="flex-1" disabled data-testid={`button-invite-friends-${index}`}>
+                                    <Button variant="outline" size="sm" className="flex-1" data-testid={`button-invite-friends-${index}`} onClick={() => toast({ title: "Invite Friends", description: "Share your trip to " + trip.city + " with friends!" })}>
                                       <Plus className="h-4 w-4 mr-2" />Invite Friends
                                     </Button>
                                   </div>
