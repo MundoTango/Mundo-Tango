@@ -100,17 +100,6 @@ export default function ProfileTabsNav({ user, activeTab, onTabChange, isOwnProf
                   <Icon className="w-4 h-4" />
                   <span className="font-medium">{tab.label}</span>
                   
-                  {/* Role badge for professional tabs */}
-                  {isRoleTab && (
-                    <Badge 
-                      variant="secondary" 
-                      className="ml-1 text-[10px] px-1.5 py-0 h-4"
-                      data-testid={`badge-role-${tab.id}`}
-                    >
-                      Pro
-                    </Badge>
-                  )}
-                  
                   {/* Active tab underline */}
                   {isActive && (
                     <motion.div
