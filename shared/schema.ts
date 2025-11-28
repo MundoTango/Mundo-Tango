@@ -60,10 +60,13 @@ export const users = pgTable("users", {
   primaryLanguage: varchar("primary_language"),
   languages: text("languages").array(),
   tangoRoles: text("tango_roles").array(),
+  tangoRoleExperience: jsonb("tango_role_experience").$type<{role: string, startYear: number}[]>(),
   leaderLevel: integer("leader_level").default(0),
   followerLevel: integer("follower_level").default(0),
+  /** @deprecated Use tangoStartYear and tangoRoleExperience instead. Kept for backwards compatibility. */
   yearsOfDancing: integer("years_of_dancing").default(0),
-  startedDancingYear: integer("started_dancing_year"),
+  /** Renamed from startedDancingYear - When the user first started tango (year). Default for all role experiences. */
+  tangoStartYear: integer("tango_start_year"),
   state: varchar("state"),
   countryCode: varchar("country_code"),
   stateCode: varchar("state_code"),
