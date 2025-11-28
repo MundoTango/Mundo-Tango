@@ -1,7 +1,7 @@
 # PRD Index - Mundo Tango
 
 > **Last Updated:** 2025-11-28  
-> **Total PRDs:** 14  
+> **Total PRDs:** 18  
 
 ---
 
@@ -19,7 +19,18 @@ This index links all Product Requirement Documents (PRDs) in the Mundo Tango pla
 | [PRD_PER_ROLE_EXPERIENCE.md](./PRD_PER_ROLE_EXPERIENCE.md) | Per-role experience tracking (JSONB) | `roleExperience.ts`, `schema.ts` | Registration, Profile, Matching, Talent Search (25+ files) |
 | [PRD_UNIFIED_LOCATION_PICKER.md](./PRD_UNIFIED_LOCATION_PICKER.md) | 3-tier smart location search | `UnifiedLocationPicker.tsx` | Travel, Profile, Events, Groups, Onboarding (26 files) |
 | [PRD_UNIFIED_FEEDS_SYSTEM.md](./PRD_UNIFIED_FEEDS_SYSTEM.md) | Unified post/memory display & creation | `UnifiedMemoriesFeed.tsx`, `PostCreator.tsx`, `SmartPostFeed.tsx` | Feed, Profile, Groups, Events, Saved Posts (20+ files) |
+| [PRD_UNIFIED_LANGUAGE_SYSTEM.md](./PRD_UNIFIED_LANGUAGE_SYSTEM.md) | Language picker with i18n sync + AI integration | `UnifiedLanguagePicker.tsx`, `languageData.ts` | Profile, Onboarding, Talent Match, Event Recommendations |
 | [PRD_LOCATION_CHANGE_CASCADE.md](./PRD_LOCATION_CHANGE_CASCADE.md) | Location change effects cascade | `locationChangeEffects.ts`, `LocationChangeWelcome.tsx` | Profile Edit, Notifications, Groups |
+
+---
+
+## User Profile System
+
+| PRD | Purpose | Key Files | Cross-References |
+|-----|---------|-----------|------------------|
+| [PRD_USER_PROFILE_SYSTEM.md](./PRD_USER_PROFILE_SYSTEM.md) | Master profile system documentation (8 tabs) | `ProfilePage.tsx`, `ProfileTab*.tsx` | PRD_UNIFIED_FEEDS_SYSTEM, PRD_UNIFIED_LOCATION_PICKER, PRD_UNIFIED_LANGUAGE_SYSTEM, PRD_UNIFIED_PRO_TAB |
+| [PRD_UNIFIED_PRO_TAB.md](./PRD_UNIFIED_PRO_TAB.md) | Consolidates 17 role-based tabs → 1 PRO tab | `ProfileTabPro.tsx`, `ProDashboard.tsx`, `ProPublicView.tsx` | PRD_TANGO_ROLES_SYSTEM, PRD_PER_ROLE_EXPERIENCE |
+| [PRD_TRAVEL_PLANNING_SYSTEM.md](./PRD_TRAVEL_PLANNING_SYSTEM.md) | Multi-city trip planning with events integration | `ProfileTabTravel.tsx`, `TravelTripPlannerPage.tsx`, `travelPlans` schema | PRD_UNIFIED_LOCATION_PICKER, Events System |
 
 ---
 
@@ -38,7 +49,7 @@ This index links all Product Requirement Documents (PRDs) in the Mundo Tango pla
 
 | PRD | Purpose | Key Integration Points |
 |-----|---------|------------------------|
-| [PRD_ENHANCED_TALENT_MATCH.md](./PRD_ENHANCED_TALENT_MATCH.md) | AI-powered talent matching | Profiles, Search, Recommendations |
+| [PRD_ENHANCED_TALENT_MATCH.md](./PRD_ENHANCED_TALENT_MATCH.md) | AI-powered talent matching | Profiles, Search, Recommendations, Language System |
 | [PRD_LIFE_CEO_FINANCE_ENHANCED.md](./PRD_LIFE_CEO_FINANCE_ENHANCED.md) | Financial planning AI | Life CEO, Goals, Budgeting |
 | [PRD_LIFE_CEO_PRODUCTIVITY_2.0.md](./PRD_LIFE_CEO_PRODUCTIVITY_2.0.md) | Productivity AI assistant | Life CEO, Tasks, Calendar |
 | [PRD_USER_PRIVACY_HUB.md](./PRD_USER_PRIVACY_HUB.md) | Privacy settings & controls | Settings, GDPR, Data Export |
@@ -60,24 +71,39 @@ This index links all Product Requirement Documents (PRDs) in the Mundo Tango pla
 | Page/Feature | Related PRDs |
 |--------------|--------------|
 | **Feed** (`/feed`) | Unified Feeds, Tango Roles |
-| **Profile** (`/profile/:id`) | Tango Roles, Unified Feeds, Location Picker, Location Change Cascade, Per-Role Experience |
-| **Events** (`/events`) | Location Picker, Unified Feeds |
+| **Profile** (`/profile/:id`) | User Profile System, Unified PRO Tab, Tango Roles, Unified Feeds, Location Picker, Location Change Cascade, Per-Role Experience, Language System |
+| **Events** (`/events`) | Location Picker, Unified Feeds, Travel Planning |
 | **Groups** (`/groups`) | Location Picker, Unified Feeds, Location Change Cascade |
-| **Onboarding** (`/onboarding`) | Tango Roles, Location Picker, Per-Role Experience |
-| **Travel** (`/profile/:id/travel`) | Location Picker, Location Change Cascade |
+| **Onboarding** (`/onboarding`) | Tango Roles, Location Picker, Per-Role Experience, Language System |
+| **Travel** (`/profile/:id/travel`) | Travel Planning System, Location Picker, Location Change Cascade |
 | **Visual Editor** | Mr. Blue PRDs, Content Studio |
 | **Life CEO** | Finance Enhanced, Productivity 2.0 |
-| **Search/Discovery** | Tango Roles, Talent Match, Per-Role Experience |
-| **Settings** | Privacy Hub |
+| **Search/Discovery** | Tango Roles, Talent Match, Per-Role Experience, Language System |
+| **Settings** | Privacy Hub, Language System |
 
 ### By Component Type
 
 | Component Type | PRDs |
 |----------------|------|
-| **UI Components** | Location Picker, Unified Feeds, Tango Roles |
-| **Business Logic** | Location Change Cascade, Talent Match |
-| **AI/ML** | Mr. Blue PRDs, Life CEO PRDs |
+| **UI Components** | Location Picker, Unified Feeds, Tango Roles, Language System, Unified PRO Tab |
+| **Profile System** | User Profile System, Unified PRO Tab, Travel Planning |
+| **Business Logic** | Location Change Cascade, Talent Match, Travel Planning |
+| **AI/ML** | Mr. Blue PRDs, Life CEO PRDs, Talent Match (language matching) |
 | **Security/Privacy** | Privacy Hub |
+| **i18n/Localization** | Language System |
+
+---
+
+## New PRDs (November 2025 Session)
+
+The following PRDs were created during the November 2025 documentation consolidation:
+
+| PRD | Lines | Key Changes |
+|-----|-------|-------------|
+| PRD_UNIFIED_PRO_TAB.md | ~817 | Consolidates 17 role-based profile tabs into single PRO tab with dashboard/public views |
+| PRD_USER_PROFILE_SYSTEM.md | ~850 | Master documentation for 8 core profile tabs + header + legacy tab consolidation plan |
+| PRD_TRAVEL_PLANNING_SYSTEM.md | ~810 | Multi-city trip planning, itinerary management, event integration, MT Host housing |
+| PRD_UNIFIED_LANGUAGE_SYSTEM.md | Updated | Added Argentine Spanish (Rioplatense) as #2 popular language, AI integration points |
 
 ---
 
@@ -92,3 +118,4 @@ New PRDs should follow: [_PRD_TEMPLATE.md](./_PRD_TEMPLATE.md)
 - **Add new PRDs** to appropriate category table above
 - **Update cross-references** when adding new features
 - **Keep file counts current** as components are adopted
+- **Document session additions** in "New PRDs" section with line counts
