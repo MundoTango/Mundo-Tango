@@ -199,7 +199,7 @@ export function UnifiedLocationPicker({
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           onFocus={() => {
-            if (results.length > 0) setShowResults(true);
+            if (searchQuery && results.length > 0) setShowResults(true);
           }}
           placeholder={placeholder || defaultPlaceholder}
           className="pl-10 pr-10"
