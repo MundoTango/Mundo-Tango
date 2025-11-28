@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Info, MapPin, Calendar as CalendarIcon, Users, Award, Edit, Check, X } from "lucide-react";
+import { Info, MapPin, Calendar as CalendarIcon, Users, Award, Edit, Check, X, Languages, Star } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
@@ -21,6 +21,7 @@ interface User {
   yearsOfDancing?: number;
   leaderLevel?: number;
   followerLevel?: number;
+  primaryLanguage?: string | null;
   languages?: string[] | null;
   createdAt?: string;
   [key: string]: any;
@@ -292,28 +293,45 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="flex items-center gap-2">
-            <Info className="w-5 h-5" />
+            <Languages className="w-5 h-5" />
             Languages
           </CardTitle>
           {isOwnProfile && editingField !== 'languages' && (
-            <Button size="sm" variant="ghost" onClick={() => handleEdit('languages', (user.languages || []).join(', '))} data-testid="button-edit-languages">
+            <Button size="sm" variant="ghost" onClick={() => handleEdit('languages', { primary: user.primaryLanguage || '', additional: (user.languages || []).join(', ') })} data-testid="button-edit-languages">
               <Edit className="w-4 h-4" />
             </Button>
           )}
         </CardHeader>
         <CardContent>
           {editingField === 'languages' ? (
-            <div className="space-y-3">
-              <Input 
-                placeholder="e.g., English, Spanish, Italian (comma-separated)" 
-                value={editValues.languages || ''} 
-                onChange={(e) => setEditValues({ ...editValues, languages: e.target.value })}
-                data-testid="input-languages"
-              />
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm text-muted-foreground flex items-center gap-1 mb-2">
+                  <Star className="w-3 h-3 text-yellow-500" /> Primary Language
+                </label>
+                <Input 
+                  placeholder="e.g., English" 
+                  value={editValues.primaryLanguage || user.primaryLanguage || ''} 
+                  onChange={(e) => setEditValues({ ...editValues, primaryLanguage: e.target.value })}
+                  data-testid="input-primary-language"
+                />
+              </div>
+              <div>
+                <label className="text-sm text-muted-foreground mb-2 block">Additional Languages</label>
+                <Input 
+                  placeholder="e.g., Spanish, Italian (comma-separated)" 
+                  value={editValues.languages || (user.languages || []).join(', ')} 
+                  onChange={(e) => setEditValues({ ...editValues, languages: e.target.value })}
+                  data-testid="input-languages"
+                />
+              </div>
               <div className="flex gap-2">
                 <Button size="sm" onClick={() => {
-                  const langs = (editValues.languages || '').split(',').map((l: string) => l.trim()).filter(Boolean);
-                  updateProfileMutation.mutate({ languages: langs });
+                  const additionalLangs = (editValues.languages || '').split(',').map((l: string) => l.trim()).filter(Boolean);
+                  updateProfileMutation.mutate({ 
+                    primaryLanguage: editValues.primaryLanguage || user.primaryLanguage,
+                    languages: additionalLangs 
+                  });
                 }} disabled={updateProfileMutation.isPending} data-testid="button-save-languages">
                   <Check className="w-4 h-4 mr-2" />Save
                 </Button>
@@ -323,14 +341,26 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
               </div>
             </div>
           ) : (
-            <div className="flex flex-wrap gap-2">
-              {user.languages && user.languages.length > 0 ? (
-                user.languages.map((lang) => (
-                  <Badge key={lang} variant="outline">
-                    {lang}
+            <div className="space-y-3">
+              {user.primaryLanguage && (
+                <div className="flex items-center gap-2">
+                  <Badge variant="default" className="flex items-center gap-1" data-testid="badge-primary-language">
+                    <Star className="w-3 h-3" />
+                    {user.primaryLanguage}
                   </Badge>
-                ))
-              ) : (
+                  <span className="text-xs text-muted-foreground">Primary</span>
+                </div>
+              )}
+              {user.languages && user.languages.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {user.languages.map((lang) => (
+                    <Badge key={lang} variant="outline" data-testid={`badge-lang-${lang.toLowerCase()}`}>
+                      {lang}
+                    </Badge>
+                  ))}
+                </div>
+              )}
+              {!user.primaryLanguage && (!user.languages || user.languages.length === 0) && (
                 <span className="text-muted-foreground italic">No languages set</span>
               )}
             </div>
