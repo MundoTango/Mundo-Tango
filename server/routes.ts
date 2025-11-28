@@ -3541,6 +3541,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.json(user);
     } catch (error) {
+      console.error("[GET /api/users/:id] Error:", error);
       res.status(500).json({ message: "Failed to fetch user" });
     }
   });
