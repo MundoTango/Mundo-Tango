@@ -438,6 +438,18 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
               </div>
             ) : (
               <div className="space-y-3">
+                {/* When did you start tango? */}
+                {user.tangoStartYear && (
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-1">When did you start tango?</p>
+                    <p className="text-sm font-medium" data-testid="text-tango-start-year">
+                      {new Date(user.tangoStartYear, 0, 1).toLocaleDateString('en-US', { 
+                        year: 'numeric'
+                      })}
+                    </p>
+                  </div>
+                )}
+                
                 {/* Per-Role Experience Cards */}
                 {user.tangoRoles && user.tangoRoles.length > 0 ? (
                   <div className="flex flex-wrap gap-2">
@@ -464,13 +476,6 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
                   </div>
                 ) : (
                   <span className="text-muted-foreground italic">No roles set</span>
-                )}
-                
-                {/* Dancing Since */}
-                {user.tangoStartYear && (
-                  <p className="text-sm text-muted-foreground mt-2" data-testid="text-dancing-since">
-                    Dancing since {user.tangoStartYear}
-                  </p>
                 )}
               </div>
             )}
