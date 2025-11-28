@@ -222,14 +222,18 @@ export class SelfHealingErrorBoundary extends Component<Props, State> {
     const { pageName = 'Unknown Page' } = this.props;
     
     try {
+      // Match API schema: errorType, errorMessage (required), errorStack, metadata
       const errorReport = {
-        page: pageName,
-        error: error.toString(),
-        stack: error.stack,
-        componentStack: errorInfo.componentStack,
-        timestamp: new Date().toISOString(),
-        userAgent: navigator.userAgent,
-        url: window.location.href,
+        errorType: 'runtime',
+        errorMessage: error.toString(),
+        errorStack: error.stack,
+        metadata: {
+          page: pageName,
+          componentStack: errorInfo.componentStack,
+          timestamp: new Date().toISOString(),
+          userAgent: navigator.userAgent,
+          url: window.location.href,
+        },
       };
       
       console.log('[Self-Healing] 🤖 Sending to Mr Blue AI for analysis...');
