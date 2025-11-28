@@ -1,32 +1,26 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { Languages, Loader2, ChevronRight, ChevronLeft, X, Star, Plus } from "lucide-react";
+import { Languages, Loader2, ChevronRight, ChevronLeft, Star, Globe } from "lucide-react";
 import { SEO } from "@/components/SEO";
 import { useAuth } from "@/contexts/AuthContext";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { motion } from "framer-motion";
 import heroImage from "@assets/stock_images/elegant_professional_29e89c1e.jpg";
-
-const COMMON_LANGUAGES = [
-  "English", "Spanish", "Portuguese", "French", "German", "Italian",
-  "Japanese", "Korean", "Chinese", "Russian", "Arabic", "Hindi",
-  "Dutch", "Swedish", "Norwegian", "Danish", "Finnish", "Polish",
-  "Turkish", "Greek", "Hebrew", "Thai", "Vietnamese", "Indonesian"
-];
+import { UnifiedLanguagePicker, getLanguageByCode, getLanguageByName } from "@/components/input/UnifiedLanguagePicker";
 
 export default function LanguagesPage() {
   const [, navigate] = useLocation();
   const { user } = useAuth();
   const { toast } = useToast();
+  const { i18n } = useTranslation();
   const [primaryLanguage, setPrimaryLanguage] = useState<string>("");
   const [additionalLanguages, setAdditionalLanguages] = useState<string[]>([]);
-  const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -37,29 +31,20 @@ export default function LanguagesPage() {
     }
   }, [user, navigate]);
 
-  const filteredLanguages = COMMON_LANGUAGES.filter(lang => 
-    lang.toLowerCase().includes(searchTerm.toLowerCase()) &&
-    lang !== primaryLanguage &&
-    !additionalLanguages.includes(lang)
-  );
-
-  const handleSetPrimary = (language: string) => {
-    if (additionalLanguages.includes(language)) {
-      setAdditionalLanguages(prev => prev.filter(l => l !== language));
+  const handlePrimaryLanguageChange = (value: string | string[]) => {
+    const langCode = value as string;
+    setPrimaryLanguage(langCode);
+    
+    if (additionalLanguages.includes(langCode)) {
+      setAdditionalLanguages(prev => prev.filter(l => l !== langCode));
     }
-    setPrimaryLanguage(language);
+    
+    i18n.changeLanguage(langCode);
+    localStorage.setItem('i18nextLng', langCode);
   };
 
-  const handleAddLanguage = (language: string) => {
-    if (language === primaryLanguage) return;
-    if (!additionalLanguages.includes(language)) {
-      setAdditionalLanguages([...additionalLanguages, language]);
-    }
-    setSearchTerm("");
-  };
-
-  const handleRemoveLanguage = (language: string) => {
-    setAdditionalLanguages(prev => prev.filter(l => l !== language));
+  const handleAdditionalLanguagesChange = (value: string | string[]) => {
+    setAdditionalLanguages(value as string[]);
   };
 
   const handleContinue = async () => {
@@ -99,6 +84,8 @@ export default function LanguagesPage() {
       setIsLoading(false);
     }
   };
+
+  const primaryLang = primaryLanguage ? (getLanguageByCode(primaryLanguage) || getLanguageByName(primaryLanguage)) : null;
 
   return (
     <SelfHealingErrorBoundary pageName="Languages" fallbackRoute="/">
@@ -161,98 +148,43 @@ export default function LanguagesPage() {
                         <Star className="h-5 w-5 text-yellow-500" />
                         <h3 className="font-semibold">Primary Language</h3>
                       </div>
+                      <p className="text-sm text-muted-foreground flex items-center gap-1.5">
+                        <Globe className="h-4 w-4" />
+                        This will also set your site display language
+                      </p>
                       
-                      {primaryLanguage ? (
-                        <div className="flex items-center gap-2">
+                      <UnifiedLanguagePicker
+                        mode="primary"
+                        value={primaryLanguage}
+                        onChange={handlePrimaryLanguageChange}
+                        syncI18n={false}
+                        placeholder="Select your primary language"
+                        data-testid="picker-primary-language"
+                      />
+                      
+                      {primaryLang && (
+                        <div className="flex items-center gap-2 p-3 bg-muted/50 rounded-lg">
                           <Badge variant="default" className="text-base py-2 px-4" data-testid="badge-primary-language">
-                            {primaryLanguage}
+                            {primaryLang.flag} {primaryLang.nativeName}
                           </Badge>
-                          <Button 
-                            variant="ghost" 
-                            size="sm"
-                            onClick={() => setPrimaryLanguage("")}
-                            data-testid="button-clear-primary"
-                          >
-                            <X className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      ) : (
-                        <div className="flex flex-wrap gap-2">
-                          {COMMON_LANGUAGES.slice(0, 8).map(lang => (
-                            <Button
-                              key={lang}
-                              variant="outline"
-                              size="sm"
-                              onClick={() => handleSetPrimary(lang)}
-                              data-testid={`button-primary-${lang.toLowerCase()}`}
-                            >
-                              {lang}
-                            </Button>
-                          ))}
+                          <span className="text-sm text-muted-foreground">({primaryLang.name})</span>
                         </div>
                       )}
                     </div>
 
                     <div className="border-t pt-6 space-y-4">
                       <div className="flex items-center gap-2">
-                        <Plus className="h-5 w-5 text-muted-foreground" />
+                        <Languages className="h-5 w-5 text-muted-foreground" />
                         <h3 className="font-semibold">Additional Languages (Optional)</h3>
                       </div>
                       
-                      {additionalLanguages.length > 0 && (
-                        <div className="flex flex-wrap gap-2 mb-4">
-                          {additionalLanguages.map(lang => (
-                            <Badge key={lang} variant="secondary" className="text-sm py-1 px-3" data-testid={`badge-lang-${lang.toLowerCase()}`}>
-                              {lang}
-                              <button 
-                                onClick={() => handleRemoveLanguage(lang)}
-                                className="ml-2 hover:text-destructive"
-                                data-testid={`button-remove-${lang.toLowerCase()}`}
-                              >
-                                <X className="h-3 w-3" />
-                              </button>
-                            </Badge>
-                          ))}
-                        </div>
-                      )}
-
-                      <div className="relative">
-                        <Input
-                          placeholder="Search or type a language..."
-                          value={searchTerm}
-                          onChange={(e) => setSearchTerm(e.target.value)}
-                          data-testid="input-language-search"
-                        />
-                        {searchTerm && filteredLanguages.length > 0 && (
-                          <div className="absolute top-full left-0 right-0 mt-1 bg-card border rounded-lg shadow-lg z-10 max-h-48 overflow-y-auto">
-                            {filteredLanguages.map(lang => (
-                              <button
-                                key={lang}
-                                onClick={() => handleAddLanguage(lang)}
-                                className="w-full text-left px-4 py-2 hover:bg-muted transition-colors"
-                                data-testid={`option-lang-${lang.toLowerCase()}`}
-                              >
-                                {lang}
-                              </button>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="flex flex-wrap gap-2">
-                        {filteredLanguages.slice(0, 6).map(lang => (
-                          <Button
-                            key={lang}
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleAddLanguage(lang)}
-                            data-testid={`button-add-${lang.toLowerCase()}`}
-                          >
-                            <Plus className="h-3 w-3 mr-1" />
-                            {lang}
-                          </Button>
-                        ))}
-                      </div>
+                      <UnifiedLanguagePicker
+                        mode="additional"
+                        value={additionalLanguages}
+                        onChange={handleAdditionalLanguagesChange}
+                        excludeLanguages={primaryLanguage ? [primaryLanguage] : []}
+                        data-testid="picker-additional-languages"
+                      />
                     </div>
                   </CardContent>
 
