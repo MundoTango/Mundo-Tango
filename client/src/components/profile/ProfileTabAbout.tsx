@@ -330,13 +330,11 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
           </div>
 
           {/* When did you start tango? - Standalone Section */}
-          {!isEditing && user.tangoStartYear && (
+          {!isEditing && (
             <div>
               <p className="text-xs text-muted-foreground mb-1">When did you start tango?</p>
               <p className="text-base font-medium" data-testid="text-tango-start-year">
-                {new Date(user.tangoStartYear, 0, 1).toLocaleDateString('en-US', { 
-                  year: 'numeric'
-                })}
+                {user.tangoStartYear ? new Date(user.tangoStartYear, 0, 1).toLocaleDateString('en-US', { year: 'numeric' }) : <span className="text-muted-foreground italic">Not set</span>}
               </p>
             </div>
           )}
