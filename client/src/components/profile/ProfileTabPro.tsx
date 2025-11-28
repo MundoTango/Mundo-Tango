@@ -46,6 +46,7 @@ interface ProfileTabProProps {
   tangoRoleExperience?: TangoRoleExperience[] | null;
   tangoStartYear?: number | null;
   yearsOfDancing?: number | null;
+  viewMode?: 'dashboard' | 'customer';
 }
 
 interface ProRoleStats {
