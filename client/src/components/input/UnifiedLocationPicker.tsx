@@ -67,6 +67,8 @@ export function UnifiedLocationPicker({
     if (value !== searchQuery && value) {
       setSearchQuery(value);
       setSelectedLocation(value);
+      setShowResults(false);
+      setResults([]);
     }
   }, [value]);
 
