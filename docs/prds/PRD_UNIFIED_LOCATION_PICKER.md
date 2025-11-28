@@ -173,16 +173,24 @@ Major tango destinations and global cities including:
 
 ### 4.2 Components (8 files)
 
-| File | Usage Context |
-|------|---------------|
-| `client/src/components/profile/ProfileTabAbout.tsx` | Profile about section location |
-| `client/src/components/profile/ProfileTabTravel.tsx` | Travel destinations input |
-| `client/src/components/events/EventFilters.tsx` | Filter events by location |
-| `client/src/components/marketplace/CheckoutWizard.tsx` | Multi-step checkout address |
-| `client/src/components/feed/SmartPostFeed.tsx` | Location-based feed filtering |
-| `client/src/components/groups/GroupSettingsPanel.tsx` | Group location settings |
-| `client/src/components/groups/GroupCreationModal.tsx` | Set group city on creation |
-| `client/src/components/universal/PostCreator.tsx` | Tag location in posts |
+| File | Usage Context | Mode | Count |
+|------|---------------|------|-------|
+| `client/src/components/profile/ProfileTabAbout.tsx` | Profile about section location | city | 1 |
+| `client/src/components/profile/ProfileTabTravel.tsx` | Travel itinerary locations (accommodation/events) | address | 4 |
+| `client/src/components/events/EventFilters.tsx` | Filter events by location | city | 1 |
+| `client/src/components/marketplace/CheckoutWizard.tsx` | Multi-step checkout address | address | 1 |
+| `client/src/components/feed/SmartPostFeed.tsx` | Location-based feed filtering | city | 1 |
+| `client/src/components/groups/GroupSettingsPanel.tsx` | Group location settings | city | 1 |
+| `client/src/components/groups/GroupCreationModal.tsx` | Set group city on creation | city | 1 |
+| `client/src/components/universal/PostCreator.tsx` | Tag location in posts | city | 1 |
+
+**ProfileTabTravel.tsx Details (4 usages):**
+- Add Item dialog: General location/venue field (mode="address")
+- Accommodation dialog: Full address field (mode="address")
+- Events dialog: Venue/location field (mode="address")
+- Edit dialog: Context-aware - UnifiedLocationPicker for accommodation/events, Input for transport routes
+
+**Note:** Transport items use text Input for "Route (From → To)" descriptions since these are text-based travel routes, not searchable addresses.
 
 ### 4.3 Utilities (1 file)
 
@@ -190,7 +198,7 @@ Major tango destinations and global cities including:
 |------|---------------|
 | `client/src/lib/componentHealthMonitor.ts` | Health monitoring for location component |
 
-**Total: 26 files importing UnifiedLocationPicker**
+**Total: 26 files importing UnifiedLocationPicker (31 total usages)**
 
 ---
 
