@@ -1357,7 +1357,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
                                       <FormField control={itemForm.control} name="date" render={({ field }) => (<FormItem><FormLabel>Date/Time</FormLabel><FormControl><Input type="datetime-local" {...field} /></FormControl><FormMessage /></FormItem>)} />
                                       <FormField control={itemForm.control} name="cost" render={({ field }) => (<FormItem><FormLabel>Total Cost (USD)</FormLabel><FormControl><Input type="number" placeholder="500" {...field} onChange={(e) => field.onChange(e.target.valueAsNumber)} /></FormControl><FormMessage /></FormItem>)} />
                                     </div>
-                                    <FormField control={itemForm.control} name="location" render={({ field }) => (<FormItem><FormLabel>Location/Venue</FormLabel><FormControl><Input placeholder="e.g., La Catedral, Buenos Aires" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                                    <FormField control={itemForm.control} name="location" render={({ field }) => (<FormItem><FormLabel>Location/Venue</FormLabel><FormControl><UnifiedLocationPicker mode="address" value={field.value || ""} onChange={(location) => field.onChange(location)} placeholder="Search for venue or address..." data-testid="input-item-location" /></FormControl><FormMessage /></FormItem>)} />
                                     <FormField control={itemForm.control} name="description" render={({ field }) => (<FormItem><FormLabel>Notes</FormLabel><FormControl><Textarea placeholder="Additional details..." {...field} rows={2} /></FormControl><FormMessage /></FormItem>)} />
                                     <FormField control={itemForm.control} name="bookingUrl" render={({ field }) => (<FormItem><FormLabel>Booking URL</FormLabel><FormControl><Input placeholder="https://..." {...field} /></FormControl><FormMessage /></FormItem>)} />
                                     <div className="flex gap-2 pt-2">
@@ -1566,7 +1566,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
                   )} />
                   
                   <FormField control={itemForm.control} name="location" render={({ field }) => (
-                    <FormItem><FormLabel>Full Address *</FormLabel><FormControl><Input placeholder="e.g., Av. Santa Fe 1234, Palermo, Buenos Aires" {...field} data-testid="input-accommodation-address" /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>Full Address *</FormLabel><FormControl><UnifiedLocationPicker mode="address" value={field.value || ""} onChange={(location) => field.onChange(location)} placeholder="Search for address..." data-testid="input-accommodation-address" /></FormControl><FormMessage /></FormItem>
                   )} />
 
                   <div className="grid grid-cols-2 gap-4">
@@ -1822,7 +1822,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
                   </div>
 
                   <FormField control={itemForm.control} name="location" render={({ field }) => (
-                    <FormItem><FormLabel>Venue/Location</FormLabel><FormControl><Input placeholder="e.g., La Catedral, Sarmiento 4006" {...field} /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>Venue/Location</FormLabel><FormControl><UnifiedLocationPicker mode="address" value={field.value || ""} onChange={(location) => field.onChange(location)} placeholder="Search for venue or address..." data-testid="input-event-location" /></FormControl><FormMessage /></FormItem>
                   )} />
 
                   <FormField control={itemForm.control} name="description" render={({ field }) => (
@@ -2160,7 +2160,19 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
               <FormField control={itemForm.control} name="location" render={({ field }) => (
                 <FormItem>
                   <FormLabel>{editingItem?.itemType === 'accommodation' ? 'Full Address' : editingItem?.itemType === 'transport' ? 'Route (From → To)' : 'Venue/Location'}</FormLabel>
-                  <FormControl><Input {...field} data-testid="input-edit-location" /></FormControl>
+                  <FormControl>
+                    {editingItem?.itemType === 'transport' ? (
+                      <Input {...field} placeholder="e.g., Buenos Aires → Montevideo" data-testid="input-edit-location" />
+                    ) : (
+                      <UnifiedLocationPicker 
+                        mode="address" 
+                        value={field.value || ""} 
+                        onChange={(location) => field.onChange(location)} 
+                        placeholder={editingItem?.itemType === 'accommodation' ? "Search for address..." : "Search for venue..."} 
+                        data-testid="input-edit-location" 
+                      />
+                    )}
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )} />
