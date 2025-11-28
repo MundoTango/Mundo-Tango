@@ -165,7 +165,7 @@ export default function CitySelectionPage() {
             transition={{ duration: 1, ease: "easeOut" }}
           >
             <Badge variant="outline" className="mb-4 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-step-1">
-              Step 1 of 4
+              Step 1 of 5
             </Badge>
             
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-white font-bold leading-tight mb-4">

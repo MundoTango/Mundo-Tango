@@ -387,6 +387,8 @@ const WelcomePage = lazy(() => import("@/pages/onboarding/WelcomePage"));
 const CitySelectionPage = lazy(() => import("@/pages/onboarding/CitySelectionPage"));
 const PhotoUploadPage = lazy(() => import("@/pages/onboarding/PhotoUploadPage"));
 const TangoRolesPage = lazy(() => import("@/pages/onboarding/TangoRolesPage"));
+const LanguagesPage = lazy(() => import("@/pages/onboarding/LanguagesPage"));
+const DanceExperiencePage = lazy(() => import("@/pages/onboarding/DanceExperiencePage"));
 const GuidedTourPage = lazy(() => import("@/pages/onboarding/GuidedTourPage"));
 const LegalAcceptance = lazy(() => import("@/pages/onboarding/LegalAcceptance"));
 const SubscriptionOnboarding = lazy(() => import("@/pages/onboarding/SubscriptionOnboarding"));
@@ -1436,7 +1438,9 @@ function Router() {
       <Route path="/onboarding/step-1" component={CitySelectionPage} />
       <Route path="/onboarding/step-2" component={PhotoUploadPage} />
       <Route path="/onboarding/step-3" component={TangoRolesPage} />
-      <Route path="/onboarding/step-4" component={GuidedTourPage} />
+      <Route path="/onboarding/step-4" component={LanguagesPage} />
+      <Route path="/onboarding/step-5" component={DanceExperiencePage} />
+      <Route path="/onboarding/tour" component={GuidedTourPage} />
       <Route path="/onboarding/legal" component={LegalAcceptance} />
       <Route path="/onboarding/subscription" component={SubscriptionOnboarding} />
       <Route path="/welcome" component={WelcomeTourPage} />
