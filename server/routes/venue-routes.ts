@@ -1,10 +1,278 @@
 import { Router, Response } from "express";
 import { db } from "@shared/db";
-import { venues } from "@shared/schema";
-import { eq, desc, and, or, ilike } from "drizzle-orm";
+import { venues, events, users } from "@shared/schema";
+import { eq, desc, and, or, ilike, sql } from "drizzle-orm";
 import { authenticateToken, AuthRequest } from "../middleware/auth";
 
 const router = Router();
+
+// ============================================================================
+// VENUE SEARCH API - 3-TIER INTELLIGENT SEARCH (MB.MD v9.6)
+// Priority: 1) User's hosted events → 2) City group venues → 3) Google Maps
+// ============================================================================
+
+interface VenueSearchResult {
+  id: string;
+  name: string;
+  address: string;
+  city: string;
+  country: string;
+  source: 'user_events' | 'city_venues' | 'database' | 'google_maps';
+  verified?: boolean;
+  rating?: number;
+  placeId?: string;
+  coordinates?: { lat: number; lng: number };
+}
+
+/**
+ * GET /api/venues/search - 3-tier intelligent venue search
+ * Query params:
+ *   - q: search query (venue name)
+ *   - userId: current user ID (for user's past venues)
+ *   - city: user's city group (for city-filtered venues)
+ */
+router.get("/search", async (req, res: Response) => {
+  try {
+    const { q, userId, city } = req.query;
+    const searchQuery = (q as string || '').trim().toLowerCase();
+    
+    if (!searchQuery || searchQuery.length < 2) {
+      return res.json({ userVenues: [], cityVenues: [], googleVenues: [] });
+    }
+
+    console.log(`[Venue Search] Query: "${searchQuery}", userId: ${userId}, city: ${city}`);
+
+    const results: {
+      userVenues: VenueSearchResult[];
+      cityVenues: VenueSearchResult[];
+      googleVenues: VenueSearchResult[];
+    } = {
+      userVenues: [],
+      cityVenues: [],
+      googleVenues: [],
+    };
+
+    // ────────────────────────────────────────────────────────────────────
+    // TIER 1: User's previously hosted events (highest priority)
+    // ────────────────────────────────────────────────────────────────────
+    if (userId) {
+      try {
+        const userEvents = await db
+          .select({
+            venueName: events.venueName,
+            venue: events.venue,
+            address: events.address,
+            city: events.city,
+            country: events.country,
+            latitude: events.latitude,
+            longitude: events.longitude,
+          })
+          .from(events)
+          .where(
+            and(
+              eq(events.userId, parseInt(userId as string)),
+              or(
+                ilike(events.venueName, `%${searchQuery}%`),
+                ilike(events.venue, `%${searchQuery}%`)
+              )
+            )
+          )
+          .limit(5);
+
+        // Deduplicate by venue name
+        const seenVenues = new Set<string>();
+        for (const event of userEvents) {
+          const name = event.venueName || event.venue || '';
+          if (name && !seenVenues.has(name.toLowerCase())) {
+            seenVenues.add(name.toLowerCase());
+            results.userVenues.push({
+              id: `user_${name.replace(/\s+/g, '_')}`,
+              name,
+              address: event.address || '',
+              city: event.city || '',
+              country: event.country || '',
+              source: 'user_events',
+              coordinates: event.latitude && event.longitude 
+                ? { lat: parseFloat(event.latitude), lng: parseFloat(event.longitude) }
+                : undefined,
+            });
+          }
+        }
+        console.log(`[Venue Search] Tier 1 (User Events): ${results.userVenues.length} venues`);
+      } catch (err) {
+        console.error('[Venue Search] Tier 1 error:', err);
+      }
+    }
+
+    // ────────────────────────────────────────────────────────────────────
+    // TIER 2: City group venues (from venues database)
+    // ────────────────────────────────────────────────────────────────────
+    try {
+      const conditions = [
+        or(
+          ilike(venues.name, `%${searchQuery}%`),
+          ilike(venues.description, `%${searchQuery}%`)
+        )
+      ];
+
+      // If city specified, prioritize that city
+      if (city && typeof city === 'string') {
+        conditions.push(ilike(venues.city, `%${city}%`));
+      }
+
+      const cityVenuesResult = await db
+        .select()
+        .from(venues)
+        .where(and(...conditions as any))
+        .orderBy(desc(venues.verified), desc(venues.rating))
+        .limit(10);
+
+      for (const venue of cityVenuesResult) {
+        results.cityVenues.push({
+          id: `db_${venue.id}`,
+          name: venue.name,
+          address: venue.address,
+          city: venue.city,
+          country: venue.country,
+          source: 'city_venues',
+          verified: venue.verified || false,
+          rating: venue.rating || 0,
+        });
+      }
+
+      // If no city-filtered results, search all venues
+      if (results.cityVenues.length === 0 && city) {
+        const allVenuesResult = await db
+          .select()
+          .from(venues)
+          .where(
+            or(
+              ilike(venues.name, `%${searchQuery}%`),
+              ilike(venues.description, `%${searchQuery}%`)
+            ) as any
+          )
+          .orderBy(desc(venues.verified), desc(venues.rating))
+          .limit(10);
+
+        for (const venue of allVenuesResult) {
+          results.cityVenues.push({
+            id: `db_${venue.id}`,
+            name: venue.name,
+            address: venue.address,
+            city: venue.city,
+            country: venue.country,
+            source: 'database',
+            verified: venue.verified || false,
+            rating: venue.rating || 0,
+          });
+        }
+      }
+
+      // Also check sample venues if database is empty
+      if (results.cityVenues.length === 0) {
+        const matchingSamples = sampleVenues.filter(v => 
+          v.name.toLowerCase().includes(searchQuery) ||
+          v.description.toLowerCase().includes(searchQuery)
+        );
+        
+        for (const venue of matchingSamples) {
+          if (city && !venue.city.toLowerCase().includes((city as string).toLowerCase())) {
+            continue; // Skip if city doesn't match
+          }
+          results.cityVenues.push({
+            id: `sample_${venue.id}`,
+            name: venue.name,
+            address: venue.address,
+            city: venue.city,
+            country: venue.country,
+            source: 'database',
+            verified: true,
+            rating: parseFloat(venue.rating),
+          });
+        }
+      }
+
+      console.log(`[Venue Search] Tier 2 (City Venues): ${results.cityVenues.length} venues`);
+    } catch (err) {
+      console.error('[Venue Search] Tier 2 error:', err);
+    }
+
+    // ────────────────────────────────────────────────────────────────────
+    // TIER 3: Google Places API fallback (when Tiers 1+2 have <3 results)
+    // ────────────────────────────────────────────────────────────────────
+    const totalResults = results.userVenues.length + results.cityVenues.length;
+    if (totalResults < 3) {
+      try {
+        const googleResults = await searchGooglePlaces(searchQuery, city as string);
+        results.googleVenues = googleResults;
+        console.log(`[Venue Search] Tier 3 (Google Maps): ${results.googleVenues.length} venues`);
+      } catch (err) {
+        console.error('[Venue Search] Tier 3 error:', err);
+      }
+    }
+
+    res.json(results);
+  } catch (error) {
+    console.error("[Venue Search] Error:", error);
+    res.status(500).json({ message: "Failed to search venues" });
+  }
+});
+
+/**
+ * Search Google Places API for venues
+ * Falls back gracefully if API key not configured
+ */
+async function searchGooglePlaces(query: string, city?: string): Promise<VenueSearchResult[]> {
+  const apiKey = process.env.GOOGLE_MAPS_API_KEY || process.env.GOOGLE_PLACES_API_KEY;
+  
+  if (!apiKey) {
+    console.log('[Venue Search] Google Places API key not configured - skipping Tier 3');
+    return [];
+  }
+
+  try {
+    const searchText = city ? `${query} ${city}` : query;
+    const url = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(searchText)}&type=establishment&key=${apiKey}`;
+    
+    const response = await fetch(url);
+    const data = await response.json();
+    
+    if (data.status !== 'OK' || !data.results) {
+      console.log(`[Venue Search] Google Places returned: ${data.status}`);
+      return [];
+    }
+
+    return data.results.slice(0, 5).map((place: any) => ({
+      id: `google_${place.place_id}`,
+      name: place.name,
+      address: place.formatted_address || '',
+      city: extractCityFromAddress(place.formatted_address),
+      country: extractCountryFromAddress(place.formatted_address),
+      source: 'google_maps' as const,
+      placeId: place.place_id,
+      rating: place.rating,
+      coordinates: place.geometry?.location 
+        ? { lat: place.geometry.location.lat, lng: place.geometry.location.lng }
+        : undefined,
+    }));
+  } catch (err) {
+    console.error('[Venue Search] Google Places API error:', err);
+    return [];
+  }
+}
+
+function extractCityFromAddress(address: string): string {
+  if (!address) return '';
+  const parts = address.split(',').map(p => p.trim());
+  // City is usually second-to-last before country
+  return parts.length >= 2 ? parts[parts.length - 2] : '';
+}
+
+function extractCountryFromAddress(address: string): string {
+  if (!address) return '';
+  const parts = address.split(',').map(p => p.trim());
+  return parts[parts.length - 1] || '';
+}
 
 // Sample venue data for when database is empty
 const sampleVenues = [
