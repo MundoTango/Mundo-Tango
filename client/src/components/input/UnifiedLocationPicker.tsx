@@ -207,10 +207,14 @@ export function UnifiedLocationPicker({
     const displayName = mode === "city" ? getDisplayName(location) : location.display_name;
 
     userHasTypedRef.current = false;
+    
+    // Close dropdown immediately - set both state values synchronously
+    setResults([]);
+    setShowResults(false);
+    
+    // Then update other fields
     setSelectedLocation(displayName);
     setSearchQuery(displayName);
-    setShowResults(false);
-    setResults([]);
     onChange(displayName, parsed.coordinates, parsed);
   };
 
