@@ -479,13 +479,13 @@ function ProDashboardView({
   proRoles: TangoRole[];
   userExperience: { tangoRoleExperience?: TangoRoleExperience[] | null; tangoStartYear?: number | null; yearsOfDancing?: number | null };
 }) {
-  const [selectedRole, setSelectedRole] = useState<string>(
-    proRoles[0]?.value || ""
+  const [selectedRoles, setSelectedRoles] = useState<string[]>(
+    proRoles.map((r) => r.value)
   );
 
-  const selectedRoleInfo = useMemo(
-    () => proRoles.find((r) => r.value === selectedRole),
-    [proRoles, selectedRole]
+  const selectedRolesInfo = useMemo(
+    () => proRoles.filter((r) => selectedRoles.includes(r.value)),
+    [proRoles, selectedRoles]
   );
 
   const { data: statsData, isLoading: statsLoading } = useQuery<ProRoleStats[]>({
@@ -504,9 +504,22 @@ function ProDashboardView({
   });
 
   const currentStats = useMemo(
-    () => Array.isArray(statsData) ? statsData.find((s) => s.role === selectedRole) : undefined,
-    [statsData, selectedRole]
+    () => Array.isArray(statsData) ? statsData.filter((s) => selectedRoles.includes(s.role)) : [],
+    [statsData, selectedRoles]
   );
+
+  const filteredEventHistory = useMemo(
+    () => Array.isArray(eventHistory) ? eventHistory.filter((e) => selectedRoles.includes(e.role)) : [],
+    [eventHistory, selectedRoles]
+  );
+
+  const toggleRole = (roleValue: string) => {
+    setSelectedRoles((prev) => 
+      prev.includes(roleValue)
+        ? prev.filter((r) => r !== roleValue)
+        : [...prev, roleValue]
+    );
+  };
 
   const handleAcceptBooking = (id: number) => {
     console.log("Accept booking:", id);
@@ -554,35 +567,42 @@ function ProDashboardView({
         </Button>
       </div>
 
-      {proRoles.length > 1 && (
-        <div className="flex items-center gap-3 flex-wrap">
-          <span className="text-sm font-medium text-muted-foreground">Role:</span>
-          <div className="flex gap-2 flex-wrap">
-            {proRoles.map((role) => {
-              const IconComponent = role.icon;
-              const isSelected = selectedRole === role.value;
-              return (
-                <Button
-                  key={role.value}
-                  variant={isSelected ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setSelectedRole(role.value)}
-                  className="gap-2"
-                  data-testid={`button-role-${role.value}`}
-                >
-                  <IconComponent
-                    className="w-4 h-4"
-                    style={{ color: isSelected ? 'currentColor' : role.color }}
-                  />
-                  <span>{role.label}</span>
-                </Button>
-              );
-            })}
-          </div>
+      <div className="flex items-center gap-3 flex-wrap">
+        <span className="text-sm font-medium text-muted-foreground">Roles:</span>
+        <div className="flex gap-2 flex-wrap">
+          {proRoles.map((role) => {
+            const IconComponent = role.icon;
+            const isSelected = selectedRoles.includes(role.value);
+            return (
+              <Button
+                key={role.value}
+                variant={isSelected ? "default" : "outline"}
+                size="sm"
+                onClick={() => toggleRole(role.value)}
+                className="gap-2"
+                data-testid={`button-role-${role.value}`}
+              >
+                <IconComponent
+                  className="w-4 h-4"
+                  style={{ color: isSelected ? 'currentColor' : role.color }}
+                />
+                <span>{role.label}</span>
+              </Button>
+            );
+          })}
+        </div>
+      </div>
+
+      {currentStats.length > 0 && (
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {currentStats.map((stat) => {
+            const roleInfo = selectedRolesInfo.find((r) => r.value === stat.role);
+            return roleInfo ? (
+              <ProStatsGrid key={stat.role} stats={stat} role={roleInfo} />
+            ) : null;
+          })}
         </div>
       )}
-
-      <ProStatsGrid stats={currentStats} role={selectedRoleInfo} />
 
       <div className="grid lg:grid-cols-2 gap-8">
         <div className="space-y-4">
@@ -598,9 +618,9 @@ function ProDashboardView({
             </Button>
           </div>
           <ProEventHistoryList
-            events={Array.isArray(eventHistory) ? eventHistory : []}
+            events={filteredEventHistory}
             isLoading={eventsLoading}
-            selectedRole={selectedRole}
+            selectedRole={selectedRoles[0] || ""}
           />
         </div>
 
