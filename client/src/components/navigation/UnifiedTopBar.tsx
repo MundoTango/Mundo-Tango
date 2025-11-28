@@ -321,7 +321,10 @@ function UnifiedTopBar({
                   {recentNotifications.map((notif, idx) => (
                     <DropdownMenuItem
                       key={notif.id || idx}
-                      onClick={() => notif.link && setLocation(notif.link)}
+                      onClick={() => {
+                        const url = notif.actionUrl || notif.link;
+                        if (url) setLocation(url);
+                      }}
                       className="cursor-pointer flex items-start gap-2 px-4 py-3 border-b last:border-0"
                       data-testid={`notification-item-${idx}`}
                     >

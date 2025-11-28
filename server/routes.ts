@@ -86,6 +86,7 @@ import userSearchRoutes from "./routes/user-search";
 import locationRoutes from "./routes/locations";
 import locationsRoutes from "./routes/locations-routes";
 import locationChangeRoutes from "./routes/location-change-routes";
+import roleChangeRoutes from "./routes/role-change-routes";
 import cityRoutes from "./routes/city-routes";
 import { registerAIArbitrageRoutes } from "./routes/ai-arbitrage-routes";
 import { registerDPOTrainingRoutes } from "./routes/dpo-training-routes";
@@ -669,6 +670,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/locations", locationRoutes);
   app.use("/api/locations", locationsRoutes); // MB.MD Agent 1: Live city search with caching
   app.use("/api/location", locationChangeRoutes); // Location change effects endpoint
+  app.use("/api/roles", roleChangeRoutes); // Role change effects - auto-join PRO groups
   app.use("/api/cities", cityRoutes); // City Group Priority Search (Tier 1: MT groups, Tier 2: Popular, Tier 3: Nominatim)
   
   // ============================================================================

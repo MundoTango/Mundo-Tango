@@ -131,6 +131,7 @@ router.post("/change-effects", authenticateToken, async (req: AuthRequest, res: 
       title: `Welcome to ${newCity}!`,
       message: `You're now connected with the ${newCity} tango community.`,
       data: { city: newCity, country: newCountry, previousCity, previousCountry },
+      actionUrl: autoJoinedGroup ? `/groups/${autoJoinedGroup.groupId}` : `/groups?city=${encodeURIComponent(newCity)}`,
     });
 
     const response = {
