@@ -10,6 +10,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/UnifiedLocationPicker";
 import { triggerLocationChangeEffects, detectLocationChange, formatWelcomeMessage, LocationChangeEvent } from '@/lib/locationChangeEffects';
+import { TANGO_ROLES, getRoleByValue } from "@/lib/tangoRoles";
 
 interface User {
   id: number;
@@ -112,7 +113,7 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
       bio: user.bio || '',
       city: user.city || '',
       country: user.country || '',
-      tangoRoles: (user.tangoRoles || []).join(', '),
+      tangoRoles: user.tangoRoles || [],
       yearsOfDancing: user.yearsOfDancing || '',
       leaderLevel: user.leaderLevel || '',
       followerLevel: user.followerLevel || '',
@@ -122,8 +123,17 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
     setIsEditing(true);
   };
 
+  const toggleRole = (roleValue: string) => {
+    const currentRoles = editValues.tangoRoles || [];
+    if (currentRoles.includes(roleValue)) {
+      setEditValues({ ...editValues, tangoRoles: currentRoles.filter((r: string) => r !== roleValue) });
+    } else {
+      setEditValues({ ...editValues, tangoRoles: [...currentRoles, roleValue] });
+    }
+  };
+
   const handleSave = () => {
-    const roles = (editValues.tangoRoles || '').split(',').map((r: string) => r.trim().toLowerCase()).filter(Boolean);
+    const roles = editValues.tangoRoles || [];
     const additionalLangs = (editValues.languages || '').split(',').map((l: string) => l.trim()).filter(Boolean);
     
     updateProfileMutation.mutate({
@@ -221,20 +231,61 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
               Tango Roles
             </h3>
             {isEditing ? (
-              <Input 
-                placeholder="e.g., teacher, dancer-leader, organizer (comma-separated)" 
-                value={editValues.tangoRoles || ''} 
-                onChange={(e) => setEditValues({ ...editValues, tangoRoles: e.target.value })}
-                data-testid="input-tango-roles"
-              />
+              <div className="space-y-3">
+                <p className="text-xs text-muted-foreground">Click to select/deselect roles</p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2" data-testid="input-tango-roles">
+                  {TANGO_ROLES.map((role) => {
+                    const IconComponent = role.icon;
+                    const isSelected = (editValues.tangoRoles || []).includes(role.value);
+                    return (
+                      <button
+                        key={role.value}
+                        type="button"
+                        onClick={() => toggleRole(role.value)}
+                        className={`relative flex items-center gap-2 p-2 rounded-lg border transition-all text-left ${
+                          isSelected
+                            ? "border-primary bg-primary/10"
+                            : "border-muted hover:border-muted-foreground/30"
+                        }`}
+                        data-testid={`role-${role.value}`}
+                      >
+                        {isSelected && (
+                          <div className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                            <Check className="h-2.5 w-2.5" />
+                          </div>
+                        )}
+                        <div className="p-1.5 rounded-md" style={{ backgroundColor: `${role.color}20` }}>
+                          <IconComponent className="w-4 h-4" style={{ color: role.color }} />
+                        </div>
+                        <span className="text-xs font-medium truncate pr-4">{role.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+                {(editValues.tangoRoles || []).length > 0 && (
+                  <p className="text-xs text-muted-foreground">
+                    Selected: {(editValues.tangoRoles || []).length} role{(editValues.tangoRoles || []).length !== 1 ? 's' : ''}
+                  </p>
+                )}
+              </div>
             ) : (
               <div className="flex flex-wrap gap-2">
                 {user.tangoRoles && user.tangoRoles.length > 0 ? (
-                  user.tangoRoles.map((role) => (
-                    <Badge key={role} variant="secondary" className="capitalize">
-                      {role.replace(/_/g, ' ')}
-                    </Badge>
-                  ))
+                  user.tangoRoles.map((roleValue) => {
+                    const role = getRoleByValue(roleValue);
+                    const IconComponent = role?.icon;
+                    return (
+                      <Badge 
+                        key={roleValue} 
+                        variant="secondary" 
+                        className="flex items-center gap-1.5 capitalize"
+                        style={role ? { borderColor: `${role.color}40` } : undefined}
+                      >
+                        {IconComponent && <IconComponent className="w-3 h-3" style={{ color: role?.color }} />}
+                        {role?.label || roleValue.replace(/_/g, ' ')}
+                      </Badge>
+                    );
+                  })
                 ) : (
                   <span className="text-muted-foreground italic">No roles set</span>
                 )}
