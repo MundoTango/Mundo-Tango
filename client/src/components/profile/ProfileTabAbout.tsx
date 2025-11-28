@@ -27,7 +27,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { SiInstagram, SiFacebook, SiYoutube, SiTiktok, SiTwitter, SiLinkedin } from "react-icons/si";
+import { SiInstagram, SiFacebook, SiYoutube, SiTiktok, SiX, SiLinkedin } from "react-icons/si";
 
 interface SocialLinks {
   instagram?: string;
@@ -329,7 +329,7 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
     { key: 'facebook', label: 'Facebook', icon: SiFacebook, placeholder: 'https://facebook.com/username' },
     { key: 'youtube', label: 'YouTube', icon: SiYoutube, placeholder: 'https://youtube.com/@channel' },
     { key: 'tiktok', label: 'TikTok', icon: SiTiktok, placeholder: 'https://tiktok.com/@username' },
-    { key: 'twitter', label: 'Twitter/X', icon: SiTwitter, placeholder: 'https://twitter.com/username' },
+    { key: 'twitter', label: 'X (Twitter)', icon: SiX, placeholder: 'https://x.com/username' },
     { key: 'linkedin', label: 'LinkedIn', icon: SiLinkedin, placeholder: 'https://linkedin.com/in/username' },
     { key: 'website', label: 'Website', icon: Globe, placeholder: 'https://yourwebsite.com' },
   ];
