@@ -590,25 +590,29 @@ function AddPortfolioDialog({
   onClose,
   role,
   onSubmit,
+  availableRoles,
 }: {
   isOpen: boolean;
   onClose: () => void;
   role?: TangoRole;
-  onSubmit: (data: { title: string; subtitle: string }) => void;
+  onSubmit: (data: { title: string; subtitle: string; role: TangoRole }) => void;
+  availableRoles: TangoRole[];
 }) {
   const [title, setTitle] = useState("");
   const [subtitle, setSubtitle] = useState("");
+  const [selectedRole, setSelectedRole] = useState<TangoRole | undefined>(role);
 
   const handleSubmit = () => {
-    if (title.trim()) {
-      onSubmit({ title, subtitle });
+    if (title.trim() && selectedRole) {
+      onSubmit({ title, subtitle, role: selectedRole });
       setTitle("");
       setSubtitle("");
+      setSelectedRole(undefined);
       onClose();
     }
   };
 
-  const portfolioLabel = role ? getRolePortfolioTitle(role.value) : "Portfolio";
+  const portfolioLabel = selectedRole ? getRolePortfolioTitle(selectedRole.value) : "Portfolio";
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -616,10 +620,28 @@ function AddPortfolioDialog({
         <DialogHeader>
           <DialogTitle>Add {portfolioLabel}</DialogTitle>
           <DialogDescription>
-            {role ? `Add a new ${portfolioLabel.toLowerCase()} item to your ${role.label} portfolio.` : "Add a new portfolio item."}
+            {selectedRole ? `Add a new ${portfolioLabel.toLowerCase()} item to your ${selectedRole.label} portfolio.` : "Select a role and add a portfolio item."}
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-4">
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Role *</label>
+            <Select value={selectedRole?.value || ""} onValueChange={(roleValue) => {
+              const foundRole = availableRoles.find((r) => r.value === roleValue);
+              setSelectedRole(foundRole);
+            }}>
+              <SelectTrigger data-testid="select-portfolio-role">
+                <SelectValue placeholder="Select a role" />
+              </SelectTrigger>
+              <SelectContent>
+                {availableRoles.map((r) => (
+                  <SelectItem key={r.value} value={r.value}>
+                    {r.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
           <div className="space-y-2">
             <label className="text-sm font-medium">Title *</label>
             <Input
@@ -644,7 +666,7 @@ function AddPortfolioDialog({
           <Button variant="outline" onClick={onClose} data-testid="button-cancel">
             Cancel
           </Button>
-          <Button onClick={handleSubmit} data-testid="button-save-portfolio">
+          <Button onClick={handleSubmit} disabled={!selectedRole || !title.trim()} data-testid="button-save-portfolio">
             Add {portfolioLabel.split(" ")[0]}
           </Button>
         </DialogFooter>
@@ -716,8 +738,8 @@ function ProDashboardView({
     setSelectedRoleForAdd(undefined);
   };
 
-  const handleAddPortfolioItem = (data: { title: string; subtitle: string }) => {
-    console.log("Adding portfolio item:", { role: selectedRoleForAdd?.value, ...data });
+  const handleAddPortfolioItem = (data: { title: string; subtitle: string; role: TangoRole }) => {
+    console.log("Adding portfolio item:", { role: data.role.value, title: data.title, subtitle: data.subtitle });
     handleCloseAddDialog();
   };
 
@@ -904,6 +926,7 @@ function ProDashboardView({
         onClose={handleCloseAddDialog}
         role={selectedRoleForAdd}
         onSubmit={handleAddPortfolioItem}
+        availableRoles={proRoles}
       />
     </div>
   );
