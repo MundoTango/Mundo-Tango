@@ -12,7 +12,7 @@ import { useTheme } from "@/contexts/theme-context";
 import { 
   Users, MapPin, Star, Building2, Search, Plus, Globe,
   TrendingUp, MessageCircle, UserPlus, ChevronRight, Sun, Moon,
-  Calendar, Home
+  Calendar, Home, Briefcase
 } from "lucide-react";
 
 // MY GROUPS - Automated by city/pro (simplified to city name)
@@ -353,9 +353,22 @@ function MyGroupCard({ group, index }: { group: typeof MY_GROUPS[0]; index: numb
             <div className="flex items-end justify-between">
               <div>
                 <h3 className="text-2xl font-serif font-bold mb-1">{group.name}</h3>
-                <Badge variant="secondary" className="text-xs capitalize bg-white/20 text-white border-white/30">
-                  {group.type}
-                </Badge>
+                {group.type === "city" ? (
+                  <Badge className="text-xs bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300 gap-1">
+                    <MapPin className="w-3 h-3" />
+                    City
+                  </Badge>
+                ) : group.type === "professional" ? (
+                  <Badge className="text-xs bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300 gap-1">
+                    <Briefcase className="w-3 h-3" />
+                    PRO
+                  </Badge>
+                ) : (
+                  <Badge className="text-xs bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300 gap-1">
+                    <Users className="w-3 h-3" />
+                    Group
+                  </Badge>
+                )}
               </div>
               {group.unreadPosts > 0 && (
                 <Badge className="bg-red-500 text-white">{group.unreadPosts} new</Badge>
@@ -406,7 +419,13 @@ function CityGroupCard({ city, index }: { city: typeof CITY_GROUPS[0]; index: nu
           {/* City Name Overlay */}
           <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
             <h3 className="text-2xl font-serif font-bold mb-1">{city.name}</h3>
-            <p className="text-sm text-white/80">{city.country}</p>
+            <div className="flex items-center gap-2">
+              <p className="text-sm text-white/80">{city.country}</p>
+              <Badge className="text-xs bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300 gap-1">
+                <MapPin className="w-3 h-3" />
+                City
+              </Badge>
+            </div>
           </div>
         </div>
 
@@ -478,8 +497,9 @@ function ProGroupCard({ group, index }: { group: typeof PRO_GROUPS[0]; index: nu
         
         <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
           <div className="flex items-center gap-3 mb-4">
-            <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-sm">
-              Professional
+            <Badge className="bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300 gap-1">
+              <Briefcase className="w-3 h-3" />
+              PRO
             </Badge>
             {group.verified && (
               <div className="flex items-center gap-1 text-sm bg-white/20 px-2 py-1 rounded-full backdrop-blur-sm">

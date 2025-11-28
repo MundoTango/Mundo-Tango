@@ -6,6 +6,34 @@ import { eq, and, ilike, sql } from "drizzle-orm";
 
 const router = Router();
 
+const PRO_ROLE_IMAGES: Record<string, string> = {
+  'leader': 'https://images.unsplash.com/photo-1508700929628-666bc8bd84ea?w=800&q=80',
+  'follower': 'https://images.unsplash.com/photo-1508700929628-666bc8bd84ea?w=800&q=80',
+  'teacher': 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=800&q=80',
+  'student': 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=800&q=80',
+  'dj': 'https://images.unsplash.com/photo-1571266028243-d220c6a8b0c5?w=800&q=80',
+  'musician': 'https://images.unsplash.com/photo-1511192336575-5a79af67a629?w=800&q=80',
+  'organizer': 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80',
+  'performer': 'https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?w=800&q=80',
+  'photographer': 'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=800&q=80',
+  'videographer': 'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=800&q=80',
+  'venue-owner': 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80',
+  'promoter': 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80',
+  'instructor': 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=800&q=80',
+  'host': 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80',
+  'choreographer': 'https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?w=800&q=80',
+  'historian': 'https://images.unsplash.com/photo-1508700929628-666bc8bd84ea?w=800&q=80',
+  'journalist': 'https://images.unsplash.com/photo-1508700929628-666bc8bd84ea?w=800&q=80',
+  'designer': 'https://images.unsplash.com/photo-1508700929628-666bc8bd84ea?w=800&q=80',
+  'vendor': 'https://images.unsplash.com/photo-1508700929628-666bc8bd84ea?w=800&q=80',
+};
+
+const DEFAULT_PRO_GROUP_IMAGE = 'https://images.unsplash.com/photo-1508700929628-666bc8bd84ea?w=800&q=80';
+
+function getPROGroupImage(role: string): string {
+  return PRO_ROLE_IMAGES[role] || DEFAULT_PRO_GROUP_IMAGE;
+}
+
 const PRO_ROLE_GROUP_MAPPINGS: Record<string, { name: string; description: string; slug: string }> = {
   'teacher': { 
     name: 'Tango Teachers Worldwide', 
@@ -159,6 +187,7 @@ router.post("/change-effects", authenticateToken, async (req: AuthRequest, res: 
             createdBy: userId,
             ownerId: userId,
             memberCount: 1,
+            coverImage: getPROGroupImage(role),
           }).returning();
 
           if (newGroup) {
