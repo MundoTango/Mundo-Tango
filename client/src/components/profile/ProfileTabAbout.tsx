@@ -12,6 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/UnifiedLocationPicker";
 import { UnifiedLanguagePicker, getLanguageByCode, getLanguageByName } from "@/components/input/UnifiedLanguagePicker";
 import { triggerLocationChangeEffects, detectLocationChange, formatWelcomeMessage, LocationChangeEvent } from '@/lib/locationChangeEffects';
+import { triggerRoleChangeEffects } from '@/lib/roleChangeEffects';
 import { TANGO_ROLES, getRoleByValue } from "@/lib/tangoRoles";
 import { 
   calculateYearsInRole, 
@@ -105,6 +106,8 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
     city: user.city || undefined,
     country: user.country || undefined,
   });
+  
+  const previousRolesRef = useRef<string[]>(user.tangoRoles || []);
 
   useEffect(() => {
     setEditValues({
@@ -179,6 +182,30 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
       
       if (newCity || newCountry) {
         previousLocationRef.current = { city: newCity || undefined, country: newCountry || undefined };
+      }
+      
+      const newRoles = editValues.tangoRoles || [];
+      const previousRoles = previousRolesRef.current || [];
+      const rolesChanged = JSON.stringify(newRoles.sort()) !== JSON.stringify(previousRoles.sort());
+      
+      if (rolesChanged && newRoles.length > 0) {
+        try {
+          const effects = await triggerRoleChangeEffects({
+            previousRoles,
+            newRoles,
+          });
+          
+          if (effects.autoJoinedGroups.length > 0) {
+            toast({
+              title: "PRO Groups Joined!",
+              description: effects.message,
+            });
+          }
+          
+          previousRolesRef.current = newRoles;
+        } catch (error) {
+          console.error('[ProfileTabAbout] Failed to trigger role effects:', error);
+        }
       }
       
       setIsEditing(false);
