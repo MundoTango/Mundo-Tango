@@ -1,6 +1,7 @@
 import { db } from "../../db";
 import { professionalEndorsements, users, friendships } from "../../../shared/schema";
 import { eq, and, count, sql, desc, avg } from "drizzle-orm";
+import { getMaxExperienceYears } from "@shared/utils/roleExperience";
 
 export interface TangoRole {
   endorsements: number;
@@ -204,7 +205,7 @@ export class ReputationService {
 
     // Get user's years of experience
     const user = await db.select().from(users).where(eq(users.id, userId)).limit(1);
-    const yearsExperience = user[0]?.yearsOfDancing || 0;
+    const yearsExperience = getMaxExperienceYears(user[0]) || 0;
 
     // Get highlighted skills across all roles
     const allEndorsements = await db

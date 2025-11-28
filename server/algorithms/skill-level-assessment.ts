@@ -3,6 +3,8 @@
  * Assesses dancer skill levels based on multiple signals
  */
 
+import { calculateYearsInRole, getMaxExperienceYears } from '@shared/utils/roleExperience';
+
 interface SkillAssessment {
   leaderLevel: number; // 1-5
   followerLevel: number; // 1-5
@@ -21,11 +23,24 @@ export class SkillLevelAssessmentAlgorithm {
     let leaderScore = 0;
     let followerScore = 0;
 
-    // Years of experience (30%)
-    const yearsScore = Math.min(profile.yearsOfDancing / 10, 1);
-    leaderScore += yearsScore * 1.5;
-    followerScore += yearsScore * 1.5;
-    factors.push(`${profile.yearsOfDancing} years of experience`);
+    // Years of experience (30%) - now using role-specific experience
+    const leaderYears = calculateYearsInRole(profile, 'leader');
+    const followerYears = calculateYearsInRole(profile, 'follower');
+    const overallYears = getMaxExperienceYears(profile);
+    
+    const leaderYearsScore = Math.min(leaderYears / 10, 1);
+    const followerYearsScore = Math.min(followerYears / 10, 1);
+    
+    leaderScore += leaderYearsScore * 1.5;
+    followerScore += followerYearsScore * 1.5;
+    
+    factors.push(`${overallYears} years of tango experience`);
+    if (leaderYears !== overallYears) {
+      factors.push(`${leaderYears} years as leader`);
+    }
+    if (followerYears !== overallYears) {
+      factors.push(`${followerYears} years as follower`);
+    }
 
     // Event attendance (25%)
     const eventCount = activityHistory.filter(a => a.type === 'event_attendance').length;

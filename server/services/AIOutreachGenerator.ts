@@ -1,12 +1,14 @@
 import { db } from '../db';
 import { users, outreachSequences, outreachSteps } from '@shared/schema';
 import { eq } from 'drizzle-orm';
+import { calculateYearsInRole, getMaxExperienceYears } from '@shared/utils/roleExperience';
 
 interface GenerateOutreachParams {
   candidateId: number;
   opportunityDescription: string;
   tone: 'formal' | 'casual' | 'enthusiastic';
   channel: 'email' | 'linkedin' | 'messenger';
+  targetRole?: string;
 }
 
 interface OutreachMessage {
@@ -28,13 +30,18 @@ export class AIOutreachGenerator {
       throw new Error('Candidate not found');
     }
 
+    const candidateExperience = params.targetRole
+      ? calculateYearsInRole(candidate, params.targetRole)
+      : getMaxExperienceYears(candidate);
+
     const message = this.generatePersonalizedMessage({
       candidateName: candidate.name,
       candidateBio: candidate.bio || '',
-      candidateExperience: candidate.yearsOfDancing || 0,
+      candidateExperience,
       candidateCity: candidate.city || '',
       opportunityDescription: params.opportunityDescription,
-      tone: params.tone
+      tone: params.tone,
+      targetRole: params.targetRole
     });
 
     return {
@@ -44,7 +51,8 @@ export class AIOutreachGenerator {
       variables: {
         name: candidate.name,
         city: candidate.city || '',
-        experience: candidate.yearsOfDancing?.toString() || '0'
+        experience: candidateExperience.toString(),
+        role: params.targetRole || ''
       }
     };
   }
@@ -56,7 +64,13 @@ export class AIOutreachGenerator {
     candidateCity: string;
     opportunityDescription: string;
     tone: 'formal' | 'casual' | 'enthusiastic';
+    targetRole?: string;
   }): { subject: string; body: string } {
+    const roleLabel = context.targetRole ? this.formatRoleLabel(context.targetRole) : null;
+    const experiencePhrase = roleLabel
+      ? `${context.candidateExperience} years as a ${roleLabel}`
+      : `${context.candidateExperience} years of tango experience`;
+
     const subjects = {
       formal: `Opportunity: ${context.opportunityDescription.slice(0, 50)}`,
       casual: `Hey ${context.candidateName}, exciting opportunity!`,
@@ -70,9 +84,9 @@ export class AIOutreachGenerator {
     };
 
     const intros = {
-      formal: `I came across your profile and was impressed by your ${context.candidateExperience} years of tango experience${context.candidateCity ? ` in ${context.candidateCity}` : ''}.`,
-      casual: `I've been looking at profiles and yours really stood out! ${context.candidateExperience} years of dancing is impressive.`,
-      enthusiastic: `Your profile caught my eye immediately! With ${context.candidateExperience} years in the tango world, you have exactly the experience we're looking for!`
+      formal: `I came across your profile and was impressed by your ${experiencePhrase}${context.candidateCity ? ` in ${context.candidateCity}` : ''}.`,
+      casual: `I've been looking at profiles and yours really stood out! ${experiencePhrase} is impressive.`,
+      enthusiastic: `Your profile caught my eye immediately! With ${experiencePhrase}, you have exactly what we're looking for!`
     };
 
     const closings = {
@@ -170,5 +184,30 @@ Otherwise, I'd still love to chat briefly about how this could be a good fit.
 
 Thanks for your time!`;
     }
+  }
+
+  private formatRoleLabel(role: string): string {
+    const roleLabels: Record<string, string> = {
+      leader: 'leader',
+      follower: 'follower',
+      teacher: 'teacher',
+      dj: 'DJ',
+      organizer: 'organizer',
+      musician: 'musician',
+      performer: 'performer',
+      choreographer: 'choreographer',
+      venue_owner: 'venue owner',
+      photographer: 'photographer',
+      videographer: 'videographer',
+      host: 'host',
+      promoter: 'promoter',
+      judge: 'judge',
+      student: 'student',
+      milonguero: 'milonguero',
+      tanguera: 'tanguera',
+      both_roles: 'both leader and follower',
+      ambassador: 'ambassador'
+    };
+    return roleLabels[role] || role;
   }
 }

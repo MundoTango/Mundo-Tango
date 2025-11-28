@@ -3,6 +3,8 @@
  * Matches dancers based on skill level, preferences, location, and availability
  */
 
+import { calculateYearsInRole, TangoRoleExperience } from '@shared/utils/roleExperience';
+
 interface DancerProfile {
   id: number;
   name: string;
@@ -12,7 +14,9 @@ interface DancerProfile {
   city: string;
   availableDays: number[]; // 0-6 (Sunday-Saturday)
   musicPreferences: string[];
-  yearsOfDancing: number;
+  yearsOfDancing?: number | null;
+  tangoRoleExperience?: TangoRoleExperience[] | null;
+  tangoStartYear?: number | null;
   goals: string[]; // 'social', 'performance', 'competition', 'teaching'
 }
 
@@ -129,20 +133,63 @@ export class DancePartnerMatchingAlgorithm {
   }
 
   private calculateSkillMatch(dancer: DancerProfile, partner: DancerProfile): number {
-    // Compare relevant skill levels based on roles
-    const dancerSkill = Math.max(dancer.leaderLevel, dancer.followerLevel);
-    const partnerSkill = Math.max(partner.leaderLevel, partner.followerLevel);
+    // Compare relevant skill levels based on complementary roles
+    // If dancer leads, compare with partner's follower level and vice versa
+    const dancerLeads = dancer.preferredRoles.includes('leader') || dancer.preferredRoles.includes('both');
+    const dancerFollows = dancer.preferredRoles.includes('follower') || dancer.preferredRoles.includes('both');
+    const partnerLeads = partner.preferredRoles.includes('leader') || partner.preferredRoles.includes('both');
+    const partnerFollows = partner.preferredRoles.includes('follower') || partner.preferredRoles.includes('both');
 
-    const diff = Math.abs(dancerSkill - partnerSkill);
+    // Calculate skill level score (60% weight)
+    let skillLevelScore = 0;
+    if (dancerLeads && partnerFollows) {
+      skillLevelScore = this.calculateLevelDifference(dancer.leaderLevel, partner.followerLevel);
+    } else if (dancerFollows && partnerLeads) {
+      skillLevelScore = this.calculateLevelDifference(dancer.followerLevel, partner.leaderLevel);
+    } else {
+      // Fallback to max levels
+      const dancerSkill = Math.max(dancer.leaderLevel, dancer.followerLevel);
+      const partnerSkill = Math.max(partner.leaderLevel, partner.followerLevel);
+      skillLevelScore = this.calculateLevelDifference(dancerSkill, partnerSkill);
+    }
 
-    // Same level = 1.0
-    // 1 level diff = 0.8
-    // 2 levels diff = 0.5
-    // 3+ levels diff = 0.2
+    // Calculate experience match using role-specific years (40% weight)
+    let experienceScore = 0;
+    if (dancerLeads && partnerFollows) {
+      const dancerYears = calculateYearsInRole(dancer, 'leader');
+      const partnerYears = calculateYearsInRole(partner, 'follower');
+      experienceScore = this.calculateExperienceMatch(dancerYears, partnerYears);
+    } else if (dancerFollows && partnerLeads) {
+      const dancerYears = calculateYearsInRole(dancer, 'follower');
+      const partnerYears = calculateYearsInRole(partner, 'leader');
+      experienceScore = this.calculateExperienceMatch(dancerYears, partnerYears);
+    } else {
+      // Fallback: compare overall experience
+      const dancerYears = calculateYearsInRole(dancer, 'leader');
+      const partnerYears = calculateYearsInRole(partner, 'leader');
+      experienceScore = this.calculateExperienceMatch(dancerYears, partnerYears);
+    }
+
+    // Combined score: 60% skill levels, 40% experience years
+    return skillLevelScore * 0.6 + experienceScore * 0.4;
+  }
+
+  private calculateLevelDifference(level1: number, level2: number): number {
+    const diff = Math.abs(level1 - level2);
+    // Same level = 1.0, 1 level diff = 0.8, 2 levels diff = 0.5, 3+ levels diff = 0.2
     if (diff === 0) return 1.0;
     if (diff === 1) return 0.8;
     if (diff === 2) return 0.5;
     return 0.2;
+  }
+
+  private calculateExperienceMatch(years1: number, years2: number): number {
+    const diff = Math.abs(years1 - years2);
+    // Similar experience = 1.0, 1-2 years diff = 0.9, 3-5 years diff = 0.7, 6+ years diff = 0.5
+    if (diff <= 1) return 1.0;
+    if (diff <= 3) return 0.9;
+    if (diff <= 5) return 0.7;
+    return 0.5;
   }
 
   private calculateLocationMatch(dancer: DancerProfile, partner: DancerProfile): number {

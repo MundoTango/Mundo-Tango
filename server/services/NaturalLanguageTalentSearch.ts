@@ -1,6 +1,7 @@
 import { db } from '../db';
 import { users } from '@shared/schema';
 import { eq, and, ilike, or, sql } from 'drizzle-orm';
+import { calculateYearsInRole, getMaxExperienceYears } from '@shared/utils/roleExperience';
 
 interface TalentSearchParams {
   query: string;
@@ -25,6 +26,7 @@ interface TalentSearchResult {
 interface ParsedQuery {
   location?: string;
   experience?: number;
+  role?: string;
   skills?: string[];
   styles?: string[];
   availability?: string;
@@ -46,7 +48,36 @@ export class NaturalLanguageTalentSearch {
     }
 
     if (parsedQuery.experience) {
-      whereConditions.push(sql`${users.yearsOfDancing} >= ${parsedQuery.experience}`);
+      if (parsedQuery.role) {
+        const currentYear = new Date().getFullYear();
+        const minStartYear = currentYear - parsedQuery.experience;
+        whereConditions.push(
+          or(
+            sql`EXISTS (
+              SELECT 1 FROM jsonb_array_elements(${users.tangoRoleExperience}) AS role_exp
+              WHERE role_exp->>'role' = ${parsedQuery.role}
+              AND (role_exp->>'startYear')::int <= ${minStartYear}
+            )`,
+            sql`(${users.tangoRoleExperience} IS NULL AND ${users.yearsOfDancing} >= ${parsedQuery.experience})`
+          )!
+        );
+      } else {
+        whereConditions.push(
+          or(
+            sql`EXISTS (
+              SELECT 1 FROM jsonb_array_elements(${users.tangoRoleExperience}) AS role_exp
+              WHERE (${new Date().getFullYear()} - (role_exp->>'startYear')::int) >= ${parsedQuery.experience}
+            )`,
+            sql`${users.yearsOfDancing} >= ${parsedQuery.experience}`
+          )!
+        );
+      }
+    }
+
+    if (parsedQuery.role) {
+      whereConditions.push(
+        sql`${parsedQuery.role} = ANY(${users.tangoRoles})`
+      );
     }
 
     const candidates = await db.select({
@@ -58,6 +89,8 @@ export class NaturalLanguageTalentSearch {
       country: users.country,
       yearsOfDancing: users.yearsOfDancing,
       tangoRoles: users.tangoRoles,
+      tangoRoleExperience: users.tangoRoleExperience,
+      tangoStartYear: users.tangoStartYear,
       languages: users.languages
     })
     .from(users)
@@ -66,8 +99,12 @@ export class NaturalLanguageTalentSearch {
 
     const rankedResults = candidates.map(candidate => {
       const matchReasons = this.explainMatch(candidate, parsedQuery);
-      const semanticScore = this.calculateSemanticScore(candidate, params.query);
+      const semanticScore = this.calculateSemanticScore(candidate, params.query, parsedQuery);
       const compatibilityScore = Math.random() * 0.3 + 0.7;
+
+      const experienceYears = parsedQuery.role
+        ? calculateYearsInRole(candidate, parsedQuery.role)
+        : getMaxExperienceYears(candidate);
 
       return {
         userId: candidate.id,
@@ -76,7 +113,7 @@ export class NaturalLanguageTalentSearch {
         bio: candidate.bio,
         city: candidate.city,
         country: candidate.country,
-        experienceYears: candidate.yearsOfDancing || 0,
+        experienceYears,
         specialties: candidate.tangoRoles || [],
         semanticScore,
         compatibilityScore,
@@ -103,11 +140,34 @@ export class NaturalLanguageTalentSearch {
       }
     }
 
+    const rolePatterns: Record<string, string[]> = {
+      'teacher': ['teacher', 'teachers', 'instructor', 'instructors', 'teaching'],
+      'dj': ['dj', 'djs', 'disc jockey'],
+      'organizer': ['organizer', 'organizers', 'organizing', 'host', 'hosts'],
+      'performer': ['performer', 'performers', 'performing'],
+      'leader': ['leader', 'leaders', 'leading'],
+      'follower': ['follower', 'followers', 'following'],
+      'musician': ['musician', 'musicians', 'music'],
+      'photographer': ['photographer', 'photographers', 'photo'],
+      'videographer': ['videographer', 'videographers', 'video']
+    };
+
+    for (const [role, patterns] of Object.entries(rolePatterns)) {
+      if (patterns.some(pattern => queryLower.includes(pattern))) {
+        parsed.role = role;
+        break;
+      }
+    }
+
     const experienceMatch = queryLower.match(/(\d+)\+?\s*(years?|yrs?)/);
     if (experienceMatch) {
       parsed.experience = parseInt(experienceMatch[1]);
     } else if (queryLower.includes('experienced')) {
       parsed.experience = 5;
+    } else if (queryLower.includes('senior') || queryLower.includes('veteran')) {
+      parsed.experience = 10;
+    } else if (queryLower.includes('beginner') || queryLower.includes('new')) {
+      parsed.experience = 0;
     }
 
     const styles = ['milonga', 'tango', 'vals', 'nuevo', 'salon'];
@@ -124,15 +184,32 @@ export class NaturalLanguageTalentSearch {
   }
 
   private explainMatch(candidate: any, query: ParsedQuery): string[] {
-    const reasons = [];
+    const reasons: string[] = [];
 
     if (query.location && (candidate.city?.toLowerCase() === query.location.toLowerCase() || 
         candidate.country?.toLowerCase() === query.location.toLowerCase())) {
       reasons.push(`📍 Based in ${candidate.city || candidate.country}`);
     }
 
-    if (query.experience && candidate.yearsOfDancing >= query.experience) {
-      reasons.push(`🎓 ${candidate.yearsOfDancing} years of experience`);
+    if (query.experience) {
+      if (query.role) {
+        const roleYears = calculateYearsInRole(candidate, query.role);
+        if (roleYears >= query.experience) {
+          reasons.push(`🎓 ${roleYears} years as ${query.role}`);
+        }
+      } else {
+        const maxYears = getMaxExperienceYears(candidate);
+        if (maxYears >= query.experience) {
+          reasons.push(`🎓 ${maxYears} years of experience`);
+        }
+      }
+    } else if (query.role) {
+      const roleYears = calculateYearsInRole(candidate, query.role);
+      if (roleYears > 0) {
+        reasons.push(`🎓 ${roleYears} years as ${query.role}`);
+      } else {
+        reasons.push(`🎓 Active ${query.role}`);
+      }
     }
 
     if (query.styles && candidate.tangoRoles) {
@@ -151,7 +228,7 @@ export class NaturalLanguageTalentSearch {
     return reasons;
   }
 
-  private calculateSemanticScore(candidate: any, query: string): number {
+  private calculateSemanticScore(candidate: any, query: string, parsedQuery: ParsedQuery): number {
     let score = 0.5;
 
     const queryLower = query.toLowerCase();
@@ -160,10 +237,22 @@ export class NaturalLanguageTalentSearch {
     const queryWords = queryLower.split(/\s+/).filter(w => w.length > 3);
     const matchingWords = queryWords.filter(word => bioLower.includes(word));
     
-    score += (matchingWords.length / queryWords.length) * 0.3;
+    if (queryWords.length > 0) {
+      score += (matchingWords.length / queryWords.length) * 0.3;
+    }
 
-    if (candidate.yearsOfDancing > 5) score += 0.1;
+    const experienceYears = parsedQuery.role
+      ? calculateYearsInRole(candidate, parsedQuery.role)
+      : getMaxExperienceYears(candidate);
+
+    if (experienceYears > 5) score += 0.1;
+    if (experienceYears > 10) score += 0.05;
+    
     if (candidate.tangoRoles && candidate.tangoRoles.length > 0) score += 0.1;
+
+    if (parsedQuery.role && candidate.tangoRoles?.includes(parsedQuery.role)) {
+      score += 0.15;
+    }
 
     return Math.min(score, 1.0);
   }
