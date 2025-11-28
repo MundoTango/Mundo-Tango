@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Info, MapPin, Calendar as CalendarIcon, Users, Award, Edit, Check, X, Languages, Star } from "lucide-react";
+import { Info, MapPin, Calendar as CalendarIcon, Users, Award, Edit, Check, X, Languages, Star, Drama } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
@@ -11,6 +11,19 @@ import { useToast } from "@/hooks/use-toast";
 import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/UnifiedLocationPicker";
 import { triggerLocationChangeEffects, detectLocationChange, formatWelcomeMessage, LocationChangeEvent } from '@/lib/locationChangeEffects';
 import { TANGO_ROLES, getRoleByValue } from "@/lib/tangoRoles";
+import { 
+  calculateYearsInRole, 
+  formatRoleExperience, 
+  buildTangoRoleExperience,
+  type TangoRoleExperience 
+} from "@shared/utils/roleExperience";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface User {
   id: number;
@@ -21,6 +34,8 @@ interface User {
   city?: string | null;
   country?: string | null;
   tangoRoles?: string[] | null;
+  tangoRoleExperience?: TangoRoleExperience[] | null;
+  tangoStartYear?: number | null;
   yearsOfDancing?: number;
   leaderLevel?: number;
   followerLevel?: number;
@@ -35,40 +50,55 @@ interface ProfileTabAboutProps {
   isOwnProfile: boolean;
 }
 
+function generateYearOptions(): number[] {
+  const currentYear = new Date().getFullYear();
+  const years: number[] = [];
+  for (let year = currentYear; year >= 1950; year--) {
+    years.push(year);
+  }
+  return years;
+}
+
 export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isEditing, setIsEditing] = useState(false);
+  const yearOptions = generateYearOptions();
+  
   const [editValues, setEditValues] = useState<Record<string, any>>({
     bio: user.bio || '',
     city: user.city || '',
     country: user.country || '',
     tangoRoles: user.tangoRoles || [],
+    tangoStartYear: user.tangoStartYear || null,
+    tangoRoleExperience: user.tangoRoleExperience || [],
     yearsOfDancing: user.yearsOfDancing || '',
     leaderLevel: user.leaderLevel || '',
     followerLevel: user.followerLevel || '',
     primaryLanguage: user.primaryLanguage || '',
     languages: (user.languages || []).join(', '),
   });
+  
   const previousLocationRef = useRef<{ city?: string; country?: string }>({
     city: user.city || undefined,
     country: user.country || undefined,
   });
 
-  // Sync editValues when user data or editing mode changes
   useEffect(() => {
     setEditValues({
       bio: user.bio || '',
       city: user.city || '',
       country: user.country || '',
       tangoRoles: user.tangoRoles || [],
+      tangoStartYear: user.tangoStartYear || null,
+      tangoRoleExperience: user.tangoRoleExperience || [],
       yearsOfDancing: user.yearsOfDancing || '',
       leaderLevel: user.leaderLevel || '',
       followerLevel: user.followerLevel || '',
       primaryLanguage: user.primaryLanguage || '',
       languages: (user.languages || []).join(', '),
     });
-  }, [user.id, user.bio, user.city, user.country, user.tangoRoles, user.yearsOfDancing, user.leaderLevel, user.followerLevel, user.primaryLanguage, user.languages]);
+  }, [user.id, user.bio, user.city, user.country, user.tangoRoles, user.tangoStartYear, user.tangoRoleExperience, user.yearsOfDancing, user.leaderLevel, user.followerLevel, user.primaryLanguage, user.languages]);
 
   const updateProfileMutation = useMutation({
     mutationFn: async (updates: Record<string, any>) => {
@@ -126,17 +156,6 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
       }
       
       setIsEditing(false);
-      setEditValues({
-        bio: editValues.bio || '',
-        city: editValues.city || '',
-        country: editValues.country || '',
-        tangoRoles: editValues.tangoRoles || [],
-        yearsOfDancing: editValues.yearsOfDancing || '',
-        leaderLevel: editValues.leaderLevel || '',
-        followerLevel: editValues.followerLevel || '',
-        primaryLanguage: editValues.primaryLanguage || '',
-        languages: editValues.languages || '',
-      });
     },
     onError: () => {
       toast({ title: "Failed to update profile", variant: "destructive" });
@@ -149,23 +168,70 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
 
   const toggleRole = (roleValue: string) => {
     const currentRoles = editValues.tangoRoles || [];
+    const currentExperience = editValues.tangoRoleExperience || [];
+    const defaultStartYear = editValues.tangoStartYear || new Date().getFullYear();
+    
     if (currentRoles.includes(roleValue)) {
-      setEditValues({ ...editValues, tangoRoles: currentRoles.filter((r: string) => r !== roleValue) });
+      setEditValues({ 
+        ...editValues, 
+        tangoRoles: currentRoles.filter((r: string) => r !== roleValue),
+        tangoRoleExperience: currentExperience.filter((exp: TangoRoleExperience) => exp.role !== roleValue)
+      });
     } else {
-      setEditValues({ ...editValues, tangoRoles: [...currentRoles, roleValue] });
+      const newExperience = [...currentExperience, { role: roleValue, startYear: defaultStartYear }];
+      setEditValues({ 
+        ...editValues, 
+        tangoRoles: [...currentRoles, roleValue],
+        tangoRoleExperience: newExperience
+      });
     }
+  };
+
+  const updateRoleStartYear = (roleValue: string, startYear: number) => {
+    const currentExperience = editValues.tangoRoleExperience || [];
+    const existingIndex = currentExperience.findIndex((exp: TangoRoleExperience) => exp.role === roleValue);
+    
+    let updatedExperience: TangoRoleExperience[];
+    if (existingIndex >= 0) {
+      updatedExperience = currentExperience.map((exp: TangoRoleExperience, index: number) => 
+        index === existingIndex ? { ...exp, startYear } : exp
+      );
+    } else {
+      updatedExperience = [...currentExperience, { role: roleValue, startYear }];
+    }
+    
+    setEditValues({ ...editValues, tangoRoleExperience: updatedExperience });
+  };
+
+  const getRoleStartYear = (roleValue: string): number => {
+    const experience = editValues.tangoRoleExperience || [];
+    const roleExp = experience.find((exp: TangoRoleExperience) => exp.role === roleValue);
+    return roleExp?.startYear || editValues.tangoStartYear || new Date().getFullYear();
   };
 
   const handleSave = () => {
     const roles = editValues.tangoRoles || [];
     const additionalLangs = (editValues.languages || '').split(',').map((l: string) => l.trim()).filter(Boolean);
     
+    const currentYear = new Date().getFullYear();
+    const tangoStartYear = editValues.tangoStartYear || null;
+    const yearsOfDancing = tangoStartYear ? Math.max(0, currentYear - tangoStartYear) : 0;
+    
+    const tangoRoleExperience = roles.length > 0 
+      ? roles.map((role: string) => ({
+          role,
+          startYear: getRoleStartYear(role)
+        }))
+      : null;
+    
     updateProfileMutation.mutate({
       bio: editValues.bio || null,
       city: editValues.city || null,
       country: editValues.country || null,
       tangoRoles: roles,
-      yearsOfDancing: editValues.yearsOfDancing ? parseInt(editValues.yearsOfDancing) : 0,
+      tangoStartYear: tangoStartYear,
+      tangoRoleExperience: tangoRoleExperience,
+      yearsOfDancing: yearsOfDancing,
       leaderLevel: editValues.leaderLevel ? parseInt(editValues.leaderLevel) : 0,
       followerLevel: editValues.followerLevel ? parseInt(editValues.followerLevel) : 0,
       primaryLanguage: editValues.primaryLanguage || null,
@@ -180,6 +246,8 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
       city: user.city || '',
       country: user.country || '',
       tangoRoles: user.tangoRoles || [],
+      tangoStartYear: user.tangoStartYear || null,
+      tangoRoleExperience: user.tangoRoleExperience || [],
       yearsOfDancing: user.yearsOfDancing || '',
       leaderLevel: user.leaderLevel || '',
       followerLevel: user.followerLevel || '',
@@ -187,6 +255,8 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
       languages: (user.languages || []).join(', '),
     });
   };
+
+  const selectedRoles = editValues.tangoRoles || [];
 
   return (
     <div className="space-y-6">
@@ -258,93 +328,168 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
             )}
           </div>
 
-          {/* Tango Roles */}
+          {/* Tango Roles & Experience - Combined Section */}
           <div>
-            <h3 className="text-sm font-medium text-muted-foreground mb-2 flex items-center gap-1">
-              <Award className="w-4 h-4" />
-              Tango Roles
+            <h3 className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-1">
+              <Drama className="w-4 h-4" />
+              Tango Roles & Experience
             </h3>
+            
             {isEditing ? (
-              <div className="space-y-3">
-                <p className="text-xs text-muted-foreground">Click to select/deselect roles</p>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2" data-testid="input-tango-roles">
-                  {TANGO_ROLES.map((role) => {
-                    const IconComponent = role.icon;
-                    const isSelected = (editValues.tangoRoles || []).includes(role.value);
-                    return (
-                      <button
-                        key={role.value}
-                        type="button"
-                        onClick={() => toggleRole(role.value)}
-                        className={`relative flex items-center gap-2 p-2 rounded-lg border transition-all text-left ${
-                          isSelected
-                            ? "border-primary bg-primary/10"
-                            : "border-muted hover:border-muted-foreground/30"
-                        }`}
-                        data-testid={`role-${role.value}`}
-                      >
-                        {isSelected && (
-                          <div className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-primary-foreground">
-                            <Check className="h-2.5 w-2.5" />
-                          </div>
-                        )}
-                        <div className="p-1.5 rounded-md" style={{ backgroundColor: `${role.color}20` }}>
-                          <IconComponent className="w-4 h-4" style={{ color: role.color }} />
-                        </div>
-                        <span className="text-xs font-medium truncate pr-4">{role.label}</span>
-                      </button>
-                    );
-                  })}
+              <div className="space-y-4">
+                {/* When did you start tango? */}
+                <div>
+                  <label className="text-xs text-muted-foreground block mb-1">When did you start tango?</label>
+                  <Select
+                    value={editValues.tangoStartYear?.toString() || ''}
+                    onValueChange={(value) => {
+                      const year = parseInt(value);
+                      setEditValues({ ...editValues, tangoStartYear: year });
+                    }}
+                  >
+                    <SelectTrigger className="w-full max-w-[200px]" data-testid="select-tango-start-year">
+                      <SelectValue placeholder="Select year" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {yearOptions.map((year) => (
+                        <SelectItem key={year} value={year.toString()}>
+                          {year}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
-                {(editValues.tangoRoles || []).length > 0 && (
+
+                {/* Role Selection */}
+                <div>
+                  <p className="text-xs text-muted-foreground mb-2">Click to select/deselect roles</p>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2" data-testid="input-tango-roles">
+                    {TANGO_ROLES.map((role) => {
+                      const IconComponent = role.icon;
+                      const isSelected = selectedRoles.includes(role.value);
+                      return (
+                        <button
+                          key={role.value}
+                          type="button"
+                          onClick={() => toggleRole(role.value)}
+                          className={`relative flex items-center gap-2 p-2 rounded-lg border transition-all text-left ${
+                            isSelected
+                              ? "border-primary bg-primary/10"
+                              : "border-muted hover:border-muted-foreground/30"
+                          }`}
+                          data-testid={`role-${role.value}`}
+                        >
+                          {isSelected && (
+                            <div className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                              <Check className="h-2.5 w-2.5" />
+                            </div>
+                          )}
+                          <div className="p-1.5 rounded-md" style={{ backgroundColor: `${role.color}20` }}>
+                            <IconComponent className="w-4 h-4" style={{ color: role.color }} />
+                          </div>
+                          <span className="text-xs font-medium truncate pr-4">{role.label}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Per-Role Start Year Customization */}
+                {selectedRoles.length > 0 && (
+                  <div className="border rounded-lg p-4 bg-muted/30">
+                    <p className="text-xs text-muted-foreground mb-3">Customize when you started each role (defaults to your tango start year):</p>
+                    <div className="space-y-3">
+                      {selectedRoles.map((roleValue: string) => {
+                        const role = getRoleByValue(roleValue);
+                        const IconComponent = role?.icon;
+                        const startYear = getRoleStartYear(roleValue);
+                        
+                        return (
+                          <div key={roleValue} className="flex items-center justify-between gap-4">
+                            <div className="flex items-center gap-2 min-w-0">
+                              {IconComponent && (
+                                <div className="p-1.5 rounded-md shrink-0" style={{ backgroundColor: `${role?.color}20` }}>
+                                  <IconComponent className="w-4 h-4" style={{ color: role?.color }} />
+                                </div>
+                              )}
+                              <span className="text-sm font-medium truncate">{role?.label || roleValue}</span>
+                            </div>
+                            <Select
+                              value={startYear.toString()}
+                              onValueChange={(value) => updateRoleStartYear(roleValue, parseInt(value))}
+                            >
+                              <SelectTrigger className="w-[120px] shrink-0" data-testid={`select-role-year-${roleValue}`}>
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {yearOptions.map((year) => (
+                                  <SelectItem key={year} value={year.toString()}>
+                                    {year}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {selectedRoles.length > 0 && (
                   <p className="text-xs text-muted-foreground">
-                    Selected: {(editValues.tangoRoles || []).length} role{(editValues.tangoRoles || []).length !== 1 ? 's' : ''}
+                    Selected: {selectedRoles.length} role{selectedRoles.length !== 1 ? 's' : ''}
                   </p>
                 )}
               </div>
             ) : (
-              <div className="flex flex-wrap gap-2">
+              <div className="space-y-3">
+                {/* Per-Role Experience Cards */}
                 {user.tangoRoles && user.tangoRoles.length > 0 ? (
-                  user.tangoRoles.map((roleValue) => {
-                    const role = getRoleByValue(roleValue);
-                    const IconComponent = role?.icon;
-                    return (
-                      <Badge 
-                        key={roleValue} 
-                        variant="secondary" 
-                        className="flex items-center gap-1.5 capitalize"
-                        style={role ? { borderColor: `${role.color}40` } : undefined}
-                      >
-                        {IconComponent && <IconComponent className="w-3 h-3" style={{ color: role?.color }} />}
-                        {role?.label || roleValue.replace(/_/g, ' ')}
-                      </Badge>
-                    );
-                  })
+                  <div className="flex flex-wrap gap-2">
+                    {user.tangoRoles.map((roleValue) => {
+                      const role = getRoleByValue(roleValue);
+                      const IconComponent = role?.icon;
+                      const experience = formatRoleExperience(user, roleValue);
+                      
+                      return (
+                        <Badge 
+                          key={roleValue} 
+                          variant="secondary" 
+                          className="flex items-center gap-1.5 py-1.5 px-3"
+                          style={role ? { borderColor: `${role.color}40` } : undefined}
+                          data-testid={`badge-role-experience-${roleValue}`}
+                        >
+                          {IconComponent && <IconComponent className="w-3.5 h-3.5" style={{ color: role?.color }} />}
+                          <span>{role?.label || roleValue.replace(/_/g, ' ')}</span>
+                          <span className="text-muted-foreground">:</span>
+                          <span className="font-medium">{experience}</span>
+                        </Badge>
+                      );
+                    })}
+                  </div>
                 ) : (
                   <span className="text-muted-foreground italic">No roles set</span>
+                )}
+                
+                {/* Dancing Since */}
+                {user.tangoStartYear && (
+                  <p className="text-sm text-muted-foreground mt-2" data-testid="text-dancing-since">
+                    Dancing since {user.tangoStartYear}
+                  </p>
                 )}
               </div>
             )}
           </div>
 
-          {/* Dance Experience */}
+          {/* Skill Levels (separate from experience) */}
           <div>
             <h3 className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-1">
               <Users className="w-4 h-4" />
-              Dance Experience
+              Skill Levels
             </h3>
             {isEditing ? (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                <div>
-                  <label className="text-xs text-muted-foreground block mb-1">Years of Dancing</label>
-                  <Input 
-                    type="number" 
-                    placeholder="e.g., 5" 
-                    value={editValues.yearsOfDancing || ''} 
-                    onChange={(e) => setEditValues({ ...editValues, yearsOfDancing: e.target.value })}
-                    data-testid="input-years-dancing"
-                  />
-                </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
                   <label className="text-xs text-muted-foreground block mb-1">Leader Level (1-10)</label>
                   <Input 
@@ -372,12 +517,6 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
               </div>
             ) : (
               <div className="space-y-2">
-                {user.yearsOfDancing && (
-                  <div>
-                    <p className="text-xs text-muted-foreground">Years of Dancing</p>
-                    <p className="text-sm font-medium">{user.yearsOfDancing} years</p>
-                  </div>
-                )}
                 {user.leaderLevel !== undefined && user.leaderLevel > 0 && (
                   <div>
                     <p className="text-xs text-muted-foreground">Leader Level</p>
@@ -390,8 +529,8 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
                     <p className="text-sm font-medium">Level {user.followerLevel}</p>
                   </div>
                 )}
-                {!user.yearsOfDancing && !user.leaderLevel && !user.followerLevel && (
-                  <span className="text-muted-foreground italic">No dance experience set</span>
+                {!user.leaderLevel && !user.followerLevel && (
+                  <span className="text-muted-foreground italic">No skill levels set</span>
                 )}
               </div>
             )}
