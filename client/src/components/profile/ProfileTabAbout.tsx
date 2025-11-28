@@ -15,6 +15,7 @@ import {
   calculateYearsInRole, 
   formatRoleExperience, 
   buildTangoRoleExperience,
+  getRoleStartYear,
   type TangoRoleExperience 
 } from "@shared/utils/roleExperience";
 import {
@@ -456,7 +457,7 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
                     {user.tangoRoles.map((roleValue) => {
                       const role = getRoleByValue(roleValue);
                       const IconComponent = role?.icon;
-                      const experience = formatRoleExperience(user, roleValue);
+                      const startYear = getRoleStartYear(user, roleValue);
                       
                       return (
                         <Badge 
@@ -469,7 +470,7 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
                           {IconComponent && <IconComponent className="w-3.5 h-3.5" style={{ color: role?.color }} />}
                           <span>{role?.label || roleValue.replace(/_/g, ' ')}</span>
                           <span className="text-muted-foreground">:</span>
-                          <span className="font-medium">{experience}</span>
+                          <span className="font-medium">{startYear}</span>
                         </Badge>
                       );
                     })}

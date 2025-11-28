@@ -106,6 +106,30 @@ export function formatRoleExperience(
 }
 
 /**
+ * Get the start year for a specific role, formatted as a string.
+ * 
+ * @param user - User object with experience fields
+ * @param role - The role to get the start year for
+ * @returns Formatted year string like "2020"
+ */
+export function getRoleStartYear(
+  user: UserWithExperience,
+  role: string
+): string {
+  const roleExp = user.tangoRoleExperience?.find(r => r.role === role);
+  
+  if (roleExp) {
+    return roleExp.startYear.toString();
+  }
+  
+  if (user.tangoStartYear) {
+    return user.tangoStartYear.toString();
+  }
+  
+  return "Unknown";
+}
+
+/**
  * Build a TangoRoleExperience array from a list of roles.
  * 
  * Used during registration/onboarding when user selects roles.
