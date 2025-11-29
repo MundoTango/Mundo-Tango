@@ -92,7 +92,7 @@ function UnifiedTopBar({
   // Fetch recent notifications (most recent 10) - uses proper auth headers
   const { data: recentNotifications = [], refetch: refetchNotifications } = useQuery<any[]>({
     queryKey: ['/api/notifications', { limit: 10 }],
-    refetchInterval: 15000,
+    refetchInterval: 5000, // Auto-refresh every 5 seconds for real-time feel
     enabled: !!user,
   });
 
