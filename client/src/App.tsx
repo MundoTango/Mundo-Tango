@@ -56,7 +56,6 @@ const DiscoverPage = lazy(() => import("@/pages/DiscoverPage"));
 const VolunteerPage = lazy(() => import("@/pages/VolunteerPage"));
 const GamificationDashboard = lazy(() => import("@/pages/GamificationDashboard"));
 const FeedPage = lazy(() => import("@/pages/FeedPage"));
-const MemoriesPage = lazy(() => import("@/pages/MemoriesPage"));
 const ProfilePage = lazy(() => import("@/pages/ProfilePage"));
 const FriendsListPage = lazy(() => import("@/pages/FriendsListPage"));
 const FriendshipPage = lazy(() => import("@/pages/FriendshipPage"));
@@ -443,15 +442,6 @@ function Router() {
           <AppLayout>
             <Suspense fallback={<LoadingFallback />}>
               <FeedPage />
-            </Suspense>
-          </AppLayout>
-        </ProtectedRoute>
-      </Route>
-      <Route path="/memories">
-        <ProtectedRoute>
-          <AppLayout>
-            <Suspense fallback={<LoadingFallback />}>
-              <MemoriesPage />
             </Suspense>
           </AppLayout>
         </ProtectedRoute>
