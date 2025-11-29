@@ -25,6 +25,7 @@ export function PhotoUploadDialog({
   const [zoom, setZoom] = useState(1);
   const [offsetX, setOffsetX] = useState(0);
   const [offsetY, setOffsetY] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
@@ -32,6 +33,7 @@ export function PhotoUploadDialog({
   const PROFILE_SIZE = 400;
   const COVER_SIZE = { width: 1200, height: 300 };
   const dimensions = type === 'profile' ? { width: PROFILE_SIZE, height: PROFILE_SIZE } : COVER_SIZE;
+  const aspectRatio = dimensions.width / dimensions.height;
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -89,6 +91,11 @@ export function PhotoUploadDialog({
     img.src = imageSource;
   };
 
+  // Calculate preview container size (fit within dialog while maintaining aspect ratio)
+  const maxPreviewHeight = 300;
+  const previewHeight = maxPreviewHeight;
+  const previewWidth = previewHeight * aspectRatio;
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl">
@@ -113,47 +120,83 @@ export function PhotoUploadDialog({
             >
               <p className="text-sm font-medium mb-2">Click to select an image</p>
               <p className="text-xs text-muted-foreground">
-                Recommended size: {type === 'profile' ? '400×400px' : '1200×300px'}
+                {type === 'profile' ? '400×400px square' : '1200×300px landscape'}
               </p>
             </div>
           </div>
         ) : (
-          <div className="flex flex-col gap-4">
-            {/* Crop Preview */}
-            <div className="relative bg-black rounded-lg overflow-hidden" style={{ aspectRatio: `${dimensions.width}/${dimensions.height}` }}>
-              <img
-                src={imageSource}
-                alt="Preview"
-                className="absolute w-full h-full object-cover"
+          <div className="flex flex-col gap-6">
+            {/* Boundary Box with Preview */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between mb-2">
+                <label className="text-sm font-semibold">
+                  Preview ({dimensions.width}×{dimensions.height}px)
+                </label>
+                <span className="text-xs text-muted-foreground">
+                  Zoom: {Math.round(zoom * 100)}%
+                </span>
+              </div>
+              
+              {/* Visible Boundary Box - Shows EXACTLY what will be saved */}
+              <div
+                ref={containerRef}
+                className="relative bg-black border-4 border-primary rounded-lg overflow-hidden mx-auto"
                 style={{
-                  transform: `scale(${zoom}) translate(${offsetX}px, ${offsetY}px)`,
-                  transformOrigin: '0 0',
-                  cursor: 'grab',
+                  width: `${previewWidth}px`,
+                  height: `${previewHeight}px`,
+                  aspectRatio: `${dimensions.width}/${dimensions.height}`,
                 }}
-              />
+              >
+                {imageSource && (
+                  <img
+                    src={imageSource}
+                    alt="Preview"
+                    className="absolute w-full h-full"
+                    style={{
+                      transform: `scale(${zoom}) translate(${offsetX / zoom}px, ${offsetY / zoom}px)`,
+                      transformOrigin: '0 0',
+                      maxWidth: 'none',
+                    }}
+                  />
+                )}
+                {/* Dimension indicator inside box */}
+                <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
+                  <div className="bg-black/60 px-3 py-1 rounded text-xs text-white font-mono opacity-0 hover:opacity-100 transition-opacity">
+                    {dimensions.width}×{dimensions.height}
+                  </div>
+                </div>
+              </div>
+
+              {/* Helpful text */}
+              <p className="text-xs text-muted-foreground text-center">
+                Adjust image below so it fills the box exactly as you want it
+              </p>
             </div>
 
             {/* Controls */}
-            <div className="space-y-3">
+            <div className="space-y-4 bg-muted/50 p-4 rounded-lg">
               {/* Zoom Slider */}
               <div className="space-y-2">
-                <label className="text-sm font-medium flex items-center gap-2">
-                  <ZoomIn className="w-4 h-4" />
-                  Zoom: {Math.round(zoom * 100)}%
-                </label>
+                <div className="flex items-center justify-between">
+                  <label className="text-sm font-medium flex items-center gap-2">
+                    <ZoomIn className="w-4 h-4" />
+                    Zoom
+                  </label>
+                  <span className="text-sm font-mono">{Math.round(zoom * 100)}%</span>
+                </div>
                 <Slider
                   value={[zoom]}
                   onValueChange={(val) => setZoom(val[0])}
                   min={0.5}
                   max={3}
-                  step={0.1}
+                  step={0.05}
                   className="w-full"
                 />
               </div>
 
               {/* Pan X */}
               <div className="space-y-2">
-                <label className="text-sm font-medium">Pan Horizontal</label>
+                <label className="text-sm font-medium">Pan Left/Right</label>
                 <Slider
                   value={[offsetX]}
                   onValueChange={(val) => setOffsetX(val[0])}
@@ -166,7 +209,7 @@ export function PhotoUploadDialog({
 
               {/* Pan Y */}
               <div className="space-y-2">
-                <label className="text-sm font-medium">Pan Vertical</label>
+                <label className="text-sm font-medium">Pan Up/Down</label>
                 <Slider
                   value={[offsetY]}
                   onValueChange={(val) => setOffsetY(val[0])}

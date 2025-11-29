@@ -391,11 +391,18 @@ export default function ProfilePage() {
             <>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button size="icon" variant="outline" className="text-white border-white/30 bg-black/20 backdrop-blur-sm hover:bg-black/30" onClick={() => setCoverPhotoDialogOpen(true)} disabled={uploadingCover} data-testid="button-upload-cover">
+                  <Button 
+                    size="icon" 
+                    variant="outline" 
+                    className="text-white border-white/30 bg-black/20 backdrop-blur-sm hover:bg-black/30" 
+                    onClick={() => setCoverPhotoDialogOpen(true)} 
+                    disabled={uploadingCover} 
+                    data-testid="button-upload-cover"
+                  >
                     <ImageIcon className="h-4 w-4" />
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent>{uploadingCover ? 'Uploading...' : 'Change Cover Photo'}</TooltipContent>
+                <TooltipContent>{uploadingCover ? 'Uploading...' : 'Edit Cover Photo'}</TooltipContent>
               </Tooltip>
               <Button asChild variant="outline" className="gap-2 text-white border-white/30 bg-black/20 backdrop-blur-sm hover:bg-black/30" data-testid="button-edit-profile">
                 <Link href="/profile/edit">
