@@ -372,17 +372,17 @@ export default function ProfilePage() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="absolute left-6 bottom-6 z-20"
+          className="absolute left-6 top-32 z-20"
         >
-          <Card className="p-6 w-80 bg-background/95 backdrop-blur-md border-white/20">
+          <Card className="p-6 w-96 bg-background/95 backdrop-blur-md border-white/20">
           {/* Profile Photo + Content Layout */}
           <div className="flex gap-6">
             {/* Left: Profile Photo Circle with Edit Button */}
             <div className="flex-shrink-0">
               <div className="relative">
-                <Avatar className="w-28 h-28 border-4 border-border shadow-lg">
+                <Avatar className="w-40 h-40 border-4 border-border shadow-lg">
                   <AvatarImage src={user.profileImage || undefined} alt={user.name} />
-                  <AvatarFallback className="bg-primary/80 text-white text-lg font-bold">
+                  <AvatarFallback className="bg-primary/80 text-white text-xl font-bold">
                     {user.name.split(' ').map(n => n[0]).join('')}
                   </AvatarFallback>
                 </Avatar>
