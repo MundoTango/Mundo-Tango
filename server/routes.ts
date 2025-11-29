@@ -3570,6 +3570,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const {
         name,
+        username,
         bio,
         city,
         country,
@@ -3593,6 +3594,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         .update(users)
         .set({
           name,
+          username,
           bio,
           city,
           country,
