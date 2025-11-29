@@ -57,6 +57,7 @@ import mrBlueRoleAdapterRoutes from "./routes/mrblue-role-adapter-routes";
 import mrBlueSubscriptionRoutes from "./routes/mrblue-subscription-routes";
 import mrBlueLearningRoutes from "./routes/mrblue-learning-routes";
 import mrBlueQAResearchRoutes from "./routes/mrblue-qa-research-routes";
+import aiCollaborationRoutes from "./routes/ai-collaboration-routes";
 import orchestrationRoutes from "./routes/orchestration";
 import gitRoutes from "./routes/git";
 import a2aRoutes from "./routes/a2a";
@@ -653,6 +654,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/mrblue/subscription", mrBlueSubscriptionRoutes); // Agent #48: Quota management
   app.use("/api/mrblue/learning", mrBlueLearningRoutes); // Agent #49: 10-pathway learning coordinator
   app.use("/api/mrblue/qa", mrBlueQAResearchRoutes); // Agent #50: Q&A research and test orchestration
+  app.use("/api/ai-collaboration", aiCollaborationRoutes); // MB.MD v9.3: Replit AI ↔ Mr Blue hierarchical collaboration
   
   app.use("/api/orchestration", orchestrationRoutes); // Production-ready workflow orchestration (Sequential/Parallel/Intelligence Cycle)
   app.use("/api/git", gitRoutes); // Autonomous Git commit system with AI-generated messages
