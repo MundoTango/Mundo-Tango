@@ -486,188 +486,188 @@ export default function ProfilePage() {
             </Tooltip>
           </div>
         )}
+      </div>
 
-        {/* Glassmorphic User Info Card - Bottom Right Overlay */}
-        <motion.div 
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="absolute bottom-0 right-0 p-6"
-        >
-          <div className="backdrop-blur-md bg-white/10 dark:bg-black/20 border border-white/20 rounded-t-2xl p-6 shadow-2xl max-w-xl w-full">
-            {/* Name & Verification */}
-            <div className="flex items-center gap-3 mb-2">
-              <h1 className="text-3xl font-bold text-white drop-shadow-lg" data-testid="text-username">
-                {user.name}
-              </h1>
-              {user.role === 'super_admin' && (
-                <Badge className="bg-primary text-white border-0" data-testid="badge-verified">
-                  <CheckCircle className="w-3 h-3 mr-1" />
-                  Verified
-                </Badge>
-              )}
-            </div>
-            
-            {/* Username */}
-            <p className="text-white/90 text-sm mb-3 font-medium" data-testid="text-handle">@{user.username}</p>
-            
-            {/* Bio */}
-            {user.bio && (
-              <p className="text-white/80 text-sm mb-4" data-testid="text-bio">{user.bio}</p>
-            )}
-            
-            {/* Tango Roles - Icons with Tooltips */}
-            {user.tangoRoles && user.tangoRoles.length > 0 && (
-              <div className="flex flex-wrap gap-1 mb-4">
-                <TooltipProvider>
-                  {user.tangoRoles.map((role, index) => {
-                    const roleIconMap: Record<string, any> = {
-                      'teacher': { icon: BookOpen, label: 'Teacher' },
-                      'dancer': { icon: Users, label: 'Dancer' },
-                      'dj': { icon: Music, label: 'DJ' },
-                      'photographer': { icon: Camera, label: 'Photographer' },
-                      'organizer': { icon: Home, label: 'Organizer' },
-                      'performer': { icon: Mic2, label: 'Performer' },
-                      'vendor': { icon: Briefcase, label: 'Vendor' },
-                      'musician': { icon: Music, label: 'Musician' },
-                      'choreographer': { icon: Heart, label: 'Choreographer' },
-                      'school': { icon: BookOpen, label: 'School' },
-                      'hotel': { icon: Home, label: 'Hotel' },
-                      'wellness': { icon: Heart, label: 'Wellness' },
-                      'tour_operator': { icon: Plane, label: 'Tour Operator' },
-                      'guide': { icon: MapPin, label: 'Guide' },
-                      'content_creator': { icon: Camera, label: 'Content Creator' },
-                    };
-                    
-                    const roleKey = role.toLowerCase();
-                    const roleInfo = roleIconMap[roleKey];
-                    const Icon = roleInfo?.icon || Briefcase;
-                    
-                    return (
-                      <Tooltip key={index}>
-                        <TooltipTrigger asChild>
-                          <div className="p-1.5 rounded-lg bg-white/20 border border-white/30 backdrop-blur-sm cursor-help" data-testid={`icon-role-${role}`}>
-                            <Icon className="w-4 h-4 text-white" />
-                          </div>
-                        </TooltipTrigger>
-                        <TooltipContent>{roleInfo?.label || role.replace(/_/g, ' ')}</TooltipContent>
-                      </Tooltip>
-                    );
-                  })}
-                </TooltipProvider>
-              </div>
-            )}
-
-            {/* Professional Score - Only show if yearsOfDancing > 0 */}
-            {user.yearsOfDancing && user.yearsOfDancing > 0 && (
-              <div className="bg-primary/20 border border-primary/30 rounded-lg p-3 backdrop-blur-sm mb-3" data-testid="section-professional-score">
-                <div className="flex items-center gap-2">
-                  <Award className="w-4 h-4 text-primary" />
-                  <span className="text-sm font-semibold text-white">
-                    {user.yearsOfDancing} {user.yearsOfDancing === 1 ? 'year' : 'years'} of tango experience
-                  </span>
-                </div>
-                {(user.leaderLevel || user.followerLevel) && (
-                  <div className="mt-2 flex gap-4 text-xs text-white/90">
-                    {user.leaderLevel && user.leaderLevel > 0 && (
-                      <span data-testid="text-leader-level">Leader: Level {user.leaderLevel}</span>
-                    )}
-                    {user.followerLevel && user.followerLevel > 0 && (
-                      <span data-testid="text-follower-level">Follower: Level {user.followerLevel}</span>
-                    )}
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Social Links */}
-            {user.socialLinks && Object.values(user.socialLinks).some(link => link) && (
-              <div className="flex flex-wrap gap-3 mb-3" data-testid="section-social-links">
-                {user.socialLinks.instagram && (
-                  <a
-                    href={user.socialLinks.instagram}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-2 rounded-full bg-white/20 hover:bg-white/30 border border-white/30 backdrop-blur-sm transition-colors"
-                    aria-label="Instagram"
-                    data-testid="link-instagram"
-                  >
-                    <Instagram className="w-4 h-4 text-white" />
-                  </a>
-                )}
-                {user.socialLinks.facebook && (
-                  <a
-                    href={user.socialLinks.facebook}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-2 rounded-full bg-white/20 hover:bg-white/30 border border-white/30 backdrop-blur-sm transition-colors"
-                    aria-label="Facebook"
-                    data-testid="link-facebook"
-                  >
-                    <Facebook className="w-4 h-4 text-white" />
-                  </a>
-                )}
-                {user.socialLinks.twitter && (
-                  <a
-                    href={user.socialLinks.twitter}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-2 rounded-full bg-white/20 hover:bg-white/30 border border-white/30 backdrop-blur-sm transition-colors"
-                    aria-label="Twitter"
-                    data-testid="link-twitter"
-                  >
-                    <Twitter className="w-4 h-4 text-white" />
-                  </a>
-                )}
-                {user.socialLinks.linkedin && (
-                  <a
-                    href={user.socialLinks.linkedin}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-2 rounded-full bg-white/20 hover:bg-white/30 border border-white/30 backdrop-blur-sm transition-colors"
-                    aria-label="LinkedIn"
-                    data-testid="link-linkedin"
-                  >
-                    <Linkedin className="w-4 h-4 text-white" />
-                  </a>
-                )}
-                {user.socialLinks.youtube && (
-                  <a
-                    href={user.socialLinks.youtube}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-2 rounded-full bg-white/20 hover:bg-white/30 border border-white/30 backdrop-blur-sm transition-colors"
-                    aria-label="YouTube"
-                    data-testid="link-youtube"
-                  >
-                    <Youtube className="w-4 h-4 text-white" />
-                  </a>
-                )}
-                {user.socialLinks.website && (
-                  <a
-                    href={user.socialLinks.website}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-2 rounded-full bg-white/20 hover:bg-white/30 border border-white/30 backdrop-blur-sm transition-colors"
-                    aria-label="Website"
-                    data-testid="link-website"
-                  >
-                    <Globe className="w-4 h-4 text-white" />
-                  </a>
-                )}
-              </div>
-            )}
-            
-            {/* Current Location */}
-            {(user.city || user.country) && (
-              <div className="flex items-center gap-2 text-white/80 text-sm" data-testid="text-location">
-                <MapPin className="w-4 h-4" />
-                <span>{[user.city, user.country].filter(Boolean).join(', ')}</span>
-              </div>
+      {/* Independent User Info Section - Below Hero */}
+      <motion.div 
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        className="max-w-5xl mx-auto px-6 py-8"
+      >
+        <Card className="p-6">
+          {/* Name & Verification */}
+          <div className="flex items-center gap-3 mb-2">
+            <h1 className="text-3xl font-bold" data-testid="text-username">
+              {user.name}
+            </h1>
+            {user.role === 'super_admin' && (
+              <Badge className="bg-primary text-white border-0" data-testid="badge-verified">
+                <CheckCircle className="w-3 h-3 mr-1" />
+                Verified
+              </Badge>
             )}
           </div>
-        </motion.div>
-      </div>
+          
+          {/* Username */}
+          <p className="text-muted-foreground text-sm mb-3 font-medium" data-testid="text-handle">@{user.username}</p>
+          
+          {/* Bio */}
+          {user.bio && (
+            <p className="text-sm mb-4" data-testid="text-bio">{user.bio}</p>
+          )}
+          
+          {/* Tango Roles - Icons with Tooltips */}
+          {user.tangoRoles && user.tangoRoles.length > 0 && (
+            <div className="flex flex-wrap gap-1 mb-4">
+              <TooltipProvider>
+                {user.tangoRoles.map((role, index) => {
+                  const roleIconMap: Record<string, any> = {
+                    'teacher': { icon: BookOpen, label: 'Teacher' },
+                    'dancer': { icon: Users, label: 'Dancer' },
+                    'dj': { icon: Music, label: 'DJ' },
+                    'photographer': { icon: Camera, label: 'Photographer' },
+                    'organizer': { icon: Home, label: 'Organizer' },
+                    'performer': { icon: Mic2, label: 'Performer' },
+                    'vendor': { icon: Briefcase, label: 'Vendor' },
+                    'musician': { icon: Music, label: 'Musician' },
+                    'choreographer': { icon: Heart, label: 'Choreographer' },
+                    'school': { icon: BookOpen, label: 'School' },
+                    'hotel': { icon: Home, label: 'Hotel' },
+                    'wellness': { icon: Heart, label: 'Wellness' },
+                    'tour_operator': { icon: Plane, label: 'Tour Operator' },
+                    'guide': { icon: MapPin, label: 'Guide' },
+                    'content_creator': { icon: Camera, label: 'Content Creator' },
+                  };
+                  
+                  const roleKey = role.toLowerCase();
+                  const roleInfo = roleIconMap[roleKey];
+                  const Icon = roleInfo?.icon || Briefcase;
+                  
+                  return (
+                    <Tooltip key={index}>
+                      <TooltipTrigger asChild>
+                        <div className="p-1.5 rounded-lg bg-muted border border-border cursor-help hover-elevate" data-testid={`icon-role-${role}`}>
+                          <Icon className="w-4 h-4" />
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>{roleInfo?.label || role.replace(/_/g, ' ')}</TooltipContent>
+                    </Tooltip>
+                  );
+                })}
+              </TooltipProvider>
+            </div>
+          )}
+
+          {/* Professional Score - Only show if yearsOfDancing > 0 */}
+          {user.yearsOfDancing && user.yearsOfDancing > 0 && (
+            <div className="bg-primary/10 border border-primary/30 rounded-lg p-3 mb-3" data-testid="section-professional-score">
+              <div className="flex items-center gap-2">
+                <Award className="w-4 h-4 text-primary" />
+                <span className="text-sm font-semibold">
+                  {user.yearsOfDancing} {user.yearsOfDancing === 1 ? 'year' : 'years'} of tango experience
+                </span>
+              </div>
+              {(user.leaderLevel || user.followerLevel) && (
+                <div className="mt-2 flex gap-4 text-xs text-muted-foreground">
+                  {user.leaderLevel && user.leaderLevel > 0 && (
+                    <span data-testid="text-leader-level">Leader: Level {user.leaderLevel}</span>
+                  )}
+                  {user.followerLevel && user.followerLevel > 0 && (
+                    <span data-testid="text-follower-level">Follower: Level {user.followerLevel}</span>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Social Links */}
+          {user.socialLinks && Object.values(user.socialLinks).some(link => link) && (
+            <div className="flex flex-wrap gap-3 mb-3" data-testid="section-social-links">
+              {user.socialLinks.instagram && (
+                <a
+                  href={user.socialLinks.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2 rounded-full hover-elevate"
+                  aria-label="Instagram"
+                  data-testid="link-instagram"
+                >
+                  <Instagram className="w-4 h-4" />
+                </a>
+              )}
+              {user.socialLinks.facebook && (
+                <a
+                  href={user.socialLinks.facebook}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2 rounded-full hover-elevate"
+                  aria-label="Facebook"
+                  data-testid="link-facebook"
+                >
+                  <Facebook className="w-4 h-4" />
+                </a>
+              )}
+              {user.socialLinks.twitter && (
+                <a
+                  href={user.socialLinks.twitter}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2 rounded-full hover-elevate"
+                  aria-label="Twitter"
+                  data-testid="link-twitter"
+                >
+                  <Twitter className="w-4 h-4" />
+                </a>
+              )}
+              {user.socialLinks.linkedin && (
+                <a
+                  href={user.socialLinks.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2 rounded-full hover-elevate"
+                  aria-label="LinkedIn"
+                  data-testid="link-linkedin"
+                >
+                  <Linkedin className="w-4 h-4" />
+                </a>
+              )}
+              {user.socialLinks.youtube && (
+                <a
+                  href={user.socialLinks.youtube}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2 rounded-full hover-elevate"
+                  aria-label="YouTube"
+                  data-testid="link-youtube"
+                >
+                  <Youtube className="w-4 h-4" />
+                </a>
+              )}
+              {user.socialLinks.website && (
+                <a
+                  href={user.socialLinks.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2 rounded-full hover-elevate"
+                  aria-label="Website"
+                  data-testid="link-website"
+                >
+                  <Globe className="w-4 h-4" />
+                </a>
+              )}
+            </div>
+          )}
+          
+          {/* Current Location */}
+          {(user.city || user.country) && (
+            <div className="flex items-center gap-2 text-muted-foreground text-sm" data-testid="text-location">
+              <MapPin className="w-4 h-4" />
+              <span>{[user.city, user.country].filter(Boolean).join(', ')}</span>
+            </div>
+          )}
+        </Card>
+      </motion.div>
 
       {/* Photo Upload Dialogs */}
       <PhotoUploadDialog
