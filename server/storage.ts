@@ -3250,7 +3250,17 @@ export class DbStorage implements IStorage {
 
   async getUserNotifications(userId: number, limit?: number): Promise<SelectNotification[]> {
     let query = db
-      .select()
+      .select({
+        id: notifications.id,
+        userId: notifications.userId,
+        type: notifications.type,
+        title: notifications.title,
+        message: notifications.message,
+        data: notifications.data,
+        isRead: notifications.isRead,
+        actionUrl: notifications.actionUrl,
+        createdAt: notifications.createdAt,
+      })
       .from(notifications)
       .where(eq(notifications.userId, userId))
       .orderBy(desc(notifications.createdAt));
@@ -3263,11 +3273,11 @@ export class DbStorage implements IStorage {
   }
 
   async markNotificationAsRead(id: number): Promise<void> {
-    await db.update(notifications).set({ read: true }).where(eq(notifications.id, id));
+    await db.update(notifications).set({ isRead: true }).where(eq(notifications.id, id));
   }
 
   async markAllNotificationsAsRead(userId: number): Promise<void> {
-    await db.update(notifications).set({ read: true }).where(eq(notifications.userId, userId));
+    await db.update(notifications).set({ isRead: true }).where(eq(notifications.userId, userId));
   }
 
   // Platform Independence: Deployments
