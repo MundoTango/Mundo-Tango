@@ -36,10 +36,9 @@ export function PhotoUploadDialog({
   const COVER_SIZE = { width: 1200, height: 300 };
   const dimensions = type === 'profile' ? { width: PROFILE_SIZE, height: PROFILE_SIZE } : COVER_SIZE;
   
-  const PREVIEW_HEIGHT = 300;
-  const aspectRatio = dimensions.width / dimensions.height;
-  const previewWidth = PREVIEW_HEIGHT * aspectRatio;
-  const previewHeight = PREVIEW_HEIGHT;
+  // Preview sizing: profile is square (300x300), cover is landscape
+  const previewWidth = type === 'profile' ? 300 : 400;
+  const previewHeight = type === 'profile' ? 300 : 100;
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -168,7 +167,7 @@ export function PhotoUploadDialog({
             >
               <p className="text-sm font-medium mb-2">Click to select an image</p>
               <p className="text-xs text-muted-foreground">
-                {type === 'profile' ? '400×400px square' : '1200×300px landscape'}
+                {type === 'profile' ? '400×400px circle' : '1200×300px landscape'}
               </p>
             </div>
           </div>
@@ -188,7 +187,7 @@ export function PhotoUploadDialog({
               {/* Visible Boundary Box - Click and drag to move image */}
               <div
                 ref={previewRef}
-                className="relative bg-black border-4 border-primary rounded-lg overflow-hidden mx-auto cursor-move"
+                className={`relative bg-black border-4 border-primary overflow-hidden mx-auto cursor-move ${type === 'profile' ? 'rounded-full' : 'rounded-lg'}`}
                 style={{
                   width: `${previewWidth}px`,
                   height: `${previewHeight}px`,
