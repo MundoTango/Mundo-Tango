@@ -369,11 +369,11 @@ export default function ProfilePage() {
         />
         
         {/* Editorial Gradient Overlay (bottom 40%) */}
-        <div className="absolute bottom-0 left-0 right-0 h-[60%] bg-gradient-to-t from-black/80 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-[60%] bg-gradient-to-t from-black/80 to-transparent z-0" />
         
         {/* Edit Cover Photo Button - Center on Hover */}
         {isOwnProfile && (
-          <div className="absolute inset-0 z-0 flex items-center justify-center invisible group-hover:visible transition-opacity bg-transparent group-hover:bg-black/50 pointer-events-none group-hover:pointer-events-auto">
+          <div className="absolute inset-0 z-0 flex items-center justify-center group-hover:flex hidden group-hover:bg-black/50 pointer-events-none group-hover:pointer-events-auto">
             <Button 
               size="lg"
               variant="outline" 
