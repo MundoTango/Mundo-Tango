@@ -19,6 +19,7 @@ Mundo Tango is a production-ready social platform connecting the global tango co
 ### Standardized Components (PRDs: `docs/prds/`)
 | Component | PRD | Files Using | Purpose |
 |-----------|-----|-------------|---------|
+| **UnifiedSidebar** | [PRD_UNIFIED_SIDEBAR_SYSTEM.md](docs/prds/PRD_UNIFIED_SIDEBAR_SYSTEM.md) | AppSidebar.tsx, AdminSidebar.tsx | 4-section icon grid navigation (Social, Community, PRO Discovery, Services) with 27 items, hover tooltips, z-50 layering |
 | **TangoRoles** | [PRD_TANGO_ROLES_SYSTEM.md](docs/prds/PRD_TANGO_ROLES_SYSTEM.md) | 15 files | 20 unified role definitions with `value`/`label` properties (includes Taxi Dancer) |
 | **RoleChangeCascade** | [PRD_ROLE_CHANGE_CASCADE.md](docs/prds/PRD_ROLE_CHANGE_CASCADE.md) | role-change-routes.ts | Symmetric ADD/REMOVE auto-join/leave PRO groups on role changes |
 | **CascadeFramework** | [PRD_CASCADE_FRAMEWORK.md](docs/prds/PRD_CASCADE_FRAMEWORK.md) | ProfileTabAbout.tsx, roleChangeEffects.ts, locationChangeEffects.ts | Unified cascade architecture: Trigger → Detection → ADD/REMOVE Cascade → Notification |
@@ -39,16 +40,23 @@ Mundo Tango is a production-ready social platform connecting the global tango co
 | `experienceLevel` | varchar | Experience-tier groups | Planned |
 
 ### Recent Fixes (Nov 29, 2025)
-**Boolean Type Mismatch in Group Join Approval:**
+
+**Unified Sidebar System Complete:**
+- **Created:** PRD_UNIFIED_SIDEBAR_SYSTEM.md (comprehensive 27-item navigation system)
+- **Structure:** 4 sections (Social, Community, PRO Discovery, Services) with 3-column icon grid
+- **Design:** Icon-only sidebar (8x8 icons), hover-triggered tooltips (title + helper text)
+- **Z-Index Fix:** Added `z-50` to Sidebar + TooltipContent (tooltips now always visible above page content)
+- **Removed Items:** Discover (merged into Events), Travel section (user preference)
+- **Added Items:** Events now includes Discover functionality ("Browse events - list, calendar, or map view")
+- **Files Modified:** AppSidebar.tsx, AdminSidebar.tsx, replit.md
+- **Test IDs:** All 27 items have unique `data-testid` attributes for E2E testing
+- **Color Coding:** PRO Discovery items color-coded by role type for visual distinction
+- **Status:** ✅ Production-ready with tooltip z-index layering
+
+**Previous Fix - Boolean Type Mismatch in Group Join Approval (Nov 29 early):**
 - **Issue:** Database column `join_approval` is boolean, but Drizzle schema and code used varchar ("open"/"approval"/"invite_only")
 - **Root Cause:** When role cascade created new PRO groups, it failed with "invalid input syntax for type boolean: 'open'"
-- **Files Fixed:**
-  1. `shared/schema.ts` - Changed `joinApproval: varchar` → `boolean` (default: true)
-  2. `server/routes/role-change-routes.ts` - Changed `joinApproval: 'open'` → `joinApproval: true`
-  3. `server/routes/location-change-routes.ts` - Changed `joinApproval: 'open'` → `joinApproval: true`
-  4. `client/src/pages/CustomGroupsPage.tsx` - Updated to use boolean true
-  5. `client/src/components/groups/GroupSettingsPanel.tsx` - Added Switch UI component (boolean toggle)
-  6. `client/src/components/groups/GroupCreationModal.tsx` - Added Switch UI component (boolean toggle)
+- **Files Fixed:** `shared/schema.ts`, `role-change-routes.ts`, `location-change-routes.ts`, `CustomGroupsPage.tsx`, `GroupSettingsPanel.tsx`, `GroupCreationModal.tsx`
 - **Semantic Mapping:** `true` = "open" (anyone can join), `false` = requires approval
 - **Impact:** Role cascade now successfully creates PRO groups and auto-joins users on role changes
 
@@ -66,6 +74,16 @@ The profile system uses **8 core tabs**: About, Feed, Photos, Friends, Events, T
 - All 3 dropdown options always visible with checkmarks
 - Query key: `["/api/events", eventId, "attendees"]`
 - Nested data: `{ rsvp: {...}, user: {...} }`
+
+### Navigation System (Nov 29, 2025)
+**Unified Sidebar Navigation:** Icon-centric 4-section sidebar with 27 items total:
+- **Social (2):** Memories, Profile
+- **Community (7):** Community Map, Events (incl. Discover), Groups, Friends, Recommendations, Messages, Leaderboard
+- **PRO Discovery (15):** Learning, Music, Media, Performances, Venues, Organizers, Stories, Artists, Musicians, Fashion, Coaches, Hosts, Vendors, Leaders, Talent Match (color-coded by role)
+- **Services (3):** Life CEO, Marketplace, Housing
+- **Design:** Icon-only (no text), 3-column grid, hover-triggered tooltips, z-50 layering for visibility
+- **Test IDs:** All items have unique `data-testid` attributes for E2E testing
+- **Status:** ✅ Production-ready (Nov 29, 2025) - See [PRD_UNIFIED_SIDEBAR_SYSTEM.md](docs/prds/PRD_UNIFIED_SIDEBAR_SYSTEM.md)
 
 ### UI/UX
 The platform uses the "MT Ocean Theme" with ocean blues and warm accents, supporting dark mode via Tailwind CSS. Components are built with `shadcn/ui` and Radix UI, using Lucide React and React Icons for iconography. It supports 68 languages via `i18next` and Wouter for routing. Layouts include `AppLayout` (public), `DashboardLayout` (authenticated), and `AdminLayout` (administrative). A Visual Editor provides wisprflow.ai-style inline editing with direct text editing, element manipulation, toast notifications, tooltips, and voice commands. A manual save system tracks changes, and context-awareness provides smart suggestions. Key features include:

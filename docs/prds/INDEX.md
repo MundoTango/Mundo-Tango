@@ -1,5 +1,8 @@
 # PRD Index - Mundo Tango
 
+## 🎯 Latest Update (Nov 29, 2025)
+**NEW:** [PRD_UNIFIED_SIDEBAR_SYSTEM.md](PRD_UNIFIED_SIDEBAR_SYSTEM.md) - Complete icon-grid navigation with 27 items, 4 sections, hover tooltips, z-50 layering
+
 > **Last Updated:** 2025-11-29  
 > **Total PRDs:** 22  
 
