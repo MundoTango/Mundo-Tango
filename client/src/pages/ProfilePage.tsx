@@ -357,14 +357,13 @@ export default function ProfilePage() {
         title={`${user.name} (@${user.username}) - Mundo Tango`}
         description={user.bio || `${user.name}'s profile on Mundo Tango`}
       />
-      
       {/* PART_4: Hero Profile Photo Section - Editorial Glassmorphic Design */}
       <div className="relative w-full min-h-[700px] overflow-visible group">
         {/* Cover Photo as Hero Image */}
         <img 
           src={user.backgroundImage || 'https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?w=1600&auto=format&fit=crop'} 
           alt={`${user.name}'s cover`}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover pt-[100px] pb-[100px] mt-[69px] mb-[69px]"
           data-testid="img-hero-cover"
         />
         
@@ -438,7 +437,6 @@ export default function ProfilePage() {
 
         
       </div>
-
       {/* Independent User Info Section - Below Hero */}
       <motion.div 
         initial={{ opacity: 0, y: 30 }}
@@ -672,7 +670,6 @@ export default function ProfilePage() {
           </div>
         </Card>
       </motion.div>
-
       {/* Photo Upload Dialogs */}
       <PhotoUploadDialog
         open={profilePhotoDialogOpen}
@@ -688,7 +685,6 @@ export default function ProfilePage() {
         type="cover"
         isUploading={uploadingCover}
       />
-
       {/* Tab Navigation */}
       <ProfileTabsNav
         user={user}
@@ -696,7 +692,6 @@ export default function ProfilePage() {
         onTabChange={setActiveTab}
         isOwnProfile={isOwnProfile}
       />
-
       {/* Tab Content */}
       <div className="max-w-5xl mx-auto px-6 py-12">
         {/* Dashboard/Customer Toggle for PRO Tab */}
