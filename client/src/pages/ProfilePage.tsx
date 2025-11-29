@@ -367,20 +367,7 @@ export default function ProfilePage() {
           data-testid="img-hero-cover"
         />
         
-        {/* Profile Photo & Action Buttons - Top Right */}
-        <div className="absolute top-6 left-6 z-20 flex gap-3">
-          {isOwnProfile && (
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button size="icon" variant="outline" className="text-white border-white/30 bg-black/20 backdrop-blur-sm hover:bg-black/30 absolute" style={{bottom: '80px'}} data-testid="button-upload-profile-photo">
-                  <Camera className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Change Profile Photo</TooltipContent>
-            </Tooltip>
-          )}
-        </div>
-
+        {/* Friend Action Buttons - Top Right (Non-Own Profile Only) */}
         {!isOwnProfile && (
           <div className="absolute top-6 right-6 z-30 flex gap-3">
             {isFriend ? (
@@ -417,10 +404,6 @@ export default function ProfilePage() {
               )}
           </div>
         )}
-        
-        
-
-        
       </div>
       {/* Independent User Info Section - Below Hero */}
       <motion.div 
