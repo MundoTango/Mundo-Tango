@@ -6,8 +6,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Slider } from "@/components/ui/slider";
 import { Info, MapPin, Calendar as CalendarIcon, Users, Award, Edit, Check, X, Languages, Star, Drama, Briefcase, Link as LinkIcon, Globe, Plus, Trash2, ExternalLink } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
+import { Link } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/UnifiedLocationPicker";
 import { UnifiedLanguagePicker, getLanguageByCode, getLanguageByName } from "@/components/input/UnifiedLanguagePicker";
@@ -108,6 +109,23 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
   });
   
   const previousRolesRef = useRef<string[]>(user.tangoRoles || []);
+
+  // Fetch city stats for user count display
+  const { data: cityStats } = useQuery<{
+    userCount: number;
+    groupId: number | null;
+    groupName: string | null;
+    city: string | null;
+    country: string | null;
+  }>({
+    queryKey: ['/api/cities/stats', { city: user.city }],
+    queryFn: async () => {
+      const res = await fetch(`/api/cities/stats?city=${encodeURIComponent(user.city || '')}`);
+      if (!res.ok) throw new Error('Failed to fetch city stats');
+      return res.json();
+    },
+    enabled: !!user.city && !isEditing,
+  });
 
   useEffect(() => {
     setEditValues({
@@ -430,7 +448,7 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
             )}
           </div>
 
-          {/* Location */}
+          {/* Location with City Pill */}
           <div>
             <h3 className="text-sm font-medium text-muted-foreground mb-2 flex items-center gap-1">
               <MapPin className="w-4 h-4" />
@@ -446,10 +464,42 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
                 }}
                 placeholder="Search for your city..."
               />
+            ) : user.city ? (
+              <div className="flex items-center gap-2 flex-wrap">
+                {cityStats?.groupId ? (
+                  <Link href={`/groups/${cityStats.groupId}`}>
+                    <Badge 
+                      variant="secondary" 
+                      className="hover-elevate cursor-pointer flex items-center gap-1.5 px-3 py-1"
+                      data-testid="badge-city-pill"
+                    >
+                      <MapPin className="w-3 h-3" />
+                      <span>{user.city}</span>
+                      {cityStats.userCount > 0 && (
+                        <>
+                          <span className="text-muted-foreground">•</span>
+                          <Users className="w-3 h-3" />
+                          <span className="text-muted-foreground">{cityStats.userCount} users</span>
+                        </>
+                      )}
+                    </Badge>
+                  </Link>
+                ) : (
+                  <Badge 
+                    variant="secondary" 
+                    className="flex items-center gap-1.5 px-3 py-1"
+                    data-testid="badge-city-pill"
+                  >
+                    <MapPin className="w-3 h-3" />
+                    <span>{user.city}</span>
+                  </Badge>
+                )}
+                {user.country && (
+                  <span className="text-sm text-muted-foreground">{user.country}</span>
+                )}
+              </div>
             ) : (
-              <p className="text-base">
-                {[user.city, user.country].filter(Boolean).join(', ') || <span className="text-muted-foreground italic">No location set</span>}
-              </p>
+              <p className="text-base text-muted-foreground italic">No location set</p>
             )}
           </div>
 

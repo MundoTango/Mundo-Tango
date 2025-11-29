@@ -152,4 +152,56 @@ router.get("/search", async (req: Request, res: Response) => {
   }
 });
 
+/**
+ * GET /api/cities/stats
+ * Returns user count and group info for a specific city
+ * Query params: ?city=Buenos Aires
+ */
+router.get("/stats", async (req: Request, res: Response) => {
+  const cityName = (req.query.city as string || '').trim();
+  
+  if (!cityName) {
+    return res.json({ userCount: 0, groupId: null, groupName: null });
+  }
+
+  try {
+    // Find city group and member count
+    const cityGroupResults = await db
+      .select({
+        group: groups,
+        memberCount: sql<number>`(
+          SELECT COUNT(*)::int 
+          FROM ${groupMembers} 
+          WHERE ${groupMembers.groupId} = ${groups.id}
+          AND ${groupMembers.status} = 'active'
+        )`.as("member_count"),
+      })
+      .from(groups)
+      .where(
+        and(
+          eq(groups.type, "city"),
+          ilike(groups.city, cityName)
+        )
+      )
+      .limit(1);
+
+    if (cityGroupResults.length > 0) {
+      const result = cityGroupResults[0];
+      return res.json({
+        userCount: result.memberCount || 0,
+        groupId: result.group.id,
+        groupName: result.group.name,
+        city: result.group.city,
+        country: result.group.country,
+      });
+    }
+
+    // No city group found
+    res.json({ userCount: 0, groupId: null, groupName: null, city: cityName });
+  } catch (error) {
+    console.error("[CityStats] Error:", error);
+    res.status(500).json({ error: "Failed to get city stats" });
+  }
+});
+
 export default router;
