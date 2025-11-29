@@ -386,39 +386,38 @@ export default function ProfilePage() {
         </div>
 
         {/* Action Buttons - Top Right */}
-        <div className="absolute top-6 right-6 z-20 flex gap-3">
-          {isOwnProfile && (
-            <>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button 
-                    size="icon" 
-                    variant="outline" 
-                    className="text-white border-white/30 bg-black/20 backdrop-blur-sm hover:bg-black/30" 
-                    onClick={() => setCoverPhotoDialogOpen(true)} 
-                    disabled={uploadingCover} 
-                    data-testid="button-upload-cover"
-                  >
-                    <ImageIcon className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>{uploadingCover ? 'Uploading...' : 'Edit Cover Photo'}</TooltipContent>
-              </Tooltip>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button asChild variant="outline" size="icon" className="text-white border-white/30 bg-black/20 backdrop-blur-sm hover:bg-black/30" data-testid="button-edit-profile">
-                    <Link href="/profile/edit">
-                      <Settings className="h-4 w-4" />
-                    </Link>
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Edit Profile</TooltipContent>
-              </Tooltip>
-            </>
-          )}
-          {!isOwnProfile && (
-            <>
-              {isFriend ? (
+        {isOwnProfile && (
+          <div className="absolute top-6 right-6 z-30 flex gap-3">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button 
+                  size="icon" 
+                  variant="outline" 
+                  className="text-white border-white/30 bg-black/20 backdrop-blur-sm hover:bg-black/30" 
+                  onClick={() => setCoverPhotoDialogOpen(true)} 
+                  disabled={uploadingCover} 
+                  data-testid="button-upload-cover"
+                >
+                  <ImageIcon className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>{uploadingCover ? 'Uploading...' : 'Edit Cover Photo'}</TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button asChild variant="outline" size="icon" className="text-white border-white/30 bg-black/20 backdrop-blur-sm hover:bg-black/30" data-testid="button-edit-profile">
+                  <Link href="/profile/edit">
+                    <Settings className="h-4 w-4" />
+                  </Link>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Edit Profile</TooltipContent>
+            </Tooltip>
+          </div>
+        )}
+        {!isOwnProfile && (
+          <div className="absolute top-6 right-6 z-30 flex gap-3">
+            {isFriend ? (
                 <Button 
                   variant="outline"
                   className="gap-2 text-white border-white/30 bg-black/20 backdrop-blur-sm hover:bg-black/30"
@@ -450,9 +449,8 @@ export default function ProfilePage() {
                   {sendFriendRequestMutation.isPending ? 'Sending...' : 'Add Friend'}
                 </Button>
               )}
-            </>
-          )}
-        </div>
+          </div>
+        )}
         
         {/* Profile Photo Circle - Bottom Left */}
         <div className="absolute bottom-0 left-6 z-10">
