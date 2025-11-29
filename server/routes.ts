@@ -9833,7 +9833,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const userId = req.user!.id;
-      await db.update(users).set({ coverImage: coverData }).where(eq(users.id, userId));
+      await db.update(users).set({ backgroundImage: coverData }).where(eq(users.id, userId));
       const updatedUsers = await db.select().from(users).where(eq(users.id, userId));
       const updatedUser = updatedUsers[0];
       

@@ -32,7 +32,7 @@ interface User {
   username: string;
   name: string;
   profileImage?: string | null;
-  coverImage?: string | null;
+  backgroundImage?: string | null;
   bio?: string | null;
   city?: string | null;
   country?: string | null;
@@ -362,7 +362,7 @@ export default function ProfilePage() {
       <div className="relative w-full min-h-[520px] overflow-visible group">
         {/* Cover Photo as Hero Image */}
         <img 
-          src={user.coverImage || 'https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?w=1600&auto=format&fit=crop'} 
+          src={user.backgroundImage || 'https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?w=1600&auto=format&fit=crop'} 
           alt={`${user.name}'s cover`}
           className="w-full h-full object-cover"
           data-testid="img-hero-cover"
