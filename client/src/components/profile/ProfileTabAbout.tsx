@@ -371,6 +371,8 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
     const cleanedPortfolioUrls = (editValues.portfolioUrls || []).filter((url: string) => url && url.trim() !== '');
     
     updateProfileMutation.mutate({
+      name: editValues.name || null,
+      username: editValues.username || null,
       bio: editValues.bio || null,
       city: editValues.city || null,
       country: editValues.country || null,
@@ -392,6 +394,8 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
   const handleCancel = () => {
     setIsEditing(false);
     setEditValues({
+      name: user.name || '',
+      username: user.username || '',
       bio: user.bio || '',
       city: user.city || '',
       country: user.country || '',
