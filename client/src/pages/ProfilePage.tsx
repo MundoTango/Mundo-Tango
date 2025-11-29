@@ -359,7 +359,7 @@ export default function ProfilePage() {
       />
       
       {/* PART_4: Hero Profile Photo Section - Editorial Glassmorphic Design */}
-      <div className="relative w-full min-h-[520px] overflow-visible group">
+      <div className="relative w-full min-h-[700px] overflow-visible group">
         {/* Cover Photo as Hero Image */}
         <img 
           src={user.backgroundImage || 'https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?w=1600&auto=format&fit=crop'} 
