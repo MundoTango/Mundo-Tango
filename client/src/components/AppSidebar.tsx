@@ -7,7 +7,6 @@ import {
   LogOut, 
   UserCircle,
   UserPlus,
-  Compass,
   GraduationCap,
   MapPin,
   Brain,
@@ -51,7 +50,6 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 const socialItems = [
   { title: "Memories", url: "/feed", icon: Home, tooltip: "Your feed and memories" },
   { title: "Profile", url: "/profile", icon: UserCircle, tooltip: "View your profile" },
-  { title: "Discover", url: "/discover", icon: Compass, tooltip: "Discover new content" },
 ];
 
 const communityItems = [
