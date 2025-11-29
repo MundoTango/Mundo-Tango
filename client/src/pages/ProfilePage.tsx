@@ -373,7 +373,7 @@ export default function ProfilePage() {
         
         {/* Edit Cover Photo Button - Center on Hover */}
         {isOwnProfile && (
-          <div className="absolute inset-0 z-10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/30 group-hover:bg-black/50 pointer-events-none group-hover:pointer-events-auto">
+          <div className="absolute inset-0 z-10 flex items-center justify-center invisible group-hover:visible transition-opacity bg-black/30 group-hover:bg-black/50 pointer-events-none group-hover:pointer-events-auto">
             <Button 
               size="lg"
               variant="outline" 
