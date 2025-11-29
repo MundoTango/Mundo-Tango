@@ -124,6 +124,10 @@ export function UnifiedLocationPicker({
       : "Search for a city...";
 
   useEffect(() => {
+    // Skip if we just selected a location (prevents infinite loop from parent re-render)
+    if (justSelectedRef.current) {
+      return;
+    }
     // Only sync if value changed from an external source (not from our own onChange)
     if (value && value !== lastExternalValueRef.current) {
       lastExternalValueRef.current = value;
@@ -492,9 +496,12 @@ export function UnifiedLocationPicker({
     const parsed = parseLocationResult(location);
     const displayName = mode === "city" ? getDisplayName(location) : location.display_name;
 
-    // SET GUARD FIRST - prevents search useEffect from triggering
+    // SET GUARD FIRST - prevents search useEffect AND value sync effect from triggering
     justSelectedRef.current = true;
     userHasTypedRef.current = false;
+    
+    // Update lastExternalValueRef BEFORE onChange to prevent value sync effect
+    lastExternalValueRef.current = displayName;
     
     // Close dropdown immediately
     setResults([]);
@@ -505,8 +512,8 @@ export function UnifiedLocationPicker({
     setSearchQuery(displayName);
     onChange(displayName, parsed.coordinates, parsed);
     
-    // Reset guard after React batch update completes
-    setTimeout(() => { justSelectedRef.current = false; }, 150);
+    // Reset guard after React batch update completes (300ms for safety)
+    setTimeout(() => { justSelectedRef.current = false; }, 300);
   };
 
   const clearLocation = () => {
@@ -535,9 +542,12 @@ export function UnifiedLocationPicker({
       coordinates: venue.coordinates || { lat: 0, lng: 0 },
     };
 
-    // SET GUARD FIRST - prevents search useEffect from triggering
+    // SET GUARD FIRST - prevents search useEffect AND value sync effect from triggering
     justSelectedRef.current = true;
     userHasTypedRef.current = false;
+    
+    // Update lastExternalValueRef BEFORE onChange to prevent value sync effect
+    lastExternalValueRef.current = displayName;
     
     // Close dropdown immediately
     setVenueResults({ userVenues: [], cityVenues: [], googleVenues: [] });
@@ -550,8 +560,8 @@ export function UnifiedLocationPicker({
     onChange(displayName, parsed.coordinates, parsed);
     onVenueSelect?.(venue);
     
-    // Reset guard after React batch update completes
-    setTimeout(() => { justSelectedRef.current = false; }, 150);
+    // Reset guard after React batch update completes (300ms for safety)
+    setTimeout(() => { justSelectedRef.current = false; }, 300);
   };
 
   const Icon = mode === "venue" ? Building2 : mode === "address" ? Home : MapPin;
