@@ -39,6 +39,8 @@ import SecuritySubTab from "./settings/SecuritySubTab";
 import SubscriptionSubTab from "./settings/SubscriptionSubTab";
 import PrivacySubTab from "./settings/PrivacySubTab";
 import { PrivacyToggle, type PrivacyLevel } from "@/components/ui/privacy-toggle";
+import { usePrivacyFilter, type PrivacySettings } from "@/hooks/usePrivacyFilter";
+import { Lock, EyeOff, Users as UsersIcon } from "lucide-react";
 
 interface SocialLinks {
   instagram?: string;
@@ -78,6 +80,7 @@ interface User {
 interface ProfileTabAboutProps {
   user: User;
   isOwnProfile: boolean;
+  isPublicView?: boolean;
 }
 
 function generateYearOptions(): number[] {
@@ -94,13 +97,22 @@ function calculateYearsOfExperience(startYear: number): number {
   return currentYear - startYear;
 }
 
-export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutProps) {
+export default function ProfileTabAbout({ user, isOwnProfile, isPublicView = false }: ProfileTabAboutProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { refreshCurrentUser } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [activeSubTab, setActiveSubTab] = useState<AboutSubTab>('profile');
   const yearOptions = generateYearOptions();
+  
+  const privacySettings = (user as any).privacySettings as PrivacySettings | undefined;
+  const privacy = usePrivacyFilter(privacySettings, {
+    isPublicView,
+    isFriend: false,
+    isOwnProfile,
+  });
+  
+  const canEdit = isOwnProfile && !isPublicView;
   
   const [editValues, setEditValues] = useState<Record<string, any>>({
     name: user.name || '',
@@ -496,7 +508,7 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
           <Info className="w-5 h-5" />
           Profile Info
         </CardTitle>
-        {isOwnProfile && renderEditControls()}
+        {canEdit && renderEditControls()}
       </CardHeader>
       
       <CardContent className="space-y-6">
@@ -544,7 +556,7 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
         <div>
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-sm font-medium text-muted-foreground">Bio</h3>
-            {isOwnProfile && (
+            {canEdit && (
               <PrivacyToggle
                 value={fieldPrivacy.bio}
                 onChange={(v) => updateFieldPrivacy('bio', v)}
@@ -553,16 +565,23 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
               />
             )}
           </div>
-          {isEditing ? (
-            <Textarea 
-              value={editValues.bio || ''} 
-              onChange={(e) => setEditValues({ ...editValues, bio: e.target.value })}
-              placeholder="Tell us about yourself..."
-              rows={4}
-              data-testid="input-bio"
-            />
+          {privacy.isBioVisible ? (
+            isEditing ? (
+              <Textarea 
+                value={editValues.bio || ''} 
+                onChange={(e) => setEditValues({ ...editValues, bio: e.target.value })}
+                placeholder="Tell us about yourself..."
+                rows={4}
+                data-testid="input-bio"
+              />
+            ) : (
+              <p className="text-base leading-relaxed">{user.bio || <span className="text-muted-foreground italic">No bio yet</span>}</p>
+            )
           ) : (
-            <p className="text-base leading-relaxed">{user.bio || <span className="text-muted-foreground italic">No bio yet</span>}</p>
+            <div className="flex items-center gap-2 text-muted-foreground italic">
+              <EyeOff className="w-4 h-4" />
+              <span>{privacy.getBioPlaceholder()}</span>
+            </div>
           )}
         </div>
 
@@ -572,7 +591,7 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
               <Briefcase className="w-4 h-4" />
               Occupation
             </h3>
-            {isOwnProfile && (
+            {canEdit && (
               <PrivacyToggle
                 value={fieldPrivacy.occupation}
                 onChange={(v) => updateFieldPrivacy('occupation', v)}
@@ -581,17 +600,24 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
               />
             )}
           </div>
-          {isEditing ? (
-            <Input
-              value={editValues.occupation || ''}
-              onChange={(e) => setEditValues({ ...editValues, occupation: e.target.value })}
-              placeholder="e.g., Tango Teacher & Performer"
-              data-testid="input-occupation"
-            />
+          {privacy.isOccupationVisible ? (
+            isEditing ? (
+              <Input
+                value={editValues.occupation || ''}
+                onChange={(e) => setEditValues({ ...editValues, occupation: e.target.value })}
+                placeholder="e.g., Tango Teacher & Performer"
+                data-testid="input-occupation"
+              />
+            ) : (
+              <p className="text-base">
+                {user.occupation || <span className="text-muted-foreground italic">No occupation set</span>}
+              </p>
+            )
           ) : (
-            <p className="text-base">
-              {user.occupation || <span className="text-muted-foreground italic">No occupation set</span>}
-            </p>
+            <div className="flex items-center gap-2 text-muted-foreground italic">
+              <EyeOff className="w-4 h-4" />
+              <span>{privacy.getOccupationPlaceholder()}</span>
+            </div>
           )}
         </div>
 
@@ -601,7 +627,7 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
               <LinkIcon className="w-4 h-4" />
               Social Links
             </h3>
-            {isOwnProfile && (
+            {canEdit && (
               <PrivacyToggle
                 value={fieldPrivacy.socialLinks}
                 onChange={(v) => updateFieldPrivacy('socialLinks', v)}
@@ -610,54 +636,61 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
               />
             )}
           </div>
-          {isEditing ? (
-            <div className="space-y-3">
-              {socialPlatforms.map((platform) => {
-                const IconComponent = platform.icon;
-                return (
-                  <div key={platform.key} className="flex items-center gap-3">
-                    <div className="w-8 flex justify-center">
-                      <IconComponent className="w-5 h-5 text-muted-foreground" />
-                    </div>
-                    <Input
-                      value={(editValues.socialLinks as SocialLinks)?.[platform.key] || ''}
-                      onChange={(e) => updateSocialLink(platform.key, e.target.value)}
-                      placeholder={platform.placeholder}
-                      className="flex-1"
-                      data-testid={`input-social-${platform.key}`}
-                    />
-                  </div>
-                );
-              })}
-            </div>
-          ) : (
-            <div className="flex flex-wrap gap-3">
-              {(() => {
-                const links = user.socialLinks as SocialLinks | null;
-                const filledLinks = socialPlatforms.filter(p => links?.[p.key]);
-                
-                if (filledLinks.length === 0) {
-                  return <span className="text-muted-foreground italic">No social links set</span>;
-                }
-                
-                return filledLinks.map((platform) => {
+          {privacy.isSocialLinksVisible ? (
+            isEditing ? (
+              <div className="space-y-3">
+                {socialPlatforms.map((platform) => {
                   const IconComponent = platform.icon;
-                  const url = links?.[platform.key];
                   return (
-                    <a
-                      key={platform.key}
-                      href={url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-2 px-3 py-2 rounded-lg bg-muted/50 hover-elevate transition-colors"
-                      data-testid={`link-social-${platform.key}`}
-                    >
-                      <IconComponent className="w-5 h-5" />
-                      <span className="text-sm">{platform.label}</span>
-                    </a>
+                    <div key={platform.key} className="flex items-center gap-3">
+                      <div className="w-8 flex justify-center">
+                        <IconComponent className="w-5 h-5 text-muted-foreground" />
+                      </div>
+                      <Input
+                        value={(editValues.socialLinks as SocialLinks)?.[platform.key] || ''}
+                        onChange={(e) => updateSocialLink(platform.key, e.target.value)}
+                        placeholder={platform.placeholder}
+                        className="flex-1"
+                        data-testid={`input-social-${platform.key}`}
+                      />
+                    </div>
                   );
-                });
-              })()}
+                })}
+              </div>
+            ) : (
+              <div className="flex flex-wrap gap-3">
+                {(() => {
+                  const links = user.socialLinks as SocialLinks | null;
+                  const filledLinks = socialPlatforms.filter(p => links?.[p.key]);
+                  
+                  if (filledLinks.length === 0) {
+                    return <span className="text-muted-foreground italic">No social links set</span>;
+                  }
+                  
+                  return filledLinks.map((platform) => {
+                    const IconComponent = platform.icon;
+                    const url = links?.[platform.key];
+                    return (
+                      <a
+                        key={platform.key}
+                        href={url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 px-3 py-2 rounded-lg bg-muted/50 hover-elevate transition-colors"
+                        data-testid={`link-social-${platform.key}`}
+                      >
+                        <IconComponent className="w-5 h-5" />
+                        <span className="text-sm">{platform.label}</span>
+                      </a>
+                    );
+                  });
+                })()}
+              </div>
+            )
+          ) : (
+            <div className="flex items-center gap-2 text-muted-foreground italic">
+              <EyeOff className="w-4 h-4" />
+              <span>{privacy.getSocialLinksPlaceholder()}</span>
             </div>
           )}
         </div>
@@ -780,7 +813,7 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
             <MapPin className="w-5 h-5" />
             Location
           </CardTitle>
-          {isOwnProfile && (
+          {canEdit && (
             <PrivacyToggle
               value={fieldPrivacy.location}
               onChange={(v) => updateFieldPrivacy('location', v)}
@@ -789,56 +822,63 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
             />
           )}
         </div>
-        {isOwnProfile && renderEditControls()}
+        {canEdit && renderEditControls()}
       </CardHeader>
       
       <CardContent>
-        {isEditing ? (
-          <UnifiedLocationPicker
-            mode="city"
-            value={[editValues.city, editValues.country].filter(Boolean).join(', ')}
-            onChange={(loc, coords, parsed) => {
-              const { city, country } = extractCityCountry(loc);
-              setEditValues({ ...editValues, city, country });
-            }}
-            placeholder="Search for your city..."
-          />
-        ) : user.city ? (
-          <div className="flex items-center gap-2 flex-wrap">
-            {cityStats?.groupId ? (
-              <Link href={`/groups/${cityStats.groupId}`}>
+        {privacy.isLocationVisible ? (
+          isEditing ? (
+            <UnifiedLocationPicker
+              mode="city"
+              value={[editValues.city, editValues.country].filter(Boolean).join(', ')}
+              onChange={(loc, coords, parsed) => {
+                const { city, country } = extractCityCountry(loc);
+                setEditValues({ ...editValues, city, country });
+              }}
+              placeholder="Search for your city..."
+            />
+          ) : user.city ? (
+            <div className="flex items-center gap-2 flex-wrap">
+              {cityStats?.groupId ? (
+                <Link href={`/groups/${cityStats.groupId}`}>
+                  <Badge 
+                    variant="secondary" 
+                    className="hover-elevate cursor-pointer flex items-center gap-1.5 px-3 py-1"
+                    data-testid="badge-city-pill"
+                  >
+                    <MapPin className="w-3 h-3" />
+                    <span>{user.city}</span>
+                    {cityStats.userCount > 0 && (
+                      <>
+                        <span className="text-muted-foreground">•</span>
+                        <Users className="w-3 h-3" />
+                        <span className="text-muted-foreground">{cityStats.userCount} users</span>
+                      </>
+                    )}
+                  </Badge>
+                </Link>
+              ) : (
                 <Badge 
                   variant="secondary" 
-                  className="hover-elevate cursor-pointer flex items-center gap-1.5 px-3 py-1"
+                  className="flex items-center gap-1.5 px-3 py-1"
                   data-testid="badge-city-pill"
                 >
                   <MapPin className="w-3 h-3" />
                   <span>{user.city}</span>
-                  {cityStats.userCount > 0 && (
-                    <>
-                      <span className="text-muted-foreground">•</span>
-                      <Users className="w-3 h-3" />
-                      <span className="text-muted-foreground">{cityStats.userCount} users</span>
-                    </>
-                  )}
                 </Badge>
-              </Link>
-            ) : (
-              <Badge 
-                variant="secondary" 
-                className="flex items-center gap-1.5 px-3 py-1"
-                data-testid="badge-city-pill"
-              >
-                <MapPin className="w-3 h-3" />
-                <span>{user.city}</span>
-              </Badge>
-            )}
-            {user.country && (
-              <span className="text-sm text-muted-foreground">{user.country}</span>
-            )}
-          </div>
+              )}
+              {user.country && (
+                <span className="text-sm text-muted-foreground">{user.country}</span>
+              )}
+            </div>
+          ) : (
+            <p className="text-base text-muted-foreground italic">No location set</p>
+          )
         ) : (
-          <p className="text-base text-muted-foreground italic">No location set</p>
+          <div className="flex items-center gap-2 text-muted-foreground italic">
+            <EyeOff className="w-4 h-4" />
+            <span>{privacy.getLocationPlaceholder()}</span>
+          </div>
         )}
       </CardContent>
     </Card>
@@ -852,7 +892,7 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
             <Drama className="w-5 h-5" />
             Tango Roles & Experience
           </CardTitle>
-          {isOwnProfile && (
+          {canEdit && (
             <PrivacyToggle
               value={fieldPrivacy.tango}
               onChange={(v) => updateFieldPrivacy('tango', v)}
@@ -861,36 +901,37 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
             />
           )}
         </div>
-        {isOwnProfile && renderEditControls()}
+        {canEdit && renderEditControls()}
       </CardHeader>
       
       <CardContent>
-        {isEditing ? (
-          <div className="space-y-4">
-            <div>
-              <label className="text-xs text-muted-foreground block mb-1.5">When did you start tango?</label>
-              <Select
-                value={editValues.tangoStartYear?.toString() || ''}
-                onValueChange={(value) => {
-                  const year = parseInt(value);
-                  setEditValues({ ...editValues, tangoStartYear: year });
-                }}
-              >
-                <SelectTrigger className="w-[150px]" data-testid="select-tango-start-year">
-                  <SelectValue placeholder="Select year" />
-                </SelectTrigger>
-                <SelectContent>
-                  {yearOptions.map((year) => (
-                    <SelectItem key={year} value={year.toString()}>
-                      {year}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <p className="text-[10px] text-muted-foreground mt-1">This sets the default year for all roles. Override per-role below.</p>
-            </div>
+        {privacy.isTangoRolesVisible ? (
+          isEditing ? (
+            <div className="space-y-4">
+              <div>
+                <label className="text-xs text-muted-foreground block mb-1.5">When did you start tango?</label>
+                <Select
+                  value={editValues.tangoStartYear?.toString() || ''}
+                  onValueChange={(value) => {
+                    const year = parseInt(value);
+                    setEditValues({ ...editValues, tangoStartYear: year });
+                  }}
+                >
+                  <SelectTrigger className="w-[150px]" data-testid="select-tango-start-year">
+                    <SelectValue placeholder="Select year" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {yearOptions.map((year) => (
+                      <SelectItem key={year} value={year.toString()}>
+                        {year}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-[10px] text-muted-foreground mt-1">This sets the default year for all roles. Override per-role below.</p>
+              </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2" data-testid="input-tango-roles">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2" data-testid="input-tango-roles">
               {TANGO_ROLES.map((role) => {
                 const IconComponent = role.icon;
                 const isSelected = selectedRoles.includes(role.value);
@@ -1048,9 +1089,15 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
                     );
                   })}
               </div>
-            ) : (
-              <span className="text-muted-foreground italic">No roles set</span>
-            )}
+              ) : (
+                <span className="text-muted-foreground italic">No roles set</span>
+              )}
+            </div>
+          )
+        ) : (
+          <div className="flex items-center gap-2 text-muted-foreground italic">
+            <EyeOff className="w-4 h-4" />
+            <span>{privacy.getTangoRolesPlaceholder()}</span>
           </div>
         )}
       </CardContent>
@@ -1065,7 +1112,7 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
             <Languages className="w-5 h-5" />
             Languages
           </CardTitle>
-          {isOwnProfile && (
+          {canEdit && (
             <PrivacyToggle
               value={fieldPrivacy.languages}
               onChange={(v) => updateFieldPrivacy('languages', v)}
@@ -1074,70 +1121,77 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
             />
           )}
         </div>
-        {isOwnProfile && renderEditControls()}
+        {canEdit && renderEditControls()}
       </CardHeader>
       
       <CardContent>
-        {isEditing ? (
-          <div className="space-y-4">
-            <div>
-              <label className="text-xs text-muted-foreground flex items-center gap-1 mb-2">
-                <Star className="w-3 h-3 text-yellow-500" /> Primary Language
-              </label>
-              <UnifiedLanguagePicker
-                mode="primary"
-                value={editValues.primaryLanguage || ''}
-                onChange={(value) => setEditValues({ ...editValues, primaryLanguage: value as string })}
-                syncI18n={true}
-                placeholder="Select your primary language"
-                data-testid="input-primary-language"
-              />
-              <p className="text-[10px] text-muted-foreground mt-1">This will also set your site display language</p>
+        {privacy.isLanguagesVisible ? (
+          isEditing ? (
+            <div className="space-y-4">
+              <div>
+                <label className="text-xs text-muted-foreground flex items-center gap-1 mb-2">
+                  <Star className="w-3 h-3 text-yellow-500" /> Primary Language
+                </label>
+                <UnifiedLanguagePicker
+                  mode="primary"
+                  value={editValues.primaryLanguage || ''}
+                  onChange={(value) => setEditValues({ ...editValues, primaryLanguage: value as string })}
+                  syncI18n={true}
+                  placeholder="Select your primary language"
+                  data-testid="input-primary-language"
+                />
+                <p className="text-[10px] text-muted-foreground mt-1">This will also set your site display language</p>
+              </div>
+              <div>
+                <label className="text-xs text-muted-foreground block mb-2">Additional Languages</label>
+                <UnifiedLanguagePicker
+                  mode="additional"
+                  value={editValues.languages || []}
+                  onChange={(value) => setEditValues({ ...editValues, languages: value as string[] })}
+                  excludeLanguages={editValues.primaryLanguage ? [editValues.primaryLanguage] : []}
+                  data-testid="input-languages"
+                />
+              </div>
             </div>
-            <div>
-              <label className="text-xs text-muted-foreground block mb-2">Additional Languages</label>
-              <UnifiedLanguagePicker
-                mode="additional"
-                value={editValues.languages || []}
-                onChange={(value) => setEditValues({ ...editValues, languages: value as string[] })}
-                excludeLanguages={editValues.primaryLanguage ? [editValues.primaryLanguage] : []}
-                data-testid="input-languages"
-              />
+          ) : (
+            <div className="space-y-2">
+              {user.primaryLanguage && (
+                <div className="flex items-center gap-2">
+                  {(() => {
+                    const lang = getLanguageByCode(user.primaryLanguage) || getLanguageByName(user.primaryLanguage);
+                    return (
+                      <Badge variant="default" className="flex items-center gap-1" data-testid="badge-primary-language">
+                        <Star className="w-3 h-3" />
+                        {lang?.flag && <span>{lang.flag}</span>}
+                        {lang?.nativeName || user.primaryLanguage}
+                      </Badge>
+                    );
+                  })()}
+                  <span className="text-xs text-muted-foreground">Primary</span>
+                </div>
+              )}
+              {user.languages && user.languages.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {user.languages.map((langCode) => {
+                    const lang = getLanguageByCode(langCode) || getLanguageByName(langCode);
+                    return (
+                      <Badge key={langCode} variant="outline" data-testid={`badge-lang-${langCode.toLowerCase()}`}>
+                        {lang?.flag && <span className="mr-1">{lang.flag}</span>}
+                        {lang?.nativeName || langCode}
+                      </Badge>
+                    );
+                  })}
+                </div>
+              )}
+              {!user.primaryLanguage && (!user.languages || user.languages.length === 0) && (
+                <span className="text-muted-foreground italic">No languages set</span>
+              )}
             </div>
-          </div>
+          )
         ) : (
-          <div className="space-y-2">
-            {user.primaryLanguage && (
-              <div className="flex items-center gap-2">
-                {(() => {
-                  const lang = getLanguageByCode(user.primaryLanguage) || getLanguageByName(user.primaryLanguage);
-                  return (
-                    <Badge variant="default" className="flex items-center gap-1" data-testid="badge-primary-language">
-                      <Star className="w-3 h-3" />
-                      {lang?.flag && <span>{lang.flag}</span>}
-                      {lang?.nativeName || user.primaryLanguage}
-                    </Badge>
-                  );
-                })()}
-                <span className="text-xs text-muted-foreground">Primary</span>
-              </div>
-            )}
-            {user.languages && user.languages.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {user.languages.map((langCode) => {
-                  const lang = getLanguageByCode(langCode) || getLanguageByName(langCode);
-                  return (
-                    <Badge key={langCode} variant="outline" data-testid={`badge-lang-${langCode.toLowerCase()}`}>
-                      {lang?.flag && <span className="mr-1">{lang.flag}</span>}
-                      {lang?.nativeName || langCode}
-                    </Badge>
-                  );
-                })}
-              </div>
-            )}
-            {!user.primaryLanguage && (!user.languages || user.languages.length === 0) && (
-              <span className="text-muted-foreground italic">No languages set</span>
-            )}
+          <div className="flex items-center gap-2 text-muted-foreground italic">
+            <EyeOff className="w-4 h-4" />
+            <span>{privacy.getLanguagesPlaceholder()}</span>
           </div>
         )}
       </CardContent>
