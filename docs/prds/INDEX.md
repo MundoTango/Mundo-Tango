@@ -1,7 +1,7 @@
 # PRD Index - Mundo Tango
 
 > **Last Updated:** 2025-11-29  
-> **Total PRDs:** 21  
+> **Total PRDs:** 22  
 
 ---
 
@@ -31,9 +31,20 @@ This index links all Product Requirement Documents (PRDs) in the Mundo Tango pla
 
 | PRD | Purpose | Key Files | Cross-References |
 |-----|---------|-----------|------------------|
+| [PRD_PROFILE_PAGE_INDEX.md](./PRD_PROFILE_PAGE_INDEX.md) | **NEW** Master component index (8 core + 17 legacy + 5 settings tabs) | All `ProfileTab*.tsx`, `AboutSubTabs.tsx` | Links all profile-related PRDs |
 | [PRD_USER_PROFILE_SYSTEM.md](./PRD_USER_PROFILE_SYSTEM.md) | Master profile system documentation (8 tabs) | `ProfilePage.tsx`, `ProfileTab*.tsx` | PRD_UNIFIED_FEEDS_SYSTEM, PRD_UNIFIED_LOCATION_PICKER, PRD_UNIFIED_LANGUAGE_SYSTEM, PRD_UNIFIED_PRO_TAB |
 | [PRD_UNIFIED_PRO_TAB.md](./PRD_UNIFIED_PRO_TAB.md) | Consolidates 17 role-based tabs → 1 PRO tab | `ProfileTabPro.tsx`, `ProDashboard.tsx`, `ProPublicView.tsx` | PRD_TANGO_ROLES_SYSTEM, PRD_PER_ROLE_EXPERIENCE |
 | [PRD_TRAVEL_PLANNING_SYSTEM.md](./PRD_TRAVEL_PLANNING_SYSTEM.md) | Multi-city trip planning with events integration | `ProfileTabTravel.tsx`, `TravelTripPlannerPage.tsx`, `travelPlans` schema | PRD_UNIFIED_LOCATION_PICKER, Events System |
+
+### About Tab Settings Sub-Tabs
+
+| PRD | Purpose | Key Files |
+|-----|---------|-----------|
+| [PRD_UNIFIED_ABOUT_SETTINGS.md](./PRD_UNIFIED_ABOUT_SETTINGS.md) | About tab with 5 sub-tabs architecture | `ProfileTabAbout.tsx`, `AboutSubTabs.tsx` |
+| [PRD_PRIVACY_SETTINGS_TAB.md](./PRD_PRIVACY_SETTINGS_TAB.md) | Privacy controls sub-tab | `settings/PrivacySubTab.tsx` |
+| [PRD_SECURITY_SETTINGS_TAB.md](./PRD_SECURITY_SETTINGS_TAB.md) | Security settings (2FA, password, sessions) | `settings/SecuritySubTab.tsx` |
+| [PRD_NOTIFICATIONS_SETTINGS_TAB.md](./PRD_NOTIFICATIONS_SETTINGS_TAB.md) | Notification preferences | `settings/NotificationsSubTab.tsx` |
+| [PRD_SUBSCRIPTION_SETTINGS_TAB.md](./PRD_SUBSCRIPTION_SETTINGS_TAB.md) | Billing, subscription plans | `settings/SubscriptionSubTab.tsx` |
 
 ---
 
@@ -103,10 +114,20 @@ The following PRDs were created during the November 2025 documentation consolida
 
 | PRD | Lines | Key Changes |
 |-----|-------|-------------|
+| PRD_PROFILE_PAGE_INDEX.md | ~300 | **NEW** Master component index with 33 components, 15 PRD cross-references |
 | PRD_UNIFIED_PRO_TAB.md | ~817 | Consolidates 17 role-based profile tabs into single PRO tab with dashboard/public views |
-| PRD_USER_PROFILE_SYSTEM.md | ~850 | Master documentation for 8 core profile tabs + header + legacy tab consolidation plan |
+| PRD_USER_PROFILE_SYSTEM.md | ~920 | Master documentation for 8 core profile tabs + RSVP mutation system (Nov 29) |
 | PRD_TRAVEL_PLANNING_SYSTEM.md | ~810 | Multi-city trip planning, itinerary management, event integration, MT Host housing |
 | PRD_UNIFIED_LANGUAGE_SYSTEM.md | Updated | Added Argentine Spanish (Rioplatense) as #2 popular language, AI integration points |
+
+### November 29, 2025 Updates
+
+| Component | Change |
+|-----------|--------|
+| ProfileTabEvents | RSVP mutation system with 3 states (going/maybe/not_going) |
+| ProfileTabEvents | All 3 dropdown options always visible |
+| PRD_USER_PROFILE_SYSTEM.md | Documented RSVP hook, mutation, and data structure |
+| PRD_PROFILE_PAGE_INDEX.md | Created master component index |
 
 ---
 
