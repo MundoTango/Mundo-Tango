@@ -67,7 +67,6 @@ interface Post {
 
 export default function ProfilePage() {
   const [, params] = useRoute("/profile/:id");
-  const [location, navigate] = useLocation();
   const searchString = useSearch();
   const { user: currentUser } = useAuth();
   const { toast } = useToast();
