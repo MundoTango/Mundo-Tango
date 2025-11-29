@@ -3,130 +3,271 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { PrivacyToggle, type PrivacySettings, defaultPrivacySettings, type PrivacyLevel } from "@/components/ui/privacy-toggle";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
-import { useState, useEffect } from "react";
-import { Eye, MapPin, Shield, User, Briefcase, Globe, Phone, Mail } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { 
+  Eye, 
+  MapPin, 
+  Shield, 
+  Search, 
+  Sparkles, 
+  Calendar, 
+  Users, 
+  MessageCircle, 
+  UserPlus, 
+  Send,
+  Globe,
+  Lock,
+  Activity,
+  Plane,
+  Bell,
+  BellOff,
+  UserX,
+  Radio
+} from "lucide-react";
+
+type VisibilityLevel = 'public' | 'friends' | 'private';
+type PermissionLevel = 'everyone' | 'friends' | 'none';
+
+interface PrivacySettingsState {
+  profileVisibility: VisibilityLevel;
+  searchDiscoverable: boolean;
+  talentMatchAI: boolean;
+  eventRecommendations: boolean;
+  showEventAttendance: boolean;
+  travelPlansVisibility: boolean;
+  showOnlineStatus: boolean;
+  messagePermission: PermissionLevel;
+  friendRequestPermission: PermissionLevel;
+  eventInvitePermission: PermissionLevel;
+  muteNotifications: boolean;
+}
+
+const defaultSettings: PrivacySettingsState = {
+  profileVisibility: 'public',
+  searchDiscoverable: true,
+  talentMatchAI: true,
+  eventRecommendations: true,
+  showEventAttendance: true,
+  travelPlansVisibility: true,
+  showOnlineStatus: true,
+  messagePermission: 'everyone',
+  friendRequestPermission: 'everyone',
+  eventInvitePermission: 'everyone',
+  muteNotifications: false,
+};
 
 export default function PrivacySubTab() {
   const { profile, useUpdatePreferences } = useAuth();
   const { toast } = useToast();
   const updatePreferencesMutation = useUpdatePreferences();
 
-  const [profileVisibility, setProfileVisibility] = useState<'public' | 'friends' | 'private'>('public');
-  const [locationSharing, setLocationSharing] = useState(true);
-  const [privacySettings, setPrivacySettings] = useState<PrivacySettings>(defaultPrivacySettings);
+  const [settings, setSettings] = useState<PrivacySettingsState>(defaultSettings);
 
   useEffect(() => {
     if (profile) {
-      setProfileVisibility((profile as any).profile_visibility ?? 'public');
-      setLocationSharing((profile as any).location_sharing ?? true);
+      const privacySettings = (profile as any).privacySettings;
+      if (privacySettings) {
+        setSettings({
+          profileVisibility: privacySettings.profileVisibility ?? 'public',
+          searchDiscoverable: privacySettings.searchDiscoverable ?? true,
+          talentMatchAI: privacySettings.talentMatchAI ?? true,
+          eventRecommendations: privacySettings.eventRecommendations ?? true,
+          showEventAttendance: privacySettings.showEventAttendance ?? true,
+          travelPlansVisibility: privacySettings.travelPlansVisibility ?? true,
+          showOnlineStatus: privacySettings.showOnlineStatus ?? true,
+          messagePermission: privacySettings.messagePermission ?? 'everyone',
+          friendRequestPermission: privacySettings.friendRequestPermission ?? 'everyone',
+          eventInvitePermission: privacySettings.eventInvitePermission ?? 'everyone',
+          muteNotifications: privacySettings.muteNotifications ?? false,
+        });
+      }
     }
   }, [profile]);
 
-  const handlePreferenceUpdate = async (updates: Record<string, any>) => {
+  const handleSettingUpdate = useCallback(async <K extends keyof PrivacySettingsState>(
+    key: K, 
+    value: PrivacySettingsState[K]
+  ) => {
+    const newSettings = { ...settings, [key]: value };
+    setSettings(newSettings);
+    
     try {
-      await updatePreferencesMutation.mutateAsync(updates);
+      await updatePreferencesMutation.mutateAsync({ 
+        privacySettings: newSettings 
+      } as any);
       toast({
         title: "Privacy settings updated",
         description: "Your privacy preferences have been saved.",
       });
     } catch (error) {
+      setSettings(settings);
       toast({
         title: "Error",
         description: error instanceof Error ? error.message : "Failed to update settings",
         variant: "destructive",
       });
     }
-  };
+  }, [settings, updatePreferencesMutation, toast]);
 
-  const handleProfileVisibilityChange = (value: 'public' | 'friends' | 'private') => {
-    setProfileVisibility(value);
-    handlePreferenceUpdate({ profile_visibility: value });
-  };
-
-  const handleLocationSharingChange = (checked: boolean) => {
-    setLocationSharing(checked);
-    handlePreferenceUpdate({ location_sharing: checked });
-  };
-
-  const handleFieldPrivacyChange = (field: keyof PrivacySettings, value: PrivacyLevel) => {
-    setPrivacySettings(prev => ({ ...prev, [field]: value }));
+  const handleViewBlockedUsers = () => {
     toast({
-      title: "Field privacy updated",
-      description: `${field.charAt(0).toUpperCase() + field.slice(1)} visibility set to ${value}.`,
+      title: "Blocked Users",
+      description: "You have no blocked users.",
     });
   };
 
-  const fieldPrivacyItems: { key: keyof PrivacySettings; label: string; icon: typeof User }[] = [
-    { key: 'bio', label: 'Bio', icon: User },
-    { key: 'occupation', label: 'Occupation', icon: Briefcase },
-    { key: 'location', label: 'Location', icon: MapPin },
-    { key: 'languages', label: 'Languages', icon: Globe },
-    { key: 'email', label: 'Email', icon: Mail },
-    { key: 'phone', label: 'Phone', icon: Phone },
-  ];
+  const isPending = updatePreferencesMutation.isPending;
 
   return (
     <div className="space-y-6" data-testid="privacy-subtab">
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Shield className="h-5 w-5 text-primary" />
-            Privacy
+            <Eye className="h-5 w-5 text-primary" />
+            Profile Visibility
           </CardTitle>
           <CardDescription>
-            Control who can see your information
+            Control who can view your profile
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <RadioGroup
+            value={settings.profileVisibility}
+            onValueChange={(value) => handleSettingUpdate('profileVisibility', value as VisibilityLevel)}
+            disabled={isPending}
+            className="space-y-3"
+            data-testid="radio-group-profile-visibility"
+          >
+            <div className="flex items-center space-x-3">
+              <RadioGroupItem 
+                value="public" 
+                id="visibility-public" 
+                data-testid="radio-visibility-public"
+              />
+              <Label 
+                htmlFor="visibility-public" 
+                className="flex items-center gap-2 cursor-pointer"
+              >
+                <Globe className="h-4 w-4 text-green-600" />
+                <div>
+                  <span className="font-medium">Public</span>
+                  <p className="text-sm text-muted-foreground">
+                    Anyone can view your profile
+                  </p>
+                </div>
+              </Label>
+            </div>
+            <div className="flex items-center space-x-3">
+              <RadioGroupItem 
+                value="friends" 
+                id="visibility-friends" 
+                data-testid="radio-visibility-friends"
+              />
+              <Label 
+                htmlFor="visibility-friends" 
+                className="flex items-center gap-2 cursor-pointer"
+              >
+                <Users className="h-4 w-4 text-blue-600" />
+                <div>
+                  <span className="font-medium">Friends Only</span>
+                  <p className="text-sm text-muted-foreground">
+                    Only friends can view your profile
+                  </p>
+                </div>
+              </Label>
+            </div>
+            <div className="flex items-center space-x-3">
+              <RadioGroupItem 
+                value="private" 
+                id="visibility-private" 
+                data-testid="radio-visibility-private"
+              />
+              <Label 
+                htmlFor="visibility-private" 
+                className="flex items-center gap-2 cursor-pointer"
+              >
+                <Lock className="h-4 w-4 text-amber-600" />
+                <div>
+                  <span className="font-medium">Private</span>
+                  <p className="text-sm text-muted-foreground">
+                    Only you can view your profile
+                  </p>
+                </div>
+              </Label>
+            </div>
+          </RadioGroup>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Search className="h-5 w-5 text-primary" />
+            Search Visibility
+          </CardTitle>
+          <CardDescription>
+            Control how you appear in search and recommendations
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center justify-between">
-            <div className="space-y-0.5 flex-1">
-              <Label htmlFor="profile-visibility" className="flex items-center gap-2">
-                <Eye className="h-4 w-4" />
-                Profile Visibility
+            <div className="space-y-0.5">
+              <Label htmlFor="search-discoverable" className="flex items-center gap-2">
+                <Search className="h-4 w-4" />
+                Appear in Search Results
               </Label>
               <p className="text-sm text-muted-foreground">
-                Control who can see your profile
+                Allow others to find you via search
               </p>
             </div>
-            <Select 
-              value={profileVisibility}
-              onValueChange={handleProfileVisibilityChange}
-              disabled={updatePreferencesMutation.isPending}
-            >
-              <SelectTrigger 
-                className="w-[180px]" 
-                id="profile-visibility" 
-                data-testid="select-profile-visibility"
-              >
-                <SelectValue placeholder="Select visibility" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="public">Public</SelectItem>
-                <SelectItem value="friends">Friends Only</SelectItem>
-                <SelectItem value="private">Private</SelectItem>
-              </SelectContent>
-            </Select>
+            <Switch 
+              id="search-discoverable" 
+              checked={settings.searchDiscoverable}
+              onCheckedChange={(checked) => handleSettingUpdate('searchDiscoverable', checked)}
+              disabled={isPending}
+              data-testid="switch-search-discoverable" 
+            />
           </div>
           <Separator />
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
-              <Label htmlFor="location-sharing" className="flex items-center gap-2">
-                <MapPin className="h-4 w-4" />
-                Location Sharing
+              <Label htmlFor="talent-match-ai" className="flex items-center gap-2">
+                <Sparkles className="h-4 w-4" />
+                Talent Match AI
               </Label>
               <p className="text-sm text-muted-foreground">
-                Share your location with other users
+                Allow AI to suggest you as a dance partner
               </p>
             </div>
             <Switch 
-              id="location-sharing" 
-              checked={locationSharing}
-              onCheckedChange={handleLocationSharingChange}
-              disabled={updatePreferencesMutation.isPending}
-              data-testid="switch-location-sharing" 
+              id="talent-match-ai" 
+              checked={settings.talentMatchAI}
+              onCheckedChange={(checked) => handleSettingUpdate('talentMatchAI', checked)}
+              disabled={isPending}
+              data-testid="switch-talent-match-ai" 
+            />
+          </div>
+          <Separator />
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
+              <Label htmlFor="event-recommendations" className="flex items-center gap-2">
+                <Calendar className="h-4 w-4" />
+                Event Recommendations
+              </Label>
+              <p className="text-sm text-muted-foreground">
+                Allow personalized event suggestions
+              </p>
+            </div>
+            <Switch 
+              id="event-recommendations" 
+              checked={settings.eventRecommendations}
+              onCheckedChange={(checked) => handleSettingUpdate('eventRecommendations', checked)}
+              disabled={isPending}
+              data-testid="switch-event-recommendations" 
             />
           </div>
         </CardContent>
@@ -135,38 +276,229 @@ export default function PrivacySubTab() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <User className="h-5 w-5 text-primary" />
-            Field-Level Privacy
+            <Activity className="h-5 w-5 text-primary" />
+            Activity Sharing
           </CardTitle>
           <CardDescription>
-            Control visibility for individual profile fields
+            Control what activity information is visible to others
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          {fieldPrivacyItems.map((item, index) => {
-            const Icon = item.icon;
-            return (
-              <div key={item.key}>
-                {index > 0 && <Separator className="mb-4" />}
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label className="flex items-center gap-2">
-                      <Icon className="h-4 w-4" />
-                      {item.label}
-                    </Label>
-                    <p className="text-sm text-muted-foreground">
-                      Who can see your {item.label.toLowerCase()}
-                    </p>
-                  </div>
-                  <PrivacyToggle
-                    value={privacySettings[item.key]}
-                    onChange={(value) => handleFieldPrivacyChange(item.key, value)}
-                    data-testid={`privacy-toggle-${item.key}`}
-                  />
-                </div>
-              </div>
-            );
-          })}
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
+              <Label htmlFor="show-event-attendance" className="flex items-center gap-2">
+                <Calendar className="h-4 w-4" />
+                Show Event Attendance
+              </Label>
+              <p className="text-sm text-muted-foreground">
+                Let others see which events you're attending
+              </p>
+            </div>
+            <Switch 
+              id="show-event-attendance" 
+              checked={settings.showEventAttendance}
+              onCheckedChange={(checked) => handleSettingUpdate('showEventAttendance', checked)}
+              disabled={isPending}
+              data-testid="switch-show-event-attendance" 
+            />
+          </div>
+          <Separator />
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
+              <Label htmlFor="travel-plans-visibility" className="flex items-center gap-2">
+                <Plane className="h-4 w-4" />
+                Travel Plans Visibility
+              </Label>
+              <p className="text-sm text-muted-foreground">
+                Show your upcoming travel destinations
+              </p>
+            </div>
+            <Switch 
+              id="travel-plans-visibility" 
+              checked={settings.travelPlansVisibility}
+              onCheckedChange={(checked) => handleSettingUpdate('travelPlansVisibility', checked)}
+              disabled={isPending}
+              data-testid="switch-travel-plans-visibility" 
+            />
+          </div>
+          <Separator />
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
+              <Label htmlFor="show-online-status" className="flex items-center gap-2">
+                <Radio className="h-4 w-4" />
+                Online Status
+              </Label>
+              <p className="text-sm text-muted-foreground">
+                Show when you're online to others
+              </p>
+            </div>
+            <Switch 
+              id="show-online-status" 
+              checked={settings.showOnlineStatus}
+              onCheckedChange={(checked) => handleSettingUpdate('showOnlineStatus', checked)}
+              disabled={isPending}
+              data-testid="switch-show-online-status" 
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <MessageCircle className="h-5 w-5 text-primary" />
+            Contact Preferences
+          </CardTitle>
+          <CardDescription>
+            Control who can contact you and how
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center justify-between gap-4">
+            <div className="space-y-0.5 flex-1">
+              <Label htmlFor="message-permission" className="flex items-center gap-2">
+                <Send className="h-4 w-4" />
+                Who Can Message Me
+              </Label>
+              <p className="text-sm text-muted-foreground">
+                Control who can send you direct messages
+              </p>
+            </div>
+            <Select 
+              value={settings.messagePermission}
+              onValueChange={(value) => handleSettingUpdate('messagePermission', value as PermissionLevel)}
+              disabled={isPending}
+            >
+              <SelectTrigger 
+                className="w-[180px]" 
+                id="message-permission" 
+                data-testid="select-message-permission"
+              >
+                <SelectValue placeholder="Select permission" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="everyone">Everyone</SelectItem>
+                <SelectItem value="friends">Friends Only</SelectItem>
+                <SelectItem value="none">Nobody</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <Separator />
+          <div className="flex items-center justify-between gap-4">
+            <div className="space-y-0.5 flex-1">
+              <Label htmlFor="friend-request-permission" className="flex items-center gap-2">
+                <UserPlus className="h-4 w-4" />
+                Who Can Send Friend Requests
+              </Label>
+              <p className="text-sm text-muted-foreground">
+                Control who can send you friend requests
+              </p>
+            </div>
+            <Select 
+              value={settings.friendRequestPermission}
+              onValueChange={(value) => handleSettingUpdate('friendRequestPermission', value as PermissionLevel)}
+              disabled={isPending}
+            >
+              <SelectTrigger 
+                className="w-[180px]" 
+                id="friend-request-permission" 
+                data-testid="select-friend-request-permission"
+              >
+                <SelectValue placeholder="Select permission" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="everyone">Everyone</SelectItem>
+                <SelectItem value="friends">Friends of Friends</SelectItem>
+                <SelectItem value="none">Nobody</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <Separator />
+          <div className="flex items-center justify-between gap-4">
+            <div className="space-y-0.5 flex-1">
+              <Label htmlFor="event-invite-permission" className="flex items-center gap-2">
+                <Calendar className="h-4 w-4" />
+                Who Can Invite to Events
+              </Label>
+              <p className="text-sm text-muted-foreground">
+                Control who can invite you to events
+              </p>
+            </div>
+            <Select 
+              value={settings.eventInvitePermission}
+              onValueChange={(value) => handleSettingUpdate('eventInvitePermission', value as PermissionLevel)}
+              disabled={isPending}
+            >
+              <SelectTrigger 
+                className="w-[180px]" 
+                id="event-invite-permission" 
+                data-testid="select-event-invite-permission"
+              >
+                <SelectValue placeholder="Select permission" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="everyone">Everyone</SelectItem>
+                <SelectItem value="friends">Friends Only</SelectItem>
+                <SelectItem value="none">Nobody</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Shield className="h-5 w-5 text-primary" />
+            Blocking & Muting
+          </CardTitle>
+          <CardDescription>
+            Manage blocked users and notification muting
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
+              <Label className="flex items-center gap-2">
+                <UserX className="h-4 w-4" />
+                Blocked Users
+              </Label>
+              <p className="text-sm text-muted-foreground">
+                View and manage your blocked users list
+              </p>
+            </div>
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={handleViewBlockedUsers}
+              data-testid="button-view-blocked-users"
+            >
+              View Blocked Users
+            </Button>
+          </div>
+          <Separator />
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
+              <Label htmlFor="mute-notifications" className="flex items-center gap-2">
+                {settings.muteNotifications ? (
+                  <BellOff className="h-4 w-4" />
+                ) : (
+                  <Bell className="h-4 w-4" />
+                )}
+                Mute All Notifications
+              </Label>
+              <p className="text-sm text-muted-foreground">
+                Temporarily silence all notifications
+              </p>
+            </div>
+            <Switch 
+              id="mute-notifications" 
+              checked={settings.muteNotifications}
+              onCheckedChange={(checked) => handleSettingUpdate('muteNotifications', checked)}
+              disabled={isPending}
+              data-testid="switch-mute-notifications" 
+            />
+          </div>
         </CardContent>
       </Card>
     </div>
