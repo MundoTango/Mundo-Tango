@@ -9811,12 +9811,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Photo data is required" });
       }
 
-      const [updatedUser] = await db.update(users)
-        .set({ profileImage: photoData })
-        .where(eq(users.id, req.user!.id))
-        .returning();
-
-      res.json(updatedUser);
+      const userId = req.user!.id;
+      await db.update(users).set({ profileImage: photoData }).where(eq(users.id, userId));
+      const updatedUsers = await db.select().from(users).where(eq(users.id, userId));
+      const updatedUser = updatedUsers[0];
+      
+      res.json(updatedUser || { message: "Photo updated" });
     } catch (error) {
       console.error('[Profile] Upload photo error:', error);
       res.status(500).json({ message: "Failed to upload profile photo" });
@@ -9832,12 +9832,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Cover data is required" });
       }
 
-      const [updatedUser] = await db.update(users)
-        .set({ coverImage: coverData })
-        .where(eq(users.id, req.user!.id))
-        .returning();
-
-      res.json(updatedUser);
+      const userId = req.user!.id;
+      await db.update(users).set({ coverImage: coverData }).where(eq(users.id, userId));
+      const updatedUsers = await db.select().from(users).where(eq(users.id, userId));
+      const updatedUser = updatedUsers[0];
+      
+      res.json(updatedUser || { message: "Cover updated" });
     } catch (error) {
       console.error('[Profile] Upload cover error:', error);
       res.status(500).json({ message: "Failed to upload cover photo" });
