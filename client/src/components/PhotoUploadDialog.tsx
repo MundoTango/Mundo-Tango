@@ -203,10 +203,12 @@ export function PhotoUploadDialog({
                     alt="Preview"
                     className="absolute select-none pointer-events-none"
                     style={{
-                      width: imageDimensions.width,
-                      height: imageDimensions.height,
+                      width: `${imageDimensions.width}px`,
+                      height: `${imageDimensions.height}px`,
                       transform: `scale(${baseScale * zoom}) translate(${offsetX / (baseScale * zoom)}px, ${offsetY / (baseScale * zoom)}px)`,
                       transformOrigin: '0 0',
+                      top: 0,
+                      left: 0,
                     }}
                     draggable={false}
                   />
