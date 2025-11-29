@@ -46,6 +46,7 @@ interface EventItem {
 function EventCard({ event, index = 0 }: { event: EventItem; index?: number }) {
   const { user } = useAuth();
   const rsvpMutation = useRSVPEvent();
+  const [pendingStatus, setPendingStatus] = useState<'going' | 'maybe' | 'not_going' | null>(null);
   
   const eventData: EventData = (event.event || event) as EventData;
   const attendeeCount = event._count || 0;
@@ -57,11 +58,18 @@ function EventCard({ event, index = 0 }: { event: EventItem; index?: number }) {
   });
 
   const userRsvp = eventRsvps?.find((r) => String(r.user_id) === String(user?.id));
-  const rsvpStatus = userRsvp?.status;
+  const rsvpStatus = pendingStatus || userRsvp?.status;
 
   const handleRSVP = async (status: 'going' | 'maybe' | 'not_going') => {
     if (!user) return;
-    await rsvpMutation.mutateAsync({ eventId: eventData.id, status });
+    setPendingStatus(status);
+    try {
+      await rsvpMutation.mutateAsync({ eventId: eventData.id, status });
+      setPendingStatus(null);
+    } catch (error) {
+      setPendingStatus(null);
+      // Error is already handled by the mutation's onError
+    }
   };
 
   const formatEventDateTime = (dateString: string): string => {
@@ -273,8 +281,31 @@ export default function ProfileTabEvents() {
     enabled: !!user && activeTab === "upcoming",
   });
 
-  const displayedEvents = activeTab === "my-events" ? myEventsData : upcomingEventsData;
-  const isLoading = activeTab === "my-events" ? myEventsLoading : upcomingEventsLoading;
+  // Fetch past events (RSVP'd events that have passed)
+  const { data: pastEventsData = [], isLoading: pastEventsLoading } = useQuery({
+    queryKey: ["/api/users/me/events/past", user?.id],
+    queryFn: async () => {
+      if (!user) return [];
+      const res = await fetch(`/api/users/${user.id}/events?status=going,maybe,interested&past=true`);
+      if (!res.ok) return [];
+      return res.json();
+    },
+    enabled: !!user && activeTab === "past",
+  });
+
+  let displayedEvents = [];
+  let isLoading = false;
+  
+  if (activeTab === "my-events") {
+    displayedEvents = myEventsData;
+    isLoading = myEventsLoading;
+  } else if (activeTab === "upcoming") {
+    displayedEvents = upcomingEventsData;
+    isLoading = upcomingEventsLoading;
+  } else if (activeTab === "past") {
+    displayedEvents = pastEventsData;
+    isLoading = pastEventsLoading;
+  }
 
   // Filter events
   const filteredEvents = useMemo(() => {
@@ -301,9 +332,10 @@ export default function ProfileTabEvents() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
+        <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="my-events">My Events</TabsTrigger>
           <TabsTrigger value="upcoming">Nearby & Following</TabsTrigger>
+          <TabsTrigger value="past">Past Events</TabsTrigger>
         </TabsList>
 
         <div className="mt-6 space-y-4">
@@ -398,6 +430,33 @@ export default function ProfileTabEvents() {
                 <CardContent>
                   <p className="text-muted-foreground">
                     {user?.city ? `No events found in ${user.city}. Check back soon!` : "Add your city to see nearby events."}
+                  </p>
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {filteredEvents.map((event: EventItem, index: number) => (
+                  <EventCard key={(event.event?.id || event.id) as number} event={event} index={index} />
+                ))}
+              </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="past" className="mt-6">
+            {isLoadingState ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {[...Array(4)].map((_, i) => (
+                  <div key={i} className="h-96 bg-muted rounded-lg animate-pulse" />
+                ))}
+              </div>
+            ) : filteredEvents.length === 0 ? (
+              <Card>
+                <CardHeader>
+                  <h3 className="text-lg font-semibold">No past events</h3>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">
+                    You haven't attended any events yet. RSVP to upcoming events to build your history!
                   </p>
                 </CardContent>
               </Card>
