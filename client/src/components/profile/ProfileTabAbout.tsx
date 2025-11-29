@@ -196,6 +196,9 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
       queryClient.invalidateQueries({ queryKey: ["user", user.id] });
       queryClient.invalidateQueries({ queryKey: ["user", user.username] });
       queryClient.invalidateQueries({ queryKey: ["/api/users"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/users", user.id] });
+      queryClient.invalidateQueries({ queryKey: [`/api/users/${user.id}`] });
       
       const newCity = editValues.city || '';
       const newCountry = editValues.country || '';
