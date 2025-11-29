@@ -59,6 +59,7 @@ interface AuthContextType {
   register: (data: { name: string; username: string; email: string; password: string }) => Promise<void>;
   logout: () => Promise<void>;
   updateProfile: (updates: Partial<Profile>) => Promise<{ error: Error | null }>;
+  refreshCurrentUser: () => Promise<boolean>;
   useUpdateAvatar: () => ReturnType<typeof useMutation<string, Error, File, { previousProfile: Profile | null }>>;
   useSubscription: () => ReturnType<typeof useQuery<Subscription | null, Error>>;
   useUpdatePreferences: () => ReturnType<typeof useMutation<void, Error, Partial<ProfilePreferences>>>;
@@ -500,6 +501,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         register, 
         logout, 
         updateProfile,
+        refreshCurrentUser: loadCurrentUser,
         useUpdateAvatar,
         useSubscription,
         useUpdatePreferences,

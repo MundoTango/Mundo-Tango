@@ -12,6 +12,7 @@ import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { Link } from "wouter";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/UnifiedLocationPicker";
 import { UnifiedLanguagePicker, getLanguageByCode, getLanguageByName } from "@/components/input/UnifiedLanguagePicker";
 import { triggerLocationChangeEffects, detectLocationChange, formatWelcomeMessage, LocationChangeEvent } from '@/lib/locationChangeEffects';
@@ -96,6 +97,7 @@ function calculateYearsOfExperience(startYear: number): number {
 export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { refreshCurrentUser } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [activeSubTab, setActiveSubTab] = useState<AboutSubTab>('profile');
   const yearOptions = generateYearOptions();
@@ -199,6 +201,8 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
       queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
       queryClient.invalidateQueries({ queryKey: ["/api/users", user.id] });
       queryClient.invalidateQueries({ queryKey: [`/api/users/${user.id}`] });
+      
+      await refreshCurrentUser();
       
       const newCity = editValues.city || '';
       const newCountry = editValues.country || '';
