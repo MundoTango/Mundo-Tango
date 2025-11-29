@@ -22,6 +22,9 @@ import {
   AlertTriangle,
   MessageSquare,
   LogOut,
+  Heart,
+  PlusCircle,
+  Folder,
 } from "lucide-react";
 import { useLocation, Link } from "wouter";
 import {
@@ -92,6 +95,13 @@ const esaItems = [
   { title: "ESA Dashboard", url: "/platform/esa", icon: Brain },
   { title: "ESA Tasks", url: "/platform/esa/tasks", icon: ListChecks },
   { title: "ESA Communications", url: "/platform/esa/communications", icon: Network },
+];
+
+// Crowdfunding (Admin-only feature) (3 items)
+const crowdfundingItems = [
+  { title: "Campaigns", url: "/crowdfunding", icon: Heart },
+  { title: "Create Campaign", url: "/crowdfunding/create", icon: PlusCircle },
+  { title: "My Campaigns", url: "/crowdfunding/my", icon: Folder },
 ];
 
 // Settings (1 item)
@@ -252,6 +262,31 @@ export function AdminSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {devToolsItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton 
+                    asChild 
+                    data-active={location === item.url}
+                    data-testid={`admin-sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
+                  >
+                    <Link to={item.url}>
+                      <>
+                        <item.icon className="h-5 w-5" />
+                        <span>{item.title}</span>
+                      </>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        {/* Crowdfunding (Admin feature) */}
+        <SidebarGroup>
+          <SidebarGroupLabel>Crowdfunding</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {crowdfundingItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton 
                     asChild 
