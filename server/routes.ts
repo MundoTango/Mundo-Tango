@@ -9802,6 +9802,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ==================== PROFILE PHOTO UPLOAD ====================
+  
+  app.post("/api/profile/photo", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const { photoData } = req.body;
+      if (!photoData) {
+        return res.status(400).json({ message: "Photo data is required" });
+      }
+
+      const [updatedUser] = await db.update(users)
+        .set({ profileImage: photoData })
+        .where(eq(users.id, req.user!.id))
+        .returning();
+
+      res.json(updatedUser);
+    } catch (error) {
+      console.error('[Profile] Upload photo error:', error);
+      res.status(500).json({ message: "Failed to upload profile photo" });
+    }
+  });
+
+  // ==================== COVER PHOTO UPLOAD ====================
+
+  app.post("/api/profile/cover", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const { coverData } = req.body;
+      if (!coverData) {
+        return res.status(400).json({ message: "Cover data is required" });
+      }
+
+      const [updatedUser] = await db.update(users)
+        .set({ coverImage: coverData })
+        .where(eq(users.id, req.user!.id))
+        .returning();
+
+      res.json(updatedUser);
+    } catch (error) {
+      console.error('[Profile] Upload cover error:', error);
+      res.status(500).json({ message: "Failed to upload cover photo" });
+    }
+  });
+
   console.log('[Server] ✅ AI Services Consolidation routes loaded successfully');
 
   return httpServer;
