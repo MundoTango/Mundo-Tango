@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import { Link } from "wouter";
 import { useAuth } from "@/contexts/AuthContext";
+import { useRSVPEvent } from "@/hooks/useEvents";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -11,10 +12,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Calendar as CalendarIcon, MapPin, Search, Users, ChevronRight, SlidersHorizontal, Check, Languages } from "lucide-react";
 import { getLanguageByCode } from "@/components/input/UnifiedLanguagePicker";
 import { safeDateFormat } from "@/lib/safeDateFormat";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
-import { apiRequest, queryClient } from "@/lib/queryClient";
+import { queryClient } from "@/lib/queryClient";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
@@ -58,7 +59,7 @@ function EventCard({ event, index = 0 }: { event: EventItem; index?: number }) {
   const rsvpStatus = userRsvp?.status;
   const isFull = eventData.maxAttendees && attendeeCount >= eventData.maxAttendees;
 
-  const handleRSVP = async (status: 'going' | 'maybe' | 'interested' | 'not_going') => {
+  const handleRSVP = async (status: 'going' | 'maybe' | 'not_going') => {
     if (!user) {
       toast({ title: "Please log in", description: "You must be logged in to RSVP", variant: "destructive" });
       return;
@@ -191,11 +192,9 @@ function EventCard({ event, index = 0 }: { event: EventItem; index?: number }) {
               >
                 {rsvpStatus === 'going' && <Check className="h-4 w-4 text-green-500" />}
                 {rsvpStatus === 'maybe' && <Users className="h-4 w-4 text-yellow-500" />}
-                {rsvpStatus === 'interested' && <Users className="h-4 w-4 text-blue-500" />}
                 {!rsvpStatus && <Users className="h-4 w-4" />}
                 {rsvpStatus === 'going' ? "Going" :
-                  rsvpStatus === 'maybe' ? "Maybe" :
-                  rsvpStatus === 'interested' ? "Interested" : "RSVP"}
+                  rsvpStatus === 'maybe' ? "Maybe" : "RSVP"}
                 <ChevronRight className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
@@ -217,15 +216,6 @@ function EventCard({ event, index = 0 }: { event: EventItem; index?: number }) {
                 <Users className="h-4 w-4 text-yellow-500" />
                 Maybe
                 {rsvpStatus === 'maybe' && <Check className="h-4 w-4 ml-auto" />}
-              </DropdownMenuItem>
-              <DropdownMenuItem 
-                onClick={() => handleRSVP('interested')}
-                className="gap-2"
-                data-testid={`rsvp-interested-${eventData.id}`}
-              >
-                <Users className="h-4 w-4 text-blue-500" />
-                Interested
-                {rsvpStatus === 'interested' && <Check className="h-4 w-4 ml-auto" />}
               </DropdownMenuItem>
               {rsvpStatus && (
                 <DropdownMenuItem 
@@ -250,15 +240,6 @@ function EventCard({ event, index = 0 }: { event: EventItem; index?: number }) {
       </Card>
     </motion.div>
   );
-}
-
-function useRSVPEvent() {
-  return useMutation({
-    mutationFn: async ({ eventId, status }: { eventId: number; status: string }) => {
-      const res = await apiRequest('POST', `/api/events/${eventId}/rsvp`, { status });
-      return await res.json();
-    },
-  });
 }
 
 export default function ProfileTabEvents() {
@@ -344,19 +325,6 @@ export default function ProfileTabEvents() {
               />
             </div>
 
-            <Select value={eventType} onValueChange={setEventType}>
-              <SelectTrigger className="w-full sm:w-48" data-testid="select-event-type">
-                <SelectValue placeholder="Event Type" />
-              </SelectTrigger>
-              <SelectContent>
-                {CATEGORIES.map((cat) => (
-                  <SelectItem key={cat} value={cat.toLowerCase()} data-testid={`option-${cat.toLowerCase()}`}>
-                    {cat}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
             <Sheet open={filtersOpen} onOpenChange={setFiltersOpen}>
               <SheetTrigger asChild>
                 <Button variant="outline" className="gap-2 w-full sm:w-auto" data-testid="button-filters">
@@ -364,7 +332,7 @@ export default function ProfileTabEvents() {
                   Filters
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="w-full sm:w-96">
+              <SheetContent side="left" className="w-full sm:w-96 overflow-y-auto">
                 <SheetHeader>
                   <SheetTitle>Filter Events</SheetTitle>
                   <SheetDescription>
@@ -376,11 +344,11 @@ export default function ProfileTabEvents() {
                     <label className="text-sm font-medium">Event Type</label>
                     <Select value={eventType} onValueChange={setEventType}>
                       <SelectTrigger>
-                        <SelectValue />
+                        <SelectValue placeholder="Select event type" />
                       </SelectTrigger>
                       <SelectContent>
                         {CATEGORIES.map((cat) => (
-                          <SelectItem key={cat} value={cat.toLowerCase()}>
+                          <SelectItem key={cat} value={cat.toLowerCase()} data-testid={`option-${cat.toLowerCase()}`}>
                             {cat}
                           </SelectItem>
                         ))}
