@@ -115,7 +115,7 @@ function AppSidebarComponent() {
           </div>
         </Link>
       </TooltipTrigger>
-      <TooltipContent side="right" className="bg-slate-900 text-white border-slate-700">
+      <TooltipContent side="right" className="bg-slate-900 text-white border-slate-700 z-50">
         <p className="font-medium">{item.title}</p>
         <p className="text-xs text-slate-400">{item.tooltip}</p>
       </TooltipContent>
@@ -145,7 +145,7 @@ function AppSidebarComponent() {
           </SidebarMenuButton>
         </SidebarMenuItem>
       </TooltipTrigger>
-      <TooltipContent side="right" className="bg-slate-900 text-white border-slate-700">
+      <TooltipContent side="right" className="bg-slate-900 text-white border-slate-700 z-50">
         <p className="text-xs text-slate-400">{item.tooltip}</p>
       </TooltipContent>
     </Tooltip>
@@ -159,7 +159,7 @@ function AppSidebarComponent() {
 
   return (
     <Sidebar 
-      className="border-r border-white/10"
+      className="border-r border-white/10 z-50"
       style={{
         background: 'linear-gradient(180deg, rgba(10, 24, 40, 0.95) 0%, rgba(30, 144, 255, 0.12) 100%)',
         backdropFilter: 'blur(32px)',
