@@ -48,7 +48,7 @@ const settingsFormSchema = z.object({
   description: z.string().min(10, "Description must be at least 10 characters"),
   longDescription: z.string().optional(),
   visibility: z.string(),
-  joinApproval: z.string(),
+  joinApproval: z.boolean(),
   whoCanPost: z.string(),
   allowEvents: z.boolean(),
   allowPosts: z.boolean(),
@@ -76,7 +76,7 @@ export function GroupSettingsPanel({ group, canManage = false }: GroupSettingsPa
       description: group.description,
       longDescription: group.longDescription || undefined,
       visibility: group.visibility || "public",
-      joinApproval: group.joinApproval || "open",
+      joinApproval: group.joinApproval !== false,
       whoCanPost: group.whoCanPost || "members",
       allowEvents: group.allowEvents !== false,
       allowPosts: group.allowPosts !== false,
@@ -240,21 +240,20 @@ export function GroupSettingsPanel({ group, canManage = false }: GroupSettingsPa
                     control={form.control}
                     name="joinApproval"
                     render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Join Approval</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <FormControl>
-                            <SelectTrigger data-testid="select-settings-join-approval">
-                              <SelectValue />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="open">Open - Anyone can join</SelectItem>
-                            <SelectItem value="approval">Approval Required</SelectItem>
-                            <SelectItem value="invite_only">Invite Only</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
+                      <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
+                        <div className="space-y-0.5">
+                          <FormLabel>Open Membership</FormLabel>
+                          <p className="text-sm text-muted-foreground">
+                            {field.value ? "Anyone can join this group" : "Members need approval to join"}
+                          </p>
+                        </div>
+                        <FormControl>
+                          <Switch
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                            data-testid="switch-settings-join-approval"
+                          />
+                        </FormControl>
                       </FormItem>
                     )}
                   />

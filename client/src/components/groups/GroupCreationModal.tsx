@@ -30,6 +30,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/UnifiedLocationPicker";
@@ -40,7 +41,7 @@ const formSchema = z.object({
   longDescription: z.string().optional(),
   type: z.string().default("city"),
   visibility: z.string().default("public"),
-  joinApproval: z.string().default("open"),
+  joinApproval: z.boolean().default(true),
   city: z.string().optional(),
   country: z.string().optional(),
   region: z.string().optional(),
@@ -71,7 +72,7 @@ export function GroupCreationModal({ open, onOpenChange }: GroupCreationModalPro
       longDescription: "",
       type: "city",
       visibility: "public",
-      joinApproval: "open",
+      joinApproval: true,
       city: "",
       country: "",
       region: "",
@@ -330,21 +331,20 @@ export function GroupCreationModal({ open, onOpenChange }: GroupCreationModalPro
                 control={form.control}
                 name="joinApproval"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Join Approval</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger data-testid="select-join-approval">
-                          <SelectValue placeholder="Select approval type" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="open">Open - Anyone can join</SelectItem>
-                        <SelectItem value="approval">Approval Required</SelectItem>
-                        <SelectItem value="invite_only">Invite Only</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
+                    <div className="space-y-0.5">
+                      <FormLabel>Open Membership</FormLabel>
+                      <p className="text-sm text-muted-foreground">
+                        {field.value ? "Anyone can join" : "Approval required"}
+                      </p>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        data-testid="switch-join-approval"
+                      />
+                    </FormControl>
                   </FormItem>
                 )}
               />
