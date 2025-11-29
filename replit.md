@@ -32,11 +32,25 @@ Mundo Tango is a production-ready social platform connecting the global tango co
 ### Cascade-Eligible Profile Fields
 | Field | Type | Cascade Target | Status |
 |-------|------|----------------|--------|
-| `tangoRoles` | varchar[] | PRO role groups (20 groups) | Implemented |
-| `city`, `country` | varchar | City/country community groups | Implemented |
+| `tangoRoles` | varchar[] | PRO role groups (20 groups) | ✅ Implemented & Tested |
+| `city`, `country` | varchar | City/country community groups | ✅ Implemented & Tested |
 | `languages` | varchar[] | Language community groups | Planned |
 | `interests` | varchar[] | Interest-based groups | Planned |
 | `experienceLevel` | varchar | Experience-tier groups | Planned |
+
+### Recent Fixes (Nov 29, 2025)
+**Boolean Type Mismatch in Group Join Approval:**
+- **Issue:** Database column `join_approval` is boolean, but Drizzle schema and code used varchar ("open"/"approval"/"invite_only")
+- **Root Cause:** When role cascade created new PRO groups, it failed with "invalid input syntax for type boolean: 'open'"
+- **Files Fixed:**
+  1. `shared/schema.ts` - Changed `joinApproval: varchar` → `boolean` (default: true)
+  2. `server/routes/role-change-routes.ts` - Changed `joinApproval: 'open'` → `joinApproval: true`
+  3. `server/routes/location-change-routes.ts` - Changed `joinApproval: 'open'` → `joinApproval: true`
+  4. `client/src/pages/CustomGroupsPage.tsx` - Updated to use boolean true
+  5. `client/src/components/groups/GroupSettingsPanel.tsx` - Added Switch UI component (boolean toggle)
+  6. `client/src/components/groups/GroupCreationModal.tsx` - Added Switch UI component (boolean toggle)
+- **Semantic Mapping:** `true` = "open" (anyone can join), `false` = requires approval
+- **Impact:** Role cascade now successfully creates PRO groups and auto-joins users on role changes
 
 See [docs/prds/INDEX.md](docs/prds/INDEX.md) for complete PRD index with cross-references (21 PRDs total).
 
