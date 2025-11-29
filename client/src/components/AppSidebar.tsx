@@ -102,7 +102,7 @@ function AppSidebarComponent() {
     <Link to={item.url} key={item.title}>
       <div 
         className={cn(
-          "flex flex-col items-center justify-center gap-1.5 p-2 rounded-lg cursor-pointer transition-all duration-200",
+          "flex flex-col items-center justify-center gap-1 p-2 rounded-lg cursor-pointer transition-all duration-200",
           "hover:bg-[#40E0D0]/20",
           isActive(item.url) && "bg-gradient-to-r from-[#40E0D0]/30 to-transparent ring-1 ring-[#40E0D0]/50"
         )}
@@ -112,9 +112,14 @@ function AppSidebarComponent() {
           className="h-8 w-8" 
           style={{ color: item.color || (isActive(item.url) ? '#40E0D0' : 'currentColor') }}
         />
-        <span className="text-xs font-medium text-center leading-tight">
-          {item.title}
-        </span>
+        <div className="text-center">
+          <p className="text-xs font-medium leading-tight">
+            {item.title}
+          </p>
+          <p className="text-xs opacity-60 leading-tight">
+            {item.tooltip}
+          </p>
+        </div>
       </div>
     </Link>
   );
