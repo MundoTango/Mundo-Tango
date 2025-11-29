@@ -778,6 +778,11 @@ router.post('/cover', authenticateToken, async (req: AuthRequest, res: Response)
       }
     }
 
+    // UPDATE: Actually save the cover image to the database
+    await db.update(users)
+      .set({ coverImage: coverImageUrl })
+      .where(eq(users.id, req.userId));
+
     console.log(`[ProfileMedia] Cover photo updated for user ${req.userId}`);
     res.json({ 
       message: 'Cover photo updated successfully',
