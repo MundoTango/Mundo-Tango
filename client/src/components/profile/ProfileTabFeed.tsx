@@ -32,9 +32,10 @@ interface ProfileTabFeedProps {
   isLoading: boolean;
   isOwnProfile: boolean;
   userId: number;
+  isPublicView?: boolean;
 }
 
-export default function ProfileTabFeed({ posts, isLoading, isOwnProfile, userId }: ProfileTabFeedProps) {
+export default function ProfileTabFeed({ posts, isLoading, isOwnProfile, userId, isPublicView }: ProfileTabFeedProps) {
   const [editingPost, setEditingPost] = useState<number | null>(null);
 
   const handleEdit = (postId: number) => {

@@ -71,6 +71,12 @@ export default function ProfilePage() {
   const { user: currentUser } = useAuth();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<string>('feed');
+  
+  // Detect public view mode from ?view=public query param
+  const searchParams = new URLSearchParams(searchString);
+  const isPublicView = searchParams.get('view') === 'public';
+  
+  // PRO tab dashboard/customer toggle (separate from public view mode)
   const [viewMode, setViewMode] = useState<'dashboard' | 'customer'>('dashboard');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const coverPhotoInputRef = useRef<HTMLInputElement>(null);
@@ -386,7 +392,7 @@ export default function ProfilePage() {
                     {user.name.split(' ').map(n => n[0]).join('')}
                   </AvatarFallback>
                 </Avatar>
-                {isOwnProfile && (
+                {isOwnProfile && !isPublicView && (
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Button 
@@ -404,7 +410,7 @@ export default function ProfilePage() {
                   </Tooltip>
                 )}
               </div>
-              {isOwnProfile && (
+              {isOwnProfile && !isPublicView && (
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button 
@@ -422,7 +428,7 @@ export default function ProfilePage() {
                   <TooltipContent>Edit Cover Photo</TooltipContent>
                 </Tooltip>
               )}
-              {isOwnProfile && (
+              {isOwnProfile && !isPublicView && (
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button 
@@ -677,11 +683,12 @@ export default function ProfilePage() {
         activeTab={activeTab}
         onTabChange={setActiveTab}
         isOwnProfile={isOwnProfile}
+        isPublicView={isPublicView}
       />
       {/* Tab Content */}
       <div className="max-w-5xl mx-auto px-6 py-12">
         {/* Dashboard/Customer Toggle for PRO Tab */}
-        {activeTab === 'pro' && (
+        {activeTab === 'pro' && !isPublicView && (
           <DashboardCustomerToggle isOwnProfile={isOwnProfile} onViewChange={setViewMode} />
         )}
 
@@ -698,7 +705,7 @@ export default function ProfilePage() {
               <h2 className="text-3xl md:text-4xl font-serif font-bold mb-8" data-testid="text-posts-title">
                 {isOwnProfile ? 'Your Posts' : 'Posts'}
               </h2>
-              <ProfileTabFeed posts={posts} isLoading={postsLoading} isOwnProfile={isOwnProfile} userId={user.id} />
+              <ProfileTabFeed posts={posts} isLoading={postsLoading} isOwnProfile={isOwnProfile} userId={user.id} isPublicView={isPublicView} />
             </div>
 
             {/* Right Column - Sidebar */}
@@ -796,7 +803,7 @@ export default function ProfilePage() {
                       );
                     })}
                   </div>
-                  {isOwnProfile && (
+                  {isOwnProfile && !isPublicView && (
                     <Button
                       variant="default"
                       size="sm"
@@ -820,7 +827,7 @@ export default function ProfilePage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <ProfileTabMemories isOwnProfile={isOwnProfile} profileId={user.id} />
+            <ProfileTabMemories isOwnProfile={isOwnProfile} profileId={user.id} isPublicView={isPublicView} />
           </motion.div>
         )}
 
@@ -831,7 +838,7 @@ export default function ProfilePage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <ProfileTabTravel profileId={user.id} isOwnProfile={isOwnProfile} />
+            <ProfileTabTravel profileId={user.id} isOwnProfile={isOwnProfile} isPublicView={isPublicView} />
           </motion.div>
         )}
 
@@ -875,7 +882,7 @@ export default function ProfilePage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <ProfileTabAbout user={user} isOwnProfile={isOwnProfile} />
+            <ProfileTabAbout user={user} isOwnProfile={isOwnProfile} isPublicView={isPublicView} />
           </motion.div>
         )}
 

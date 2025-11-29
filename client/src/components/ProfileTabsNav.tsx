@@ -23,6 +23,7 @@ interface ProfileTabsNavProps {
   activeTab: string;
   onTabChange: (tab: string) => void;
   isOwnProfile: boolean;
+  isPublicView?: boolean;
 }
 
 const PROFESSIONAL_ROLES = [
@@ -60,7 +61,7 @@ export const getVisibleTabs = (user: User): Array<{ id: string; label: string; i
   return allTabs;
 };
 
-export default function ProfileTabsNav({ user, activeTab, onTabChange, isOwnProfile }: ProfileTabsNavProps) {
+export default function ProfileTabsNav({ user, activeTab, onTabChange, isOwnProfile, isPublicView }: ProfileTabsNavProps) {
   const visibleTabs = getVisibleTabs(user);
   const [hoveredTab, setHoveredTab] = useState<string | null>(null);
   
