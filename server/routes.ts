@@ -3587,32 +3587,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
         occupation,
         portfolioUrls,
         communityWebsiteUrl,
+        privacySettings,
       } = req.body;
+
+      // Build update data object - only include fields that are provided
+      const updateData: any = {
+        updatedAt: new Date(),
+      };
+
+      // Add profile fields if provided
+      if (name !== undefined) updateData.name = name;
+      if (username !== undefined) updateData.username = username;
+      if (bio !== undefined) updateData.bio = bio;
+      if (city !== undefined) updateData.city = city;
+      if (country !== undefined) updateData.country = country;
+      if (yearsOfDancing !== undefined) updateData.yearsOfDancing = yearsOfDancing;
+      if (tangoRoles !== undefined) updateData.tangoRoles = tangoRoles;
+      if (tangoStartYear !== undefined) updateData.tangoStartYear = tangoStartYear;
+      if (tangoRoleExperience !== undefined) updateData.tangoRoleExperience = tangoRoleExperience;
+      if (socialLinks !== undefined) updateData.socialLinks = socialLinks;
+      if (profileImage !== undefined) updateData.profileImage = profileImage;
+      if (leaderLevel !== undefined) updateData.leaderLevel = leaderLevel;
+      if (followerLevel !== undefined) updateData.followerLevel = followerLevel;
+      if (primaryLanguage !== undefined) updateData.primaryLanguage = primaryLanguage;
+      if (languages !== undefined) updateData.languages = languages;
+      if (occupation !== undefined) updateData.occupation = occupation;
+      if (portfolioUrls !== undefined) updateData.portfolioUrls = portfolioUrls;
+      if (communityWebsiteUrl !== undefined) updateData.communityWebsiteUrl = communityWebsiteUrl;
+
+      // Handle privacySettings JSONB merge - critical for field-level privacy
+      if (privacySettings !== undefined) {
+        updateData.privacySettings = sql`COALESCE(${users.privacySettings}, '{}'::jsonb) || ${JSON.stringify(privacySettings)}::jsonb`;
+      }
 
       // Update user in database
       const [updatedUser] = await db
         .update(users)
-        .set({
-          name,
-          username,
-          bio,
-          city,
-          country,
-          yearsOfDancing,
-          tangoRoles,
-          tangoStartYear,
-          tangoRoleExperience,
-          socialLinks,
-          profileImage,
-          leaderLevel,
-          followerLevel,
-          primaryLanguage,
-          languages,
-          occupation,
-          portfolioUrls,
-          communityWebsiteUrl,
-          updatedAt: new Date(),
-        })
+        .set(updateData)
         .where(eq(users.id, userId))
         .returning();
 
