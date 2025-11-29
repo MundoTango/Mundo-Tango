@@ -76,6 +76,13 @@ export function useWebSocket(options: UseWebSocketOptions) {
       console.log(`[WS] Connecting to ${path} for user ${user.id}...`);
       setStatus('connecting');
 
+      // Validate host before creating WebSocket
+      if (!window.location.host || window.location.host.includes('undefined')) {
+        console.warn('[WS] Skipping connection - invalid host:', window.location.host);
+        setStatus('error');
+        return;
+      }
+
       // Get JWT token from localStorage
       const token = localStorage.getItem('accessToken');
       if (!token) {

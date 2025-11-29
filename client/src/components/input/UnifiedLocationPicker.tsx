@@ -44,6 +44,8 @@ interface ParsedLocation {
   country?: string;
   postalCode?: string;
   coordinates: { lat: number; lng: number };
+  groupId?: string; // City group ID if this is a city_group result
+  source?: string; // Result source: city_group, popular, nominatim
 }
 
 // Extended parsed location for venue mode
@@ -341,6 +343,12 @@ export function UnifiedLocationPicker({
       lng: parseFloat(location.lon),
     };
 
+    // Extract custom fields for city_group results
+    // @ts-ignore - accessing custom fields added during search
+    const groupId = location._groupId;
+    // @ts-ignore
+    const source = location._source;
+
     if (mode === "address" && location.address) {
       return {
         fullAddress: location.display_name,
@@ -352,18 +360,29 @@ export function UnifiedLocationPicker({
         country: location.address.country,
         postalCode: location.address.postcode,
         coordinates: coords,
+        groupId,
+        source,
       };
     }
 
     const city = parts[0];
     const country = parts[parts.length - 1];
     
-    return {
+    const result: ParsedLocation = {
       fullAddress: location.display_name,
       city,
       country,
       coordinates: coords,
     };
+
+    // Add group ID and source if this is a city_group result
+    if (groupId) {
+      result.groupId = groupId;
+      result.source = source;
+      console.log('[UnifiedLocationPicker] Selected city_group:', { city, groupId, source });
+    }
+
+    return result;
   };
 
   const getDisplayName = (location: LocationResult): string => {
