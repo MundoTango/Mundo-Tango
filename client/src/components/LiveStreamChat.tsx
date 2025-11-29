@@ -66,6 +66,12 @@ export default function LiveStreamChat({ streamId, isLive, currentUserId }: Live
   useEffect(() => {
     if (!isLive) return;
 
+    // Skip WebSocket in development with HMR issues
+    if (!window.location.host || window.location.host.includes('undefined')) {
+      console.warn('[LiveStream Chat] Skipping WebSocket due to invalid host');
+      return;
+    }
+
     const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
     const wsUrl = `${protocol}//${window.location.host}/ws/stream/${streamId}`;
     

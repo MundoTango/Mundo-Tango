@@ -50,6 +50,12 @@ export function useAutonomousProgress({
       return;
     }
 
+    // Skip WebSocket in development with HMR issues
+    if (!window.location.host || window.location.host.includes('undefined')) {
+      console.warn('[AutonomousProgress] Skipping WebSocket due to invalid host');
+      return;
+    }
+
     try {
       setError(null);
 
