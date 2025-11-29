@@ -24,14 +24,16 @@ export function PhotoUploadDialog({
   const [zoom, setZoom] = useState(1);
   const [offsetX, setOffsetX] = useState(0);
   const [offsetY, setOffsetY] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const previewRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
   const PROFILE_SIZE = 400;
   const COVER_SIZE = { width: 1200, height: 300 };
   const dimensions = type === 'profile' ? { width: PROFILE_SIZE, height: PROFILE_SIZE } : COVER_SIZE;
-  const aspectRatio = dimensions.width / dimensions.height;
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -52,6 +54,21 @@ export function PhotoUploadDialog({
     reader.readAsDataURL(file);
   };
 
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setIsDragging(true);
+    setDragStart({ x: e.clientX - offsetX, y: e.clientY - offsetY });
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging) return;
+    setOffsetX(e.clientX - dragStart.x);
+    setOffsetY(e.clientY - dragStart.y);
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
   const handleCrop = () => {
     if (!imageSource || !canvasRef.current) return;
 
@@ -69,19 +86,22 @@ export function PhotoUploadDialog({
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       // Calculate source region to crop from image
-      // The image is zoomed, and we pan it
       const sourceCropWidth = img.width / zoom;
       const sourceCropHeight = img.height / zoom;
       const sourceX = -offsetX / zoom;
       const sourceY = -offsetY / zoom;
 
-      // Draw the cropped region of the source image to fill the canvas
+      // Draw the cropped region
       ctx.drawImage(
         img,
-        sourceX, sourceY,
-        sourceCropWidth, sourceCropHeight,
-        0, 0,
-        canvas.width, canvas.height
+        sourceX,
+        sourceY,
+        sourceCropWidth,
+        sourceCropHeight,
+        0,
+        0,
+        canvas.width,
+        canvas.height
       );
 
       canvas.toBlob(
@@ -103,10 +123,7 @@ export function PhotoUploadDialog({
     img.src = imageSource;
   };
 
-  // Calculate preview container size
-  const maxPreviewHeight = 300;
-  const previewHeight = maxPreviewHeight;
-  const previewWidth = previewHeight * aspectRatio;
+  const aspectRatio = dimensions.width / dimensions.height;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -149,25 +166,30 @@ export function PhotoUploadDialog({
                 </span>
               </div>
 
-              {/* Visible Boundary Box - Shows EXACTLY what will be saved */}
+              {/* Visible Boundary Box - Click and drag to move image */}
               <div
-                className="relative bg-black border-4 border-primary rounded-lg overflow-hidden mx-auto"
+                ref={previewRef}
+                className="relative bg-black border-4 border-primary rounded-lg overflow-hidden mx-auto cursor-move"
                 style={{
-                  width: `${previewWidth}px`,
-                  height: `${previewHeight}px`,
+                  width: `${300 * aspectRatio}px`,
+                  height: '300px',
                   aspectRatio: `${dimensions.width}/${dimensions.height}`,
                 }}
+                onMouseDown={handleMouseDown}
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
+                onMouseLeave={handleMouseUp}
               >
                 {imageSource && (
                   <img
                     src={imageSource}
                     alt="Preview"
-                    className="absolute w-full h-full"
+                    className="absolute select-none pointer-events-none"
                     style={{
                       transform: `scale(${zoom}) translate(${offsetX}px, ${offsetY}px)`,
                       transformOrigin: '0 0',
-                      maxWidth: 'none',
                     }}
+                    draggable={false}
                   />
                 )}
                 {/* Dimension indicator inside box */}
@@ -180,7 +202,7 @@ export function PhotoUploadDialog({
 
               {/* Helpful text */}
               <p className="text-xs text-muted-foreground text-center">
-                Adjust image below so it fills the box exactly as you want it
+                Click and drag the image to position it
               </p>
             </div>
 
@@ -203,32 +225,7 @@ export function PhotoUploadDialog({
                   step={0.05}
                   className="w-full"
                 />
-              </div>
-
-              {/* Pan X */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Pan Left/Right</label>
-                <Slider
-                  value={[offsetX]}
-                  onValueChange={(val) => setOffsetX(val[0])}
-                  min={-300}
-                  max={300}
-                  step={5}
-                  className="w-full"
-                />
-              </div>
-
-              {/* Pan Y */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Pan Up/Down</label>
-                <Slider
-                  value={[offsetY]}
-                  onValueChange={(val) => setOffsetY(val[0])}
-                  min={-300}
-                  max={300}
-                  step={5}
-                  className="w-full"
-                />
+                <p className="text-xs text-muted-foreground">Drag image in preview box to position</p>
               </div>
             </div>
 
