@@ -213,10 +213,11 @@ export default function ProfileTabAbout({ user, isOwnProfile, isPublicView = fal
 
   const updateProfileMutation = useMutation({
     mutationFn: async (updates: Record<string, any>) => {
-      const res = await apiRequest("PATCH", `/api/users/${user.id}`, updates);
+      const { _isPrivacyOnlyUpdate, ...cleanUpdates } = updates;
+      const res = await apiRequest("PATCH", `/api/users/${user.id}`, cleanUpdates);
       return res.json();
     },
-    onSuccess: async () => {
+    onSuccess: async (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ["user", user.id] });
       queryClient.invalidateQueries({ queryKey: ["user", user.username] });
       queryClient.invalidateQueries({ queryKey: ["/api/users"] });
@@ -225,6 +226,13 @@ export default function ProfileTabAbout({ user, isOwnProfile, isPublicView = fal
       queryClient.invalidateQueries({ queryKey: [`/api/users/${user.id}`] });
       
       await refreshCurrentUser();
+      
+      // Skip location/role cascades for privacy-only updates
+      if (variables?._isPrivacyOnlyUpdate) {
+        toast({ title: "Privacy settings updated!" });
+        setIsEditing(false);
+        return;
+      }
       
       const newCity = editValues.city || '';
       const newCountry = editValues.country || '';
