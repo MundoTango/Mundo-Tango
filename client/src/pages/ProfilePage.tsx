@@ -849,7 +849,7 @@ export default function ProfilePage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <ProfileTabEvents />
+            <ProfileTabEvents profileId={user.id} isOwnProfile={isOwnProfile} isPublicView={isPublicView} />
           </motion.div>
         )}
 
@@ -860,7 +860,7 @@ export default function ProfilePage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <ProfileTabFriends />
+            <ProfileTabFriends profileId={user.id} isOwnProfile={isOwnProfile} isPublicView={isPublicView} />
           </motion.div>
         )}
 

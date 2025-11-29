@@ -114,6 +114,7 @@ interface MTHostListing {
 interface ProfileTabTravelProps {
   profileId: number;
   isOwnProfile?: boolean;
+  isPublicView?: boolean;
 }
 
 const tripPlannerSchema = z.object({
@@ -196,7 +197,27 @@ const transportTypes = [
   { id: 'boat', label: 'Boat', icon: Anchor, color: 'bg-cyan-500/10 text-cyan-600 border-cyan-500/30' },
 ];
 
-export default function ProfileTabTravel({ profileId, isOwnProfile = false }: ProfileTabTravelProps) {
+export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPublicView = false }: ProfileTabTravelProps) {
+  // Privacy check: Hide travel plans in public view
+  const canEdit = isOwnProfile && !isPublicView;
+  
+  if (isPublicView) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Plane className="w-5 h-5" />
+            Travel Plans
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-muted-foreground italic">
+            Travel plans are private.
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
   const [expandedTrips, setExpandedTrips] = useState<Set<number>>(new Set([0]));
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editingTripId, setEditingTripId] = useState<number | null>(null);

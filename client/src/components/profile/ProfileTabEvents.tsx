@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import { Link } from "wouter";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRSVPEvent, useEventRSVPs } from "@/hooks/useEvents";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -247,8 +247,37 @@ function EventCard({ event, index = 0 }: { event: any; index?: number }) {
   );
 }
 
-export default function ProfileTabEvents() {
+interface ProfileTabEventsProps {
+  profileId?: number;
+  isOwnProfile?: boolean;
+  isPublicView?: boolean;
+}
+
+export default function ProfileTabEvents({
+  profileId,
+  isOwnProfile = false,
+  isPublicView = false,
+}: ProfileTabEventsProps = {}) {
   const { user } = useAuth();
+  const canEdit = isOwnProfile && !isPublicView;
+
+  if (isPublicView) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <CalendarIcon className="w-5 h-5" />
+            Events
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-muted-foreground italic">
+            Event history is private.
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
   const [activeTab, setActiveTab] = useState("my-events");
   const [searchQuery, setSearchQuery] = useState("");
   const [eventType, setEventType] = useState("all");
