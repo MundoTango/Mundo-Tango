@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { useToast } from '@/hooks/use-toast';
-import { ZoomIn } from 'lucide-react';
+import { ZoomIn, ZoomOut, Move } from 'lucide-react';
 
 interface PhotoUploadDialogProps {
   open: boolean;
@@ -23,22 +23,26 @@ export function PhotoUploadDialog({
   const [imageSource, setImageSource] = useState<string | null>(null);
   const [imageDimensions, setImageDimensions] = useState<{ width: number; height: number } | null>(null);
   const [zoom, setZoom] = useState(1);
-  const [offsetX, setOffsetX] = useState(0);
-  const [offsetY, setOffsetY] = useState(0);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const previewRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
+  // Output dimensions (what gets saved)
   const PROFILE_SIZE = 400;
   const COVER_SIZE = { width: 1200, height: 300 };
-  const dimensions = type === 'profile' ? { width: PROFILE_SIZE, height: PROFILE_SIZE } : COVER_SIZE;
+  const outputDimensions = type === 'profile' ? { width: PROFILE_SIZE, height: PROFILE_SIZE } : COVER_SIZE;
   
-  // Preview sizing: profile is square (300x300), cover is landscape
-  const previewWidth = type === 'profile' ? 300 : 400;
-  const previewHeight = type === 'profile' ? 300 : 100;
+  // Crop frame dimensions (the visible boundary box)
+  const cropWidth = type === 'profile' ? 300 : 500;
+  const cropHeight = type === 'profile' ? 300 : 125;
+  
+  // Container size (area where image is displayed)
+  const containerWidth = 500;
+  const containerHeight = 400;
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -54,81 +58,76 @@ export function PhotoUploadDialog({
       const src = event.target?.result as string;
       const img = new Image();
       img.onload = () => {
-        // Calculate initial position - favor TOP for portrait images (where faces are)
-        const scaleX = previewWidth / img.width;
-        const scaleY = previewHeight / img.height;
-        const initialBaseScale = Math.max(scaleX, scaleY);
-        const scaledWidth = img.width * initialBaseScale;
-        const scaledHeight = img.height * initialBaseScale;
-        
-        // For horizontal offset: always center
-        const centerOffsetX = (previewWidth - scaledWidth) / 2;
-        
-        // For vertical offset: 
-        // - Portrait images (taller than wide): start at TOP (offset = 0) to show face
-        // - Landscape images: center vertically
-        const isPortrait = img.height > img.width;
-        const centerOffsetY = isPortrait ? 0 : (previewHeight - scaledHeight) / 2;
-        
-        console.log('[PhotoUpload] Image loaded:', {
-          dimensions: `${img.width}×${img.height}`,
-          isPortrait,
-          scaledSize: `${scaledWidth.toFixed(0)}×${scaledHeight.toFixed(0)}`,
-          initialOffset: `(${centerOffsetX.toFixed(1)}, ${centerOffsetY.toFixed(1)})`
-        });
-        
         setImageDimensions({ width: img.width, height: img.height });
         setImageSource(src);
-        setZoom(1);
-        setOffsetX(centerOffsetX);
-        setOffsetY(centerOffsetY);
+        
+        // Calculate initial zoom to fit image nicely in container
+        const scaleToFit = Math.min(
+          containerWidth / img.width,
+          containerHeight / img.height,
+          1 // Don't upscale small images
+        );
+        setZoom(scaleToFit);
+        
+        // Center the image in the container
+        const scaledWidth = img.width * scaleToFit;
+        const scaledHeight = img.height * scaleToFit;
+        setPosition({
+          x: (containerWidth - scaledWidth) / 2,
+          y: (containerHeight - scaledHeight) / 2
+        });
+        
+        console.log('[PhotoUpload] Image loaded:', {
+          original: `${img.width}×${img.height}`,
+          initialZoom: scaleToFit.toFixed(3),
+          initialPos: `centered`
+        });
       };
       img.src = src;
     };
     reader.readAsDataURL(file);
   };
-  
-  const getBaseScale = () => {
-    if (!imageDimensions) return 1;
-    const scaleX = previewWidth / imageDimensions.width;
-    const scaleY = previewHeight / imageDimensions.height;
-    return Math.max(scaleX, scaleY);
-  };
-  
-  const baseScale = getBaseScale();
-  
-  // Debug logging
-  useEffect(() => {
-    if (imageDimensions && imageSource) {
-      const totalScale = baseScale * zoom;
-      console.log('[PhotoUpload Debug]', {
-        type,
-        imageDimensions,
-        previewWidth,
-        previewHeight,
-        baseScale,
-        zoom,
-        totalScale,
-        offsetX,
-        offsetY,
-        transform: `scale(${totalScale}) translate(${offsetX / totalScale}px, ${offsetY / totalScale}px)`
-      });
-    }
-  }, [imageDimensions, imageSource, baseScale, zoom, offsetX, offsetY, type, previewWidth, previewHeight]);
 
   const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
     setIsDragging(true);
-    setDragStart({ x: e.clientX - offsetX, y: e.clientY - offsetY });
+    setDragStart({ 
+      x: e.clientX - position.x, 
+      y: e.clientY - position.y 
+    });
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!isDragging) return;
-    setOffsetX(e.clientX - dragStart.x);
-    setOffsetY(e.clientY - dragStart.y);
+    setPosition({
+      x: e.clientX - dragStart.x,
+      y: e.clientY - dragStart.y
+    });
   };
 
   const handleMouseUp = () => {
     setIsDragging(false);
+  };
+
+  // Calculate what part of the original image is inside the crop frame
+  const getCropCoordinates = () => {
+    if (!imageDimensions) return null;
+    
+    // Crop frame is centered in the container
+    const cropLeft = (containerWidth - cropWidth) / 2;
+    const cropTop = (containerHeight - cropHeight) / 2;
+    
+    // Image position and size after zoom
+    const scaledWidth = imageDimensions.width * zoom;
+    const scaledHeight = imageDimensions.height * zoom;
+    
+    // Calculate source coordinates in original image pixels
+    const sourceX = (cropLeft - position.x) / zoom;
+    const sourceY = (cropTop - position.y) / zoom;
+    const sourceWidth = cropWidth / zoom;
+    const sourceHeight = cropHeight / zoom;
+    
+    return { sourceX, sourceY, sourceWidth, sourceHeight };
   };
 
   const handleCrop = () => {
@@ -140,25 +139,26 @@ export function PhotoUploadDialog({
 
     const img = new Image();
     img.onload = () => {
-      canvas.width = dimensions.width;
-      canvas.height = dimensions.height;
+      canvas.width = outputDimensions.width;
+      canvas.height = outputDimensions.height;
 
       ctx.fillStyle = '#000000';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      const totalScale = baseScale * zoom;
-      
-      const sourceX = -offsetX / totalScale;
-      const sourceY = -offsetY / totalScale;
-      const sourceWidth = previewWidth / totalScale;
-      const sourceHeight = previewHeight / totalScale;
+      const crop = getCropCoordinates();
+      if (!crop) return;
+
+      console.log('[PhotoUpload] Cropping:', {
+        source: `(${crop.sourceX.toFixed(0)}, ${crop.sourceY.toFixed(0)}) ${crop.sourceWidth.toFixed(0)}×${crop.sourceHeight.toFixed(0)}`,
+        output: `${outputDimensions.width}×${outputDimensions.height}`
+      });
 
       ctx.drawImage(
         img,
-        sourceX,
-        sourceY,
-        sourceWidth,
-        sourceHeight,
+        crop.sourceX,
+        crop.sourceY,
+        crop.sourceWidth,
+        crop.sourceHeight,
         0,
         0,
         canvas.width,
@@ -185,9 +185,13 @@ export function PhotoUploadDialog({
     img.src = imageSource;
   };
 
+  // Crop frame position (centered in container)
+  const cropLeft = (containerWidth - cropWidth) / 2;
+  const cropTop = (containerHeight - cropHeight) / 2;
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-[600px]">
         <DialogHeader>
           <DialogTitle>
             {type === 'profile' ? 'Upload Profile Photo' : 'Upload Cover Photo'}
@@ -209,102 +213,130 @@ export function PhotoUploadDialog({
             >
               <p className="text-sm font-medium mb-2">Click to select an image</p>
               <p className="text-xs text-muted-foreground">
-                {type === 'profile' ? '400×400px circle' : '1200×300px landscape'}
+                {type === 'profile' ? 'Square crop for 400×400px circle' : 'Landscape crop for 1200×300px'}
               </p>
             </div>
           </div>
         ) : (
-          <div className="flex flex-col gap-6">
-            {/* Boundary Box with Preview */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between mb-2">
-                <label className="text-sm font-semibold">
-                  Preview ({dimensions.width}×{dimensions.height}px)
-                </label>
-                <span className="text-xs text-muted-foreground">
-                  Zoom: {Math.round(zoom * 100)}%
-                </span>
-              </div>
-
-              {/* Visible Boundary Box - Click and drag to move image */}
-              <div
-                ref={previewRef}
-                className={`relative bg-black border-4 border-primary overflow-hidden mx-auto cursor-move ${type === 'profile' ? 'rounded-full' : 'rounded-lg'}`}
-                style={{
-                  width: `${previewWidth}px`,
-                  height: `${previewHeight}px`,
-                }}
-                onMouseDown={handleMouseDown}
-                onMouseMove={handleMouseMove}
-                onMouseUp={handleMouseUp}
-                onMouseLeave={handleMouseUp}
-              >
-                {imageSource && imageDimensions && (
-                  <img
-                    src={imageSource}
-                    alt="Preview"
-                    className="absolute select-none pointer-events-none"
-                    style={{
-                      width: `${imageDimensions.width}px`,
-                      height: `${imageDimensions.height}px`,
-                      transform: `scale(${baseScale * zoom}) translate(${offsetX / (baseScale * zoom)}px, ${offsetY / (baseScale * zoom)}px)`,
-                      transformOrigin: '0 0',
-                      top: 0,
-                      left: 0,
-                    }}
-                    draggable={false}
-                  />
-                )}
-                {/* Dimension indicator inside box */}
-                <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
-                  <div className="bg-black/60 px-3 py-1 rounded text-xs text-white font-mono opacity-0 hover:opacity-100 transition-opacity">
-                    {dimensions.width}×{dimensions.height}
-                  </div>
-                </div>
-              </div>
-
-              {/* Helpful text */}
-              <p className="text-xs text-muted-foreground text-center">
-                Click and drag the image to position it
-              </p>
-              
-              {/* DEBUG: Show actual computed values */}
-              {imageDimensions && (
-                <div className="bg-amber-100 dark:bg-amber-900 p-2 rounded text-xs font-mono space-y-1 border border-amber-400">
-                  <p className="font-bold text-amber-700 dark:text-amber-300">DEBUG VALUES:</p>
-                  <p>Original: {imageDimensions.width}×{imageDimensions.height}</p>
-                  <p>Preview: {previewWidth}×{previewHeight}</p>
-                  <p>baseScale: {baseScale.toFixed(4)}</p>
-                  <p>zoom: {zoom.toFixed(2)} → totalScale: {(baseScale * zoom).toFixed(4)}</p>
-                  <p>Scaled size: {Math.round(imageDimensions.width * baseScale * zoom)}×{Math.round(imageDimensions.height * baseScale * zoom)}</p>
-                  <p>offsetX: {offsetX.toFixed(1)}px, offsetY: {offsetY.toFixed(1)}px</p>
-                  <p>Transform: scale({(baseScale * zoom).toFixed(3)}) translate({(offsetX / (baseScale * zoom)).toFixed(1)}px, {(offsetY / (baseScale * zoom)).toFixed(1)}px)</p>
-                </div>
-              )}
+          <div className="flex flex-col gap-4">
+            {/* Instructions */}
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Move className="w-4 h-4" />
+              <span>Drag image to position. The highlighted area will be saved.</span>
             </div>
 
-            {/* Controls */}
-            <div className="space-y-4 bg-muted/50 p-4 rounded-lg">
-              {/* Zoom Slider */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <label className="text-sm font-medium flex items-center gap-2">
-                    <ZoomIn className="w-4 h-4" />
-                    Zoom
-                  </label>
-                  <span className="text-sm font-mono">{Math.round(zoom * 100)}%</span>
-                </div>
+            {/* Image container with crop overlay */}
+            <div 
+              ref={containerRef}
+              className="relative bg-neutral-900 rounded-lg overflow-hidden cursor-move mx-auto"
+              style={{ width: containerWidth, height: containerHeight }}
+              onMouseDown={handleMouseDown}
+              onMouseMove={handleMouseMove}
+              onMouseUp={handleMouseUp}
+              onMouseLeave={handleMouseUp}
+            >
+              {/* The actual image - displayed at natural proportions */}
+              {imageSource && imageDimensions && (
+                <img
+                  src={imageSource}
+                  alt="Preview"
+                  className="absolute select-none pointer-events-none"
+                  style={{
+                    width: imageDimensions.width * zoom,
+                    height: imageDimensions.height * zoom,
+                    left: position.x,
+                    top: position.y,
+                  }}
+                  draggable={false}
+                />
+              )}
+              
+              {/* Dark overlay outside crop area */}
+              <div 
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                  background: `linear-gradient(to right, 
+                    rgba(0,0,0,0.7) ${cropLeft}px, 
+                    transparent ${cropLeft}px, 
+                    transparent ${cropLeft + cropWidth}px, 
+                    rgba(0,0,0,0.7) ${cropLeft + cropWidth}px
+                  )`
+                }}
+              />
+              <div 
+                className="absolute pointer-events-none"
+                style={{
+                  left: cropLeft,
+                  width: cropWidth,
+                  top: 0,
+                  height: cropTop,
+                  background: 'rgba(0,0,0,0.7)'
+                }}
+              />
+              <div 
+                className="absolute pointer-events-none"
+                style={{
+                  left: cropLeft,
+                  width: cropWidth,
+                  top: cropTop + cropHeight,
+                  height: containerHeight - cropTop - cropHeight,
+                  background: 'rgba(0,0,0,0.7)'
+                }}
+              />
+              
+              {/* Crop frame border */}
+              <div 
+                className={`absolute pointer-events-none border-2 border-primary ${type === 'profile' ? 'rounded-full' : 'rounded-lg'}`}
+                style={{
+                  left: cropLeft,
+                  top: cropTop,
+                  width: cropWidth,
+                  height: cropHeight,
+                  boxShadow: '0 0 0 2px rgba(255,255,255,0.3)'
+                }}
+              />
+              
+              {/* Size indicator */}
+              <div 
+                className="absolute bottom-2 right-2 bg-black/70 px-2 py-1 rounded text-xs text-white font-mono pointer-events-none"
+              >
+                Output: {outputDimensions.width}×{outputDimensions.height}px
+              </div>
+            </div>
+
+            {/* Zoom controls */}
+            <div className="space-y-2 bg-muted/50 p-4 rounded-lg">
+              <div className="flex items-center justify-between">
+                <label className="text-sm font-medium flex items-center gap-2">
+                  <ZoomIn className="w-4 h-4" />
+                  Zoom
+                </label>
+                <span className="text-sm font-mono">{Math.round(zoom * 100)}%</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <ZoomOut className="w-4 h-4 text-muted-foreground" />
                 <Slider
                   value={[zoom]}
                   onValueChange={(val) => setZoom(val[0])}
                   min={0.1}
-                  max={3}
+                  max={2}
                   step={0.01}
-                  className="w-full"
+                  className="flex-1"
                 />
-                <p className="text-xs text-muted-foreground">Drag image in preview box to position</p>
+                <ZoomIn className="w-4 h-4 text-muted-foreground" />
               </div>
             </div>
+
+            {/* Debug info */}
+            {imageDimensions && (
+              <div className="bg-amber-100 dark:bg-amber-900/50 p-2 rounded text-xs font-mono space-y-1 border border-amber-400">
+                <p className="font-bold text-amber-700 dark:text-amber-300">DEBUG:</p>
+                <p>Original: {imageDimensions.width}×{imageDimensions.height} (natural proportions)</p>
+                <p>Zoom: {(zoom * 100).toFixed(0)}% → Display: {Math.round(imageDimensions.width * zoom)}×{Math.round(imageDimensions.height * zoom)}</p>
+                <p>Position: ({position.x.toFixed(0)}, {position.y.toFixed(0)})</p>
+                <p>Crop frame: {cropWidth}×{cropHeight} centered in {containerWidth}×{containerHeight}</p>
+              </div>
+            )}
 
             {/* Hidden canvas for cropping */}
             <canvas ref={canvasRef} className="hidden" />
