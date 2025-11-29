@@ -21,13 +21,24 @@ Mundo Tango is a production-ready social platform connecting the global tango co
 |-----------|-----|-------------|---------|
 | **TangoRoles** | [PRD_TANGO_ROLES_SYSTEM.md](docs/prds/PRD_TANGO_ROLES_SYSTEM.md) | 15 files | 20 unified role definitions with `value`/`label` properties (includes Taxi Dancer) |
 | **RoleChangeCascade** | [PRD_ROLE_CHANGE_CASCADE.md](docs/prds/PRD_ROLE_CHANGE_CASCADE.md) | role-change-routes.ts | Symmetric ADD/REMOVE auto-join/leave PRO groups on role changes |
+| **CascadeFramework** | [PRD_CASCADE_FRAMEWORK.md](docs/prds/PRD_CASCADE_FRAMEWORK.md) | ProfileTabAbout.tsx, roleChangeEffects.ts, locationChangeEffects.ts | Unified cascade architecture: Trigger → Detection → ADD/REMOVE Cascade → Notification |
+| **RBAC/ABAC System** | [PRD_RBAC_ABAC_COMPLETE.md](docs/prds/PRD_RBAC_ABAC_COMPLETE.md) | auth.ts, eventRolesSchemas.ts, tangoRoles.ts | Complete 4-tier role system: Platform (8 levels), Event (10 types), Tango (20 roles), Group (3 levels) |
 | **PerRoleExperience** | [PRD_PER_ROLE_EXPERIENCE.md](docs/prds/PRD_PER_ROLE_EXPERIENCE.md) | 25+ files | Per-role start years with `calculateYearsInRole()` helper |
 | **UnifiedLocationPicker** | [PRD_UNIFIED_LOCATION_PICKER.md](docs/prds/PRD_UNIFIED_LOCATION_PICKER.md) | 26 files | 3-tier search: popular cities → server cache → Nominatim API |
 | **UnifiedMemoriesFeed** | [PRD_UNIFIED_FEEDS_SYSTEM.md](docs/prds/PRD_UNIFIED_FEEDS_SYSTEM.md) | 20+ files | Consistent post/memory display with SmartPostFeed + PostCreator |
 | **LocationChangeCascade** | [PRD_LOCATION_CHANGE_CASCADE.md](docs/prds/PRD_LOCATION_CHANGE_CASCADE.md) | 5 files | Auto-join groups, notifications, cache refresh on city change |
 | **UnifiedPROTab** | [PRD_UNIFIED_PRO_TAB.md](docs/prds/PRD_UNIFIED_PRO_TAB.md) | ProfileTabPro.tsx | Consolidates 17 role tabs into single dashboard/public view |
 
-See [docs/prds/INDEX.md](docs/prds/INDEX.md) for complete PRD index with cross-references.
+### Cascade-Eligible Profile Fields
+| Field | Type | Cascade Target | Status |
+|-------|------|----------------|--------|
+| `tangoRoles` | varchar[] | PRO role groups (20 groups) | Implemented |
+| `city`, `country` | varchar | City/country community groups | Implemented |
+| `languages` | varchar[] | Language community groups | Planned |
+| `interests` | varchar[] | Interest-based groups | Planned |
+| `experienceLevel` | varchar | Experience-tier groups | Planned |
+
+See [docs/prds/INDEX.md](docs/prds/INDEX.md) for complete PRD index with cross-references (21 PRDs total).
 
 ### Profile Tab Architecture
 The profile system uses **8 core tabs**: About, Feed, Photos, Friends, Events, Travel, Memories, and PRO. The **17 legacy role-based tabs** (Teacher, DJ, Performer, Photographer, Organizer, Musician, Choreographer, Vendor, etc.) are deprecated and consolidated into the unified PRO tab. Events→PRO integration ensures participant invites auto-populate the PRO portfolio with verified event history.
