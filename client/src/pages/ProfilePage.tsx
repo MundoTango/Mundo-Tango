@@ -434,58 +434,9 @@ export default function ProfilePage() {
           </div>
         )}
         
-        {/* Profile Photo Circle - Bottom Left */}
-        <div className="absolute bottom-0 left-6 z-10">
-          <div className="relative">
-            <Avatar className="w-32 h-32 border-4 border-white/30 shadow-lg">
-              <AvatarImage src={user.profileImage || undefined} alt={user.name} />
-              <AvatarFallback className="bg-primary/80 text-white text-xl font-bold">
-                {user.name.split(' ').map(n => n[0]).join('')}
-              </AvatarFallback>
-            </Avatar>
-            {isOwnProfile && (
-              <>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button 
-                      size="icon" 
-                      variant="outline" 
-                      className="absolute bottom-0 right-0 rounded-full text-white border-white/30 bg-black/20 backdrop-blur-sm hover:bg-black/30" 
-                      data-testid="button-change-profile-photo"
-                      onClick={() => setProfilePhotoDialogOpen(true)}
-                      disabled={uploadingPhoto}
-                    >
-                      <Camera className="h-4 w-4" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>{uploadingPhoto ? 'Uploading...' : 'Change Profile Photo'}</TooltipContent>
-                </Tooltip>
-              </>
-            )}
-          </div>
-        </div>
+        
 
-        {/* Edit Cover Photo Button - Right of Profile Circle */}
-        {isOwnProfile && (
-          <div className="absolute bottom-6 left-48 z-10">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button 
-                  size="sm"
-                  variant="outline" 
-                  className="text-white border-white/30 gap-2 bg-black/20 backdrop-blur-sm hover:bg-black/30" 
-                  onClick={() => setCoverPhotoDialogOpen(true)} 
-                  disabled={uploadingCover} 
-                  data-testid="button-upload-cover"
-                >
-                  <ImageIcon className="h-4 w-4" />
-                  {uploadingCover ? 'Uploading...' : 'Edit Cover'}
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Edit Cover Photo</TooltipContent>
-            </Tooltip>
-          </div>
-        )}
+        
       </div>
 
       {/* Independent User Info Section - Below Hero */}
