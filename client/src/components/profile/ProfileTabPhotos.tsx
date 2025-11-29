@@ -449,14 +449,15 @@ export default function ProfileTabPhotos() {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Image className="w-5 h-5" />
-          Face Photos
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Image className="w-5 h-5" />
+            Face Photos
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
         <div className="space-y-6">
           {/* Photo Grid - Drag and Drop */}
           <DragDropContext onDragEnd={handleDragEnd}>
@@ -600,62 +601,63 @@ export default function ProfileTabPhotos() {
       </CardContent>
     </Card>
 
-    {/* Gallery Section - All Photos and Videos from Memories Feed */}
-    {galleryItems.length > 0 && (
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Image className="w-5 h-5" />
-            Gallery
-            <span className="text-sm font-normal text-muted-foreground ml-auto">
-              {galleryItems.length} item{galleryItems.length !== 1 ? 's' : ''}
-            </span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {galleryLoading ? (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-              {Array(8).fill(null).map((_, i) => (
-                <div key={i} className="aspect-square bg-muted rounded-lg animate-pulse" />
-              ))}
-            </div>
-          ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-              {galleryItems.map((item) => (
-                <div
-                  key={item.id}
-                  className="relative aspect-square rounded-lg overflow-hidden bg-muted border border-border hover-elevate group cursor-pointer transition-all"
-                  data-testid={`gallery-item-${item.id}`}
-                >
-                  <img 
-                    src={item.thumbnail || item.url} 
-                    alt={item.caption || 'Gallery item'}
-                    className="w-full h-full object-cover"
-                  />
-                  
-                  {/* Video badge */}
-                  {item.type === 'video' && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <div className="w-12 h-12 rounded-full bg-white/90 flex items-center justify-center">
-                        <svg className="w-6 h-6 text-primary fill-current" viewBox="0 0 24 24">
-                          <path d="M8 5v14l11-7z" />
-                        </svg>
+      {/* Gallery Section - All Photos and Videos from Memories Feed */}
+      {galleryItems.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Image className="w-5 h-5" />
+              Gallery
+              <span className="text-sm font-normal text-muted-foreground ml-auto">
+                {galleryItems.length} item{galleryItems.length !== 1 ? 's' : ''}
+              </span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {galleryLoading ? (
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                {Array(8).fill(null).map((_, i) => (
+                  <div key={i} className="aspect-square bg-muted rounded-lg animate-pulse" />
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                {galleryItems.map((item) => (
+                  <div
+                    key={item.id}
+                    className="relative aspect-square rounded-lg overflow-hidden bg-muted border border-border hover-elevate group cursor-pointer transition-all"
+                    data-testid={`gallery-item-${item.id}`}
+                  >
+                    <img 
+                      src={item.thumbnail || item.url} 
+                      alt={item.caption || 'Gallery item'}
+                      className="w-full h-full object-cover"
+                    />
+                    
+                    {/* Video badge */}
+                    {item.type === 'video' && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="w-12 h-12 rounded-full bg-white/90 flex items-center justify-center">
+                          <svg className="w-6 h-6 text-primary fill-current" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z" />
+                          </svg>
+                        </div>
                       </div>
-                    </div>
-                  )}
-                  
-                  {/* Caption on hover */}
-                  {item.caption && (
-                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <p className="text-white text-xs line-clamp-2">{item.caption}</p>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
-    )}
+                    )}
+                    
+                    {/* Caption on hover */}
+                    {item.caption && (
+                      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <p className="text-white text-xs line-clamp-2">{item.caption}</p>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
+    </div>
   );
 }
