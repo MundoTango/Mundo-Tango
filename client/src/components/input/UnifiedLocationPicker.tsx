@@ -336,12 +336,44 @@ export function UnifiedLocationPicker({
               return true;
             });
             
-            clientCacheRef.current.set(queryKey, deduplicatedResults);
+            // Smart consolidation: if we have city_group results that closely match the query,
+            // hide other tiers unless the query has additional specificity
+            const hasCityGroupResults = deduplicatedResults.some(r => {
+              // @ts-ignore
+              return r._source === 'city_group';
+            });
+            
+            let finalResults = deduplicatedResults;
+            if (hasCityGroupResults) {
+              // Only keep city_group results + other results that add specificity
+              // "Buenos Aires" -> show only city_group
+              // "Buenos Aires restaurant" -> show both city_group and other matches
+              const normalizedQuery = searchQuery.toLowerCase().trim();
+              const hasPureCityQuery = deduplicatedResults.some(r => {
+                // @ts-ignore
+                if (r._source === 'city_group') {
+                  const cityName = r.address?.city?.toLowerCase() || '';
+                  return normalizedQuery.includes(cityName) && 
+                         normalizedQuery.length <= cityName.length + 5; // Allow minor variations
+                }
+                return false;
+              });
+              
+              if (hasPureCityQuery) {
+                // Query is just city name, show ONLY city_group results
+                finalResults = deduplicatedResults.filter(r => {
+                  // @ts-ignore
+                  return r._source === 'city_group';
+                });
+              }
+            }
+            
+            clientCacheRef.current.set(queryKey, finalResults);
             if (clientCacheRef.current.size > 50) {
               const firstKey = clientCacheRef.current.keys().next().value;
               if (firstKey) clientCacheRef.current.delete(firstKey);
             }
-            setResults(deduplicatedResults);
+            setResults(finalResults);
             setShowResults(true);
           }
         } catch (error) {
