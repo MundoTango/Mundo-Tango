@@ -46,6 +46,7 @@ interface ParsedLocation {
   coordinates: { lat: number; lng: number };
   groupId?: string; // City group ID if this is a city_group result
   source?: string; // Result source: city_group, popular, nominatim
+  memberCount?: number; // Number of dancers in the city group
 }
 
 // Extended parsed location for venue mode
@@ -398,6 +399,8 @@ export function UnifiedLocationPicker({
     const groupId = location._groupId;
     // @ts-ignore
     const source = location._source;
+    // @ts-ignore
+    const memberCount = location._memberCount;
 
     if (mode === "address" && location.address) {
       return {
@@ -412,6 +415,7 @@ export function UnifiedLocationPicker({
         coordinates: coords,
         groupId,
         source,
+        memberCount,
       };
     }
 
@@ -425,11 +429,12 @@ export function UnifiedLocationPicker({
       coordinates: coords,
     };
 
-    // Add group ID and source if this is a city_group result
+    // Add group ID, source, and memberCount if this is a city_group result
     if (groupId) {
       result.groupId = groupId;
       result.source = source;
-      console.log('[UnifiedLocationPicker] Selected city_group:', { city, groupId, source });
+      result.memberCount = memberCount;
+      console.log('[UnifiedLocationPicker] Selected city_group:', { city, groupId, source, memberCount });
     }
 
     return result;
