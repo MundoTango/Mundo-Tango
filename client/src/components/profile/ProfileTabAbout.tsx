@@ -220,6 +220,15 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
             newRoles,
           });
           
+          if (effects.autoLeftGroups && effects.autoLeftGroups.length > 0) {
+            const leftGroupNames = effects.autoLeftGroups.map(g => g.groupName).join(', ');
+            toast({
+              title: "PRO Groups Removed",
+              description: `You've been removed from: ${leftGroupNames}`,
+              variant: "default",
+            });
+          }
+          
           if (effects.autoJoinedGroups.length > 0) {
             toast({
               title: "PRO Groups Joined!",

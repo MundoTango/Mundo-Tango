@@ -20,6 +20,11 @@ export interface RoleChangeEffects {
     alreadyMember?: boolean;
     created?: boolean;
   }>;
+  autoLeftGroups: Array<{
+    groupId: number;
+    groupName: string;
+    role: string;
+  }>;
   createdGroups: Array<{
     groupId: number;
     groupName: string;
