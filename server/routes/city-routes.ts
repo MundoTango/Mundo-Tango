@@ -204,4 +204,131 @@ router.get("/stats", async (req: Request, res: Response) => {
   }
 });
 
+/**
+ * GET /api/cities/find-group
+ * Auto-detect existing city group OR create new one
+ * Smart consolidation: "Buenos Aires" variations → same groupId
+ * Disambiguation: "Buenos Aires, Texas" → different groupId
+ * 
+ * Query params: ?city=Buenos Aires&country=Argentina
+ * Returns: { groupId, groupName, isNew, memberCount }
+ */
+router.get("/find-group", async (req: Request, res: Response) => {
+  const cityName = (req.query.city as string || '').trim();
+  const countryName = (req.query.country as string || '').trim();
+  
+  if (!cityName) {
+    return res.status(400).json({ error: "City name is required" });
+  }
+
+  try {
+    console.log(`[CityFindGroup] Looking for: "${cityName}", "${countryName}"`);
+
+    // Normalize city name for matching (same logic as frontend)
+    const normalizeCityName = (name: string): string => {
+      return name
+        .toLowerCase()
+        .replace(/^ciudad autónoma de\s*/i, '')
+        .replace(/^ciudad de\s*/i, '')
+        .replace(/^provincia de\s*/i, '')
+        .replace(/^metropolitan\s*/i, '')
+        .replace(/^greater\s*/i, '')
+        .replace(/^area\s*/i, '')
+        .trim();
+    };
+
+    const normalizedCity = normalizeCityName(cityName);
+    const normalizedCountry = countryName.toLowerCase().trim();
+
+    // Search for existing city group with smart matching
+    const existingGroups = await db
+      .select({
+        group: groups,
+        memberCount: sql<number>`(
+          SELECT COUNT(*)::int 
+          FROM ${groupMembers} 
+          WHERE ${groupMembers.groupId} = ${groups.id}
+          AND ${groupMembers.status} = 'active'
+        )`.as("member_count"),
+      })
+      .from(groups)
+      .where(eq(groups.type, "city"))
+      .limit(100);
+
+    // Find matching group with smart consolidation
+    let matchedGroup = null;
+    for (const result of existingGroups) {
+      const groupCity = normalizeCityName(result.group.city || result.group.name || '');
+      const groupCountry = (result.group.country || '').toLowerCase().trim();
+      
+      // Match if normalized names are equal or one contains the other
+      const cityMatch = normalizedCity === groupCity || 
+                       normalizedCity.includes(groupCity) || 
+                       groupCity.includes(normalizedCity);
+      
+      // Country must match (or be empty for legacy groups)
+      const countryMatch = !normalizedCountry || 
+                          !groupCountry || 
+                          normalizedCountry === groupCountry ||
+                          normalizedCountry.includes(groupCountry) ||
+                          groupCountry.includes(normalizedCountry);
+      
+      if (cityMatch && countryMatch) {
+        matchedGroup = result;
+        console.log(`[CityFindGroup] Found existing group: ${result.group.name} (ID: ${result.group.id})`);
+        break;
+      }
+    }
+
+    if (matchedGroup) {
+      return res.json({
+        groupId: matchedGroup.group.id,
+        groupName: matchedGroup.group.name,
+        city: matchedGroup.group.city,
+        country: matchedGroup.group.country,
+        memberCount: matchedGroup.memberCount || 0,
+        isNew: false,
+      });
+    }
+
+    // No existing group - create new one
+    console.log(`[CityFindGroup] Creating new city group for: "${cityName}", "${countryName}"`);
+    
+    // Get coordinates from popular cities or default
+    const popularCity = POPULAR_CITIES.find(
+      c => normalizeCityName(c.name) === normalizedCity && 
+           c.country.toLowerCase().includes(normalizedCountry)
+    );
+    
+    const newGroupData = {
+      name: cityName,
+      slug: cityName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
+      type: 'city' as const,
+      city: cityName,
+      country: countryName || undefined,
+      visibility: 'public' as const,
+      description: `Tango community in ${cityName}${countryName ? `, ${countryName}` : ''}`,
+      latitude: popularCity?.lat?.toString(),
+      longitude: popularCity?.lng?.toString(),
+      memberCount: 0,
+    };
+
+    const [newGroup] = await db.insert(groups).values(newGroupData).returning();
+    
+    console.log(`[CityFindGroup] Created new city group: ${newGroup.name} (ID: ${newGroup.id})`);
+
+    return res.json({
+      groupId: newGroup.id,
+      groupName: newGroup.name,
+      city: newGroup.city,
+      country: newGroup.country,
+      memberCount: 0,
+      isNew: true,
+    });
+  } catch (error) {
+    console.error("[CityFindGroup] Error:", error);
+    res.status(500).json({ error: "Failed to find or create city group" });
+  }
+});
+
 export default router;

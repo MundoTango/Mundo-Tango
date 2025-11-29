@@ -106,6 +106,7 @@ export function UnifiedLocationPicker({
   const lastExternalValueRef = useRef(value);
   const justSelectedRef = useRef(false); // Guard against infinite loop on selection
   const selectionLockRef = useRef(false); // NUCLEAR LOCK - blocks ALL dropdown opening for 500ms after selection
+  const finalSelectedValueRef = useRef<string | null>(null); // Stores the confirmed selected value - prevents re-search
 
   const updateDropdownPosition = useCallback(() => {
     if (inputContainerRef.current) {
@@ -160,6 +161,8 @@ export function UnifiedLocationPicker({
     const value = e.target.value;
     setSearchQuery(value);
     userHasTypedRef.current = true;
+    // Clear final selection when user types - allows new search
+    finalSelectedValueRef.current = null;
     setShowResults(!!value);
   };
 
@@ -167,6 +170,12 @@ export function UnifiedLocationPicker({
     // NUCLEAR LOCK CHECK - skip ALL searches during selection lock
     if (selectionLockRef.current || justSelectedRef.current) {
       console.log('[UnifiedLocationPicker] Search blocked by lock');
+      return;
+    }
+    
+    // FINAL SELECTION CHECK - prevent re-search for already selected value
+    if (finalSelectedValueRef.current && searchQuery === finalSelectedValueRef.current) {
+      console.log('[UnifiedLocationPicker] Search blocked - value is final selection:', searchQuery);
       return;
     }
 
@@ -503,6 +512,9 @@ export function UnifiedLocationPicker({
     justSelectedRef.current = true;
     userHasTypedRef.current = false;
     
+    // PERMANENT SELECTION LOCK - prevents re-search for this value until user types again
+    finalSelectedValueRef.current = displayName;
+    
     // Update lastExternalValueRef BEFORE onChange to prevent value sync effect
     lastExternalValueRef.current = displayName;
     
@@ -514,14 +526,14 @@ export function UnifiedLocationPicker({
     setSelectedLocation(displayName);
     setSearchQuery(displayName);
     
-    console.log('[UnifiedLocationPicker] Selection complete - NUCLEAR LOCK ACTIVE for 500ms');
+    console.log('[UnifiedLocationPicker] Selection complete - value locked:', displayName);
     onChange(displayName, parsed.coordinates, parsed);
     
-    // Reset guards after React batch update completes
+    // Reset nuclear lock after React batch update completes (but keep finalSelectedValueRef)
     setTimeout(() => { 
       justSelectedRef.current = false; 
       selectionLockRef.current = false;
-      console.log('[UnifiedLocationPicker] NUCLEAR LOCK RELEASED');
+      console.log('[UnifiedLocationPicker] NUCLEAR LOCK RELEASED - finalSelectedValueRef still active');
     }, 500);
   };
 
@@ -530,6 +542,8 @@ export function UnifiedLocationPicker({
     setSearchQuery("");
     setResults([]);
     setVenueResults({ userVenues: [], cityVenues: [], googleVenues: [] });
+    // Clear final selection so user can search again
+    finalSelectedValueRef.current = null;
     onChange("", { lat: 0, lng: 0 }, undefined);
   };
 
@@ -556,6 +570,9 @@ export function UnifiedLocationPicker({
     justSelectedRef.current = true;
     userHasTypedRef.current = false;
     
+    // PERMANENT SELECTION LOCK - prevents re-search for this value until user types again
+    finalSelectedValueRef.current = displayName;
+    
     // Update lastExternalValueRef BEFORE onChange to prevent value sync effect
     lastExternalValueRef.current = displayName;
     
@@ -567,15 +584,15 @@ export function UnifiedLocationPicker({
     setSelectedLocation(displayName);
     setSearchQuery(displayName);
     
-    console.log('[UnifiedLocationPicker] Venue selection complete - NUCLEAR LOCK ACTIVE for 500ms');
+    console.log('[UnifiedLocationPicker] Venue selection complete - value locked:', displayName);
     onChange(displayName, parsed.coordinates, parsed);
     onVenueSelect?.(venue);
     
-    // Reset guards after React batch update completes
+    // Reset nuclear lock after React batch update completes (but keep finalSelectedValueRef)
     setTimeout(() => { 
       justSelectedRef.current = false; 
       selectionLockRef.current = false;
-      console.log('[UnifiedLocationPicker] NUCLEAR LOCK RELEASED');
+      console.log('[UnifiedLocationPicker] NUCLEAR LOCK RELEASED - finalSelectedValueRef still active');
     }, 500);
   };
 
@@ -622,6 +639,8 @@ export function UnifiedLocationPicker({
               return;
             }
             userHasTypedRef.current = true;
+            // Clear final selection when user types - allows new search
+            finalSelectedValueRef.current = null;
             setSearchQuery(e.target.value);
             setShowResults(true);
             updateDropdownPosition();
