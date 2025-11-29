@@ -15,7 +15,6 @@ import {
   Globe,
   Sparkles,
   Building2,
-  Plane,
   Music,
   Camera,
   Drama,
@@ -57,26 +56,13 @@ const socialItems = [
 
 const communityItems = [
   { title: "Community Map", url: "/community-world-map", icon: Globe, tooltip: "Explore the global tango community" },
+  { title: "Events", url: "/events", icon: Calendar, tooltip: "Browse events - list, calendar, or map view" },
+  { title: "Groups", url: "/groups", icon: Users, tooltip: "Browse and join groups" },
   { title: "Friends", url: "/friends-list", icon: UserPlus, tooltip: "Manage your friends" },
   { title: "Recommendations", url: "/recommendations", icon: Sparkles, tooltip: "Personalized recommendations" },
-  { title: "Groups", url: "/groups", icon: Users, tooltip: "Browse and join groups" },
   { title: "Messages", url: "/messages", icon: MessageSquare, tooltip: "Your conversations" },
   { title: "Leaderboard", url: "/leaderboard", icon: Trophy, tooltip: "Top contributors" },
 ];
-
-const eventsItem = { 
-  title: "Events", 
-  url: "/events", 
-  icon: Calendar, 
-  tooltip: "Browse events - list, calendar, or map view" 
-};
-
-const travelItem = { 
-  title: "Travel", 
-  url: "/travel", 
-  icon: Plane, 
-  tooltip: "Plan your tango trips" 
-};
 
 const proDiscoveryItems = [
   { title: "Learning", url: "/pro/learning", icon: GraduationCap, color: "#10B981", tooltip: "Classes and workshops" },
@@ -96,26 +82,11 @@ const proDiscoveryItems = [
   { title: "Talent Match", url: "/talent-match", icon: Sparkles, color: "#1E90FF", tooltip: "Find the perfect match" },
 ];
 
-const toolsItem = { 
-  title: "Life CEO", 
-  url: "/life-ceo", 
-  icon: Brain, 
-  tooltip: "AI-powered life management" 
-};
-
-const marketplaceItem = { 
-  title: "Marketplace", 
-  url: "/marketplace", 
-  icon: ShoppingBag, 
-  tooltip: "Browse products and services" 
-};
-
-const housingItem = { 
-  title: "Housing", 
-  url: "/housing", 
-  icon: HousingIcon, 
-  tooltip: "Find tango-friendly accommodations" 
-};
+const servicesItems = [
+  { title: "Life CEO", url: "/life-ceo", icon: Brain, tooltip: "AI-powered life management" },
+  { title: "Marketplace", url: "/marketplace", icon: ShoppingBag, tooltip: "Browse products and services" },
+  { title: "Housing", url: "/housing", icon: HousingIcon, tooltip: "Find tango-friendly accommodations" },
+];
 
 function AppSidebarComponent() {
   const [location] = useLocation();
@@ -183,7 +154,7 @@ function AppSidebarComponent() {
   );
 
   const renderIconGrid = (items: Array<{ title: string; url: string; icon: React.ElementType; color?: string; tooltip: string }>) => (
-    <div className="grid grid-cols-5 gap-1 px-2">
+    <div className="grid grid-cols-3 gap-1 px-2">
       {items.map(renderIconGridItem)}
     </div>
   );
@@ -226,16 +197,6 @@ function AppSidebarComponent() {
         </SidebarGroup>
 
         <SidebarGroup className="border-b border-white/10 pb-4">
-          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">Events & Travel</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {renderSingleItem(eventsItem)}
-              {renderSingleItem(travelItem)}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        <SidebarGroup className="border-b border-white/10 pb-4">
           <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">
             PRO Discovery
           </SidebarGroupLabel>
@@ -247,11 +208,7 @@ function AppSidebarComponent() {
         <SidebarGroup className="border-b border-white/10 pb-4">
           <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">Services</SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
-              {renderSingleItem(toolsItem)}
-              {renderSingleItem(marketplaceItem)}
-              {renderSingleItem(housingItem)}
-            </SidebarMenu>
+            {renderIconGrid(servicesItems)}
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
