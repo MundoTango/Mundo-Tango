@@ -1,9 +1,9 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { useToast } from '@/hooks/use-toast';
-import { ZoomIn, ZoomOut } from 'lucide-react';
+import { ZoomIn } from 'lucide-react';
 
 interface PhotoUploadDialogProps {
   open: boolean;
@@ -20,12 +20,10 @@ export function PhotoUploadDialog({
   type,
   isUploading = false,
 }: PhotoUploadDialogProps) {
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [imageSource, setImageSource] = useState<string | null>(null);
   const [zoom, setZoom] = useState(1);
   const [offsetX, setOffsetX] = useState(0);
   const [offsetY, setOffsetY] = useState(0);
-  const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
@@ -47,7 +45,6 @@ export function PhotoUploadDialog({
     const reader = new FileReader();
     reader.onload = (event) => {
       setImageSource(event.target?.result as string);
-      setSelectedFile(file);
       setZoom(1);
       setOffsetX(0);
       setOffsetY(0);
@@ -67,31 +64,46 @@ export function PhotoUploadDialog({
       canvas.width = dimensions.width;
       canvas.height = dimensions.height;
 
-      const scaledWidth = img.width * zoom;
-      const scaledHeight = img.height * zoom;
-
+      // Fill background with black first
       ctx.fillStyle = '#000000';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      ctx.drawImage(img, offsetX, offsetY, scaledWidth, scaledHeight);
+      // Calculate source region to crop from image
+      // The image is zoomed, and we pan it
+      const sourceCropWidth = img.width / zoom;
+      const sourceCropHeight = img.height / zoom;
+      const sourceX = -offsetX / zoom;
+      const sourceY = -offsetY / zoom;
 
-      canvas.toBlob((blob) => {
-        if (!blob) return;
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const base64 = e.target?.result as string;
-          onUpload(base64);
-          setImageSource(null);
-          setSelectedFile(null);
-          onOpenChange(false);
-        };
-        reader.readAsDataURL(blob);
-      }, 'image/jpeg', 0.95);
+      // Draw the cropped region of the source image to fill the canvas
+      ctx.drawImage(
+        img,
+        sourceX, sourceY,
+        sourceCropWidth, sourceCropHeight,
+        0, 0,
+        canvas.width, canvas.height
+      );
+
+      canvas.toBlob(
+        (blob) => {
+          if (!blob) return;
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const base64 = e.target?.result as string;
+            onUpload(base64);
+            setImageSource(null);
+            onOpenChange(false);
+          };
+          reader.readAsDataURL(blob);
+        },
+        'image/jpeg',
+        0.9
+      );
     };
     img.src = imageSource;
   };
 
-  // Calculate preview container size (fit within dialog while maintaining aspect ratio)
+  // Calculate preview container size
   const maxPreviewHeight = 300;
   const previewHeight = maxPreviewHeight;
   const previewWidth = previewHeight * aspectRatio;
@@ -136,10 +148,9 @@ export function PhotoUploadDialog({
                   Zoom: {Math.round(zoom * 100)}%
                 </span>
               </div>
-              
+
               {/* Visible Boundary Box - Shows EXACTLY what will be saved */}
               <div
-                ref={containerRef}
                 className="relative bg-black border-4 border-primary rounded-lg overflow-hidden mx-auto"
                 style={{
                   width: `${previewWidth}px`,
@@ -153,7 +164,7 @@ export function PhotoUploadDialog({
                     alt="Preview"
                     className="absolute w-full h-full"
                     style={{
-                      transform: `scale(${zoom}) translate(${offsetX / zoom}px, ${offsetY / zoom}px)`,
+                      transform: `scale(${zoom}) translate(${offsetX}px, ${offsetY}px)`,
                       transformOrigin: '0 0',
                       maxWidth: 'none',
                     }}
@@ -200,8 +211,8 @@ export function PhotoUploadDialog({
                 <Slider
                   value={[offsetX]}
                   onValueChange={(val) => setOffsetX(val[0])}
-                  min={-500}
-                  max={500}
+                  min={-300}
+                  max={300}
                   step={5}
                   className="w-full"
                 />
@@ -213,8 +224,8 @@ export function PhotoUploadDialog({
                 <Slider
                   value={[offsetY]}
                   onValueChange={(val) => setOffsetY(val[0])}
-                  min={-500}
-                  max={500}
+                  min={-300}
+                  max={300}
                   step={5}
                   className="w-full"
                 />
@@ -231,7 +242,6 @@ export function PhotoUploadDialog({
             variant="outline"
             onClick={() => {
               setImageSource(null);
-              setSelectedFile(null);
               onOpenChange(false);
             }}
           >

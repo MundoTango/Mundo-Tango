@@ -404,12 +404,16 @@ export default function ProfilePage() {
                 </TooltipTrigger>
                 <TooltipContent>{uploadingCover ? 'Uploading...' : 'Edit Cover Photo'}</TooltipContent>
               </Tooltip>
-              <Button asChild variant="outline" className="gap-2 text-white border-white/30 bg-black/20 backdrop-blur-sm hover:bg-black/30" data-testid="button-edit-profile">
-                <Link href="/profile/edit">
-                  <Settings className="h-4 w-4" />
-                  Edit Profile
-                </Link>
-              </Button>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button asChild variant="outline" size="icon" className="text-white border-white/30 bg-black/20 backdrop-blur-sm hover:bg-black/30" data-testid="button-edit-profile">
+                    <Link href="/profile/edit">
+                      <Settings className="h-4 w-4" />
+                    </Link>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Edit Profile</TooltipContent>
+              </Tooltip>
             </>
           )}
           {!isOwnProfile && (
