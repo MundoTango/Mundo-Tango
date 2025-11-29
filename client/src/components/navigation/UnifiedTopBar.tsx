@@ -109,11 +109,40 @@ function UnifiedTopBar({
           },
           credentials: 'include',
         });
+        // Invalidate with exact key structure
         queryClient.invalidateQueries({ queryKey: ['/api/notifications/count'] });
         queryClient.invalidateQueries({ queryKey: ['/api/notifications'] });
+        console.log('[Notifications] Marked all as read');
       } catch (error) {
         console.error('[Notifications] Failed to mark as read:', error);
       }
+    }
+  };
+
+  // Handle individual notification click - navigate and close dropdown
+  const handleNotificationClick = async (notif: any) => {
+    const url = notif.actionUrl || notif.link;
+    if (url) {
+      // Mark individual notification as read if not already read
+      if (!notif.read) {
+        try {
+          const token = localStorage.getItem('accessToken');
+          await fetch(`/api/notifications/${notif.id}/read`, {
+            method: 'PUT',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+          });
+          queryClient.invalidateQueries({ queryKey: ['/api/notifications/count'] });
+          queryClient.invalidateQueries({ queryKey: ['/api/notifications'] });
+        } catch (error) {
+          console.error('[Notifications] Failed to mark as read:', error);
+        }
+      }
+      // Navigate to the notification target
+      setLocation(url);
     }
   };
 
@@ -321,11 +350,8 @@ function UnifiedTopBar({
                   {recentNotifications.map((notif, idx) => (
                     <DropdownMenuItem
                       key={notif.id || idx}
-                      onClick={() => {
-                        const url = notif.actionUrl || notif.link;
-                        if (url) setLocation(url);
-                      }}
-                      className="cursor-pointer flex items-start gap-2 px-4 py-3 border-b last:border-0"
+                      onClick={() => handleNotificationClick(notif)}
+                      className="cursor-pointer flex items-start gap-2 px-4 py-3 border-b last:border-0 hover:bg-accent/50"
                       data-testid={`notification-item-${idx}`}
                     >
                       <div className="flex-1 min-w-0">
@@ -339,7 +365,7 @@ function UnifiedTopBar({
                       </div>
                       {!notif.read && (
                         <div 
-                          className="flex-shrink-0 w-2 h-2 rounded-full"
+                          className="flex-shrink-0 w-2 h-2 rounded-full mt-1"
                           style={{ background: '#40E0D0' }}
                         />
                       )}
