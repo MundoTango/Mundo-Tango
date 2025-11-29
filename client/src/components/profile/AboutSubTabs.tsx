@@ -28,6 +28,7 @@ interface AboutSubTabsProps {
   activeTab: AboutSubTab;
   onTabChange: (tab: AboutSubTab) => void;
   isOwnProfile: boolean;
+  isPublicView?: boolean;
   hasSubscription?: boolean;
 }
 
@@ -35,10 +36,12 @@ export function AboutSubTabs({
   activeTab, 
   onTabChange, 
   isOwnProfile,
+  isPublicView = false,
   hasSubscription = false
 }: AboutSubTabsProps) {
   const visibleTabs = tabs.filter(tab => {
-    if (tab.ownerOnly && !isOwnProfile) return false;
+    // Hide owner-only tabs in public view or when not viewing own profile
+    if (tab.ownerOnly && (isPublicView || !isOwnProfile)) return false;
     if (tab.id === 'subscription' && !hasSubscription && !isOwnProfile) return false;
     return true;
   });

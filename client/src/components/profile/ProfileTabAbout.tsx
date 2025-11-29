@@ -1212,7 +1212,8 @@ export default function ProfileTabAbout({ user, isOwnProfile, isPublicView = fal
       <AboutSubTabs 
         activeTab={activeSubTab} 
         onTabChange={setActiveSubTab} 
-        isOwnProfile={canEdit}
+        isOwnProfile={isOwnProfile}
+        isPublicView={isPublicView}
         hasSubscription={!!user.stripeSubscriptionId}
       />
       
