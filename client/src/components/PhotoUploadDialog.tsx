@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
@@ -21,6 +21,7 @@ export function PhotoUploadDialog({
   isUploading = false,
 }: PhotoUploadDialogProps) {
   const [imageSource, setImageSource] = useState<string | null>(null);
+  const [imageDimensions, setImageDimensions] = useState<{ width: number; height: number } | null>(null);
   const [zoom, setZoom] = useState(1);
   const [offsetX, setOffsetX] = useState(0);
   const [offsetY, setOffsetY] = useState(0);
@@ -34,6 +35,11 @@ export function PhotoUploadDialog({
   const PROFILE_SIZE = 400;
   const COVER_SIZE = { width: 1200, height: 300 };
   const dimensions = type === 'profile' ? { width: PROFILE_SIZE, height: PROFILE_SIZE } : COVER_SIZE;
+  
+  const PREVIEW_HEIGHT = 300;
+  const aspectRatio = dimensions.width / dimensions.height;
+  const previewWidth = PREVIEW_HEIGHT * aspectRatio;
+  const previewHeight = PREVIEW_HEIGHT;
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -46,13 +52,28 @@ export function PhotoUploadDialog({
 
     const reader = new FileReader();
     reader.onload = (event) => {
-      setImageSource(event.target?.result as string);
-      setZoom(1);
-      setOffsetX(0);
-      setOffsetY(0);
+      const src = event.target?.result as string;
+      const img = new Image();
+      img.onload = () => {
+        setImageDimensions({ width: img.width, height: img.height });
+        setImageSource(src);
+        setZoom(1);
+        setOffsetX(0);
+        setOffsetY(0);
+      };
+      img.src = src;
     };
     reader.readAsDataURL(file);
   };
+  
+  const getBaseScale = () => {
+    if (!imageDimensions) return 1;
+    const scaleX = previewWidth / imageDimensions.width;
+    const scaleY = previewHeight / imageDimensions.height;
+    return Math.max(scaleX, scaleY);
+  };
+  
+  const baseScale = getBaseScale();
 
   const handleMouseDown = (e: React.MouseEvent) => {
     setIsDragging(true);
@@ -70,7 +91,7 @@ export function PhotoUploadDialog({
   };
 
   const handleCrop = () => {
-    if (!imageSource || !canvasRef.current) return;
+    if (!imageSource || !canvasRef.current || !imageDimensions) return;
 
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
@@ -81,23 +102,22 @@ export function PhotoUploadDialog({
       canvas.width = dimensions.width;
       canvas.height = dimensions.height;
 
-      // Fill background with black first
       ctx.fillStyle = '#000000';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Calculate source region to crop from image
-      const sourceCropWidth = img.width / zoom;
-      const sourceCropHeight = img.height / zoom;
-      const sourceX = -offsetX / zoom;
-      const sourceY = -offsetY / zoom;
+      const totalScale = baseScale * zoom;
+      
+      const sourceX = -offsetX / totalScale;
+      const sourceY = -offsetY / totalScale;
+      const sourceWidth = previewWidth / totalScale;
+      const sourceHeight = previewHeight / totalScale;
 
-      // Draw the cropped region
       ctx.drawImage(
         img,
         sourceX,
         sourceY,
-        sourceCropWidth,
-        sourceCropHeight,
+        sourceWidth,
+        sourceHeight,
         0,
         0,
         canvas.width,
@@ -112,6 +132,7 @@ export function PhotoUploadDialog({
             const base64 = e.target?.result as string;
             onUpload(base64);
             setImageSource(null);
+            setImageDimensions(null);
             onOpenChange(false);
           };
           reader.readAsDataURL(blob);
@@ -122,8 +143,6 @@ export function PhotoUploadDialog({
     };
     img.src = imageSource;
   };
-
-  const aspectRatio = dimensions.width / dimensions.height;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -171,22 +190,23 @@ export function PhotoUploadDialog({
                 ref={previewRef}
                 className="relative bg-black border-4 border-primary rounded-lg overflow-hidden mx-auto cursor-move"
                 style={{
-                  width: `${300 * aspectRatio}px`,
-                  height: '300px',
-                  aspectRatio: `${dimensions.width}/${dimensions.height}`,
+                  width: `${previewWidth}px`,
+                  height: `${previewHeight}px`,
                 }}
                 onMouseDown={handleMouseDown}
                 onMouseMove={handleMouseMove}
                 onMouseUp={handleMouseUp}
                 onMouseLeave={handleMouseUp}
               >
-                {imageSource && (
+                {imageSource && imageDimensions && (
                   <img
                     src={imageSource}
                     alt="Preview"
                     className="absolute select-none pointer-events-none"
                     style={{
-                      transform: `scale(${zoom}) translate(${offsetX}px, ${offsetY}px)`,
+                      width: imageDimensions.width,
+                      height: imageDimensions.height,
+                      transform: `scale(${baseScale * zoom}) translate(${offsetX / (baseScale * zoom)}px, ${offsetY / (baseScale * zoom)}px)`,
                       transformOrigin: '0 0',
                     }}
                     draggable={false}
@@ -239,6 +259,7 @@ export function PhotoUploadDialog({
             variant="outline"
             onClick={() => {
               setImageSource(null);
+              setImageDimensions(null);
               onOpenChange(false);
             }}
           >
