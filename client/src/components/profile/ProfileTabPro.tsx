@@ -987,23 +987,52 @@ function ProDashboardView({
     [proRoles, selectedRoles]
   );
 
-  const { data: statsData, isLoading: statsLoading } = useQuery<ProRoleStats[]>({
+  const { data: statsData, isLoading: statsLoading } = useQuery<Record<string, ProRoleStats>>({
     queryKey: ["/api/users", userId, "pro-stats"],
+    queryFn: async () => {
+      const res = await fetch(`/api/users/${userId}/pro-stats`);
+      if (!res.ok) throw new Error('Failed to fetch pro stats');
+      const data = await res.json();
+      return data.stats || {};
+    },
     enabled: !!userId,
   });
 
   const { data: eventHistory, isLoading: eventsLoading } = useQuery<ProEventHistoryItem[]>({
     queryKey: ["/api/users", userId, "event-history"],
+    queryFn: async () => {
+      const res = await fetch(`/api/users/${userId}/event-history`);
+      if (!res.ok) throw new Error('Failed to fetch event history');
+      const data = await res.json();
+      return data.events || [];
+    },
     enabled: !!userId,
   });
 
   const { data: bookingRequests, isLoading: bookingsLoading } = useQuery<ProBookingRequest[]>({
     queryKey: ["/api/users", userId, "booking-requests"],
+    queryFn: async () => {
+      const token = localStorage.getItem('accessToken');
+      const res = await fetch(`/api/users/${userId}/booking-requests`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        credentials: 'include',
+      });
+      if (!res.ok) {
+        if (res.status === 403) return []; // Not owner, can't see booking requests
+        throw new Error('Failed to fetch booking requests');
+      }
+      const data = await res.json();
+      return data.requests || [];
+    },
     enabled: !!userId,
   });
 
   const currentStats = useMemo(
-    () => Array.isArray(statsData) ? statsData.filter((s) => selectedRoles.includes(s.role)) : [],
+    () => statsData 
+      ? Object.entries(statsData)
+          .filter(([role]) => selectedRoles.includes(role))
+          .map(([role, data]) => ({ ...data, role }))
+      : [],
     [statsData, selectedRoles]
   );
 
@@ -1286,18 +1315,30 @@ function ProPublicView({
   userExperience: { tangoRoleExperience?: TangoRoleExperience[] | null; tangoStartYear?: number | null; yearsOfDancing?: number | null };
   userName?: string;
 }) {
-  const { data: statsData } = useQuery<ProRoleStats[]>({
-    queryKey: ["/api/users", userId, "pro-stats"],
+  const { data: statsData } = useQuery<Record<string, ProRoleStats>>({
+    queryKey: ["/api/users", userId, "pro-stats", "public"],
+    queryFn: async () => {
+      const res = await fetch(`/api/users/${userId}/pro-stats`);
+      if (!res.ok) throw new Error('Failed to fetch pro stats');
+      const data = await res.json();
+      return data.stats || {};
+    },
     enabled: !!userId,
   });
 
   const { data: eventHistory, isLoading: eventsLoading } = useQuery<ProEventHistoryItem[]>({
     queryKey: ["/api/users", userId, "event-history", "public"],
+    queryFn: async () => {
+      const res = await fetch(`/api/users/${userId}/event-history?status=confirmed`);
+      if (!res.ok) throw new Error('Failed to fetch event history');
+      const data = await res.json();
+      return data.events || [];
+    },
     enabled: !!userId,
   });
 
   const publicEvents = useMemo(
-    () => (Array.isArray(eventHistory) ? eventHistory : []).filter((e) => e.isPubliclyListed && e.status === "confirmed"),
+    () => (Array.isArray(eventHistory) ? eventHistory : []).filter((e) => e.isPubliclyListed),
     [eventHistory]
   );
 
@@ -1341,7 +1382,7 @@ function ProPublicView({
         <h3 className="text-xl font-serif font-bold mb-4">Active Roles</h3>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {proRoles.map((role, index) => {
-            const roleStats = Array.isArray(statsData) ? statsData.find((s) => s.role === role.value) : undefined;
+            const roleStats = statsData ? statsData[role.value] : undefined;
             return (
               <motion.div
                 key={role.value}
