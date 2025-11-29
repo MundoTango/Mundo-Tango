@@ -111,7 +111,7 @@ function UnifiedTopBar({
         });
         // Invalidate with exact key structure
         queryClient.invalidateQueries({ queryKey: ['/api/notifications/count'] });
-        queryClient.invalidateQueries({ queryKey: ['/api/notifications'] });
+        queryClient.invalidateQueries({ queryKey: ['/api/notifications', { limit: 10 }] });
         console.log('[Notifications] Marked all as read');
       } catch (error) {
         console.error('[Notifications] Failed to mark as read:', error);
@@ -139,7 +139,7 @@ function UnifiedTopBar({
             credentials: 'include',
           });
           queryClient.invalidateQueries({ queryKey: ['/api/notifications/count'] });
-          queryClient.invalidateQueries({ queryKey: ['/api/notifications'] });
+          queryClient.invalidateQueries({ queryKey: ['/api/notifications', { limit: 10 }] });
         } catch (error) {
           console.error('[Notifications] Failed to mark as read:', error);
         }
