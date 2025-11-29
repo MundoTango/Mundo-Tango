@@ -55,8 +55,12 @@ function EventCard({ event, index = 0 }: { event: any; index?: number }) {
   
   const { data: eventRsvps = [] } = useEventRSVPs(eventData.id);
 
-  const userRsvp = eventRsvps?.find((r) => String(r.user_id) === String(user?.id));
-  const rsvpStatus = userRsvp?.status;
+  // API returns [{rsvp: {...}, user: {...}}, ...] - the RSVP data is nested
+  const userRsvp = eventRsvps?.find((r: any) => {
+    const rsvpData = r.rsvp || r;
+    return String(rsvpData.userId || rsvpData.user_id) === String(user?.id);
+  });
+  const rsvpStatus = userRsvp?.rsvp?.status || userRsvp?.status;
   const isRsvped = rsvpStatus === "going";
   const isFull = eventData.maxAttendees && attendeeCount >= eventData.maxAttendees;
 
