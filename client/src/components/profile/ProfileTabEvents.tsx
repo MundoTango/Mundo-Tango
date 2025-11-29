@@ -195,10 +195,12 @@ function EventCard({ event, index = 0 }: { event: any; index?: number }) {
               >
                 {rsvpStatus === 'going' && <Check className="h-4 w-4 text-green-500" />}
                 {rsvpStatus === 'maybe' && <Users className="h-4 w-4 text-yellow-500" />}
+                {rsvpStatus === 'not_going' && <Users className="h-4 w-4 text-red-500" />}
                 {!rsvpStatus && <Users className="h-4 w-4" />}
                 {rsvpMutation.isPending ? "Updating..." :
                   rsvpStatus === 'going' ? "Going" :
-                  rsvpStatus === 'maybe' ? "Maybe" : "RSVP"}
+                  rsvpStatus === 'maybe' ? "Maybe" :
+                  rsvpStatus === 'not_going' ? "Not Going" : "RSVP"}
                 <ChevronRight className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
@@ -221,16 +223,15 @@ function EventCard({ event, index = 0 }: { event: any; index?: number }) {
                 Maybe
                 {rsvpStatus === 'maybe' && <Check className="h-4 w-4 ml-auto" />}
               </DropdownMenuItem>
-              {rsvpStatus && (
-                <DropdownMenuItem 
-                  onClick={() => handleRSVP('not_going')}
-                  className="gap-2 text-muted-foreground"
-                  data-testid={`rsvp-cancel-${eventData.id}`}
-                >
-                  <Users className="h-4 w-4" />
-                  Not Going
-                </DropdownMenuItem>
-              )}
+              <DropdownMenuItem 
+                onClick={() => handleRSVP('not_going')}
+                className="gap-2 text-muted-foreground"
+                data-testid={`rsvp-not-going-${eventData.id}`}
+              >
+                <Users className="h-4 w-4 text-red-500" />
+                Not Going
+                {rsvpStatus === 'not_going' && <Check className="h-4 w-4 ml-auto" />}
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
 
