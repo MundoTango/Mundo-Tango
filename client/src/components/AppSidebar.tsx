@@ -99,29 +99,24 @@ function AppSidebarComponent() {
   const isActive = (url: string) => location === url || location.startsWith(url + '/');
 
   const renderIconGridItem = (item: { title: string; url: string; icon: React.ElementType; color?: string; tooltip: string }) => (
-    <Tooltip key={item.title}>
-      <TooltipTrigger asChild>
-        <Link to={item.url}>
-          <div 
-            className={cn(
-              "flex items-center justify-center w-10 h-10 rounded-lg cursor-pointer transition-all duration-200",
-              "hover:bg-[#40E0D0]/20",
-              isActive(item.url) && "bg-gradient-to-r from-[#40E0D0]/30 to-transparent ring-1 ring-[#40E0D0]/50"
-            )}
-            data-testid={`sidebar-icon-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
-          >
-            <item.icon 
-              className="h-5 w-5" 
-              style={{ color: item.color || (isActive(item.url) ? '#40E0D0' : 'currentColor') }}
-            />
-          </div>
-        </Link>
-      </TooltipTrigger>
-      <TooltipContent side="right" className="bg-slate-900 text-white border-slate-700">
-        <p className="font-medium">{item.title}</p>
-        <p className="text-xs text-slate-400">{item.tooltip}</p>
-      </TooltipContent>
-    </Tooltip>
+    <Link to={item.url} key={item.title}>
+      <div 
+        className={cn(
+          "flex flex-col items-center justify-center gap-1.5 p-2 rounded-lg cursor-pointer transition-all duration-200",
+          "hover:bg-[#40E0D0]/20",
+          isActive(item.url) && "bg-gradient-to-r from-[#40E0D0]/30 to-transparent ring-1 ring-[#40E0D0]/50"
+        )}
+        data-testid={`sidebar-icon-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
+      >
+        <item.icon 
+          className="h-8 w-8" 
+          style={{ color: item.color || (isActive(item.url) ? '#40E0D0' : 'currentColor') }}
+        />
+        <span className="text-xs font-medium text-center leading-tight">
+          {item.title}
+        </span>
+      </div>
+    </Link>
   );
 
   const renderSingleItem = (item: { title: string; url: string; icon: React.ElementType; tooltip: string }) => (
@@ -154,7 +149,7 @@ function AppSidebarComponent() {
   );
 
   const renderIconGrid = (items: Array<{ title: string; url: string; icon: React.ElementType; color?: string; tooltip: string }>) => (
-    <div className="grid grid-cols-3 gap-1 px-2">
+    <div className="grid grid-cols-3 gap-2 px-2">
       {items.map(renderIconGridItem)}
     </div>
   );
