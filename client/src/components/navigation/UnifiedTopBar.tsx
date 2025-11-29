@@ -121,13 +121,13 @@ function UnifiedTopBar({
 
   // Handle individual notification click - navigate and close dropdown
   const handleNotificationClick = async (notif: any) => {
-    console.log('[DEBUG] Notification clicked:', { id: notif.id, actionUrl: notif.actionUrl, link: notif.link, title: notif.title });
+    console.log('[DEBUG] Notification clicked:', { id: notif.id, actionUrl: notif.actionUrl, isRead: notif.isRead, read: notif.read, title: notif.title });
     const url = notif.actionUrl || notif.link;
     console.log('[DEBUG] Navigation URL:', url);
     
     if (url) {
-      // Mark individual notification as read if not already read
-      if (!notif.read) {
+      // Mark individual notification as read if not already read (isRead is the Drizzle mapped field name)
+      if (!notif.isRead && notif.id) {
         try {
           const token = localStorage.getItem('accessToken');
           await fetch(`/api/notifications/${notif.id}/read`, {
@@ -369,7 +369,7 @@ function UnifiedTopBar({
                           </p>
                         )}
                       </div>
-                      {!notif.read && (
+                      {!notif.isRead && (
                         <div 
                           className="flex-shrink-0 w-2 h-2 rounded-full mt-1"
                           style={{ background: '#40E0D0' }}
