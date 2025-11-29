@@ -381,21 +381,6 @@ export default function ProfilePage() {
           )}
         </div>
 
-        {/* Action Buttons - Top Right (Settings) */}
-        {isOwnProfile && (
-          <div className="absolute top-6 right-6 z-30 flex gap-3">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button asChild variant="outline" size="icon" className="text-white border-white/30 bg-black/20 backdrop-blur-sm hover:bg-black/30" data-testid="button-edit-profile">
-                  <Link href="/profile/edit">
-                    <Settings className="h-4 w-4" />
-                  </Link>
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Edit Profile</TooltipContent>
-            </Tooltip>
-          </div>
-        )}
         {!isOwnProfile && (
           <div className="absolute top-6 right-6 z-30 flex gap-3">
             {isFriend ? (
