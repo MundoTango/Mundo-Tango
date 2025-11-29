@@ -764,7 +764,7 @@ export const groups = pgTable("groups", {
   // Visibility & Privacy
   isPrivate: boolean("is_private").default(false),
   visibility: varchar("visibility", { length: 20 }).default("public"),
-  joinApproval: varchar("join_approval", { length: 20 }).default("open"),
+  joinApproval: boolean("join_approval").default(true),
   
   // Media
   emoji: varchar("emoji", { length: 10 }),

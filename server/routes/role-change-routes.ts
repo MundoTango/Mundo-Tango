@@ -245,7 +245,7 @@ router.post("/change-effects", authenticateToken, async (req: AuthRequest, res: 
             description: mapping.description,
             type: 'role',
             visibility: 'public',
-            joinApproval: 'open',
+            joinApproval: true,
             allowEvents: true,
             allowPosts: true,
             allowDiscussions: true,
