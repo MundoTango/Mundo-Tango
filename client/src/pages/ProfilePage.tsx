@@ -898,7 +898,7 @@ export default function ProfilePage() {
               isOwner={isOwnProfile}
               tangoRoles={user.tangoRoles || []}
               tangoRoleExperience={null}
-              viewMode={viewMode}
+              viewMode={isPublicView ? 'customer' : viewMode}
             />
           </motion.div>
         )}
