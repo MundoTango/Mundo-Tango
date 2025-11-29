@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Slider } from "@/components/ui/slider";
-import { Info, MapPin, Calendar as CalendarIcon, Users, Award, Edit, Check, X, Languages, Star, Drama, Briefcase, Link as LinkIcon, Globe, Plus, Trash2, ExternalLink } from "lucide-react";
+import { Info, MapPin, Calendar as CalendarIcon, Users, Award, Edit, Check, X, Languages, Star, Drama, Briefcase, Link as LinkIcon, Globe, Plus, Trash2, ExternalLink, User, AtSign } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
@@ -100,6 +101,8 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
   const yearOptions = generateYearOptions();
   
   const [editValues, setEditValues] = useState<Record<string, any>>({
+    name: user.name || '',
+    username: user.username || '',
     bio: user.bio || '',
     city: user.city || '',
     country: user.country || '',
@@ -164,6 +167,8 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
 
   useEffect(() => {
     setEditValues({
+      name: user.name || '',
+      username: user.username || '',
       bio: user.bio || '',
       city: user.city || '',
       country: user.country || '',
@@ -180,7 +185,7 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
       portfolioUrls: user.portfolioUrls || [],
       communityWebsiteUrl: user.communityWebsiteUrl || '',
     });
-  }, [user.id, user.bio, user.city, user.country, user.tangoRoles, user.tangoStartYear, user.tangoRoleExperience, user.yearsOfDancing, user.leaderLevel, user.followerLevel, user.primaryLanguage, user.languages, user.occupation, user.socialLinks, user.portfolioUrls, user.communityWebsiteUrl]);
+  }, [user.id, user.name, user.username, user.bio, user.city, user.country, user.tangoRoles, user.tangoStartYear, user.tangoRoleExperience, user.yearsOfDancing, user.leaderLevel, user.followerLevel, user.primaryLanguage, user.languages, user.occupation, user.socialLinks, user.portfolioUrls, user.communityWebsiteUrl]);
 
   const updateProfileMutation = useMutation({
     mutationFn: async (updates: Record<string, any>) => {
@@ -484,6 +489,47 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
       </CardHeader>
       
       <CardContent className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <h3 className="text-sm font-medium text-muted-foreground mb-2 flex items-center gap-1">
+              <User className="w-4 h-4" />
+              Display Name
+            </h3>
+            {isEditing ? (
+              <Input
+                value={editValues.name || ''}
+                onChange={(e) => setEditValues({ ...editValues, name: e.target.value })}
+                placeholder="Your display name"
+                data-testid="input-display-name"
+              />
+            ) : (
+              <p className="text-base font-medium">{user.name || <span className="text-muted-foreground italic">No name set</span>}</p>
+            )}
+          </div>
+          <div>
+            <h3 className="text-sm font-medium text-muted-foreground mb-2 flex items-center gap-1">
+              <AtSign className="w-4 h-4" />
+              Username
+            </h3>
+            {isEditing ? (
+              <div className="flex items-center">
+                <span className="text-muted-foreground mr-1">@</span>
+                <Input
+                  value={editValues.username || ''}
+                  onChange={(e) => setEditValues({ ...editValues, username: e.target.value.replace(/[^a-zA-Z0-9_]/g, '').toLowerCase() })}
+                  placeholder="username"
+                  className="flex-1"
+                  data-testid="input-username"
+                />
+              </div>
+            ) : (
+              <p className="text-base">@{user.username || <span className="text-muted-foreground italic">No username</span>}</p>
+            )}
+          </div>
+        </div>
+        
+        <Separator />
+        
         <div>
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-sm font-medium text-muted-foreground">Bio</h3>
