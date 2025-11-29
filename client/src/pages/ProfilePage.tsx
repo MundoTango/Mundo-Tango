@@ -24,6 +24,7 @@ import ProfileTabAbout from "@/components/profile/ProfileTabAbout";
 import ProfileTabMemories from "@/components/profile/ProfileTabMemories";
 import ProfileTabPro from "@/components/profile/ProfileTabPro";
 import DashboardCustomerToggle from "@/components/profile/DashboardCustomerToggle";
+import { PhotoUploadDialog } from "@/components/PhotoUploadDialog";
 
 interface User {
   id: number;
@@ -75,6 +76,8 @@ export default function ProfilePage() {
   const coverPhotoInputRef = useRef<HTMLInputElement>(null);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [uploadingCover, setUploadingCover] = useState(false);
+  const [profilePhotoDialogOpen, setProfilePhotoDialogOpen] = useState(false);
+  const [coverPhotoDialogOpen, setCoverPhotoDialogOpen] = useState(false);
 
   // Upload profile photo mutation (send compressed base64)
   const uploadPhotoMutation = useMutation({
@@ -189,43 +192,14 @@ export default function ProfilePage() {
     });
   };
 
-  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    
+  const handlePhotoUploadCropped = (croppedBase64: string) => {
     setUploadingPhoto(true);
-    
-    try {
-      // Compress image first (matching PostCreator pattern)
-      const compressedBase64 = await compressImage(file);
-      uploadPhotoMutation.mutate(compressedBase64);
-    } catch (err) {
-      toast({ title: "Error", description: "Failed to process image", variant: "destructive" });
-      setUploadingPhoto(false);
-    }
-    
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
+    uploadPhotoMutation.mutate(croppedBase64);
   };
 
-  const handleCoverPhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    
+  const handleCoverPhotoUploadCropped = (croppedBase64: string) => {
     setUploadingCover(true);
-    
-    try {
-      const compressedBase64 = await compressImage(file);
-      uploadCoverMutation.mutate(compressedBase64);
-    } catch (err) {
-      toast({ title: "Error", description: "Failed to process image", variant: "destructive" });
-      setUploadingCover(false);
-    }
-    
-    if (coverPhotoInputRef.current) {
-      coverPhotoInputRef.current.value = '';
-    }
+    uploadCoverMutation.mutate(croppedBase64);
   };
   
   // Read tab from URL query params (e.g., /profile?tab=memories)
@@ -417,20 +391,12 @@ export default function ProfilePage() {
             <>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button size="icon" variant="outline" className="text-white border-white/30 bg-black/20 backdrop-blur-sm hover:bg-black/30" onClick={() => coverPhotoInputRef.current?.click()} disabled={uploadingCover} data-testid="button-upload-cover">
+                  <Button size="icon" variant="outline" className="text-white border-white/30 bg-black/20 backdrop-blur-sm hover:bg-black/30" onClick={() => setCoverPhotoDialogOpen(true)} disabled={uploadingCover} data-testid="button-upload-cover">
                     <ImageIcon className="h-4 w-4" />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>{uploadingCover ? 'Uploading...' : 'Change Cover Photo'}</TooltipContent>
               </Tooltip>
-              <input
-                ref={coverPhotoInputRef}
-                type="file"
-                accept="image/jpeg,image/png,image/gif,image/webp"
-                onChange={handleCoverPhotoUpload}
-                className="hidden"
-                data-testid="input-cover-photo"
-              />
               <Button asChild variant="outline" className="gap-2 text-white border-white/30 bg-black/20 backdrop-blur-sm hover:bg-black/30" data-testid="button-edit-profile">
                 <Link href="/profile/edit">
                   <Settings className="h-4 w-4" />
@@ -495,7 +461,7 @@ export default function ProfilePage() {
                       variant="outline" 
                       className="absolute bottom-0 right-0 rounded-full text-white border-white/30 bg-black/20 backdrop-blur-sm hover:bg-black/30" 
                       data-testid="button-change-profile-photo"
-                      onClick={() => fileInputRef.current?.click()}
+                      onClick={() => setProfilePhotoDialogOpen(true)}
                       disabled={uploadingPhoto}
                     >
                       <Camera className="h-4 w-4" />
@@ -503,14 +469,6 @@ export default function ProfilePage() {
                   </TooltipTrigger>
                   <TooltipContent>{uploadingPhoto ? 'Uploading...' : 'Change Profile Photo'}</TooltipContent>
                 </Tooltip>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/jpeg,image/png,image/gif,image/webp"
-                  onChange={handlePhotoUpload}
-                  className="hidden"
-                  data-testid="input-profile-photo"
-                />
               </>
             )}
           </div>
@@ -697,6 +655,22 @@ export default function ProfilePage() {
           </div>
         </motion.div>
       </div>
+
+      {/* Photo Upload Dialogs */}
+      <PhotoUploadDialog
+        open={profilePhotoDialogOpen}
+        onOpenChange={setProfilePhotoDialogOpen}
+        onUpload={handlePhotoUploadCropped}
+        type="profile"
+        isUploading={uploadingPhoto}
+      />
+      <PhotoUploadDialog
+        open={coverPhotoDialogOpen}
+        onOpenChange={setCoverPhotoDialogOpen}
+        onUpload={handleCoverPhotoUploadCropped}
+        type="cover"
+        isUploading={uploadingCover}
+      />
 
       {/* Tab Navigation */}
       <ProfileTabsNav
