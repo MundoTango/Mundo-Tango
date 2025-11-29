@@ -376,7 +376,7 @@ export default function ProfilePage() {
       />
       
       {/* PART_4: Hero Profile Photo Section - Editorial Glassmorphic Design */}
-      <div className="relative w-full min-h-[520px] overflow-visible">
+      <div className="relative w-full min-h-[520px] overflow-visible group">
         {/* Cover Photo as Hero Image */}
         <img 
           src={user.coverImage || 'https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?w=1600&auto=format&fit=crop'} 
@@ -384,6 +384,21 @@ export default function ProfilePage() {
           className="w-full h-full object-cover"
           data-testid="img-hero-cover"
         />
+        
+        {/* Cover Photo Edit Overlay Button - Only for Own Profile */}
+        {isOwnProfile && (
+          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-15">
+            <button
+              onClick={() => coverPhotoInputRef.current?.click()}
+              disabled={uploadingCover}
+              className="flex items-center gap-2 px-6 py-3 bg-black/60 backdrop-blur-sm hover:bg-black/80 border border-white/40 rounded-lg text-white font-medium transition-colors"
+              data-testid="button-edit-cover-overlay"
+            >
+              <ImageIcon className="h-5 w-5" />
+              {uploadingCover ? 'Uploading...' : 'Edit Cover Photo'}
+            </button>
+          </div>
+        )}
         
         {/* Editorial Gradient Overlay (bottom 40%) */}
         <div className="absolute bottom-0 left-0 right-0 h-[60%] bg-gradient-to-t from-black/80 via-black/60 to-transparent" />
