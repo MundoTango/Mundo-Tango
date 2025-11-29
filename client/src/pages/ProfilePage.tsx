@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useRoute, Link, useSearch } from "wouter";
+import { useRoute, Link, useSearch, useLocation } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -240,7 +240,9 @@ export default function ProfilePage() {
   // Support both numeric ID and username - use username/ID from URL or current user's ID
   const profileIdentifier = params?.id || currentUser?.id?.toString();
 
-  const { data: user, isLoading: userLoading } = useQuery<User>({
+  const [, navigate] = useLocation();
+
+  const { data: user, isLoading: userLoading, isError: userError } = useQuery<User>({
     queryKey: ["user", profileIdentifier],
     queryFn: async () => {
       const res = await fetch(`/api/users/${profileIdentifier}`);
@@ -249,6 +251,13 @@ export default function ProfilePage() {
     },
     enabled: !!profileIdentifier,
   });
+
+  // If we tried to fetch a specific profile and got an error, redirect to current user's profile
+  useEffect(() => {
+    if (userError && params?.id && currentUser?.id) {
+      navigate(`/profile/${currentUser.id}`);
+    }
+  }, [userError, params?.id, currentUser?.id, navigate]);
 
   const { data: posts = [], isLoading: postsLoading } = useQuery<Post[]>({
     queryKey: ["user-posts", user?.id],
