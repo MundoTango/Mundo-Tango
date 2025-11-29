@@ -82,6 +82,25 @@ export function PhotoUploadDialog({
   };
   
   const baseScale = getBaseScale();
+  
+  // Debug logging
+  useEffect(() => {
+    if (imageDimensions && imageSource) {
+      const totalScale = baseScale * zoom;
+      console.log('[PhotoUpload Debug]', {
+        type,
+        imageDimensions,
+        previewWidth,
+        previewHeight,
+        baseScale,
+        zoom,
+        totalScale,
+        offsetX,
+        offsetY,
+        transform: `scale(${totalScale}) translate(${offsetX / totalScale}px, ${offsetY / totalScale}px)`
+      });
+    }
+  }, [imageDimensions, imageSource, baseScale, zoom, offsetX, offsetY, type, previewWidth, previewHeight]);
 
   const handleMouseDown = (e: React.MouseEvent) => {
     setIsDragging(true);
@@ -234,6 +253,20 @@ export function PhotoUploadDialog({
               <p className="text-xs text-muted-foreground text-center">
                 Click and drag the image to position it
               </p>
+              
+              {/* DEBUG: Show actual computed values */}
+              {imageDimensions && (
+                <div className="bg-amber-100 dark:bg-amber-900 p-2 rounded text-xs font-mono space-y-1 border border-amber-400">
+                  <p className="font-bold text-amber-700 dark:text-amber-300">DEBUG VALUES:</p>
+                  <p>Original: {imageDimensions.width}×{imageDimensions.height}</p>
+                  <p>Preview: {previewWidth}×{previewHeight}</p>
+                  <p>baseScale: {baseScale.toFixed(4)}</p>
+                  <p>zoom: {zoom.toFixed(2)} → totalScale: {(baseScale * zoom).toFixed(4)}</p>
+                  <p>Scaled size: {Math.round(imageDimensions.width * baseScale * zoom)}×{Math.round(imageDimensions.height * baseScale * zoom)}</p>
+                  <p>offsetX: {offsetX.toFixed(1)}px, offsetY: {offsetY.toFixed(1)}px</p>
+                  <p>Transform: scale({(baseScale * zoom).toFixed(3)}) translate({(offsetX / (baseScale * zoom)).toFixed(1)}px, {(offsetY / (baseScale * zoom)).toFixed(1)}px)</p>
+                </div>
+              )}
             </div>
 
             {/* Controls */}
