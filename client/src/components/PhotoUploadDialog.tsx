@@ -54,11 +54,20 @@ export function PhotoUploadDialog({
       const src = event.target?.result as string;
       const img = new Image();
       img.onload = () => {
+        // Calculate initial centered position
+        const scaleX = previewWidth / img.width;
+        const scaleY = previewHeight / img.height;
+        const initialBaseScale = Math.max(scaleX, scaleY);
+        const scaledWidth = img.width * initialBaseScale;
+        const scaledHeight = img.height * initialBaseScale;
+        const centerOffsetX = (previewWidth - scaledWidth) / 2;
+        const centerOffsetY = (previewHeight - scaledHeight) / 2;
+        
         setImageDimensions({ width: img.width, height: img.height });
         setImageSource(src);
         setZoom(1);
-        setOffsetX(0);
-        setOffsetY(0);
+        setOffsetX(centerOffsetX);
+        setOffsetY(centerOffsetY);
       };
       img.src = src;
     };
