@@ -52,10 +52,20 @@ Mundo Tango is a production-ready social platform connecting the global tango co
 - **Semantic Mapping:** `true` = "open" (anyone can join), `false` = requires approval
 - **Impact:** Role cascade now successfully creates PRO groups and auto-joins users on role changes
 
-See [docs/prds/INDEX.md](docs/prds/INDEX.md) for complete PRD index with cross-references (21 PRDs total).
+See [docs/prds/INDEX.md](docs/prds/INDEX.md) for complete PRD index with cross-references (22 PRDs total).
 
 ### Profile Tab Architecture
-The profile system uses **8 core tabs**: About, Feed, Photos, Friends, Events, Travel, Memories, and PRO. The **17 legacy role-based tabs** (Teacher, DJ, Performer, Photographer, Organizer, Musician, Choreographer, Vendor, etc.) are deprecated and consolidated into the unified PRO tab. Events→PRO integration ensures participant invites auto-populate the PRO portfolio with verified event history.
+The profile system uses **8 core tabs**: About, Feed, Photos, Friends, Events, Travel, Memories, and PRO. The **17 legacy role-based tabs** (Teacher, DJ, Performer, Photographer, Organizer, Musician, Choreographer, Vendor, etc.) are deprecated and consolidated into the unified PRO tab. Events→PRO integration ensures participant invites auto-populate the PRO portfolio with verified event history. See [PRD_PROFILE_PAGE_INDEX.md](docs/prds/PRD_PROFILE_PAGE_INDEX.md) for master component index with 33 components.
+
+**About Tab Sub-Tabs (5 sub-tabs):**
+- Profile (public) | Privacy (owner) | Security (owner) | Notifications (owner) | Subscription (owner)
+- See `AboutSubTabs.tsx` for navigation, individual `settings/*SubTab.tsx` for implementations
+
+**ProfileTabEvents RSVP System (Nov 29, 2025):**
+- 3 states: `going` (green), `maybe` (yellow), `not_going` (red)
+- All 3 dropdown options always visible with checkmarks
+- Query key: `["/api/events", eventId, "attendees"]`
+- Nested data: `{ rsvp: {...}, user: {...} }`
 
 ### UI/UX
 The platform uses the "MT Ocean Theme" with ocean blues and warm accents, supporting dark mode via Tailwind CSS. Components are built with `shadcn/ui` and Radix UI, using Lucide React and React Icons for iconography. It supports 68 languages via `i18next` and Wouter for routing. Layouts include `AppLayout` (public), `DashboardLayout` (authenticated), and `AdminLayout` (administrative). A Visual Editor provides wisprflow.ai-style inline editing with direct text editing, element manipulation, toast notifications, tooltips, and voice commands. A manual save system tracks changes, and context-awareness provides smart suggestions. Key features include:
