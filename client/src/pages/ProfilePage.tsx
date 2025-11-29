@@ -67,6 +67,7 @@ interface Post {
 
 export default function ProfilePage() {
   const [, params] = useRoute("/profile/:id");
+  const [location, navigate] = useLocation();
   const searchString = useSearch();
   const { user: currentUser } = useAuth();
   const { toast } = useToast();
@@ -435,7 +436,7 @@ export default function ProfilePage() {
                       size="sm"
                       variant="outline" 
                       className="w-full mt-2 text-xs gap-1 bg-black/20 backdrop-blur-sm hover:bg-black/30" 
-                      onClick={() => window.open(`/profile/${user.id}?view=public`, '_blank')}
+                      onClick={() => navigate(`/profile/${user.id}?view=public`)}
                       data-testid="button-view-public-profile"
                     >
                       <Eye className="h-3 w-3" />
