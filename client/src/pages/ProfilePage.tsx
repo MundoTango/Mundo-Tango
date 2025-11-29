@@ -368,9 +368,6 @@ export default function ProfilePage() {
           data-testid="img-hero-cover"
         />
         
-        {/* Editorial Gradient Overlay (bottom 40%) - Only on hover */}
-        <div className="absolute bottom-0 left-0 right-0 h-[60%] bg-gradient-to-t from-black/0 to-transparent group-hover:from-black/80 transition-colors z-0" />
-
         {/* Profile Photo & Action Buttons - Top Right */}
         <div className="absolute top-6 left-6 z-20 flex gap-3">
           {isOwnProfile && (
