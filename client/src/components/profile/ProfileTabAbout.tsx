@@ -199,7 +199,16 @@ export default function ProfileTabAbout({ user, isOwnProfile, isPublicView = fal
       portfolioUrls: user.portfolioUrls || [],
       communityWebsiteUrl: user.communityWebsiteUrl || '',
     });
-  }, [user.id, user.name, user.username, user.bio, user.city, user.country, user.tangoRoles, user.tangoStartYear, user.tangoRoleExperience, user.yearsOfDancing, user.leaderLevel, user.followerLevel, user.primaryLanguage, user.languages, user.occupation, user.socialLinks, user.portfolioUrls, user.communityWebsiteUrl]);
+    // Sync fieldPrivacy from user's current privacy settings
+    setFieldPrivacy({
+      bio: (user as any).privacySettings?.fieldVisibility?.bio || 'public',
+      occupation: (user as any).privacySettings?.fieldVisibility?.occupation || 'public',
+      location: (user as any).privacySettings?.fieldVisibility?.location || 'public',
+      tango: (user as any).privacySettings?.fieldVisibility?.tango || 'public',
+      languages: (user as any).privacySettings?.fieldVisibility?.languages || 'public',
+      socialLinks: (user as any).privacySettings?.fieldVisibility?.socialLinks || 'public',
+    });
+  }, [user.id, user.name, user.username, user.bio, user.city, user.country, user.tangoRoles, user.tangoStartYear, user.tangoRoleExperience, user.yearsOfDancing, user.leaderLevel, user.followerLevel, user.primaryLanguage, user.languages, user.occupation, user.socialLinks, user.portfolioUrls, user.communityWebsiteUrl, (user as any).privacySettings]);
 
   const updateProfileMutation = useMutation({
     mutationFn: async (updates: Record<string, any>) => {
@@ -423,6 +432,15 @@ export default function ProfileTabAbout({ user, isOwnProfile, isPublicView = fal
       socialLinks: user.socialLinks || {},
       portfolioUrls: user.portfolioUrls || [],
       communityWebsiteUrl: user.communityWebsiteUrl || '',
+    });
+    // Reset fieldPrivacy to current saved values
+    setFieldPrivacy({
+      bio: (user as any).privacySettings?.fieldVisibility?.bio || 'public',
+      occupation: (user as any).privacySettings?.fieldVisibility?.occupation || 'public',
+      location: (user as any).privacySettings?.fieldVisibility?.location || 'public',
+      tango: (user as any).privacySettings?.fieldVisibility?.tango || 'public',
+      languages: (user as any).privacySettings?.fieldVisibility?.languages || 'public',
+      socialLinks: (user as any).privacySettings?.fieldVisibility?.socialLinks || 'public',
     });
   };
 
