@@ -46,31 +46,22 @@ interface EventItem {
 function EventCard({ event, index = 0 }: { event: EventItem; index?: number }) {
   const { user } = useAuth();
   const rsvpMutation = useRSVPEvent();
-  const { toast } = useToast();
   
   const eventData: EventData = (event.event || event) as EventData;
   const attendeeCount = event._count || 0;
-  
-  const { data: eventRsvps } = useQuery<any[]>({
-    queryKey: ["rsvps", eventData.id],
+  const isFull = eventData.maxAttendees && attendeeCount >= eventData.maxAttendees;
+
+  // Fetch RSVPs for this event to determine user's current status
+  const { data: eventRsvps = [] } = useQuery<any[]>({
+    queryKey: ["/api/events", eventData.id, "attendees"],
   });
 
   const userRsvp = eventRsvps?.find((r) => String(r.user_id) === String(user?.id));
   const rsvpStatus = userRsvp?.status;
-  const isFull = eventData.maxAttendees && attendeeCount >= eventData.maxAttendees;
 
   const handleRSVP = async (status: 'going' | 'maybe' | 'not_going') => {
-    if (!user) {
-      toast({ title: "Please log in", description: "You must be logged in to RSVP", variant: "destructive" });
-      return;
-    }
-    try {
-      await rsvpMutation.mutateAsync({ eventId: eventData.id, status });
-      queryClient.invalidateQueries({ queryKey: ["rsvps", eventData.id] });
-      toast({ title: "RSVP updated", description: `You marked this event as ${status}` });
-    } catch (error) {
-      toast({ title: "Error", description: "Failed to update RSVP", variant: "destructive" });
-    }
+    if (!user) return;
+    await rsvpMutation.mutateAsync({ eventId: eventData.id, status });
   };
 
   const formatEventDateTime = (dateString: string): string => {
@@ -187,15 +178,20 @@ function EventCard({ event, index = 0 }: { event: EventItem; index?: number }) {
               <Button
                 variant={rsvpStatus ? "outline" : "default"}
                 className="flex-1 gap-2"
-                disabled={!user}
+                disabled={!user || rsvpMutation.isPending}
                 data-testid={`button-rsvp-${eventData.id}`}
               >
-                {rsvpStatus === 'going' && <Check className="h-4 w-4 text-green-500" />}
-                {rsvpStatus === 'maybe' && <Users className="h-4 w-4 text-yellow-500" />}
-                {!rsvpStatus && <Users className="h-4 w-4" />}
-                {rsvpStatus === 'going' ? "Going" :
-                  rsvpStatus === 'maybe' ? "Maybe" : "RSVP"}
-                <ChevronRight className="h-4 w-4" />
+                {rsvpMutation.isPending ? (
+                  <>Updating...</>
+                ) : (
+                  <>
+                    {rsvpStatus === 'going' && <Check className="h-4 w-4 text-green-500" />}
+                    {rsvpStatus === 'maybe' && <Users className="h-4 w-4 text-yellow-500" />}
+                    {!rsvpStatus && <Users className="h-4 w-4" />}
+                    {rsvpStatus === 'going' ? 'Going' : rsvpStatus === 'maybe' ? 'Maybe' : 'RSVP'}
+                    <ChevronRight className="h-4 w-4" />
+                  </>
+                )}
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-48">
@@ -203,30 +199,29 @@ function EventCard({ event, index = 0 }: { event: EventItem; index?: number }) {
                 onClick={() => handleRSVP('going')}
                 className="gap-2"
                 data-testid={`rsvp-going-${eventData.id}`}
+                disabled={rsvpMutation.isPending}
               >
                 <Check className="h-4 w-4 text-green-500" />
                 Going
-                {rsvpStatus === 'going' && <Check className="h-4 w-4 ml-auto" />}
               </DropdownMenuItem>
               <DropdownMenuItem 
                 onClick={() => handleRSVP('maybe')}
                 className="gap-2"
                 data-testid={`rsvp-maybe-${eventData.id}`}
+                disabled={rsvpMutation.isPending}
               >
                 <Users className="h-4 w-4 text-yellow-500" />
                 Maybe
-                {rsvpStatus === 'maybe' && <Check className="h-4 w-4 ml-auto" />}
               </DropdownMenuItem>
-              {rsvpStatus && (
-                <DropdownMenuItem 
-                  onClick={() => handleRSVP('not_going')}
-                  className="gap-2 text-muted-foreground"
-                  data-testid={`rsvp-cancel-${eventData.id}`}
-                >
-                  <Users className="h-4 w-4" />
-                  Not Going
-                </DropdownMenuItem>
-              )}
+              <DropdownMenuItem 
+                onClick={() => handleRSVP('not_going')}
+                className="gap-2 text-muted-foreground"
+                data-testid={`rsvp-cancel-${eventData.id}`}
+                disabled={rsvpMutation.isPending}
+              >
+                <Users className="h-4 w-4" />
+                Not Going
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
 
