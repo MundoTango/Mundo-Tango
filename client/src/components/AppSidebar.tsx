@@ -72,7 +72,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 
 const socialItems = [
-  { title: "Memories", url: "/memories", icon: Home },
+  { title: "Memories", url: "/feed", icon: Home },
   { title: "Profile", url: "/profile", icon: UserCircle },
   { title: "Discover", url: "/discover", icon: Compass },
 ];
