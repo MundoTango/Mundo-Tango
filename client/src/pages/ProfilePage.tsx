@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Settings, UserPlus, UserMinus, UserCheck, Plane, Calendar, CheckCircle, Instagram, Facebook, Twitter, Linkedin, Youtube, Globe, Award, Plus, Camera, Music, Users, ImageIcon, Mic2, Home, Briefcase, BookOpen, Heart } from "lucide-react";
+import { MapPin, Settings, UserPlus, UserMinus, UserCheck, Plane, Calendar, CheckCircle, Instagram, Facebook, Twitter, Linkedin, Youtube, Globe, Award, Plus, Camera, Music, Users, ImageIcon, Mic2, Home, Briefcase, BookOpen, Heart, Eye } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useAuth } from "@/contexts/AuthContext";
 import { SEO } from "@/components/SEO";
@@ -420,6 +420,23 @@ export default function ProfilePage() {
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>Edit Cover Photo</TooltipContent>
+                </Tooltip>
+              )}
+              {isOwnProfile && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button 
+                      size="sm"
+                      variant="outline" 
+                      className="w-full mt-2 text-xs gap-1 bg-black/20 backdrop-blur-sm hover:bg-black/30" 
+                      onClick={() => window.open(`/profile/${user.id}?view=public`, '_blank')}
+                      data-testid="button-view-public-profile"
+                    >
+                      <Eye className="h-3 w-3" />
+                      View Public Profile
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>See how your profile looks to others</TooltipContent>
                 </Tooltip>
               )}
             </div>

@@ -1,10 +1,12 @@
 # PRD Index - Mundo Tango
 
 ## 🎯 Latest Update (Nov 29, 2025)
-**NEW:** [PRD_UNIFIED_SIDEBAR_SYSTEM.md](PRD_UNIFIED_SIDEBAR_SYSTEM.md) - Complete icon-grid navigation with 27 items, 4 sections, hover tooltips, z-50 layering
+**NEW:** [PRD_PUBLIC_PROFILE_VIEW_SYSTEM.md](PRD_PUBLIC_PROFILE_VIEW_SYSTEM.md) - Public profile preview with viewMode state, privacy field filtering, 18 hidden owner-only elements  
+**PRIOR:** [PRD_UNIFIED_SIDEBAR_SYSTEM.md](PRD_UNIFIED_SIDEBAR_SYSTEM.md) - Complete icon-grid navigation with 27 items, 4 sections, hover tooltips, z-50 layering
 
 > **Last Updated:** 2025-11-29  
-> **Total PRDs:** 22  
+> **Total PRDs:** 23  
+> **Session PRDs:** UnifiedSidebar, PublicProfileView  
 
 ---
 
@@ -18,6 +20,8 @@ This index links all Product Requirement Documents (PRDs) in the Mundo Tango pla
 
 | PRD | Purpose | Key Files | Pages/Features Using |
 |-----|---------|-----------|---------------------|
+| [PRD_PUBLIC_PROFILE_VIEW_SYSTEM.md](./PRD_PUBLIC_PROFILE_VIEW_SYSTEM.md) | **NEW** Public profile preview with privacy filtering | ProfilePage.tsx, All profile tabs | Profile, Public View Mode, Privacy Integration |
+| [PRD_UNIFIED_SIDEBAR_SYSTEM.md](./PRD_UNIFIED_SIDEBAR_SYSTEM.md) | 27-item icon-grid navigation (4 sections, hover tooltips) | AppSidebar.tsx, AdminSidebar.tsx | Main navigation, All pages |
 | [PRD_TANGO_ROLES_SYSTEM.md](./PRD_TANGO_ROLES_SYSTEM.md) | 20 unified tango role definitions (includes Taxi Dancer) | `lib/tangoRoles.ts`, `UserRoleBadges.tsx` | Onboarding, Profile, Search, Cards (15 files) |
 | [PRD_ROLE_CHANGE_CASCADE.md](./PRD_ROLE_CHANGE_CASCADE.md) | Symmetric ADD/REMOVE role cascades | `role-change-routes.ts` | Profile Edit, PRO Groups, Notifications |
 | [PRD_CASCADE_FRAMEWORK.md](./PRD_CASCADE_FRAMEWORK.md) | **NEW** Unified cascade architecture for all attribute changes | `roleChangeEffects.ts`, `locationChangeEffects.ts` | Profile Edit, All Cascades |

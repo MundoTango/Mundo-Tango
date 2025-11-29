@@ -19,6 +19,7 @@ Mundo Tango is a production-ready social platform connecting the global tango co
 ### Standardized Components (PRDs: `docs/prds/`)
 | Component | PRD | Files Using | Purpose |
 |-----------|-----|-------------|---------|
+| **PublicProfileView** | [PRD_PUBLIC_PROFILE_VIEW_SYSTEM.md](docs/prds/PRD_PUBLIC_PROFILE_VIEW_SYSTEM.md) | ProfilePage.tsx, All profile tabs | "View Public Profile" button + viewMode state (private/public) with privacy field filtering |
 | **UnifiedSidebar** | [PRD_UNIFIED_SIDEBAR_SYSTEM.md](docs/prds/PRD_UNIFIED_SIDEBAR_SYSTEM.md) | AppSidebar.tsx, AdminSidebar.tsx | 4-section icon grid navigation (Social, Community, PRO Discovery, Services) with 27 items, hover tooltips, z-50 layering |
 | **TangoRoles** | [PRD_TANGO_ROLES_SYSTEM.md](docs/prds/PRD_TANGO_ROLES_SYSTEM.md) | 15 files | 20 unified role definitions with `value`/`label` properties (includes Taxi Dancer) |
 | **RoleChangeCascade** | [PRD_ROLE_CHANGE_CASCADE.md](docs/prds/PRD_ROLE_CHANGE_CASCADE.md) | role-change-routes.ts | Symmetric ADD/REMOVE auto-join/leave PRO groups on role changes |
@@ -40,6 +41,17 @@ Mundo Tango is a production-ready social platform connecting the global tango co
 | `experienceLevel` | varchar | Experience-tier groups | Planned |
 
 ### Recent Fixes (Nov 29, 2025)
+
+**Public Profile View System Added:**
+- **Created:** PRD_PUBLIC_PROFILE_VIEW_SYSTEM.md (comprehensive view mode architecture)
+- **Feature:** "View Public Profile" button in profile header (Eye icon)
+- **Mechanism:** URL query param `?view=public` + viewMode state (private/public)
+- **Privacy:** Respects fieldVisibility JSONB settings on all fields
+- **Architecture:** 18 owner-only elements hidden in public view (edit buttons, upload buttons, settings)
+- **Design:** Reuses existing DashboardCustomerToggle pattern extended to full profile
+- **Test IDs:** Added `button-view-public-profile`, all public view elements testable
+- **Status:** ✅ Button implemented, ready for tab integration
+- **Files Modified:** ProfilePage.tsx (added Eye icon import + button), created PRD
 
 **Unified Sidebar System Complete:**
 - **Created:** PRD_UNIFIED_SIDEBAR_SYSTEM.md (comprehensive 27-item navigation system)
