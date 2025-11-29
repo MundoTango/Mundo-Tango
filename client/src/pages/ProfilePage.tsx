@@ -370,23 +370,6 @@ export default function ProfilePage() {
         
         {/* Editorial Gradient Overlay (bottom 40%) - Only on hover */}
         <div className="absolute bottom-0 left-0 right-0 h-[60%] bg-gradient-to-t from-black/0 to-transparent group-hover:from-black/80 transition-colors z-0" />
-        
-        {/* Edit Cover Photo Button - Center on Hover */}
-        {isOwnProfile && (
-          <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/0 group-hover:bg-black/50 transition-colors pointer-events-none group-hover:pointer-events-auto">
-            <Button 
-              size="lg"
-              variant="outline" 
-              className="text-white border-white gap-2 bg-black/40 backdrop-blur-sm hover:bg-black/60" 
-              onClick={() => setCoverPhotoDialogOpen(true)} 
-              disabled={uploadingCover} 
-              data-testid="button-upload-cover"
-            >
-              <ImageIcon className="h-5 w-5" />
-              {uploadingCover ? 'Uploading...' : 'Edit Cover Photo'}
-            </Button>
-          </div>
-        )}
 
         {/* Profile Photo & Action Buttons - Top Right */}
         <div className="absolute top-6 left-6 z-20 flex gap-3">
@@ -484,6 +467,28 @@ export default function ProfilePage() {
             )}
           </div>
         </div>
+
+        {/* Edit Cover Photo Button - Right of Profile Circle */}
+        {isOwnProfile && (
+          <div className="absolute bottom-6 left-48 z-10">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button 
+                  size="sm"
+                  variant="outline" 
+                  className="text-white border-white/30 gap-2 bg-black/20 backdrop-blur-sm hover:bg-black/30" 
+                  onClick={() => setCoverPhotoDialogOpen(true)} 
+                  disabled={uploadingCover} 
+                  data-testid="button-upload-cover"
+                >
+                  <ImageIcon className="h-4 w-4" />
+                  {uploadingCover ? 'Uploading...' : 'Edit Cover'}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Edit Cover Photo</TooltipContent>
+            </Tooltip>
+          </div>
+        )}
 
         {/* Glassmorphic User Info Card - Bottom Right Overlay */}
         <motion.div 
