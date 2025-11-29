@@ -283,9 +283,9 @@ export function PhotoUploadDialog({
                 <Slider
                   value={[zoom]}
                   onValueChange={(val) => setZoom(val[0])}
-                  min={0.5}
+                  min={0.1}
                   max={3}
-                  step={0.05}
+                  step={0.01}
                   className="w-full"
                 />
                 <p className="text-xs text-muted-foreground">Drag image in preview box to position</p>
