@@ -371,6 +371,23 @@ export default function ProfilePage() {
         {/* Editorial Gradient Overlay (bottom 40%) */}
         <div className="absolute bottom-0 left-0 right-0 h-[60%] bg-gradient-to-t from-black/80 via-black/60 to-transparent" />
         
+        {/* Edit Cover Photo Button - Center on Hover */}
+        {isOwnProfile && (
+          <div className="absolute inset-0 z-20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/30 group-hover:bg-black/50">
+            <Button 
+              size="lg"
+              variant="outline" 
+              className="text-white border-white gap-2 bg-black/40 backdrop-blur-sm hover:bg-black/60" 
+              onClick={() => setCoverPhotoDialogOpen(true)} 
+              disabled={uploadingCover} 
+              data-testid="button-upload-cover"
+            >
+              <ImageIcon className="h-5 w-5" />
+              {uploadingCover ? 'Uploading...' : 'Edit Cover Photo'}
+            </Button>
+          </div>
+        )}
+
         {/* Profile Photo & Action Buttons - Top Right */}
         <div className="absolute top-6 left-6 z-20 flex gap-3">
           {isOwnProfile && (
@@ -385,24 +402,9 @@ export default function ProfilePage() {
           )}
         </div>
 
-        {/* Action Buttons - Top Right */}
+        {/* Action Buttons - Top Right (Settings) */}
         {isOwnProfile && (
           <div className="absolute top-6 right-6 z-30 flex gap-3">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button 
-                  size="icon" 
-                  variant="outline" 
-                  className="text-white border-white/30 bg-black/20 backdrop-blur-sm hover:bg-black/30" 
-                  onClick={() => setCoverPhotoDialogOpen(true)} 
-                  disabled={uploadingCover} 
-                  data-testid="button-upload-cover"
-                >
-                  <ImageIcon className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>{uploadingCover ? 'Uploading...' : 'Edit Cover Photo'}</TooltipContent>
-            </Tooltip>
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button asChild variant="outline" size="icon" className="text-white border-white/30 bg-black/20 backdrop-blur-sm hover:bg-black/30" data-testid="button-edit-profile">
