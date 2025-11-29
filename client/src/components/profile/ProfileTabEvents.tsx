@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { Link } from "wouter";
 import { useAuth } from "@/contexts/AuthContext";
-import { useRSVPEvent } from "@/hooks/useEvents";
+import { useRSVPEvent, useEventRSVPs } from "@/hooks/useEvents";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -52,9 +52,7 @@ function EventCard({ event, index = 0 }: { event: any; index?: number }) {
   const eventData = event.event || event;
   const attendeeCount = event._count || 0;
   
-  const { data: eventRsvps } = useQuery<RSVP[]>({
-    queryKey: ["rsvps", eventData.id],
-  });
+  const { data: eventRsvps = [] } = useEventRSVPs(eventData.id);
 
   const userRsvp = eventRsvps?.find((r) => String(r.user_id) === String(user?.id));
   const rsvpStatus = userRsvp?.status;
@@ -67,7 +65,7 @@ function EventCard({ event, index = 0 }: { event: any; index?: number }) {
     }
     try {
       await rsvpMutation.mutateAsync({ eventId: eventData.id, status });
-      queryClient.invalidateQueries({ queryKey: ["rsvps", eventData.id] });
+      queryClient.invalidateQueries({ queryKey: ["/api/events", eventData.id, "attendees"] });
       toast({ title: "RSVP updated", description: `You marked this event as ${status}` });
     } catch (error) {
       toast({ title: "Error", description: "Failed to update RSVP", variant: "destructive" });
