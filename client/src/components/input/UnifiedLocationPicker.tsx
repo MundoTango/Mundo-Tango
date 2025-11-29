@@ -262,12 +262,33 @@ export function UnifiedLocationPicker({
               });
             });
             
-            clientCacheRef.current.set(queryKey, transformedResults);
+            // Deduplicate: Keep only ONE result per city
+            // If a city_group exists for a city, filter out other sources for the same city
+            const seenCities = new Set<string>();
+            const deduplicatedResults = transformedResults.filter((result) => {
+              // @ts-ignore - custom source field
+              const source = result._source;
+              const cityName = result.address?.city || '';
+              const cityCountry = result.address?.country || '';
+              const cityKey = `${cityName}|${cityCountry}`.toLowerCase();
+              
+              // Priority: city_group > popular > nominatim
+              // If we've already seen this city, only keep if current source is higher priority
+              if (seenCities.has(cityKey)) {
+                // Already have this city, skip unless this is a city_group (highest priority)
+                return source === 'city_group';
+              }
+              
+              seenCities.add(cityKey);
+              return true;
+            });
+            
+            clientCacheRef.current.set(queryKey, deduplicatedResults);
             if (clientCacheRef.current.size > 50) {
               const firstKey = clientCacheRef.current.keys().next().value;
               if (firstKey) clientCacheRef.current.delete(firstKey);
             }
-            setResults(transformedResults);
+            setResults(deduplicatedResults);
             setShowResults(true);
           }
         } catch (error) {
