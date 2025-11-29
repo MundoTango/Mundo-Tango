@@ -1058,7 +1058,7 @@ export default function ProfileTabAbout({ user, isOwnProfile, isPublicView = fal
                               className="flex items-center gap-1.5 py-1.5 px-3 cursor-pointer hover-elevate transition-all"
                               style={role ? { borderColor: `${role.color}40` } : undefined}
                               data-testid={`badge-role-experience-${roleValue}`}
-                              onClick={() => isOwnProfile && setIsEditing(true)}
+                              onClick={() => canEdit && setIsEditing(true)}
                             >
                               {IconComponent && <IconComponent className="w-3.5 h-3.5" style={{ color: role?.color }} />}
                               <span>{role?.label || roleValue.replace(/_/g, ' ')}</span>
@@ -1212,7 +1212,7 @@ export default function ProfileTabAbout({ user, isOwnProfile, isPublicView = fal
       <AboutSubTabs 
         activeTab={activeSubTab} 
         onTabChange={setActiveSubTab} 
-        isOwnProfile={isOwnProfile}
+        isOwnProfile={canEdit}
         hasSubscription={!!user.stripeSubscriptionId}
       />
       
