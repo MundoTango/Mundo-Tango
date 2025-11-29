@@ -385,7 +385,7 @@ interface TravelPlanItem {
 
 ### 4.5 ProfileTabEvents
 
-**Purpose:** Display user's event participations and upcoming events.
+**Purpose:** Display user's event participations, upcoming events, and manage RSVP status.
 
 **Component:** `client/src/components/profile/ProfileTabEvents.tsx`
 
@@ -395,6 +395,69 @@ interface TravelPlanItem {
 - Pricing display
 - Date and venue information
 - Event image display
+- Host languages display
+- **RSVP Mutation System** (Nov 29, 2025)
+
+#### RSVP Mutation System
+
+**Status States:**
+| Status | Icon | Color | Description |
+|--------|------|-------|-------------|
+| `going` | Check | Green | User confirmed attendance |
+| `maybe` | Users | Yellow | User interested but uncertain |
+| `not_going` | Users | Red | User declined |
+| `null` | Users | Default | No RSVP yet |
+
+**Implementation:**
+```typescript
+// RSVP Hook
+const useEventRSVPs = (eventId: number, userId?: number) => {
+  return useQuery({
+    queryKey: ["/api/events", eventId, "attendees"],
+    enabled: !!eventId,
+    select: (data) => {
+      // Find user's RSVP from attendees list
+      const userRsvp = data?.find(a => a.user?.id === userId);
+      return userRsvp?.rsvp?.status || null;
+    }
+  });
+};
+
+// RSVP Mutation
+const rsvpMutation = useMutation({
+  mutationFn: async ({ eventId, status }) => {
+    return apiRequest("POST", `/api/events/${eventId}/rsvp`, { status });
+  },
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ["/api/events", eventId, "attendees"] });
+    toast({ title: "RSVP Updated" });
+  }
+});
+```
+
+**Dropdown UI:**
+- All 3 options always visible (Going, Maybe, Not Going)
+- Current status shown with checkmark
+- Status-specific icons with colors
+- Disabled during mutation pending
+
+**Data Structure (API Response):**
+```typescript
+// GET /api/events/:id/attendees returns:
+{
+  rsvp: {
+    id: number;
+    eventId: number;
+    userId: number;
+    status: 'going' | 'maybe' | 'not_going';
+  };
+  user: {
+    id: number;
+    name: string;
+    profileImage?: string;
+  };
+}
+```
 
 **Event Interface:**
 ```typescript
@@ -411,6 +474,7 @@ interface Event {
     price?: string;
     imageUrl?: string;
     status: string;
+    hostLanguages?: string[];
   };
   organizer: {
     id: number;
@@ -424,6 +488,7 @@ interface Event {
 - Events → PRO Tab (verified event participations)
 - Events → Memories (event memories auto-created)
 - Travel → Events (trip-linked events)
+- RSVP Status → Event Attendees list
 
 ---
 
