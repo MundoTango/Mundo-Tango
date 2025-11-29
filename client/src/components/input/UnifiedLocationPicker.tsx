@@ -265,19 +265,69 @@ export function UnifiedLocationPicker({
             });
             
             // Deduplicate: Keep only ONE result per city
-            // If a city_group exists for a city, filter out other sources for the same city
+            // If a city_group exists for a city, filter out ALL other sources for that city
+            // Step 1: Collect all city_group city names (normalized)
+            const cityGroupNames = new Set<string>();
+            const cityGroupCountries = new Map<string, string>();
+            
+            const normalizeCityName = (name: string): string => {
+              // Remove common prefixes and normalize for matching
+              return name
+                .toLowerCase()
+                .replace(/^ciudad autónoma de\s*/i, '')
+                .replace(/^ciudad de\s*/i, '')
+                .replace(/^provincia de\s*/i, '')
+                .replace(/^metropolitan\s*/i, '')
+                .replace(/^greater\s*/i, '')
+                .replace(/^area\s*/i, '')
+                .trim();
+            };
+            
+            transformedResults.forEach((result) => {
+              // @ts-ignore
+              if (result._source === 'city_group') {
+                const normalized = normalizeCityName(result.address?.city || '');
+                const country = (result.address?.country || '').toLowerCase();
+                cityGroupNames.add(normalized);
+                cityGroupCountries.set(normalized, country);
+              }
+            });
+            
+            // Step 2: Filter results - if a city_group exists for this city, only show the city_group
             const seenCities = new Set<string>();
             const deduplicatedResults = transformedResults.filter((result) => {
               // @ts-ignore - custom source field
               const source = result._source;
               const cityName = result.address?.city || '';
               const cityCountry = result.address?.country || '';
-              const cityKey = `${cityName}|${cityCountry}`.toLowerCase();
+              const normalizedName = normalizeCityName(cityName);
+              const normalizedCountry = cityCountry.toLowerCase();
               
-              // Priority: city_group > popular > nominatim
-              // If we've already seen this city, only keep if current source is higher priority
+              // Check if this city matches any city_group (even partial match)
+              let matchesCityGroup = false;
+              cityGroupNames.forEach((groupName) => {
+                const groupCountry = cityGroupCountries.get(groupName) || '';
+                // Match if normalized names are equal, or one contains the other
+                if (normalizedName === groupName || 
+                    normalizedName.includes(groupName) || 
+                    groupName.includes(normalizedName)) {
+                  // Also verify same country (or close match)
+                  if (normalizedCountry === groupCountry || 
+                      normalizedCountry.includes(groupCountry) ||
+                      groupCountry.includes(normalizedCountry)) {
+                    matchesCityGroup = true;
+                  }
+                }
+              });
+              
+              // If this matches a city_group but ISN'T a city_group, filter it out
+              if (matchesCityGroup && source !== 'city_group') {
+                return false;
+              }
+              
+              // Standard deduplication for non-city_group matches
+              const cityKey = `${normalizedName}|${normalizedCountry}`;
               if (seenCities.has(cityKey)) {
-                // Already have this city, skip unless this is a city_group (highest priority)
                 return source === 'city_group';
               }
               
