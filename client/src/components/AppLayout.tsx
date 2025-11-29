@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
-import Sidebar from "./Sidebar";
+import { AppSidebar } from "./AppSidebar";
 import UnifiedTopBar from "./navigation/UnifiedTopBar";
 import TourGuide from "./mrBlue/TourGuide";
 import { useQuery } from "@tanstack/react-query";
 import { SelfHealingStatus } from "@/components/SelfHealingStatus";
+import { SidebarProvider, SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
@@ -21,25 +22,7 @@ function setSidebarCookie(isOpen: boolean) {
   document.cookie = `${SIDEBAR_COOKIE_NAME}=${isOpen}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`;
 }
 
-export function AppLayout({ children }: { children: React.ReactNode }) {
-  const [sidebarOpen, setSidebarOpen] = useState(() => getSidebarStateFromCookie());
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 1024);
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  const handleSidebarToggle = () => {
-    const newState = !sidebarOpen;
-    setSidebarOpen(newState);
-    setSidebarCookie(newState);
-  };
-
+function AppLayoutContent({ children }: { children: React.ReactNode }) {
   const { data: userData } = useQuery<{ user: { id: number; role: string } }>({
     queryKey: ['/api/auth/me']
   });
@@ -47,35 +30,11 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const user = userData?.user;
 
   return (
-    <div className="relative flex flex-col h-screen w-full bg-background">
-      {/* Top Bar - Fixed */}
-      <UnifiedTopBar 
-        onMenuToggle={handleSidebarToggle}
-        showMenuButton={true}
-      />
+    <>
+      <main className="flex-1 overflow-y-auto">
+        {children}
+      </main>
       
-      {/* Content Area - Below Top Bar */}
-      <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar - renders its own positioning */}
-        <Sidebar 
-          isOpen={sidebarOpen} 
-          setIsOpen={(open) => {
-            setSidebarOpen(open);
-            setSidebarCookie(open);
-          }}
-          isMobile={isMobile}
-        />
-        
-        {/* Main Content - adjusts margin based on sidebar state on desktop */}
-        <main 
-          className={`flex-1 overflow-y-auto transition-all duration-300 ease-in-out ${
-            !isMobile && sidebarOpen ? 'lg:ml-64' : ''
-          }`}
-        >
-          {children}
-        </main>
-      </div>
-
       {user && (
         <TourGuide
           feature="app-onboarding"
@@ -85,6 +44,33 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       )}
       
       <SelfHealingStatus />
-    </div>
+    </>
+  );
+}
+
+export function AppLayout({ children }: { children: React.ReactNode }) {
+  const [defaultOpen] = useState(() => getSidebarStateFromCookie());
+
+  const sidebarStyle = {
+    "--sidebar-width": "16rem",
+    "--sidebar-width-icon": "3rem",
+  };
+
+  return (
+    <SidebarProvider 
+      defaultOpen={defaultOpen}
+      onOpenChange={(open) => setSidebarCookie(open)}
+      style={sidebarStyle as React.CSSProperties}
+    >
+      <div className="flex h-screen w-full bg-background">
+        <AppSidebar />
+        <div className="flex flex-col flex-1 overflow-hidden">
+          <UnifiedTopBar 
+            showMenuButton={true}
+          />
+          <AppLayoutContent>{children}</AppLayoutContent>
+        </div>
+      </div>
+    </SidebarProvider>
   );
 }

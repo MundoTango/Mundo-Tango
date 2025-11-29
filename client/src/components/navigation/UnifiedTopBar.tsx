@@ -4,6 +4,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/hooks/use-theme";
+import { useSidebar } from "@/components/ui/sidebar";
 import {
   Menu,
   Search,
@@ -41,7 +42,7 @@ import { InlineSearchInput } from "@/components/navigation/InlineSearchInput";
 import { cn } from "@/lib/utils";
 
 interface UnifiedTopBarProps {
-  onMenuToggle: () => void;
+  onMenuToggle?: () => void;
   theme?: 'light' | 'dark';
   onThemeToggle?: () => void;
   showMenuButton?: boolean;
@@ -87,7 +88,7 @@ function getNotificationIcon(type: string) {
 }
 
 function UnifiedTopBar({ 
-  onMenuToggle, 
+  onMenuToggle: externalMenuToggle, 
   theme: externalTheme, 
   onThemeToggle: externalThemeToggle,
   showMenuButton = true 
@@ -97,6 +98,16 @@ function UnifiedTopBar({
   const { user, profile, logout } = useAuth();
   const { theme: internalTheme, setTheme: setInternalTheme } = useTheme();
   const queryClient = useQueryClient();
+  
+  // Use shadcn sidebar toggle if available, fallback to external prop
+  let sidebarToggle: (() => void) | undefined;
+  try {
+    const sidebar = useSidebar();
+    sidebarToggle = sidebar?.toggleSidebar;
+  } catch {
+    // useSidebar throws if not inside SidebarProvider, fallback to external
+  }
+  const onMenuToggle = sidebarToggle || externalMenuToggle || (() => {});
 
   // Use external theme if provided, otherwise use internal
   const theme = externalTheme || internalTheme;

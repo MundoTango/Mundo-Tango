@@ -1,20 +1,18 @@
 import { useState, useEffect, ReactNode } from 'react';
-import { cn } from '@/lib/utils';
-import Sidebar from '@/components/Sidebar';
+import { AppSidebar } from '@/components/AppSidebar';
 import UnifiedTopBar from '@/components/navigation/UnifiedTopBar';
+import { SidebarProvider } from "@/components/ui/sidebar";
 
 interface DashboardLayoutProps {
   children: ReactNode;
 }
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
     const savedTheme = localStorage.getItem('theme');
     return (savedTheme as 'light' | 'dark') || 'light';
   });
 
-  // Update document theme class on mount and theme change
   useEffect(() => {
     if (theme === 'dark') {
       document.documentElement.classList.add('dark');
@@ -35,30 +33,26 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     }
   };
 
+  const sidebarStyle = {
+    "--sidebar-width": "16rem",
+    "--sidebar-width-icon": "3rem",
+  };
+
   return (
-    <div className="min-h-screen bg-bg-primary" data-testid="dashboard-layout">
-      {/* Topbar */}
-      <UnifiedTopBar 
-        onMenuToggle={() => setSidebarOpen(!sidebarOpen)}
-        theme={theme}
-        onThemeToggle={toggleTheme}
-        showMenuButton={true}
-      />
-
-      <div className="relative flex min-h-screen">
-        {/* Sidebar */}
-        <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
-
-        {/* Main content */}
-        <main className="flex-1 bg-bg-primary transition-all duration-300">
-          <div className={cn(
-            "transition-all duration-300",
-            sidebarOpen ? "lg:pl-64" : "lg:pl-0"
-          )}>
+    <SidebarProvider style={sidebarStyle as React.CSSProperties}>
+      <div className="flex h-screen w-full bg-bg-primary" data-testid="dashboard-layout">
+        <AppSidebar />
+        <div className="flex flex-col flex-1 overflow-hidden">
+          <UnifiedTopBar 
+            theme={theme}
+            onThemeToggle={toggleTheme}
+            showMenuButton={true}
+          />
+          <main className="flex-1 overflow-y-auto bg-bg-primary">
             {children}
-          </div>
-        </main>
+          </main>
+        </div>
       </div>
-    </div>
+    </SidebarProvider>
   );
 }
