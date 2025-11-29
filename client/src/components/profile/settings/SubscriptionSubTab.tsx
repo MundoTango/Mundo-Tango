@@ -4,11 +4,40 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 import { Crown, ExternalLink, Calendar, CreditCard } from "lucide-react";
+import { useState } from "react";
+import { apiRequest } from "@/lib/queryClient";
 
 export default function SubscriptionSubTab() {
   const { useSubscription } = useAuth();
   const { data: subscription, isLoading } = useSubscription();
+  const { toast } = useToast();
+  const [isRedirecting, setIsRedirecting] = useState(false);
+
+  const handleManageSubscription = async () => {
+    setIsRedirecting(true);
+    try {
+      const response = await apiRequest('POST', '/api/stripe/create-portal-session');
+      const data = await response.json();
+      if (data.url) {
+        window.open(data.url, '_blank');
+      } else {
+        toast({
+          title: "Subscription Management",
+          description: "Billing portal coming soon. Contact support for billing changes.",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Unable to open billing portal. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsRedirecting(false);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -96,10 +125,12 @@ export default function SubscriptionSubTab() {
           <Button 
             variant="outline" 
             className="w-full" 
+            onClick={handleManageSubscription}
+            disabled={isRedirecting}
             data-testid="button-manage-subscription"
           >
             <ExternalLink className="h-4 w-4 mr-2" />
-            Manage Subscription
+            {isRedirecting ? 'Opening...' : 'Manage Subscription'}
           </Button>
         </CardContent>
       </Card>
