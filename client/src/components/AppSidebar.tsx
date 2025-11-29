@@ -7,21 +7,18 @@ import {
   Settings, 
   LogOut, 
   Server,
-  Rss,
   UserCircle,
   UserPlus,
   Bell,
   Compass,
   GraduationCap,
   MapPin,
-  PlayCircle,
   Brain,
   ShoppingBag,
   ShoppingCart,
   Package,
   Store,
   Bot,
-  Bookmark,
   Shield,
   Sparkles,
   Globe,
@@ -33,10 +30,6 @@ import {
   Briefcase,
   Building2,
   TrendingUp,
-  Share2,
-  PenSquare,
-  Link as LinkIcon,
-  Megaphone,
   Plane,
   PlaneTakeoff,
   Heart,
@@ -46,6 +39,19 @@ import {
   Files,
   BookTemplate,
   PenTool,
+  Music,
+  Camera,
+  Drama,
+  PenLine,
+  Palette,
+  Piano,
+  Shirt,
+  BookOpen,
+  Target,
+  Mic,
+  Trophy,
+  Home as HousingIcon,
+  Award,
 } from "lucide-react";
 import { useLocation, Link } from "wouter";
 import { cn } from "@/lib/utils";
@@ -65,57 +71,59 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 
-// Core Social Hub (3 items)
 const socialItems = [
   { title: "Memories", url: "/memories", icon: Home },
   { title: "Profile", url: "/profile", icon: UserCircle },
   { title: "Discover", url: "/discover", icon: Compass },
 ];
 
-// Community & Connections (6 items)
 const communityItems = [
   { title: "Friends", url: "/friends-list", icon: UserPlus },
   { title: "Recommendations", url: "/recommendations", icon: Sparkles },
-  { title: "Invitations", url: "/invitations", icon: UserPlus },
   { title: "Notifications", url: "/notifications", icon: Bell },
   { title: "Groups", url: "/groups", icon: Users },
   { title: "Messages", url: "/messages", icon: MessageSquare },
 ];
 
-// Events & Calendar (2 items)
 const eventsItems = [
   { title: "Events", url: "/events", icon: Calendar },
   { title: "Calendar", url: "/calendar", icon: Calendar },
 ];
 
-// Travel (4 items)
 const travelItems = [
   { title: "Dashboard", url: "/travel", icon: Plane },
   { title: "Plan Trip", url: "/travel/planner", icon: PlaneTakeoff },
   { title: "My Trips", url: "/travel", icon: MapPin },
-  { title: "Event Travel", url: "/events", icon: Users },
 ];
 
-// Tango Resources (3 items)
-const tangoItems = [
-  { title: "Teachers", url: "/teachers", icon: GraduationCap },
-  { title: "Venues", url: "/venues", icon: MapPin },
-  { title: "Tutorials", url: "/tutorials", icon: PlayCircle },
+const proDiscoveryItems = [
+  { title: "Learning", url: "/pro/learning", icon: GraduationCap, color: "#10B981" },
+  { title: "Music", url: "/pro/music", icon: Music, color: "#8B5CF6" },
+  { title: "Media Gallery", url: "/pro/media", icon: Camera, color: "#EF4444" },
+  { title: "Performances", url: "/pro/performances", icon: Drama, color: "#F59E0B" },
+  { title: "Venues", url: "/pro/venues", icon: Building2, color: "#6B7280" },
+  { title: "Organizers", url: "/pro/organizers", icon: Calendar, color: "#3B82F6" },
+  { title: "Stories & Blog", url: "/pro/stories", icon: PenLine, color: "#14B8A6" },
+  { title: "Artists", url: "/pro/artists", icon: Palette, color: "#EC4899" },
+  { title: "Musicians", url: "/pro/musicians", icon: Piano, color: "#A855F7" },
+  { title: "Fashion", url: "/pro/fashion", icon: Shirt, color: "#EC4899" },
+  { title: "Coaches", url: "/pro/coaches", icon: Target, color: "#10B981" },
+  { title: "Hosts & MCs", url: "/pro/hosts", icon: Mic, color: "#F97316" },
+  { title: "Vendors", url: "/pro/vendors", icon: Briefcase, color: "#6366F1" },
+  { title: "Community Leaders", url: "/pro/community", icon: Globe, color: "#40E0D0" },
+  { title: "Talent Match", url: "/talent-match", icon: Sparkles, color: "#1E90FF" },
 ];
 
-// Resources (1 item)
 const resourcesItems = [
   { title: "Community Map", url: "/community-world-map", icon: Globe },
+  { title: "Top Contributors", url: "/leaderboard", icon: Trophy },
 ];
 
-// AI & Tools (3 items)
 const toolsItems = [
   { title: "Life CEO", url: "/life-ceo", icon: Brain },
   { title: "Mr Blue AI", url: "/mr-blue", icon: Bot },
-  { title: "Autonomous Dev", url: "/autonomous", icon: Brain },
 ];
 
-// Marketplace (4 items)
 const marketplaceItems = [
   { title: "Browse Products", url: "/marketplace", icon: ShoppingBag },
   { title: "Cart", url: "/marketplace/cart", icon: ShoppingCart },
@@ -123,22 +131,17 @@ const marketplaceItems = [
   { title: "Seller Dashboard", url: "/marketplace/seller", icon: Store },
 ];
 
-// Crowdfunding (3 items)
+const housingItems = [
+  { title: "Browse Housing", url: "/housing", icon: HousingIcon },
+  { title: "My Listings", url: "/housing/my-listings", icon: Building2 },
+];
+
 const crowdfundingItems = [
   { title: "Discover", url: "/crowdfunding", icon: Heart },
   { title: "Create Campaign", url: "/crowdfunding/create", icon: PlusCircle },
   { title: "My Campaigns", url: "/crowdfunding/my", icon: Folder },
 ];
 
-// Social Media (4 items)
-const socialMediaItems = [
-  { title: "Dashboard", url: "/social", icon: Share2 },
-  { title: "Compose", url: "/social/compose", icon: PenSquare },
-  { title: "Connections", url: "/social/connections", icon: LinkIcon },
-  { title: "Campaigns", url: "/social/campaigns", icon: Megaphone },
-];
-
-// Financial (5 items)
 const financialItems = [
   { title: "Dashboard", url: "/financial", icon: LayoutDashboard },
   { title: "Portfolios", url: "/financial/portfolios", icon: Briefcase },
@@ -147,7 +150,6 @@ const financialItems = [
   { title: "Insights", url: "/financial/insights", icon: Brain },
 ];
 
-// Legal (4 items)
 const legalItems = [
   { title: "Dashboard", url: "/legal", icon: FileText },
   { title: "Documents", url: "/legal/documents", icon: Files },
@@ -155,21 +157,17 @@ const legalItems = [
   { title: "Pending Signatures", url: "/legal/documents?filter=pending", icon: PenTool },
 ];
 
-// Personal (3 items)
 const personalItems = [
-  { title: "Saved Posts", url: "/saved-posts", icon: Bookmark },
   { title: "Favorites", url: "/favorites", icon: Star },
   { title: "Settings", url: "/settings", icon: Settings },
 ];
 
-// Admin (3 items - role-based)
 const adminItems = [
   { title: "Admin", url: "/admin", icon: Shield },
   { title: "Platform", url: "/platform", icon: Server },
   { title: "Visual Editor", url: "/admin/visual-editor", icon: Layout },
 ];
 
-// ESA Framework (3 items - God/Super Admin only)
 const esaItems = [
   { title: "ESA Framework", url: "/platform/esa", icon: Brain },
   { title: "ESA Tasks", url: "/platform/esa/tasks", icon: ListChecks },
@@ -180,15 +178,48 @@ function AppSidebarComponent() {
   const [location] = useLocation();
   const { user, profile, logout } = useAuth();
 
-  // Use profile data for display, fallback to user email
   const displayName = profile?.name || user?.email?.split('@')[0] || "User";
   const username = profile?.username || user?.email?.split('@')[0] || "user";
   const avatarUrl = profile?.profileImage;
 
-  // Check if user is admin (role === 'admin' or 'god')
   const isAdmin = user?.role === 'admin' || user?.role === 'god';
-  // Check if user is God/Super Admin (only 'god' role for ESA access)
   const isGodAdmin = user?.role === 'god';
+
+  const renderMenuItem = (item: { title: string; url: string; icon: React.ElementType; color?: string }, isActive: boolean) => (
+    <SidebarMenuItem key={item.title}>
+      <SidebarMenuButton 
+        asChild 
+        data-active={isActive} 
+        data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
+        className={cn(
+          "transition-all duration-200 rounded-lg",
+          isActive && "bg-gradient-to-r from-[#40E0D0]/20 to-transparent border-l-2 border-[#40E0D0]"
+        )}
+        style={isActive ? { color: item.color || '#40E0D0' } : undefined}
+      >
+        <Link to={item.url}>
+          <>
+            <item.icon 
+              className="h-5 w-5 transition-colors duration-200" 
+              style={item.color ? { color: item.color } : undefined}
+            />
+            <span className="font-medium">{item.title}</span>
+          </>
+        </Link>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
+  );
+
+  const renderGroup = (label: string, items: typeof socialItems) => (
+    <SidebarGroup className="border-b border-white/10 pb-4">
+      <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">{label}</SidebarGroupLabel>
+      <SidebarGroupContent>
+        <SidebarMenu>
+          {items.map((item) => renderMenuItem(item, location === item.url || location.startsWith(item.url + '/')))}
+        </SidebarMenu>
+      </SidebarGroupContent>
+    </SidebarGroup>
+  );
 
   return (
     <Sidebar 
@@ -213,462 +244,67 @@ function AppSidebarComponent() {
           </SidebarGroupLabel>
         </SidebarGroup>
 
-        {/* Core Social Hub */}
+        {renderGroup("Social", socialItems)}
+        {renderGroup("Community", communityItems)}
+        {renderGroup("Events", eventsItems)}
+        {renderGroup("Travel", travelItems)}
+
         <SidebarGroup className="border-b border-white/10 pb-4">
-          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">Social</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">
+            PRO Discovery
+          </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {socialItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton 
-                    asChild 
-                    data-active={location === item.url} 
-                    data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
-                    className={cn(
-                      "transition-all duration-200 rounded-lg",
-                      location === item.url && "bg-gradient-to-r from-[#40E0D0]/20 to-transparent border-l-2 border-[#40E0D0]"
-                    )}
-                    style={location === item.url ? { color: '#40E0D0' } : undefined}
-                  >
-                    <Link to={item.url}>
-                      <>
-                        <item.icon className="h-5 w-5 transition-colors duration-200" />
-                        <span className="font-medium">{item.title}</span>
-                      </>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        {/* Community & Connections */}
-        <SidebarGroup className="border-b border-white/10 pb-4">
-          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">Community</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {communityItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton 
-                    asChild 
-                    data-active={location === item.url} 
-                    data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
-                    className={cn(
-                      "transition-all duration-200 rounded-lg",
-                      location === item.url && "bg-gradient-to-r from-[#40E0D0]/20 to-transparent border-l-2 border-[#40E0D0]"
-                    )}
-                    style={location === item.url ? { color: '#40E0D0' } : undefined}
-                  >
-                    <Link to={item.url}>
-                      <>
-                        <item.icon className="h-5 w-5 transition-colors duration-200" />
-                        <span className="font-medium">{item.title}</span>
-                      </>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        {/* Events & Calendar */}
-        <SidebarGroup className="border-b border-white/10 pb-4">
-          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">Events</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {eventsItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton 
-                    asChild 
-                    data-active={location === item.url} 
-                    data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
-                    className={cn(
-                      "transition-all duration-200 rounded-lg",
-                      location === item.url && "bg-gradient-to-r from-[#40E0D0]/20 to-transparent border-l-2 border-[#40E0D0]"
-                    )}
-                    style={location === item.url ? { color: '#40E0D0' } : undefined}
-                  >
-                    <Link to={item.url}>
-                      <>
-                        <item.icon className="h-5 w-5 transition-colors duration-200" />
-                        <span className="font-medium">{item.title}</span>
-                      </>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        {/* Travel */}
-        <SidebarGroup className="border-b border-white/10 pb-4">
-          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">Travel</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {travelItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton 
-                    asChild 
-                    data-active={location === item.url} 
-                    data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
-                    className={cn(
-                      "transition-all duration-200 rounded-lg",
-                      location === item.url && "bg-gradient-to-r from-[#40E0D0]/20 to-transparent border-l-2 border-[#40E0D0]"
-                    )}
-                    style={location === item.url ? { color: '#40E0D0' } : undefined}
-                  >
-                    <Link to={item.url}>
-                      <>
-                        <item.icon className="h-5 w-5 transition-colors duration-200" />
-                        <span className="font-medium">{item.title}</span>
-                      </>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        {/* Tango Resources */}
-        <SidebarGroup className="border-b border-white/10 pb-4">
-          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">Tango Resources</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {tangoItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton 
-                    asChild 
-                    data-active={location === item.url} 
-                    data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
-                    className={cn(
-                      "transition-all duration-200 rounded-lg",
-                      location === item.url && "bg-gradient-to-r from-[#40E0D0]/20 to-transparent border-l-2 border-[#40E0D0]"
-                    )}
-                    style={location === item.url ? { color: '#40E0D0' } : undefined}
-                  >
-                    <Link to={item.url}>
-                      <>
-                        <item.icon className="h-5 w-5 transition-colors duration-200" />
-                        <span className="font-medium">{item.title}</span>
-                      </>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        {/* Resources */}
-        <SidebarGroup className="border-b border-white/10 pb-4">
-          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">Resources</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {resourcesItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton 
-                    asChild 
-                    data-active={location === item.url} 
-                    data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
-                    className={cn(
-                      "transition-all duration-200 rounded-lg",
-                      location === item.url && "bg-gradient-to-r from-[#40E0D0]/20 to-transparent border-l-2 border-[#40E0D0]"
-                    )}
-                    style={location === item.url ? { color: '#40E0D0' } : undefined}
-                  >
-                    <Link to={item.url}>
-                      <>
-                        <item.icon className="h-5 w-5 transition-colors duration-200" />
-                        <span className="font-medium">{item.title}</span>
-                      </>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        {/* AI & Tools */}
-        <SidebarGroup className="border-b border-white/10 pb-4">
-          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">AI & Tools</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {toolsItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton 
-                    asChild 
-                    data-active={location === item.url} 
-                    data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
-                    className={cn(
-                      "transition-all duration-200 rounded-lg",
-                      location === item.url && "bg-gradient-to-r from-[#40E0D0]/20 to-transparent border-l-2 border-[#40E0D0]"
-                    )}
-                    style={location === item.url ? { color: '#40E0D0' } : undefined}
-                  >
-                    <Link to={item.url}>
-                      <>
-                        <item.icon className="h-5 w-5 transition-colors duration-200" />
-                        <span className="font-medium">{item.title}</span>
-                      </>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        {/* Marketplace */}
-        <SidebarGroup className="border-b border-white/10 pb-4">
-          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">Marketplace</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {marketplaceItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton 
-                    asChild 
-                    data-active={location === item.url || location.startsWith(item.url + '/')} 
-                    data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
-                    className={cn(
-                      "transition-all duration-200 rounded-lg",
-                      (location === item.url || location.startsWith(item.url + '/')) && "bg-gradient-to-r from-[#40E0D0]/20 to-transparent border-l-2 border-[#40E0D0]"
-                    )}
-                    style={(location === item.url || location.startsWith(item.url + '/')) ? { color: '#40E0D0' } : undefined}
-                  >
-                    <Link to={item.url}>
-                      <>
-                        <item.icon className="h-5 w-5 transition-colors duration-200" />
-                        <span className="font-medium">{item.title}</span>
-                      </>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        {/* Crowdfunding */}
-        <SidebarGroup className="border-b border-white/10 pb-4">
-          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">Crowdfunding</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {crowdfundingItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton 
-                    asChild 
-                    data-active={location === item.url || location.startsWith('/crowdfunding')} 
-                    data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
-                    className={cn(
-                      "transition-all duration-200 rounded-lg",
-                      (location === item.url || (item.url === "/crowdfunding" && location.startsWith('/crowdfunding'))) && "bg-gradient-to-r from-[#40E0D0]/20 to-transparent border-l-2 border-[#40E0D0]"
-                    )}
-                    style={(location === item.url || (item.url === "/crowdfunding" && location.startsWith('/crowdfunding'))) ? { color: '#40E0D0' } : undefined}
-                  >
-                    <Link to={item.url}>
-                      <>
-                        <item.icon className="h-5 w-5 transition-colors duration-200" />
-                        <span className="font-medium">{item.title}</span>
-                      </>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        {/* Social Media */}
-        <SidebarGroup className="border-b border-white/10 pb-4">
-          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">Social Media</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {socialMediaItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton 
-                    asChild 
-                    data-active={location === item.url} 
-                    data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
-                    className={cn(
-                      "transition-all duration-200 rounded-lg",
-                      location === item.url && "bg-gradient-to-r from-[#40E0D0]/20 to-transparent border-l-2 border-[#40E0D0]"
-                    )}
-                    style={location === item.url ? { color: '#40E0D0' } : undefined}
-                  >
-                    <Link to={item.url}>
-                      <>
-                        <item.icon className="h-5 w-5 transition-colors duration-200" />
-                        <span className="font-medium">{item.title}</span>
-                      </>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        {/* Financial */}
-        <SidebarGroup className="border-b border-white/10 pb-4">
-          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">Financial</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {financialItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton 
-                    asChild 
-                    data-active={location === item.url || (item.url === "/financial" && location.startsWith("/financial"))} 
-                    data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
-                    className={cn(
-                      "transition-all duration-200 rounded-lg",
-                      (location === item.url || (item.url === "/financial" && location.startsWith("/financial") && !financialItems.slice(1).some(fi => location === fi.url))) && "bg-gradient-to-r from-[#40E0D0]/20 to-transparent border-l-2 border-[#40E0D0]"
-                    )}
-                    style={(location === item.url || (item.url === "/financial" && location.startsWith("/financial") && !financialItems.slice(1).some(fi => location === fi.url))) ? { color: '#40E0D0' } : undefined}
-                  >
-                    <Link to={item.url}>
-                      <>
-                        <item.icon className="h-5 w-5 transition-colors duration-200" />
-                        <span className="font-medium">{item.title}</span>
-                      </>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        {/* Legal */}
-        <SidebarGroup className="border-b border-white/10 pb-4">
-          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">Legal</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {legalItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton 
-                    asChild 
-                    data-active={location === item.url || (item.url === "/legal" && location.startsWith("/legal"))} 
-                    data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
-                    className={cn(
-                      "transition-all duration-200 rounded-lg",
-                      (location === item.url || (item.url === "/legal" && location.startsWith("/legal") && !legalItems.slice(1).some(li => location === li.url))) && "bg-gradient-to-r from-[#40E0D0]/20 to-transparent border-l-2 border-[#40E0D0]"
-                    )}
-                    style={(location === item.url || (item.url === "/legal" && location.startsWith("/legal") && !legalItems.slice(1).some(li => location === li.url))) ? { color: '#40E0D0' } : undefined}
-                  >
-                    <Link to={item.url}>
-                      <>
-                        <item.icon className="h-5 w-5 transition-colors duration-200" />
-                        <span className="font-medium">{item.title}</span>
-                      </>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        {/* Personal */}
-        <SidebarGroup className="border-b border-white/10 pb-4">
-          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">Personal</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {personalItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton 
-                    asChild 
-                    data-active={location === item.url} 
-                    data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
-                    className={cn(
-                      "transition-all duration-200 rounded-lg",
-                      location === item.url && "bg-gradient-to-r from-[#40E0D0]/20 to-transparent border-l-2 border-[#40E0D0]"
-                    )}
-                    style={location === item.url ? { color: '#40E0D0' } : undefined}
-                  >
-                    <Link to={item.url}>
-                      <>
-                        <item.icon className="h-5 w-5 transition-colors duration-200" />
-                        <span className="font-medium">{item.title}</span>
-                      </>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        {/* Admin (role-based visibility) */}
-        {isAdmin && (
-          <>
-            <SidebarSeparator className="bg-white/10" />
-            <SidebarGroup className="border-b border-white/10 pb-4">
-              <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">Admin</SidebarGroupLabel>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  {adminItems.map((item) => (
-                    <SidebarMenuItem key={item.title}>
-                      <SidebarMenuButton 
-                        asChild 
-                        data-active={location === item.url} 
-                        data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
-                        className={cn(
-                          "transition-all duration-200 rounded-lg",
-                          location === item.url && "bg-gradient-to-r from-[#40E0D0]/20 to-transparent border-l-2 border-[#40E0D0]"
-                        )}
-                        style={location === item.url ? { color: '#40E0D0' } : undefined}
-                      >
-                        <Link to={item.url}>
-                          <>
-                            <item.icon className="h-5 w-5 transition-colors duration-200" />
-                            <span className="font-medium">{item.title}</span>
-                          </>
-                        </Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  ))}
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </SidebarGroup>
-          </>
-        )}
-
-        {/* ESA Framework (God/Super Admin only) */}
-        {isGodAdmin && (
-          <SidebarGroup className="border-b border-white/10 pb-4">
-            <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">ESA Framework</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {esaItems.map((item) => (
+              {proDiscoveryItems.map((item) => {
+                const isActive = location === item.url || location.startsWith(item.url + '/');
+                return (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton 
                       asChild 
-                      data-active={location === item.url} 
+                      data-active={isActive} 
                       data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
                       className={cn(
                         "transition-all duration-200 rounded-lg",
-                        location === item.url && "bg-gradient-to-r from-[#40E0D0]/20 to-transparent border-l-2 border-[#40E0D0]"
+                        isActive && "bg-gradient-to-r from-[#40E0D0]/20 to-transparent border-l-2"
                       )}
-                      style={location === item.url ? { color: '#40E0D0' } : undefined}
+                      style={{
+                        ...(isActive ? { color: item.color, borderColor: item.color } : {}),
+                      }}
                     >
                       <Link to={item.url}>
                         <>
-                          <item.icon className="h-5 w-5 transition-colors duration-200" />
+                          <item.icon 
+                            className="h-5 w-5 transition-colors duration-200" 
+                            style={{ color: item.color }}
+                          />
                           <span className="font-medium">{item.title}</span>
                         </>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
+                );
+              })}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        {renderGroup("Resources", resourcesItems)}
+        {renderGroup("AI & Tools", toolsItems)}
+        {renderGroup("Marketplace", marketplaceItems)}
+        {renderGroup("Housing", housingItems)}
+        {renderGroup("Crowdfunding", crowdfundingItems)}
+        {renderGroup("Financial", financialItems)}
+        {renderGroup("Legal", legalItems)}
+        {renderGroup("Personal", personalItems)}
+
+        {isAdmin && (
+          <>
+            <SidebarSeparator className="bg-white/10" />
+            {renderGroup("Admin", adminItems)}
+          </>
         )}
+
+        {isGodAdmin && renderGroup("ESA Framework", esaItems)}
       </SidebarContent>
 
       <SidebarFooter 

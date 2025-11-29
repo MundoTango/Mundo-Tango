@@ -403,6 +403,24 @@ const ReportContentPage = lazy(() => import("@/pages/ReportContentPage"));
 // Visual Editor - Production version
 const VisualEditorPage = lazy(() => import("@/pages/VisualEditorPage"));
 
+// PRO Discovery Pages - Public professional discovery
+const PROLearningPage = lazy(() => import("@/pages/pro/PROGroupPublicPage").then(m => ({ default: m.LearningPage })));
+const PROMusicPage = lazy(() => import("@/pages/pro/PROGroupPublicPage").then(m => ({ default: m.MusicPage })));
+const PROMediaGalleryPage = lazy(() => import("@/pages/pro/PROGroupPublicPage").then(m => ({ default: m.MediaGalleryPage })));
+const PROPerformancesPage = lazy(() => import("@/pages/pro/PROGroupPublicPage").then(m => ({ default: m.PerformancesPage })));
+const PROVenuesPage = lazy(() => import("@/pages/pro/PROGroupPublicPage").then(m => ({ default: m.VenuesPage })));
+const PROOrganizersPage = lazy(() => import("@/pages/pro/PROGroupPublicPage").then(m => ({ default: m.OrganizersPage })));
+const PROStoriesBlogPage = lazy(() => import("@/pages/pro/PROGroupPublicPage").then(m => ({ default: m.StoriesBlogPage })));
+const PROArtistsPage = lazy(() => import("@/pages/pro/PROGroupPublicPage").then(m => ({ default: m.ArtistsPage })));
+const PROMusiciansPage = lazy(() => import("@/pages/pro/PROGroupPublicPage").then(m => ({ default: m.MusiciansPage })));
+const PROClothingDesignersPage = lazy(() => import("@/pages/pro/PROGroupPublicPage").then(m => ({ default: m.ClothingDesignersPage })));
+const PROHistoriansPage = lazy(() => import("@/pages/pro/PROGroupPublicPage").then(m => ({ default: m.HistoriansPage })));
+const PROCoachesPage = lazy(() => import("@/pages/pro/PROGroupPublicPage").then(m => ({ default: m.CoachesPage })));
+const PROHostsMCsPage = lazy(() => import("@/pages/pro/PROGroupPublicPage").then(m => ({ default: m.HostsMCsPage })));
+const PROVendorsPage = lazy(() => import("@/pages/pro/PROGroupPublicPage").then(m => ({ default: m.VendorsPage })));
+const PROCommunityBuildersPage = lazy(() => import("@/pages/pro/PROGroupPublicPage").then(m => ({ default: m.CommunityBuildersPage })));
+const PROTaxiDancersPage = lazy(() => import("@/pages/pro/PROGroupPublicPage").then(m => ({ default: m.TaxiDancersPage })));
+
 function Router() {
   return (
     <Switch>
@@ -1009,6 +1027,167 @@ function Router() {
         <ProtectedRoute>
           <AppLayout>
             <TutorialsPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      {/* PRO Discovery Pages - Public professional discovery */}
+      <Route path="/pro/learning">
+        <ProtectedRoute>
+          <AppLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <PROLearningPage />
+            </Suspense>
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/pro/music">
+        <ProtectedRoute>
+          <AppLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <PROMusicPage />
+            </Suspense>
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/pro/media">
+        <ProtectedRoute>
+          <AppLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <PROMediaGalleryPage />
+            </Suspense>
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/pro/performances">
+        <ProtectedRoute>
+          <AppLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <PROPerformancesPage />
+            </Suspense>
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/pro/venues">
+        <ProtectedRoute>
+          <AppLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <PROVenuesPage />
+            </Suspense>
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/pro/organizers">
+        <ProtectedRoute>
+          <AppLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <PROOrganizersPage />
+            </Suspense>
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/pro/stories">
+        <ProtectedRoute>
+          <AppLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <PROStoriesBlogPage />
+            </Suspense>
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/pro/artists">
+        <ProtectedRoute>
+          <AppLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <PROArtistsPage />
+            </Suspense>
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/pro/musicians">
+        <ProtectedRoute>
+          <AppLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <PROMusiciansPage />
+            </Suspense>
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/pro/fashion">
+        <ProtectedRoute>
+          <AppLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <PROClothingDesignersPage />
+            </Suspense>
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/pro/historians">
+        <ProtectedRoute>
+          <AppLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <PROHistoriansPage />
+            </Suspense>
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/pro/coaches">
+        <ProtectedRoute>
+          <AppLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <PROCoachesPage />
+            </Suspense>
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/pro/hosts">
+        <ProtectedRoute>
+          <AppLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <PROHostsMCsPage />
+            </Suspense>
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/pro/vendors">
+        <ProtectedRoute>
+          <AppLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <PROVendorsPage />
+            </Suspense>
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/pro/community">
+        <ProtectedRoute>
+          <AppLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <PROCommunityBuildersPage />
+            </Suspense>
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/pro/taxi-dancers">
+        <ProtectedRoute>
+          <AppLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <PROTaxiDancersPage />
+            </Suspense>
           </AppLayout>
         </ProtectedRoute>
       </Route>
