@@ -369,7 +369,7 @@ export default function ProfilePage() {
         />
         
         {/* Editorial Gradient Overlay (bottom 40%) */}
-        <div className="absolute bottom-0 left-0 right-0 h-[60%] bg-gradient-to-t from-black/80 via-black/60 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-[60%] bg-gradient-to-t from-black/80 to-transparent" />
         
         {/* Edit Cover Photo Button - Center on Hover */}
         {isOwnProfile && (
