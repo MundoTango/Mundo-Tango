@@ -26,6 +26,7 @@ const PRO_ROLE_IMAGES: Record<string, string> = {
   'journalist': 'https://images.unsplash.com/photo-1508700929628-666bc8bd84ea?w=800&q=80',
   'designer': 'https://images.unsplash.com/photo-1508700929628-666bc8bd84ea?w=800&q=80',
   'vendor': 'https://images.unsplash.com/photo-1508700929628-666bc8bd84ea?w=800&q=80',
+  'taxi-dancer': 'https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?w=800&q=80',
 };
 
 const DEFAULT_PRO_GROUP_IMAGE = 'https://images.unsplash.com/photo-1508700929628-666bc8bd84ea?w=800&q=80';
@@ -110,6 +111,11 @@ const PRO_ROLE_GROUP_MAPPINGS: Record<string, { name: string; description: strin
     description: 'Vendors and businesses serving the tango community. Connect, collaborate, and grow together.',
     slug: 'pro-business'
   },
+  'taxi-dancer': { 
+    name: 'Taxi Dancers Guild', 
+    description: 'Professional taxi dancers who enhance milonga experiences. Connect with organizers, share best practices, and find opportunities.',
+    slug: 'pro-taxi-dancers'
+  },
 };
 
 router.post("/change-effects", authenticateToken, async (req: AuthRequest, res: Response) => {
@@ -128,7 +134,66 @@ router.post("/change-effects", authenticateToken, async (req: AuthRequest, res: 
 
     const autoJoinedGroups: any[] = [];
     const createdGroups: any[] = [];
+    const autoLeftGroups: any[] = [];
 
+    // ========== ROLE REMOVAL CASCADE - Auto-LEAVE PRO Groups ==========
+    for (const role of removedRoles) {
+      const mapping = PRO_ROLE_GROUP_MAPPINGS[role];
+      if (!mapping) continue;
+
+      try {
+        // Find the PRO group for this role
+        const existingGroups = await db
+          .select({
+            group: groups,
+          })
+          .from(groups)
+          .where(and(eq(groups.type, "role"), eq(groups.slug, mapping.slug)))
+          .limit(1);
+
+        if (existingGroups.length > 0) {
+          const group = existingGroups[0].group;
+          
+          // Check if user is a member of this group
+          const membership = await db
+            .select()
+            .from(groupMembers)
+            .where(and(
+              eq(groupMembers.groupId, group.id),
+              eq(groupMembers.userId, userId),
+              eq(groupMembers.status, 'active')
+            ))
+            .limit(1);
+
+          if (membership.length > 0) {
+            // Leave the group
+            await db
+              .delete(groupMembers)
+              .where(and(
+                eq(groupMembers.groupId, group.id),
+                eq(groupMembers.userId, userId)
+              ));
+
+            // Decrement member count
+            await db
+              .update(groups)
+              .set({ memberCount: sql`GREATEST(0, ${groups.memberCount} - 1)` })
+              .where(eq(groups.id, group.id));
+
+            autoLeftGroups.push({
+              groupId: group.id,
+              groupName: group.name,
+              role,
+            });
+            console.log(`[RoleChangeEffects] User ${userId} auto-left PRO group ${group.id} (${group.name}) after removing role ${role}`);
+          }
+        }
+      } catch (leaveError) {
+        console.error(`[RoleChangeEffects] Failed to leave PRO group for role ${role}:`, leaveError);
+      }
+    }
+
+    // ========== ROLE ADDITION CASCADE - Auto-JOIN PRO Groups ==========
     for (const role of addedRoles) {
       const mapping = PRO_ROLE_GROUP_MAPPINGS[role];
       if (!mapping) continue;
@@ -214,6 +279,8 @@ router.post("/change-effects", authenticateToken, async (req: AuthRequest, res: 
       }
     }
 
+    // ========== NOTIFICATIONS ==========
+    // Notification for joined groups
     if (autoJoinedGroups.length > 0) {
       const groupNames = autoJoinedGroups.map(g => g.groupName).slice(0, 3);
       const moreCount = autoJoinedGroups.length > 3 ? ` and ${autoJoinedGroups.length - 3} more` : '';
@@ -225,7 +292,6 @@ router.post("/change-effects", authenticateToken, async (req: AuthRequest, res: 
         message: `You've joined ${groupNames.join(', ')}${moreCount}.`,
         data: { 
           addedRoles, 
-          removedRoles, 
           autoJoinedGroups: autoJoinedGroups.map(g => ({ groupId: g.groupId, groupName: g.groupName }))
         },
         actionUrl: autoJoinedGroups.length === 1 
@@ -234,14 +300,41 @@ router.post("/change-effects", authenticateToken, async (req: AuthRequest, res: 
       });
     }
 
+    // Notification for left groups (role removal cascade)
+    if (autoLeftGroups.length > 0) {
+      const leftGroupNames = autoLeftGroups.map(g => g.groupName).slice(0, 3);
+      const moreLeftCount = autoLeftGroups.length > 3 ? ` and ${autoLeftGroups.length - 3} more` : '';
+      
+      await storage.createNotification({
+        userId,
+        type: "role_change",
+        title: `PRO Group Membership Updated`,
+        message: `You've left ${leftGroupNames.join(', ')}${moreLeftCount} as the role is no longer in your profile.`,
+        data: { 
+          removedRoles, 
+          autoLeftGroups: autoLeftGroups.map(g => ({ groupId: g.groupId, groupName: g.groupName }))
+        },
+        actionUrl: `/groups?filter=my-groups`,
+      });
+    }
+
+    // ========== BUILD RESPONSE ==========
+    let message = 'Role update complete.';
+    if (autoJoinedGroups.length > 0 && autoLeftGroups.length > 0) {
+      message = `You've joined ${autoJoinedGroups.length} and left ${autoLeftGroups.length} PRO group(s) based on your role changes.`;
+    } else if (autoJoinedGroups.length > 0) {
+      message = `You've been added to ${autoJoinedGroups.length} PRO group(s) based on your roles.`;
+    } else if (autoLeftGroups.length > 0) {
+      message = `You've left ${autoLeftGroups.length} PRO group(s) as roles were removed.`;
+    }
+
     const response = {
       addedRoles,
       removedRoles,
       autoJoinedGroups,
+      autoLeftGroups,
       createdGroups,
-      message: autoJoinedGroups.length > 0 
-        ? `You've been added to ${autoJoinedGroups.length} PRO group(s) based on your roles.`
-        : 'Role update complete.',
+      message,
     };
 
     console.log(`[RoleChangeEffects] Response:`, JSON.stringify(response, null, 2));

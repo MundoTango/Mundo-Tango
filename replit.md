@@ -19,7 +19,8 @@ Mundo Tango is a production-ready social platform connecting the global tango co
 ### Standardized Components (PRDs: `docs/prds/`)
 | Component | PRD | Files Using | Purpose |
 |-----------|-----|-------------|---------|
-| **TangoRoles** | [PRD_TANGO_ROLES_SYSTEM.md](docs/prds/PRD_TANGO_ROLES_SYSTEM.md) | 15 files | 19 unified role definitions with `value`/`label` properties |
+| **TangoRoles** | [PRD_TANGO_ROLES_SYSTEM.md](docs/prds/PRD_TANGO_ROLES_SYSTEM.md) | 15 files | 20 unified role definitions with `value`/`label` properties (includes Taxi Dancer) |
+| **RoleChangeCascade** | [PRD_ROLE_CHANGE_CASCADE.md](docs/prds/PRD_ROLE_CHANGE_CASCADE.md) | role-change-routes.ts | Symmetric ADD/REMOVE auto-join/leave PRO groups on role changes |
 | **PerRoleExperience** | [PRD_PER_ROLE_EXPERIENCE.md](docs/prds/PRD_PER_ROLE_EXPERIENCE.md) | 25+ files | Per-role start years with `calculateYearsInRole()` helper |
 | **UnifiedLocationPicker** | [PRD_UNIFIED_LOCATION_PICKER.md](docs/prds/PRD_UNIFIED_LOCATION_PICKER.md) | 26 files | 3-tier search: popular cities → server cache → Nominatim API |
 | **UnifiedMemoriesFeed** | [PRD_UNIFIED_FEEDS_SYSTEM.md](docs/prds/PRD_UNIFIED_FEEDS_SYSTEM.md) | 20+ files | Consistent post/memory display with SmartPostFeed + PostCreator |
