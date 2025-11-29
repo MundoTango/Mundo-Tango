@@ -104,6 +104,7 @@ export function UnifiedLocationPicker({
   const venueCacheRef = useRef<Map<string, typeof venueResults>>(new Map());
   const userHasTypedRef = useRef(false);
   const lastExternalValueRef = useRef(value);
+  const justSelectedRef = useRef(false); // Guard against infinite loop on selection
 
   const updateDropdownPosition = useCallback(() => {
     if (inputContainerRef.current) {
@@ -158,6 +159,11 @@ export function UnifiedLocationPicker({
   };
 
   useEffect(() => {
+    // Skip search if we just selected a location (prevents infinite loop)
+    if (justSelectedRef.current) {
+      return;
+    }
+
     if (searchQuery.trim().length < 1) {
       setResults([]);
       setVenueResults({ userVenues: [], cityVenues: [], googleVenues: [] });
@@ -486,16 +492,21 @@ export function UnifiedLocationPicker({
     const parsed = parseLocationResult(location);
     const displayName = mode === "city" ? getDisplayName(location) : location.display_name;
 
+    // SET GUARD FIRST - prevents search useEffect from triggering
+    justSelectedRef.current = true;
     userHasTypedRef.current = false;
     
-    // Close dropdown immediately - set both state values synchronously
+    // Close dropdown immediately
     setResults([]);
     setShowResults(false);
     
-    // Then update other fields
+    // Update fields
     setSelectedLocation(displayName);
     setSearchQuery(displayName);
     onChange(displayName, parsed.coordinates, parsed);
+    
+    // Reset guard after React batch update completes
+    setTimeout(() => { justSelectedRef.current = false; }, 150);
   };
 
   const clearLocation = () => {
@@ -524,14 +535,23 @@ export function UnifiedLocationPicker({
       coordinates: venue.coordinates || { lat: 0, lng: 0 },
     };
 
+    // SET GUARD FIRST - prevents search useEffect from triggering
+    justSelectedRef.current = true;
     userHasTypedRef.current = false;
+    
+    // Close dropdown immediately
     setVenueResults({ userVenues: [], cityVenues: [], googleVenues: [] });
     setShowResults(false);
+    
+    // Update fields
     setSelectedLocation(displayName);
     setSearchQuery(displayName);
     
     onChange(displayName, parsed.coordinates, parsed);
     onVenueSelect?.(venue);
+    
+    // Reset guard after React batch update completes
+    setTimeout(() => { justSelectedRef.current = false; }, 150);
   };
 
   const Icon = mode === "venue" ? Building2 : mode === "address" ? Home : MapPin;
