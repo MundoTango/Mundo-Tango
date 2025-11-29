@@ -105,6 +105,7 @@ export function UnifiedLocationPicker({
   const userHasTypedRef = useRef(false);
   const lastExternalValueRef = useRef(value);
   const justSelectedRef = useRef(false); // Guard against infinite loop on selection
+  const selectionLockRef = useRef(false); // NUCLEAR LOCK - blocks ALL dropdown opening for 500ms after selection
 
   const updateDropdownPosition = useCallback(() => {
     if (inputContainerRef.current) {
@@ -124,8 +125,8 @@ export function UnifiedLocationPicker({
       : "Search for a city...";
 
   useEffect(() => {
-    // Skip if we just selected a location (prevents infinite loop from parent re-render)
-    if (justSelectedRef.current) {
+    // NUCLEAR LOCK CHECK - skip ALL syncs during selection lock
+    if (selectionLockRef.current || justSelectedRef.current) {
       return;
     }
     // Only sync if value changed from an external source (not from our own onChange)
@@ -163,8 +164,9 @@ export function UnifiedLocationPicker({
   };
 
   useEffect(() => {
-    // Skip search if we just selected a location (prevents infinite loop)
-    if (justSelectedRef.current) {
+    // NUCLEAR LOCK CHECK - skip ALL searches during selection lock
+    if (selectionLockRef.current || justSelectedRef.current) {
+      console.log('[UnifiedLocationPicker] Search blocked by lock');
       return;
     }
 
@@ -496,7 +498,8 @@ export function UnifiedLocationPicker({
     const parsed = parseLocationResult(location);
     const displayName = mode === "city" ? getDisplayName(location) : location.display_name;
 
-    // SET GUARD FIRST - prevents search useEffect AND value sync effect from triggering
+    // NUCLEAR LOCK - blocks ALL dropdown opening for 500ms
+    selectionLockRef.current = true;
     justSelectedRef.current = true;
     userHasTypedRef.current = false;
     
@@ -510,10 +513,16 @@ export function UnifiedLocationPicker({
     // Update fields
     setSelectedLocation(displayName);
     setSearchQuery(displayName);
+    
+    console.log('[UnifiedLocationPicker] Selection complete - NUCLEAR LOCK ACTIVE for 500ms');
     onChange(displayName, parsed.coordinates, parsed);
     
-    // Reset guard after React batch update completes (300ms for safety)
-    setTimeout(() => { justSelectedRef.current = false; }, 300);
+    // Reset guards after React batch update completes
+    setTimeout(() => { 
+      justSelectedRef.current = false; 
+      selectionLockRef.current = false;
+      console.log('[UnifiedLocationPicker] NUCLEAR LOCK RELEASED');
+    }, 500);
   };
 
   const clearLocation = () => {
@@ -542,7 +551,8 @@ export function UnifiedLocationPicker({
       coordinates: venue.coordinates || { lat: 0, lng: 0 },
     };
 
-    // SET GUARD FIRST - prevents search useEffect AND value sync effect from triggering
+    // NUCLEAR LOCK - blocks ALL dropdown opening for 500ms
+    selectionLockRef.current = true;
     justSelectedRef.current = true;
     userHasTypedRef.current = false;
     
@@ -557,11 +567,16 @@ export function UnifiedLocationPicker({
     setSelectedLocation(displayName);
     setSearchQuery(displayName);
     
+    console.log('[UnifiedLocationPicker] Venue selection complete - NUCLEAR LOCK ACTIVE for 500ms');
     onChange(displayName, parsed.coordinates, parsed);
     onVenueSelect?.(venue);
     
-    // Reset guard after React batch update completes (300ms for safety)
-    setTimeout(() => { justSelectedRef.current = false; }, 300);
+    // Reset guards after React batch update completes
+    setTimeout(() => { 
+      justSelectedRef.current = false; 
+      selectionLockRef.current = false;
+      console.log('[UnifiedLocationPicker] NUCLEAR LOCK RELEASED');
+    }, 500);
   };
 
   const Icon = mode === "venue" ? Building2 : mode === "address" ? Home : MapPin;
@@ -601,6 +616,11 @@ export function UnifiedLocationPicker({
         <Input
           value={searchQuery}
           onChange={(e) => {
+            // NUCLEAR LOCK CHECK - block ALL input changes during selection lock
+            if (selectionLockRef.current) {
+              console.log('[UnifiedLocationPicker] Input blocked by selection lock');
+              return;
+            }
             userHasTypedRef.current = true;
             setSearchQuery(e.target.value);
             setShowResults(true);
