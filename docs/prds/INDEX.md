@@ -1,7 +1,7 @@
 # PRD Index - Mundo Tango
 
 > **Last Updated:** 2025-11-29  
-> **Total PRDs:** 19  
+> **Total PRDs:** 21  
 
 ---
 
@@ -17,6 +17,8 @@ This index links all Product Requirement Documents (PRDs) in the Mundo Tango pla
 |-----|---------|-----------|---------------------|
 | [PRD_TANGO_ROLES_SYSTEM.md](./PRD_TANGO_ROLES_SYSTEM.md) | 20 unified tango role definitions (includes Taxi Dancer) | `lib/tangoRoles.ts`, `UserRoleBadges.tsx` | Onboarding, Profile, Search, Cards (15 files) |
 | [PRD_ROLE_CHANGE_CASCADE.md](./PRD_ROLE_CHANGE_CASCADE.md) | Symmetric ADD/REMOVE role cascades | `role-change-routes.ts` | Profile Edit, PRO Groups, Notifications |
+| [PRD_CASCADE_FRAMEWORK.md](./PRD_CASCADE_FRAMEWORK.md) | **NEW** Unified cascade architecture for all attribute changes | `roleChangeEffects.ts`, `locationChangeEffects.ts` | Profile Edit, All Cascades |
+| [PRD_RBAC_ABAC_COMPLETE.md](./PRD_RBAC_ABAC_COMPLETE.md) | **NEW** Complete RBAC/ABAC system (8 platform, 10 event, 20 tango, 4 group roles) | `auth.ts`, `eventRolesSchemas.ts`, `tangoRoles.ts` | All Permission Checks |
 | [PRD_PER_ROLE_EXPERIENCE.md](./PRD_PER_ROLE_EXPERIENCE.md) | Per-role experience tracking (JSONB) | `roleExperience.ts`, `schema.ts` | Registration, Profile, Matching, Talent Search (25+ files) |
 | [PRD_UNIFIED_LOCATION_PICKER.md](./PRD_UNIFIED_LOCATION_PICKER.md) | 3-tier smart location search | `UnifiedLocationPicker.tsx` | Travel, Profile, Events, Groups, Onboarding (26 files) |
 | [PRD_UNIFIED_FEEDS_SYSTEM.md](./PRD_UNIFIED_FEEDS_SYSTEM.md) | Unified post/memory display & creation | `UnifiedMemoriesFeed.tsx`, `PostCreator.tsx`, `SmartPostFeed.tsx` | Feed, Profile, Groups, Events, Saved Posts (20+ files) |

@@ -19,6 +19,12 @@ import {
   LogOut,
   ChevronDown,
   ArrowRight,
+  MapPin,
+  Users,
+  Briefcase,
+  Calendar,
+  Star,
+  UserPlus,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -52,6 +58,32 @@ function PulseIcon({ children, pulseColor }: { children: React.ReactNode; pulseC
       {children}
     </div>
   );
+}
+
+// Get notification icon based on type
+function getNotificationIcon(type: string) {
+  const iconClass = "h-4 w-4 flex-shrink-0";
+  const iconStyle = { color: '#40E0D0' };
+  
+  switch (type) {
+    case 'role_change':
+      return <Briefcase className={iconClass} style={iconStyle} />;
+    case 'location_change':
+      return <MapPin className={iconClass} style={iconStyle} />;
+    case 'group_join':
+    case 'group_leave':
+      return <Users className={iconClass} style={iconStyle} />;
+    case 'event_invite':
+    case 'event_update':
+      return <Calendar className={iconClass} style={iconStyle} />;
+    case 'friend_request':
+      return <UserPlus className={iconClass} style={iconStyle} />;
+    case 'like':
+    case 'favorite':
+      return <Star className={iconClass} style={iconStyle} />;
+    default:
+      return <Bell className={iconClass} style={iconStyle} />;
+  }
 }
 
 function UnifiedTopBar({ 
@@ -357,9 +389,12 @@ function UnifiedTopBar({
                     <DropdownMenuItem
                       key={notif.id || idx}
                       onClick={() => handleNotificationClick(notif)}
-                      className="cursor-pointer flex items-start gap-2 px-4 py-3 border-b last:border-0 hover:bg-accent/50"
+                      className="cursor-pointer flex items-start gap-3 px-4 py-3 border-b last:border-0 hover:bg-accent/50"
                       data-testid={`notification-item-${idx}`}
                     >
+                      <div className="mt-0.5">
+                        {getNotificationIcon(notif.type)}
+                      </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium truncate">{notif.title}</p>
                         <p className="text-xs text-muted-foreground truncate">{notif.message}</p>

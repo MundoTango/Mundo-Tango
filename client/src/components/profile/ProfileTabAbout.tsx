@@ -211,14 +211,31 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
       
       const newRoles = editValues.tangoRoles || [];
       const previousRoles = previousRolesRef.current || [];
-      const rolesChanged = JSON.stringify(newRoles.sort()) !== JSON.stringify(previousRoles.sort());
+      const rolesChanged = JSON.stringify([...newRoles].sort()) !== JSON.stringify([...previousRoles].sort());
       
-      if (rolesChanged && newRoles.length > 0) {
+      // CRITICAL FIX: Trigger cascade in three scenarios:
+      // 1. Roles changed (added or removed)
+      // 2. User has roles but previousRoles was empty (initial sync)
+      // 3. All roles removed (newRoles.length === 0 but previousRoles.length > 0)
+      const shouldTriggerCascade = rolesChanged || 
+        (newRoles.length > 0 && previousRoles.length === 0) ||
+        (newRoles.length === 0 && previousRoles.length > 0);
+      
+      console.log('[ProfileTabAbout] Role cascade check:', {
+        newRoles: newRoles.length,
+        previousRoles: previousRoles.length,
+        rolesChanged,
+        shouldTriggerCascade,
+      });
+      
+      if (shouldTriggerCascade) {
         try {
+          console.log('[ProfileTabAbout] Triggering role change effects...');
           const effects = await triggerRoleChangeEffects({
             previousRoles,
             newRoles,
           });
+          console.log('[ProfileTabAbout] Role effects response:', effects);
           
           if (effects.autoLeftGroups && effects.autoLeftGroups.length > 0) {
             const leftGroupNames = effects.autoLeftGroups.map(g => g.groupName).join(', ');
@@ -229,7 +246,7 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
             });
           }
           
-          if (effects.autoJoinedGroups.length > 0) {
+          if (effects.autoJoinedGroups && effects.autoJoinedGroups.length > 0) {
             toast({
               title: "PRO Groups Joined!",
               description: effects.message,
