@@ -367,52 +367,14 @@ export default function ProfilePage() {
           data-testid="img-hero-cover"
         />
         
-        {/* Friend Action Buttons - Top Right (Non-Own Profile Only) */}
-        {!isOwnProfile && (
-          <div className="absolute top-6 right-6 z-30 flex gap-3">
-            {isFriend ? (
-                <Button 
-                  variant="outline"
-                  className="gap-2 text-white border-white/30 bg-black/20 backdrop-blur-sm hover:bg-black/30"
-                  onClick={() => removeFriendMutation.mutate()}
-                  disabled={removeFriendMutation.isPending}
-                  data-testid={`button-remove-friend-${user.id}`}
-                >
-                  <UserMinus className="h-4 w-4" />
-                  {removeFriendMutation.isPending ? 'Removing...' : 'Remove Friend'}
-                </Button>
-              ) : hasPendingRequest ? (
-                <Button 
-                  variant="outline"
-                  className="gap-2 text-white border-white/30 bg-black/20 backdrop-blur-sm"
-                  disabled
-                  data-testid="button-request-pending"
-                >
-                  <UserCheck className="h-4 w-4" />
-                  Request Sent
-                </Button>
-              ) : (
-                <Button 
-                  className="gap-2 text-white bg-primary/80 backdrop-blur-sm hover:bg-primary"
-                  onClick={() => sendFriendRequestMutation.mutate()}
-                  disabled={sendFriendRequestMutation.isPending}
-                  data-testid={`button-add-friend-${user.id}`}
-                >
-                  <UserPlus className="h-4 w-4" />
-                  {sendFriendRequestMutation.isPending ? 'Sending...' : 'Add Friend'}
-                </Button>
-              )}
-          </div>
-        )}
-      </div>
-      {/* Independent User Info Section - Below Hero */}
-      <motion.div 
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
-        className="max-w-2xl mx-auto px-6 py-8"
-      >
-        <Card className="p-6">
+        {/* User Info Card Overlay - Left Side */}
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="absolute left-6 bottom-6 z-20"
+        >
+          <Card className="p-6 w-80 bg-background/95 backdrop-blur-md border-white/20">
           {/* Profile Photo + Content Layout */}
           <div className="flex gap-6">
             {/* Left: Profile Photo Circle with Edit Button */}
@@ -636,8 +598,47 @@ export default function ProfilePage() {
               )}
             </div>
           </div>
-        </Card>
-      </motion.div>
+          </Card>
+        </motion.div>
+        
+        {/* Friend Action Buttons - Top Right (Non-Own Profile Only) */}
+        {!isOwnProfile && (
+          <div className="absolute top-6 right-6 z-30 flex gap-3">
+            {isFriend ? (
+                <Button 
+                  variant="outline"
+                  className="gap-2 text-white border-white/30 bg-black/20 backdrop-blur-sm hover:bg-black/30"
+                  onClick={() => removeFriendMutation.mutate()}
+                  disabled={removeFriendMutation.isPending}
+                  data-testid={`button-remove-friend-${user.id}`}
+                >
+                  <UserMinus className="h-4 w-4" />
+                  {removeFriendMutation.isPending ? 'Removing...' : 'Remove Friend'}
+                </Button>
+              ) : hasPendingRequest ? (
+                <Button 
+                  variant="outline"
+                  className="gap-2 text-white border-white/30 bg-black/20 backdrop-blur-sm"
+                  disabled
+                  data-testid="button-request-pending"
+                >
+                  <UserCheck className="h-4 w-4" />
+                  Request Sent
+                </Button>
+              ) : (
+                <Button 
+                  className="gap-2 text-white bg-primary/80 backdrop-blur-sm hover:bg-primary"
+                  onClick={() => sendFriendRequestMutation.mutate()}
+                  disabled={sendFriendRequestMutation.isPending}
+                  data-testid={`button-add-friend-${user.id}`}
+                >
+                  <UserPlus className="h-4 w-4" />
+                  {sendFriendRequestMutation.isPending ? 'Sending...' : 'Add Friend'}
+                </Button>
+              )}
+          </div>
+        )}
+      </div>
       {/* Photo Upload Dialogs */}
       <PhotoUploadDialog
         open={profilePhotoDialogOpen}
