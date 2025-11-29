@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Slider } from "@/components/ui/slider";
 import { Info, MapPin, Calendar as CalendarIcon, Users, Award, Edit, Check, X, Languages, Star, Drama, Briefcase, Link as LinkIcon, Globe, Plus, Trash2, ExternalLink } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { Link } from "wouter";
@@ -77,6 +78,12 @@ function generateYearOptions(): number[] {
     years.push(year);
   }
   return years;
+}
+
+// Calculate years of experience for a specific role
+function calculateYearsOfExperience(startYear: number): number {
+  const currentYear = new Date().getFullYear();
+  return currentYear - startYear;
 }
 
 export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutProps) {
@@ -650,26 +657,56 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
                 {/* Per-Role Experience Cards */}
                 {user.tangoRoles && user.tangoRoles.length > 0 ? (
                   <div className="flex flex-wrap gap-2">
-                    {user.tangoRoles.map((roleValue) => {
-                      const role = getRoleByValue(roleValue);
-                      const IconComponent = role?.icon;
-                      const startYear = getRoleStartYear(user, roleValue);
-                      
-                      return (
-                        <Badge 
-                          key={roleValue} 
-                          variant="secondary" 
-                          className="flex items-center gap-1.5 py-1.5 px-3"
-                          style={role ? { borderColor: `${role.color}40` } : undefined}
-                          data-testid={`badge-role-experience-${roleValue}`}
-                        >
-                          {IconComponent && <IconComponent className="w-3.5 h-3.5" style={{ color: role?.color }} />}
-                          <span>{role?.label || roleValue.replace(/_/g, ' ')}</span>
-                          <span className="text-muted-foreground">:</span>
-                          <span className="font-medium">{startYear}</span>
-                        </Badge>
-                      );
-                    })}
+                    {user.tangoRoles
+                      .map((roleValue) => {
+                        const role = getRoleByValue(roleValue);
+                        const startYear = getRoleStartYear(user, roleValue);
+                        return { roleValue, role, startYear };
+                      })
+                      .sort((a, b) => (b.startYear || 0) - (a.startYear || 0))
+                      .map(({ roleValue, role, startYear }) => {
+                        const IconComponent = role?.icon;
+                        const yearsExp = startYear ? calculateYearsOfExperience(startYear) : 0;
+                        
+                        return (
+                          <Tooltip key={roleValue}>
+                            <TooltipTrigger asChild>
+                              <div className="relative group">
+                                <Badge 
+                                  variant="secondary" 
+                                  className="flex items-center gap-1.5 py-1.5 px-3 cursor-pointer hover-elevate transition-all"
+                                  style={role ? { borderColor: `${role.color}40` } : undefined}
+                                  data-testid={`badge-role-experience-${roleValue}`}
+                                  onClick={() => isOwnProfile && setIsEditing(true)}
+                                >
+                                  {IconComponent && <IconComponent className="w-3.5 h-3.5" style={{ color: role?.color }} />}
+                                  <span>{role?.label || roleValue.replace(/_/g, ' ')}</span>
+                                  <span className="text-muted-foreground">:</span>
+                                  <span className="font-medium">{startYear}</span>
+                                </Badge>
+                                {isEditing && (
+                                  <button
+                                    onClick={() => {
+                                      const updated = editValues.tangoRoles.filter((r: string) => r !== roleValue);
+                                      setEditValues({ ...editValues, tangoRoles: updated });
+                                    }}
+                                    className="absolute -top-2 -right-2 w-5 h-5 bg-destructive rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                                    data-testid={`button-remove-role-${roleValue}`}
+                                  >
+                                    <X className="w-3 h-3" />
+                                  </button>
+                                )}
+                              </div>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <div className="text-sm">
+                                <p className="font-medium">{yearsExp} {yearsExp === 1 ? 'year' : 'years'} of experience</p>
+                                <p className="text-xs text-muted-foreground">Since {startYear}</p>
+                              </div>
+                            </TooltipContent>
+                          </Tooltip>
+                        );
+                      })}
                   </div>
                 ) : (
                   <span className="text-muted-foreground italic">No roles set</span>
