@@ -54,14 +54,28 @@ export function PhotoUploadDialog({
       const src = event.target?.result as string;
       const img = new Image();
       img.onload = () => {
-        // Calculate initial centered position
+        // Calculate initial position - favor TOP for portrait images (where faces are)
         const scaleX = previewWidth / img.width;
         const scaleY = previewHeight / img.height;
         const initialBaseScale = Math.max(scaleX, scaleY);
         const scaledWidth = img.width * initialBaseScale;
         const scaledHeight = img.height * initialBaseScale;
+        
+        // For horizontal offset: always center
         const centerOffsetX = (previewWidth - scaledWidth) / 2;
-        const centerOffsetY = (previewHeight - scaledHeight) / 2;
+        
+        // For vertical offset: 
+        // - Portrait images (taller than wide): start at TOP (offset = 0) to show face
+        // - Landscape images: center vertically
+        const isPortrait = img.height > img.width;
+        const centerOffsetY = isPortrait ? 0 : (previewHeight - scaledHeight) / 2;
+        
+        console.log('[PhotoUpload] Image loaded:', {
+          dimensions: `${img.width}×${img.height}`,
+          isPortrait,
+          scaledSize: `${scaledWidth.toFixed(0)}×${scaledHeight.toFixed(0)}`,
+          initialOffset: `(${centerOffsetX.toFixed(1)}, ${centerOffsetY.toFixed(1)})`
+        });
         
         setImageDimensions({ width: img.width, height: img.height });
         setImageSource(src);
