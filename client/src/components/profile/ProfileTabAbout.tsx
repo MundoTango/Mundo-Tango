@@ -36,6 +36,7 @@ import NotificationsSubTab from "./settings/NotificationsSubTab";
 import SecuritySubTab from "./settings/SecuritySubTab";
 import SubscriptionSubTab from "./settings/SubscriptionSubTab";
 import PrivacySubTab from "./settings/PrivacySubTab";
+import { PrivacyToggle, type PrivacyLevel } from "@/components/ui/privacy-toggle";
 
 interface SocialLinks {
   instagram?: string;
@@ -115,6 +116,28 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
     portfolioUrls: user.portfolioUrls || [],
     communityWebsiteUrl: user.communityWebsiteUrl || '',
   });
+  
+  const [fieldPrivacy, setFieldPrivacy] = useState<Record<string, PrivacyLevel>>({
+    bio: (user as any).privacySettings?.fieldVisibility?.bio || 'public',
+    occupation: (user as any).privacySettings?.fieldVisibility?.occupation || 'public',
+    location: (user as any).privacySettings?.fieldVisibility?.location || 'public',
+    tango: (user as any).privacySettings?.fieldVisibility?.tango || 'public',
+    languages: (user as any).privacySettings?.fieldVisibility?.languages || 'public',
+    socialLinks: (user as any).privacySettings?.fieldVisibility?.socialLinks || 'public',
+  });
+  
+  const updateFieldPrivacy = (field: string, value: PrivacyLevel) => {
+    setFieldPrivacy(prev => ({ ...prev, [field]: value }));
+    updateProfileMutation.mutate({
+      privacySettings: {
+        ...(user as any).privacySettings,
+        fieldVisibility: {
+          ...((user as any).privacySettings?.fieldVisibility || {}),
+          [field]: value,
+        },
+      },
+    });
+  };
   
   const previousLocationRef = useRef<{ city?: string; country?: string }>({
     city: user.city || undefined,
@@ -462,7 +485,17 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
       
       <CardContent className="space-y-6">
         <div>
-          <h3 className="text-sm font-medium text-muted-foreground mb-2">Bio</h3>
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-sm font-medium text-muted-foreground">Bio</h3>
+            {isOwnProfile && (
+              <PrivacyToggle
+                value={fieldPrivacy.bio}
+                onChange={(v) => updateFieldPrivacy('bio', v)}
+                compact
+                data-testid="privacy-toggle-bio"
+              />
+            )}
+          </div>
           {isEditing ? (
             <Textarea 
               value={editValues.bio || ''} 
@@ -477,10 +510,20 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
         </div>
 
         <div>
-          <h3 className="text-sm font-medium text-muted-foreground mb-2 flex items-center gap-1">
-            <Briefcase className="w-4 h-4" />
-            Occupation
-          </h3>
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-sm font-medium text-muted-foreground flex items-center gap-1">
+              <Briefcase className="w-4 h-4" />
+              Occupation
+            </h3>
+            {isOwnProfile && (
+              <PrivacyToggle
+                value={fieldPrivacy.occupation}
+                onChange={(v) => updateFieldPrivacy('occupation', v)}
+                compact
+                data-testid="privacy-toggle-occupation"
+              />
+            )}
+          </div>
           {isEditing ? (
             <Input
               value={editValues.occupation || ''}
@@ -496,10 +539,20 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
         </div>
 
         <div>
-          <h3 className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-1">
-            <LinkIcon className="w-4 h-4" />
-            Social Links
-          </h3>
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-medium text-muted-foreground flex items-center gap-1">
+              <LinkIcon className="w-4 h-4" />
+              Social Links
+            </h3>
+            {isOwnProfile && (
+              <PrivacyToggle
+                value={fieldPrivacy.socialLinks}
+                onChange={(v) => updateFieldPrivacy('socialLinks', v)}
+                compact
+                data-testid="privacy-toggle-social-links"
+              />
+            )}
+          </div>
           {isEditing ? (
             <div className="space-y-3">
               {socialPlatforms.map((platform) => {
@@ -665,10 +718,20 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
   const locationContent = (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between gap-4">
-        <CardTitle className="flex items-center gap-2">
-          <MapPin className="w-5 h-5" />
-          Location
-        </CardTitle>
+        <div className="flex items-center gap-4">
+          <CardTitle className="flex items-center gap-2">
+            <MapPin className="w-5 h-5" />
+            Location
+          </CardTitle>
+          {isOwnProfile && (
+            <PrivacyToggle
+              value={fieldPrivacy.location}
+              onChange={(v) => updateFieldPrivacy('location', v)}
+              compact
+              data-testid="privacy-toggle-location"
+            />
+          )}
+        </div>
         {isOwnProfile && renderEditControls()}
       </CardHeader>
       
@@ -727,10 +790,20 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
   const tangoContent = (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between gap-4">
-        <CardTitle className="flex items-center gap-2">
-          <Drama className="w-5 h-5" />
-          Tango Roles & Experience
-        </CardTitle>
+        <div className="flex items-center gap-4">
+          <CardTitle className="flex items-center gap-2">
+            <Drama className="w-5 h-5" />
+            Tango Roles & Experience
+          </CardTitle>
+          {isOwnProfile && (
+            <PrivacyToggle
+              value={fieldPrivacy.tango}
+              onChange={(v) => updateFieldPrivacy('tango', v)}
+              compact
+              data-testid="privacy-toggle-tango"
+            />
+          )}
+        </div>
         {isOwnProfile && renderEditControls()}
       </CardHeader>
       
@@ -930,10 +1003,20 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
   const languagesContent = (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between gap-4">
-        <CardTitle className="flex items-center gap-2">
-          <Languages className="w-5 h-5" />
-          Languages
-        </CardTitle>
+        <div className="flex items-center gap-4">
+          <CardTitle className="flex items-center gap-2">
+            <Languages className="w-5 h-5" />
+            Languages
+          </CardTitle>
+          {isOwnProfile && (
+            <PrivacyToggle
+              value={fieldPrivacy.languages}
+              onChange={(v) => updateFieldPrivacy('languages', v)}
+              compact
+              data-testid="privacy-toggle-languages"
+            />
+          )}
+        </div>
         {isOwnProfile && renderEditControls()}
       </CardHeader>
       
@@ -1004,6 +1087,15 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
     </Card>
   );
 
+  const unifiedProfileContent = (
+    <div className="space-y-6">
+      {profileContent}
+      {locationContent}
+      {tangoContent}
+      {languagesContent}
+    </div>
+  );
+
   return (
     <div className="space-y-6">
       <AboutSubTabs 
@@ -1016,10 +1108,7 @@ export default function ProfileTabAbout({ user, isOwnProfile }: ProfileTabAboutP
       <AboutSubTabContent 
         activeTab={activeSubTab}
         children={{
-          profile: profileContent,
-          location: locationContent,
-          tango: tangoContent,
-          languages: languagesContent,
+          profile: unifiedProfileContent,
           privacy: <PrivacySubTab />,
           notifications: <NotificationsSubTab />,
           security: <SecuritySubTab />,

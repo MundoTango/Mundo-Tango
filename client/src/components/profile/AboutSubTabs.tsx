@@ -1,14 +1,9 @@
-import { useState } from "react";
-import { User, MapPin, Music, Languages, Shield, Bell, Lock, Crown } from "lucide-react";
+import { User, Shield, Bell, Lock, Crown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 
 export type AboutSubTab = 
   | 'profile' 
-  | 'location' 
-  | 'tango' 
-  | 'languages' 
   | 'privacy' 
   | 'notifications' 
   | 'security' 
@@ -23,9 +18,6 @@ interface TabDefinition {
 
 const tabs: TabDefinition[] = [
   { id: 'profile', label: 'Profile', icon: User },
-  { id: 'location', label: 'Location', icon: MapPin },
-  { id: 'tango', label: 'Tango', icon: Music },
-  { id: 'languages', label: 'Languages', icon: Languages },
   { id: 'privacy', label: 'Privacy', icon: Shield, ownerOnly: true },
   { id: 'notifications', label: 'Notifications', icon: Bell, ownerOnly: true },
   { id: 'security', label: 'Security', icon: Lock, ownerOnly: true },
@@ -82,9 +74,6 @@ interface AboutSubTabContentProps {
   activeTab: AboutSubTab;
   children: {
     profile?: React.ReactNode;
-    location?: React.ReactNode;
-    tango?: React.ReactNode;
-    languages?: React.ReactNode;
     privacy?: React.ReactNode;
     notifications?: React.ReactNode;
     security?: React.ReactNode;
@@ -96,9 +85,6 @@ export function AboutSubTabContent({ activeTab, children }: AboutSubTabContentPr
   return (
     <div className="min-h-[200px]" data-testid={`subtab-content-${activeTab}`}>
       {activeTab === 'profile' && children.profile}
-      {activeTab === 'location' && children.location}
-      {activeTab === 'tango' && children.tango}
-      {activeTab === 'languages' && children.languages}
       {activeTab === 'privacy' && children.privacy}
       {activeTab === 'notifications' && children.notifications}
       {activeTab === 'security' && children.security}
