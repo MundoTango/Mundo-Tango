@@ -153,6 +153,7 @@ export default function ProfileTabAbout({ user, isOwnProfile, isPublicView = fal
           [field]: value,
         },
       },
+      _isPrivacyOnlyUpdate: true,
     });
   };
   
