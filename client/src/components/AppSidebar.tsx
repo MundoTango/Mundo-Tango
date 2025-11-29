@@ -4,41 +4,18 @@ import {
   Calendar, 
   Users, 
   MessageSquare, 
-  Settings, 
   LogOut, 
-  Server,
   UserCircle,
   UserPlus,
-  Bell,
   Compass,
   GraduationCap,
   MapPin,
   Brain,
   ShoppingBag,
-  ShoppingCart,
-  Package,
-  Store,
-  Bot,
-  Shield,
-  Sparkles,
   Globe,
-  Star,
-  ListChecks,
-  Network,
-  Layout,
-  LayoutDashboard,
-  Briefcase,
+  Sparkles,
   Building2,
-  TrendingUp,
   Plane,
-  PlaneTakeoff,
-  Heart,
-  PlusCircle,
-  Folder,
-  FileText,
-  Files,
-  BookTemplate,
-  PenTool,
   Music,
   Camera,
   Drama,
@@ -46,12 +23,13 @@ import {
   Palette,
   Piano,
   Shirt,
-  BookOpen,
   Target,
   Mic,
   Trophy,
   Home as HousingIcon,
-  Award,
+  Briefcase,
+  List,
+  Map,
 } from "lucide-react";
 import { useLocation, Link } from "wouter";
 import { cn } from "@/lib/utils";
@@ -65,114 +43,79 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarFooter,
-  SidebarSeparator,
 } from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 const socialItems = [
-  { title: "Memories", url: "/feed", icon: Home },
-  { title: "Profile", url: "/profile", icon: UserCircle },
-  { title: "Discover", url: "/discover", icon: Compass },
+  { title: "Memories", url: "/feed", icon: Home, tooltip: "Your feed and memories" },
+  { title: "Profile", url: "/profile", icon: UserCircle, tooltip: "View your profile" },
+  { title: "Discover", url: "/discover", icon: Compass, tooltip: "Discover new content" },
 ];
 
 const communityItems = [
-  { title: "Friends", url: "/friends-list", icon: UserPlus },
-  { title: "Recommendations", url: "/recommendations", icon: Sparkles },
-  { title: "Notifications", url: "/notifications", icon: Bell },
-  { title: "Groups", url: "/groups", icon: Users },
-  { title: "Messages", url: "/messages", icon: MessageSquare },
+  { title: "Community Map", url: "/community-world-map", icon: Globe, tooltip: "Explore the global tango community" },
+  { title: "Friends", url: "/friends-list", icon: UserPlus, tooltip: "Manage your friends" },
+  { title: "Recommendations", url: "/recommendations", icon: Sparkles, tooltip: "Personalized recommendations" },
+  { title: "Groups", url: "/groups", icon: Users, tooltip: "Browse and join groups" },
+  { title: "Messages", url: "/messages", icon: MessageSquare, tooltip: "Your conversations" },
+  { title: "Leaderboard", url: "/leaderboard", icon: Trophy, tooltip: "Top contributors" },
 ];
 
-const eventsItems = [
-  { title: "Events", url: "/events", icon: Calendar },
-  { title: "Calendar", url: "/calendar", icon: Calendar },
-];
+const eventsItem = { 
+  title: "Events", 
+  url: "/events", 
+  icon: Calendar, 
+  tooltip: "Browse events - list, calendar, or map view" 
+};
 
-const travelItems = [
-  { title: "Dashboard", url: "/travel", icon: Plane },
-  { title: "Plan Trip", url: "/travel/planner", icon: PlaneTakeoff },
-  { title: "My Trips", url: "/travel", icon: MapPin },
-];
+const travelItem = { 
+  title: "Travel", 
+  url: "/travel", 
+  icon: Plane, 
+  tooltip: "Plan your tango trips" 
+};
 
 const proDiscoveryItems = [
-  { title: "Learning", url: "/pro/learning", icon: GraduationCap, color: "#10B981" },
-  { title: "Music", url: "/pro/music", icon: Music, color: "#8B5CF6" },
-  { title: "Media Gallery", url: "/pro/media", icon: Camera, color: "#EF4444" },
-  { title: "Performances", url: "/pro/performances", icon: Drama, color: "#F59E0B" },
-  { title: "Venues", url: "/pro/venues", icon: Building2, color: "#6B7280" },
-  { title: "Organizers", url: "/pro/organizers", icon: Calendar, color: "#3B82F6" },
-  { title: "Stories & Blog", url: "/pro/stories", icon: PenLine, color: "#14B8A6" },
-  { title: "Artists", url: "/pro/artists", icon: Palette, color: "#EC4899" },
-  { title: "Musicians", url: "/pro/musicians", icon: Piano, color: "#A855F7" },
-  { title: "Fashion", url: "/pro/fashion", icon: Shirt, color: "#EC4899" },
-  { title: "Coaches", url: "/pro/coaches", icon: Target, color: "#10B981" },
-  { title: "Hosts & MCs", url: "/pro/hosts", icon: Mic, color: "#F97316" },
-  { title: "Vendors", url: "/pro/vendors", icon: Briefcase, color: "#6366F1" },
-  { title: "Community Leaders", url: "/pro/community", icon: Globe, color: "#40E0D0" },
-  { title: "Talent Match", url: "/talent-match", icon: Sparkles, color: "#1E90FF" },
+  { title: "Learning", url: "/pro/learning", icon: GraduationCap, color: "#10B981", tooltip: "Classes and workshops" },
+  { title: "Music", url: "/pro/music", icon: Music, color: "#8B5CF6", tooltip: "Tango music and DJs" },
+  { title: "Media", url: "/pro/media", icon: Camera, color: "#EF4444", tooltip: "Photos and videos" },
+  { title: "Performances", url: "/pro/performances", icon: Drama, color: "#F59E0B", tooltip: "Show performances" },
+  { title: "Venues", url: "/pro/venues", icon: Building2, color: "#6B7280", tooltip: "Dance venues" },
+  { title: "Organizers", url: "/pro/organizers", icon: Calendar, color: "#3B82F6", tooltip: "Event organizers" },
+  { title: "Stories", url: "/pro/stories", icon: PenLine, color: "#14B8A6", tooltip: "Blog and stories" },
+  { title: "Artists", url: "/pro/artists", icon: Palette, color: "#EC4899", tooltip: "Visual artists" },
+  { title: "Musicians", url: "/pro/musicians", icon: Piano, color: "#A855F7", tooltip: "Live musicians" },
+  { title: "Fashion", url: "/pro/fashion", icon: Shirt, color: "#EC4899", tooltip: "Tango fashion" },
+  { title: "Coaches", url: "/pro/coaches", icon: Target, color: "#10B981", tooltip: "Personal coaches" },
+  { title: "Hosts", url: "/pro/hosts", icon: Mic, color: "#F97316", tooltip: "Event hosts and MCs" },
+  { title: "Vendors", url: "/pro/vendors", icon: Briefcase, color: "#6366F1", tooltip: "Tango vendors" },
+  { title: "Leaders", url: "/pro/community", icon: Globe, color: "#40E0D0", tooltip: "Community leaders" },
+  { title: "Talent Match", url: "/talent-match", icon: Sparkles, color: "#1E90FF", tooltip: "Find the perfect match" },
 ];
 
-const resourcesItems = [
-  { title: "Community Map", url: "/community-world-map", icon: Globe },
-  { title: "Top Contributors", url: "/leaderboard", icon: Trophy },
-];
+const toolsItem = { 
+  title: "Life CEO", 
+  url: "/life-ceo", 
+  icon: Brain, 
+  tooltip: "AI-powered life management" 
+};
 
-const toolsItems = [
-  { title: "Life CEO", url: "/life-ceo", icon: Brain },
-  { title: "Mr Blue AI", url: "/mr-blue", icon: Bot },
-];
+const marketplaceItem = { 
+  title: "Marketplace", 
+  url: "/marketplace", 
+  icon: ShoppingBag, 
+  tooltip: "Browse products and services" 
+};
 
-const marketplaceItems = [
-  { title: "Browse Products", url: "/marketplace", icon: ShoppingBag },
-  { title: "Cart", url: "/marketplace/cart", icon: ShoppingCart },
-  { title: "My Orders", url: "/marketplace/orders", icon: Package },
-  { title: "Seller Dashboard", url: "/marketplace/seller", icon: Store },
-];
-
-const housingItems = [
-  { title: "Browse Housing", url: "/housing", icon: HousingIcon },
-  { title: "My Listings", url: "/housing/my-listings", icon: Building2 },
-];
-
-const crowdfundingItems = [
-  { title: "Discover", url: "/crowdfunding", icon: Heart },
-  { title: "Create Campaign", url: "/crowdfunding/create", icon: PlusCircle },
-  { title: "My Campaigns", url: "/crowdfunding/my", icon: Folder },
-];
-
-const financialItems = [
-  { title: "Dashboard", url: "/financial", icon: LayoutDashboard },
-  { title: "Portfolios", url: "/financial/portfolios", icon: Briefcase },
-  { title: "Accounts", url: "/financial/accounts", icon: Building2 },
-  { title: "Trading", url: "/financial/trading", icon: TrendingUp },
-  { title: "Insights", url: "/financial/insights", icon: Brain },
-];
-
-const legalItems = [
-  { title: "Dashboard", url: "/legal", icon: FileText },
-  { title: "Documents", url: "/legal/documents", icon: Files },
-  { title: "Templates", url: "/legal/templates", icon: BookTemplate },
-  { title: "Pending Signatures", url: "/legal/documents?filter=pending", icon: PenTool },
-];
-
-const personalItems = [
-  { title: "Favorites", url: "/favorites", icon: Star },
-  { title: "Settings", url: "/settings", icon: Settings },
-];
-
-const adminItems = [
-  { title: "Admin", url: "/admin", icon: Shield },
-  { title: "Platform", url: "/platform", icon: Server },
-  { title: "Visual Editor", url: "/admin/visual-editor", icon: Layout },
-];
-
-const esaItems = [
-  { title: "ESA Framework", url: "/platform/esa", icon: Brain },
-  { title: "ESA Tasks", url: "/platform/esa/tasks", icon: ListChecks },
-  { title: "ESA Comms", url: "/platform/esa/communications", icon: Network },
-];
+const housingItem = { 
+  title: "Housing", 
+  url: "/housing", 
+  icon: HousingIcon, 
+  tooltip: "Find tango-friendly accommodations" 
+};
 
 function AppSidebarComponent() {
   const [location] = useLocation();
@@ -182,43 +125,67 @@ function AppSidebarComponent() {
   const username = profile?.username || user?.email?.split('@')[0] || "user";
   const avatarUrl = profile?.profileImage;
 
-  const isAdmin = user?.role === 'admin' || user?.role === 'god';
-  const isGodAdmin = user?.role === 'god';
+  const isActive = (url: string) => location === url || location.startsWith(url + '/');
 
-  const renderMenuItem = (item: { title: string; url: string; icon: React.ElementType; color?: string }, isActive: boolean) => (
-    <SidebarMenuItem key={item.title}>
-      <SidebarMenuButton 
-        asChild 
-        data-active={isActive} 
-        data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
-        className={cn(
-          "transition-all duration-200 rounded-lg",
-          isActive && "bg-gradient-to-r from-[#40E0D0]/20 to-transparent border-l-2 border-[#40E0D0]"
-        )}
-        style={isActive ? { color: item.color || '#40E0D0' } : undefined}
-      >
+  const renderIconGridItem = (item: { title: string; url: string; icon: React.ElementType; color?: string; tooltip: string }) => (
+    <Tooltip key={item.title}>
+      <TooltipTrigger asChild>
         <Link to={item.url}>
-          <>
+          <div 
+            className={cn(
+              "flex items-center justify-center w-10 h-10 rounded-lg cursor-pointer transition-all duration-200",
+              "hover:bg-[#40E0D0]/20",
+              isActive(item.url) && "bg-gradient-to-r from-[#40E0D0]/30 to-transparent ring-1 ring-[#40E0D0]/50"
+            )}
+            data-testid={`sidebar-icon-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
+          >
             <item.icon 
-              className="h-5 w-5 transition-colors duration-200" 
-              style={item.color ? { color: item.color } : undefined}
+              className="h-5 w-5" 
+              style={{ color: item.color || (isActive(item.url) ? '#40E0D0' : 'currentColor') }}
             />
-            <span className="font-medium">{item.title}</span>
-          </>
+          </div>
         </Link>
-      </SidebarMenuButton>
-    </SidebarMenuItem>
+      </TooltipTrigger>
+      <TooltipContent side="right" className="bg-slate-900 text-white border-slate-700">
+        <p className="font-medium">{item.title}</p>
+        <p className="text-xs text-slate-400">{item.tooltip}</p>
+      </TooltipContent>
+    </Tooltip>
   );
 
-  const renderGroup = (label: string, items: typeof socialItems) => (
-    <SidebarGroup className="border-b border-white/10 pb-4">
-      <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">{label}</SidebarGroupLabel>
-      <SidebarGroupContent>
-        <SidebarMenu>
-          {items.map((item) => renderMenuItem(item, location === item.url || location.startsWith(item.url + '/')))}
-        </SidebarMenu>
-      </SidebarGroupContent>
-    </SidebarGroup>
+  const renderSingleItem = (item: { title: string; url: string; icon: React.ElementType; tooltip: string }) => (
+    <Tooltip key={item.title}>
+      <TooltipTrigger asChild>
+        <SidebarMenuItem>
+          <SidebarMenuButton 
+            asChild 
+            data-active={isActive(item.url)} 
+            data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
+            className={cn(
+              "transition-all duration-200 rounded-lg",
+              isActive(item.url) && "bg-gradient-to-r from-[#40E0D0]/20 to-transparent border-l-2 border-[#40E0D0]"
+            )}
+            style={isActive(item.url) ? { color: '#40E0D0' } : undefined}
+          >
+            <Link to={item.url}>
+              <>
+                <item.icon className="h-5 w-5 transition-colors duration-200" />
+                <span className="font-medium">{item.title}</span>
+              </>
+            </Link>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      </TooltipTrigger>
+      <TooltipContent side="right" className="bg-slate-900 text-white border-slate-700">
+        <p className="text-xs text-slate-400">{item.tooltip}</p>
+      </TooltipContent>
+    </Tooltip>
+  );
+
+  const renderIconGrid = (items: Array<{ title: string; url: string; icon: React.ElementType; color?: string; tooltip: string }>) => (
+    <div className="grid grid-cols-5 gap-1 px-2">
+      {items.map(renderIconGridItem)}
+    </div>
   );
 
   return (
@@ -244,67 +211,49 @@ function AppSidebarComponent() {
           </SidebarGroupLabel>
         </SidebarGroup>
 
-        {renderGroup("Social", socialItems)}
-        {renderGroup("Community", communityItems)}
-        {renderGroup("Events", eventsItems)}
-        {renderGroup("Travel", travelItems)}
+        <SidebarGroup className="border-b border-white/10 pb-4">
+          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">Social</SidebarGroupLabel>
+          <SidebarGroupContent>
+            {renderIconGrid(socialItems)}
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup className="border-b border-white/10 pb-4">
+          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">Community</SidebarGroupLabel>
+          <SidebarGroupContent>
+            {renderIconGrid(communityItems)}
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup className="border-b border-white/10 pb-4">
+          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">Events & Travel</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {renderSingleItem(eventsItem)}
+              {renderSingleItem(travelItem)}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
 
         <SidebarGroup className="border-b border-white/10 pb-4">
           <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">
             PRO Discovery
           </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
-              {proDiscoveryItems.map((item) => {
-                const isActive = location === item.url || location.startsWith(item.url + '/');
-                return (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton 
-                      asChild 
-                      data-active={isActive} 
-                      data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
-                      className={cn(
-                        "transition-all duration-200 rounded-lg",
-                        isActive && "bg-gradient-to-r from-[#40E0D0]/20 to-transparent border-l-2"
-                      )}
-                      style={{
-                        ...(isActive ? { color: item.color, borderColor: item.color } : {}),
-                      }}
-                    >
-                      <Link to={item.url}>
-                        <>
-                          <item.icon 
-                            className="h-5 w-5 transition-colors duration-200" 
-                            style={{ color: item.color }}
-                          />
-                          <span className="font-medium">{item.title}</span>
-                        </>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
-            </SidebarMenu>
+            {renderIconGrid(proDiscoveryItems)}
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {renderGroup("Resources", resourcesItems)}
-        {renderGroup("AI & Tools", toolsItems)}
-        {renderGroup("Marketplace", marketplaceItems)}
-        {renderGroup("Housing", housingItems)}
-        {renderGroup("Crowdfunding", crowdfundingItems)}
-        {renderGroup("Financial", financialItems)}
-        {renderGroup("Legal", legalItems)}
-        {renderGroup("Personal", personalItems)}
-
-        {isAdmin && (
-          <>
-            <SidebarSeparator className="bg-white/10" />
-            {renderGroup("Admin", adminItems)}
-          </>
-        )}
-
-        {isGodAdmin && renderGroup("ESA Framework", esaItems)}
+        <SidebarGroup className="border-b border-white/10 pb-4">
+          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">Services</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {renderSingleItem(toolsItem)}
+              {renderSingleItem(marketplaceItem)}
+              {renderSingleItem(housingItem)}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
       </SidebarContent>
 
       <SidebarFooter 
