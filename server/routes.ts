@@ -272,7 +272,7 @@ import {
   agentCommunications
 } from "@shared/platform-schema";
 import { db } from "@shared/db";
-import { eq, and, or, desc, sql, isNotNull, gte, count } from "drizzle-orm";
+import { eq, and, or, desc, sql, isNotNull, gte, count, inArray } from "drizzle-orm";
 import { z } from "zod";
 import { fromZodError } from "zod-validation-error";
 import { cityscapeService } from "./services/cityscape-service";
@@ -3997,31 +3997,73 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // User's events - for UserProfilePublicPage
+  // User's events - for UserProfilePublicPage and ProfileTabEvents
   app.get("/api/users/:userId/events", async (req: Request, res: Response) => {
     try {
       const userId = parseInt(req.params.userId);
+      const { status = "going", past } = req.query;
+      
+      // Parse status parameter: can be comma-separated list like "going,maybe,interested"
+      const statusList = typeof status === 'string' 
+        ? status.split(',').map(s => s.trim()).filter(Boolean)
+        : ['going'];
+      
+      // Build conditions
+      const conditions = [eq(eventRsvps.userId, userId)];
+      
+      // Add status filter - match any of the provided statuses
+      if (statusList.length === 1) {
+        conditions.push(eq(eventRsvps.status, statusList[0]));
+      } else if (statusList.length > 1) {
+        conditions.push(inArray(eventRsvps.status, statusList));
+      }
+      
+      // Add date filter for past/upcoming events
+      if (past === 'true') {
+        conditions.push(sql`${events.startDate} < NOW()`);
+      }
       
       const userEvents = await db
         .select({
           id: events.id,
           title: events.title,
+          description: events.description,
           startDate: events.startDate,
+          endDate: events.endDate,
           location: events.location,
+          city: events.city,
+          venue: events.venue,
+          eventType: events.eventType,
           imageUrl: events.imageUrl,
+          maxAttendees: events.maxAttendees,
+          rsvpStatus: eventRsvps.status,
         })
         .from(events)
         .innerJoin(eventRsvps, eq(events.id, eventRsvps.eventId))
-        .where(
-          and(
-            eq(eventRsvps.userId, userId),
-            eq(eventRsvps.status, 'going')
-          )
-        )
+        .where(and(...conditions))
         .orderBy(desc(events.startDate))
-        .limit(6);
+        .limit(50);
       
-      res.json(userEvents);
+      // Format response to match expected structure
+      const formattedEvents = userEvents.map(event => ({
+        event: {
+          id: event.id,
+          title: event.title,
+          description: event.description,
+          startDate: event.startDate,
+          endDate: event.endDate,
+          location: event.location,
+          city: event.city,
+          venue: event.venue,
+          eventType: event.eventType,
+          imageUrl: event.imageUrl,
+          maxAttendees: event.maxAttendees,
+        },
+        rsvpStatus: event.rsvpStatus,
+        _count: 0,
+      }));
+      
+      res.json(formattedEvents);
     } catch (error) {
       console.error('Failed to fetch user events:', error);
       res.status(500).json({ message: "Failed to fetch user events" });
