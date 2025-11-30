@@ -452,9 +452,12 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
     },
   });
 
+  const [visibilityPopoverOpen, setVisibilityPopoverOpen] = useState<number | null>(null);
+
   const handleVisibilityChange = (trip: TravelPlan, newVisibility: 'public' | 'friends' | 'private') => {
     console.log('[TravelTab] Visibility change clicked:', { tripId: trip.id, newVisibility, currentVisibility: trip.visibility });
     updateTripMutation.mutate({ tripId: trip.id, data: { visibility: newVisibility } });
+    setVisibilityPopoverOpen(null);
   };
 
   const handleDateChange = (trip: TravelPlan, startDate: Date | undefined, endDate: Date | undefined) => {
@@ -1022,7 +1025,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
                       </Popover>
                     )}
                     {isOwnProfile && (
-                      <Popover>
+                      <Popover open={visibilityPopoverOpen === trip.id} onOpenChange={(open) => setVisibilityPopoverOpen(open ? trip.id : null)}>
                         <PopoverTrigger asChild>
                           <Button 
                             variant="outline" 
@@ -1054,7 +1057,11 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
                                     "justify-start text-xs h-7 gap-2",
                                     (trip.visibility || 'public') === option.value && "bg-accent"
                                   )}
-                                  onClick={() => handleVisibilityChange(trip, option.value)}
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    handleVisibilityChange(trip, option.value);
+                                  }}
                                   data-testid={`button-visibility-option-${option.value}`}
                                 >
                                   <OptionIcon className="h-3 w-3" />
