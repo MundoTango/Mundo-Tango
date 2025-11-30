@@ -41,10 +41,10 @@ function MapUpdater({ center }: { center: [number, number] }) {
 
 const createLayerIcon = (count: number, layerType: string) => {
   const colors = {
-    events: { primary: '#FF6B6B', secondary: '#FF8E8E' },
-    housing: { primary: '#4ECDC4', secondary: '#45B7AF' },
-    recommendations: { primary: '#FFD93D', secondary: '#FFC107' },
-    default: { primary: '#40E0D0', secondary: '#1E90FF' },
+    events: { primary: '#0066FF', secondary: '#0052CC' },
+    housing: { primary: '#0080FF', secondary: '#0066FF' },
+    recommendations: { primary: '#1E90FF', secondary: '#0066FF' },
+    default: { primary: '#0066FF', secondary: '#0052CC' },
   };
 
   const colorPair = colors[layerType as keyof typeof colors] || colors.default;
@@ -64,7 +64,7 @@ const createLayerIcon = (count: number, layerType: string) => {
         font-weight: bold;
         color: white;
         font-size: 12px;
-        box-shadow: 0 4px 12px rgba(64, 224, 208, 0.4);
+        box-shadow: 0 4px 12px rgba(0, 102, 255, 0.4);
         transition: transform 0.2s;
       ">
         ${count}
