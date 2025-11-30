@@ -1501,9 +1501,12 @@ router.get("/:id/permissions", optionalAuth, async (req: AuthRequest, res: Respo
   try {
     const userId = req.user?.id;
     const eventId = parseInt(req.params.id);
+    
+    console.log(`[Events Permissions] Request for eventId: ${eventId}, userId: ${userId || 'unauthenticated'}`);
 
     // Return default (no permission) for unauthenticated users
     if (!userId) {
+      console.log(`[Events Permissions] Unauthenticated user, returning default permissions`);
       return res.json({
         canPost: false,
         canComment: false,
@@ -1514,13 +1517,17 @@ router.get("/:id/permissions", optionalAuth, async (req: AuthRequest, res: Respo
       });
     }
 
+    console.log(`[Events Permissions] Fetching permissions for userId: ${userId}, eventId: ${eventId}`);
     const permissions = await PostingPermissionService.getEventPermissions(userId, eventId);
+    console.log(`[Events Permissions] PostingPermissionService returned:`, JSON.stringify(permissions));
     
     // Check if user is the event organizer
     const [event] = await db.select({ userId: events.userId }).from(events).where(eq(events.id, eventId)).limit(1);
     const isOrganizer = event?.userId === userId;
     
-    res.json({ ...permissions, isOrganizer });
+    const result = { ...permissions, isOrganizer };
+    console.log(`[Events Permissions] Final result:`, JSON.stringify(result));
+    res.json(result);
   } catch (error) {
     console.error("[Events] Error fetching permissions:", error);
     res.status(500).json({ message: "Failed to fetch permissions" });

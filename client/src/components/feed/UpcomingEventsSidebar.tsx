@@ -1,17 +1,13 @@
 import { useState, useEffect } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, MapPin, Users, Star, Clock, ExternalLink, Check, HelpCircle, Sparkles } from "lucide-react";
+import { Calendar, MapPin, Users, Star, Clock, ExternalLink } from "lucide-react";
 import { motion } from "framer-motion";
 import { safeDateFormat, safeDateDistance } from "@/lib/safeDateFormat";
 import { Link } from "wouter";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { UnifiedRSVPButton, type RSVPStatus } from "@/components/unified/UnifiedRSVPButton";
 
 interface Event {
   id: number;
@@ -30,6 +26,12 @@ interface Event {
   };
 }
 
+interface RsvpData {
+  eventId: number;
+  status: RSVPStatus;
+  event?: Event;
+}
+
 interface UpcomingEventsSidebarProps {
   className?: string;
 }
@@ -40,169 +42,88 @@ const PRIORITY_CATEGORIES = [
 ];
 
 export function UpcomingEventsSidebar({ className }: UpcomingEventsSidebarProps) {
-  const [events, setEvents] = useState<Event[]>([]);
   const [selectedCategory, setSelectedCategory] = useState("my-events");
-  const [isLoading, setIsLoading] = useState(true);
   const [realtimeRsvps, setRealtimeRsvps] = useState<Record<number, number>>({});
-  const [userRsvps, setUserRsvps] = useState<Set<number>>(new Set());
-  const [rsvpStatuses, setRsvpStatuses] = useState<Record<number, string>>({});
+  const queryClient = useQueryClient();
 
-  // Fetch events and setup WebSocket for real-time updates
-  useEffect(() => {
-    fetchEvents();
-    fetchUserRsvps();
-  }, [selectedCategory]);
-
-  // Fetch user's existing RSVPs
-  const fetchUserRsvps = async () => {
-    try {
-      const response = await fetch('/api/events/my-rsvps', {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-        },
+  // Fetch user's RSVPs using React Query for cache consistency
+  const { data: myRsvps = [] } = useQuery<RsvpData[]>({
+    queryKey: ["/api/events/my-rsvps"],
+    queryFn: async () => {
+      const token = localStorage.getItem('accessToken');
+      if (!token) return [];
+      const res = await fetch('/api/events/my-rsvps', {
+        headers: { 'Authorization': `Bearer ${token}` },
+        credentials: 'include',
       });
-      
-      if (response.ok) {
-        const data = await response.json();
-        setUserRsvps(new Set(data.map((rsvp: any) => rsvp.eventId)));
-        const statuses: Record<number, string> = {};
-        data.forEach((rsvp: any) => {
-          statuses[rsvp.eventId] = rsvp.status;
-        });
-        setRsvpStatuses(statuses);
-      }
-    } catch (error) {
-      console.error('Failed to fetch user RSVPs:', error);
-    }
-  };
+      if (!res.ok) return [];
+      return res.json();
+    },
+    staleTime: 0, // Always refetch when component mounts
+  });
 
-  const fetchEvents = async () => {
-    setIsLoading(true);
-    try {
-      let eventData: Event[] = [];
+  // Create a map of eventId -> status for quick lookup
+  const rsvpStatusMap = myRsvps.reduce((acc, rsvp) => {
+    acc[rsvp.eventId] = rsvp.status;
+    return acc;
+  }, {} as Record<number, RSVPStatus>);
+
+  // Fetch events based on selected category
+  const { data: events = [], isLoading } = useQuery<Event[]>({
+    queryKey: ["/api/events", "sidebar", selectedCategory],
+    queryFn: async () => {
       const token = localStorage.getItem('accessToken');
       
       if (selectedCategory === 'my-events') {
-        // Fetch events user has RSVPed to
-        try {
-          const rsvpResponse = await fetch('/api/events/my-rsvps?limit=10&upcoming=true', {
-            headers: { 'Authorization': `Bearer ${token}` },
-          });
-          if (rsvpResponse.ok) {
-            const rsvpData = await rsvpResponse.json();
-            // Transform RSVP data to Event format
-            eventData = rsvpData.map((rsvp: any) => rsvp.event || {
-              id: rsvp.eventId,
-              title: rsvp.eventTitle || 'Untitled Event',
-              startDate: rsvp.eventStartDate || new Date().toISOString(),
-              location: rsvp.eventLocation,
-              rsvpCount: rsvp.eventRsvpCount || 0,
-            }).filter((e: any) => e.id);
-          }
-        } catch (error) {
-          console.error('Failed to fetch RSVPed events:', error);
+        // Use the my-rsvps endpoint for "My Events"
+        const rsvpResponse = await fetch('/api/events/my-rsvps?limit=10&upcoming=true', {
+          headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+          credentials: 'include',
+        });
+        if (rsvpResponse.ok) {
+          const rsvpData = await rsvpResponse.json();
+          return rsvpData.map((rsvp: any) => rsvp.event || {
+            id: rsvp.eventId,
+            title: rsvp.eventTitle || 'Untitled Event',
+            startDate: rsvp.eventStartDate || new Date().toISOString(),
+            location: rsvp.eventLocation,
+            rsvpCount: rsvp.eventRsvpCount || 0,
+          }).filter((e: any) => e.id);
         }
+        return [];
       } else if (selectedCategory === 'upcoming') {
-        // Fetch events from user's city groups
+        // Try city group events first, then fallback to general upcoming
         try {
           const cityGroupResponse = await fetch('/api/events/city-group?limit=10&upcoming=true', {
-            headers: { 'Authorization': `Bearer ${token}` },
+            headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+            credentials: 'include',
           });
           if (cityGroupResponse.ok) {
-            eventData = await cityGroupResponse.json();
-          } else {
-            // Fallback to general upcoming events
-            const upcomingResponse = await fetch('/api/events?upcoming=true&limit=10', {
-              headers: { 'Authorization': `Bearer ${token}` },
-            });
-            if (upcomingResponse.ok) {
-              eventData = await upcomingResponse.json();
-            }
+            return cityGroupResponse.json();
           }
-        } catch (error) {
-          console.error('Failed to fetch city group events:', error);
+        } catch {}
+        
+        // Fallback to general upcoming events
+        const upcomingResponse = await fetch('/api/events?upcoming=true&limit=10', {
+          headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+          credentials: 'include',
+        });
+        if (upcomingResponse.ok) {
+          return upcomingResponse.json();
         }
+        return [];
       }
-      
-      // Only use test data if we have no real data and user is not authenticated
-      setEvents(eventData.length > 0 ? eventData : (token ? [] : getTestEvents()));
-    } catch (error) {
-      console.error('Failed to fetch events:', error);
-      setEvents([]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Test events data for demonstration
-  const getTestEvents = (): Event[] => {
-    const now = Date.now();
-    return [
-      {
-        id: 1,
-        title: "Milan Tango Festival 2025",
-        description: "Annual tango festival with international masters",
-        startDate: new Date(now + 2 * 24 * 60 * 60 * 1000).toISOString(),
-        location: "Milan, Italy",
-        rsvpCount: 127,
-        category: "festival",
-        createdBy: {
-          id: 1,
-          name: "Carlos Mendez",
-          profileImage: undefined
-        }
-      },
-      {
-        id: 2,
-        title: "Barcelona Milonga Night",
-        description: "Weekly milonga with live orchestra",
-        startDate: new Date(now + 3 * 24 * 60 * 60 * 1000).toISOString(),
-        location: "Barcelona, Spain",
-        rsvpCount: 89,
-        category: "milonga",
-        imageUrl: undefined
-      },
-      {
-        id: 3,
-        title: "Toronto Practica Session",
-        description: "Practice session for intermediate dancers",
-        startDate: new Date(now + 4 * 24 * 60 * 60 * 1000).toISOString(),
-        location: "Toronto, Canada",
-        rsvpCount: 34,
-        category: "practica"
-      },
-      {
-        id: 4,
-        title: "Beginner Tango Workshop",
-        description: "Learn the fundamentals of Argentine Tango",
-        startDate: new Date(now + 5 * 24 * 60 * 60 * 1000).toISOString(),
-        location: "Paris, France",
-        rsvpCount: 56,
-        category: "workshop"
-      },
-      {
-        id: 5,
-        title: "Buenos Aires Traditional Milonga",
-        description: "Authentic milonga in the heart of Buenos Aires",
-        startDate: new Date(now + 7 * 24 * 60 * 60 * 1000).toISOString(),
-        location: "Buenos Aires, Argentina",
-        rsvpCount: 203,
-        category: "milonga"
-      }
-    ];
-  };
+      return [];
+    },
+    staleTime: 30000, // 30 seconds
+  });
 
   // Real-time RSVP updates via WebSocket
   useEffect(() => {
     const accessToken = localStorage.getItem('accessToken');
-    
-    // Don't connect if not authenticated
-    if (!accessToken) {
-      return;
-    }
+    if (!accessToken) return;
 
     let ws: WebSocket | null = null;
-    let reconnectTimeout: NodeJS.Timeout | null = null;
 
     const connect = () => {
       try {
@@ -210,7 +131,6 @@ export function UpcomingEventsSidebar({ className }: UpcomingEventsSidebarProps)
         
         ws.onopen = () => {
           console.log('[WS] Connected to notification service');
-          // Send auth message
           if (ws && accessToken) {
             ws.send(JSON.stringify({
               type: 'auth',
@@ -221,13 +141,13 @@ export function UpcomingEventsSidebar({ className }: UpcomingEventsSidebarProps)
 
         ws.onmessage = (event) => {
           const data = JSON.parse(event.data);
-          
-          // Listen for RSVP updates
           if (data.type === 'event_rsvp_update') {
             setRealtimeRsvps(prev => ({
               ...prev,
               [data.eventId]: data.rsvpCount,
             }));
+            // Also invalidate queries to sync
+            queryClient.invalidateQueries({ queryKey: ["/api/events/my-rsvps"] });
           }
         };
 
@@ -237,7 +157,6 @@ export function UpcomingEventsSidebar({ className }: UpcomingEventsSidebarProps)
 
         ws.onclose = () => {
           console.log('[WS] Disconnected from notification service');
-          // Don't reconnect automatically - prevents infinite loop
         };
       } catch (error) {
         console.error('[WS] Failed to create WebSocket:', error);
@@ -247,43 +166,21 @@ export function UpcomingEventsSidebar({ className }: UpcomingEventsSidebarProps)
     connect();
 
     return () => {
-      if (reconnectTimeout) {
-        clearTimeout(reconnectTimeout);
-      }
       if (ws) {
         ws.close();
       }
     };
-  }, []);
+  }, [queryClient]);
 
   const getRsvpCount = (eventId: number, baseCount: number) => {
     return realtimeRsvps[eventId] ?? baseCount;
   };
 
-  const handleRsvp = async (eventId: number, status: 'going' | 'maybe' | 'interested') => {
-    try {
-      const response = await fetch(`/api/events/${eventId}/rsvp`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-        },
-        body: JSON.stringify({ status }),
-      });
-
-      if (response.ok) {
-        setUserRsvps(prev => new Set(prev).add(eventId));
-        setRsvpStatuses(prev => ({ ...prev, [eventId]: status }));
-        if (status === 'going') {
-          setRealtimeRsvps(prev => ({
-            ...prev,
-            [eventId]: (prev[eventId] || events.find(e => e.id === eventId)?.rsvpCount || 0) + 1,
-          }));
-        }
-      }
-    } catch (error) {
-      console.error("Failed to RSVP:", error);
-    }
+  // Handle RSVP status change - invalidate sidebar queries
+  const handleRsvpStatusChange = (eventId: number, status: RSVPStatus) => {
+    // The UnifiedRSVPButton already handles cache invalidation,
+    // but we also invalidate the sidebar-specific query
+    queryClient.invalidateQueries({ queryKey: ["/api/events", "sidebar"] });
   };
 
   return (
@@ -351,6 +248,7 @@ export function UpcomingEventsSidebar({ className }: UpcomingEventsSidebarProps)
           events.map((event, index) => {
             const rsvpCount = getRsvpCount(event.id, event.rsvpCount);
             const isPulsingRsvp = realtimeRsvps[event.id] !== undefined;
+            const currentStatus = rsvpStatusMap[event.id] || null;
             
             return (
               <motion.div
@@ -411,7 +309,7 @@ export function UpcomingEventsSidebar({ className }: UpcomingEventsSidebarProps)
                           </div>
                         )}
 
-                        {/* RSVP Counter with Real-time Pulse and Button */}
+                        {/* RSVP Counter with Real-time Pulse and UnifiedRSVPButton */}
                         <motion.div 
                           className="flex items-center gap-2 mt-1.5"
                           animate={isPulsingRsvp ? {
@@ -433,87 +331,13 @@ export function UpcomingEventsSidebar({ className }: UpcomingEventsSidebarProps)
                             {rsvpCount} going
                           </Badge>
                           
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                              {userRsvps.has(event.id) ? (
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  className="h-6 text-xs px-2"
-                                  style={{
-                                    borderColor: rsvpStatuses[event.id] === 'going' ? '#10B981' : rsvpStatuses[event.id] === 'maybe' ? '#F59E0B' : '#8B5CF6',
-                                    color: rsvpStatuses[event.id] === 'going' ? '#10B981' : rsvpStatuses[event.id] === 'maybe' ? '#F59E0B' : '#8B5CF6',
-                                  }}
-                                  data-testid={`button-rsvp-status-${event.id}`}
-                                >
-                                  {rsvpStatuses[event.id] === 'going' && <Check className="w-3 h-3 mr-1" />}
-                                  {rsvpStatuses[event.id] === 'maybe' && <HelpCircle className="w-3 h-3 mr-1" />}
-                                  {rsvpStatuses[event.id] === 'interested' && <Sparkles className="w-3 h-3 mr-1" />}
-                                  {rsvpStatuses[event.id] === 'going' ? 'Going' : rsvpStatuses[event.id] === 'maybe' ? 'Maybe' : 'Interested'}
-                                </Button>
-                              ) : (
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  className="h-6 text-xs px-2"
-                                  style={{
-                                    borderColor: '#40E0D0',
-                                    color: '#40E0D0'
-                                  }}
-                                  data-testid={`button-rsvp-${event.id}`}
-                                >
-                                  RSVP
-                                </Button>
-                              )}
-                            </DropdownMenuTrigger>
-                              <DropdownMenuContent 
-                                align="end"
-                                className="w-40"
-                                style={{
-                                  background: 'linear-gradient(180deg, rgba(64, 224, 208, 0.15) 0%, rgba(30, 144, 255, 0.12) 100%)',
-                                  backdropFilter: 'blur(12px)',
-                                  borderColor: 'rgba(64, 224, 208, 0.3)',
-                                }}
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                <DropdownMenuItem
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    handleRsvp(event.id, 'going');
-                                  }}
-                                  className="cursor-pointer"
-                                  data-testid={`rsvp-going-${event.id}`}
-                                >
-                                  <Check className="w-4 h-4 mr-2" style={{ color: '#10B981' }} />
-                                  <span>Going</span>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    handleRsvp(event.id, 'maybe');
-                                  }}
-                                  className="cursor-pointer"
-                                  data-testid={`rsvp-maybe-${event.id}`}
-                                >
-                                  <HelpCircle className="w-4 h-4 mr-2" style={{ color: '#F59E0B' }} />
-                                  <span>Maybe</span>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    handleRsvp(event.id, 'interested');
-                                  }}
-                                  className="cursor-pointer"
-                                  data-testid={`rsvp-interested-${event.id}`}
-                                >
-                                  <Sparkles className="w-4 h-4 mr-2" style={{ color: '#8B5CF6' }} />
-                                  <span>Interested</span>
-                                </DropdownMenuItem>
-                              </DropdownMenuContent>
-                          </DropdownMenu>
+                          {/* Use UnifiedRSVPButton for consistent cache management */}
+                          <UnifiedRSVPButton
+                            eventId={event.id}
+                            currentStatus={currentStatus}
+                            variant="badge"
+                            onStatusChange={(status) => handleRsvpStatusChange(event.id, status)}
+                          />
                         </motion.div>
                       </div>
                     </div>
