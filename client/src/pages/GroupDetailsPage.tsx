@@ -511,6 +511,743 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
   );
 }
 
+function GroupHousingTab({ groupCity }: { groupCity?: string | null }) {
+  const [showMap, setShowMap] = useState(false);
+  
+  const { data: listings, isLoading } = useQuery<HousingListing[]>({
+    queryKey: ['/api/housing/listings', groupCity],
+    queryFn: async () => {
+      const url = groupCity 
+        ? `/api/housing/listings?city=${encodeURIComponent(groupCity)}&status=active`
+        : '/api/housing/listings?status=active&limit=20';
+      const res = await fetch(url, { credentials: 'include' });
+      if (!res.ok) return [];
+      const data = await res.json();
+      return data.listings || data || [];
+    },
+    enabled: true,
+  });
+
+  if (isLoading) {
+    return (
+      <Card className="overflow-hidden">
+        <CardHeader className="border-b">
+          <CardTitle className="text-2xl font-serif flex items-center gap-2">
+            <Home className="h-6 w-6 text-primary" />
+            Housing Options
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-8 space-y-6">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="flex items-start gap-6 p-6 border rounded-xl">
+              <Skeleton className="w-16 h-16 rounded-xl" />
+              <div className="flex-1 space-y-3">
+                <Skeleton className="h-6 w-2/3" />
+                <Skeleton className="h-4 w-1/3" />
+                <Skeleton className="h-4 w-1/4" />
+              </div>
+            </div>
+          ))}
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const listingsWithCoords = listings?.filter(l => l.latitude && l.longitude) || [];
+  const defaultCenter: [number, number] = listingsWithCoords.length > 0 
+    ? [parseFloat(listingsWithCoords[0].latitude!), parseFloat(listingsWithCoords[0].longitude!)]
+    : [0, 0];
+
+  return (
+    <div className="space-y-6">
+      <Card className="overflow-hidden">
+        <CardHeader className="border-b">
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="text-2xl font-serif flex items-center gap-2">
+                <Home className="h-6 w-6 text-primary" />
+                Housing Options
+              </CardTitle>
+              <CardDescription>
+                {listings?.length || 0} housing options available in {groupCity || "the area"}
+              </CardDescription>
+            </div>
+            {listingsWithCoords.length > 0 && (
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="gap-2"
+                onClick={() => setShowMap(!showMap)}
+                data-testid="button-toggle-housing-map"
+              >
+                <MapIcon className="h-4 w-4" />
+                {showMap ? 'List View' : 'Map View'}
+              </Button>
+            )}
+          </div>
+        </CardHeader>
+        <CardContent className="p-6">
+          {showMap && listingsWithCoords.length > 0 ? (
+            <div className="h-[400px] rounded-xl overflow-hidden border mb-6">
+              <MapContainer 
+                center={defaultCenter} 
+                zoom={12} 
+                className="h-full w-full"
+              >
+                <TileLayer
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                />
+                {listingsWithCoords.map((listing) => (
+                  <Marker 
+                    key={listing.id}
+                    position={[parseFloat(listing.latitude!), parseFloat(listing.longitude!)]}
+                  >
+                    <Popup>
+                      <div className="p-2">
+                        <h4 className="font-semibold">{listing.title}</h4>
+                        <p className="text-sm text-muted-foreground">{listing.roomType}</p>
+                        <p className="font-medium">{listing.currency} {listing.price}/night</p>
+                      </div>
+                    </Popup>
+                  </Marker>
+                ))}
+              </MapContainer>
+            </div>
+          ) : null}
+
+          {!listings || listings.length === 0 ? (
+            <div className="text-center py-12">
+              <Home className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+              <h3 className="text-lg font-medium mb-2">No Housing Available</h3>
+              <p className="text-muted-foreground">
+                No housing options listed for {groupCity || "this area"} yet.
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {listings.map((listing, index) => (
+                <motion.div
+                  key={listing.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  className="flex items-start gap-6 p-6 border rounded-xl hover-elevate"
+                  data-testid={`housing-listing-${listing.id}`}
+                >
+                  <div className="w-16 h-16 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                    <Home className="h-8 w-8 text-primary" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-xl font-serif font-bold mb-2">{listing.title}</h3>
+                    <div className="space-y-2 text-sm text-muted-foreground">
+                      <div className="flex items-center gap-4">
+                        <Badge variant="outline">{listing.propertyType}</Badge>
+                        <Badge variant="secondary">{listing.roomType}</Badge>
+                      </div>
+                      {listing.host && (
+                        <div className="flex items-center gap-2">
+                          <Avatar className="h-6 w-6">
+                            <AvatarImage src={listing.host.profileImage} />
+                            <AvatarFallback>{listing.host.name?.charAt(0) || 'H'}</AvatarFallback>
+                          </Avatar>
+                          <span>Hosted by {listing.host.name}</span>
+                        </div>
+                      )}
+                      <div className="font-medium text-foreground text-lg flex items-center gap-1">
+                        <DollarSign className="h-4 w-4" />
+                        {listing.currency} {listing.price}/night
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <MapPin className="h-3 w-3" />
+                        {listing.city}, {listing.country}
+                      </div>
+                    </div>
+                  </div>
+                  <Link href={`/housing/${listing.id}`}>
+                    <Button data-testid={`button-view-housing-${listing.id}`}>
+                      View Details
+                    </Button>
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+function GroupHubTab({ groupCity, groupCountry }: { groupCity?: string | null; groupCountry?: string | null }) {
+  const { data: milongas, isLoading: loadingMilongas } = useQuery<SelectEvent[]>({
+    queryKey: ['/api/events', 'milonga', groupCity],
+    queryFn: async () => {
+      const url = groupCity 
+        ? `/api/events?city=${encodeURIComponent(groupCity)}&eventType=milonga&limit=10&upcoming=true`
+        : '/api/events?eventType=milonga&limit=10&upcoming=true';
+      const res = await fetch(url, { credentials: 'include' });
+      if (!res.ok) return [];
+      const data = await res.json();
+      let events = data.events || data || [];
+      if (events.length > 0 && events[0]?.event) {
+        events = events.map((item: any) => item.event || item);
+      }
+      return events;
+    },
+  });
+
+  const { data: teachers, isLoading: loadingTeachers } = useQuery<UserByRole[]>({
+    queryKey: ['/api/users/by-role', 'teacher', groupCity],
+    queryFn: async () => {
+      const url = groupCity 
+        ? `/api/users/by-role?role=teacher&city=${encodeURIComponent(groupCity)}&limit=6`
+        : '/api/users/by-role?role=teacher&limit=6';
+      const res = await fetch(url, { credentials: 'include' });
+      if (!res.ok) return [];
+      return res.json();
+    },
+  });
+
+  const { data: djs, isLoading: loadingDJs } = useQuery<UserByRole[]>({
+    queryKey: ['/api/users/by-role', 'dj', groupCity],
+    queryFn: async () => {
+      const url = groupCity 
+        ? `/api/users/by-role?role=dj&city=${encodeURIComponent(groupCity)}&limit=6`
+        : '/api/users/by-role?role=dj&limit=6';
+      const res = await fetch(url, { credentials: 'include' });
+      if (!res.ok) return [];
+      return res.json();
+    },
+  });
+
+  const { data: organizers, isLoading: loadingOrganizers } = useQuery<UserByRole[]>({
+    queryKey: ['/api/users/by-role', 'organizer', groupCity],
+    queryFn: async () => {
+      const url = groupCity 
+        ? `/api/users/by-role?role=organizer&city=${encodeURIComponent(groupCity)}&limit=6`
+        : '/api/users/by-role?role=organizer&limit=6';
+      const res = await fetch(url, { credentials: 'include' });
+      if (!res.ok) return [];
+      return res.json();
+    },
+  });
+
+  return (
+    <div className="space-y-8">
+      <Card className="overflow-hidden">
+        <CardHeader className="border-b">
+          <CardTitle className="text-2xl font-serif flex items-center gap-2">
+            <Heart className="h-6 w-6 text-primary" />
+            Community Hub
+          </CardTitle>
+          <CardDescription>
+            Local tango resources in {groupCity || groupCountry || "your area"}
+          </CardDescription>
+        </CardHeader>
+      </Card>
+
+      <Card className="overflow-hidden">
+        <CardHeader className="border-b">
+          <CardTitle className="text-xl font-serif">Upcoming Milongas</CardTitle>
+          <CardDescription>Regular milongas in {groupCity || "the area"}</CardDescription>
+        </CardHeader>
+        <CardContent className="p-6">
+          {loadingMilongas ? (
+            <div className="space-y-4">
+              {[1, 2, 3].map((i) => (
+                <Skeleton key={i} className="h-20 w-full rounded-xl" />
+              ))}
+            </div>
+          ) : !milongas || milongas.length === 0 ? (
+            <div className="text-center py-8 text-muted-foreground">
+              <Music className="h-8 w-8 mx-auto mb-2 opacity-50" />
+              <p>No milongas scheduled yet</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {milongas.slice(0, 5).map((milonga) => (
+                <Link key={milonga.id} href={`/events/${milonga.id}`}>
+                  <motion.div 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="p-4 border rounded-xl hover-elevate cursor-pointer"
+                    data-testid={`milonga-${milonga.id}`}
+                  >
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <h4 className="text-lg font-semibold mb-1">{milonga.title}</h4>
+                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                          <span className="flex items-center gap-1">
+                            <Calendar className="h-3 w-3" />
+                            {safeDateFormat(milonga.startDate, "EEE, MMM d")}
+                          </span>
+                          {milonga.location && (
+                            <span className="flex items-center gap-1">
+                              <MapPin className="h-3 w-3" />
+                              {milonga.location}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <ChevronRight className="h-5 w-5 text-muted-foreground" />
+                    </div>
+                  </motion.div>
+                </Link>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      <div className="grid md:grid-cols-3 gap-6">
+        <Card className="overflow-hidden">
+          <CardHeader className="border-b">
+            <CardTitle className="text-lg font-serif flex items-center gap-2">
+              <GraduationCap className="h-5 w-5 text-blue-500" />
+              Teachers
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-4">
+            {loadingTeachers ? (
+              <div className="space-y-3">
+                {[1, 2, 3].map((i) => <Skeleton key={i} className="h-12 w-full" />)}
+              </div>
+            ) : !teachers || teachers.length === 0 ? (
+              <p className="text-center text-muted-foreground py-4 text-sm">No teachers found</p>
+            ) : (
+              <div className="space-y-3">
+                {teachers.map((teacher) => (
+                  <Link key={teacher.id} href={`/profile/${teacher.username || teacher.id}`}>
+                    <div className="flex items-center gap-3 p-2 rounded-lg hover-elevate cursor-pointer">
+                      <Avatar className="h-10 w-10">
+                        <AvatarImage src={teacher.profileImage} />
+                        <AvatarFallback className="bg-blue-500/20 text-blue-700 dark:text-blue-300">
+                          {teacher.name?.charAt(0) || 'T'}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium truncate">{teacher.name}</p>
+                        <p className="text-xs text-muted-foreground truncate">{teacher.city}</p>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card className="overflow-hidden">
+          <CardHeader className="border-b">
+            <CardTitle className="text-lg font-serif flex items-center gap-2">
+              <Music className="h-5 w-5 text-purple-500" />
+              DJs
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-4">
+            {loadingDJs ? (
+              <div className="space-y-3">
+                {[1, 2, 3].map((i) => <Skeleton key={i} className="h-12 w-full" />)}
+              </div>
+            ) : !djs || djs.length === 0 ? (
+              <p className="text-center text-muted-foreground py-4 text-sm">No DJs found</p>
+            ) : (
+              <div className="space-y-3">
+                {djs.map((dj) => (
+                  <Link key={dj.id} href={`/profile/${dj.username || dj.id}`}>
+                    <div className="flex items-center gap-3 p-2 rounded-lg hover-elevate cursor-pointer">
+                      <Avatar className="h-10 w-10">
+                        <AvatarImage src={dj.profileImage} />
+                        <AvatarFallback className="bg-purple-500/20 text-purple-700 dark:text-purple-300">
+                          {dj.name?.charAt(0) || 'D'}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium truncate">{dj.name}</p>
+                        <p className="text-xs text-muted-foreground truncate">{dj.city}</p>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card className="overflow-hidden">
+          <CardHeader className="border-b">
+            <CardTitle className="text-lg font-serif flex items-center gap-2">
+              <Mic2 className="h-5 w-5 text-amber-500" />
+              Organizers
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-4">
+            {loadingOrganizers ? (
+              <div className="space-y-3">
+                {[1, 2, 3].map((i) => <Skeleton key={i} className="h-12 w-full" />)}
+              </div>
+            ) : !organizers || organizers.length === 0 ? (
+              <p className="text-center text-muted-foreground py-4 text-sm">No organizers found</p>
+            ) : (
+              <div className="space-y-3">
+                {organizers.map((org) => (
+                  <Link key={org.id} href={`/profile/${org.username || org.id}`}>
+                    <div className="flex items-center gap-3 p-2 rounded-lg hover-elevate cursor-pointer">
+                      <Avatar className="h-10 w-10">
+                        <AvatarImage src={org.profileImage} />
+                        <AvatarFallback className="bg-amber-500/20 text-amber-700 dark:text-amber-300">
+                          {org.name?.charAt(0) || 'O'}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium truncate">{org.name}</p>
+                        <p className="text-xs text-muted-foreground truncate">{org.city}</p>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}
+
+function GroupCityGuideTab({ group, groupCity, groupCountry }: { 
+  group: SelectGroup; 
+  groupCity?: string | null; 
+  groupCountry?: string | null;
+}) {
+  const [activeCategory, setActiveCategory] = useState<string>('restaurant');
+
+  const { data: teachers } = useQuery<UserByRole[]>({
+    queryKey: ['/api/users/by-role', 'teacher', groupCity],
+    queryFn: async () => {
+      const url = groupCity 
+        ? `/api/users/by-role?role=teacher&city=${encodeURIComponent(groupCity)}&limit=5`
+        : '/api/users/by-role?role=teacher&limit=5';
+      const res = await fetch(url, { credentials: 'include' });
+      if (!res.ok) return [];
+      return res.json();
+    },
+  });
+
+  const { data: djs } = useQuery<UserByRole[]>({
+    queryKey: ['/api/users/by-role', 'dj', groupCity],
+    queryFn: async () => {
+      const url = groupCity 
+        ? `/api/users/by-role?role=dj&city=${encodeURIComponent(groupCity)}&limit=5`
+        : '/api/users/by-role?role=dj&limit=5';
+      const res = await fetch(url, { credentials: 'include' });
+      if (!res.ok) return [];
+      return res.json();
+    },
+  });
+
+  const { data: organizers } = useQuery<UserByRole[]>({
+    queryKey: ['/api/users/by-role', 'organizer', groupCity],
+    queryFn: async () => {
+      const url = groupCity 
+        ? `/api/users/by-role?role=organizer&city=${encodeURIComponent(groupCity)}&limit=5`
+        : '/api/users/by-role?role=organizer&limit=5';
+      const res = await fetch(url, { credentials: 'include' });
+      if (!res.ok) return [];
+      return res.json();
+    },
+  });
+
+  const categories = [
+    { id: 'restaurant', label: 'Restaurants', icon: Utensils },
+    { id: 'cafe', label: 'Cafes', icon: Coffee },
+    { id: 'bar', label: 'Bars', icon: Wine },
+    { id: 'venue', label: 'Venues', icon: Building2 },
+  ];
+
+  return (
+    <div className="space-y-8" data-testid="city-guide-content">
+      <Card className="overflow-hidden">
+        <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-primary/10">
+          <div className="flex items-center justify-between gap-2">
+            <CardTitle className="text-2xl font-serif flex items-center gap-3">
+              <Compass className="h-6 w-6 text-primary" />
+              {groupCity || group.name} City Guide
+            </CardTitle>
+            {group.verified && (
+              <Badge variant="secondary" className="gap-1" data-testid="badge-verified">
+                <Check className="h-3 w-3" />
+                Verified Community
+              </Badge>
+            )}
+          </div>
+          <CardDescription>
+            Your complete guide to tango in {groupCity || "this city"}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="p-8">
+          <div className="grid md:grid-cols-2 gap-8 mb-8">
+            {(groupCity || groupCountry) && (
+              <div className="flex items-start gap-4" data-testid="section-location">
+                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <MapPin className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold mb-1">Location</h3>
+                  <p className="text-muted-foreground text-lg" data-testid="text-location">
+                    {groupCity}{groupCountry && `, ${groupCountry}`}
+                  </p>
+                </div>
+              </div>
+            )}
+            
+            {group.sourceUrl && (
+              <div className="flex items-start gap-4" data-testid="section-source">
+                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <ExternalLink className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold mb-1">Official Website</h3>
+                  <a 
+                    href={group.sourceUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary hover:underline text-lg flex items-center gap-2"
+                    data-testid="link-source"
+                  >
+                    {(() => {
+                      try {
+                        return new URL(group.sourceUrl).hostname.replace('www.', '');
+                      } catch {
+                        return 'Visit Website';
+                      }
+                    })()}
+                    <ExternalLink className="h-4 w-4" />
+                  </a>
+                </div>
+              </div>
+            )}
+          </div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <div className="text-center p-4 rounded-xl bg-gradient-to-br from-blue-500/10 to-cyan-500/10 border border-blue-500/20">
+              <div className="text-3xl font-bold text-primary">{group.memberCount || 0}</div>
+              <div className="text-sm text-muted-foreground">Members</div>
+            </div>
+            <div className="text-center p-4 rounded-xl bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/20">
+              <div className="text-3xl font-bold text-primary">{group.eventCount || 0}</div>
+              <div className="text-sm text-muted-foreground">Events</div>
+            </div>
+            <div className="text-center p-4 rounded-xl bg-gradient-to-br from-amber-500/10 to-orange-500/10 border border-amber-500/20">
+              <div className="text-3xl font-bold text-primary">{group.postCount || 0}</div>
+              <div className="text-sm text-muted-foreground">Posts</div>
+            </div>
+            <div className="text-center p-4 rounded-xl bg-gradient-to-br from-green-500/10 to-emerald-500/10 border border-green-500/20">
+              <div className="text-3xl font-bold text-primary">
+                {group.verified ? <Check className="h-8 w-8 mx-auto" /> : "—"}
+              </div>
+              <div className="text-sm text-muted-foreground">Verified</div>
+            </div>
+          </div>
+          
+          {group.description && (
+            <div className="prose prose-lg dark:prose-invert max-w-none" data-testid="section-description">
+              <div dangerouslySetInnerHTML={{ __html: group.description }} />
+            </div>
+          )}
+        </CardContent>
+      </Card>
+      
+      <Card className="overflow-hidden">
+        <CardHeader className="border-b">
+          <CardTitle className="text-xl font-serif flex items-center gap-2">
+            <Users className="h-5 w-5 text-primary" />
+            Key People in {groupCity || "This Community"}
+          </CardTitle>
+          <CardDescription>
+            Teachers, DJs, and organizers active in this tango scene
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="p-6">
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="space-y-4">
+              <h4 className="font-semibold flex items-center gap-2 text-lg">
+                <GraduationCap className="h-5 w-5 text-blue-500" />
+                Teachers
+              </h4>
+              <div className="space-y-3">
+                {teachers && teachers.length > 0 ? teachers.map((teacher) => (
+                  <Link key={teacher.id} href={`/profile/${teacher.username || teacher.id}`}>
+                    <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/30 hover-elevate cursor-pointer">
+                      <Avatar className="h-10 w-10">
+                        <AvatarImage src={teacher.profileImage} />
+                        <AvatarFallback className="bg-blue-500/20 text-blue-700 dark:text-blue-300">
+                          {teacher.name?.charAt(0) || 'T'}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium truncate">{teacher.name}</p>
+                        <p className="text-xs text-muted-foreground">Tango Instructor</p>
+                      </div>
+                    </div>
+                  </Link>
+                )) : (
+                  <p className="text-sm text-muted-foreground py-2">No teachers found in this area</p>
+                )}
+              </div>
+            </div>
+            
+            <div className="space-y-4">
+              <h4 className="font-semibold flex items-center gap-2 text-lg">
+                <Music className="h-5 w-5 text-purple-500" />
+                DJs
+              </h4>
+              <div className="space-y-3">
+                {djs && djs.length > 0 ? djs.map((dj) => (
+                  <Link key={dj.id} href={`/profile/${dj.username || dj.id}`}>
+                    <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/30 hover-elevate cursor-pointer">
+                      <Avatar className="h-10 w-10">
+                        <AvatarImage src={dj.profileImage} />
+                        <AvatarFallback className="bg-purple-500/20 text-purple-700 dark:text-purple-300">
+                          {dj.name?.charAt(0) || 'D'}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium truncate">{dj.name}</p>
+                        <p className="text-xs text-muted-foreground">Milonga DJ</p>
+                      </div>
+                    </div>
+                  </Link>
+                )) : (
+                  <p className="text-sm text-muted-foreground py-2">No DJs found in this area</p>
+                )}
+              </div>
+            </div>
+            
+            <div className="space-y-4">
+              <h4 className="font-semibold flex items-center gap-2 text-lg">
+                <Mic2 className="h-5 w-5 text-amber-500" />
+                Organizers
+              </h4>
+              <div className="space-y-3">
+                {organizers && organizers.length > 0 ? organizers.map((org) => (
+                  <Link key={org.id} href={`/profile/${org.username || org.id}`}>
+                    <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/30 hover-elevate cursor-pointer">
+                      <Avatar className="h-10 w-10">
+                        <AvatarImage src={org.profileImage} />
+                        <AvatarFallback className="bg-amber-500/20 text-amber-700 dark:text-amber-300">
+                          {org.name?.charAt(0) || 'O'}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium truncate">{org.name}</p>
+                        <p className="text-xs text-muted-foreground">Event Organizer</p>
+                      </div>
+                    </div>
+                  </Link>
+                )) : (
+                  <p className="text-sm text-muted-foreground py-2">No organizers found in this area</p>
+                )}
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+      
+      <Card className="overflow-hidden">
+        <CardHeader className="border-b">
+          <CardTitle className="text-xl font-serif flex items-center gap-2">
+            <MapPin className="h-5 w-5 text-primary" />
+            Local Recommendations
+          </CardTitle>
+          <CardDescription>
+            Restaurants, cafes, and venues recommended by the community
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="p-6">
+          <div className="flex flex-wrap gap-2 mb-6">
+            {categories.map((cat) => (
+              <Button
+                key={cat.id}
+                variant={activeCategory === cat.id ? "default" : "outline"}
+                size="sm"
+                className="gap-2"
+                onClick={() => setActiveCategory(cat.id)}
+                data-testid={`button-category-${cat.id}`}
+              >
+                <cat.icon className="h-4 w-4" />
+                {cat.label}
+              </Button>
+            ))}
+          </div>
+          
+          {groupCity ? (
+            <RecommendationsList 
+              city={groupCity} 
+              category={activeCategory}
+              showMap={false}
+            />
+          ) : (
+            <div className="text-center py-8 text-muted-foreground">
+              <MapPin className="h-8 w-8 mx-auto mb-2 opacity-50" />
+              <p>Select a city to see recommendations</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {(group.longDescription || group.rules || (group.tags && group.tags.length > 0)) && (
+        <Card className="overflow-hidden">
+          <CardHeader className="border-b">
+            <CardTitle className="text-xl font-serif">Additional Information</CardTitle>
+          </CardHeader>
+          <CardContent className="p-6 space-y-6">
+            {group.longDescription && group.longDescription !== group.description && (
+              <div>
+                <h4 className="font-semibold mb-3">More About This Community</h4>
+                <div 
+                  className="text-muted-foreground prose dark:prose-invert max-w-none"
+                  dangerouslySetInnerHTML={{ __html: group.longDescription }}
+                />
+              </div>
+            )}
+            
+            {group.tags && group.tags.length > 0 && (
+              <div>
+                <h4 className="font-semibold mb-3">Tags</h4>
+                <div className="flex flex-wrap gap-2">
+                  {group.tags.map((tag: string, i: number) => (
+                    <Badge key={i} variant="secondary" className="text-sm">
+                      {tag}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            {group.rules && (
+              <div>
+                <h4 className="font-semibold mb-3">Community Guidelines</h4>
+                <div 
+                  className="text-muted-foreground prose dark:prose-invert max-w-none"
+                  dangerouslySetInnerHTML={{ __html: group.rules }}
+                />
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
+      
+      {group.createdAt && (
+        <div className="text-center text-sm text-muted-foreground py-4">
+          Community established {safeDateFormat(group.createdAt, "MMMM yyyy")}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function GroupDetailsPage() {
   const [, params] = useRoute("/groups/:id");
   const groupIdOrSlug = params?.id || "";
@@ -779,58 +1516,6 @@ export default function GroupDetailsPage() {
                   groupCity={group.city} 
                   groupCountry={group.country} 
                 />
-                  </Card>
-                  
-                  {/* Additional Info */}
-                  {(group.longDescription || group.rules || group.tags?.length) && (
-                    <Card className="overflow-hidden">
-                      <CardHeader className="border-b">
-                        <CardTitle className="text-xl font-serif">Additional Information</CardTitle>
-                      </CardHeader>
-                      <CardContent className="p-6 space-y-6">
-                        {group.longDescription && group.longDescription !== group.description && (
-                          <div>
-                            <h4 className="font-semibold mb-3">More About This Community</h4>
-                            <div 
-                              className="text-muted-foreground prose dark:prose-invert max-w-none"
-                              dangerouslySetInnerHTML={{ __html: group.longDescription }}
-                            />
-                          </div>
-                        )}
-                        
-                        {group.tags && group.tags.length > 0 && (
-                          <div>
-                            <h4 className="font-semibold mb-3">Tags</h4>
-                            <div className="flex flex-wrap gap-2">
-                              {group.tags.map((tag: string, i: number) => (
-                                <Badge key={i} variant="secondary" className="text-sm">
-                                  {tag}
-                                </Badge>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                        
-                        {group.rules && (
-                          <div>
-                            <h4 className="font-semibold mb-3">Community Guidelines</h4>
-                            <div 
-                              className="text-muted-foreground prose dark:prose-invert max-w-none"
-                              dangerouslySetInnerHTML={{ __html: group.rules }}
-                            />
-                          </div>
-                        )}
-                      </CardContent>
-                    </Card>
-                  )}
-                  
-                  {/* Footer */}
-                  {group.createdAt && (
-                    <div className="text-center text-sm text-muted-foreground py-4">
-                      Community established {safeDateFormat(group.createdAt, "MMMM yyyy")}
-                    </div>
-                  )}
-                </div>
               </TabsContent>
 
               {membershipData?.isMember && (

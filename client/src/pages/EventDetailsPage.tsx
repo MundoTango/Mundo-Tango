@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Calendar, MapPin, DollarSign, Globe, Users, Check, ChevronRight, User, Ticket, Music, Tag, ExternalLink, Clock, Navigation } from "lucide-react";
+import { Calendar, MapPin, DollarSign, Globe, Users, Check, ChevronRight, User, Ticket, Music, Tag, ExternalLink, Clock, Navigation, Camera, Image as ImageIcon, Loader2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link } from "wouter";
 import { safeDateFormat } from "@/lib/safeDateFormat";
@@ -18,6 +18,116 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { getCityImageUrl } from "@/lib/cityImageMap";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { EventPostFeed } from "@/components/events/EventPostFeed";
+
+interface EventPhoto {
+  photo: {
+    id: number;
+    eventId: number;
+    uploaderId: number;
+    imageUrl: string;
+    caption?: string;
+    createdAt: string;
+  };
+  uploader?: {
+    id: number;
+    name: string;
+    username: string;
+    profileImage?: string;
+  };
+}
+
+function EventPhotosTab({ eventId }: { eventId: number }) {
+  const { data: photos, isLoading } = useQuery<EventPhoto[]>({
+    queryKey: ['/api/events', eventId, 'photos'],
+    queryFn: async () => {
+      const res = await fetch(`/api/events/${eventId}/photos`, { credentials: 'include' });
+      if (!res.ok) return [];
+      return res.json();
+    },
+    enabled: eventId > 0,
+  });
+
+  if (isLoading) {
+    return (
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        {[1, 2, 3, 4, 5, 6].map((i) => (
+          <Skeleton key={i} className="aspect-square rounded-xl" />
+        ))}
+      </div>
+    );
+  }
+
+  if (!photos || photos.length === 0) {
+    return (
+      <div className="text-center py-16">
+        <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-muted/50 flex items-center justify-center">
+          <Camera className="h-10 w-10 text-muted-foreground" />
+        </div>
+        <h3 className="text-xl font-semibold mb-2">No Photos Yet</h3>
+        <p className="text-muted-foreground mb-6">
+          Be the first to share photos from this event!
+        </p>
+        <Button variant="outline" className="gap-2" data-testid="button-upload-photo">
+          <ImageIcon className="h-4 w-4" />
+          Upload Photo
+        </Button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h3 className="text-lg font-semibold">{photos.length} Photos</h3>
+        <Button variant="outline" size="sm" className="gap-2" data-testid="button-upload-photo">
+          <ImageIcon className="h-4 w-4" />
+          Upload
+        </Button>
+      </div>
+      
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        {photos.map((photo, index) => (
+          <motion.div
+            key={photo.photo.id}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: index * 0.05 }}
+            className="group relative aspect-square rounded-xl overflow-hidden border hover-elevate cursor-pointer"
+            data-testid={`photo-${photo.photo.id}`}
+          >
+            <img 
+              src={photo.photo.imageUrl} 
+              alt={photo.photo.caption || 'Event photo'}
+              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="absolute bottom-0 left-0 right-0 p-3">
+                {photo.uploader && (
+                  <div className="flex items-center gap-2">
+                    <Avatar className="h-6 w-6 border border-white/30">
+                      <AvatarImage src={photo.uploader.profileImage} />
+                      <AvatarFallback className="text-xs bg-white/20 text-white">
+                        {photo.uploader.name?.charAt(0) || 'U'}
+                      </AvatarFallback>
+                    </Avatar>
+                    <span className="text-sm text-white truncate">
+                      {photo.uploader.name}
+                    </span>
+                  </div>
+                )}
+                {photo.photo.caption && (
+                  <p className="text-xs text-white/80 mt-1 line-clamp-2">
+                    {photo.photo.caption}
+                  </p>
+                )}
+              </div>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export default function EventDetailsPage() {
   const [, params] = useRoute("/events/:id");
@@ -195,9 +305,13 @@ export default function EventDetailsPage() {
                 <CardTitle className="text-3xl font-serif">{event.title || 'Event'}</CardTitle>
               </CardHeader>
               <Tabs defaultValue="discussion" className="w-full">
-                <TabsList className="grid w-full grid-cols-2 border-b rounded-none bg-transparent p-0">
+                <TabsList className="grid w-full grid-cols-3 border-b rounded-none bg-transparent p-0">
                   <TabsTrigger value="discussion" className="rounded-none border-b-2 data-[state=active]:border-b-primary">
                     Discussion
+                  </TabsTrigger>
+                  <TabsTrigger value="photos" className="rounded-none border-b-2 data-[state=active]:border-b-primary gap-2">
+                    <Camera className="h-4 w-4" />
+                    Photos
                   </TabsTrigger>
                   <TabsTrigger value="details" className="rounded-none border-b-2 data-[state=active]:border-b-primary">
                     Details
@@ -206,6 +320,10 @@ export default function EventDetailsPage() {
 
                 <TabsContent value="discussion" className="p-8">
                   <EventPostFeed eventId={eventId} eventName={event.title} />
+                </TabsContent>
+
+                <TabsContent value="photos" className="p-8">
+                  <EventPhotosTab eventId={eventId} />
                 </TabsContent>
 
                 <TabsContent value="details" className="p-8">
