@@ -509,27 +509,36 @@ export default function EventDetailsPage() {
               </div>
 
               <div className="flex flex-wrap gap-3 justify-center">
-                <Button
-                  size="lg"
-                  className="gap-2"
-                  onClick={() => handleRsvp("going")}
-                  disabled={rsvpEvent.isPending}
-                  data-testid="button-going"
-                >
-                  <Check className="h-5 w-5" />
-                  I'm Going
-                  <ChevronRight className="h-5 w-5" />
-                </Button>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="gap-2 bg-white/10 text-white border-white/30 backdrop-blur-sm hover:bg-white/20"
-                  onClick={() => handleRsvp("maybe")}
-                  disabled={rsvpEvent.isPending}
-                  data-testid="button-maybe"
-                >
-                  Maybe
-                </Button>
+                {currentRsvpStatus === "going" || permissions?.isRsvpd ? (
+                  <Badge className="gap-2 px-4 py-2 text-base bg-primary text-white border-0" data-testid="badge-going">
+                    <Check className="h-5 w-5" />
+                    You're Going!
+                  </Badge>
+                ) : (
+                  <>
+                    <Button
+                      size="lg"
+                      className="gap-2"
+                      onClick={() => handleRsvp("going")}
+                      disabled={rsvpEvent.isPending}
+                      data-testid="button-going"
+                    >
+                      <Check className="h-5 w-5" />
+                      I'm Going
+                      <ChevronRight className="h-5 w-5" />
+                    </Button>
+                    <Button
+                      size="lg"
+                      variant="outline"
+                      className="gap-2 bg-white/10 text-white border-white/30 backdrop-blur-sm hover:bg-white/20"
+                      onClick={() => handleRsvp("maybe")}
+                      disabled={rsvpEvent.isPending}
+                      data-testid="button-maybe"
+                    >
+                      Maybe
+                    </Button>
+                  </>
+                )}
               </div>
             </motion.div>
           </div>
