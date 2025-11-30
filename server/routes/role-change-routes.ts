@@ -36,6 +36,19 @@ function getPROGroupImage(role: string): string {
 }
 
 const PRO_ROLE_GROUP_MAPPINGS: Record<string, { name: string; description: string; slug: string }> = {
+  // ========== DANCE ROLES ==========
+  'dancer-leader': { 
+    name: 'Tango Leaders Network', 
+    description: 'Connect with tango leaders worldwide. Share techniques, find practice partners, and discuss the art of leading.',
+    slug: 'pro-leaders'
+  },
+  'dancer-follower': { 
+    name: 'Tango Followers Network', 
+    description: 'Connect with tango followers worldwide. Share experiences, discuss technique, and find practice partners.',
+    slug: 'pro-followers'
+  },
+  
+  // ========== PROFESSIONAL ROLES ==========
   'teacher': { 
     name: 'Tango Teachers Worldwide', 
     description: 'Connect with tango teachers from around the globe. Share teaching methods, discuss pedagogy, and grow your teaching practice.',
@@ -115,6 +128,18 @@ const PRO_ROLE_GROUP_MAPPINGS: Record<string, { name: string; description: strin
     name: 'Taxi Dancers Guild', 
     description: 'Professional taxi dancers who enhance milonga experiences. Connect with organizers, share best practices, and find opportunities.',
     slug: 'pro-taxi-dancers'
+  },
+  
+  // ========== COMMUNITY ROLES ==========
+  'fan': { 
+    name: 'Tango Enthusiasts Community', 
+    description: 'For passionate tango fans and enthusiasts. Share your love of tango, discover events, and connect with the community.',
+    slug: 'pro-fans'
+  },
+  'other': { 
+    name: 'Tango Community Hub', 
+    description: 'A welcoming space for everyone in the tango world with unique roles and contributions.',
+    slug: 'pro-community'
   },
 };
 
