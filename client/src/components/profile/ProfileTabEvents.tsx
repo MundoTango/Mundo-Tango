@@ -260,24 +260,6 @@ export default function ProfileTabEvents({
 }: ProfileTabEventsProps = {}) {
   const { user } = useAuth();
   const canEdit = isOwnProfile && !isPublicView;
-
-  if (isPublicView) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <CalendarIcon className="w-5 h-5" />
-            Events
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground italic">
-            Event history is private.
-          </p>
-        </CardContent>
-      </Card>
-    );
-  }
   const [activeTab, setActiveTab] = useState("my-events");
   const [searchQuery, setSearchQuery] = useState("");
   const [eventType, setEventType] = useState("all");
