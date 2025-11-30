@@ -4884,6 +4884,36 @@ export const travelPlanItems = pgTable("travel_plan_items", {
   typeIdx: index("idx_travel_items_type").on(table.type),
 }));
 
+// ============================================================================
+// TRIP JOIN REQUESTS - Request to Book Feature
+// ============================================================================
+
+export const tripJoinRequests = pgTable("trip_join_requests", {
+  id: serial("id").primaryKey(),
+  tripId: integer("trip_id").references(() => travelPlans.id, { onDelete: 'cascade' }).notNull(),
+  requesterId: integer("requester_id").references(() => users.id, { onDelete: 'cascade' }).notNull(),
+  ownerId: integer("owner_id").references(() => users.id, { onDelete: 'cascade' }).notNull(),
+  message: text("message"),
+  status: varchar("status", { length: 20 }).default('pending').notNull(), // 'pending' | 'accepted' | 'rejected'
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  respondedAt: timestamp("responded_at"),
+}, (table) => ({
+  tripIdx: index("idx_trip_join_requests_trip").on(table.tripId),
+  requesterIdx: index("idx_trip_join_requests_requester").on(table.requesterId),
+  ownerIdx: index("idx_trip_join_requests_owner").on(table.ownerId),
+  statusIdx: index("idx_trip_join_requests_status").on(table.status),
+  uniqueRequest: uniqueIndex("idx_trip_join_unique").on(table.tripId, table.requesterId),
+}));
+
+export const insertTripJoinRequestSchema = createInsertSchema(tripJoinRequests).omit({
+  id: true,
+  createdAt: true,
+  respondedAt: true,
+});
+
+export type InsertTripJoinRequest = z.infer<typeof insertTripJoinRequestSchema>;
+export type SelectTripJoinRequest = typeof tripJoinRequests.$inferSelect;
+
 // Venue Recommendations System (PART 1-14)
 export const venueRecommendations = pgTable("venue_recommendations", {
   id: serial("id").primaryKey(),
