@@ -12,6 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Calendar as CalendarIcon, MapPin, Search, Users, Plus, Map as MapIconLucide, List, ChevronRight, Database, Download, ChevronLeft, SlidersHorizontal, Check, Languages } from "lucide-react";
 import { getLanguageByCode } from "@/components/input/UnifiedLanguagePicker";
 import { safeDateFormat } from "@/lib/safeDateFormat";
+import { getTimezoneFromCity } from "@/lib/timezoneUtils";
 import { SEO } from "@/components/SEO";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
@@ -79,11 +80,13 @@ function EventCard({ event, index = 0 }: { event: any; index?: number }) {
   };
 
   const formatEventDateTime = (dateString: string): string => {
-    return safeDateFormat(dateString, "MMM dd, yyyy", "Date TBD");
+    const tz = getTimezoneFromCity(eventData.city);
+    return safeDateFormat(dateString, "MMM dd, yyyy", "Date TBD", tz);
   };
 
   const formatEventTime = (dateString: string): string => {
-    return safeDateFormat(dateString, "h:mm a", "Time TBD");
+    const tz = getTimezoneFromCity(eventData.city);
+    return safeDateFormat(dateString, "h:mm a", "Time TBD", tz);
   };
   
   // Determine image URL - use fallback if null

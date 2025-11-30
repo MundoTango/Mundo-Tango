@@ -8,6 +8,7 @@ import { Calendar, MapPin, DollarSign, Globe, Users, Check, ChevronRight, User, 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link } from "wouter";
 import { safeDateFormat } from "@/lib/safeDateFormat";
+import { getTimezoneFromCity } from "@/lib/timezoneUtils";
 import { useToast } from "@/hooks/use-toast";
 import { SEO } from "@/components/SEO";
 import { PageLayout } from "@/components/PageLayout";
@@ -150,6 +151,8 @@ export default function EventDetailsPage() {
     return parts.join(", ");
   };
 
+  const eventTimezone = event?.city ? getTimezoneFromCity(event.city) : "UTC";
+
   const getDirectionsUrl = () => {
     const address = buildFullAddress();
     if (!address) return null;
@@ -254,7 +257,7 @@ export default function EventDetailsPage() {
                 {(event.startDate || event.date) && (
                   <div className="flex items-center gap-2">
                     <Calendar className="h-5 w-5" />
-                    <span>{safeDateFormat(event.startDate || event.date, "EEEE, MMMM d, yyyy")}</span>
+                    <span>{safeDateFormat(event.startDate || event.date, "EEEE, MMMM d, yyyy", "TBD", eventTimezone)}</span>
                   </div>
                 )}
                 {(event.location || event.venue || event.city) && (
@@ -341,7 +344,7 @@ export default function EventDetailsPage() {
                     <div>
                       <p className="text-lg font-semibold mb-2">Date & Time</p>
                       <p className="text-base text-muted-foreground leading-relaxed">
-                        {(event.startDate || event.date) && safeDateFormat(event.startDate || event.date, "PPPP")}
+                        {(event.startDate || event.date) && safeDateFormat(event.startDate || event.date, "PPPP", "TBD", eventTimezone)}
                         {event.startTime && <> at {event.startTime}</>}
                         {event.endTime && <> - {event.endTime}</>}
                       </p>

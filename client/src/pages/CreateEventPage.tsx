@@ -241,7 +241,15 @@ export default function CreateEventPage() {
                         name="startDate"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Start Date & Time *</FormLabel>
+                            <FormLabel className="flex items-center gap-2">
+                              <Clock className="h-4 w-4" />
+                              Start Date & Time *
+                              {userTimezone && (
+                                <span className="text-xs font-normal text-muted-foreground ml-auto">
+                                  {formatTimezoneAbbr(userTimezone)}
+                                </span>
+                              )}
+                            </FormLabel>
                             <FormControl>
                               <Input 
                                 type="datetime-local" 
@@ -258,7 +266,15 @@ export default function CreateEventPage() {
                         name="endDate"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>End Date & Time</FormLabel>
+                            <FormLabel className="flex items-center gap-2">
+                              <Clock className="h-4 w-4" />
+                              End Date & Time
+                              {userTimezone && (
+                                <span className="text-xs font-normal text-muted-foreground ml-auto">
+                                  {formatTimezoneAbbr(userTimezone)}
+                                </span>
+                              )}
+                            </FormLabel>
                             <FormControl>
                               <Input 
                                 type="datetime-local" 
