@@ -189,8 +189,8 @@ router.get("/my-groups", authenticateToken, async (req: AuthRequest, res: Respon
             locationBadge = endYear ? `Lived here ${startYear}-${endYear}` : `Lived here since ${startYear}`;
           }
         }
-        // Check if this is a professional group
-        else if (item.group.type === 'professional') {
+        // Check if this is a professional group (type='professional' OR type='role')
+        else if (item.group.type === 'professional' || item.group.type === 'role') {
           locationCategory = 'professional';
           // Try to find a matching role for the badge
           const groupName = item.group.name.toLowerCase();
@@ -212,8 +212,8 @@ router.get("/my-groups", authenticateToken, async (req: AuthRequest, res: Respon
       })
       // Filter out city groups that aren't connected to location history (orphaned groups)
       .filter(item => {
-        // Always include professional groups
-        if (item.group.type === 'professional') return true;
+        // Always include professional groups (type='professional' OR type='role')
+        if (item.group.type === 'professional' || item.group.type === 'role') return true;
         // Include current city group
         if (item.locationCategory === 'current') return true;
         // Include previous city groups from location history
