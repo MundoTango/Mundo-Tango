@@ -2823,16 +2823,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Feature 13: Discover Feed
-  app.get("/api/feed/discover", authenticateToken, async (req: AuthRequest, res: Response) => {
+  // Feature 13: Discover Feed (optionalAuth - allows public access with fallback to trending)
+  app.get("/api/feed/discover", optionalAuth, async (req: AuthRequest, res: Response) => {
     try {
       const { limit = "20", offset = "0" } = req.query;
-      const result = await feedAlgorithmService.getDiscoverFeed(
-        req.user!.id,
-        parseInt(limit as string),
-        parseInt(offset as string)
-      );
-      res.json(result);
+      
+      // If user is authenticated, get personalized discover feed
+      if (req.user) {
+        const result = await feedAlgorithmService.getDiscoverFeed(
+          req.user.id,
+          parseInt(limit as string),
+          parseInt(offset as string)
+        );
+        return res.json(result);
+      }
+      
+      // For unauthenticated users, return trending posts as discover feed
+      const posts = await feedAlgorithmService.getTrendingPosts(parseInt(limit as string));
+      res.json({
+        posts,
+        nextOffset: posts.length === parseInt(limit as string) ? parseInt(offset as string) + parseInt(limit as string) : null,
+        hasMore: posts.length === parseInt(limit as string),
+      });
     } catch (error) {
       console.error("[GET /api/feed/discover] Error:", error);
       res.status(500).json({ message: "Failed to fetch discover feed" });
