@@ -18,6 +18,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { getCityImageUrl } from "@/lib/cityImageMap";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { EventPostFeed } from "@/components/events/EventPostFeed";
+import { PostCreator } from "@/components/universal/PostCreator";
 
 export default function EventDetailsPage() {
   const [, params] = useRoute("/events/:id");
@@ -204,7 +205,14 @@ export default function EventDetailsPage() {
                   </TabsTrigger>
                 </TabsList>
 
-                <TabsContent value="discussion" className="p-8">
+                <TabsContent value="discussion" className="p-8 space-y-6">
+                  <PostCreator 
+                    context={{ 
+                      type: 'event', 
+                      id: eventId, 
+                      name: event.title 
+                    }} 
+                  />
                   <EventPostFeed eventId={eventId} eventName={event.title} />
                 </TabsContent>
 
