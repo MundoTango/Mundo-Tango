@@ -242,7 +242,8 @@ router.patch("/plans/:id", authenticateToken, async (req: AuthRequest, res: Resp
   try {
     const userId = req.user!.id;
     const { id } = req.params;
-    const { name, description, startDate, endDate, budget, currency, isPublic, status, notes } = req.body;
+    console.log("[Travel PATCH] Request body:", req.body);
+    const { name, description, startDate, endDate, budget, currency, visibility, status, notes } = req.body;
 
     // Verify ownership
     const existing = await db.select()
@@ -260,19 +261,21 @@ router.patch("/plans/:id", authenticateToken, async (req: AuthRequest, res: Resp
     const updateData: any = { updatedAt: new Date() };
     if (name !== undefined) updateData.name = name;
     if (description !== undefined) updateData.description = description;
-    if (startDate !== undefined) updateData.startDate = startDate;
-    if (endDate !== undefined) updateData.endDate = endDate;
+    if (startDate !== undefined) updateData.startDate = new Date(startDate);
+    if (endDate !== undefined) updateData.endDate = new Date(endDate);
     if (budget !== undefined) updateData.budget = budget;
     if (currency !== undefined) updateData.currency = currency;
-    if (isPublic !== undefined) updateData.isPublic = isPublic;
+    if (visibility !== undefined) updateData.visibility = visibility;
     if (status !== undefined) updateData.status = status;
     if (notes !== undefined) updateData.notes = notes;
 
+    console.log("[Travel PATCH] Update data:", updateData);
     const result = await db.update(travelPlans)
       .set(updateData)
       .where(eq(travelPlans.id, parseInt(id)))
       .returning();
 
+    console.log("[Travel PATCH] Result:", result[0]);
     res.json(result[0]);
   } catch (error) {
     console.error("Error updating travel plan:", error);
