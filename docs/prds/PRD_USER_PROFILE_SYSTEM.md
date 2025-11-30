@@ -400,40 +400,54 @@ interface TravelPlanItem {
 
 #### RSVP Mutation System
 
+> **Architecture:** See [PRD_RSVP_ARCHITECTURE.md](./PRD_RSVP_ARCHITECTURE.md) for complete RSVP system documentation.
+
 **Status States:**
 | Status | Icon | Color | Description |
 |--------|------|-------|-------------|
-| `going` | Check | Green | User confirmed attendance |
-| `maybe` | Users | Yellow | User interested but uncertain |
-| `not_going` | Users | Red | User declined |
-| `null` | Users | Default | No RSVP yet |
+| `going` | CheckCircle2 | Green (`text-green-500`) | User confirmed attendance |
+| `maybe` | HelpCircle | Yellow (`text-yellow-500`) | User interested but uncertain |
+| `not_going` | XCircle | Red (`text-red-500`) | User declined |
+| `interested` | Star | Blue (`text-blue-500`) | Following event updates |
+| `null` | Calendar | Muted | No RSVP yet |
 
-**Implementation:**
+**Implementation (Updated Nov 30, 2025):**
 ```typescript
-// RSVP Hook
-const useEventRSVPs = (eventId: number, userId?: number) => {
+// RSVP Hook - Now fetches ALL statuses by default (not just 'going')
+export function useEventRSVPs(eventId: number | undefined, options?: { statusFilter?: string }) {
+  const statusFilter = options?.statusFilter || 'all';
+  
   return useQuery({
-    queryKey: ["/api/events", eventId, "attendees"],
+    queryKey: ['/api/events', eventId, 'attendees', { status: statusFilter }],
+    queryFn: async () => {
+      const res = await fetch(`/api/events/${eventId}/attendees?status=${statusFilter}`);
+      if (!res.ok) throw new Error('Failed to fetch attendees');
+      return res.json();
+    },
     enabled: !!eventId,
-    select: (data) => {
-      // Find user's RSVP from attendees list
-      const userRsvp = data?.find(a => a.user?.id === userId);
-      return userRsvp?.rsvp?.status || null;
+  });
+}
+
+// RSVP Mutation - With proper cache invalidation
+export function useRSVPEvent() {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: async ({ eventId, status }: { eventId: number; status: string }) => {
+      return apiRequest("POST", `/api/events/${eventId}/rsvp`, { status });
+    },
+    onSuccess: (_, variables) => {
+      // Invalidate all attendee queries for this event (all status filters)
+      queryClient.invalidateQueries({ 
+        queryKey: ['/api/events', variables.eventId, 'attendees'] 
+      });
     }
   });
-};
-
-// RSVP Mutation
-const rsvpMutation = useMutation({
-  mutationFn: async ({ eventId, status }) => {
-    return apiRequest("POST", `/api/events/${eventId}/rsvp`, { status });
-  },
-  onSuccess: () => {
-    queryClient.invalidateQueries({ queryKey: ["/api/events", eventId, "attendees"] });
-    toast({ title: "RSVP Updated" });
-  }
-});
+}
 ```
+
+**Critical Fix (Nov 30, 2025):**
+The backend endpoint `GET /api/events/:id/attendees` now supports `status=all` query parameter to return RSVPs of all statuses, not just 'going'. This fixes the bug where 'maybe' and 'not_going' RSVPs would disappear after page refresh.
 
 **Dropdown UI:**
 - All 3 options always visible (Going, Maybe, Not Going)
@@ -443,20 +457,31 @@ const rsvpMutation = useMutation({
 
 **Data Structure (API Response):**
 ```typescript
-// GET /api/events/:id/attendees returns:
-{
-  rsvp: {
-    id: number;
-    eventId: number;
-    userId: number;
-    status: 'going' | 'maybe' | 'not_going';
-  };
-  user: {
-    id: number;
-    name: string;
-    profileImage?: string;
-  };
-}
+// GET /api/events/:id/attendees?status=all returns:
+// Array of attendee objects with nested rsvp and user data
+[
+  {
+    rsvp: {
+      id: number;
+      eventId: number;
+      userId: number;
+      status: 'going' | 'maybe' | 'not_going' | 'interested';
+      createdAt: string;
+      updatedAt: string;
+    };
+    user: {
+      id: number;
+      name: string;
+      profileImage?: string;
+    };
+  }
+]
+
+// Query Parameters:
+// - status=all (default): Returns all RSVPs regardless of status
+// - status=going: Returns only confirmed attendees (for attendee lists)
+// - status=maybe: Returns only 'maybe' responses
+// - status=interested: Returns only users following the event
 ```
 
 **Event Interface:**

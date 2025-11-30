@@ -125,15 +125,20 @@ These tabs are being consolidated into the unified PRO tab:
 
 ## 4. Feature Details
 
-### 4.1 ProfileTabEvents - RSVP System (Nov 29, 2025)
+### 4.1 ProfileTabEvents - RSVP System (Updated Nov 30, 2025)
+
+> **Full Documentation:** [PRD_RSVP_ARCHITECTURE.md](./PRD_RSVP_ARCHITECTURE.md)
 
 | Feature | Description |
 |---------|-------------|
-| **RSVP States** | `going` (green), `maybe` (yellow), `not_going` (red), `null` (default) |
-| **Dropdown Menu** | All 3 options always visible with status icons |
-| **Mutation** | Immediate UI update via `useMutation` + cache invalidation |
-| **Query Key** | `["/api/events", eventId, "attendees"]` |
-| **Data Structure** | Nested `{ rsvp: {...}, user: {...} }` objects |
+| **RSVP States** | `going` (green), `maybe` (yellow), `not_going` (red), `interested` (blue), `null` (default) |
+| **Dropdown Menu** | All options always visible with status-specific icons |
+| **Mutation** | Immediate UI update via `useRSVPEvent` hook + cache invalidation |
+| **Query Key** | `['/api/events', eventId, 'attendees', { status: 'all' }]` |
+| **API Endpoint** | `GET /api/events/:id/attendees?status=all` (fetches ALL statuses) |
+| **Data Structure** | Array of `{ rsvp: {...}, user: {...} }` objects |
+
+**Critical Fix (Nov 30):** Backend now supports `status=all` query parameter to return all RSVP types, fixing persistence bug where 'maybe'/'not_going' disappeared on refresh.
 
 ### 4.2 ProfileTabAbout - Cascade Effects
 
@@ -212,7 +217,8 @@ These tabs are being consolidated into the unified PRO tab:
 | Method | Endpoint | Purpose |
 |--------|----------|---------|
 | GET | `/api/users/:id/events` | User's event participations |
-| GET | `/api/events/:id/attendees` | Event attendees with RSVP status |
+| GET | `/api/events/:id/attendees?status=all` | All RSVPs for event (default) |
+| GET | `/api/events/:id/attendees?status=going` | Confirmed attendees only |
 | POST | `/api/events/:id/rsvp` | Create/update RSVP |
 
 ### Social APIs

@@ -123,8 +123,9 @@ The following PRDs were created during the November 2025 documentation consolida
 |-----|-------|-------------|
 | PRD_PROFILE_PAGE_INDEX.md | ~300 | **NEW** Master component index with 33 components, 15 PRD cross-references |
 | PRD_UNIFIED_PRO_TAB.md | ~817 | Consolidates 17 role-based profile tabs into single PRO tab with dashboard/public views |
-| PRD_USER_PROFILE_SYSTEM.md | ~920 | Master documentation for 8 core profile tabs + RSVP mutation system (Nov 29) |
+| PRD_USER_PROFILE_SYSTEM.md | ~920 | Master documentation for 8 core profile tabs + RSVP mutation system (Nov 29, updated Nov 30) |
 | PRD_TRAVEL_PLANNING_SYSTEM.md | ~810 | Multi-city trip planning, itinerary management, event integration, MT Host housing |
+| PRD_RSVP_ARCHITECTURE.md | ~280 | **NEW** Unified RSVP architecture - Events, Travel, Friends (Nov 30) |
 | PRD_UNIFIED_LANGUAGE_SYSTEM.md | Updated | Added Argentine Spanish (Rioplatense) as #2 popular language, AI integration points |
 
 ### November 29, 2025 Updates
@@ -135,6 +136,17 @@ The following PRDs were created during the November 2025 documentation consolida
 | ProfileTabEvents | All 3 dropdown options always visible |
 | PRD_USER_PROFILE_SYSTEM.md | Documented RSVP hook, mutation, and data structure |
 | PRD_PROFILE_PAGE_INDEX.md | Created master component index |
+
+### November 30, 2025 Updates
+
+| Component | Change |
+|-----------|--------|
+| PRD_RSVP_ARCHITECTURE.md | **NEW** - Unified RSVP architecture documentation |
+| Event Routes Backend | Fixed `?status=all` parameter to return all RSVP types (not just 'going') |
+| useEventRSVPs Hook | Updated to fetch all statuses by default, fixing persistence bug |
+| useRSVPEvent Hook | Improved cache invalidation with consistent eventId types |
+| PRD_USER_PROFILE_SYSTEM.md | Updated RSVP section with corrected implementation |
+| PRD_PROFILE_PAGE_INDEX.md | Updated query keys and API endpoints documentation |
 
 ---
 
