@@ -381,28 +381,6 @@ export default function CommunityWorldMapPage() {
               </Card>
             )}
 
-            {/* Layer Controls */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Map Layers</CardTitle>
-                <CardDescription>Toggle different data layers on the map</CardDescription>
-              </CardHeader>
-              <CardContent className="flex flex-wrap gap-2">
-                {layers.map((layer) => (
-                  <Button
-                    key={layer.id}
-                    variant={layer.enabled ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => toggleLayer(layer.id)}
-                    data-testid={`button-layer-${layer.id}`}
-                  >
-                    <layer.icon className="mr-2 h-4 w-4" />
-                    {layer.label}
-                  </Button>
-                ))}
-              </CardContent>
-            </Card>
-
             {/* Search */}
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
