@@ -724,8 +724,8 @@ router.get("/:id/posts", async (req: Request, res: Response) => {
       .select({
         id: groupPosts.id,
         groupId: groupPosts.groupId,
-        userId: groupPosts.userId,
-        authorId: groupPosts.userId,
+        authorId: groupPosts.authorId,
+        userId: groupPosts.authorId,
         content: groupPosts.content,
         mediaUrls: groupPosts.mediaUrls,
         likeCount: groupPosts.likeCount,
@@ -740,7 +740,7 @@ router.get("/:id/posts", async (req: Request, res: Response) => {
         }
       })
       .from(groupPosts)
-      .leftJoin(users, eq(groupPosts.userId, users.id))
+      .leftJoin(users, eq(groupPosts.authorId, users.id))
       .where(eq(groupPosts.groupId, parseInt(id)))
       .orderBy(desc(groupPosts.createdAt))
       .limit(parseInt(limit as string))
@@ -783,7 +783,7 @@ router.post("/:id/posts", authenticateToken, async (req: AuthRequest, res: Respo
       .insert(groupPosts)
       .values({
         groupId: parseInt(id),
-        userId,
+        authorId: userId,
         content,
         mediaUrls: mediaUrls || []
       })
@@ -794,8 +794,8 @@ router.post("/:id/posts", authenticateToken, async (req: AuthRequest, res: Respo
       .select({
         id: groupPosts.id,
         groupId: groupPosts.groupId,
-        userId: groupPosts.userId,
-        authorId: groupPosts.userId,
+        authorId: groupPosts.authorId,
+        userId: groupPosts.authorId,
         content: groupPosts.content,
         mediaUrls: groupPosts.mediaUrls,
         likeCount: groupPosts.likeCount,
@@ -810,7 +810,7 @@ router.post("/:id/posts", authenticateToken, async (req: AuthRequest, res: Respo
         }
       })
       .from(groupPosts)
-      .leftJoin(users, eq(groupPosts.userId, users.id))
+      .leftJoin(users, eq(groupPosts.authorId, users.id))
       .where(eq(groupPosts.id, post.id))
       .limit(1);
 
