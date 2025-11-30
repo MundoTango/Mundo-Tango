@@ -199,26 +199,8 @@ const transportTypes = [
 ];
 
 export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPublicView = false }: ProfileTabTravelProps) {
-  // Privacy check: Hide travel plans in public view
+  // Privacy check: Only show public trips in public view (filter applied in render)
   const canEdit = isOwnProfile && !isPublicView;
-  
-  if (isPublicView) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Plane className="w-5 h-5" />
-            Travel Plans
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground italic">
-            Travel plans are private.
-          </p>
-        </CardContent>
-      </Card>
-    );
-  }
   const [expandedTrips, setExpandedTrips] = useState<Set<number>>(new Set([0]));
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editingTripId, setEditingTripId] = useState<number | null>(null);
