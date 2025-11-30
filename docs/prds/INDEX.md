@@ -1,14 +1,16 @@
 # PRD Index - Mundo Tango
 
 ## 🎯 Latest Update (Nov 30, 2025)
+**NEW:** [GAP_ANALYSIS_SUMMARY.md](GAP_ANALYSIS_SUMMARY.md) - Comprehensive gap analysis: 70% documentation debt, 60+ undocumented systems, prioritized action plan  
 **NEW:** [PRD_GROUPS_LANDING_SYSTEM.md](PRD_GROUPS_LANDING_SYSTEM.md) - Complete Groups landing page (3 tabs, search, creation modal)  
 **NEW:** [PRD_GROUP_DETAILS_SYSTEM.md](PRD_GROUP_DETAILS_SYSTEM.md) - Group details page (7 tabs: Discussion, Events, Housing, Hub, Members, City Guide, Settings)  
 **NEW:** [PRD_GROUP_MEMBERSHIP_SYSTEM.md](PRD_GROUP_MEMBERSHIP_SYSTEM.md) - Join/leave flows, role hierarchy, approval workflows  
 **PRIOR:** [PRD_RSVP_ARCHITECTURE.md](PRD_RSVP_ARCHITECTURE.md) - Unified RSVP system for Events/Travel/Friends
 
 > **Last Updated:** 2025-11-30  
-> **Total PRDs:** 27  
-> **Session PRDs:** Groups System (3 PRDs), RSVP Architecture, Profile System Updates  
+> **Total PRDs:** 28  
+> **Documentation Coverage:** 35% (70% gap identified)  
+> **Session PRDs:** Gap Analysis Summary, Groups System (3 PRDs), RSVP Architecture, Profile System Updates  
 
 ---
 
@@ -111,6 +113,36 @@ This index links all Product Requirement Documents (PRDs) in the Mundo Tango pla
 | [PRD_LIFE_CEO_FINANCE_ENHANCED.md](./PRD_LIFE_CEO_FINANCE_ENHANCED.md) | Financial planning AI | Life CEO, Goals, Budgeting |
 | [PRD_LIFE_CEO_PRODUCTIVITY_2.0.md](./PRD_LIFE_CEO_PRODUCTIVITY_2.0.md) | Productivity AI assistant | Life CEO, Tasks, Calendar |
 | [PRD_USER_PRIVACY_HUB.md](./PRD_USER_PRIVACY_HUB.md) | Privacy settings & controls | Settings, GDPR, Data Export |
+
+---
+
+## Gap Analysis & System Audits
+
+| Document | Purpose | Key Findings |
+|----------|---------|--------------|
+| [GAP_ANALYSIS_SUMMARY.md](./GAP_ANALYSIS_SUMMARY.md) | **NEW** Comprehensive platform gap analysis | 70% documentation debt, 150+ tables, 70+ API files, 60+ missing PRDs |
+
+### Gap Analysis Highlights
+
+**P0 Missing PRDs (Revenue-Critical):**
+- Marketplace System (4+ pages, 500+ lines E2E tests exist)
+- Crowdfunding System (4+ pages, 450+ lines E2E tests exist)
+- Legal Documents System (5+ pages, 350+ lines E2E tests exist)
+- Messages System (4+ pages, partial E2E coverage)
+
+**P1 Missing PRDs (Core Platform):**
+- Housing System (5+ pages)
+- Travel System (4+ pages, E2E tests exist)
+- Events Extended (8+ pages, RSVP architecture)
+- Admin Dashboard (15+ pages, 15+ API files)
+
+**Agent Squad Assignments:**
+- Squad 1: PRD Writers (50 agents)
+- Squad 2: Database Schema (30 agents)
+- Squad 3: API Documentation (40 agents)
+- Squad 4: UI Auditors (30 agents)
+- Squad 5: E2E Test (30 agents)
+- Squad 6: Integration (20 agents)
 
 ---
 
