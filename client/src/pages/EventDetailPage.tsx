@@ -5,16 +5,20 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
-import { Calendar, MapPin, Clock, Users, Share2, DollarSign, CheckCircle2, XCircle, HelpCircle } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Calendar, MapPin, Users, Share2, DollarSign, CheckCircle2, XCircle, HelpCircle, MessageCircle, Info } from "lucide-react";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
+import { EventPostFeed } from "@/components/events/EventPostFeed";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function EventDetailPage() {
   const { id } = useParams();
   const { toast } = useToast();
+  const { user } = useAuth();
 
-  const { data: eventData, isLoading, error } = useQuery<any>({
+  const { data: eventData, isLoading } = useQuery<any>({
     queryKey: ["/api/events", id],
     queryFn: async () => {
       const res = await fetch(`/api/events/${id}`, { credentials: "include" });
@@ -68,6 +72,7 @@ export default function EventDetailPage() {
   const event = eventData.event;
   const organizer = eventData.organizer;
   const attendeeCount = eventData.attendeeCount || 0;
+  const isAttending = attendees?.some((a: any) => a.user?.id === user?.id);
 
   return (
     <div className="min-h-screen bg-background">
@@ -137,17 +142,8 @@ export default function EventDetailPage() {
             <Separator />
 
             <div className="space-y-4">
-              <h3 className="font-semibold text-lg">About this event</h3>
-              <p className="text-muted-foreground whitespace-pre-wrap">
-                {event.description || "No description provided"}
-              </p>
-            </div>
-
-            <Separator />
-
-            <div className="space-y-4">
               <h3 className="font-semibold text-lg">RSVP</h3>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 <Button
                   onClick={() => rsvpMutation.mutate("going")}
                   disabled={rsvpMutation.isPending}
@@ -176,47 +172,96 @@ export default function EventDetailPage() {
                 </Button>
               </div>
             </div>
-
-            {organizer && (
-              <>
-                <Separator />
-                <div className="space-y-4">
-                  <h3 className="font-semibold text-lg">Organizer</h3>
-                  <div className="flex items-center gap-3">
-                    <Avatar>
-                      <AvatarImage src={organizer.profileImage} />
-                      <AvatarFallback>{organizer.name?.charAt(0) || "O"}</AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <p className="font-medium">{organizer.name}</p>
-                      <p className="text-sm text-muted-foreground">@{organizer.username}</p>
-                    </div>
-                  </div>
-                </div>
-              </>
-            )}
-
-            {attendees && attendees.length > 0 && (
-              <>
-                <Separator />
-                <div className="space-y-4">
-                  <h3 className="font-semibold text-lg">Attendees ({attendees.length})</h3>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {attendees.slice(0, 8).map((item: any) => (
-                      <div key={item.user.id} className="flex items-center gap-2">
-                        <Avatar className="h-8 w-8">
-                          <AvatarImage src={item.user.profileImage} />
-                          <AvatarFallback>{item.user.name?.charAt(0) || "?"}</AvatarFallback>
-                        </Avatar>
-                        <p className="text-sm truncate">{item.user.name}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </>
-            )}
           </CardContent>
         </Card>
+
+        <Tabs defaultValue="about" className="w-full">
+          <TabsList className="grid w-full grid-cols-3 gap-1 mb-6">
+            <TabsTrigger value="about" data-testid="tab-about">
+              <Info className="h-4 w-4 mr-2" />
+              About
+            </TabsTrigger>
+            <TabsTrigger value="discussion" data-testid="tab-discussion">
+              <MessageCircle className="h-4 w-4 mr-2" />
+              Discussion
+            </TabsTrigger>
+            <TabsTrigger value="attendees" data-testid="tab-attendees">
+              <Users className="h-4 w-4 mr-2" />
+              Attendees
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="about">
+            <Card>
+              <CardContent className="pt-6 space-y-6">
+                <div className="space-y-4">
+                  <h3 className="font-semibold text-lg">About this event</h3>
+                  <p className="text-muted-foreground whitespace-pre-wrap">
+                    {event.description || "No description provided"}
+                  </p>
+                </div>
+
+                {organizer && (
+                  <>
+                    <Separator />
+                    <div className="space-y-4">
+                      <h3 className="font-semibold text-lg">Organizer</h3>
+                      <div className="flex items-center gap-3">
+                        <Avatar>
+                          <AvatarImage src={organizer.profileImage} />
+                          <AvatarFallback>{organizer.name?.charAt(0) || "O"}</AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <p className="font-medium">{organizer.name}</p>
+                          <p className="text-sm text-muted-foreground">@{organizer.username}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="discussion">
+            <EventPostFeed 
+              eventId={parseInt(id || "0")}
+              eventName={event.title}
+              canPost={!!user}
+            />
+          </TabsContent>
+
+          <TabsContent value="attendees">
+            <Card>
+              <CardContent className="pt-6">
+                {attendees && attendees.length > 0 ? (
+                  <div className="space-y-4">
+                    <h3 className="font-semibold text-lg">Attendees ({attendees.length})</h3>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      {attendees.map((item: any) => (
+                        <div key={item.user?.id || item.id} className="flex items-center gap-2 p-2 rounded-lg hover-elevate">
+                          <Avatar className="h-10 w-10">
+                            <AvatarImage src={item.user?.profileImage} />
+                            <AvatarFallback>{item.user?.name?.charAt(0) || "?"}</AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium truncate">{item.user?.name}</p>
+                            <p className="text-xs text-muted-foreground truncate">@{item.user?.username}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <Users className="h-12 w-12 mx-auto text-muted-foreground/50 mb-3" />
+                    <p className="text-muted-foreground">No attendees yet. Be the first to RSVP!</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );

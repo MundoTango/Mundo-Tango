@@ -6,6 +6,7 @@ import {
   eventPhotos,
   eventComments,
   users,
+  posts,
   insertEventSchema,
   insertEventRsvpSchema,
   insertEventCommentSchema
@@ -1096,6 +1097,122 @@ router.post("/:id/check-in", authenticateToken, async (req: AuthRequest, res: Re
   } catch (error) {
     console.error("[Events] Error checking in attendee:", error);
     res.status(500).json({ message: "Failed to check in attendee" });
+  }
+});
+
+// ============================================================================
+// EVENT POSTS (Discussion Tab)
+// ============================================================================
+
+// GET /api/events/:id/posts - Get all posts for an event
+router.get("/:id/posts", async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { limit = "20", offset = "0" } = req.query;
+
+    const eventPosts = await db
+      .select({
+        id: posts.id,
+        userId: posts.userId,
+        eventId: posts.eventId,
+        content: posts.content,
+        imageUrl: posts.imageUrl,
+        videoUrl: posts.videoUrl,
+        visibility: posts.visibility,
+        likes: posts.likes,
+        comments: posts.comments,
+        createdAt: posts.createdAt,
+        tags: posts.tags,
+        location: posts.location,
+        user: {
+          id: users.id,
+          name: users.name,
+          username: users.username,
+          profileImage: users.profileImage
+        }
+      })
+      .from(posts)
+      .leftJoin(users, eq(posts.userId, users.id))
+      .where(eq(posts.eventId, parseInt(id)))
+      .orderBy(desc(posts.createdAt))
+      .limit(parseInt(limit as string))
+      .offset(parseInt(offset as string));
+
+    res.json(eventPosts);
+  } catch (error) {
+    console.error("[Events] Error fetching posts:", error);
+    res.status(500).json({ message: "Failed to fetch posts" });
+  }
+});
+
+// POST /api/events/:id/posts - Create a post for an event
+router.post("/:id/posts", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    const { id } = req.params;
+    const { content, imageUrl, videoUrl, tags, location } = req.body;
+
+    // Verify event exists
+    const [event] = await db
+      .select()
+      .from(events)
+      .where(eq(events.id, parseInt(id)))
+      .limit(1);
+
+    if (!event) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+
+    if (!content || content.trim().length === 0) {
+      return res.status(400).json({ message: "Post content is required" });
+    }
+
+    const [post] = await db
+      .insert(posts)
+      .values({
+        userId,
+        eventId: parseInt(id),
+        content: content.trim(),
+        imageUrl: imageUrl || null,
+        videoUrl: videoUrl || null,
+        tags: tags || [],
+        location: location || null,
+        visibility: "public",
+        postType: "event_discussion"
+      })
+      .returning();
+
+    // Fetch with user info
+    const [postWithUser] = await db
+      .select({
+        id: posts.id,
+        userId: posts.userId,
+        eventId: posts.eventId,
+        content: posts.content,
+        imageUrl: posts.imageUrl,
+        videoUrl: posts.videoUrl,
+        visibility: posts.visibility,
+        likes: posts.likes,
+        comments: posts.comments,
+        createdAt: posts.createdAt,
+        tags: posts.tags,
+        location: posts.location,
+        user: {
+          id: users.id,
+          name: users.name,
+          username: users.username,
+          profileImage: users.profileImage
+        }
+      })
+      .from(posts)
+      .leftJoin(users, eq(posts.userId, users.id))
+      .where(eq(posts.id, post.id))
+      .limit(1);
+
+    res.status(201).json(postWithUser);
+  } catch (error) {
+    console.error("[Events] Error creating post:", error);
+    res.status(500).json({ message: "Failed to create post" });
   }
 });
 
