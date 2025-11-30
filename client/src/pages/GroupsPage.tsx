@@ -131,7 +131,7 @@ export default function GroupsPage() {
   }, [filteredGroups]);
 
   const professionalGroups = useMemo(() => {
-    return filteredGroups.filter(g => g.type === "professional");
+    return filteredGroups.filter(g => g.type === "professional" || g.type === "role");
   }, [filteredGroups]);
 
   // My Groups - organized by location relevance (current city, previous cities, professional, other)
