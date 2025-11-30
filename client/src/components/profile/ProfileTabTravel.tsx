@@ -16,6 +16,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Plane, Calendar as CalendarIcon, MapPin, DollarSign, Sparkles, FileText, Briefcase, Home, Utensils, Heart, Plus, ChevronDown, ChevronUp, TrendingUp, X, Edit, Users, Trash2, Clock, Check, PieChart, Download, Train, Ship, Bus, Car, Music, Ticket, Building2, Link2, Search, ExternalLink, Loader2, Anchor, ArrowRight, Send, Globe, Lock, Eye, MessageCircle } from "lucide-react";
 import { RequestToBookModal } from "./RequestToBookModal";
+import { TravelCalendar } from "@/components/unified/TravelCalendar";
 
 import buenosAiresImg from "@assets/stock_images/buenos_aires_argenti_afa3bd1f.jpg";
 import milanImg from "@assets/stock_images/milan_italy_duomo_ca_513cf7b4.jpg";
@@ -822,6 +823,30 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
           </Card>
         ))}
       </div>
+
+      {/* Travel Calendar with Completion Status */}
+      {travelPlans && travelPlans.length > 0 && (
+        <TravelCalendar
+          travelPlans={travelPlans}
+          onDayClick={(date, events) => {
+            if (events.length > 0) {
+              const tripEvent = events.find(e => e.type === "trip");
+              if (tripEvent) {
+                const tripIndex = travelPlans.findIndex(t => t.id === tripEvent.tripId);
+                if (tripIndex !== -1) {
+                  setExpandedTrips(new Set([tripIndex]));
+                }
+              }
+            }
+          }}
+          onEventClick={(event) => {
+            const tripIndex = travelPlans.findIndex(t => t.id === event.tripId);
+            if (tripIndex !== -1) {
+              setExpandedTrips(new Set([tripIndex]));
+            }
+          }}
+        />
+      )}
 
       {/* Header with Action */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
