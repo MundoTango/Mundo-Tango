@@ -612,5 +612,47 @@ body {
       white-space: nowrap;
       border-width: 0;
     }
+
+    /* ========== LEAFLET MAP POPUP STYLES ========== */
+    /* City popup card with cityscape images matching GroupsPage design */
+    .leaflet-popup-content-wrapper {
+      padding: 0 !important;
+      border-radius: 0.5rem !important;
+      overflow: hidden;
+      background: transparent !important;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+    }
+    
+    .leaflet-popup-content {
+      margin: 0 !important;
+      min-width: 280px !important;
+      width: auto !important;
+    }
+    
+    .leaflet-popup-tip-container {
+      display: none;
+    }
+    
+    .leaflet-popup-close-button {
+      z-index: 10;
+      top: 8px !important;
+      right: 8px !important;
+      color: white !important;
+      font-size: 20px !important;
+      font-weight: bold;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 50%;
+      width: 24px !important;
+      height: 24px !important;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .leaflet-popup-close-button:hover {
+      background: rgba(0, 0, 0, 0.5);
+      color: white !important;
+    }
   }
 }

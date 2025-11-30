@@ -1,7 +1,7 @@
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { useEffect } from 'react';
-import { Users, Calendar, Home, Building2 } from 'lucide-react';
+import { CityPopupCard } from './CityPopupCard';
 
 interface CommunityLocation {
   id: number;
@@ -39,13 +39,12 @@ function MapUpdater({ center }: { center: [number, number] }) {
   return null;
 }
 
-// Create custom markers with different colors for each layer type
 const createLayerIcon = (count: number, layerType: string) => {
   const colors = {
-    events: { primary: '#FF6B6B', secondary: '#FF8E8E' }, // Red gradient for events
-    housing: { primary: '#4ECDC4', secondary: '#45B7AF' }, // Teal gradient for housing
-    recommendations: { primary: '#FFD93D', secondary: '#FFC107' }, // Yellow gradient for venues/recommendations
-    default: { primary: '#40E0D0', secondary: '#1E90FF' }, // MT Ocean default
+    events: { primary: '#FF6B6B', secondary: '#FF8E8E' },
+    housing: { primary: '#4ECDC4', secondary: '#45B7AF' },
+    recommendations: { primary: '#FFD93D', secondary: '#FFC107' },
+    default: { primary: '#40E0D0', secondary: '#1E90FF' },
   };
 
   const colorPair = colors[layerType as keyof typeof colors] || colors.default;
@@ -83,20 +82,16 @@ export function CommunityMapWithLayers({
   zoom,
   onCityClick,
 }: CommunityMapWithLayersProps) {
-  // Find which layers are enabled
   const eventsEnabled = layers.find(l => l.id === 'events')?.enabled || false;
   const housingEnabled = layers.find(l => l.id === 'housing')?.enabled || false;
   const recommendationsEnabled = layers.find(l => l.id === 'recommendations')?.enabled || false;
 
-  // If no layers are enabled, show default markers for all locations
   const noLayersEnabled = !eventsEnabled && !housingEnabled && !recommendationsEnabled;
 
-  // Create marker sets for each enabled layer
   const eventMarkers = eventsEnabled ? locations.filter(loc => loc.activeEvents > 0) : [];
   const housingMarkers = housingEnabled ? locations.filter(loc => loc.housing > 0) : [];
   const recommendationMarkers = recommendationsEnabled ? locations.filter(loc => loc.recommendations > 0) : [];
 
-  // For default display when no layers are enabled
   const defaultMarkers = noLayersEnabled ? locations : [];
 
   return (
@@ -112,7 +107,6 @@ export function CommunityMapWithLayers({
       />
       <MapUpdater center={center} />
 
-      {/* Default markers when no layers enabled */}
       {defaultMarkers.map((location) => (
         <Marker
           key={`default-${location.id}`}
@@ -123,32 +117,19 @@ export function CommunityMapWithLayers({
           }}
         >
           <Popup>
-            <div className="p-2" data-testid={`popup-location-${location.id}`}>
-              <h3 className="font-bold text-lg mb-2">{location.city}, {location.country}</h3>
-              <div className="space-y-1 text-sm">
-                <div className="flex items-center gap-2">
-                  <Users className="h-4 w-4" />
-                  <span>{location.memberCount} members</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4" />
-                  <span>{location.activeEvents} events</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Home className="h-4 w-4" />
-                  <span>{location.housing} housing</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Building2 className="h-4 w-4" />
-                  <span>{location.recommendations} recommendations</span>
-                </div>
-              </div>
-            </div>
+            <CityPopupCard
+              city={location.city}
+              country={location.country}
+              groupId={location.groupId}
+              memberCount={location.memberCount}
+              eventCount={location.activeEvents}
+              recommendationCount={location.recommendations}
+              housingCount={location.housing}
+            />
           </Popup>
         </Marker>
       ))}
 
-      {/* Events layer markers (RED) */}
       {eventMarkers.map((location) => (
         <Marker
           key={`events-${location.id}`}
@@ -159,24 +140,19 @@ export function CommunityMapWithLayers({
           }}
         >
           <Popup>
-            <div className="p-2" data-testid={`popup-events-${location.id}`}>
-              <h3 className="font-bold text-lg mb-2">{location.city}, {location.country}</h3>
-              <div className="space-y-1 text-sm">
-                <div className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4 text-red-500" />
-                  <span className="font-semibold">{location.activeEvents} active events</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Users className="h-4 w-4" />
-                  <span>{location.memberCount} members</span>
-                </div>
-              </div>
-            </div>
+            <CityPopupCard
+              city={location.city}
+              country={location.country}
+              groupId={location.groupId}
+              memberCount={location.memberCount}
+              eventCount={location.activeEvents}
+              recommendationCount={location.recommendations}
+              housingCount={location.housing}
+            />
           </Popup>
         </Marker>
       ))}
 
-      {/* Housing layer markers (TEAL) */}
       {housingMarkers.map((location) => (
         <Marker
           key={`housing-${location.id}`}
@@ -187,24 +163,19 @@ export function CommunityMapWithLayers({
           }}
         >
           <Popup>
-            <div className="p-2" data-testid={`popup-housing-${location.id}`}>
-              <h3 className="font-bold text-lg mb-2">{location.city}, {location.country}</h3>
-              <div className="space-y-1 text-sm">
-                <div className="flex items-center gap-2">
-                  <Home className="h-4 w-4 text-teal-500" />
-                  <span className="font-semibold">{location.housing} housing listings</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Users className="h-4 w-4" />
-                  <span>{location.memberCount} members</span>
-                </div>
-              </div>
-            </div>
+            <CityPopupCard
+              city={location.city}
+              country={location.country}
+              groupId={location.groupId}
+              memberCount={location.memberCount}
+              eventCount={location.activeEvents}
+              recommendationCount={location.recommendations}
+              housingCount={location.housing}
+            />
           </Popup>
         </Marker>
       ))}
 
-      {/* Recommendations/Venues layer markers (YELLOW) */}
       {recommendationMarkers.map((location) => (
         <Marker
           key={`recommendations-${location.id}`}
@@ -215,19 +186,15 @@ export function CommunityMapWithLayers({
           }}
         >
           <Popup>
-            <div className="p-2" data-testid={`popup-recommendations-${location.id}`}>
-              <h3 className="font-bold text-lg mb-2">{location.city}, {location.country}</h3>
-              <div className="space-y-1 text-sm">
-                <div className="flex items-center gap-2">
-                  <Building2 className="h-4 w-4 text-yellow-500" />
-                  <span className="font-semibold">{location.recommendations} venue recommendations</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Users className="h-4 w-4" />
-                  <span>{location.memberCount} members</span>
-                </div>
-              </div>
-            </div>
+            <CityPopupCard
+              city={location.city}
+              country={location.country}
+              groupId={location.groupId}
+              memberCount={location.memberCount}
+              eventCount={location.activeEvents}
+              recommendationCount={location.recommendations}
+              housingCount={location.housing}
+            />
           </Popup>
         </Marker>
       ))}
