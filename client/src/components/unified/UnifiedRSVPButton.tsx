@@ -84,9 +84,13 @@ export function UnifiedRSVPButton({
       const res = await apiRequest('POST', `/api/events/${eventId}/rsvp`, { status });
       return res.json();
     },
-    onSuccess: (_, status) => {
+    onSuccess: async (_, status) => {
+      // Refetch permissions and attendees immediately so UI updates
+      await queryClient.refetchQueries({ queryKey: ["/api/events", eventId, "permissions"] });
+      await queryClient.refetchQueries({ queryKey: ["/api/events", eventId, "attendees"] });
+      
+      // Then invalidate the broader queries for consistency
       queryClient.invalidateQueries({ queryKey: ["/api/events", eventId] });
-      queryClient.invalidateQueries({ queryKey: ["/api/events", eventId, "attendees"] });
       queryClient.invalidateQueries({ queryKey: ["/api/events/my-rsvps"] });
       queryClient.invalidateQueries({ queryKey: ["/api/events"] });
       
