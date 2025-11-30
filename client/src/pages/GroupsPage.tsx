@@ -194,19 +194,94 @@ export default function GroupsPage() {
       .slice(0, 5);
   }, [enrichedGroups]);
 
+  // Check if user is a member of a group
+  const isMemberOfGroup = (groupId: number): boolean => {
+    return myGroups.some(g => g.id === groupId);
+  };
+
   // Render City Group Card with editorial design
-  const renderCityCard = (group: SelectGroup & { healthScore: number; distance: number }) => (
-    <motion.div
-      key={group.id}
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      whileHover={{ y: -4 }}
-      className="group cursor-pointer"
-    >
-      <Card className="overflow-hidden hover-elevate h-full">
-        {/* Cityscape Image - 16:9 */}
-        <div className="relative aspect-[16/9] overflow-hidden">
+  const renderCityCard = (group: SelectGroup & { healthScore: number; distance: number }) => {
+    const isMember = isMemberOfGroup(group.id);
+    
+    return (
+      <motion.div
+        key={group.id}
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        whileHover={{ y: -4 }}
+        className="group cursor-pointer"
+      >
+        <Card className="overflow-hidden hover-elevate h-full">
+          {/* Cityscape Image - 16:9 */}
+          <div className="relative aspect-[16/9] overflow-hidden">
+            <motion.img
+              src={group.coverImage || getCityImageUrl(group.city)}
+              alt={group.name}
+              className="w-full h-full object-cover"
+              whileHover={{ scale: 1.05 }}
+              transition={{ duration: 0.6 }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+            
+            <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+              <h3 className="text-2xl font-serif font-bold mb-1">{group.name}</h3>
+              <p className="text-sm text-white/80">{group.city}</p>
+            </div>
+          </div>
+
+          <div className="p-6 space-y-4">
+            <p className="text-sm text-muted-foreground line-clamp-2">{group.description}</p>
+            
+            <div className="grid grid-cols-4 gap-3 text-sm">
+              <div className="flex flex-col items-center gap-1 p-2 bg-muted/50 rounded-lg">
+                <Users className="w-4 h-4 text-cyan-500" />
+                <div className="font-semibold text-center">{(group.memberCount || 0).toLocaleString()}</div>
+                <div className="text-xs text-muted-foreground text-center">Members</div>
+              </div>
+              <div className="flex flex-col items-center gap-1 p-2 bg-muted/50 rounded-lg">
+                <CalendarIcon className="w-4 h-4 text-blue-500" />
+                <div className="font-semibold text-center">{group.eventCount || 0}</div>
+                <div className="text-xs text-muted-foreground text-center">Events</div>
+              </div>
+              <div className="flex flex-col items-center gap-1 p-2 bg-muted/50 rounded-lg">
+                <Sparkles className="w-4 h-4 text-purple-500" />
+                <div className="font-semibold text-center">{group.recommendationCount || 0}</div>
+                <div className="text-xs text-muted-foreground text-center">Recs</div>
+              </div>
+              <div className="flex flex-col items-center gap-1 p-2 bg-muted/50 rounded-lg">
+                <Home className="w-4 h-4 text-amber-500" />
+                <div className="font-semibold text-center">{group.housingCount || 0}</div>
+                <div className="text-xs text-muted-foreground text-center">Housing</div>
+              </div>
+            </div>
+
+            <Link href={`/groups/${group.id}`} className="w-full">
+              <Button className="w-full gap-2" data-testid={`button-view-group-${group.id}`}>
+                <ChevronRight className="w-4 h-4" />
+                {isMember ? "View Details" : "Join"}
+              </Button>
+            </Link>
+          </div>
+        </Card>
+      </motion.div>
+    );
+  };
+
+  // Render Professional Group Card with editorial design
+  const renderProCard = (group: SelectGroup & { healthScore: number; distance: number; isFeatured: boolean }) => {
+    const isMember = isMemberOfGroup(group.id);
+    
+    return (
+      <motion.article
+        key={group.id}
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.6 }}
+        className="group mb-12"
+      >
+        <div className="relative aspect-[16/9] overflow-hidden rounded-2xl mb-8">
           <motion.img
             src={group.coverImage || getCityImageUrl(group.city)}
             alt={group.name}
@@ -216,114 +291,52 @@ export default function GroupsPage() {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
           
-          <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-            <h3 className="text-2xl font-serif font-bold mb-1">{group.name}</h3>
-            <p className="text-sm text-white/80">{group.city}</p>
+          <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
+            <div className="flex items-center gap-3 mb-4">
+              <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-sm">
+                Professional
+              </Badge>
+              {group.isFeatured && (
+                <div className="flex items-center gap-1 text-sm bg-white/20 px-2 py-1 rounded-full backdrop-blur-sm">
+                  <Star className="w-3 h-3 fill-white" />
+                  <span>Featured</span>
+                </div>
+              )}
+            </div>
+            <h2 className="text-3xl font-serif font-bold">{group.name}</h2>
           </div>
         </div>
 
-        <div className="p-6 space-y-4">
-          <p className="text-sm text-muted-foreground line-clamp-2">{group.description}</p>
-          
-          <div className="grid grid-cols-4 gap-3 text-sm">
-            <div className="flex flex-col items-center gap-1 p-2 bg-muted/50 rounded-lg">
-              <Users className="w-4 h-4 text-cyan-500" />
-              <div className="font-semibold text-center">{(group.memberCount || 0).toLocaleString()}</div>
-              <div className="text-xs text-muted-foreground text-center">Members</div>
+        <div className="space-y-6 px-2">
+          <p className="text-lg leading-relaxed text-foreground/90">
+            {group.description}
+          </p>
+
+          <div className="flex flex-wrap items-center gap-6 text-sm">
+            <div className="flex items-center gap-2">
+              <Users className="w-5 h-5 text-primary" />
+              <span className="font-semibold">{(group.memberCount || 0).toLocaleString()}</span>
+              <span className="text-muted-foreground">members</span>
             </div>
-            <div className="flex flex-col items-center gap-1 p-2 bg-muted/50 rounded-lg">
-              <CalendarIcon className="w-4 h-4 text-blue-500" />
-              <div className="font-semibold text-center">{group.eventCount || 0}</div>
-              <div className="text-xs text-muted-foreground text-center">Events</div>
-            </div>
-            <div className="flex flex-col items-center gap-1 p-2 bg-muted/50 rounded-lg">
-              <Sparkles className="w-4 h-4 text-purple-500" />
-              <div className="font-semibold text-center">{group.recommendationCount || 0}</div>
-              <div className="text-xs text-muted-foreground text-center">Recs</div>
-            </div>
-            <div className="flex flex-col items-center gap-1 p-2 bg-muted/50 rounded-lg">
-              <Home className="w-4 h-4 text-amber-500" />
-              <div className="font-semibold text-center">{group.housingCount || 0}</div>
-              <div className="text-xs text-muted-foreground text-center">Housing</div>
+            <div className="flex items-center gap-2">
+              <Globe className="w-5 h-5 text-cyan-500" />
+              <span className="font-semibold">{group.city || "Global"}</span>
             </div>
           </div>
 
-          <Link href={`/groups/${group.id}`} className="w-full">
-            <Button className="w-full gap-2" data-testid={`button-view-group-${group.id}`}>
-              <UserPlus className="w-4 h-4" />
-              Join {group.name}
+          <Link href={`/groups/${group.id}`}>
+            <Button size="lg" className="gap-2" data-testid={`button-view-group-${group.id}`}>
+              <ChevronRight className="w-5 h-5" />
+              {isMember ? "View Details" : "Join Community"}
+              <ChevronRight className="w-4 h-4" />
             </Button>
           </Link>
         </div>
-      </Card>
-    </motion.div>
-  );
 
-  // Render Professional Group Card with editorial design
-  const renderProCard = (group: SelectGroup & { healthScore: number; distance: number; isFeatured: boolean }) => (
-    <motion.article
-      key={group.id}
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-100px" }}
-      transition={{ duration: 0.6 }}
-      className="group mb-12"
-    >
-      <div className="relative aspect-[16/9] overflow-hidden rounded-2xl mb-8">
-        <motion.img
-          src={group.coverImage || getCityImageUrl(group.city)}
-          alt={group.name}
-          className="w-full h-full object-cover"
-          whileHover={{ scale: 1.05 }}
-          transition={{ duration: 0.6 }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
-        
-        <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
-          <div className="flex items-center gap-3 mb-4">
-            <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-sm">
-              Professional
-            </Badge>
-            {group.isFeatured && (
-              <div className="flex items-center gap-1 text-sm bg-white/20 px-2 py-1 rounded-full backdrop-blur-sm">
-                <Star className="w-3 h-3 fill-white" />
-                <span>Featured</span>
-              </div>
-            )}
-          </div>
-          <h2 className="text-3xl font-serif font-bold">{group.name}</h2>
-        </div>
-      </div>
-
-      <div className="space-y-6 px-2">
-        <p className="text-lg leading-relaxed text-foreground/90">
-          {group.description}
-        </p>
-
-        <div className="flex flex-wrap items-center gap-6 text-sm">
-          <div className="flex items-center gap-2">
-            <Users className="w-5 h-5 text-primary" />
-            <span className="font-semibold">{(group.memberCount || 0).toLocaleString()}</span>
-            <span className="text-muted-foreground">members</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Globe className="w-5 h-5 text-cyan-500" />
-            <span className="font-semibold">{group.city || "Global"}</span>
-          </div>
-        </div>
-
-        <Link href={`/groups/${group.id}`}>
-          <Button size="lg" className="gap-2" data-testid={`button-view-group-${group.id}`}>
-            <UserPlus className="w-5 h-5" />
-            Join Community
-            <ChevronRight className="w-4 h-4" />
-          </Button>
-        </Link>
-      </div>
-
-      <Separator className="mt-12" />
-    </motion.article>
-  );
+        <Separator className="mt-12" />
+      </motion.article>
+    );
+  };
 
   return (
     <SelfHealingErrorBoundary pageName="Groups" fallbackRoute="/feed">
