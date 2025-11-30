@@ -744,15 +744,37 @@ router.get("/:id", async (req: Request, res: Response) => {
 router.post("/", authenticateToken, requireMinimumRole(3), async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user!.id;
+    const { startTime, endTime, timezone, ...rest } = req.body;
     
-    const eventData = insertEventSchema.omit({ userId: true }).parse(req.body);
+    // Combine date with time if time strings are provided
+    let startDate = new Date(rest.startDate);
+    let endDate = new Date(rest.endDate || rest.startDate);
+    
+    if (startTime) {
+      const [hours, minutes] = startTime.split(':').map(Number);
+      startDate.setHours(hours, minutes, 0, 0);
+    }
+    
+    if (endTime) {
+      const [hours, minutes] = endTime.split(':').map(Number);
+      endDate.setHours(hours, minutes, 0, 0);
+    }
+    
+    const eventData = {
+      ...rest,
+      startDate,
+      endDate,
+      timezone: timezone || "UTC",
+      location: rest.location || `${rest.venue}, ${rest.city}`,
+      maxAttendees: rest.maxCapacity || null,
+      status: "published"
+    };
 
     const [event] = await db
       .insert(events)
       .values({
         ...eventData,
-        userId,
-        status: "published"
+        userId
       })
       .returning();
 
@@ -762,7 +784,7 @@ router.post("/", authenticateToken, requireMinimumRole(3), async (req: AuthReque
       return res.status(400).json({ message: "Validation error", errors: error.errors });
     }
     console.error("[Events] Error creating event:", error);
-    res.status(500).json({ message: "Failed to create event" });
+    res.status(500).json({ message: "Failed to create event", details: String(error) });
   }
 });
 
