@@ -610,7 +610,23 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
 
       setUploadProgress(85);
       const method = editMode ? 'PATCH' : 'POST';
-      const endpoint = editMode ? `/api/posts/${existingPost?.id}` : '/api/posts';
+      
+      // Determine endpoint based on context
+      let endpoint = '/api/posts';
+      let cacheKey: any[] = ["/api/posts"];
+      
+      if (!editMode) {
+        if (context.type === 'event' && context.id) {
+          endpoint = `/api/events/${context.id}/posts`;
+          cacheKey = ["/api/events", context.id, "posts"];
+        } else if (context.type === 'group' && context.id) {
+          endpoint = `/api/groups/${context.id}/posts`;
+          cacheKey = ["/api/groups", context.id, "posts"];
+        }
+      } else {
+        endpoint = `/api/posts/${existingPost?.id}`;
+      }
+      
       console.log(`[PostCreator] Sending ${method} request to ${endpoint}...`);
       
       try {
@@ -629,7 +645,7 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
 
       // apiRequest throws on error, so if we get here it succeeded
       // Invalidate posts cache to refresh feed
-      queryClient.invalidateQueries({ queryKey: ["/api/posts"] });
+      queryClient.invalidateQueries({ queryKey: cacheKey });
 
       toast({
         title: "🎉 Memory shared!",
