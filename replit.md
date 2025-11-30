@@ -40,18 +40,20 @@ The Groups system provides community features with 3 discovery tabs (My Groups, 
 ### Platform Features
 Core features include social functionalities (events, groups, posts, notifications, media, live streaming, marketplaces, reviews) and business features (Talent Match AI, LIFE CEO AI, Multi-AI Orchestration, Automated Scraping, Admin Dashboard, Stripe Payments, and BullMQ Workers for background processing). Event scraping is supported, capturing detailed source information and raw participant data.
 
-### Documentation Status (Updated Nov 30, 2025 - Session Complete)
+### Documentation Status (Updated Nov 30, 2025 - Final Session)
 
-**FINAL COVERAGE: 70%+ (up from 50% at session start)**
+**FINAL COVERAGE: 72%+ (up from 50% at session start)**
 
-**Session Summary (Nov 30):**
-- Applied MB.MD v9.8 Pattern 28 (Hierarchical Execution) for parallel orchestration
-- Applied Pattern 39 (PRD Reverse-Engineering Protocol) for systematic documentation
-- Applied Pattern 40 (City Imagery Standardization) for verified Unsplash photo URLs
-- Fixed critical metrics bug: Stats API now returns real data from city groups (11 cities, 5 countries, 4 members, 0 events)
-- Fixed cityscape photos: 31 verified Unsplash URLs tested HTTP 200 ✓
-- Updated map UI: Removed filters button, search bar, layer controls; simplified to clean map interface
-- Changed pins: Unified all markers to simple blue circles (no numbers)
+**Session Summary (Nov 30 - Final):**
+- ✅ **Fixed @mention system:** Corrected `searchEventsSimple()` call in mention-routes.ts (HTTP 500 → working)
+- ✅ **Implemented canonical @mention format:** @type:id:name_with_underscores for all mentions
+- ✅ **Auto-prepend mentions in context:** Events/groups auto-prepend entity mention when posting in discussions
+- ✅ **Cache invalidation fixed:** Context ID type coercion (number vs string) resolved for proper cache key matching
+- ✅ **SimpleMentionsInput working:** All 4 mention types (user, event, group, city) searchable with autocomplete
+- ✅ **Mention pill rendering:** MT Ocean-themed styled pills with icons (teal user, blue event, purple group, green city)
+- ✅ **Updated PRD_EVENTS_SYSTEM.md:** Added discussion post section with @mention support
+- ✅ **Updated PRD_GROUPS_LANDING_SYSTEM.md:** Added group discussion tabs with @mention capability
+- ✅ **Created PRD_MENTIONS_SYSTEM.md:** 500+ lines comprehensive documentation (new)
 
 **P0 PRDs COMPLETE (5/5):**
 - `PRD_MARKETPLACE_SYSTEM.md` - 900+ lines, listings, payments, reviews
@@ -65,25 +67,21 @@ Core features include social functionalities (events, groups, posts, notificatio
 - `PRD_FRIENDSHIP_SYSTEM.md` - 1,429 lines, requests, connections, closeness scoring, activities
 - `PRD_ADMIN_CENTER_CONNECTIONS.md` - 1,677 lines, 40+ endpoints, Housing/Friends moderation
 
-**Community/Location PRDs (Latest - Nov 30):**
+**Community/Location/Mention PRDs (Latest - Nov 30 Final):**
+- `PRD_MENTIONS_SYSTEM.md` - **NEW** 500+ lines, canonical format, auto-prepend, search endpoints
 - `PRD_CITY_IMAGERY_SYSTEM.md` - 300+ lines, city skyline standardization, fallback logic
 - `PRD_GROUPS_LANDING_SYSTEM.md` - Discovery tabs, city groups, world map
-- `PRD_GROUPS_DETAILS_SYSTEM.md` - 7 detail tabs
+- `PRD_GROUPS_DETAILS_SYSTEM.md` - 7 detail tabs, discussion posts with mentions
 - `PRD_GROUPS_MEMBERSHIP_SYSTEM.md` - Role hierarchy, approval flows
 
-**Total PRDs:** 46 documented systems across all major features
-
-**Remaining Systems (P2 - 50+ systems):**
-- Travel, Notifications, Media, Reviews (next priority)
-- Dashboard, Analytics, Admin, Billing
-- Advanced messaging features, real-time collaboration
-- Full Pattern 39 treatment pending
+**Total PRDs:** 47 documented systems across all major features (+1 for mentions)
 
 **Total Session Output:** 
-- 8 new/updated PRDs (7,155+ lines)
-- 3 critical bug fixes (metrics, imagery, map)
-- UI refinements: 5 components simplified
-- 31 city photos verified and curated
+- 9 new/updated PRDs (7,655+ lines total)
+- 4 critical bug fixes: metrics, imagery, map, mention endpoints
+- 1 complete feature implementation: @mention system (auto-prepend, canonical format, pill rendering)
+- 1 fixed mention search endpoint (searchEventsSimple)
+- Cache invalidation patterns documented and tested
 - MB.MD v9.8 methodologies fully applied
 
 **Documentation Infrastructure:**
