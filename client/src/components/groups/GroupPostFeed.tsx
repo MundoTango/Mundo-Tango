@@ -65,10 +65,10 @@ function GroupPostFeedComponent({ groupId, groupName = "Group", canPost = false,
       posts={transformedPosts}
       isLoading={isLoading}
       context={{ type: 'group', id: groupId, name: groupName }}
-      showPostCreator={canPost}
+      showPostCreator={true}
       showFilters={true}
       onPostCreated={handlePostCreated}
-      emptyMessage={canPost ? `No posts in ${groupName} yet. Be the first to share!` : `No posts in ${groupName} yet.`}
+      emptyMessage={`No posts in ${groupName} yet. Be the first to share!`}
       data-testid="group-post-feed"
     />
   );

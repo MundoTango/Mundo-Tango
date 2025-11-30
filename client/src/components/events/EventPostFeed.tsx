@@ -88,12 +88,10 @@ function EventPostFeedComponent({ eventId, eventName = "Event", canPost = false 
       posts={transformedPosts}
       isLoading={isLoading}
       context={{ type: 'event', id: eventId, name: eventName }}
-      showPostCreator={canPost}
+      showPostCreator={true}
       showFilters={true}
       onPostCreated={handlePostCreated}
-      emptyMessage={canPost 
-        ? `No posts about ${eventName} yet. Share your experience!` 
-        : `No posts about ${eventName} yet.`}
+      emptyMessage={`No posts about ${eventName} yet. Share your experience!`}
       data-testid="event-post-feed"
     />
   );
