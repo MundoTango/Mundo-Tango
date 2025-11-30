@@ -140,7 +140,7 @@ router.get("/my-groups", authenticateToken, async (req: AuthRequest, res: Respon
           SELECT COUNT(*)::int 
           FROM ${events} e
           WHERE e.group_id = ${groups.id}
-          AND e.start_time > NOW()
+          AND e.start_date > NOW()
         )`.as('event_count'),
       })
       .from(groupMembers)
