@@ -2,7 +2,7 @@ import { Router, type Response } from "express";
 import { authenticateToken, AuthRequest } from "../middleware/auth";
 import { storage, db } from "../storage";
 import { groups, groupMembers, users } from "@shared/schema";
-import { eq, and, ilike, sql } from "drizzle-orm";
+import { eq, and, or, ilike, sql } from "drizzle-orm";
 
 const router = Router();
 
@@ -142,13 +142,16 @@ router.post("/change-effects", authenticateToken, async (req: AuthRequest, res: 
       if (!mapping) continue;
 
       try {
-        // Find the PRO group for this role
+        // Find the PRO group for this role (type="role" OR type="professional")
         const existingGroups = await db
           .select({
             group: groups,
           })
           .from(groups)
-          .where(and(eq(groups.type, "role"), eq(groups.slug, mapping.slug)))
+          .where(and(
+            or(eq(groups.type, "role"), eq(groups.type, "professional")),
+            eq(groups.slug, mapping.slug)
+          ))
           .limit(1);
 
         if (existingGroups.length > 0) {
@@ -209,7 +212,10 @@ router.post("/change-effects", authenticateToken, async (req: AuthRequest, res: 
           )`.as("member_count"),
         })
         .from(groups)
-        .where(and(eq(groups.type, "role"), eq(groups.slug, mapping.slug)))
+        .where(and(
+          or(eq(groups.type, "role"), eq(groups.type, "professional")),
+          eq(groups.slug, mapping.slug)
+        ))
         .limit(1);
 
       if (existingGroups.length > 0) {
@@ -358,7 +364,7 @@ router.get("/pro-groups", authenticateToken, async (req: AuthRequest, res: Respo
         )`.as("member_count"),
       })
       .from(groups)
-      .where(eq(groups.type, "role"))
+      .where(or(eq(groups.type, "role"), eq(groups.type, "professional")))
       .orderBy(groups.name);
 
     res.json(proGroups.map(g => ({
