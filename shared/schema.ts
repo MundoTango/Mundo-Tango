@@ -155,6 +155,39 @@ export type InsertCityWebsite = z.infer<typeof insertCityWebsiteSchema>;
 export type CityWebsite = typeof cityWebsites.$inferSelect;
 
 // ============================================================================
+// USER LOCATION HISTORY - Cities where user has lived for tango (6+ months)
+// ============================================================================
+
+export const userLocationHistory = pgTable("user_location_history", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  city: varchar("city", { length: 255 }).notNull(),
+  country: varchar("country", { length: 255 }),
+  startDate: date("start_date").notNull(),
+  endDate: date("end_date"), // null = current city
+  isCurrent: boolean("is_current").default(false),
+  latitude: numeric("latitude", { precision: 10, scale: 7 }),
+  longitude: numeric("longitude", { precision: 10, scale: 7 }),
+  groupId: integer("group_id"), // Auto-linked city group (FK added via migration)
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  userIdx: index("user_location_history_user_idx").on(table.userId),
+  cityIdx: index("user_location_history_city_idx").on(table.city),
+  currentIdx: index("user_location_history_current_idx").on(table.userId, table.isCurrent),
+  dateRangeIdx: index("user_location_history_date_range_idx").on(table.startDate, table.endDate),
+}));
+
+export const insertUserLocationHistorySchema = createInsertSchema(userLocationHistory).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type InsertUserLocationHistory = z.infer<typeof insertUserLocationHistorySchema>;
+export type UserLocationHistory = typeof userLocationHistory.$inferSelect;
+
+// ============================================================================
 // GOD LEVEL QUOTAS
 // ============================================================================
 

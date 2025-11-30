@@ -9,11 +9,12 @@ import {
   users,
   events,
   eventRsvps,
+  userLocationHistory,
   insertGroupSchema,
   insertGroupPostSchema
 } from "@shared/schema";
 import { authenticateToken, AuthRequest } from "../middleware/auth";
-import { eq, and, desc, sql, or, ilike, inArray, count, asc } from "drizzle-orm";
+import { eq, and, desc, sql, or, ilike, inArray, count, asc, isNotNull } from "drizzle-orm";
 import { z } from "zod";
 
 const router = Router();
@@ -91,11 +92,30 @@ router.get("/", async (req: Request, res: Response) => {
 // GROUP ANALYTICS (must be before /:id routes)
 // ============================================================================
 
-// GET /api/groups/my-groups - Get current user's groups (auth required)
+// GET /api/groups/my-groups - Get current user's groups with location awareness (auth required)
 router.get("/my-groups", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user!.id;
 
+    // Get user profile with city and tangoRoles
+    const [userProfile] = await db
+      .select({
+        city: users.city,
+        country: users.country,
+        tangoRoles: users.tangoRoles,
+      })
+      .from(users)
+      .where(eq(users.id, userId))
+      .limit(1);
+
+    // Get user's location history
+    const locationHistoryData = await db
+      .select()
+      .from(userLocationHistory)
+      .where(eq(userLocationHistory.userId, userId))
+      .orderBy(desc(userLocationHistory.isCurrent), desc(userLocationHistory.startDate));
+
+    // Get user's joined groups with enhanced data
     const userGroups = await db
       .select({
         group: groups,
@@ -115,7 +135,13 @@ router.get("/my-groups", authenticateToken, async (req: AuthRequest, res: Respon
           FROM ${groupMembers} gm
           WHERE gm.group_id = ${groups.id}
           AND gm.status = 'active'
-        )`.as('member_count')
+        )`.as('member_count'),
+        eventCount: sql<number>`(
+          SELECT COUNT(*)::int 
+          FROM ${events} e
+          WHERE e.group_id = ${groups.id}
+          AND e.start_time > NOW()
+        )`.as('event_count'),
       })
       .from(groupMembers)
       .innerJoin(groups, eq(groupMembers.groupId, groups.id))
@@ -126,7 +152,80 @@ router.get("/my-groups", authenticateToken, async (req: AuthRequest, res: Respon
       ))
       .orderBy(desc(groupMembers.joinedAt));
 
-    res.json(userGroups);
+    // Organize groups by location relevance
+    const currentCity = userProfile?.city?.toLowerCase();
+    const tangoRoles = userProfile?.tangoRoles || [];
+
+    // Create a map of historical cities with their date ranges
+    const historicalCities = new Map<string, { startDate: string; endDate: string | null; isCurrent: boolean }>();
+    locationHistoryData.forEach(loc => {
+      historicalCities.set(loc.city.toLowerCase(), {
+        startDate: loc.startDate,
+        endDate: loc.endDate,
+        isCurrent: loc.isCurrent || false,
+      });
+    });
+
+    // Enhance groups with location badges and categorization
+    const enhancedGroups = userGroups.map(item => {
+      const groupCity = item.group.city?.toLowerCase();
+      let locationCategory: 'current' | 'previous' | 'professional' | 'other' = 'other';
+      let locationBadge: string | null = null;
+
+      // Check if this is the current city group
+      if (groupCity && currentCity && groupCity === currentCity) {
+        locationCategory = 'current';
+        locationBadge = 'Current City';
+      }
+      // Check if this is a historical city group
+      else if (groupCity && historicalCities.has(groupCity)) {
+        const history = historicalCities.get(groupCity)!;
+        locationCategory = history.isCurrent ? 'current' : 'previous';
+        if (!history.isCurrent) {
+          const startYear = new Date(history.startDate).getFullYear();
+          const endYear = history.endDate ? new Date(history.endDate).getFullYear() : null;
+          locationBadge = endYear ? `Lived here ${startYear}-${endYear}` : `Lived here since ${startYear}`;
+        }
+      }
+      // Check if this is a professional group matching user's roles
+      else if (item.group.type === 'professional') {
+        const groupName = item.group.name.toLowerCase();
+        const matchingRole = tangoRoles.find(role => 
+          groupName.includes(role.toLowerCase()) || 
+          groupName.includes(role.toLowerCase().replace('_', ' '))
+        );
+        if (matchingRole) {
+          locationCategory = 'professional';
+          locationBadge = `Your Role: ${matchingRole}`;
+        }
+      }
+
+      return {
+        ...item,
+        locationCategory,
+        locationBadge,
+        eventCount: item.eventCount || 0,
+      };
+    });
+
+    // Sort: current city first, then previous cities, then professional, then other
+    const sortOrder = { current: 0, previous: 1, professional: 2, other: 3 };
+    enhancedGroups.sort((a, b) => {
+      const orderDiff = sortOrder[a.locationCategory] - sortOrder[b.locationCategory];
+      if (orderDiff !== 0) return orderDiff;
+      // Within same category, sort by join date
+      return new Date(b.membership.joinedAt!).getTime() - new Date(a.membership.joinedAt!).getTime();
+    });
+
+    res.json({
+      groups: enhancedGroups,
+      userProfile: {
+        currentCity: userProfile?.city,
+        currentCountry: userProfile?.country,
+        tangoRoles: tangoRoles,
+      },
+      locationHistory: locationHistoryData,
+    });
   } catch (error) {
     console.error("[Groups] Error fetching user groups:", error);
     res.status(500).json({ message: "Failed to fetch user groups" });
