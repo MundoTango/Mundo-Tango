@@ -161,8 +161,9 @@ export default function CommunityWorldMapPage() {
   ];
 
   const allLocations = useMemo(() => {
-    return locations.length > 0 ? locations : mockLocations;
-  }, [locations]);
+    // Use real locations from API, only fallback to mock if loading
+    return locations && locations.length > 0 ? locations : (isLoading ? mockLocations : locations);
+  }, [locations, isLoading]);
 
   // Apply filters
   const filteredLocations = useMemo(() => {

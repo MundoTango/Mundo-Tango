@@ -6593,23 +6593,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // 2. GET /api/community/stats - Get global community statistics (PUBLIC)
   app.get("/api/community/stats", async (req: Request, res: Response) => {
     try {
-      // Get user stats
-      const userStats = await db.select({
-        totalMembers: sql<number>`count(distinct ${users.id})::int`,
-        countries: sql<number>`count(distinct ${users.country})::int`,
-        cities: sql<number>`count(distinct ${users.city})::int`,
+      // MB.MD v9.8: Calculate stats from actual city groups (not users)
+      const cityGroupStats = await db.select({
+        totalCities: sql<number>`count(*)::int`,
+        countries: sql<number>`count(distinct ${groups.country})::int`,
+        totalMembers: sql<number>`sum(${groups.memberCount})::int`,
+        totalEvents: sql<number>`sum(${groups.eventCount})::int`,
       })
-      .from(users)
-      .where(eq(users.isActive, true));
+      .from(groups)
+      .where(eq(groups.type, 'city'));
 
-      // Get event count
-      const eventStats = await db.select({
-        activeEvents: sql<number>`count(*)::int`,
-      })
-      .from(events)
-      .where(eq(events.status, 'published'));
-
-      // Get venue count
+      // Get venue recommendations count
       const venueStats = await db.select({
         totalVenues: sql<number>`count(*)::int`,
       })
@@ -6623,10 +6617,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       .where(eq(housingListings.status, 'active'));
 
       res.json({
-        totalCities: userStats[0]?.cities || 0,
-        countries: userStats[0]?.countries || 0,
-        totalMembers: userStats[0]?.totalMembers || 0,
-        activeEvents: eventStats[0]?.activeEvents || 0,
+        totalCities: cityGroupStats[0]?.totalCities || 0,
+        countries: cityGroupStats[0]?.countries || 0,
+        totalMembers: cityGroupStats[0]?.totalMembers || 0,
+        activeEvents: cityGroupStats[0]?.totalEvents || 0,
         totalVenues: venueStats[0]?.totalVenues || 0,
         totalRecommendations: venueStats[0]?.totalVenues || 0,
         totalHousing: housingStats[0]?.totalHousing || 0
