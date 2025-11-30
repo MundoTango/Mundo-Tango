@@ -54,44 +54,6 @@ export function UpcomingEventsSidebar({ className }: UpcomingEventsSidebarProps)
   useEffect(() => {
     fetchEvents();
     fetchUserRsvps();
-
-    // Setup WebSocket for real-time RSVP updates (with safety check)
-    if (!window.location.host || window.location.host.includes('undefined')) {
-      console.warn('[UpcomingEventsSidebar] Skipping WebSocket due to invalid host');
-      return;
-    }
-
-    let ws: WebSocket | null = null;
-    try {
-      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-      ws = new WebSocket(`${protocol}//${window.location.host}/ws/events`);
-      
-      ws.onmessage = (event) => {
-        try {
-          const data = JSON.parse(event.data);
-          if (data.type === 'rsvp_update') {
-            setRealtimeRsvps(prev => ({
-              ...prev,
-              [data.eventId]: data.count
-            }));
-          }
-        } catch (error) {
-          console.error('[UpcomingEventsSidebar] Error parsing WebSocket message:', error);
-        }
-      };
-
-      ws.onerror = (error) => {
-        console.error('[UpcomingEventsSidebar] WebSocket error:', error);
-      };
-    } catch (error) {
-      console.error('[UpcomingEventsSidebar] Failed to create WebSocket:', error);
-    }
-
-    return () => {
-      if (ws && ws.readyState === WebSocket.OPEN) {
-        ws.close();
-      }
-    };
   }, [selectedCategory]);
 
   // Fetch user's existing RSVPs
