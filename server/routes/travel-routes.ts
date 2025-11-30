@@ -1,6 +1,6 @@
 import { Router, Response } from "express";
 import { db } from "@shared/db";
-import { travelPlans, travelPlanItems, users, events, housingListings } from "@shared/schema";
+import { travelPlans, travelPlanItems, users, events, housingListings, tripJoinRequests, notifications } from "@shared/schema";
 import { eq, desc, and, gte, lte, or, ilike, isNotNull } from "drizzle-orm";
 import { authenticateToken, AuthRequest } from "../middleware/auth";
 import * as cheerio from "cheerio";
@@ -1115,5 +1115,312 @@ function extractListItems($: cheerio.CheerioAPI, selectors: string[]): string[] 
   
   return items.slice(0, 20);
 }
+
+// ============================================================================
+// TRIP JOIN REQUESTS - Request to Book Feature
+// ============================================================================
+
+// POST /api/travel/trips/:tripId/request-join - Request to join a trip
+router.post("/trips/:tripId/request-join", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const requesterId = req.user!.id;
+    const tripId = parseInt(req.params.tripId);
+    const { message } = req.body;
+
+    // Get the trip to find the owner
+    const tripResult = await db.select()
+      .from(travelPlans)
+      .where(eq(travelPlans.id, tripId))
+      .limit(1);
+
+    if (tripResult.length === 0) {
+      return res.status(404).json({ message: "Trip not found" });
+    }
+
+    const trip = tripResult[0];
+
+    // Prevent requesting to join own trip
+    if (trip.userId === requesterId) {
+      return res.status(400).json({ message: "Cannot request to join your own trip" });
+    }
+
+    // Check if request already exists
+    const existingRequest = await db.select()
+      .from(tripJoinRequests)
+      .where(and(
+        eq(tripJoinRequests.tripId, tripId),
+        eq(tripJoinRequests.requesterId, requesterId)
+      ))
+      .limit(1);
+
+    if (existingRequest.length > 0) {
+      return res.status(400).json({ message: "You have already requested to join this trip" });
+    }
+
+    // Get requester info for notification
+    const requesterResult = await db.select({
+      id: users.id,
+      name: users.name,
+      username: users.username,
+      profileImage: users.profileImage,
+    })
+      .from(users)
+      .where(eq(users.id, requesterId))
+      .limit(1);
+
+    const requester = requesterResult[0];
+
+    // Create the join request
+    const [newRequest] = await db.insert(tripJoinRequests).values({
+      tripId,
+      requesterId,
+      ownerId: trip.userId,
+      message: message || null,
+      status: 'pending',
+    }).returning();
+
+    // Create notification for trip owner
+    await db.insert(notifications).values({
+      userId: trip.userId,
+      type: 'trip_join_request',
+      title: 'New Trip Join Request',
+      message: `${requester.name} wants to join your trip to ${trip.city}`,
+      data: JSON.stringify({
+        requestId: newRequest.id,
+        tripId: trip.id,
+        tripCity: trip.city,
+        requesterId: requester.id,
+        requesterName: requester.name,
+        requesterUsername: requester.username,
+        requesterImage: requester.profileImage,
+        requestMessage: message,
+      }),
+      actionUrl: `/profile/${trip.userId}?tab=travel&tripId=${trip.id}&section=requests`,
+      isRead: false,
+    });
+
+    res.status(201).json({
+      message: "Join request sent successfully",
+      request: newRequest,
+    });
+  } catch (error) {
+    console.error("Error creating trip join request:", error);
+    res.status(500).json({ message: "Failed to send join request" });
+  }
+});
+
+// GET /api/travel/trips/:tripId/requests - Get all join requests for a trip (owner only)
+router.get("/trips/:tripId/requests", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    const tripId = parseInt(req.params.tripId);
+
+    // Verify ownership
+    const tripResult = await db.select()
+      .from(travelPlans)
+      .where(and(
+        eq(travelPlans.id, tripId),
+        eq(travelPlans.userId, userId)
+      ))
+      .limit(1);
+
+    if (tripResult.length === 0) {
+      return res.status(404).json({ message: "Trip not found or you don't have permission" });
+    }
+
+    // Get all requests with requester info
+    const requests = await db.select({
+      id: tripJoinRequests.id,
+      tripId: tripJoinRequests.tripId,
+      requesterId: tripJoinRequests.requesterId,
+      message: tripJoinRequests.message,
+      status: tripJoinRequests.status,
+      createdAt: tripJoinRequests.createdAt,
+      respondedAt: tripJoinRequests.respondedAt,
+      requesterName: users.name,
+      requesterUsername: users.username,
+      requesterProfileImage: users.profileImage,
+      requesterCity: users.city,
+      requesterCountry: users.country,
+      requesterTangoRoles: users.tangoRoles,
+    })
+      .from(tripJoinRequests)
+      .leftJoin(users, eq(tripJoinRequests.requesterId, users.id))
+      .where(eq(tripJoinRequests.tripId, tripId))
+      .orderBy(desc(tripJoinRequests.createdAt));
+
+    res.json(requests);
+  } catch (error) {
+    console.error("Error fetching trip join requests:", error);
+    res.status(500).json({ message: "Failed to fetch join requests" });
+  }
+});
+
+// GET /api/travel/my-requests - Get all requests made by current user
+router.get("/my-requests", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+
+    const requests = await db.select({
+      id: tripJoinRequests.id,
+      tripId: tripJoinRequests.tripId,
+      message: tripJoinRequests.message,
+      status: tripJoinRequests.status,
+      createdAt: tripJoinRequests.createdAt,
+      respondedAt: tripJoinRequests.respondedAt,
+      tripCity: travelPlans.city,
+      tripCountry: travelPlans.country,
+      tripStartDate: travelPlans.startDate,
+      tripEndDate: travelPlans.endDate,
+      ownerName: users.name,
+      ownerUsername: users.username,
+      ownerProfileImage: users.profileImage,
+    })
+      .from(tripJoinRequests)
+      .leftJoin(travelPlans, eq(tripJoinRequests.tripId, travelPlans.id))
+      .leftJoin(users, eq(tripJoinRequests.ownerId, users.id))
+      .where(eq(tripJoinRequests.requesterId, userId))
+      .orderBy(desc(tripJoinRequests.createdAt));
+
+    res.json(requests);
+  } catch (error) {
+    console.error("Error fetching my requests:", error);
+    res.status(500).json({ message: "Failed to fetch your requests" });
+  }
+});
+
+// PATCH /api/travel/requests/:requestId - Accept or reject a request (owner only)
+router.patch("/requests/:requestId", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    const requestId = parseInt(req.params.requestId);
+    const { status } = req.body; // 'accepted' | 'rejected'
+
+    if (!['accepted', 'rejected'].includes(status)) {
+      return res.status(400).json({ message: "Status must be 'accepted' or 'rejected'" });
+    }
+
+    // Get the request and verify ownership
+    const requestResult = await db.select({
+      request: tripJoinRequests,
+      trip: travelPlans,
+    })
+      .from(tripJoinRequests)
+      .leftJoin(travelPlans, eq(tripJoinRequests.tripId, travelPlans.id))
+      .where(eq(tripJoinRequests.id, requestId))
+      .limit(1);
+
+    if (requestResult.length === 0) {
+      return res.status(404).json({ message: "Request not found" });
+    }
+
+    const { request, trip } = requestResult[0];
+
+    if (!trip || trip.userId !== userId) {
+      return res.status(403).json({ message: "You can only respond to requests for your own trips" });
+    }
+
+    if (request.status !== 'pending') {
+      return res.status(400).json({ message: "This request has already been processed" });
+    }
+
+    // Get owner info for notification
+    const ownerResult = await db.select({
+      name: users.name,
+    })
+      .from(users)
+      .where(eq(users.id, userId))
+      .limit(1);
+
+    const owner = ownerResult[0];
+
+    // Update the request
+    const [updatedRequest] = await db.update(tripJoinRequests)
+      .set({
+        status,
+        respondedAt: new Date(),
+      })
+      .where(eq(tripJoinRequests.id, requestId))
+      .returning();
+
+    // Create notification for requester
+    await db.insert(notifications).values({
+      userId: request.requesterId,
+      type: status === 'accepted' ? 'trip_request_accepted' : 'trip_request_rejected',
+      title: status === 'accepted' ? 'Trip Request Accepted!' : 'Trip Request Update',
+      message: status === 'accepted' 
+        ? `${owner.name} accepted your request to join their trip to ${trip.city}!`
+        : `${owner.name} was unable to accept your request to join their trip to ${trip.city}`,
+      data: JSON.stringify({
+        requestId: request.id,
+        tripId: trip.id,
+        tripCity: trip.city,
+        ownerId: userId,
+        ownerName: owner.name,
+        status,
+      }),
+      actionUrl: `/profile/${userId}?tab=travel`,
+      isRead: false,
+    });
+
+    res.json({
+      message: `Request ${status}`,
+      request: updatedRequest,
+    });
+  } catch (error) {
+    console.error("Error updating trip join request:", error);
+    res.status(500).json({ message: "Failed to update request" });
+  }
+});
+
+// DELETE /api/travel/requests/:requestId - Cancel a request (requester only)
+router.delete("/requests/:requestId", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    const requestId = parseInt(req.params.requestId);
+
+    // Get the request and verify requester
+    const requestResult = await db.select()
+      .from(tripJoinRequests)
+      .where(and(
+        eq(tripJoinRequests.id, requestId),
+        eq(tripJoinRequests.requesterId, userId)
+      ))
+      .limit(1);
+
+    if (requestResult.length === 0) {
+      return res.status(404).json({ message: "Request not found or you don't have permission" });
+    }
+
+    await db.delete(tripJoinRequests)
+      .where(eq(tripJoinRequests.id, requestId));
+
+    res.json({ message: "Request cancelled successfully" });
+  } catch (error) {
+    console.error("Error cancelling trip join request:", error);
+    res.status(500).json({ message: "Failed to cancel request" });
+  }
+});
+
+// GET /api/travel/pending-requests-count - Get count of pending requests for user's trips
+router.get("/pending-requests-count", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+
+    const result = await db.select({
+      count: tripJoinRequests.id,
+    })
+      .from(tripJoinRequests)
+      .where(and(
+        eq(tripJoinRequests.ownerId, userId),
+        eq(tripJoinRequests.status, 'pending')
+      ));
+
+    res.json({ count: result.length });
+  } catch (error) {
+    console.error("Error counting pending requests:", error);
+    res.status(500).json({ message: "Failed to count pending requests" });
+  }
+});
 
 export default router;
