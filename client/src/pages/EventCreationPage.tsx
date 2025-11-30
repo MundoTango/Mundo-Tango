@@ -1,5 +1,5 @@
-import { useState, useRef } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useState, useRef, useEffect } from "react";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -22,6 +22,7 @@ import { uploadMediaFile, validateMediaFile } from "@/lib/mediaUpload";
 import { EVENT_TYPES } from "@/lib/eventTypes";
 import { getCurrencyFromCountry, getCurrencySymbol } from "@/lib/currencyUtils";
 import { CurrencyPicker } from "@/components/input/CurrencyPicker";
+import { getTimezoneFromCity, formatTimezoneAbbr } from "@/lib/timezoneUtils";
 
 const WIZARD_STEPS = [
   { id: 'basics', title: 'Event Basics', description: 'Title, type, and description' },
@@ -50,11 +51,30 @@ export default function EventCreationPage() {
   const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [startDate, setStartDate] = useState<Date>();
-  const [endDate, setEndDate] = useState<Date>();
+  const [dateRange, setDateRange] = useState<{ from?: Date; to?: Date }>({});
   const [startTime, setStartTime] = useState("20:00");
   const [endTime, setEndTime] = useState("23:00");
   const [timezone, setTimezone] = useState("UTC");
+  const [userPrimaryLocation, setUserPrimaryLocation] = useState("");
+
+  // Fetch current user profile
+  const { data: currentUser } = useQuery({
+    queryKey: ['/api/users/me'],
+    queryFn: async () => {
+      const res = await fetch('/api/users/me');
+      if (!res.ok) throw new Error('Failed to fetch user');
+      return res.json();
+    },
+  });
+
+  // Initialize timezone from user's primary location
+  useEffect(() => {
+    if (currentUser?.city) {
+      const inferredTz = getTimezoneFromCity(currentUser.city);
+      setTimezone(inferredTz);
+      setUserPrimaryLocation(currentUser.city);
+    }
+  }, [currentUser]);
   const [coverPhoto, setCoverPhoto] = useState<File | null>(null);
   const [coverPhotoPreview, setCoverPhotoPreview] = useState<string>("");
   const [additionalPhotos, setAdditionalPhotos] = useState<File[]>([]);
@@ -120,7 +140,7 @@ export default function EventCreationPage() {
       case 0:
         return !!(formData.title && formData.eventType);
       case 1:
-        return !!startDate;
+        return !!dateRange.from;
       case 2:
         return !!formData.location;
       case 3:
@@ -157,7 +177,7 @@ export default function EventCreationPage() {
       coordinates 
     });
     const cityName = parsed?.city || location;
-    const tz = TIMEZONE_MAP[cityName] || "UTC";
+    const tz = getTimezoneFromCity(cityName);
     setTimezone(tz);
   };
 
@@ -215,7 +235,7 @@ export default function EventCreationPage() {
   };
 
   const handleSubmit = () => {
-    if (!formData.title || !startDate || !formData.location) {
+    if (!formData.title || !dateRange.from || !formData.location) {
       toast({ title: "Please fill in all required fields", variant: "destructive" });
       return;
     }
@@ -226,8 +246,8 @@ export default function EventCreationPage() {
       ...formData,
       city,
       country,
-      startDate: startDate.toISOString(),
-      endDate: endDate?.toISOString() || startDate.toISOString(),
+      startDate: dateRange.from.toISOString(),
+      endDate: (dateRange.to || dateRange.from).toISOString(),
       startTime,
       endTime,
       timezone,
@@ -306,54 +326,36 @@ export default function EventCreationPage() {
             exit={{ opacity: 0, x: -20 }}
             className="space-y-6"
           >
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label>Start Date *</Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className="w-full justify-start text-left h-12"
-                      data-testid="button-start-date"
-                    >
-                      <CalendarIcon className="mr-2 h-5 w-5" />
-                      {startDate ? format(startDate, "PPP") : "Select start date"}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0">
-                    <Calendar
-                      mode="single"
-                      selected={startDate}
-                      onSelect={setStartDate}
-                      disabled={(date) => date < new Date()}
-                    />
-                  </PopoverContent>
-                </Popover>
-              </div>
-
-              <div className="space-y-2">
-                <Label>End Date</Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className="w-full justify-start text-left h-12"
-                      data-testid="button-end-date"
-                    >
-                      <CalendarIcon className="mr-2 h-5 w-5" />
-                      {endDate ? format(endDate, "PPP") : "Same as start date"}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0">
-                    <Calendar
-                      mode="single"
-                      selected={endDate}
-                      onSelect={setEndDate}
-                      disabled={(date) => startDate ? date < startDate : date < new Date()}
-                    />
-                  </PopoverContent>
-                </Popover>
-              </div>
+            <div className="space-y-2">
+              <Label>Event Date Range *</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start text-left h-12"
+                    data-testid="button-date-range"
+                  >
+                    <CalendarIcon className="mr-2 h-5 w-5" />
+                    {dateRange.from ? (
+                      dateRange.to ? (
+                        `${format(dateRange.from, "MMM d")} - ${format(dateRange.to, "MMM d, yyyy")}`
+                      ) : (
+                        format(dateRange.from, "MMM d, yyyy")
+                      )
+                    ) : (
+                      "Select date range"
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0">
+                  <Calendar
+                    mode="range"
+                    selected={dateRange}
+                    onSelect={setDateRange}
+                    disabled={(date) => date < new Date()}
+                  />
+                </PopoverContent>
+              </Popover>
             </div>
 
             <div className="grid md:grid-cols-2 gap-6">
@@ -369,7 +371,6 @@ export default function EventCreationPage() {
                     data-testid="input-start-time"
                   />
                 </div>
-                <p className="text-xs text-muted-foreground">Timezone: {timezone}</p>
               </div>
 
               <div className="space-y-2">
@@ -385,6 +386,42 @@ export default function EventCreationPage() {
                   />
                 </div>
               </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Timezone</Label>
+              {userPrimaryLocation && (
+                <p className="text-xs text-muted-foreground">Your primary location: {userPrimaryLocation}</p>
+              )}
+              <Select
+                value={timezone}
+                onValueChange={(value) => setTimezone(value)}
+              >
+                <SelectTrigger className="h-12" data-testid="select-timezone">
+                  <SelectValue placeholder="Select timezone" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="America/Argentina/Buenos_Aires">Buenos Aires (ART)</SelectItem>
+                  <SelectItem value="America/New_York">New York (EST/EDT)</SelectItem>
+                  <SelectItem value="America/Los_Angeles">Los Angeles (PST/PDT)</SelectItem>
+                  <SelectItem value="America/Toronto">Toronto (EST/EDT)</SelectItem>
+                  <SelectItem value="America/Mexico_City">Mexico City (CST/CDT)</SelectItem>
+                  <SelectItem value="America/Sao_Paulo">São Paulo (BRT)</SelectItem>
+                  <SelectItem value="Europe/London">London (GMT/BST)</SelectItem>
+                  <SelectItem value="Europe/Paris">Paris (CET/CEST)</SelectItem>
+                  <SelectItem value="Europe/Berlin">Berlin (CET/CEST)</SelectItem>
+                  <SelectItem value="Europe/Madrid">Madrid (CET/CEST)</SelectItem>
+                  <SelectItem value="Europe/Moscow">Moscow (MSK)</SelectItem>
+                  <SelectItem value="Asia/Dubai">Dubai (GST)</SelectItem>
+                  <SelectItem value="Asia/Bangkok">Bangkok (ICT)</SelectItem>
+                  <SelectItem value="Asia/Singapore">Singapore (SGT)</SelectItem>
+                  <SelectItem value="Asia/Hong_Kong">Hong Kong (HKT)</SelectItem>
+                  <SelectItem value="Asia/Tokyo">Tokyo (JST)</SelectItem>
+                  <SelectItem value="Asia/Seoul">Seoul (KST)</SelectItem>
+                  <SelectItem value="Australia/Sydney">Sydney (AEST/AEDT)</SelectItem>
+                  <SelectItem value="UTC">UTC</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </motion.div>
         );
@@ -649,7 +686,15 @@ export default function EventCreationPage() {
                     <div>
                       <p className="text-sm text-muted-foreground">Date & Time</p>
                       <p className="font-medium">
-                        {startDate ? format(startDate, "PPP") : "Not set"}
+                        {dateRange.from ? (
+                          dateRange.to ? (
+                            `${format(dateRange.from, "PPP")} - ${format(dateRange.to, "PPP")}`
+                          ) : (
+                            format(dateRange.from, "PPP")
+                          )
+                        ) : (
+                          "Not set"
+                        )}
                         {startTime && ` at ${startTime}`}
                       </p>
                       <p className="text-xs text-muted-foreground">{timezone}</p>
