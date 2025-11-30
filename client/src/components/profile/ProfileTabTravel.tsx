@@ -269,7 +269,9 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
       
       await Promise.all(plans.map(async (trip) => {
         try {
-          const response = await fetch(`/api/travel/trips/${trip.id}/join-requests`);
+          const response = await fetch(`/api/travel/trips/${trip.id}/requests`, {
+            credentials: 'include',
+          });
           if (response.ok) {
             const requests = await response.json();
             tripRequestsMap[trip.id] = requests;
