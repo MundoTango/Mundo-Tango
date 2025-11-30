@@ -436,18 +436,23 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
 
   const updateTripMutation = useMutation({
     mutationFn: async ({ tripId, data }: { tripId: number; data: { visibility?: string; startDate?: string; endDate?: string } }) => {
+      console.log('[TravelTab] Mutation function executing:', { tripId, data });
       const res = await apiRequest("PATCH", `/api/travel/plans/${tripId}`, data);
-      return await res.json();
+      const result = await res.json();
+      console.log('[TravelTab] Mutation response:', result);
+      return result;
     },
-    onSuccess: async () => {
+    onSuccess: async (result, variables) => {
+      console.log('[TravelTab] Mutation onSuccess called:', { result, variables, profileId });
+      // Invalidate and immediately refetch
       await queryClient.invalidateQueries({ queryKey: ["/api/travel/plans", profileId] });
-      await queryClient.refetchQueries({ 
-        queryKey: ["/api/travel/plans", profileId],
-        type: 'active'
-      });
+      await new Promise(resolve => setTimeout(resolve, 100)); // Small delay to ensure cache is cleared
+      const newData = await queryClient.fetchQuery({ queryKey: ["/api/travel/plans", profileId] });
+      console.log('[TravelTab] Refetched data after mutation:', newData);
       toast({ title: "Trip updated!" });
     },
-    onError: () => {
+    onError: (error) => {
+      console.error('[TravelTab] Mutation error:', error);
       toast({ title: "Failed to update trip", description: "Please try again.", variant: "destructive" });
     },
   });
@@ -455,7 +460,13 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
   const [visibilityPopoverOpen, setVisibilityPopoverOpen] = useState<number | null>(null);
 
   const handleVisibilityChange = (trip: TravelPlan, newVisibility: 'public' | 'friends' | 'private') => {
-    console.log('[TravelTab] Visibility change clicked:', { tripId: trip.id, newVisibility, currentVisibility: trip.visibility });
+    console.log('[TravelTab] 🔴 Visibility change handler called:', { 
+      tripId: trip.id, 
+      newVisibility, 
+      currentVisibility: trip.visibility,
+      mutationPending: updateTripMutation.isPending
+    });
+    console.log('[TravelTab] About to mutate with:', { tripId: trip.id, data: { visibility: newVisibility } });
     updateTripMutation.mutate({ tripId: trip.id, data: { visibility: newVisibility } });
     setVisibilityPopoverOpen(null);
   };
