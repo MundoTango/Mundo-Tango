@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { useEvents, useRSVPEvent, useEventAttendance, useEventRSVPs } from "@/hooks/useEvents";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
@@ -272,6 +272,7 @@ function EventCard({ event, index = 0 }: { event: any; index?: number }) {
 }
 
 export default function EventsPage() {
+  const [, navigate] = useLocation();
   const { user } = useAuth();
   const { toast } = useToast();
   const [viewMode, setViewMode] = useState<"list" | "calendar" | "map">("list");
@@ -426,7 +427,12 @@ export default function EventsPage() {
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 items-center justify-center flex-wrap">
-                <Button size="lg" className="gap-2" data-testid="button-create-event">
+                <Button 
+                  size="lg" 
+                  className="gap-2" 
+                  data-testid="button-create-event"
+                  onClick={() => navigate("/events/create")}
+                >
                   <Plus className="h-5 w-5" />
                   Create Event
                   <ChevronRight className="h-5 w-5" />
