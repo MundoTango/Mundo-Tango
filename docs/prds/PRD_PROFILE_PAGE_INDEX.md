@@ -1,8 +1,8 @@
 # PRD: Profile Page Component Index
 
-> **Version:** 1.0  
+> **Version:** 1.1  
 > **Created:** 2025-11-29  
-> **Last Updated:** 2025-11-29  
+> **Last Updated:** 2025-11-30  
 > **Status:** Active  
 > **Purpose:** Master index of all Profile Page components, tabs, and features with PRD cross-references
 
@@ -271,6 +271,9 @@ These tabs are being consolidated into the unified PRO tab:
 
 | Date | Component | Change | Author |
 |------|-----------|--------|--------|
+| 2025-11-30 | ProfileTabEvents | Fixed user events endpoint 500 error (removed non-existent `hostLanguages` column) | Replit AI |
+| 2025-11-30 | ProfileTabEvents | Added `inArray` support for multi-status RSVP filtering | Replit AI |
+| 2025-11-30 | ProfileTabEvents | Backend supports `status=all` for RSVP persistence fix | Replit AI |
 | 2025-11-29 | ProfileTabEvents | RSVP mutation system with 3 states | Replit AI |
 | 2025-11-29 | ProfileTabEvents | Not Going option always visible | Replit AI |
 | 2025-11-28 | ProfileTabAbout | Role cascade integration | Replit AI |

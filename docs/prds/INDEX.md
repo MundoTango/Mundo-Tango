@@ -1,12 +1,13 @@
 # PRD Index - Mundo Tango
 
-## 🎯 Latest Update (Nov 29, 2025)
-**NEW:** [PRD_PUBLIC_PROFILE_VIEW_SYSTEM.md](PRD_PUBLIC_PROFILE_VIEW_SYSTEM.md) - Public profile preview with viewMode state, privacy field filtering, 18 hidden owner-only elements  
-**PRIOR:** [PRD_UNIFIED_SIDEBAR_SYSTEM.md](PRD_UNIFIED_SIDEBAR_SYSTEM.md) - Complete icon-grid navigation with 27 items, 4 sections, hover tooltips, z-50 layering
+## 🎯 Latest Update (Nov 30, 2025)
+**NEW:** [PRD_RSVP_ARCHITECTURE.md](PRD_RSVP_ARCHITECTURE.md) - Unified RSVP system for Events/Travel/Friends with persistence fix  
+**FIXED:** User Events endpoint 500 error resolved (removed non-existent `hostLanguages` column)  
+**PRIOR:** [PRD_PUBLIC_PROFILE_VIEW_SYSTEM.md](PRD_PUBLIC_PROFILE_VIEW_SYSTEM.md) - Public profile preview with viewMode state
 
-> **Last Updated:** 2025-11-29  
-> **Total PRDs:** 23  
-> **Session PRDs:** UnifiedSidebar, PublicProfileView  
+> **Last Updated:** 2025-11-30  
+> **Total PRDs:** 24  
+> **Session PRDs:** RSVP Architecture, Profile System Updates  
 
 ---
 
@@ -141,12 +142,14 @@ The following PRDs were created during the November 2025 documentation consolida
 
 | Component | Change |
 |-----------|--------|
-| PRD_RSVP_ARCHITECTURE.md | **NEW** - Unified RSVP architecture documentation |
+| PRD_RSVP_ARCHITECTURE.md | **NEW** - Unified RSVP architecture documentation (v1.1) |
+| `/api/users/:userId/events` | Fixed 500 error - removed non-existent `hostLanguages` column from query |
+| Event Routes Backend | Added `inArray` import for multi-status RSVP filtering |
 | Event Routes Backend | Fixed `?status=all` parameter to return all RSVP types (not just 'going') |
 | useEventRSVPs Hook | Updated to fetch all statuses by default, fixing persistence bug |
 | useRSVPEvent Hook | Improved cache invalidation with consistent eventId types |
-| PRD_USER_PROFILE_SYSTEM.md | Updated RSVP section with corrected implementation |
-| PRD_PROFILE_PAGE_INDEX.md | Updated query keys and API endpoints documentation |
+| PRD_USER_PROFILE_SYSTEM.md | v1.1 - Updated Event Interface, removed invalid `hostLanguages` field |
+| PRD_PROFILE_PAGE_INDEX.md | v1.1 - Updated changelog with bug fixes |
 
 ---
 

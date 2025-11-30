@@ -1,7 +1,8 @@
 # PRD: User Profile System
 
-> **Version:** 1.0  
+> **Version:** 1.1  
 > **Created:** 2025-11-28  
+> **Last Updated:** 2025-11-30  
 > **Status:** Active  
 > **Master Document:** This PRD is the central reference for all profile-related components
 
@@ -486,7 +487,8 @@ The backend endpoint `GET /api/events/:id/attendees` now supports `status=all` q
 
 **Event Interface:**
 ```typescript
-interface Event {
+// Response from GET /api/users/:userId/events?status=going,maybe,interested
+interface UserEventResponse {
   event: {
     id: number;
     title: string;
@@ -495,19 +497,17 @@ interface Event {
     endDate: string;
     venue?: string;
     city?: string;
+    location: string;
     eventType: string;
-    price?: string;
     imageUrl?: string;
-    status: string;
-    hostLanguages?: string[];
+    maxAttendees?: number;
   };
-  organizer: {
-    id: number;
-    name: string;
-  };
+  rsvpStatus: 'going' | 'maybe' | 'not_going' | 'interested';
   _count: number;
 }
 ```
+
+> **Note (Nov 30, 2025):** The `hostLanguages` field was removed from the API response as it doesn't exist in the events schema. The endpoint now returns only valid schema columns.
 
 **Cross-Tab Data Flows:**
 - Events → PRO Tab (verified event participations)

@@ -271,8 +271,75 @@ CREATE INDEX idx_event_rsvps_status ON event_rsvps(status);
 
 ---
 
-## 10. Changelog
+## 10. User Events Endpoint
+
+### 10.1 Endpoint: `/api/users/:userId/events`
+
+Fetches events a user has RSVP'd to, with optional status filtering.
+
+**Query Parameters:**
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `status` | string | `going` | Comma-separated list: `going,maybe,interested` |
+| `past` | boolean | `false` | Include past events if `true` |
+
+**Response Structure:**
+```json
+[
+  {
+    "event": {
+      "id": 123,
+      "title": "Milonga Night",
+      "description": "Weekly milonga...",
+      "startDate": "2025-12-01T19:00:00Z",
+      "endDate": "2025-12-01T23:00:00Z",
+      "location": "Dance Studio",
+      "city": "Buenos Aires",
+      "venue": "Salon Canning",
+      "eventType": "milonga",
+      "imageUrl": "https://...",
+      "maxAttendees": 100
+    },
+    "rsvpStatus": "going",
+    "_count": 0
+  }
+]
+```
+
+### 10.2 Bug Fix: Non-Existent Column Reference (Nov 30, 2025)
+
+**Problem:** Endpoint returned 500 error due to selecting non-existent `hostLanguages` column from events table.
+
+**Error Trace:**
+```
+TypeError: Cannot convert undefined or null to object
+    at orderSelectedFields (drizzle-orm/utils.ts)
+```
+
+**Root Cause:** The Drizzle ORM query attempted to select `events.hostLanguages` which doesn't exist in the schema.
+
+**Fix Applied:**
+```typescript
+// BEFORE (Bug): Selected non-existent column
+const userEvents = await db.select({
+  // ... other fields
+  hostLanguages: events.hostLanguages,  // ❌ Column doesn't exist
+}).from(events).innerJoin(eventRsvps, eq(events.id, eventRsvps.eventId));
+
+// AFTER (Fixed): Removed non-existent column
+const userEvents = await db.select({
+  // ... other fields
+  // hostLanguages removed - column doesn't exist in schema
+}).from(events).innerJoin(eventRsvps, eq(events.id, eventRsvps.eventId));
+```
+
+**Lesson Learned:** Always verify schema columns exist before referencing in Drizzle ORM queries.
+
+---
+
+## 11. Changelog
 
 | Date | Version | Change | Author |
 |------|---------|--------|--------|
+| 2025-11-30 | 1.1 | Fixed `/api/users/:userId/events` non-existent column bug | Replit AI |
 | 2025-11-30 | 1.0 | Initial creation documenting RSVP persistence fix | Replit AI |
