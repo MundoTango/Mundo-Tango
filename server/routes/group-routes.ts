@@ -11,7 +11,9 @@ import {
   eventRsvps,
   userLocationHistory,
   insertGroupSchema,
-  insertGroupPostSchema
+  insertGroupPostSchema,
+  placeRecommendations,
+  housingListings
 } from "@shared/schema";
 import { authenticateToken, AuthRequest } from "../middleware/auth";
 import { eq, and, desc, sql, or, ilike, inArray, count, asc, isNotNull } from "drizzle-orm";
@@ -55,8 +57,16 @@ router.get("/", async (req: Request, res: Response) => {
           FROM ${events} e
           WHERE e.group_id = ${groups.id}
         )`.as('event_count'),
-        recommendationCount: sql<number>`(0)`.as('recommendation_count'),
-        housingCount: sql<number>`(0)`.as('housing_count')
+        recommendationCount: sql<number>`(
+          SELECT COUNT(*)::int 
+          FROM ${placeRecommendations} pr
+          WHERE pr.city = ${groups.city} OR LOWER(pr.city) = LOWER(${groups.city})
+        )`.as('recommendation_count'),
+        housingCount: sql<number>`(
+          SELECT COUNT(*)::int 
+          FROM ${housingListings} hl
+          WHERE hl.city = ${groups.city} OR LOWER(hl.city) = LOWER(${groups.city})
+        )`.as('housing_count')
       })
       .from(groups)
       .leftJoin(users, eq(groups.createdBy, users.id))
