@@ -33,6 +33,7 @@ export interface EventPostingPermissions extends PostingPermissions {
   isOrganizer: boolean;
   isParticipant: boolean;
   isRsvpd: boolean;
+  rsvpStatus: 'going' | 'interested' | 'maybe' | 'not_going' | null;
 }
 
 export class PostingPermissionService {
@@ -152,6 +153,7 @@ export class PostingPermissionService {
         isOrganizer: true,
         isParticipant: true,
         isRsvpd: true,
+        rsvpStatus: 'going' as const,
         role: platformRoleLevel === 8 ? 'god' : 'super_admin',
         roleLevel: platformRoleLevel,
         reason: 'Platform admin override'
@@ -178,6 +180,7 @@ export class PostingPermissionService {
         isOrganizer: true,
         isParticipant: true,
         isRsvpd: true,
+        rsvpStatus: 'going' as const,
         role: 'organizer',
         roleLevel: 10,
         reason: 'Event creator'
@@ -217,6 +220,7 @@ export class PostingPermissionService {
         isOrganizer: participant.role === 'organizer' || participant.role === 'co_organizer',
         isParticipant: true,
         isRsvpd: true,
+        rsvpStatus: 'going' as const,
         role: participant.role,
         roleLevel: this.getEventRoleLevel(participant.role),
         reason: rolePerms?.canPostUpdates ? undefined : 'Role does not have posting rights'
@@ -240,7 +244,8 @@ export class PostingPermissionService {
     // Any RSVP status (going, maybe, interested) allows commenting
     const validRsvpStatuses = ['going', 'maybe', 'interested'];
     if (rsvp.length > 0 && validRsvpStatuses.includes(rsvp[0].status)) {
-      console.log(`[PostingPermissionService] User is RSVP'd (status: ${rsvp[0].status}), allowing canComment`);
+      const actualRsvpStatus = rsvp[0].status as 'going' | 'interested' | 'maybe';
+      console.log(`[PostingPermissionService] User is RSVP'd (status: ${actualRsvpStatus}), allowing canComment`);
       // RSVP'd attendee can comment but not post updates
       return {
         canPost: false,
@@ -252,6 +257,7 @@ export class PostingPermissionService {
         isOrganizer: false,
         isParticipant: false,
         isRsvpd: true,
+        rsvpStatus: actualRsvpStatus,
         role: 'attendee',
         roleLevel: 1,
         reason: 'Attendees can comment but not post updates'
@@ -271,6 +277,7 @@ export class PostingPermissionService {
       isOrganizer: false,
       isParticipant: false,
       isRsvpd: false,
+      rsvpStatus: null,
       role: 'guest',
       roleLevel: 0,
       reason: 'RSVP to comment on this event'
