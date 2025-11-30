@@ -33,9 +33,9 @@ function GroupPostFeedComponent({ groupId, groupName = "Group", canPost = false,
         const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
         return dateB - dateA;
       })
-      .map((post) => ({
+      .map((post: any) => ({
         id: post.id,
-        userId: post.authorId,
+        userId: post.userId || post.authorId,
         content: post.content,
         imageUrl: null,
         videoUrl: null,
@@ -47,11 +47,16 @@ function GroupPostFeedComponent({ groupId, groupName = "Group", canPost = false,
         currentReaction: null,
         reactions: {},
         tags: [],
-        user: {
-          id: post.authorId,
-          name: `User #${post.authorId}`,
-          username: `user${post.authorId}`,
-          profileImage: `https://api.dicebear.com/7.x/avataaars/svg?seed=${post.authorId}`,
+        user: post.user ? {
+          id: post.user.id,
+          name: post.user.name || `User #${post.userId}`,
+          username: post.user.username || `user${post.userId}`,
+          profileImage: post.user.profileImage || `https://api.dicebear.com/7.x/avataaars/svg?seed=${post.userId}`,
+        } : {
+          id: post.userId || post.authorId,
+          name: `User #${post.userId || post.authorId}`,
+          username: `user${post.userId || post.authorId}`,
+          profileImage: `https://api.dicebear.com/7.x/avataaars/svg?seed=${post.userId || post.authorId}`,
         },
       }));
   }, [posts]);

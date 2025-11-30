@@ -722,8 +722,17 @@ router.get("/:id/posts", async (req: Request, res: Response) => {
 
     const posts = await db
       .select({
-        post: groupPosts,
-        author: {
+        id: groupPosts.id,
+        groupId: groupPosts.groupId,
+        userId: groupPosts.userId,
+        authorId: groupPosts.userId,
+        content: groupPosts.content,
+        mediaUrls: groupPosts.mediaUrls,
+        likeCount: groupPosts.likeCount,
+        commentCount: groupPosts.commentCount,
+        createdAt: groupPosts.createdAt,
+        isPinned: groupPosts.isPinned,
+        user: {
           id: users.id,
           name: users.name,
           username: users.username,
@@ -731,7 +740,7 @@ router.get("/:id/posts", async (req: Request, res: Response) => {
         }
       })
       .from(groupPosts)
-      .leftJoin(users, eq(groupPosts.authorId, users.id))
+      .leftJoin(users, eq(groupPosts.userId, users.id))
       .where(eq(groupPosts.groupId, parseInt(id)))
       .orderBy(desc(groupPosts.createdAt))
       .limit(parseInt(limit as string))
@@ -757,7 +766,7 @@ router.post("/:id/posts", authenticateToken, async (req: AuthRequest, res: Respo
       .from(groupMembers)
       .where(and(
         eq(groupMembers.groupId, parseInt(id)),
-        eq(groupMembers.userId, authorId),
+        eq(groupMembers.userId, userId),
         eq(groupMembers.status, "active")
       ))
       .limit(1);
@@ -780,7 +789,32 @@ router.post("/:id/posts", authenticateToken, async (req: AuthRequest, res: Respo
       })
       .returning();
 
-    res.status(201).json(post);
+    // Fetch with user info
+    const [postWithUser] = await db
+      .select({
+        id: groupPosts.id,
+        groupId: groupPosts.groupId,
+        userId: groupPosts.userId,
+        authorId: groupPosts.userId,
+        content: groupPosts.content,
+        mediaUrls: groupPosts.mediaUrls,
+        likeCount: groupPosts.likeCount,
+        commentCount: groupPosts.commentCount,
+        createdAt: groupPosts.createdAt,
+        isPinned: groupPosts.isPinned,
+        user: {
+          id: users.id,
+          name: users.name,
+          username: users.username,
+          profileImage: users.profileImage
+        }
+      })
+      .from(groupPosts)
+      .leftJoin(users, eq(groupPosts.userId, users.id))
+      .where(eq(groupPosts.id, post.id))
+      .limit(1);
+
+    res.status(201).json(postWithUser || post);
   } catch (error) {
     console.error("[Groups] Error creating post:", error);
     res.status(500).json({ message: "Failed to create post" });
