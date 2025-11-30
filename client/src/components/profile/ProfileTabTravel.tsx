@@ -258,6 +258,16 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
   // State for join requests from database
   const [joinRequests, setJoinRequests] = useState<Record<number, any[]>>({});
   
+  // Fetch travel plans FIRST (before allJoinRequests which depends on it)
+  const { data: travelPlans, isLoading } = useQuery({
+    queryKey: ['/api/travel/plans', profileId],
+    queryFn: async () => {
+      const response = await fetch(`/api/travel/plans?userId=${profileId}`);
+      if (!response.ok) throw new Error('Failed to fetch travel plans');
+      return response.json() as Promise<TravelPlan[]>;
+    }
+  });
+  
   // Fetch join requests for all trips the user owns
   const { data: allJoinRequests, refetch: refetchJoinRequests } = useQuery({
     queryKey: ['/api/travel/join-requests', profileId],
@@ -403,15 +413,6 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
   const itemForm = useForm<ItineraryItemForm>({
     resolver: zodResolver(itineraryItemSchema),
     defaultValues: { title: "", type: "", description: "", location: "", cost: undefined, bookingUrl: "" },
-  });
-
-  const { data: travelPlans, isLoading } = useQuery({
-    queryKey: ['/api/travel/plans', profileId],
-    queryFn: async () => {
-      const response = await fetch(`/api/travel/plans?userId=${profileId}`);
-      if (!response.ok) throw new Error('Failed to fetch travel plans');
-      return response.json() as Promise<TravelPlan[]>;
-    }
   });
 
   // Fetch profile owner info for Request to Book modal (only for public view)
