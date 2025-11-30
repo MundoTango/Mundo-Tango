@@ -251,15 +251,17 @@ export default function CreateEventPage() {
                         name="startDate"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="flex items-center gap-2">
-                              <Clock className="h-4 w-4" />
-                              Start Date & Time *
+                            <div className="flex items-center justify-between gap-2">
+                              <FormLabel className="flex items-center gap-2">
+                                <Clock className="h-4 w-4" />
+                                Start Date & Time *
+                              </FormLabel>
                               {userTimezone && (
-                                <span className="text-xs font-normal text-muted-foreground ml-auto">
+                                <span className="text-sm font-semibold px-2 py-1 bg-primary/10 text-primary rounded-md">
                                   {formatTimezoneAbbr(userTimezone)}
                                 </span>
                               )}
-                            </FormLabel>
+                            </div>
                             <FormControl>
                               <Input 
                                 type="datetime-local" 
@@ -276,15 +278,17 @@ export default function CreateEventPage() {
                         name="endDate"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="flex items-center gap-2">
-                              <Clock className="h-4 w-4" />
-                              End Date & Time
+                            <div className="flex items-center justify-between gap-2">
+                              <FormLabel className="flex items-center gap-2">
+                                <Clock className="h-4 w-4" />
+                                End Date & Time
+                              </FormLabel>
                               {userTimezone && (
-                                <span className="text-xs font-normal text-muted-foreground ml-auto">
+                                <span className="text-sm font-semibold px-2 py-1 bg-primary/10 text-primary rounded-md">
                                   {formatTimezoneAbbr(userTimezone)}
                                 </span>
                               )}
-                            </FormLabel>
+                            </div>
                             <FormControl>
                               <Input 
                                 type="datetime-local" 
