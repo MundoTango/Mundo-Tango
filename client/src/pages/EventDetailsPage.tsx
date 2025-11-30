@@ -192,9 +192,24 @@ export default function EventDetailsPage() {
           >
             <Card className="overflow-hidden">
               <CardHeader className="border-b">
-                <CardTitle className="text-3xl font-serif">Event Details</CardTitle>
+                <CardTitle className="text-3xl font-serif">{event.title || 'Event'}</CardTitle>
               </CardHeader>
-              <CardContent className="p-8 space-y-8">
+              <Tabs defaultValue="discussion" className="w-full">
+                <TabsList className="grid w-full grid-cols-2 border-b rounded-none bg-transparent p-0">
+                  <TabsTrigger value="discussion" className="rounded-none border-b-2 data-[state=active]:border-b-primary">
+                    Discussion
+                  </TabsTrigger>
+                  <TabsTrigger value="details" className="rounded-none border-b-2 data-[state=active]:border-b-primary">
+                    Details
+                  </TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="discussion" className="p-8">
+                  <EventPostFeed eventId={eventId} eventName={event.title} />
+                </TabsContent>
+
+                <TabsContent value="details" className="p-8">
+                  <div className="space-y-8">
                 <div className="grid gap-8 md:grid-cols-2">
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -625,7 +640,9 @@ export default function EventDetailsPage() {
                     </div>
                   </motion.div>
                 )}
-              </CardContent>
+                  </div>
+                </TabsContent>
+              </Tabs>
             </Card>
           </motion.div>
         </div>
