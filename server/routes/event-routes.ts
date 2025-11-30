@@ -747,6 +747,12 @@ router.post("/", authenticateToken, requireMinimumRole(3), async (req: AuthReque
     const userId = req.user!.id;
     const { startTime, endTime, timezone, maxCapacity, ...rest } = req.body;
     
+    console.log("[Events] Creating event for user:", userId);
+    console.log("[Events] Request body keys:", Object.keys(req.body));
+    console.log("[Events] Title:", rest.title, "| Description length:", rest.description?.length || 0);
+    console.log("[Events] Location:", rest.location, "| City:", rest.city, "| Country:", rest.country);
+    console.log("[Events] Photos count:", rest.photos?.length || 0, "| Cover URL:", rest.coverImageUrl ? "yes" : "no");
+    
     // Combine date with time if time strings are provided
     let startDate = new Date(rest.startDate);
     let endDate = new Date(rest.endDate || rest.startDate);

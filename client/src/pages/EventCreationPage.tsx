@@ -185,10 +185,24 @@ export default function EventCreationPage() {
       return;
     }
 
+    // Ensure description has a value (required by database)
+    const description = formData.description?.trim() || `${formData.eventType} event`;
+
     const { city, country } = extractCityCountry(formData.location);
+
+    console.log("[EventCreation] Submitting:", {
+      title: formData.title,
+      descriptionLength: description.length,
+      location: formData.location,
+      city,
+      country,
+      hasPhotos: additionalPhotos.length > 0,
+      hasCover: !!coverPhoto
+    });
 
     createMutation.mutate({
       ...formData,
+      description, // Override with generated description if empty
       city,
       country,
       startDate: dateRange.from.toISOString(),
