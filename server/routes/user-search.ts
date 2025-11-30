@@ -189,4 +189,57 @@ router.get('/mention-search', authenticateToken, async (req, res) => {
   }
 });
 
+// GET /api/users/by-role - Get users by tango role and city for Hub directories
+router.get('/by-role', async (req, res) => {
+  try {
+    const role = req.query.role as string;
+    const city = req.query.city as string;
+    const limit = parseInt(req.query.limit as string) || 10;
+    
+    if (!role) {
+      return res.status(400).json({ error: 'Role parameter is required' });
+    }
+
+    let query = db
+      .select({
+        id: users.id,
+        name: users.name,
+        username: users.username,
+        profileImage: users.profileImage,
+        bio: users.bio,
+        city: users.city,
+        country: users.country,
+        tangoRoles: users.tangoRoles,
+      })
+      .from(users)
+      .where(sql`${role} = ANY(${users.tangoRoles})`)
+      .limit(limit);
+
+    if (city) {
+      query = db
+        .select({
+          id: users.id,
+          name: users.name,
+          username: users.username,
+          profileImage: users.profileImage,
+          bio: users.bio,
+          city: users.city,
+          country: users.country,
+          tangoRoles: users.tangoRoles,
+        })
+        .from(users)
+        .where(
+          sql`${role} = ANY(${users.tangoRoles}) AND ${users.city} ILIKE ${`%${city}%`}`
+        )
+        .limit(limit);
+    }
+
+    const results = await query;
+    res.json(results);
+  } catch (error) {
+    console.error('Users by role error:', error);
+    res.status(500).json({ error: 'Failed to fetch users by role' });
+  }
+});
+
 export default router;
