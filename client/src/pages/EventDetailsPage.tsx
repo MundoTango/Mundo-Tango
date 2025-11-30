@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link } from "wouter";
 import { safeDateFormat } from "@/lib/safeDateFormat";
 import { getTimezoneFromCity } from "@/lib/timezoneUtils";
+import { getCurrencySymbol } from "@/lib/currencyUtils";
 import { useToast } from "@/hooks/use-toast";
 import { SEO } from "@/components/SEO";
 import { PageLayout } from "@/components/PageLayout";
@@ -399,7 +400,7 @@ export default function EventDetailsPage() {
                       <p className="text-lg font-semibold mb-2" data-testid="text-price-label">Price</p>
                       <p className="text-base text-muted-foreground leading-relaxed" data-testid="text-event-price">
                         {event.price && event.price > 0 
-                          ? `${event.currency || '$'}${event.price}` 
+                          ? `${getCurrencySymbol(event.currency as any) || '$'}${event.price}` 
                           : 'Free'}
                       </p>
                     </div>

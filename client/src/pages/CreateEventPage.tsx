@@ -20,6 +20,8 @@ import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/Un
 import { Calendar, MapPin, DollarSign, Users, Plus, Clock } from "lucide-react";
 import { EVENT_TYPES, EVENT_TYPE_VALUES } from "@/lib/eventTypes";
 import { getTimezoneFromCity, formatTimezoneAbbr } from "@/lib/timezoneUtils";
+import { getCurrencyFromCountry } from "@/lib/currencyUtils";
+import { CurrencyPicker } from "@/components/input/CurrencyPicker";
 
 const eventFormSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters"),
@@ -87,6 +89,12 @@ export default function CreateEventPage() {
     } else if (parsed?.street) {
       form.setValue("address", parsed.street);
     }
+    
+    // Infer timezone and currency from country
+    const tz = getTimezoneFromCity(city);
+    setUserTimezone(tz);
+    const currency = getCurrencyFromCountry(country);
+    form.setValue("currency", currency);
   };
 
   const createEventMutation = useMutation({
@@ -338,24 +346,33 @@ export default function CreateEventPage() {
                     />
 
                     {isPaid && (
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <FormField
                           control={form.control}
                           name="price"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Price</FormLabel>
+                              <FormLabel className="flex items-center gap-2">
+                                <DollarSign className="h-4 w-4" />
+                                Price
+                              </FormLabel>
                               <FormControl>
                                 <Input 
                                   type="number" 
                                   min="0"
                                   step="0.01"
-                                  placeholder="0.00"
+                                  placeholder="25.00"
                                   {...field}
-                                  onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                                  onChange={(e) => {
+                                    const value = e.target.value;
+                                    field.onChange(value ? parseFloat(value) : '');
+                                  }}
                                   data-testid="input-price"
                                 />
                               </FormControl>
+                              <FormDescription>
+                                Leave blank for free event
+                              </FormDescription>
                               <FormMessage />
                             </FormItem>
                           )}
@@ -367,9 +384,9 @@ export default function CreateEventPage() {
                             <FormItem>
                               <FormLabel>Currency</FormLabel>
                               <FormControl>
-                                <Input 
-                                  placeholder="USD" 
-                                  {...field} 
+                                <CurrencyPicker 
+                                  value={field.value}
+                                  onChange={field.onChange}
                                   data-testid="input-currency"
                                 />
                               </FormControl>

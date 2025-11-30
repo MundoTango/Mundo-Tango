@@ -20,6 +20,8 @@ import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/Un
 import { motion, AnimatePresence } from "framer-motion";
 import { uploadMediaFile, validateMediaFile } from "@/lib/mediaUpload";
 import { EVENT_TYPES } from "@/lib/eventTypes";
+import { getCurrencyFromCountry, getCurrencySymbol } from "@/lib/currencyUtils";
+import { CurrencyPicker } from "@/components/input/CurrencyPicker";
 
 const WIZARD_STEPS = [
   { id: 'basics', title: 'Event Basics', description: 'Title, type, and description' },
@@ -42,12 +44,6 @@ const TIMEZONE_MAP: Record<string, string> = {
   'Mexico City': 'America/Mexico_City',
 };
 
-const CURRENCY_ICONS: Record<string, string> = {
-  USD: '$',
-  EUR: '€',
-  GBP: '£',
-  ARS: '$',
-};
 
 export default function EventCreationPage() {
   const [, navigate] = useLocation();
@@ -95,8 +91,13 @@ export default function EventCreationPage() {
           const result = await uploadMediaFile(photo);
           uploadedPhotos.push({ ...result, isCover: false });
         }
+        
+        // Format price with currency symbol for storage
+        const formattedPrice = data.isFree ? null : `${getCurrencySymbol(data.currency)}${data.price}`;
+        
         return apiRequest("/api/events", "POST", {
           ...data,
+          price: formattedPrice,
           coverImageUrl: uploadedPhotos.find(p => p.isCover)?.url,
           photos: uploadedPhotos.filter(p => !p.isCover),
         });
@@ -465,39 +466,24 @@ export default function EventCreationPage() {
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="price">Ticket Price *</Label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 font-semibold text-lg">
-                      {CURRENCY_ICONS[formData.currency] || '$'}
-                    </span>
-                    <Input
-                      id="price"
-                      type="number"
-                      placeholder="25"
-                      min="0"
-                      step="0.01"
-                      className="pl-10 h-12"
-                      value={formData.price || ''}
-                      onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) || 0 })}
-                      data-testid="input-price"
-                    />
-                  </div>
+                  <Input
+                    id="price"
+                    type="number"
+                    placeholder="25.00"
+                    min="0"
+                    step="0.01"
+                    className="h-12"
+                    value={formData.price || ''}
+                    onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) || 0 })}
+                    data-testid="input-price"
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label>Currency</Label>
-                  <Select
+                  <CurrencyPicker 
                     value={formData.currency}
-                    onValueChange={(value) => setFormData({ ...formData, currency: value })}
-                  >
-                    <SelectTrigger className="h-12" data-testid="select-currency">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="USD">{CURRENCY_ICONS['USD']} USD</SelectItem>
-                      <SelectItem value="EUR">{CURRENCY_ICONS['EUR']} EUR</SelectItem>
-                      <SelectItem value="GBP">{CURRENCY_ICONS['GBP']} GBP</SelectItem>
-                      <SelectItem value="ARS">{CURRENCY_ICONS['ARS']} ARS</SelectItem>
-                    </SelectContent>
-                  </Select>
+                    onChange={(value) => setFormData({ ...formData, currency: value })}
+                  />
                 </div>
               </div>
             )}
@@ -679,11 +665,11 @@ export default function EventCreationPage() {
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <span className="text-lg font-bold">{CURRENCY_ICONS[formData.currency] || '$'}</span>
+                    <DollarSign className="h-5 w-5 text-muted-foreground" />
                     <div>
                       <p className="text-sm text-muted-foreground">Price</p>
                       <p className="font-medium">
-                        {formData.isFree ? "Free" : `${CURRENCY_ICONS[formData.currency]} ${formData.price}`}
+                        {formData.isFree ? "Free" : `${getCurrencySymbol(formData.currency as any)}${formData.price}`}
                       </p>
                     </div>
                   </div>
