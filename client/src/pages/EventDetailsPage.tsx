@@ -403,9 +403,9 @@ export default function EventDetailsPage() {
         title: "RSVP confirmed!",
         description: `You are ${status} for this event.`,
       });
-      // Invalidate permissions query so post creator appears
-      queryClient.invalidateQueries({ queryKey: ["/api/events", eventId, "permissions"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/events", eventId, "attendees"] });
+      // Refetch permissions immediately so post creator appears
+      await queryClient.refetchQueries({ queryKey: ["/api/events", eventId, "permissions"] });
+      queryClient.refetchQueries({ queryKey: ["/api/events", eventId, "attendees"] });
     } catch (error) {
       toast({
         title: "RSVP failed",
