@@ -118,4 +118,4 @@ function EventPostFeedComponent({ eventId, eventName = "Event" }: EventPostFeedP
   );
 }
 
-export const EventPostFeed = memo(EventPostFeedComponent);
+export const EventPostFeed = EventPostFeedComponent;

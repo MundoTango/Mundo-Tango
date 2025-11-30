@@ -395,10 +395,11 @@ export default function EventDetailsPage() {
     return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
   };
 
-  const handleRsvpStatusChange = (status: RSVPStatus) => {
+  const handleRsvpStatusChange = async (status: RSVPStatus) => {
     setRsvpStatusState(status);
+    // Permissions are already refetched by UnifiedRSVPButton, but ensure it's complete
     if (status) {
-      queryClient.refetchQueries({ queryKey: ["/api/events", eventId, "permissions"] });
+      await queryClient.refetchQueries({ queryKey: ["/api/events", eventId, "permissions"] });
     }
   };
 
