@@ -39,39 +39,26 @@ function MapUpdater({ center }: { center: [number, number] }) {
   return null;
 }
 
-const createLayerIcon = (count: number, layerType: string) => {
-  const colors = {
-    events: { primary: '#0066FF', secondary: '#0052CC' },
-    housing: { primary: '#0080FF', secondary: '#0066FF' },
-    recommendations: { primary: '#1E90FF', secondary: '#0066FF' },
-    default: { primary: '#0066FF', secondary: '#0052CC' },
-  };
-
-  const colorPair = colors[layerType as keyof typeof colors] || colors.default;
-
+const createLayerIcon = () => {
   return L.divIcon({
     className: 'custom-marker',
     html: `
       <div style="
-        background: linear-gradient(135deg, ${colorPair.primary} 0%, ${colorPair.secondary} 100%);
+        background: #0066FF;
         border: 3px solid white;
         border-radius: 50%;
-        width: 40px;
-        height: 40px;
+        width: 24px;
+        height: 24px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-weight: bold;
-        color: white;
-        font-size: 12px;
         box-shadow: 0 4px 12px rgba(0, 102, 255, 0.4);
         transition: transform 0.2s;
       ">
-        ${count}
       </div>
     `,
-    iconSize: [40, 40],
-    iconAnchor: [20, 40],
+    iconSize: [24, 24],
+    iconAnchor: [12, 24],
   });
 };
 
@@ -111,7 +98,7 @@ export function CommunityMapWithLayers({
         <Marker
           key={`default-${location.id}`}
           position={[location.coordinates.lat, location.coordinates.lng]}
-          icon={createLayerIcon(location.memberCount, 'default')}
+          icon={createLayerIcon()}
           eventHandlers={{
             click: () => onCityClick(location)
           }}
@@ -134,7 +121,7 @@ export function CommunityMapWithLayers({
         <Marker
           key={`events-${location.id}`}
           position={[location.coordinates.lat, location.coordinates.lng]}
-          icon={createLayerIcon(location.activeEvents, 'events')}
+          icon={createLayerIcon()}
           eventHandlers={{
             click: () => onCityClick(location)
           }}
@@ -157,7 +144,7 @@ export function CommunityMapWithLayers({
         <Marker
           key={`housing-${location.id}`}
           position={[location.coordinates.lat, location.coordinates.lng]}
-          icon={createLayerIcon(location.housing, 'housing')}
+          icon={createLayerIcon()}
           eventHandlers={{
             click: () => onCityClick(location)
           }}
@@ -180,7 +167,7 @@ export function CommunityMapWithLayers({
         <Marker
           key={`recommendations-${location.id}`}
           position={[location.coordinates.lat, location.coordinates.lng]}
-          icon={createLayerIcon(location.recommendations, 'recommendations')}
+          icon={createLayerIcon()}
           eventHandlers={{
             click: () => onCityClick(location)
           }}
