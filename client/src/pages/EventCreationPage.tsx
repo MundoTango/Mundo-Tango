@@ -494,7 +494,6 @@ export default function EventCreationPage() {
                       <SelectValue placeholder="Select style" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">None</SelectItem>
                       <SelectItem value="traditional">Traditional</SelectItem>
                       <SelectItem value="nuevo">Nuevo</SelectItem>
                       <SelectItem value="alternative">Alternative</SelectItem>
