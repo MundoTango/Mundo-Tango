@@ -1,13 +1,14 @@
 # PRD Index - Mundo Tango
 
 ## 🎯 Latest Update (Nov 30, 2025)
-**NEW:** [PRD_RSVP_ARCHITECTURE.md](PRD_RSVP_ARCHITECTURE.md) - Unified RSVP system for Events/Travel/Friends with persistence fix  
-**FIXED:** User Events endpoint 500 error resolved (removed non-existent `hostLanguages` column)  
-**PRIOR:** [PRD_PUBLIC_PROFILE_VIEW_SYSTEM.md](PRD_PUBLIC_PROFILE_VIEW_SYSTEM.md) - Public profile preview with viewMode state
+**NEW:** [PRD_GROUPS_LANDING_SYSTEM.md](PRD_GROUPS_LANDING_SYSTEM.md) - Complete Groups landing page (3 tabs, search, creation modal)  
+**NEW:** [PRD_GROUP_DETAILS_SYSTEM.md](PRD_GROUP_DETAILS_SYSTEM.md) - Group details page (7 tabs: Discussion, Events, Housing, Hub, Members, City Guide, Settings)  
+**NEW:** [PRD_GROUP_MEMBERSHIP_SYSTEM.md](PRD_GROUP_MEMBERSHIP_SYSTEM.md) - Join/leave flows, role hierarchy, approval workflows  
+**PRIOR:** [PRD_RSVP_ARCHITECTURE.md](PRD_RSVP_ARCHITECTURE.md) - Unified RSVP system for Events/Travel/Friends
 
 > **Last Updated:** 2025-11-30  
-> **Total PRDs:** 24  
-> **Session PRDs:** RSVP Architecture, Profile System Updates  
+> **Total PRDs:** 27  
+> **Session PRDs:** Groups System (3 PRDs), RSVP Architecture, Profile System Updates  
 
 ---
 
@@ -56,6 +57,41 @@ This index links all Product Requirement Documents (PRDs) in the Mundo Tango pla
 
 ---
 
+## Groups System
+
+| PRD | Purpose | Key Files | Cross-References |
+|-----|---------|-----------|------------------|
+| [PRD_GROUPS_LANDING_SYSTEM.md](./PRD_GROUPS_LANDING_SYSTEM.md) | **NEW** Groups landing (3 tabs: My Groups, Cities, Professional) | `GroupsPage.tsx`, `GroupCreationModal.tsx` | Location Picker, Unified Feeds |
+| [PRD_GROUP_DETAILS_SYSTEM.md](./PRD_GROUP_DETAILS_SYSTEM.md) | **NEW** Group details (7 tabs: Discussion, Events, Housing, Hub, Members, City Guide, Settings) | `GroupDetailsPage.tsx`, `GroupPostFeed.tsx`, `GroupMembersList.tsx` | RSVP Architecture, Unified Feeds, Travel Planning |
+| [PRD_GROUP_MEMBERSHIP_SYSTEM.md](./PRD_GROUP_MEMBERSHIP_SYSTEM.md) | **NEW** Membership flows (join/leave, role hierarchy, approval workflows) | `group-routes.ts`, `groupMembers` schema | RBAC/ABAC, Notifications |
+
+### Groups Database Schema
+
+| Table | Columns | Relations |
+|-------|---------|-----------|
+| `groups` | 23 columns (id, name, slug, type, visibility, city, country, memberCount, etc.) | → users, events |
+| `groupMembers` | id, groupId, userId, role, status, joinedAt, notificationLevel | → groups, users (cascade delete) |
+| `groupPosts` | id, groupId, authorId, content, mediaUrls, isPinned, reactions | → groups, users (cascade delete) |
+| `groupCategories` | id, name, slug, description, icon | category taxonomy |
+| `groupCategoryAssignments` | groupId, categoryId (composite PK) | → groups, groupCategories |
+
+### Groups API Endpoints (15+)
+
+| Endpoint | Method | Purpose |
+|----------|--------|---------|
+| `/api/groups` | GET | List groups with filters (search, type, city) |
+| `/api/groups` | POST | Create new group (auto-add creator as admin) |
+| `/api/groups/my-groups` | GET | User's group memberships |
+| `/api/groups/analytics/popular` | GET | Popular groups by members |
+| `/api/groups/:id` | GET/PUT/DELETE | Group CRUD |
+| `/api/groups/:id/join` | POST | Join group (pending if private) |
+| `/api/groups/:id/leave` | DELETE | Leave group |
+| `/api/groups/:id/members` | GET | List members with role filtering |
+| `/api/groups/:id/posts` | GET/POST | Group posts CRUD |
+| `/api/groups/:id/events` | GET | Events linked to group |
+
+---
+
 ## AI & Intelligence
 
 | PRD | Purpose | Key Integration Points |
@@ -94,10 +130,11 @@ This index links all Product Requirement Documents (PRDs) in the Mundo Tango pla
 |--------------|--------------|
 | **Feed** (`/feed`) | Unified Feeds, Tango Roles |
 | **Profile** (`/profile/:id`) | User Profile System, Unified PRO Tab, Tango Roles, Unified Feeds, Location Picker, Location Change Cascade, Per-Role Experience, Language System |
-| **Events** (`/events`) | Location Picker, Unified Feeds, Travel Planning |
-| **Groups** (`/groups`) | Location Picker, Unified Feeds, Location Change Cascade |
+| **Events** (`/events`) | Location Picker, Unified Feeds, Travel Planning, Group Details (events tab) |
+| **Groups** (`/groups`) | **Groups Landing System**, Location Picker, Unified Feeds, Location Change Cascade |
+| **Groups Details** (`/groups/:id`) | **Group Details System**, **Group Membership System**, RSVP Architecture, Unified Feeds, Travel Planning |
 | **Onboarding** (`/onboarding`) | Tango Roles, Location Picker, Per-Role Experience, Language System |
-| **Travel** (`/profile/:id/travel`) | Travel Planning System, Location Picker, Location Change Cascade |
+| **Travel** (`/profile/:id/travel`) | Travel Planning System, Location Picker, Location Change Cascade, Group Details (housing tab) |
 | **Visual Editor** | Mr. Blue PRDs, Content Studio |
 | **Life CEO** | Finance Enhanced, Productivity 2.0 |
 | **Search/Discovery** | Tango Roles, Talent Match, Per-Role Experience, Language System |
@@ -107,11 +144,12 @@ This index links all Product Requirement Documents (PRDs) in the Mundo Tango pla
 
 | Component Type | PRDs |
 |----------------|------|
-| **UI Components** | Location Picker, Unified Feeds, Tango Roles, Language System, Unified PRO Tab |
+| **UI Components** | Location Picker, Unified Feeds, Tango Roles, Language System, Unified PRO Tab, Group Post Feed |
 | **Profile System** | User Profile System, Unified PRO Tab, Travel Planning |
-| **Business Logic** | Location Change Cascade, Talent Match, Travel Planning |
+| **Groups System** | **Groups Landing**, **Group Details**, **Group Membership**, Unified Feeds |
+| **Business Logic** | Location Change Cascade, Talent Match, Travel Planning, Group Membership |
 | **AI/ML** | Mr. Blue PRDs, Life CEO PRDs, Talent Match (language matching) |
-| **Security/Privacy** | Privacy Hub |
+| **Security/Privacy** | Privacy Hub, RBAC/ABAC (group roles) |
 | **i18n/Localization** | Language System |
 
 ---
@@ -122,11 +160,14 @@ The following PRDs were created during the November 2025 documentation consolida
 
 | PRD | Lines | Key Changes |
 |-----|-------|-------------|
-| PRD_PROFILE_PAGE_INDEX.md | ~300 | **NEW** Master component index with 33 components, 15 PRD cross-references |
+| PRD_GROUPS_LANDING_SYSTEM.md | ~600 | **NEW** Groups landing with 3 tabs, search, GroupCreationModal, sidebar stats |
+| PRD_GROUP_DETAILS_SYSTEM.md | ~700 | **NEW** Group details with 7 tabs, hero section, RSVP integration, member management |
+| PRD_GROUP_MEMBERSHIP_SYSTEM.md | ~550 | **NEW** Membership flows, role hierarchy (creator→admin→mod→member), approval workflows |
+| PRD_PROFILE_PAGE_INDEX.md | ~300 | Master component index with 33 components, 15 PRD cross-references |
 | PRD_UNIFIED_PRO_TAB.md | ~817 | Consolidates 17 role-based profile tabs into single PRO tab with dashboard/public views |
 | PRD_USER_PROFILE_SYSTEM.md | ~920 | Master documentation for 8 core profile tabs + RSVP mutation system (Nov 29, updated Nov 30) |
 | PRD_TRAVEL_PLANNING_SYSTEM.md | ~810 | Multi-city trip planning, itinerary management, event integration, MT Host housing |
-| PRD_RSVP_ARCHITECTURE.md | ~280 | **NEW** Unified RSVP architecture - Events, Travel, Friends (Nov 30) |
+| PRD_RSVP_ARCHITECTURE.md | ~280 | Unified RSVP architecture - Events, Travel, Friends (Nov 30) |
 | PRD_UNIFIED_LANGUAGE_SYSTEM.md | Updated | Added Argentine Spanish (Rioplatense) as #2 popular language, AI integration points |
 
 ### November 29, 2025 Updates
@@ -142,7 +183,12 @@ The following PRDs were created during the November 2025 documentation consolida
 
 | Component | Change |
 |-----------|--------|
-| PRD_RSVP_ARCHITECTURE.md | **NEW** - Unified RSVP architecture documentation (v1.1) |
+| PRD_GROUPS_LANDING_SYSTEM.md | **NEW** - Complete groups landing page documentation (3 tabs, search, creation) |
+| PRD_GROUP_DETAILS_SYSTEM.md | **NEW** - Group details page with 7 tabs, hero section, RSVP integration |
+| PRD_GROUP_MEMBERSHIP_SYSTEM.md | **NEW** - Membership system with role hierarchy, approval workflows, cascades |
+| INDEX.md | Added Groups System section with 3 PRDs, database schema, 15+ API endpoints |
+| Cross-Reference Matrix | Updated with Groups pages, component types, page mappings |
+| PRD_RSVP_ARCHITECTURE.md | Unified RSVP architecture documentation (v1.1) |
 | `/api/users/:userId/events` | Fixed 500 error - removed non-existent `hostLanguages` column from query |
 | Event Routes Backend | Added `inArray` import for multi-status RSVP filtering |
 | Event Routes Backend | Fixed `?status=all` parameter to return all RSVP types (not just 'going') |

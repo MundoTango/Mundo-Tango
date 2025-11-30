@@ -34,6 +34,9 @@ The backend is built with Express and TypeScript, utilizing PostgreSQL (Neon) an
 ### AI Systems
 An extensive AI ecosystem orchestrates 1,218 specialized agents hierarchically, with Replit AI providing strategic oversight, Mr. Blue as a tactical coordinator, and individual agents for atomic tasks. This system includes self-healing infrastructure, a production-ready validation loop (Phase C Autonomous Framework), a Visual Validation Framework for UI changes, and contextual agent activation. A comprehensive Backend Agent System extends autonomy across the full stack, complemented by Mr. Blue AI Assistant for interactive support and a Bifrost AI Gateway for managing multi-provider AI interactions.
 
+### Groups System
+The Groups system provides community features with 3 discovery tabs (My Groups, Cities, Professional) and 7 detail tabs (Discussion, Events, Housing, Hub, Members, City Guide, Settings). Database tables include: `groups` (23 columns: id, name, slug, type, visibility, city, country, memberCount), `groupMembers` (role hierarchy: creator→admin→moderator→member, status: active/pending/inactive/banned), `groupPosts` (content, media, reactions, pinned), `groupCategories`, and `groupCategoryAssignments`. API endpoints (15+): CRUD operations, join/leave flows, membership approval, posts, events by groupId. Wiring includes: Events (groupId FK), Profile (membership display), Location (UnifiedLocationPicker), RSVP (event integration within groups), and Notifications (join requests, post alerts).
+
 ### Platform Features
 Core features include social functionalities (events, groups, posts, notifications, media, live streaming, marketplaces, reviews) and business features (Talent Match AI, LIFE CEO AI, Multi-AI Orchestration, Automated Scraping, Admin Dashboard, Stripe Payments, and BullMQ Workers for background processing). Event scraping is supported, capturing detailed source information and raw participant data.
 
