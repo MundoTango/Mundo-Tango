@@ -1027,19 +1027,23 @@ export default function ProfileTabAbout({ user, isOwnProfile, isPublicView = fal
               {/* Add City Form */}
               {isAddingCity && (
                 <Card className="p-4 mb-4 border-dashed">
-                  <div className="space-y-4">
-                    <UnifiedLocationPicker
-                      mode="city"
-                      value={newCityData.city}
-                      onChange={(loc, coords, parsed) => {
-                        const { city, country } = extractCityCountry(loc);
-                        setNewCityData({ ...newCityData, city, country });
-                      }}
-                      placeholder="Search for a city..."
-                    />
-                    
-                    <div className="grid grid-cols-2 gap-3">
-                      <div>
+                  <div className="space-y-3">
+                    {/* City and Date Range on same line */}
+                    <div className="flex gap-3 items-end flex-wrap">
+                      <div className="flex-1 min-w-[200px]">
+                        <label className="text-xs text-muted-foreground block mb-1.5">City</label>
+                        <UnifiedLocationPicker
+                          mode="city"
+                          value={newCityData.city}
+                          onChange={(loc, coords, parsed) => {
+                            const { city, country } = extractCityCountry(loc);
+                            setNewCityData({ ...newCityData, city, country });
+                          }}
+                          placeholder="Search for a city..."
+                        />
+                      </div>
+                      
+                      <div className="w-[140px]">
                         <label className="text-xs text-muted-foreground block mb-1.5">Start Date</label>
                         <Input
                           type="date"
@@ -1048,7 +1052,8 @@ export default function ProfileTabAbout({ user, isOwnProfile, isPublicView = fal
                           data-testid="input-city-start-date"
                         />
                       </div>
-                      <div>
+                      
+                      <div className="w-[140px]">
                         <label className="text-xs text-muted-foreground block mb-1.5">End Date</label>
                         <Input
                           type="date"
