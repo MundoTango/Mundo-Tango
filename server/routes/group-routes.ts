@@ -233,6 +233,11 @@ router.get("/my-groups", authenticateToken, async (req: AuthRequest, res: Respon
       return new Date(b.membership.joinedAt!).getTime() - new Date(a.membership.joinedAt!).getTime();
     });
 
+    // Debug: Log professional groups
+    const professionalGroups = enhancedGroups.filter(g => g.locationCategory === 'professional');
+    console.log(`[MyGroups] Total groups: ${enhancedGroups.length}, Professional groups: ${professionalGroups.length}`);
+    console.log(`[MyGroups] Professional groups:`, professionalGroups.map(g => ({ id: g.group.id, name: g.group.name, type: g.group.type })));
+
     res.json({
       groups: enhancedGroups,
       userProfile: {
