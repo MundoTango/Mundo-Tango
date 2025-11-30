@@ -34,9 +34,9 @@ export default function EventCreationPage() {
 
   // Fetch current user profile
   const { data: currentUser } = useQuery({
-    queryKey: ['/api/users/me'],
+    queryKey: ['/api/auth/me'],
     queryFn: async () => {
-      const res = await fetch('/api/users/me');
+      const res = await fetch('/api/auth/me');
       if (!res.ok) throw new Error('Failed to fetch user');
       return res.json();
     },
@@ -70,7 +70,7 @@ export default function EventCreationPage() {
     price: 0,
     currency: "USD",
     maxCapacity: 0,
-    musicStyle: "",
+    musicStyle: "mixed",
     level: "all",
   });
 
