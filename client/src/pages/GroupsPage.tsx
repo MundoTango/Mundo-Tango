@@ -21,6 +21,7 @@ import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary"
 import { GroupCreationModal } from "@/components/groups/GroupCreationModal";
 import { GroupCategoryFilter } from "@/components/groups/GroupCategoryFilter";
 import { useAuth } from "@/contexts/AuthContext";
+import { getCityImageUrl } from "@/lib/cityImageMap";
 
 // Health score calculation (mock)
 const calculateHealthScore = (group: SelectGroup): number => {
@@ -172,7 +173,7 @@ export default function GroupsPage() {
         {/* Cityscape Image - 16:9 */}
         <div className="relative aspect-[16/9] overflow-hidden">
           <motion.img
-            src={group.coverImage || `https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=1200&auto=format&fit=crop&q=80`}
+            src={group.coverImage || getCityImageUrl(group.city)}
             alt={group.name}
             className="w-full h-full object-cover"
             whileHover={{ scale: 1.05 }}
@@ -229,7 +230,7 @@ export default function GroupsPage() {
     >
       <div className="relative aspect-[16/9] overflow-hidden rounded-2xl mb-8">
         <motion.img
-          src={group.coverImage || `https://images.unsplash.com/photo-1540575861501-7cf05a4b125a?w=1200&auto=format&fit=crop&q=80`}
+          src={group.coverImage || getCityImageUrl(group.city)}
           alt={group.name}
           className="w-full h-full object-cover"
           whileHover={{ scale: 1.05 }}
