@@ -219,12 +219,11 @@ export default function CreateEventPage() {
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              <SelectItem value="milonga">Milonga</SelectItem>
-                              <SelectItem value="practica">Practica</SelectItem>
-                              <SelectItem value="workshop">Workshop</SelectItem>
-                              <SelectItem value="festival">Festival</SelectItem>
-                              <SelectItem value="performance">Performance</SelectItem>
-                              <SelectItem value="social">Social</SelectItem>
+                              {EVENT_TYPES.map((type) => (
+                                <SelectItem key={type.value} value={type.value}>
+                                  {type.label}
+                                </SelectItem>
+                              ))}
                             </SelectContent>
                           </Select>
                           <FormMessage />

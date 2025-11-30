@@ -35,6 +35,7 @@ import {
 import { format } from "date-fns";
 import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/UnifiedLocationPicker";
 import { UnifiedLanguagePicker, getLanguageByCode, TOP_10_LANGUAGES } from "@/components/input/UnifiedLanguagePicker";
+import { EVENT_TYPES } from "@/lib/eventTypes";
 
 interface EventFiltersProps {
   onFilterChange: (filters: EventFilterValues) => void;
@@ -57,22 +58,6 @@ export interface EventFilterValues {
   languages?: string[];
   languageMatchOnly?: boolean;
 }
-
-const EVENT_TYPES = [
-  { value: "milonga", label: "Milonga" },
-  { value: "practica", label: "Practica" },
-  { value: "class", label: "Class" },
-  { value: "workshop", label: "Workshop" },
-  { value: "festival", label: "Festival" },
-  { value: "marathon", label: "Marathon" },
-  { value: "encuentro", label: "Encuentro" },
-  { value: "performance", label: "Performance" },
-  { value: "show", label: "Show" },
-  { value: "social", label: "Social" },
-  { value: "competition", label: "Competition" },
-  { value: "online", label: "Online" },
-  { value: "concert", label: "Concert" },
-];
 
 const DANCE_STYLES = [
   { value: "traditional", label: "Traditional" },

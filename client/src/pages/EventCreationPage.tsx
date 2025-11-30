@@ -19,6 +19,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/UnifiedLocationPicker";
 import { motion, AnimatePresence } from "framer-motion";
 import { uploadMediaFile, validateMediaFile } from "@/lib/mediaUpload";
+import { EVENT_TYPES } from "@/lib/eventTypes";
 
 const WIZARD_STEPS = [
   { id: 'basics', title: 'Event Basics', description: 'Title, type, and description' },
@@ -26,21 +27,6 @@ const WIZARD_STEPS = [
   { id: 'location', title: 'Location', description: 'Where is it happening?' },
   { id: 'details', title: 'Details', description: 'Pricing, capacity, and media' },
   { id: 'review', title: 'Review', description: 'Confirm and publish' },
-];
-
-const EVENT_TYPES = [
-  { value: 'milonga', label: 'Milonga', icon: '🎶' },
-  { value: 'workshop', label: 'Workshop', icon: '📚' },
-  { value: 'festival', label: 'Festival', icon: '🎉' },
-  { value: 'practica', label: 'Practica', icon: '🎯' },
-  { value: 'social_dance', label: 'Social Dance', icon: '💃' },
-  { value: 'performance', label: 'Performance', icon: '🎭' },
-  { value: 'competition', label: 'Competition', icon: '🏆' },
-  { value: 'masterclass', label: 'Masterclass', icon: '👨‍🏫' },
-  { value: 'lecture', label: 'Lecture', icon: '🎓' },
-  { value: 'exhibition', label: 'Exhibition', icon: '🖼️' },
-  { value: 'concert', label: 'Concert', icon: '🎵' },
-  { value: 'dinner', label: 'Dinner', icon: '🍽️' },
 ];
 
 const TIMEZONE_MAP: Record<string, string> = {
