@@ -1,6 +1,7 @@
 import { useRoute } from "wouter";
-import { useEvent, useRSVPEvent } from "@/hooks/useEvents";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useEvent } from "@/hooks/useEvents";
+import { useQuery } from "@tanstack/react-query";
+import { UnifiedRSVPButton, RSVPStatus } from "@/components/unified/UnifiedRSVPButton";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -354,7 +355,7 @@ interface EventPermissions {
 export default function EventDetailsPage() {
   const [, params] = useRoute("/events/:id");
   const [, setLocation] = useLocation();
-  const [currentRsvpStatus, setCurrentRsvpStatus] = useState<string | null>(null);
+  const [rsvpStatusState, setRsvpStatusState] = useState<RSVPStatus>(null);
   const eventId = parseInt(params?.id || "0");
   const { data: event, isLoading } = useEvent(eventId);
   const rsvpEvent = useRSVPEvent();
@@ -395,23 +396,10 @@ export default function EventDetailsPage() {
     return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
   };
 
-  const handleRsvp = async (status: "going" | "maybe" | "not_going") => {
-    try {
-      await rsvpEvent.mutateAsync({ eventId: eventId, status });
-      setCurrentRsvpStatus(status);
-      toast({
-        title: "RSVP confirmed!",
-        description: `You are ${status} for this event.`,
-      });
-      // Refetch permissions immediately so post creator appears
-      await queryClient.refetchQueries({ queryKey: ["/api/events", eventId, "permissions"] });
-      queryClient.refetchQueries({ queryKey: ["/api/events", eventId, "attendees"] });
-    } catch (error) {
-      toast({
-        title: "RSVP failed",
-        description: "Please try again",
-        variant: "destructive",
-      });
+  const handleRsvpStatusChange = (status: RSVPStatus) => {
+    setRsvpStatusState(status);
+    if (status) {
+      queryClient.refetchQueries({ queryKey: ["/api/events", eventId, "permissions"] });
     }
   };
 
@@ -509,36 +497,13 @@ export default function EventDetailsPage() {
               </div>
 
               <div className="flex flex-wrap gap-3 justify-center">
-                {currentRsvpStatus === "going" || permissions?.isRsvpd ? (
-                  <Badge className="gap-2 px-4 py-2 text-base bg-primary text-white border-0" data-testid="badge-going">
-                    <Check className="h-5 w-5" />
-                    You're Going!
-                  </Badge>
-                ) : (
-                  <>
-                    <Button
-                      size="lg"
-                      className="gap-2"
-                      onClick={() => handleRsvp("going")}
-                      disabled={rsvpEvent.isPending}
-                      data-testid="button-going"
-                    >
-                      <Check className="h-5 w-5" />
-                      I'm Going
-                      <ChevronRight className="h-5 w-5" />
-                    </Button>
-                    <Button
-                      size="lg"
-                      variant="outline"
-                      className="gap-2 bg-white/10 text-white border-white/30 backdrop-blur-sm hover:bg-white/20"
-                      onClick={() => handleRsvp("maybe")}
-                      disabled={rsvpEvent.isPending}
-                      data-testid="button-maybe"
-                    >
-                      Maybe
-                    </Button>
-                  </>
-                )}
+                <UnifiedRSVPButton
+                  eventId={eventId}
+                  currentStatus={rsvpStatusState || permissions?.isRsvpd ? "going" : null}
+                  variant="expanded"
+                  onStatusChange={handleRsvpStatusChange}
+                  className="[&>div]:flex-1 [&>div>button]:text-base [&>div>button]:h-12"
+                />
               </div>
             </motion.div>
           </div>

@@ -1,9 +1,9 @@
 import { useState, useMemo } from "react";
 import { Link, useLocation } from "wouter";
-import { useEvents, useRSVPEvent, useEventAttendance, useEventRSVPs } from "@/hooks/useEvents";
+import { useEvents, useEventAttendance, useEventRSVPs } from "@/hooks/useEvents";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { UnifiedRSVPButton, RSVPStatus } from "@/components/unified/UnifiedRSVPButton";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -47,8 +47,6 @@ L.Icon.Default.mergeOptions({
 
 function EventCard({ event, index = 0 }: { event: any; index?: number }) {
   const { user } = useAuth();
-  const rsvpMutation = useRSVPEvent();
-  const { toast } = useToast();
   
   // Extract event data from API response (could be nested as event.event)
   const eventData = event.event || event;
@@ -61,23 +59,8 @@ function EventCard({ event, index = 0 }: { event: any; index?: number }) {
     const rsvpData = r.rsvp || r;
     return String(rsvpData.userId || rsvpData.user_id) === String(user?.id);
   });
-  const rsvpStatus = userRsvp?.rsvp?.status || userRsvp?.status;
-  const isRsvped = rsvpStatus === "going";
+  const rsvpStatus = (userRsvp?.rsvp?.status || userRsvp?.status) as RSVPStatus;
   const isFull = eventData.maxAttendees && attendeeCount >= eventData.maxAttendees;
-
-  const handleRSVP = async (status: 'going' | 'maybe' | 'interested' | 'not_going') => {
-    if (!user) {
-      toast({ title: "Please log in", description: "You must be logged in to RSVP", variant: "destructive" });
-      return;
-    }
-    try {
-      await rsvpMutation.mutateAsync({ eventId: eventData.id, status });
-      queryClient.invalidateQueries({ queryKey: ["/api/events", eventData.id, "attendees"] });
-      toast({ title: "RSVP updated", description: `You marked this event as ${status}` });
-    } catch (error) {
-      toast({ title: "Error", description: "Failed to update RSVP", variant: "destructive" });
-    }
-  };
 
   const formatEventDateTime = (dateString: string): string => {
     const tz = getTimezoneFromCity(eventData.city);
@@ -201,66 +184,12 @@ function EventCard({ event, index = 0 }: { event: any; index?: number }) {
         </CardContent>
 
         <CardFooter className="flex gap-2 pt-0 px-6 pb-6">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant={rsvpStatus ? "outline" : "default"}
-                className="flex-1 gap-2"
-                disabled={!user || rsvpMutation.isPending}
-                data-testid={`button-rsvp-${eventData.id}`}
-              >
-                {rsvpStatus === 'going' && <Check className="h-4 w-4 text-green-500" />}
-                {rsvpStatus === 'maybe' && <Users className="h-4 w-4 text-yellow-500" />}
-                {rsvpStatus === 'interested' && <Users className="h-4 w-4 text-blue-500" />}
-                {rsvpStatus === 'not_going' && <Users className="h-4 w-4 text-red-500" />}
-                {!rsvpStatus && <Users className="h-4 w-4" />}
-                {rsvpMutation.isPending ? "Updating..." : 
-                  rsvpStatus === 'going' ? "Going" :
-                  rsvpStatus === 'maybe' ? "Maybe" :
-                  rsvpStatus === 'interested' ? "Interested" :
-                  rsvpStatus === 'not_going' ? "Not Going" : "RSVP"}
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-48">
-              <DropdownMenuItem 
-                onClick={() => handleRSVP('going')}
-                className="gap-2"
-                data-testid={`rsvp-going-${eventData.id}`}
-              >
-                <Check className="h-4 w-4 text-green-500" />
-                Going
-                {rsvpStatus === 'going' && <Check className="h-4 w-4 ml-auto" />}
-              </DropdownMenuItem>
-              <DropdownMenuItem 
-                onClick={() => handleRSVP('maybe')}
-                className="gap-2"
-                data-testid={`rsvp-maybe-${eventData.id}`}
-              >
-                <Users className="h-4 w-4 text-yellow-500" />
-                Maybe
-                {rsvpStatus === 'maybe' && <Check className="h-4 w-4 ml-auto" />}
-              </DropdownMenuItem>
-              <DropdownMenuItem 
-                onClick={() => handleRSVP('interested')}
-                className="gap-2"
-                data-testid={`rsvp-interested-${eventData.id}`}
-              >
-                <Users className="h-4 w-4 text-blue-500" />
-                Interested
-                {rsvpStatus === 'interested' && <Check className="h-4 w-4 ml-auto" />}
-              </DropdownMenuItem>
-              <DropdownMenuItem 
-                onClick={() => handleRSVP('not_going')}
-                className="gap-2 text-muted-foreground"
-                data-testid={`rsvp-not-going-${eventData.id}`}
-              >
-                <Users className="h-4 w-4 text-red-500" />
-                Not Going
-                {rsvpStatus === 'not_going' && <Check className="h-4 w-4 ml-auto" />}
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <UnifiedRSVPButton
+            eventId={eventData.id}
+            currentStatus={rsvpStatus}
+            variant="compact"
+            disabled={!user}
+          />
 
           <Link href={`/events/${eventData.id}`}>
             <Button variant="outline" className="gap-2" data-testid={`button-view-event-${eventData.id}`}>
