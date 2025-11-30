@@ -14,7 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Plane, Calendar as CalendarIcon, MapPin, DollarSign, Sparkles, FileText, Briefcase, Home, Utensils, Heart, Plus, ChevronDown, ChevronUp, TrendingUp, X, Edit, Users, Trash2, Clock, Check, PieChart, Download, Train, Ship, Bus, Car, Music, Ticket, Building2, Link2, Search, ExternalLink, Loader2, Anchor, ArrowRight, Send } from "lucide-react";
+import { Plane, Calendar as CalendarIcon, MapPin, DollarSign, Sparkles, FileText, Briefcase, Home, Utensils, Heart, Plus, ChevronDown, ChevronUp, TrendingUp, X, Edit, Users, Trash2, Clock, Check, PieChart, Download, Train, Ship, Bus, Car, Music, Ticket, Building2, Link2, Search, ExternalLink, Loader2, Anchor, ArrowRight, Send, Globe, Lock, Eye } from "lucide-react";
 
 import buenosAiresImg from "@assets/stock_images/buenos_aires_argenti_afa3bd1f.jpg";
 import milanImg from "@assets/stock_images/milan_italy_duomo_ca_513cf7b4.jpg";
@@ -39,6 +39,7 @@ interface TravelPlan {
   endDate: string;
   tripDuration: number;
   status: string;
+  visibility?: 'public' | 'friends' | 'private';
   notes?: string;
   items?: TravelPlanItem[];
 }
@@ -450,6 +451,43 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
       setUpdatingTripId(null);
     },
   });
+
+  const updateTripMutation = useMutation({
+    mutationFn: async ({ tripId, data }: { tripId: number; data: { visibility?: string; startDate?: string; endDate?: string } }) => {
+      const res = await apiRequest("PATCH", `/api/travel/plans/${tripId}`, data);
+      return await res.json();
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["/api/travel/plans", profileId] });
+      await queryClient.refetchQueries({ 
+        queryKey: ["/api/travel/plans", profileId],
+        type: 'active'
+      });
+      toast({ title: "Trip updated!" });
+    },
+    onError: () => {
+      toast({ title: "Failed to update trip", description: "Please try again.", variant: "destructive" });
+    },
+  });
+
+  const handleVisibilityChange = (trip: TravelPlan, newVisibility: 'public' | 'friends' | 'private') => {
+    updateTripMutation.mutate({ tripId: trip.id, data: { visibility: newVisibility } });
+  };
+
+  const handleDateChange = (trip: TravelPlan, startDate: Date | undefined, endDate: Date | undefined) => {
+    const updates: { startDate?: string; endDate?: string } = {};
+    if (startDate) updates.startDate = startDate.toISOString();
+    if (endDate) updates.endDate = endDate.toISOString();
+    if (Object.keys(updates).length > 0) {
+      updateTripMutation.mutate({ tripId: trip.id, data: updates });
+    }
+  };
+
+  const visibilityOptions = [
+    { value: 'public' as const, label: 'Public', icon: Globe, color: 'bg-green-500/20 text-green-100 border-green-500/40' },
+    { value: 'friends' as const, label: 'Friends', icon: Users, color: 'bg-blue-500/20 text-blue-100 border-blue-500/40' },
+    { value: 'private' as const, label: 'Private', icon: Lock, color: 'bg-red-500/20 text-red-100 border-red-500/40' },
+  ];
 
   // Status change handler - shows notes dialog for completion
   const handleStatusChange = (trip: TravelPlan, newStatus: string) => {
@@ -878,7 +916,13 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
       {/* Trip Cards with Full Features - 2 Column Grid */}
       {travelPlans && travelPlans.length > 0 && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {travelPlans.map((trip, index) => {
+          {travelPlans
+            .filter((trip) => {
+              if (!isPublicView) return true;
+              const visibility = trip.visibility || 'public';
+              return visibility === 'public';
+            })
+            .map((trip, index) => {
             const budgetStats = calculateBudgetStats(trip);
             const activeTab = tripTabs[trip.id] || "overview";
             const isExpanded = expandedTrips.has(index);
@@ -897,7 +941,47 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
                   <h3 className="text-xl font-serif font-bold text-white">{trip.city}{trip.country && <span className="text-white/80 text-base ml-2">• {trip.country}</span>}</h3>
                   <div className="flex items-center gap-2 text-white/80 text-sm mt-2 flex-wrap">
                     <CalendarIcon className="w-3 h-3 flex-shrink-0" />
-                    <span>{new Date(trip.startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - {new Date(trip.endDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                    {isOwnProfile ? (
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="h-auto p-0 text-white/80 hover:text-white hover:bg-white/10"
+                            data-testid={`button-edit-dates-${index}`}
+                          >
+                            <span>{new Date(trip.startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - {new Date(trip.endDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                            <Edit className="w-3 h-3 ml-1.5 opacity-60" />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-3" align="start">
+                          <div className="space-y-3">
+                            <div>
+                              <label className="text-xs font-medium text-muted-foreground mb-1 block">Start Date</label>
+                              <Calendar
+                                mode="single"
+                                selected={trip.startDate ? new Date(trip.startDate) : undefined}
+                                onSelect={(date) => date && handleDateChange(trip, date, undefined)}
+                                className="rounded-md border"
+                                data-testid={`calendar-start-${index}`}
+                              />
+                            </div>
+                            <div>
+                              <label className="text-xs font-medium text-muted-foreground mb-1 block">End Date</label>
+                              <Calendar
+                                mode="single"
+                                selected={trip.endDate ? new Date(trip.endDate) : undefined}
+                                onSelect={(date) => date && handleDateChange(trip, undefined, date)}
+                                className="rounded-md border"
+                                data-testid={`calendar-end-${index}`}
+                              />
+                            </div>
+                          </div>
+                        </PopoverContent>
+                      </Popover>
+                    ) : (
+                      <span>{new Date(trip.startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - {new Date(trip.endDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                    )}
                     <span>({trip.tripDuration} {trip.tripDuration === 1 ? 'day' : 'days'})</span>
                     {isOwnProfile && (
                       <Popover open={statusDropdownOpen === trip.id} onOpenChange={(open) => setStatusDropdownOpen(open ? trip.id : null)}>
@@ -937,6 +1021,52 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
                                 {option.label}
                               </Button>
                             ))}
+                          </div>
+                        </PopoverContent>
+                      </Popover>
+                    )}
+                    {isOwnProfile && (
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className={cn(
+                              "h-6 text-xs border px-2 py-0",
+                              visibilityOptions.find(v => v.value === (trip.visibility || 'public'))?.color || 'bg-white/20 text-white border-white/30'
+                            )}
+                            data-testid={`button-visibility-${index}`}
+                          >
+                            {(() => {
+                              const VisibilityIcon = visibilityOptions.find(v => v.value === (trip.visibility || 'public'))?.icon || Globe;
+                              return <VisibilityIcon className="h-3 w-3 mr-1" />;
+                            })()}
+                            {(trip.visibility || 'public').charAt(0).toUpperCase() + (trip.visibility || 'public').slice(1)}
+                            <ChevronDown className="h-3 w-3 ml-1" />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-1" align="start">
+                          <div className="flex flex-col gap-1">
+                            {visibilityOptions.map((option) => {
+                              const OptionIcon = option.icon;
+                              return (
+                                <Button
+                                  key={option.value}
+                                  variant="ghost"
+                                  size="sm"
+                                  className={cn(
+                                    "justify-start text-xs h-7 gap-2",
+                                    (trip.visibility || 'public') === option.value && "bg-accent"
+                                  )}
+                                  onClick={() => handleVisibilityChange(trip, option.value)}
+                                  data-testid={`button-visibility-option-${option.value}`}
+                                >
+                                  <OptionIcon className="h-3 w-3" />
+                                  {(trip.visibility || 'public') === option.value && <Check className="h-3 w-3" />}
+                                  {option.label}
+                                </Button>
+                              );
+                            })}
                           </div>
                         </PopoverContent>
                       </Popover>

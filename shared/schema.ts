@@ -4849,6 +4849,7 @@ export const travelPlans = pgTable("travel_plans", {
   interests: text("interests").array().default(sql`'{}'::text[]`),
   travelStyle: varchar("travel_style", { length: 255 }),
   status: varchar("status", { length: 50 }).default('planning'),
+  visibility: varchar("visibility", { length: 20 }).default('public'), // 'public' | 'friends' | 'private'
   notes: text("notes"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow()
