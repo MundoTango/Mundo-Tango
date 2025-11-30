@@ -735,7 +735,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
           <h2 className="text-2xl font-bold">Your Travel Plans</h2>
           <p className="text-sm text-muted-foreground">{upcomingTrips.length} upcoming • {pastTrips.length} past</p>
         </div>
-        {isOwnProfile && !showCreateForm && (
+        {canEdit && !showCreateForm && (
           <Button onClick={() => setShowCreateForm(true)} data-testid="button-plan-new-trip">
             <Plus className="h-4 w-4 mr-2" />Plan New Trip
           </Button>
@@ -744,7 +744,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
 
       {/* Inline Trip Creation Form */}
       <AnimatePresence>
-        {showCreateForm && isOwnProfile && (
+        {showCreateForm && canEdit && (
           <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.3 }}>
             <Card className="border-primary/50" data-testid="card-create-trip-form">
               <CardHeader className="flex flex-row items-center justify-between">
@@ -843,13 +843,13 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
             <div className="p-6 rounded-full bg-primary/10 w-24 h-24 mx-auto flex items-center justify-center"><Plane className="h-12 w-12 text-primary" /></div>
             <h3 className="text-2xl font-serif font-bold">Start Your Tango Journey</h3>
             <p className="text-muted-foreground" data-testid="text-no-plans">Plan your first trip to a tango festival, workshop, or explore new cities with fellow dancers.</p>
-            {isOwnProfile && <Button onClick={() => setShowCreateForm(true)} size="lg" className="mt-4" data-testid="button-plan-first-trip"><Plus className="h-5 w-5 mr-2" />Plan Your First Trip</Button>}
+            {canEdit && <Button onClick={() => setShowCreateForm(true)} size="lg" className="mt-4" data-testid="button-plan-first-trip"><Plus className="h-5 w-5 mr-2" />Plan Your First Trip</Button>}
           </div>
         </Card>
       )}
 
       {/* Post-trip completion prompt - show only once per page */}
-      {isOwnProfile && tripNeedingCompletion && (
+      {canEdit && tripNeedingCompletion && (
         <Dialog open={true} onOpenChange={(open) => { if (!open) { setCompletionPrompts(new Set([...completionPrompts, tripNeedingCompletion.id])); setCompletionNotes(''); } }}>
           <DialogContent>
             <DialogHeader>
@@ -951,7 +951,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
                   <h3 className="text-xl font-serif font-bold text-white">{trip.city}{trip.country && <span className="text-white/80 text-base ml-2">• {trip.country}</span>}</h3>
                   <div className="flex items-center gap-2 text-white/80 text-sm mt-2 flex-wrap">
                     <CalendarIcon className="w-3 h-3 flex-shrink-0" />
-                    {isOwnProfile ? (
+                    {canEdit ? (
                       <Popover>
                         <PopoverTrigger asChild>
                           <Button 
@@ -993,7 +993,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
                       <span>{new Date(trip.startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - {new Date(trip.endDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                     )}
                     <span>({trip.tripDuration} {trip.tripDuration === 1 ? 'day' : 'days'})</span>
-                    {isOwnProfile && (
+                    {canEdit && (
                       <Popover open={statusDropdownOpen === trip.id} onOpenChange={(open) => setStatusDropdownOpen(open ? trip.id : null)}>
                         <PopoverTrigger asChild>
                           <Button 
@@ -1035,7 +1035,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
                         </PopoverContent>
                       </Popover>
                     )}
-                    {isOwnProfile && (
+                    {canEdit && (
                       <Popover open={visibilityPopoverOpen === trip.id} onOpenChange={(open) => setVisibilityPopoverOpen(open ? trip.id : null)}>
                         <PopoverTrigger asChild>
                           <Button 
@@ -1204,7 +1204,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
                                         {item.cost && <p className="font-bold text-primary">${Number(item.cost).toFixed(0)}</p>}
                                         {item.costPerNight && <p className="text-xs text-muted-foreground">${item.costPerNight}/night</p>}
                                         {item.isBooked && <Badge variant="outline" className="bg-green-500/10 text-green-600 text-xs"><Check className="h-3 w-3 mr-1" />Booked</Badge>}
-                                        {isOwnProfile && (
+                                        {canEdit && (
                                           <div className="flex gap-1 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                             <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => openEditDialog(trip.id, item, 'accommodation')} data-testid={`button-edit-accommodation-${idx}`}>
                                               <Edit className="h-3 w-3" />
@@ -1223,7 +1223,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
                                     <p className="text-sm">No accommodation added yet</p>
                                   </div>
                                 )}
-                                {isOwnProfile && (
+                                {canEdit && (
                                   <Button variant="outline" size="sm" className="w-full" onClick={() => { itemForm.setValue('type', 'hotel'); setAccommodationDialog({ tripId: trip.id, city: trip.city, startDate: trip.startDate, endDate: trip.endDate }); setAccommodationTab('mthost'); }} data-testid={`button-add-accommodation-${index}`}>
                                     <Plus className="h-4 w-4 mr-2" />Add Accommodation
                                   </Button>
@@ -1279,7 +1279,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
                                         <div className="text-right flex flex-col items-end gap-1">
                                           {item.cost && <p className="font-bold text-primary">${Number(item.cost).toFixed(0)}</p>}
                                           {item.isBooked && <Badge variant="outline" className="bg-green-500/10 text-green-600 text-xs"><Check className="h-3 w-3 mr-1" />Booked</Badge>}
-                                          {isOwnProfile && (
+                                          {canEdit && (
                                             <div className="flex gap-1 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                               <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => openEditDialog(trip.id, item, 'transport')} data-testid={`button-edit-transport-${idx}`}>
                                                 <Edit className="h-3 w-3" />
@@ -1299,7 +1299,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
                                     <p className="text-sm">No transport added yet</p>
                                   </div>
                                 )}
-                                {isOwnProfile && (
+                                {canEdit && (
                                   <Button variant="outline" size="sm" className="w-full" onClick={() => { itemForm.setValue('type', 'flight'); setTransportDialog({ tripId: trip.id, city: trip.city }); setSelectedTransportType('flight'); }} data-testid={`button-add-transport-${index}`}>
                                     <Plus className="h-4 w-4 mr-2" />Add Transport
                                   </Button>
@@ -1330,7 +1330,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
                                       <div className="text-right flex flex-col items-end gap-1">
                                         {item.cost && <p className="font-bold text-primary">${Number(item.cost).toFixed(0)}</p>}
                                         {item.isBooked && <Badge variant="outline" className="bg-green-500/10 text-green-600 text-xs"><Check className="h-3 w-3 mr-1" />Attending</Badge>}
-                                        {isOwnProfile && (
+                                        {canEdit && (
                                           <div className="flex gap-1 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                             <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => openEditDialog(trip.id, item, 'event')} data-testid={`button-edit-event-${idx}`}>
                                               <Edit className="h-3 w-3" />
@@ -1350,7 +1350,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
                                     <p className="text-xs mt-1">Add milongas and events during your trip</p>
                                   </div>
                                 )}
-                                {isOwnProfile && (
+                                {canEdit && (
                                   <Button variant="outline" size="sm" className="w-full" onClick={() => { setEventsDialog({ tripId: trip.id, city: trip.city, startDate: trip.startDate, endDate: trip.endDate }); setEventSearchQuery(''); }} data-testid={`button-add-event-${index}`}>
                                     <Plus className="h-4 w-4 mr-2" />Add Event / Milonga
                                   </Button>
@@ -1381,7 +1381,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
                                           Requests to Join Your Trip
                                           {pendingIncoming.length > 0 && <Badge variant="outline" className="bg-pink-500/10 text-pink-600 border-pink-500/30 text-xs">{pendingIncoming.length}</Badge>}
                                         </h5>
-                                        {isOwnProfile && pendingIncoming.length > 0 ? (
+                                        {canEdit && pendingIncoming.length > 0 ? (
                                           <div className="space-y-2">
                                             {pendingIncoming.map((companion, idx) => (
                                               <div key={companion.id} className="flex items-center justify-between p-3 bg-pink-500/5 border border-pink-500/20 rounded-lg">
@@ -1421,7 +1421,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
                                           Your Requests to Join Others
                                           {pendingOutgoing.length > 0 && <Badge variant="outline" className="bg-amber-500/10 text-amber-600 border-amber-500/30 text-xs">{pendingOutgoing.length}</Badge>}
                                         </h5>
-                                        {isOwnProfile && pendingOutgoing.length > 0 ? (
+                                        {canEdit && pendingOutgoing.length > 0 ? (
                                           <div className="space-y-2">
                                             {pendingOutgoing.map((companion) => (
                                               <div key={companion.id} className="flex items-center justify-between p-3 bg-amber-500/5 border border-amber-500/20 rounded-lg">
@@ -1493,7 +1493,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
                                 })()}
 
                                 {/* Action Buttons */}
-                                {isOwnProfile && (
+                                {canEdit && (
                                   <div className="flex gap-2 pt-2">
                                     <Button variant="outline" size="sm" className="flex-1" data-testid={`button-find-companions-${index}`} onClick={() => setFindCompanionsDialog({ tripId: trip.id, city: trip.city })}>
                                       <Search className="h-4 w-4 mr-2" />Find Compatible Travelers
@@ -1549,7 +1549,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
                       })()}
 
                   {/* Edit Mode */}
-                  {editingTripId === trip.id && isOwnProfile && (
+                  {editingTripId === trip.id && canEdit && (
                     <Card className="border-amber-500/30 bg-amber-500/5 mt-4">
                       <CardHeader>
                         <CardTitle className="text-base flex items-center gap-2"><Edit className="h-4 w-4" />Edit Trip Details</CardTitle>
@@ -1586,7 +1586,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
                   )}
 
                   {/* Card Footer with Actions */}
-                  {isOwnProfile && (
+                  {canEdit && (
                     <div className="pt-4 mt-4 border-t border-border flex flex-wrap items-center gap-3">
                       <Button variant="outline" size="sm" onClick={() => setEditingTripId(editingTripId === trip.id ? null : trip.id)} data-testid={`button-edit-trip-${index}`}><Edit className="h-4 w-4 mr-2" />{editingTripId === trip.id ? "Close Edit" : "Edit Trip"}</Button>
                       <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive" onClick={() => deleteTripMutation.mutate(trip.id)} data-testid={`button-delete-trip-${index}`}><Trash2 className="h-4 w-4 mr-2" />Delete</Button>
