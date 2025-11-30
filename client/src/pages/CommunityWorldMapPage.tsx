@@ -239,18 +239,6 @@ export default function CommunityWorldMapPage() {
         </div>
 
         <div className="container mx-auto px-6 py-12 space-y-6">
-          {/* Filters Button */}
-          <div className="flex justify-end">
-            <Button
-              variant={showFilters ? "default" : "outline"}
-              onClick={() => setShowFilters(!showFilters)}
-              data-testid="button-toggle-filters"
-            >
-              <Filter className="mr-2 h-4 w-4" />
-              Filters
-            </Button>
-          </div>
-
             {/* Global Stats */}
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
               <Card className="hover-elevate">
@@ -318,68 +306,6 @@ export default function CommunityWorldMapPage() {
                 </CardContent>
               </Card>
             </div>
-
-            {/* Advanced Filters */}
-            {showFilters && (
-              <Card className="border-primary/20">
-                <CardHeader>
-                  <div className="flex justify-between items-center">
-                    <CardTitle>Advanced Filters</CardTitle>
-                    <Button variant="ghost" size="icon" onClick={() => setShowFilters(false)}>
-                      <X className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="space-y-2">
-                      <Label>Minimum Members: {filters.minMembers}</Label>
-                      <Slider
-                        value={[filters.minMembers]}
-                        onValueChange={([value]) => setFilters({ ...filters, minMembers: value })}
-                        max={1000}
-                        step={50}
-                        data-testid="slider-min-members"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Minimum Events: {filters.minEvents}</Label>
-                      <Slider
-                        value={[filters.minEvents]}
-                        onValueChange={([value]) => setFilters({ ...filters, minEvents: value })}
-                        max={50}
-                        step={5}
-                        data-testid="slider-min-events"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Sort By</Label>
-                      <Select value={filters.sortBy} onValueChange={(value) => setFilters({ ...filters, sortBy: value })}>
-                        <SelectTrigger data-testid="select-sort-by">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="members">Most Members</SelectItem>
-                          <SelectItem value="events">Most Events</SelectItem>
-                          <SelectItem value="name">City Name</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="active-only"
-                      checked={filters.activeOnly}
-                      onCheckedChange={(checked) => setFilters({ ...filters, activeOnly: checked as boolean })}
-                      data-testid="checkbox-active-only"
-                    />
-                    <Label htmlFor="active-only" className="cursor-pointer">
-                      Show only active communities
-                    </Label>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
 
             {/* Search */}
             <div className="relative">
