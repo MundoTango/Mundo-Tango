@@ -51,14 +51,14 @@ router.get("/", async (req: Request, res: Response) => {
           SELECT COUNT(*)::int 
           FROM ${groupMembers} 
           WHERE ${groupMembers.groupId} = ${groups.id}
-        )`.as('member_count'),
+        )`.as('memberCount'),
         eventCount: sql<number>`(
           SELECT COUNT(*)::int 
           FROM ${events} e
           WHERE e.group_id = ${groups.id}
-        )`.as('event_count'),
-        recommendationCount: sql<number>`(0)`.as('recommendation_count'),
-        housingCount: sql<number>`(0)`.as('housing_count')
+        )`.as('eventCount'),
+        recommendationCount: sql<number>`(0)`.as('recommendationCount'),
+        housingCount: sql<number>`(0)`.as('housingCount')
       })
       .from(groups)
       .leftJoin(users, eq(groups.createdBy, users.id))
@@ -153,13 +153,13 @@ router.get("/my-groups", authenticateToken, async (req: AuthRequest, res: Respon
           FROM ${groupMembers} gm
           WHERE gm.group_id = ${groups.id}
           AND gm.status = 'active'
-        )`.as('member_count'),
+        )`.as('memberCount'),
         eventCount: sql<number>`(
           SELECT COUNT(*)::int 
           FROM ${events} e
           WHERE e.group_id = ${groups.id}
           AND e.start_date > NOW()
-        )`.as('event_count'),
+        )`.as('eventCount'),
       })
       .from(groupMembers)
       .innerJoin(groups, eq(groupMembers.groupId, groups.id))
