@@ -7,7 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Users, MapPin, Settings as SettingsIcon, Calendar, Home, Building2, Heart, Check, ChevronRight, Music, Mic2, Star, Clock, ExternalLink, Compass, GraduationCap, SlidersHorizontal, Languages } from "lucide-react";
+import { Users, MapPin, Settings as SettingsIcon, Calendar, Home, Building2, Heart, Check, ChevronRight, ChevronDown, ChevronUp, Music, Mic2, Star, Clock, ExternalLink, Compass, GraduationCap, SlidersHorizontal, Languages } from "lucide-react";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { safeDateFormat } from "@/lib/safeDateFormat";
@@ -22,7 +22,7 @@ import { useRSVPEvent, useMyRSVPs } from "@/hooks/useEvents";
 import { useAuth } from "@/contexts/AuthContext";
 import { getCityImageUrl } from "@/lib/cityImageMap";
 import { EventFilters, type EventFilterValues } from "@/components/events/EventFilters";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { getLanguageByCode } from "@/components/input/UnifiedLanguagePicker";
 
 function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: string | null }) {
@@ -203,45 +203,51 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
               }
             </CardDescription>
           </div>
-          <Sheet open={isFilterOpen} onOpenChange={setIsFilterOpen}>
-            <SheetTrigger asChild>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="gap-2"
-                data-testid="button-event-filters"
-              >
-                <SlidersHorizontal className="h-4 w-4" />
-                Filters
-                {activeFilterCount > 0 && (
-                  <Badge variant="secondary" className="ml-1 h-5 w-5 p-0 flex items-center justify-center text-xs">
-                    {activeFilterCount}
-                  </Badge>
-                )}
-              </Button>
-            </SheetTrigger>
-            <SheetContent className="w-[400px] sm:w-[540px] overflow-y-auto">
-              <SheetHeader>
-                <SheetTitle className="flex items-center gap-2">
-                  <SlidersHorizontal className="h-5 w-5" />
-                  Filter Events
-                </SheetTitle>
-                <SheetDescription>
-                  Narrow down events by type, date, skill level, and more
-                </SheetDescription>
-              </SheetHeader>
-              <div className="mt-6">
-                <EventFilters 
-                  onFilterChange={(newFilters) => {
-                    setFilters(newFilters);
-                  }} 
-                  initialFilters={filters}
-                />
-              </div>
-            </SheetContent>
-          </Sheet>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="gap-2"
+            onClick={() => setIsFilterOpen(!isFilterOpen)}
+            data-testid="button-event-filters"
+          >
+            <SlidersHorizontal className="h-4 w-4" />
+            Filters
+            {activeFilterCount > 0 && (
+              <Badge variant="secondary" className="ml-1 h-5 w-5 p-0 flex items-center justify-center text-xs">
+                {activeFilterCount}
+              </Badge>
+            )}
+            {isFilterOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+          </Button>
         </div>
       </CardHeader>
+      
+      <Collapsible open={isFilterOpen} onOpenChange={setIsFilterOpen}>
+        <CollapsibleContent>
+          <div className="px-8 py-6 border-b bg-muted/30">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-medium text-muted-foreground">Filter Events</h3>
+              {activeFilterCount > 0 && (
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => setFilters({})}
+                  className="h-7 text-xs"
+                  data-testid="button-reset-filters"
+                >
+                  Reset all
+                </Button>
+              )}
+            </div>
+            <EventFilters 
+              onFilterChange={(newFilters) => {
+                setFilters(newFilters);
+              }} 
+              initialFilters={filters}
+            />
+          </div>
+        </CollapsibleContent>
+      </Collapsible>
       <CardContent className="p-8 space-y-6">
         {activeFilterCount > 0 && (
           <div className="flex flex-wrap gap-2 pb-4 border-b">
