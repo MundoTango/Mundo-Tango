@@ -107,6 +107,11 @@ export function verifyCsrfToken(req: Request, res: Response, next: NextFunction)
     if (travelScrapingEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
       return next();
     }
+    // Skip CSRF for location history endpoints (JWT protected)
+    const locationEndpoints = ["/api/location-history"];
+    if (locationEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
+      return next();
+    }
   }
   
   const sessionId = (req as any).session?.id || req.ip;
