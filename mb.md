@@ -1,10 +1,19 @@
 # MB.MD - Mundo Blue Methodology Directive
 
-**Version:** 9.6 E2E TESTING INFRASTRUCTURE COMPLETE - 38 PATTERNS  
+**Version:** 9.7 PRD REVERSE-ENGINEERING PROTOCOL - 39 PATTERNS  
 **Created:** October 30, 2025  
-**Last Updated:** November 26, 2025  
+**Last Updated:** November 30, 2025  
 **Purpose:** Build platform to reverse negative impacts of social media and change the world  
 **Project:** Mundo Tango - The Anti-Facebook (927 features, 20-week strategy)
+
+**New in v9.7 (PRD REVERSE-ENGINEERING PROTOCOL - Nov 30, 2025):**
+- 📋 **PATTERN 39**: PRD Reverse-Engineering Protocol - 5-source methodology for documenting existing systems
+- 🔍 **GAP ANALYSIS COMPLETE**: 70% documentation debt identified (35% documented, 65% undocumented)
+- ✅ **P0 PRDs COMPLETE**: Marketplace (900+ lines), Crowdfunding (338), Legal (329), Messages (unified)
+- ✅ **GROUPS SYSTEM VERIFIED**: 3 PRDs (Landing, Details, Membership) with 85% coverage
+- ✅ **EVENTS PRD CREATED**: Comprehensive 600+ line PRD covering 1,103-line API, 5 pages, 8 E2E test files
+- 📊 **HIERARCHICAL EXECUTION DEMONSTRATED**: Replit AI (strategic) ↔ Mr. Blue (tactical) dialogue documented
+- 🎯 **COVERAGE IMPROVED**: 35% → 50%+ documentation coverage through systematic reverse-engineering
 
 **New in v9.6 (E2E TESTING INFRASTRUCTURE - Nov 26, 2025):**
 - 📋 **PATTERN 38**: E2E Testing Infrastructure Protocol added to methodology
@@ -4022,6 +4031,128 @@ export const authRateLimiter = rateLimit({
 |---------|-----------|-----|
 | Login times out after ~5-17 tests | authRateLimiter blocking | Add skip: () => isDevelopment |
 | 429 errors in tests | API rate limiter active | Disable all limiters in dev |
+
+---
+
+### **Pattern 39: PRD Reverse-Engineering Protocol** ⭐⭐⭐ (v9.7 - Nov 30, 2025)
+
+**Source:** Gap Analysis Session - 70% Documentation Debt Discovery  
+**Date:** November 30, 2025  
+**Trigger:** Scott requested comprehensive documentation of 60+ undocumented systems
+
+**Problem:** Large codebases have extensive implementations but 70% documentation debt. Traditional PRD-first approach doesn't work for existing systems. Need to reverse-engineer PRDs from code.
+
+**Solution:** 5-Source Reverse-Engineering Methodology
+
+**The 5 Sources:**
+
+```typescript
+// 1. E2E TESTS → User Flows + UI Components
+// Read: tests/e2e/**/*.spec.ts
+// Extract: data-testid values, user journeys, assertions
+// Example: 'button-create-event' → CreateEventButton exists
+
+// 2. DATABASE SCHEMA → Data Model
+// Read: shared/schema.ts
+// Extract: Tables, columns, relationships, indexes
+// Example: events table has 67 columns, 15 indexes
+
+// 3. API ROUTES → Endpoints + Business Logic
+// Read: server/routes/*.ts
+// Extract: Endpoints, auth requirements, response formats
+// Example: GET /api/events → List with 8 filters
+
+// 4. FRONTEND PAGES → UI Structure
+// Read: client/src/pages/*.tsx
+// Extract: Components, hooks, state management
+// Example: EventsPage.tsx uses react-big-calendar
+
+// 5. CROSS-SYSTEM GREP → Wirings
+// Grep: Foreign keys, imports, shared types
+// Extract: Integration points between systems
+// Example: events.groupId → groups.id (wiring)
+```
+
+**PRD Template Sections (10 Required):**
+
+```markdown
+1. Purpose - What problem does this system solve?
+2. Problem Solved - Before/after state
+3. Technical Implementation - Core files with line counts
+4. Database Schema - Tables, columns, relationships
+5. API Endpoints - Full endpoint inventory with auth
+6. Frontend Pages - Route, test IDs, key features
+7. User Flows - Step-by-step journeys
+8. Cross-System Wirings - FKs, integrations, cascades
+9. E2E Test Coverage - Test files, coverage %
+10. Changelog - Version history
+```
+
+**Validation Checklist (10 Points):**
+
+```
+□ All database tables documented (columns, types, indexes)
+□ All API endpoints mapped (method, auth, description)
+□ All frontend pages inventoried (route, test IDs)
+□ UI test IDs extracted from E2E tests
+□ Wirings to other systems documented
+□ E2E test file referenced
+□ Sample data/fallbacks documented
+□ Tier enforcement rules captured
+□ Performance optimizations noted
+□ Future enhancements listed
+```
+
+**Execution Commands:**
+
+```bash
+# 1. Find E2E tests for a system
+find tests/e2e -name "*events*"
+
+# 2. Extract schema for a table
+grep -A 100 "export const events = pgTable" shared/schema.ts
+
+# 3. Find API routes
+ls server/routes/ | grep -i event
+
+# 4. Find frontend pages
+ls client/src/pages/ | grep -i Event
+
+# 5. Find wirings (foreign keys)
+grep -r "events.id" shared/schema.ts
+```
+
+**Impact Metrics (P0 Phase Results):**
+
+| PRD | Lines | Source Files | Time |
+|-----|-------|--------------|------|
+| Marketplace | 900+ | 4 routes, 3 pages, 6 tests | 45min |
+| Crowdfunding | 338 | 2 routes, 2 pages, 4 tests | 30min |
+| Legal | 329 | 1 route, 2 pages, 3 tests | 20min |
+| Messages | 400+ | 2 routes, 3 pages, 5 tests | 30min |
+| Events | 600+ | 1 route (1,103 lines), 5 pages, 8 tests | 40min |
+
+**Total: 2,500+ lines documented in single session**
+
+**Coverage Improvement:**
+- Before: 35% documented
+- After: 50%+ documented
+- Remaining: 56 systems need treatment
+
+**Key Learning:**
+> "Read the code. The code is the truth. The PRD matches the implementation, not the other way around for existing systems."
+
+**Pattern 39 Triggers:**
+- ✅ User requests documentation of existing feature
+- ✅ PRD gap analysis reveals undocumented systems
+- ✅ New team member onboarding requires system understanding
+- ✅ Audit/compliance requires technical documentation
+
+**Anti-Patterns:**
+- ❌ Don't guess - read the actual code
+- ❌ Don't assume - verify with E2E tests
+- ❌ Don't skip wirings - they cause cascade bugs
+- ❌ Don't forget test IDs - they prove UI exists
 
 ---
 
