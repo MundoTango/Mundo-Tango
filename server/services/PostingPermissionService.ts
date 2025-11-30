@@ -158,14 +158,14 @@ export class PostingPermissionService {
       };
     }
     
-    // Check if user is the event creator/organizer
+    // Check if user is the event creator/organizer (check both userId and organizerId)
     const eventData = await db
-      .select({ organizerId: events.organizerId })
+      .select({ userId: events.userId, organizerId: events.organizerId })
       .from(events)
       .where(eq(events.id, eventId))
       .limit(1);
     
-    const isEventCreator = eventData.length > 0 && eventData[0].organizerId === userId;
+    const isEventCreator = eventData.length > 0 && (eventData[0].userId === userId || eventData[0].organizerId === userId);
     
     if (isEventCreator) {
       return {
