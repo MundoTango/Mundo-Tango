@@ -454,9 +454,20 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
     setUploadProgress(0);
 
     try {
-      const finalContent = showEnhancement && enhancedContent ? enhancedContent : content;
+      let finalContent = showEnhancement && enhancedContent ? enhancedContent : content;
+      
+      // Auto-append @mention of group/event name for context-specific posts
+      if ((context.type === 'group' || context.type === 'event') && context.name) {
+        const mention = `@${context.name}`;
+        // Only add mention if not already present
+        if (!finalContent.includes(mention)) {
+          finalContent = `${mention} ${finalContent}`;
+        }
+      }
+      
       console.log('[PostCreator] Submitting post with content:', finalContent);
       console.log('[PostCreator] Media files:', mediaFiles.length);
+      console.log('[PostCreator] Context:', context);
       
       // Build post data object
       const postData: any = {
