@@ -456,12 +456,16 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
     try {
       let finalContent = showEnhancement && enhancedContent ? enhancedContent : content;
       
-      // Auto-append @mention of group/event name for context-specific posts
-      if ((context.type === 'group' || context.type === 'event') && context.name) {
-        const mention = `@${context.name}`;
+      // Auto-append @mention of group/event name for context-specific posts (in canonical format)
+      if ((context.type === 'group' || context.type === 'event') && context.name && context.id) {
+        const mentionType = context.type === 'event' ? 'event' : 'group';
+        const entityId = typeof context.id === 'string' ? parseInt(context.id) : context.id;
+        const safeName = context.name.replace(/ /g, '_');
+        // Use canonical format: @type:id:Name_With_Underscores
+        const canonicalMention = `@${mentionType}:${mentionType}_${entityId}:${safeName}`;
         // Only add mention if not already present
-        if (!finalContent.includes(mention)) {
-          finalContent = `${mention} ${finalContent}`;
+        if (!finalContent.includes(canonicalMention)) {
+          finalContent = `${canonicalMention} ${finalContent}`;
         }
       }
       
