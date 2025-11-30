@@ -237,6 +237,15 @@ test.describe('Event System - RSVP Functionality', () => {
   test('RSVP buttons are visible on event page', async ({ page }) => {
     console.log('🚀 [TEST] Testing RSVP buttons...');
     
+    await page.goto(`${BASE_URL}/login`, { waitUntil: 'load', timeout: 30000 });
+    await page.waitForTimeout(2000);
+    
+    await page.fill('[data-testid="input-email"]', 'admin@mundotango.life');
+    await page.fill('[data-testid="input-password"]', 'admin123');
+    await page.click('[data-testid="button-login"]');
+    
+    await page.waitForURL(`${BASE_URL}/feed`, { timeout: 10000 });
+    
     await page.goto(`${BASE_URL}/events/${TEST_EVENT_ID}`, { waitUntil: 'load', timeout: 30000 });
     await page.waitForTimeout(3000);
     
@@ -249,7 +258,7 @@ test.describe('Event System - RSVP Functionality', () => {
     console.log('✅ RSVP buttons visible');
     
     await page.screenshot({ 
-      path: 'e2e/screenshots/event-rsvp-buttons.png',
+      path: 'tests/screenshots/event-rsvp-buttons.png',
       fullPage: true 
     });
     console.log('✅ Screenshot: RSVP buttons captured');
