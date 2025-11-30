@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,29 +12,72 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Calendar as CalendarIcon, MapPin, DollarSign, Users, Image as ImageIcon, ChevronLeft, ChevronRight, Check, Music, Clock, Info, Sparkles } from "lucide-react";
+import { Calendar as CalendarIcon, MapPin, DollarSign, Users, Image as ImageIcon, ChevronLeft, ChevronRight, Check, Music, Clock, Info, Sparkles, X, Upload } from "lucide-react";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/UnifiedLocationPicker";
 import { motion, AnimatePresence } from "framer-motion";
+import { uploadMediaFile, validateMediaFile } from "@/lib/mediaUpload";
 
 const WIZARD_STEPS = [
   { id: 'basics', title: 'Event Basics', description: 'Title, type, and description' },
   { id: 'datetime', title: 'Date & Time', description: 'When is your event?' },
   { id: 'location', title: 'Location', description: 'Where is it happening?' },
-  { id: 'details', title: 'Details', description: 'Pricing, capacity, and more' },
+  { id: 'details', title: 'Details', description: 'Pricing, capacity, and media' },
   { id: 'review', title: 'Review', description: 'Confirm and publish' },
 ];
+
+const EVENT_TYPES = [
+  { value: 'milonga', label: 'Milonga', icon: '🎶' },
+  { value: 'workshop', label: 'Workshop', icon: '📚' },
+  { value: 'festival', label: 'Festival', icon: '🎉' },
+  { value: 'practica', label: 'Practica', icon: '🎯' },
+  { value: 'social_dance', label: 'Social Dance', icon: '💃' },
+  { value: 'performance', label: 'Performance', icon: '🎭' },
+  { value: 'competition', label: 'Competition', icon: '🏆' },
+  { value: 'masterclass', label: 'Masterclass', icon: '👨‍🏫' },
+  { value: 'lecture', label: 'Lecture', icon: '🎓' },
+  { value: 'exhibition', label: 'Exhibition', icon: '🖼️' },
+  { value: 'concert', label: 'Concert', icon: '🎵' },
+  { value: 'dinner', label: 'Dinner', icon: '🍽️' },
+];
+
+const TIMEZONE_MAP: Record<string, string> = {
+  'Buenos Aires': 'America/Argentina/Buenos_Aires',
+  'New York': 'America/New_York',
+  'Los Angeles': 'America/Los_Angeles',
+  'London': 'Europe/London',
+  'Paris': 'Europe/Paris',
+  'Berlin': 'Europe/Berlin',
+  'Tokyo': 'Asia/Tokyo',
+  'Sydney': 'Australia/Sydney',
+  'Toronto': 'America/Toronto',
+  'Mexico City': 'America/Mexico_City',
+};
+
+const CURRENCY_ICONS: Record<string, string> = {
+  USD: '$',
+  EUR: '€',
+  GBP: '£',
+  ARS: '$',
+};
 
 export default function EventCreationPage() {
   const [, navigate] = useLocation();
   const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(0);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
   const [startTime, setStartTime] = useState("20:00");
   const [endTime, setEndTime] = useState("23:00");
+  const [timezone, setTimezone] = useState("UTC");
+  const [coverPhoto, setCoverPhoto] = useState<File | null>(null);
+  const [coverPhotoPreview, setCoverPhotoPreview] = useState<string>("");
+  const [additionalPhotos, setAdditionalPhotos] = useState<File[]>([]);
+  const [additionalPhotoPreviews, setAdditionalPhotoPreviews] = useState<string[]>([]);
+  const [uploadingPhotos, setUploadingPhotos] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -46,23 +89,41 @@ export default function EventCreationPage() {
     country: "",
     coordinates: { lat: 0, lng: 0 },
     isFree: true,
-    price: "",
+    price: 0,
     currency: "USD",
-    maxCapacity: "",
-    imageUrl: "",
+    maxCapacity: 0,
     musicStyle: "",
-    dressCode: "",
     level: "all",
-    tags: [] as string[],
   });
 
   const createMutation = useMutation({
-    mutationFn: (data: any) => apiRequest("/api/events", "POST", data),
+    mutationFn: async (data: any) => {
+      setUploadingPhotos(true);
+      try {
+        const uploadedPhotos: any[] = [];
+        if (coverPhoto) {
+          const result = await uploadMediaFile(coverPhoto);
+          uploadedPhotos.push({ ...result, isCover: true });
+        }
+        for (const photo of additionalPhotos) {
+          const result = await uploadMediaFile(photo);
+          uploadedPhotos.push({ ...result, isCover: false });
+        }
+        return apiRequest("/api/events", "POST", {
+          ...data,
+          coverImageUrl: uploadedPhotos.find(p => p.isCover)?.url,
+          photos: uploadedPhotos.filter(p => !p.isCover),
+        });
+      } finally {
+        setUploadingPhotos(false);
+      }
+    },
     onSuccess: (event) => {
       toast({ title: "Event created successfully!" });
       navigate(`/events/${event.id}`);
     },
-    onError: () => {
+    onError: (error: any) => {
+      console.error('Event creation error:', error);
       toast({ title: "Failed to create event", variant: "destructive" });
     },
   });
@@ -76,7 +137,7 @@ export default function EventCreationPage() {
       case 2:
         return !!formData.location;
       case 3:
-        return formData.isFree || (!!formData.price && parseFloat(formData.price) > 0);
+        return formData.isFree || formData.price > 0;
       case 4:
         return true;
       default:
@@ -86,10 +147,7 @@ export default function EventCreationPage() {
 
   const handleNext = () => {
     if (!validateStep(currentStep)) {
-      toast({ 
-        title: "Please complete required fields", 
-        variant: "destructive" 
-      });
+      toast({ title: "Please complete required fields", variant: "destructive" });
       return;
     }
     if (currentStep < WIZARD_STEPS.length - 1) {
@@ -101,6 +159,72 @@ export default function EventCreationPage() {
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
     }
+  };
+
+  const handleLocationChange = (location: string, coordinates: any, parsed?: any) => {
+    setFormData({ 
+      ...formData, 
+      location,
+      city: parsed?.city || "",
+      country: parsed?.country || "",
+      coordinates 
+    });
+    const cityName = parsed?.city || location;
+    const tz = TIMEZONE_MAP[cityName] || "UTC";
+    setTimezone(tz);
+  };
+
+  const handleCoverPhotoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    const validation = validateMediaFile(file, 10);
+    if (!validation.valid) {
+      toast({ title: validation.error || "Invalid file", variant: "destructive" });
+      return;
+    }
+
+    setCoverPhoto(file);
+    const reader = new FileReader();
+    reader.onload = () => {
+      setCoverPhotoPreview(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleAdditionalPhotosSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (additionalPhotos.length + files.length > 6) {
+      toast({ 
+        title: "Too many photos", 
+        description: "Maximum 6 additional photos allowed",
+        variant: "destructive" 
+      });
+      return;
+    }
+
+    const validFiles = files.filter(file => {
+      const validation = validateMediaFile(file, 10);
+      if (!validation.valid) {
+        toast({ title: validation.error || "Invalid file", variant: "destructive" });
+        return false;
+      }
+      return true;
+    });
+
+    setAdditionalPhotos([...additionalPhotos, ...validFiles]);
+    validFiles.forEach(file => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setAdditionalPhotoPreviews(prev => [...prev, reader.result as string]);
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const removeAdditionalPhoto = (index: number) => {
+    setAdditionalPhotos(prev => prev.filter((_, i) => i !== index));
+    setAdditionalPhotoPreviews(prev => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = () => {
@@ -119,8 +243,9 @@ export default function EventCreationPage() {
       endDate: endDate?.toISOString() || startDate.toISOString(),
       startTime,
       endTime,
-      price: formData.isFree ? null : parseFloat(formData.price),
-      maxCapacity: formData.maxCapacity ? parseInt(formData.maxCapacity) : null,
+      timezone,
+      price: formData.isFree ? null : formData.price,
+      maxCapacity: formData.maxCapacity || null,
       latitude: formData.coordinates.lat || null,
       longitude: formData.coordinates.lng || null,
     });
@@ -153,25 +278,20 @@ export default function EventCreationPage() {
             <div className="space-y-2">
               <Label>Event Type *</Label>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                {[
-                  { value: 'milonga', label: 'Milonga', icon: '💃' },
-                  { value: 'workshop', label: 'Workshop', icon: '📚' },
-                  { value: 'festival', label: 'Festival', icon: '🎉' },
-                  { value: 'practica', label: 'Practica', icon: '🎯' },
-                ].map((type) => (
+                {EVENT_TYPES.map((type) => (
                   <button
                     key={type.value}
                     type="button"
                     onClick={() => setFormData({ ...formData, eventType: type.value })}
-                    className={`p-4 rounded-xl border-2 transition-all hover-elevate ${
+                    className={`p-3 rounded-xl border-2 transition-all hover-elevate text-sm ${
                       formData.eventType === type.value
                         ? 'border-primary bg-primary/5'
                         : 'border-border hover:border-primary/50'
                     }`}
                     data-testid={`button-type-${type.value}`}
                   >
-                    <div className="text-2xl mb-2">{type.icon}</div>
-                    <div className="font-medium">{type.label}</div>
+                    <div className="text-xl mb-1">{type.icon}</div>
+                    <div className="font-medium text-xs">{type.label}</div>
                   </button>
                 ))}
               </div>
@@ -262,6 +382,7 @@ export default function EventCreationPage() {
                     data-testid="input-start-time"
                   />
                 </div>
+                <p className="text-xs text-muted-foreground">Timezone: {timezone}</p>
               </div>
 
               <div className="space-y-2">
@@ -294,15 +415,7 @@ export default function EventCreationPage() {
               <UnifiedLocationPicker
                 value={formData.location}
                 coordinates={formData.coordinates}
-                onChange={(location, coordinates, parsed) => {
-                  setFormData({ 
-                    ...formData, 
-                    location,
-                    city: parsed?.city || "",
-                    country: parsed?.country || "",
-                    coordinates 
-                  });
-                }}
+                onChange={handleLocationChange}
                 mode="city"
                 placeholder="Search for a city (e.g., Buenos Aires, Argentina)"
               />
@@ -367,14 +480,18 @@ export default function EventCreationPage() {
                 <div className="space-y-2">
                   <Label htmlFor="price">Ticket Price *</Label>
                   <div className="relative">
-                    <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 font-semibold text-lg">
+                      {CURRENCY_ICONS[formData.currency] || '$'}
+                    </span>
                     <Input
                       id="price"
                       type="number"
-                      placeholder="25.00"
+                      placeholder="25"
+                      min="0"
+                      step="0.01"
                       className="pl-10 h-12"
-                      value={formData.price}
-                      onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                      value={formData.price || ''}
+                      onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) || 0 })}
                       data-testid="input-price"
                     />
                   </div>
@@ -389,10 +506,10 @@ export default function EventCreationPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="USD">USD ($)</SelectItem>
-                      <SelectItem value="EUR">EUR (€)</SelectItem>
-                      <SelectItem value="GBP">GBP (£)</SelectItem>
-                      <SelectItem value="ARS">ARS ($)</SelectItem>
+                      <SelectItem value="USD">{CURRENCY_ICONS['USD']} USD</SelectItem>
+                      <SelectItem value="EUR">{CURRENCY_ICONS['EUR']} EUR</SelectItem>
+                      <SelectItem value="GBP">{CURRENCY_ICONS['GBP']} GBP</SelectItem>
+                      <SelectItem value="ARS">{CURRENCY_ICONS['ARS']} ARS</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -400,16 +517,17 @@ export default function EventCreationPage() {
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="maxCapacity">Maximum Capacity</Label>
+              <Label htmlFor="maxCapacity">Maximum Attendees</Label>
               <div className="relative">
                 <Users className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                 <Input
                   id="maxCapacity"
                   type="number"
                   placeholder="100"
+                  min="0"
                   className="pl-10 h-12"
-                  value={formData.maxCapacity}
-                  onChange={(e) => setFormData({ ...formData, maxCapacity: e.target.value })}
+                  value={formData.maxCapacity || ''}
+                  onChange={(e) => setFormData({ ...formData, maxCapacity: parseInt(e.target.value) || 0 })}
                   data-testid="input-capacity"
                 />
               </div>
@@ -426,6 +544,7 @@ export default function EventCreationPage() {
                     <SelectValue placeholder="Select style" />
                   </SelectTrigger>
                   <SelectContent>
+                    <SelectItem value="">None</SelectItem>
                     <SelectItem value="traditional">Traditional</SelectItem>
                     <SelectItem value="nuevo">Nuevo</SelectItem>
                     <SelectItem value="alternative">Alternative</SelectItem>
@@ -453,18 +572,70 @@ export default function EventCreationPage() {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="imageUrl">Cover Image URL</Label>
-              <div className="relative">
-                <ImageIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                <Input
-                  id="imageUrl"
-                  placeholder="https://example.com/image.jpg"
-                  className="pl-10 h-12"
-                  value={formData.imageUrl}
-                  onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-                  data-testid="input-image-url"
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label>Cover Photo</Label>
+                <div
+                  onClick={() => fileInputRef.current?.click()}
+                  className="border-2 border-dashed rounded-xl p-8 text-center cursor-pointer hover-elevate transition-all"
+                  data-testid="button-upload-cover"
+                >
+                  {coverPhotoPreview ? (
+                    <img src={coverPhotoPreview} alt="Cover" className="w-full h-48 object-cover rounded-lg" />
+                  ) : (
+                    <div className="space-y-2">
+                      <ImageIcon className="mx-auto h-12 w-12 text-muted-foreground" />
+                      <p className="text-sm font-medium">Click to upload cover photo</p>
+                      <p className="text-xs text-muted-foreground">PNG, JPG up to 10MB</p>
+                    </div>
+                  )}
+                </div>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleCoverPhotoSelect}
+                  className="hidden"
+                  data-testid="input-cover-photo"
                 />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Additional Photos ({additionalPhotos.length}/6)</Label>
+                {additionalPhotoPreviews.length > 0 && (
+                  <div className="grid grid-cols-3 gap-3 mb-4">
+                    {additionalPhotoPreviews.map((preview, index) => (
+                      <div key={index} className="relative group">
+                        <img src={preview} alt={`Photo ${index + 1}`} className="w-full h-24 object-cover rounded-lg" />
+                        <button
+                          onClick={() => removeAdditionalPhoto(index)}
+                          className="absolute top-1 right-1 bg-destructive rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                          data-testid={`button-remove-photo-${index}`}
+                        >
+                          <X className="h-3 w-3 text-white" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {additionalPhotos.length < 6 && (
+                  <label
+                    className="border-2 border-dashed rounded-xl p-6 text-center cursor-pointer hover-elevate transition-all block"
+                    data-testid="button-upload-additional"
+                  >
+                    <Upload className="mx-auto h-8 w-8 text-muted-foreground mb-2" />
+                    <p className="text-sm font-medium">Click to add up to 6 photos</p>
+                    <p className="text-xs text-muted-foreground">PNG, JPG up to 10MB each</p>
+                    <input
+                      type="file"
+                      multiple
+                      accept="image/*"
+                      onChange={handleAdditionalPhotosSelect}
+                      className="hidden"
+                      data-testid="input-additional-photos"
+                    />
+                  </label>
+                )}
               </div>
             </div>
           </motion.div>
@@ -492,7 +663,7 @@ export default function EventCreationPage() {
                   <div>
                     <h4 className="text-2xl font-bold">{formData.title || "Untitled Event"}</h4>
                     <Badge variant="secondary" className="mt-2 capitalize">
-                      {formData.eventType}
+                      {EVENT_TYPES.find(t => t.value === formData.eventType)?.label}
                     </Badge>
                   </div>
                   <Button variant="ghost" size="sm" onClick={() => setCurrentStep(0)}>
@@ -504,11 +675,12 @@ export default function EventCreationPage() {
                   <div className="flex items-center gap-3">
                     <CalendarIcon className="h-5 w-5 text-muted-foreground" />
                     <div>
-                      <p className="text-sm text-muted-foreground">Date</p>
+                      <p className="text-sm text-muted-foreground">Date & Time</p>
                       <p className="font-medium">
                         {startDate ? format(startDate, "PPP") : "Not set"}
                         {startTime && ` at ${startTime}`}
                       </p>
+                      <p className="text-xs text-muted-foreground">{timezone}</p>
                     </div>
                   </div>
 
@@ -521,11 +693,11 @@ export default function EventCreationPage() {
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <DollarSign className="h-5 w-5 text-muted-foreground" />
+                    <span className="text-lg font-bold">{CURRENCY_ICONS[formData.currency] || '$'}</span>
                     <div>
                       <p className="text-sm text-muted-foreground">Price</p>
                       <p className="font-medium">
-                        {formData.isFree ? "Free" : `${formData.currency} ${formData.price}`}
+                        {formData.isFree ? "Free" : `${CURRENCY_ICONS[formData.currency]} ${formData.price}`}
                       </p>
                     </div>
                   </div>
@@ -543,6 +715,13 @@ export default function EventCreationPage() {
                   <div className="pt-4 border-t">
                     <p className="text-sm text-muted-foreground mb-2">Description</p>
                     <p className="text-sm">{formData.description}</p>
+                  </div>
+                )}
+
+                {(coverPhoto || additionalPhotos.length > 0) && (
+                  <div className="pt-4 border-t">
+                    <p className="text-sm text-muted-foreground mb-2">Photos ({(coverPhoto ? 1 : 0) + additionalPhotos.length})</p>
+                    <p className="text-sm">1 cover photo + {additionalPhotos.length} additional photo{additionalPhotos.length !== 1 ? 's' : ''}</p>
                   </div>
                 )}
               </CardContent>
@@ -629,11 +808,11 @@ export default function EventCreationPage() {
                 <Button
                   type="button"
                   onClick={handleSubmit}
-                  disabled={createMutation.isPending}
+                  disabled={createMutation.isPending || uploadingPhotos}
                   className="gap-2"
                   data-testid="button-publish"
                 >
-                  {createMutation.isPending ? "Publishing..." : "Publish Event"}
+                  {createMutation.isPending || uploadingPhotos ? "Publishing..." : "Publish Event"}
                   <Sparkles className="h-4 w-4" />
                 </Button>
               )}
