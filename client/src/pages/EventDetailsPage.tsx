@@ -16,6 +16,8 @@ import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { getCityImageUrl } from "@/lib/cityImageMap";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { EventPostFeed } from "@/components/events/EventPostFeed";
 
 export default function EventDetailsPage() {
   const [, params] = useRoute("/events/:id");
