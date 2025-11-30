@@ -1002,17 +1002,20 @@ router.delete("/:id", authenticateToken, async (req: AuthRequest, res: Response)
 router.post("/:id/rsvp", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user!.id;
-    const { id } = req.params;
+    const eventId = parseInt(req.params.id);
     const { status = "going", guestCount = 0 } = req.body;
+
+    console.log(`[Events RSVP] Creating RSVP - userId: ${userId}, eventId: ${eventId}, status: ${status}`);
 
     // Check if event exists
     const event = await db
       .select()
       .from(events)
-      .where(eq(events.id, parseInt(id)))
+      .where(eq(events.id, eventId))
       .limit(1);
 
     if (event.length === 0) {
+      console.log(`[Events RSVP] Event not found: ${eventId}`);
       return res.status(404).json({ message: "Event not found" });
     }
 
@@ -1021,35 +1024,40 @@ router.post("/:id/rsvp", authenticateToken, async (req: AuthRequest, res: Respon
       .select()
       .from(eventRsvps)
       .where(and(
-        eq(eventRsvps.eventId, parseInt(id)),
+        eq(eventRsvps.eventId, eventId),
         eq(eventRsvps.userId, userId)
       ))
       .limit(1);
 
     if (existing.length > 0) {
+      console.log(`[Events RSVP] Updating existing RSVP for user ${userId} on event ${eventId}`);
       // Update existing RSVP
       const [updated] = await db
         .update(eventRsvps)
         .set({ status, guestCount, updatedAt: new Date() })
         .where(and(
-          eq(eventRsvps.eventId, parseInt(id)),
+          eq(eventRsvps.eventId, eventId),
           eq(eventRsvps.userId, userId)
         ))
         .returning();
 
+      console.log(`[Events RSVP] Updated RSVP:`, updated);
       return res.json(updated);
     }
 
     // Create new RSVP
+    console.log(`[Events RSVP] Creating new RSVP - values: { eventId: ${eventId}, userId: ${userId}, status: ${status}, guestCount: ${guestCount} }`);
     const [rsvp] = await db
       .insert(eventRsvps)
       .values({
-        eventId: parseInt(id),
+        eventId,
         userId,
         status,
         guestCount
       })
       .returning();
+
+    console.log(`[Events RSVP] RSVP created successfully:`, rsvp);
 
     // Update event attendee count
     await db
@@ -1057,8 +1065,9 @@ router.post("/:id/rsvp", authenticateToken, async (req: AuthRequest, res: Respon
       .set({
         currentAttendees: sql`${events.currentAttendees} + ${guestCount + 1}`
       })
-      .where(eq(events.id, parseInt(id)));
+      .where(eq(events.id, eventId));
 
+    console.log(`[Events RSVP] Event attendee count updated`);
     res.status(201).json(rsvp);
   } catch (error) {
     console.error("[Events] Error creating RSVP:", error);
