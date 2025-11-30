@@ -249,47 +249,122 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
     matchScore: number;
     details: string;
     status: 'pending_incoming' | 'pending_outgoing' | 'confirmed';
+    requestId?: number; // Links to database tripJoinRequests.id
+    message?: string;
   };
   
-  // Per-trip companion state (keyed by trip ID)
-  const [tripCompanions, setTripCompanions] = useState<Record<number, TravelCompanion[]>>(() => ({
-    // Default test data for trip ID 0 (first trip)
-    0: [
-      { id: 'sc1', name: 'Sofia Chen', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop', initials: 'SC', matchScore: 92, details: 'Loves milongas', status: 'pending_incoming' },
-      { id: 'mr1', name: 'Marco Rodriguez', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop', initials: 'MR', matchScore: 85, details: 'Intermediate dancer', status: 'pending_incoming' },
-      { id: 'al1', name: "Ana Lucia", avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop', initials: 'AL', matchScore: 88, details: 'Her trip to Buenos Aires', status: 'pending_outgoing' },
-      { id: 'jt1', name: 'James Thompson', avatar: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=100&h=100&fit=crop', initials: 'JT', matchScore: 90, details: 'Advanced dancer • Sharing accommodation', status: 'confirmed' },
-      { id: 'ek1', name: 'Elena Kowalski', avatar: 'https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=100&h=100&fit=crop', initials: 'EK', matchScore: 87, details: 'Beginner-friendly • Same milonga schedule', status: 'confirmed' },
-    ]
-  }));
+  // State for join requests from database
+  const [joinRequests, setJoinRequests] = useState<Record<number, any[]>>({});
   
-  // Get companions for a specific trip
-  const getCompanionsForTrip = (tripId: number) => tripCompanions[tripId] || [];
+  // Fetch join requests for all trips the user owns
+  const { data: allJoinRequests, refetch: refetchJoinRequests } = useQuery({
+    queryKey: ['/api/travel/join-requests', profileId],
+    queryFn: async () => {
+      // Only fetch if viewing own profile
+      if (!isOwnProfile) return {};
+      
+      const tripRequestsMap: Record<number, any[]> = {};
+      const plans = travelPlans || [];
+      
+      await Promise.all(plans.map(async (trip) => {
+        try {
+          const response = await fetch(`/api/travel/trips/${trip.id}/join-requests`);
+          if (response.ok) {
+            const requests = await response.json();
+            tripRequestsMap[trip.id] = requests;
+          }
+        } catch (e) {
+          console.error(`Failed to fetch join requests for trip ${trip.id}:`, e);
+        }
+      }));
+      
+      return tripRequestsMap;
+    },
+    enabled: isOwnProfile && !isPublicView && !!travelPlans,
+  });
   
-  // Accept a companion request - moves from pending_incoming to confirmed
-  const acceptCompanionRequest = (tripId: number, companionId: string) => {
-    setTripCompanions(prev => ({
-      ...prev,
-      [tripId]: (prev[tripId] || []).map(c => 
-        c.id === companionId ? { ...c, status: 'confirmed' as const } : c
-      )
+  // Get companions for a specific trip - combines real join requests with mock data
+  const getCompanionsForTrip = (tripId: number): TravelCompanion[] => {
+    const requests = allJoinRequests?.[tripId] || [];
+    
+    // Map real join requests to TravelCompanion format
+    const realCompanions: TravelCompanion[] = requests.map((req: any) => ({
+      id: `request-${req.id}`,
+      requestId: req.id,
+      name: req.requesterName || 'Unknown User',
+      avatar: req.requesterProfileImage || '',
+      initials: (req.requesterName || 'U').split(' ').map((n: string) => n[0]).join('').toUpperCase(),
+      matchScore: 85, // Default score for now
+      details: req.message || 'Wants to join your trip',
+      status: req.status === 'pending' ? 'pending_incoming' as const : 
+              req.status === 'accepted' ? 'confirmed' as const : 
+              'pending_incoming' as const,
+      message: req.message,
     }));
-    const companion = getCompanionsForTrip(tripId).find(c => c.id === companionId);
-    toast({ title: "Request Accepted!", description: `${companion?.name || 'Companion'} has been added to your trip.` });
-  };
-  
-  // Decline a companion request - removes from list
-  const declineCompanionRequest = (tripId: number, companionId: string) => {
-    const companion = getCompanionsForTrip(tripId).find(c => c.id === companionId);
-    setTripCompanions(prev => ({
-      ...prev,
-      [tripId]: (prev[tripId] || []).filter(c => c.id !== companionId)
-    }));
-    toast({ title: "Request Declined", description: `${companion?.name || 'Request'} has been declined.` });
+    
+    return realCompanions;
   };
   
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  
+  // Accept a companion request - calls API
+  const acceptCompanionRequest = async (tripId: number, companionId: string) => {
+    const requestId = parseInt(companionId.replace('request-', ''));
+    if (isNaN(requestId)) {
+      toast({ title: "Error", description: "Invalid request ID", variant: "destructive" });
+      return;
+    }
+    
+    try {
+      const response = await fetch(`/api/travel/join-requests/${requestId}/respond`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ status: 'accepted' }),
+      });
+      
+      if (response.ok) {
+        toast({ title: "Request Accepted!", description: "Companion has been added to your trip." });
+        refetchJoinRequests();
+        queryClient.invalidateQueries({ queryKey: ['/api/travel/join-requests', profileId] });
+      } else {
+        const error = await response.json();
+        toast({ title: "Error", description: error.message || "Failed to accept request", variant: "destructive" });
+      }
+    } catch (e) {
+      toast({ title: "Error", description: "Failed to accept request", variant: "destructive" });
+    }
+  };
+  
+  // Decline a companion request - calls API
+  const declineCompanionRequest = async (tripId: number, companionId: string) => {
+    const requestId = parseInt(companionId.replace('request-', ''));
+    if (isNaN(requestId)) {
+      toast({ title: "Error", description: "Invalid request ID", variant: "destructive" });
+      return;
+    }
+    
+    try {
+      const response = await fetch(`/api/travel/join-requests/${requestId}/respond`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ status: 'rejected' }),
+      });
+      
+      if (response.ok) {
+        toast({ title: "Request Declined", description: "Request has been declined." });
+        refetchJoinRequests();
+        queryClient.invalidateQueries({ queryKey: ['/api/travel/join-requests', profileId] });
+      } else {
+        const error = await response.json();
+        toast({ title: "Error", description: error.message || "Failed to decline request", variant: "destructive" });
+      }
+    } catch (e) {
+      toast({ title: "Error", description: "Failed to decline request", variant: "destructive" });
+    }
+  };
 
   const [pickerKey, setPickerKey] = useState(0);
   
