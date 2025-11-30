@@ -16,8 +16,18 @@ import { requireMinimumRole } from "../middleware/tierEnforcement";
 import { eq, and, desc, gte, lte, sql, or, asc, inArray, count } from "drizzle-orm";
 import { z } from "zod";
 import { PostingPermissionService } from "../services/PostingPermissionService";
+import multer from "multer";
+import { v2 as cloudinary } from "cloudinary";
 
 const router = Router();
+const upload = multer({ storage: multer.memoryStorage() });
+
+// Configure Cloudinary (ensure it uses env vars)
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 // Sample events data for when database is empty
 const sampleEvents = [
@@ -1154,12 +1164,13 @@ router.post("/:id/comments", authenticateToken, async (req: AuthRequest, res: Re
 // EVENT PHOTOS ROUTES
 // ============================================================================
 
-// GET /api/events/:id/photos - Get event photos
+// GET /api/events/:id/photos - Get event photos (includes organizer photos from mediaUrls)
 router.get("/:id/photos", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
-    const photos = await db
+    // Get photos from eventPhotos table (participant uploads)
+    const participantPhotos = await db
       .select({
         photo: eventPhotos,
         uploader: {
@@ -1174,10 +1185,230 @@ router.get("/:id/photos", async (req: Request, res: Response) => {
       .where(eq(eventPhotos.eventId, parseInt(id)))
       .orderBy(desc(eventPhotos.createdAt));
 
-    res.json(photos);
+    // Get event to include organizer photos from mediaUrls
+    const [event] = await db
+      .select({
+        id: events.id,
+        userId: events.userId,
+        mediaUrls: events.mediaUrls,
+        organizerName: users.name,
+        organizerUsername: users.username,
+        organizerImage: users.profileImage
+      })
+      .from(events)
+      .leftJoin(users, eq(events.userId, users.id))
+      .where(eq(events.id, parseInt(id)))
+      .limit(1);
+
+    // Transform organizer photos from mediaUrls to same format
+    const organizerPhotos = (event?.mediaUrls || []).map((url: string, idx: number) => ({
+      photo: {
+        id: -(idx + 1), // Negative IDs for organizer photos (won't conflict with DB)
+        eventId: parseInt(id),
+        uploaderId: event?.userId || 0,
+        photoUrl: url,
+        imageUrl: url, // Add imageUrl for frontend compatibility
+        caption: null,
+        isOrganizer: true,
+        createdAt: null
+      },
+      uploader: {
+        id: event?.userId || 0,
+        name: event?.organizerName || 'Organizer',
+        username: event?.organizerUsername || 'organizer',
+        profileImage: event?.organizerImage || null
+      },
+      isOrganizer: true
+    }));
+
+    // Normalize participant photos to include imageUrl for frontend
+    const normalizedParticipantPhotos = participantPhotos.map(p => ({
+      ...p,
+      photo: {
+        ...p.photo,
+        imageUrl: p.photo.photoUrl // Add imageUrl alias
+      },
+      isOrganizer: false
+    }));
+
+    // Combine: organizer photos first, then participant photos
+    res.json([...organizerPhotos, ...normalizedParticipantPhotos]);
   } catch (error) {
     console.error("[Events] Error fetching photos:", error);
     res.status(500).json({ message: "Failed to fetch photos" });
+  }
+});
+
+// POST /api/events/:id/photos - Upload photo to event (auth required, RSVP'd or organizer)
+router.post("/:id/photos", authenticateToken, upload.single("file"), async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    const eventId = parseInt(req.params.id);
+    const { caption } = req.body;
+
+    // Check event exists
+    const [event] = await db
+      .select()
+      .from(events)
+      .where(eq(events.id, eventId))
+      .limit(1);
+
+    if (!event) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+
+    // Check if user is organizer or RSVP'd
+    const isOrganizer = event.userId === userId || event.organizerId === userId;
+    
+    if (!isOrganizer) {
+      const [rsvp] = await db
+        .select()
+        .from(eventRsvps)
+        .where(and(
+          eq(eventRsvps.eventId, eventId),
+          eq(eventRsvps.userId, userId),
+          eq(eventRsvps.status, "going")
+        ))
+        .limit(1);
+
+      if (!rsvp) {
+        return res.status(403).json({ message: "Only event attendees can upload photos" });
+      }
+    }
+
+    // Upload to Cloudinary
+    const file = req.file;
+    if (!file) {
+      return res.status(400).json({ message: "No file provided" });
+    }
+
+    const result: any = await new Promise((resolve, reject) => {
+      cloudinary.uploader.upload_stream(
+        {
+          folder: `events/${eventId}`,
+          transformation: [
+            { width: 1200, height: 1200, crop: "limit" },
+            { quality: "auto", fetch_format: "auto" }
+          ]
+        },
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result);
+        }
+      ).end(file.buffer);
+    });
+
+    // Insert into database
+    const [photo] = await db
+      .insert(eventPhotos)
+      .values({
+        eventId,
+        uploaderId: userId,
+        photoUrl: result.secure_url,
+        thumbnailUrl: result.secure_url.replace('/upload/', '/upload/w_300,h_300,c_fill/'),
+        caption: caption || null
+      })
+      .returning();
+
+    // Get uploader info
+    const [uploader] = await db
+      .select({
+        id: users.id,
+        name: users.name,
+        username: users.username,
+        profileImage: users.profileImage
+      })
+      .from(users)
+      .where(eq(users.id, userId))
+      .limit(1);
+
+    res.status(201).json({
+      photo: { ...photo, imageUrl: photo.photoUrl },
+      uploader,
+      isOrganizer: false
+    });
+  } catch (error) {
+    console.error("[Events] Error uploading photo:", error);
+    res.status(500).json({ message: "Failed to upload photo" });
+  }
+});
+
+// DELETE /api/events/:id/photos/:photoId - Delete photo (auth required, owner or organizer)
+router.delete("/:id/photos/:photoId", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    const eventId = parseInt(req.params.id);
+    const photoId = parseInt(req.params.photoId);
+
+    // Check if photo exists
+    const [photo] = await db
+      .select()
+      .from(eventPhotos)
+      .where(and(
+        eq(eventPhotos.id, photoId),
+        eq(eventPhotos.eventId, eventId)
+      ))
+      .limit(1);
+
+    if (!photo) {
+      return res.status(404).json({ message: "Photo not found" });
+    }
+
+    // Check if user is photo owner or event organizer
+    const [event] = await db
+      .select()
+      .from(events)
+      .where(eq(events.id, eventId))
+      .limit(1);
+
+    const isPhotoOwner = photo.uploaderId === userId;
+    const isOrganizer = event?.userId === userId || event?.organizerId === userId;
+
+    if (!isPhotoOwner && !isOrganizer) {
+      return res.status(403).json({ message: "Not authorized to delete this photo" });
+    }
+
+    // Delete from database (Cloudinary cleanup could be added later)
+    await db
+      .delete(eventPhotos)
+      .where(eq(eventPhotos.id, photoId));
+
+    res.json({ message: "Photo deleted successfully" });
+  } catch (error) {
+    console.error("[Events] Error deleting photo:", error);
+    res.status(500).json({ message: "Failed to delete photo" });
+  }
+});
+
+// POST /api/events/:id/photos/:photoId/report - Report a photo (auth required)
+router.post("/:id/photos/:photoId/report", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    const eventId = parseInt(req.params.id);
+    const photoId = parseInt(req.params.photoId);
+    const { reason } = req.body;
+
+    // Check if photo exists
+    const [photo] = await db
+      .select()
+      .from(eventPhotos)
+      .where(and(
+        eq(eventPhotos.id, photoId),
+        eq(eventPhotos.eventId, eventId)
+      ))
+      .limit(1);
+
+    if (!photo) {
+      return res.status(404).json({ message: "Photo not found" });
+    }
+
+    // For now, just log the report (could add a reports table later)
+    console.log(`[Events] Photo ${photoId} reported by user ${userId}: ${reason || 'No reason given'}`);
+
+    res.json({ message: "Photo reported successfully. Our team will review it." });
+  } catch (error) {
+    console.error("[Events] Error reporting photo:", error);
+    res.status(500).json({ message: "Failed to report photo" });
   }
 });
 
