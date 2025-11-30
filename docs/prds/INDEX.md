@@ -1,6 +1,8 @@
 # PRD Index - Mundo Tango
 
 ## 🎯 Latest Update (Nov 30, 2025)
+**NEW:** [PRD_POSTING_PERMISSIONS_SYSTEM.md](PRD_POSTING_PERMISSIONS_SYSTEM.md) - Unified RBAC/ABAC for group and event posting permissions
+**NEW:** [PRD_MENTIONS_SYSTEM.md](PRD_MENTIONS_SYSTEM.md) - Canonical @mention format with auto-prepend context  
 **NEW:** [GAP_ANALYSIS_SUMMARY.md](GAP_ANALYSIS_SUMMARY.md) - Comprehensive gap analysis: 70% documentation debt, 60+ undocumented systems, prioritized action plan  
 **NEW:** [PRD_GROUPS_LANDING_SYSTEM.md](PRD_GROUPS_LANDING_SYSTEM.md) - Complete Groups landing page (3 tabs, search, creation modal)  
 **NEW:** [PRD_GROUP_DETAILS_SYSTEM.md](PRD_GROUP_DETAILS_SYSTEM.md) - Group details page (7 tabs: Discussion, Events, Housing, Hub, Members, City Guide, Settings)  
@@ -8,9 +10,9 @@
 **PRIOR:** [PRD_RSVP_ARCHITECTURE.md](PRD_RSVP_ARCHITECTURE.md) - Unified RSVP system for Events/Travel/Friends
 
 > **Last Updated:** 2025-11-30  
-> **Total PRDs:** 28  
-> **Documentation Coverage:** 35% (70% gap identified)  
-> **Session PRDs:** Gap Analysis Summary, Groups System (3 PRDs), RSVP Architecture, Profile System Updates  
+> **Total PRDs:** 30  
+> **Documentation Coverage:** 40% (60% gap remaining)  
+> **Session PRDs:** Posting Permissions, Mentions, Gap Analysis, Groups System (3 PRDs), RSVP Architecture  
 
 ---
 
@@ -66,6 +68,7 @@ This index links all Product Requirement Documents (PRDs) in the Mundo Tango pla
 | [PRD_GROUPS_LANDING_SYSTEM.md](./PRD_GROUPS_LANDING_SYSTEM.md) | **NEW** Groups landing (3 tabs: My Groups, Cities, Professional) | `GroupsPage.tsx`, `GroupCreationModal.tsx` | Location Picker, Unified Feeds |
 | [PRD_GROUP_DETAILS_SYSTEM.md](./PRD_GROUP_DETAILS_SYSTEM.md) | **NEW** Group details (7 tabs: Discussion, Events, Housing, Hub, Members, City Guide, Settings) | `GroupDetailsPage.tsx`, `GroupPostFeed.tsx`, `GroupMembersList.tsx` | RSVP Architecture, Unified Feeds, Travel Planning |
 | [PRD_GROUP_MEMBERSHIP_SYSTEM.md](./PRD_GROUP_MEMBERSHIP_SYSTEM.md) | **NEW** Membership flows (join/leave, role hierarchy, approval workflows) | `group-routes.ts`, `groupMembers` schema | RBAC/ABAC, Notifications |
+| [PRD_POSTING_PERMISSIONS_SYSTEM.md](./PRD_POSTING_PERMISSIONS_SYSTEM.md) | **NEW** RBAC/ABAC posting permissions for groups & events | `PostingPermissionService.ts`, `GroupPostFeed.tsx`, `EventPostFeed.tsx` | RBAC/ABAC, Group Membership, Event RSVP |
 
 ### Groups Database Schema
 
@@ -77,7 +80,7 @@ This index links all Product Requirement Documents (PRDs) in the Mundo Tango pla
 | `groupCategories` | id, name, slug, description, icon | category taxonomy |
 | `groupCategoryAssignments` | groupId, categoryId (composite PK) | → groups, groupCategories |
 
-### Groups API Endpoints (15+)
+### Groups API Endpoints (16+)
 
 | Endpoint | Method | Purpose |
 |----------|--------|---------|
@@ -89,7 +92,8 @@ This index links all Product Requirement Documents (PRDs) in the Mundo Tango pla
 | `/api/groups/:id/join` | POST | Join group (pending if private) |
 | `/api/groups/:id/leave` | DELETE | Leave group |
 | `/api/groups/:id/members` | GET | List members with role filtering |
-| `/api/groups/:id/posts` | GET/POST | Group posts CRUD |
+| `/api/groups/:id/permissions` | GET | **NEW** User's posting permissions (RBAC) |
+| `/api/groups/:id/posts` | GET/POST | Group posts CRUD (RBAC enforced) |
 | `/api/groups/:id/events` | GET | Events linked to group |
 
 ---
