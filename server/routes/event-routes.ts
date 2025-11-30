@@ -1105,6 +1105,20 @@ router.post("/:id/check-in", authenticateToken, async (req: AuthRequest, res: Re
 // EVENT POSTS (Discussion Tab)
 // ============================================================================
 
+// GET /api/events/:id/permissions - Get user's posting permissions for an event
+router.get("/:id/permissions", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    const eventId = parseInt(req.params.id);
+
+    const permissions = await PostingPermissionService.getEventPermissions(userId, eventId);
+    res.json(permissions);
+  } catch (error) {
+    console.error("[Events] Error fetching permissions:", error);
+    res.status(500).json({ message: "Failed to fetch permissions" });
+  }
+});
+
 // GET /api/events/:id/posts - Get all posts for an event
 router.get("/:id/posts", async (req: Request, res: Response) => {
   try {
