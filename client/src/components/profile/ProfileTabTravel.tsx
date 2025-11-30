@@ -453,6 +453,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
   });
 
   const handleVisibilityChange = (trip: TravelPlan, newVisibility: 'public' | 'friends' | 'private') => {
+    console.log('[TravelTab] Visibility change clicked:', { tripId: trip.id, newVisibility, currentVisibility: trip.visibility });
     updateTripMutation.mutate({ tripId: trip.id, data: { visibility: newVisibility } });
   };
 
