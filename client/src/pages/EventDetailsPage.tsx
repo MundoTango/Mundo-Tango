@@ -358,7 +358,6 @@ export default function EventDetailsPage() {
   const [rsvpStatusState, setRsvpStatusState] = useState<RSVPStatus>(null);
   const eventId = parseInt(params?.id || "0");
   const { data: event, isLoading } = useEvent(eventId);
-  const rsvpEvent = useRSVPEvent();
   const { toast } = useToast();
   const { user } = useAuth();
 
