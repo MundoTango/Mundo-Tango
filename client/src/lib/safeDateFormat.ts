@@ -1,4 +1,5 @@
 import { format, formatDistanceToNow } from "date-fns";
+import { formatTimezoneAbbr } from "./timezoneUtils";
 
 /**
  * Safely format a date with automatic fallback on error
@@ -7,11 +8,17 @@ import { format, formatDistanceToNow } from "date-fns";
 export function safeDateFormat(
   date: string | Date | null | undefined,
   formatStr: string,
-  fallback: string = "TBD"
+  fallback: string = "TBD",
+  timezone?: string
 ): string {
   try {
     if (!date) return fallback;
-    return format(new Date(date), formatStr);
+    const formatted = format(new Date(date), formatStr);
+    if (timezone) {
+      const tzAbbr = formatTimezoneAbbr(timezone);
+      return `${formatted} ${tzAbbr}`;
+    }
+    return formatted;
   } catch {
     return fallback;
   }

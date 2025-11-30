@@ -17,8 +17,9 @@ import { SEO } from "@/components/SEO";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/UnifiedLocationPicker";
-import { Calendar, MapPin, DollarSign, Users, Plus } from "lucide-react";
+import { Calendar, MapPin, DollarSign, Users, Plus, Clock } from "lucide-react";
 import { EVENT_TYPES, EVENT_TYPE_VALUES } from "@/lib/eventTypes";
+import { getTimezoneFromCity, formatTimezoneAbbr } from "@/lib/timezoneUtils";
 
 const eventFormSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters"),
@@ -50,6 +51,8 @@ export default function CreateEventPage() {
   const { toast } = useToast();
   const [selectedLocation, setSelectedLocation] = useState({ city: "", country: "", address: "" });
 
+  const [userTimezone, setUserTimezone] = useState("");
+  
   const form = useForm<EventFormValues>({
     resolver: zodResolver(eventFormSchema),
     defaultValues: {
