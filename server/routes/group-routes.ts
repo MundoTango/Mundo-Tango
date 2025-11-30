@@ -54,7 +54,6 @@ router.get("/", async (req: Request, res: Response) => {
           SELECT COUNT(*)::int 
           FROM ${events} e
           WHERE e.group_id = ${groups.id}
-          AND e.start_date > NOW()
         )`.as('event_count'),
         recommendationCount: sql<number>`(0)`.as('recommendation_count'),
         housingCount: sql<number>`(0)`.as('housing_count')
