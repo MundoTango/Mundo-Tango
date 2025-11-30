@@ -20,7 +20,7 @@ import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/Un
 import { Calendar, MapPin, DollarSign, Users, Plus, Clock } from "lucide-react";
 import { EVENT_TYPES, EVENT_TYPE_VALUES } from "@/lib/eventTypes";
 import { getTimezoneFromCity, formatTimezoneAbbr } from "@/lib/timezoneUtils";
-import { getCurrencyFromCountry } from "@/lib/currencyUtils";
+import { getCurrencyFromCountry, getCurrencySymbol } from "@/lib/currencyUtils";
 import { CurrencyPicker } from "@/components/input/CurrencyPicker";
 
 const eventFormSchema = z.object({
@@ -99,11 +99,13 @@ export default function CreateEventPage() {
 
   const createEventMutation = useMutation({
     mutationFn: async (data: EventFormValues) => {
+      const formattedPrice = data.price ? `${getCurrencySymbol(data.currency as any)}${data.price}` : null;
       return await apiRequest("/api/events", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...data,
+          price: formattedPrice,
           startDate: new Date(data.startDate),
           endDate: data.endDate ? new Date(data.endDate) : null,
         }),
