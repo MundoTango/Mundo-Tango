@@ -47,7 +47,7 @@ router.get("/events/search", authenticateToken, async (req, res) => {
     const searchQuery = String(q).toLowerCase();
     const limit = 10;
 
-    const searchedEvents = await storage.searchEvents(searchQuery, limit);
+    const searchedEvents = await storage.searchEventsSimple(searchQuery, limit);
     const results = searchedEvents.map((event: any) => ({
       id: `event_${event.id}`,
       type: "event" as const,
