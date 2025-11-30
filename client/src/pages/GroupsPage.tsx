@@ -13,7 +13,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
-import { Users, Plus, Search, MapPin, TrendingUp, Award, Heart, Activity, Filter, X, Globe, Star, MessageCircle, UserPlus, Calendar, Home, Building2, ChevronRight } from "lucide-react";
+import { Users, Plus, Search, MapPin, TrendingUp, Award, Heart, Activity, Filter, X, Globe, Star, MessageCircle, UserPlus, Calendar, Home, Building2, ChevronRight, Sparkles } from "lucide-react";
 import type { SelectGroup } from "@shared/schema";
 import { SEO } from "@/components/SEO";
 import { PageLayout } from "@/components/PageLayout";
@@ -190,20 +190,26 @@ export default function GroupsPage() {
         <div className="p-6 space-y-4">
           <p className="text-sm text-muted-foreground line-clamp-2">{group.description}</p>
           
-          <div className="grid grid-cols-2 gap-3 text-sm">
-            <div className="flex items-center gap-2">
+          <div className="grid grid-cols-4 gap-3 text-sm">
+            <div className="flex flex-col items-center gap-1 p-2 bg-muted/50 rounded-lg">
               <Users className="w-4 h-4 text-cyan-500" />
-              <div>
-                <div className="font-semibold">{(group.memberCount || 0).toLocaleString()}</div>
-                <div className="text-xs text-muted-foreground">Members</div>
-              </div>
+              <div className="font-semibold text-center">{(group.memberCount || 0).toLocaleString()}</div>
+              <div className="text-xs text-muted-foreground text-center">Members</div>
             </div>
-            <div className="flex items-center gap-2">
-              <Activity className="w-4 h-4 text-green-500" />
-              <div>
-                <div className="font-semibold">{group.healthScore}/100</div>
-                <div className="text-xs text-muted-foreground">Active</div>
-              </div>
+            <div className="flex flex-col items-center gap-1 p-2 bg-muted/50 rounded-lg">
+              <Calendar className="w-4 h-4 text-blue-500" />
+              <div className="font-semibold text-center">{group.eventCount || 0}</div>
+              <div className="text-xs text-muted-foreground text-center">Events</div>
+            </div>
+            <div className="flex flex-col items-center gap-1 p-2 bg-muted/50 rounded-lg">
+              <Sparkles className="w-4 h-4 text-purple-500" />
+              <div className="font-semibold text-center">{group.recommendationCount || 0}</div>
+              <div className="text-xs text-muted-foreground text-center">Recs</div>
+            </div>
+            <div className="flex flex-col items-center gap-1 p-2 bg-muted/50 rounded-lg">
+              <Home className="w-4 h-4 text-amber-500" />
+              <div className="font-semibold text-center">{group.housingCount || 0}</div>
+              <div className="text-xs text-muted-foreground text-center">Housing</div>
             </div>
           </div>
 
