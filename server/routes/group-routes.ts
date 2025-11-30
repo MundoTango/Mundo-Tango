@@ -167,46 +167,61 @@ router.get("/my-groups", authenticateToken, async (req: AuthRequest, res: Respon
     });
 
     // Enhance groups with location badges and categorization
-    const enhancedGroups = userGroups.map(item => {
-      const groupCity = item.group.city?.toLowerCase();
-      let locationCategory: 'current' | 'previous' | 'professional' | 'other' = 'other';
-      let locationBadge: string | null = null;
+    // Filter to only include: current city groups, groups from active location history, or professional groups
+    const enhancedGroups = userGroups
+      .map(item => {
+        const groupCity = item.group.city?.toLowerCase();
+        let locationCategory: 'current' | 'previous' | 'professional' | 'other' = 'other';
+        let locationBadge: string | null = null;
 
-      // Check if this is the current city group
-      if (groupCity && currentCity && groupCity === currentCity) {
-        locationCategory = 'current';
-        locationBadge = 'Current City';
-      }
-      // Check if this is a historical city group
-      else if (groupCity && historicalCities.has(groupCity)) {
-        const history = historicalCities.get(groupCity)!;
-        locationCategory = history.isCurrent ? 'current' : 'previous';
-        if (!history.isCurrent) {
-          const startYear = new Date(history.startDate).getFullYear();
-          const endYear = history.endDate ? new Date(history.endDate).getFullYear() : null;
-          locationBadge = endYear ? `Lived here ${startYear}-${endYear}` : `Lived here since ${startYear}`;
+        // Check if this is the current city group
+        if (groupCity && currentCity && groupCity === currentCity) {
+          locationCategory = 'current';
+          locationBadge = 'Current City';
         }
-      }
-      // Check if this is a professional group matching user's roles
-      else if (item.group.type === 'professional') {
-        const groupName = item.group.name.toLowerCase();
-        const matchingRole = tangoRoles.find(role => 
-          groupName.includes(role.toLowerCase()) || 
-          groupName.includes(role.toLowerCase().replace('_', ' '))
-        );
-        if (matchingRole) {
-          locationCategory = 'professional';
-          locationBadge = `Your Role: ${matchingRole}`;
+        // Check if this is a historical city group
+        else if (groupCity && historicalCities.has(groupCity)) {
+          const history = historicalCities.get(groupCity)!;
+          locationCategory = history.isCurrent ? 'current' : 'previous';
+          if (!history.isCurrent) {
+            const startYear = new Date(history.startDate).getFullYear();
+            const endYear = history.endDate ? new Date(history.endDate).getFullYear() : null;
+            locationBadge = endYear ? `Lived here ${startYear}-${endYear}` : `Lived here since ${startYear}`;
+          }
         }
-      }
+        // Check if this is a professional group matching user's roles
+        else if (item.group.type === 'professional') {
+          const groupName = item.group.name.toLowerCase();
+          const matchingRole = tangoRoles.find(role => 
+            groupName.includes(role.toLowerCase()) || 
+            groupName.includes(role.toLowerCase().replace('_', ' '))
+          );
+          if (matchingRole) {
+            locationCategory = 'professional';
+            locationBadge = `Your Role: ${matchingRole}`;
+          }
+        }
 
-      return {
-        ...item,
-        locationCategory,
-        locationBadge,
-        eventCount: item.eventCount || 0,
-      };
-    });
+        return {
+          ...item,
+          locationCategory,
+          locationBadge,
+          eventCount: item.eventCount || 0,
+        };
+      })
+      // Filter out city groups that aren't connected to location history (orphaned groups)
+      .filter(item => {
+        // Always include professional groups
+        if (item.group.type === 'professional') return true;
+        // Include current city group
+        if (item.locationCategory === 'current') return true;
+        // Include previous city groups from location history
+        if (item.locationCategory === 'previous') return true;
+        // Filter out orphaned city groups (not in location history)
+        if (item.group.type === 'city' && item.locationCategory === 'other') return false;
+        // Keep other non-city groups
+        return true;
+      });
 
     // Sort: current city first, then previous cities, then professional, then other
     const sortOrder = { current: 0, previous: 1, professional: 2, other: 3 };
