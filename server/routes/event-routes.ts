@@ -15,6 +15,7 @@ import { authenticateToken, optionalAuth, AuthRequest } from "../middleware/auth
 import { requireMinimumRole } from "../middleware/tierEnforcement";
 import { eq, and, desc, gte, lte, sql, or, asc, inArray, count } from "drizzle-orm";
 import { z } from "zod";
+import { PostingPermissionService } from "../services/PostingPermissionService";
 
 const router = Router();
 
@@ -1145,22 +1146,36 @@ router.get("/:id/posts", async (req: Request, res: Response) => {
   }
 });
 
-// POST /api/events/:id/posts - Create a post for an event
+// POST /api/events/:id/posts - Create a post for an event (RBAC enforced)
 router.post("/:id/posts", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user!.id;
     const { id } = req.params;
     const { content, imageUrl, videoUrl, tags, location } = req.body;
+    const eventId = parseInt(id);
 
     // Verify event exists
     const [event] = await db
       .select()
       .from(events)
-      .where(eq(events.id, parseInt(id)))
+      .where(eq(events.id, eventId))
       .limit(1);
 
     if (!event) {
       return res.status(404).json({ message: "Event not found" });
+    }
+
+    // RBAC Permission Check - Event context uses different rules than groups
+    const permissions = await PostingPermissionService.getEventPermissions(userId, eventId);
+    
+    // For event discussions, RSVP'd users can comment (canComment=true) but only staff can post updates (canPost=true)
+    // Allow posting if user canPost OR canComment (treating event posts like comments)
+    if (!permissions.canPost && !permissions.canComment) {
+      return res.status(403).json({ 
+        message: permissions.reason || "RSVP to participate in this event's discussion",
+        role: permissions.role,
+        isRsvpd: permissions.isRsvpd
+      });
     }
 
     if (!content || content.trim().length === 0) {
@@ -1171,7 +1186,7 @@ router.post("/:id/posts", authenticateToken, async (req: AuthRequest, res: Respo
       .insert(posts)
       .values({
         userId,
-        eventId: parseInt(id),
+        eventId: eventId,
         content: content.trim(),
         imageUrl: imageUrl || null,
         videoUrl: videoUrl || null,

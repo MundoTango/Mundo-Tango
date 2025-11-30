@@ -18,6 +18,7 @@ import {
 import { authenticateToken, AuthRequest } from "../middleware/auth";
 import { eq, and, desc, sql, or, ilike, inArray, count, asc, isNotNull } from "drizzle-orm";
 import { z } from "zod";
+import { PostingPermissionService } from "../services/PostingPermissionService";
 
 const router = Router();
 
@@ -753,26 +754,23 @@ router.get("/:id/posts", async (req: Request, res: Response) => {
   }
 });
 
-// POST /api/groups/:id/posts - Create group post (auth required, members only)
+// POST /api/groups/:id/posts - Create group post (RBAC enforced)
 router.post("/:id/posts", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user!.id;
     const { id } = req.params;
     const { content, mediaUrls } = req.body;
+    const groupId = parseInt(id);
 
-    // Check if user is a member
-    const membership = await db
-      .select()
-      .from(groupMembers)
-      .where(and(
-        eq(groupMembers.groupId, parseInt(id)),
-        eq(groupMembers.userId, userId),
-        eq(groupMembers.status, "active")
-      ))
-      .limit(1);
-
-    if (membership.length === 0) {
-      return res.status(403).json({ message: "Must be a group member to post" });
+    // RBAC Permission Check
+    const permissions = await PostingPermissionService.getGroupPermissions(userId, groupId);
+    
+    if (!permissions.canPost) {
+      return res.status(403).json({ 
+        message: permissions.reason || "You don't have permission to post in this group",
+        role: permissions.role,
+        canComment: permissions.canComment
+      });
     }
 
     if (!content || content.trim().length === 0) {
@@ -782,7 +780,7 @@ router.post("/:id/posts", authenticateToken, async (req: AuthRequest, res: Respo
     const [post] = await db
       .insert(groupPosts)
       .values({
-        groupId: parseInt(id),
+        groupId: groupId,
         authorId: userId,
         content,
         mediaUrls: mediaUrls || []
