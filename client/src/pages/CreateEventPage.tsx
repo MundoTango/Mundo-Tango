@@ -18,11 +18,12 @@ import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/UnifiedLocationPicker";
 import { Calendar, MapPin, DollarSign, Users, Plus } from "lucide-react";
+import { EVENT_TYPES, EVENT_TYPE_VALUES } from "@/lib/eventTypes";
 
 const eventFormSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters"),
   description: z.string().min(10, "Description must be at least 10 characters"),
-  eventType: z.enum(["milonga", "practica", "workshop", "festival", "performance", "social"]),
+  eventType: z.enum(EVENT_TYPE_VALUES as [string, ...string[]]),
   startDate: z.string().min(1, "Start date is required"),
   endDate: z.string().optional(),
   location: z.string().min(3, "Location is required"),
