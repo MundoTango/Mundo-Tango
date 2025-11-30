@@ -40,6 +40,21 @@ The Groups system provides community features with 3 discovery tabs (My Groups, 
 ### Platform Features
 Core features include social functionalities (events, groups, posts, notifications, media, live streaming, marketplaces, reviews) and business features (Talent Match AI, LIFE CEO AI, Multi-AI Orchestration, Automated Scraping, Admin Dashboard, Stripe Payments, and BullMQ Workers for background processing). Event scraping is supported, capturing detailed source information and raw participant data.
 
+### Documentation Status (Gap Analysis Nov 30, 2025)
+A comprehensive gap analysis revealed 70% documentation debt across the platform:
+- **Documented:** 35% (28 PRDs covering Groups, Profile, AI systems)
+- **Undocumented:** 65% (60+ systems including Marketplace, Crowdfunding, Legal, Housing, Travel, Messages, Admin)
+- **Database:** 150+ tables implemented, partially documented
+- **API Routes:** 70+ files implemented, minimal documentation
+- **E2E Tests:** 100+ test files exist (can be reverse-engineered for PRDs)
+
+Priority action plan managed by MB.MD v9.6 Pattern 28 (Hierarchical Execution):
+- P0 (Revenue-Critical): Marketplace, Crowdfunding, Legal, Messages
+- P1 (Core Platform): Housing, Travel, Events Extended, Admin Dashboard
+- P2 (Supporting): Notifications, Media, Reviews systems
+
+See `docs/prds/GAP_ANALYSIS_SUMMARY.md` for complete analysis and agent squad assignments.
+
 ### Testing
 The platform targets 95%+ test coverage using E2E Tests (Playwright) for critical functionalities and Hybrid Visual Testing with Playwright and Claude Computer Use for AI-powered visual regression analysis. Integration tests cover backend APIs and orchestration services.
 
