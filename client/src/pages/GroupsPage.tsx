@@ -13,7 +13,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
-import { Users, Plus, Search, MapPin, TrendingUp, Award, Heart, Activity, Filter, X, Globe, Star, MessageCircle, UserPlus, Calendar, Home, Building2, ChevronRight, Sparkles } from "lucide-react";
+import { Users, Plus, Search, MapPin, TrendingUp, Award, Heart, Activity, Filter, X, Globe, Star, MessageCircle, UserPlus, Calendar as CalendarIcon, Home, Building2, ChevronRight, Sparkles } from "lucide-react";
 import type { SelectGroup } from "@shared/schema";
 import { SEO } from "@/components/SEO";
 import { PageLayout } from "@/components/PageLayout";
@@ -57,8 +57,31 @@ export default function GroupsPage() {
     queryKey: ["/api/groups"],
   });
 
-  // Fetch user's actual group memberships
-  const { data: myGroupsData, isLoading: isLoadingMyGroups } = useQuery<any[]>({
+  // Fetch user's actual group memberships with location awareness
+  interface EnhancedGroupData {
+    groups: Array<{
+      group: SelectGroup;
+      membership: { role: string; status: string; joinedAt: string };
+      memberCount: number;
+      eventCount: number;
+      locationCategory: 'current' | 'previous' | 'professional' | 'other';
+      locationBadge: string | null;
+    }>;
+    userProfile: {
+      currentCity: string | null;
+      currentCountry: string | null;
+      tangoRoles: string[];
+    };
+    locationHistory: Array<{
+      id: number;
+      city: string;
+      startDate: string;
+      endDate: string | null;
+      isCurrent: boolean;
+    }>;
+  }
+
+  const { data: myGroupsData, isLoading: isLoadingMyGroups } = useQuery<EnhancedGroupData>({
     queryKey: ["/api/groups/my-groups"],
     enabled: !!user,
   });
@@ -111,18 +134,30 @@ export default function GroupsPage() {
     return filteredGroups.filter(g => g.type === "professional");
   }, [filteredGroups]);
 
-  // My Groups - actual groups user has joined from database
+  // My Groups - organized by location relevance (current city, previous cities, professional, other)
   const myGroups = useMemo(() => {
-    if (!user || !myGroupsData) return [];
-    return (myGroupsData || []).map(item => ({
+    if (!user || !myGroupsData?.groups) return [];
+    return myGroupsData.groups.map(item => ({
       ...item.group,
       healthScore: calculateHealthScore(item.group),
       distance: calculateDistance(item.group.city),
       isFeatured: (item.memberCount || 0) > 20,
       memberCount: item.memberCount,
-      membership: item.membership
+      eventCount: item.eventCount,
+      membership: item.membership,
+      locationCategory: item.locationCategory,
+      locationBadge: item.locationBadge,
     }));
   }, [myGroupsData, user]);
+
+  // Group myGroups by location category for organized display
+  const groupedMyGroups = useMemo(() => {
+    const current = myGroups.filter(g => g.locationCategory === 'current');
+    const previous = myGroups.filter(g => g.locationCategory === 'previous');
+    const professional = myGroups.filter(g => g.locationCategory === 'professional');
+    const other = myGroups.filter(g => g.locationCategory === 'other');
+    return { current, previous, professional, other };
+  }, [myGroups]);
 
   // Featured groups (algorithm-selected)
   const featuredGroups = useMemo(() => {
@@ -197,7 +232,7 @@ export default function GroupsPage() {
               <div className="text-xs text-muted-foreground text-center">Members</div>
             </div>
             <div className="flex flex-col items-center gap-1 p-2 bg-muted/50 rounded-lg">
-              <Calendar className="w-4 h-4 text-blue-500" />
+              <CalendarIcon className="w-4 h-4 text-blue-500" />
               <div className="font-semibold text-center">{group.eventCount || 0}</div>
               <div className="text-xs text-muted-foreground text-center">Events</div>
             </div>
@@ -367,26 +402,108 @@ export default function GroupsPage() {
                       </TabsTrigger>
                     </TabsList>
 
-                    {/* MY GROUPS Tab */}
+                    {/* MY GROUPS Tab - Organized by Location */}
                     <TabsContent value="my-groups" className="space-y-8">
                       <div className="flex items-center justify-between mb-6">
                         <div>
                           <h2 className="text-3xl font-serif font-bold">My Groups</h2>
                           <p className="text-muted-foreground mt-2">
-                            Automatically added based on your city and professional roles
+                            Organized by your current city, tango history, and professional roles
                           </p>
                         </div>
                       </div>
 
-                      {isLoading ? (
+                      {isLoadingMyGroups ? (
                         <div className="grid md:grid-cols-2 gap-6">
                           {[...Array(4)].map((_, i) => (
                             <Skeleton key={i} className="h-64 w-full" />
                           ))}
                         </div>
                       ) : myGroups.length > 0 ? (
-                        <div className="grid md:grid-cols-2 gap-6">
-                          {myGroups.map((group) => renderCityCard(group))}
+                        <div className="space-y-10">
+                          {/* Current City Groups */}
+                          {groupedMyGroups.current.length > 0 && (
+                            <section>
+                              <div className="flex items-center gap-2 mb-4">
+                                <Home className="w-5 h-5 text-primary" />
+                                <h3 className="text-xl font-semibold">Current City</h3>
+                                <Badge variant="default" className="ml-2">
+                                  {myGroupsData?.userProfile?.currentCity || 'Your City'}
+                                </Badge>
+                              </div>
+                              <div className="grid md:grid-cols-2 gap-6">
+                                {groupedMyGroups.current.map((group) => (
+                                  <div key={group.id} className="relative">
+                                    {renderCityCard(group)}
+                                  </div>
+                                ))}
+                              </div>
+                            </section>
+                          )}
+
+                          {/* Previous Cities Groups */}
+                          {groupedMyGroups.previous.length > 0 && (
+                            <section>
+                              <div className="flex items-center gap-2 mb-4">
+                                <MapPin className="w-5 h-5 text-cyan-500" />
+                                <h3 className="text-xl font-semibold">Previous Tango Cities</h3>
+                              </div>
+                              <div className="grid md:grid-cols-2 gap-6">
+                                {groupedMyGroups.previous.map((group) => (
+                                  <div key={group.id} className="relative">
+                                    {group.locationBadge && (
+                                      <Badge 
+                                        variant="secondary" 
+                                        className="absolute top-4 right-4 z-10 bg-background/90 backdrop-blur-sm"
+                                      >
+                                        <CalendarIcon className="w-3 h-3 mr-1" />
+                                        {group.locationBadge}
+                                      </Badge>
+                                    )}
+                                    {renderCityCard(group)}
+                                  </div>
+                                ))}
+                              </div>
+                            </section>
+                          )}
+
+                          {/* Professional Groups */}
+                          {groupedMyGroups.professional.length > 0 && (
+                            <section>
+                              <div className="flex items-center gap-2 mb-4">
+                                <Award className="w-5 h-5 text-purple-500" />
+                                <h3 className="text-xl font-semibold">Your Professional Networks</h3>
+                              </div>
+                              <div className="grid md:grid-cols-2 gap-6">
+                                {groupedMyGroups.professional.map((group) => (
+                                  <div key={group.id} className="relative">
+                                    {group.locationBadge && (
+                                      <Badge 
+                                        variant="outline" 
+                                        className="absolute top-4 right-4 z-10 bg-background/90 backdrop-blur-sm border-purple-500/50"
+                                      >
+                                        {group.locationBadge}
+                                      </Badge>
+                                    )}
+                                    {renderCityCard(group)}
+                                  </div>
+                                ))}
+                              </div>
+                            </section>
+                          )}
+
+                          {/* Other Groups */}
+                          {groupedMyGroups.other.length > 0 && (
+                            <section>
+                              <div className="flex items-center gap-2 mb-4">
+                                <Users className="w-5 h-5 text-muted-foreground" />
+                                <h3 className="text-xl font-semibold">Other Groups</h3>
+                              </div>
+                              <div className="grid md:grid-cols-2 gap-6">
+                                {groupedMyGroups.other.map((group) => renderCityCard(group))}
+                              </div>
+                            </section>
+                          )}
                         </div>
                       ) : (
                         <Card className="p-8 text-center border-dashed">

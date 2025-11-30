@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Slider } from "@/components/ui/slider";
-import { Info, MapPin, Calendar as CalendarIcon, Users, Award, Edit, Check, X, Languages, Star, Drama, Briefcase, Link as LinkIcon, Globe, Plus, Trash2, ExternalLink, User, AtSign } from "lucide-react";
+import { Info, MapPin, Calendar as CalendarIcon, Users, Award, Edit, Check, X, Languages, Star, Drama, Briefcase, Link as LinkIcon, Globe, Plus, Trash2, ExternalLink, User, AtSign, History, Home } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -178,6 +178,67 @@ export default function ProfileTabAbout({ user, isOwnProfile, isPublicView = fal
       return res.json();
     },
     enabled: !!user.city && !isEditing,
+  });
+
+  // Location History - cities lived 6+ months for tango
+  interface LocationHistoryEntry {
+    id: number;
+    city: string;
+    country: string | null;
+    startDate: string;
+    endDate: string | null;
+    isCurrent: boolean;
+    groupId: number | null;
+  }
+
+  const { data: locationHistory, refetch: refetchLocationHistory } = useQuery<LocationHistoryEntry[]>({
+    queryKey: ['/api/location-history'],
+    enabled: isOwnProfile,
+  });
+
+  const [isAddingCity, setIsAddingCity] = useState(false);
+  const [newCityData, setNewCityData] = useState({
+    city: '',
+    country: '',
+    startDate: '',
+    endDate: '',
+    isCurrent: false,
+  });
+
+  const addLocationHistoryMutation = useMutation({
+    mutationFn: async (data: typeof newCityData) => {
+      const res = await apiRequest('/api/location-history', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      });
+      return res;
+    },
+    onSuccess: () => {
+      refetchLocationHistory();
+      setIsAddingCity(false);
+      setNewCityData({ city: '', country: '', startDate: '', endDate: '', isCurrent: false });
+      toast({ title: "City added to your tango history" });
+    },
+    onError: (error: any) => {
+      toast({ 
+        title: "Could not add city", 
+        description: error.message || "Minimum 6 months residency required",
+        variant: "destructive" 
+      });
+    },
+  });
+
+  const deleteLocationHistoryMutation = useMutation({
+    mutationFn: async (id: number) => {
+      const res = await apiRequest(`/api/location-history/${id}`, {
+        method: 'DELETE',
+      });
+      return res;
+    },
+    onSuccess: () => {
+      refetchLocationHistory();
+      toast({ title: "City removed from history" });
+    },
   });
 
   useEffect(() => {
@@ -832,13 +893,24 @@ export default function ProfileTabAbout({ user, isOwnProfile, isPublicView = fal
     </Card>
   );
 
+  const formatDateRange = (startDate: string, endDate: string | null) => {
+    const start = new Date(startDate);
+    const startYear = start.getFullYear();
+    if (endDate) {
+      const end = new Date(endDate);
+      const endYear = end.getFullYear();
+      return startYear === endYear ? `${startYear}` : `${startYear}-${endYear}`;
+    }
+    return `${startYear} - Present`;
+  };
+
   const locationContent = (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-4">
           <CardTitle className="flex items-center gap-2">
             <MapPin className="w-5 h-5" />
-            Location
+            Tango Cities
           </CardTitle>
           {canEdit && (
             <PrivacyToggle
@@ -852,55 +924,228 @@ export default function ProfileTabAbout({ user, isOwnProfile, isPublicView = fal
         {canEdit && renderEditControls()}
       </CardHeader>
       
-      <CardContent>
+      <CardContent className="space-y-6">
         {privacy.isLocationVisible ? (
-          isEditing ? (
-            <UnifiedLocationPicker
-              mode="city"
-              value={[editValues.city, editValues.country].filter(Boolean).join(', ')}
-              onChange={(loc, coords, parsed) => {
-                const { city, country } = extractCityCountry(loc);
-                setEditValues({ ...editValues, city, country });
-              }}
-              placeholder="Search for your city..."
-            />
-          ) : user.city ? (
-            <div className="flex items-center gap-2 flex-wrap">
-              {cityStats?.groupId ? (
-                <Link href={`/groups/${cityStats.groupId}`}>
-                  <Badge 
-                    variant="secondary" 
-                    className="hover-elevate cursor-pointer flex items-center gap-1.5 px-3 py-1"
-                    data-testid="badge-city-pill"
-                  >
-                    <MapPin className="w-3 h-3" />
-                    <span>{user.city}</span>
-                    {cityStats.userCount > 0 && (
-                      <>
-                        <span className="text-muted-foreground">•</span>
-                        <Users className="w-3 h-3" />
-                        <span className="text-muted-foreground">{cityStats.userCount} users</span>
-                      </>
-                    )}
-                  </Badge>
-                </Link>
+          <>
+            {/* Primary City (Current) */}
+            <div>
+              <h4 className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-2">
+                <Home className="w-4 h-4" />
+                Primary City
+              </h4>
+              {isEditing ? (
+                <UnifiedLocationPicker
+                  mode="city"
+                  value={[editValues.city, editValues.country].filter(Boolean).join(', ')}
+                  onChange={(loc, coords, parsed) => {
+                    const { city, country } = extractCityCountry(loc);
+                    setEditValues({ ...editValues, city, country });
+                  }}
+                  placeholder="Search for your current city..."
+                />
+              ) : user.city ? (
+                <div className="flex items-center gap-2 flex-wrap">
+                  {cityStats?.groupId ? (
+                    <Link href={`/groups/${cityStats.groupId}`}>
+                      <Badge 
+                        variant="default" 
+                        className="hover-elevate cursor-pointer flex items-center gap-1.5 px-3 py-1.5"
+                        data-testid="badge-primary-city"
+                      >
+                        <MapPin className="w-3.5 h-3.5" />
+                        <span className="font-medium">{user.city}</span>
+                        {user.country && (
+                          <>
+                            <span className="opacity-70">,</span>
+                            <span className="opacity-70">{user.country}</span>
+                          </>
+                        )}
+                        {cityStats.userCount > 0 && (
+                          <>
+                            <span className="opacity-50">•</span>
+                            <Users className="w-3 h-3 opacity-70" />
+                            <span className="opacity-70">{cityStats.userCount}</span>
+                          </>
+                        )}
+                      </Badge>
+                    </Link>
+                  ) : (
+                    <Badge 
+                      variant="default" 
+                      className="flex items-center gap-1.5 px-3 py-1.5"
+                      data-testid="badge-primary-city"
+                    >
+                      <MapPin className="w-3.5 h-3.5" />
+                      <span className="font-medium">{user.city}</span>
+                      {user.country && (
+                        <>
+                          <span className="opacity-70">,</span>
+                          <span className="opacity-70">{user.country}</span>
+                        </>
+                      )}
+                    </Badge>
+                  )}
+                </div>
               ) : (
-                <Badge 
-                  variant="secondary" 
-                  className="flex items-center gap-1.5 px-3 py-1"
-                  data-testid="badge-city-pill"
-                >
-                  <MapPin className="w-3 h-3" />
-                  <span>{user.city}</span>
-                </Badge>
-              )}
-              {user.country && (
-                <span className="text-sm text-muted-foreground">{user.country}</span>
+                <p className="text-sm text-muted-foreground italic">No primary city set</p>
               )}
             </div>
-          ) : (
-            <p className="text-base text-muted-foreground italic">No location set</p>
-          )
+
+            <Separator />
+
+            {/* Previous Cities (Location History) */}
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <h4 className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                  <History className="w-4 h-4" />
+                  Previous Tango Cities
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <Info className="w-3 h-3 text-muted-foreground" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="text-xs max-w-[200px]">
+                        Cities where you lived 6+ months while dancing tango. 
+                        This helps connect you with your tango communities.
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </h4>
+                {canEdit && !isAddingCity && (
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    onClick={() => setIsAddingCity(true)}
+                    data-testid="button-add-city"
+                  >
+                    <Plus className="w-4 h-4 mr-1" />
+                    Add City
+                  </Button>
+                )}
+              </div>
+
+              {/* Add City Form */}
+              {isAddingCity && (
+                <Card className="p-4 mb-4 border-dashed">
+                  <div className="space-y-4">
+                    <UnifiedLocationPicker
+                      mode="city"
+                      value={newCityData.city}
+                      onChange={(loc, coords, parsed) => {
+                        const { city, country } = extractCityCountry(loc);
+                        setNewCityData({ ...newCityData, city, country });
+                      }}
+                      placeholder="Search for a city..."
+                    />
+                    
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-xs text-muted-foreground block mb-1.5">Start Date</label>
+                        <Input
+                          type="date"
+                          value={newCityData.startDate}
+                          onChange={(e) => setNewCityData({ ...newCityData, startDate: e.target.value })}
+                          data-testid="input-city-start-date"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-xs text-muted-foreground block mb-1.5">End Date</label>
+                        <Input
+                          type="date"
+                          value={newCityData.endDate}
+                          onChange={(e) => setNewCityData({ ...newCityData, endDate: e.target.value })}
+                          placeholder="Leave empty if current"
+                          data-testid="input-city-end-date"
+                        />
+                      </div>
+                    </div>
+
+                    <p className="text-xs text-muted-foreground">
+                      Minimum 6 months residency required for tango city history.
+                    </p>
+
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        onClick={() => addLocationHistoryMutation.mutate(newCityData)}
+                        disabled={!newCityData.city || !newCityData.startDate || addLocationHistoryMutation.isPending}
+                        data-testid="button-save-city"
+                      >
+                        {addLocationHistoryMutation.isPending ? "Saving..." : "Save City"}
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                          setIsAddingCity(false);
+                          setNewCityData({ city: '', country: '', startDate: '', endDate: '', isCurrent: false });
+                        }}
+                        data-testid="button-cancel-add-city"
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  </div>
+                </Card>
+              )}
+
+              {/* Location History List */}
+              {locationHistory && locationHistory.length > 0 ? (
+                <div className="flex flex-wrap gap-2">
+                  {locationHistory
+                    .filter(loc => !loc.isCurrent)
+                    .map((location) => (
+                      <div key={location.id} className="group relative">
+                        {location.groupId ? (
+                          <Link href={`/groups/${location.groupId}`}>
+                            <Badge 
+                              variant="secondary" 
+                              className="hover-elevate cursor-pointer flex items-center gap-1.5 px-3 py-1.5"
+                              data-testid={`badge-city-history-${location.id}`}
+                            >
+                              <MapPin className="w-3 h-3" />
+                              <span>{location.city}</span>
+                              <span className="text-muted-foreground">•</span>
+                              <CalendarIcon className="w-3 h-3 text-muted-foreground" />
+                              <span className="text-xs text-muted-foreground">
+                                {formatDateRange(location.startDate, location.endDate)}
+                              </span>
+                            </Badge>
+                          </Link>
+                        ) : (
+                          <Badge 
+                            variant="secondary" 
+                            className="flex items-center gap-1.5 px-3 py-1.5"
+                            data-testid={`badge-city-history-${location.id}`}
+                          >
+                            <MapPin className="w-3 h-3" />
+                            <span>{location.city}</span>
+                            <span className="text-muted-foreground">•</span>
+                            <CalendarIcon className="w-3 h-3 text-muted-foreground" />
+                            <span className="text-xs text-muted-foreground">
+                              {formatDateRange(location.startDate, location.endDate)}
+                            </span>
+                          </Badge>
+                        )}
+                        {canEdit && (
+                          <button
+                            onClick={() => deleteLocationHistoryMutation.mutate(location.id)}
+                            className="absolute -top-2 -right-2 w-5 h-5 bg-destructive rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                            data-testid={`button-delete-city-${location.id}`}
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                </div>
+              ) : !isAddingCity ? (
+                <p className="text-sm text-muted-foreground italic">
+                  No previous tango cities added yet
+                </p>
+              ) : null}
+            </div>
+          </>
         ) : (
           <div className="flex items-center gap-2 text-muted-foreground italic">
             <EyeOff className="w-4 h-4" />
