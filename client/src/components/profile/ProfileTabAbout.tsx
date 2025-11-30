@@ -207,10 +207,7 @@ export default function ProfileTabAbout({ user, isOwnProfile, isPublicView = fal
 
   const addLocationHistoryMutation = useMutation({
     mutationFn: async (data: typeof newCityData) => {
-      const res = await apiRequest('/api/location-history', {
-        method: 'POST',
-        body: JSON.stringify(data),
-      });
+      const res = await apiRequest('POST', '/api/location-history', data);
       return res;
     },
     onSuccess: () => {
@@ -230,9 +227,7 @@ export default function ProfileTabAbout({ user, isOwnProfile, isPublicView = fal
 
   const deleteLocationHistoryMutation = useMutation({
     mutationFn: async (id: number) => {
-      const res = await apiRequest(`/api/location-history/${id}`, {
-        method: 'DELETE',
-      });
+      const res = await apiRequest('DELETE', `/api/location-history/${id}`);
       return res;
     },
     onSuccess: () => {
