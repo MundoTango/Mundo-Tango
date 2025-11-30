@@ -49,7 +49,15 @@ router.get("/", async (req: Request, res: Response) => {
           SELECT COUNT(*)::int 
           FROM ${groupMembers} 
           WHERE ${groupMembers.groupId} = ${groups.id}
-        )`.as('member_count')
+        )`.as('member_count'),
+        eventCount: sql<number>`(
+          SELECT COUNT(*)::int 
+          FROM ${events} e
+          WHERE e.group_id = ${groups.id}
+          AND e.start_date > NOW()
+        )`.as('event_count'),
+        recommendationCount: sql<number>`(0)`.as('recommendation_count'),
+        housingCount: sql<number>`(0)`.as('housing_count')
       })
       .from(groups)
       .leftJoin(users, eq(groups.createdBy, users.id))
