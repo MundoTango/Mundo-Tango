@@ -37,9 +37,11 @@ export default function EventCreationPage() {
     queryKey: ['/api/auth/me'],
     queryFn: async () => {
       const res = await fetch('/api/auth/me');
-      if (!res.ok) throw new Error('Failed to fetch user');
+      if (!res.ok) return null;
       return res.json();
     },
+    retry: 3,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
   });
 
   // Initialize timezone from user's primary location
