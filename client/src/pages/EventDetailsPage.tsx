@@ -354,6 +354,7 @@ interface EventPermissions {
 export default function EventDetailsPage() {
   const [, params] = useRoute("/events/:id");
   const [, setLocation] = useLocation();
+  const [currentRsvpStatus, setCurrentRsvpStatus] = useState<string | null>(null);
   const eventId = parseInt(params?.id || "0");
   const { data: event, isLoading } = useEvent(eventId);
   const rsvpEvent = useRSVPEvent();
@@ -397,10 +398,14 @@ export default function EventDetailsPage() {
   const handleRsvp = async (status: "going" | "maybe" | "not_going") => {
     try {
       await rsvpEvent.mutateAsync({ eventId: eventId, status });
+      setCurrentRsvpStatus(status);
       toast({
         title: "RSVP confirmed!",
         description: `You are ${status} for this event.`,
       });
+      // Invalidate permissions query so post creator appears
+      queryClient.invalidateQueries({ queryKey: ["/api/events", eventId, "permissions"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/events", eventId, "attendees"] });
     } catch (error) {
       toast({
         title: "RSVP failed",
