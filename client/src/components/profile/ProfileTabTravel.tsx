@@ -852,7 +852,12 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
       {/* Header with Action */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold">Your Travel Plans</h2>
+          <h2 className="text-2xl font-bold">
+            {isPublicView && profileOwner 
+              ? `${profileOwner.displayName || profileOwner.name || 'User'}'s Travel Plans`
+              : 'Your Travel Plans'
+            }
+          </h2>
           <p className="text-sm text-muted-foreground">{upcomingTrips.length} upcoming • {pastTrips.length} past</p>
         </div>
         {canEdit && !showCreateForm && (
