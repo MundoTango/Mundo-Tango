@@ -15,7 +15,7 @@ export const CITY_IMAGE_MAP: Record<string, string> = {
   "Tokyo": "https://images.unsplash.com/photo-1540959375944-7049f642e9d4?w=1200&auto=format&fit=crop&q=80", // Tokyo neon/skyline
   "Toronto": "https://images.unsplash.com/photo-1517457373614-b7152f800fd1?w=1200&auto=format&fit=crop&q=80", // CN Tower
   "Sydney": "https://images.unsplash.com/photo-1506973404872-a4a7615e3fb0?w=1200&auto=format&fit=crop&q=80", // Opera House
-  "Melbourne": "https://images.unsplash.com/photo-1506973404872-a4a7615e3fb0?w=1200&auto=format&fit=crop&q=80", // Melbourne street art
+  "Melbourne": "https://images.unsplash.com/photo-1579154204601-01d82a27c6f2?w=1200&auto=format&fit=crop&q=80", // Melbourne laneway/street art
   "Los Angeles": "https://images.unsplash.com/photo-1516738901601-4f67e4051c14?w=1200&auto=format&fit=crop&q=80", // LA skyline
   "San Francisco": "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=1200&auto=format&fit=crop&q=80", // Golden Gate Bridge
   "Miami": "https://images.unsplash.com/photo-1495521821757-a1efb6729352?w=1200&auto=format&fit=crop&q=80", // Miami skyline

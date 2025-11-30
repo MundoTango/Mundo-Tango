@@ -656,3 +656,23 @@ body {
     }
   }
 }
+/* Leaflet popup constraint for city cards */
+.leaflet-popup-content-wrapper {
+  max-width: 360px;
+  width: 360px;
+  border-radius: 8px;
+}
+
+.leaflet-popup-content {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+.leaflet-popup {
+  margin-bottom: 20px;
+}
+
+.leaflet-popup-tip {
+  background: inherit;
+}

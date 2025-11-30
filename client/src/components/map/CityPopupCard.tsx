@@ -25,7 +25,7 @@ export function CityPopupCard({
   description,
 }: CityPopupCardProps) {
   return (
-    <div className="w-[360px] overflow-hidden rounded-lg bg-card" data-testid={`popup-city-card-${city}`}>
+    <div className="w-[360px] max-w-[360px] overflow-hidden rounded-lg bg-card flex flex-col" data-testid={`popup-city-card-${city}`} style={{ maxWidth: '360px', width: '360px' }}>
       <div className="relative aspect-[16/9] overflow-hidden">
         <img
           src={getCityImageUrl(city)}
