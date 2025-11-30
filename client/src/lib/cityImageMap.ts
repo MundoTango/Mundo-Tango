@@ -36,6 +36,8 @@ export const CITY_IMAGE_MAP: Record<string, string> = {
   "Mexico City": "https://images.unsplash.com/photo-1518154506305-a76b0e90a413?w=1200&auto=format&fit=crop&q=80", // Mexico City skyline
   "Rio de Janeiro": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1200&auto=format&fit=crop&q=80", // Rio Christ the Redeemer
   "Sao Paulo": "https://images.unsplash.com/photo-1554694752-8f64ddba8b51?w=1200&auto=format&fit=crop&q=80", // São Paulo skyline
+  "São Paulo": "https://images.unsplash.com/photo-1554694752-8f64ddba8b51?w=1200&auto=format&fit=crop&q=80", // São Paulo skyline (with accent)
+  "Athens": "https://images.unsplash.com/photo-1575883328134-b280d127e63f?w=1200&auto=format&fit=crop&q=80", // Acropolis/Athens skyline
 };
 
 /**
