@@ -93,7 +93,7 @@ export default function EventCreationPage() {
         // Format price with currency symbol for storage
         const formattedPrice = data.isFree ? null : `${getCurrencySymbol(data.currency)}${data.price}`;
         
-        return apiRequest("/api/events", "POST", {
+        return apiRequest("POST", "/api/events", {
           ...data,
           price: formattedPrice,
           coverImageUrl: uploadedPhotos.find(p => p.isCover)?.url,
