@@ -10,6 +10,7 @@ import { Search, Users, MapPin, Plus, TrendingUp } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/UnifiedLocationPicker";
+import { getCityImageUrl } from "@/lib/cityImageMap";
 
 export default function CityGroupsPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -95,15 +96,13 @@ export default function CityGroupsPage() {
               
               return (
                 <Card key={group.id} className="hover-elevate" data-testid={`card-group-${group.id}`}>
-                  {group.coverImage && (
-                    <div className="h-32 overflow-hidden rounded-t-lg">
-                      <img
-                        src={group.coverImage}
-                        alt={group.name}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  )}
+                  <div className="h-32 overflow-hidden rounded-t-lg">
+                    <img
+                      src={group.coverImage || getCityImageUrl(group.city)}
+                      alt={group.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
                   <CardHeader>
                     <div className="flex items-center gap-3">
                       <Avatar>

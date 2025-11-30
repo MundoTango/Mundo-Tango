@@ -19,6 +19,7 @@ import { GroupSettingsPanel } from "@/components/groups/GroupSettingsPanel";
 import { motion } from "framer-motion";
 import { useRSVPEvent, useMyRSVPs } from "@/hooks/useEvents";
 import { useAuth } from "@/contexts/AuthContext";
+import { getCityImageUrl } from "@/lib/cityImageMap";
 
 function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: string | null }) {
   const { user } = useAuth();
@@ -329,7 +330,7 @@ export default function GroupDetailsPage() {
           <motion.div 
             className="absolute inset-0 bg-cover bg-center" 
             style={{
-              backgroundImage: `url('${group.coverImage || "https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=1600&auto=format&fit=crop"}')`
+              backgroundImage: `url('${group.coverImage || getCityImageUrl(group.city)}')`
             }}
             initial={{ scale: 1.1 }}
             animate={{ scale: 1 }}

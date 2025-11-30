@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Search, Users, Briefcase, Music, User, CheckCircle2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
+import { getCityImageUrl } from "@/lib/cityImageMap";
 
 const professionalCategories = [
   { value: "all", label: "All Professionals", icon: Users },
@@ -101,15 +102,13 @@ export default function ProfessionalGroupsPage() {
               
               return (
                 <Card key={group.id} className="hover-elevate" data-testid={`card-group-${group.id}`}>
-                  {group.coverImage && (
-                    <div className="h-32 overflow-hidden rounded-t-lg">
-                      <img
-                        src={group.coverImage}
-                        alt={group.name}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  )}
+                  <div className="h-32 overflow-hidden rounded-t-lg">
+                    <img
+                      src={group.coverImage || getCityImageUrl(group.city)}
+                      alt={group.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
                   <CardHeader>
                     <div className="flex items-center gap-3">
                       <Avatar>

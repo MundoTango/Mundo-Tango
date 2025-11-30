@@ -15,6 +15,7 @@ import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary"
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { getCityImageUrl } from "@/lib/cityImageMap";
 
 export default function EventDetailsPage() {
   const [, params] = useRoute("/events/:id");
@@ -110,7 +111,7 @@ export default function EventDetailsPage() {
           <motion.div 
             className="absolute inset-0 bg-cover bg-center" 
             style={{
-              backgroundImage: `url('${event.imageUrl || event.coverImage || 'https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?w=1600&auto=format&fit=crop'}')`
+              backgroundImage: `url('${event.imageUrl || event.coverImage || getCityImageUrl(event.city)}')`
             }}
             initial={{ scale: 1.1 }}
             animate={{ scale: 1 }}

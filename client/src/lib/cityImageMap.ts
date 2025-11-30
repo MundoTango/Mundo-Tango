@@ -6,7 +6,7 @@
 
 export const CITY_IMAGE_MAP: Record<string, string> = {
   // Major Tango Cities
-  "Buenos Aires": "https://images.unsplash.com/photo-1497436212556-dc7a1d5f4f3e?w=1200&auto=format&fit=crop&q=80", // Buenos Aires cityscape
+  "Buenos Aires": "https://images.unsplash.com/photo-1612294037637-ec328d0e075e?w=1200&auto=format&fit=crop&q=80", // Buenos Aires Obelisco skyline
   "Paris": "https://images.unsplash.com/photo-1499856871957-5b8620a32237?w=1200&auto=format&fit=crop&q=80", // Eiffel Tower/Paris skyline
   "Barcelona": "https://images.unsplash.com/photo-1562883714039-c1c1e2b57ecb?w=1200&auto=format&fit=crop&q=80", // Sagrada Familia
   "Berlin": "https://images.unsplash.com/photo-1571735119606-7d44c5e9f0cd?w=1200&auto=format&fit=crop&q=80", // Berlin cityscape
