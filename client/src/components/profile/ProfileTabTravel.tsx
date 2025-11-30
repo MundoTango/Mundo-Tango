@@ -896,14 +896,27 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
       )}
 
       {/* Trip Cards with Full Features - 2 Column Grid */}
-      {travelPlans && travelPlans.length > 0 && (
+      {travelPlans && travelPlans.length > 0 && (() => {
+        const visibleTrips = travelPlans.filter((trip) => {
+          if (!isPublicView) return true;
+          const visibility = trip.visibility || 'public';
+          return visibility === 'public';
+        });
+        
+        if (isPublicView && visibleTrips.length === 0) {
+          return (
+            <Card>
+              <CardContent className="py-8 text-center">
+                <Plane className="h-10 w-10 mx-auto mb-3 text-muted-foreground/50" />
+                <p className="text-muted-foreground">No public travel plans shared.</p>
+              </CardContent>
+            </Card>
+          );
+        }
+        
+        return (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {travelPlans
-            .filter((trip) => {
-              if (!isPublicView) return true;
-              const visibility = trip.visibility || 'public';
-              return visibility === 'public';
-            })
+          {visibleTrips
             .map((trip, index) => {
             const budgetStats = calculateBudgetStats(trip);
             const activeTab = tripTabs[trip.id] || "overview";
@@ -1055,6 +1068,17 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
                     )}
                     {!isOwnProfile && trip.status && (
                       <Badge variant="outline" className="text-xs bg-white/20 text-white border-white/30">{trip.status.charAt(0).toUpperCase() + trip.status.slice(1)}</Badge>
+                    )}
+                    {isPublicView && (
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="h-6 text-xs border px-2 py-0 bg-primary/20 text-white border-primary/40 hover:bg-primary/30"
+                        data-testid={`button-request-book-${index}`}
+                      >
+                        <Send className="h-3 w-3 mr-1" />
+                        Request to Book
+                      </Button>
                     )}
                   </div>
                 </div>
@@ -1556,7 +1580,8 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
             );
           })}
         </div>
-      )}
+        );
+      })()}
 
       {/* Enhanced Accommodation Dialog with MT Host Integration */}
       <Dialog open={!!accommodationDialog} onOpenChange={(open) => { if (!open) { setAccommodationDialog(null); itemForm.reset(); setScrapingUrl(''); setAccommodationTab('mthost'); } }}>
