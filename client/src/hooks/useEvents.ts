@@ -152,11 +152,12 @@ export function useDeleteEvent() {
   });
 }
 
-export function useEventRSVPs(eventId: string | number) {
+export function useEventRSVPs(eventId: string | number, statusFilter?: string) {
   return useQuery({
-    queryKey: ["/api/events", eventId, "attendees"],
+    queryKey: ["/api/events", eventId, "attendees", statusFilter || "all"],
     queryFn: async () => {
-      const res = await fetch(`/api/events/${eventId}/attendees`);
+      const status = statusFilter || "all";
+      const res = await fetch(`/api/events/${eventId}/attendees?status=${status}`);
       if (!res.ok) throw new Error('Failed to fetch RSVPs');
       return await res.json();
     },
@@ -196,17 +197,19 @@ export function useRSVPEvent() {
       return await res.json();
     },
     onMutate: async (variables) => {
-      await queryClient.cancelQueries({ queryKey: ["/api/events", variables.eventId, "attendees"] });
+      const eventId = typeof variables.eventId === 'string' ? parseInt(variables.eventId, 10) : variables.eventId;
+      
+      await queryClient.cancelQueries({ queryKey: ["/api/events", eventId, "attendees", "all"] });
       await queryClient.cancelQueries({ queryKey: ["/api/events/my-rsvps"] });
 
-      const previousAttendees = queryClient.getQueryData(["/api/events", variables.eventId, "attendees"]);
+      const previousAttendees = queryClient.getQueryData(["/api/events", eventId, "attendees", "all"]);
       const previousMyRsvps = queryClient.getQueryData(["/api/events/my-rsvps"]);
 
-      return { previousAttendees, previousMyRsvps };
+      return { previousAttendees, previousMyRsvps, eventId };
     },
     onError: (err, variables, context) => {
       if (context?.previousAttendees) {
-        queryClient.setQueryData(["/api/events", variables.eventId, "attendees"], context.previousAttendees);
+        queryClient.setQueryData(["/api/events", context.eventId, "attendees", "all"], context.previousAttendees);
       }
       if (context?.previousMyRsvps) {
         queryClient.setQueryData(["/api/events/my-rsvps"], context.previousMyRsvps);
@@ -218,8 +221,13 @@ export function useRSVPEvent() {
       });
     },
     onSuccess: (data, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["/api/events", variables.eventId, "attendees"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/events", variables.eventId] });
+      const eventId = typeof variables.eventId === 'string' ? parseInt(variables.eventId, 10) : variables.eventId;
+      
+      queryClient.invalidateQueries({ queryKey: ["/api/events", eventId, "attendees", "all"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/events", eventId, "attendees", "going"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/events", eventId, "attendees", "maybe"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/events", eventId, "attendees", "not_going"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/events", eventId] });
       queryClient.invalidateQueries({ queryKey: ["/api/events/my-rsvps"] });
       queryClient.invalidateQueries({ queryKey: ["/api/events"] });
 

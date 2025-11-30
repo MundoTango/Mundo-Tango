@@ -907,7 +907,13 @@ router.post("/:id/rsvp", authenticateToken, async (req: AuthRequest, res: Respon
 router.get("/:id/attendees", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { status = "going" } = req.query;
+    const { status = "all" } = req.query;
+
+    const whereConditions = [eq(eventRsvps.eventId, parseInt(id))];
+    
+    if (status !== "all") {
+      whereConditions.push(eq(eventRsvps.status, status as string));
+    }
 
     const attendees = await db
       .select({
@@ -923,10 +929,7 @@ router.get("/:id/attendees", async (req: Request, res: Response) => {
       })
       .from(eventRsvps)
       .leftJoin(users, eq(eventRsvps.userId, users.id))
-      .where(and(
-        eq(eventRsvps.eventId, parseInt(id)),
-        eq(eventRsvps.status, status as string)
-      ))
+      .where(and(...whereConditions))
       .orderBy(desc(eventRsvps.createdAt));
 
     res.json(attendees);
