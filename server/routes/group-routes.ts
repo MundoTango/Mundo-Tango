@@ -32,7 +32,7 @@ router.get("/", async (req: Request, res: Response) => {
       city,
       country,
       isPrivate,
-      limit = "20",
+      limit = "100",
       offset = "0"
     } = req.query;
 
