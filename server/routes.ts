@@ -9101,7 +9101,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.patch("/api/travel/plans/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const id = parseInt(req.params.id);
+      console.log(`[Travel] PATCH /api/travel/plans/${id}:`, JSON.stringify(req.body));
       const plan = await storage.updateTravelPlan(id, req.body);
+      console.log(`[Travel] Updated plan ${id} visibility:`, plan?.visibility);
       res.json(plan);
     } catch (error) {
       console.error('[Travel] Update plan error:', error);
