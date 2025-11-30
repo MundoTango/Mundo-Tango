@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Calendar, MapPin, Users, Star, TrendingUp, Clock, ExternalLink, Check, HelpCircle, Sparkles } from "lucide-react";
+import { Calendar, MapPin, Users, Star, Clock, ExternalLink, Check, HelpCircle, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import { safeDateFormat, safeDateDistance } from "@/lib/safeDateFormat";
 import { Link } from "wouter";
@@ -37,8 +37,6 @@ interface UpcomingEventsSidebarProps {
 
 const PRIORITY_CATEGORIES = [
   { id: "my-events", label: "My Events", icon: Star, color: "from-amber-500 to-orange-500" },
-  { id: "trending", label: "Trending", icon: TrendingUp, color: "from-pink-500 to-rose-500" },
-  { id: "nearby", label: "Nearby", icon: MapPin, color: "from-cyan-500 to-blue-500" },
   { id: "upcoming", label: "Upcoming", icon: Clock, color: "from-purple-500 to-indigo-500" },
 ];
 
@@ -82,41 +80,56 @@ export function UpcomingEventsSidebar({ className }: UpcomingEventsSidebarProps)
   const fetchEvents = async () => {
     setIsLoading(true);
     try {
-      let eventData = [];
+      let eventData: Event[] = [];
+      const token = localStorage.getItem('accessToken');
       
-      // For "my-events", fetch both RSVPed events and city group events
       if (selectedCategory === 'my-events') {
+        // Fetch events user has RSVPed to
         try {
           const rsvpResponse = await fetch('/api/events/my-rsvps?limit=10&upcoming=true', {
-            headers: {
-              'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-            },
+            headers: { 'Authorization': `Bearer ${token}` },
           });
           if (rsvpResponse.ok) {
             const rsvpData = await rsvpResponse.json();
-            eventData = rsvpData;
+            // Transform RSVP data to Event format
+            eventData = rsvpData.map((rsvp: any) => rsvp.event || {
+              id: rsvp.eventId,
+              title: rsvp.eventTitle || 'Untitled Event',
+              startDate: rsvp.eventStartDate || new Date().toISOString(),
+              location: rsvp.eventLocation,
+              rsvpCount: rsvp.eventRsvpCount || 0,
+            }).filter((e: any) => e.id);
           }
         } catch (error) {
           console.error('Failed to fetch RSVPed events:', error);
         }
-      } else {
-        // For other categories, use the standard events endpoint
-        const response = await fetch(`/api/events?category=${selectedCategory}&limit=5&upcoming=true`, {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-          },
-        });
-        
-        if (response.ok) {
-          eventData = await response.json();
+      } else if (selectedCategory === 'upcoming') {
+        // Fetch events from user's city groups
+        try {
+          const cityGroupResponse = await fetch('/api/events/city-group?limit=10&upcoming=true', {
+            headers: { 'Authorization': `Bearer ${token}` },
+          });
+          if (cityGroupResponse.ok) {
+            eventData = await cityGroupResponse.json();
+          } else {
+            // Fallback to general upcoming events
+            const upcomingResponse = await fetch('/api/events?upcoming=true&limit=10', {
+              headers: { 'Authorization': `Bearer ${token}` },
+            });
+            if (upcomingResponse.ok) {
+              eventData = await upcomingResponse.json();
+            }
+          }
+        } catch (error) {
+          console.error('Failed to fetch city group events:', error);
         }
       }
       
-      // Only use test data if we have no real data
-      setEvents(eventData.length > 0 ? eventData : getTestEvents());
+      // Only use test data if we have no real data and user is not authenticated
+      setEvents(eventData.length > 0 ? eventData : (token ? [] : getTestEvents()));
     } catch (error) {
       console.error('Failed to fetch events:', error);
-      setEvents(getTestEvents());
+      setEvents([]);
     } finally {
       setIsLoading(false);
     }
