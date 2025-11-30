@@ -74,6 +74,31 @@ Every cascade operation must create a notification for user awareness:
 **Trigger:** User assigned/removed from event role  
 **Result:** Permission updates for that event's resources
 
+### 7. Event Location Cascade (Implemented) ✅
+**Trigger:** Event created in new city  
+**File:** `server/routes/event-routes.ts` (POST /api/events)  
+**Utility:** `server/utils/cityGroupAutomation.ts`
+
+| Action | Result |
+|--------|--------|
+| Event created in city without group | Auto-create city group (type='city') |
+| Organizer becomes group admin | Auto-join with admin role |
+| Notification sent | "🎉 You started a community!" |
+
+**Implementation Pattern:**
+```typescript
+// In event-routes.ts POST /api/events, after event creation:
+if (cleanData.city && cleanData.country) {
+  const { ensureCityGroupExists } = await import("../utils/cityGroupAutomation");
+  const result = await ensureCityGroupExists(city, country, userId);
+  // result.wasCreated = true if new group was made
+}
+```
+
+**Learning Added (Nov 30, 2025):**
+- EventsSystemAgent must always apply Pattern 8 (Cascade Detection) when creating location-based entities
+- Cross-reference CASCADE_FRAMEWORK PRD for any feature touching city/country fields
+
 ---
 
 ## Architecture Pattern

@@ -805,6 +805,27 @@ router.post("/", authenticateToken, requireMinimumRole(3), async (req: AuthReque
       })
       .returning();
 
+    // CASCADE: Auto-create city group if new location (Pattern 8: Cascade Detection)
+    if (cleanData.city && cleanData.country) {
+      try {
+        const { ensureCityGroupExists } = await import("../utils/cityGroupAutomation");
+        const cityGroupResult = await ensureCityGroupExists(
+          cleanData.city,
+          cleanData.country,
+          userId
+        );
+        
+        if (cityGroupResult?.wasCreated) {
+          console.log(`[Events] CASCADE: Created new city group "${cityGroupResult.groupName}" for event ${event.id}`);
+        } else if (cityGroupResult) {
+          console.log(`[Events] City group "${cityGroupResult.groupName}" already exists for ${cleanData.city}`);
+        }
+      } catch (cascadeError) {
+        // Don't fail event creation if cascade fails
+        console.error("[Events] City group cascade error (non-blocking):", cascadeError);
+      }
+    }
+
     res.status(201).json(event);
   } catch (error) {
     if (error instanceof z.ZodError) {
