@@ -39,13 +39,15 @@ interface EventPostFeedProps {
 }
 
 function EventPostFeedComponent({ eventId, eventName = "Event" }: EventPostFeedProps) {
-  const { data: permissions } = useQuery<EventPermissions>({
+  const { data: permissions, refetch } = useQuery<EventPermissions>({
     queryKey: ["/api/events", eventId, "permissions"],
     queryFn: async () => {
       const res = await fetch(`/api/events/${eventId}/permissions`, { credentials: "include" });
       if (!res.ok) return { canPost: false, canComment: false, role: null, isRsvpd: false };
       return res.json();
     },
+    staleTime: 0, // Always refetch to ensure fresh RSVP status
+    gcTime: 0, // Clear cache immediately
   });
 
   const { data: posts, isLoading } = useQuery<EventPost[]>({
