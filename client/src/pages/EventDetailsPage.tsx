@@ -4,9 +4,9 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Calendar, MapPin, DollarSign, Globe, Users, Check, ChevronRight, User, Ticket, Music, Tag, ExternalLink, Clock, Navigation, Camera, Image as ImageIcon, Loader2 } from "lucide-react";
+import { Calendar, MapPin, DollarSign, Globe, Users, Check, ChevronRight, User, Ticket, Music, Tag, ExternalLink, Clock, Navigation, Camera, Image as ImageIcon, Loader2, Edit, Share2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { safeDateFormat } from "@/lib/safeDateFormat";
 import { getTimezoneFromCity } from "@/lib/timezoneUtils";
 import { getCurrencySymbol } from "@/lib/currencyUtils";
@@ -20,6 +20,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { getCityImageUrl } from "@/lib/cityImageMap";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { EventPostFeed } from "@/components/events/EventPostFeed";
+import { EventParticipantManager } from "@/components/events/EventParticipantManager";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface EventPhoto {
   photo: {
@@ -131,17 +133,40 @@ function EventPhotosTab({ eventId }: { eventId: number }) {
   );
 }
 
+interface EventPermissions {
+  canPost: boolean;
+  canComment: boolean;
+  role: string | null;
+  isRsvpd: boolean;
+  isOrganizer: boolean;
+  reason?: string;
+}
+
 export default function EventDetailsPage() {
   const [, params] = useRoute("/events/:id");
+  const [, setLocation] = useLocation();
   const eventId = parseInt(params?.id || "0");
   const { data: event, isLoading } = useEvent(eventId);
   const rsvpEvent = useRSVPEvent();
   const { toast } = useToast();
+  const { user } = useAuth();
 
   const { data: attendees = [] } = useQuery<any[]>({
     queryKey: ["/api/events", eventId, "attendees"],
     enabled: eventId > 0,
   });
+
+  const { data: permissions } = useQuery<EventPermissions>({
+    queryKey: ["/api/events", eventId, "permissions"],
+    queryFn: async () => {
+      const res = await fetch(`/api/events/${eventId}/permissions`, { credentials: "include" });
+      if (!res.ok) return { canPost: false, canComment: false, role: null, isRsvpd: false, isOrganizer: false };
+      return res.json();
+    },
+    enabled: eventId > 0,
+  });
+
+  const isOrganizer = permissions?.isOrganizer || (event?.userId === user?.id);
 
   const buildFullAddress = () => {
     const parts = [];
@@ -305,8 +330,18 @@ export default function EventDetailsPage() {
             className="space-y-8"
           >
             <Card className="overflow-hidden">
-              <CardHeader className="border-b">
+              <CardHeader className="border-b flex flex-row items-center justify-between gap-4">
                 <CardTitle className="text-3xl font-serif">{event.title || 'Event'}</CardTitle>
+                {isOrganizer && (
+                  <div className="flex items-center gap-2">
+                    <Link href={`/events/${eventId}/edit`}>
+                      <Button variant="outline" size="sm" className="gap-2" data-testid="button-edit-event">
+                        <Edit className="h-4 w-4" />
+                        Edit Event
+                      </Button>
+                    </Link>
+                  </div>
+                )}
               </CardHeader>
               <Tabs defaultValue="discussion" className="w-full">
                 <TabsList className="grid w-full grid-cols-3 border-b rounded-none bg-transparent p-0">
@@ -762,6 +797,9 @@ export default function EventDetailsPage() {
                     </div>
                   </motion.div>
                 )}
+
+                {/* Event Team / Participants Manager */}
+                <EventParticipantManager eventId={eventId} isOrganizer={isOrganizer} />
                   </div>
                 </TabsContent>
               </Tabs>

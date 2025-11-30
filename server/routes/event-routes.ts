@@ -1156,13 +1156,30 @@ router.post("/:id/check-in", authenticateToken, async (req: AuthRequest, res: Re
 // ============================================================================
 
 // GET /api/events/:id/permissions - Get user's posting permissions for an event
-router.get("/:id/permissions", authenticateToken, async (req: AuthRequest, res: Response) => {
+router.get("/:id/permissions", optionalAuth, async (req: AuthRequest, res: Response) => {
   try {
-    const userId = req.user!.id;
+    const userId = req.user?.id;
     const eventId = parseInt(req.params.id);
 
+    // Return default (no permission) for unauthenticated users
+    if (!userId) {
+      return res.json({
+        canPost: false,
+        canComment: false,
+        role: null,
+        isRsvpd: false,
+        isOrganizer: false,
+        reason: "Login to join the discussion"
+      });
+    }
+
     const permissions = await PostingPermissionService.getEventPermissions(userId, eventId);
-    res.json(permissions);
+    
+    // Check if user is the event organizer
+    const [event] = await db.select({ userId: events.userId }).from(events).where(eq(events.id, eventId)).limit(1);
+    const isOrganizer = event?.userId === userId;
+    
+    res.json({ ...permissions, isOrganizer });
   } catch (error) {
     console.error("[Events] Error fetching permissions:", error);
     res.status(500).json({ message: "Failed to fetch permissions" });
