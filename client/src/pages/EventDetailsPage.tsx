@@ -1,10 +1,10 @@
 import { useRoute } from "wouter";
 import { useEvent, useRSVPEvent } from "@/hooks/useEvents";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Calendar, MapPin, DollarSign, Globe, Users, Check, ChevronRight, User, Ticket, Music, Tag, ExternalLink, Clock, Navigation, Camera, Image as ImageIcon, Loader2, Edit, Share2, Heart } from "lucide-react";
+import { Calendar, MapPin, DollarSign, Globe, Users, Check, ChevronRight, User, Ticket, Music, Tag, ExternalLink, Clock, Navigation, Camera, Image as ImageIcon, Loader2, Edit, Share2, Heart, MoreVertical, Trash2, Flag, Upload, Crown, UserCheck } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link, useLocation } from "wouter";
 import { safeDateFormat } from "@/lib/safeDateFormat";
@@ -23,6 +23,9 @@ import { EventPostFeed } from "@/components/events/EventPostFeed";
 import { EventParticipantManager } from "@/components/events/EventParticipantManager";
 import { UnifiedMemoriesFeed } from "@/components/feed/UnifiedMemoriesFeed";
 import { useAuth } from "@/contexts/AuthContext";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { queryClient } from "@/lib/queryClient";
+import { useRef, useState } from "react";
 
 interface EventPhoto {
   photo: {
@@ -30,8 +33,10 @@ interface EventPhoto {
     eventId: number;
     uploaderId: number;
     imageUrl: string;
+    photoUrl?: string;
     caption?: string;
     createdAt: string;
+    isOrganizer?: boolean;
   };
   uploader?: {
     id: number;
@@ -39,9 +44,15 @@ interface EventPhoto {
     username: string;
     profileImage?: string;
   };
+  isOrganizer?: boolean;
 }
 
 function EventPhotosTab({ eventId }: { eventId: number }) {
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isUploading, setIsUploading] = useState(false);
+
   const { data: photos, isLoading } = useQuery<EventPhoto[]>({
     queryKey: ['/api/events', eventId, 'photos'],
     queryFn: async () => {
@@ -51,6 +62,103 @@ function EventPhotosTab({ eventId }: { eventId: number }) {
     },
     enabled: eventId > 0,
   });
+
+  const { data: permissions } = useQuery<{ isOrganizer: boolean; isRsvpd: boolean }>({
+    queryKey: ['/api/events', eventId, 'permissions'],
+    queryFn: async () => {
+      const res = await fetch(`/api/events/${eventId}/permissions`, { credentials: 'include' });
+      if (!res.ok) return { isOrganizer: false, isRsvpd: false };
+      return res.json();
+    },
+    enabled: eventId > 0,
+  });
+
+  const canUpload = permissions?.isOrganizer || permissions?.isRsvpd;
+
+  const handleUploadClick = () => {
+    if (!user) {
+      toast({ title: "Please log in to upload photos", variant: "destructive" });
+      return;
+    }
+    if (!canUpload) {
+      toast({ title: "Only event attendees can upload photos", description: "RSVP to join the event first", variant: "destructive" });
+      return;
+    }
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      toast({ title: "Please select an image file", variant: "destructive" });
+      return;
+    }
+
+    setIsUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const res = await fetch(`/api/events/${eventId}/photos`, {
+        method: 'POST',
+        credentials: 'include',
+        body: formData,
+      });
+
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.message || 'Upload failed');
+      }
+
+      toast({ title: "Photo uploaded successfully!" });
+      queryClient.invalidateQueries({ queryKey: ['/api/events', eventId, 'photos'] });
+    } catch (error: any) {
+      toast({ title: "Upload failed", description: error.message, variant: "destructive" });
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
+  const handleDeletePhoto = async (photoId: number) => {
+    try {
+      const res = await fetch(`/api/events/${eventId}/photos/${photoId}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.message || 'Delete failed');
+      }
+
+      toast({ title: "Photo deleted" });
+      queryClient.invalidateQueries({ queryKey: ['/api/events', eventId, 'photos'] });
+    } catch (error: any) {
+      toast({ title: "Delete failed", description: error.message, variant: "destructive" });
+    }
+  };
+
+  const handleReportPhoto = async (photoId: number) => {
+    try {
+      const res = await fetch(`/api/events/${eventId}/photos/${photoId}/report`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reason: 'Inappropriate content' }),
+      });
+
+      if (!res.ok) throw new Error('Report failed');
+      toast({ title: "Photo reported", description: "Our team will review it." });
+    } catch (error) {
+      toast({ title: "Report failed", variant: "destructive" });
+    }
+  };
+
+  const organizerPhotos = photos?.filter(p => p.isOrganizer) || [];
+  const participantPhotos = photos?.filter(p => !p.isOrganizer) || [];
 
   if (isLoading) {
     return (
@@ -62,9 +170,118 @@ function EventPhotosTab({ eventId }: { eventId: number }) {
     );
   }
 
-  if (!photos || photos.length === 0) {
+  const renderPhotoGrid = (photoList: EventPhoto[], sectionTitle?: string, icon?: React.ReactNode) => (
+    <div className="space-y-4">
+      {sectionTitle && (
+        <div className="flex items-center gap-2">
+          {icon}
+          <h4 className="text-sm font-medium text-muted-foreground">{sectionTitle}</h4>
+          <Badge variant="secondary" className="text-xs">{photoList.length}</Badge>
+        </div>
+      )}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        {photoList.map((photo, index) => {
+          const isOwner = user && photo.uploader?.id === user.id;
+          const canDelete = isOwner || permissions?.isOrganizer;
+          const photoUrl = photo.photo.imageUrl || photo.photo.photoUrl || '';
+
+          return (
+            <motion.div
+              key={`${photo.isOrganizer ? 'org' : 'part'}-${photo.photo.id}`}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: index * 0.05 }}
+              className="group relative aspect-square rounded-xl overflow-hidden border hover-elevate cursor-pointer"
+              data-testid={`photo-${photo.photo.id}`}
+            >
+              <img 
+                src={photoUrl}
+                alt={photo.photo.caption || 'Event photo'}
+                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+              />
+              {photo.isOrganizer && (
+                <Badge className="absolute top-2 left-2 gap-1 bg-primary/90 backdrop-blur-sm text-xs">
+                  <Crown className="h-3 w-3" />
+                  Organizer
+                </Badge>
+              )}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                {user && photo.photo.id > 0 && (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        className="absolute top-2 right-2 h-8 w-8 bg-black/40 backdrop-blur-sm text-white hover:bg-black/60"
+                        data-testid={`button-photo-menu-${photo.photo.id}`}
+                      >
+                        <MoreVertical className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      {canDelete && (
+                        <DropdownMenuItem 
+                          onClick={() => handleDeletePhoto(photo.photo.id)}
+                          className="text-destructive focus:text-destructive"
+                          data-testid={`button-delete-photo-${photo.photo.id}`}
+                        >
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Delete
+                        </DropdownMenuItem>
+                      )}
+                      {!isOwner && (
+                        <DropdownMenuItem 
+                          onClick={() => handleReportPhoto(photo.photo.id)}
+                          data-testid={`button-report-photo-${photo.photo.id}`}
+                        >
+                          <Flag className="h-4 w-4 mr-2" />
+                          Report
+                        </DropdownMenuItem>
+                      )}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                )}
+                <div className="absolute bottom-0 left-0 right-0 p-3">
+                  {photo.uploader && (
+                    <div className="flex items-center gap-2">
+                      <Avatar className="h-6 w-6 border border-white/30">
+                        <AvatarImage src={photo.uploader.profileImage} />
+                        <AvatarFallback className="text-xs bg-white/20 text-white">
+                          {photo.uploader.name?.charAt(0) || 'U'}
+                        </AvatarFallback>
+                      </Avatar>
+                      <span className="text-sm text-white truncate">
+                        {photo.uploader.name}
+                      </span>
+                    </div>
+                  )}
+                  {photo.photo.caption && (
+                    <p className="text-xs text-white/80 mt-1 line-clamp-2">
+                      {photo.photo.caption}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          );
+        })}
+      </div>
+    </div>
+  );
+
+  const totalPhotos = (photos?.length || 0);
+
+  if (totalPhotos === 0) {
     return (
       <div className="text-center py-16">
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          onChange={handleFileChange}
+          className="hidden"
+          data-testid="input-photo-file"
+        />
         <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-muted/50 flex items-center justify-center">
           <Camera className="h-10 w-10 text-muted-foreground" />
         </div>
@@ -72,64 +289,55 @@ function EventPhotosTab({ eventId }: { eventId: number }) {
         <p className="text-muted-foreground mb-6">
           Be the first to share photos from this event!
         </p>
-        <Button variant="outline" className="gap-2" data-testid="button-upload-photo">
-          <ImageIcon className="h-4 w-4" />
-          Upload Photo
+        <Button 
+          variant="outline" 
+          className="gap-2" 
+          onClick={handleUploadClick}
+          disabled={isUploading}
+          data-testid="button-upload-photo"
+        >
+          {isUploading ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <Upload className="h-4 w-4" />
+          )}
+          {isUploading ? 'Uploading...' : 'Upload Photo'}
         </Button>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        onChange={handleFileChange}
+        className="hidden"
+        data-testid="input-photo-file"
+      />
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold">{photos.length} Photos</h3>
-        <Button variant="outline" size="sm" className="gap-2" data-testid="button-upload-photo">
-          <ImageIcon className="h-4 w-4" />
-          Upload
+        <h3 className="text-lg font-semibold">{totalPhotos} Photos</h3>
+        <Button 
+          variant="outline" 
+          size="sm" 
+          className="gap-2" 
+          onClick={handleUploadClick}
+          disabled={isUploading}
+          data-testid="button-upload-photo"
+        >
+          {isUploading ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <Upload className="h-4 w-4" />
+          )}
+          {isUploading ? 'Uploading...' : 'Upload'}
         </Button>
       </div>
       
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {photos.map((photo, index) => (
-          <motion.div
-            key={photo.photo.id}
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: index * 0.05 }}
-            className="group relative aspect-square rounded-xl overflow-hidden border hover-elevate cursor-pointer"
-            data-testid={`photo-${photo.photo.id}`}
-          >
-            <img 
-              src={photo.photo.imageUrl} 
-              alt={photo.photo.caption || 'Event photo'}
-              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
-              <div className="absolute bottom-0 left-0 right-0 p-3">
-                {photo.uploader && (
-                  <div className="flex items-center gap-2">
-                    <Avatar className="h-6 w-6 border border-white/30">
-                      <AvatarImage src={photo.uploader.profileImage} />
-                      <AvatarFallback className="text-xs bg-white/20 text-white">
-                        {photo.uploader.name?.charAt(0) || 'U'}
-                      </AvatarFallback>
-                    </Avatar>
-                    <span className="text-sm text-white truncate">
-                      {photo.uploader.name}
-                    </span>
-                  </div>
-                )}
-                {photo.photo.caption && (
-                  <p className="text-xs text-white/80 mt-1 line-clamp-2">
-                    {photo.photo.caption}
-                  </p>
-                )}
-              </div>
-            </div>
-          </motion.div>
-        ))}
-      </div>
+      {organizerPhotos.length > 0 && renderPhotoGrid(organizerPhotos, "Organizer Photos", <Crown className="h-4 w-4 text-primary" />)}
+      {participantPhotos.length > 0 && renderPhotoGrid(participantPhotos, "Guest Photos", <UserCheck className="h-4 w-4 text-muted-foreground" />)}
     </div>
   );
 }
