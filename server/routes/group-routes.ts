@@ -189,15 +189,16 @@ router.get("/my-groups", authenticateToken, async (req: AuthRequest, res: Respon
             locationBadge = endYear ? `Lived here ${startYear}-${endYear}` : `Lived here since ${startYear}`;
           }
         }
-        // Check if this is a professional group matching user's roles
+        // Check if this is a professional group
         else if (item.group.type === 'professional') {
+          locationCategory = 'professional';
+          // Try to find a matching role for the badge
           const groupName = item.group.name.toLowerCase();
           const matchingRole = tangoRoles.find(role => 
             groupName.includes(role.toLowerCase()) || 
             groupName.includes(role.toLowerCase().replace('_', ' '))
           );
           if (matchingRole) {
-            locationCategory = 'professional';
             locationBadge = `Your Role: ${matchingRole}`;
           }
         }
