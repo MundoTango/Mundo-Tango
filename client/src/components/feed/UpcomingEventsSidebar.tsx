@@ -120,18 +120,38 @@ export function UpcomingEventsSidebar({ className }: UpcomingEventsSidebarProps)
   const fetchEvents = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/events?category=${selectedCategory}&limit=5&upcoming=true`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-        },
-      });
+      let eventData = [];
       
-      if (response.ok) {
-        const data = await response.json();
-        setEvents(data.length > 0 ? data : getTestEvents());
+      // For "my-events", fetch both RSVPed events and city group events
+      if (selectedCategory === 'my-events') {
+        try {
+          const rsvpResponse = await fetch('/api/events/my-rsvps?limit=10&upcoming=true', {
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+            },
+          });
+          if (rsvpResponse.ok) {
+            const rsvpData = await rsvpResponse.json();
+            eventData = rsvpData;
+          }
+        } catch (error) {
+          console.error('Failed to fetch RSVPed events:', error);
+        }
       } else {
-        setEvents(getTestEvents());
+        // For other categories, use the standard events endpoint
+        const response = await fetch(`/api/events?category=${selectedCategory}&limit=5&upcoming=true`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+          },
+        });
+        
+        if (response.ok) {
+          eventData = await response.json();
+        }
       }
+      
+      // Only use test data if we have no real data
+      setEvents(eventData.length > 0 ? eventData : getTestEvents());
     } catch (error) {
       console.error('Failed to fetch events:', error);
       setEvents(getTestEvents());
