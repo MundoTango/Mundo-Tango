@@ -4,15 +4,31 @@ import { queryClient } from "@/lib/queryClient";
 import type { SelectGroupPost } from "@shared/schema";
 import { UnifiedMemoriesFeed } from "@/components/feed/UnifiedMemoriesFeed";
 import type { PostItemData } from "@/components/feed/PostItem";
+import { Badge } from "@/components/ui/badge";
+import { Shield, Users, Eye, Lock } from "lucide-react";
+
+interface GroupPermissions {
+  canPost: boolean;
+  canComment: boolean;
+  role: string | null;
+  reason?: string;
+}
 
 interface GroupPostFeedProps {
   groupId: number;
   groupName?: string;
-  canPost?: boolean;
-  canModerate?: boolean;
 }
 
-function GroupPostFeedComponent({ groupId, groupName = "Group", canPost = false, canModerate = false }: GroupPostFeedProps) {
+function GroupPostFeedComponent({ groupId, groupName = "Group" }: GroupPostFeedProps) {
+  const { data: permissions } = useQuery<GroupPermissions>({
+    queryKey: ["/api/groups", groupId, "permissions"],
+    queryFn: async () => {
+      const res = await fetch(`/api/groups/${groupId}/permissions`, { credentials: "include" });
+      if (!res.ok) return { canPost: false, canComment: false, role: null };
+      return res.json();
+    },
+  });
+
   const { data: posts, isLoading } = useQuery<SelectGroupPost[]>({
     queryKey: ["/api/groups", groupId, "posts"],
     queryFn: async () => {
@@ -65,17 +81,67 @@ function GroupPostFeedComponent({ groupId, groupName = "Group", canPost = false,
     queryClient.invalidateQueries({ queryKey: ["/api/groups", groupId, "posts"] });
   };
 
+  const canPost = permissions?.canPost ?? false;
+  const userRole = permissions?.role;
+
+  const getRoleIcon = (role: string | null | undefined) => {
+    switch (role) {
+      case "admin":
+      case "creator":
+        return <Shield className="h-3 w-3" />;
+      case "moderator":
+        return <Shield className="h-3 w-3" />;
+      case "member":
+        return <Users className="h-3 w-3" />;
+      case "follower":
+        return <Eye className="h-3 w-3" />;
+      default:
+        return <Lock className="h-3 w-3" />;
+    }
+  };
+
+  const getRoleBadgeVariant = (role: string | null | undefined) => {
+    switch (role) {
+      case "admin":
+      case "creator":
+        return "default";
+      case "moderator":
+        return "secondary";
+      case "member":
+        return "outline";
+      default:
+        return "outline";
+    }
+  };
+
   return (
-    <UnifiedMemoriesFeed
-      posts={transformedPosts}
-      isLoading={isLoading}
-      context={{ type: 'group', id: groupId, name: groupName }}
-      showPostCreator={true}
-      showFilters={true}
-      onPostCreated={handlePostCreated}
-      emptyMessage={`No posts in ${groupName} yet. Be the first to share!`}
-      data-testid="group-post-feed"
-    />
+    <div className="space-y-4" data-testid="group-post-feed">
+      {userRole && (
+        <div className="flex items-center gap-2 px-1">
+          <Badge variant={getRoleBadgeVariant(userRole)} className="gap-1 text-xs">
+            {getRoleIcon(userRole)}
+            {userRole.charAt(0).toUpperCase() + userRole.slice(1)}
+          </Badge>
+          {!canPost && (
+            <span className="text-xs text-muted-foreground">
+              {permissions?.reason || "Members can post in discussions"}
+            </span>
+          )}
+        </div>
+      )}
+      <UnifiedMemoriesFeed
+        posts={transformedPosts}
+        isLoading={isLoading}
+        context={{ type: 'group', id: groupId, name: groupName }}
+        showPostCreator={canPost}
+        showFilters={true}
+        onPostCreated={handlePostCreated}
+        emptyMessage={canPost 
+          ? `No posts in ${groupName} yet. Be the first to share!`
+          : `No posts in ${groupName} yet.`
+        }
+      />
+    </div>
   );
 }
 
