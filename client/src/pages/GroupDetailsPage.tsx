@@ -1,3 +1,4 @@
+import { useState, useMemo } from "react";
 import { useRoute, Link } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,7 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Users, MapPin, Settings as SettingsIcon, Calendar, Home, Building2, Heart, Check, ChevronRight, Music, Mic2, Star, Clock, ExternalLink, Compass, GraduationCap } from "lucide-react";
+import { Users, MapPin, Settings as SettingsIcon, Calendar, Home, Building2, Heart, Check, ChevronRight, Music, Mic2, Star, Clock, ExternalLink, Compass, GraduationCap, SlidersHorizontal, Languages } from "lucide-react";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { safeDateFormat } from "@/lib/safeDateFormat";
@@ -20,17 +21,21 @@ import { motion } from "framer-motion";
 import { useRSVPEvent, useMyRSVPs } from "@/hooks/useEvents";
 import { useAuth } from "@/contexts/AuthContext";
 import { getCityImageUrl } from "@/lib/cityImageMap";
+import { EventFilters, type EventFilterValues } from "@/components/events/EventFilters";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { getLanguageByCode } from "@/components/input/UnifiedLanguagePicker";
 
 function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: string | null }) {
   const { user } = useAuth();
   const { toast } = useToast();
   const rsvpMutation = useRSVPEvent();
   const { data: myRsvps } = useMyRSVPs();
+  const [filters, setFilters] = useState<EventFilterValues>({});
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
   
   const { data: events, isLoading } = useQuery<SelectEvent[]>({
     queryKey: ["/api/events", "group", groupId, groupCity],
     queryFn: async () => {
-      // First try to fetch by groupId using the new endpoint
       let res = await fetch(`/api/groups/${groupId}/events?limit=50`, { credentials: "include" });
       if (res.ok) {
         const data = await res.json();
@@ -41,7 +46,6 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
         if (eventList.length > 0) return eventList;
       }
       
-      // Fallback: try fetching by city
       if (groupCity) {
         res = await fetch(`/api/events?city=${encodeURIComponent(groupCity)}&limit=50&upcoming=true`, { credentials: "include" });
         if (res.ok) {
@@ -57,6 +61,82 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
       return [];
     },
   });
+  
+  const filteredEvents = useMemo(() => {
+    if (!events) return [];
+    
+    return events.filter(event => {
+      if (filters.q) {
+        const searchTerm = filters.q.toLowerCase();
+        const titleMatch = event.title?.toLowerCase().includes(searchTerm);
+        const descMatch = event.description?.toLowerCase().includes(searchTerm);
+        const locationMatch = event.location?.toLowerCase().includes(searchTerm);
+        const venueMatch = event.venue?.toLowerCase().includes(searchTerm);
+        if (!titleMatch && !descMatch && !locationMatch && !venueMatch) return false;
+      }
+      
+      if (filters.type && filters.type !== 'all') {
+        const eventType = (event.eventType || event.category || '').toLowerCase();
+        if (eventType !== filters.type.toLowerCase()) return false;
+      }
+      
+      if (filters.dateFrom) {
+        const eventDate = new Date(event.startDate || event.date || '');
+        if (eventDate < filters.dateFrom) return false;
+      }
+      
+      if (filters.dateTo) {
+        const eventDate = new Date(event.startDate || event.date || '');
+        if (eventDate > filters.dateTo) return false;
+      }
+      
+      if (filters.skillLevel && filters.skillLevel !== 'all') {
+        const eventLevel = (event.skillLevel || '').toLowerCase();
+        if (eventLevel !== filters.skillLevel.toLowerCase()) return false;
+      }
+      
+      if (filters.danceStyle && filters.danceStyle !== 'all') {
+        const eventStyle = (event.danceStyle || '').toLowerCase();
+        if (eventStyle !== filters.danceStyle.toLowerCase()) return false;
+      }
+      
+      if (filters.languages && filters.languages.length > 0) {
+        const eventLangs = event.hostLanguages || [];
+        const hasMatchingLang = filters.languages.some(lang => eventLangs.includes(lang));
+        if (!hasMatchingLang) return false;
+      }
+      
+      if (filters.online === true && !event.isOnline) return false;
+      if (filters.online === false && event.isOnline) return false;
+      
+      if (filters.verified && !event.verified) return false;
+      
+      if (filters.tags && filters.tags.length > 0) {
+        const eventTags = event.tags || [];
+        const hasMatchingTag = filters.tags.some(tag => 
+          eventTags.some((et: string) => et.toLowerCase().includes(tag.toLowerCase()))
+        );
+        if (!hasMatchingTag) return false;
+      }
+      
+      return true;
+    });
+  }, [events, filters]);
+  
+  const activeFilterCount = useMemo(() => {
+    return [
+      filters.q,
+      filters.type && filters.type !== 'all',
+      filters.dateFrom,
+      filters.dateTo,
+      filters.skillLevel && filters.skillLevel !== 'all',
+      filters.danceStyle && filters.danceStyle !== 'all',
+      (filters.languages?.length || 0) > 0,
+      filters.online !== null && filters.online !== undefined,
+      filters.verified,
+      (filters.tags?.length || 0) > 0,
+    ].filter(Boolean).length;
+  }, [filters]);
   
   const handleRSVP = async (eventId: number, currentStatus?: string) => {
     if (!user) {
@@ -102,28 +182,169 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
     );
   }
 
-  const eventList = events || [];
+  const eventList = filteredEvents;
+  const totalEvents = events?.length || 0;
 
   return (
     <Card className="overflow-hidden">
       <CardHeader className="border-b">
-        <CardTitle className="text-2xl font-serif flex items-center gap-2">
-          <Calendar className="h-6 w-6 text-primary" />
-          Group Events
-        </CardTitle>
-        <CardDescription>
-          {eventList.length > 0 
-            ? `${eventList.length} upcoming events in ${groupCity || "this city"}`
-            : `No events scheduled yet in ${groupCity || "this city"}`
-          }
-        </CardDescription>
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <CardTitle className="text-2xl font-serif flex items-center gap-2">
+              <Calendar className="h-6 w-6 text-primary" />
+              Group Events
+            </CardTitle>
+            <CardDescription>
+              {totalEvents > 0 
+                ? activeFilterCount > 0 
+                  ? `${eventList.length} of ${totalEvents} events (filtered)`
+                  : `${totalEvents} upcoming events in ${groupCity || "this city"}`
+                : `No events scheduled yet in ${groupCity || "this city"}`
+              }
+            </CardDescription>
+          </div>
+          <Sheet open={isFilterOpen} onOpenChange={setIsFilterOpen}>
+            <SheetTrigger asChild>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="gap-2"
+                data-testid="button-event-filters"
+              >
+                <SlidersHorizontal className="h-4 w-4" />
+                Filters
+                {activeFilterCount > 0 && (
+                  <Badge variant="secondary" className="ml-1 h-5 w-5 p-0 flex items-center justify-center text-xs">
+                    {activeFilterCount}
+                  </Badge>
+                )}
+              </Button>
+            </SheetTrigger>
+            <SheetContent className="w-[400px] sm:w-[540px] overflow-y-auto">
+              <SheetHeader>
+                <SheetTitle className="flex items-center gap-2">
+                  <SlidersHorizontal className="h-5 w-5" />
+                  Filter Events
+                </SheetTitle>
+                <SheetDescription>
+                  Narrow down events by type, date, skill level, and more
+                </SheetDescription>
+              </SheetHeader>
+              <div className="mt-6">
+                <EventFilters 
+                  onFilterChange={(newFilters) => {
+                    setFilters(newFilters);
+                  }} 
+                  initialFilters={filters}
+                />
+              </div>
+            </SheetContent>
+          </Sheet>
+        </div>
       </CardHeader>
       <CardContent className="p-8 space-y-6">
-        {eventList.length === 0 ? (
+        {activeFilterCount > 0 && (
+          <div className="flex flex-wrap gap-2 pb-4 border-b">
+            <span className="text-sm text-muted-foreground mr-2">Active filters:</span>
+            {filters.q && (
+              <Badge variant="secondary" className="gap-1 cursor-pointer hover-elevate" onClick={() => setFilters({...filters, q: ''})}>
+                Search: {filters.q}
+                <span className="ml-1 text-muted-foreground">&times;</span>
+              </Badge>
+            )}
+            {filters.type && filters.type !== 'all' && (
+              <Badge variant="secondary" className="gap-1 cursor-pointer hover-elevate" onClick={() => setFilters({...filters, type: undefined})}>
+                Type: {filters.type}
+                <span className="ml-1 text-muted-foreground">&times;</span>
+              </Badge>
+            )}
+            {filters.dateFrom && (
+              <Badge variant="secondary" className="gap-1 cursor-pointer hover-elevate" onClick={() => setFilters({...filters, dateFrom: undefined})}>
+                From: {filters.dateFrom.toLocaleDateString()}
+                <span className="ml-1 text-muted-foreground">&times;</span>
+              </Badge>
+            )}
+            {filters.dateTo && (
+              <Badge variant="secondary" className="gap-1 cursor-pointer hover-elevate" onClick={() => setFilters({...filters, dateTo: undefined})}>
+                To: {filters.dateTo.toLocaleDateString()}
+                <span className="ml-1 text-muted-foreground">&times;</span>
+              </Badge>
+            )}
+            {filters.skillLevel && filters.skillLevel !== 'all' && (
+              <Badge variant="secondary" className="gap-1 cursor-pointer hover-elevate" onClick={() => setFilters({...filters, skillLevel: undefined})}>
+                Level: {filters.skillLevel}
+                <span className="ml-1 text-muted-foreground">&times;</span>
+              </Badge>
+            )}
+            {filters.danceStyle && filters.danceStyle !== 'all' && (
+              <Badge variant="secondary" className="gap-1 cursor-pointer hover-elevate" onClick={() => setFilters({...filters, danceStyle: undefined})}>
+                Style: {filters.danceStyle}
+                <span className="ml-1 text-muted-foreground">&times;</span>
+              </Badge>
+            )}
+            {filters.languages?.map(code => {
+              const lang = getLanguageByCode(code);
+              return (
+                <Badge key={code} variant="secondary" className="gap-1 cursor-pointer hover-elevate" onClick={() => setFilters({...filters, languages: filters.languages?.filter(l => l !== code)})}>
+                  {lang?.flag} {lang?.name || code}
+                  <span className="ml-1 text-muted-foreground">&times;</span>
+                </Badge>
+              );
+            })}
+            {filters.online === true && (
+              <Badge variant="secondary" className="gap-1 cursor-pointer hover-elevate" onClick={() => setFilters({...filters, online: null})}>
+                Online Only
+                <span className="ml-1 text-muted-foreground">&times;</span>
+              </Badge>
+            )}
+            {filters.online === false && (
+              <Badge variant="secondary" className="gap-1 cursor-pointer hover-elevate" onClick={() => setFilters({...filters, online: null})}>
+                In-Person Only
+                <span className="ml-1 text-muted-foreground">&times;</span>
+              </Badge>
+            )}
+            {filters.verified && (
+              <Badge variant="secondary" className="gap-1 cursor-pointer hover-elevate" onClick={() => setFilters({...filters, verified: false})}>
+                Verified Only
+                <span className="ml-1 text-muted-foreground">&times;</span>
+              </Badge>
+            )}
+            {filters.tags?.map(tag => (
+              <Badge key={tag} variant="secondary" className="gap-1 cursor-pointer hover-elevate" onClick={() => setFilters({...filters, tags: filters.tags?.filter(t => t !== tag)})}>
+                {tag}
+                <span className="ml-1 text-muted-foreground">&times;</span>
+              </Badge>
+            ))}
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => setFilters({})}
+              className="h-6 text-xs text-muted-foreground"
+              data-testid="button-clear-all-filters"
+            >
+              Clear all
+            </Button>
+          </div>
+        )}
+        
+        {eventList.length === 0 && totalEvents === 0 ? (
           <div className="text-center py-12 text-muted-foreground">
             <Calendar className="h-12 w-12 mx-auto mb-4 opacity-50" />
             <p className="text-lg">No events scheduled yet</p>
             <p className="text-sm">Check back soon for upcoming tango events!</p>
+          </div>
+        ) : eventList.length === 0 && totalEvents > 0 ? (
+          <div className="text-center py-12 text-muted-foreground">
+            <SlidersHorizontal className="h-12 w-12 mx-auto mb-4 opacity-50" />
+            <p className="text-lg">No events match your filters</p>
+            <p className="text-sm mb-4">Try adjusting your filter criteria</p>
+            <Button 
+              variant="outline" 
+              onClick={() => setFilters({})}
+              data-testid="button-clear-event-filters"
+            >
+              Clear All Filters
+            </Button>
           </div>
         ) : (
           eventList.slice(0, 10).map((event, index) => {
@@ -177,11 +398,29 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
                           <span className="truncate">{event.location || event.city}</span>
                         </div>
                       )}
-                      {event.eventType && (
-                        <Badge variant="secondary" className="text-xs">
-                          {event.eventType.charAt(0).toUpperCase() + event.eventType.slice(1)}
-                        </Badge>
-                      )}
+                      <div className="flex flex-wrap gap-2">
+                        {event.eventType && (
+                          <Badge variant="secondary" className="text-xs">
+                            {event.eventType.charAt(0).toUpperCase() + event.eventType.slice(1)}
+                          </Badge>
+                        )}
+                        {event.hostLanguages && event.hostLanguages.length > 0 && (
+                          <div className="flex items-center gap-1">
+                            <Languages className="h-3 w-3 text-muted-foreground" />
+                            {event.hostLanguages.slice(0, 3).map((code: string) => {
+                              const lang = getLanguageByCode(code);
+                              return (
+                                <Badge key={code} variant="outline" className="text-xs gap-1 py-0">
+                                  {lang?.flag}
+                                </Badge>
+                              );
+                            })}
+                            {event.hostLanguages.length > 3 && (
+                              <span className="text-xs text-muted-foreground">+{event.hostLanguages.length - 3}</span>
+                            )}
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                   <div className="flex flex-col gap-2">
