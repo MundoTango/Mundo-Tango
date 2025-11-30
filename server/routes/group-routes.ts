@@ -81,6 +81,15 @@ router.get("/", async (req: Request, res: Response) => {
       .limit(parseInt(limit as string))
       .offset(parseInt(offset as string));
 
+    // Debug logging
+    console.log(`[Groups] GET /api/groups - Returned ${results.length} groups (type filter: ${type}, city filter: ${city})`);
+    if (results.length > 0) {
+      const types = results.map(r => r.group.type);
+      console.log(`[Groups] Group types returned: ${[...new Set(types)].join(', ')}`);
+      const cities = results.map(r => r.group.city).filter(Boolean);
+      console.log(`[Groups] Cities: ${[...new Set(cities)].join(', ')}`);
+    }
+
     res.json(results);
   } catch (error) {
     console.error("[Groups] Error fetching groups:", error);
