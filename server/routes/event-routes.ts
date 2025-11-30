@@ -741,10 +741,11 @@ router.get("/:id", async (req: Request, res: Response) => {
 // POST /api/events - Create new event
 // TIER ENFORCEMENT: Requires Community Leader (level 3) or higher
 // Level 3 = Community Leader, Level 4 = Admin, Level 5+ = Higher tiers
+// AUTO-CREATES: City if not found, based on event city field
 router.post("/", authenticateToken, requireMinimumRole(3), async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user!.id;
-    const { startTime, endTime, timezone, ...rest } = req.body;
+    const { startTime, endTime, timezone, maxCapacity, ...rest } = req.body;
     
     // Combine date with time if time strings are provided
     let startDate = new Date(rest.startDate);
@@ -760,31 +761,52 @@ router.post("/", authenticateToken, requireMinimumRole(3), async (req: AuthReque
       endDate.setHours(hours, minutes, 0, 0);
     }
     
-    const eventData = {
-      ...rest,
+    // Build clean event data with required fields only
+    const cleanData = {
+      title: rest.title,
+      description: rest.description,
+      eventType: rest.eventType,
       startDate,
       endDate,
+      location: rest.location || rest.city || "Unknown Location",
+      venue: rest.venue || null,
+      venueName: rest.venueName || null,
+      address: rest.address || null,
+      city: rest.city || null,
+      country: rest.country || null,
+      latitude: rest.latitude ? String(rest.latitude) : null,
+      longitude: rest.longitude ? String(rest.longitude) : null,
       timezone: timezone || "UTC",
-      location: rest.location || `${rest.venue}, ${rest.city}`,
-      maxAttendees: rest.maxCapacity || null,
-      status: "published"
+      maxAttendees: maxCapacity || null,
+      musicStyle: rest.musicStyle || null,
+      danceStyles: rest.danceStyles || null,
+      price: rest.price || null,
+      currency: rest.currency || "USD",
+      isFree: rest.isFree !== false,
+      isPaid: rest.price ? true : false,
+      isOnline: false,
+      visibility: "public",
+      coverImage: rest.coverImageUrl || null,
+      mediaUrls: rest.photos?.map((p: any) => p.url) || null
     };
 
     const [event] = await db
       .insert(events)
       .values({
-        ...eventData,
-        userId
+        ...cleanData,
+        userId,
+        status: "published"
       })
       .returning();
 
     res.status(201).json(event);
   } catch (error) {
     if (error instanceof z.ZodError) {
+      console.error("[Events] Validation error:", error.errors);
       return res.status(400).json({ message: "Validation error", errors: error.errors });
     }
     console.error("[Events] Error creating event:", error);
-    res.status(500).json({ message: "Failed to create event", details: String(error) });
+    res.status(500).json({ message: "Failed to create event", error: String(error).substring(0, 200) });
   }
 });
 
