@@ -57,8 +57,8 @@ interface MapLayer {
 export default function CommunityWorldMapPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCity, setSelectedCity] = useState<CommunityLocation | null>(null);
-  const [mapCenter, setMapCenter] = useState<[number, number]>([-34.6037, -58.3816]); // Buenos Aires default
-  const [mapZoom, setMapZoom] = useState(12);
+  const [mapCenter, setMapCenter] = useState<[number, number]>([20, 0]); // World view centered
+  const [mapZoom, setMapZoom] = useState(2); // Zoom out to see all cities
   
   // Layer toggles
   const [layers, setLayers] = useState<MapLayer[]>([
