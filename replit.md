@@ -84,6 +84,13 @@ Core features include social functionalities (events, groups, posts, notificatio
 - Cache invalidation patterns documented and tested
 - MB.MD v9.8 methodologies fully applied
 
+**City Group Automation (CASCADE Pattern 7 - Implemented):**
+- `server/utils/cityGroupAutomation.ts` - ensureCityGroupExists() utility
+- Event creation in new city → auto-creates city group (type='city')
+- Organizer auto-joined as admin, notification sent
+- McCloud Tango Community backfilled (Group ID: 116, Notification ID: 128)
+- E2E tests: 2/3 passing (1 flaky browser crash)
+
 **Documentation Infrastructure:**
 - `docs/prds/INDEX.md` - Master index (all 46 PRDs)
 - `docs/prds/GAP_ANALYSIS_SUMMARY.md` - Coverage breakdown
