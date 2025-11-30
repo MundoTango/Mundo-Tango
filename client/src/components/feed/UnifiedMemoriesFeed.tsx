@@ -138,7 +138,7 @@ function UnifiedMemoriesFeedComponent({
             <PostCreator 
               context={{ 
                 type: context.type === 'profile' ? 'memory' : context.type as any,
-                id: context.id?.toString(),
+                id: context.id,
                 name: context.name
               }}
               onPostCreated={onPostCreated}
@@ -161,7 +161,7 @@ function UnifiedMemoriesFeedComponent({
           <PostCreator 
             context={{ 
               type: context.type === 'profile' ? 'memory' : context.type as any,
-              id: context.id?.toString(),
+              id: context.id,
               name: context.name
             }}
             onPostCreated={onPostCreated}

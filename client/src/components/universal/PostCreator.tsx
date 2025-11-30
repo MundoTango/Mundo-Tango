@@ -617,11 +617,13 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
       
       if (!editMode) {
         if (context.type === 'event' && context.id) {
-          endpoint = `/api/events/${context.id}/posts`;
-          cacheKey = ["/api/events", context.id, "posts"];
+          const eventId = typeof context.id === 'string' ? parseInt(context.id) : context.id;
+          endpoint = `/api/events/${eventId}/posts`;
+          cacheKey = ["/api/events", eventId, "posts"];
         } else if (context.type === 'group' && context.id) {
-          endpoint = `/api/groups/${context.id}/posts`;
-          cacheKey = ["/api/groups", context.id, "posts"];
+          const groupId = typeof context.id === 'string' ? parseInt(context.id) : context.id;
+          endpoint = `/api/groups/${groupId}/posts`;
+          cacheKey = ["/api/groups", groupId, "posts"];
         }
       } else {
         endpoint = `/api/posts/${existingPost?.id}`;
