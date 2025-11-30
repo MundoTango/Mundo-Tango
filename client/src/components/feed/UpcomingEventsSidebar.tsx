@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Calendar, MapPin, Users, Star, Clock, ExternalLink, Check, HelpCircle, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import { safeDateFormat, safeDateDistance } from "@/lib/safeDateFormat";

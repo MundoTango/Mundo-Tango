@@ -667,6 +667,86 @@ router.get("/my-rsvps", authenticateToken, async (req: AuthRequest, res: Respons
   }
 });
 
+// GET /api/events/city-group - Get events from user's city groups (MUST be before /:id route!)
+router.get("/city-group", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const upcoming = req.query.upcoming === 'true';
+    
+    // Get user's city group memberships
+    const userCityGroups = await db
+      .select({ groupId: groupMembers.groupId, city: groups.city, country: groups.country })
+      .from(groupMembers)
+      .innerJoin(groups, eq(groupMembers.groupId, groups.id))
+      .where(and(
+        eq(groupMembers.userId, userId),
+        eq(groupMembers.status, 'active'),
+        eq(groups.type, 'city')
+      ));
+    
+    if (userCityGroups.length === 0) {
+      // Fallback: return general upcoming events if user has no city groups
+      const now = new Date();
+      const fallbackEvents = await db
+        .select({
+          id: events.id,
+          title: events.title,
+          description: events.description,
+          startDate: events.startDate,
+          endDate: events.endDate,
+          location: events.location,
+          city: events.city,
+          country: events.country,
+          imageUrl: events.imageUrl,
+          rsvpCount: events.rsvpCount,
+          category: events.category,
+        })
+        .from(events)
+        .where(and(
+          eq(events.status, 'published'),
+          upcoming ? gte(events.startDate, now) : undefined
+        ))
+        .orderBy(events.startDate)
+        .limit(limit);
+      
+      return res.json(fallbackEvents);
+    }
+    
+    // Get events from user's city groups
+    const cities = userCityGroups.map(g => g.city).filter(Boolean) as string[];
+    const now = new Date();
+    
+    const cityGroupEvents = await db
+      .select({
+        id: events.id,
+        title: events.title,
+        description: events.description,
+        startDate: events.startDate,
+        endDate: events.endDate,
+        location: events.location,
+        city: events.city,
+        country: events.country,
+        imageUrl: events.imageUrl,
+        rsvpCount: events.rsvpCount,
+        category: events.category,
+      })
+      .from(events)
+      .where(and(
+        eq(events.status, 'published'),
+        inArray(events.city, cities),
+        upcoming ? gte(events.startDate, now) : undefined
+      ))
+      .orderBy(events.startDate)
+      .limit(limit);
+    
+    res.json(cityGroupEvents);
+  } catch (error) {
+    console.error("[Events] Error fetching city group events:", error);
+    res.status(500).json({ message: "Failed to fetch city group events" });
+  }
+});
+
 // GET /api/events/upcoming - Get upcoming events (MUST be before /:id route!)
 router.get("/upcoming", async (req: Request, res: Response) => {
   try {
