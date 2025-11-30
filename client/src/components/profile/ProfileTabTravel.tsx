@@ -243,6 +243,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
   // Travel Companion types and state management
   type TravelCompanion = {
     id: string;
+    requesterId?: number; // Actual user ID of the requester
     name: string;
     avatar: string;
     initials: string;
@@ -291,6 +292,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
     const realCompanions: TravelCompanion[] = requests.map((req: any) => ({
       id: `request-${req.id}`,
       requestId: req.id,
+      requesterId: req.requesterId, // Actual user ID for DM/profile links
       name: req.requesterName || 'Unknown User',
       avatar: req.requesterProfileImage || '',
       initials: (req.requesterName || 'U').split(' ').map((n: string) => n[0]).join('').toUpperCase(),
@@ -1482,25 +1484,40 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
                                               {pendingIncoming.length > 0 && <Badge variant="outline" className="bg-pink-500/10 text-pink-600 border-pink-500/30 text-xs">{pendingIncoming.length}</Badge>}
                                             </h5>
                                             {canEdit && pendingIncoming.length > 0 ? (
-                                              <div className="space-y-2">
+                                              <div className="space-y-3">
                                                 {pendingIncoming.map((companion, idx) => (
-                                                  <div key={companion.id} className="flex items-center justify-between p-3 bg-pink-500/5 border border-pink-500/20 rounded-lg">
-                                                    <div className="flex items-center gap-3">
-                                                      <Avatar className="h-10 w-10 border-2 border-pink-500/30">
-                                                        <AvatarImage src={companion.avatar} />
-                                                        <AvatarFallback>{companion.initials}</AvatarFallback>
-                                                      </Avatar>
-                                                      <div>
-                                                        <p className="font-medium text-sm">{companion.name}</p>
-                                                        <p className="text-xs text-muted-foreground">{companion.matchScore}% match • {companion.details}</p>
+                                                  <div key={companion.id} className="p-3 bg-pink-500/5 border border-pink-500/20 rounded-lg space-y-3">
+                                                    <div className="flex items-center justify-between">
+                                                      <div className="flex items-center gap-3">
+                                                        <Avatar className="h-10 w-10 border-2 border-pink-500/30">
+                                                          <AvatarImage src={companion.avatar} />
+                                                          <AvatarFallback>{companion.initials}</AvatarFallback>
+                                                        </Avatar>
+                                                        <div>
+                                                          <p className="font-medium text-sm">{companion.name}</p>
+                                                          <p className="text-xs text-muted-foreground">{companion.matchScore}% match</p>
+                                                        </div>
+                                                      </div>
+                                                      <div className="flex gap-1">
+                                                        <Button size="sm" variant="outline" className="h-8 text-green-600 border-green-500/30 hover:bg-green-500/10" data-testid={`button-accept-request-${idx}`} onClick={() => acceptCompanionRequest(trip.id, companion.id)}>
+                                                          <Check className="h-3 w-3 mr-1" />Accept
+                                                        </Button>
+                                                        <Button size="sm" variant="ghost" className="h-8 text-muted-foreground" data-testid={`button-decline-request-${idx}`} onClick={() => declineCompanionRequest(trip.id, companion.id)}>
+                                                          <X className="h-3 w-3" />
+                                                        </Button>
                                                       </div>
                                                     </div>
-                                                    <div className="flex gap-1">
-                                                      <Button size="sm" variant="outline" className="h-8 text-green-600 border-green-500/30 hover:bg-green-500/10" data-testid={`button-accept-request-${idx}`} onClick={() => acceptCompanionRequest(trip.id, companion.id)}>
-                                                        <Check className="h-3 w-3 mr-1" />Accept
+                                                    {companion.message && (
+                                                      <div className="bg-muted/50 rounded p-2 text-sm text-muted-foreground italic">
+                                                        "{companion.message}"
+                                                      </div>
+                                                    )}
+                                                    <div className="flex gap-2">
+                                                      <Button size="sm" variant="ghost" className="h-7 text-xs text-cyan-600" data-testid={`button-dm-requester-${idx}`} onClick={() => window.location.href = `/messages?userId=${companion.requesterId}`}>
+                                                        <MessageCircle className="h-3 w-3 mr-1" />Direct Message
                                                       </Button>
-                                                      <Button size="sm" variant="ghost" className="h-8 text-muted-foreground" data-testid={`button-decline-request-${idx}`} onClick={() => declineCompanionRequest(trip.id, companion.id)}>
-                                                        <X className="h-3 w-3" />
+                                                      <Button size="sm" variant="ghost" className="h-7 text-xs" data-testid={`button-view-profile-${idx}`} onClick={() => window.location.href = `/profile/${companion.requesterId}`}>
+                                                        <Eye className="h-3 w-3 mr-1" />View Profile
                                                       </Button>
                                                     </div>
                                                   </div>
