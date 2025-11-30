@@ -93,6 +93,8 @@ export function UnifiedRSVPButton({
       queryClient.invalidateQueries({ queryKey: ["/api/events", eventId] });
       queryClient.invalidateQueries({ queryKey: ["/api/events/my-rsvps"] });
       queryClient.invalidateQueries({ queryKey: ["/api/events"] });
+      // Also invalidate sidebar-specific queries
+      queryClient.invalidateQueries({ queryKey: ["/api/events", "sidebar"] });
       
       onStatusChange?.(status);
       

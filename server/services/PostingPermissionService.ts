@@ -237,8 +237,10 @@ export class PostingPermissionService {
     
     console.log(`[PostingPermissionService] RSVP check for userId: ${userId}, eventId: ${eventId}, found: ${rsvp.length}, status: ${rsvp[0]?.status}`);
     
-    if (rsvp.length > 0 && rsvp[0].status === 'going') {
-      console.log(`[PostingPermissionService] User is RSVP'd attendee, allowing canComment`);
+    // Any RSVP status (going, maybe, interested) allows commenting
+    const validRsvpStatuses = ['going', 'maybe', 'interested'];
+    if (rsvp.length > 0 && validRsvpStatuses.includes(rsvp[0].status)) {
+      console.log(`[PostingPermissionService] User is RSVP'd (status: ${rsvp[0].status}), allowing canComment`);
       // RSVP'd attendee can comment but not post updates
       return {
         canPost: false,
@@ -256,7 +258,7 @@ export class PostingPermissionService {
       };
     }
     
-    console.log(`[PostingPermissionService] No RSVP found or not going, denying permissions`);
+    console.log(`[PostingPermissionService] No RSVP found or not valid status (${rsvp[0]?.status}), denying permissions`);
     
     // Non-participant guest
     return {
