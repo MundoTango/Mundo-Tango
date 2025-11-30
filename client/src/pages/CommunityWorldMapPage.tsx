@@ -13,11 +13,8 @@ import {
   MapPin, 
   Users, 
   Calendar, 
-  Search,
   Home,
-  Radio,
   Building2,
-  Filter,
   X
 } from "lucide-react";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
@@ -55,7 +52,6 @@ interface MapLayer {
 
 
 export default function CommunityWorldMapPage() {
-  const [searchQuery, setSearchQuery] = useState("");
   const [selectedCity, setSelectedCity] = useState<CommunityLocation | null>(null);
   const [mapCenter, setMapCenter] = useState<[number, number]>([20, 0]); // World view centered
   const [mapZoom, setMapZoom] = useState(2); // Zoom out to see all cities
@@ -168,18 +164,14 @@ export default function CommunityWorldMapPage() {
   // Apply filters
   const filteredLocations = useMemo(() => {
     return allLocations.filter((loc) => {
-      const matchesSearch =
-        loc.city.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        loc.country.toLowerCase().includes(searchQuery.toLowerCase());
-      
       const matchesFilters =
         loc.memberCount >= filters.minMembers &&
         loc.activeEvents >= filters.minEvents &&
         (!filters.activeOnly || loc.isActive);
 
-      return matchesSearch && matchesFilters;
+      return matchesFilters;
     });
-  }, [allLocations, searchQuery, filters]);
+  }, [allLocations, filters]);
 
   // Sort locations
   const sortedLocations = useMemo(() => {
@@ -305,19 +297,6 @@ export default function CommunityWorldMapPage() {
                   <p className="text-xs text-muted-foreground">Available listings</p>
                 </CardContent>
               </Card>
-            </div>
-
-            {/* Search */}
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder="Search cities or countries..."
-                className="pl-10"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                data-testid="input-search-cities"
-              />
             </div>
 
             {/* Interactive Map - Full Width */}
