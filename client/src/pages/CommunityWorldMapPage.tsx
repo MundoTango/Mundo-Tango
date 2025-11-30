@@ -415,93 +415,26 @@ export default function CommunityWorldMapPage() {
               />
             </div>
 
-            {/* Map & City List */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Interactive Map */}
-              <Card className="lg:col-span-2 overflow-hidden">
-                <CardHeader>
-                  <CardTitle>Interactive Map</CardTitle>
-                  <CardDescription>
-                    Toggle layers to filter markers by type. Color-coded: 🔴 Events, 🔵 Housing, 🟡 Venues
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="p-0">
-                  <div className="w-full h-[600px]" data-testid="map-container">
-                    <CommunityMapWithLayers
-                      locations={sortedLocations}
-                      layers={layers}
-                      center={mapCenter}
-                      zoom={mapZoom}
-                      onCityClick={handleCityClick}
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* City List */}
-              <Card className="lg:col-span-1">
-                <CardHeader>
-                  <CardTitle>Communities</CardTitle>
-                  <CardDescription>
-                    {sortedLocations.length} {sortedLocations.length === 1 ? 'location' : 'locations'}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3 max-h-[600px] overflow-y-auto">
-                    {isLoading ? (
-                      <div className="text-center py-8 text-muted-foreground">
-                        Loading communities...
-                      </div>
-                    ) : sortedLocations.length > 0 ? (
-                      sortedLocations.map((location) => (
-                        <Button
-                          key={location.id}
-                          variant={selectedCity?.id === location.id ? "default" : "outline"}
-                          className="w-full justify-start text-left h-auto p-4 hover-elevate"
-                          onClick={() => handleCityClick(location)}
-                          data-testid={`button-city-${location.id}`}
-                        >
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-1">
-                              <MapPin className="h-4 w-4" />
-                              <span className="font-semibold">{location.city}</span>
-                              {location.isActive && (
-                                <Badge variant="default" className="text-xs">Active</Badge>
-                              )}
-                            </div>
-                            <div className="text-xs text-muted-foreground space-y-1">
-                              <div>{location.country}</div>
-                              <div className="flex flex-wrap items-center gap-2">
-                                <span className="flex items-center gap-1">
-                                  <Users className="h-3 w-3" />
-                                  {location.memberCount}
-                                </span>
-                                <span className="flex items-center gap-1">
-                                  <Calendar className="h-3 w-3" />
-                                  {location.activeEvents}
-                                </span>
-                                <span className="flex items-center gap-1">
-                                  <Home className="h-3 w-3" />
-                                  {location.housing}
-                                </span>
-                                <span className="flex items-center gap-1">
-                                  <Building2 className="h-3 w-3" />
-                                  {location.recommendations}
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                        </Button>
-                      ))
-                    ) : (
-                      <div className="text-center py-8 text-muted-foreground">
-                        No communities found
-                      </div>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+            {/* Interactive Map - Full Width */}
+            <Card className="overflow-hidden">
+              <CardHeader>
+                <CardTitle>Interactive Map</CardTitle>
+                <CardDescription>
+                  Click on any marker to see city details. Toggle layers to filter by type.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-0">
+                <div className="w-full h-[600px]" data-testid="map-container">
+                  <CommunityMapWithLayers
+                    locations={sortedLocations}
+                    layers={layers}
+                    center={mapCenter}
+                    zoom={mapZoom}
+                    onCityClick={handleCityClick}
+                  />
+                </div>
+              </CardContent>
+            </Card>
 
             {/* Selected City Details */}
             {selectedCity && (
