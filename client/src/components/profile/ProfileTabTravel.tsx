@@ -14,7 +14,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Plane, Calendar as CalendarIcon, MapPin, DollarSign, Sparkles, FileText, Briefcase, Home, Utensils, Heart, Plus, ChevronDown, ChevronUp, TrendingUp, X, Edit, Users, Trash2, Clock, Check, PieChart, Download, Train, Ship, Bus, Car, Music, Ticket, Building2, Link2, Search, ExternalLink, Loader2, Anchor, ArrowRight, Send, Globe, Lock, Eye } from "lucide-react";
+import { Plane, Calendar as CalendarIcon, MapPin, DollarSign, Sparkles, FileText, Briefcase, Home, Utensils, Heart, Plus, ChevronDown, ChevronUp, TrendingUp, X, Edit, Users, Trash2, Clock, Check, PieChart, Download, Train, Ship, Bus, Car, Music, Ticket, Building2, Link2, Search, ExternalLink, Loader2, Anchor, ArrowRight, Send, Globe, Lock, Eye, MessageCircle } from "lucide-react";
+import { RequestToBookModal } from "./RequestToBookModal";
 
 import buenosAiresImg from "@assets/stock_images/buenos_aires_argenti_afa3bd1f.jpg";
 import milanImg from "@assets/stock_images/milan_italy_duomo_ca_513cf7b4.jpg";
@@ -236,6 +237,9 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
   const [inviteFriendsDialog, setInviteFriendsDialog] = useState<{ tripId: number; city: string } | null>(null);
   const [groupChatDialog, setGroupChatDialog] = useState<{ tripId: number; city: string; companions: TravelCompanion[] } | null>(null);
   
+  // Request to Book modal state
+  const [requestToBookTrip, setRequestToBookTrip] = useState<TravelPlan | null>(null);
+  
   // Travel Companion types and state management
   type TravelCompanion = {
     id: string;
@@ -328,6 +332,17 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
       if (!response.ok) throw new Error('Failed to fetch travel plans');
       return response.json() as Promise<TravelPlan[]>;
     }
+  });
+
+  // Fetch profile owner info for Request to Book modal (only for public view)
+  const { data: profileOwner } = useQuery({
+    queryKey: ['/api/users', profileId],
+    queryFn: async () => {
+      const response = await fetch(`/api/users/${profileId}`);
+      if (!response.ok) throw new Error('Failed to fetch profile');
+      return response.json();
+    },
+    enabled: isPublicView, // Only fetch when viewing someone else's profile
   });
 
   // Find first past trip that needs completion prompt (after travelPlans is defined)
@@ -1093,6 +1108,10 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
                         variant="outline" 
                         size="sm" 
                         className="h-6 text-xs border px-2 py-0 bg-primary/20 text-white border-primary/40 hover:bg-primary/30"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setRequestToBookTrip(trip);
+                        }}
                         data-testid={`button-request-book-${index}`}
                       >
                         <Send className="h-3 w-3 mr-1" />
@@ -2405,6 +2424,24 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
           </Form>
         </DialogContent>
       </Dialog>
+
+      {/* Request to Book Modal - for public profile visitors */}
+      {requestToBookTrip && profileOwner && (
+        <RequestToBookModal
+          open={!!requestToBookTrip}
+          onOpenChange={(open) => !open && setRequestToBookTrip(null)}
+          trip={{
+            id: requestToBookTrip.id,
+            city: requestToBookTrip.city,
+            country: requestToBookTrip.country,
+            startDate: requestToBookTrip.startDate,
+            endDate: requestToBookTrip.endDate,
+            ownerName: profileOwner.name || profileOwner.username || 'Unknown',
+            ownerUsername: profileOwner.username || '',
+            ownerProfileImage: profileOwner.profileImage,
+          }}
+        />
+      )}
     </div>
   );
 }
