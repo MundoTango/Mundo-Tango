@@ -119,10 +119,10 @@ function AppSidebarComponent() {
     if (userCity) {
       items.push({
         title: userCity,
-        url: `/groups?city=${encodeURIComponent(userCity)}`,
+        url: `/city/${encodeURIComponent(userCity)}`,
         icon: MapPin,
         color: '#40E0D0',
-        tooltip: `Your city group: ${userCity}`,
+        tooltip: `Your city: ${userCity}`,
       });
     }
     
