@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Calendar, MapPin, DollarSign, Globe, Users, Check, ChevronRight, User, Ticket, Music, Tag, ExternalLink, Clock, Navigation, Camera, Image as ImageIcon, Loader2, Edit, Share2, MoreVertical, Trash2, Flag, Upload, Crown, UserCheck } from "lucide-react";
+import { EventEditForm } from "@/components/events/EventEditForm";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link, useLocation } from "wouter";
 import { safeDateFormat } from "@/lib/safeDateFormat";
@@ -432,23 +433,7 @@ export default function EventDetailsPage() {
     }
   };
 
-  useEffect(() => {
-    if (event && isEditing) {
-      setEditData({
-        title: event.title || '',
-        description: event.description || '',
-        venue: event.venue || '',
-        address: event.address || '',
-        city: event.city || '',
-        country: event.country || '',
-        startDate: event.startDate ? new Date(event.startDate).toISOString().split('T')[0] : '',
-        startTime: event.startTime || '',
-        price: event.price ? String(event.price) : '',
-      });
-    }
-  }, [isEditing, event]);
-
-  const handleSaveEdit = async () => {
+  const handleSaveEdit = async (data: any) => {
     setIsSaving(true);
     try {
       const res = await fetch(`/api/events/${eventId}`, {
@@ -456,15 +441,19 @@ export default function EventDetailsPage() {
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify({
-          title: editData.title,
-          description: editData.description,
-          venue: editData.venue,
-          address: editData.address,
-          city: editData.city,
-          country: editData.country,
-          startDate: editData.startDate,
-          startTime: editData.startTime,
-          price: editData.price ? parseFloat(editData.price) : null,
+          title: data.title,
+          description: data.description,
+          eventType: data.eventType,
+          venue: data.location?.split(',')[0] || data.location,
+          address: data.address,
+          city: data.city,
+          country: data.country,
+          location: data.location,
+          startDate: data.startDate,
+          endDate: data.endDate,
+          price: data.price || null,
+          currency: data.currency,
+          maxAttendees: data.maxAttendees || null,
         }),
       });
       if (!res.ok) throw new Error('Failed to save');
@@ -472,7 +461,7 @@ export default function EventDetailsPage() {
       queryClient.invalidateQueries({ queryKey: ['/api/events', eventId] });
       setIsEditing(false);
     } catch (error: any) {
-      toast({ title: 'Error saving event', description: error.message, variant: 'destructive' });
+      throw error;
     } finally {
       setIsSaving(false);
     }
@@ -620,73 +609,31 @@ export default function EventDetailsPage() {
 
                 <TabsContent value="details" className="p-8">
                   <div className="space-y-8">
-                    {isOrganizer && (
+                    {isEditing && isOrganizer ? (
+                      <EventEditForm 
+                        event={event}
+                        onSave={handleSaveEdit}
+                        onCancel={() => setIsEditing(false)}
+                        isSaving={isSaving}
+                      />
+                    ) : isOrganizer ? (
                       <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2 }}
                         className="flex justify-end gap-2"
                       >
-                        {isEditing ? (
-                          <>
-                            <Button 
-                              variant="default" 
-                              className="gap-2"
-                              onClick={handleSaveEdit}
-                              disabled={isSaving}
-                              data-testid="button-save-event"
-                            >
-                              {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
-                              Save
-                            </Button>
-                            <Button 
-                              variant="outline"
-                              onClick={() => setIsEditing(false)}
-                              disabled={isSaving}
-                              data-testid="button-cancel-edit"
-                            >
-                              Cancel
-                            </Button>
-                          </>
-                        ) : (
-                          <Button 
-                            variant="outline" 
-                            className="gap-2"
-                            onClick={() => setIsEditing(true)}
-                            data-testid="button-edit-event"
-                          >
-                            <Edit className="h-4 w-4" />
-                            Edit Event
-                          </Button>
-                        )}
+                        <Button 
+                          variant="outline" 
+                          className="gap-2"
+                          onClick={() => setIsEditing(true)}
+                          data-testid="button-edit-event"
+                        >
+                          <Edit className="h-4 w-4" />
+                          Edit Event
+                        </Button>
                       </motion.div>
-                    )}
-                {isEditing && (
-                  <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
-                    <h3 className="text-lg font-semibold mb-4">Edit Event Details</h3>
-                    <div className="space-y-4">
-                      <div>
-                        <label className="block text-sm font-medium mb-1">Event Title</label>
-                        <input
-                          type="text"
-                          value={editData.title}
-                          onChange={(e) => setEditData({ ...editData, title: e.target.value })}
-                          className="w-full px-3 py-2 border rounded-md text-base"
-                          data-testid="input-edit-title"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium mb-1">Description</label>
-                        <textarea
-                          value={editData.description}
-                          onChange={(e) => setEditData({ ...editData, description: e.target.value })}
-                          className="w-full px-3 py-2 border rounded-md text-sm min-h-24 resize-none"
-                          data-testid="input-edit-description"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                )}
+                    ) : null}
 
                 <div className="grid gap-8 md:grid-cols-2">
                   <motion.div
