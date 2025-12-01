@@ -230,6 +230,8 @@ export default function ProfilePage() {
       return res.json();
     },
     enabled: !!profileIdentifier,
+    retry: false, // Don't retry on 404 - we'll redirect to current user's profile instead
+    staleTime: 30000, // Cache for 30 seconds to prevent repeated requests
   });
 
   // If we tried to fetch a specific profile and got an error, redirect to current user's profile
