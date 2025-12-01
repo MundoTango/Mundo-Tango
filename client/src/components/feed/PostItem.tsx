@@ -313,7 +313,7 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
         )}
 
         {/* Actions */}
-        <div className="px-4 pb-3 flex items-center gap-1 flex-wrap">
+        <div className="px-4 flex items-center gap-1 flex-wrap pt-[20px] pb-[20px]">
           <ReactionSelector
             targetId={post.id}
             targetType="post"
@@ -386,7 +386,6 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
         )}
         </Card>
       </motion.div>
-
       {/* Modals */}
       <ShareModal
         open={showShareModal}
@@ -394,14 +393,12 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
         postId={post.id}
         postTitle={(post.content || "").substring(0, 100)}
       />
-
       <ReportModal
         open={showReportModal}
         onOpenChange={setShowReportModal}
         postId={post.id}
         contentType="post"
       />
-
       <EditPostDialog
         open={showEditDialog}
         onOpenChange={setShowEditDialog}
