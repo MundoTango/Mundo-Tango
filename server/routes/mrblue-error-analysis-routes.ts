@@ -129,6 +129,12 @@ router.post("/analyze-error", async (req: Request, res: Response) => {
             .returning();
 
           errorId = inserted.id;
+          
+          // Index in LanceDB for semantic search (MB.MD v9.8)
+          contextService.indexError(errorId, error.errorMessage, {
+            errorType: error.errorType,
+            metadata: error.metadata,
+          }).catch(err => console.warn('[Error Analysis API] LanceDB indexing failed (non-critical):', err.message));
         }
 
         storedErrors.push({ id: errorId, error });
