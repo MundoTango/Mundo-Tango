@@ -44,13 +44,14 @@ Core features include social functionalities (events, groups, posts, notificatio
 
 **FINAL COVERAGE: 72%+ (up from 50% at session start)**
 
-**Session Summary (Dec 01, 2025):**
-- ✅ **Self-healing Status Endpoint Fixed:** Added missing `/api/self-healing/status` endpoint to self-healing-routes.ts - now returns proper JSON with agent health status
-- ✅ **TourGuide Error Handling:** Updated query configuration with `retry: false` and `enabled: false` on 404 to handle missing tours gracefully without console errors
-- ✅ **Error Classification Validated:** ProactiveErrorDetector correctly distinguishes infrastructure errors (Coframe/Statsig/CSP from Replit environment) from Mundo Tango application errors
-- ✅ **RSVP Cache Fix Confirmed:** Type normalization and query key matching validated working - eventId consistently treated as number across all cache operations
-- ✅ **Events System Verified:** E2E tests confirmed 20 event cards displaying correctly on events page
-- ✅ **Expected 404s Documented:** `/api/users/admin` (no user exists), `/api/mr-blue/agents/tour/app-onboarding` (tour not created) are valid responses, components handle gracefully
+**Session Summary (Dec 01, 2025 - Latest):**
+- ✅ **RSVP Authorization Header Fix:** Added JWT token to permission queries in EventDetailsPage (lines 68-84, 379-396) - RSVP now persists after refresh
+- ✅ **React Key Prop Warning Fix:** Updated EventsPage list view (line 539-544) and map view (line 658-676) to handle nested event data with fallback keys
+- ✅ **Self-healing Status Endpoint Fixed:** Added `/api/self-healing/status` endpoint returning JSON with agent health status
+- ✅ **TourGuide Error Handling:** Query config with `retry: false` and `enabled: false` on 404 for graceful handling
+- ✅ **RSVP Cache Synchronization:** Type normalization ensures eventId is number across all cache operations
+- ✅ **Events System Verified:** E2E tests confirmed 20 event cards displaying correctly
+- ✅ **PRD Updated:** PRD_EVENTS_SYSTEM.md v1.3 with RSVP auth fix and React key fix documentation
 
 **Session Summary (Nov 30 - Previous):**
 - ✅ **Fixed @mention system:** Corrected `searchEventsSimple()` call in mention-routes.ts (HTTP 500 → working)

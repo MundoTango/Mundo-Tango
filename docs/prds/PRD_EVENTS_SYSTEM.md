@@ -653,9 +653,73 @@ queryKey: ['/api/events', normalizedEventId, 'rsvp', 'me']
 
 ---
 
-## 17. Changelog
+## 17. RSVP Authorization Header Fix (Dec 01, 2025)
+
+### Issue Fixed
+RSVP status and edit permissions would reset on page refresh because permission queries didn't include JWT auth.
+
+### Root Cause
+EventDetailsPage was fetching permissions without authorization headers:
+```typescript
+// OLD - Missing auth header
+const response = await fetch(`/api/events/${eventId}/permissions/posting`);
+```
+
+### Fix Applied
+Added authorization header to permission queries (lines 68-84, 379-396):
+```typescript
+// NEW - Includes JWT token
+const response = await fetch(`/api/events/${eventId}/permissions/posting`, {
+  headers: {
+    'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+  }
+});
+```
+
+### Files Modified
+- `client/src/pages/EventDetailsPage.tsx` - Added auth headers to 2 permission fetch calls
+
+---
+
+## 18. React Key Prop Warning Fix (Dec 01, 2025)
+
+### Issue Fixed
+React console warning: "Each child in a list should have a unique 'key' prop".
+
+### Root Cause
+Event API returns nested structure `{event: {..., id: 123}}` but key was using `event.id` (undefined).
+
+### Fix Applied
+Extract ID from nested or flat structure with fallback:
+```typescript
+// List view (lines 539-544)
+{events.map((event, index) => {
+  const eventId = event.event?.id || event.id;
+  return (
+    <EventCard key={eventId || `event-${index}`} event={event} index={index} />
+  );
+})}
+
+// Map view (lines 658-676)
+{eventsWithCoordinates.map((event, index) => {
+  const eventData = event.event || event;
+  const eventId = eventData.id;
+  return (
+    <Marker key={eventId || `map-event-${index}`} ... />
+  );
+})}
+```
+
+### Files Modified
+- `client/src/pages/EventsPage.tsx` - Updated list view and map view rendering
+
+---
+
+## 19. Changelog
 
 | Date | Version | Changes |
 |------|---------|---------|
+| 2025-12-01 | 1.3 | Added React key prop warning fix for nested event data |
+| 2025-12-01 | 1.2 | Added RSVP authorization header fix for persistent permissions |
 | 2025-12-01 | 1.1 | Added RSVP cache synchronization fix documentation |
 | 2025-11-30 | 1.0 | Initial PRD created via Pattern 39 reverse-engineering |
