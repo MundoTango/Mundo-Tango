@@ -1594,18 +1594,8 @@ router.post("/:id/posts", authenticateToken, async (req: AuthRequest, res: Respo
       return res.status(404).json({ message: "Event not found" });
     }
 
-    // RBAC Permission Check - Event context uses different rules than groups
-    const permissions = await PostingPermissionService.getEventPermissions(userId, eventId);
-    
-    // For event discussions, RSVP'd users can comment (canComment=true) but only staff can post updates (canPost=true)
-    // Allow posting if user canPost OR canComment (treating event posts like comments)
-    if (!permissions.canPost && !permissions.canComment) {
-      return res.status(403).json({ 
-        message: permissions.reason || "RSVP to participate in this event's discussion",
-        role: permissions.role,
-        isRsvpd: permissions.isRsvpd
-      });
-    }
+    // Allow any logged-in user to post to event discussions (no RSVP required)
+    // This enables open community discussion about events
 
     if (!content || content.trim().length === 0) {
       return res.status(400).json({ message: "Post content is required" });

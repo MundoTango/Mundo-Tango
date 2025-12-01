@@ -349,6 +349,7 @@ interface EventPermissions {
   role: string | null;
   isRsvpd: boolean;
   isOrganizer: boolean;
+  rsvpStatus: 'going' | 'interested' | 'maybe' | 'not_going' | null;
   reason?: string;
 }
 
@@ -370,7 +371,7 @@ export default function EventDetailsPage() {
     queryKey: ["/api/events", eventId, "permissions"],
     queryFn: async () => {
       const res = await fetch(`/api/events/${eventId}/permissions`, { credentials: "include" });
-      if (!res.ok) return { canPost: false, canComment: false, role: null, isRsvpd: false, isOrganizer: false };
+      if (!res.ok) return { canPost: false, canComment: false, role: null, isRsvpd: false, isOrganizer: false, rsvpStatus: null };
       return res.json();
     },
     enabled: eventId > 0,
@@ -499,7 +500,7 @@ export default function EventDetailsPage() {
               <div className="flex flex-wrap gap-3 justify-center">
                 <UnifiedRSVPButton
                   eventId={eventId}
-                  currentStatus={rsvpStatusState || permissions?.isRsvpd ? "going" : null}
+                  currentStatus={rsvpStatusState ?? permissions?.rsvpStatus ?? null}
                   variant="expanded"
                   onStatusChange={handleRsvpStatusChange}
                   className="[&>div]:flex-1 [&>div>button]:text-base [&>div>button]:h-12"

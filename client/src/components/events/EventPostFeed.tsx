@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";
 import { UnifiedMemoriesFeed } from "@/components/feed/UnifiedMemoriesFeed";
 import type { PostItemData } from "@/components/feed/PostItem";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface EventPost {
   id: number;
@@ -25,30 +26,13 @@ interface EventPost {
   };
 }
 
-interface EventPermissions {
-  canPost: boolean;
-  canComment: boolean;
-  role: string | null;
-  isRsvpd: boolean;
-  reason?: string;
-}
-
 interface EventPostFeedProps {
   eventId: number;
   eventName?: string;
 }
 
 function EventPostFeedComponent({ eventId, eventName = "Event" }: EventPostFeedProps) {
-  const { data: permissions, refetch } = useQuery<EventPermissions>({
-    queryKey: ["/api/events", eventId, "permissions"],
-    queryFn: async () => {
-      const res = await fetch(`/api/events/${eventId}/permissions`, { credentials: "include" });
-      if (!res.ok) return { canPost: false, canComment: false, role: null, isRsvpd: false };
-      return res.json();
-    },
-    staleTime: 0, // Always refetch to ensure fresh RSVP status
-    gcTime: 0, // Clear cache immediately
-  });
+  const { user } = useAuth();
 
   const { data: posts, isLoading } = useQuery<EventPost[]>({
     queryKey: ["/api/events", eventId, "posts"],
@@ -101,20 +85,20 @@ function EventPostFeedComponent({ eventId, eventName = "Event" }: EventPostFeedP
     queryClient.invalidateQueries({ queryKey: ["/api/events", eventId, "posts"] });
   };
 
-  // Allow posting if user can post OR comment (RSVPd users can participate)
-  const canParticipate = permissions?.canPost || permissions?.canComment || false;
+  // Allow any logged-in user to post - no RSVP required
+  const canPost = !!user;
 
   return (
     <UnifiedMemoriesFeed
       posts={transformedPosts}
       isLoading={isLoading}
       context={{ type: 'event', id: eventId, name: eventName }}
-      showPostCreator={canParticipate}
+      showPostCreator={canPost}
       showFilters={true}
       onPostCreated={handlePostCreated}
-      emptyMessage={canParticipate 
+      emptyMessage={canPost 
         ? `No posts about ${eventName} yet. Share your experience!`
-        : `No posts about ${eventName} yet. RSVP to join the discussion.`
+        : `No posts about ${eventName} yet. Log in to join the discussion.`
       }
     />
   );
