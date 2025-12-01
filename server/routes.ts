@@ -9976,26 +9976,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
         ))
         .limit(500);
 
-      // Transform to map marker format
-      const markers = eventMarkers.map((event: any) => ({
-        id: event.id,
-        city: event.city,
-        country: event.country,
-        coordinates: {
-          lat: parseFloat(String(event.latitude)),
-          lng: parseFloat(String(event.longitude)),
-        },
-        title: event.title,
-        eventType: event.eventType || 'social',
-        startDate: event.startDate,
-        address: event.address || event.location,
-        memberCount: 0,
-        activeEvents: 1,
-        recommendations: 0,
-        housing: 0,
-        isActive: true,
-      }));
+      // Transform to map marker format with validated coordinates
+      const markers = eventMarkers
+        .map((event: any) => {
+          const lat = parseFloat(String(event.latitude || 0));
+          const lng = parseFloat(String(event.longitude || 0));
+          
+          // Skip if coordinates are invalid
+          if (isNaN(lat) || isNaN(lng) || lat === 0 && lng === 0) {
+            return null;
+          }
+          
+          return {
+            id: event.id,
+            city: event.city || '',
+            country: event.country || '',
+            coordinates: {
+              lat,
+              lng,
+            },
+            title: event.title,
+            eventType: event.eventType || 'social',
+            startDate: event.startDate,
+            address: event.address || event.location,
+            memberCount: 0,
+            activeEvents: 1,
+            recommendations: 0,
+            housing: 0,
+            isActive: true,
+          };
+        })
+        .filter((marker: any) => marker !== null);
 
+      console.log(`[Map] Returning ${markers.length} event markers`);
       res.json(markers);
     } catch (error) {
       console.error('[Map] Fetch event markers error:', error);

@@ -2,6 +2,10 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { useEffect } from 'react';
 import { CityPopupCard } from './CityPopupCard';
+import { Button } from '@/components/ui/button';
+import { Link } from 'wouter';
+import { safeDateFormat } from '@/lib/safeDateFormat';
+import { Calendar, MapPin } from 'lucide-react';
 
 interface CommunityLocation {
   id: number;
@@ -14,12 +18,16 @@ interface CommunityLocation {
   housing: number;
   isActive: boolean;
   groupId?: number;
+  title?: string;
+  eventType?: string;
+  startDate?: any;
+  address?: string;
 }
 
 interface MapLayer {
   id: string;
   label: string;
-  enabled: boolean;
+  enabled: any;
   icon: any;
 }
 
@@ -62,6 +70,35 @@ const createLayerIcon = () => {
   });
 };
 
+// Event-specific popup card
+function EventPopupCard({ location }: { location: CommunityLocation }) {
+  return (
+    <div className="w-[280px] max-w-[280px] overflow-hidden rounded-lg bg-card flex flex-col p-4 space-y-3" data-testid={`popup-event-card-${location.id}`}>
+      <h3 className="text-lg font-semibold leading-tight">{location.title || 'Event'}</h3>
+      
+      <div className="space-y-2 text-sm text-muted-foreground">
+        <div className="flex items-start gap-2">
+          <Calendar className="h-4 w-4 flex-shrink-0 mt-0.5" />
+          <span>
+            {location.startDate ? safeDateFormat(new Date(location.startDate), "EEE, MMM d, yyyy h:mm a") : "Date TBD"}
+          </span>
+        </div>
+        
+        <div className="flex items-start gap-2">
+          <MapPin className="h-4 w-4 flex-shrink-0 mt-0.5" />
+          <span className="text-xs">{location.address || location.city}</span>
+        </div>
+      </div>
+
+      <Link href={`/events/${location.id}`} className="block">
+        <Button className="w-full text-xs" data-testid={`button-view-event-${location.id}`}>
+          View Details
+        </Button>
+      </Link>
+    </div>
+  );
+}
+
 export function CommunityMapWithLayers({
   locations,
   layers,
@@ -69,17 +106,12 @@ export function CommunityMapWithLayers({
   zoom,
   onCityClick,
 }: CommunityMapWithLayersProps) {
-  const eventsEnabled = layers.find(l => l.id === 'events')?.enabled || false;
-  const housingEnabled = layers.find(l => l.id === 'housing')?.enabled || false;
-  const recommendationsEnabled = layers.find(l => l.id === 'recommendations')?.enabled || false;
-
-  const noLayersEnabled = !eventsEnabled && !housingEnabled && !recommendationsEnabled;
-
-  const eventMarkers = eventsEnabled ? locations.filter(loc => loc.activeEvents > 0) : [];
-  const housingMarkers = housingEnabled ? locations.filter(loc => loc.housing > 0) : [];
-  const recommendationMarkers = recommendationsEnabled ? locations.filter(loc => loc.recommendations > 0) : [];
-
-  const defaultMarkers = noLayersEnabled ? locations : [];
+  // Filter to only valid coordinates
+  const displayMarkers = locations.filter(loc => {
+    const lat = loc.coordinates?.lat;
+    const lng = loc.coordinates?.lng;
+    return typeof lat === 'number' && typeof lng === 'number' && !isNaN(lat) && !isNaN(lng);
+  });
 
   return (
     <MapContainer
@@ -94,9 +126,9 @@ export function CommunityMapWithLayers({
       />
       <MapUpdater center={center} />
 
-      {defaultMarkers.map((location) => (
+      {displayMarkers.map((location) => (
         <Marker
-          key={`default-${location.id}`}
+          key={`marker-${location.id}`}
           position={[location.coordinates.lat, location.coordinates.lng]}
           icon={createLayerIcon()}
           eventHandlers={{
@@ -104,84 +136,19 @@ export function CommunityMapWithLayers({
           }}
         >
           <Popup>
-            <CityPopupCard
-              city={location.city}
-              country={location.country}
-              groupId={location.groupId}
-              memberCount={location.memberCount}
-              eventCount={location.activeEvents}
-              recommendationCount={location.recommendations}
-              housingCount={location.housing}
-            />
-          </Popup>
-        </Marker>
-      ))}
-
-      {eventMarkers.map((location) => (
-        <Marker
-          key={`events-${location.id}`}
-          position={[location.coordinates.lat, location.coordinates.lng]}
-          icon={createLayerIcon()}
-          eventHandlers={{
-            click: () => onCityClick(location)
-          }}
-        >
-          <Popup>
-            <CityPopupCard
-              city={location.city}
-              country={location.country}
-              groupId={location.groupId}
-              memberCount={location.memberCount}
-              eventCount={location.activeEvents}
-              recommendationCount={location.recommendations}
-              housingCount={location.housing}
-            />
-          </Popup>
-        </Marker>
-      ))}
-
-      {housingMarkers.map((location) => (
-        <Marker
-          key={`housing-${location.id}`}
-          position={[location.coordinates.lat, location.coordinates.lng]}
-          icon={createLayerIcon()}
-          eventHandlers={{
-            click: () => onCityClick(location)
-          }}
-        >
-          <Popup>
-            <CityPopupCard
-              city={location.city}
-              country={location.country}
-              groupId={location.groupId}
-              memberCount={location.memberCount}
-              eventCount={location.activeEvents}
-              recommendationCount={location.recommendations}
-              housingCount={location.housing}
-            />
-          </Popup>
-        </Marker>
-      ))}
-
-      {recommendationMarkers.map((location) => (
-        <Marker
-          key={`recommendations-${location.id}`}
-          position={[location.coordinates.lat, location.coordinates.lng]}
-          icon={createLayerIcon()}
-          eventHandlers={{
-            click: () => onCityClick(location)
-          }}
-        >
-          <Popup>
-            <CityPopupCard
-              city={location.city}
-              country={location.country}
-              groupId={location.groupId}
-              memberCount={location.memberCount}
-              eventCount={location.activeEvents}
-              recommendationCount={location.recommendations}
-              housingCount={location.housing}
-            />
+            {location.title ? (
+              <EventPopupCard location={location} />
+            ) : (
+              <CityPopupCard
+                city={location.city}
+                country={location.country}
+                groupId={location.groupId}
+                memberCount={location.memberCount}
+                eventCount={location.activeEvents}
+                recommendationCount={location.recommendations}
+                housingCount={location.housing}
+              />
+            )}
           </Popup>
         </Marker>
       ))}
