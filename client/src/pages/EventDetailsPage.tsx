@@ -661,6 +661,33 @@ export default function EventDetailsPage() {
                         )}
                       </motion.div>
                     )}
+                {isEditing && (
+                  <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
+                    <h3 className="text-lg font-semibold mb-4">Edit Event Details</h3>
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium mb-1">Event Title</label>
+                        <input
+                          type="text"
+                          value={editData.title}
+                          onChange={(e) => setEditData({ ...editData, title: e.target.value })}
+                          className="w-full px-3 py-2 border rounded-md text-base"
+                          data-testid="input-edit-title"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium mb-1">Description</label>
+                        <textarea
+                          value={editData.description}
+                          onChange={(e) => setEditData({ ...editData, description: e.target.value })}
+                          className="w-full px-3 py-2 border rounded-md text-sm min-h-24 resize-none"
+                          data-testid="input-edit-description"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 <div className="grid gap-8 md:grid-cols-2">
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
