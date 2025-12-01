@@ -366,21 +366,24 @@ export default function ProfilePage() {
         description={user.bio || `${user.name}'s profile on Mundo Tango`}
       />
       {/* PART_4: Hero Profile Photo Section - Editorial Glassmorphic Design */}
-      <div className="relative w-full min-h-[700px] overflow-visible group">
+      <div className="relative w-full h-[50vh] md:h-[60vh] overflow-hidden group">
         {/* Cover Photo as Hero Image */}
         <img 
           src={user.backgroundImage || 'https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?w=1600&auto=format&fit=crop'} 
           alt={`${user.name}'s cover`}
-          className="w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-cover"
           data-testid="img-hero-cover"
         />
         
+        {/* Dark Overlay Gradient for Text Readability */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-transparent" />
+
         {/* User Info Card Overlay - Left Side */}
         <motion.div 
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="absolute left-6 top-32 z-20"
+          className="absolute left-6 top-20 z-20"
         >
           <Card className="p-6 w-[500px] bg-background/95 backdrop-blur-md border-white/20">
           {/* Profile Photo + Content Layout */}
@@ -628,7 +631,7 @@ export default function ProfilePage() {
         
         {/* Friend Action Buttons - Top Right (Non-Own Profile Only) */}
         {!isOwnProfile && (
-          <div className="absolute top-6 right-6 z-30 flex gap-3">
+          <div className="absolute top-8 right-8 z-30 flex gap-3">
             {isFriend ? (
                 <Button 
                   variant="outline"
