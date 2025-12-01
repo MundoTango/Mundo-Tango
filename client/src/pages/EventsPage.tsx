@@ -3,6 +3,7 @@ import { Link, useLocation } from "wouter";
 import { useEvents, useEventAttendance, useEventRSVPs } from "@/hooks/useEvents";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { UnifiedRSVPButton, RSVPStatus } from "@/components/unified/UnifiedRSVPButton";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
