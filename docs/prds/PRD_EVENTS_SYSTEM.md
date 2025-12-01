@@ -715,10 +715,160 @@ Extract ID from nested or flat structure with fallback:
 
 ---
 
-## 19. Changelog
+## 19. Event Invitations System (Dec 01, 2025)
+
+### Feature Overview
+Full invitation system allowing organizers to invite users to their events via email or user account, with tracking and response handling.
+
+### Schema Changes (event_invitations table)
+```typescript
+export const eventInvitations = pgTable("event_invitations", {
+  id: serial("id").primaryKey(),
+  eventId: integer("event_id").references(() => events.id),
+  inviterId: integer("inviter_id").references(() => users.id),
+  inviteeUserId: integer("invitee_user_id").references(() => users.id),
+  invitee_email: varchar("invitee_email", { length: 255 }),
+  invitee_name: varchar("invitee_name", { length: 255 }),
+  status: varchar("status", { length: 20 }).default("pending"), // pending|accepted|declined|expired
+  invite_code: varchar("invite_code", { length: 64 }),
+  role: varchar("role", { length: 50 }), // organizer|speaker|performer|dj
+  expires_at: timestamp("expires_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+  respondedAt: timestamp("responded_at"),
+});
+```
+
+### API Endpoints
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| POST | `/api/events/:id/invitations` | Organizer | Create invitation |
+| GET | `/api/events/invitations/pending` | User | Get pending invitations |
+| POST | `/api/events/invitations/:inviteId/respond` | User | Accept/decline invitation |
+| GET | `/api/events/:id/invitations` | Organizer | List event invitations |
+
+### Files Modified
+- `shared/schema.ts` - Added 5 new columns to eventInvitations table
+- `server/routes/event-routes.ts` - Added 4 invitation routes (lines 804-896)
+- `server/services/notification-service.ts` - Added notifyEventInvitation helper
+
+---
+
+## 20. RSVP Capacity Enforcement (Dec 01, 2025)
+
+### Feature Overview
+RSVP system now enforces event capacity limits and returns 409 status when event is full, with waitlist availability flag.
+
+### Implementation
+```typescript
+// Capacity check in RSVP route (event-routes.ts lines 1085-1118)
+if (event.maxAttendees) {
+  const maxCapacity = event.maxAttendees;
+  const currentCount = await db.select({ count: sql`count(*)` })
+    .from(eventRsvps)
+    .where(and(
+      eq(eventRsvps.eventId, eventId),
+      eq(eventRsvps.status, "going")
+    ));
+
+  if (currentCount + totalNeeded > maxCapacity) {
+    return res.status(409).json({ 
+      message: "Event is at full capacity",
+      capacity: maxCapacity,
+      current: currentCount,
+      waitlistAvailable: true
+    });
+  }
+}
+```
+
+### API Response (409 Status)
+```json
+{
+  "message": "Event is at full capacity",
+  "capacity": 100,
+  "current": 100,
+  "waitlistAvailable": true
+}
+```
+
+---
+
+## 21. Event Notification Integration (Dec 01, 2025)
+
+### Feature Overview
+6 new notification helpers for event-specific notifications, integrated into event routes.
+
+### Notification Helpers Added
+```typescript
+// server/services/notification-service.ts
+notifyEventInvitation(userId, eventId, eventTitle, inviterName)
+notifyEventRsvp(organizerId, eventId, eventTitle, rsvpUserId, status)
+notifyEventUpdate(eventId, eventTitle, updateType)
+notifyEventPhotoUploaded(organizerId, eventId, eventTitle, uploaderId)
+notifyEventDiscussionPost(eventId, eventTitle, posterId, postContent)
+notifyEventReminder(eventId, eventTitle, reminderType)
+```
+
+### Integration Points
+- RSVP creation → notifies organizer
+- Photo upload → notifies organizer
+- Invitation sent → notifies invitee
+
+---
+
+## 22. PRO Tab Organizer Role Surfacing (Dec 01, 2025)
+
+### Feature Overview
+PRO tab now automatically detects and surfaces the "organizer" role based on events created by the user.
+
+### Implementation
+```typescript
+// server/routes/pro.ts - Enhanced pro-stats endpoint
+// Auto-detect organizer role from events table (user is event creator)
+if (!roleFilter || roleFilter === 'organizer') {
+  const organizedEvents = await db
+    .select({ id: events.id, startDate: events.startDate })
+    .from(events)
+    .where(eq(events.userId, userId));
+
+  if (organizedEvents.length > 0) {
+    stats['organizer'] = {
+      totalEvents: organizedEvents.length,
+      upcomingEvents: organizedEvents.filter(e => new Date(e.startDate) > now).length,
+      avgRating: 0,
+      totalReviews: 0,
+    };
+  }
+}
+```
+
+### API Response Example
+```json
+{
+  "stats": {
+    "organizer": {
+      "totalEvents": 260,
+      "upcomingEvents": 19,
+      "avgRating": 0,
+      "totalReviews": 0
+    }
+  }
+}
+```
+
+### Files Modified
+- `server/routes/pro.ts` - Added organizer detection in pro-stats and event-history endpoints
+
+---
+
+## 23. Changelog
 
 | Date | Version | Changes |
 |------|---------|---------|
+| 2025-12-01 | 1.7 | Added PRO tab organizer role auto-detection |
+| 2025-12-01 | 1.6 | Added event notification integration (6 helpers) |
+| 2025-12-01 | 1.5 | Added RSVP capacity enforcement with 409 response |
+| 2025-12-01 | 1.4 | Added event invitations system (4 endpoints, schema) |
 | 2025-12-01 | 1.3 | Added React key prop warning fix for nested event data |
 | 2025-12-01 | 1.2 | Added RSVP authorization header fix for persistent permissions |
 | 2025-12-01 | 1.1 | Added RSVP cache synchronization fix documentation |
