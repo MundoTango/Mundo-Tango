@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar as CalendarIcon, MapPin, Search, Users, Plus, Map as MapIconLucide, List, ChevronRight, Database, Download, ChevronLeft, SlidersHorizontal, Check, Languages } from "lucide-react";
+import { Calendar as CalendarIcon, MapPin, Search, Users, Plus, Map as MapIconLucide, List, ChevronRight, ChevronDown, Database, Download, ChevronLeft, SlidersHorizontal, Check, Languages } from "lucide-react";
 import { getLanguageByCode } from "@/components/input/UnifiedLanguagePicker";
 import { safeDateFormat } from "@/lib/safeDateFormat";
 import { getTimezoneFromCity } from "@/lib/timezoneUtils";
@@ -215,15 +215,18 @@ function EventCard({ event, index = 0 }: { event: any; index?: number }) {
   );
 }
 
+type EventTab = "my-events" | "upcoming" | "discover";
+
 export default function EventsPage() {
   const [, navigate] = useLocation();
   const { user } = useAuth();
   const { toast } = useToast();
+  const [activeTab, setActiveTab] = useState<EventTab>(user ? "upcoming" : "discover");
   const [viewMode, setViewMode] = useState<"list" | "calendar" | "map">("list");
   const [filters, setFilters] = useState<EventFilterValues>({});
   const [page, setPage] = useState(1);
   const [sortBy, setSortBy] = useState<"relevance" | "date" | "price">("relevance");
-  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [filtersExpanded, setFiltersExpanded] = useState(false);
 
   // Build query params for search
   const buildSearchParams = () => {
@@ -248,8 +251,20 @@ export default function EventsPage() {
     return params.toString();
   };
 
-  // Fetch events with advanced search
-  const { data: searchResults, isLoading } = useQuery({
+  // TAB 1: My Events - User's RSVPs
+  const { data: myEventsData, isLoading: isLoadingMyEvents } = useQuery({
+    queryKey: ["/api/events/my-rsvps"],
+    enabled: !!user && activeTab === "my-events",
+  });
+
+  // TAB 2: Upcoming - Smart personalized events (city + groups)
+  const { data: upcomingData, isLoading: isLoadingUpcoming } = useQuery({
+    queryKey: ["/api/events/smart", { limit: 20, offset: (page - 1) * 20 }],
+    enabled: !!user && activeTab === "upcoming",
+  });
+
+  // TAB 3: Discover - Global search
+  const { data: searchResults, isLoading: isLoadingDiscover } = useQuery({
     queryKey: ["/api/events/search", filters, page, sortBy],
     queryFn: async () => {
       const params = buildSearchParams();
@@ -257,10 +272,30 @@ export default function EventsPage() {
       if (!response.ok) throw new Error("Failed to fetch events");
       return response.json();
     },
+    enabled: activeTab === "discover",
   });
 
-  const events = searchResults?.events || [];
-  const pagination = searchResults?.pagination;
+  // Select events based on active tab
+  const events = useMemo(() => {
+    switch (activeTab) {
+      case "my-events":
+        return myEventsData || [];
+      case "upcoming":
+        return upcomingData?.events || [];
+      case "discover":
+      default:
+        return searchResults?.events || [];
+    }
+  }, [activeTab, myEventsData, upcomingData, searchResults]);
+
+  const pagination = activeTab === "discover" ? searchResults?.pagination : null;
+  const isLoading = activeTab === "my-events" ? isLoadingMyEvents : 
+                    activeTab === "upcoming" ? isLoadingUpcoming : isLoadingDiscover;
+  
+  // Active filter count
+  const activeFilterCount = Object.keys(filters).filter(
+    k => k !== "q" && filters[k as keyof EventFilterValues] !== undefined && filters[k as keyof EventFilterValues] !== null
+  ).length;
 
   const isSuperAdmin = user?.role === 'super_admin';
 
@@ -424,76 +459,141 @@ export default function EventsPage() {
             {/* Ad Banner */}
             <BannerAd placement="events" />
 
-            {/* Search Bar & Controls */}
-            <div className="flex flex-col lg:flex-row gap-4">
-              {/* Quick Search */}
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search events by title, description, or location..."
-                  value={filters.q || ""}
-                  onChange={(e) => {
-                    setFilters({ ...filters, q: e.target.value });
-                    setPage(1);
-                  }}
-                  className="pl-10"
-                  data-testid="input-search-events"
-                />
-              </div>
+            {/* 3-TAB ARCHITECTURE: My Events | Upcoming | Discover */}
+            <Tabs value={activeTab} onValueChange={(val) => {
+              setActiveTab(val as EventTab);
+              setPage(1);
+            }}>
+              <TabsList className="w-full grid grid-cols-3 h-12">
+                <TabsTrigger 
+                  value="my-events" 
+                  className="gap-2"
+                  disabled={!user}
+                  data-testid="tab-my-events"
+                >
+                  <Check className="h-4 w-4" />
+                  <span className="hidden sm:inline">My Events</span>
+                  <span className="sm:hidden">Mine</span>
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="upcoming" 
+                  className="gap-2"
+                  disabled={!user}
+                  data-testid="tab-upcoming"
+                >
+                  <CalendarIcon className="h-4 w-4" />
+                  <span className="hidden sm:inline">Upcoming</span>
+                  <span className="sm:hidden">Soon</span>
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="discover" 
+                  className="gap-2"
+                  data-testid="tab-discover"
+                >
+                  <Search className="h-4 w-4" />
+                  Discover
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
 
-              {/* Advanced Filters Toggle */}
-              <Sheet open={filtersOpen} onOpenChange={setFiltersOpen}>
-                <SheetTrigger asChild>
-                  <Button variant="outline" className="gap-2" data-testid="button-open-filters">
-                    <SlidersHorizontal className="h-4 w-4" />
-                    Advanced Filters
-                    {Object.keys(filters).filter(k => k !== "q" && filters[k as keyof EventFilterValues] !== undefined && filters[k as keyof EventFilterValues] !== null).length > 0 && (
-                      <Badge variant="secondary" className="ml-2">
-                        {Object.keys(filters).filter(k => k !== "q" && filters[k as keyof EventFilterValues] !== undefined && filters[k as keyof EventFilterValues] !== null).length}
-                      </Badge>
-                    )}
-                  </Button>
-                </SheetTrigger>
-                <SheetContent side="left" className="w-full sm:w-96 overflow-y-auto">
-                  <SheetHeader>
-                    <SheetTitle>Filter Events</SheetTitle>
-                    <SheetDescription>
-                      Refine your search with 12 powerful filters
-                    </SheetDescription>
-                  </SheetHeader>
-                  <div className="mt-6">
-                    <EventFilters 
-                      onFilterChange={(newFilters) => {
-                        setFilters(newFilters);
+            {/* Tab Descriptions */}
+            <div className="text-sm text-muted-foreground">
+              {activeTab === "my-events" && "Events you've RSVP'd to"}
+              {activeTab === "upcoming" && `Events in your city${upcomingData?.filters?.joinedCities?.length ? ` and ${upcomingData.filters.joinedCities.length} followed cities` : ""}`}
+              {activeTab === "discover" && "Explore all events worldwide"}
+            </div>
+
+            {/* Search Bar & Controls - Only show for Discover tab */}
+            {activeTab === "discover" && (
+              <div className="space-y-4">
+                <div className="flex flex-col lg:flex-row gap-4">
+                  {/* Quick Search */}
+                  <div className="relative flex-1">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder="Search events by title, description, or location..."
+                      value={filters.q || ""}
+                      onChange={(e) => {
+                        setFilters({ ...filters, q: e.target.value });
                         setPage(1);
-                      }} 
-                      initialFilters={filters}
+                      }}
+                      className="pl-10"
+                      data-testid="input-search-events"
                     />
                   </div>
-                </SheetContent>
-              </Sheet>
 
-              {/* Sort Controls */}
-              <Select value={sortBy} onValueChange={(val: "relevance" | "date" | "price") => {
-                setSortBy(val);
-                setPage(1);
-              }}>
-                <SelectTrigger className="w-full lg:w-48" data-testid="select-sort">
-                  <SelectValue placeholder="Sort by" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="relevance" data-testid="option-sort-relevance">
-                    Relevance
-                  </SelectItem>
-                  <SelectItem value="date" data-testid="option-sort-date">
-                    Date
-                  </SelectItem>
-                  <SelectItem value="price" data-testid="option-sort-price">
-                    Price
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+                  {/* Collapsible Filters Toggle */}
+                  <Button 
+                    variant="outline" 
+                    className="gap-2" 
+                    onClick={() => setFiltersExpanded(!filtersExpanded)}
+                    data-testid="button-toggle-filters"
+                  >
+                    <SlidersHorizontal className="h-4 w-4" />
+                    Filters
+                    {activeFilterCount > 0 && (
+                      <Badge variant="secondary">{activeFilterCount}</Badge>
+                    )}
+                    <ChevronDown className={`h-4 w-4 transition-transform ${filtersExpanded ? 'rotate-180' : ''}`} />
+                  </Button>
+
+                  {/* Sort Controls */}
+                  <Select value={sortBy} onValueChange={(val: "relevance" | "date" | "price") => {
+                    setSortBy(val);
+                    setPage(1);
+                  }}>
+                    <SelectTrigger className="w-full lg:w-48" data-testid="select-sort">
+                      <SelectValue placeholder="Sort by" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="relevance" data-testid="option-sort-relevance">
+                        Relevance
+                      </SelectItem>
+                      <SelectItem value="date" data-testid="option-sort-date">
+                        Date
+                      </SelectItem>
+                      <SelectItem value="price" data-testid="option-sort-price">
+                        Price
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Collapsible Filters Panel */}
+                {filtersExpanded && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <Card className="p-6">
+                      <div className="flex items-center justify-between mb-4">
+                        <h3 className="font-medium">Advanced Filters</h3>
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          onClick={() => {
+                            setFilters({});
+                            setPage(1);
+                          }}
+                          data-testid="button-clear-filters"
+                        >
+                          Clear All
+                        </Button>
+                      </div>
+                      <EventFilters 
+                        onFilterChange={(newFilters) => {
+                          setFilters(newFilters);
+                          setPage(1);
+                        }} 
+                        initialFilters={filters}
+                      />
+                    </Card>
+                  </motion.div>
+                )}
+              </div>
+            )}
 
             {/* View Mode Toggle & Results Count */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -514,11 +614,23 @@ export default function EventsPage() {
                 </TabsList>
               </Tabs>
 
-              {pagination && (
-                <p className="text-sm text-muted-foreground" data-testid="text-results-count">
-                  Showing {((pagination.page - 1) * pagination.limit) + 1}-{Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total} events
-                </p>
-              )}
+              <div className="flex items-center gap-4">
+                {activeTab === "my-events" && myEventsData && (
+                  <p className="text-sm text-muted-foreground" data-testid="text-my-events-count">
+                    {myEventsData.length} event{myEventsData.length !== 1 ? 's' : ''} you're attending
+                  </p>
+                )}
+                {activeTab === "upcoming" && upcomingData && (
+                  <p className="text-sm text-muted-foreground" data-testid="text-upcoming-count">
+                    {upcomingData.events?.length || 0} upcoming in your area
+                  </p>
+                )}
+                {pagination && activeTab === "discover" && (
+                  <p className="text-sm text-muted-foreground" data-testid="text-results-count">
+                    Showing {((pagination.page - 1) * pagination.limit) + 1}-{Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total} events
+                  </p>
+                )}
+              </div>
             </div>
 
             {/* Content */}
