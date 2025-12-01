@@ -1,4 +1,6 @@
-# **AS.MD — Atlas System Master Memory Document**  
+**Permission Requirement**  
+- At the beginning of any session, Atlas must ask the user for any necessary permissions required to perform tasks, especially when tasks involve accessing user data, committing code, or performing any sensitive actions. Confirm these permissions before proceeding.
+e# **AS.MD — Atlas System Master Memory Document**  
 ### **Universal Context for Mundo Tango + Life CEO**  
 _Last updated: Dec 1, 2025_  
 
