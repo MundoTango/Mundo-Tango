@@ -44,7 +44,18 @@ Core features include social functionalities (events, groups, posts, notificatio
 
 **FINAL COVERAGE: 72%+ (up from 50% at session start)**
 
-**Session Summary (Dec 01, 2025 - Latest - Object Storage Migration):**
+**Session Summary (Dec 01, 2025 - Latest - Cover Photo Hero Fix):**
+- ✅ **Cover Photo Bug Fixed:** Event hero section now displays uploaded cover photo correctly
+  - Root cause: Event creation saved to `coverImage` but hero expected `imageUrl`
+  - Fix: Event creation now saves `coverImageUrl` to BOTH `imageUrl` AND `coverImage` columns
+  - Restored `coverImage` to `eventSummaryFields` (safe now with Object Storage URLs, not base64)
+- ✅ **Mr. Blue Error Tracking:** 3 non-critical errors tracked (i18next, ads 401, tour 404)
+  - All errors are existing patterns, no escalation needed
+  - ProactiveErrorDetector → batch sent → analyzed successfully
+- ✅ **MB.MD Pattern 28 Applied:** Hierarchical execution methodology used
+- ✅ **PRD Updated:** PRD_EVENTS_SYSTEM.md v2.1 with Cover Photo Hero Display Fix section
+
+**Session Summary (Dec 01, 2025 - Previous - Object Storage Migration):**
 - ✅ **Object Storage Media Upload:** POST /api/media/upload endpoint using ObjectStorageService
   - Server-side upload to Replit Object Storage (bucket already configured)
   - Returns URLs like `/public-objects/images/photo_xxx.png` instead of base64
