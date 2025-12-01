@@ -534,18 +534,8 @@ export default function EventDetailsPage() {
             className="space-y-8"
           >
             <Card className="overflow-hidden">
-              <CardHeader className="border-b flex flex-row items-center justify-between gap-4">
+              <CardHeader className="border-b">
                 <CardTitle className="text-3xl font-serif">{event.title || 'Event'}</CardTitle>
-                {isOrganizer && (
-                  <div className="flex items-center gap-2">
-                    <Link href={`/events/${eventId}/edit`}>
-                      <Button variant="outline" size="sm" className="gap-2" data-testid="button-edit-event">
-                        <Edit className="h-4 w-4" />
-                        Edit Event
-                      </Button>
-                    </Link>
-                  </div>
-                )}
               </CardHeader>
               <Tabs defaultValue="discussion" className="w-full">
                 <TabsList className="grid w-full grid-cols-3 border-b rounded-none bg-transparent p-0">
@@ -571,6 +561,21 @@ export default function EventDetailsPage() {
 
                 <TabsContent value="details" className="p-8">
                   <div className="space-y-8">
+                    {isOrganizer && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2 }}
+                        className="flex justify-end"
+                      >
+                        <Link href={`/events/${eventId}/edit`}>
+                          <Button variant="outline" className="gap-2" data-testid="button-edit-event">
+                            <Edit className="h-4 w-4" />
+                            Edit Event
+                          </Button>
+                        </Link>
+                      </motion.div>
+                    )}
                 <div className="grid gap-8 md:grid-cols-2">
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
