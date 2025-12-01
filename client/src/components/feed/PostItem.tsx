@@ -13,6 +13,7 @@ import { ReportModal } from "@/components/modals/ReportModal";
 import { useReactToPost, useSharePost, useSavePost, useUnsavePost, useDeletePost, useReportPost } from "@/hooks/usePostInteractions";
 import { EditPostDialog } from "@/components/modals/EditPostDialog";
 import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 import { CommentsSection } from "./CommentsSection";
 import { renderMentionPills } from "@/utils/renderMentionPills";
 import { motion } from "framer-motion";
@@ -71,6 +72,7 @@ interface PostItemProps {
 
 export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
   const { user } = useAuth();
+  const { toast } = useToast();
   const [showComments, setShowComments] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const [showReportModal, setShowReportModal] = useState(false);
@@ -128,6 +130,15 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
   const isDeleteLoading = deleteMutation.isPending;
 
   const handleReaction = async (reactionId: string) => {
+    if (!user) {
+      // User not logged in - show toast instead of making API call
+      toast({
+        title: "Sign in required",
+        description: "Please sign in to react to posts",
+        variant: "destructive",
+      });
+      return;
+    }
     await reactMutation.mutateAsync({ postId: post.id, reactionType: reactionId });
   };
 

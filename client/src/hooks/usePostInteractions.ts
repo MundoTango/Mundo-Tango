@@ -90,16 +90,23 @@ export const useReactToPost = () => {
       
       return { previousPostsData };
     },
-    onError: (error, variables, context) => {
+    onError: (error: any, variables, context) => {
       // Rollback on error
       if (context?.previousPostsData) {
         queryClient.setQueryData(['/api/posts'], context.previousPostsData);
       }
       // Refetch to get correct state
       queryClient.invalidateQueries({ queryKey: ['infinite-feed'] });
+      
+      // Check for 401 Unauthorized - user needs to log in
+      const status = error?.response?.status || error?.status;
+      const isUnauthorized = status === 401 || error?.message?.includes('401') || error?.message?.includes('Unauthorized');
+      
       toast({
-        title: "Reaction failed",
-        description: "Could not react to post",
+        title: isUnauthorized ? "Sign in required" : "Reaction failed",
+        description: isUnauthorized 
+          ? "Please sign in to react to posts" 
+          : "Could not react to post",
         variant: "destructive",
       });
     },
