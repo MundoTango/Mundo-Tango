@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { Button } from "@/components/ui/button";
@@ -81,9 +81,20 @@ const formatRoleName = (role: string) => {
 export function EventParticipantManager({ eventId, isOrganizer }: EventParticipantManagerProps) {
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const [selectedRole, setSelectedRole] = useState<string>("dj");
   const [selectedUser, setSelectedUser] = useState<SearchedUser | null>(null);
   const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
+  const debounceTimer = useRef<ReturnType<typeof setTimeout>>();
+
+  // Debounce search query to reduce API calls
+  useEffect(() => {
+    debounceTimer.current = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 300);
+
+    return () => clearTimeout(debounceTimer.current);
+  }, [searchQuery]);
 
   const { data: participantsData, isLoading } = useQuery<{ participants: Record<string, Participant[]>, total: number }>({
     queryKey: ["/api/events", eventId, "participants"],
@@ -95,17 +106,20 @@ export function EventParticipantManager({ eventId, isOrganizer }: EventParticipa
   });
 
   const { data: searchResults = [], isLoading: isSearching } = useQuery<SearchedUser[]>({
-    queryKey: ["/api/events", eventId, "search-team-members", selectedRole, searchQuery],
+    queryKey: ["/api/events", eventId, "search-team-members", selectedRole, debouncedSearchQuery],
     queryFn: async () => {
-      if (!searchQuery || searchQuery.length < 2) return [];
+      if (!debouncedSearchQuery || debouncedSearchQuery.length < 2) return [];
       const res = await fetch(
-        `/api/events/${eventId}/search-team-members?role=${encodeURIComponent(selectedRole)}&q=${encodeURIComponent(searchQuery)}&limit=15`, 
+        `/api/events/${eventId}/search-team-members?role=${encodeURIComponent(selectedRole)}&q=${encodeURIComponent(debouncedSearchQuery)}&limit=15`, 
         { credentials: "include" }
       );
-      if (!res.ok) return [];
+      if (!res.ok) {
+        console.error("Failed to search team members");
+        return [];
+      }
       return res.json();
     },
-    enabled: searchQuery.length >= 2,
+    enabled: debouncedSearchQuery.length >= 2,
   });
 
   const inviteParticipant = useMutation({
@@ -241,14 +255,14 @@ export function EventParticipantManager({ eventId, isOrganizer }: EventParticipa
                     />
                   </div>
                   
-                  {searchQuery.length >= 2 && (
-                    <ScrollArea className="h-48 rounded-md border">
+                  {debouncedSearchQuery.length >= 2 && (
+                    <ScrollArea className="h-48 rounded-md border" data-testid="search-results-scroll">
                       {isSearching ? (
-                        <div className="flex items-center justify-center py-6">
+                        <div className="flex items-center justify-center py-6" data-testid="search-loading">
                           <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
                         </div>
                       ) : searchResults.length === 0 ? (
-                        <div className="py-6 text-center text-muted-foreground text-sm">
+                        <div className="py-6 text-center text-muted-foreground text-sm" data-testid="search-empty">
                           No users found
                         </div>
                       ) : (
