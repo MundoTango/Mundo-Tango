@@ -87,20 +87,38 @@ router.post("/events/:id/participants", authenticateToken, async (req, res) => {
     const eventId = parseInt(req.params.id);
     const userId = (req as any).userId;
 
-    // Verify user is organizer/co-organizer/host
-    const organizer = await db
+    // Get event details first
+    const [event] = await db
       .select()
-      .from(eventParticipants)
-      .where(
-        and(
-          eq(eventParticipants.eventId, eventId),
-          eq(eventParticipants.userId, userId),
-          sql`${eventParticipants.role} IN ('organizer', 'co_organizer', 'host')`
-        )
-      )
+      .from(events)
+      .where(eq(events.id, eventId))
       .limit(1);
 
-    if (organizer.length === 0) {
+    if (!event) {
+      return res.status(404).json({ error: "Event not found" });
+    }
+
+    // Verify user is event creator OR organizer/co-organizer/host participant
+    const isEventCreator = event.userId === userId;
+    
+    let isOrganizerParticipant = false;
+    if (!isEventCreator) {
+      const [organizer] = await db
+        .select()
+        .from(eventParticipants)
+        .where(
+          and(
+            eq(eventParticipants.eventId, eventId),
+            eq(eventParticipants.userId, userId),
+            sql`${eventParticipants.role} IN ('organizer', 'co_organizer', 'host')`
+          )
+        )
+        .limit(1);
+      
+      isOrganizerParticipant = !!organizer;
+    }
+
+    if (!isEventCreator && !isOrganizerParticipant) {
       return res.status(403).json({ error: "Only organizers can add participants" });
     }
 
@@ -123,7 +141,92 @@ router.post("/events/:id/participants", authenticateToken, async (req, res) => {
       .values(participantData)
       .returning();
 
-    res.status(201).json({ participant: newParticipant });
+    // Get user details for notifications
+    const [addedUser] = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, newParticipant.userId))
+      .limit(1);
+
+    // ========== DOWNSTREAM EFFECT 1: Create notification ==========
+    try {
+      await notificationService.createNotification({
+        userId: newParticipant.userId,
+        type: "event_participant_added",
+        title: `Added to ${event.title}`,
+        message: `You've been added as a ${validatedData.role.replace('_', ' ')} to "${event.title}"`,
+        relatedEventId: eventId,
+        relatedUserId: userId,
+        metadata: {
+          role: validatedData.role,
+          eventId: eventId,
+          organizerId: userId
+        }
+      });
+    } catch (error) {
+      console.error("[Notification] Failed to create participant notification:", error);
+    }
+
+    // ========== DOWNSTREAM EFFECT 2: Create activity log ==========
+    try {
+      if ((sql as any).raw) {
+        await db.execute(sql.raw(`
+          INSERT INTO event_activity_logs (event_id, user_id, action, details, created_at)
+          VALUES (${eventId}, ${userId}, 'participant_added', ${'{"role": "' + validatedData.role + '", "target_user_id": ' + newParticipant.userId + '}'}, NOW())
+        `));
+      }
+    } catch (error) {
+      console.error("[ActivityLog] Failed to log participant addition:", error);
+    }
+
+    // ========== DOWNSTREAM EFFECT 3: WebSocket real-time update ==========
+    try {
+      // Emit to all users watching this event
+      const eventUpdateMessage = {
+        type: "participant_added",
+        eventId: eventId,
+        participant: {
+          id: newParticipant.id,
+          userId: newParticipant.userId,
+          userName: addedUser?.name,
+          role: newParticipant.role,
+          status: newParticipant.status
+        },
+        timestamp: new Date().toISOString()
+      };
+      
+      // TODO: Broadcast via WebSocket/Socket.io to event viewers
+      // io.to(`event-${eventId}`).emit('participant_added', eventUpdateMessage);
+      console.log("[WebSocket] Participant added event:", eventUpdateMessage);
+    } catch (error) {
+      console.error("[WebSocket] Failed to broadcast participant update:", error);
+    }
+
+    // ========== DOWNSTREAM EFFECT 4: Send email notification ==========
+    try {
+      // TODO: Send email to newParticipant with event details
+      if (addedUser?.email) {
+        console.log(`[Email] Would send participant invitation to ${addedUser.email} for event ${event.title}`);
+        // Example implementation:
+        // await emailService.sendParticipantInvitation({
+        //   recipientEmail: addedUser.email,
+        //   recipientName: addedUser.name,
+        //   eventTitle: event.title,
+        //   eventDate: event.startDate,
+        //   eventVenue: event.venue,
+        //   role: validatedData.role,
+        //   organizerName: (await db.select().from(users).where(eq(users.id, userId)))[0]?.name,
+        //   eventLink: `https://mundotango.com/events/${eventId}`
+        // });
+      }
+    } catch (error) {
+      console.error("[Email] Failed to send participant notification email:", error);
+    }
+
+    res.status(201).json({ 
+      participant: newParticipant,
+      message: `${addedUser?.name || 'User'} added as ${validatedData.role.replace('_', ' ')} successfully`
+    });
   } catch (error: any) {
     console.error("Error adding participant:", error);
     res.status(400).json({ error: error.message || "Failed to add participant" });
