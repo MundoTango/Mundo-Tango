@@ -317,20 +317,38 @@ router.delete("/events/:id/participants/:targetUserId", authenticateToken, async
     const targetUserId = parseInt(req.params.targetUserId);
     const userId = (req as any).userId;
 
-    // Verify user has permission
-    const manager = await db
+    // Get event to check if user is creator
+    const [event] = await db
       .select()
-      .from(eventParticipants)
-      .where(
-        and(
-          eq(eventParticipants.eventId, eventId),
-          eq(eventParticipants.userId, userId),
-          eq(eventParticipants.canManageParticipants, true)
-        )
-      )
+      .from(events)
+      .where(eq(events.id, eventId))
       .limit(1);
 
-    if (manager.length === 0) {
+    if (!event) {
+      return res.status(404).json({ error: "Event not found" });
+    }
+
+    // Verify user has permission (either event creator OR has canManageParticipants)
+    const isEventCreator = event.userId === userId;
+    
+    let hasManagementPermission = isEventCreator;
+    if (!isEventCreator) {
+      const [manager] = await db
+        .select()
+        .from(eventParticipants)
+        .where(
+          and(
+            eq(eventParticipants.eventId, eventId),
+            eq(eventParticipants.userId, userId),
+            eq(eventParticipants.canManageParticipants, true)
+          )
+        )
+        .limit(1);
+
+      hasManagementPermission = !!manager;
+    }
+
+    if (!hasManagementPermission) {
       return res.status(403).json({ error: "Permission denied" });
     }
 

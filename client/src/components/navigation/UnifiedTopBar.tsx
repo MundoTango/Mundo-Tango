@@ -76,6 +76,7 @@ function getNotificationIcon(type: string) {
       return <Users className={iconClass} style={iconStyle} />;
     case 'event_invite':
     case 'event_update':
+    case 'event_rsvp':
       return <Calendar className={iconClass} style={iconStyle} />;
     case 'friend_request':
       return <UserPlus className={iconClass} style={iconStyle} />;
