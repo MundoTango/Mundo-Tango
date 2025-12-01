@@ -1,6 +1,6 @@
 # PRD: Events System
 
-> **Version:** 1.7  
+> **Version:** 1.9  
 > **Created:** 2025-11-30  
 > **Updated:** 2025-12-01  
 > **Status:** Active  
@@ -937,10 +937,67 @@ const { data: searchResults } = useQuery({
 
 ---
 
-## 24. Changelog
+## 24. Performance Optimizations (v1.9)
+
+### Problem
+The GET `/api/events/:id` endpoint was returning 15MB+ responses due to base64-encoded images stored in `coverImage` and `mediaUrls` columns. Response times exceeded 7 seconds.
+
+### Solution Applied
+
+#### 1. Database Query Optimization
+Created shared Drizzle selector `eventSummaryFields` that explicitly excludes the `coverImage` column:
+
+```typescript
+// server/routes/event-routes.ts
+const eventSummaryFields = {
+  id: events.id,
+  title: events.title,
+  // ... 40+ fields
+  imageUrl: events.imageUrl,  // URL-based images (not base64)
+  // coverImage: EXCLUDED - can be megabytes of base64 data
+  mediaUrls: events.mediaUrls,
+  // ...
+};
+```
+
+#### 2. Response Filtering
+Filter base64 data from `mediaUrls` before sending response:
+
+```typescript
+const cleanMediaUrls = eventData.mediaUrls?.filter(
+  (url: string) => !url?.startsWith('data:')
+) || [];
+```
+
+### Performance Results
+
+| Metric | Before | After | Improvement |
+|--------|--------|-------|-------------|
+| Response Size | 15MB | 53KB | **99.6% reduction** |
+| Response Time | 7.86s | 2.7s | **65% faster** |
+| Memory Usage | High | Normal | Significant reduction |
+
+### Known Limitations
+- The filtering occurs after database fetch, so DB still pays the read cost
+- Root cause: Event creation stores base64 in mediaUrls when Cloudinary is not configured
+- Permanent fix requires configuring Cloudinary or Replit Object Storage for media uploads
+
+### Future Improvements
+1. Configure `VITE_CLOUDINARY_CLOUD_NAME` and `VITE_CLOUDINARY_UPLOAD_PRESET` for frontend uploads
+2. Or migrate to server-side Object Storage uploads
+3. Backfill existing base64 data to cloud storage
+4. Remove base64 fallback from `client/src/lib/mediaUpload.ts`
+
+### Files Modified
+- `server/routes/event-routes.ts` - Added `eventSummaryFields` selector and base64 filtering
+
+---
+
+## 25. Changelog
 
 | Date | Version | Changes |
 |------|---------|---------|
+| 2025-12-01 | 1.9 | Added Performance Optimizations section (99.6% response size reduction) |
 | 2025-12-01 | 1.8 | Added Smart Team Member Search with 4-tier priority |
 | 2025-12-01 | 1.7 | Added PRO tab organizer role auto-detection |
 | 2025-12-01 | 1.6 | Added event notification integration (6 helpers) |
