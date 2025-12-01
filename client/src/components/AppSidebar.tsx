@@ -57,8 +57,7 @@ const communityItems = [
   { title: "Community Map", url: "/community-world-map", icon: Globe, tooltip: "Explore the global tango community" },
   { title: "Events", url: "/events", icon: Calendar, tooltip: "Browse events - list, calendar, or map view" },
   { title: "Groups", url: "/groups", icon: Users, tooltip: "Browse and join groups" },
-  { title: "Friends", url: "/friends-list", icon: UserPlus, tooltip: "Manage your friends" },
-  { title: "Recommendations", url: "/recommendations", icon: Sparkles, tooltip: "Personalized recommendations" },
+    { title: "Friends", url: "/friends", icon: UserPlus, tooltip: "Manage your friends" },  { title: "Recommendations", url: "/recommendations", icon: Sparkles, tooltip: "Personalized recommendations" },
   { title: "Messages", url: "/messages", icon: MessageSquare, tooltip: "Your conversations" },
   { title: "Leaderboard", url: "/leaderboard", icon: Trophy, tooltip: "Top contributors" },
 ];
