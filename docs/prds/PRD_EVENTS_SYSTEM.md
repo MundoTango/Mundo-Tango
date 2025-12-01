@@ -1,7 +1,8 @@
 # PRD: Events System
 
-> **Version:** 1.0  
+> **Version:** 1.7  
 > **Created:** 2025-11-30  
+> **Updated:** 2025-12-01  
 > **Status:** Active  
 > **Route:** `/events`, `/events/:id`, `/events/create`, `/events/calendar`  
 > **PRD Method:** Pattern 39 - Reverse-Engineering Protocol  
