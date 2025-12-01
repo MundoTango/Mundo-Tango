@@ -7,38 +7,51 @@ import { CommunityMapWithLayers } from "@/components/map/CommunityMapWithLayers"
 import { UnifiedLocationPicker } from "@/components/input/UnifiedLocationPicker";
 import "leaflet/dist/leaflet.css";
 
-interface CommunityLocation {
+interface EventMarker {
   id: number;
+  title: string;
   city: string;
   country: string;
   coordinates: { lat: number; lng: number };
+  eventType: string;
+  startDate: string;
+  address: string;
   memberCount: number;
   activeEvents: number;
   recommendations: number;
   housing: number;
   isActive: boolean;
-  groupId?: number;
 }
 
 export default function CommunityMapPage() {
   const [searchLocation, setSearchLocation] = useState("");
   const [mapCenter, setMapCenter] = useState<[number, number] | null>(null);
-  const [activeLayers, setActiveLayers] = useState<string[]>([]);
 
-  const { data: locations = [], isLoading } = useQuery<CommunityLocation[]>({
+  const { data: eventMarkers = [], isLoading } = useQuery<EventMarker[]>({
     queryKey: ["/api/map/markers"],
   });
 
-  const toggleLayer = (layerId: string) => {
-    setActiveLayers(prev =>
-      prev.includes(layerId) ? prev.filter(l => l !== layerId) : [...prev, layerId]
-    );
-  };
+  // Convert event markers to city location format for map display
+  const locations: any[] = eventMarkers.map(marker => ({
+    id: marker.id,
+    city: marker.city,
+    country: marker.country,
+    coordinates: marker.coordinates,
+    memberCount: 0,
+    activeEvents: 1,
+    recommendations: 0,
+    housing: 0,
+    isActive: true,
+    groupId: marker.id,
+    title: marker.title,
+    eventType: marker.eventType,
+    address: marker.address,
+  }));
 
   const layers = [
-    { id: "events", label: "Events", enabled: activeLayers.includes("events"), icon: Calendar },
-    { id: "housing", label: "Housing", enabled: activeLayers.includes("housing"), icon: Building2 },
-    { id: "recommendations", label: "Recommendations", enabled: activeLayers.includes("recommendations"), icon: MapPin },
+    { id: "events", label: "Events", enabled: true, icon: Calendar },
+    { id: "housing", label: "Housing", enabled: false, icon: Building2 },
+    { id: "recommendations", label: "Recommendations", enabled: false, icon: MapPin },
   ];
 
   return (

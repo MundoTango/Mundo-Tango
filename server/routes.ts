@@ -9949,81 +9949,56 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // ==================== MAP MARKERS - CITY GROUPS ====================
+  // ==================== MAP MARKERS - INDIVIDUAL EVENTS ====================
 
   app.get("/api/map/markers", async (req: Request, res: Response) => {
     try {
-      // Get all city groups with aggregated data
-      const cityGroups = await db
+      // Get all upcoming events with valid coordinates
+      const eventMarkers = await db
         .select({
-          id: groups.id,
-          city: groups.name,
-          country: groups.country,
-          latitude: groups.latitude,
-          longitude: groups.longitude,
-          description: groups.description,
+          id: events.id,
+          title: events.title,
+          city: events.city,
+          country: events.country,
+          latitude: events.latitude,
+          longitude: events.longitude,
+          eventType: events.eventType,
+          startDate: events.startDate,
+          address: events.address,
+          location: events.location,
         })
-        .from(groups)
+        .from(events)
         .where(and(
-          ne(groups.latitude, null),
-          ne(groups.longitude, null)
-        ));
+          ne(events.latitude, null),
+          ne(events.longitude, null),
+          gt(events.startDate, new Date()),
+          eq(events.status, 'published')
+        ))
+        .limit(500);
 
-      // Aggregate stats per city group
-      const locations = await Promise.all(
-        cityGroups.map(async (cityGroup: any) => {
-          // Count members in this group
-          const memberCount = await db
-            .select({ count: sql<number>`count(*)::int` })
-            .from(groupMembers)
-            .where(eq(groupMembers.groupId, cityGroup.id))
-            .then(r => r[0]?.count || 0);
+      // Transform to map marker format
+      const markers = eventMarkers.map((event: any) => ({
+        id: event.id,
+        city: event.city,
+        country: event.country,
+        coordinates: {
+          lat: parseFloat(String(event.latitude)),
+          lng: parseFloat(String(event.longitude)),
+        },
+        title: event.title,
+        eventType: event.eventType || 'social',
+        startDate: event.startDate,
+        address: event.address || event.location,
+        memberCount: 0,
+        activeEvents: 1,
+        recommendations: 0,
+        housing: 0,
+        isActive: true,
+      }));
 
-          // Count active events in this city
-          const eventCount = await db
-            .select({ count: sql<number>`count(*)::int` })
-            .from(events)
-            .where(and(
-              eq(events.city, cityGroup.city),
-              gt(events.eventDate, new Date())
-            ))
-            .then(r => r[0]?.count || 0);
-
-          // Count housing listings in this city
-          const housingCount = await db
-            .select({ count: sql<number>`count(*)::int` })
-            .from(housing)
-            .where(eq(housing.city, cityGroup.city))
-            .then(r => r[0]?.count || 0);
-
-          // Count recommendations in this city
-          const recommendationCount = await db
-            .select({ count: sql<number>`count(*)::int` })
-            .from(placeRecommendations)
-            .where(eq(placeRecommendations.city, cityGroup.city))
-            .then(r => r[0]?.count || 0);
-
-          return {
-            id: cityGroup.id,
-            city: cityGroup.city,
-            country: cityGroup.country,
-            coordinates: {
-              lat: parseFloat(String(cityGroup.latitude)),
-              lng: parseFloat(String(cityGroup.longitude)),
-            },
-            memberCount,
-            activeEvents: eventCount,
-            recommendations: recommendationCount,
-            housing: housingCount,
-            isActive: memberCount > 0 || eventCount > 0,
-            groupId: cityGroup.id,
-          };
-        })
-      );
-
-      res.json(locations);
+      res.json(markers);
     } catch (error) {
-      console.error('[Map] Fetch city markers error:', error);
+      console.error('[Map] Fetch event markers error:', error);
       res.status(500).json({ message: "Failed to fetch map markers" });
     }
   });
