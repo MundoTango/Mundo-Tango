@@ -40,11 +40,19 @@ The Groups system provides community features with 3 discovery tabs (My Groups, 
 ### Platform Features
 Core features include social functionalities (events, groups, posts, notifications, media, live streaming, marketplaces, reviews) and business features (Talent Match AI, LIFE CEO AI, Multi-AI Orchestration, Automated Scraping, Admin Dashboard, Stripe Payments, and BullMQ Workers for background processing). Event scraping is supported, capturing detailed source information and raw participant data.
 
-### Documentation Status (Updated Nov 30, 2025 - Final Session)
+### Documentation Status (Updated Dec 01, 2025)
 
 **FINAL COVERAGE: 72%+ (up from 50% at session start)**
 
-**Session Summary (Nov 30 - Final):**
+**Session Summary (Dec 01, 2025):**
+- ✅ **Self-healing Status Endpoint Fixed:** Added missing `/api/self-healing/status` endpoint to self-healing-routes.ts - now returns proper JSON with agent health status
+- ✅ **TourGuide Error Handling:** Updated query configuration with `retry: false` and `enabled: false` on 404 to handle missing tours gracefully without console errors
+- ✅ **Error Classification Validated:** ProactiveErrorDetector correctly distinguishes infrastructure errors (Coframe/Statsig/CSP from Replit environment) from Mundo Tango application errors
+- ✅ **RSVP Cache Fix Confirmed:** Type normalization and query key matching validated working - eventId consistently treated as number across all cache operations
+- ✅ **Events System Verified:** E2E tests confirmed 20 event cards displaying correctly on events page
+- ✅ **Expected 404s Documented:** `/api/users/admin` (no user exists), `/api/mr-blue/agents/tour/app-onboarding` (tour not created) are valid responses, components handle gracefully
+
+**Session Summary (Nov 30 - Previous):**
 - ✅ **Fixed @mention system:** Corrected `searchEventsSimple()` call in mention-routes.ts (HTTP 500 → working)
 - ✅ **Implemented canonical @mention format:** @type:id:name_with_underscores for all mentions
 - ✅ **Auto-prepend mentions in context:** Events/groups auto-prepend entity mention when posting in discussions

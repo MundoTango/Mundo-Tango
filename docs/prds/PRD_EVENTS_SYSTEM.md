@@ -626,8 +626,36 @@ events_location_search_idx, events_search_idx
 
 ---
 
-## 16. Changelog
+## 16. RSVP Cache Synchronization (Dec 01, 2025)
+
+### Issue Fixed
+RSVP status would appear stale after user RSVPs - button showed "Going" but refreshed back to "RSVP".
+
+### Root Cause
+Type mismatch in query key normalization - `eventId` was sometimes string, sometimes number:
+```typescript
+// Query keys didn't match due to type coercion
+queryKey: ['/api/events', eventId, 'rsvp', 'me']  // string "123"
+queryClient.invalidateQueries({ queryKey: ['/api/events', 123, 'rsvp'] })  // number 123
+```
+
+### Fix Applied
+Type normalization in `useEvents.ts`:
+```typescript
+const normalizedEventId = typeof eventId === 'string' ? parseInt(eventId, 10) : eventId;
+queryKey: ['/api/events', normalizedEventId, 'rsvp', 'me']
+```
+
+### Validation
+- RSVP updates now persist immediately across page navigations
+- Cache invalidation patterns documented and tested
+- E2E tests confirm 20 event cards display correctly
+
+---
+
+## 17. Changelog
 
 | Date | Version | Changes |
 |------|---------|---------|
+| 2025-12-01 | 1.1 | Added RSVP cache synchronization fix documentation |
 | 2025-11-30 | 1.0 | Initial PRD created via Pattern 39 reverse-engineering |
