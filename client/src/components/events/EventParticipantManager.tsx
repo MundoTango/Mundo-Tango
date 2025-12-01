@@ -95,12 +95,13 @@ export function EventParticipantManager({ eventId, isOrganizer }: EventParticipa
   });
 
   const { data: searchResults = [], isLoading: isSearching } = useQuery<SearchedUser[]>({
-    queryKey: ["/api/users/search", searchQuery],
+    queryKey: ["/api/events", eventId, "search-team-members", selectedRole, searchQuery],
     queryFn: async () => {
       if (!searchQuery || searchQuery.length < 2) return [];
-      const res = await fetch(`/api/users/search?q=${encodeURIComponent(searchQuery)}&limit=10`, { 
-        credentials: "include" 
-      });
+      const res = await fetch(
+        `/api/events/${eventId}/search-team-members?role=${encodeURIComponent(selectedRole)}&q=${encodeURIComponent(searchQuery)}&limit=15`, 
+        { credentials: "include" }
+      );
       if (!res.ok) return [];
       return res.json();
     },
