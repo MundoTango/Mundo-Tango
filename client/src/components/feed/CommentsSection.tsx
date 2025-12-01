@@ -72,9 +72,18 @@ export const CommentsSection = ({ postId }: CommentsSectionProps) => {
         isLiked: comment.isLiked || false,
         parentId: comment.parentId || null,
         createdAt: comment.createdAt,
-        user: comment.user || { 
+        user: comment.user ? {
+          id: comment.user.id || comment.userId,
+          name: comment.user.name,
+          username: comment.user.username,
+          profileImage: comment.user.profileImage,
+          tangoRoles: comment.user.tangoRoles || [],
+        } : { 
           id: comment.userId, 
-          name: 'Unknown User' 
+          name: 'Unknown User',
+          username: 'unknown',
+          profileImage: undefined,
+          tangoRoles: [],
         },
         replies: [],
       });

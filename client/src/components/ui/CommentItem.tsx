@@ -2,9 +2,11 @@ import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Heart, MessageCircle, Trash2, Loader2 } from "lucide-react";
+import { MessageCircle, Trash2, Loader2 } from "lucide-react";
 import { safeDateDistance } from "@/lib/safeDateFormat";
 import { UserRoleBadges } from "@/components/UserRoleBadges";
+import { ReactionSelector } from "@/components/ui/ReactionSelector";
+import { useAuth } from "@/contexts/AuthContext";
 
 export interface CommentData {
   id: number;
@@ -43,16 +45,13 @@ export const CommentItem = ({
   onReply,
   onDelete,
 }: CommentItemProps) => {
+  const { user } = useAuth();
   const [showReplyInput, setShowReplyInput] = useState(false);
   const [replyContent, setReplyContent] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const isAuthor = currentUserId === comment.userId;
   const canReply = depth < MAX_DEPTH;
-
-  const handleLike = () => {
-    onLike?.(comment.id);
-  };
 
   const handleReply = async () => {
     if (!replyContent.trim()) return;
@@ -118,20 +117,13 @@ export const CommentItem = ({
 
         {/* Action Buttons */}
         <div className="flex items-center gap-4 mt-2 ml-3">
-          <button
-            onClick={handleLike}
-            className="flex items-center gap-1 text-xs transition-colors hover-elevate px-2 py-1 rounded"
-            style={{
-              color: comment.isLiked ? '#EF4444' : 'var(--muted-foreground)',
-            }}
-            data-testid={`button-like-comment-${comment.id}`}
-          >
-            <Heart 
-              className="w-3.5 h-3.5" 
-              fill={comment.isLiked ? '#EF4444' : 'none'}
+          {user && (
+            <ReactionSelector 
+              targetId={comment.id}
+              targetType="comment"
+              data-testid={`reactions-comment-${comment.id}`}
             />
-            {comment.likes ? comment.likes : null}
-          </button>
+          )}
 
           {canReply && onReply && (
             <button
