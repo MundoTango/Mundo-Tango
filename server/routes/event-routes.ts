@@ -881,8 +881,18 @@ router.get("/:id", async (req: Request, res: Response) => {
         eq(eventRsvps.status, "going")
       ));
 
+    // PERFORMANCE FIX: Strip base64 coverImage from response (can be megabytes)
+    // Frontend should use imageUrl or city fallback instead
+    const eventData = result[0].event;
+    const cleanEvent = {
+      ...eventData,
+      // Only include coverImage if it's a URL, not base64
+      coverImage: eventData.coverImage?.startsWith('data:') ? null : eventData.coverImage,
+    };
+    
     res.json({
-      ...result[0],
+      event: cleanEvent,
+      organizer: result[0].organizer,
       attendeeCount: rsvpCount[0]?.count || 0
     });
   } catch (error) {
