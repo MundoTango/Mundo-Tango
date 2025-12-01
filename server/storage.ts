@@ -1979,30 +1979,51 @@ export class DbStorage implements IStorage {
   }
 
   async getPostComments(postId: number): Promise<any[]> {
-    const result = await db
-      .select({
-        id: postComments.id,
-        postId: postComments.postId,
-        userId: postComments.userId,
-        content: postComments.content,
-        parentId: postComments.parentId,
-        likes: postComments.likes,
-        createdAt: postComments.createdAt,
-        updatedAt: postComments.updatedAt,
-        user: {
-          id: users.id,
-          name: users.name,
-          username: users.username,
-          profileImage: users.profileImage,
-          tangoRoles: users.tangoRoles,
-        }
-      })
-      .from(postComments)
-      .leftJoin(users, eq(postComments.userId, users.id))
-      .where(eq(postComments.postId, postId))
-      .orderBy(asc(postComments.createdAt));
-    
-    return result;
+    try {
+      const sql_query = `
+        SELECT 
+          pc.id,
+          pc."postId",
+          pc."userId",
+          pc.content,
+          pc."parentId",
+          pc.likes,
+          pc."createdAt",
+          pc."updatedAt",
+          u.id as user_id,
+          u.name as user_name,
+          u.username as user_username,
+          u."profileImage" as user_profile_image,
+          u."tangoRoles" as user_tango_roles
+        FROM "postComments" pc
+        LEFT JOIN "users" u ON pc."userId" = u.id
+        WHERE pc."postId" = $1
+        ORDER BY pc."createdAt" ASC
+      `;
+      
+      const result = await db.execute(sql`${sql.raw(sql_query)}`, [postId]);
+      
+      return (result as any[]).map(row => ({
+        id: row.id,
+        postId: row.postId,
+        userId: row.userId,
+        content: row.content,
+        parentId: row.parentId,
+        likes: row.likes,
+        createdAt: row.createdAt,
+        updatedAt: row.updatedAt,
+        user: row.user_id ? {
+          id: row.user_id,
+          name: row.user_name,
+          username: row.user_username,
+          profileImage: row.user_profile_image,
+          tangoRoles: row.user_tango_roles,
+        } : null,
+      }));
+    } catch (error) {
+      console.error('Error fetching comments:', error);
+      return [];
+    }
   }
 
   async followUser(followerId: number, followingId: number): Promise<SelectFollow | undefined> {
