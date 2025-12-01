@@ -16,7 +16,7 @@ export default function HousingMarketplacePage() {
   const [maxPrice, setMaxPrice] = useState("");
 
   const { data: listings, isLoading } = useQuery<any[]>({
-    queryKey: ["/api/housing/listings", { city, propertyType, minPrice, maxPrice }],
+    queryKey: ["/api/housing/listings", { city, propertyType: propertyType === 'all' ? '' : propertyType, minPrice, maxPrice }],
   });
 
   return (
@@ -57,7 +57,7 @@ export default function HousingMarketplacePage() {
                   <SelectValue placeholder="Property Type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Types</SelectItem>
+                  <SelectItem value="all">All Types</SelectItem>
                   <SelectItem value="apartment">Apartment</SelectItem>
                   <SelectItem value="room">Private Room</SelectItem>
                   <SelectItem value="house">House</SelectItem>

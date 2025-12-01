@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, useMemo } from "react";
 import { 
   Home, 
   Calendar, 
@@ -22,12 +22,12 @@ import {
   Piano,
   Shirt,
   Target,
-  Mic,
   Trophy,
   Home as HousingIcon,
   Briefcase,
   List,
   Map,
+  Star,
 } from "lucide-react";
 import { useLocation, Link } from "wouter";
 import { cn } from "@/lib/utils";
@@ -46,6 +46,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { TANGO_ROLES, type TangoRole } from "@/lib/tangoRoles";
 
 const socialItems = [
   { title: "Memories", url: "/feed", icon: Home, tooltip: "Your feed and memories" },
@@ -74,7 +75,6 @@ const proDiscoveryItems = [
   { title: "Musicians", url: "/pro/musicians", icon: Piano, color: "#A855F7", tooltip: "Live musicians" },
   { title: "Fashion", url: "/pro/fashion", icon: Shirt, color: "#EC4899", tooltip: "Tango fashion" },
   { title: "Coaches", url: "/pro/coaches", icon: Target, color: "#10B981", tooltip: "Personal coaches" },
-  { title: "Hosts", url: "/pro/hosts", icon: Mic, color: "#F97316", tooltip: "Event hosts and MCs" },
   { title: "Vendors", url: "/pro/vendors", icon: Briefcase, color: "#6366F1", tooltip: "Tango vendors" },
   { title: "Leaders", url: "/pro/community", icon: Globe, color: "#40E0D0", tooltip: "Community leaders" },
   { title: "Talent Match", url: "/talent-match", icon: Sparkles, color: "#1E90FF", tooltip: "Find the perfect match" },
@@ -86,6 +86,23 @@ const servicesItems = [
   { title: "Housing", url: "/housing", icon: HousingIcon, tooltip: "Find tango-friendly accommodations" },
 ];
 
+const roleToProDiscoveryMap: Record<string, string> = {
+  'teacher': '/pro/learning',
+  'dj': '/pro/music',
+  'photographer': '/pro/media',
+  'videographer': '/pro/media',
+  'performer': '/pro/performances',
+  'venue-owner': '/pro/venues',
+  'organizer': '/pro/organizers',
+  'blogger': '/pro/stories',
+  'artist': '/pro/artists',
+  'musician': '/pro/musicians',
+  'fashion-designer': '/pro/fashion',
+  'coach': '/pro/coaches',
+  'vendor': '/pro/vendors',
+  'community-leader': '/pro/community',
+};
+
 function AppSidebarComponent() {
   const [location] = useLocation();
   const { user, profile, logout } = useAuth();
@@ -93,6 +110,39 @@ function AppSidebarComponent() {
   const displayName = profile?.name || user?.email?.split('@')[0] || "User";
   const username = profile?.username || user?.email?.split('@')[0] || "user";
   const avatarUrl = profile?.profileImage;
+  const userCity = profile?.city || user?.city;
+  const userTangoRoles = user?.tangoRoles || [];
+
+  const myStuffItems = useMemo(() => {
+    const items: Array<{ title: string; url: string; icon: React.ElementType; color?: string; tooltip: string }> = [];
+    
+    if (userCity) {
+      items.push({
+        title: userCity,
+        url: `/groups?city=${encodeURIComponent(userCity)}`,
+        icon: MapPin,
+        color: '#40E0D0',
+        tooltip: `Your city group: ${userCity}`,
+      });
+    }
+    
+    userTangoRoles.forEach(roleValue => {
+      const role = TANGO_ROLES.find(r => r.value === roleValue);
+      const proUrl = roleToProDiscoveryMap[roleValue];
+      
+      if (role && proUrl && role.category !== 'dance') {
+        items.push({
+          title: role.label,
+          url: proUrl,
+          icon: role.icon,
+          color: role.color,
+          tooltip: `Your PRO role: ${role.label}`,
+        });
+      }
+    });
+    
+    return items;
+  }, [userCity, userTangoRoles]);
 
   const isActive = (url: string) => location === url || location.startsWith(url + '/');
 
@@ -186,6 +236,18 @@ function AppSidebarComponent() {
             {renderIconGrid(socialItems)}
           </SidebarGroupContent>
         </SidebarGroup>
+
+        {myStuffItems.length > 0 && (
+          <SidebarGroup className="border-b border-white/10 pb-4">
+            <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60 flex items-center gap-1">
+              <Star className="h-3 w-3" style={{ color: '#FFD700' }} />
+              My Stuff
+            </SidebarGroupLabel>
+            <SidebarGroupContent>
+              {renderIconGrid(myStuffItems)}
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
 
         <SidebarGroup className="border-b border-white/10 pb-4">
           <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">Community</SidebarGroupLabel>
