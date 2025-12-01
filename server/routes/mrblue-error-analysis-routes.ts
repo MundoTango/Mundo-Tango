@@ -81,10 +81,10 @@ router.post("/analyze-error", async (req: Request, res: Response) => {
       }>,
     };
 
-    // Step 1: Analyze each error and store in database
-    const storedErrors: Array<{ id: number; error: any }> = [];
-
-    for (const error of errors) {
+    // Step 1: Analyze and store errors IN PARALLEL (MB.MD v9.8 - Pattern 28: Parallel Agent Squads)
+    console.log(`[Error Analysis API] 🚀 Processing ${errors.length} errors in PARALLEL`);
+    
+    const storeErrorPromises = errors.map(async (error) => {
       try {
         console.log(`[Error Analysis API] Analyzing error: ${error.errorMessage.substring(0, 50)}...`);
 
@@ -130,30 +130,33 @@ router.post("/analyze-error", async (req: Request, res: Response) => {
 
           errorId = inserted.id;
           
-          // Index in LanceDB for semantic search (MB.MD v9.8)
+          // Index in LanceDB for semantic search (MB.MD v9.8) - fire and forget
           contextService.indexError(errorId, error.errorMessage, {
             errorType: error.errorType,
             metadata: error.metadata,
           }).catch(err => console.warn('[Error Analysis API] LanceDB indexing failed (non-critical):', err.message));
         }
 
-        storedErrors.push({ id: errorId, error });
-        results.analyzedCount++;
-
         console.log(`[Error Analysis API] ✅ Stored error (id: ${errorId})`);
-      } catch (error: any) {
-        console.error('[Error Analysis API] Error storing pattern:', error);
+        return { id: errorId, error, success: true };
+      } catch (err: any) {
+        console.error('[Error Analysis API] Error storing pattern:', err);
+        return { id: 0, error, success: false };
       }
-    }
+    });
 
-    // Step 2: Find similar errors using LanceDB (via contextService)
-    console.log('[Error Analysis API] Searching for similar errors...');
+    const storeResults = await Promise.all(storeErrorPromises);
+    const storedErrors = storeResults.filter(r => r.success);
+    results.analyzedCount = storedErrors.length;
+    console.log(`[Error Analysis API] ✅ Stored ${storedErrors.length}/${errors.length} errors in parallel`)
+
+    // Step 2: Find similar errors using LanceDB IN PARALLEL (MB.MD v9.8)
+    console.log('[Error Analysis API] 🚀 Searching for similar errors in PARALLEL...');
 
     const similarErrorGroups: Map<number, number[]> = new Map();
 
-    for (const { id, error } of storedErrors) {
+    const searchPromises = storedErrors.map(async ({ id, error }) => {
       try {
-        // Search for similar errors (stub for now - will be implemented with LanceDB)
         const similarErrors = await contextService.searchErrors(error.errorMessage, 5);
         
         if (similarErrors.length > 0) {
@@ -174,10 +177,15 @@ router.post("/analyze-error", async (req: Request, res: Response) => {
               .where(eq(errorPatterns.id, id));
           }
         }
-      } catch (error: any) {
-        console.error(`[Error Analysis API] Error finding similar errors for id ${id}:`, error);
+        return { id, success: true };
+      } catch (err: any) {
+        console.error(`[Error Analysis API] Error finding similar errors for id ${id}:`, err);
+        return { id, success: false };
       }
-    }
+    });
+
+    await Promise.all(searchPromises);
+    console.log(`[Error Analysis API] ✅ Similar error search complete for ${storedErrors.length} errors`)
 
     // Step 3: Detect commonalities using ErrorAnalysisAgent
     console.log('[Error Analysis API] Detecting commonalities...');

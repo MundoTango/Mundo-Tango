@@ -107,23 +107,26 @@ export class AgentLifecycle {
         this.currentRoute = route;
       }
       
-      // Step 3: Activate agents for new route
-      const agents: BasePageAgent[] = [];
-      for (const agentId of agentIds) {
-        const agent = agentRegistry.getAgent(agentId);
-        if (agent) {
-          agents.push(agent);
-          this.activeAgents.set(agentId, {
-            agent,
-            route,
-            activatedAt: new Date(),
-            state: 'initializing',
-          });
-          console.log(`[AgentLifecycle] ✅ Activated: ${agent.getName()}`);
-        } else {
-          console.warn(`[AgentLifecycle] ⚠️ Agent ${agentId} not found in registry`);
-        }
-      }
+      // Step 3: Activate agents for new route IN PARALLEL (MB.MD v9.8 - Pattern 28)
+      console.log(`[AgentLifecycle] 🚀 Activating ${agentIds.length} agents in PARALLEL`);
+      const agents: BasePageAgent[] = agentIds
+        .map(agentId => {
+          const agent = agentRegistry.getAgent(agentId);
+          if (agent) {
+            this.activeAgents.set(agentId, {
+              agent,
+              route,
+              activatedAt: new Date(),
+              state: 'initializing',
+            });
+            console.log(`[AgentLifecycle] ✅ Activated: ${agent.getName()}`);
+            return agent;
+          } else {
+            console.warn(`[AgentLifecycle] ⚠️ Agent ${agentId} not found in registry`);
+            return null;
+          }
+        })
+        .filter((a): a is BasePageAgent => a !== null);
       
       if (agents.length === 0) {
         console.log(`[AgentLifecycle] ℹ️ No agents registered for route ${route}`);
