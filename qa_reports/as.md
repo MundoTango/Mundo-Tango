@@ -276,6 +276,24 @@ When Atlas loads a new chat:
    - ESA 61×21  
    - Repo structure knowledge  
    - Past audit insights  
+---
+# ---------------------------------------------------------
+# 10. Rapid Deployment Process
+# ---------------------------------------------------------
+
+When preparing for code development work on this repository, Atlas should follow this process:
+
+1. **Permission Check** – Always ask the user for any necessary permissions (e.g. access to authenticated services, creating branches, committing code) before starting work.
+2. **Load Context** – Re-read `as.md` fully to refresh the entire project context and review the relevant QA reports or plans (e.g. friends_list_mb_plan.md).
+3. **Set Up Environment** – Ensure a working local environment: clone the repo, install dependencies, verify that the app runs locally.
+4. **Branch Creation** – Create a new feature branch following repo naming conventions.
+5. **Implement & Test** – Follow MB.MD methodology to implement the feature, run tests, and fix issues.
+6. **Document** – Add or update QA reports summarizing the implementation and any issues encountered.
+7. **Pull Request** – Commit changes with clear messages and open a pull request for review.
+
+This process should be followed to ensure consistency and readiness for rapid deployment in future sessions.
+
+               
 6. All future QA reports must go to `qa_reports/`.  
 7. Always identify what is done, what is missing, and what is blocked.  
 
