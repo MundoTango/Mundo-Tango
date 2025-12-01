@@ -20,7 +20,27 @@ import multer from "multer";
 import { v2 as cloudinary } from "cloudinary";
 
 const router = Router();
-const upload = multer({ storage: multer.memoryStorage() });
+
+// ============================================================================
+// MULTER CONFIGURATION WITH SECURITY VALIDATION
+// ============================================================================
+const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: MAX_FILE_SIZE,
+  },
+  fileFilter: (req, file, cb) => {
+    // Check MIME type
+    if (!ALLOWED_MIME_TYPES.includes(file.mimetype)) {
+      cb(new Error(`Invalid file type. Allowed: ${ALLOWED_MIME_TYPES.join(', ')}`));
+      return;
+    }
+    cb(null, true);
+  }
+});
 
 // Configure Cloudinary (ensure it uses env vars)
 cloudinary.config({
@@ -1248,6 +1268,31 @@ router.get("/:id/photos", async (req: Request, res: Response) => {
   }
 });
 
+// Helper function to validate image magic bytes
+function validateImageMagicBytes(buffer: Buffer): { valid: boolean; type: string | null } {
+  if (buffer.length < 4) return { valid: false, type: null };
+  
+  // JPEG: FF D8 FF
+  if (buffer[0] === 0xFF && buffer[1] === 0xD8 && buffer[2] === 0xFF) {
+    return { valid: true, type: 'image/jpeg' };
+  }
+  // PNG: 89 50 4E 47 0D 0A 1A 0A
+  if (buffer[0] === 0x89 && buffer[1] === 0x50 && buffer[2] === 0x4E && buffer[3] === 0x47) {
+    return { valid: true, type: 'image/png' };
+  }
+  // GIF: 47 49 46 38
+  if (buffer[0] === 0x47 && buffer[1] === 0x49 && buffer[2] === 0x46 && buffer[3] === 0x38) {
+    return { valid: true, type: 'image/gif' };
+  }
+  // WebP: 52 49 46 46 ... 57 45 42 50
+  if (buffer[0] === 0x52 && buffer[1] === 0x49 && buffer[2] === 0x46 && buffer[3] === 0x46 && 
+      buffer.length >= 12 && buffer[8] === 0x57 && buffer[9] === 0x45 && buffer[10] === 0x42 && buffer[11] === 0x50) {
+    return { valid: true, type: 'image/webp' };
+  }
+  
+  return { valid: false, type: null };
+}
+
 // POST /api/events/:id/photos - Upload photo to event (auth required, RSVP'd or organizer)
 router.post("/:id/photos", authenticateToken, upload.single("file"), async (req: AuthRequest, res: Response) => {
   try {
@@ -1289,6 +1334,14 @@ router.post("/:id/photos", authenticateToken, upload.single("file"), async (req:
     const file = req.file;
     if (!file) {
       return res.status(400).json({ message: "No file provided" });
+    }
+
+    // Validate magic bytes to prevent spoofed MIME types
+    const magicCheck = validateImageMagicBytes(file.buffer);
+    if (!magicCheck.valid) {
+      return res.status(400).json({ 
+        message: "Invalid image file. File content does not match a valid image format." 
+      });
     }
 
     const result: any = await new Promise((resolve, reject) => {
@@ -1648,6 +1701,24 @@ router.post("/:id/posts", authenticateToken, async (req: AuthRequest, res: Respo
     console.error("[Events] Error creating post:", error);
     res.status(500).json({ message: "Failed to create post" });
   }
+});
+
+// ============================================================================
+// MULTER ERROR HANDLER MIDDLEWARE
+// ============================================================================
+router.use((err: any, req: Request, res: Response, next: any) => {
+  if (err instanceof multer.MulterError) {
+    if (err.code === 'LIMIT_FILE_SIZE') {
+      return res.status(400).json({ 
+        message: `File too large. Maximum size is ${MAX_FILE_SIZE / (1024 * 1024)}MB` 
+      });
+    }
+    return res.status(400).json({ message: `Upload error: ${err.message}` });
+  }
+  if (err && err.message && err.message.includes('Invalid file type')) {
+    return res.status(400).json({ message: err.message });
+  }
+  next(err);
 });
 
 export default router;
