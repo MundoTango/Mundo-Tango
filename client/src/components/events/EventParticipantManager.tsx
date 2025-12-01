@@ -90,6 +90,7 @@ export function EventParticipantManager({ eventId, isOrganizer }: EventParticipa
   // Debounce search query to reduce API calls
   useEffect(() => {
     debounceTimer.current = setTimeout(() => {
+      console.log("[Search Debug] Debounced query updated to:", searchQuery);
       setDebouncedSearchQuery(searchQuery);
     }, 300);
 
@@ -120,6 +121,7 @@ export function EventParticipantManager({ eventId, isOrganizer }: EventParticipa
   const { data: searchResults = [], isLoading: isSearching } = useQuery<SearchedUser[]>({
     queryKey: ["/api/events", eventId, "search-team-members", selectedRole, debouncedSearchQuery],
     queryFn: async () => {
+      console.log("[Search Debug] Query running with:", { debouncedSearchQuery, selectedRole, eventId });
       if (!debouncedSearchQuery || debouncedSearchQuery.length < 2) return [];
       const token = localStorage.getItem('accessToken');
       const headers: Record<string, string> = {};
@@ -127,18 +129,20 @@ export function EventParticipantManager({ eventId, isOrganizer }: EventParticipa
         headers['Authorization'] = `Bearer ${token}`;
       }
       
-      const res = await fetch(
-        `/api/events/${eventId}/search-team-members?role=${encodeURIComponent(selectedRole)}&q=${encodeURIComponent(debouncedSearchQuery)}&limit=15`, 
-        { 
-          credentials: "include",
-          headers,
-        }
-      );
+      const url = `/api/events/${eventId}/search-team-members?role=${encodeURIComponent(selectedRole)}&q=${encodeURIComponent(debouncedSearchQuery)}&limit=15`;
+      console.log("[Search Debug] Fetching:", url);
+      
+      const res = await fetch(url, { 
+        credentials: "include",
+        headers,
+      });
       if (!res.ok) {
-        console.error("Failed to search team members:", res.status, res.statusText);
+        console.error("[Search Debug] Failed:", res.status, res.statusText);
         return [];
       }
-      return res.json();
+      const data = await res.json();
+      console.log("[Search Debug] Results:", data.length, "users found");
+      return data;
     },
     enabled: debouncedSearchQuery.length >= 2 && !!localStorage.getItem('accessToken'),
     staleTime: 2 * 60 * 1000,
