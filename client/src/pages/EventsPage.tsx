@@ -31,6 +31,7 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { BannerAd } from "@/components/ads/BannerAd";
 import { EventFilters, type EventFilterValues } from "@/components/events/EventFilters";
+import { getCityImageUrl } from "@/lib/cityImageMap";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
@@ -48,6 +49,7 @@ L.Icon.Default.mergeOptions({
 
 function EventCard({ event, index = 0 }: { event: any; index?: number }) {
   const { user } = useAuth();
+  const [imgError, setImgError] = useState(false);
   
   // Extract event data from API response (could be nested as event.event)
   const eventData = event.event || event;
@@ -73,8 +75,16 @@ function EventCard({ event, index = 0 }: { event: any; index?: number }) {
     return safeDateFormat(dateString, "h:mm a", "Time TBD", tz);
   };
   
-  // Determine image URL - use fallback if null
-  const imageUrl = eventData.imageUrl || eventData.image_url || "https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?w=800&auto=format&fit=crop";
+  // Determine image URL with city imagery fallback (MB.MD v9.8 auto-fix pattern)
+  const rawImageUrl = eventData.imageUrl || eventData.image_url;
+  const cityFallback = getCityImageUrl(eventData.city);
+  const imageUrl = imgError || !rawImageUrl ? cityFallback : rawImageUrl;
+  
+  // Handle image load error - fallback to city imagery
+  const handleImageError = () => {
+    console.log(`[EventCard] Image failed to load for event ${eventData.id}, falling back to city imagery`);
+    setImgError(true);
+  };
 
   return (
     <motion.div
@@ -94,6 +104,7 @@ function EventCard({ event, index = 0 }: { event: any; index?: number }) {
             className="w-full h-full object-cover"
             whileHover={{ scale: 1.05 }}
             transition={{ duration: 0.6 }}
+            onError={handleImageError}
             data-testid={`img-event-${eventData.id}`}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
