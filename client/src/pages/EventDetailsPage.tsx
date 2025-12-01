@@ -67,7 +67,15 @@ function EventPhotosTab({ eventId }: { eventId: number }) {
   const { data: permissions } = useQuery<{ isOrganizer: boolean; isRsvpd: boolean }>({
     queryKey: ['/api/events', eventId, 'permissions'],
     queryFn: async () => {
-      const res = await fetch(`/api/events/${eventId}/permissions`, { credentials: 'include' });
+      const token = localStorage.getItem('accessToken');
+      const headers: Record<string, string> = {};
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+      const res = await fetch(`/api/events/${eventId}/permissions`, { 
+        headers,
+        credentials: 'include' 
+      });
       if (!res.ok) return { isOrganizer: false, isRsvpd: false };
       return res.json();
     },
@@ -370,7 +378,15 @@ export default function EventDetailsPage() {
   const { data: permissions } = useQuery<EventPermissions>({
     queryKey: ["/api/events", eventId, "permissions"],
     queryFn: async () => {
-      const res = await fetch(`/api/events/${eventId}/permissions`, { credentials: "include" });
+      const token = localStorage.getItem('accessToken');
+      const headers: Record<string, string> = {};
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+      const res = await fetch(`/api/events/${eventId}/permissions`, { 
+        headers,
+        credentials: "include" 
+      });
       if (!res.ok) return { canPost: false, canComment: false, role: null, isRsvpd: false, isOrganizer: false, rsvpStatus: null };
       return res.json();
     },

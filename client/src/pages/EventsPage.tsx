@@ -533,9 +533,12 @@ export default function EventsPage() {
                     {events && events.length > 0 ? (
                       <>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                          {events.map((event, index) => (
-                            <EventCard key={event.id} event={event} index={index} />
-                          ))}
+                          {events.map((event, index) => {
+                            const eventId = event.event?.id || event.id;
+                            return (
+                              <EventCard key={eventId || `event-${index}`} event={event} index={index} />
+                            );
+                          })}
                         </div>
 
                         {/* Pagination Controls */}
@@ -649,21 +652,25 @@ export default function EventsPage() {
                           attribution='&copy; <a href="https://carto.com/attributions">CARTO</a>'
                           url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
                         />
-                        {eventsWithCoordinates.map((event) => (
-                          <Marker key={event.id} position={[event.lat, event.lng]}>
-                            <Popup>
-                              <div className="p-2">
-                                <h3 className="font-semibold mb-1" dangerouslySetInnerHTML={{ __html: event.title || "Event" }} />
-                                <p className="text-sm text-muted-foreground mb-2">
-                                  {safeDateFormat(event.startDate || event.date, "MMM dd, yyyy 'at' h:mm a")}
-                                </p>
-                                <Link href={`/events/${event.id}`}>
-                                  <Button size="sm" className="w-full">View Details</Button>
-                                </Link>
-                              </div>
-                            </Popup>
-                          </Marker>
-                        ))}
+                        {eventsWithCoordinates.map((event, index) => {
+                          const eventData = event.event || event;
+                          const eventId = eventData.id;
+                          return (
+                            <Marker key={eventId || `map-event-${index}`} position={[event.lat, event.lng]}>
+                              <Popup>
+                                <div className="p-2">
+                                  <h3 className="font-semibold mb-1" dangerouslySetInnerHTML={{ __html: eventData.title || "Event" }} />
+                                  <p className="text-sm text-muted-foreground mb-2">
+                                    {safeDateFormat(eventData.startDate || eventData.date, "MMM dd, yyyy 'at' h:mm a")}
+                                  </p>
+                                  <Link href={`/events/${eventId}`}>
+                                    <Button size="sm" className="w-full">View Details</Button>
+                                  </Link>
+                                </div>
+                              </Popup>
+                            </Marker>
+                          );
+                        })}
                       </MapContainer>
                     </div>
                   </Card>
