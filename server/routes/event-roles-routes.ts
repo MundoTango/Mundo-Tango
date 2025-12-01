@@ -45,6 +45,8 @@ router.get("/events/:id/participants", async (req, res) => {
           username: users.username,
           email: users.email,
           city: users.city,
+          name: users.name,
+          profileImage: users.profileImage,
         }
       })
       .from(eventParticipants)
