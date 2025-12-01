@@ -158,7 +158,7 @@ export function EventParticipantManager({ eventId, isOrganizer }: EventParticipa
       queryClient.invalidateQueries({ queryKey: ["/api/events", eventId, "participants"] });
       // Invalidate notification caches to show the new event_rsvp notification immediately
       queryClient.invalidateQueries({ queryKey: ['/api/notifications/count'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/notifications'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/notifications', { limit: 10 }] });
       toast({
         title: "Participant added!",
         description: `${selectedUser?.name || "User"} has been added as ${formatRoleName(selectedRole)}`,
