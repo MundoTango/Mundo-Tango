@@ -1,6 +1,6 @@
 # PRD: Events System
 
-> **Version:** 1.9  
+> **Version:** 2.1  
 > **Created:** 2025-11-30  
 > **Updated:** 2025-12-01  
 > **Status:** Active  
@@ -1024,12 +1024,43 @@ The permanent fix was implemented using Replit Object Storage:
 - `server/routes/event-routes.ts` - Added `eventSummaryFields` selector and base64 filtering
 - `server/routes/media-routes.ts` - Object Storage upload endpoint (MB.MD Pattern 28)
 
+### Cover Photo Hero Display Fix (v2.1) - IMPLEMENTED ✅
+
+**Problem:** Event cover photos uploaded during event creation were not displaying in the hero section on EventDetailsPage. The uploaded image was saved to `coverImage` column but the hero section expected `imageUrl`.
+
+**Root Cause Analysis:**
+1. Event creation saved cover photo URL only to `coverImage` column (line 1025)
+2. `eventSummaryFields` selector excluded `coverImage` for performance (was base64 before)
+3. EventDetailsPage hero uses fallback: `event.imageUrl || event.coverImage || getCityImageUrl(event.city)`
+
+**Solution (MB.MD Pattern 28 - Hierarchical Execution):**
+
+1. **Updated Event Creation** - Now saves `coverImageUrl` to BOTH columns:
+   ```typescript
+   imageUrl: rest.coverImageUrl || null,   // FIX: Save to imageUrl for hero section display
+   coverImage: rest.coverImageUrl || null, // Backward compatibility
+   ```
+
+2. **Restored coverImage in eventSummaryFields** - Safe now with Object Storage URLs:
+   ```typescript
+   imageUrl: events.imageUrl,    // URL-based images (not base64)
+   coverImage: events.coverImage, // RESTORED: Now safe - Object Storage URLs, not base64
+   ```
+
+**Files Modified:**
+- `server/routes/event-routes.ts` (lines 59-60, 1028-1029)
+
+**Testing:**
+- Verified hero section displays uploaded cover photo
+- Three-tier fallback works: imageUrl → coverImage → city imagery
+
 ---
 
 ## 25. Changelog
 
 | Date | Version | Changes |
 |------|---------|---------|
+| 2025-12-01 | 2.1 | Cover Photo Hero Display Fix - Save to imageUrl + coverImage, restore coverImage in eventSummaryFields |
 | 2025-12-01 | 2.0 | Object Storage Migration - POST /api/media/upload endpoint, eliminates base64 permanently |
 | 2025-12-01 | 1.9 | Added Performance Optimizations section (99.6% response size reduction) |
 | 2025-12-01 | 1.8 | Added Smart Team Member Search with 4-tier priority |
