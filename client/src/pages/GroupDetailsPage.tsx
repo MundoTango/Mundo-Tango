@@ -18,8 +18,9 @@ import { GroupPostFeed } from "@/components/groups/GroupPostFeed";
 import { GroupMembersList } from "@/components/groups/GroupMembersList";
 import { GroupSettingsPanel } from "@/components/groups/GroupSettingsPanel";
 import { motion } from "framer-motion";
-import { useRSVPEvent, useMyRSVPs } from "@/hooks/useEvents";
+import { useMyRSVPs } from "@/hooks/useEvents";
 import { useAuth } from "@/contexts/AuthContext";
+import { UnifiedRSVPButton, type RSVPStatus } from "@/components/unified/UnifiedRSVPButton";
 import { getCityImageUrl } from "@/lib/cityImageMap";
 import { EventFilters, type EventFilterValues } from "@/components/events/EventFilters";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -70,8 +71,6 @@ interface UserByRole {
 
 function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: string | null }) {
   const { user } = useAuth();
-  const { toast } = useToast();
-  const rsvpMutation = useRSVPEvent();
   const { data: myRsvps } = useMyRSVPs();
   const [filters, setFilters] = useState<EventFilterValues>({});
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -181,23 +180,10 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
     ].filter(Boolean).length;
   }, [filters]);
   
-  const handleRSVP = async (eventId: number, currentStatus?: string) => {
-    if (!user) {
-      toast({
-        title: "Login required",
-        description: "Please log in to RSVP for events",
-        variant: "destructive",
-      });
-      return;
-    }
-    const newStatus = currentStatus === "going" ? "not_going" : "going";
-    await rsvpMutation.mutateAsync({ eventId, status: newStatus });
-  };
-  
-  const getUserRsvpStatus = (eventId: number) => {
-    if (!myRsvps) return undefined;
+  const getUserRsvpStatus = (eventId: number): RSVPStatus => {
+    if (!myRsvps) return null;
     const rsvp = myRsvps.find((r: any) => r.eventId === eventId);
-    return rsvp?.status;
+    return (rsvp?.status || null) as RSVPStatus;
   };
 
   if (isLoading) {
@@ -473,18 +459,12 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
                     </div>
                   </div>
                   <div className="flex flex-col gap-2">
-                    <Button 
-                      size="sm" 
-                      variant={isGoing ? "outline" : "default"}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        handleRSVP(event.id, rsvpStatus);
-                      }}
-                      disabled={rsvpMutation.isPending}
+                    <UnifiedRSVPButton
+                      eventId={event.id}
+                      currentStatus={rsvpStatus}
+                      variant="compact"
                       data-testid={`button-rsvp-event-${event.id}`}
-                    >
-                      {rsvpMutation.isPending ? "..." : isGoing ? "Going" : "RSVP"}
-                    </Button>
+                    />
                     <Link href={`/events/${event.id}`}>
                       <Button size="sm" variant="ghost" data-testid={`button-view-event-${event.id}`}>
                         Details
