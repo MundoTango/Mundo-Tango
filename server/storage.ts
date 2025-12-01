@@ -1978,8 +1978,31 @@ export class DbStorage implements IStorage {
     return result[0];
   }
 
-  async getPostComments(postId: number): Promise<SelectPostComment[]> {
-    return await db.select().from(postComments).where(eq(postComments.postId, postId)).orderBy(asc(postComments.createdAt));
+  async getPostComments(postId: number): Promise<any[]> {
+    const result = await db
+      .select({
+        id: postComments.id,
+        postId: postComments.postId,
+        userId: postComments.userId,
+        content: postComments.content,
+        parentId: postComments.parentId,
+        likes: postComments.likes,
+        createdAt: postComments.createdAt,
+        updatedAt: postComments.updatedAt,
+        user: {
+          id: users.id,
+          name: users.name,
+          username: users.username,
+          profileImage: users.profileImage,
+          tangoRoles: users.tangoRoles,
+        }
+      })
+      .from(postComments)
+      .leftJoin(users, eq(postComments.userId, users.id))
+      .where(eq(postComments.postId, postId))
+      .orderBy(asc(postComments.createdAt));
+    
+    return result;
   }
 
   async followUser(followerId: number, followingId: number): Promise<SelectFollow | undefined> {

@@ -187,6 +187,7 @@ export const CommentsSection = ({ postId }: CommentsSectionProps) => {
             <CommentItem
               key={comment.id}
               comment={comment}
+              postId={postId}
               currentUserId={user?.id}
               onLike={handleLike}
               onReply={handleReply}

@@ -31,6 +31,7 @@ export interface CommentData {
 
 interface CommentItemProps {
   comment: CommentData;
+  postId: number;
   currentUserId?: number;
   depth?: number;
   onLike?: (commentId: number) => void;
@@ -42,6 +43,7 @@ const MAX_DEPTH = 3;
 
 export const CommentItem = ({
   comment,
+  postId,
   currentUserId,
   depth = 0,
   onLike,
@@ -145,6 +147,7 @@ export const CommentItem = ({
             <ReactionSelector 
               targetId={comment.id}
               targetType="comment"
+              postId={postId}
               currentReaction={currentReaction}
               reactions={reactions}
               data-testid={`reactions-comment-${comment.id}`}
@@ -225,6 +228,7 @@ export const CommentItem = ({
               <CommentItem
                 key={reply.id}
                 comment={reply}
+                postId={postId}
                 currentUserId={currentUserId}
                 depth={depth + 1}
                 onLike={onLike}
