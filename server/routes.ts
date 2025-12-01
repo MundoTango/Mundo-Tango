@@ -9949,116 +9949,81 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // ==================== MAP MARKERS ====================
+  // ==================== MAP MARKERS - CITY GROUPS ====================
 
   app.get("/api/map/markers", async (req: Request, res: Response) => {
     try {
-      const { type = "users,events,venues" } = req.query;
-      const filterTypes = String(type).split(",").map(t => t.trim());
-      const markers: any[] = [];
+      // Get all city groups with aggregated data
+      const cityGroups = await db
+        .select({
+          id: groups.id,
+          city: groups.name,
+          country: groups.country,
+          latitude: groups.latitude,
+          longitude: groups.longitude,
+          description: groups.description,
+        })
+        .from(groups)
+        .where(and(
+          ne(groups.latitude, null),
+          ne(groups.longitude, null)
+        ));
 
-      // Fetch users (dancers) if included
-      if (filterTypes.includes("users")) {
-        const userMarkers = await db
-          .select({
-            id: users.id,
-            name: users.name,
-            city: users.city,
-            country: users.country,
-            latitude: users.latitude,
-            longitude: users.longitude,
-            tangoRoles: users.tangoRoles,
-          })
-          .from(users)
-          .where(and(
-            ne(users.latitude, null),
-            ne(users.longitude, null)
-          ))
-          .limit(100);
+      // Aggregate stats per city group
+      const locations = await Promise.all(
+        cityGroups.map(async (cityGroup: any) => {
+          // Count members in this group
+          const memberCount = await db
+            .select({ count: sql<number>`count(*)::int` })
+            .from(groupMembers)
+            .where(eq(groupMembers.groupId, cityGroup.id))
+            .then(r => r[0]?.count || 0);
 
-        markers.push(
-          ...userMarkers.map((u: any) => ({
-            id: u.id,
-            type: "user",
-            name: u.name,
-            city: u.city,
-            country: u.country,
-            latitude: String(u.latitude),
-            longitude: String(u.longitude),
-            tangoRoles: u.tangoRoles || [],
-          }))
-        );
-      }
+          // Count active events in this city
+          const eventCount = await db
+            .select({ count: sql<number>`count(*)::int` })
+            .from(events)
+            .where(and(
+              eq(events.city, cityGroup.city),
+              gt(events.eventDate, new Date())
+            ))
+            .then(r => r[0]?.count || 0);
 
-      // Fetch events if included
-      if (filterTypes.includes("events")) {
-        const eventMarkers = await db
-          .select({
-            id: events.id,
-            title: events.title,
-            city: events.city,
-            country: events.country,
-            latitude: events.latitude,
-            longitude: events.longitude,
-            eventType: events.eventType,
-          })
-          .from(events)
-          .where(and(
-            ne(events.latitude, null),
-            ne(events.longitude, null),
-            gt(events.eventDate, new Date())
-          ))
-          .limit(100);
+          // Count housing listings in this city
+          const housingCount = await db
+            .select({ count: sql<number>`count(*)::int` })
+            .from(housing)
+            .where(eq(housing.city, cityGroup.city))
+            .then(r => r[0]?.count || 0);
 
-        markers.push(
-          ...eventMarkers.map((e: any) => ({
-            id: e.id,
-            type: "event",
-            title: e.title,
-            name: e.title,
-            city: e.city,
-            country: e.country,
-            latitude: String(e.latitude),
-            longitude: String(e.longitude),
-            eventType: e.eventType || "social",
-          }))
-        );
-      }
+          // Count recommendations in this city
+          const recommendationCount = await db
+            .select({ count: sql<number>`count(*)::int` })
+            .from(placeRecommendations)
+            .where(eq(placeRecommendations.city, cityGroup.city))
+            .then(r => r[0]?.count || 0);
 
-      // Fetch venues if included
-      if (filterTypes.includes("venues")) {
-        const venueMarkers = await db
-          .select({
-            id: venues.id,
-            name: venues.name,
-            city: venues.city,
-            country: venues.country,
-            latitude: venues.latitude,
-            longitude: venues.longitude,
-          })
-          .from(venues)
-          .where(and(
-            ne(venues.latitude, null),
-            ne(venues.longitude, null)
-          ))
-          .limit(100);
+          return {
+            id: cityGroup.id,
+            city: cityGroup.city,
+            country: cityGroup.country,
+            coordinates: {
+              lat: parseFloat(String(cityGroup.latitude)),
+              lng: parseFloat(String(cityGroup.longitude)),
+            },
+            memberCount,
+            activeEvents: eventCount,
+            recommendations: recommendationCount,
+            housing: housingCount,
+            isActive: memberCount > 0 || eventCount > 0,
+            groupId: cityGroup.id,
+          };
+        })
+      );
 
-        markers.push(
-          ...venueMarkers.map((v: any) => ({
-            id: v.id,
-            type: "venue",
-            name: v.name,
-            city: v.city,
-            country: v.country,
-            latitude: String(v.latitude),
-            longitude: String(v.longitude),
-          }))
-        );
-      }
-
-      res.json(markers);
+      res.json(locations);
     } catch (error) {
-      console.error('[Map] Fetch markers error:', error);
+      console.error('[Map] Fetch city markers error:', error);
       res.status(500).json({ message: "Failed to fetch map markers" });
     }
   });
