@@ -45,13 +45,22 @@ Core features include social functionalities (events, groups, posts, notificatio
 **FINAL COVERAGE: 72%+ (up from 50% at session start)**
 
 **Session Summary (Dec 01, 2025 - Latest):**
+- ✅ **Smart Team Member Search:** 4-tier priority search for adding team members to events:
+  - Tier 1: Previous collaborators (users who worked with organizer before)
+  - Tier 2: City-based professionals with matching tangoRole
+  - Tier 3: All users with matching tangoRole
+  - Tier 4: General search fallback
+  - API: `GET /api/events/:id/search-team-members?role=dj&q=query&limit=15`
+  - Frontend: EventParticipantManager uses role-filtered smart search
+  - PRD: PRD_EVENTS_SYSTEM.md v1.8 with full documentation
+- ✅ **Event Edit Form Complete:** EventEditForm component reuses creation form with pre-populated data
 - ✅ **RSVP Authorization Header Fix:** Added JWT token to permission queries in EventDetailsPage (lines 68-84, 379-396) - RSVP now persists after refresh
 - ✅ **React Key Prop Warning Fix:** Updated EventsPage list view (line 539-544) and map view (line 658-676) to handle nested event data with fallback keys
 - ✅ **Self-healing Status Endpoint Fixed:** Added `/api/self-healing/status` endpoint returning JSON with agent health status
 - ✅ **TourGuide Error Handling:** Query config with `retry: false` and `enabled: false` on 404 for graceful handling
 - ✅ **RSVP Cache Synchronization:** Type normalization ensures eventId is number across all cache operations
 - ✅ **Events System Verified:** E2E tests confirmed 20 event cards displaying correctly
-- ✅ **PRD Updated:** PRD_EVENTS_SYSTEM.md v1.3 with RSVP auth fix and React key fix documentation
+- ✅ **PRD Updated:** PRD_EVENTS_SYSTEM.md v1.8 with Smart Team Member Search documentation
 
 **Session Summary (Nov 30 - Previous):**
 - ✅ **Fixed @mention system:** Corrected `searchEventsSimple()` call in mention-routes.ts (HTTP 500 → working)
@@ -69,7 +78,7 @@ Core features include social functionalities (events, groups, posts, notificatio
 - `PRD_CROWDFUNDING_SYSTEM.md` - 338 lines, campaigns, pledges, rewards
 - `PRD_LEGAL_DOCUMENTS_SYSTEM.md` - 329 lines, agreements, signatures
 - `PRD_MESSAGES_SYSTEM.md` - 400+ lines, unified messaging platform
-- `PRD_EVENTS_SYSTEM.md` - 600+ lines, 17 API endpoints, 5 pages, RSVP, check-in
+- `PRD_EVENTS_SYSTEM.md` - 950+ lines, 18 API endpoints, Smart Team Search, RSVP, check-in
 
 **P1 PRDs COMPLETE (3/3):**
 - `PRD_HOUSING_SYSTEM.md` - 1,482 lines, hosts/guests, bookings, reviews, photos, Stripe

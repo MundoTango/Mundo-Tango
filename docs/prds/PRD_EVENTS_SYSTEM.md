@@ -862,10 +862,86 @@ if (!roleFilter || roleFilter === 'organizer') {
 
 ---
 
-## 23. Changelog
+## 23. Smart Team Member Search (Dec 01, 2025)
+
+### Feature Overview
+When organizers add team members (DJs, teachers, performers, photographers) to events, the search prioritizes relevant candidates using a 4-tier ranking system based on role, collaboration history, and location.
+
+### Search Priority Tiers
+1. **Previous Collaborators** - Users who participated in the organizer's past events with matching role
+2. **City Professionals** - Users in the same city with matching `tangoRoles` array
+3. **Role Matches** - All users with matching `tangoRoles` anywhere
+4. **General Search** - Fallback to name/username/email search
+
+### API Endpoint
+
+**GET** `/api/events/:id/search-team-members`
+
+**Query Parameters:**
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `role` | string | Yes | Participant role: `dj`, `teacher`, `performer`, `photographer`, `host`, `co_organizer` |
+| `q` | string | Yes | Search query (min 2 chars) |
+| `limit` | number | No | Max results (default: 15, max: 50) |
+
+**Response:**
+```json
+[
+  {
+    "id": 42,
+    "name": "Carlos DJ",
+    "username": "carlos_dj",
+    "profileImage": "...",
+    "city": "Buenos Aires",
+    "tangoRoles": ["dj", "organizer"],
+    "tier": 1,
+    "matchType": "previous_collaborator"
+  }
+]
+```
+
+### Role Mapping
+Participant roles map to `tangoRoles` array values:
+```typescript
+const tangoRoleMapping = {
+  'dj': 'dj',
+  'teacher': 'teacher',
+  'performer': 'performer',
+  'photographer': 'photographer',
+  'host': 'organizer',
+  'co_organizer': 'organizer'
+};
+```
+
+### Frontend Integration
+```typescript
+// EventParticipantManager.tsx
+const { data: searchResults } = useQuery({
+  queryKey: ["/api/events", eventId, "search-team-members", selectedRole, searchQuery],
+  queryFn: async () => {
+    const res = await fetch(
+      `/api/events/${eventId}/search-team-members?role=${selectedRole}&q=${searchQuery}&limit=15`
+    );
+    return res.json();
+  },
+  enabled: searchQuery.length >= 2,
+});
+```
+
+### Files Modified
+- `server/routes/event-routes.ts` - Added smart search endpoint (lines 2048-2221)
+- `client/src/components/events/EventParticipantManager.tsx` - Updated search query
+
+### MB.MD Pattern Applied
+**Pattern 28**: Parallel Agent Orchestration - 4 database queries execute with tiered de-duplication
+
+---
+
+## 24. Changelog
 
 | Date | Version | Changes |
 |------|---------|---------|
+| 2025-12-01 | 1.8 | Added Smart Team Member Search with 4-tier priority |
 | 2025-12-01 | 1.7 | Added PRO tab organizer role auto-detection |
 | 2025-12-01 | 1.6 | Added event notification integration (6 helpers) |
 | 2025-12-01 | 1.5 | Added RSVP capacity enforcement with 409 response |

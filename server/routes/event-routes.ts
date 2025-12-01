@@ -2034,6 +2034,190 @@ router.post("/:id/invitations/:invitationId/respond", authenticateToken, async (
 });
 
 // ============================================================================
+// SMART TEAM MEMBER SEARCH (MB.MD Pattern 28 - Parallel Agent Orchestration)
+// ============================================================================
+// Search Priority:
+// 1. Previous collaborators (users the organizer has worked with before)
+// 2. City-based professionals with matching tangoRole
+// 3. All users with matching tangoRole
+// 4. General user search fallback
+
+router.get("/:id/search-team-members", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    const eventId = parseInt(req.params.id);
+    const role = (req.query.role as string) || '';
+    const query = (req.query.q as string) || '';
+    const limit = Math.min(parseInt(req.query.limit as string) || 15, 50);
+
+    if (!query || query.length < 2) {
+      return res.json([]);
+    }
+
+    // Get event and organizer info
+    const [event] = await db
+      .select({
+        id: events.id,
+        organizerId: events.organizerId,
+        userId: events.userId,
+        city: events.city,
+        country: events.country
+      })
+      .from(events)
+      .where(eq(events.id, eventId))
+      .limit(1);
+
+    if (!event) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+
+    const organizerId = event.organizerId || event.userId;
+    
+    // Get organizer's city for location-based search
+    const [organizer] = await db
+      .select({ city: users.city, country: users.country })
+      .from(users)
+      .where(eq(users.id, organizerId!))
+      .limit(1);
+
+    const searchCity = event.city || organizer?.city || '';
+    const searchLower = query.toLowerCase();
+
+    // Map participant roles to tangoRoles array values
+    const tangoRoleMapping: Record<string, string> = {
+      'dj': 'dj',
+      'teacher': 'teacher',
+      'performer': 'performer',
+      'photographer': 'photographer',
+      'host': 'organizer',
+      'co_organizer': 'organizer'
+    };
+    const mappedRole = tangoRoleMapping[role] || role;
+
+    // TIER 1: Previous collaborators (users who have participated in organizer's past events)
+    const previousCollaborators = await db
+      .select({
+        id: users.id,
+        name: users.name,
+        username: users.username,
+        email: users.email,
+        profileImage: users.profileImage,
+        city: users.city,
+        tangoRoles: users.tangoRoles,
+        tier: sql<number>`1`.as('tier')
+      })
+      .from(users)
+      .innerJoin(eventRsvps, eq(users.id, eventRsvps.userId))
+      .innerJoin(events, eq(eventRsvps.eventId, events.id))
+      .where(and(
+        or(
+          eq(events.organizerId, organizerId!),
+          eq(events.userId, organizerId!)
+        ),
+        sql`${events.id} != ${eventId}`,
+        or(
+          sql`LOWER(${users.name}) LIKE ${'%' + searchLower + '%'}`,
+          sql`LOWER(${users.username}) LIKE ${'%' + searchLower + '%'}`
+        ),
+        mappedRole ? sql`${users.tangoRoles} @> ARRAY[${mappedRole}]::text[]` : sql`1=1`
+      ))
+      .groupBy(users.id)
+      .limit(limit);
+
+    // TIER 2: City-based professionals with matching role
+    const cityProfessionals = await db
+      .select({
+        id: users.id,
+        name: users.name,
+        username: users.username,
+        email: users.email,
+        profileImage: users.profileImage,
+        city: users.city,
+        tangoRoles: users.tangoRoles,
+        tier: sql<number>`2`.as('tier')
+      })
+      .from(users)
+      .where(and(
+        searchCity ? sql`LOWER(${users.city}) = ${searchCity.toLowerCase()}` : sql`1=1`,
+        or(
+          sql`LOWER(${users.name}) LIKE ${'%' + searchLower + '%'}`,
+          sql`LOWER(${users.username}) LIKE ${'%' + searchLower + '%'}`
+        ),
+        mappedRole ? sql`${users.tangoRoles} @> ARRAY[${mappedRole}]::text[]` : sql`1=1`,
+        sql`${users.id} NOT IN (${previousCollaborators.length > 0 
+          ? sql.join(previousCollaborators.map(u => sql`${u.id}`), sql`, `)
+          : sql`-1`})`
+      ))
+      .limit(limit);
+
+    // TIER 3: All users with matching role (anywhere)
+    const allWithRole = await db
+      .select({
+        id: users.id,
+        name: users.name,
+        username: users.username,
+        email: users.email,
+        profileImage: users.profileImage,
+        city: users.city,
+        tangoRoles: users.tangoRoles,
+        tier: sql<number>`3`.as('tier')
+      })
+      .from(users)
+      .where(and(
+        or(
+          sql`LOWER(${users.name}) LIKE ${'%' + searchLower + '%'}`,
+          sql`LOWER(${users.username}) LIKE ${'%' + searchLower + '%'}`
+        ),
+        mappedRole ? sql`${users.tangoRoles} @> ARRAY[${mappedRole}]::text[]` : sql`1=1`,
+        sql`${users.id} NOT IN (${[...previousCollaborators, ...cityProfessionals].length > 0
+          ? sql.join([...previousCollaborators, ...cityProfessionals].map(u => sql`${u.id}`), sql`, `)
+          : sql`-1`})`
+      ))
+      .limit(limit);
+
+    // TIER 4: General search fallback (all users matching query)
+    const generalSearch = await db
+      .select({
+        id: users.id,
+        name: users.name,
+        username: users.username,
+        email: users.email,
+        profileImage: users.profileImage,
+        city: users.city,
+        tangoRoles: users.tangoRoles,
+        tier: sql<number>`4`.as('tier')
+      })
+      .from(users)
+      .where(and(
+        or(
+          sql`LOWER(${users.name}) LIKE ${'%' + searchLower + '%'}`,
+          sql`LOWER(${users.username}) LIKE ${'%' + searchLower + '%'}`,
+          sql`LOWER(${users.email}) LIKE ${'%' + searchLower + '%'}`
+        ),
+        sql`${users.id} NOT IN (${[...previousCollaborators, ...cityProfessionals, ...allWithRole].length > 0
+          ? sql.join([...previousCollaborators, ...cityProfessionals, ...allWithRole].map(u => sql`${u.id}`), sql`, `)
+          : sql`-1`})`
+      ))
+      .limit(Math.max(0, limit - previousCollaborators.length - cityProfessionals.length - allWithRole.length));
+
+    // Combine and sort by tier
+    const results = [
+      ...previousCollaborators.map(u => ({ ...u, matchType: 'previous_collaborator' })),
+      ...cityProfessionals.map(u => ({ ...u, matchType: 'city_professional' })),
+      ...allWithRole.map(u => ({ ...u, matchType: 'role_match' })),
+      ...generalSearch.map(u => ({ ...u, matchType: 'general' }))
+    ].slice(0, limit);
+
+    console.log(`[SmartSearch] Event ${eventId}, Role: ${role}, Query: "${query}" → ${results.length} results (${previousCollaborators.length} collaborators, ${cityProfessionals.length} city pros, ${allWithRole.length} role matches, ${generalSearch.length} general)`);
+
+    res.json(results);
+  } catch (error) {
+    console.error("[Events] Smart team member search error:", error);
+    res.status(500).json({ message: "Search failed" });
+  }
+});
+
+// ============================================================================
 // MULTER ERROR HANDLER MIDDLEWARE
 // ============================================================================
 router.use((err: any, req: Request, res: Response, next: any) => {
