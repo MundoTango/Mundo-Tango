@@ -148,8 +148,8 @@ export const ReactionSelector = ({
           }),
           color: currentReaction ? getCurrentReactionColor() : 'inherit',
         }}
-        onClick={() => currentReaction ? onReact('') : onReact('love')}
-        data-testid={`button-react-${postId}`}
+        onClick={() => handleReactionClick(currentReaction || 'love')}
+        data-testid={`button-react-${targetId}`}
       >
         {currentReaction ? (() => {
           const IconComponent = getCurrentReactionIcon();
@@ -172,7 +172,7 @@ export const ReactionSelector = ({
           />
         )}
         {getTotalReactions() > 0 && (
-          <span className="text-sm font-medium" data-testid={`text-reaction-count-${postId}`}>
+          <span className="text-sm font-medium" data-testid={`text-reaction-count-${targetId}`}>
             {getTotalReactions()}
           </span>
         )}

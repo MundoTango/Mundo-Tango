@@ -3444,6 +3444,64 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // COMMENT REACTIONS - Use commentLikes table as temporary storage
+  app.post("/api/comments/:id/react", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const commentId = parseInt(req.params.id);
+      const { reactionType } = req.body;
+      
+      if (reactionType === undefined || reactionType === null) {
+        return res.status(400).json({ message: "Reaction type is required" });
+      }
+
+      // For now, map reactions to simple like/unlike using commentLikes
+      // In production, would use dedicated commentReactions table
+      if (reactionType === '' || reactionType === 'love') {
+        // Remove like
+        await db.delete(commentLikes).where(
+          and(
+            eq(commentLikes.commentId, commentId),
+            eq(commentLikes.userId, req.user!.id)
+          )
+        );
+      } else {
+        // Remove any existing like first
+        await db.delete(commentLikes).where(
+          and(
+            eq(commentLikes.commentId, commentId),
+            eq(commentLikes.userId, req.user!.id)
+          )
+        );
+        
+        // Add new like
+        await db.insert(commentLikes).values({
+          commentId,
+          userId: req.user!.id,
+        });
+
+        // Send notification to comment author
+        const comment = await db.select().from(postComments)
+          .where(eq(postComments.id, commentId))
+          .limit(1);
+        
+        if (comment[0] && comment[0].userId !== req.user!.id) {
+          await storage.createNotification({
+            userId: comment[0].userId,
+            type: 'reaction',
+            title: 'New reaction',
+            message: `Someone reacted ${reactionType} to your comment`,
+            data: JSON.stringify({ commentId })
+          });
+        }
+      }
+
+      res.json({ success: true });
+    } catch (error) {
+      console.error('React to comment error:', error);
+      res.status(500).json({ message: "Failed to react to comment" });
+    }
+  });
+
   app.post("/api/posts/:id/save", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const postId = parseInt(req.params.id);
