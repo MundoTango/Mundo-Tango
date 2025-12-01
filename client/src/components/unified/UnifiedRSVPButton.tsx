@@ -85,15 +85,24 @@ export function UnifiedRSVPButton({
       return res.json();
     },
     onSuccess: async (_, status) => {
-      // Refetch permissions and attendees immediately so UI updates
-      await queryClient.refetchQueries({ queryKey: ["/api/events", eventId, "permissions"] });
-      await queryClient.refetchQueries({ queryKey: ["/api/events", eventId, "attendees"] });
+      // CRITICAL: Normalize eventId to number for consistent query key matching
+      const numericEventId = typeof eventId === 'string' ? parseInt(eventId, 10) : eventId;
       
-      // Then invalidate the broader queries for consistency
-      queryClient.invalidateQueries({ queryKey: ["/api/events", eventId] });
+      // Invalidate ALL attendees queries (with different status filters)
+      // This matches useEventRSVPs query key: ["/api/events", eventId, "attendees", statusFilter || "all"]
+      await queryClient.invalidateQueries({ queryKey: ["/api/events", numericEventId, "attendees"] });
+      await queryClient.invalidateQueries({ queryKey: ["/api/events", String(eventId), "attendees"] });
+      
+      // Refetch the specific "all" query that EventCard uses
+      await queryClient.refetchQueries({ queryKey: ["/api/events", numericEventId, "attendees", "all"] });
+      
+      // Invalidate permissions and event data
+      queryClient.invalidateQueries({ queryKey: ["/api/events", numericEventId, "permissions"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/events", numericEventId] });
+      
+      // Invalidate global event lists
       queryClient.invalidateQueries({ queryKey: ["/api/events/my-rsvps"] });
       queryClient.invalidateQueries({ queryKey: ["/api/events"] });
-      // Also invalidate sidebar-specific queries
       queryClient.invalidateQueries({ queryKey: ["/api/events", "sidebar"] });
       
       onStatusChange?.(status);

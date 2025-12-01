@@ -153,11 +153,14 @@ export function useDeleteEvent() {
 }
 
 export function useEventRSVPs(eventId: string | number, statusFilter?: string) {
+  // CRITICAL: Normalize eventId to number for consistent query key matching
+  const numericEventId = typeof eventId === 'string' ? parseInt(eventId, 10) : eventId;
+  
   return useQuery({
-    queryKey: ["/api/events", eventId, "attendees", statusFilter || "all"],
+    queryKey: ["/api/events", numericEventId, "attendees", statusFilter || "all"],
     queryFn: async () => {
       const status = statusFilter || "all";
-      const res = await fetch(`/api/events/${eventId}/attendees?status=${status}`);
+      const res = await fetch(`/api/events/${numericEventId}/attendees?status=${status}`);
       if (!res.ok) throw new Error('Failed to fetch RSVPs');
       return await res.json();
     },
