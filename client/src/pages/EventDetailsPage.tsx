@@ -25,7 +25,7 @@ import { EventParticipantManager } from "@/components/events/EventParticipantMan
 import { useAuth } from "@/contexts/AuthContext";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { queryClient } from "@/lib/queryClient";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 
 interface EventPhoto {
   photo: {
@@ -364,6 +364,19 @@ export default function EventDetailsPage() {
   const [, params] = useRoute("/events/:id");
   const [, setLocation] = useLocation();
   const [rsvpStatusState, setRsvpStatusState] = useState<RSVPStatus>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [editData, setEditData] = useState({
+    title: '',
+    description: '',
+    venue: '',
+    address: '',
+    city: '',
+    country: '',
+    startDate: '',
+    startTime: '',
+    price: '',
+  });
   const eventId = parseInt(params?.id || "0");
   const { data: event, isLoading } = useEvent(eventId);
   const { toast } = useToast();
@@ -416,6 +429,52 @@ export default function EventDetailsPage() {
     // Permissions are already refetched by UnifiedRSVPButton, but ensure it's complete
     if (status) {
       await queryClient.refetchQueries({ queryKey: ["/api/events", eventId, "permissions"] });
+    }
+  };
+
+  useEffect(() => {
+    if (event && isEditing) {
+      setEditData({
+        title: event.title || '',
+        description: event.description || '',
+        venue: event.venue || '',
+        address: event.address || '',
+        city: event.city || '',
+        country: event.country || '',
+        startDate: event.startDate ? new Date(event.startDate).toISOString().split('T')[0] : '',
+        startTime: event.startTime || '',
+        price: event.price ? String(event.price) : '',
+      });
+    }
+  }, [isEditing, event]);
+
+  const handleSaveEdit = async () => {
+    setIsSaving(true);
+    try {
+      const res = await fetch(`/api/events/${eventId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          title: editData.title,
+          description: editData.description,
+          venue: editData.venue,
+          address: editData.address,
+          city: editData.city,
+          country: editData.country,
+          startDate: editData.startDate,
+          startTime: editData.startTime,
+          price: editData.price ? parseFloat(editData.price) : null,
+        }),
+      });
+      if (!res.ok) throw new Error('Failed to save');
+      toast({ title: 'Event updated successfully' });
+      queryClient.invalidateQueries({ queryKey: ['/api/events', eventId] });
+      setIsEditing(false);
+    } catch (error: any) {
+      toast({ title: 'Error saving event', description: error.message, variant: 'destructive' });
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -566,14 +625,40 @@ export default function EventDetailsPage() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2 }}
-                        className="flex justify-end"
+                        className="flex justify-end gap-2"
                       >
-                        <Link href={`/events/${eventId}/edit`}>
-                          <Button variant="outline" className="gap-2" data-testid="button-edit-event">
+                        {isEditing ? (
+                          <>
+                            <Button 
+                              variant="default" 
+                              className="gap-2"
+                              onClick={handleSaveEdit}
+                              disabled={isSaving}
+                              data-testid="button-save-event"
+                            >
+                              {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
+                              Save
+                            </Button>
+                            <Button 
+                              variant="outline"
+                              onClick={() => setIsEditing(false)}
+                              disabled={isSaving}
+                              data-testid="button-cancel-edit"
+                            >
+                              Cancel
+                            </Button>
+                          </>
+                        ) : (
+                          <Button 
+                            variant="outline" 
+                            className="gap-2"
+                            onClick={() => setIsEditing(true)}
+                            data-testid="button-edit-event"
+                          >
                             <Edit className="h-4 w-4" />
                             Edit Event
                           </Button>
-                        </Link>
+                        )}
                       </motion.div>
                     )}
                 <div className="grid gap-8 md:grid-cols-2">
@@ -586,13 +671,32 @@ export default function EventDetailsPage() {
                     <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
                       <Calendar className="h-7 w-7 text-primary" />
                     </div>
-                    <div>
+                    <div className="flex-1">
                       <p className="text-lg font-semibold mb-2">Date & Time</p>
-                      <p className="text-base text-muted-foreground leading-relaxed">
-                        {(event.startDate || event.date) && safeDateFormat(event.startDate || event.date, "PPPP", "TBD", eventTimezone)}
-                        {event.startTime && <> at {event.startTime}</>}
-                        {event.endTime && <> - {event.endTime}</>}
-                      </p>
+                      {isEditing ? (
+                        <div className="space-y-2">
+                          <input
+                            type="date"
+                            value={editData.startDate}
+                            onChange={(e) => setEditData({ ...editData, startDate: e.target.value })}
+                            className="w-full px-3 py-1 border rounded-md text-sm"
+                            data-testid="input-edit-date"
+                          />
+                          <input
+                            type="time"
+                            value={editData.startTime}
+                            onChange={(e) => setEditData({ ...editData, startTime: e.target.value })}
+                            className="w-full px-3 py-1 border rounded-md text-sm"
+                            data-testid="input-edit-time"
+                          />
+                        </div>
+                      ) : (
+                        <p className="text-base text-muted-foreground leading-relaxed">
+                          {(event.startDate || event.date) && safeDateFormat(event.startDate || event.date, "PPPP", "TBD", eventTimezone)}
+                          {event.startTime && <> at {event.startTime}</>}
+                          {event.endTime && <> - {event.endTime}</>}
+                        </p>
+                      )}
                     </div>
                   </motion.div>
 
@@ -608,12 +712,49 @@ export default function EventDetailsPage() {
                       </div>
                       <div className="flex-1">
                         <p className="text-lg font-semibold mb-2">Location</p>
-                        <p className="text-base text-muted-foreground leading-relaxed mb-3" data-testid="text-event-address">
-                          {event.venue && <span className="font-medium">{event.venue}</span>}
-                          {event.venue && (event.address || event.location) && <br />}
-                          {event.address || event.location}
-                          {event.city && <><br />{event.city}{event.country && `, ${event.country}`}</>}
-                        </p>
+                        {isEditing ? (
+                          <div className="space-y-2">
+                            <input
+                              type="text"
+                              placeholder="Venue"
+                              value={editData.venue}
+                              onChange={(e) => setEditData({ ...editData, venue: e.target.value })}
+                              className="w-full px-3 py-1 border rounded-md text-sm"
+                              data-testid="input-edit-venue"
+                            />
+                            <input
+                              type="text"
+                              placeholder="Address"
+                              value={editData.address}
+                              onChange={(e) => setEditData({ ...editData, address: e.target.value })}
+                              className="w-full px-3 py-1 border rounded-md text-sm"
+                              data-testid="input-edit-address"
+                            />
+                            <input
+                              type="text"
+                              placeholder="City"
+                              value={editData.city}
+                              onChange={(e) => setEditData({ ...editData, city: e.target.value })}
+                              className="w-full px-3 py-1 border rounded-md text-sm"
+                              data-testid="input-edit-city"
+                            />
+                            <input
+                              type="text"
+                              placeholder="Country"
+                              value={editData.country}
+                              onChange={(e) => setEditData({ ...editData, country: e.target.value })}
+                              className="w-full px-3 py-1 border rounded-md text-sm"
+                              data-testid="input-edit-country"
+                            />
+                          </div>
+                        ) : (
+                          <p className="text-base text-muted-foreground leading-relaxed mb-3" data-testid="text-event-address">
+                            {event.venue && <span className="font-medium">{event.venue}</span>}
+                            {event.venue && (event.address || event.location) && <br />}
+                            {event.address || event.location}
+                            {event.city && <><br />{event.city}{event.country && `, ${event.country}`}</>}
+                          </p>
+                        )}
                         {getDirectionsUrl() && (
                           <a 
                             href={getDirectionsUrl()!}
@@ -640,13 +781,26 @@ export default function EventDetailsPage() {
                     <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
                       <DollarSign className="h-7 w-7 text-primary" />
                     </div>
-                    <div>
+                    <div className="flex-1">
                       <p className="text-lg font-semibold mb-2" data-testid="text-price-label">Price</p>
-                      <p className="text-base text-muted-foreground leading-relaxed" data-testid="text-event-price">
-                        {event.price && event.price > 0 
-                          ? `${getCurrencySymbol(event.currency as any) || '$'}${event.price}` 
-                          : 'Free'}
-                      </p>
+                      {isEditing ? (
+                        <input
+                          type="number"
+                          placeholder="0"
+                          value={editData.price}
+                          onChange={(e) => setEditData({ ...editData, price: e.target.value })}
+                          className="w-full px-3 py-1 border rounded-md text-sm"
+                          step="0.01"
+                          min="0"
+                          data-testid="input-edit-price"
+                        />
+                      ) : (
+                        <p className="text-base text-muted-foreground leading-relaxed" data-testid="text-event-price">
+                          {event.price && event.price > 0 
+                            ? `${getCurrencySymbol(event.currency as any) || '$'}${event.price}` 
+                            : 'Free'}
+                        </p>
+                      )}
                     </div>
                   </motion.div>
 
