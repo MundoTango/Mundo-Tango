@@ -42,6 +42,8 @@ interface ReactionSelectorProps {
   totalCount?: number;
   className?: string;
   isLoading?: boolean;
+  onReact?: (reactionId: string) => Promise<void> | void;
+  'data-testid'?: string;
 }
 
 export const ReactionSelector = ({
@@ -51,7 +53,9 @@ export const ReactionSelector = ({
   reactions = {},
   totalCount,
   className = '',
-  isLoading = false
+  isLoading = false,
+  onReact,
+  'data-testid': dataTestId
 }: ReactionSelectorProps) => {
   const [showReactions, setShowReactions] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
@@ -71,16 +75,27 @@ export const ReactionSelector = ({
   }, []);
 
   const handleReactionClick = async (reactionId: string) => {
+    const toggledReaction = currentReaction === reactionId ? '' : reactionId;
+    
     try {
-      const endpoint = targetType === 'post' 
-        ? `/api/posts/${targetId}/react`
-        : `/api/comments/${targetId}/react`;
-      
-      await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ reactionType: currentReaction === reactionId ? '' : reactionId })
-      });
+      if (onReact) {
+        await onReact(toggledReaction);
+      } else {
+        const endpoint = targetType === 'post' 
+          ? `/api/posts/${targetId}/react`
+          : `/api/comments/${targetId}/react`;
+        
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ reactionType: toggledReaction })
+        });
+        
+        if (!response.ok) {
+          throw new Error(`Reaction failed: ${response.status}`);
+        }
+      }
       setShowReactions(false);
     } catch (error) {
       console.error('Reaction failed:', error);

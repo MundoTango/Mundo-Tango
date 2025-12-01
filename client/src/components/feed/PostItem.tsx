@@ -315,7 +315,8 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
         {/* Actions */}
         <div className="px-4 pb-3 flex items-center gap-1 flex-wrap">
           <ReactionSelector
-            postId={post.id}
+            targetId={post.id}
+            targetType="post"
             currentReaction={post.currentReaction || undefined}
             onReact={handleReaction}
             reactions={post.reactions || {}}
