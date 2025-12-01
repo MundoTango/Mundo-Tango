@@ -54,7 +54,7 @@ const eventSummaryFields = {
   onlineLink: events.onlineLink,
   meetingUrl: events.meetingUrl,
   imageUrl: events.imageUrl,  // URL-based images (not base64)
-  // coverImage: EXCLUDED - can be megabytes of base64 data
+  coverImage: events.coverImage,  // RESTORED: Now safe - Object Storage URLs, not base64
   mediaUrls: events.mediaUrls,
   organizerId: events.organizerId,
   coOrganizers: events.coOrganizers,
@@ -1022,7 +1022,8 @@ router.post("/", authenticateToken, requireMinimumRole(3), async (req: AuthReque
       isPaid: rest.price ? true : false,
       isOnline: false,
       visibility: "public",
-      coverImage: rest.coverImageUrl || null,
+      imageUrl: rest.coverImageUrl || null,  // FIX: Save to imageUrl for hero section display
+      coverImage: rest.coverImageUrl || null,  // Also save to coverImage for backward compatibility
       mediaUrls: rest.photos?.map((p: any) => p.url) || null
     };
 
