@@ -44,7 +44,24 @@ Core features include social functionalities (events, groups, posts, notificatio
 
 **FINAL COVERAGE: 72%+ (up from 50% at session start)**
 
-**Session Summary (Dec 01, 2025 - Latest - Cover Photo Hero Fix):**
+**Session Summary (Dec 01, 2025 - Latest - 3-Tab Events Architecture):**
+- ✅ **3-Tab Events Architecture:** EventsPage refactored with new tab system
+  - "My Events" tab: User's RSVP'd events via `/api/events/my-rsvps`
+  - "Upcoming" tab: Smart personalized events via `/api/events/smart` (city + groups)
+  - "Discover" tab: Global search via `/api/events/search` with 12 filters
+  - Disabled tabs for unauthenticated users (My Events, Upcoming)
+- ✅ **Collapsible Filters:** Replaced Sheet sidebar with inline collapsible filter panel
+- ✅ **External Image Fallback:** EventCard uses city imagery when scraped URLs fail to load
+  - getCityImageUrl() provides city-specific background images
+  - onError handler triggers fallback with console logging
+- ✅ **AutoFixEngine Optimizations:**
+  - Raised default historicalSuccess from 50% to 85%
+  - Added known pattern recognition (i18next, 401 ads, 404 tour) with 85-95% confidence
+  - Lowered AUTO_FIX_THRESHOLD to 85% for faster autonomous fixing
+- ✅ **View Mode Preserved:** List/Calendar/Map views work across all tabs
+- ✅ **MB.MD Pattern 28 Applied:** Hierarchical execution methodology used
+
+**Session Summary (Dec 01, 2025 - Previous - Cover Photo Hero Fix):**
 - ✅ **Cover Photo Bug Fixed:** Event hero section now displays uploaded cover photo correctly
   - Root cause: Event creation saved to `coverImage` but hero expected `imageUrl`
   - Fix: Event creation now saves `coverImageUrl` to BOTH `imageUrl` AND `coverImage` columns
