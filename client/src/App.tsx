@@ -99,6 +99,7 @@ const ReputationProfile = lazy(() => import("@/pages/ReputationProfile"));
 const EventsPage = lazy(() => import("@/pages/EventsPage"));
 const EventSearchPage = lazy(() => import("@/pages/events/EventSearchPage"));
 const EventDetailsPage = lazy(() => import("@/pages/EventDetailsPage"));
+const EditEventPage = lazy(() => import("@/pages/EditEventPage"));
 const MyEventsPage = lazy(() => import("@/pages/MyEventsPage"));
 const GroupsPage = lazy(() => import("@/pages/GroupsPage"));
 const GroupDetailsPage = lazy(() => import("@/pages/GroupDetailsPage"));
@@ -652,6 +653,14 @@ function Router() {
         <ProtectedRoute>
           <AppLayout>
             <EventCreationPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/events/:id/edit">
+        <ProtectedRoute>
+          <AppLayout>
+            <EditEventPage />
           </AppLayout>
         </ProtectedRoute>
       </Route>
