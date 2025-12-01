@@ -20,6 +20,37 @@ export interface Tour {
 }
 
 const PREDEFINED_TOURS: Record<string, Omit<Tour, 'id' | 'createdAt'>> = {
+  'app-onboarding': {
+    name: 'App Onboarding',
+    feature: 'app-onboarding',
+    steps: [
+      {
+        target: '[data-testid="sidebar-navigation"]',
+        content: 'Welcome to Mundo Tango! This is your main navigation sidebar where you can access all features.',
+        title: 'Welcome! 👋',
+        placement: 'right',
+        disableBeacon: true
+      },
+      {
+        target: '[data-testid="link-feed"]',
+        content: 'The Feed shows updates from the tango community and your connections.',
+        title: 'Your Feed',
+        placement: 'right'
+      },
+      {
+        target: '[data-testid="link-events"]',
+        content: 'Discover milongas, practicas, and festivals happening worldwide.',
+        title: 'Tango Events',
+        placement: 'right'
+      },
+      {
+        target: '[data-testid="link-profile"]',
+        content: 'Customize your dancer profile and share your tango journey.',
+        title: 'Your Profile',
+        placement: 'right'
+      }
+    ]
+  },
   onboarding: {
     name: 'Platform Onboarding',
     feature: 'onboarding',
