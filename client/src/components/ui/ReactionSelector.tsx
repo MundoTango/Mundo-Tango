@@ -35,21 +35,21 @@ export const REACTION_TYPES: Reaction[] = [
 ];
 
 interface ReactionSelectorProps {
-  postId: number;
+  targetId: number;
+  targetType: 'post' | 'comment';
   currentReaction?: string;
   reactions?: { [key: string]: number };
   totalCount?: number;
-  onReact: (reactionId: string) => void;
   className?: string;
   isLoading?: boolean;
 }
 
 export const ReactionSelector = ({
-  postId,
+  targetId,
+  targetType,
   currentReaction,
   reactions = {},
   totalCount,
-  onReact,
   className = '',
   isLoading = false
 }: ReactionSelectorProps) => {
@@ -70,13 +70,21 @@ export const ReactionSelector = ({
     };
   }, []);
 
-  const handleReactionClick = (reactionId: string) => {
-    if (currentReaction === reactionId) {
-      onReact('');
-    } else {
-      onReact(reactionId);
+  const handleReactionClick = async (reactionId: string) => {
+    try {
+      const endpoint = targetType === 'post' 
+        ? `/api/posts/${targetId}/react`
+        : `/api/comments/${targetId}/react`;
+      
+      await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reactionType: currentReaction === reactionId ? '' : reactionId })
+      });
+      setShowReactions(false);
+    } catch (error) {
+      console.error('Reaction failed:', error);
     }
-    setShowReactions(false);
   };
 
   const getTotalReactions = () => {
@@ -188,7 +196,9 @@ export const ReactionSelector = ({
               border: '1px solid rgba(255, 255, 255, 0.3)',
               pointerEvents: 'auto',
             }}
-            data-testid={`popup-reactions-${postId}`}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+            data-testid={`popup-reactions-${targetId}`}
           >
             <div className="flex gap-2">
               {REACTION_TYPES.map((reaction) => {
@@ -205,7 +215,7 @@ export const ReactionSelector = ({
                         : 'rgba(255, 255, 255, 0.1)',
                     }}
                     title={reaction.label}
-                    data-testid={`button-reaction-${reaction.id}-${postId}`}
+                    data-testid={`button-reaction-${reaction.id}-${targetId}`}
                   >
                     <IconComponent 
                       className="w-6 h-6 transition-transform group-hover:scale-125"

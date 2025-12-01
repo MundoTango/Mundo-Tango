@@ -121,6 +121,8 @@ export const CommentItem = ({
             <ReactionSelector 
               targetId={comment.id}
               targetType="comment"
+              currentReaction={comment.isLiked ? 'love' : undefined}
+              reactions={{ love: comment.likes || 0 }}
               data-testid={`reactions-comment-${comment.id}`}
             />
           )}
