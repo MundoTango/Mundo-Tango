@@ -5,7 +5,7 @@ import { UnifiedRSVPButton, RSVPStatus } from "@/components/unified/UnifiedRSVPB
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Calendar, MapPin, DollarSign, Globe, Users, Check, ChevronRight, User, Ticket, Music, Tag, ExternalLink, Clock, Navigation, Camera, Image as ImageIcon, Loader2, Edit, Share2, Heart, MoreVertical, Trash2, Flag, Upload, Crown, UserCheck } from "lucide-react";
+import { Calendar, MapPin, DollarSign, Globe, Users, Check, ChevronRight, User, Ticket, Music, Tag, ExternalLink, Clock, Navigation, Camera, Image as ImageIcon, Loader2, Edit, Share2, MoreVertical, Trash2, Flag, Upload, Crown, UserCheck } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link, useLocation } from "wouter";
 import { safeDateFormat } from "@/lib/safeDateFormat";
@@ -22,7 +22,6 @@ import { getCityImageUrl } from "@/lib/cityImageMap";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { EventPostFeed } from "@/components/events/EventPostFeed";
 import { EventParticipantManager } from "@/components/events/EventParticipantManager";
-import { UnifiedMemoriesFeed } from "@/components/feed/UnifiedMemoriesFeed";
 import { useAuth } from "@/contexts/AuthContext";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { queryClient } from "@/lib/queryClient";
@@ -549,17 +548,13 @@ export default function EventDetailsPage() {
                 )}
               </CardHeader>
               <Tabs defaultValue="discussion" className="w-full">
-                <TabsList className="grid w-full grid-cols-4 border-b rounded-none bg-transparent p-0">
+                <TabsList className="grid w-full grid-cols-3 border-b rounded-none bg-transparent p-0">
                   <TabsTrigger value="discussion" className="rounded-none border-b-2 data-[state=active]:border-b-primary">
                     Discussion
                   </TabsTrigger>
                   <TabsTrigger value="photos" className="rounded-none border-b-2 data-[state=active]:border-b-primary gap-2">
                     <Camera className="h-4 w-4" />
                     Photos
-                  </TabsTrigger>
-                  <TabsTrigger value="memories" className="rounded-none border-b-2 data-[state=active]:border-b-primary gap-2">
-                    <Heart className="h-4 w-4" />
-                    Memories
                   </TabsTrigger>
                   <TabsTrigger value="details" className="rounded-none border-b-2 data-[state=active]:border-b-primary">
                     Details
@@ -572,15 +567,6 @@ export default function EventDetailsPage() {
 
                 <TabsContent value="photos" className="p-8">
                   <EventPhotosTab eventId={eventId} />
-                </TabsContent>
-
-                <TabsContent value="memories" className="p-8">
-                  <UnifiedMemoriesFeed
-                    context={{ type: 'event', id: eventId, name: event.title }}
-                    showPostCreator={true}
-                    showFilters={true}
-                    emptyMessage={`No memories about ${event.title} yet. Create one to get started!`}
-                  />
                 </TabsContent>
 
                 <TabsContent value="details" className="p-8">
