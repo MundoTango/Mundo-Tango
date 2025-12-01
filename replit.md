@@ -39,6 +39,14 @@ Mundo Tango is a production-ready social platform connecting the global tango co
 - **Enhancements**: Added test IDs (search-results-scroll, search-loading, search-empty)
 - **Error Handling**: Added console.error for failed searches
 
+### Community Map Pin Location - FIXED (Pattern 43)
+- **Issue**: Map pins showing at wrong location (Buenos Aires instead of McCloud, CA)
+- **Root Cause**: `map-routes.ts` returned `latitude`/`longitude` as separate fields; frontend expected `coordinates: { lat, lng }`
+- **Fix**: Transformed API response to wrap coordinates in proper object format
+- **File**: `server/routes/map-routes.ts` lines 84-93
+- **Methodology Applied**: Research → Plan → Build → Test → Document (MB.MD v9.9.2)
+- **Result**: Events now display at correct geographic coordinates on Leaflet map
+
 ## System Architecture
 
 ### Standardized Components
@@ -82,6 +90,7 @@ Production uses GitHub Actions for CI/CD, Prometheus/Grafana with Sentry for mon
 - **Other:** Sentry, Playwright, BullMQ, FFmpeg, fluent-ffmpeg, Wouter, Multer
 
 ## MB.MD Methodology Status
+- **Pattern 43**: Map Coordinate Protocol - IMPLEMENTED (API response format standardization)
 - **Pattern 42**: Drizzle ORM LeftJoin Flat Column Selection - IMPLEMENTED (Comments API fixed)
 - **Pattern 41**: Parallel Agent Execution - IMPLEMENTED (Multi-agent orchestration working)
 - **Pattern 40**: City Imagery Standardization - IMPLEMENTED (10+ components updated)
