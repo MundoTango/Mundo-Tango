@@ -371,7 +371,7 @@ export default function ProfilePage() {
         <img 
           src={user.backgroundImage || 'https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?w=1600&auto=format&fit=crop'} 
           alt={`${user.name}'s cover`}
-          className="w-full h-full object-cover pt-[100px] pb-[100px] mt-[69px] mb-[69px]"
+          className="w-full h-full object-cover"
           data-testid="img-hero-cover"
         />
         
@@ -787,7 +787,7 @@ export default function ProfilePage() {
                           onClick={isOwnProfile ? () => setActiveTab('photos') : undefined}
                           className={`aspect-square rounded-lg overflow-hidden ${
                             photo 
-                              ? 'border border-border' 
+                              ? '' 
                               : 'bg-muted border-2 border-dashed border-border/50 flex items-center justify-center'
                           } ${isOwnProfile ? 'hover:opacity-90 cursor-pointer' : ''} transition-all`}
                           data-testid={`photo-slot-${index}`}
