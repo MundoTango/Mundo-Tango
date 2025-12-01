@@ -58,11 +58,12 @@ router.post("/upload", optionalAuth, upload.single('file'), async (req: AuthRequ
     const filename = `${type}_${Date.now()}_${randomUUID().slice(0, 8)}${ext}`;
     const directory = isVideo ? 'videos' : 'images';
 
-    // Upload to Object Storage
+    // Upload to Object Storage with clean path structure
     const result = await objectStorageService.uploadBuffer(req.file.buffer, {
-      filename: `${directory}/${filename}`,
+      filename,
       contentType: req.file.mimetype,
-      isPublic: true
+      isPublic: true,
+      directory  // 'images' or 'videos' - will become /public-objects/images/filename.ext
     });
 
     if (!result.success) {

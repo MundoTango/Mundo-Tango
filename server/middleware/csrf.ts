@@ -65,6 +65,7 @@ export function verifyCsrfToken(req: Request, res: Response, next: NextFunction)
   const uploadEndpoints = [
     "/api/upload/video",  // Video compression uploads
     "/api/upload/image",  // Image uploads
+    "/api/media/upload",  // Object Storage media uploads (MB.MD Pattern 28)
     "/api/posts"  // Post creation with media
   ];
   if (uploadEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
@@ -186,6 +187,7 @@ export function verifyDoubleSubmitCookie(req: Request, res: Response, next: Next
   const uploadEndpoints = [
     "/api/upload/video",  // Video compression uploads
     "/api/upload/image",  // Image uploads
+    "/api/media/upload",  // Object Storage media uploads (MB.MD Pattern 28)
     "/api/posts"  // Post creation with media
   ];
   if (uploadEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
