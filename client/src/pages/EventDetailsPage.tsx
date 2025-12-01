@@ -635,6 +635,7 @@ export default function EventDetailsPage() {
                       </motion.div>
                     ) : null}
 
+                {!isEditing && (
                 <div className="grid gap-8 md:grid-cols-2">
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -647,30 +648,11 @@ export default function EventDetailsPage() {
                     </div>
                     <div className="flex-1">
                       <p className="text-lg font-semibold mb-2">Date & Time</p>
-                      {isEditing ? (
-                        <div className="space-y-2">
-                          <input
-                            type="date"
-                            value={editData.startDate}
-                            onChange={(e) => setEditData({ ...editData, startDate: e.target.value })}
-                            className="w-full px-3 py-1 border rounded-md text-sm"
-                            data-testid="input-edit-date"
-                          />
-                          <input
-                            type="time"
-                            value={editData.startTime}
-                            onChange={(e) => setEditData({ ...editData, startTime: e.target.value })}
-                            className="w-full px-3 py-1 border rounded-md text-sm"
-                            data-testid="input-edit-time"
-                          />
-                        </div>
-                      ) : (
-                        <p className="text-base text-muted-foreground leading-relaxed">
-                          {(event.startDate || event.date) && safeDateFormat(event.startDate || event.date, "PPPP", "TBD", eventTimezone)}
-                          {event.startTime && <> at {event.startTime}</>}
-                          {event.endTime && <> - {event.endTime}</>}
-                        </p>
-                      )}
+                      <p className="text-base text-muted-foreground leading-relaxed">
+                        {(event.startDate || event.date) && safeDateFormat(event.startDate || event.date, "PPPP", "TBD", eventTimezone)}
+                        {event.startTime && <> at {event.startTime}</>}
+                        {event.endTime && <> - {event.endTime}</>}
+                      </p>
                     </div>
                   </motion.div>
 
@@ -686,49 +668,12 @@ export default function EventDetailsPage() {
                       </div>
                       <div className="flex-1">
                         <p className="text-lg font-semibold mb-2">Location</p>
-                        {isEditing ? (
-                          <div className="space-y-2">
-                            <input
-                              type="text"
-                              placeholder="Venue"
-                              value={editData.venue}
-                              onChange={(e) => setEditData({ ...editData, venue: e.target.value })}
-                              className="w-full px-3 py-1 border rounded-md text-sm"
-                              data-testid="input-edit-venue"
-                            />
-                            <input
-                              type="text"
-                              placeholder="Address"
-                              value={editData.address}
-                              onChange={(e) => setEditData({ ...editData, address: e.target.value })}
-                              className="w-full px-3 py-1 border rounded-md text-sm"
-                              data-testid="input-edit-address"
-                            />
-                            <input
-                              type="text"
-                              placeholder="City"
-                              value={editData.city}
-                              onChange={(e) => setEditData({ ...editData, city: e.target.value })}
-                              className="w-full px-3 py-1 border rounded-md text-sm"
-                              data-testid="input-edit-city"
-                            />
-                            <input
-                              type="text"
-                              placeholder="Country"
-                              value={editData.country}
-                              onChange={(e) => setEditData({ ...editData, country: e.target.value })}
-                              className="w-full px-3 py-1 border rounded-md text-sm"
-                              data-testid="input-edit-country"
-                            />
-                          </div>
-                        ) : (
-                          <p className="text-base text-muted-foreground leading-relaxed mb-3" data-testid="text-event-address">
-                            {event.venue && <span className="font-medium">{event.venue}</span>}
-                            {event.venue && (event.address || event.location) && <br />}
-                            {event.address || event.location}
-                            {event.city && <><br />{event.city}{event.country && `, ${event.country}`}</>}
-                          </p>
-                        )}
+                        <p className="text-base text-muted-foreground leading-relaxed mb-3" data-testid="text-event-address">
+                          {event.venue && <span className="font-medium">{event.venue}</span>}
+                          {event.venue && (event.address || event.location) && <br />}
+                          {event.address || event.location}
+                          {event.city && <><br />{event.city}{event.country && `, ${event.country}`}</>}
+                        </p>
                         {getDirectionsUrl() && (
                           <a 
                             href={getDirectionsUrl()!}
@@ -757,24 +702,11 @@ export default function EventDetailsPage() {
                     </div>
                     <div className="flex-1">
                       <p className="text-lg font-semibold mb-2" data-testid="text-price-label">Price</p>
-                      {isEditing ? (
-                        <input
-                          type="number"
-                          placeholder="0"
-                          value={editData.price}
-                          onChange={(e) => setEditData({ ...editData, price: e.target.value })}
-                          className="w-full px-3 py-1 border rounded-md text-sm"
-                          step="0.01"
-                          min="0"
-                          data-testid="input-edit-price"
-                        />
-                      ) : (
-                        <p className="text-base text-muted-foreground leading-relaxed" data-testid="text-event-price">
-                          {event.price && event.price > 0 
-                            ? `${getCurrencySymbol(event.currency as any) || '$'}${event.price}` 
-                            : 'Free'}
-                        </p>
-                      )}
+                      <p className="text-base text-muted-foreground leading-relaxed" data-testid="text-event-price">
+                        {event.price && event.price > 0 
+                          ? `${getCurrencySymbol(event.currency as any) || '$'}${event.price}` 
+                          : 'Free'}
+                      </p>
                     </div>
                   </motion.div>
 
@@ -797,6 +729,7 @@ export default function EventDetailsPage() {
                     </div>
                   </motion.div>
                 </div>
+                )}
 
                 {/* Attendees List Sidebar */}
                 {attendees.length > 0 && (
