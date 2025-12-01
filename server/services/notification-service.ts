@@ -60,7 +60,7 @@ export class NotificationService {
       senderId,
       priority,
       metadata,
-      read: false,
+      isRead: false,
     });
 
     // Send via appropriate channels
