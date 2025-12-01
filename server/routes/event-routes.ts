@@ -26,6 +26,74 @@ import { v2 as cloudinary } from "cloudinary";
 const router = Router();
 
 // ============================================================================
+// PERFORMANCE: SHARED EVENT FIELD SELECTORS (MB.MD Pattern 28 Optimization)
+// Exclude coverImage from queries to avoid loading megabyte-scale base64 data
+// ============================================================================
+const eventSummaryFields = {
+  id: events.id,
+  title: events.title,
+  slug: events.slug,
+  description: events.description,
+  eventType: events.eventType,
+  category: events.category,
+  userId: events.userId,
+  startDate: events.startDate,
+  endDate: events.endDate,
+  date: events.date,
+  timezone: events.timezone,
+  isRecurring: events.isRecurring,
+  location: events.location,
+  venue: events.venue,
+  venueName: events.venueName,
+  address: events.address,
+  city: events.city,
+  country: events.country,
+  latitude: events.latitude,
+  longitude: events.longitude,
+  isOnline: events.isOnline,
+  onlineLink: events.onlineLink,
+  meetingUrl: events.meetingUrl,
+  imageUrl: events.imageUrl,  // URL-based images (not base64)
+  // coverImage: EXCLUDED - can be megabytes of base64 data
+  mediaUrls: events.mediaUrls,
+  organizerId: events.organizerId,
+  coOrganizers: events.coOrganizers,
+  groupId: events.groupId,
+  maxAttendees: events.maxAttendees,
+  currentAttendees: events.currentAttendees,
+  waitlistEnabled: events.waitlistEnabled,
+  waitlistCount: events.waitlistCount,
+  isPaid: events.isPaid,
+  isFree: events.isFree,
+  price: events.price,
+  currency: events.currency,
+  ticketUrl: events.ticketUrl,
+  ticketLink: events.ticketLink,
+  visibility: events.visibility,
+  requiresApproval: events.requiresApproval,
+  allowGuestPlusOne: events.allowGuestPlusOne,
+  allowPhotos: events.allowPhotos,
+  allowComments: events.allowComments,
+  musicStyle: events.musicStyle,
+  danceStyles: events.danceStyles,
+  djName: events.djName,
+  tags: events.tags,
+  dressCode: events.dressCode,
+  ageRestriction: events.ageRestriction,
+  wheelchairAccessible: events.wheelchairAccessible,
+  parkingAvailable: events.parkingAvailable,
+  status: events.status,
+  viewCount: events.viewCount,
+  shareCount: events.shareCount,
+  sourceName: events.sourceName,
+  sourceUrl: events.sourceUrl,
+  seriesId: events.seriesId,
+  createdAt: events.createdAt,
+  updatedAt: events.updatedAt,
+  publishedAt: events.publishedAt,
+};
+
+// ============================================================================
 // MULTER CONFIGURATION WITH SECURITY VALIDATION
 // ============================================================================
 const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
@@ -848,13 +916,14 @@ router.get("/upcoming", async (req: Request, res: Response) => {
 });
 
 // GET /api/events/:id - Get event details
+// PERFORMANCE: Uses eventSummaryFields to exclude base64 coverImage from DB query
 router.get("/:id", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
     const result = await db
       .select({
-        event: events,
+        event: eventSummaryFields,  // OPTIMIZED: excludes coverImage from DB load
         organizer: {
           id: users.id,
           name: users.name,
@@ -880,18 +949,16 @@ router.get("/:id", async (req: Request, res: Response) => {
         eq(eventRsvps.eventId, parseInt(id)),
         eq(eventRsvps.status, "going")
       ));
-
-    // PERFORMANCE FIX: Strip base64 coverImage from response (can be megabytes)
-    // Frontend should use imageUrl or city fallback instead
+    
+    // PERFORMANCE FIX: Filter out base64 data from mediaUrls (can be megabytes per image)
     const eventData = result[0].event;
-    const cleanEvent = {
-      ...eventData,
-      // Only include coverImage if it's a URL, not base64
-      coverImage: eventData.coverImage?.startsWith('data:') ? null : eventData.coverImage,
-    };
+    const cleanMediaUrls = eventData.mediaUrls?.filter((url: string) => !url?.startsWith('data:')) || [];
     
     res.json({
-      event: cleanEvent,
+      event: {
+        ...eventData,
+        mediaUrls: cleanMediaUrls,  // Only URL-based media, no base64
+      },
       organizer: result[0].organizer,
       attendeeCount: rsvpCount[0]?.count || 0
     });
