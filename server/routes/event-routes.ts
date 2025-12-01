@@ -5,12 +5,16 @@ import {
   eventRsvps,
   eventPhotos,
   eventComments,
+  eventInvitations,
   users,
   posts,
   insertEventSchema,
   insertEventRsvpSchema,
-  insertEventCommentSchema
+  insertEventCommentSchema,
+  insertEventInvitationSchema
 } from "@shared/schema";
+import { notificationService } from "../services/notification-service";
+import crypto from "crypto";
 import { authenticateToken, optionalAuth, AuthRequest } from "../middleware/auth";
 import { requireMinimumRole } from "../middleware/tierEnforcement";
 import { eq, and, desc, gte, lte, sql, or, asc, inArray, count } from "drizzle-orm";
@@ -668,6 +672,45 @@ router.get("/analytics/attendance", async (req: Request, res: Response) => {
   }
 });
 
+// GET /api/events/invitations/pending - Get user's pending invitations (MUST be before /:id route!)
+router.get("/invitations/pending", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+
+    const invitations = await db
+      .select({
+        invitation: eventInvitations,
+        event: {
+          id: events.id,
+          title: events.title,
+          startDate: events.startDate,
+          venue: events.venue,
+          city: events.city,
+          imageUrl: events.imageUrl
+        },
+        inviter: {
+          id: users.id,
+          name: users.name,
+          username: users.username,
+          profileImage: users.profileImage
+        }
+      })
+      .from(eventInvitations)
+      .innerJoin(events, eq(eventInvitations.eventId, events.id))
+      .leftJoin(users, eq(eventInvitations.inviterId, users.id))
+      .where(and(
+        eq(eventInvitations.inviteeId, userId),
+        eq(eventInvitations.status, 'pending')
+      ))
+      .orderBy(desc(eventInvitations.createdAt));
+
+    res.json(invitations);
+  } catch (error) {
+    console.error("[Events] Error fetching pending invitations:", error);
+    res.status(500).json({ message: "Failed to fetch invitations" });
+  }
+});
+
 // GET /api/events/my-rsvps - Get user's RSVPs (MUST be before /:id route!)
 router.get("/my-rsvps", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
@@ -1018,7 +1061,7 @@ router.delete("/:id", authenticateToken, async (req: AuthRequest, res: Response)
 // EVENT RSVP ROUTES
 // ============================================================================
 
-// POST /api/events/:id/rsvp - RSVP to event (auth required)
+// POST /api/events/:id/rsvp - RSVP to event (auth required) with capacity enforcement
 router.post("/:id/rsvp", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user!.id;
@@ -1027,20 +1070,20 @@ router.post("/:id/rsvp", authenticateToken, async (req: AuthRequest, res: Respon
 
     console.log(`[Events RSVP] Creating RSVP - userId: ${userId}, eventId: ${eventId}, status: ${status}`);
 
-    // Check if event exists
-    const event = await db
+    // Check if event exists and get capacity info
+    const [event] = await db
       .select()
       .from(events)
       .where(eq(events.id, eventId))
       .limit(1);
 
-    if (event.length === 0) {
+    if (!event) {
       console.log(`[Events RSVP] Event not found: ${eventId}`);
       return res.status(404).json({ message: "Event not found" });
     }
 
     // Check if already RSVP'd
-    const existing = await db
+    const [existing] = await db
       .select()
       .from(eventRsvps)
       .where(and(
@@ -1049,9 +1092,35 @@ router.post("/:id/rsvp", authenticateToken, async (req: AuthRequest, res: Respon
       ))
       .limit(1);
 
-    if (existing.length > 0) {
+    // Capacity enforcement for new RSVPs or status changes to 'going'
+    if (status === "going" && (!existing || existing.status !== "going")) {
+      const maxCapacity = event.maxAttendees || event.capacity;
+      if (maxCapacity && maxCapacity > 0) {
+        // Count current attendees
+        const [{ count: currentCount }] = await db
+          .select({ count: sql<number>`COUNT(*)::int` })
+          .from(eventRsvps)
+          .where(and(
+            eq(eventRsvps.eventId, eventId),
+            eq(eventRsvps.status, "going")
+          ));
+
+        const totalNeeded = (existing?.status === "going" ? 0 : 1) + guestCount;
+        if (currentCount + totalNeeded > maxCapacity) {
+          console.log(`[Events RSVP] Event at capacity: ${currentCount}/${maxCapacity}`);
+          return res.status(409).json({ 
+            message: "Event is at full capacity",
+            capacity: maxCapacity,
+            current: currentCount,
+            waitlistAvailable: true
+          });
+        }
+      }
+    }
+
+    if (existing) {
       console.log(`[Events RSVP] Updating existing RSVP for user ${userId} on event ${eventId}`);
-      // Update existing RSVP
+      const previousStatus = existing.status;
       const [updated] = await db
         .update(eventRsvps)
         .set({ status, guestCount, updatedAt: new Date() })
@@ -1060,6 +1129,17 @@ router.post("/:id/rsvp", authenticateToken, async (req: AuthRequest, res: Respon
           eq(eventRsvps.userId, userId)
         ))
         .returning();
+
+      // Update attendee count if status changed
+      if (previousStatus !== status) {
+        const delta = (status === "going" ? 1 : 0) - (previousStatus === "going" ? 1 : 0);
+        if (delta !== 0) {
+          await db
+            .update(events)
+            .set({ currentAttendees: sql`GREATEST(0, COALESCE(${events.currentAttendees}, 0) + ${delta})` })
+            .where(eq(events.id, eventId));
+        }
+      }
 
       console.log(`[Events RSVP] Updated RSVP:`, updated);
       return res.json(updated);
@@ -1079,15 +1159,23 @@ router.post("/:id/rsvp", authenticateToken, async (req: AuthRequest, res: Respon
 
     console.log(`[Events RSVP] RSVP created successfully:`, rsvp);
 
-    // Update event attendee count
-    await db
-      .update(events)
-      .set({
-        currentAttendees: sql`${events.currentAttendees} + ${guestCount + 1}`
-      })
-      .where(eq(events.id, eventId));
+    // Update event attendee count for 'going' status
+    if (status === "going") {
+      await db
+        .update(events)
+        .set({
+          currentAttendees: sql`COALESCE(${events.currentAttendees}, 0) + ${guestCount + 1}`
+        })
+        .where(eq(events.id, eventId));
+    }
 
     console.log(`[Events RSVP] Event attendee count updated`);
+    
+    // Notify event organizer about new RSVP
+    if (event.userId !== userId) {
+      notificationService.notifyEventRsvp(event.userId, eventId, event.title, userId, status).catch(console.error);
+    }
+    
     res.status(201).json(rsvp);
   } catch (error) {
     console.error("[Events] Error creating RSVP:", error);
@@ -1383,6 +1471,11 @@ router.post("/:id/photos", authenticateToken, upload.single("file"), async (req:
       .from(users)
       .where(eq(users.id, userId))
       .limit(1);
+
+    // Notify event organizer about new photo upload
+    if (event.userId !== userId) {
+      notificationService.notifyEventPhotoUploaded(event.userId, eventId, event.title, userId).catch(console.error);
+    }
 
     res.status(201).json({
       photo: { ...photo, imageUrl: photo.photoUrl },
@@ -1697,9 +1790,246 @@ router.post("/:id/posts", authenticateToken, async (req: AuthRequest, res: Respo
       .limit(1);
 
     res.status(201).json(postWithUser);
+
+    // Send notification to organizer about new post
+    if (event.userId !== userId) {
+      notificationService.notifyEventPost(event.userId, eventId, event.title, userId).catch(console.error);
+    }
   } catch (error) {
     console.error("[Events] Error creating post:", error);
     res.status(500).json({ message: "Failed to create post" });
+  }
+});
+
+// ============================================================================
+// EVENT INVITATION ROUTES
+// ============================================================================
+
+// POST /api/events/:id/invitations - Invite user(s) to event (organizer or attendee)
+router.post("/:id/invitations", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    const eventId = parseInt(req.params.id);
+    const { inviteeIds, emails, message, role } = req.body;
+
+    // Check event exists
+    const [event] = await db
+      .select()
+      .from(events)
+      .where(eq(events.id, eventId))
+      .limit(1);
+
+    if (!event) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+
+    const isOrganizer = event.userId === userId || event.organizerId === userId;
+    
+    // Check if user can invite (organizer or RSVP'd attendee)
+    if (!isOrganizer) {
+      const [rsvp] = await db
+        .select()
+        .from(eventRsvps)
+        .where(and(
+          eq(eventRsvps.eventId, eventId),
+          eq(eventRsvps.userId, userId),
+          eq(eventRsvps.status, "going")
+        ))
+        .limit(1);
+
+      if (!rsvp) {
+        return res.status(403).json({ message: "Only organizers and attendees can invite others" });
+      }
+    }
+
+    const invitations = [];
+
+    // Handle user ID invitations
+    if (inviteeIds && Array.isArray(inviteeIds)) {
+      for (const inviteeId of inviteeIds) {
+        // Skip if already invited
+        const [existing] = await db
+          .select()
+          .from(eventInvitations)
+          .where(and(
+            eq(eventInvitations.eventId, eventId),
+            eq(eventInvitations.inviteeId, inviteeId)
+          ))
+          .limit(1);
+
+        if (existing) continue;
+
+        const inviteCode = crypto.randomBytes(16).toString('hex');
+        const [invitation] = await db
+          .insert(eventInvitations)
+          .values({
+            eventId,
+            inviterId: userId,
+            inviteeId,
+            inviteCode,
+            message: message || null,
+            role: role || 'guest',
+            status: 'pending',
+            expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days
+          })
+          .returning();
+
+        invitations.push(invitation);
+
+        // Send notification
+        notificationService.notifyEventInvitation(inviteeId, eventId, event.title, userId).catch(console.error);
+      }
+    }
+
+    // Handle email invitations (for non-users)
+    if (emails && Array.isArray(emails)) {
+      for (const emailObj of emails) {
+        const email = typeof emailObj === 'string' ? emailObj : emailObj.email;
+        const name = typeof emailObj === 'string' ? null : emailObj.name;
+
+        const inviteCode = crypto.randomBytes(16).toString('hex');
+        const [invitation] = await db
+          .insert(eventInvitations)
+          .values({
+            eventId,
+            inviterId: userId,
+            inviteeEmail: email,
+            inviteeName: name,
+            inviteCode,
+            message: message || null,
+            role: role || 'guest',
+            status: 'pending',
+            expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+          })
+          .returning();
+
+        invitations.push(invitation);
+        // TODO: Send email invitation
+      }
+    }
+
+    res.status(201).json({ 
+      message: `${invitations.length} invitation(s) sent`,
+      invitations 
+    });
+  } catch (error) {
+    console.error("[Events] Error creating invitations:", error);
+    res.status(500).json({ message: "Failed to create invitations" });
+  }
+});
+
+// GET /api/events/:id/invitations - Get event invitations (organizer only)
+router.get("/:id/invitations", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    const eventId = parseInt(req.params.id);
+
+    // Check if user is organizer
+    const [event] = await db
+      .select()
+      .from(events)
+      .where(eq(events.id, eventId))
+      .limit(1);
+
+    if (!event) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+
+    if (event.userId !== userId && event.organizerId !== userId) {
+      return res.status(403).json({ message: "Only organizers can view invitations" });
+    }
+
+    const invitations = await db
+      .select({
+        invitation: eventInvitations,
+        inviter: {
+          id: users.id,
+          name: users.name,
+          username: users.username,
+          profileImage: users.profileImage
+        }
+      })
+      .from(eventInvitations)
+      .leftJoin(users, eq(eventInvitations.inviterId, users.id))
+      .where(eq(eventInvitations.eventId, eventId))
+      .orderBy(desc(eventInvitations.createdAt));
+
+    res.json(invitations);
+  } catch (error) {
+    console.error("[Events] Error fetching invitations:", error);
+    res.status(500).json({ message: "Failed to fetch invitations" });
+  }
+});
+
+
+// POST /api/events/:id/invitations/:invitationId/respond - Respond to invitation
+router.post("/:id/invitations/:invitationId/respond", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    const eventId = parseInt(req.params.id);
+    const invitationId = parseInt(req.params.invitationId);
+    const { response } = req.body; // 'accepted' or 'declined'
+
+    if (!['accepted', 'declined'].includes(response)) {
+      return res.status(400).json({ message: "Invalid response. Use 'accepted' or 'declined'" });
+    }
+
+    // Find invitation
+    const [invitation] = await db
+      .select()
+      .from(eventInvitations)
+      .where(and(
+        eq(eventInvitations.id, invitationId),
+        eq(eventInvitations.eventId, eventId),
+        eq(eventInvitations.inviteeId, userId)
+      ))
+      .limit(1);
+
+    if (!invitation) {
+      return res.status(404).json({ message: "Invitation not found" });
+    }
+
+    if (invitation.status !== 'pending') {
+      return res.status(400).json({ message: "Invitation already responded to" });
+    }
+
+    // Update invitation
+    const [updated] = await db
+      .update(eventInvitations)
+      .set({ 
+        status: response,
+        respondedAt: new Date()
+      })
+      .where(eq(eventInvitations.id, invitationId))
+      .returning();
+
+    // If accepted, auto-RSVP
+    if (response === 'accepted') {
+      const [existingRsvp] = await db
+        .select()
+        .from(eventRsvps)
+        .where(and(
+          eq(eventRsvps.eventId, eventId),
+          eq(eventRsvps.userId, userId)
+        ))
+        .limit(1);
+
+      if (!existingRsvp) {
+        await db
+          .insert(eventRsvps)
+          .values({
+            eventId,
+            userId,
+            status: 'going',
+            guestCount: 0
+          });
+      }
+    }
+
+    res.json(updated);
+  } catch (error) {
+    console.error("[Events] Error responding to invitation:", error);
+    res.status(500).json({ message: "Failed to respond to invitation" });
   }
 });
 

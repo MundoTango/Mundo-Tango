@@ -701,6 +701,39 @@ export const eventRsvps = pgTable("event_rsvps", {
   rsvpedAtIdx: index("event_rsvps_rsvped_at_idx").on(table.rsvpedAt),
 }));
 
+// Event Invitations - Invite users to attend events
+export const eventInvitations = pgTable("event_invitations", {
+  id: serial("id").primaryKey(),
+  eventId: integer("event_id").notNull().references(() => events.id, { onDelete: "cascade" }),
+  inviterId: integer("inviter_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  inviteeId: integer("invitee_id").references(() => users.id, { onDelete: "cascade" }),
+  
+  // For email invitations (no account yet)
+  inviteeEmail: varchar("invitee_email", { length: 255 }),
+  inviteeName: varchar("invitee_name", { length: 255 }),
+  
+  // Invite Details
+  inviteCode: varchar("invite_code", { length: 64 }).unique(),
+  message: text("message"),
+  role: varchar("role", { length: 50 }), // 'guest', 'performer', 'helper', etc.
+  
+  // Status
+  status: varchar("status", { length: 20 }).default("pending"), // pending, accepted, declined, expired
+  
+  // Timestamps
+  createdAt: timestamp("created_at").defaultNow(),
+  expiresAt: timestamp("expires_at"),
+  respondedAt: timestamp("responded_at"),
+}, (table) => ({
+  eventIdx: index("event_invitations_event_idx").on(table.eventId),
+  inviterIdx: index("event_invitations_inviter_idx").on(table.inviterId),
+  inviteeIdx: index("event_invitations_invitee_idx").on(table.inviteeId),
+  emailIdx: index("event_invitations_email_idx").on(table.inviteeEmail),
+  codeIdx: uniqueIndex("event_invitations_code_idx").on(table.inviteCode),
+  statusIdx: index("event_invitations_status_idx").on(table.status),
+  uniqueInvite: uniqueIndex("unique_event_invite").on(table.eventId, table.inviteeId),
+}));
+
 export const eventPhotos = pgTable("event_photos", {
   id: serial("id").primaryKey(),
   eventId: integer("event_id").notNull().references(() => events.id, { onDelete: "cascade" }),
@@ -1652,6 +1685,15 @@ export const insertEventRsvpSchema = createInsertSchema(eventRsvps).omit({
 });
 export type InsertEventRsvp = z.infer<typeof insertEventRsvpSchema>;
 export type SelectEventRsvp = typeof eventRsvps.$inferSelect;
+
+// Event Invitations
+export const insertEventInvitationSchema = createInsertSchema(eventInvitations).omit({ 
+  id: true, 
+  createdAt: true,
+  respondedAt: true,
+});
+export type InsertEventInvitation = z.infer<typeof insertEventInvitationSchema>;
+export type SelectEventInvitation = typeof eventInvitations.$inferSelect;
 
 // Event Photos
 export const insertEventPhotoSchema = createInsertSchema(eventPhotos).omit({ 
