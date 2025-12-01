@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -8,6 +8,7 @@ import { motion } from "framer-motion";
 import { safeDateFormat, safeDateDistance } from "@/lib/safeDateFormat";
 import { Link } from "wouter";
 import { UnifiedRSVPButton, type RSVPStatus } from "@/components/unified/UnifiedRSVPButton";
+import { useMyEvents, useUpcomingEvents, useMyRSVPs } from "@/hooks/useEvents";
 
 interface Event {
   id: number;
@@ -46,77 +47,41 @@ export function UpcomingEventsSidebar({ className }: UpcomingEventsSidebarProps)
   const [realtimeRsvps, setRealtimeRsvps] = useState<Record<number, number>>({});
   const queryClient = useQueryClient();
 
-  // Fetch user's RSVPs using React Query for cache consistency
-  const { data: myRsvps = [] } = useQuery<RsvpData[]>({
-    queryKey: ["/api/events/my-rsvps"],
-    queryFn: async () => {
-      const token = localStorage.getItem('accessToken');
-      if (!token) return [];
-      const res = await fetch('/api/events/my-rsvps', {
-        headers: { 'Authorization': `Bearer ${token}` },
-        credentials: 'include',
-      });
-      if (!res.ok) return [];
-      return res.json();
-    },
-    staleTime: 0, // Always refetch when component mounts
+  // UNIFIED HOOKS: Use same data sources as EventsPage tabs
+  // This ensures "My Events" and "Upcoming" show identical content everywhere
+  const { data: myRsvps = [] } = useMyRSVPs();
+  
+  // My Events tab: Uses /api/events/my-rsvps (same as EventsPage "My Events" tab)
+  const { data: myEventsData = [], isLoading: isLoadingMyEvents } = useMyEvents({
+    limit: 10,
+    upcoming: true,
+    enabled: selectedCategory === 'my-events',
+  });
+  
+  // Upcoming tab: Uses /api/events/smart (same as EventsPage "Upcoming" tab)
+  const { data: upcomingData, isLoading: isLoadingUpcoming } = useUpcomingEvents({
+    limit: 10,
+    enabled: selectedCategory === 'upcoming',
   });
 
   // Create a map of eventId -> status for quick lookup
-  const rsvpStatusMap = myRsvps.reduce((acc, rsvp) => {
+  const rsvpStatusMap = (myRsvps as RsvpData[]).reduce((acc, rsvp) => {
     acc[rsvp.eventId] = rsvp.status;
     return acc;
   }, {} as Record<number, RSVPStatus>);
 
-  // Fetch events based on selected category
-  const { data: events = [], isLoading } = useQuery<Event[]>({
-    queryKey: ["/api/events", "sidebar", selectedCategory],
-    queryFn: async () => {
-      const token = localStorage.getItem('accessToken');
-      
-      if (selectedCategory === 'my-events') {
-        // Use the my-rsvps endpoint for "My Events"
-        const rsvpResponse = await fetch('/api/events/my-rsvps?limit=10&upcoming=true', {
-          headers: token ? { 'Authorization': `Bearer ${token}` } : {},
-          credentials: 'include',
-        });
-        if (rsvpResponse.ok) {
-          const rsvpData = await rsvpResponse.json();
-          return rsvpData.map((rsvp: any) => rsvp.event || {
-            id: rsvp.eventId,
-            title: rsvp.eventTitle || 'Untitled Event',
-            startDate: rsvp.eventStartDate || new Date().toISOString(),
-            location: rsvp.eventLocation,
-            rsvpCount: rsvp.eventRsvpCount || 0,
-          }).filter((e: any) => e.id);
-        }
-        return [];
-      } else if (selectedCategory === 'upcoming') {
-        // Try city group events first, then fallback to general upcoming
-        try {
-          const cityGroupResponse = await fetch('/api/events/city-group?limit=10&upcoming=true', {
-            headers: token ? { 'Authorization': `Bearer ${token}` } : {},
-            credentials: 'include',
-          });
-          if (cityGroupResponse.ok) {
-            return cityGroupResponse.json();
-          }
-        } catch {}
-        
-        // Fallback to general upcoming events
-        const upcomingResponse = await fetch('/api/events?upcoming=true&limit=10', {
-          headers: token ? { 'Authorization': `Bearer ${token}` } : {},
-          credentials: 'include',
-        });
-        if (upcomingResponse.ok) {
-          return upcomingResponse.json();
-        }
-        return [];
-      }
-      return [];
-    },
-    staleTime: 30000, // 30 seconds
-  });
+  // Select events based on category (matches EventsPage tab logic exactly)
+  const events: Event[] = selectedCategory === 'my-events'
+    ? (myEventsData as any[]).map((rsvp: any) => rsvp.event || {
+        id: rsvp.eventId,
+        title: rsvp.eventTitle || 'Untitled Event',
+        startDate: rsvp.eventStartDate || new Date().toISOString(),
+        location: rsvp.eventLocation,
+        rsvpCount: rsvp.eventRsvpCount || 0,
+      }).filter((e: any) => e.id)
+    : (upcomingData?.events || []).map((item: any) => item.event || item);
+  
+  const isLoading = selectedCategory === 'my-events' ? isLoadingMyEvents : isLoadingUpcoming;
 
   // Real-time RSVP updates via WebSocket
   useEffect(() => {

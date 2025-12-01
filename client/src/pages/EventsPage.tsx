@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { Link, useLocation } from "wouter";
-import { useEvents, useEventAttendance, useEventRSVPs } from "@/hooks/useEvents";
+import { useEvents, useEventAttendance, useEventRSVPs, useMyEvents, useUpcomingEvents } from "@/hooks/useEvents";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -251,15 +251,17 @@ export default function EventsPage() {
     return params.toString();
   };
 
-  // TAB 1: My Events - User's RSVPs
-  const { data: myEventsData, isLoading: isLoadingMyEvents } = useQuery({
-    queryKey: ["/api/events/my-rsvps"],
+  // TAB 1: My Events - User's RSVPs (uses unified hook)
+  const { data: myEventsData, isLoading: isLoadingMyEvents } = useMyEvents({
+    limit: 20,
+    upcoming: true,
     enabled: !!user && activeTab === "my-events",
   });
 
-  // TAB 2: Upcoming - Smart personalized events (city + groups)
-  const { data: upcomingData, isLoading: isLoadingUpcoming } = useQuery({
-    queryKey: ["/api/events/smart", { limit: 20, offset: (page - 1) * 20 }],
+  // TAB 2: Upcoming - Smart personalized events (uses unified hook)
+  const { data: upcomingData, isLoading: isLoadingUpcoming } = useUpcomingEvents({
+    limit: 20,
+    offset: (page - 1) * 20,
     enabled: !!user && activeTab === "upcoming",
   });
 

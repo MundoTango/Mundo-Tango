@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { Link } from "wouter";
 import { useAuth } from "@/contexts/AuthContext";
-import { useRSVPEvent, useEventRSVPs } from "@/hooks/useEvents";
+import { useEventRSVPs } from "@/hooks/useEvents";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -9,16 +9,14 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar as CalendarIcon, MapPin, Search, Users, ChevronRight, SlidersHorizontal, Check, Languages } from "lucide-react";
+import { Calendar as CalendarIcon, MapPin, Search, Users, ChevronRight, SlidersHorizontal, Languages } from "lucide-react";
 import { getLanguageByCode } from "@/components/input/UnifiedLanguagePicker";
 import { safeDateFormat } from "@/lib/safeDateFormat";
 import { useQuery } from "@tanstack/react-query";
 import type { RSVP } from "@shared/supabase-types";
 import { motion } from "framer-motion";
-import { useToast } from "@/hooks/use-toast";
-import { queryClient } from "@/lib/queryClient";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { UnifiedRSVPButton, type RSVPStatus } from "@/components/unified/UnifiedRSVPButton";
 
 const CATEGORIES = ["All", "Milonga", "Practica", "Class", "Workshop", "Festival", "Marathon", "Encuentro", "Performance", "Social", "Online"];
 
@@ -46,8 +44,6 @@ interface EventItem {
 
 function EventCard({ event, index = 0 }: { event: any; index?: number }) {
   const { user } = useAuth();
-  const rsvpMutation = useRSVPEvent();
-  const { toast } = useToast();
   
   const eventData = event.event || event;
   const attendeeCount = event._count || 0;
@@ -59,22 +55,8 @@ function EventCard({ event, index = 0 }: { event: any; index?: number }) {
     const rsvpData = r.rsvp || r;
     return String(rsvpData.userId || rsvpData.user_id) === String(user?.id);
   });
-  const rsvpStatus = userRsvp?.rsvp?.status || userRsvp?.status;
+  const rsvpStatus = (userRsvp?.rsvp?.status || userRsvp?.status || null) as RSVPStatus;
   const isFull = eventData.maxAttendees && attendeeCount >= eventData.maxAttendees;
-
-  const handleRSVP = async (status: 'going' | 'maybe' | 'not_going') => {
-    if (!user) {
-      toast({ title: "Please log in", description: "You must be logged in to RSVP", variant: "destructive" });
-      return;
-    }
-    try {
-      await rsvpMutation.mutateAsync({ eventId: eventData.id, status });
-      queryClient.invalidateQueries({ queryKey: ["/api/events", eventData.id, "attendees"] });
-      toast({ title: "RSVP updated", description: `You marked this event as ${status}` });
-    } catch (error) {
-      toast({ title: "Error", description: "Failed to update RSVP", variant: "destructive" });
-    }
-  };
 
   const formatEventDateTime = (dateString: string): string => {
     return safeDateFormat(dateString, "MMM dd, yyyy", "Date TBD");
@@ -185,55 +167,13 @@ function EventCard({ event, index = 0 }: { event: any; index?: number }) {
         </CardContent>
 
         <CardFooter className="flex gap-2 pt-0 px-6 pb-6">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant={rsvpStatus ? "outline" : "default"}
-                className="flex-1 gap-2"
-                disabled={!user || rsvpMutation.isPending}
-                data-testid={`button-rsvp-${eventData.id}`}
-              >
-                {rsvpStatus === 'going' && <Check className="h-4 w-4 text-green-500" />}
-                {rsvpStatus === 'maybe' && <Users className="h-4 w-4 text-yellow-500" />}
-                {rsvpStatus === 'not_going' && <Users className="h-4 w-4 text-red-500" />}
-                {!rsvpStatus && <Users className="h-4 w-4" />}
-                {rsvpMutation.isPending ? "Updating..." :
-                  rsvpStatus === 'going' ? "Going" :
-                  rsvpStatus === 'maybe' ? "Maybe" :
-                  rsvpStatus === 'not_going' ? "Not Going" : "RSVP"}
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-48">
-              <DropdownMenuItem 
-                onClick={() => handleRSVP('going')}
-                className="gap-2"
-                data-testid={`rsvp-going-${eventData.id}`}
-              >
-                <Check className="h-4 w-4 text-green-500" />
-                Going
-                {rsvpStatus === 'going' && <Check className="h-4 w-4 ml-auto" />}
-              </DropdownMenuItem>
-              <DropdownMenuItem 
-                onClick={() => handleRSVP('maybe')}
-                className="gap-2"
-                data-testid={`rsvp-maybe-${eventData.id}`}
-              >
-                <Users className="h-4 w-4 text-yellow-500" />
-                Maybe
-                {rsvpStatus === 'maybe' && <Check className="h-4 w-4 ml-auto" />}
-              </DropdownMenuItem>
-              <DropdownMenuItem 
-                onClick={() => handleRSVP('not_going')}
-                className="gap-2 text-muted-foreground"
-                data-testid={`rsvp-not-going-${eventData.id}`}
-              >
-                <Users className="h-4 w-4 text-red-500" />
-                Not Going
-                {rsvpStatus === 'not_going' && <Check className="h-4 w-4 ml-auto" />}
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <UnifiedRSVPButton
+            eventId={eventData.id}
+            currentStatus={rsvpStatus}
+            variant="expanded"
+            className="flex-1"
+            data-testid={`button-rsvp-unified-${eventData.id}`}
+          />
 
           <Link href={`/events/${eventData.id}`}>
             <Button variant="outline" className="gap-2" data-testid={`button-view-event-${eventData.id}`}>

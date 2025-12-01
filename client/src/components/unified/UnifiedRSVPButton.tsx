@@ -100,10 +100,13 @@ export function UnifiedRSVPButton({
       queryClient.invalidateQueries({ queryKey: ["/api/events", numericEventId, "permissions"] });
       queryClient.invalidateQueries({ queryKey: ["/api/events", numericEventId] });
       
-      // Invalidate global event lists
-      queryClient.invalidateQueries({ queryKey: ["/api/events/my-rsvps"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/events"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/events", "sidebar"] });
+      // UNIFIED CACHE INVALIDATION: Ensure all components using RSVP data stay in sync
+      // This is the single source of truth for RSVP cache invalidation
+      queryClient.invalidateQueries({ queryKey: ["/api/events/my-rsvps"] }); // useMyRSVPs, useMyEvents
+      queryClient.invalidateQueries({ queryKey: ["/api/events/smart"] }); // useUpcomingEvents
+      queryClient.invalidateQueries({ queryKey: ["/api/events/search"] }); // Discover tab
+      queryClient.invalidateQueries({ queryKey: ["/api/events"] }); // useEvents
+      queryClient.invalidateQueries({ queryKey: ["/api/events", "sidebar"] }); // Legacy sidebar queries
       
       onStatusChange?.(status);
       

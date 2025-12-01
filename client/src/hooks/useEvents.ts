@@ -189,6 +189,67 @@ export function useMyRSVPs() {
   });
 }
 
+/**
+ * UNIFIED HOOK: My Events (user's RSVP'd events)
+ * Used by: EventsPage "My Events" tab, UpcomingEventsSidebar "My Events" tab
+ * Endpoint: /api/events/my-rsvps
+ */
+export function useMyEvents(options?: { limit?: number; upcoming?: boolean; enabled?: boolean }) {
+  const { limit = 20, upcoming = true, enabled = true } = options || {};
+  
+  return useQuery({
+    queryKey: ["/api/events/my-rsvps", { limit, upcoming }],
+    queryFn: async () => {
+      const token = localStorage.getItem('accessToken');
+      if (!token) return [];
+      
+      const params = new URLSearchParams();
+      if (limit) params.append('limit', String(limit));
+      if (upcoming) params.append('upcoming', 'true');
+      
+      const res = await fetch(`/api/events/my-rsvps?${params.toString()}`, {
+        headers: { 'Authorization': `Bearer ${token}` },
+        credentials: 'include',
+      });
+      if (!res.ok) return [];
+      return res.json();
+    },
+    enabled,
+    staleTime: 0, // Always refetch for fresh data
+  });
+}
+
+/**
+ * UNIFIED HOOK: Upcoming Events (smart personalized events)
+ * Used by: EventsPage "Upcoming" tab, UpcomingEventsSidebar "Upcoming" tab
+ * Endpoint: /api/events/smart
+ * Returns events from: user's city + joined group cities + RSVP'd events
+ */
+export function useUpcomingEvents(options?: { limit?: number; offset?: number; enabled?: boolean }) {
+  const { limit = 20, offset = 0, enabled = true } = options || {};
+  
+  return useQuery({
+    queryKey: ["/api/events/smart", { limit, offset }],
+    queryFn: async () => {
+      const token = localStorage.getItem('accessToken');
+      if (!token) return { events: [], filters: {} };
+      
+      const params = new URLSearchParams();
+      params.append('limit', String(limit));
+      params.append('offset', String(offset));
+      
+      const res = await fetch(`/api/events/smart?${params.toString()}`, {
+        headers: { 'Authorization': `Bearer ${token}` },
+        credentials: 'include',
+      });
+      if (!res.ok) return { events: [], filters: {} };
+      return res.json();
+    },
+    enabled,
+    staleTime: 30000, // 30 seconds cache
+  });
+}
+
 export function useRSVPEvent() {
   const { user } = useAuth();
   const { toast } = useToast();
