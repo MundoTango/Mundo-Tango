@@ -128,6 +128,33 @@ router.get("/:id/pro-stats", optionalAuth, async (req: Request, res: Response) =
       }
     }
 
+    // Auto-detect organizer role from events table (user is event creator)
+    if (!roleFilter || roleFilter === 'organizer') {
+      const now = new Date();
+      const organizedEvents = await db
+        .select({
+          id: events.id,
+          startDate: events.startDate,
+        })
+        .from(events)
+        .where(eq(events.userId, userId));
+
+      if (organizedEvents.length > 0) {
+        const upcomingOrganized = organizedEvents.filter(e => 
+          e.startDate && new Date(e.startDate) > now
+        ).length;
+
+        // Merge with existing organizer stats if any
+        const existingOrganizerStats = stats['organizer'];
+        stats['organizer'] = {
+          totalEvents: (existingOrganizerStats?.totalEvents || 0) + organizedEvents.length,
+          upcomingEvents: (existingOrganizerStats?.upcomingEvents || 0) + upcomingOrganized,
+          avgRating: existingOrganizerStats?.avgRating || 0,
+          totalReviews: existingOrganizerStats?.totalReviews || 0,
+        };
+      }
+    }
+
     res.json({ stats });
   } catch (error: any) {
     console.error("[PRO] Error fetching pro stats:", error);
@@ -188,7 +215,7 @@ router.get("/:id/event-history", optionalAuth, async (req: Request, res: Respons
       .orderBy(desc(events.startDate))
       .limit(limit);
 
-    const eventHistory = participations.map((p) => ({
+    let eventHistory = participations.map((p) => ({
       id: p.id,
       eventId: p.eventId,
       eventTitle: p.eventTitle || "Untitled Event",
@@ -201,6 +228,46 @@ router.get("/:id/event-history", optionalAuth, async (req: Request, res: Respons
       isPubliclyListed: p.isPubliclyListed ?? true,
       eventType: p.eventType || "event",
     }));
+
+    // Add events where user is the organizer (creator)
+    if (!roleFilter || roleFilter === 'organizer') {
+      const organizedEvents = await db
+        .select({
+          id: events.id,
+          title: events.title,
+          startDate: events.startDate,
+          venue: events.venue,
+          city: events.city,
+          eventType: events.eventType,
+        })
+        .from(events)
+        .where(eq(events.userId, userId))
+        .orderBy(desc(events.startDate))
+        .limit(limit);
+
+      const organizerHistory = organizedEvents.map((e) => ({
+        id: -e.id, // Negative ID to distinguish from participant records
+        eventId: e.id,
+        eventTitle: e.title || "Untitled Event",
+        eventDate: e.startDate?.toISOString() || "",
+        eventVenue: e.venue || "",
+        eventCity: e.city || "",
+        role: 'organizer',
+        status: 'confirmed' as 'pending' | 'confirmed' | 'completed',
+        customTitle: 'Event Organizer',
+        isPubliclyListed: true,
+        eventType: e.eventType || "event",
+      }));
+
+      // Filter out duplicates (if event appears in both)
+      const existingEventIds = new Set(eventHistory.map(e => e.eventId));
+      const newOrganizerEvents = organizerHistory.filter(e => !existingEventIds.has(e.eventId));
+      eventHistory = [...eventHistory, ...newOrganizerEvents];
+    }
+
+    // Sort by date and limit
+    eventHistory.sort((a, b) => new Date(b.eventDate).getTime() - new Date(a.eventDate).getTime());
+    eventHistory = eventHistory.slice(0, limit);
 
     res.json({ events: eventHistory });
   } catch (error: any) {
