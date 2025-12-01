@@ -154,17 +154,19 @@ router.post("/events/:id/participants", authenticateToken, async (req, res) => {
     try {
       await notificationService.createNotification({
         userId: newParticipant.userId,
-        type: "event_participant_added",
+        type: "event_rsvp",
         title: `Added to ${event.title}`,
         message: `You've been added as a ${validatedData.role.replace('_', ' ')} to "${event.title}"`,
-        relatedEventId: eventId,
-        relatedUserId: userId,
+        actionUrl: `/events/${eventId}`,
+        senderId: userId,
+        priority: "high",
         metadata: {
           role: validatedData.role,
           eventId: eventId,
           organizerId: userId
         }
       });
+      console.log(`[Notification] ✅ Created notification for user ${newParticipant.userId}`);
     } catch (error) {
       console.error("[Notification] Failed to create participant notification:", error);
     }
