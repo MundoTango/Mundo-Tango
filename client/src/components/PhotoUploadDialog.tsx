@@ -32,13 +32,14 @@ export function PhotoUploadDialog({
   const { toast } = useToast();
 
   // Output dimensions (what gets saved)
+  // Updated for new hero bounds: h-[50vh] md:h-[60vh] with full width
   const PROFILE_SIZE = 400;
-  const COVER_SIZE = { width: 1200, height: 300 };
+  const COVER_SIZE = { width: 1600, height: 600 }; // 16:9 aspect ratio for hero sections
   const outputDimensions = type === 'profile' ? { width: PROFILE_SIZE, height: PROFILE_SIZE } : COVER_SIZE;
   
-  // Crop frame dimensions (the visible boundary box)
-  const cropWidth = type === 'profile' ? 300 : 500;
-  const cropHeight = type === 'profile' ? 300 : 125;
+  // Crop frame dimensions (the visible boundary box) - updated for new viewport-based hero
+  const cropWidth = type === 'profile' ? 300 : 600;
+  const cropHeight = type === 'profile' ? 300 : 225; // 16:9 aspect ratio
   
   // Container size (area where image is displayed)
   const containerWidth = 500;
@@ -213,7 +214,7 @@ export function PhotoUploadDialog({
             >
               <p className="text-sm font-medium mb-2">Click to select an image</p>
               <p className="text-xs text-muted-foreground">
-                {type === 'profile' ? 'Square crop for 400×400px circle' : 'Landscape crop for 1200×300px'}
+                {type === 'profile' ? 'Square crop for 400×400px circle' : 'Hero image (16:9 aspect ratio for full-width hero sections)'}
               </p>
             </div>
           </div>
