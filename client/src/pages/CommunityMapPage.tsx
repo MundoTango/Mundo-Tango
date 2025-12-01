@@ -32,21 +32,26 @@ export default function CommunityMapPage() {
   });
 
   // Convert event markers to city location format for map display
-  const locations: any[] = eventMarkers.map(marker => ({
-    id: marker.id,
-    city: marker.city,
-    country: marker.country,
-    coordinates: marker.coordinates,
-    memberCount: 0,
-    activeEvents: 1,
-    recommendations: 0,
-    housing: 0,
-    isActive: true,
-    groupId: marker.id,
-    title: marker.title,
-    eventType: marker.eventType,
-    address: marker.address,
-  }));
+  const locations: any[] = eventMarkers.map(marker => {
+    // Ensure coordinates are numbers, not strings
+    const lat = typeof marker.coordinates.lat === 'string' ? parseFloat(marker.coordinates.lat) : marker.coordinates.lat;
+    const lng = typeof marker.coordinates.lng === 'string' ? parseFloat(marker.coordinates.lng) : marker.coordinates.lng;
+    return {
+      id: marker.id,
+      city: marker.city,
+      country: marker.country,
+      coordinates: { lat, lng },
+      memberCount: 0,
+      activeEvents: 1,
+      recommendations: 0,
+      housing: 0,
+      isActive: true,
+      groupId: marker.id,
+      title: marker.title,
+      eventType: marker.eventType,
+      address: marker.address,
+    };
+  });
 
   const layers = [
     { id: "events", label: "Events", enabled: true, icon: Calendar },

@@ -9982,20 +9982,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
           const lat = parseFloat(String(event.latitude || 0));
           const lng = parseFloat(String(event.longitude || 0));
           
+          console.log(`[Map] Event "${event.title}": lat=${lat}, lng=${lng}`);
+          
           // Skip if coordinates are invalid
-          if (isNaN(lat) || isNaN(lng) || lat === 0 && lng === 0) {
+          if (isNaN(lat) || isNaN(lng)) {
+            console.log(`[Map] Skipping event "${event.title}" - invalid coordinates`);
             return null;
           }
           
           return {
             id: event.id,
+            title: event.title,
             city: event.city || '',
             country: event.country || '',
             coordinates: {
-              lat,
-              lng,
+              lat: lat,
+              lng: lng,
             },
-            title: event.title,
             eventType: event.eventType || 'social',
             startDate: event.startDate,
             address: event.address || event.location,
