@@ -275,13 +275,19 @@ export class GlobalKnowledgeBase {
     // Simple word-based similarity
     // In production: use embeddings or proper NLP
     
+    // Null safety: default to empty strings if undefined
+    const contextA = (a?.context || '').toLowerCase();
+    const issueA = (a?.issue || '').toLowerCase();
+    const contextB = (b?.context || '').toLowerCase();
+    const issueB = (b?.issue || '').toLowerCase();
+    
     const wordsA = new Set(
-      [...a.context.toLowerCase().split(/\W+/), ...a.issue.toLowerCase().split(/\W+/)]
+      [...contextA.split(/\W+/), ...issueA.split(/\W+/)]
         .filter(w => w.length > 3)
     );
     
     const wordsB = new Set(
-      [...b.context.toLowerCase().split(/\W+/), ...b.issue.toLowerCase().split(/\W+/)]
+      [...contextB.split(/\W+/), ...issueB.split(/\W+/)]
         .filter(w => w.length > 3)
     );
 
