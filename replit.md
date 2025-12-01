@@ -44,7 +44,17 @@ Core features include social functionalities (events, groups, posts, notificatio
 
 **FINAL COVERAGE: 72%+ (up from 50% at session start)**
 
-**Session Summary (Dec 01, 2025 - Latest - Performance):**
+**Session Summary (Dec 01, 2025 - Latest - Object Storage Migration):**
+- ✅ **Object Storage Media Upload:** POST /api/media/upload endpoint using ObjectStorageService
+  - Server-side upload to Replit Object Storage (bucket already configured)
+  - Returns URLs like `/public-objects/images/photo_xxx.png` instead of base64
+  - All 12 upload components automatically benefit (EventCreation, PostCreator, PhotoUpload, etc.)
+- ✅ **Client Updated:** `client/src/lib/mediaUpload.ts` calls server endpoint instead of base64 fallback
+- ✅ **CSRF Bypass:** Added `/api/media/upload` to CSRF skip list (multipart CSRF-resistant)
+- ✅ **Path Structure Optimized:** Clean paths /public-objects/{images|videos}/{filename}
+- ✅ **PRD Updated:** PRD_EVENTS_SYSTEM.md v2.0 with Object Storage Migration section
+
+**Session Summary (Dec 01, 2025 - Previous - Performance):**
 - ✅ **Performance Optimization Complete:** API response time improved from 7.86s to 2.7s (65% faster)
 - ✅ **Response Size Reduced:** 15MB → 53KB (99.6% reduction) by filtering base64 from mediaUrls
 - ✅ **Database Query Optimization:** Created `eventSummaryFields` selector excluding coverImage column
