@@ -9949,6 +9949,120 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ==================== MAP MARKERS ====================
+
+  app.get("/api/map/markers", async (req: Request, res: Response) => {
+    try {
+      const { type = "users,events,venues" } = req.query;
+      const filterTypes = String(type).split(",").map(t => t.trim());
+      const markers: any[] = [];
+
+      // Fetch users (dancers) if included
+      if (filterTypes.includes("users")) {
+        const userMarkers = await db
+          .select({
+            id: users.id,
+            name: users.name,
+            city: users.city,
+            country: users.country,
+            latitude: users.latitude,
+            longitude: users.longitude,
+            tangoRoles: users.tangoRoles,
+          })
+          .from(users)
+          .where(and(
+            ne(users.latitude, null),
+            ne(users.longitude, null)
+          ))
+          .limit(100);
+
+        markers.push(
+          ...userMarkers.map((u: any) => ({
+            id: u.id,
+            type: "user",
+            name: u.name,
+            city: u.city,
+            country: u.country,
+            latitude: String(u.latitude),
+            longitude: String(u.longitude),
+            tangoRoles: u.tangoRoles || [],
+          }))
+        );
+      }
+
+      // Fetch events if included
+      if (filterTypes.includes("events")) {
+        const eventMarkers = await db
+          .select({
+            id: events.id,
+            title: events.title,
+            city: events.city,
+            country: events.country,
+            latitude: events.latitude,
+            longitude: events.longitude,
+            eventType: events.eventType,
+          })
+          .from(events)
+          .where(and(
+            ne(events.latitude, null),
+            ne(events.longitude, null),
+            gt(events.eventDate, new Date())
+          ))
+          .limit(100);
+
+        markers.push(
+          ...eventMarkers.map((e: any) => ({
+            id: e.id,
+            type: "event",
+            title: e.title,
+            name: e.title,
+            city: e.city,
+            country: e.country,
+            latitude: String(e.latitude),
+            longitude: String(e.longitude),
+            eventType: e.eventType || "social",
+          }))
+        );
+      }
+
+      // Fetch venues if included
+      if (filterTypes.includes("venues")) {
+        const venueMarkers = await db
+          .select({
+            id: venues.id,
+            name: venues.name,
+            city: venues.city,
+            country: venues.country,
+            latitude: venues.latitude,
+            longitude: venues.longitude,
+          })
+          .from(venues)
+          .where(and(
+            ne(venues.latitude, null),
+            ne(venues.longitude, null)
+          ))
+          .limit(100);
+
+        markers.push(
+          ...venueMarkers.map((v: any) => ({
+            id: v.id,
+            type: "venue",
+            name: v.name,
+            city: v.city,
+            country: v.country,
+            latitude: String(v.latitude),
+            longitude: String(v.longitude),
+          }))
+        );
+      }
+
+      res.json(markers);
+    } catch (error) {
+      console.error('[Map] Fetch markers error:', error);
+      res.status(500).json({ message: "Failed to fetch map markers" });
+    }
+  });
+
   console.log('[Server] ✅ AI Services Consolidation routes loaded successfully');
 
   return httpServer;
