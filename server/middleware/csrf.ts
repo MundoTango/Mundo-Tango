@@ -71,6 +71,12 @@ export function verifyCsrfToken(req: Request, res: Response, next: NextFunction)
     return next();
   }
   
+  // Skip CSRF for event photo uploads specifically (JWT auth + multipart CSRF-resistant)
+  // Pattern: /api/events/:id/photos where :id is numeric
+  if (/^\/api\/events\/\d+\/photos/.test(req.originalUrl)) {
+    return next();
+  }
+  
   // Skip CSRF for The Plan endpoints (Scott's first-time login tour)
   const thePlanEndpoints = [
     "/api/the-plan/"
@@ -183,6 +189,12 @@ export function verifyDoubleSubmitCookie(req: Request, res: Response, next: Next
     "/api/posts"  // Post creation with media
   ];
   if (uploadEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
+    return next();
+  }
+  
+  // Skip CSRF for event photo uploads specifically (JWT auth + multipart CSRF-resistant)
+  // Pattern: /api/events/:id/photos where :id is numeric
+  if (/^\/api\/events\/\d+\/photos/.test(req.originalUrl)) {
     return next();
   }
   
