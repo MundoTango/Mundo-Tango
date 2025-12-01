@@ -99,27 +99,50 @@ export function EventParticipantManager({ eventId, isOrganizer }: EventParticipa
   const { data: participantsData, isLoading } = useQuery<{ participants: Record<string, Participant[]>, total: number }>({
     queryKey: ["/api/events", eventId, "participants"],
     queryFn: async () => {
-      const res = await fetch(`/api/events/${eventId}/participants`, { credentials: "include" });
+      const token = localStorage.getItem('accessToken');
+      const headers: Record<string, string> = {};
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+      
+      const res = await fetch(`/api/events/${eventId}/participants`, { 
+        credentials: "include",
+        headers,
+      });
       if (!res.ok) return { participants: {}, total: 0 };
       return res.json();
     },
+    enabled: !!localStorage.getItem('accessToken'),
+    staleTime: 2 * 60 * 1000,
+    gcTime: 5 * 60 * 1000,
   });
 
   const { data: searchResults = [], isLoading: isSearching } = useQuery<SearchedUser[]>({
     queryKey: ["/api/events", eventId, "search-team-members", selectedRole, debouncedSearchQuery],
     queryFn: async () => {
       if (!debouncedSearchQuery || debouncedSearchQuery.length < 2) return [];
+      const token = localStorage.getItem('accessToken');
+      const headers: Record<string, string> = {};
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+      
       const res = await fetch(
         `/api/events/${eventId}/search-team-members?role=${encodeURIComponent(selectedRole)}&q=${encodeURIComponent(debouncedSearchQuery)}&limit=15`, 
-        { credentials: "include" }
+        { 
+          credentials: "include",
+          headers,
+        }
       );
       if (!res.ok) {
-        console.error("Failed to search team members");
+        console.error("Failed to search team members:", res.status, res.statusText);
         return [];
       }
       return res.json();
     },
-    enabled: debouncedSearchQuery.length >= 2,
+    enabled: debouncedSearchQuery.length >= 2 && !!localStorage.getItem('accessToken'),
+    staleTime: 2 * 60 * 1000,
+    gcTime: 5 * 60 * 1000,
   });
 
   const inviteParticipant = useMutation({
