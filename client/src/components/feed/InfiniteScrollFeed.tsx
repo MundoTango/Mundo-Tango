@@ -93,6 +93,8 @@ export function InfiniteScrollFeed({ feedType, filter, onRefresh }: InfiniteScro
     }
   };
 
+  const token = localStorage.getItem('accessToken');
+
   const {
     data,
     fetchNextPage,
@@ -119,7 +121,6 @@ export function InfiniteScrollFeed({ feedType, filter, onRefresh }: InfiniteScro
         endpoint = `/api/posts/mentions`;
       }
 
-      const token = localStorage.getItem('accessToken');
       const headers: Record<string, string> = {};
       if (token) {
         headers['Authorization'] = `Bearer ${token}`;
@@ -152,6 +153,9 @@ export function InfiniteScrollFeed({ feedType, filter, onRefresh }: InfiniteScro
     },
     getNextPageParam: (lastPage) => lastPage.nextOffset,
     initialPageParam: 0,
+    enabled: !!token,
+    staleTime: 2 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
   });
 
   // Auto-load more when scrolling to bottom

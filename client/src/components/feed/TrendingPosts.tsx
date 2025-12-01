@@ -28,11 +28,23 @@ export function TrendingPosts() {
   const { data: posts, isLoading } = useQuery<TrendingPost[]>({
     queryKey: ['trending-posts'],
     queryFn: async () => {
-      const response = await fetch('/api/feed/trending?limit=5');
+      const token = localStorage.getItem('accessToken');
+      const headers: Record<string, string> = {};
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+      
+      const response = await fetch('/api/feed/trending?limit=5', {
+        credentials: 'include',
+        headers,
+      });
       if (!response.ok) throw new Error('Failed to fetch trending posts');
       return response.json();
     },
     refetchInterval: 5 * 60 * 1000, // Auto-refresh every 5 minutes
+    enabled: !!localStorage.getItem('accessToken'),
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
   });
 
   return (

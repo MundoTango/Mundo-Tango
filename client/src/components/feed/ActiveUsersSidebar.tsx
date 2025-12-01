@@ -18,11 +18,23 @@ export function ActiveUsersSidebar() {
   const { data: users, isLoading } = useQuery<ActiveUser[]>({
     queryKey: ['active-users'],
     queryFn: async () => {
-      const response = await fetch('/api/feed/active-users?limit=10');
+      const token = localStorage.getItem('accessToken');
+      const headers: Record<string, string> = {};
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+      
+      const response = await fetch('/api/feed/active-users?limit=10', {
+        credentials: 'include',
+        headers,
+      });
       if (!response.ok) throw new Error('Failed to fetch active users');
       return response.json();
     },
     refetchInterval: 60 * 1000, // Auto-refresh every minute
+    enabled: !!localStorage.getItem('accessToken'),
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
   });
 
   return (
