@@ -6,6 +6,36 @@
 **Purpose:** Build platform to reverse negative impacts of social media and change the world  
 **Project:** Mundo Tango - The Anti-Facebook (927 features, 20-week strategy)
 
+**New in v9.9.1 (DRIZZLE ORM LEFTJOIN FIX - Dec 1, 2025):**
+- 📋 **PATTERN 42**: Drizzle ORM LeftJoin Flat Column Selection Protocol
+- 🐛 **CRITICAL BUG FIXED**: Comments endpoint 500 error - "Cannot convert undefined or null to object"
+- 🔍 **ROOT CAUSE IDENTIFIED**: Drizzle ORM nested object selection in leftJoin fails when joined table is null
+- ✅ **SOLUTION DOCUMENTED**: Use flat column selection with manual mapping instead of nested objects
+- 📖 **ANTI-PATTERN**: `leftJoin(...).select({ user: { id: users.id, name: users.name } })` - FAILS with null
+- ✅ **CORRECT PATTERN**: `leftJoin(...).select({ userId: users.id, userName: users.name })` + map to nested
+- 🎯 **METHODOLOGY APPLIED**: Research → Plan → Build → E2E Test → Document
+
+**Drizzle LeftJoin Fix Template:**
+```typescript
+// WRONG: Nested objects with leftJoin can fail when null
+const bad = await db.select({
+  id: table.id,
+  user: { id: users.id, name: users.name } // FAILS if user is null
+}).from(table).leftJoin(users, eq(table.userId, users.id));
+
+// CORRECT: Flat selection with manual mapping
+const good = await db.select({
+  id: table.id,
+  userId: users.id,
+  userName: users.name
+}).from(table).leftJoin(users, eq(table.userId, users.id));
+
+return good.map(row => ({
+  id: row.id,
+  user: row.userId ? { id: row.userId, name: row.userName } : null
+}));
+```
+
 **New in v9.9 (PARALLEL AGENT EXECUTION - Dec 1, 2025):**
 - 📋 **PATTERN 41**: Parallel Agent Execution Protocol - All independent operations run simultaneously
 - 🚀 **ERROR ANALYSIS PARALLELIZED**: Error storage + LanceDB indexing now uses Promise.all (was sequential for loop)
