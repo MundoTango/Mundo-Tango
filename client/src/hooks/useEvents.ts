@@ -215,7 +215,8 @@ export function useMyEvents(options?: { limit?: number; upcoming?: boolean; enab
       return res.json();
     },
     enabled,
-    staleTime: 0, // Always refetch for fresh data
+    staleTime: 3 * 60 * 1000, // 3 minutes - reduces API calls
+    gcTime: 10 * 60 * 1000, // 10 minutes cache retention
   });
 }
 
@@ -246,7 +247,8 @@ export function useUpcomingEvents(options?: { limit?: number; offset?: number; e
       return res.json();
     },
     enabled,
-    staleTime: 30000, // 30 seconds cache
+    staleTime: 2 * 60 * 1000, // 2 minutes cache - reduces API calls
+    gcTime: 10 * 60 * 1000, // 10 minutes cache retention
   });
 }
 
