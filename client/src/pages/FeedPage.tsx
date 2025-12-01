@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback, Fragment, useMemo } from "react";
+import { useState, useRef, useEffect, useCallback, Fragment, useMemo, lazy, Suspense } from "react";
 import { usePosts, useCreatePost, useToggleLike, useComments, useCreateComment, useUpdateComment, useDeleteComment } from "@/hooks/usePosts";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery } from "@tanstack/react-query";
@@ -26,17 +26,19 @@ import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary"
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { PostCreator } from "@/components/universal/PostCreator";
 import { SmartPostFeed } from "@/components/feed/SmartPostFeed";
-import { UpcomingEventsSidebar } from "@/components/feed/UpcomingEventsSidebar";
 import { UnifiedLocationPicker } from "@/components/input/UnifiedLocationPicker";
 import { PostItem } from "@/components/feed/PostItem";
 import { EditPostDialog } from "@/components/modals/EditPostDialog";
-import { StoriesCarousel } from "@/components/feed/StoriesCarousel";
 import { FeedTabs } from "@/components/feed/FeedTabs";
 import { InfiniteScrollFeed } from "@/components/feed/InfiniteScrollFeed";
 import { UnifiedMemoriesFeed } from "@/components/feed/UnifiedMemoriesFeed";
 import { NewPostsBanner } from "@/components/feed/NewPostsBanner";
 import { Link } from "wouter";
 import { FeedAd } from "@/components/ads/FeedAd";
+
+// Lazy load heavy sidebar components to improve initial page load
+const StoriesCarousel = lazy(() => import("@/components/feed/StoriesCarousel").then(m => ({ default: m.StoriesCarousel })));
+const UpcomingEventsSidebar = lazy(() => import("@/components/feed/UpcomingEventsSidebar").then(m => ({ default: m.UpcomingEventsSidebar })));
 
 type Post = {
   id: number;
@@ -452,8 +454,10 @@ export default function FeedPage() {
       <div className="grid grid-cols-12 gap-6 px-6 py-12 max-w-7xl mx-auto">
         {/* Main Feed Column */}
         <main className="col-span-12 lg:col-span-9 space-y-6">
-          {/* Instagram-style Stories Carousel */}
-          <StoriesCarousel />
+          {/* Instagram-style Stories Carousel - Lazy loaded */}
+          <Suspense fallback={<Card className="p-4 h-24 bg-muted animate-pulse" />}>
+            <StoriesCarousel />
+          </Suspense>
 
           {/* Feed Tabs - Following vs Discover (Feature 13) */}
           <FeedTabs value={feedType} onChange={setFeedType} />
@@ -485,9 +489,11 @@ export default function FeedPage() {
           />
         </main>
 
-        {/* Right Sidebar - Upcoming Events */}
+        {/* Right Sidebar - Upcoming Events - Lazy loaded */}
         <aside className="hidden lg:block lg:col-span-3 space-y-6">
-          <UpcomingEventsSidebar />
+          <Suspense fallback={<Card className="p-4 h-32 bg-muted animate-pulse" />}>
+            <UpcomingEventsSidebar />
+          </Suspense>
         </aside>
       </div>
 
