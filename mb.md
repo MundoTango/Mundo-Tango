@@ -4954,3 +4954,362 @@ search_web(["methodology documentation best practices"]);
 
 **This pattern establishes Comet agent expertise for efficient research, learning, and knowledge sharing.** 🔍
 
+
+---
+
+### **Pattern 46: Agent Performance Optimization Protocol** ⭐⭐⭐ (v9.9.2 - Dec 2, 2025)
+
+**Source:** Real-world session analysis + token efficiency best practices
+**Date:** December 2, 2025
+**Context:** Self-improving methodology for faster execution, lower token usage, and better memory management
+**Evolution:** This pattern should be updated continuously as new optimizations are discovered
+
+**Problem:** Agents can waste tokens on redundant operations, slow execution with unnecessary steps, and lose context due to poor memory management. Need systematic approach to continuous performance improvement.
+
+**Solution:** Structured optimization framework with self-measurement, continuous learning, and pattern evolution.
+
+---
+
+## 🚀 **1. TOKEN CONSERVATION STRATEGIES**
+
+### **1.1 Tool Selection Optimization**
+
+**Use Lightweight Tools First:**
+```typescript
+// ❌ EXPENSIVE: Read entire 5000-line file
+await read_page({ tab_id, depth: 15 });  // 50K+ tokens
+
+// ✅ EFFICIENT: Use targeted tools
+await find({ query: "specific element", tab_id });  // <5K tokens
+await read_page({ tab_id, ref_id: "ref_123", depth: 3 });  // <10K tokens
+```
+
+**Avoid Redundant Tool Calls:**
+```typescript
+// ❌ WASTEFUL: Multiple screenshots for same state
+await screenshot();  // 2K tokens
+await screenshot();  // 2K tokens again
+await screenshot();  // 2K tokens again = 6K wasted
+
+// ✅ EFFICIENT: Single screenshot, reuse result
+const screen = await screenshot();  // 2K tokens once
+// Analyze screen data multiple times without re-capturing
+```
+
+### **1.2 Batch Operations**
+
+**Combine Related Actions:**
+```typescript
+// ❌ INEFFICIENT: Sequential single actions
+await computer({ actions: [{ action: "type", text: "hello" }] });
+await computer({ actions: [{ action: "key", text: "Return" }] });
+await computer({ actions: [{ action: "wait", duration: 2 }] });
+// Total: 3 tool calls, 3x overhead
+
+// ✅ EFFICIENT: Batch into single call
+await computer({ 
+  actions: [
+    { action: "type", text: "hello" },
+    { action: "key", text: "Return" },
+    { action: "wait", duration: 2 }
+  ]
+});  // 1 tool call, 1x overhead
+```
+
+### **1.3 Response Conciseness**
+
+**CRITICAL: Token-efficient responses:**
+```markdown
+// ❌ WASTEFUL: Over-explanation
+"I understand your request. Let me think about this carefully. 
+First, I'll need to consider multiple approaches. After thorough 
+analysis of various options and weighing the pros and cons..."
+[500 tokens before taking action]
+
+// ✅ EFFICIENT: Direct execution
+"Executing cleanup now."
+[10 tokens, then immediate action]
+```
+
+**Skip unnecessary explanations when user says "do it":**
+- User: "do it" = Execute immediately, explain after
+- User: "make a plan" = Explain first, execute after approval
+
+---
+
+## ⚡ **2. SPEED OPTIMIZATION STRATEGIES**
+
+### **2.1 Parallel Execution (Pattern 41 Enhancement)**
+
+**Execute Independent Operations Simultaneously:**
+```typescript
+// ❌ SLOW: Sequential (30 seconds total)
+await research("topic A");  // 10s
+await research("topic B");  // 10s
+await research("topic C");  // 10s
+
+// ✅ FAST: Parallel (10 seconds total)
+await Promise.all([
+  research("topic A"),
+  research("topic B"),
+  research("topic C")
+]);  // All run simultaneously
+```
+
+### **2.2 Skip Redundant Verification**
+
+**Trust Previous Successful Operations:**
+```typescript
+// ❌ SLOW: Re-verify after every step
+await gitAdd();
+await checkGitStatus();  // Redundant
+await gitCommit();
+await checkGitStatus();  // Redundant
+await gitPush();
+await checkGitStatus();  // Only this one needed
+
+// ✅ FAST: Verify only at critical points
+await gitAdd();
+await gitCommit();
+await gitPush();
+await checkGitStatus();  // Once at end
+```
+
+### **2.3 Direct File Operations**
+
+**Use Shell Commands for Bulk Operations:**
+```bash
+# ✅ FAST: sed for 670-line deletion (instant)
+sed -i '4364,5033d' mb.md
+
+# ❌ SLOW: Browser editing 670 lines (minutes)
+# Navigate, select, delete, repeat 670 times
+```
+
+---
+
+## 🧠 **3. MEMORY OPTIMIZATION STRATEGIES**
+
+### **3.1 Context Window Management**
+
+**Use External Memory Systems:**
+```typescript
+// ❌ WASTEFUL: Keep everything in conversation
+// Session grows to 500K tokens, then context limit hit
+
+// ✅ EFFICIENT: Offload to files
+- mb.md: Methodologies (persistent)
+- PRDs: Feature specs (reference when needed)
+- Knowledge bases: Platform learnings (searchable)
+- AGENT_MEMORY.md: Session notes (carry forward key points only)
+```
+
+**Summary Key Points Only:**
+```markdown
+// ❌ WASTEFUL: Repeat full history
+"As we discussed 50 messages ago, the user wanted X, then Y, 
+then we tried Z, which led to A, then B happened, and after 
+that we discovered C..."
+[1000+ tokens of history]
+
+// ✅ EFFICIENT: Essential context only
+"Context: Cleaned mb.md (removed 670 lines), added Patterns 44-45.
+Next: Facebook audit."
+[20 tokens]
+```
+
+### **3.2 Reference Links Instead of Duplication**
+
+**Link to Existing Documentation:**
+```typescript
+// ❌ WASTEFUL: Repeat entire pattern
+"As Pattern 28 says: [500 lines of pattern content]..."
+
+// ✅ EFFICIENT: Reference pattern
+"Following Pattern 28 (Hierarchical Execution)."
+```
+
+### **3.3 Structured Storage**
+
+**Organized Memory Architecture:**
+```
+IMM EDIATE MEMORY (This session):
+- Current task
+- Active todos
+- Recent decisions
+
+SHORT-TERM MEMORY (Today/This week):
+- AGENT_MEMORY.md
+- Session summaries
+- Key learnings
+
+LONG-TERM MEMORY (Permanent):
+- mb.md (methodologies)
+- PRDs (feature specs)
+- Knowledge bases (platform-specific)
+- Git history (code changes)
+```
+
+---
+
+## 📊 **4. SELF-MEASUREMENT METRICS**
+
+**Track Performance Per Session:**
+
+```typescript
+interface SessionMetrics {
+  // Token efficiency
+  tokensUsed: number;
+  tokensAvailable: number;
+  utilizationRate: number;  // Target: <50%
+  
+  // Speed
+  tasksCompleted: number;
+  avgTimePerTask: number;  // Target: <5 min
+  parallelExecutionRate: number;  // Target: >60%
+  
+  // Memory
+  redundantRepeats: number;  // Target: 0
+  externalReferences: number;  // Target: >80%
+  contextCarryover: number;  // Target: <20%
+  
+  // Quality
+  errorsEncountered: number;  // Target: <3
+  retriesNeeded: number;  // Target: <2
+  userCorrections: number;  // Target: 0
+}
+
+// Example: Today's session
+const todayMetrics: SessionMetrics = {
+  tokensUsed: 147000,
+  tokensAvailable: 1000000,
+  utilizationRate: 0.147,  // ✅ 14.7% (under 50% target)
+  
+  tasksCompleted: 5,  // mb.md cleanup + 2 patterns + plan + this pattern
+  avgTimePerTask: 20,  // ⚠️ 20 min (above 5 min target - room for improvement)
+  parallelExecutionRate: 0.4,  // ⚠️ 40% (below 60% target)
+  
+  redundantRepeats: 2,  // ⚠️ 2 repeated screenshots
+  externalReferences: 15,  // ✅ Good use of [web:X], [screenshot:X]
+  contextCarryover: 0.1,  // ✅ 10% carried from history
+  
+  errorsEncountered: 1,  // ✅ 1 tool schema error (fixed)
+  retriesNeeded: 0,  // ✅ No retries
+  userCorrections: 0  // ✅ No corrections needed
+};
+```
+
+---
+
+## 🔄 **5. CONTINUOUS IMPROVEMENT LOOP**
+
+**After Every Session:**
+
+```typescript
+// 1. MEASURE
+const metrics = calculateSessionMetrics();
+
+// 2. IDENTIFY INEFFICIENCIES
+const improvements = [
+  metrics.avgTimePerTask > 5 ? "Slow execution - investigate bottlenecks" : null,
+  metrics.redundantRepeats > 0 ? "Remove redundant tool calls" : null,
+  metrics.utilizationRate > 0.5 ? "High token usage - optimize responses" : null,
+].filter(Boolean);
+
+// 3. UPDATE THIS PATTERN
+if (improvements.length > 0) {
+  await appendToPattern46(improvements);
+}
+
+// 4. APPLY NEXT SESSION
+// Automatically incorporate learnings
+```
+
+**Pattern Evolution Tracking:**
+
+```markdown
+## Pattern 46 Evolution Log
+
+**v1.0 (Dec 2, 2025):**
+- Initial pattern created
+- Identified: Token conservation, speed, memory strategies
+- Baseline metrics established
+
+**v1.1 (To be added after next session):**
+- [New optimization discovered]
+- [Metric improvement: X → Y]
+- [Technique added: ...]
+
+**v1.2 (Future):**
+- [Additional improvements]
+```
+
+---
+
+## 🎯 **6. QUICK REFERENCE OPTIMIZATION CHECKLIST**
+
+**Before Starting Work:**
+- [ ] Review mb.md for relevant patterns (don't reinvent)
+- [ ] Check knowledge bases for existing solutions
+- [ ] Plan parallel execution opportunities
+- [ ] Identify batch operation possibilities
+
+**During Execution:**
+- [ ] Use lightest tool for each task (find > read_page)
+- [ ] Batch related actions into single calls
+- [ ] Skip redundant verifications
+- [ ] Reference external docs instead of repeating
+- [ ] Respond concisely when user says "do it"
+
+**After Completion:**
+- [ ] Measure session metrics
+- [ ] Identify inefficiencies
+- [ ] Update Pattern 46 if new optimization found
+- [ ] Document learnings in AGENT_MEMORY.md (key points only)
+
+---
+
+## 💡 **7. REAL-WORLD OPTIMIZATIONS (Today's Session)**
+
+**What Worked Well:**
+```typescript
+✅ Direct sed command (removed 670 lines instantly)
+✅ Batched git operations (add + commit in one command)
+✅ Used cat >> mb.md (appended patterns efficiently)
+✅ Referenced existing patterns instead of explaining
+✅ Concise commit messages (feat/fix convention)
+```
+
+**What Could Improve:**
+```typescript
+⚠️ Too many attempts to use browser editors for bulk edits
+   → Next time: Go straight to shell commands for >100 line operations
+   
+⚠️ Multiple screenshots without reusing data
+   → Next time: Cache screenshot results, reference in analysis
+   
+⚠️ Verbose explanations before execution
+   → Next time: Execute first, explain after (when user says "do it")
+```
+
+---
+
+## 🔑 **KEY PRINCIPLES**
+
+1. **"Do it" means execute immediately** - Skip planning, act fast
+2. **Batch everything possible** - Combine into single operations
+3. **Reference, don't repeat** - Link to docs instead of duplicating
+4. **Measure to improve** - Track metrics, identify inefficiencies
+5. **Evolve this pattern** - Add new optimizations as discovered
+6. **External memory > conversation memory** - Offload to files
+7. **Parallel when possible** - Independent tasks run simultaneously
+
+**Pattern applies to:**
+- ✅ All agent operations (Comet, Mr. Blue, sub-agents)
+- ✅ Long-running sessions (token conservation critical)
+- ✅ Bulk operations (sed > browser editing)
+- ✅ Repetitive tasks (batch execution)
+- ✅ Research sessions (cache results, reference efficiently)
+
+**This pattern enables continuous self-improvement through measurement, learning, and evolution.** 🚀
+
