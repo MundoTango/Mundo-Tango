@@ -158,12 +158,6 @@ app.use((req, res, next) => {
   
   // CSRF Protection - Double-submit cookie pattern (stateless, no Redis needed)
   app.use(setCsrfToken); // Set token cookie on all GET requests
-// Mr Blue AI Assistant
-import mrBlueRoutes from "./routes/mr-blue-routes";
-import lumaRoutes from "./routes/luma-routes";
-app.use("/api/mr-blue", mrBlueRoutes);
-app.use("/api/luma", lumaRoutes);
-
   app.use('/api', verifyDoubleSubmitCookie); // Verify token on mutations
   
   const server = await registerRoutes(app);
