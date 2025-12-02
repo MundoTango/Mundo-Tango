@@ -28,7 +28,6 @@ export const CITY_TIMEZONE_MAP: Record<string, string> = {
   'Istanbul': 'Europe/Istanbul',
   'Bangkok': 'Asia/Bangkok',
   'Mexico': 'America/Mexico_City',
-  'Brazil': 'America/Sao_Paulo',
   'Argentina': 'America/Argentina/Buenos_Aires',
   'USA': 'America/New_York',
   'UK': 'Europe/London',
