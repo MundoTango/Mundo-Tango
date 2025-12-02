@@ -32,6 +32,7 @@ import mrBlueEnhancedRoutes from "./routes/mr-blue-enhanced";
 import mrBlueAgentsRoutes from "./routes/mrBlueAgents";
 import mrBlueActivateAgentsRoutes from "./routes/mrblue/activate-agents";
 import mrBlueSaveBackendRoutes from "./routes/mrblue/save-backend";
+import { registerLumaRoutes } from "./routes/mrblue/luma-routes";
 import mrBlueContextRoutes from "./routes/mrblue-context-routes";
 import mrBlueVideoConferenceRoutes from "./routes/mrblue-video-conference-routes";
 import mrBlueVibeCodingRoutes from "./routes/mrblue-vibecoding-routes";
@@ -668,6 +669,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/realtime", authenticateToken, realtimeVoiceRoutes);
   app.use("/api/openai-realtime", authenticateToken, openaiRealtimeRoutes);
   registerVoiceCloningRoutes(app); // Voice cloning for Mr. Blue custom voices
+    registerLumaRoutes(app); // Luma Dream Machine video generation for Mr Blue
   app.use("/api/premium", premiumMediaRoutes);
   app.use("/api/god-level", authenticateToken, godLevelRoutes);
   app.use("/api/ai", aiEnhanceRoutes);
