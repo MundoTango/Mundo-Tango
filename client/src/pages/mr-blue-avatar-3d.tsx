@@ -67,11 +67,11 @@ export default function MrBlueAvatar3DPage() {
         <Card className="overflow-hidden">
           <CardContent className="p-0">
             <div className="h-[400px] md:h-[500px] bg-gradient-to-b from-background to-muted/20">
-            </                <div className="w-full h-[400px] bg-blue-500 rounded-lg flex items-center justify-center text-white text-2xl font-bold">
-                🤖 Mr. Blue 3D Avatar
-                <br />
-                <span className="text-sm">(Emotion: {emotion})</span>
-              </div>div>
+              <div className="w-full h-full bg-blue-500 rounded-lg flex flex-col items-center justify-center text-white text-2xl font-bold" data-testid="avatar-3d-container">
+                <span>Mr. Blue 3D Avatar</span>
+                <span className="text-sm mt-2">(Emotion: {emotion})</span>
+              </div>
+            </div>
           </CardContent>
         </Card>
 
