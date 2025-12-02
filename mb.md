@@ -4391,3 +4391,566 @@ E2E Testing Infrastructure Protocol documenting distributed rate limiter discove
 
 ---
 
+
+---
+
+### **Pattern 44: GitHub/Replit Expertise Protocol** ⭐⭐⭐ (v9.9.2 - Dec 2, 2025)
+
+**Source:** MundoTango production workflows + user documentation practices
+**Date:** December 2, 2025
+**Context:** Advanced Git workflows, Replit deployment, auto-sync protocols for continuous delivery
+
+**Problem:** Developers need expert-level guidance for GitHub operations, Replit deployment, branch management, and auto-sync configurations to maintain efficient DevOps workflows.
+
+**Solution:** Comprehensive GitHub/Replit methodology covering all aspects of repository management, deployment pipelines, and collaborative development.
+
+#### **GitHub Workflow Best Practices**
+
+**Branch Management:**
+```bash
+# Feature branch workflow
+git checkout -b feature/facebook-integration
+git commit -m "feat: Add Facebook OAuth integration"
+git push origin feature/facebook-integration
+
+# Create pull request for code review
+# Merge after approval
+git checkout main
+git pull origin main
+git branch -d feature/facebook-integration  # Cleanup local
+```
+
+**Commit Message Standards:**
+```
+feat: Add new feature (new capability)
+fix: Bug fix (correction)
+docs: Documentation only
+style: Formatting, missing semi-colons
+refactor: Code restructuring
+test: Adding tests
+chore: Maintenance tasks
+
+Example:
+feat: Add Memories Feed with infinite scroll
+fix: Remove Memories Feed PRD (governance violation)
+docs: Update mb.md with Pattern 44
+```
+
+**Auto-Sync Protocol (Pattern 33 Enhancement):**
+```yaml
+# .github/workflows/auto-sync.yml
+name: Auto-Sync to GitHub
+on:
+  schedule:
+    - cron: '0 */6 * * *'  # Every 6 hours
+  workflow_dispatch:  # Manual trigger
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pull and Push
+        run: |
+          git config --global user.name "Mundo Tango Bot"
+          git config --global user.email "admin@mundotango.life"
+          git fetch origin main
+          git pull --rebase origin main
+          git push origin main
+```
+
+#### **Replit Deployment Optimization**
+
+**Deployment Configuration:**
+```toml
+# .replit
+[deployment]
+deploymentTarget = "autoscale"
+build = ["npm", "run", "build"]
+run = ["npm", "run", "start"]
+
+[[ports]]
+localPort = 5000
+externalPort = 80
+```
+
+**Environment Management:**
+```bash
+# Replit Secrets (use Replit UI, never commit)
+# Tools → Secrets
+DATABASE_URL=postgresql://...
+OPENAI_API_KEY=sk-...
+GITHUB_TOKEN=ghp_...
+```
+
+**Health Check Verification:**
+```typescript
+// Verify deployment after push
+async function verifyDeployment() {
+  const checks = [
+    { name: 'Website', url: 'https://mundotango.life' },
+    { name: 'API Health', url: 'https://mundotango.life/api/health' },
+    { name: 'Database', url: 'https://mundotango.life/api/health/db' },
+  ];
+
+  for (const check of checks) {
+    const response = await fetch(check.url, { timeout: 5000 });
+    if (!response.ok) {
+      console.error(`❌ ${check.name} is down (HTTP ${response.status})`);
+    } else {
+      console.log(`✅ ${check.name} is healthy`);
+    }
+  }
+}
+```
+
+#### **Code Review Standards**
+
+**Pull Request Checklist:**
+```markdown
+## PR Checklist
+- [ ] All tests passing (`npm test`)
+- [ ] LSP errors resolved (0 errors)
+- [ ] Database migrations applied (`npm run db:push`)
+- [ ] Environment variables documented
+- [ ] Build succeeds (`npm run build`)
+- [ ] Deployment verified on staging
+- [ ] No console errors in browser
+- [ ] Critical user flows tested
+```
+
+**Review Focus Areas:**
+- Security: Auth checks, input validation, XSS prevention
+- Performance: Bundle size, lazy loading, database queries
+- Accessibility: WCAG 2.1 AAA compliance
+- Documentation: Inline comments, API docs, README updates
+
+#### **Git Workflows for Common Scenarios**
+
+**Scenario 1: Sync Conflict Resolution**
+```bash
+# Pull rejected: remote has changes
+git pull --rebase origin main
+# Fix any conflicts
+git add .
+git rebase --continue
+git push origin main
+```
+
+**Scenario 2: Undo Last Commit (Not Pushed)**
+```bash
+git reset --soft HEAD~1  # Keep changes
+git reset --hard HEAD~1  # Discard changes
+```
+
+**Scenario 3: Cherry-Pick Specific Commit**
+```bash
+git cherry-pick <commit-hash>
+git push origin main
+```
+
+**Scenario 4: Clean Large Files from History**
+```bash
+# Remove accidentally committed large files
+git filter-branch --force --index-filter \
+  "git rm --cached --ignore-unmatch path/to/large/file" \
+  --prune-empty --tag-name-filter cat -- --all
+```
+
+#### **Deployment Pipeline**
+
+**Continuous Deployment Flow:**
+```
+Local Dev → Git Push → GitHub Actions → Replit Auto-Deploy → Health Checks → Production
+```
+
+**Rollback Procedure:**
+```bash
+# Option 1: Revert to previous commit
+git revert HEAD
+git push origin main
+
+# Option 2: Reset to specific commit
+git reset --hard <previous-working-commit>
+git push origin main --force  # Use with caution
+
+# Option 3: Use Replit rollback feature
+# Replit Dashboard → Deployments → Rollback to previous version
+```
+
+#### **Monitoring & Alerts**
+
+**GitHub Actions Monitoring:**
+- Check workflow status: `https://github.com/MundoTango/Mundo-Tango/actions`
+- Set up email notifications for failed workflows
+- Monitor deployment frequency and success rate
+
+**Replit Monitoring:**
+- Check deployment logs in Replit Dashboard
+- Monitor CPU/Memory usage
+- Set up uptime monitoring (UptimeRobot, Pingdom)
+
+#### **Key Learnings:**
+
+1. **Always Pull Before Push:** Prevents merge conflicts (use `git pull --rebase`)
+2. **Use GitHub Actions for Automation:** Auto-sync, auto-deploy, auto-test
+3. **Replit Git Pane is Reliable:** Use visual Git interface for commits/pushes
+4. **Document Everything:** Update mb.md with learnings after every major workflow
+5. **Health Checks are Critical:** Verify deployment success programmatically
+
+**Pattern applies to:**
+- ✅ All MundoTango repository operations
+- ✅ Feature branch workflows and code reviews
+- ✅ Replit deployment and environment management  
+- ✅ GitHub Actions automation and CI/CD pipelines
+- ✅ Rollback procedures and incident response
+
+**This pattern establishes GitHub/Replit expertise for efficient, reliable DevOps workflows.** 🚀
+
+
+---
+
+### **Pattern 45: Comet/Perplexity Agent Learning Methodology** ⭐⭐⭐ (v9.9.2 - Dec 2, 2025)
+
+**Source:** Comet browser automation + Perplexity search_web tool best practices
+**Date:** December 2, 2025
+**Context:** When and how to deploy Comet agents for research, search optimization, learning capture, and cross-agent knowledge sharing
+
+**Problem:** Agents need standardized methodology for deploying Comet/Perplexity agents, optimizing search queries, evaluating results, and capturing learnings for future reference.
+
+**Solution:** Comprehensive Comet agent methodology covering search strategies, result synthesis, learning documentation, and knowledge base updates.
+
+#### **When to Deploy Comet Agents**
+
+**Use Comet Agents For:**
+```typescript
+✅ Research & Information Gathering:
+  - "Find best practices for X"
+  - "Research competitors for Y"
+  - "Gather examples of Z implementation"
+
+✅ Technical Documentation:
+  - "How does API X work?"
+  - "Find integration guides for service Y"
+  - "Locate official documentation for Z"
+
+✅ Real-time Data Collection:
+  - "Current pricing for service X"
+  - "Latest release notes for library Y"
+  - "Up-to-date statistics on Z"
+
+✅ Multi-source Synthesis:
+  - "Compare approaches A vs B vs C"
+  - "Aggregate opinions on topic X"
+  - "Find consensus on best practice Y"
+```
+
+**Don't Use Comet For:**
+```typescript
+❌ Codebase-specific questions:
+  - Use codebase_search instead
+  - "Where is AuthService implemented?"
+
+❌ Known file operations:
+  - Use read/edit/grep tools
+  - "Update line 42 in config.ts"
+
+❌ Simple calculations:
+  - Use direct computation
+  - "What is 2 + 2?"
+
+❌ Already-documented knowledge:
+  - Check mb.md, PRDs, knowledge bases first
+  - "What is Pattern 28?"
+```
+
+#### **Search Query Optimization**
+
+**Best Practices (from Comet guidelines):**
+
+**1. Short, Keyword-Focused Queries:**
+```typescript
+// ❌ BAD: Long, question-format
+search_web(["What is the best way to implement authentication in a React application?"]);
+
+// ✅ GOOD: Short, keyword-focused
+search_web(["React authentication best practices", "React Auth0 integration", "NextAuth.js setup"]);
+```
+
+**2. Break Multi-Entity Questions:**
+```typescript
+// ❌ BAD: Combined query
+search_web(["Brand A vs Brand B protein powder review"]);
+
+// ✅ GOOD: Separate queries
+search_web([
+  "Brand A protein powder review",
+  "Brand B protein powder review"
+]);
+```
+
+**3. Limit to 3 Queries Per Request:**
+```typescript
+// ✅ Efficient: Maximum 3 queries
+search_web([
+  "n8n Facebook automation",
+  "Facebook Graph API webhooks",
+  "automated content collection Facebook"
+]);
+
+// ❌ Inefficient: Too many queries (slows down, reduces quality)
+search_web([
+  "query1", "query2", "query3", "query4", "query5", "query6"
+]);
+```
+
+**4. Include Context When Needed:**
+```typescript
+// For time-sensitive queries
+search_web(["inflation rate Canada 2025"]);
+
+// For version-specific queries
+search_web(["React 19 new features", "Next.js 15 app router"]);
+```
+
+#### **Result Evaluation & Synthesis**
+
+**Evaluation Criteria:**
+```typescript
+interface SearchResult {
+  relevance: 'high' | 'medium' | 'low';  // Does it answer the query?
+  recency: Date;  // Is it up-to-date?
+  authority: 'official' | 'community' | 'blog';  // Source credibility
+  actionability: 'code examples' | 'concepts' | 'opinions';  // Can we use it?
+}
+
+// Prioritize results:
+// 1. Official docs (high authority + code examples)
+// 2. Recent community discussions (recency + real-world usage)
+// 3. Blog posts/tutorials (actionability)
+```
+
+**Synthesis Template:**
+```markdown
+## Research: [Topic]
+
+**Sources:** [web:1], [web:2], [web:3]
+
+**Key Findings:**
+1. [Finding 1] [web:1]
+2. [Finding 2] [web:2]
+3. [Finding 3] [web:3]
+
+**Code Examples:**
+```typescript
+// Synthesized example from multiple sources
+[Combined best practices]
+```
+
+**Recommendation:**
+[Actionable next step based on research]
+```
+
+#### **Learning Capture Protocol**
+
+**Document After Every Research Session:**
+
+**1. Immediate Capture (During Session):**
+```typescript
+// As you research, note:
+- New concepts discovered
+- Unexpected findings
+- Better approaches than current
+- Common patterns across sources
+```
+
+**2. Create Knowledge Base Entry:**
+```bash
+# For platform-specific learnings
+echo "## Facebook Automation Learnings" >> docs/FACEBOOK_KNOWLEDGE_BASE.md
+echo "- n8n workflow automation [web:1]" >> docs/FACEBOOK_KNOWLEDGE_BASE.md
+echo "- Graph API webhook setup [web:2]" >> docs/FACEBOOK_KNOWLEDGE_BASE.md
+```
+
+**3. Update MB.MD (If Methodology-Level):**
+```typescript
+// Add new pattern if:
+// - Applies across multiple projects
+// - Solves recurring problem
+// - Represents best practice
+// - Improves efficiency by 20%+
+
+// Example: Pattern 44 (GitHub/Replit) added after identifying
+// recurring workflows across multiple sessions
+```
+
+**4. Create PRD (If Feature-Level):**
+```bash
+# Move project-specific findings to PRDs
+echo "Feature implementation guide based on research" >> docs/prds/PRD_FEATURE_NAME.md
+```
+
+#### **Cross-Agent Knowledge Sharing**
+
+**Knowledge Propagation Flow:**
+```
+Comet Research → Learning Capture → MB.MD Update → All Agents Access → Applied in Future Tasks
+```
+
+**Implementation:**
+```typescript
+// 1. Research with Comet
+const research = await search_web(["n8n automation best practices"]);
+
+// 2. Synthesize findings
+const learnings = synthesize(research);
+
+// 3. Document in appropriate location
+if (isMethodology(learnings)) {
+  await appendToMBMD(learnings);  // Becomes Pattern 46, 47, etc.
+} else if (isFeatureSpecific(learnings)) {
+  await createPRD(learnings);  // Goes to docs/prds/
+} else {
+  await updateKnowledgeBase(learnings);  // Goes to docs/*_KNOWLEDGE_BASE.md
+}
+
+// 4. All future agents now have this knowledge
+// - Via mb.md (methodologies)
+// - Via PRDs (feature specs)
+// - Via knowledge bases (platform learnings)
+```
+
+#### **Comet Browser Automation (Advanced)**
+
+**When to Use Computer Use:**
+```typescript
+✅ Tasks requiring browser interaction:
+  - Login to external services
+  - Fill forms on third-party sites
+  - Extract data from JavaScript-heavy sites
+  - Test user flows visually
+
+❌ Don't use for:
+  - Simple HTTP requests (use fetch)
+  - Tasks with official APIs
+  - Real-time interactions (too slow)
+```
+
+**Safety Protocol:**
+```typescript
+// ALWAYS require approval for:
+const dangerousTasks = [
+  'credential_entry',    // Passwords, API keys
+  'financial_transactions',  // Money involved
+  'data_deletion',       // Destructive operations
+  'public_posting'       // Social media, forums
+];
+
+// Example:
+if (task.requiresCredentials) {
+  await requestUserApproval(task);
+  // User must click "Proceed" before execution
+}
+```
+
+#### **Performance Optimization**
+
+**Search Efficiency:**
+```typescript
+// Batch related queries (up to 3)
+const results = await search_web([
+  "topic A",
+  "topic B", 
+  "topic C"
+]);
+
+// Process results in parallel
+const [resultA, resultB, resultC] = await Promise.all([
+  processResult(results[0]),
+  processResult(results[1]),
+  processResult(results[2])
+]);
+```
+
+**Caching Strategy:**
+```typescript
+// Cache research results for 24 hours
+const cacheKey = `research:${query}:${date}`;
+const cached = await getFromCache(cacheKey);
+
+if (cached) {
+  return cached;  // Instant result
+} else {
+  const fresh = await search_web([query]);
+  await setCache(cacheKey, fresh, ttl: 86400);  // 24 hours
+  return fresh;
+}
+```
+
+#### **Quality Metrics**
+
+**Track Research Effectiveness:**
+```typescript
+interface ResearchMetrics {
+  queriesExecuted: number;
+  relevantResultsFound: number;
+  learningsDocumented: number;
+  patternsCreated: number;
+  timeToAnswer: number;  // Minutes
+  sourcesConsulted: number;
+}
+
+// Target metrics:
+// - Relevance rate: >80%
+// - Learning capture rate: 100%
+// - Time to answer: <5 minutes
+// - Sources: 3-5 per query
+```
+
+#### **Real-World Examples**
+
+**Example 1: Facebook Automation Research (Dec 2, 2025)**
+```typescript
+// Query
+search_web([
+  "n8n Facebook automation",
+  "Facebook Graph API content collection",
+  "automated Facebook post scheduling"
+]);
+
+// Result: Found n8n workflows, Graph API docs, scheduling tools
+// Learning: n8n + Graph API + webhooks = complete automation
+// Documentation: Added to docs/FACEBOOK_KNOWLEDGE_BASE.md
+// Application: Used in content-collection pipeline
+```
+
+**Example 2: mb.md Governance Audit (Dec 2, 2025)**
+```typescript
+// Query
+search_web(["methodology documentation best practices"]);
+
+// Result: Found governance patterns, PRD separation principles
+// Learning: Methodologies != PRDs != Checklists (strict separation)
+// Documentation: Created Pattern 28 (Governance Enforcement)
+// Application: Cleaned mb.md, removed 670-line PRD violation
+```
+
+#### **Key Learnings**
+
+1. **Short Queries > Long Questions:** 3-5 keywords more effective than full sentences
+2. **3 Query Limit:** Optimal balance of speed and comprehensiveness
+3. **Separate Multi-Entity:** Break "A vs B" into two queries
+4. **Always Cite Sources:** Use [web:X] for every claim
+5. **Document Immediately:** Capture learnings before context is lost
+6. **Update MB.MD Continuously:** Add patterns as they emerge
+7. **Cache Research:** Don't re-search the same topics
+
+**Pattern applies to:**
+- ✅ All Comet agent deployments for research
+- ✅ Search query optimization and result evaluation
+- ✅ Learning capture and documentation workflows
+- ✅ Knowledge base maintenance and updates
+- ✅ Cross-agent knowledge sharing via mb.md
+
+**This pattern establishes Comet agent expertise for efficient research, learning, and knowledge sharing.** 🔍
+
