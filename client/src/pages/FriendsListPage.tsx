@@ -534,9 +534,7 @@ export default function FriendsListPage() {
                 }
                 data-testid="checkbox-did-we-dance"
               />
-              <Label htmlFor="didWeDance" className="cursor-pointer">
-                We danced together 💃🕺
-              </Label>
+              <Label htmlFor="didWeDance" className="cursor-pointer">We've met!💃🕺</Label>
             </div>
 
             {requestData.didWeDance && (
