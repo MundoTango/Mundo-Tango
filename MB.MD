@@ -40,3 +40,29 @@
 - [ ] Mr Blue can generate video avatars (Luma)
 - [ ] Users can interact via web UI
 - [ ] All APIs return proper responses
+
+## Configuration Requirements
+
+### Environment Variables
+**Required for Phase 1 (Luma Video Generation):**
+- `LUMA_API_KEY` - API key from Luma Dream Machine (lumalabs.ai)
+  - Add to Replit Secrets or .env file
+  - Get key from: https://lumalabs.ai/dream-machine
+
+**Test Configuration:**
+```bash
+curl https://your-replit-url.replit.dev/api/mrblue/luma/health
+```
+
+Expected response:
+```json
+{
+  "service": "luma",
+  "status": "healthy",
+  "apiConfigured": true,
+  "endpoints": [
+    "/api/mrblue/luma/text-to-video",
+    "/api/mrblue/luma/image-to-video"
+  ]
+}
+```
