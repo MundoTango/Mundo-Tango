@@ -1,3 +1,25 @@
+## 📌 GOVERNANCE & ENFORCEMENT
+
+**CRITICAL**: This document contains METHODOLOGIES ONLY.
+
+See:
+- [Soul Doc](docs/governance/mr-blue-soul.md) - Mission & values  
+- [System Prompt](docs/governance/mr-blue-system-prompt.md) - Operating parameters
+
+**MB.MD updates are ONLY allowed for:**
+- ✅ New methodology patterns
+- ✅ Process improvements to existing patterns  
+- ✅ Universal best practices that apply across methodologies
+
+**NEVER add to mb.md:**
+- ❌ Project plans
+- ❌ Implementation checklists
+- ❌ PRDs (Product Requirement Documents)
+- ❌ Feature specifications
+
+---
+
+
 # MB.MD - Mundo Blue Methodology Directive
 
 **Version:** 9.9 PARALLEL AGENT EXECUTION PROTOCOL - 41 PATTERNS  
