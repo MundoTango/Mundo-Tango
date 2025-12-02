@@ -11,19 +11,20 @@ body {
 
 /* LIGHT MODE */
 :root {
-  --button-outline: rgba(0,0,0, .10);
-  --badge-outline: rgba(0,0,0, .05);
+  --button-outline: rgba(0, 0, 0, .10);
+  --badge-outline: rgba(0, 0, 0, .05);
 
   /* Automatic computation of border around primary / danger buttons */
-  --opaque-button-border-intensity: -8; /* In terms of percentages */
+  --opaque-button-border-intensity: -8;
+  /* In terms of percentages */
 
   /* Backgrounds applied on top of other backgrounds when hovered/active */
-  --elevate-1: rgba(0,0,0, .03);
-  --elevate-2: rgba(0,0,0, .08);
+  --elevate-1: rgba(0, 0, 0, .03);
+  --elevate-2: rgba(0, 0, 0, .08);
 
   /* ========== MT OCEAN THEME - Primary Colors ========== */
   /* Turquoise → Dodger Blue → Cobalt Blue Gradient */
-  
+
   --background: 0 0% 98%;
   --foreground: 218 20% 12%;
 
@@ -73,7 +74,8 @@ body {
   --font-serif: "Playfair Display", Georgia, serif;
   --font-mono: Menlo, Monaco, "Courier New", monospace;
   --font-accent: Cinzel, serif;
-  --radius: .5rem; /* 8px */
+  --radius: .5rem;
+  /* 8px */
   --shadow-2xs: 0px 1px 2px 0px hsl(240 8% 12% / 0.05);
   --shadow-xs: 0px 1px 3px 0px hsl(240 8% 12% / 0.08);
   --shadow-sm: 0px 2px 4px -1px hsl(240 8% 12% / 0.06), 0px 1px 2px -1px hsl(240 8% 12% / 0.04);
@@ -86,14 +88,22 @@ body {
   --spacing: 0.25rem;
 
   /* ========== VIBRANT TAG COLORS (Tango-Inspired) ========== */
-  --tag-milonga: 0 85% 60%;        /* Red */
-  --tag-practica: 25 95% 58%;      /* Orange */
-  --tag-performance: 45 95% 55%;   /* Yellow/Gold */
-  --tag-workshop: 142 70% 45%;     /* Green */
-  --tag-festival: 270 70% 60%;     /* Purple */
-  --tag-travel: 210 100% 56%;      /* Blue */
-  --tag-music: 330 80% 55%;        /* Pink */
-  --tag-fashion: 177 72% 50%;      /* Teal/Turquoise */
+  --tag-milonga: 0 85% 60%;
+  /* Red */
+  --tag-practica: 25 95% 58%;
+  /* Orange */
+  --tag-performance: 45 95% 55%;
+  /* Yellow/Gold */
+  --tag-workshop: 142 70% 45%;
+  /* Green */
+  --tag-festival: 270 70% 60%;
+  /* Purple */
+  --tag-travel: 210 100% 56%;
+  /* Blue */
+  --tag-music: 330 80% 55%;
+  /* Pink */
+  --tag-fashion: 177 72% 50%;
+  /* Teal/Turquoise */
 
   /* Gradient Backgrounds */
   --gradient-memories-start: 177 40% 96%;
@@ -133,14 +143,15 @@ body {
 }
 
 .dark {
-  --button-outline: rgba(255,255,255, .10);
-  --badge-outline: rgba(255,255,255, .05);
+  --button-outline: rgba(255, 255, 255, .10);
+  --badge-outline: rgba(255, 255, 255, .05);
 
-  --opaque-button-border-intensity: 9;  /* In terms of percentages */
+  --opaque-button-border-intensity: 9;
+  /* In terms of percentages */
 
   /* Backgrounds applied on top of other backgrounds when hovered/active */
-  --elevate-1: rgba(255,255,255, .04);
-  --elevate-2: rgba(255,255,255, .09);
+  --elevate-1: rgba(255, 255, 255, .04);
+  --elevate-2: rgba(255, 255, 255, .09);
 
   /* MT OCEAN THEME - Dark Mode */
   --background: 218 30% 8%;
@@ -448,68 +459,68 @@ body {
     --ocean-seafoam-400: #40E0D0;
     --seafoam: #40E0D0;
     --ocean-deep: #0047AB;
-    
+
     /* Background colors */
     --bg-primary: hsl(0 0% 98%);
     --bg-ocean-gradient: linear-gradient(135deg, #40E0D0 0%, #1E90FF 50%, #0047AB 100%);
-    
+
     /* Profile card */
     --profile-card-bg: rgba(255, 255, 255, 0.5);
     --profile-border: rgba(64, 224, 208, 0.2);
-    
+
     /* Stats cards */
     --stat-card-bg: rgba(255, 255, 255, 0.3);
     --stat-border: rgba(64, 224, 208, 0.15);
     --stat-icon-bg: rgba(64, 224, 208, 0.1);
-    
+
     /* Footer branding */
     --footer-brand-bg: rgba(64, 224, 208, 0.1);
     --footer-border: rgba(64, 224, 208, 0.2);
-    
+
     /* Brand icon */
     --brand-icon-bg: linear-gradient(135deg, #40E0D0 0%, #1E90FF 100%);
-    
+
     /* Avatar backgrounds */
     --avatar-light-bg: linear-gradient(135deg, #40E0D0 0%, #1E90FF 100%);
-    
+
     /* Hover states */
     --hover-ocean-light: rgba(64, 224, 208, 0.1);
     --ocean-hover: rgba(64, 224, 208, 0.15);
-    
+
     /* Active states */
     --active-ocean-bg: rgba(64, 224, 208, 0.15);
-    
+
     /* Overlay */
     --overlay-ocean: rgba(64, 224, 208, 0.05);
   }
-  
+
   /* ========== DESIGN TOKEN SYSTEM ========== */
   /* These CSS variables are populated by ThemeProvider based on route */
   /* Bold Minimaximalist on marketing routes, MT Ocean on platform routes */
-  
+
   /* Design token CSS variables will be set by ThemeProvider */
   /* See client/src/contexts/theme-context.tsx for implementation */
-  
+
   /* Transition speeds for Tailwind integration */
   .duration-150 {
     transition-duration: 150ms;
   }
-  
+
   .duration-300 {
     transition-duration: 300ms;
   }
-  
+
   /* Theme-aware utility classes */
   @layer utilities {
     .theme-transition {
       transition-duration: var(--transition-speed);
       transition-timing-function: var(--animation-curve);
     }
-    
+
     .theme-shadow {
       box-shadow: var(--shadow-medium);
     }
-    
+
     .theme-shadow-large {
       box-shadow: var(--shadow-large);
     }
@@ -520,86 +531,86 @@ body {
       color: var(--seafoam);
       font-weight: 600;
     }
-    
+
     .hover-ocean-light:hover {
       background-color: var(--hover-ocean-light);
     }
-    
+
     .text-ocean {
       color: var(--ocean);
     }
-    
+
     .text-ocean-muted {
       color: var(--ocean-muted);
     }
-    
+
     .text-ocean-secondary {
       color: var(--ocean-secondary);
     }
-    
+
     .text-seafoam {
       color: var(--seafoam);
     }
-    
+
     .bg-ocean-gradient {
       background: var(--bg-ocean-gradient);
     }
-    
+
     .bg-profile-card {
       background: var(--profile-card-bg);
     }
-    
+
     .border-profile-border {
       border-color: var(--profile-border);
     }
-    
+
     .bg-stat-card {
       background: var(--stat-card-bg);
     }
-    
+
     .border-stat-border {
       border-color: var(--stat-border);
     }
-    
+
     .bg-stat-icon {
       background: var(--stat-icon-bg);
     }
-    
+
     .bg-footer-brand {
       background: var(--footer-brand-bg);
     }
-    
+
     .border-footer-border {
       border-color: var(--footer-border);
     }
-    
+
     .bg-brand-icon {
       background: var(--brand-icon-bg);
     }
-    
+
     .text-brand-gradient {
       background: linear-gradient(135deg, #40E0D0 0%, #1E90FF 50%, #0047AB 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
-    
+
     .bg-avatar-light {
       background: var(--avatar-light-bg);
     }
-    
+
     .bg-avatar-dark {
       background: linear-gradient(135deg, #003A8F 0%, #002052 100%);
     }
-    
+
     .overlay-ocean {
       background: var(--overlay-ocean);
     }
-    
+
     .border-seafoam {
       border-color: var(--seafoam);
     }
-    
+
     /* Screen reader only utility class for accessibility */
     .sr-only {
       position: absolute;
@@ -622,17 +633,17 @@ body {
       background: transparent !important;
       box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
     }
-    
+
     .leaflet-popup-content {
       margin: 0 !important;
       min-width: 360px !important;
       width: auto !important;
     }
-    
+
     .leaflet-popup-tip-container {
       display: none;
     }
-    
+
     .leaflet-popup-close-button {
       z-index: 10;
       top: 8px !important;
@@ -649,13 +660,24 @@ body {
       align-items: center;
       justify-content: center;
     }
-    
+
     .leaflet-popup-close-button:hover {
       background: rgba(0, 0, 0, 0.5);
       color: white !important;
     }
   }
 }
+
+/* ========== HERO TEXT CONTRAST FIX (WCAG ACCESSIBILITY) ========== */
+/* Improves readability of white/light text on hero background images */
+.text-4xl,
+.text-5xl,
+.text-6xl,
+h1,
+h2.text-4xl {
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 0, 0, 0.6) !important;
+}
+
 /* Leaflet popup constraint for city cards */
 .leaflet-popup-content-wrapper {
   max-width: 360px;
