@@ -4,9 +4,12 @@ const router = Router();
 
 const ELEVENLABS_API_BASE = 'https://api.elevenlabs.io/v1';
 
+const DEFAULT_VOICE_ID = 'pNInz6obpgDQGcFmaJgB'; // ElevenLabs "Adam" voice
+
 router.post('/', async (req: Request, res: Response) => {
   const { text, voiceId } = req.body;
   const apiKey = process.env.ELEVENLABS_API_KEY;
+  const effectiveVoiceId = voiceId || process.env.ELEVENLABS_VOICE_ID || DEFAULT_VOICE_ID;
   
   if (!apiKey) {
     console.error('[TTS] ElevenLabs API key not configured');
@@ -16,17 +19,17 @@ router.post('/', async (req: Request, res: Response) => {
     });
   }
   
-  if (!text || !voiceId) {
+  if (!text) {
     return res.status(400).json({ 
       success: false, 
-      error: 'Missing required fields: text and voiceId' 
+      error: 'Missing required field: text' 
     });
   }
   
   try {
-    console.log(`[TTS] Generating speech for ${text.length} characters`);
+    console.log(`[TTS] Generating speech for ${text.length} characters using voice ${effectiveVoiceId}`);
     
-    const resp = await fetch(`${ELEVENLABS_API_BASE}/text-to-speech/${voiceId}/stream`, {
+    const resp = await fetch(`${ELEVENLABS_API_BASE}/text-to-speech/${effectiveVoiceId}/stream`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

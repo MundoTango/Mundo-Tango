@@ -1,8 +1,8 @@
-export async function speak(text: string, voiceId: string): Promise<Blob> {
+export async function speak(text: string, voiceId?: string): Promise<Blob> {
   const resp = await fetch('/api/mr-blue/tts', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ text, voiceId })
+    body: JSON.stringify({ text, ...(voiceId && { voiceId }) })
   });
   
   if (!resp.ok) {
