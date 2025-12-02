@@ -27,11 +27,28 @@
 - [x ] Health Check Endpoint Testing
 - [ ] End-to-End Chat Testing
 
+### Phase 2.5: Validation (Pattern 46 - MANDATORY)
+- [ ] LSP Validation (syntax/type checking)
+- [ ] E2E Tests for Changed Components
+- [ ] Screenshot Evidence (before/after)
+- [ ] Console Log Collection
+- [ ] Security Scan
+- [ ] Confidence Score Calculation
+- [ ] Retry Tracking (1/3, 2/3, 3/3 attempts)
+
 ### Phase 4: Documentation & Deployment
 - [ ] API Documentation
 - [ ] User Guide
 - [ ] Git Commit & Push
 - [ ] Production Deployment
+
+### Phase 3.5: Evidence Collection (Pattern 46 - MANDATORY)
+- [ ] Store Evidence in Database
+- [ ] Upload Screenshots to Cloudinary
+- [ ] Generate Evidence Summary Report
+- [ ] Package: Session ID, Files Changed, Test Results
+- [ ] Package: LSP Errors, Security Scan, Confidence Score
+- [ ] Publish evidence:collected Event
 
 ## Execution Strategy
 1. Complete all backend services first
