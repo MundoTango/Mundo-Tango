@@ -15,6 +15,21 @@ Mundo Tango is a production-ready social platform connecting the global tango co
 - **Validation Loop** - observe → decide → act → validate → adapt (not just automation)
 - **MB.MD Methodology** - Apply v9.9.2 patterns systematically: Research → Plan → Build → Test → Document
 
+## Recent Fixes (Dec 2, 2025)
+
+### Mr Blue 3D Avatar System - NEW (Pattern 44)
+- **Route**: `/mr-blue-avatar-3d` - Interactive 3D avatar page
+- **Backend TTS Proxy**: `server/routes/mrBlueTTS.ts` - Secure ElevenLabs API key handling
+- **Components Created**:
+  - `Avatar3D.tsx` - Three.js canvas with emotion-responsive abstract avatar
+  - `ttsService.ts` - Client TTS service calling backend proxy (not ElevenLabs directly)
+  - `personalityEngine.ts` - Emotion analysis and personality response engine (stub)
+  - `useEmotionDetection.ts` - React hook for emotion state management
+- **Security**: Pattern 25 compliant - API keys stay server-side only
+- **Emotions**: idle, happy, surprised, nodding, thinking, speaking
+- **Dependencies**: @react-three/fiber, @react-three/drei, three (verified installed)
+- **MB.MD Applied**: Full Research → Plan → Build → Test → Document cycle
+
 ## Recent Fixes (Dec 1, 2025)
 
 ### Housing API 500 Error - FIXED
@@ -90,12 +105,13 @@ Production uses GitHub Actions for CI/CD, Prometheus/Grafana with Sentry for mon
 - **Other:** Sentry, Playwright, BullMQ, FFmpeg, fluent-ffmpeg, Wouter, Multer
 
 ## MB.MD Methodology Status
+- **Pattern 44**: Mr Blue 3D Avatar System - IMPLEMENTED (TTS proxy, emotion states, Three.js canvas)
 - **Pattern 43**: Map Coordinate Protocol - IMPLEMENTED (API response format standardization)
 - **Pattern 42**: Drizzle ORM LeftJoin Flat Column Selection - IMPLEMENTED (Comments API fixed)
 - **Pattern 41**: Parallel Agent Execution - IMPLEMENTED (Multi-agent orchestration working)
 - **Pattern 40**: City Imagery Standardization - IMPLEMENTED (10+ components updated)
 - **Pattern 39**: PRD Reverse-Engineering - IN PROGRESS (EventParticipantManager documented)
-- **Current Focus**: E2E testing infrastructure, Input field optimization, Accessibility
+- **Current Focus**: ElevenLabs TTS integration, GLB 3D model support, E2E testing
 
 ## Known Issues & Roadmap
 - Remaining E2E tests for EventParticipantManager search debouncing
