@@ -17,6 +17,20 @@ Mundo Tango is a production-ready social platform connecting the global tango co
 
 ## Recent Fixes (Dec 2, 2025)
 
+### MB.MD Governance Cleanup - COMPLETE (Pattern 45)
+- **Issue**: mb.md contained 3 governance violations (project plans, implementation checklists, PRDs)
+- **Violations Removed**:
+  1. V9.0 Integration Checklist (lines 2314-2384) - project plan with phases
+  2. Facebook Implementation Checklist (lines 2796-2834) - 5-phase project plan
+  3. Memories Feed PRD stub (lines 4255-4286) - PRD in methodology file
+- **Governance Rule Enforced**: MB.MD contains ONLY methodologies (Patterns 1-47+)
+- **Documentation Hierarchy Validated**:
+  - `docs/governance/` - Soul/system prompts
+  - `docs/prds/` - 40+ Product Requirements Documents
+  - `docs/mb-md-plans/` - Implementation checklists (extracted)
+  - `mb.md` - Patterns/methodologies only
+- **MB.MD Applied**: Full governance compliance audit
+
 ### Mr Blue 3D Avatar System - NEW (Pattern 44)
 - **Route**: `/mr-blue-avatar-3d` - Interactive 3D avatar page
 - **Backend TTS Proxy**: `server/routes/mrBlueTTS.ts` - Secure ElevenLabs API key handling
