@@ -15,6 +15,7 @@ import {
   Mail
 } from "lucide-react";
 import { useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 export default function LandingPage() {
   // Set page title
@@ -24,11 +25,11 @@ export default function LandingPage() {
     // Add meta tags
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
-      metaDescription.setAttribute('content', 'Connect with tango dancers worldwide, discover events, find housing, and grow your tango journey. Join 10,000+ dancers in 95 cities.');
+      metaDescription.setAttribute('content', 'Connect with tango dancers worldwide, discover events, find housing, and grow your tango journey. Join thousands of passionate dancers.');
     } else {
       const meta = document.createElement('meta');
       meta.name = 'description';
-      meta.content = 'Connect with tango dancers worldwide, discover events, find housing, and grow your tango journey. Join 10,000+ dancers in 95 cities.';
+      meta.content = 'Connect with tango dancers worldwide, discover events, find housing, and grow your tango journey. Join thousands of passionate dancers.';
       document.head.appendChild(meta);
     }
 
@@ -248,11 +249,22 @@ export default function LandingPage() {
     }
   ];
 
+  // Fetch dynamic stats from API
+  const { data: publicStats } = useQuery<{
+    dancers: string;
+    events: string;
+    cities: number;
+    countries: string;
+  }>({
+    queryKey: ["/api/stats/public"],
+    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+  });
+
   const stats = [
-    { value: "10,000+", label: "Dancers" },
-    { value: "226+", label: "Events/Month" },
-    { value: "95", label: "Cities" },
-    { value: "50+", label: "Countries" }
+    { value: publicStats?.dancers || "1,000+", label: "Dancers" },
+    { value: publicStats?.events || "100+", label: "Events" },
+    { value: publicStats?.cities?.toString() || "50", label: "Cities" },
+    { value: publicStats?.countries || "25+", label: "Countries" }
   ];
 
   return (
@@ -289,7 +301,7 @@ export default function LandingPage() {
                 data-testid="text-hero-subheadline"
               >
                 Connect with the global tango community. Discover events, find dance partners, 
-                and grow your journey with 10,000+ passionate dancers worldwide.
+                and grow your journey with {publicStats?.dancers || "thousands of"} passionate dancers worldwide.
               </motion.p>
 
               {/* CTA Buttons */}
@@ -699,7 +711,7 @@ export default function LandingPage() {
               variants={fadeInUp}
               className="text-white/80 text-sm"
             >
-              Join 10,000+ dancers worldwide
+              Join {publicStats?.dancers || "thousands of"} dancers worldwide
             </motion.p>
           </motion.div>
         </div>

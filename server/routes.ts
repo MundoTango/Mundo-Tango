@@ -471,6 +471,60 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ error: 'Failed to join waitlist' });
     }
   });
+
+  // Public stats endpoint for landing page (no auth required)
+  app.get("/api/stats/public", async (req: Request, res: Response) => {
+    try {
+      const { db } = await import("./db");
+      const { users, events, groups } = await import("@shared/schema");
+      const { count, sql } = await import("drizzle-orm");
+      
+      // Get total users count
+      const totalUsersResult = await db.select({ count: count() }).from(users);
+      const totalUsers = totalUsersResult[0]?.count || 0;
+      
+      // Get total events count
+      const totalEventsResult = await db.select({ count: count() }).from(events);
+      const totalEvents = totalEventsResult[0]?.count || 0;
+      
+      // Get unique cities count
+      const citiesResult = await db
+        .select({ count: sql<number>`COUNT(DISTINCT ${users.city})` })
+        .from(users)
+        .where(sql`${users.city} IS NOT NULL AND ${users.city} != ''`);
+      const totalCities = citiesResult[0]?.count || 0;
+      
+      // Get unique countries count
+      const countriesResult = await db
+        .select({ count: sql<number>`COUNT(DISTINCT ${users.country})` })
+        .from(users)
+        .where(sql`${users.country} IS NOT NULL AND ${users.country} != ''`);
+      const totalCountries = countriesResult[0]?.count || 0;
+      
+      // Format numbers for display
+      const formatNumber = (n: number): string => {
+        if (n >= 10000) return `${Math.floor(n / 1000)}k+`;
+        if (n >= 1000) return `${(n / 1000).toFixed(1)}k+`;
+        return `${n}+`;
+      };
+      
+      res.json({
+        dancers: formatNumber(totalUsers),
+        events: formatNumber(totalEvents),
+        cities: totalCities,
+        countries: `${totalCountries}+`
+      });
+    } catch (error: any) {
+      console.error('[PublicStats] Error:', error);
+      // Return fallback values on error
+      res.json({
+        dancers: "1,000+",
+        events: "100+",
+        cities: 50,
+        countries: "25+"
+      });
+    }
+  });
   
   // ============================================================================
   // CSRF PROTECTION: Verify CSRF tokens on all mutating requests (POST/PUT/DELETE/PATCH)
