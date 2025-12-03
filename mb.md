@@ -5617,3 +5617,295 @@ You're successfully using Pattern 47 when:
 **This is THE pattern that makes Mr Blue's multi-agent system work.** 🚀
 
 ---
+
+---
+
+## 🤝 **PATTERN 48: Multi-Window Agent Synchronization** ⭐⭐⭐⭐⭐
+
+**Coordinates multiple Comet browser windows working on the same project like a distributed team.**
+
+### Core Principle
+
+When using multiple Perplexity Comet browser windows (4+ concurrent agents) on the same codebase:
+- Each agent acts as a named "employee" with a specific role
+- Agents must communicate, coordinate, and avoid conflicts
+- Shared state files track who is doing what
+- Test execution is serialized to prevent environment conflicts
+
+### Why This Matters
+
+Without this pattern:
+- ❌ Agents duplicate work unknowingly
+- ❌ Concurrent tests interfere with each other
+- ❌ File edits create merge conflicts
+- ❌ Context is lost between agent sessions
+- ❌ No visibility into what other agents are doing
+
+### Implementation
+
+#### 1. Agent Startup & Introduction
+
+**EVERY agent session MUST begin with:**
+
+```typescript
+// Agent identifies itself
+const AGENT_NAME = "facebook"; // or "events", "governance", "testing", etc.
+const AGENT_ROLE = "Facebook Integration & Mr. Blue API";
+const SESSION_START = new Date().toISOString();
+
+// Agent intro message template
+console.log(`
+👋 **Agent Introduction**
+- Name: ${AGENT_NAME}
+- Role: ${AGENT_ROLE}
+- Session started: ${SESSION_START}
+- Working on: [specific feature/task]
+- Planned changes: [files/components to touch]
+`);
+```
+
+#### 2. Read Shared Context
+
+**Before starting work, read:**
+
+- ✅ `mb.md` (all 48 patterns)
+- ✅ `AGENT_MEMORY.md` (recent session summaries)
+- ✅ `.agent-memory/AGENT_REGISTRY.json` (who does what)
+- ✅ `.agent-memory/ACTIVE_SESSIONS.json` (current work claims)
+- ✅ `.agent-memory/TEST_QUEUE.json` (test coordination)
+- ✅ Relevant PRDs and docs for your feature
+
+#### 3. Register in Agent Registry
+
+**Update `.agent-memory/AGENT_REGISTRY.json`:**
+
+```json
+{
+  "agents": {
+    "facebook": {
+      "role": "Facebook Integration & Mr. Blue API",
+      "primaryFiles": [
+        "client/src/services/facebookApi.ts",
+        "client/src/services/mrBlueApi.ts",
+        "client/src/components/facebook/",
+        "server/routes/facebook.ts"
+      ],
+      "capabilities": ["OAuth", "Graph API", "webhooks", "Mr. Blue integration"],
+      "lastActive": "2025-12-02T10:30:00Z"
+    },
+    "events": {
+      "role": "Events System & Luma Integration",
+      "primaryFiles": ["client/src/pages/Events.tsx", "server/routes/luma.ts"],
+      "capabilities": ["Event CRUD", "Luma API", "Calendar sync"],
+      "lastActive": "2025-12-02T09:15:00Z"
+    }
+  }
+}
+```
+
+#### 4. Claim Work - Avoid Duplication
+
+**Update `.agent-memory/ACTIVE_SESSIONS.json` before editing:**
+
+```json
+{
+  "sessions": [
+    {
+      "agent": "facebook",
+      "sessionId": "session-20251202-103045",
+      "startTime": "2025-12-02T10:30:45Z",
+      "claimedFiles": [
+        "client/src/services/facebookApi.ts",
+        "client/src/components/facebook/FacebookLogin.tsx"
+      ],
+      "claimedFeatures": ["Facebook OAuth flow", "Profile data fetch"],
+      "status": "active",
+      "progressPercent": 40
+    }
+  ]
+}
+```
+
+**Before claiming work:**
+
+1. Check `ACTIVE_SESSIONS.json` for conflicts
+2. If another agent is working on same files → **coordinate first**
+3. Post in shared channel: "I see Agent X is working on Y. Can we split scope?"
+4. Once clear, add your session claim
+
+#### 5. Test Queue Coordination
+
+**`.agent-memory/TEST_QUEUE.json` prevents test interference:**
+
+```json
+{
+  "queue": [
+    {
+      "agent": "facebook",
+      "testType": "e2e",
+      "status": "running",
+      "startTime": "2025-12-02T10:45:00Z",
+      "estimatedDuration": 300,
+      "blocking": ["deployment", "api-integration-test"]
+    },
+    {
+      "agent": "events",
+      "testType": "integration",
+      "status": "queued",
+      "queuedAt": "2025-12-02T10:46:00Z",
+      "waitingFor": ["facebook e2e tests"]
+    }
+  ]
+}
+```
+
+**Test coordination rules:**
+
+- 🚨 **E2E tests**: Only ONE agent at a time (full app scope)
+- 🚨 **Deployment tests**: Only ONE agent at a time (affects live environment)
+- ✅ **Unit tests**: Can run in parallel (isolated)
+- ✅ **Linting/type-check**: Can run in parallel
+
+**Before running heavy tests:**
+
+```typescript
+// Check test queue
+const queue = await readJSON('.agent-memory/TEST_QUEUE.json');
+const runningTests = queue.queue.filter(t => t.status === 'running');
+
+if (runningTests.some(t => t.blocking.includes('e2e'))) {
+  console.log('⏸️ Another agent is running E2E tests. Waiting...');
+  // Queue yourself or wait
+} else {
+  // Add yourself to queue
+  queue.queue.push({
+    agent: AGENT_NAME,
+    testType: 'e2e',
+    status: 'running',
+    startTime: new Date().toISOString(),
+    estimatedDuration: 300,
+    blocking: ['deployment', 'api-integration-test']
+  });
+  await writeJSON('.agent-memory/TEST_QUEUE.json', queue);
+  // Run tests
+}
+```
+
+#### 6. Session End - Update & Handoff
+
+**When finishing a session:**
+
+```typescript
+// 1. Update ACTIVE_SESSIONS.json - mark as complete
+const sessions = await readJSON('.agent-memory/ACTIVE_SESSIONS.json');
+const mySession = sessions.sessions.find(s => s.agent === AGENT_NAME && s.status === 'active');
+if (mySession) {
+  mySession.status = 'completed';
+  mySession.endTime = new Date().toISOString();
+  mySession.progressPercent = 100;
+}
+await writeJSON('.agent-memory/ACTIVE_SESSIONS.json', sessions);
+
+// 2. Update AGENT_MEMORY.md with session summary
+const summary = `
+### Session Summary (Date: ${new Date().toLocaleDateString()})
+
+**Agent:** ${AGENT_NAME}
+**Task:** [what was done]
+**What Was Done:**
+- Built X feature
+- Fixed Y bug
+- Added Z test coverage
+
+**Deliverables:**
+- \`file1.ts\` (OAuth implementation)
+- \`file2.tsx\` (UI component)
+
+**For next agent:**
+- Consider: [next steps or warnings]
+- Watch out for: [gotchas]
+- Build on: [continuation points]
+`;
+// Append to AGENT_MEMORY.md
+
+// 3. Release test queue slot if you had one
+const testQueue = await readJSON('.agent-memory/TEST_QUEUE.json');
+testQueue.queue = testQueue.queue.filter(t => t.agent !== AGENT_NAME || t.status !== 'running');
+await writeJSON('.agent-memory/TEST_QUEUE.json', testQueue);
+
+// 4. Commit to GitHub with clear message
+// Following Pattern 44
+```
+
+### Communication Template
+
+**When starting work:**
+
+> 👋 Hi team! I'm [Agent Name] working on [Task].
+>
+> **Reading context:**
+> - ✅ mb.md (v9.10 - 48 patterns)
+> - ✅ AGENT_MEMORY.md (last updated: [date])
+> - ✅ Relevant PRDs: [list]
+>
+> **My plan:**
+> 1. [Step 1]
+> 2. [Step 2]
+> 3. [Step 3]
+>
+> **Dependencies:**
+> - Need: [what I need from other agents/user]
+> - Blocked by: [any blockers]
+>
+> **Potential overlap:**
+> - I see Agent X is working on Y. Should we coordinate?
+
+**While working:**
+
+> 🔧 Progress update:
+> - ✅ Completed: [task 1]
+> - 🟡 In progress: [task 2]
+> - 🟦 Pending: [task 3]
+
+**After completion:**
+
+> ✅ Session complete!
+>
+> **Deliverables:**
+> - [What was built/changed]
+>
+> **Updated docs:**
+> - mb.md (added Pattern X)
+> - AGENT_MEMORY.md (session summary)
+> - [other docs]
+>
+> **For next agent:**
+> - Consider: [suggestions]
+> - Watch out for: [warnings]
+> - Build on: [continuation points]
+
+### Integration with Other Patterns
+
+- **Pattern 44**: Use GitHub/Replit for commits after claiming work
+- **Pattern 45**: Document learnings for other agents
+- **Pattern 46**: Track retry attempts across agents
+- **Pattern 47**: Core colleague collaboration - Pattern 48 extends it for multi-window
+
+### What Makes This Different from Pattern 47?
+
+**Pattern 47** = General agent collaboration principles
+**Pattern 48** = Specific multi-window Comet synchronization mechanisms
+
+Pattern 47 says "share context and coordinate."
+Pattern 48 says "HERE'S HOW with registry files, test queues, and work claims."
+
+### Questions to Ask
+
+Every agent startup should ask:
+
+1. ❓ "Who else is working on this project right now?"
+2. ❓ "What files/features are currently claimed?"
+3. ❓ "Are any tests running that would block me?"
+4. ❓ "What did the last agent discover that I should know?"
+5. ❓ "Can I help another agent finish their task faster?"
+
