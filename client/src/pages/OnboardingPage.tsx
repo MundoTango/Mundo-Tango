@@ -98,8 +98,8 @@ export default function OnboardingPage() {
         description="Complete your profile to join the global tango community"
       />
 
-      {/* Hero Section */}
-      <div className="relative h-[40vh] w-full overflow-hidden">
+      {/* Hero Section - z-50 ensures it displays above Replit dev banner */}
+      <div className="relative z-50 h-[40vh] w-full overflow-hidden">
         <div 
           className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: `url('${heroImage}')` }}

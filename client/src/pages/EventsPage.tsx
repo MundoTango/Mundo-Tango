@@ -726,9 +726,38 @@ export default function EventsPage() {
                         )}
                       </>
                     ) : (
-                      <Card>
-                        <CardContent className="py-12 text-center text-muted-foreground">
-                          No events found. Try adjusting your filters or search query.
+                      <Card className="p-8" data-testid="empty-state-events">
+                        <CardContent className="py-12 text-center">
+                          <div className="flex flex-col items-center gap-4">
+                            <div className="p-4 rounded-full bg-muted">
+                              <CalendarIcon className="h-8 w-8 text-muted-foreground" aria-hidden="true" />
+                            </div>
+                            <div className="space-y-2">
+                              <h3 className="text-xl font-semibold">No Events Found</h3>
+                              <p className="text-muted-foreground max-w-sm mx-auto">
+                                {activeTab === "my-events" 
+                                  ? "You haven't RSVP'd to any events yet. Explore upcoming events to find milongas near you!"
+                                  : activeTab === "upcoming"
+                                  ? "No upcoming events in your area. Try changing your location or check back later."
+                                  : "Try adjusting your filters or search query to find more events."}
+                              </p>
+                            </div>
+                            <div className="flex gap-3 mt-4">
+                              {activeFilterCount > 0 && (
+                                <Button 
+                                  variant="outline" 
+                                  onClick={() => { setFilters({}); setPage(1); }}
+                                  data-testid="button-clear-filters-empty"
+                                >
+                                  Clear Filters
+                                </Button>
+                              )}
+                              <Button onClick={() => navigate("/events/create")} data-testid="button-create-event-empty">
+                                <Plus className="h-4 w-4 mr-2" />
+                                Create Event
+                              </Button>
+                            </div>
+                          </div>
                         </CardContent>
                       </Card>
                     )}
