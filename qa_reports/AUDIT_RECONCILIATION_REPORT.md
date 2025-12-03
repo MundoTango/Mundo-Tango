@@ -1,123 +1,243 @@
-# MB.MD Audit Reconciliation Report
+# MB.MD Audit Reconciliation Report v2.0
 
-**Methodology Applied:** Pattern 39 (PRD Reverse-Engineering) + Pattern 41 (Parallel Agent Execution)
+**Methodology Applied:** MB.MD v9.9.2 (Research → Plan → Build → E2E Test → Document)
 **Date:** December 3, 2025
-**Sources Cross-Referenced:**
-- `qa_reports/admin_audit.md` - Admin-level QA findings
-- `qa_reports/complete_audit.md` - Standard user QA findings  
-- `qa_reports/mb_orchestration_plan.md` - Orchestration plan
-- `replit.md` - Already-fixed issues (Dec 1-3, 2025)
-- Codebase verification via grep/read
+**Pattern Used:** Pattern 39 (PRD Reverse-Engineering) + Pattern 41 (Parallel Execution)
 
 ---
 
-## Research Phase Results
+## Total Issue Count
 
-### Already Fixed (Verified in Code)
-
-| Issue | Audit Source | Status | Evidence |
-|-------|-------------|--------|----------|
-| Friends List 404 | complete_audit.md #6 | ✅ FIXED | `FriendsListPage.tsx` exists (669 lines) |
-| City Imagery Inconsistency | admin_audit.md | ✅ FIXED | Pattern 40 implemented, `cityImageMap.ts` |
-| Map Pin Wrong Location | complete_audit.md #3 | ✅ FIXED | Pattern 43, `map-routes.ts` fixed |
-| SelectItem Empty Value | admin_audit.md | ✅ FIXED | HousingMarketplacePage fixed |
-| Housing API 500 Error | admin_audit.md | ✅ FIXED | Missing columns added via SQL |
-| Search Debouncing | admin_audit.md | ✅ FIXED | EventParticipantManager optimized |
-| Visual Editor Bugs | qa_reports | ✅ FIXED | QA Bug #1 & #2 in VisualEditorPage.tsx |
-| Confirmation Modals | admin_audit.md | ✅ EXISTS | `alert-dialog.tsx` component available |
-| Empty State Components | complete_audit.md | ✅ EXISTS | `LoadingStates.tsx` has EmptyState |
-| Skeleton Loaders | complete_audit.md | ✅ EXISTS | `skeleton.tsx` component available |
-
-### Outstanding Issues (P0 - Critical)
-
-| Issue | Audit Source | Priority | Action Required |
-|-------|-------------|----------|-----------------|
-| Login error feedback missing | complete_audit.md #1 | P0 | Add inline/toast error on failed login |
-| Onboarding city selection error | complete_audit.md #1 | P0 | Fix submission logic, add error messages |
-| Save/Cancel workflow clarity | admin_audit.md | P0 | Ensure unsaved changes warning |
-| Post/Event edit propagation | admin_audit.md | P0 | Invalidate cache after mutations |
-
-### Outstanding Issues (P1 - Important)
-
-| Issue | Audit Source | Priority | Action Required |
-|-------|-------------|----------|-----------------|
-| Empty state guidance for new users | complete_audit.md #1 | P1 | Apply EmptyState component to feed |
-| No guidance when profile sections empty | complete_audit.md #2 | P1 | Add prompts in profile tabs |
-| Hidden Gems/Cross-post tooltips | admin_audit.md | P1 | Add tooltips explaining features |
-| PRO pages grammar ("Become a Teachers") | complete_audit.md #10 | P1 | Fix to "Become a Teacher" |
-| World map layer toggles | complete_audit.md #3 | P1 | Add filter buttons for datasets |
-| Zero counts visual distinction | complete_audit.md #3 | P1 | Style zero vs non-zero differently |
-| ARIA labels missing | complete_audit.md | P1 | Add to tabs and buttons |
-
-### Outstanding Issues (P2 - Enhancement)
-
-| Issue | Audit Source | Priority | Action Required |
-|-------|-------------|----------|-----------------|
-| Admin dashboard for user management | admin_audit.md | P2 | Build user management page |
-| Moderation queues | admin_audit.md | P2 | Add reported content queue |
-| Event analytics for admin | admin_audit.md | P2 | Add event engagement metrics |
-| Audit logs for admin actions | admin_audit.md | P2 | Log admin activities |
-| Messages channel connection onboarding | complete_audit.md #8 | P2 | OAuth flows for channels |
-| Leaderboard points explanation | complete_audit.md #9 | P2 | Add tooltips for metrics |
+| Source | Issues Found |
+|--------|-------------|
+| admin_audit.md | 20 issues |
+| complete_audit.md | 50 issues |
+| Cross-Page Architecture | 5 issues |
+| Technical Recommendations | 10 items |
+| **TOTAL** | **85 issues** |
 
 ---
 
-## Execution Plan (MB.MD Phased)
+## Status Summary
 
-### Phase 1: P0 Critical Fixes (Immediate)
-
-**Tasks:**
-1. Add login error feedback (toast + inline)
-2. Fix onboarding city selection error handling
-3. Implement unsaved changes warning for editors
-4. Add cache invalidation for post/event mutations
-
-**Validation:** E2E tests for login flow, onboarding flow
-
-### Phase 2: P1 UX Consistency (This Week)
-
-**Tasks:**
-1. Apply EmptyState to feed, profile tabs, PRO pages
-2. Add tooltips to Hidden Gems, Cross-post features
-3. Fix "Become a Teachers" → "Become a Teacher"
-4. Add ARIA labels to interactive elements
-5. Style zero counts distinctively on world map
-
-**Validation:** Pattern 32 (Cross-Page Layout Verification)
-
-### Phase 3: P2 Admin Enhancements (Next Sprint)
-
-**Tasks:**
-1. Build admin user management dashboard
-2. Add moderation queue for reported content
-3. Implement event analytics dashboard
-4. Add admin action audit logging
-5. Messages channel OAuth integration
-
-**Validation:** Admin Flow QA (AF-7)
+| Status | Count | Percentage |
+|--------|-------|------------|
+| Already Fixed | 12 | 14% |
+| P0 Critical | 8 | 9% |
+| P1 Important | 25 | 29% |
+| P2 Enhancement | 40 | 48% |
 
 ---
 
-## Components Available for Reuse
+## Already Fixed (12 issues)
 
-| Component | Location | Usage |
-|-----------|----------|-------|
-| EmptyState | `LoadingStates.tsx` | Feed, profile, PRO pages |
-| Skeleton | `ui/skeleton.tsx` | Async loading states |
-| AlertDialog | `ui/alert-dialog.tsx` | Confirmation modals |
-| Toast | `hooks/use-toast.ts` | Error feedback |
-| Tooltip | `ui/tooltip.tsx` | Feature explanations |
+| # | Issue | Source | Evidence |
+|---|-------|--------|----------|
+| 1 | Friends List 404 | complete_audit #6 | `FriendsListPage.tsx` (669 lines) |
+| 2 | City Imagery Inconsistent | admin_audit | Pattern 40, `cityImageMap.ts` |
+| 3 | Map Pin Wrong Location | complete_audit #3 | Pattern 43, `map-routes.ts` |
+| 4 | SelectItem Empty Value | admin_audit | HousingMarketplacePage fixed |
+| 5 | Housing API 500 | admin_audit | SQL columns added |
+| 6 | Search No Debouncing | admin_audit | EventParticipantManager |
+| 7 | Visual Editor 5x Greeting | QA Report | Line 437 VisualEditorPage.tsx |
+| 8 | Visual Editor Empty Prompts | QA Report | Lines 267-271 |
+| 9 | AlertDialog Component | admin_audit | `alert-dialog.tsx` exists |
+| 10 | EmptyState Component | complete_audit | `LoadingStates.tsx` exists |
+| 11 | Skeleton Component | complete_audit | `skeleton.tsx` exists |
+| 12 | Git Merge Conflict | Build System | vite.config.ts fixed |
 
 ---
 
-## Summary
+## Phase 1: P0 Critical (8 issues) - IMMEDIATE
 
-- **Total Issues in Audits:** 32
-- **Already Fixed:** 10 (31%)
-- **P0 Outstanding:** 4 (12.5%)
-- **P1 Outstanding:** 7 (22%)
-- **P2 Outstanding:** 11 (34.5%)
+| # | Issue | Source | File to Fix |
+|---|-------|--------|-------------|
+| 1 | Login error feedback missing | complete_audit #1 | LoginPage.tsx |
+| 2 | Onboarding city selection error | complete_audit #1 | OnboardingFlow.tsx |
+| 3 | Replit banner overlaps onboarding | complete_audit #1 | CSS z-index fix |
+| 4 | Save/cancel workflow clarity | admin_audit | Post editor components |
+| 5 | Delete confirmation with undo | admin_audit | PostActions.tsx |
+| 6 | Post updates propagate to feed | admin_audit | Cache invalidation |
+| 7 | Event changes propagate | admin_audit | Event mutation cache |
+| 8 | Event edit validation | admin_audit | Event form schema |
 
-**Recommendation:** Execute Phase 1 P0 fixes first, then Phase 2 P1 for user experience, then Phase 3 P2 for admin features.
+---
+
+## Phase 2: P1 Important (25 issues) - THIS WEEK
+
+### Empty State Guidance (8 issues)
+- Feed empty state for new users
+- Profile sections empty prompts
+- Events empty state messaging
+- Groups My Groups empty prompts
+- Recommendations empty state
+- Messages no channels message
+- Leaderboard new user message
+- PRO pages sample listings
+
+### Tooltips & Documentation (4 issues)
+- Hidden Gems tooltip
+- Cross-post tooltip
+- Go Live tooltip
+- Leaderboard metrics tooltips
+
+### Grammar & Text (1 issue)
+- "Become a Teachers" → "Become a Teacher"
+
+### Accessibility (4 issues)
+- ARIA labels for tabs
+- ARIA labels for buttons
+- Map keyboard navigation
+- Messages accessibility labels
+
+### UI Consistency (8 issues)
+- Map layer toggles
+- Zero vs non-zero distinction
+- Profile stats cross-page links
+- Events cards link to hosts
+- Teachers cross-page links
+- DJs cross-page links
+- Photographers cross-links
+- Shared component standardization
+
+---
+
+## Phase 3: P2 Enhancement (40 issues) - NEXT SPRINT
+
+### Admin Features (10 issues)
+- Admin user management dashboard
+- Moderation queues
+- Event analytics
+- Audit logs
+- Role management controls
+- Settings pages
+- User role immediate effect
+- Content flagging system
+- Group moderation tools
+- Membership approval filters
+
+### Performance (6 issues)
+- Map clustering/lazy loading
+- Events skeleton loaders
+- Events pagination
+- Groups lazy loading
+- Profile tabs async loading
+- Cross-page data consistency
+
+### Filters & Sorting (8 issues)
+- Events additional filters
+- Groups filters and sort
+- Leaderboard filters
+- Teachers style/language filters
+- DJs genre/instrument filters
+- Photographers service filters
+- Recommendations personalization
+- Messages search improvements
+
+### Integration (10 issues)
+- Messages OAuth channels
+- Messages sync notifications
+- Friends feed integration
+- Recommendations algorithm
+- DJs join flow
+- Photographers profile update
+- Event-host profile links
+- Group data sync
+- Onboarding persistence
+- Real-time notifications
+
+### Documentation (6 issues)
+- PRO roles explanation
+- How features work guides
+- Points earning explanation
+- Hiring photographers benefits
+- Community engagement docs
+- Technical recommendations
+
+---
+
+## MB.MD Execution Plan
+
+### Phase 1 Execution (P0 - Now)
+```
+Research → Locate files for each P0 issue
+Plan → Identify minimal fix approach
+Build → Implement fixes in parallel where possible
+E2E Test → Validate login, onboarding, edit flows
+Document → Update this report with fixes
+```
+
+### Phase 2 Execution (P1 - This Week)
+```
+Research → Audit empty state patterns
+Plan → Apply EmptyState component systematically
+Build → Add tooltips, fix grammar, ARIA labels
+E2E Test → Cross-page consistency checks
+Document → Update replit.md with patterns
+```
+
+### Phase 3 Execution (P2 - Next Sprint)
+```
+Research → Admin dashboard requirements
+Plan → Break into sub-tasks per feature
+Build → Implement in priority order
+E2E Test → Admin flow tests
+Document → Create admin docs
+```
+
+---
+
+## Validation Criteria
+
+### Phase 1 Complete When:
+- [ ] Login shows error toast on failure
+- [ ] Onboarding city selection works without error
+- [ ] Banner does not overlap onboarding
+- [ ] Edit flows have save/cancel warning
+- [ ] Delete shows confirmation with undo
+- [ ] Post edits reflect in feed immediately
+- [ ] Event edits reflect in all views
+- [ ] Event dates validate properly
+
+### Phase 2 Complete When:
+- [ ] All empty states show helpful guidance
+- [ ] All advanced features have tooltips
+- [ ] Grammar errors fixed
+- [ ] ARIA labels present on interactive elements
+- [ ] UI consistent across pages
+
+### Phase 3 Complete When:
+- [ ] Admin dashboard functional
+- [ ] Moderation tools available
+- [ ] All filters implemented
+- [ ] OAuth integrations working
+- [ ] Performance optimizations complete
+
+---
+
+## Files to Modify
+
+### Phase 1 (P0)
+- `client/src/pages/LoginPage.tsx`
+- `client/src/components/onboarding/*.tsx`
+- `client/src/components/feed/PostActions.tsx`
+- `client/src/components/events/EventForm.tsx`
+- `server/routes/posts.ts` (cache invalidation)
+- `server/routes/events.ts` (cache invalidation)
+
+### Phase 2 (P1)
+- `client/src/pages/FeedPage.tsx`
+- `client/src/pages/ProfilePage.tsx`
+- `client/src/pages/EventsPage.tsx`
+- `client/src/pages/GroupsPage.tsx`
+- `client/src/pages/pro/*.tsx`
+- `client/src/components/MemoryComposer.tsx`
+
+---
+
+**Total Work Estimate:**
+- Phase 1: 4-6 hours
+- Phase 2: 8-12 hours
+- Phase 3: 20-30 hours
 
 **Pattern Applied:** Research → Plan → Build → E2E Test → Document (MB.MD v9.9.2)
