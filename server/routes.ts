@@ -174,6 +174,7 @@ import adsRoutes from "./routes/ads-routes";
 import revenueRoutes from "./routes/revenue-routes";
 import volunteerTestingRoutes from "./routes/volunteerTesting";
 import volunteerTasksRoutes from "./routes/volunteerTasks";
+import talentPipelineRoutes from "./routes/talentPipeline";
 import gamificationRoutes from "./routes/gamification";
 import { registerLearningPathwaysRoutes } from "./routes/learningPathways-routes";
 import systemPromptsRoutes from "./routes/systemPrompts";
@@ -555,6 +556,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Volunteer Task Management - Plan Items, Work Logs, Stats
   app.use("/api/volunteer", volunteerTasksRoutes);
+  
+  // Talent Pipeline Management - Candidate tracking and approvals
+  app.use("/api/talent-pipeline", talentPipelineRoutes);
   
   // TRACK 8: Gamification System - Points, Badges, Leaderboard, Progressive Autonomy
   app.use("/api/gamification", gamificationRoutes);
