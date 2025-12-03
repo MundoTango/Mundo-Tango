@@ -49,6 +49,12 @@ import MarketingPrototypeOcean from "@/pages/MarketingPrototypeOcean";
 import ForDancersPage from "@/pages/marketing/ForDancersPage";
 import ForTeachersPage from "@/pages/marketing/ForTeachersPage";
 import ForOrganizersPage from "@/pages/marketing/ForOrganizersPage";
+import SupportPage from "@/pages/marketing/SupportPage";
+import SupportersPage from "@/pages/marketing/SupportersPage";
+import VolunteerPage from "@/pages/marketing/VolunteerPage";
+import MrBluePage from "@/pages/marketing/MrBluePage";
+import AmbassadorsPage from "@/pages/marketing/AmbassadorsPage";
+import OpenSourcePage from "@/pages/marketing/OpenSourcePage";
 import FeedPrototypePage from "@/pages/FeedPrototypePage";
 import GroupsPrototypePage from "@/pages/GroupsPrototypePage";
 import CommunityPrototypePage from "@/pages/CommunityPrototypePage";
@@ -738,6 +744,12 @@ function Router() {
       <Route path="/for-dancers" component={ForDancersPage} />
       <Route path="/for-teachers" component={ForTeachersPage} />
       <Route path="/for-organizers" component={ForOrganizersPage} />
+      <Route path="/support" component={SupportPage} />
+      <Route path="/supporters" component={SupportersPage} />
+      <Route path="/volunteer" component={VolunteerPage} />
+      <Route path="/mr-blue" component={MrBluePage} />
+      <Route path="/ambassadors" component={AmbassadorsPage} />
+      <Route path="/open-source" component={OpenSourcePage} />
       <Route path="/feed-prototype" component={FeedPrototypePage} />
       <Route path="/groups-prototype" component={GroupsPrototypePage} />
       <Route path="/community-prototype" component={CommunityPrototypePage} />
