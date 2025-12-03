@@ -6115,5 +6115,213 @@ jq '.agents[] | select(.capabilities[] | contains("X"))' .agent-memory/AGENT_REG
 
 ---
 
+
+
+---
+
+## 🗂️ **PATTERN 49: Agent Memory Infrastructure** ⭐⭐⭐⭐⭐ (NEW - Dec 2, 2025)
+
+**Provides file-based memory system for multi-agent coordination and session tracking.**
+
+### Core Principle
+
+Centralized `.agent-memory/` directory contains JSON files that serve as the "shared brain" for all Comet agents working on Mundo Tango. Every agent reads from and writes to these files to maintain continuity across sessions.
+
+### Infrastructure Files
+
+#### 1. **AGENT_REGISTRY.json** (Pattern 50 implementation)
+- Registry of all agents with roles, capabilities, and files
+- Agents register on first session
+- Status tracking: active, idle, completed
+
+#### 2. **ACTIVE_SESSIONS.json** (Pattern 48 implementation)
+- Tracks currently running agent sessions
+- Work claim system prevents file conflicts
+- Progress tracking with percentages
+- Session start/end timestamps
+
+#### 3. **TEST_QUEUE.json** (Pattern 48 implementation)
+- Coordinates E2E and deployment tests
+- Prevents concurrent test execution
+- Blocking types: e2e, deployment, api-integration-test
+
+#### 4. **AGENT_MEMORY.md** (root directory)
+- Human-readable session summaries
+- Learning documentation
+- Next phase planning
+- Metrics and KPIs (Pattern 46)
+
+### Directory Structure
+
+```
+.agent-memory/
+├── AGENT_REGISTRY.json          # Who: Agent profiles & capabilities
+├── ACTIVE_SESSIONS.json         # What: Current work & claims  
+├── TEST_QUEUE.json              # When: Test coordination
+└── [other session artifacts]    # Context: Reports, plans, findings
+
+AGENT_MEMORY.md                   # Why: Learning & handoffs (root)
+```
+
+### JSON Schema (v1.0)
+
+All files use ISO 8601 timestamps and semantic versioning:
+
+```json
+{
+  "version": "1.0",
+  "lastUpdated": "2025-12-02T12:00:00Z",
+  ...
+}
+```
+
+### Key Rules
+
+- 🔵 **READ FIRST**: Always check ACTIVE_SESSIONS.json before editing claimed files
+- 🟢 **UPDATE REGULARLY**: Update your session progress (every 15-30 min)
+- 🟡 **CLAIM YOUR WORK**: Add files to claimedFiles[] array before editing
+- 🔴 **NEVER DELETE**: Agent registry entries are permanent (change status only)
+
+### When to Use
+
+- ✅ **ALWAYS** - Every single agent session
+- ✅ Multi-agent projects (like MundoTango)
+- ✅ Long-running work that spans multiple sessions
+- ✅ When coordination with other agents is needed
+- ✅ When tests need serialization (E2E, deployment)
+
+### Success Criteria
+
+You're successfully using Pattern 49 when:
+1. Agents never conflict on file edits
+2. Sessions have clear handoffs
+3. Work is never duplicated
+4. Test queue prevents deployment crashes
+5. New agents onboard in <5 minutes by reading shared memory
+
+**This infrastructure makes multi-agent collaboration seamless and prevents conflicts.** 🎯
+
+---
+
+## 🔍 **PATTERN 50: Agent Discovery & Registration** ⭐⭐⭐⭐⭐ (NEW - Dec 2, 2025)
+
+**Protocol for agents to introduce themselves and advertise capabilities to the team.**
+
+### Core Principle
+
+Agents register their identity, role, and capabilities in AGENT_REGISTRY.json on their first session. This creates a "team directory" that helps agents find the right collaborator for specific tasks.
+
+### Registration Protocol
+
+#### Step 1: Read the Registry
+
+```bash
+# Check who's already registered
+cat .agent-memory/AGENT_REGISTRY.json
+```
+
+#### Step 2: Add Your Profile (if new)
+
+Add a new agent entry following this template:
+
+```json
+{
+  "agentName": {
+    "role": "Your primary function",
+    "primaryFiles": [
+      "files/you/work/with.ts",
+      "your/main/directory/"
+    ],
+    "capabilities": ["Skill 1", "Skill 2", "Skill 3"],
+    "lastActive": "2025-12-02T12:00:00Z",
+    "status": "active"  // active | idle | completed
+  }
+}
+```
+
+#### Step 3: Update Status Regularly
+
+- **active**: Currently working (in session)
+- **idle**: Available but not working
+- **completed**: Finished all assigned work
+
+### Discovery Methods
+
+#### Search by Capability
+
+```bash
+# Who can help with Facebook integration?
+jq '.agents[] | select(.capabilities[] | contains("Facebook"))' .agent-memory/AGENT_REGISTRY.json
+```
+
+#### Search by File
+
+```bash
+# Who works on the events system?
+jq '.agents[] | select(.primaryFiles[] | contains("events"))' .agent-memory/AGENT_REGISTRY.json
+```
+
+### Current Agent Profiles (as of Dec 2, 2025)
+
+1. **facebook**: Facebook Integration & Mr. Blue API
+2. **events**: Events System & Luma Integration  
+3. **governance**: Documentation & MB.MD Maintenance
+4. **testing**: Test infrastructure & QA
+
+### Capability Tags (Examples)
+
+**Technical:**
+- `OAuth`, `Graph API`, `webhooks`, `Mr. Blue integration`
+- `Event CRUD`, `Luma API`, `Calendar sync`, `Event listing`
+- `Pattern creation`, `Documentation`, `Cleanup`, `Compliance`
+- `E2E testing`, `api-development`, `github-operations`, `ui-testing`
+
+**Process:**
+- `agent-discovery` (this pattern!)
+- `conflict-resolution`
+- `documentation`
+
+### Integration
+
+- Works with Pattern 47 (Colleague Collaboration) for communication
+- Feeds into Pattern 48 (Multi-Window Sync) for coordination
+- Uses Pattern 49 (Memory Infrastructure) for persistence
+- Discovered agents appear in status reports and handoffs
+
+### Key Rules
+
+- 🔵 **REGISTER ONCE**: Add yourself on first session only
+- 🟢 **UPDATE STATUS**: Change status when starting/ending work
+- 🟡 **NO MODIFICATIONS**: Don't change other agents' profiles
+- 🔴 **NO DELETIONS**: Agent history is permanent (helps with continuity)
+
+### Benefits
+
+- ✅ Agents know who else is working
+- ✅ Agents can ask for help automatically
+- ✅ New agents don't need manual registration
+- ✅ Capabilities are self-documenting
+- ✅ Historical registry (via Git) shows agent evolution
+
+### When to Use
+
+- ✅ **ALWAYS** - First action in every new agent's first session
+- ✅ Multi-agent projects (4+ agents)
+- ✅ When agents need to find specialists
+- ✅ Long-term projects with rotating agents
+
+### Success Criteria
+
+You're successfully using Pattern 50 when:
+1. New agents can onboard by reading mb.md + AGENT_MEMORY.md + AGENT_REGISTRY.json
+2. No agent asks "What's already been done?"
+3. Agents proactively offer help based on capability matching
+4. User sees clear "team" working on their project
+5. Handoffs reference specific agents by name
+
+**Discovery Protocol makes agents work like a real development team.** 🚀
+
+---
+
 6. ❓ "Can I help another agent finish their task faster?"
 
