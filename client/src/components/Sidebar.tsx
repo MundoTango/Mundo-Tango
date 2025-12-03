@@ -257,6 +257,8 @@ export default function Sidebar({ isOpen: externalIsOpen, setIsOpen: externalSet
           borderColor: 'rgba(64, 224, 208, 0.2)',
         }}
         data-testid="sidebar"
+        role="navigation"
+        aria-label="Main navigation"
       >
         {/* Scrollable content */}
         <div className="flex-1 overflow-y-auto px-3 py-4 space-y-4">

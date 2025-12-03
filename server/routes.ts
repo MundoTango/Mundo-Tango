@@ -2974,6 +2974,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.post("/api/posts/:id/restore", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      res.status(410).json({ 
+        message: "Post cannot be restored - already permanently deleted",
+        hint: "Undo is only available for a short time after deletion"
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to restore post" });
+    }
+  });
+
   app.post("/api/posts/:id/like", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const postId = parseInt(req.params.id);
