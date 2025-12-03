@@ -193,25 +193,29 @@ export default function LandingPage() {
       title: "Global Tango Map",
       description: "Find dancers in 95+ cities",
       gradient: "from-teal-500 to-cyan-600",
-      icon: MapPin
+      icon: MapPin,
+      image: "/demos/tango-map.png"
     },
     {
       title: "Event Discovery",
       description: "Never miss a milonga",
       gradient: "from-purple-500 to-indigo-600",
-      icon: Calendar
+      icon: Calendar,
+      image: "/demos/events-discovery.png"
     },
     {
       title: "Mr. Blue AI",
       description: "Your personal guide",
       gradient: "from-blue-500 to-cyan-500",
-      icon: Bot
+      icon: Bot,
+      image: "/demos/mr-blue-chat.png"
     },
     {
       title: "Your Profile",
       description: "Showcase your journey",
       gradient: "from-rose-500 to-pink-600",
-      icon: Users
+      icon: Users,
+      image: "/demos/profile-view.png"
     }
   ];
 
@@ -563,15 +567,24 @@ export default function LandingPage() {
                 return (
                   <motion.div key={index} variants={fadeInUp}>
                     <Card className="h-full overflow-hidden hover-elevate" data-testid={`screenshot-${index}`}>
-                      <div className={`h-48 bg-gradient-to-br ${screenshot.gradient} flex items-center justify-center relative overflow-hidden`}>
-                        <div className="absolute inset-0 bg-black/10" />
-                        <div className="relative z-10 text-white text-center p-6">
-                          <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                            <IconComponent className="h-8 w-8" />
+                      <div className={`h-48 bg-gradient-to-br ${screenshot.gradient} relative overflow-hidden`}>
+                        {screenshot.image && (
+                          <img 
+                            src={screenshot.image} 
+                            alt={screenshot.title}
+                            className="absolute inset-0 w-full h-full object-cover object-top"
+                            loading="lazy"
+                          />
+                        )}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                        <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+                          <div className="flex items-center gap-2">
+                            <div className="w-8 h-8 rounded-lg bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                              <IconComponent className="h-4 w-4" />
+                            </div>
+                            <span className="text-sm font-medium">{screenshot.title}</span>
                           </div>
-                          <div className="text-sm font-medium opacity-90">{screenshot.title}</div>
                         </div>
-                        <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-black/20 to-transparent" />
                       </div>
                       <CardContent className="pt-4">
                         <h3 className="font-semibold text-lg">{screenshot.title}</h3>
