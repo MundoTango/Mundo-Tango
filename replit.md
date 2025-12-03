@@ -17,6 +17,31 @@ Mundo Tango is a production-ready social platform connecting the global tango co
 
 ## Recent Fixes (Dec 3, 2025)
 
+### Volunteer Task System & LandingPage Fix - COMPLETE (Pattern 49)
+- **Methodology**: MB.MD 5-phase cycle (Research → Plan → Build → Test → Document)
+- **Plan Schema Tables Added** (`shared/schema.ts`):
+  - `planItems` - Task items with title, description, status, priority, dates, hours
+  - `planLinks` - Dependencies between tasks (blocks, enables, etc.)
+  - `workLogs` - Time tracking for volunteer work hours
+  - Insert/select schemas and types exported
+- **MyTasksPage Created** (`client/src/pages/MyTasksPage.tsx`):
+  - Volunteer task dashboard with stats (total tasks, completed, hours logged, streak)
+  - Task list with status filters (Active, All, Completed)
+  - Status quick actions (Start, Complete, Blocked, Log Time)
+  - Recent activity sidebar with work log history
+  - Tips for success section for volunteer guidance
+- **Volunteer Tasks API** (`server/routes/volunteerTasks.ts`):
+  - `GET /api/volunteer/my-tasks` - Get tasks assigned to user
+  - `GET /api/volunteer/work-logs` - Get user's work log history
+  - `GET /api/volunteer/stats` - Get aggregated stats (tasks, hours, completion rate)
+  - `PATCH /api/volunteer/tasks/:id/status` - Update task status
+  - `POST /api/volunteer/tasks` - Create new task
+  - `POST /api/volunteer/work-logs` - Log work hours
+- **LandingPage DOM Nesting Fixed**:
+  - Issue: `<Link href="..."><a>...</a></Link>` caused nested anchor tags warning
+  - Fix: Changed to `<Link href="..." className="...">text</Link>` (11 footer links)
+- **Route Registered**: `/my-tasks` in App.tsx with lazy loading
+
 ### Audit Reconciliation Phase 2 - COMPLETE (Pattern 47)
 - **Methodology**: MB.MD 5-phase cycle (Research → Plan → Build → Test → Document)
 - **P0 Fixes Verified (8 items)**:
