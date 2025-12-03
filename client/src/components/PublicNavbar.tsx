@@ -1,6 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Moon, Sun, Globe, ChevronDown, Users, GraduationCap, CalendarCheck, Heart, Bot, Flag, HandHeart, Code, Play } from "lucide-react";
+import { Moon, Sun, Globe, ChevronDown, Users, GraduationCap, CalendarCheck, Heart, Bot, Flag, HandHeart, Code } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
@@ -11,7 +11,6 @@ export function PublicNavbar() {
   const navItems = [
     { label: "Home", path: "/" },
     { label: "About", path: "/about" },
-    { label: "Demos", path: "/demos" },
     { label: "Pricing", path: "/pricing" },
     { label: "FAQ", path: "/faq" },
     { label: "Contact", path: "/contact" }

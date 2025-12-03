@@ -724,7 +724,6 @@ export default function LandingPage() {
             <div>
               <h3 className="font-semibold mb-4">Resources</h3>
               <ul className="space-y-2 text-sm">
-                <li><Link href="/demos" className="text-muted-foreground hover:text-foreground">Platform Demos</Link></li>
                 <li><Link href="/mr-blue" className="text-muted-foreground hover:text-foreground">Mr. Blue AI</Link></li>
                 <li><Link href="/help" className="text-muted-foreground hover:text-foreground">Help Center</Link></li>
                 <li><Link href="/faq" className="text-muted-foreground hover:text-foreground">FAQ</Link></li>

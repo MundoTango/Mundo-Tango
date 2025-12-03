@@ -383,42 +383,29 @@ export function DemoModal({ open, onOpenChange }: DemoModalProps) {
               </motion.div>
             </AnimatePresence>
 
-            <div className="space-y-3 mt-4">
-              <Link href="/demos" className="block">
+            <div className="flex gap-2 mt-4">
+              <Link href="/register" className="flex-1">
                 <Button 
                   className="w-full ocean-gradient text-white" 
                   size="lg"
                   onClick={() => onOpenChange(false)}
-                  data-testid="button-explore-demos"
+                  data-testid="button-start-trial-modal"
                 >
-                  Try Interactive Demos
+                  Start 7-Day Trial
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
-              <div className="flex gap-2">
-                <Link href="/register" className="flex-1">
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="w-full"
-                    onClick={() => onOpenChange(false)}
-                    data-testid="button-start-trial-modal"
-                  >
-                    Start 7-Day Trial
-                  </Button>
-                </Link>
-                <Link href="/pricing" className="flex-1">
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    className="w-full"
-                    onClick={() => onOpenChange(false)}
-                    data-testid="button-view-pricing-modal"
-                  >
-                    View Pricing
-                  </Button>
-                </Link>
-              </div>
+              <Link href="/pricing" className="flex-1">
+                <Button 
+                  variant="outline" 
+                  size="lg" 
+                  className="w-full"
+                  onClick={() => onOpenChange(false)}
+                  data-testid="button-view-pricing-modal"
+                >
+                  View Pricing
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
