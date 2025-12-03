@@ -1,8 +1,9 @@
 /**
  * Mundo Tango Demo Recording Script
- * Uses Playwright to capture platform screenshots
+ * Uses Playwright to capture platform screenshots for demo assets
  * 
  * MB.MD Pattern 41: Parallel Execution
+ * MB.MD Pattern 38: E2E Testing Infrastructure
  * 
  * Usage: npx tsx scripts/record-demo.ts
  */
@@ -14,100 +15,148 @@ import * as path from 'path';
 const BASE_URL = process.env.BASE_URL || 'http://localhost:5000';
 const OUTPUT_DIR = path.join(process.cwd(), 'public', 'demos');
 
-interface CaptureConfig {
+interface PageCapture {
   name: string;
   path: string;
+  waitFor?: string;
   description: string;
 }
 
-const SCREENSHOTS: CaptureConfig[] = [
+const DEMO_PAGES: PageCapture[] = [
   {
     name: 'tango-map',
-    path: '/landing',
-    description: 'Landing Page - Global Tango Community',
+    path: '/community-map',
+    waitFor: '[data-testid="community-map"]',
+    description: 'Global Tango Map - Find dancers worldwide',
   },
   {
     name: 'events-discovery',
-    path: '/landing',
-    description: 'Events Discovery',
+    path: '/events',
+    waitFor: '[data-testid="events-page"]',
+    description: 'Events Discovery - Milongas and festivals',
   },
   {
     name: 'mr-blue-chat',
-    path: '/landing',
-    description: 'Mr Blue AI Chat Interface',
+    path: '/mr-blue',
+    waitFor: '[data-testid="mr-blue-page"]',
+    description: 'Mr Blue AI - Your tango companion',
   },
   {
     name: 'profile-view',
-    path: '/landing',
-    description: 'Profile View',
+    path: '/profile/1',
+    waitFor: '[data-testid="profile-page"]',
+    description: 'Profile - Showcase your tango journey',
   },
 ];
 
+async function capturePageScreenshot(
+  browser: any, 
+  page: PageCapture
+): Promise<boolean> {
+  const context = await browser.newContext({
+    viewport: { width: 1280, height: 720 },
+  });
+  
+  try {
+    const browserPage = await context.newPage();
+    
+    console.log(`Navigating to ${page.path}...`);
+    await browserPage.goto(`${BASE_URL}${page.path}`, { 
+      waitUntil: 'domcontentloaded',
+      timeout: 15000 
+    });
+    
+    await browserPage.waitForTimeout(2000);
+    
+    if (page.waitFor) {
+      try {
+        await browserPage.waitForSelector(page.waitFor, { timeout: 5000 });
+      } catch {
+        console.log(`  Selector ${page.waitFor} not found, capturing anyway`);
+      }
+    }
+    
+    await browserPage.screenshot({
+      path: path.join(OUTPUT_DIR, `${page.name}.png`),
+      fullPage: false,
+      type: 'png',
+    });
+    
+    console.log(`  ✅ Saved ${page.name}.png`);
+    return true;
+  } catch (error) {
+    console.log(`  ❌ Failed to capture ${page.name}: ${error}`);
+    return false;
+  } finally {
+    await context.close();
+  }
+}
+
 async function main(): Promise<void> {
-  console.log('Mundo Tango Demo Recording Script');
-  console.log('==================================');
-  console.log(`Base URL: ${BASE_URL}`);
-  console.log(`Output: ${OUTPUT_DIR}`);
-  console.log('');
+  console.log('╔════════════════════════════════════════╗');
+  console.log('║  Mundo Tango Demo Recording Script     ║');
+  console.log('║  MB.MD Pattern 41: Parallel Capture    ║');
+  console.log('╚════════════════════════════════════════╝');
+  console.log(`\nBase URL: ${BASE_URL}`);
+  console.log(`Output: ${OUTPUT_DIR}\n`);
   
   if (!fs.existsSync(OUTPUT_DIR)) {
     fs.mkdirSync(OUTPUT_DIR, { recursive: true });
-    console.log(`Created output directory: ${OUTPUT_DIR}`);
+    console.log(`Created output directory: ${OUTPUT_DIR}\n`);
   }
   
   const browser = await chromium.launch({ headless: true });
   
   try {
-    const context = await browser.newContext({
+    console.log('📸 Capturing Landing Page...');
+    const landingContext = await browser.newContext({
       viewport: { width: 1280, height: 720 },
     });
-    const page = await context.newPage();
+    const landingPage = await landingContext.newPage();
     
-    console.log('Navigating to landing page...');
-    await page.goto(`${BASE_URL}/landing`, { 
+    await landingPage.goto(`${BASE_URL}/landing`, { 
       waitUntil: 'domcontentloaded',
       timeout: 15000 
     });
+    await landingPage.waitForTimeout(3000);
     
-    await page.waitForTimeout(3000);
-    
-    console.log('Capturing landing page screenshot...');
-    await page.screenshot({
+    await landingPage.screenshot({
       path: path.join(OUTPUT_DIR, 'landing-page.png'),
       fullPage: false,
       type: 'png',
     });
-    console.log('Saved landing-page.png');
+    console.log('  ✅ Saved landing-page.png');
     
-    const sections = [
-      { name: 'hero-section', selector: 'section:first-of-type' },
-      { name: 'features-section', selector: '#features' },
-      { name: 'pricing-section', selector: '#pricing' },
-    ];
-    
-    for (const section of sections) {
-      try {
-        const element = await page.$(section.selector);
-        if (element) {
-          await element.screenshot({
-            path: path.join(OUTPUT_DIR, `${section.name}.png`),
-            type: 'png',
-          });
-          console.log(`Saved ${section.name}.png`);
-        }
-      } catch (e) {
-        console.log(`Could not capture ${section.name}`);
+    try {
+      const heroSection = await landingPage.$('[data-testid="section-hero"]');
+      if (heroSection) {
+        await heroSection.screenshot({
+          path: path.join(OUTPUT_DIR, 'hero-section.png'),
+          type: 'png',
+        });
+        console.log('  ✅ Saved hero-section.png');
       }
+    } catch (e) {
+      console.log('  Could not capture hero section');
     }
     
-    await context.close();
+    await landingContext.close();
     
-    console.log('\nDemo Recording Complete!');
-    console.log('========================');
+    console.log('\n📸 Capturing Feature Pages (Parallel)...');
+    const results = await Promise.all(
+      DEMO_PAGES.map(page => capturePageScreenshot(browser, page))
+    );
     
-    const files = fs.readdirSync(OUTPUT_DIR);
-    console.log('Generated files:');
-    files.forEach(f => console.log(`  - ${f}`));
+    const successCount = results.filter(Boolean).length;
+    console.log(`\n✅ Captured ${successCount}/${DEMO_PAGES.length} feature pages`);
+    
+    console.log('\n╔════════════════════════════════════════╗');
+    console.log('║  Demo Recording Complete!              ║');
+    console.log('╚════════════════════════════════════════╝');
+    
+    const files = fs.readdirSync(OUTPUT_DIR).filter(f => f.endsWith('.png'));
+    console.log('\nGenerated assets:');
+    files.forEach(f => console.log(`  📷 ${f}`));
     
   } finally {
     await browser.close();
