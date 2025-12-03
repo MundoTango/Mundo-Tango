@@ -11,9 +11,9 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
       </main>
       <footer className="border-t bg-muted/30" data-testid="public-footer">
         <div className="container mx-auto px-4 py-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
             {/* Brand */}
-            <div>
+            <div className="col-span-2 md:col-span-1">
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-8 h-8 ocean-gradient rounded-lg flex items-center justify-center">
                   <span className="text-white font-bold text-lg">MT</span>
@@ -33,6 +33,19 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
                 <li><Link href="/pricing" className="text-muted-foreground hover:text-foreground">Pricing</Link></li>
                 <li><Link href="/faq" className="text-muted-foreground hover:text-foreground">FAQ</Link></li>
                 <li><Link href="/contact" className="text-muted-foreground hover:text-foreground">Contact</Link></li>
+              </ul>
+            </div>
+
+            {/* Community */}
+            <div>
+              <h3 className="font-semibold mb-4">Community</h3>
+              <ul className="space-y-2 text-sm">
+                <li><Link href="/support" className="text-muted-foreground hover:text-foreground">Support Us</Link></li>
+                <li><Link href="/supporters" className="text-muted-foreground hover:text-foreground">Our Supporters</Link></li>
+                <li><Link href="/ambassadors" className="text-muted-foreground hover:text-foreground">Ambassadors</Link></li>
+                <li><Link href="/volunteer" className="text-muted-foreground hover:text-foreground">Volunteer</Link></li>
+                <li><Link href="/mr-blue" className="text-muted-foreground hover:text-foreground">Mr. Blue AI</Link></li>
+                <li><Link href="/open-source" className="text-muted-foreground hover:text-foreground">Open Source</Link></li>
               </ul>
             </div>
 
