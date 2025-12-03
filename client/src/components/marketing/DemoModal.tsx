@@ -315,8 +315,7 @@ export function DemoModal({ open, onOpenChange }: DemoModalProps) {
                 <ul className="space-y-2">
                   {slide.features.map((feature, i) => (
                     <li key={i} className="flex items-center gap-2 text-sm">
-                      <CheckCircle className={`h-4 w-4 bg-gradient-to-r ${slide.color} bg-clip-text`} style={{ color: 'transparent', background: `linear-gradient(to right, var(--tw-gradient-from), var(--tw-gradient-to))`, WebkitBackgroundClip: 'text' }} />
-                      <CheckCircle className={`h-4 w-4`} style={{ color: slide.color.includes('blue') ? '#3b82f6' : slide.color.includes('purple') ? '#a855f7' : slide.color.includes('green') ? '#22c55e' : slide.color.includes('orange') ? '#f97316' : '#06b6d4' }} />
+                      <CheckCircle className="h-4 w-4 text-primary flex-shrink-0" />
                       <span className="text-foreground">{feature}</span>
                     </li>
                   ))}

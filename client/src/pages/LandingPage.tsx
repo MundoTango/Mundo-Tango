@@ -190,24 +190,28 @@ export default function LandingPage() {
 
   const screenshots = [
     {
-      title: "Tango Map",
-      description: "Discover dancers worldwide",
-      gradient: "from-teal-400 to-blue-500"
+      title: "Global Tango Map",
+      description: "Find dancers in 95+ cities",
+      gradient: "from-teal-500 to-cyan-600",
+      icon: MapPin
     },
     {
-      title: "Event Calendar",
+      title: "Event Discovery",
       description: "Never miss a milonga",
-      gradient: "from-blue-400 to-indigo-500"
+      gradient: "from-purple-500 to-indigo-600",
+      icon: Calendar
     },
     {
-      title: "AI Chat",
-      description: "Your tango assistant",
-      gradient: "from-purple-400 to-pink-500"
+      title: "Mr. Blue AI",
+      description: "Your personal guide",
+      gradient: "from-blue-500 to-cyan-500",
+      icon: Bot
     },
     {
-      title: "Profile",
+      title: "Your Profile",
       description: "Showcase your journey",
-      gradient: "from-pink-400 to-rose-500"
+      gradient: "from-rose-500 to-pink-600",
+      icon: Users
     }
   ];
 
@@ -554,22 +558,29 @@ export default function LandingPage() {
 
             {/* Screenshots Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {screenshots.map((screenshot, index) => (
-                <motion.div key={index} variants={fadeInUp}>
-                  <Card className="h-full overflow-hidden hover-elevate" data-testid={`screenshot-${index}`}>
-                    <div className={`h-48 bg-gradient-to-br ${screenshot.gradient} flex items-center justify-center`}>
-                      <div className="text-white text-center p-6">
-                        <div className="text-6xl mb-4">📱</div>
-                        <div className="text-xs uppercase tracking-wider opacity-80">PLACEHOLDER</div>
+              {screenshots.map((screenshot, index) => {
+                const IconComponent = screenshot.icon;
+                return (
+                  <motion.div key={index} variants={fadeInUp}>
+                    <Card className="h-full overflow-hidden hover-elevate" data-testid={`screenshot-${index}`}>
+                      <div className={`h-48 bg-gradient-to-br ${screenshot.gradient} flex items-center justify-center relative overflow-hidden`}>
+                        <div className="absolute inset-0 bg-black/10" />
+                        <div className="relative z-10 text-white text-center p-6">
+                          <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                            <IconComponent className="h-8 w-8" />
+                          </div>
+                          <div className="text-sm font-medium opacity-90">{screenshot.title}</div>
+                        </div>
+                        <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-black/20 to-transparent" />
                       </div>
-                    </div>
-                    <CardContent className="pt-4">
-                      <h3 className="font-semibold text-lg">{screenshot.title}</h3>
-                      <p className="text-sm text-muted-foreground mt-1">{screenshot.description}</p>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))}
+                      <CardContent className="pt-4">
+                        <h3 className="font-semibold text-lg">{screenshot.title}</h3>
+                        <p className="text-sm text-muted-foreground mt-1">{screenshot.description}</p>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                );
+              })}
             </div>
           </motion.div>
         </div>
