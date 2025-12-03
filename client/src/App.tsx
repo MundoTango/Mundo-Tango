@@ -175,7 +175,7 @@ const VideoStudio = lazy(() => import("@/pages/VideoStudio"));
 const MrBlueVideoDemo = lazy(() => import("@/pages/mr-blue-video-demo"));
 const MrBlueAvatarDemo = lazy(() => import("@/pages/mr-blue-avatar-demo"));
 const MrBlueStudioPage = lazy(() => import("@/pages/mr-blue-studio"));
-const MrBlueAvatar3DPage = lazy(() => import("@/pages/MrBlueAvatar3D"));
+const MrBlueAvatar3DPage = lazy(() => import("@/pages/mr-blue-avatar-3d"));
 const AvatarDesignerPage = lazy(() => import("@/pages/AvatarDesignerPage"));
 const PremiumFeaturesPage = lazy(() => import("@/pages/PremiumFeaturesPage"));
 
