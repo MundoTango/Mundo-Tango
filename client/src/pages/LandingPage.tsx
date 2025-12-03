@@ -2,14 +2,13 @@ import { motion } from "framer-motion";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { PublicNavbar } from "@/components/PublicNavbar";
 import { 
   MapPin, Users, Calendar, Home, Briefcase, Video, 
-  Bot, Globe, Check, Star, ArrowRight, Play,
+  Bot, Globe, Check, ArrowRight, Play,
   UserPlus, Search, MessageCircle, TrendingUp,
   Facebook, Twitter, Instagram, Youtube, Linkedin,
   Mail
@@ -438,70 +437,6 @@ export default function LandingPage() {
                   {index < steps.length - 1 && (
                     <div className="hidden lg:block absolute top-8 left-[60%] w-[80%] h-0.5 bg-gradient-to-r from-primary to-transparent" />
                   )}
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Social Proof / Testimonials Section */}
-      <section className="py-20 md:py-24" data-testid="section-testimonials">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={staggerContainer}
-            className="space-y-12"
-          >
-            {/* Section Header */}
-            <div className="text-center max-w-3xl mx-auto space-y-4">
-              <motion.h2 
-                variants={fadeInUp}
-                className="text-3xl md:text-4xl font-bold ocean-gradient-text"
-                data-testid="text-testimonials-heading"
-              >
-                Loved by Dancers Worldwide
-              </motion.h2>
-              <motion.p 
-                variants={fadeInUp}
-                className="text-lg text-muted-foreground"
-              >
-                Join thousands of tangueros who have transformed their dance journey with Mundo Tango.
-              </motion.p>
-            </div>
-
-            {/* Testimonials Carousel */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {testimonials.slice(0, 3).map((testimonial, index) => (
-                <motion.div key={index} variants={fadeInUp}>
-                  <Card className="h-full hover-elevate" data-testid={`testimonial-${index}`}>
-                    <CardContent className="pt-6 space-y-4">
-                      {/* Stars */}
-                      <div className="flex gap-1">
-                        {Array.from({ length: testimonial.rating }).map((_, i) => (
-                          <Star key={i} className="h-5 w-5 fill-yellow-400 text-yellow-400" />
-                        ))}
-                      </div>
-
-                      {/* Quote */}
-                      <p className="text-lg italic">"{testimonial.quote}"</p>
-
-                      {/* Author */}
-                      <div className="flex items-center gap-3 pt-4 border-t">
-                        <Avatar>
-                          <AvatarFallback className="ocean-gradient text-white">
-                            {testimonial.initials}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <div className="font-semibold">{testimonial.author}</div>
-                          <div className="text-sm text-muted-foreground">{testimonial.location}</div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
                 </motion.div>
               ))}
             </div>

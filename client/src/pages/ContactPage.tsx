@@ -1,243 +1,298 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Mail, MessageCircle, MapPin, Phone } from "lucide-react";
-import { useState } from "react";
+import { Bot, MessageCircle, MapPin, Sparkles, Globe, Calendar, Users } from "lucide-react";
 import { SEO } from "@/components/SEO";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
-import { useMutation } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
-import { useToast } from "@/hooks/use-toast";
+import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
+import { Link } from "wouter";
+
+interface GeoLocation {
+  city: string;
+  country: string;
+  countryCode: string;
+}
+
+interface LocalTangoInfo {
+  milongasThisWeek: number;
+  activeTeachers: number;
+  upcomingEvents: number;
+  dancersNearby: number;
+}
 
 export default function ContactPage() {
-  const { toast } = useToast();
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    subject: "",
-    message: ""
+  const { data: geoData } = useQuery<GeoLocation>({
+    queryKey: ["/api/geo/location"],
+    retry: false,
   });
 
-  const submitContactMutation = useMutation({
-    mutationFn: async (data: typeof formData) => {
-      return await apiRequest("POST", "/api/contact", data);
-    },
-    onSuccess: () => {
-      toast({
-        title: "Message sent!",
-        description: "We'll get back to you within 24-48 hours.",
-      });
-      setFormData({ name: "", email: "", subject: "", message: "" });
-    },
-    onError: (error: Error) => {
-      toast({
-        variant: "destructive",
-        title: "Failed to send message",
-        description: error.message || "Please try again later.",
-      });
-    }
+  const { data: localInfo } = useQuery<LocalTangoInfo>({
+    queryKey: ["/api/geo/tango-info", geoData?.city],
+    enabled: !!geoData?.city,
+    retry: false,
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    submitContactMutation.mutate(formData);
+  const fadeInUp = {
+    hidden: { opacity: 0, y: 30 },
+    visible: { opacity: 1, y: 0 }
+  };
+
+  const staggerContainer = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
   };
 
   return (
     <SelfHealingErrorBoundary pageName="Contact" fallbackRoute="/">
       <SEO
-        title="Contact Us - Mundo Tango"
-        description="Get in touch with the Mundo Tango team. We're here to help with questions, feedback, and support for the global tango community."
+        title="Contact - Chat with Mr. Blue | Mundo Tango"
+        description="Get instant answers from Mr. Blue, our AI tango assistant. Available 24/7 to help with questions about events, travel, learning, and the global tango community."
       />
 
       <div className="min-h-screen bg-background">
         {/* Hero Section */}
-        <div className="relative h-[40vh] md:h-[50vh] w-full overflow-hidden">
-          <div className="absolute inset-0 bg-cover bg-center" style={{
-            backgroundImage: `url('https://images.unsplash.com/photo-1486299267070-83823f5448dd?w=1600&h=900&fit=crop&q=80')`
-          }}>
-            <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
-          </div>
-          
-          <div className="relative z-10 flex flex-col items-center justify-center h-full px-8 text-center">
+        <section className="relative py-20 overflow-hidden">
+          <div className="absolute inset-0 ocean-gradient opacity-90" />
+          <div className="absolute inset-0 bg-black/20" />
+
+          <div className="relative z-10 container mx-auto px-4">
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, ease: "easeOut" }}
+              initial="hidden"
+              animate="visible"
+              variants={staggerContainer}
+              className="max-w-4xl mx-auto text-center"
             >
-              <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
-                <Mail className="w-3 h-3 mr-1.5" />
-                Get in Touch
-              </Badge>
-              
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-white font-bold leading-tight mb-4" data-testid="text-page-title">
-                Contact Us
-              </h1>
-              
-              <p className="text-lg text-white/80 max-w-2xl mx-auto" data-testid="text-page-description">
-                We're here to help with any questions or feedback
-              </p>
+              <div className="glass-card rounded-2xl p-8 md:p-12 space-y-6">
+                <motion.div variants={fadeInUp} className="flex justify-center">
+                  <div className="w-24 h-24 rounded-full ocean-gradient flex items-center justify-center">
+                    <Bot className="h-12 w-12 text-white" />
+                  </div>
+                </motion.div>
+
+                <motion.div variants={fadeInUp}>
+                  <Badge variant="secondary" className="mb-4">
+                    <MessageCircle className="h-3 w-3 mr-1" />
+                    24/7 Support
+                  </Badge>
+                </motion.div>
+
+                <motion.h1
+                  variants={fadeInUp}
+                  className="text-4xl md:text-5xl font-bold text-white"
+                  data-testid="text-page-title"
+                >
+                  Chat with Mr. Blue
+                </motion.h1>
+
+                <motion.p
+                  variants={fadeInUp}
+                  className="text-xl text-white/90 max-w-2xl mx-auto"
+                  data-testid="text-page-description"
+                >
+                  Your AI tango companion is ready to help with anything.
+                  Events, travel, learning, community - just ask!
+                </motion.p>
+
+                <motion.div variants={fadeInUp} className="flex justify-center gap-4 pt-4">
+                  <Link href="/register">
+                    <Button size="lg" className="bg-white text-primary hover:bg-white/90" data-testid="button-chat-mrblue">
+                      <MessageCircle className="h-5 w-5 mr-2" />
+                      Start Chatting
+                    </Button>
+                  </Link>
+                </motion.div>
+
+                <motion.div
+                  variants={fadeInUp}
+                  className="flex flex-wrap justify-center gap-4 pt-4"
+                >
+                  <Badge variant="secondary" className="text-sm py-1 px-3">
+                    <Sparkles className="h-3 w-3 mr-1" />
+                    Instant Answers
+                  </Badge>
+                  <Badge variant="secondary" className="text-sm py-1 px-3">
+                    <Globe className="h-3 w-3 mr-1" />
+                    68 Languages
+                  </Badge>
+                  <Badge variant="secondary" className="text-sm py-1 px-3">
+                    <Calendar className="h-3 w-3 mr-1" />
+                    Event Discovery
+                  </Badge>
+                </motion.div>
+              </div>
             </motion.div>
           </div>
-        </div>
+        </section>
 
-        <div className="container mx-auto max-w-6xl px-6 py-12">
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-          >
-            <div className="grid gap-8 lg:grid-cols-3">
-              <div className="lg:col-span-2">
-                <Card className="hover-elevate">
-                  <CardHeader>
-                    <CardTitle className="text-2xl font-serif">Send us a Message</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                      <div className="grid gap-4 sm:grid-cols-2">
-                        <div>
-                          <Label htmlFor="name">Name *</Label>
-                          <Input
-                            id="name"
-                            required
-                            value={formData.name}
-                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                            data-testid="input-name"
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor="email">Email *</Label>
-                          <Input
-                            id="email"
-                            type="email"
-                            required
-                            value={formData.email}
-                            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                            data-testid="input-email"
-                          />
-                        </div>
-                      </div>
+        {/* Local Tango Info Section - Shows when geolocation available */}
+        {geoData?.city && (
+          <section className="py-16 bg-muted/30" data-testid="section-local-info">
+            <div className="container mx-auto px-4">
+              <motion.div
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                variants={staggerContainer}
+                className="max-w-4xl mx-auto"
+              >
+                <motion.div variants={fadeInUp} className="text-center mb-12">
+                  <Badge variant="outline" className="mb-4">
+                    <MapPin className="h-3 w-3 mr-1" />
+                    Your Location
+                  </Badge>
+                  <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">
+                    Tango in {geoData.city}
+                  </h2>
+                  <p className="text-muted-foreground">
+                    Mr. Blue knows what's happening in your local tango scene
+                  </p>
+                </motion.div>
 
-                      <div>
-                        <Label htmlFor="subject">Subject *</Label>
-                        <Input
-                          id="subject"
-                          required
-                          value={formData.subject}
-                          onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                          data-testid="input-subject"
-                        />
-                      </div>
+                <div className="grid md:grid-cols-4 gap-6">
+                  <motion.div variants={fadeInUp}>
+                    <Card className="text-center p-6" data-testid="stat-milongas">
+                      <Calendar className="h-8 w-8 mx-auto mb-3 text-primary" />
+                      <p className="text-3xl font-bold text-primary">
+                        {localInfo?.milongasThisWeek || "Ask Mr. Blue"}
+                      </p>
+                      <p className="text-sm text-muted-foreground">Milongas This Week</p>
+                    </Card>
+                  </motion.div>
 
-                      <div>
-                        <Label htmlFor="message">Message *</Label>
-                        <Textarea
-                          id="message"
-                          required
-                          rows={6}
-                          value={formData.message}
-                          onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                          data-testid="input-message"
-                        />
-                      </div>
+                  <motion.div variants={fadeInUp}>
+                    <Card className="text-center p-6" data-testid="stat-teachers">
+                      <Users className="h-8 w-8 mx-auto mb-3 text-primary" />
+                      <p className="text-3xl font-bold text-primary">
+                        {localInfo?.activeTeachers || "Ask Mr. Blue"}
+                      </p>
+                      <p className="text-sm text-muted-foreground">Local Teachers</p>
+                    </Card>
+                  </motion.div>
 
-                      <Button 
-                        type="submit" 
-                        className="w-full" 
-                        data-testid="button-submit"
-                        disabled={submitContactMutation.isPending}
-                      >
-                        <Mail className="h-4 w-4 mr-2" />
-                        {submitContactMutation.isPending ? "Sending..." : "Send Message"}
-                      </Button>
-                    </form>
-                  </CardContent>
-                </Card>
-              </div>
+                  <motion.div variants={fadeInUp}>
+                    <Card className="text-center p-6" data-testid="stat-events">
+                      <Sparkles className="h-8 w-8 mx-auto mb-3 text-primary" />
+                      <p className="text-3xl font-bold text-primary">
+                        {localInfo?.upcomingEvents || "Ask Mr. Blue"}
+                      </p>
+                      <p className="text-sm text-muted-foreground">Upcoming Events</p>
+                    </Card>
+                  </motion.div>
 
-              <div className="space-y-6">
-                <Card className="hover-elevate">
-                  <CardHeader>
-                    <CardTitle className="text-lg font-serif">Contact Information</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="flex items-start gap-3">
-                      <Mail className="h-5 w-5 text-primary mt-0.5" />
-                      <div>
-                        <p className="font-medium">Email</p>
-                        <a href="mailto:support@mundotango.com" className="text-sm text-muted-foreground hover:text-primary">
-                          support@mundotango.com
-                        </a>
-                      </div>
-                    </div>
+                  <motion.div variants={fadeInUp}>
+                    <Card className="text-center p-6" data-testid="stat-dancers">
+                      <Globe className="h-8 w-8 mx-auto mb-3 text-primary" />
+                      <p className="text-3xl font-bold text-primary">
+                        {localInfo?.dancersNearby || "Ask Mr. Blue"}
+                      </p>
+                      <p className="text-sm text-muted-foreground">Dancers Nearby</p>
+                    </Card>
+                  </motion.div>
+                </div>
 
-                    <div className="flex items-start gap-3">
-                      <MessageCircle className="h-5 w-5 text-primary mt-0.5" />
-                      <div>
-                        <p className="font-medium">Live Chat</p>
-                        <p className="text-sm text-muted-foreground">Available Mon-Fri, 9AM-6PM EST</p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-start gap-3">
-                      <MapPin className="h-5 w-5 text-primary mt-0.5" />
-                      <div>
-                        <p className="font-medium">Office</p>
-                        <p className="text-sm text-muted-foreground">
-                          123 Tango Street<br />
-                          Buenos Aires, Argentina
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-start gap-3">
-                      <Phone className="h-5 w-5 text-primary mt-0.5" />
-                      <div>
-                        <p className="font-medium">Phone</p>
-                        <p className="text-sm text-muted-foreground">+1 (555) 123-4567</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card className="hover-elevate">
-                  <CardHeader>
-                    <CardTitle className="text-lg font-serif">Frequently Asked</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    <div>
-                      <p className="font-medium text-sm">General Inquiries</p>
-                      <p className="text-xs text-muted-foreground">support@mundotango.com</p>
-                    </div>
-                    <div>
-                      <p className="font-medium text-sm">Business & Partnerships</p>
-                      <p className="text-xs text-muted-foreground">partnerships@mundotango.com</p>
-                    </div>
-                    <div>
-                      <p className="font-medium text-sm">Press & Media</p>
-                      <p className="text-xs text-muted-foreground">press@mundotango.com</p>
-                    </div>
-                    <div>
-                      <p className="font-medium text-sm">Technical Support</p>
-                      <p className="text-xs text-muted-foreground">tech@mundotango.com</p>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card className="bg-primary/5 border-primary/20">
-                  <CardContent className="pt-6 text-center text-sm text-muted-foreground">
-                    <p>We typically respond within 24-48 hours during business days.</p>
-                  </CardContent>
-                </Card>
-              </div>
+                <motion.div variants={fadeInUp} className="text-center mt-8">
+                  <Link href="/register">
+                    <Button variant="outline" size="lg" data-testid="button-explore-local">
+                      <MapPin className="h-4 w-4 mr-2" />
+                      Explore {geoData.city} Tango Scene
+                    </Button>
+                  </Link>
+                </motion.div>
+              </motion.div>
             </div>
-          </motion.div>
-        </div>
+          </section>
+        )}
+
+        {/* What Mr. Blue Can Help With */}
+        <section className="py-16" data-testid="section-help-topics">
+          <div className="container mx-auto px-4">
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              variants={staggerContainer}
+              className="max-w-4xl mx-auto"
+            >
+              <motion.div variants={fadeInUp} className="text-center mb-12">
+                <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">
+                  How Can Mr. Blue Help?
+                </h2>
+                <p className="text-muted-foreground">
+                  Your personal tango assistant is knowledgeable about everything tango
+                </p>
+              </motion.div>
+
+              <div className="grid md:grid-cols-2 gap-6">
+                {[
+                  {
+                    title: "Find Events",
+                    description: "Milongas, festivals, workshops, and practicas worldwide. Mr. Blue knows them all.",
+                    example: '"What milongas are happening in Berlin this weekend?"'
+                  },
+                  {
+                    title: "Plan Travel",
+                    description: "Get recommendations for tango destinations, housing, and local tips.",
+                    example: '"Help me plan a 2-week tango trip to Buenos Aires"'
+                  },
+                  {
+                    title: "Learn & Grow",
+                    description: "Find teachers, get technique advice, discover learning resources.",
+                    example: '"I want to improve my volcadas - where should I start?"'
+                  },
+                  {
+                    title: "Connect",
+                    description: "Find dance partners, join communities, discover local scenes.",
+                    example: '"How can I find regular dance partners in my city?"'
+                  }
+                ].map((topic, idx) => (
+                  <motion.div key={idx} variants={fadeInUp}>
+                    <Card className="h-full hover-elevate" data-testid={`card-topic-${idx}`}>
+                      <CardHeader>
+                        <CardTitle className="text-xl">{topic.title}</CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-3">
+                        <p className="text-muted-foreground">{topic.description}</p>
+                        <p className="text-sm italic text-primary/80 bg-primary/5 p-3 rounded-lg">
+                          {topic.example}
+                        </p>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* CTA Section */}
+        <section className="py-16 bg-muted/30" data-testid="section-cta">
+          <div className="container mx-auto px-4">
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              variants={staggerContainer}
+              className="max-w-2xl mx-auto text-center"
+            >
+              <motion.div variants={fadeInUp}>
+                <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">
+                  Ready to Get Started?
+                </h2>
+                <p className="text-muted-foreground mb-8">
+                  Join Mundo Tango and chat with Mr. Blue about anything tango.
+                  No email needed - just sign up and start the conversation.
+                </p>
+                <Link href="/register">
+                  <Button size="lg" className="text-lg px-8" data-testid="button-register-cta">
+                    <Sparkles className="h-5 w-5 mr-2" />
+                    Join Free & Chat Now
+                  </Button>
+                </Link>
+              </motion.div>
+            </motion.div>
+          </div>
+        </section>
       </div>
     </SelfHealingErrorBoundary>
   );
