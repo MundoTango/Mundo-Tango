@@ -44,26 +44,6 @@ const features = [
   }
 ];
 
-const testimonials = [
-  {
-    quote: "I found my favorite dance partners through Mundo Tango. Now I never dance alone at milongas!",
-    name: "Maria G.",
-    location: "Buenos Aires",
-    role: "Social Dancer"
-  },
-  {
-    quote: "The travel feature helped me plan my first tango trip to Europe. Made friends in 5 countries!",
-    name: "Carlos R.",
-    location: "San Francisco",
-    role: "Tango Enthusiast"
-  },
-  {
-    quote: "As a beginner, this community welcomed me with open arms. Best decision I made for my tango journey.",
-    name: "Sophie L.",
-    location: "Paris",
-    role: "Beginner Dancer"
-  }
-];
 
 export default function ForDancersPage() {
   const heroRef = useRef(null);
@@ -174,55 +154,6 @@ export default function ForDancersPage() {
                     </CardHeader>
                     <CardContent>
                       <p className="text-muted-foreground">{feature.description}</p>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="py-20 px-8 bg-muted/30" data-testid="section-testimonials-dancers">
-          <div className="max-w-6xl mx-auto">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="text-center mb-16"
-            >
-              <h2 className="text-4xl md:text-5xl font-serif font-bold mb-6">
-                Dancers Love Us
-              </h2>
-              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                Join thousands who have transformed their tango experience.
-              </p>
-            </motion.div>
-
-            <div className="grid md:grid-cols-3 gap-8">
-              {testimonials.map((testimonial, idx) => (
-                <motion.div
-                  key={idx}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: idx * 0.1 }}
-                >
-                  <Card className="h-full" data-testid={`card-testimonial-${idx}`}>
-                    <CardContent className="pt-6">
-                      <p className="text-lg italic mb-6">"{testimonial.quote}"</p>
-                      <div className="flex items-center gap-3">
-                        <div className="h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center">
-                          <span className="text-lg font-bold text-primary">
-                            {testimonial.name.charAt(0)}
-                          </span>
-                        </div>
-                        <div>
-                          <p className="font-semibold">{testimonial.name}</p>
-                          <p className="text-sm text-muted-foreground">
-                            {testimonial.location} | {testimonial.role}
-                          </p>
-                        </div>
-                      </div>
                     </CardContent>
                   </Card>
                 </motion.div>

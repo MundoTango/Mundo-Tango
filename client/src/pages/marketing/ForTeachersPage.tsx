@@ -45,10 +45,10 @@ const features = [
 ];
 
 const benefits = [
-  "Free PRO trial for 30 days",
-  "Zero platform fees for first 3 months",
+  "7-day free trial with Pro features",
+  "Cancel anytime",
   "Unlimited class listings",
-  "Student communication tools",
+  "Student management tools",
   "Integrated calendar sync",
   "Priority support"
 ];
@@ -56,24 +56,18 @@ const benefits = [
 const pricingTiers = [
   {
     name: "Basic",
-    price: "Free",
-    description: "Get started with essential tools",
+    price: "$4.99",
+    period: "/month",
+    description: "Essential teaching tools",
     features: ["Profile listing", "5 class listings", "Basic analytics", "Community access"]
   },
   {
-    name: "PRO",
-    price: "$29",
+    name: "Teacher Pro",
+    price: "$29.99",
     period: "/month",
     description: "Everything you need to grow",
-    features: ["Unlimited listings", "Video library", "Payment processing", "Advanced analytics", "Priority support", "Featured placement"],
+    features: ["Unlimited listings", "Video library", "Payment processing", "Advanced analytics", "Priority support", "Verified badge"],
     highlighted: true
-  },
-  {
-    name: "School",
-    price: "$99",
-    period: "/month",
-    description: "For teaching collectives",
-    features: ["Multiple instructors", "School branding", "Custom domain", "API access", "Dedicated support", "White-label options"]
   }
 ];
 

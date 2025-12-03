@@ -44,25 +44,6 @@ const features = [
   }
 ];
 
-const eventTypes = [
-  { name: "Milongas", count: "2,500+", description: "Weekly social dances" },
-  { name: "Festivals", count: "150+", description: "Multi-day events" },
-  { name: "Workshops", count: "800+", description: "Intensive learning" },
-  { name: "Practicas", count: "1,200+", description: "Practice sessions" }
-];
-
-const testimonials = [
-  {
-    quote: "Ticket sales increased 40% after listing on Mundo Tango. Dancers find us from all over the world!",
-    name: "Festival Buenos Aires",
-    type: "Festival Organizer"
-  },
-  {
-    quote: "The analytics help me understand what my dancers want. My milonga is now always packed!",
-    name: "La Milonga NYC",
-    type: "Milonga Host"
-  }
-];
 
 export default function ForOrganizersPage() {
   const heroRef = useRef(null);
@@ -141,29 +122,6 @@ export default function ForOrganizersPage() {
           </div>
         </motion.section>
 
-        <section className="py-16 px-8 bg-muted/30" data-testid="section-stats-organizers">
-          <div className="max-w-6xl mx-auto">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              {eventTypes.map((type, idx) => (
-                <motion.div
-                  key={idx}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: idx * 0.1 }}
-                  className="text-center"
-                >
-                  <Card className="p-6" data-testid={`card-stat-${idx}`}>
-                    <p className="text-3xl md:text-4xl font-bold text-primary mb-2">{type.count}</p>
-                    <p className="font-semibold mb-1">{type.name}</p>
-                    <p className="text-sm text-muted-foreground">{type.description}</p>
-                  </Card>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
-
         <section className="py-20 px-8" data-testid="section-features-organizers">
           <div className="max-w-6xl mx-auto">
             <motion.div
@@ -196,43 +154,6 @@ export default function ForOrganizersPage() {
                     </CardHeader>
                     <CardContent>
                       <p className="text-muted-foreground">{feature.description}</p>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="py-20 px-8 bg-muted/30" data-testid="section-testimonials-organizers">
-          <div className="max-w-4xl mx-auto">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="text-center mb-16"
-            >
-              <h2 className="text-4xl md:text-5xl font-serif font-bold mb-6">
-                Trusted by Organizers
-              </h2>
-            </motion.div>
-
-            <div className="grid md:grid-cols-2 gap-8">
-              {testimonials.map((testimonial, idx) => (
-                <motion.div
-                  key={idx}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: idx * 0.1 }}
-                >
-                  <Card className="h-full" data-testid={`card-testimonial-organizer-${idx}`}>
-                    <CardContent className="pt-6">
-                      <p className="text-lg italic mb-6">"{testimonial.quote}"</p>
-                      <div>
-                        <p className="font-semibold">{testimonial.name}</p>
-                        <p className="text-sm text-muted-foreground">{testimonial.type}</p>
-                      </div>
                     </CardContent>
                   </Card>
                 </motion.div>

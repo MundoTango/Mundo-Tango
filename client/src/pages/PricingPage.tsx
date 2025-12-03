@@ -10,59 +10,70 @@ import { motion } from "framer-motion";
 
 const plans = [
   {
-    name: "Free",
+    name: "Free Trial",
     price: "$0",
-    period: "forever",
+    period: "7 days",
     icon: Users,
-    description: "Perfect for casual dancers",
+    description: "Try Pro features free",
     features: [
-      "Basic profile",
+      "Full Pro features for 7 days",
+      "No credit card required",
+      "Browse events & community",
+      "AI assistant access",
+      "Partner matching preview"
+    ],
+    cta: "Start Free Trial",
+    popular: false
+  },
+  {
+    name: "Basic",
+    price: "$4.99",
+    period: "month",
+    icon: Users,
+    description: "Essential tango tools",
+    features: [
+      "Basic profile & messaging",
       "Browse events",
-      "Join up to 3 groups",
-      "Message other users",
-      "Access to public tutorials",
-      "Community guidelines access"
+      "Join groups",
+      "Community access",
+      "Limited AI queries"
     ],
     cta: "Get Started",
     popular: false
   },
   {
-    name: "Pro",
+    name: "Dancer Pro",
     price: "$9.99",
     period: "month",
     icon: Zap,
     description: "For dedicated dancers",
     features: [
-      "Everything in Free",
-      "Unlimited group memberships",
-      "Advanced search filters",
-      "Priority event notifications",
-      "Access to premium tutorials",
-      "Remove ads",
-      "Custom profile themes",
-      "Download music tracks"
+      "Everything in Basic",
+      "Unlimited AI assistant",
+      "Advanced partner matching",
+      "Housing marketplace",
+      "Priority notifications",
+      "Ad-free experience",
+      "Travel planning tools"
     ],
     cta: "Start Free Trial",
     popular: true
   },
   {
-    name: "Teacher",
+    name: "Professional",
     price: "$29.99",
     period: "month",
     icon: Crown,
-    description: "For instructors and organizers",
+    description: "For teachers & organizers",
     features: [
-      "Everything in Pro",
-      "Create unlimited events",
-      "Promote classes & workshops",
+      "Everything in Dancer Pro",
+      "Event creation & management",
       "Analytics dashboard",
-      "Student management tools",
-      "Custom booking page",
-      "Revenue tracking",
-      "Priority support",
-      "Verified teacher badge"
+      "Student management",
+      "Verified badge",
+      "Priority support"
     ],
-    cta: "Start Teaching",
+    cta: "Start Free Trial",
     popular: false
   }
 ];
@@ -192,7 +203,7 @@ export default function PricingPage() {
                 },
                 {
                   q: "Is there a free trial?",
-                  a: "Yes! Pro and Teacher plans include a 14-day free trial. No credit card required to start."
+                  a: "Yes! All plans start with a 7-day free trial with full Pro features. No credit card required."
                 },
                 {
                   q: "Can I cancel anytime?",
@@ -211,7 +222,7 @@ export default function PricingPage() {
             </div>
           </motion.div>
 
-          {/* Custom Plan CTA */}
+          {/* Questions CTA */}
           <motion.div
             className="mt-16"
             initial={{ opacity: 0, y: 20 }}
@@ -221,11 +232,13 @@ export default function PricingPage() {
           >
             <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
               <CardContent className="py-12 text-center">
-                <h3 className="text-3xl font-serif font-bold mb-3">Need a custom plan?</h3>
+                <h3 className="text-3xl font-serif font-bold mb-3">Questions?</h3>
                 <p className="text-muted-foreground mb-6 text-lg max-w-2xl mx-auto">
-                  Contact us for enterprise pricing and custom solutions for large organizations.
+                  Chat with Mr. Blue, our AI assistant, for instant answers about plans and features.
                 </p>
-                <Button variant="outline" size="lg">Contact Sales</Button>
+                <a href="/mr-blue">
+                  <Button variant="outline" size="lg">Chat with Mr. Blue</Button>
+                </a>
               </CardContent>
             </Card>
           </motion.div>

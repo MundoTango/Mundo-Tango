@@ -136,92 +136,52 @@ export default function LandingPage() {
     }
   ];
 
-  const testimonials = [
-    {
-      quote: "Mundo Tango connected me with dancers worldwide! I've made lifelong friends in Buenos Aires, Paris, and Seoul.",
-      author: "Maria S.",
-      location: "Buenos Aires, Argentina",
-      initials: "MS",
-      rating: 5
-    },
-    {
-      quote: "Best platform for finding tango events. I discovered amazing milongas I never knew existed in my own city!",
-      author: "Carlos R.",
-      location: "Seoul, South Korea",
-      initials: "CR",
-      rating: 5
-    },
-    {
-      quote: "The AI assistant is a game-changer. It helped me plan my entire European tango tour with personalized recommendations.",
-      author: "Sofia L.",
-      location: "Paris, France",
-      initials: "SL",
-      rating: 5
-    },
-    {
-      quote: "Housing marketplace saved me thousands on my tango travels. Stayed with incredible hosts who became dear friends.",
-      author: "James K.",
-      location: "New York, USA",
-      initials: "JK",
-      rating: 5
-    },
-    {
-      quote: "Found my regular dance partners here. The matching algorithm really understands what I'm looking for in a connection.",
-      author: "Isabella M.",
-      location: "Milan, Italy",
-      initials: "IM",
-      rating: 5
-    }
-  ];
-
   const pricingTiers = [
     {
-      name: "Free",
+      name: "Free Trial",
       price: "$0",
-      period: "forever",
-      description: "Perfect for casual dancers",
+      period: "7 days",
+      description: "Try Pro features free",
       features: [
-        "Basic profile",
+        "Full Pro features for 7 days",
+        "No credit card required",
         "Event discovery",
-        "Community map access",
-        "Group messaging",
-        "Limited AI assistant queries (10/month)"
+        "Community access",
+        "AI assistant access"
       ],
-      cta: "Get Started",
+      cta: "Start Free Trial",
       popular: false
     },
     {
-      name: "Pro",
-      price: "$9",
+      name: "Dancer Pro",
+      price: "$9.99",
       period: "per month",
-      description: "For dedicated tangueros",
+      description: "For dedicated dancers",
       features: [
-        "Everything in Free",
-        "Advanced matching algorithm",
         "Unlimited AI assistant",
+        "Advanced partner matching",
         "Housing marketplace access",
         "Priority event listings",
-        "Video call features",
-        "Ad-free experience"
+        "Ad-free experience",
+        "Travel planning tools"
       ],
       cta: "Start Free Trial",
       popular: true
     },
     {
-      name: "Premium",
-      price: "$29",
+      name: "Professional",
+      price: "$29.99",
       period: "per month",
-      description: "For professionals & organizers",
+      description: "For teachers & organizers",
       features: [
-        "Everything in Pro",
+        "Everything in Dancer Pro",
         "Event creation & management",
         "Analytics dashboard",
-        "Promotional tools",
-        "Live streaming capabilities",
-        "Custom branding",
-        "Premium support"
+        "Student management tools",
+        "Verified badge",
+        "Priority support"
       ],
-      cta: "Contact Sales",
+      cta: "Start Free Trial",
       popular: false
     }
   ];

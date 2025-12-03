@@ -551,13 +551,11 @@ const CrowdfundingMyPage = lazy(
 );
 
 // Content & Info
-const BlogPage = lazy(() => import("@/pages/BlogPage"));
 const NewsletterPage = lazy(() => import("@/pages/NewsletterPage"));
 const StreamDetailPage = lazy(() => import("@/pages/StreamDetailPage"));
 const ReviewsPage = lazy(() => import("@/pages/ReviewsPage"));
 const MediaGalleryPage = lazy(() => import("@/pages/MediaGalleryPage"));
 const LeaderboardPage = lazy(() => import("@/pages/LeaderboardPage"));
-const FAQPage = lazy(() => import("@/pages/FAQPage"));
 const HelpPage = lazy(() => import("@/pages/HelpPage"));
 const HelpCenterPage = lazy(() => import("@/pages/HelpCenterPage"));
 const ContactPage = lazy(() => import("@/pages/ContactPage"));
@@ -1726,8 +1724,6 @@ function Router() {
         </ProtectedRoute>
       </Route>
 
-      <Route path="/faq" component={FAQPage} />
-
       <Route path="/dance-styles" component={DanceStylesPage} />
 
       <Route path="/partner-finder">
@@ -1827,8 +1823,6 @@ function Router() {
         </ProtectedRoute>
       </Route>
       <Route path="/travel-planner" component={TravelPlannerPage} />
-      <Route path="/blog" component={BlogPage} />
-      <Route path="/blog/:slug" component={BlogPage} />
       <Route path="/music" component={MusicLibraryPage} />
       <Route path="/music-library" component={MusicLibraryPage} />
       <Route path="/community-guidelines" component={CommunityGuidelinesPage} />
