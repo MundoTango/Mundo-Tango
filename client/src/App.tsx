@@ -700,6 +700,9 @@ const PROTaxiDancersPage = lazy(() =>
 function Router() {
   return (
     <Switch>
+      <Route path="/">
+        <Redirect to="/landing" />
+      </Route>
       <Route path="/landing" component={LandingPage} />
       <Route path="/dashboard">
         <ProtectedRoute>
