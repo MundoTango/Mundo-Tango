@@ -44,6 +44,43 @@ Core features encompass social functionalities (events, groups, posts, notificat
 ### Testing
 The platform utilizes E2E tests, automated unit test coverage via CI/CD, and visual regression testing with Playwright and Claude Computer Use for AI-powered validation. The E2E testing methodology includes page load tests, API tests, button/link verification, and content verification.
 
+### E2E Testing Methodology (PERMANENT)
+**CRITICAL: Always use the `run_test` tool for E2E testing. It handles all environment setup automatically.**
+
+**Stripe Testing Integration:**
+- The `run_test` tool **automatically injects Stripe testing keys** - no manual configuration needed
+- Testing secrets available: `TESTING_STRIPE_SECRET_KEY`, `TESTING_VITE_STRIPE_PUBLIC_KEY`
+- The testing subagent overrides `STRIPE_SECRET_KEY` and `VITE_STRIPE_PUBLIC_KEY` with test values
+- Test card numbers (official Stripe test cards):
+  - `4242424242424242` - Success
+  - `4000000000000002` - Declined
+  - `4000000000009995` - Insufficient funds
+  - Expiry: `12/25`, CVC: `123`, ZIP: `12345`
+
+**Test Plan Best Practices:**
+1. Use `[New Context]` to start fresh browser context
+2. Use `[Browser]` for navigation and interactions
+3. Use `[Verify]` for assertions (batch related verifications together)
+4. Use `[API]` for direct endpoint testing
+5. Generate unique values with `${nanoid(6)}` for test data isolation
+
+**When to Use run_test:**
+- UI/UX workflows with user interactions
+- Multi-page flows and forms
+- Features with JavaScript dependencies
+- Payment/checkout flows (Stripe auto-configured)
+- Bug fix verification
+
+**When NOT to Use run_test:**
+- Pure backend-only changes with no UI impact
+- Simple text/copy changes
+- Games or non-browser-testable features
+
+**Test Files:**
+- `tests/wave5-stripe-billing.spec.ts` - Stripe billing E2E tests
+- `tests/e2e/` - General E2E test suites
+- `tests/helpers/stripe.ts` - Stripe test utilities
+
 ### Production
 Production leverages GitHub Actions for CI/CD, Prometheus/Grafana with Sentry for monitoring, Replit Publishing for deployment, Redis for caching, and PostgreSQL (Neon) with Drizzle ORM for infrastructure.
 
