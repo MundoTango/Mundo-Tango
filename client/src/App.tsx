@@ -46,6 +46,9 @@ import FacebookCallbackPage from "@/pages/auth/FacebookCallbackPage";
 import MarketingPrototype from "@/pages/MarketingPrototype";
 import MarketingPrototypeEnhanced from "@/pages/MarketingPrototypeEnhanced";
 import MarketingPrototypeOcean from "@/pages/MarketingPrototypeOcean";
+import ForDancersPage from "@/pages/marketing/ForDancersPage";
+import ForTeachersPage from "@/pages/marketing/ForTeachersPage";
+import ForOrganizersPage from "@/pages/marketing/ForOrganizersPage";
 import FeedPrototypePage from "@/pages/FeedPrototypePage";
 import GroupsPrototypePage from "@/pages/GroupsPrototypePage";
 import CommunityPrototypePage from "@/pages/CommunityPrototypePage";
@@ -732,6 +735,9 @@ function Router() {
         path="/marketing-prototype-ocean"
         component={MarketingPrototypeOcean}
       />
+      <Route path="/for-dancers" component={ForDancersPage} />
+      <Route path="/for-teachers" component={ForTeachersPage} />
+      <Route path="/for-organizers" component={ForOrganizersPage} />
       <Route path="/feed-prototype" component={FeedPrototypePage} />
       <Route path="/groups-prototype" component={GroupsPrototypePage} />
       <Route path="/community-prototype" component={CommunityPrototypePage} />
