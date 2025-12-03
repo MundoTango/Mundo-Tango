@@ -51,14 +51,23 @@ Production leverages GitHub Actions for CI/CD, Prometheus/Grafana with Sentry fo
 The marketing site includes a Donation Tier System (Tango Legends), a Human to Agent Collaboration (H2AC) Volunteer Program with 6 divisions, and an Ambassador Program. It features marketing page routes for support, supporters, volunteer, Mr. Blue, ambassadors, and open source. All public statistics are wired to a real database.
 
 ### Demo System (December 2025)
-The platform includes a comprehensive Demo System implemented using MB.MD Patterns 28 + 41:
+The platform includes a comprehensive Demo System implemented using MB.MD Patterns 28, 38, + 41:
 
 **Core Components:**
 - `/demos` hub page with 8 interactive demo cards (DemosPage.tsx)
-- DemoModal component opens on "Watch Demo" button click in landing page hero section
+- DemoModal component (client/src/components/marketing/DemoModal.tsx) - 5-slide interactive carousel
+- Landing page integration via "Watch Demo" button in hero section
 - Navigation integration: "Demos" link in PublicNavbar and footer "Platform Demos" link
+- Playwright demo recording script (scripts/record-demo.ts) for automated screenshot capture
 
-**Demo Categories:**
+**DemoModal Slides (5 interactive slides):**
+1. **Meet Mr. Blue** - AI companion chat preview with conversation UI
+2. **Discover Events** - Global calendar with event cards (La Viruta, Berlin Festival, etc.)
+3. **Connect & Dance** - Partner matching with Talent Match AI preview
+4. **Plan Your Journey** - Travel planner with Buenos Aires itinerary example
+5. **3D Avatar Experience** - Interactive 3D avatar with 10 emotional expressions
+
+**Demo Categories (DemosPage):**
 1. **Mr. Blue AI Assistant** - AI companion with 10 expression states
 2. **3D Avatar Experience** - Real-time avatar animations (/mr-blue-avatar-demo)
 3. **Events Discovery** - Find global tango events
@@ -68,10 +77,23 @@ The platform includes a comprehensive Demo System implemented using MB.MD Patter
 7. **Music Library** - Classic and modern tango music
 8. **City Guides** - Worldwide tango scene information
 
+**LandingPage Screenshots Section:**
+- 4 feature cards with icons: Global Tango Map (MapPin), Event Discovery (Calendar), Mr. Blue AI (Bot), Your Profile (Users)
+- Gradient backgrounds with icon overlays (no emoji placeholders)
+- data-testid="screenshot-0" through "screenshot-3"
+
 **Design Principles:**
 - ZERO fake data policy enforced - all statistics from real database APIs
-- 7-day free trial (not 14-day) with accurate pricing tiers
+- 7-day free trial (not 14-day) with accurate pricing tiers (Free Trial $0, Dancer Pro $9.99, Professional $29.99)
 - Ocean gradient theme with hover-elevate interactions
+- All CTAs link to /register with "Start 7-Day Trial" messaging
+
+**Technical Files:**
+- DemoModal: client/src/components/marketing/DemoModal.tsx
+- LandingPage: client/src/pages/LandingPage.tsx  
+- Demo Recording: scripts/record-demo.ts
+- Demo Assets: public/demos/ (hero-section.png, landing-page.png)
+- PixarAvatar: client/src/components/mr-blue/PixarAvatar.tsx (React Three Fiber 3D avatar with 7 states including 'error')
 
 ## External Dependencies
 - **Infrastructure:** PostgreSQL, Redis, Cloudinary, OpenStreetMap
