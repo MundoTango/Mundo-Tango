@@ -223,7 +223,9 @@ export default function OnboardingPage() {
                     <div className="space-y-8">
                       <div className="text-center">
                         <Camera className="h-16 w-16 text-primary mx-auto mb-6" />
-                        <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">Add a Profile Photo</h2>
+                        <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">
+                          Add a Profile Photo <span className="text-base font-normal text-muted-foreground">(optional)</span>
+                        </h2>
                         <p className="text-muted-foreground text-lg leading-relaxed">
                           A photo helps the community recognize you
                         </p>

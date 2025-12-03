@@ -13,7 +13,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import { Send, MessageCircle, Users, Heart } from "lucide-react";
+import { Send, MessageCircle, Users, Heart, Search, PenSquare } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/AuthContext";
 import { safeDateDistance } from "@/lib/safeDateFormat";
 import { SEO } from "@/components/SEO";
@@ -22,7 +23,14 @@ import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary"
 
 export default function MessagesPage() {
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const { data: conversations, isLoading } = useConversations();
+  
+  // Filter conversations by search query
+  const filteredConversations = conversations?.filter(c => 
+    c.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    c.lastMessage?.toLowerCase().includes(searchQuery.toLowerCase())
+  ) || [];
 
   return (
     <SelfHealingErrorBoundary pageName="Messages" fallbackRoute="/feed">
@@ -123,12 +131,32 @@ export default function MessagesPage() {
               <div className="h-[calc(100vh-45rem)] md:h-[600px] flex rounded-2xl overflow-hidden border shadow-lg">
                 {/* Left Panel - Conversation List (1/3 width) */}
                 <div className="flex-1 border-r flex flex-col max-w-[33.333%] bg-card">
-                  <div className="p-6 border-b">
-                    <h2 className="text-2xl md:text-3xl font-serif font-bold" data-testid="heading-messages">
-                      Messages
-                    </h2>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      {conversations?.length || 0} conversation{conversations?.length !== 1 ? 's' : ''}
+                  <div className="p-4 border-b space-y-3">
+                    <div className="flex items-center justify-between gap-2">
+                      <h2 className="text-xl font-serif font-bold" data-testid="heading-messages">
+                        Messages
+                      </h2>
+                      <Button 
+                        size="icon" 
+                        variant="ghost"
+                        data-testid="button-new-message"
+                        title="New conversation"
+                      >
+                        <PenSquare className="h-5 w-5" />
+                      </Button>
+                    </div>
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        placeholder="Search conversations..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="pl-9"
+                        data-testid="input-search-messages"
+                      />
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      {filteredConversations.length} of {conversations?.length || 0} conversation{conversations?.length !== 1 ? 's' : ''}
                     </p>
                   </div>
                   
@@ -151,9 +179,9 @@ export default function MessagesPage() {
                           </motion.div>
                         ))}
                       </div>
-                    ) : conversations && conversations.length > 0 ? (
+                    ) : filteredConversations.length > 0 ? (
                       <div className="p-4 space-y-2">
-                        {conversations.map((conversation, index) => (
+                        {filteredConversations.map((conversation, index) => (
                           <motion.button
                             key={conversation.id}
                             initial={{ opacity: 0, x: -20 }}

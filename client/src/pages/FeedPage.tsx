@@ -157,11 +157,11 @@ export default function FeedPage() {
 
   const allPosts = data?.pages.flat() || [];
 
-  // Cycle through tango quotes every 5 seconds
+  // Cycle through tango quotes every 10 seconds (less distracting)
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentQuoteIndex((prev) => (prev + 1) % TANGO_QUOTES.length);
-    }, 5000);
+    }, 10000);
     return () => clearInterval(interval);
   }, []);
 

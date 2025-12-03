@@ -21,8 +21,10 @@ export default function SettingsPage() {
         title="Settings"
         description="Redirecting to your profile settings..."
       />
-      <div className="flex items-center justify-center min-h-screen">
-        <p className="text-muted-foreground">Redirecting to your profile...</p>
+      <div className="flex flex-col items-center justify-center min-h-screen gap-4">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+        <p className="text-muted-foreground">Taking you to your profile settings...</p>
+        <p className="text-sm text-muted-foreground/70">Your settings are integrated into your profile for easy access</p>
       </div>
     </>
   );
