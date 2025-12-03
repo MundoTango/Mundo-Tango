@@ -1,0 +1,168 @@
+Here is a clean **MB.MD-style plan** for completing the audit fixes.
+It is written so you can **drop it directly into `qa_reports/mb_orchestration_plan.md` or a new MB.MD planning section**.
+
+Let me know if you'd like me to **insert it into the file directly** or **extend it into a Phase plan**.
+
+---
+
+```{"id":"38421","variant":"standard","title":"MB.MD Audit Fix Completion Plan"}
+# MB.MD Orchestration Plan — Audit Fix Completion
+
+This plan summarizes all remaining fixes identified across the admin audit, complete audit, and orchestration audit, and translates them into MB.MD-structured execution tasks. All tasks follow the MB Phased Execution Model and the standard QA → Implement → Validate → Document loop.
+
+---
+
+# 1. Objectives
+
+- Complete all outstanding audit issues identified in:
+  - `admin_audit.md`
+  - `complete_audit.md`
+  - `mb_orchestration_plan.md`
+- Standardize UI/UX behaviors across all admin and customer-facing pages.
+- Remove architectural inconsistencies flagged during cross-page validation.
+- Ensure data propagation, caching, and fallback behaviors match MB.MD patterns.
+- Produce a unified “Audit Fix Completion Report” after all work is validated.
+
+---
+
+# 2. Scope of Work
+
+## 2.1 Admin-Level Issues
+- Ensure Save/Cancel workflows are consistent for all edit flows.
+- Add missing tooltips/docs for advanced composer features:
+  - Hidden Gems
+  - Cross-post
+  - Go Live
+- Standardize deletion confirmation modals + undo flows.
+- Fix propagation issues: ensure edits to posts, events, and profiles update all dependent components immediately.
+
+## 2.2 Global Consistency Fixes
+- Apply MB.MD Pattern 40 (City Imagery Standardization) across:
+  - Events
+  - Professionals
+  - Local groups
+  - Recommendations
+- Normalize fallback image logic (3-tier fallback).
+- Fix inconsistent icon sizes, padding, and card layouts across pages.
+
+## 2.3 Navigation & Layout Issues
+- Validate that all admin-only pages are properly permission-gated.
+- Fix sidebar layout inconsistencies when switching between:
+  - Feed
+  - Events
+  - Groups
+  - Admin moderation
+- Standardize top-level navigation for Admin mode vs User mode.
+
+## 2.4 Data Integrity Fixes
+- Ensure page-to-page sync for:
+  - Event updates
+  - Profile edits
+  - New posts
+  - Admin moderation actions
+- Fix stale cache issues in:
+  - Upcoming events sidebar
+  - Friends sidebar
+  - Notifications panel
+- Add missing invalidation logic where needed.
+
+---
+
+# 3. MB.MD Execution Phases
+
+## Phase 1 — Immediate Blocking Fixes (P0)
+**Goal:** Resolve errors that prevent consistent usage or break admin workflows.
+
+### Tasks
+- Fix inconsistent Save/Cancel flows (admin + user editors).
+- Add confirmation modals for deletion in all components.
+- Ensure feed updates instantly reflect edits & deletions.
+- Fix event update propagation (event detail ↔ listings ↔ sidebars).
+- Clean up missing fallback image logic (Pattern 40).
+
+**Validation:**  
+Run MB.MD Test Suite A (UI/UX patterns 1–12) + cross-page sync test.
+
+---
+
+## Phase 2 — UX Consistency Across Pages (P1)
+**Goal:** Harmonize UI and behaviors across admin + customer experiences.
+
+### Tasks
+- Standardize padding, card layout, icon spacing.
+- Normalize search bars, hero headers, and tabs.
+- Add tooltips + docs for composer advanced features.
+- Validate dark/light mode consistency.
+
+**Validation:**  
+Run MB.MD Pattern 32 (Cross-Page Layout Verification).
+
+---
+
+## Phase 3 — Data Flow & Caching Fixes (P1 / P2)
+**Goal:** Ensure database and frontend state are synchronized everywhere.
+
+### Tasks
+- Add missing invalidation hooks for sidebar components.
+- Fix cache refresh for event participants.
+- Ensure notifications refresh after actions.
+- Validate all API routes involved in CRUD flows.
+
+**Validation:**  
+Run MB.MD Data Consistency Test Suite (DC-1 and DC-2).
+
+---
+
+## Phase 4 — Admin Orchestration Improvements (P2)
+**Goal:** Improve moderator efficiency and admin workflows.
+
+### Tasks
+- Standardize admin dashboard controls.
+- Add missing admin-only routes where required.
+- Verify moderation actions (hide post, remove media, mark as inappropriate).
+- Add inline audit logging (optional).
+
+**Validation:**  
+Run Admin Flow QA (AF-7).
+
+---
+
+## Phase 5 — Documentation & Final Rollup
+**Goal:** Close out all audits with complete institutional documentation.
+
+### Deliverables
+- `ADMIN_AUDIT_FIXED.md`
+- `GLOBAL_CONSISTENCY_FIXES.md`
+- `ORCHESTRATION_FIX_REPORT.md`
+- Updated MB.MD Phase Tracker
+- Updates to `as.md` (Atlas System Master Memory)
+
+**Validation:**  
+Automated audit summary + manual review.
+
+---
+
+# 4. Tracking & Reporting Structure
+
+## Daily Reporting
+- Each fix logged to `qa_reports/…` with:
+  - Issue summary  
+  - Fix applied  
+  - Code locations  
+  - Screenshots (optional)  
+
+## Completion Criteria
+All P0–P2 issues across the three audits must be:
+1. **Implemented**
+2. **Verified via MB.MD test patterns**
+3. **Documented**
+
+---
+
+# 5. Final Summary
+
+This plan operationalizes all known audit issues and aligns them with MB.MD’s phased execution methodology. Completing these fixes ensures full functional integrity and prepares the system for Phase 3+ enhancements, federation, and additional agent integrations.
+
+Follow the phases in order unless a P0 blocker emerges.
+
+```
