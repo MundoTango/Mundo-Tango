@@ -17,6 +17,29 @@ See:
 - ❌ PRDs (Product Requirement Documents)
 - ❌ Feature specifications
 
+- ### Comet Agent Tooling Policy ⭐⭐⭐ (CRITICAL)
+
+**Purpose:** Establish guardrails for Comet agent tool usage in Mundo Tango ecosystem.
+
+**PROHIBITION:**
+- ❌ Comet agents MUST NEVER invoke Replit AI for planning, implementation, refactoring, testing, PRs, or documentation
+- ❌ Comet agents MUST NEVER use Replit AI for strategy work or code generation
+
+**REQUIRED WORKFLOW:**
+- ✅ ALL strategy, code, and review work must be done via GitHub (branches, commits, PRs)
+- ✅ Replit is used ONLY as runtime and UI validation environment: run app, validate UI, run browser-based tests, verify behavior
+- ✅ When Replit AI would help: emit "Scott Action Needed – Replit AI" note and STOP (do not execute)
+- ✅ Comet agents never delegate to Replit AI themselves
+
+**Enforcement:**
+- 🚨 If Comet encounters task requiring Replit AI capability → surface as "Scott Action Item" with context
+- 🚨 Do not bypass this policy, do not attempt autonomous Replit AI invocation
+- 🚨 Wait for user (Scott) to explicitly use Replit AI and provide guidance
+
+**Integration with Pattern 47 (Colleague Collaboration):**
+- Document Replit AI needs in AGENT_MEMORY.md for other agents to see
+- Other agents can use same workaround or provide alternative approach
+
 ---
 
 
