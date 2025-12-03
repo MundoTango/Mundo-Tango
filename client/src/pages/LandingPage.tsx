@@ -249,23 +249,37 @@ export default function LandingPage() {
     }
   ];
 
-  // Fetch dynamic stats from API
+  // Fetch dynamic stats from API - shows real data only, no fake numbers
   const { data: publicStats } = useQuery<{
-    dancers: string;
-    events: string;
-    cities: number;
-    countries: string;
+    dancers: number | null;
+    teachers: number | null;
+    organizers: number | null;
+    events: number | null;
+    cities: string | null;
+    countries: number | null;
+    platformStats: {
+      yearsBuilding: number;
+      hoursInvested: number;
+      amountInvested: number;
+      foundedYear: number;
+      startedDancing: string;
+      yearsOfDancing: number;
+      trips: number;
+      cities: number;
+      countries: number;
+    };
   }>({
     queryKey: ["/api/stats/public"],
-    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+    staleTime: 5 * 60 * 1000,
   });
 
+  // Only display stats that have real data (not null)
   const stats = [
-    { value: publicStats?.dancers || "1,000+", label: "Dancers" },
-    { value: publicStats?.events || "100+", label: "Events" },
-    { value: publicStats?.cities?.toString() || "50", label: "Cities" },
-    { value: publicStats?.countries || "25+", label: "Countries" }
-  ];
+    publicStats?.dancers ? { value: `${publicStats.dancers}+`, label: "Dancers" } : null,
+    publicStats?.events ? { value: `${publicStats.events}+`, label: "Events" } : null,
+    publicStats?.cities ? { value: publicStats.cities.toString(), label: "Cities" } : null,
+    publicStats?.countries ? { value: `${publicStats.countries}+`, label: "Countries" } : null,
+  ].filter(Boolean) as { value: string; label: string }[];
 
   return (
     <div className="min-h-screen bg-background">
@@ -301,7 +315,7 @@ export default function LandingPage() {
                 data-testid="text-hero-subheadline"
               >
                 Connect with the global tango community. Discover events, find dance partners, 
-                and grow your journey with {publicStats?.dancers || "thousands of"} passionate dancers worldwide.
+                and grow your journey with passionate dancers worldwide.
               </motion.p>
 
               {/* CTA Buttons */}
@@ -332,22 +346,29 @@ export default function LandingPage() {
               </motion.div>
             </div>
 
-            {/* Stats Bar */}
-            <motion.div 
-              variants={fadeInUp}
-              className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-12"
-            >
-              {stats.map((stat, index) => (
-                <div 
-                  key={index}
-                  className="glass-card rounded-xl p-6 text-center"
-                  data-testid={`stat-${stat.label.toLowerCase().replace("/", "-")}`}
-                >
-                  <div className="text-3xl md:text-4xl font-bold text-white">{stat.value}</div>
-                  <div className="text-sm md:text-base text-white/80 mt-1">{stat.label}</div>
-                </div>
-              ))}
-            </motion.div>
+            {/* Stats Bar - Only shows when there's real data */}
+            {stats.length > 0 && (
+              <motion.div 
+                variants={fadeInUp}
+                className={`grid gap-4 mt-12 ${
+                  stats.length === 1 ? 'grid-cols-1 max-w-xs mx-auto' :
+                  stats.length === 2 ? 'grid-cols-2 max-w-md mx-auto' :
+                  stats.length === 3 ? 'grid-cols-3 max-w-lg mx-auto' :
+                  'grid-cols-2 lg:grid-cols-4'
+                }`}
+              >
+                {stats.map((stat, index) => (
+                  <div 
+                    key={index}
+                    className="glass-card rounded-xl p-6 text-center"
+                    data-testid={`stat-${stat.label.toLowerCase().replace("/", "-")}`}
+                  >
+                    <div className="text-3xl md:text-4xl font-bold text-white">{stat.value}</div>
+                    <div className="text-sm md:text-base text-white/80 mt-1">{stat.label}</div>
+                  </div>
+                ))}
+              </motion.div>
+            )}
           </motion.div>
         </div>
       </section>
@@ -707,12 +728,14 @@ export default function LandingPage() {
             </motion.div>
 
             {/* Social Proof */}
-            <motion.p 
-              variants={fadeInUp}
-              className="text-white/80 text-sm"
-            >
-              Join {publicStats?.dancers || "thousands of"} dancers worldwide
-            </motion.p>
+            {publicStats?.dancers && (
+              <motion.p 
+                variants={fadeInUp}
+                className="text-white/80 text-sm"
+              >
+                Join {publicStats.dancers}+ dancers worldwide
+              </motion.p>
+            )}
           </motion.div>
         </div>
       </section>
@@ -720,9 +743,34 @@ export default function LandingPage() {
       {/* Footer */}
       <footer className="bg-card border-t py-12" data-testid="section-footer">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+          {/* Scott's Story Banner */}
+          <div className="bg-muted/50 rounded-xl p-6 mb-8">
+            <div className="flex flex-col md:flex-row gap-6 items-center">
+              <div className="flex-1">
+                <h3 className="font-semibold text-lg mb-2">Built by a Dancer, For Dancers</h3>
+                <p className="text-sm text-muted-foreground">
+                  Scott started dancing tango in {publicStats?.platformStats?.startedDancing || "September 2007"} and has traveled to {publicStats?.platformStats?.cities || 79} cities across {publicStats?.platformStats?.countries || 27} countries for tango. 
+                  In April 2024, he began building Mundo Tango, investing over {publicStats?.platformStats?.hoursInvested?.toLocaleString() || "3,000"} hours and ${(publicStats?.platformStats?.amountInvested || 30000).toLocaleString()} of his own money to create the platform the tango community deserves.
+                </p>
+              </div>
+              <div className="flex gap-3">
+                <Link href="/about">
+                  <Button variant="outline" size="sm" data-testid="button-about-scott">
+                    About Scott
+                  </Button>
+                </Link>
+                <Link href="/support">
+                  <Button size="sm" data-testid="button-support-platform">
+                    Support Platform
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-8 mb-8">
             {/* Logo & Description */}
-            <div className="space-y-4">
+            <div className="space-y-4 md:col-span-2">
               <div className="flex items-center gap-2">
                 <div className="w-10 h-10 ocean-gradient rounded-lg flex items-center justify-center">
                   <span className="text-white font-bold text-lg">MT</span>
@@ -730,7 +778,7 @@ export default function LandingPage() {
                 <span className="font-bold text-xl ocean-gradient-text">Mundo Tango</span>
               </div>
               <p className="text-sm text-muted-foreground">
-                Connecting the global tango community, one dance at a time.
+                Connecting the global tango community, one dance at a time. {publicStats?.platformStats?.yearsOfDancing || 18} years of passion, now a platform for all.
               </p>
               {/* Social Icons */}
               <div className="flex gap-3">
@@ -754,27 +802,32 @@ export default function LandingPage() {
               <h3 className="font-semibold mb-4">Company</h3>
               <ul className="space-y-2 text-sm">
                 <li><Link href="/about" className="text-muted-foreground hover:text-foreground">About</Link></li>
-                <li><Link href="/features" className="text-muted-foreground hover:text-foreground">Features</Link></li>
+                <li><Link href="/for-dancers" className="text-muted-foreground hover:text-foreground">For Dancers</Link></li>
+                <li><Link href="/for-teachers" className="text-muted-foreground hover:text-foreground">For Teachers</Link></li>
+                <li><Link href="/for-organizers" className="text-muted-foreground hover:text-foreground">For Organizers</Link></li>
                 <li><Link href="/pricing" className="text-muted-foreground hover:text-foreground">Pricing</Link></li>
-                <li><Link href="/blog" className="text-muted-foreground hover:text-foreground">Blog</Link></li>
               </ul>
             </div>
 
-            {/* Resources */}
+            {/* Community */}
+            <div>
+              <h3 className="font-semibold mb-4">Community</h3>
+              <ul className="space-y-2 text-sm">
+                <li><Link href="/support" className="text-muted-foreground hover:text-foreground">Support Us</Link></li>
+                <li><Link href="/supporters" className="text-muted-foreground hover:text-foreground">Our Supporters</Link></li>
+                <li><Link href="/ambassadors" className="text-muted-foreground hover:text-foreground">Ambassadors</Link></li>
+                <li><Link href="/volunteer" className="text-muted-foreground hover:text-foreground">Volunteer</Link></li>
+                <li><Link href="/open-source" className="text-muted-foreground hover:text-foreground">Open Source</Link></li>
+              </ul>
+            </div>
+
+            {/* Resources & Legal */}
             <div>
               <h3 className="font-semibold mb-4">Resources</h3>
               <ul className="space-y-2 text-sm">
+                <li><Link href="/mr-blue" className="text-muted-foreground hover:text-foreground">Mr. Blue AI</Link></li>
                 <li><Link href="/help" className="text-muted-foreground hover:text-foreground">Help Center</Link></li>
                 <li><Link href="/faq" className="text-muted-foreground hover:text-foreground">FAQ</Link></li>
-                <li><Link href="/contact" className="text-muted-foreground hover:text-foreground">Contact</Link></li>
-                <li><Link href="/community-guidelines" className="text-muted-foreground hover:text-foreground">Community Guidelines</Link></li>
-              </ul>
-            </div>
-
-            {/* Legal */}
-            <div>
-              <h3 className="font-semibold mb-4">Legal</h3>
-              <ul className="space-y-2 text-sm">
                 <li><Link href="/privacy" className="text-muted-foreground hover:text-foreground">Privacy Policy</Link></li>
                 <li><Link href="/terms" className="text-muted-foreground hover:text-foreground">Terms of Service</Link></li>
               </ul>
@@ -785,7 +838,7 @@ export default function LandingPage() {
 
           {/* Bottom Bar */}
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
-            <p>© 2025 Mundo Tango. All rights reserved.</p>
+            <p>© 2025 Mundo Tango. All rights reserved. Built with love from April 2024.</p>
             <div className="flex items-center gap-2">
               <Globe className="h-4 w-4" />
               <span>Language: English</span>
