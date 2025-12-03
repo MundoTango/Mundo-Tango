@@ -27,6 +27,7 @@ See:
 
 **REQUIRED WORKFLOW:**
 - ✅ ALL strategy, code, and review work must be done via GitHub (branches, commits, PRs)
+-   - 📋 **Three-Step Workflow**: (1) Complete ALL work in GitHub as GitHub expert (branches, commits, PRs), (2) Use Replit Shell to `git pull` the branch, (3) Validate changes in Replit: verify code, test UI at https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/
 - ✅ Replit is used ONLY as runtime and UI validation environment: run app, validate UI, run browser-based tests, verify behavior
 - ✅ When Replit AI would help: emit "Scott Action Needed – Replit AI" note and STOP (do not execute)
 - ✅ Comet agents never delegate to Replit AI themselves
