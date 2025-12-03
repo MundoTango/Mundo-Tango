@@ -50,6 +50,29 @@ Production leverages GitHub Actions for CI/CD, Prometheus/Grafana with Sentry fo
 ### Marketing Site Architecture
 The marketing site includes a Donation Tier System (Tango Legends), a Human to Agent Collaboration (H2AC) Volunteer Program with 6 divisions, and an Ambassador Program. It features marketing page routes for support, supporters, volunteer, Mr. Blue, ambassadors, and open source. All public statistics are wired to a real database.
 
+### Demo System (December 2025)
+The platform includes a comprehensive Demo System implemented using MB.MD Patterns 28 + 41:
+
+**Core Components:**
+- `/demos` hub page with 8 interactive demo cards (DemosPage.tsx)
+- DemoModal component opens on "Watch Demo" button click in landing page hero section
+- Navigation integration: "Demos" link in PublicNavbar and footer "Platform Demos" link
+
+**Demo Categories:**
+1. **Mr. Blue AI Assistant** - AI companion with 10 expression states
+2. **3D Avatar Experience** - Real-time avatar animations (/mr-blue-avatar-demo)
+3. **Events Discovery** - Find global tango events
+4. **Community Groups** - City and professional networks
+5. **Talent Match AI** - Intelligent dancer matching
+6. **Travel Planner** - Tango journey planning
+7. **Music Library** - Classic and modern tango music
+8. **City Guides** - Worldwide tango scene information
+
+**Design Principles:**
+- ZERO fake data policy enforced - all statistics from real database APIs
+- 7-day free trial (not 14-day) with accurate pricing tiers
+- Ocean gradient theme with hover-elevate interactions
+
 ## External Dependencies
 - **Infrastructure:** PostgreSQL, Redis, Cloudinary, OpenStreetMap
 - **Authentication:** Google OAuth, Facebook OAuth, JWT
