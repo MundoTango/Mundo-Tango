@@ -425,7 +425,8 @@ const PROTaxiDancersPage = lazy(() => import("@/pages/pro/PROGroupPublicPage").t
 function Router() {
   return (
     <Switch>
-      <Route path="/">
+      <Route 484
+      >
         <Redirect to="/profile/admin" />
       </Route>
       <Route path="/landing" component={LandingPage} />
