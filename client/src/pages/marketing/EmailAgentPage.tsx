@@ -7,9 +7,9 @@ import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { Link } from "wouter";
-import emailHeroImg from "@assets/stock_images/professional_office__3f3e5cfe.jpg";
-import emailImg1 from "@assets/stock_images/professional_office__0fd5582e.jpg";
-import emailImg2 from "@assets/stock_images/professional_office__c4038cdf.jpg";
+import emailHeroImg from "@assets/stock_images/tango_dancers_in_ele_9f76090c.jpg";
+import emailImg1 from "@assets/stock_images/milonga_dance_hall,__ffbc0d71.jpg";
+import emailImg2 from "@assets/stock_images/milonga_dance_hall,__8449cbb5.jpg";
 
 export default function EmailAgentPage() {
   const metrics = [

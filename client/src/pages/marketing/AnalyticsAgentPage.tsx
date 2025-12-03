@@ -7,9 +7,9 @@ import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { Link } from "wouter";
-import analyticsHeroImg from "@assets/stock_images/professional_office__7baceb73.jpg";
-import analyticsImg1 from "@assets/stock_images/professional_office__e56fc639.jpg";
-import analyticsImg2 from "@assets/stock_images/professional_office__ac13e3df.jpg";
+import analyticsHeroImg from "@assets/stock_images/tango_dancers_in_ele_e6cc8a3a.jpg";
+import analyticsImg1 from "@assets/stock_images/milonga_dance_hall,__36c486f2.jpg";
+import analyticsImg2 from "@assets/stock_images/buenos_aires_argenti_9805cd85.jpg";
 
 export default function AnalyticsAgentPage() {
   const metrics = [

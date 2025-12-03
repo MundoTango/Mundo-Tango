@@ -7,9 +7,9 @@ import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { Link } from "wouter";
-import seoHeroImg from "@assets/stock_images/professional_office__e56fc639.jpg";
-import seoImg1 from "@assets/stock_images/professional_office__ac13e3df.jpg";
-import seoImg2 from "@assets/stock_images/professional_office__6787b655.jpg";
+import seoHeroImg from "@assets/stock_images/tango_dancers_in_ele_003ee0cf.jpg";
+import seoImg1 from "@assets/stock_images/buenos_aires_argenti_9805cd85.jpg";
+import seoImg2 from "@assets/stock_images/buenos_aires_argenti_4131c695.jpg";
 
 export default function SEOAgentPage() {
   const metrics = [

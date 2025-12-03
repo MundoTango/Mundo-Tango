@@ -57,7 +57,7 @@ function AmbassadorsPageContent() {
   ];
 
   const requirements = [
-    "Attend at least 2 milongas per WEEK in your city",
+    "Host at least 1 milonga per week in your city",
     "Be active on the platform (post, share events, connect)",
     "Respond to questions from visiting dancers",
     "Help onboard new local dancers to the platform",

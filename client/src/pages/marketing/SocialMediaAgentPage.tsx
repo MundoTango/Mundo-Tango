@@ -7,9 +7,9 @@ import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { Link } from "wouter";
-import socialHeroImg from "@assets/stock_images/professional_office__d04fc77c.jpg";
-import socialImg1 from "@assets/stock_images/professional_office__a01e9a13.jpg";
-import socialImg2 from "@assets/stock_images/professional_office__9e53fcce.jpg";
+import socialHeroImg from "@assets/stock_images/tango_dancers_in_ele_3f401f8b.jpg";
+import socialImg1 from "@assets/stock_images/milonga_dance_hall,__451269f1.jpg";
+import socialImg2 from "@assets/stock_images/buenos_aires_argenti_88a7659b.jpg";
 
 export default function SocialMediaAgentPage() {
   const metrics = [

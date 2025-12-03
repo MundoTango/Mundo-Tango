@@ -7,9 +7,9 @@ import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { Link } from "wouter";
-import contentHeroImg from "@assets/stock_images/professional_office__0fd5582e.jpg";
-import contentImg1 from "@assets/stock_images/professional_office__c4038cdf.jpg";
-import contentImg2 from "@assets/stock_images/professional_office__7baceb73.jpg";
+import contentHeroImg from "@assets/stock_images/tango_dancers_in_ele_8c2ddd84.jpg";
+import contentImg1 from "@assets/stock_images/milonga_dance_hall,__36c486f2.jpg";
+import contentImg2 from "@assets/stock_images/milonga_dance_hall,__46cae5f7.jpg";
 
 export default function ContentAgentPage() {
   const metrics = [
