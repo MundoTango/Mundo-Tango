@@ -191,6 +191,9 @@ import invitationBatchingRoutes from "./routes/invitation-batching-routes";
 import tangoResumeRoutes from "./routes/tango-resume-routes";
 import roleConfirmationRoutes from "./routes/role-confirmation-routes";
 
+// Marketing Site Public Routes
+import publicStatsRoutes from "./routes/public-stats-routes";
+
 import { authenticateToken, optionalAuth, AuthRequest, requireRoleLevel } from "./middleware/auth";
 import { setCsrfToken, verifyCsrfToken } from "./middleware/csrf";
 import { auditLog, getClientIp } from "./middleware/auditLog";
@@ -473,55 +476,90 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Public stats endpoint for landing page (no auth required)
+  // Displays real data only - no fake numbers. Stats hidden if below threshold.
+  const DISPLAY_THRESHOLD = 10;
+  
   app.get("/api/stats/public", async (req: Request, res: Response) => {
     try {
       const { db } = await import("./db");
-      const { users, events, groups } = await import("@shared/schema");
-      const { count, sql } = await import("drizzle-orm");
+      const { users, events } = await import("@shared/schema");
+      const { count, sql, eq, and, gte } = await import("drizzle-orm");
       
-      // Get total users count
-      const totalUsersResult = await db.select({ count: count() }).from(users);
-      const totalUsers = totalUsersResult[0]?.count || 0;
+      // Get active users count with role breakdowns
+      const usersResult = await db.select({ 
+        total: count(),
+        teachers: sql<number>`COUNT(CASE WHEN 'teacher' = ANY(tango_roles) THEN 1 END)`,
+        organizers: sql<number>`COUNT(CASE WHEN 'organizer' = ANY(tango_roles) THEN 1 END)`,
+      }).from(users).where(and(eq(users.isActive, true), eq(users.suspended, false)));
       
-      // Get total events count
-      const totalEventsResult = await db.select({ count: count() }).from(events);
-      const totalEvents = totalEventsResult[0]?.count || 0;
+      const totalUsers = usersResult[0]?.total || 0;
+      const teacherCount = usersResult[0]?.teachers || 0;
+      const organizerCount = usersResult[0]?.organizers || 0;
+      
+      // Get upcoming events count
+      const eventsResult = await db.select({ count: count() })
+        .from(events)
+        .where(gte(events.startDate, new Date()));
+      const totalEvents = eventsResult[0]?.count || 0;
       
       // Get unique cities count
       const citiesResult = await db
-        .select({ count: sql<number>`COUNT(DISTINCT ${users.city})` })
+        .select({ count: sql<number>`COUNT(DISTINCT city)` })
         .from(users)
-        .where(sql`${users.city} IS NOT NULL AND ${users.city} != ''`);
+        .where(sql`city IS NOT NULL AND city != '' AND is_active = true`);
       const totalCities = citiesResult[0]?.count || 0;
       
       // Get unique countries count
       const countriesResult = await db
-        .select({ count: sql<number>`COUNT(DISTINCT ${users.country})` })
+        .select({ count: sql<number>`COUNT(DISTINCT country)` })
         .from(users)
-        .where(sql`${users.country} IS NOT NULL AND ${users.country} != ''`);
+        .where(sql`country IS NOT NULL AND country != '' AND is_active = true`);
       const totalCountries = countriesResult[0]?.count || 0;
       
-      // Format numbers for display
-      const formatNumber = (n: number): string => {
-        if (n >= 10000) return `${Math.floor(n / 1000)}k+`;
-        if (n >= 1000) return `${(n / 1000).toFixed(1)}k+`;
-        return `${n}+`;
+      // Platform stats (always shown - these are founder facts)
+      const platformStats = {
+        yearsBuilding: 1,
+        hoursInvested: 3000,
+        amountInvested: 30000,
+        foundedYear: 2024,
+        startedDancing: "September 2007",
+        yearsOfDancing: 18,
+        trips: 112,
+        cities: 79,
+        countries: 27,
       };
       
+      // Only return stats that meet the display threshold (no fake numbers!)
       res.json({
-        dancers: formatNumber(totalUsers),
-        events: formatNumber(totalEvents),
-        cities: totalCities,
-        countries: `${totalCountries}+`
+        dancers: totalUsers >= DISPLAY_THRESHOLD ? totalUsers : null,
+        teachers: teacherCount >= DISPLAY_THRESHOLD ? teacherCount : null,
+        organizers: organizerCount >= DISPLAY_THRESHOLD ? organizerCount : null,
+        events: totalEvents >= DISPLAY_THRESHOLD ? totalEvents : null,
+        cities: totalCities >= DISPLAY_THRESHOLD ? totalCities : null,
+        countries: totalCountries >= 3 ? totalCountries : null,
+        platformStats,
       });
     } catch (error: any) {
       console.error('[PublicStats] Error:', error);
-      // Return fallback values on error
+      // On error, return null for dynamic stats but keep platform stats
       res.json({
-        dancers: "1,000+",
-        events: "100+",
-        cities: 50,
-        countries: "25+"
+        dancers: null,
+        teachers: null,
+        organizers: null,
+        events: null,
+        cities: null,
+        countries: null,
+        platformStats: {
+          yearsBuilding: 1,
+          hoursInvested: 3000,
+          amountInvested: 30000,
+          foundedYear: 2024,
+          startedDancing: "September 2007",
+          yearsOfDancing: 18,
+          trips: 112,
+          cities: 79,
+          countries: 27,
+        },
       });
     }
   });
@@ -613,6 +651,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Talent Pipeline Management - Candidate tracking and approvals
   app.use("/api/talent-pipeline", talentPipelineRoutes);
+  
+  // Marketing Site Public Routes (no auth required)
+  app.use("/api/public", publicStatsRoutes);
   
   // TRACK 8: Gamification System - Points, Badges, Leaderboard, Progressive Autonomy
   app.use("/api/gamification", gamificationRoutes);

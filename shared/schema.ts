@@ -19004,6 +19004,234 @@ export type InsertWorkLog = z.infer<typeof insertWorkLogSchema>;
 export type SelectWorkLog = typeof workLogs.$inferSelect;
 
 // ============================================================================
+// PLATFORM DONATIONS & TANGO LEGEND SUPPORTERS
+// Named tiers honoring tango legends who shaped the art form
+// ============================================================================
+
+export const tangoLegendTierEnum = pgEnum("tango_legend_tier", [
+  "cachafaz",   // $10+ - El Cachafaz, first tango dancer to tour the world
+  "piazzolla",  // $50+ - Astor Piazzolla, revolutionary Tango Nuevo composer  
+  "copes",      // $100+ - Juan Carlos Copes, saved tango from extinction
+  "gardel",     // $500+ - Carlos Gardel, THE KING OF TANGO
+]);
+
+export const platformDonations = pgTable(
+  "platform_donations",
+  {
+    id: serial("id").primaryKey(),
+    userId: integer("user_id").references(() => users.id, { onDelete: "set null" }),
+    email: varchar("email", { length: 255 }).notNull(),
+    name: varchar("name", { length: 255 }),
+    amountCents: integer("amount_cents").notNull(),
+    currency: varchar("currency", { length: 3 }).default("USD").notNull(),
+    tier: tangoLegendTierEnum("tier").notNull(),
+    isRecurring: boolean("is_recurring").default(false).notNull(),
+    stripePaymentIntentId: varchar("stripe_payment_intent_id", { length: 255 }),
+    stripeSubscriptionId: varchar("stripe_subscription_id", { length: 255 }),
+    stripeCustomerId: varchar("stripe_customer_id", { length: 255 }),
+    displayOnWall: boolean("display_on_wall").default(true).notNull(),
+    message: text("message"),
+    isAnonymous: boolean("is_anonymous").default(false).notNull(),
+    status: varchar("status", { length: 20 }).default("completed").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  },
+  (table) => ({
+    userIdx: index("platform_donations_user_idx").on(table.userId),
+    tierIdx: index("platform_donations_tier_idx").on(table.tier),
+    statusIdx: index("platform_donations_status_idx").on(table.status),
+    createdAtIdx: index("platform_donations_created_at_idx").on(table.createdAt),
+  }),
+);
+
+export const insertPlatformDonationSchema = createInsertSchema(platformDonations).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+export type InsertPlatformDonation = z.infer<typeof insertPlatformDonationSchema>;
+export type SelectPlatformDonation = typeof platformDonations.$inferSelect;
+
+// Donor badges awarded based on donation tier
+export const donorBadges = pgTable(
+  "donor_badges",
+  {
+    id: serial("id").primaryKey(),
+    userId: integer("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    tier: tangoLegendTierEnum("tier").notNull(),
+    awardedAt: timestamp("awarded_at").defaultNow().notNull(),
+    totalDonatedCents: integer("total_donated_cents").default(0).notNull(),
+    isActive: boolean("is_active").default(true).notNull(),
+  },
+  (table) => ({
+    userIdx: index("donor_badges_user_idx").on(table.userId),
+    tierIdx: index("donor_badges_tier_idx").on(table.tier),
+    uniqueUserTier: unique("unique_user_donor_tier").on(table.userId, table.tier),
+  }),
+);
+
+export const insertDonorBadgeSchema = createInsertSchema(donorBadges).omit({
+  id: true,
+  awardedAt: true,
+});
+export type InsertDonorBadge = z.infer<typeof insertDonorBadgeSchema>;
+export type SelectDonorBadge = typeof donorBadges.$inferSelect;
+
+// ============================================================================
+// AMBASSADOR APPLICATIONS
+// Community ambassadors represent Mundo Tango in their cities
+// ============================================================================
+
+export const ambassadorApplications = pgTable(
+  "ambassador_applications",
+  {
+    id: serial("id").primaryKey(),
+    userId: integer("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    city: varchar("city", { length: 255 }).notNull(),
+    country: varchar("country", { length: 255 }).notNull(),
+    milongasPerWeek: integer("milongas_per_week").default(2).notNull(),
+    motivation: text("motivation").notNull(),
+    experience: text("experience"),
+    socialMediaLinks: jsonb("social_media_links").$type<{
+      facebook?: string;
+      instagram?: string;
+      youtube?: string;
+      website?: string;
+    }>(),
+    status: varchar("status", { length: 20 }).default("pending").notNull(),
+    reviewedBy: integer("reviewed_by").references(() => users.id),
+    reviewNotes: text("review_notes"),
+    approvedAt: timestamp("approved_at"),
+    rejectedAt: timestamp("rejected_at"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  },
+  (table) => ({
+    userIdx: index("ambassador_applications_user_idx").on(table.userId),
+    cityIdx: index("ambassador_applications_city_idx").on(table.city, table.country),
+    statusIdx: index("ambassador_applications_status_idx").on(table.status),
+  }),
+);
+
+export const insertAmbassadorApplicationSchema = createInsertSchema(ambassadorApplications).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  approvedAt: true,
+  rejectedAt: true,
+});
+export type InsertAmbassadorApplication = z.infer<typeof insertAmbassadorApplicationSchema>;
+export type SelectAmbassadorApplication = typeof ambassadorApplications.$inferSelect;
+
+// Active ambassadors (approved applications)
+export const ambassadors = pgTable(
+  "ambassadors",
+  {
+    id: serial("id").primaryKey(),
+    userId: integer("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    applicationId: integer("application_id")
+      .notNull()
+      .references(() => ambassadorApplications.id, { onDelete: "cascade" }),
+    city: varchar("city", { length: 255 }).notNull(),
+    country: varchar("country", { length: 255 }).notNull(),
+    referralCode: varchar("referral_code", { length: 50 }).unique(),
+    totalReferrals: integer("total_referrals").default(0).notNull(),
+    totalEarningsCents: integer("total_earnings_cents").default(0).notNull(),
+    isActive: boolean("is_active").default(true).notNull(),
+    activatedAt: timestamp("activated_at").defaultNow().notNull(),
+    deactivatedAt: timestamp("deactivated_at"),
+  },
+  (table) => ({
+    userIdx: index("ambassadors_user_idx").on(table.userId),
+    cityIdx: index("ambassadors_city_idx").on(table.city, table.country),
+    referralCodeIdx: index("ambassadors_referral_code_idx").on(table.referralCode),
+    activeIdx: index("ambassadors_active_idx").on(table.isActive),
+  }),
+);
+
+export const insertAmbassadorSchema = createInsertSchema(ambassadors).omit({
+  id: true,
+  activatedAt: true,
+  deactivatedAt: true,
+});
+export type InsertAmbassador = z.infer<typeof insertAmbassadorSchema>;
+export type SelectAmbassador = typeof ambassadors.$inferSelect;
+
+// ============================================================================
+// VOLUNTEER APPLICATIONS (Extended from existing volunteer system)
+// H2AC - Human to Agent Collaboration volunteer program
+// ============================================================================
+
+export const volunteerDivisionEnum = pgEnum("volunteer_division", [
+  "foundation",   // Layers 1-10: Database, Auth, API, Backend, DevOps
+  "core",         // Layers 11-20: Frontend, UI/UX, Components, Mobile
+  "business",     // Layers 21-30: Payments, Growth, Marketing, Analytics
+  "intelligence", // Layers 31-46: AI/ML, Data Science, NLP, Mr Blue
+  "platform",     // Layers 47-56: Security, QA, Performance, SRE
+  "extended",     // Layers 57-61: Translation, Content, Community, Social
+]);
+
+export const volunteerRoleEnum = pgEnum("volunteer_role", [
+  "c_level",      // CEO, CTO, CPO, CMO advisors
+  "division_chief",
+  "director",
+  "team_lead",
+  "expert_agent",
+  "individual_contributor",
+]);
+
+export const volunteerApplications = pgTable(
+  "volunteer_applications",
+  {
+    id: serial("id").primaryKey(),
+    userId: integer("user_id").references(() => users.id, { onDelete: "set null" }),
+    email: varchar("email", { length: 255 }).notNull(),
+    name: varchar("name", { length: 255 }).notNull(),
+    division: volunteerDivisionEnum("division").notNull(),
+    preferredRole: volunteerRoleEnum("preferred_role").default("individual_contributor").notNull(),
+    skills: text("skills").array(),
+    experience: text("experience"),
+    portfolioUrl: text("portfolio_url"),
+    githubUrl: text("github_url"),
+    linkedinUrl: text("linkedin_url"),
+    hoursPerWeek: integer("hours_per_week").default(5).notNull(),
+    timezone: varchar("timezone", { length: 100 }),
+    motivation: text("motivation").notNull(),
+    status: varchar("status", { length: 20 }).default("pending").notNull(),
+    reviewedBy: integer("reviewed_by").references(() => users.id),
+    reviewNotes: text("review_notes"),
+    matchScore: real("match_score"),
+    suggestedTasks: jsonb("suggested_tasks").$type<string[]>(),
+    approvedAt: timestamp("approved_at"),
+    rejectedAt: timestamp("rejected_at"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  },
+  (table) => ({
+    userIdx: index("volunteer_applications_user_idx").on(table.userId),
+    divisionIdx: index("volunteer_applications_division_idx").on(table.division),
+    statusIdx: index("volunteer_applications_status_idx").on(table.status),
+    emailIdx: index("volunteer_applications_email_idx").on(table.email),
+  }),
+);
+
+export const insertVolunteerApplicationSchema = createInsertSchema(volunteerApplications).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  approvedAt: true,
+  rejectedAt: true,
+});
+export type InsertVolunteerApplication = z.infer<typeof insertVolunteerApplicationSchema>;
+export type SelectVolunteerApplication = typeof volunteerApplications.$inferSelect;
+
+// ============================================================================
 // PLATFORM INDEPENDENCE SCHEMA (PATH 2)
 // ============================================================================
 
