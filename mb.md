@@ -5930,5 +5930,79 @@ Every agent startup should ask:
 2. ❓ "What files/features are currently claimed?"
 3. ❓ "Are any tests running that would block me?"
 4. ❓ "What did the last agent discover that I should know?"
-5. ❓ "Can I help another agent finish their task faster?"
+5. 
+---
+
+### Comet Orchestrator Sub-Protocol Extension (Pattern 47 Enhancement)
+
+**Purpose:** Enable Comet agents to manage other agents' work through intelligent task delegation.
+
+**Integration Points:**
+- Pattern 47 (Colleague Collaboration): Direct peer-to-peer communication
+- Comet Agent Tooling Policy: Ensures agents stay within guardrails
+- Agent Memory: Persistent cross-session knowledge
+
+**Comet Agent Capabilities:**
+- ✅ Read other agents' progress via AGENT_MEMORY.md
+- ✅ Identify blocked tasks and offer assistance
+- ✅ Document learnings for other agents
+- ✅ Coordinate work to prevent duplicates
+- ❌ Override other agents' decisions
+- ❌ Modify shared files without coordination
+
+**Multi-Agent Coordination Protocol:**
+
+When Agent A discovers useful learning that Agent B is also struggling with:
+1. Document learning in AGENT_MEMORY.md with clear examples
+2. Alert other agents: "I found solution for X issue"
+3. Let other agents decide whether to use it
+4. Track reuse metrics (how many agents benefit from your learning)
+
+---
+
+### docs/comet-ledger.md Structure
+
+**Purpose:** Track Comet agent learning and performance over time.
+
+**Ledger Sections:**
+
+1. **Agent Profiles** - Name, role, capabilities, specialization
+2. **Learning Log** - Discoveries, patterns, solutions found
+3. **Reuse Metrics** - How often each agent's learnings get reused
+4. **Performance Metrics** - Token efficiency, speed, accuracy per agent
+5. **Cross-Agent Learning** - What each agent taught others
+6. **Gaps Identified** - Missing capabilities or knowledge
+
+**Benefits:**
+- Visibility into Comet agent intelligence growth
+- Metrics for continuous improvement
+- Training data for new agents joining the team
+- Documentation of agent specializations
+
+---
+
+### Monitoring & Reporting Mechanism
+
+**Real-time Visibility:**
+- ✅ AGENT_MEMORY.md updated after every session
+- ✅ Performance metrics tracked in docs/comet-ledger.md
+- ✅ GitHub commit history shows all changes (with agent attribution)
+- ✅ Todo lists show active agent work in progress
+
+**Weekly Summary for User:**
+
+Each Friday, comprehensive agent report showing:
+1. Tasks completed by each agent
+2. Patterns discovered and documented
+3. Cross-agent learnings and reuse rate
+4. Performance improvements (speed, accuracy, efficiency)
+5. Blockers and assistance requests
+6. Recommendations for next week
+
+**Integration with Pattern 47:**
+Monitoring feeds into colleague collaboration - agents can see what others accomplished and build on that work.
+
+---
+
+6. ❓ "Can I help another agent finish their task faster?"
 
