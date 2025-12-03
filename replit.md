@@ -56,3 +56,32 @@ Production leverages GitHub Actions for CI/CD, Prometheus/Grafana with Sentry fo
 - **UI Libraries:** shadcn/ui, Radix UI, Framer Motion, Leaflet
 - **Internationalization:** i18next, i18next-browser-languagedetector, i18next-http-backend, react-i18next
 - **Other:** Sentry, Playwright, BullMQ, FFmpeg, fluent-ffmpeg, Wouter, Multer
+
+## Recent Changes (December 2025)
+
+### Marketing Pages (Dec 3, 2025)
+Added 3 audience-targeted marketing pages with editorial design:
+- `/for-dancers` - ForDancersPage with community features, partner finding, event discovery
+- `/for-teachers` - ForTeachersPage with student management tools, scheduling, payment processing, pricing tiers
+- `/for-organizers` - ForOrganizersPage with event management, ticketing, attendee analytics
+
+All pages include:
+- Framer Motion scroll animations
+- SEO meta tags via SEO component
+- SelfHealingErrorBoundary wrapping
+- Testimonials and CTAs with wouter Links
+- Consistent MT Ocean Theme styling
+
+### Volunteer Task System (Dec 3, 2025)
+- Created MyTasksPage.tsx for volunteer task assignment and management
+- Built complete volunteer tasks API at `/api/volunteer-tasks` with CRUD endpoints
+- Integrated with existing user authentication system
+
+### Talent Pipeline (Dec 3, 2025)
+- Wired TalentPipelinePage to real API (removed mock data)
+- Created talent pipeline API routes with stats, pending candidates, approve/reject mutations
+- Using useQuery/useMutation hooks from TanStack Query
+
+### Plan Schema (Dec 3, 2025)
+- Added planItems, planLinks, workLog tables to shared/schema.ts
+- Supports hierarchical task management with dependencies and time tracking
