@@ -399,14 +399,16 @@ function SupportPageContent() {
               Join the movement. Become a Tango Legend.
             </motion.p>
             <motion.div variants={fadeInUp} className="flex justify-center gap-4">
-              <Button 
-                size="lg" 
-                className="bg-white text-primary hover:bg-white/90"
-                data-testid="button-support-now"
-              >
-                Support Now
-                <Heart className="h-4 w-4 ml-2" />
-              </Button>
+              <Link href="/donate">
+                <Button 
+                  size="lg" 
+                  className="bg-white text-primary hover:bg-white/90"
+                  data-testid="button-support-now"
+                >
+                  Support Now
+                  <Heart className="h-4 w-4 ml-2" />
+                </Button>
+              </Link>
               <Link href="/supporters">
                 <Button 
                   size="lg" 

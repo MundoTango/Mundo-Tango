@@ -243,13 +243,15 @@ export default function ForTeachersPage() {
                           </li>
                         ))}
                       </ul>
-                      <Button 
-                        className="w-full mt-6" 
-                        variant={tier.highlighted ? "default" : "outline"}
-                        data-testid={`button-select-${tier.name.toLowerCase()}`}
-                      >
-                        Get Started
-                      </Button>
+                      <Link href={`/register?role=teacher&plan=${tier.name.toLowerCase()}`}>
+                        <Button 
+                          className="w-full mt-6" 
+                          variant={tier.highlighted ? "default" : "outline"}
+                          data-testid={`button-select-${tier.name.toLowerCase()}`}
+                        >
+                          Get Started
+                        </Button>
+                      </Link>
                     </CardContent>
                   </Card>
                 </motion.div>

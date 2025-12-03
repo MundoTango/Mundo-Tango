@@ -2,10 +2,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { SEO } from "@/components/SEO";
-import { Search, TrendingUp, Link, FileText, BarChart3, Target, Sparkles } from "lucide-react";
+import { Search, TrendingUp, Link as LinkIcon, FileText, BarChart3, Target, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
+import { Link } from "wouter";
 import seoHeroImg from "@assets/stock_images/professional_office__e56fc639.jpg";
 import seoImg1 from "@assets/stock_images/professional_office__ac13e3df.jpg";
 import seoImg2 from "@assets/stock_images/professional_office__6787b655.jpg";
@@ -142,10 +143,12 @@ export default function SEOAgentPage() {
                     </div>
                   </div>
                 ))}
-                <Button className="w-full gap-2" variant="outline" data-testid="button-view-all-keywords">
-                  <Search className="w-4 h-4" />
-                  View All Keywords
-                </Button>
+                <Link href="/admin/seo/keywords">
+                  <Button className="w-full gap-2" variant="outline" data-testid="button-view-all-keywords">
+                    <Search className="w-4 h-4" />
+                    View All Keywords
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
 
@@ -189,10 +192,12 @@ export default function SEOAgentPage() {
                     </div>
                   </div>
                 ))}
-                <Button className="w-full gap-2" data-testid="button-generate-seo-report">
-                  <Sparkles className="w-4 h-4" />
-                  Generate Full SEO Report
-                </Button>
+                <Link href="/admin/seo/report">
+                  <Button className="w-full gap-2" data-testid="button-generate-seo-report">
+                    <Sparkles className="w-4 h-4" />
+                    Generate Full SEO Report
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
           </div>

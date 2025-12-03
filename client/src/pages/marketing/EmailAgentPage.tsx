@@ -6,6 +6,7 @@ import { Mail, Send, Users, TrendingUp, MousePointerClick, Eye, Sparkles } from 
 import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
+import { Link } from "wouter";
 import emailHeroImg from "@assets/stock_images/professional_office__3f3e5cfe.jpg";
 import emailImg1 from "@assets/stock_images/professional_office__0fd5582e.jpg";
 import emailImg2 from "@assets/stock_images/professional_office__c4038cdf.jpg";
@@ -156,10 +157,12 @@ export default function EmailAgentPage() {
                     )}
                   </div>
                 ))}
-                <Button className="w-full gap-2" variant="outline" data-testid="button-create-campaign">
-                  <Sparkles className="w-4 h-4" />
-                  Create Campaign
-                </Button>
+                <Link href="/admin/email/create">
+                  <Button className="w-full gap-2" variant="outline" data-testid="button-create-campaign">
+                    <Sparkles className="w-4 h-4" />
+                    Create Campaign
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
 
@@ -190,10 +193,12 @@ export default function EmailAgentPage() {
                     <p className="text-xs text-muted-foreground">subscribers</p>
                   </div>
                 ))}
-                <Button className="w-full gap-2" data-testid="button-manage-segments">
-                  <Users className="w-4 h-4" />
-                  Manage Segments
-                </Button>
+                <Link href="/admin/email/segments">
+                  <Button className="w-full gap-2" data-testid="button-manage-segments">
+                    <Users className="w-4 h-4" />
+                    Manage Segments
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
           </div>

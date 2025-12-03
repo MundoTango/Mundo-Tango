@@ -6,6 +6,7 @@ import { Share2, TrendingUp, Users, MessageCircle, Heart, Calendar, Sparkles } f
 import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
+import { Link } from "wouter";
 import socialHeroImg from "@assets/stock_images/professional_office__d04fc77c.jpg";
 import socialImg1 from "@assets/stock_images/professional_office__a01e9a13.jpg";
 import socialImg2 from "@assets/stock_images/professional_office__9e53fcce.jpg";
@@ -141,10 +142,12 @@ export default function SocialMediaAgentPage() {
                     <p className="text-xs text-muted-foreground">{post.time}</p>
                   </div>
                 ))}
-                <Button className="w-full gap-2" variant="outline" data-testid="button-schedule-post">
-                  <Calendar className="w-4 h-4" />
-                  Schedule New Post
-                </Button>
+                <Link href="/admin/social/create">
+                  <Button className="w-full gap-2" variant="outline" data-testid="button-schedule-post">
+                    <Calendar className="w-4 h-4" />
+                    Schedule New Post
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
 
@@ -184,10 +187,12 @@ export default function SocialMediaAgentPage() {
                     </div>
                   </div>
                 ))}
-                <Button className="w-full gap-2" data-testid="button-social-analytics">
-                  <TrendingUp className="w-4 h-4" />
-                  View Full Analytics
-                </Button>
+                <Link href="/admin/social/analytics">
+                  <Button className="w-full gap-2" data-testid="button-social-analytics">
+                    <TrendingUp className="w-4 h-4" />
+                    View Full Analytics
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
           </div>
