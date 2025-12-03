@@ -15,6 +15,21 @@ Mundo Tango is a production-ready social platform connecting the global tango co
 - **Validation Loop** - observe → decide → act → validate → adapt (not just automation)
 - **MB.MD Methodology** - Apply v9.9.2 patterns systematically: Research → Plan → Build → Test → Document
 
+## Recent Fixes (Dec 3, 2025)
+
+### Build System Recovery - COMPLETE
+- **Issue**: Git merge conflict in vite.config.ts causing build failure with "Unexpected <<" error
+- **Root Cause**: Merge conflict markers (`<<<<<<< HEAD`, `=======`, `>>>>>>>`) from uncommitted git merge
+- **Fix**: Resolved conflict via bash command (edit tool restricted on vite.config.ts)
+- **Result**: App builds and runs successfully, all 1,218 agents initialized
+
+### MB.MD QA Bug Fixes - VERIFIED
+- **Bug #1**: 5x greeting repetition - FIXED (lines 413-445 in VisualEditorPage.tsx)
+  - Removed duplicate save in streaming response handler
+- **Bug #2**: Empty prompts saved - FIXED (lines 267-271 in VisualEditorPage.tsx)
+  - Added content validation: `if (!content || !content.trim()) throw new Error`
+- **Test Coverage**: 15 Playwright tests in `tests/visual-editor-qa-critical-bugs.spec.ts`
+
 ## Recent Fixes (Dec 2, 2025)
 
 ### MB.MD Governance Cleanup - COMPLETE (Pattern 45)
