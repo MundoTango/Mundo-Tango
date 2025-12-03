@@ -173,6 +173,7 @@ import { registerMessagingRoutes } from "./routes/messaging-routes";
 import adsRoutes from "./routes/ads-routes";
 import revenueRoutes from "./routes/revenue-routes";
 import volunteerTestingRoutes from "./routes/volunteerTesting";
+import volunteerTasksRoutes from "./routes/volunteerTasks";
 import gamificationRoutes from "./routes/gamification";
 import { registerLearningPathwaysRoutes } from "./routes/learningPathways-routes";
 import systemPromptsRoutes from "./routes/systemPrompts";
@@ -551,6 +552,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // TRACK 6: Volunteer Testing System - Scenarios + Recruitment + UI
   app.use("/api/volunteer", volunteerTestingRoutes);
+  
+  // Volunteer Task Management - Plan Items, Work Logs, Stats
+  app.use("/api/volunteer", volunteerTasksRoutes);
   
   // TRACK 8: Gamification System - Points, Badges, Leaderboard, Progressive Autonomy
   app.use("/api/gamification", gamificationRoutes);

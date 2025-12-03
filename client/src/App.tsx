@@ -227,6 +227,7 @@ const PrivacyHub = lazy(() => import("@/pages/PrivacyHub"));
 const TalentPipelinePage = lazy(
   () => import("@/pages/admin/TalentPipelinePage"),
 );
+const MyTasksPage = lazy(() => import("@/pages/MyTasksPage"));
 const TaskBoardPage = lazy(() => import("@/pages/admin/TaskBoardPage"));
 const PricingManagerPage = lazy(
   () => import("@/pages/admin/PricingManagerPage"),
@@ -752,6 +753,7 @@ function Router() {
       <Route path="/testimonials" component={TestimonialsPage} />
       <Route path="/discover" component={DiscoverPage} />
       <Route path="/volunteer" component={VolunteerPage} />
+      <Route path="/my-tasks" component={MyTasksPage} />
       <Route path="/gamification" component={GamificationDashboard} />
       <Route path="/talent-match" component={TalentMatchPage} />
       <Route path="/mr-blue">

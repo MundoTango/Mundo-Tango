@@ -741,10 +741,10 @@ export default function LandingPage() {
             <div>
               <h3 className="font-semibold mb-4">Company</h3>
               <ul className="space-y-2 text-sm">
-                <li><Link href="/about"><a className="text-muted-foreground hover:text-foreground">About</a></Link></li>
-                <li><Link href="/features"><a className="text-muted-foreground hover:text-foreground">Features</a></Link></li>
-                <li><Link href="/pricing"><a className="text-muted-foreground hover:text-foreground">Pricing</a></Link></li>
-                <li><Link href="/blog"><a className="text-muted-foreground hover:text-foreground">Blog</a></Link></li>
+                <li><Link href="/about" className="text-muted-foreground hover:text-foreground">About</Link></li>
+                <li><Link href="/features" className="text-muted-foreground hover:text-foreground">Features</Link></li>
+                <li><Link href="/pricing" className="text-muted-foreground hover:text-foreground">Pricing</Link></li>
+                <li><Link href="/blog" className="text-muted-foreground hover:text-foreground">Blog</Link></li>
               </ul>
             </div>
 
@@ -752,10 +752,10 @@ export default function LandingPage() {
             <div>
               <h3 className="font-semibold mb-4">Resources</h3>
               <ul className="space-y-2 text-sm">
-                <li><Link href="/help"><a className="text-muted-foreground hover:text-foreground">Help Center</a></Link></li>
-                <li><Link href="/faq"><a className="text-muted-foreground hover:text-foreground">FAQ</a></Link></li>
-                <li><Link href="/contact"><a className="text-muted-foreground hover:text-foreground">Contact</a></Link></li>
-                <li><Link href="/community-guidelines"><a className="text-muted-foreground hover:text-foreground">Community Guidelines</a></Link></li>
+                <li><Link href="/help" className="text-muted-foreground hover:text-foreground">Help Center</Link></li>
+                <li><Link href="/faq" className="text-muted-foreground hover:text-foreground">FAQ</Link></li>
+                <li><Link href="/contact" className="text-muted-foreground hover:text-foreground">Contact</Link></li>
+                <li><Link href="/community-guidelines" className="text-muted-foreground hover:text-foreground">Community Guidelines</Link></li>
               </ul>
             </div>
 
@@ -763,8 +763,8 @@ export default function LandingPage() {
             <div>
               <h3 className="font-semibold mb-4">Legal</h3>
               <ul className="space-y-2 text-sm">
-                <li><Link href="/privacy"><a className="text-muted-foreground hover:text-foreground">Privacy Policy</a></Link></li>
-                <li><Link href="/terms"><a className="text-muted-foreground hover:text-foreground">Terms of Service</a></Link></li>
+                <li><Link href="/privacy" className="text-muted-foreground hover:text-foreground">Privacy Policy</Link></li>
+                <li><Link href="/terms" className="text-muted-foreground hover:text-foreground">Terms of Service</Link></li>
               </ul>
             </div>
           </div>

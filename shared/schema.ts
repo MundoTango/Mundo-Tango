@@ -18890,6 +18890,120 @@ export type SelectMrBlueWorkflowPattern =
   typeof mrBlueWorkflowPatterns.$inferSelect;
 
 // ============================================================================
+// TALENT MATCH PLAN SCHEMA
+// For tracking volunteer work plans, tasks, and time logs
+// ============================================================================
+
+// Plan Items - Individual tasks within a volunteer's work plan
+export const planItems = pgTable(
+  "plan_items",
+  {
+    id: serial("id").primaryKey(),
+    volunteerId: integer("volunteer_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    title: varchar("title", { length: 255 }).notNull(),
+    description: text("description"),
+    status: varchar("status", { length: 20 }).notNull().default("pending"), // pending, in_progress, completed, blocked, cancelled
+    priority: varchar("priority", { length: 20 }).notNull().default("medium"), // low, medium, high, critical
+    estimatedHours: real("estimated_hours"),
+    actualHours: real("actual_hours").default(0),
+    dueDate: timestamp("due_date"),
+    completedAt: timestamp("completed_at"),
+    assignedBy: integer("assigned_by").references(() => users.id),
+    category: varchar("category", { length: 50 }), // frontend, backend, design, docs, testing, etc.
+    tags: text("tags").array(),
+    metadata: jsonb("metadata").$type<{
+      skillsRequired?: string[];
+      acceptanceCriteria?: string[];
+      attachments?: string[];
+      aiScore?: number;
+      [key: string]: any;
+    }>(),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => ({
+    volunteerIdx: index("plan_items_volunteer_idx").on(table.volunteerId),
+    statusIdx: index("plan_items_status_idx").on(table.status),
+    priorityIdx: index("plan_items_priority_idx").on(table.priority),
+    dueDateIdx: index("plan_items_due_date_idx").on(table.dueDate),
+    categoryIdx: index("plan_items_category_idx").on(table.category),
+  }),
+);
+
+export const insertPlanItemSchema = createInsertSchema(planItems).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+export type InsertPlanItem = z.infer<typeof insertPlanItemSchema>;
+export type SelectPlanItem = typeof planItems.$inferSelect;
+
+// Plan Links - Dependencies between plan items
+export const planLinks = pgTable(
+  "plan_links",
+  {
+    id: serial("id").primaryKey(),
+    sourceItemId: integer("source_item_id")
+      .notNull()
+      .references(() => planItems.id, { onDelete: "cascade" }),
+    targetItemId: integer("target_item_id")
+      .notNull()
+      .references(() => planItems.id, { onDelete: "cascade" }),
+    linkType: varchar("link_type", { length: 20 }).notNull().default("blocks"), // blocks, relates_to, duplicates, parent_of
+    createdAt: timestamp("created_at").defaultNow(),
+  },
+  (table) => ({
+    sourceIdx: index("plan_links_source_idx").on(table.sourceItemId),
+    targetIdx: index("plan_links_target_idx").on(table.targetItemId),
+    uniqueLink: unique().on(table.sourceItemId, table.targetItemId, table.linkType),
+  }),
+);
+
+export const insertPlanLinkSchema = createInsertSchema(planLinks).omit({
+  id: true,
+  createdAt: true,
+});
+export type InsertPlanLink = z.infer<typeof insertPlanLinkSchema>;
+export type SelectPlanLink = typeof planLinks.$inferSelect;
+
+// Work Log - Time tracking entries for plan items
+export const workLogs = pgTable(
+  "work_logs",
+  {
+    id: serial("id").primaryKey(),
+    planItemId: integer("plan_item_id")
+      .notNull()
+      .references(() => planItems.id, { onDelete: "cascade" }),
+    volunteerId: integer("volunteer_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    hoursWorked: real("hours_worked").notNull(),
+    description: text("description"),
+    workDate: timestamp("work_date").notNull().defaultNow(),
+    startTime: timestamp("start_time"),
+    endTime: timestamp("end_time"),
+    isAutoLogged: boolean("is_auto_logged").default(false), // True if logged by system (Git commits, etc.)
+    sourceType: varchar("source_type", { length: 30 }), // manual, git_commit, ai_detected
+    sourceRef: varchar("source_ref", { length: 255 }), // Git commit SHA, etc.
+    createdAt: timestamp("created_at").defaultNow(),
+  },
+  (table) => ({
+    planItemIdx: index("work_logs_plan_item_idx").on(table.planItemId),
+    volunteerIdx: index("work_logs_volunteer_idx").on(table.volunteerId),
+    workDateIdx: index("work_logs_work_date_idx").on(table.workDate),
+  }),
+);
+
+export const insertWorkLogSchema = createInsertSchema(workLogs).omit({
+  id: true,
+  createdAt: true,
+});
+export type InsertWorkLog = z.infer<typeof insertWorkLogSchema>;
+export type SelectWorkLog = typeof workLogs.$inferSelect;
+
+// ============================================================================
 // PLATFORM INDEPENDENCE SCHEMA (PATH 2)
 // ============================================================================
 
