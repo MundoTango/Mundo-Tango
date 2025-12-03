@@ -57,7 +57,63 @@ Production leverages GitHub Actions for CI/CD, Prometheus/Grafana with Sentry fo
 - **Internationalization:** i18next, i18next-browser-languagedetector, i18next-http-backend, react-i18next
 - **Other:** Sentry, Playwright, BullMQ, FFmpeg, fluent-ffmpeg, Wouter, Multer
 
+## Marketing Site Architecture
+
+### Donation Tier System (Tango Legends)
+Named donation tiers honoring tango legends:
+- **El Cachafaz** ($10+) - First tango dancer to tour world, taught Paris high society
+- **Astor Piazzolla** ($50+) - Revolutionary Tango Nuevo composer
+- **Juan Carlos Copes** ($100+) - Saved tango from extinction, trained Duvall & Baryshnikov
+- **Carlos Gardel** ($500+) - THE KING OF TANGO, highest honor
+
+Each tier includes: profile badge, Supporters page recognition, exclusive benefits.
+
+### H2AC Volunteer Program
+Human to Agent Collaboration with 927+ agents across:
+- **Foundation Division** (Layers 1-10): Database, Auth, API, Backend, DevOps
+- **Core Division** (Layers 11-20): Frontend, UI/UX, Components, Mobile
+- **Business Division** (Layers 21-30): Payments, Growth, Marketing, Analytics
+- **Intelligence Division** (Layers 31-46): AI/ML, Data Science, NLP, Mr Blue
+- **Platform Division** (Layers 47-56): Security, QA, Performance, SRE
+- **Extended Division** (Layers 57-61): Translation, Content, Community, Social
+
+### Ambassador Program
+City ambassadors required to host 2 milongas/week. Benefits include: Copes badge, featured placement, moderation tools, early access, exclusive community.
+
+### Marketing Page Routes
+- `/support` - SupportPage with Tango Legend donation tiers
+- `/supporters` - SupportersPage with donor recognition wall
+- `/volunteer` - VolunteerPage with H2AC program
+- `/mr-blue` - MrBluePage for AI assistant marketing
+- `/ambassadors` - AmbassadorsPage for city ambassador program
+- `/open-source` - OpenSourcePage for transparency
+
+### Public Stats API
+All stats wired to real database - NO fake numbers:
+- `GET /api/stats/public` - dancers, cities, countries, platformStats
+- `GET /api/public/tango-legends` - 4 donation tier objects
+- `GET /api/public/volunteer-divisions` - 6 division objects
+- `GET /api/public/ambassadors` - active ambassadors
+- `GET /api/public/supporters` - donor wall data
+- `GET /api/public/donation-stats` - total raised, donor count
+- `GET /api/public/cities-seeking-ambassadors` - cities needing ambassadors
+
+### Platform Facts (Accurate)
+- Started dancing: September 2007 (18 years of tango)
+- Built platform: April 2024 (3,000+ hours invested)
+- Investment: $30,000 personal funds
+- Founded by: Scott (Founder & CEO)
+
 ## Recent Changes (December 2025)
+
+### Marketing Site Build (Dec 3, 2025)
+Built comprehensive marketing site with:
+- 6 new marketing pages: Support, Supporters, Volunteer, Mr Blue, Ambassadors, Open Source
+- Tango Legend donation tiers with Stripe integration
+- H2AC volunteer program with 6 divisions
+- Ambassador program with city tracking
+- All stats wired to real database APIs (zero fake numbers)
+- Scott's story in footer with accurate platform history
 
 ### Marketing Pages (Dec 3, 2025)
 Added 3 audience-targeted marketing pages with editorial design:
