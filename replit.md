@@ -105,7 +105,7 @@ Human to Agent Collaboration with 927+ agents across:
 - **Extended Division** (Layers 57-61): Translation, Content, Community, Social
 
 ### Ambassador Program
-City ambassadors required to host 2 milongas/week. Benefits include: Copes badge, featured placement, moderation tools, early access, exclusive community.
+City ambassadors required to host 1 milonga per week. Benefits include: Copes badge, featured placement, moderation tools, early access, exclusive community.
 
 ### Marketing Page Routes
 - `/support` - SupportPage with Tango Legend donation tiers
