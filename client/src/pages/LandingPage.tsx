@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { PublicNavbar } from "@/components/PublicNavbar";
+import { DemoModal } from "@/components/marketing/DemoModal";
 import { 
   MapPin, Users, Calendar, Home, Briefcase, Video, 
   Bot, Globe, Check, ArrowRight, Play,
@@ -13,10 +14,12 @@ import {
   Facebook, Twitter, Instagram, Youtube, Linkedin,
   Mail
 } from "lucide-react";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 
 export default function LandingPage() {
+  const [demoModalOpen, setDemoModalOpen] = useState(false);
+
   // Set page title
   useEffect(() => {
     document.title = "Mundo Tango - Global Tango Community Platform";
@@ -298,6 +301,7 @@ export default function LandingPage() {
                   variant="default"
                   className="bg-primary hover:bg-primary/90 text-primary-foreground text-lg px-8 py-6 h-auto"
                   data-testid="button-watch-demo"
+                  onClick={() => setDemoModalOpen(true)}
                 >
                   <Play className="mr-2 h-5 w-5" />
                   Watch Demo
@@ -720,6 +724,7 @@ export default function LandingPage() {
             <div>
               <h3 className="font-semibold mb-4">Resources</h3>
               <ul className="space-y-2 text-sm">
+                <li><Link href="/demos" className="text-muted-foreground hover:text-foreground">Platform Demos</Link></li>
                 <li><Link href="/mr-blue" className="text-muted-foreground hover:text-foreground">Mr. Blue AI</Link></li>
                 <li><Link href="/help" className="text-muted-foreground hover:text-foreground">Help Center</Link></li>
                 <li><Link href="/faq" className="text-muted-foreground hover:text-foreground">FAQ</Link></li>
@@ -741,6 +746,8 @@ export default function LandingPage() {
           </div>
         </div>
       </footer>
+
+      <DemoModal open={demoModalOpen} onOpenChange={setDemoModalOpen} />
     </div>
   );
 }
