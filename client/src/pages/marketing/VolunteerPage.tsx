@@ -318,14 +318,16 @@ function VolunteerPageContent() {
               Apply to join our volunteer program. We'll match you with tasks that fit your skills and interests.
             </motion.p>
             <motion.div variants={fadeInUp} className="flex justify-center gap-4">
-              <Button 
-                size="lg" 
-                className="bg-white text-primary hover:bg-white/90"
-                data-testid="button-apply-now"
-              >
-                Apply to Volunteer
-                <ArrowRight className="h-4 w-4 ml-2" />
-              </Button>
+              <Link href="/register?role=volunteer">
+                <Button 
+                  size="lg" 
+                  className="bg-white text-primary hover:bg-white/90"
+                  data-testid="button-apply-now"
+                >
+                  Apply to Volunteer
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </Button>
+              </Link>
               <Link href="/ambassadors">
                 <Button 
                   size="lg" 

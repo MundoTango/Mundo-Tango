@@ -264,10 +264,12 @@ function SupportPageContent() {
                         </div>
                       </CardContent>
                       <CardFooter>
-                        <Button className="w-full" data-testid={`button-donate-${legend.id}`}>
-                          Support as {legend.name.split(" ")[0]}
-                          <ArrowRight className="h-4 w-4 ml-2" />
-                        </Button>
+                        <Link href={`/donate?tier=${legend.id}`} className="w-full">
+                          <Button className="w-full" data-testid={`button-donate-${legend.id}`}>
+                            Support as {legend.name.split(" ")[0]}
+                            <ArrowRight className="h-4 w-4 ml-2" />
+                          </Button>
+                        </Link>
                       </CardFooter>
                     </Card>
                   </motion.div>
@@ -352,7 +354,23 @@ function SupportPageContent() {
                     </p>
                   </CardContent>
                   <CardFooter>
-                    <Button variant="outline" className="w-full" data-testid="button-share">
+                    <Button 
+                      variant="outline" 
+                      className="w-full" 
+                      data-testid="button-share"
+                      onClick={() => {
+                        if (navigator.share) {
+                          navigator.share({
+                            title: 'Mundo Tango',
+                            text: 'Join the global tango community!',
+                            url: window.location.origin,
+                          });
+                        } else {
+                          navigator.clipboard.writeText(window.location.origin);
+                          alert('Link copied to clipboard!');
+                        }
+                      }}
+                    >
                       Share Mundo Tango
                     </Button>
                   </CardFooter>

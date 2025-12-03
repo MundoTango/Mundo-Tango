@@ -109,10 +109,12 @@ function AmbassadorsPageContent() {
               </motion.p>
 
               <motion.div variants={fadeInUp}>
-                <Button size="lg" className="bg-white text-primary hover:bg-white/90" data-testid="button-apply">
-                  Apply to be Ambassador
-                  <ArrowRight className="h-4 w-4 ml-2" />
-                </Button>
+                <Link href="/register?role=ambassador">
+                  <Button size="lg" className="bg-white text-primary hover:bg-white/90" data-testid="button-apply">
+                    Apply to be Ambassador
+                    <ArrowRight className="h-4 w-4 ml-2" />
+                  </Button>
+                </Link>
               </motion.div>
             </div>
           </motion.div>
@@ -193,10 +195,12 @@ function AmbassadorsPageContent() {
                 </ul>
               </CardContent>
               <CardFooter className="justify-center pt-6">
-                <Button size="lg" data-testid="button-apply-now">
-                  Apply Now
-                  <ArrowRight className="h-4 w-4 ml-2" />
-                </Button>
+                <Link href="/register?role=ambassador">
+                  <Button size="lg" data-testid="button-apply-now">
+                    Apply Now
+                    <ArrowRight className="h-4 w-4 ml-2" />
+                  </Button>
+                </Link>
               </CardFooter>
             </Card>
           </motion.div>
@@ -306,10 +310,12 @@ function AmbassadorsPageContent() {
               Join the global network of ambassadors connecting dancers worldwide.
             </motion.p>
             <motion.div variants={fadeInUp} className="flex justify-center gap-4">
-              <Button size="lg" className="bg-white text-primary hover:bg-white/90" data-testid="button-apply-final">
-                Apply to be Ambassador
-                <ArrowRight className="h-4 w-4 ml-2" />
-              </Button>
+              <Link href="/register?role=ambassador">
+                <Button size="lg" className="bg-white text-primary hover:bg-white/90" data-testid="button-apply-final">
+                  Apply to be Ambassador
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </Button>
+              </Link>
             </motion.div>
           </motion.div>
         </div>
