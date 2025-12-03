@@ -6004,5 +6004,115 @@ Monitoring feeds into colleague collaboration - agents can see what others accom
 
 ---
 
+
+## 🔄 PATTERN 49: Agent Memory Infrastructure (NEW - Dec 2, 2025)
+
+**Purpose:** Provide persistent, structured storage for agent coordination and communication.
+
+**Core Files (`.agent-memory/` directory):**
+
+### 1. AGENT_REGISTRY.json
+- **Records:** Agent profiles, capabilities, specialization
+- **Updated by:** New agents on first session
+- **Read by:** All agents (discovery)
+- **Example entry:** Name, role, capabilities list, primary files, status
+
+### 2. ACTIVE_SESSIONS.json  
+- **Records:** Currently active work claims
+- **Updated by:** Agent on session start/end
+- **Read by:** All agents (conflict prevention)
+- **Prevents:** Duplicate work claims
+
+### 3. TEST_QUEUE.json
+- **Records:** Test execution queue
+- **Updated by:** Agents before running tests
+- **Read by:** All agents (serialization)
+- **Prevents:** Parallel E2E test interference
+
+### 4. AGENT_MESSAGING.log
+- **Records:** Append-only communication log
+- **Updated by:** Agents during session
+- **Read by:** All agents (async communication)
+- **Format:** Timestamp | Agent | Message
+
+**Benefits:**
+- ✅ File-based coordination (no database needed)
+- ✅ Git-tracked history
+- ✅ Human-readable JSON/plain text
+- ✅ Works offline
+- ✅ Safe concurrent access
+
+**When to Use:**
+- ✅ Multi-agent coordination
+- ✅ Work claim verification
+- ✅ Test queue management
+- ✅ Async agent communication
+
+---
+
+## 🎯 PATTERN 50: Agent Discovery & Registration (NEW - Dec 2, 2025)
+
+**Purpose:** Enable agents to discover each other and advertise capabilities.
+
+**Registration Protocol (Agent Session Start):**
+
+```bash
+# 1. Agent reads AGENT_REGISTRY.json
+cat .agent-memory/AGENT_REGISTRY.json
+
+# 2. Agent checks if already registered
+if ! grep -q "\"$AGENT_NAME\"" .agent-memory/AGENT_REGISTRY.json; then
+  # 3. Register new agent (append to registry)
+  cat >> .agent-memory/AGENT_REGISTRY.json << "EOF"
+  "your-agent-name": {
+    "role": "Your Role",
+    "capabilities": ["cap1", "cap2"],
+    "primaryFiles": ["file1.ts", "file2.ts"],
+    "lastActive": "$(date -Iseconds)",
+    "status": "available"
+  }
+  EOF
+fi
+```
+
+**Discovery Protocol (Finding Agents):**
+
+```bash
+# Agent wants to know who can help with X task
+jq '.agents[] | select(.capabilities[] | contains("X"))' .agent-memory/AGENT_REGISTRY.json
+
+# Results: List of agents with capability X
+```
+
+**Key Rules:**
+- 🟢 Agents MUST register on first session
+- 🟢 Agents SHOULD update lastActive timestamp regularly
+- 🟡 Agents CAN change status (available/busy/offline)
+- 🔴 Agents MUST NOT modify other agent registrations
+- 🔴 Agents MUST NOT delete registrations
+
+**Capabilities Examples:**
+- `agent-discovery` - Can find other agents
+- `github-operations` - Can commit/push to GitHub  
+- `ui-testing` - Can run E2E tests
+- `api-development` - Can write backend code
+- `documentation` - Can write docs
+- `conflict-resolution` - Can arbitrate between agents
+
+**Integration:**
+- Works with Pattern 47 (Colleague Collaboration)
+- Feeds into Pattern 48 (Multi-Window Sync)
+- Uses Pattern 49 (Memory Infrastructure)
+- Discovered agents appear in status reports
+
+**Benefits:**
+- ✅ Agents know who else is working
+- ✅ Agents can ask for help automatically
+- ✅ New agents don't need manual registration
+- ✅ Capabilities are self-documenting
+- ✅ Historical registry (via Git)
+
+---
+
 6. ❓ "Can I help another agent finish their task faster?"
 
