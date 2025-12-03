@@ -4,7 +4,7 @@ import { useInView } from "react-intersection-observer";
 import { PostItem } from "./PostItem";
 import { UnifiedMemoriesFeed } from "./UnifiedMemoriesFeed";
 import { Skeleton } from "@/components/ui/skeleton";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Camera } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -229,16 +229,35 @@ export function InfiniteScrollFeed({ feedType, filter, onRefresh }: InfiniteScro
     console.error('[InfiniteScrollFeed] Error flattening posts:', e);
   }
 
-  // Empty state
+  // Empty state with actionable guidance
   if (allPosts.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-12 text-center">
-        <p className="text-lg text-foreground/60">
-          No posts to display
+      <div 
+        className="flex flex-col items-center justify-center py-12 text-center"
+        role="status"
+        aria-label="No posts available"
+        data-testid="empty-state-feed"
+      >
+        <div className="p-4 rounded-full bg-muted mb-4">
+          <Camera className="h-8 w-8 text-muted-foreground" aria-hidden="true" />
+        </div>
+        <h3 className="text-lg font-semibold mb-2">No posts yet</h3>
+        <p className="text-sm text-foreground/60 max-w-sm">
+          {feedType === 'following' 
+            ? "Follow more dancers to see their posts here, or switch to Discover to explore the community."
+            : "Be the first to share a memory with the tango community!"}
         </p>
-        <p className="text-sm text-foreground/40 mt-2">
-          Try changing your filter or following more users
-        </p>
+        <div className="flex gap-3 mt-4">
+          {feedType === 'following' && (
+            <a
+              href="/discover"
+              className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover-elevate active-elevate-2 text-sm"
+              data-testid="link-discover-dancers"
+            >
+              Discover Dancers
+            </a>
+          )}
+        </div>
       </div>
     );
   }
