@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { 
@@ -174,6 +175,9 @@ export function VideoDemoModal({ open, onOpenChange, initialSlide, screenshots }
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-5xl p-0 overflow-hidden bg-slate-900 border-slate-700">
+        <DialogDescription className="sr-only">
+          Interactive video demonstration of {currentContent.title}. Use play/pause and navigation controls to explore features.
+        </DialogDescription>
         <div className="relative">
           {/* Video Player Header */}
           <div className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between p-4 bg-gradient-to-b from-black/80 to-transparent">

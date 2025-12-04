@@ -88,36 +88,40 @@ Production leverages GitHub Actions for CI/CD, Prometheus/Grafana with Sentry fo
 The marketing site includes a Donation Tier System (Tango Legends), a Human to Agent Collaboration (H2AC) Volunteer Program with 6 divisions, and an Ambassador Program. It features marketing page routes for support, supporters, volunteer, Mr. Blue, ambassadors, and open source. All public statistics are wired to a real database.
 
 ### Demo System (December 2025)
-The platform includes a comprehensive Demo System implemented using MB.MD Patterns 28, 38, + 41:
+The platform includes a comprehensive Video Demo System implemented using MB.MD Patterns 28, 38, + 41:
 
 **Core Components:**
-- `/demos` hub page with 8 interactive demo cards (DemosPage.tsx)
-- DemoModal component (client/src/components/marketing/DemoModal.tsx) - 5-slide interactive carousel
-- Landing page integration via "Watch Demo" button in hero section
-- Navigation integration: "Demos" link in PublicNavbar and footer "Platform Demos" link
+- Landing page video demo section with 4 clickable demo cards (LandingPage.tsx)
+- DemoModal component (client/src/components/marketing/DemoModal.tsx) - 5-slide interactive carousel for "Watch Demo" button
+- VideoDemoModal component (client/src/components/marketing/VideoDemoModal.tsx) - Video-style demo player for feature cards
 - Playwright demo recording script (scripts/record-demo.ts) for automated screenshot capture
+- Real screenshots in public/demos/ (tango-map.png, events-discovery.png, mr-blue-chat.png, profile-view.png)
 
-**DemoModal Slides (5 interactive slides):**
+**Video Demo Cards on Landing Page (4 features):**
+1. **Global Tango Map** - Interactive map with animated city markers
+2. **Event Discovery** - Event listing with animated event cards
+3. **Mr. Blue AI** - Chat conversation animation demo
+4. **Your Profile** - Profile stats with animated counters
+
+**VideoDemoModal Features:**
+- Video-style player interface with play/pause controls
+- Auto-advancing slides with progress bar
+- Navigation arrows and slide indicators
+- Animated content specific to each feature
+- Accessibility-compliant with screen reader support
+
+**DemoModal Slides (5 interactive slides via "Watch Demo" button):**
 1. **Meet Mr. Blue** - AI companion chat preview with conversation UI
 2. **Discover Events** - Global calendar with event cards (La Viruta, Berlin Festival, etc.)
 3. **Connect & Dance** - Partner matching with Talent Match AI preview
 4. **Plan Your Journey** - Travel planner with Buenos Aires itinerary example
 5. **3D Avatar Experience** - Interactive 3D avatar with 10 emotional expressions
 
-**Demo Categories (DemosPage):**
-1. **Mr. Blue AI Assistant** - AI companion with 10 expression states
-2. **3D Avatar Experience** - Real-time avatar animations (/mr-blue-avatar-demo)
-3. **Events Discovery** - Find global tango events
-4. **Community Groups** - City and professional networks
-5. **Talent Match AI** - Intelligent dancer matching
-6. **Travel Planner** - Tango journey planning
-7. **Music Library** - Classic and modern tango music
-8. **City Guides** - Worldwide tango scene information
-
-**LandingPage Screenshots Section:**
-- 4 feature cards with icons: Global Tango Map (MapPin), Event Discovery (Calendar), Mr. Blue AI (Bot), Your Profile (Users)
-- Gradient backgrounds with icon overlays (no emoji placeholders)
-- data-testid="screenshot-0" through "screenshot-3"
+**LandingPage Video Demo Section:**
+- 4 clickable feature cards with video play overlays
+- Real platform screenshots as thumbnails
+- Click any card to open VideoDemoModal with animated demo
+- data-testid="video-demo-0" through "video-demo-3"
 
 **Design Principles:**
 - ZERO fake data policy enforced - all statistics from real database APIs
@@ -127,9 +131,10 @@ The platform includes a comprehensive Demo System implemented using MB.MD Patter
 
 **Technical Files:**
 - DemoModal: client/src/components/marketing/DemoModal.tsx
+- VideoDemoModal: client/src/components/marketing/VideoDemoModal.tsx
 - LandingPage: client/src/pages/LandingPage.tsx  
 - Demo Recording: scripts/record-demo.ts
-- Demo Assets: public/demos/ (hero-section.png, landing-page.png)
+- Demo Assets: public/demos/ (tango-map.png, events-discovery.png, mr-blue-chat.png, profile-view.png)
 - PixarAvatar: client/src/components/mr-blue/PixarAvatar.tsx (React Three Fiber 3D avatar with 7 states including 'error')
 
 ## External Dependencies
