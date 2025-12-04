@@ -138,7 +138,17 @@ The platform includes a comprehensive Video Demo System implemented using MB.MD 
 - PixarAvatar: client/src/components/mr-blue/PixarAvatar.tsx (React Three Fiber 3D avatar with 7 states including 'error')
 
 ### Video Recording System (December 2025)
-Complete automated video recording system using Playwright's recordVideo capability for capturing real customer journeys.
+Complete automated video recording system using Playwright's recordVideo capability for capturing real customer journeys. **ZERO FAKE DATA POLICY: All videos are actual Playwright recordings, not screenshots or animations.**
+
+**Recording Status (7/8 Complete):**
+- ✅ customer/event-discovery.mp4 (723KB, ~15s)
+- ✅ customer/mr-blue-chat.mp4 (855KB, ~20s)
+- ✅ customer/signup.mp4 (448KB, ~12s)
+- ❌ customer/profile-view.mp4 (pending - resource constraints)
+- ✅ marketing/tango-map-promo.mp4 (2.0MB, ~18s)
+- ✅ marketing/community-showcase.mp4 (1.5MB, ~14s)
+- ✅ tour/app-onboarding.mp4 (832KB, ~18s)
+- ✅ tour/feature-highlights.mp4 (831KB, ~18s)
 
 **Architecture (MB.MD Patterns 28, 38, 41):**
 - Pattern 28: Hierarchical Execution - Replit AI (strategic) → Mr. Blue (tactical) → Video agents (execution)
