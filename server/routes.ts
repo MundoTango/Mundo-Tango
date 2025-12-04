@@ -24,6 +24,7 @@ import { createBookmarkRoutes } from "./routes/bookmark-routes";
 import avatarRoutes from "./routes/avatarRoutes";
 import videoRoutes from "./routes/videoRoutes";
 import videoUploadRoutes from "./routes/video-upload-routes";
+import videoRecordingRoutes from "./routes/video-recording-routes";
 import { objectStorageService } from "./objectStorage";
 import mrblueVideoRoutes from "./routes/mrblue-video-routes";
 import mrBlueRoutes from "./routes/mrBlue";
@@ -711,6 +712,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/avatar", avatarRoutes);
   app.use("/api/videos", videoRoutes);
   app.use("/api/upload/video", videoUploadRoutes);
+  app.use("/api/videos/recording", videoRecordingRoutes); // Video Recording System (MB.MD Pattern 41)
   
   // Object Storage: Serve public objects (videos, images)
   // Blueprint: javascript_object_storage
