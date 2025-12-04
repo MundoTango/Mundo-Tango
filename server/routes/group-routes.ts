@@ -612,8 +612,8 @@ router.post("/:id/join", authenticateToken, async (req: AuthRequest, res: Respon
   }
 });
 
-// POST /api/groups/:id/leave - Leave group (auth required)
-router.post("/:id/leave", authenticateToken, async (req: AuthRequest, res: Response) => {
+// DELETE /api/groups/:id/leave - Leave group (auth required)
+router.delete("/:id/leave", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user!.id;
     const { id } = req.params;
@@ -639,7 +639,7 @@ router.post("/:id/leave", authenticateToken, async (req: AuthRequest, res: Respo
       .where(eq(groups.id, parseInt(id)))
       .limit(1);
 
-    if (group[0]?.createdBy === authorId) {
+    if (group[0]?.createdBy === userId) {
       return res.status(400).json({ 
         message: "Group creator cannot leave. Please transfer ownership or delete the group." 
       });
