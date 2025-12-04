@@ -1,30 +1,19 @@
 {
   "version": "1.0.0",
-  "generatedAt": "2025-12-04T00:52:00.000Z",
+  "generatedAt": "2025-12-04T01:45:00.000Z",
   "platform": "Mundo Tango",
   "description": "Video Recording Library - Customer journeys, marketing content, and tours",
   "journeys": [
-    {
-      "id": "signup",
-      "name": "User Signup Flow",
-      "description": "Complete registration journey with form validation and onboarding",
-      "type": "customer",
-      "videoFile": "customer/signup.mp4",
-      "thumbnailFile": null,
-      "duration": "~45 seconds",
-      "recordedAt": null,
-      "status": "pending"
-    },
     {
       "id": "event-discovery",
       "name": "Event Discovery",
       "description": "Browse and discover tango events worldwide",
       "type": "customer",
       "videoFile": "customer/event-discovery.mp4",
-      "thumbnailFile": null,
-      "duration": "~30 seconds",
-      "recordedAt": null,
-      "status": "pending"
+      "thumbnailFile": "customer/event-discovery-thumb.jpg",
+      "duration": "~15 seconds",
+      "recordedAt": "2025-12-04T01:34:00.000Z",
+      "status": "recorded"
     },
     {
       "id": "mr-blue-chat",
@@ -32,10 +21,21 @@
       "description": "Interactive conversation with Mr. Blue AI assistant",
       "type": "customer",
       "videoFile": "customer/mr-blue-chat.mp4",
-      "thumbnailFile": null,
-      "duration": "~25 seconds",
-      "recordedAt": null,
-      "status": "pending"
+      "thumbnailFile": "customer/mr-blue-chat-thumb.jpg",
+      "duration": "~20 seconds",
+      "recordedAt": "2025-12-04T01:35:00.000Z",
+      "status": "recorded"
+    },
+    {
+      "id": "signup",
+      "name": "User Signup Flow",
+      "description": "Complete registration journey with form validation and onboarding",
+      "type": "customer",
+      "videoFile": "customer/signup.mp4",
+      "thumbnailFile": "customer/signup-thumb.jpg",
+      "duration": "~12 seconds",
+      "recordedAt": "2025-12-04T01:39:00.000Z",
+      "status": "recorded"
     },
     {
       "id": "profile-view",
@@ -54,10 +54,10 @@
       "description": "Promotional video showcasing the interactive global tango map",
       "type": "marketing",
       "videoFile": "marketing/tango-map-promo.mp4",
-      "thumbnailFile": null,
-      "duration": "~15 seconds",
-      "recordedAt": null,
-      "status": "pending"
+      "thumbnailFile": "marketing/tango-map-promo-thumb.jpg",
+      "duration": "~18 seconds",
+      "recordedAt": "2025-12-04T01:42:00.000Z",
+      "status": "recorded"
     },
     {
       "id": "community-showcase",
@@ -65,38 +65,38 @@
       "description": "Promotional video highlighting community and connection features",
       "type": "marketing",
       "videoFile": "marketing/community-showcase.mp4",
-      "thumbnailFile": null,
+      "thumbnailFile": "marketing/community-showcase-thumb.jpg",
       "duration": "~14 seconds",
-      "recordedAt": null,
-      "status": "pending"
+      "recordedAt": "2025-12-04T01:42:00.000Z",
+      "status": "recorded"
     },
     {
       "id": "app-onboarding",
       "name": "Mr. Blue App Onboarding Tour",
       "description": "Mr. Blue welcomes new users and guides them through main features",
       "type": "tour",
-      "videoFile": "tours/app-onboarding.mp4",
-      "thumbnailFile": null,
+      "videoFile": "tour/app-onboarding.mp4",
+      "thumbnailFile": "tour/app-onboarding-thumb.jpg",
       "duration": "~18 seconds",
-      "recordedAt": null,
-      "status": "pending"
+      "recordedAt": "2025-12-04T01:43:00.000Z",
+      "status": "recorded"
     },
     {
       "id": "feature-highlights",
       "name": "Feature Highlights Tour",
       "description": "Mr. Blue highlights the most powerful features of Mundo Tango",
       "type": "tour",
-      "videoFile": "tours/feature-highlights.mp4",
-      "thumbnailFile": null,
+      "videoFile": "tour/feature-highlights.mp4",
+      "thumbnailFile": "tour/feature-highlights-thumb.jpg",
       "duration": "~18 seconds",
-      "recordedAt": null,
-      "status": "pending"
+      "recordedAt": "2025-12-04T01:43:00.000Z",
+      "status": "recorded"
     }
   ],
   "stats": {
     "totalJourneys": 8,
-    "recorded": 0,
-    "pending": 8,
+    "recorded": 7,
+    "pending": 1,
     "categories": {
       "customer": 4,
       "marketing": 2,
