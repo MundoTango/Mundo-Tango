@@ -240,3 +240,108 @@ Expected response:
 3. **Batch Testing** - Group related features
 4. **Early Exit** - Stop on critical failures
 5. **Inline Documentation** - Update MB.MD as you work
+
+---
+
+## 🔐 Pattern 47: API Security Checklist Protocol (Book of Secret Knowledge)
+
+**Source:** https://github.com/trimstray/the-book-of-secret-knowledge
+
+### Pre-Deployment Checklist:
+1. **Authentication** - JWT with proper expiration, refresh tokens, secure storage
+2. **Authorization** - RBAC/ABAC enforced on every endpoint
+3. **Input Validation** - Zod schemas on all inputs, SQL injection prevention
+4. **Rate Limiting** - express-rate-limit on all API routes
+5. **CORS** - Strict origin whitelist, no wildcards in production
+6. **Headers** - Helmet.js for security headers (X-Frame-Options, CSP, HSTS)
+7. **Secrets** - Environment variables only, never in code
+8. **Logging** - Audit logs for sensitive operations, no PII in logs
+9. **HTTPS** - TLS 1.3 minimum, HSTS preloading
+10. **Dependencies** - npm audit, Snyk scanning, no EOL packages
+
+### Implementation Status:
+- [x] Helmet.js configured
+- [x] express-rate-limit on API routes
+- [x] Zod validation on inputs
+- [x] JWT authentication
+- [x] RBAC 8-tier system
+- [ ] HSTS preloading submission
+- [ ] CSP fine-tuning for Luma/ElevenLabs
+
+---
+
+## ✅ Pattern 48: Feature Completion Validation (MANDATORY)
+
+**CRITICAL:** A feature is NOT complete until ALL 5 criteria are met:
+
+### The 5-Point Completion Checklist:
+```
+┌─────────────────────────────────────────────────────────────┐
+│  FEATURE COMPLETION = Backend + UI + Navigation + E2E + Docs │
+├─────────────────────────────────────────────────────────────┤
+│  1. ☐ Backend API routes exist and return valid data        │
+│  2. ☐ Frontend component renders with real data (no stubs)  │
+│  3. ☐ Navigation accessible (sidebar/topbar/routing)        │
+│  4. ☐ E2E Playwright test passes                            │
+│  5. ☐ Documentation updated (MB.MD or relevant docs)        │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Anti-Pattern Detection:
+- ❌ "Backend complete" without UI - NOT DONE
+- ❌ UI exists but 404s - NOT DONE
+- ❌ Works but no sidebar/topbar entry - NOT DONE
+- ❌ All works but no E2E test - NOT DONE
+
+### Enforcement:
+Before marking ANY feature complete, run:
+1. `curl` the API endpoint → verify JSON response
+2. Navigate to the UI → verify renders with data
+3. Check sidebar/topbar → verify icon/link present
+4. Run Playwright test → verify passes
+5. Update MB.MD → verify documented
+
+---
+
+## 📊 MASTER EXECUTION PLAN - Dec 4, 2025
+
+### Wave Structure (8 Parallel Squads):
+
+```
+WAVE 0 (Foundation) - CURRENT
+├── MB.MD Pattern 47 + 48 updates ✅ IN PROGRESS
+├── Baseline Playwright E2E test
+├── Shared Components:
+│   ├── Unified Filter Component
+│   ├── Unified Location Picker
+│   ├── Unified Form Design System
+│   └── Friendship Closeness Badge
+
+WAVE 1 (8 Parallel Squads) - 75% time reduction
+├── ALPHA: Events + City Hub + City Groups (maps/pins)
+├── BRAVO: Housing (full marketplace)
+├── CHARLIE: PRO Discovery + Dashboard + Groups
+├── DELTA: Talent Match (recruiting pipeline)
+├── ECHO: Messages OAuth (Gmail/FB/IG/WhatsApp)
+├── FOXTROT: Admin Center + Ads System
+├── GOLF: Mr Blue AI (3D/Voice/Orchestration/Tours)
+└── HOTEL: Facebook Messenger + Marketing Site
+
+WAVE 2 (Dependencies)
+├── Memories Feed + Friend Request Form
+├── Recommendations + Leaderboard
+└── Vibe Coding completion
+
+WAVE 3: QA Audit (103 issues)
+WAVE 4: i18n (60+ languages)
+WAVE 5: Final E2E Testing
+```
+
+### Progress Tracking:
+- Wave 0: 5% complete
+- Wave 1: 0% complete
+- Wave 2: 0% complete
+- Wave 3: 0% complete
+- Wave 4: 0% complete
+- Wave 5: 0% complete
+- **OVERALL: 1%**

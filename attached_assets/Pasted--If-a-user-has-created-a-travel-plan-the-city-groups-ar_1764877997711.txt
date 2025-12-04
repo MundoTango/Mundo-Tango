@@ -1,0 +1,45 @@
+
+If a user has created a travel plan, the city groups are watching for visitors so on the city group: 
+-  Hero section remove "city"
+-memory feed like the upcoming events on memoreis feed add "Upcoming Visitors" shows 10 users based on friendship closeness and "see all x". tabs for "this week", "this month", "1+ months". The users will have their profile photo, tango role icons, dates, and their statuses planning or confirmed
+- Vistors landing page: metrics, grid of all upcoming users with tango role icons, dates, and status with fitlers for firendship closeness and Pro role
+_________
+
+User profile - PRO- PRO Dashboard
+-  the form:
+-- is a boring desing, since we have our PRO icons with colors, those colors should dictate what the form's color scheme is. 
+-- remove role, when using the "add" button we are already clicking on the form for that role. 
+--look at our other forms for design inspiration
+-- the forms are all very basic
+--think of it more hollistically, the PRO Dashboard form, the data from the PRO dashboard, the sidebar Pro icons and where they go, and the PRO groups should all be interconnected both data, visusally, and routing.  in our documenation we have more data as to what each pro's work and environment should look like. find and reasearch recursively. 
+- this means you should exapnd what should be on the dashboard for each PRO
+
+________________
+
+Admin Center
+- is all data actually tied to what it is supposed to be tied to? It looks like static or stubs. 
+- many pages don’t work at all can we combine the pages in a smarter way? this page is also RBAC dependent so God level has more powers here than standard admin. So as god level I need analytics of everything at a high level and then be able to drill into each analytic or IC page you have already made. These pages also don’t need the full editorial treatment, it is an admin center so right to the point
+- it has a different top menu bar, design violation
+- side bar, is great but can each section of a dashboard with the over view of all pages?
+________________
+admin/ads Looks great!
+	•	The form, always the forms can you standardize the designs and fields of the all forms?
+	◦	I’m not a marketer or ads person nor are most tango people so make it easier
+	◦	add type and placement: can’t an add be in any of these places? it’s just a matter of different images right?
+	◦	locations, are great but again use our standardized location picker
+	◦	new field something “how often seen” - I don’t want users to be overwhelmed so maybe not on every login or every page
+	◦	new field our user data is now extensive how can we offer better routing for better placement? one example: I’m a organizer and I want to target users who are in/coming to/or based on events usually come to Europe during May, looking for dancers who dance both roles, and are teachers with open calendars. We have this awesome wealth of knowledge and we can do so much with it everywhere!
+	◦	Create button didn’t work
+	•	final product is you need to make 2 ads, one for volunteers to use talent match and the other for our financial support. This should in all memory feed sidebars. 
+
+__________
+
+Mr Blue tours 
+He now that we are done with the platform you need to prepare his tours. 
+So starting from when the user completes registration, what tours will they have? 
+________________
+final testing
+i expect to see fresh playright entered posts, events, groups, chats with mr blue, friend requests, trave, reactions, coments, .... any user action should be tested. 
+
+do you have questions about any ofo the work?
+
