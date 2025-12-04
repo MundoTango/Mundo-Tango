@@ -56,6 +56,35 @@ An automated video recording system uses Playwright's `recordVideo` capability t
 ### Event Scraping System
 An automated scraping infrastructure (MB.MD Patterns 28, 38, 41) enriches global tango event and community data using specialized scraping agents (#115-119). It includes a City Group Enrichment Service, community metadata extraction, Admin API endpoints, and GitHub Actions automation for daily scraping.
 
+### Event Series System (NEW - Dec 2024)
+Recurring event containers for weekly/monthly/yearly events:
+- **Database**: `event_series` table with recurrence_type, recurrence_day, organizer ownership
+- **Events Link**: Events can belong to a series via `series_id` foreign key
+- **Profile Page**: `/event-series/:id` with About/Upcoming/Past tabs, cover photo, inline edit for organizers
+- **Auto-Creation**: Scraping pipeline detects recurring patterns (same venue + day of week) and auto-creates Series
+- **Creator UI**: Event creation form has "Make this a recurring series" toggle with Weekly/Monthly/Yearly options
+- **API Endpoints**: CRUD at `/api/event-series`, claim ownership at `/api/event-series/:id/claim`
+
+### City Groups Events Tab (REDESIGNED - Dec 2024)
+Redesigned to match Events landing page design:
+- **Main Tabs**: "Upcoming Events" | "Series" (for recurring events)
+- **View Tabs**: List | Calendar | Map (icons)
+- **Compact Filter Bar**: Inline search, type selector, verified toggle, expandable advanced filters
+- **Calendar View**: react-big-calendar integration with event navigation
+- **Map View**: react-leaflet with event markers and popups
+
+### RSS Feed Scraping (NEW - Dec 2024)
+- **RSSFeedService**: Parses RSS 2.0 and Atom 1.0 feeds for event data
+- **Database**: `rss_url` column in `event_scraping_sources` table
+- **Admin Endpoints**: Add/list/validate RSS sources, trigger scraping
+- **Pipeline Integration**: RSS sources processed in parallel with other scrapers
+
+### Geocoding Service (NEW - Dec 2024)
+- **GeocodingService**: OpenStreetMap Nominatim API integration with rate limiting (1 req/sec)
+- **Caching**: 24-hour TTL in-memory cache to avoid duplicate lookups
+- **Batch Script**: `server/scripts/batchGeocodeEvents.ts` for bulk geocoding
+- **Coverage**: Geocodes events and city groups missing coordinates
+
 ## External Dependencies
 - **Infrastructure:** PostgreSQL, Redis, Cloudinary, OpenStreetMap
 - **Authentication:** Google OAuth, Facebook OAuth, JWT
