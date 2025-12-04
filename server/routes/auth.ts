@@ -435,7 +435,17 @@ router.get("/me", authenticateToken, async (req: AuthRequest, res: Response) => 
 
     const { password, ...userWithoutPassword } = req.user;
 
-    res.json({ user: userWithoutPassword });
+    // Map snake_case database fields to camelCase for frontend
+    const userResponse = {
+      ...userWithoutPassword,
+      // Ensure tangoRoles is available (map from tango_roles if needed)
+      tangoRoles: (userWithoutPassword as any).tango_roles || (userWithoutPassword as any).tangoRoles || [],
+      // Ensure city and country are included
+      city: userWithoutPassword.city,
+      country: userWithoutPassword.country,
+    };
+
+    res.json({ user: userResponse });
   } catch (error) {
     console.error("Get current user error:", error);
     res.status(500).json({ message: "Internal server error" });
