@@ -122,6 +122,32 @@ Shows friendship tier badges on housing listings when the host is a known friend
 - **Tier Mapping**: 1=close_friend, 2=friend, 3=acquaintance
 - **Features**: Tooltip with mutual friends/shared events, compact badge for card overlay
 
+### Unified Components (NEW - Dec 2024)
+Reusable shared components for consistency across the platform:
+- **UnifiedFilterBar** (`client/src/components/filters/UnifiedFilterBar.tsx`):
+  - Compact inline filter bar with search, type selector, verified toggle
+  - Expandable advanced filters (location, date range, price)
+  - View mode toggles (list/calendar/map)
+  - Active filter badges with one-click removal
+  - Variants: `EventFilterBar`, `HousingFilterBar`, `GroupFilterBar`, `MemoryFilterBar`
+- **FriendshipClosenessIndicator** (`client/src/components/friendship/FriendshipClosenessIndicator.tsx`):
+  - Three variants: `badge` (standard), `compact` (icon only), `detailed` (hover card)
+  - Shows friendship tier with appropriate icons and colors
+  - HoverCard variant includes mutual friends preview and connection strength
+  - Uses `/api/housing/closeness/:hostId` API
+  - Batch loading hook: `useBatchFriendshipCloseness(hostIds[])`
+
+### City Hub Page (NEW - Dec 2024)
+Unified city exploration experience:
+- **Location**: `client/src/pages/CityHubPage.tsx`
+- **Features**:
+  - Hero section with city background image
+  - 5 tabs: Overview, Events, Groups, Housing, Visitors
+  - View modes: Grid, List, Map
+  - City search via UnifiedLocationPicker
+- **API Integration**: Events, Groups, Housing, and Travel APIs filtered by city
+- **Route**: `/city-hub` with optional `?city=` query param
+
 ## External Dependencies
 - **Infrastructure:** PostgreSQL, Redis, Cloudinary, OpenStreetMap
 - **Authentication:** Google OAuth, Facebook OAuth, JWT
