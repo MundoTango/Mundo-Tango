@@ -154,6 +154,29 @@ Unified city exploration experience:
 - **API Integration**: Events, Groups, Housing, and Travel APIs filtered by city
 - **Route**: `/city-hub` with optional `?city=` query param
 
+### Messages Unified Inbox (NEW - Dec 2024)
+Multi-channel messaging platform with OAuth integration:
+- **Location**: `client/src/pages/MessagesPage.tsx`, `server/routes/messages-routes.ts`
+- **Supported Channels**: MT Internal, Gmail, Facebook, Instagram, WhatsApp
+- **Database Tables** (`shared/messageSchemas.ts`):
+  - `connectedChannels`: OAuth connections per user
+  - `externalMessages`: Synced messages from external channels
+  - `messageTemplates`: Reusable message templates
+  - `messageAutomations`: Auto-reply and routing rules
+  - `scheduledMessages`: Future scheduled messages
+- **Components**:
+  - `ChannelSettingsPanel`: Connect/disconnect OAuth channels
+  - `useMessageChannels`: React hooks for channel management
+  - Channel tabs (All/MT/Gmail/Facebook/Instagram/WhatsApp)
+- **API Endpoints**:
+  - `POST /api/messages/channels/connect` - Connect OAuth channel
+  - `GET /api/messages/channels` - List connected channels
+  - `DELETE /api/messages/channels/:channel` - Disconnect channel
+  - `POST /api/messages/sync` - Sync messages from channels
+  - `GET /api/messages/unified` - Get unified inbox
+  - `POST /api/messages/send` - Send message to any channel
+- **Security**: AES-256-GCM token encryption, Graph API v18.0
+
 ## External Dependencies
 - **Infrastructure:** PostgreSQL, Redis, Cloudinary, OpenStreetMap
 - **Authentication:** Google OAuth, Facebook OAuth, JWT

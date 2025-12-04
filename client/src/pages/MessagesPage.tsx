@@ -7,24 +7,41 @@ import {
   useMessagesRealtime,
   useMarkMessagesAsRead 
 } from "@/hooks/useMessages";
+import {
+  useConnectedChannels,
+  useUnreadCount,
+  CHANNEL_CONFIG,
+  type MessageChannel
+} from "@/hooks/useMessageChannels";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import { Send, MessageCircle, Users, Heart, Search, PenSquare } from "lucide-react";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Send, MessageCircle, Users, Heart, Search, PenSquare, Settings, Mail, Inbox } from "lucide-react";
+import { SiFacebook, SiWhatsapp, SiGmail, SiInstagram } from "react-icons/si";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/AuthContext";
 import { safeDateDistance } from "@/lib/safeDateFormat";
 import { SEO } from "@/components/SEO";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
+import { ChannelSettingsPanel } from "@/components/messages/ChannelSettingsPanel";
 
 export default function MessagesPage() {
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [activeChannel, setActiveChannel] = useState<'all' | MessageChannel>('all');
+  const [showSettings, setShowSettings] = useState(false);
   const { data: conversations, isLoading } = useConversations();
+  const { data: connectedChannels } = useConnectedChannels();
+  const { data: unreadCounts } = useUnreadCount();
+  
+  const connectedChannelsList = connectedChannels?.filter(c => c.isActive) || [];
+  const hasConnectedChannels = connectedChannelsList.length > 0;
   
   // Filter conversations by search query
   const filteredConversations = conversations?.filter(c => 
@@ -136,15 +153,61 @@ export default function MessagesPage() {
                       <h2 className="text-xl font-serif font-bold" data-testid="heading-messages">
                         Messages
                       </h2>
-                      <Button 
-                        size="icon" 
-                        variant="ghost"
-                        data-testid="button-new-message"
-                        title="New conversation"
-                      >
-                        <PenSquare className="h-5 w-5" />
-                      </Button>
+                      <div className="flex items-center gap-1">
+                        <Dialog open={showSettings} onOpenChange={setShowSettings}>
+                          <DialogTrigger asChild>
+                            <Button 
+                              size="icon" 
+                              variant="ghost"
+                              data-testid="button-channel-settings"
+                              title="Channel settings"
+                            >
+                              <Settings className="h-5 w-5" />
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent className="max-w-lg">
+                            <DialogHeader>
+                              <DialogTitle>Message Channels</DialogTitle>
+                            </DialogHeader>
+                            <ChannelSettingsPanel />
+                          </DialogContent>
+                        </Dialog>
+                        <Button 
+                          size="icon" 
+                          variant="ghost"
+                          data-testid="button-new-message"
+                          title="New conversation"
+                        >
+                          <PenSquare className="h-5 w-5" />
+                        </Button>
+                      </div>
                     </div>
+                    
+                    {/* Channel Tabs */}
+                    <Tabs value={activeChannel} onValueChange={(v) => setActiveChannel(v as typeof activeChannel)} className="w-full">
+                      <TabsList className="w-full grid grid-cols-6 h-8">
+                        <TabsTrigger value="all" className="text-xs px-2" data-testid="tab-channel-all">
+                          <Inbox className="w-3 h-3 mr-1" />
+                          All
+                        </TabsTrigger>
+                        <TabsTrigger value="mt" className="text-xs px-2" data-testid="tab-channel-mt">
+                          <MessageCircle className="w-3 h-3" />
+                        </TabsTrigger>
+                        <TabsTrigger value="gmail" className="text-xs px-2" data-testid="tab-channel-gmail">
+                          <SiGmail className="w-3 h-3" />
+                        </TabsTrigger>
+                        <TabsTrigger value="facebook" className="text-xs px-2" data-testid="tab-channel-facebook">
+                          <SiFacebook className="w-3 h-3" />
+                        </TabsTrigger>
+                        <TabsTrigger value="instagram" className="text-xs px-2" data-testid="tab-channel-instagram">
+                          <SiInstagram className="w-3 h-3" />
+                        </TabsTrigger>
+                        <TabsTrigger value="whatsapp" className="text-xs px-2" data-testid="tab-channel-whatsapp">
+                          <SiWhatsapp className="w-3 h-3" />
+                        </TabsTrigger>
+                      </TabsList>
+                    </Tabs>
+                    
                     <div className="relative">
                       <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input
@@ -155,9 +218,16 @@ export default function MessagesPage() {
                         data-testid="input-search-messages"
                       />
                     </div>
-                    <p className="text-xs text-muted-foreground">
-                      {filteredConversations.length} of {conversations?.length || 0} conversation{conversations?.length !== 1 ? 's' : ''}
-                    </p>
+                    <div className="flex items-center justify-between text-xs text-muted-foreground">
+                      <span>
+                        {filteredConversations.length} of {conversations?.length || 0} conversation{conversations?.length !== 1 ? 's' : ''}
+                      </span>
+                      {hasConnectedChannels && (
+                        <Badge variant="outline" className="text-[10px]">
+                          {connectedChannelsList.length} channel{connectedChannelsList.length !== 1 ? 's' : ''} connected
+                        </Badge>
+                      )}
+                    </div>
                   </div>
                   
                   <ScrollArea className="flex-1">
