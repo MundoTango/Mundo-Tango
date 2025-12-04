@@ -1,3 +1,13 @@
+/**
+ * Mundo Tango - Video Demo Modal
+ * Real video playback for customer journey recordings
+ * 
+ * MB.MD Pattern 41: Parallel Execution
+ * MB.MD Pattern 26: OSI - Leveraging Playwright recordVideo
+ * 
+ * ZERO FAKE DATA POLICY: Uses actual recorded .mp4 videos, not mock animations
+ */
+
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,6 +26,10 @@ import {
   Calendar,
   Bot,
   Users,
+  Volume2,
+  VolumeX,
+  Maximize,
+  RotateCcw,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { LucideIcon } from "lucide-react";
@@ -35,107 +49,147 @@ interface VideoDemoModalProps {
   screenshots: Screenshot[];
 }
 
-const journeyData = [
+interface JourneyVideoData {
+  id: string;
+  name: string;
+  description: string;
+  videoUrl: string;
+  thumbnailUrl: string;
+  fallbackSteps: { image: string; caption: string }[];
+}
+
+const journeyData: JourneyVideoData[] = [
   {
     id: 'tango-map',
     name: 'Global Tango Map',
     description: 'Explore dancers and events worldwide',
-    steps: [
-      { image: '/demos/journeys/tango-map-step-01.png', caption: 'View global tango map with city markers' },
-      { image: '/demos/journeys/tango-map-step-02.png', caption: 'Interactive map with dancer locations' },
+    videoUrl: '/videos/customer/tango-map.mp4',
+    thumbnailUrl: '/demos/tango-map.png',
+    fallbackSteps: [
+      { image: '/demos/tango-map.png', caption: 'Interactive global tango map with city markers' },
     ]
   },
   {
     id: 'events',
     name: 'Event Discovery',
     description: 'Find milongas and festivals near you',
-    steps: [
-      { image: '/demos/journeys/events-step-01.png', caption: 'Browse upcoming tango events' },
-      { image: '/demos/journeys/events-step-02.png', caption: 'Event cards with details and RSVP' },
+    videoUrl: '/videos/customer/event-discovery.mp4',
+    thumbnailUrl: '/demos/events-discovery.png',
+    fallbackSteps: [
+      { image: '/demos/events-discovery.png', caption: 'Browse upcoming tango events worldwide' },
     ]
   },
   {
     id: 'mr-blue',
     name: 'Mr. Blue AI',
     description: 'Your personal tango companion',
-    steps: [
-      { image: '/demos/journeys/mr-blue-step-01.png', caption: 'Meet Mr. Blue AI assistant' },
-      { image: '/demos/journeys/mr-blue-step-02.png', caption: 'Chat interface with suggestions' },
+    videoUrl: '/videos/customer/mr-blue-chat.mp4',
+    thumbnailUrl: '/demos/mr-blue-chat.png',
+    fallbackSteps: [
+      { image: '/demos/mr-blue-chat.png', caption: 'Meet Mr. Blue AI assistant' },
     ]
   },
   {
     id: 'profile',
     name: 'Your Profile',
     description: 'Showcase your tango journey',
-    steps: [
-      { image: '/demos/journeys/profile-step-01.png', caption: 'Your personalized feed' },
-      { image: '/demos/journeys/profile-step-02.png', caption: 'Social features and connections' },
+    videoUrl: '/videos/customer/profile-view.mp4',
+    thumbnailUrl: '/demos/profile-view.png',
+    fallbackSteps: [
+      { image: '/demos/profile-view.png', caption: 'Your personalized tango profile' },
     ]
   }
 ];
 
 export function VideoDemoModal({ open, onOpenChange, initialSlide, screenshots }: VideoDemoModalProps) {
   const [currentJourney, setCurrentJourney] = useState(initialSlide);
-  const [currentStep, setCurrentStep] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(true);
-  const progressInterval = useRef<NodeJS.Timeout | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
   const [progress, setProgress] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [videoLoaded, setVideoLoaded] = useState(false);
+  const [videoError, setVideoError] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   const journey = journeyData[currentJourney] || journeyData[0];
   const currentScreenshot = screenshots[currentJourney];
   const IconComponent = currentScreenshot?.icon || MapPin;
-  const totalSteps = journey.steps.length;
-  const currentStepData = journey.steps[currentStep];
 
   useEffect(() => {
     setCurrentJourney(initialSlide);
-    setCurrentStep(0);
     setProgress(0);
-    setIsPlaying(true);
+    setIsPlaying(false);
+    setVideoLoaded(false);
+    setVideoError(false);
   }, [initialSlide, open]);
 
   useEffect(() => {
-    if (open && isPlaying) {
-      progressInterval.current = setInterval(() => {
-        setProgress(prev => {
-          if (prev >= 100) {
-            if (currentStep < totalSteps - 1) {
-              setCurrentStep(s => s + 1);
-              return 0;
-            } else if (currentJourney < journeyData.length - 1) {
-              setCurrentJourney(j => j + 1);
-              setCurrentStep(0);
-              return 0;
-            } else {
-              setIsPlaying(false);
-              return 100;
-            }
-          }
-          return prev + 0.4;
-        });
-      }, 50);
-    }
+    const video = videoRef.current;
+    if (!video) return;
 
-    return () => {
-      if (progressInterval.current) {
-        clearInterval(progressInterval.current);
+    const handleLoadedData = () => {
+      setVideoLoaded(true);
+      setDuration(video.duration);
+      setVideoError(false);
+    };
+
+    const handleTimeUpdate = () => {
+      if (video.duration > 0) {
+        setProgress((video.currentTime / video.duration) * 100);
       }
     };
-  }, [open, isPlaying, currentStep, currentJourney, totalSteps]);
+
+    const handleEnded = () => {
+      setIsPlaying(false);
+      setProgress(100);
+    };
+
+    const handleError = () => {
+      setVideoError(true);
+      setVideoLoaded(false);
+    };
+
+    video.addEventListener('loadeddata', handleLoadedData);
+    video.addEventListener('timeupdate', handleTimeUpdate);
+    video.addEventListener('ended', handleEnded);
+    video.addEventListener('error', handleError);
+
+    return () => {
+      video.removeEventListener('loadeddata', handleLoadedData);
+      video.removeEventListener('timeupdate', handleTimeUpdate);
+      video.removeEventListener('ended', handleEnded);
+      video.removeEventListener('error', handleError);
+    };
+  }, [currentJourney]);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    if (isPlaying) {
+      video.play().catch(() => setIsPlaying(false));
+    } else {
+      video.pause();
+    }
+  }, [isPlaying]);
 
   const handlePrevJourney = () => {
     if (currentJourney > 0) {
       setCurrentJourney(prev => prev - 1);
-      setCurrentStep(0);
       setProgress(0);
+      setIsPlaying(false);
+      setVideoLoaded(false);
+      setVideoError(false);
     }
   };
 
   const handleNextJourney = () => {
     if (currentJourney < journeyData.length - 1) {
       setCurrentJourney(prev => prev + 1);
-      setCurrentStep(0);
       setProgress(0);
+      setIsPlaying(false);
+      setVideoLoaded(false);
+      setVideoError(false);
     }
   };
 
@@ -143,11 +197,51 @@ export function VideoDemoModal({ open, onOpenChange, initialSlide, screenshots }
     setIsPlaying(!isPlaying);
   };
 
+  const toggleMute = () => {
+    setIsMuted(!isMuted);
+    if (videoRef.current) {
+      videoRef.current.muted = !isMuted;
+    }
+  };
+
+  const handleRestart = () => {
+    if (videoRef.current) {
+      videoRef.current.currentTime = 0;
+      setProgress(0);
+      setIsPlaying(true);
+    }
+  };
+
+  const handleFullscreen = () => {
+    if (videoRef.current) {
+      if (videoRef.current.requestFullscreen) {
+        videoRef.current.requestFullscreen();
+      }
+    }
+  };
+
+  const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (videoRef.current && duration > 0) {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const newProgress = (clickX / rect.width) * 100;
+      const newTime = (newProgress / 100) * duration;
+      videoRef.current.currentTime = newTime;
+      setProgress(newProgress);
+    }
+  };
+
+  const formatTime = (seconds: number): string => {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-5xl p-0 overflow-hidden bg-slate-900 border-slate-700">
         <DialogDescription className="sr-only">
-          Customer journey demonstration of {journey.name}. Use play/pause and navigation controls to explore features.
+          Customer journey video demonstration of {journey.name}. Use play/pause and navigation controls to explore features.
         </DialogDescription>
         <div className="relative">
           {/* Video Player Header */}
@@ -161,43 +255,82 @@ export function VideoDemoModal({ open, onOpenChange, initialSlide, screenshots }
                 <p className="text-white/70 text-sm">{journey.description}</p>
               </div>
             </div>
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="text-white hover:bg-white/20"
-              onClick={() => onOpenChange(false)}
-            >
-              <X className="h-5 w-5" />
-            </Button>
+            <div className="flex items-center gap-2">
+              <Badge variant="secondary" className="bg-white/10 text-white border-none">
+                {videoLoaded ? 'HD Video' : videoError ? 'Preview' : 'Loading...'}
+              </Badge>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="text-white hover:bg-white/20"
+                onClick={() => onOpenChange(false)}
+                data-testid="video-modal-close"
+              >
+                <X className="h-5 w-5" />
+              </Button>
+            </div>
           </div>
 
-          {/* Main Video Content Area - Real Screenshots */}
-          <div className="relative aspect-video bg-slate-900 overflow-hidden">
+          {/* Main Video Content Area */}
+          <div className="relative aspect-video bg-slate-950 overflow-hidden">
             <AnimatePresence mode="wait">
               <motion.div
-                key={`${currentJourney}-${currentStep}`}
+                key={currentJourney}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.3 }}
                 className="absolute inset-0"
               >
-                <img
-                  src={currentStepData.image}
-                  alt={currentStepData.caption}
-                  className="w-full h-full object-contain bg-slate-950"
-                />
-                
-                {/* Caption Overlay */}
-                <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
-                  <motion.p
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="text-white text-lg font-medium text-center"
+                {/* Video Element */}
+                {!videoError ? (
+                  <video
+                    ref={videoRef}
+                    key={journey.videoUrl}
+                    src={journey.videoUrl}
+                    poster={journey.thumbnailUrl}
+                    className="w-full h-full object-contain"
+                    muted={isMuted}
+                    playsInline
+                    preload="metadata"
+                    data-testid="video-player"
+                  />
+                ) : (
+                  <img
+                    src={journey.fallbackSteps[0]?.image || journey.thumbnailUrl}
+                    alt={journey.name}
+                    className="w-full h-full object-contain"
+                  />
+                )}
+
+                {/* Play Overlay (when paused) */}
+                {!isPlaying && videoLoaded && (
+                  <button
+                    onClick={togglePlay}
+                    className="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/40 transition-colors"
+                    data-testid="video-play-overlay"
                   >
-                    {currentStepData.caption}
-                  </motion.p>
-                </div>
+                    <div className="w-20 h-20 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center hover:bg-white/30 transition-colors">
+                      <Play className="h-10 w-10 text-white ml-1" />
+                    </div>
+                  </button>
+                )}
+
+                {/* Video Error Overlay */}
+                {videoError && (
+                  <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
+                    <motion.p
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="text-white text-lg font-medium text-center"
+                    >
+                      {journey.fallbackSteps[0]?.caption || journey.description}
+                    </motion.p>
+                    <p className="text-white/60 text-sm text-center mt-2">
+                      Video recording pending - showing preview
+                    </p>
+                  </div>
+                )}
               </motion.div>
             </AnimatePresence>
 
@@ -218,18 +351,6 @@ export function VideoDemoModal({ open, onOpenChange, initialSlide, screenshots }
             >
               <ChevronRight className="h-6 w-6" />
             </button>
-
-            {/* Step Progress Dots */}
-            <div className="absolute top-20 left-1/2 -translate-x-1/2 flex gap-2">
-              {journey.steps.map((_, i) => (
-                <div
-                  key={i}
-                  className={`w-2 h-2 rounded-full transition-all ${
-                    i === currentStep ? 'bg-white w-4' : 'bg-white/40'
-                  }`}
-                />
-              ))}
-            </div>
           </div>
 
           {/* Video Controls */}
@@ -238,22 +359,55 @@ export function VideoDemoModal({ open, onOpenChange, initialSlide, screenshots }
             <div className="flex items-center gap-3">
               <button
                 onClick={togglePlay}
-                className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-all"
+                disabled={videoError}
+                className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 data-testid="video-play-pause"
               >
                 {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5 ml-0.5" />}
               </button>
               
-              <div className="flex-1 h-1 bg-white/20 rounded-full overflow-hidden">
+              <div 
+                className="flex-1 h-1.5 bg-white/20 rounded-full overflow-hidden cursor-pointer"
+                onClick={handleProgressClick}
+                data-testid="video-progress-bar"
+              >
                 <motion.div 
                   className="h-full bg-gradient-to-r from-cyan-500 to-teal-500"
                   style={{ width: `${progress}%` }}
                 />
               </div>
 
-              <span className="text-white/60 text-sm w-24 text-right">
-                Step {currentStep + 1}/{totalSteps}
+              <span className="text-white/60 text-sm w-20 text-right font-mono">
+                {videoLoaded ? formatTime((progress / 100) * duration) : '--:--'}
               </span>
+
+              {/* Additional Controls */}
+              <button
+                onClick={handleRestart}
+                disabled={videoError}
+                className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-all disabled:opacity-50"
+                data-testid="video-restart"
+              >
+                <RotateCcw className="h-4 w-4" />
+              </button>
+
+              <button
+                onClick={toggleMute}
+                disabled={videoError}
+                className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-all disabled:opacity-50"
+                data-testid="video-mute"
+              >
+                {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+              </button>
+
+              <button
+                onClick={handleFullscreen}
+                disabled={videoError}
+                className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-all disabled:opacity-50"
+                data-testid="video-fullscreen"
+              >
+                <Maximize className="h-4 w-4" />
+              </button>
             </div>
 
             {/* Journey Indicators */}
@@ -265,8 +419,10 @@ export function VideoDemoModal({ open, onOpenChange, initialSlide, screenshots }
                     key={j.id}
                     onClick={() => {
                       setCurrentJourney(i);
-                      setCurrentStep(0);
                       setProgress(0);
+                      setIsPlaying(false);
+                      setVideoLoaded(false);
+                      setVideoError(false);
                     }}
                     className={`flex items-center gap-2 px-3 py-1.5 rounded-full transition-all ${
                       i === currentJourney 
