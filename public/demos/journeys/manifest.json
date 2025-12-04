@@ -1,0 +1,41 @@
+{
+  "journeys": [
+    {
+      "id": "tango-map",
+      "name": "Global Tango Map",
+      "description": "Explore dancers and events worldwide",
+      "screenshots": [
+        "tango-map-step-01.png",
+        "tango-map-step-02.png"
+      ]
+    },
+    {
+      "id": "events",
+      "name": "Event Discovery",
+      "description": "Find milongas and festivals near you",
+      "screenshots": [
+        "events-step-01.png",
+        "events-step-02.png"
+      ]
+    },
+    {
+      "id": "mr-blue",
+      "name": "Mr. Blue AI",
+      "description": "Your personal tango companion",
+      "screenshots": [
+        "mr-blue-step-01.png",
+        "mr-blue-step-02.png"
+      ]
+    },
+    {
+      "id": "profile",
+      "name": "Your Profile",
+      "description": "Showcase your tango journey",
+      "screenshots": [
+        "profile-step-01.png",
+        "profile-step-02.png"
+      ]
+    }
+  ],
+  "generatedAt": "2025-12-04T00:21:06.527Z"
+}
