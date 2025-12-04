@@ -8,9 +8,12 @@ import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { motion } from "framer-motion";
 
+const slugify = (name: string) => name.toLowerCase().replace(/\s+/g, '-');
+
 const plans = [
   {
     name: "Free Trial",
+    slug: "free-trial",
     price: "$0",
     period: "7 days",
     icon: Users,
@@ -27,6 +30,7 @@ const plans = [
   },
   {
     name: "Basic",
+    slug: "basic",
     price: "$4.99",
     period: "month",
     icon: Users,
@@ -43,6 +47,7 @@ const plans = [
   },
   {
     name: "Dancer Pro",
+    slug: "dancer-pro",
     price: "$9.99",
     period: "month",
     icon: Zap,
@@ -61,6 +66,7 @@ const plans = [
   },
   {
     name: "Professional",
+    slug: "professional",
     price: "$29.99",
     period: "month",
     icon: Crown,
@@ -121,7 +127,7 @@ export default function PricingPage() {
       <div className="bg-background py-16 px-6">
         <div className="container mx-auto max-w-7xl">
           {/* Plans Grid */}
-          <div className="grid gap-8 md:grid-cols-3 mb-16">
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4 mb-16" data-testid="pricing-plans-grid">
             {plans.map((plan, index) => {
               const IconComponent = plan.icon;
               return (
@@ -134,11 +140,11 @@ export default function PricingPage() {
                 >
                   <Card
                     className={`relative h-full ${plan.popular ? "border-primary shadow-2xl" : ""}`}
-                    data-testid={`plan-${plan.name.toLowerCase()}`}
+                    data-testid={`card-plan-${plan.slug}`}
                   >
                     {plan.popular && (
                       <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                        <Badge className="text-xs px-4 py-1.5">Most Popular</Badge>
+                        <Badge className="text-xs px-4 py-1.5" data-testid={`badge-popular-${plan.slug}`}>Most Popular</Badge>
                       </div>
                     )}
 
@@ -148,18 +154,18 @@ export default function PricingPage() {
                           <IconComponent className="h-10 w-10 text-primary" />
                         </div>
                       </div>
-                      <CardTitle className="text-3xl font-serif font-bold mb-2">{plan.name}</CardTitle>
-                      <p className="text-sm text-muted-foreground mb-6">{plan.description}</p>
-                      <div className="mb-4">
-                        <span className="text-5xl font-serif font-bold">{plan.price}</span>
-                        <span className="text-muted-foreground text-lg">/{plan.period}</span>
+                      <CardTitle className="text-3xl font-serif font-bold mb-2" data-testid={`text-plan-name-${plan.slug}`}>{plan.name}</CardTitle>
+                      <p className="text-sm text-muted-foreground mb-6" data-testid={`text-plan-description-${plan.slug}`}>{plan.description}</p>
+                      <div className="mb-4" data-testid={`text-price-${plan.slug}`}>
+                        <span className="text-5xl font-serif font-bold" data-testid={`text-price-amount-${plan.slug}`}>{plan.price}</span>
+                        <span className="text-muted-foreground text-lg" data-testid={`text-price-period-${plan.slug}`}>/{plan.period}</span>
                       </div>
                     </CardHeader>
 
                     <CardContent className="space-y-6">
-                      <ul className="space-y-4">
+                      <ul className="space-y-4" data-testid={`list-features-${plan.slug}`}>
                         {plan.features.map((feature, idx) => (
-                          <li key={idx} className="flex items-start gap-3">
+                          <li key={idx} className="flex items-start gap-3" data-testid={`feature-${plan.slug}-${idx}`}>
                             <Check className="h-5 w-5 text-green-500 shrink-0 mt-0.5" />
                             <span className="text-sm leading-relaxed">{feature}</span>
                           </li>
@@ -169,7 +175,7 @@ export default function PricingPage() {
                       <Button
                         className="w-full gap-2"
                         variant={plan.popular ? "default" : "outline"}
-                        data-testid={`button-${plan.name.toLowerCase()}`}
+                        data-testid={`button-cta-${plan.slug}`}
                       >
                         {plan.cta}
                       </Button>

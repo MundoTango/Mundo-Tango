@@ -119,6 +119,41 @@ export default function crowdfundingRoutes(app: Express) {
   });
 
   /**
+   * GET /api/crowdfunding/campaigns/mine
+   * Get campaigns created by the authenticated user
+   * NOTE: This route MUST be defined before /:id to prevent "mine" being parsed as an ID
+   */
+  app.get("/api/crowdfunding/campaigns/mine", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const userId = req.user!.userId;
+
+      const campaigns = await db
+        .select({
+          campaign: fundingCampaigns,
+          backerCount: sql<number>`(
+            SELECT COUNT(DISTINCT donor_user_id) 
+            FROM campaign_donations 
+            WHERE campaign_id = ${fundingCampaigns.id}
+          )`.as('backerCount'),
+          daysRemaining: sql<number>`(
+            CASE 
+              WHEN ${fundingCampaigns.deadline} IS NULL THEN NULL
+              ELSE EXTRACT(DAY FROM (${fundingCampaigns.deadline} - CURRENT_TIMESTAMP))
+            END
+          )`.as('daysRemaining'),
+        })
+        .from(fundingCampaigns)
+        .where(eq(fundingCampaigns.userId, userId))
+        .orderBy(desc(fundingCampaigns.createdAt));
+
+      res.json(campaigns);
+    } catch (error: any) {
+      console.error("Error fetching user's campaigns:", error);
+      res.status(500).json({ message: "Failed to fetch your campaigns", error: error.message });
+    }
+  });
+
+  /**
    * GET /api/crowdfunding/campaigns/:id
    * Get detailed campaign information
    */

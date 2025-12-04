@@ -341,7 +341,7 @@ export default function ProfilePage() {
     },
   });
 
-  if (userLoading || !user) {
+  if (userLoading) {
     return (
       <SelfHealingErrorBoundary pageName="Profile" fallbackRoute="/feed">
         <SEO 
@@ -353,6 +353,43 @@ export default function ProfilePage() {
           <div className="max-w-5xl mx-auto px-6 py-12">
             <Skeleton className="h-32 w-full mb-6" />
             <Skeleton className="h-32 w-full" />
+          </div>
+        </div>
+      </SelfHealingErrorBoundary>
+    );
+  }
+
+  if (userError || !user) {
+    return (
+      <SelfHealingErrorBoundary pageName="Profile" fallbackRoute="/feed">
+        <SEO 
+          title="User Not Found - Mundo Tango"
+          description="The requested user profile could not be found"
+        />
+        <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-6 px-4" data-testid="container-user-not-found">
+          <div className="text-center space-y-4">
+            <div className="w-24 h-24 mx-auto rounded-full bg-muted flex items-center justify-center">
+              <Users className="w-12 h-12 text-muted-foreground" />
+            </div>
+            <h1 className="text-2xl font-bold" data-testid="text-user-not-found-title">User Not Found</h1>
+            <p className="text-muted-foreground max-w-md" data-testid="text-user-not-found-message">
+              The profile you're looking for doesn't exist or may have been removed.
+            </p>
+          </div>
+          <div className="flex gap-4">
+            <Button 
+              variant="outline" 
+              onClick={() => window.history.back()}
+              data-testid="button-go-back"
+            >
+              Go Back
+            </Button>
+            <Link href="/feed">
+              <Button data-testid="button-go-home">
+                <Home className="w-4 h-4 mr-2" />
+                Go to Feed
+              </Button>
+            </Link>
           </div>
         </div>
       </SelfHealingErrorBoundary>

@@ -124,6 +124,11 @@ export function verifyCsrfToken(req: Request, res: Response, next: NextFunction)
     if (eventSeriesEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
       return next();
     }
+    // Skip CSRF for talent match profile enrichment endpoints (MB.MD Subagent #4)
+    const talentMatchEndpoints = ["/api/v1/enrich-github", "/api/v1/enrich-profile", "/api/v1/validate-linkedin", "/api/v1/validate-urls", "/api/v1/volunteers", "/api/v1/clarifier", "/api/talent-match"];
+    if (talentMatchEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
+      return next();
+    }
   }
   
   const sessionId = (req as any).session?.id || req.ip;
@@ -236,7 +241,7 @@ export function verifyDoubleSubmitCookie(req: Request, res: Response, next: Next
   const journeyEndpoints = ["/api/journey"]; // Internal API for recording development progress
   const travelScrapingEndpoints = ["/api/travel/scrape-accommodation", "/api/travel/scrape-transport"];
   const eventSeriesEndpoints = ["/api/event-series"]; // Event series management (TRACK A)
-  const talentMatchEndpoints = ["/api/v1/volunteers", "/api/v1/clarifier", "/api/talent-match"]; // Talent Match system (JWT protected)
+  const talentMatchEndpoints = ["/api/v1/volunteers", "/api/v1/clarifier", "/api/talent-match", "/api/v1/enrich-github", "/api/v1/enrich-profile", "/api/v1/validate-linkedin", "/api/v1/validate-urls"]; // Talent Match system (JWT protected)
   const friendsEndpoints = ["/api/friends"]; // Friends system (JWT protected)
   const isAuthEndpoint = authEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint));
   const isJourneyEndpoint = journeyEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint));

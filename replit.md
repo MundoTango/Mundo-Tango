@@ -15,6 +15,15 @@ Mundo Tango is a production-ready social platform designed to connect the global
 - Validation Loop - observe → decide → act → validate → adapt (not just automation)
 - MB.MD Methodology - Apply v9.9.2 patterns systematically: Research → Plan → Build → Test → Document
 
+## CRITICAL: API Keys & Secrets (NEVER ASK FOR THESE)
+All credentials are pre-configured in Replit Secrets. DO NOT request these from the user:
+- **Stripe Production**: `STRIPE_SECRET_KEY`, `VITE_STRIPE_PUBLIC_KEY`
+- **Stripe Testing**: `TESTING_STRIPE_SECRET_KEY`, `TESTING_VITE_STRIPE_PUBLIC_KEY` (run_test injects automatically)
+- **AI Providers**: OpenAI, Anthropic, Groq, Gemini, OpenRouter, Luma, ElevenLabs
+- **Database**: DATABASE_URL, PG* variables (Neon PostgreSQL)
+- **OAuth**: Google, Facebook, GitHub tokens configured
+- **Infrastructure**: Redis, Supabase, Cloudinary, Sentry configured
+
 ## System Architecture
 
 ### Standardized Components
@@ -79,11 +88,39 @@ Redesigned to match Events landing page design:
 - **Admin Endpoints**: Add/list/validate RSS sources, trigger scraping
 - **Pipeline Integration**: RSS sources processed in parallel with other scrapers
 
+### Profile Enrichment Service (NEW - Dec 2024)
+Talent Match profile enrichment from LinkedIn/GitHub URLs:
+- **Location**: `server/services/profile-enrichment.ts`
+- **GitHub Integration**: Uses public GitHub API (no auth required) via `@octokit/rest`
+  - Fetches: bio, company, location, repos, languages, stars, forks, contribution stats
+  - Rate limit: 60 requests/hour for unauthenticated requests
+- **LinkedIn Integration**: URL validation only (direct scraping blocked by LinkedIn)
+  - Validates URL format and extracts username from vanity URLs
+  - Pattern extraction for name/headline where possible
+- **API Endpoints**:
+  - `GET /api/talent-match/enrich-github/:username` - Fetch GitHub profile data
+  - `POST /api/talent-match/enrich-profile` - Enrich from URL array (auth required)
+  - `POST /api/talent-match/validate-linkedin` - Validate LinkedIn URL format
+  - `POST /api/talent-match/validate-urls` - Validate multiple profile URLs
+- **Limitations**: LinkedIn data extraction blocked by anti-scraping measures; GitHub auth would increase rate limit
+
 ### Geocoding Service (NEW - Dec 2024)
 - **GeocodingService**: OpenStreetMap Nominatim API integration with rate limiting (1 req/sec)
 - **Caching**: 24-hour TTL in-memory cache to avoid duplicate lookups
 - **Batch Script**: `server/scripts/batchGeocodeEvents.ts` for bulk geocoding
 - **Coverage**: Geocodes events and city groups missing coordinates
+
+### Housing Friendship Closeness Integration (NEW - Dec 2024)
+Shows friendship tier badges on housing listings when the host is a known friend:
+- **Database**: Uses existing `friend_closeness` table (closenessScore 0-1000, tier 1-3)
+- **API Endpoints**: 
+  - `GET /api/housing/closeness/:hostId` - Get closeness for single host (auth required)
+  - `POST /api/housing/closeness/batch` - Get closeness for multiple hosts (auth required)
+- **Components**:
+  - `FriendClosenessIndicator` - Badge component with tier display (close friend/friend/acquaintance)
+  - `ListingCard` - Integrated with closeness indicator via `showCloseness` prop
+- **Tier Mapping**: 1=close_friend, 2=friend, 3=acquaintance
+- **Features**: Tooltip with mutual friends/shared events, compact badge for card overlay
 
 ## External Dependencies
 - **Infrastructure:** PostgreSQL, Redis, Cloudinary, OpenStreetMap

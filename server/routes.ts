@@ -14,6 +14,7 @@ import platformAllRoutes from "./routes/platform-all";
 import webhooksRoutes from "./routes/webhooks";
 import { createTalentMatchRoutes } from "./talent-match-routes";
 import { createAIChatRoutes } from "./ai-chat-routes";
+import { profileEnrichmentService } from "./services/profile-enrichment";
 import queuesRoutes from "./routes/queues";
 import mentionRoutes from "./routes/mention-routes";
 import lifeCeoRoutes from "./routes/life-ceo-routes";
@@ -9881,6 +9882,70 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('[TalentMatch] Get pipeline error:', error);
       res.status(500).json({ message: 'Failed to fetch pipeline' });
+    }
+  });
+
+  // ============================================================================
+  // PROFILE ENRICHMENT API (GitHub/LinkedIn)
+  // Fetches public profile data from GitHub, validates LinkedIn URLs
+  // ============================================================================
+
+  app.post("/api/talent-match/enrich-profile", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const { urls } = req.body;
+      if (!urls || !Array.isArray(urls) || urls.length === 0) {
+        return res.status(400).json({ message: 'urls array is required' });
+      }
+      const result = await profileEnrichmentService.enrichFromUrls(urls);
+      res.json(result);
+    } catch (error: any) {
+      console.error('[ProfileEnrichment] Enrich profile error:', error);
+      res.status(500).json({ message: 'Failed to enrich profile', error: error.message });
+    }
+  });
+
+  app.get("/api/talent-match/enrich-github/:username", async (req: Request, res: Response) => {
+    try {
+      const { username } = req.params;
+      if (!username) {
+        return res.status(400).json({ message: 'GitHub username is required' });
+      }
+      const profile = await profileEnrichmentService.fetchGitHubProfile(username);
+      res.json(profile);
+    } catch (error: any) {
+      console.error('[ProfileEnrichment] GitHub fetch error:', error);
+      if (error.status === 404) {
+        return res.status(404).json({ message: 'GitHub user not found' });
+      }
+      res.status(500).json({ message: 'Failed to fetch GitHub profile', error: error.message });
+    }
+  });
+
+  app.post("/api/talent-match/validate-linkedin", async (req: Request, res: Response) => {
+    try {
+      const { url } = req.body;
+      if (!url) {
+        return res.status(400).json({ message: 'LinkedIn URL is required' });
+      }
+      const result = profileEnrichmentService.processLinkedInUrl(url);
+      res.json(result);
+    } catch (error: any) {
+      console.error('[ProfileEnrichment] LinkedIn validation error:', error);
+      res.status(500).json({ message: 'Failed to validate LinkedIn URL', error: error.message });
+    }
+  });
+
+  app.post("/api/talent-match/validate-urls", async (req: Request, res: Response) => {
+    try {
+      const { urls } = req.body;
+      if (!urls || !Array.isArray(urls)) {
+        return res.status(400).json({ message: 'urls array is required' });
+      }
+      const result = profileEnrichmentService.validateProfileUrls(urls);
+      res.json(result);
+    } catch (error: any) {
+      console.error('[ProfileEnrichment] URL validation error:', error);
+      res.status(500).json({ message: 'Failed to validate URLs', error: error.message });
     }
   });
 

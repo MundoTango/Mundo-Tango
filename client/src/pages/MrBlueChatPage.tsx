@@ -139,13 +139,12 @@ export default function MrBlueChatPage() {
   return (
     <SelfHealingErrorBoundary pageName="Mr Blue AI Chat" fallbackRoute="/feed">
       <PageLayout title="Mr Blue AI" showBreadcrumbs>
-<>
-      <SEO
-        title="Mr Blue AI Chat - Mundo Tango"
-        description="Chat with Mr Blue, your AI-powered assistant for code analysis, debugging, and task management."
-      />
+        <SEO
+          title="Mr Blue AI Chat - Mundo Tango"
+          description="Chat with Mr Blue, your AI-powered assistant for code analysis, debugging, and task management."
+        />
 
-      <div className="h-screen flex flex-col" data-testid="page-mr-blue">
+        <div className="h-full flex flex-col" data-testid="page-mr-blue">
         {/* Header */}
         <div className="border-b glass-topbar p-4">
           <div className="container mx-auto max-w-6xl">
@@ -379,8 +378,7 @@ export default function MrBlueChatPage() {
           </Tabs>
         </div>
       </div>
-    </>
-    </PageLayout>
+      </PageLayout>
     </SelfHealingErrorBoundary>
   );
 }

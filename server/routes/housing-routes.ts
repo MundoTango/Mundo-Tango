@@ -5,7 +5,8 @@ import {
   housingBookings,
   housingReviews,
   housingFavorites,
-  users
+  users,
+  friendCloseness
 } from "@shared/schema";
 import { authenticateToken, AuthRequest } from "../middleware/auth";
 import { eq, and, desc, gte, lte, sql, or } from "drizzle-orm";
@@ -930,6 +931,158 @@ router.put("/:listingId/photos/:photoId/caption", authenticateToken, async (req:
   } catch (error) {
     console.error("[Housing] Error updating caption:", error);
     res.status(500).json({ message: "Failed to update caption" });
+  }
+});
+
+// ============================================================================
+// HOUSING FRIEND CLOSENESS ROUTES
+// ============================================================================
+
+// GET /api/housing/closeness/:hostId - Get closeness for a host (auth required)
+router.get("/closeness/:hostId", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.userId!;
+    const { hostId } = req.params;
+    const parsedHostId = parseInt(hostId);
+
+    if (isNaN(parsedHostId)) {
+      return res.status(400).json({ message: "Invalid host ID" });
+    }
+
+    // Don't show closeness badge for your own listing
+    if (userId === parsedHostId) {
+      return res.json({ isOwn: true, closeness: null });
+    }
+
+    // Get the host's info (name and email) to match against friend closeness
+    const [host] = await db
+      .select({ id: users.id, name: users.name, email: users.email })
+      .from(users)
+      .where(eq(users.id, parsedHostId))
+      .limit(1);
+
+    if (!host) {
+      return res.status(404).json({ message: "Host not found" });
+    }
+
+    // Look for the host in the current user's friend closeness table
+    // Match by either friend name or friend email
+    const closenessResult = await db
+      .select()
+      .from(friendCloseness)
+      .where(
+        and(
+          eq(friendCloseness.userId, userId),
+          or(
+            sql`LOWER(${friendCloseness.friendName}) = LOWER(${host.name})`,
+            sql`LOWER(${friendCloseness.friendEmail}) = LOWER(${host.email})`
+          )
+        )
+      )
+      .limit(1);
+
+    if (closenessResult.length === 0) {
+      return res.json({ 
+        isFriend: false, 
+        closeness: null,
+        hostName: host.name
+      });
+    }
+
+    const closeness = closenessResult[0];
+    
+    // Convert tier number to label
+    const tierLabels: Record<number, string> = {
+      1: "close_friend",
+      2: "friend",
+      3: "acquaintance"
+    };
+
+    res.json({
+      isFriend: true,
+      closeness: {
+        id: closeness.id,
+        friendName: closeness.friendName,
+        closenessScore: closeness.closenessScore,
+        tier: closeness.tier,
+        tierLabel: tierLabels[closeness.tier || 3] || "acquaintance",
+        mutualFriends: closeness.mutualFriends,
+        sharedEvents: closeness.sharedEvents,
+        lastInteraction: closeness.lastInteraction
+      },
+      hostName: host.name
+    });
+  } catch (error) {
+    console.error("[Housing] Error fetching closeness:", error);
+    res.status(500).json({ message: "Failed to fetch closeness data" });
+  }
+});
+
+// GET /api/housing/closeness/batch - Get closeness for multiple hosts (auth required)
+router.post("/closeness/batch", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.userId!;
+    const { hostIds } = req.body;
+
+    if (!Array.isArray(hostIds) || hostIds.length === 0) {
+      return res.status(400).json({ message: "hostIds array is required" });
+    }
+
+    // Limit to 50 hosts per request
+    const limitedHostIds = hostIds.slice(0, 50).map(id => parseInt(id)).filter(id => !isNaN(id));
+
+    // Get all hosts' info
+    const hosts = await db
+      .select({ id: users.id, name: users.name, email: users.email })
+      .from(users)
+      .where(sql`${users.id} IN ${limitedHostIds}`);
+
+    // Get all friend closeness for current user
+    const allCloseness = await db
+      .select()
+      .from(friendCloseness)
+      .where(eq(friendCloseness.userId, userId));
+
+    // Match hosts with closeness data
+    const results: Record<number, any> = {};
+    const tierLabels: Record<number, string> = {
+      1: "close_friend",
+      2: "friend",
+      3: "acquaintance"
+    };
+
+    for (const host of hosts) {
+      if (host.id === userId) {
+        results[host.id] = { isOwn: true, closeness: null };
+        continue;
+      }
+
+      const match = allCloseness.find(c => 
+        c.friendName?.toLowerCase() === host.name?.toLowerCase() ||
+        c.friendEmail?.toLowerCase() === host.email?.toLowerCase()
+      );
+
+      if (match) {
+        results[host.id] = {
+          isFriend: true,
+          closeness: {
+            friendName: match.friendName,
+            closenessScore: match.closenessScore,
+            tier: match.tier,
+            tierLabel: tierLabels[match.tier || 3] || "acquaintance",
+            mutualFriends: match.mutualFriends,
+            sharedEvents: match.sharedEvents
+          }
+        };
+      } else {
+        results[host.id] = { isFriend: false, closeness: null };
+      }
+    }
+
+    res.json({ closeness: results });
+  } catch (error) {
+    console.error("[Housing] Error fetching batch closeness:", error);
+    res.status(500).json({ message: "Failed to fetch closeness data" });
   }
 });
 

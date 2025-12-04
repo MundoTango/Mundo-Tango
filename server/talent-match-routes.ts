@@ -2,6 +2,7 @@ import { Router } from "express";
 import type { IStorage } from "./storage";
 import { resumeParser } from "./services/resume-parser";
 import { detectSkillSignals, matchVolunteerToTasks, generateClarifierQuestions } from "./algorithms/signal-detection";
+import { profileEnrichmentService } from "./services/profile-enrichment";
 import Groq from "groq-sdk";
 
 // Bifrost AI Gateway integration - MB.MD Protocol Implementation
@@ -471,6 +472,78 @@ Keep responses concise (2-3 sentences max).`;
     }
   });
 
+  // ============================================================================
+  // PROFILE ENRICHMENT
+  // ============================================================================
+
+  // Enrich profile from GitHub username
+  router.get("/enrich-github/:username", async (req, res) => {
+    try {
+      const { username } = req.params;
+      
+      if (!username || username.trim() === "") {
+        return res.status(400).json({ error: "GitHub username is required" });
+      }
+
+      const profile = await profileEnrichmentService.fetchGitHubProfile(username);
+      res.json(profile);
+    } catch (error: any) {
+      console.error("[ProfileEnrichment] GitHub fetch error:", error.message);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Enrich profile from multiple URLs (GitHub and/or LinkedIn)
+  router.post("/enrich-profile", async (req, res) => {
+    try {
+      const { urls } = req.body;
+      
+      if (!urls || !Array.isArray(urls) || urls.length === 0) {
+        return res.status(400).json({ error: "URLs array is required" });
+      }
+
+      const enrichment = await profileEnrichmentService.enrichFromUrls(urls);
+      res.json(enrichment);
+    } catch (error: any) {
+      console.error("[ProfileEnrichment] Enrich profile error:", error.message);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Validate LinkedIn URL and extract info
+  router.post("/validate-linkedin", async (req, res) => {
+    try {
+      const { url } = req.body;
+      
+      if (!url || typeof url !== "string" || url.trim() === "") {
+        return res.status(400).json({ error: "LinkedIn URL is required" });
+      }
+
+      const result = profileEnrichmentService.processLinkedInUrl(url);
+      res.json(result);
+    } catch (error: any) {
+      console.error("[ProfileEnrichment] LinkedIn validation error:", error.message);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Validate multiple profile URLs
+  router.post("/validate-urls", async (req, res) => {
+    try {
+      const { urls } = req.body;
+      
+      if (!urls || !Array.isArray(urls) || urls.length === 0) {
+        return res.status(400).json({ error: "URLs array is required" });
+      }
+
+      const validation = profileEnrichmentService.validateProfileUrls(urls);
+      res.json(validation);
+    } catch (error: any) {
+      console.error("[ProfileEnrichment] URL validation error:", error.message);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   // Health check
   router.get("/health", async (req, res) => {
     res.json({
@@ -481,7 +554,13 @@ Keep responses concise (2-3 sentences max).`;
         tasks: "/api/v1/tasks",
         assignments: "/api/v1/assignments",
         clarifier: "/api/v1/clarifier",
-        esa: "/api/v1/esa"
+        esa: "/api/v1/esa",
+        enrichment: {
+          github: "/api/v1/enrich-github/:username",
+          enrichProfile: "/api/v1/enrich-profile",
+          validateLinkedIn: "/api/v1/validate-linkedin",
+          validateUrls: "/api/v1/validate-urls"
+        }
       }
     });
   });

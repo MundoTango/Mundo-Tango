@@ -49,7 +49,7 @@ router.get("/pending", async (_req: Request, res: Response) => {
         notes: candidatePipelines.notes,
         createdAt: candidatePipelines.createdAt,
         userName: users.username,
-        userDisplayName: users.displayName,
+        userDisplayName: users.name,
         userEmail: users.email,
       })
       .from(candidatePipelines)
@@ -151,7 +151,7 @@ router.get("/all", async (_req: Request, res: Response) => {
         notes: candidatePipelines.notes,
         createdAt: candidatePipelines.createdAt,
         userName: users.username,
-        userDisplayName: users.displayName,
+        userDisplayName: users.name,
       })
       .from(candidatePipelines)
       .leftJoin(users, eq(candidatePipelines.candidateId, users.id))
