@@ -12,16 +12,42 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { SEO } from "@/components/SEO";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/UnifiedLocationPicker";
-import { Calendar, MapPin, DollarSign, Users, Plus, Clock } from "lucide-react";
+import { Calendar, MapPin, DollarSign, Users, Plus, Clock, Repeat } from "lucide-react";
 import { EVENT_TYPES, EVENT_TYPE_VALUES } from "@/lib/eventTypes";
 import { getTimezoneFromCity, formatTimezoneAbbr } from "@/lib/timezoneUtils";
 import { getCurrencyFromCountry, getCurrencySymbol } from "@/lib/currencyUtils";
 import { CurrencyPicker } from "@/components/input/CurrencyPicker";
+
+const DAYS_OF_WEEK = [
+  { value: "0", label: "Sunday" },
+  { value: "1", label: "Monday" },
+  { value: "2", label: "Tuesday" },
+  { value: "3", label: "Wednesday" },
+  { value: "4", label: "Thursday" },
+  { value: "5", label: "Friday" },
+  { value: "6", label: "Saturday" },
+];
+
+const MONTHS = [
+  { value: "1", label: "January" },
+  { value: "2", label: "February" },
+  { value: "3", label: "March" },
+  { value: "4", label: "April" },
+  { value: "5", label: "May" },
+  { value: "6", label: "June" },
+  { value: "7", label: "July" },
+  { value: "8", label: "August" },
+  { value: "9", label: "September" },
+  { value: "10", label: "October" },
+  { value: "11", label: "November" },
+  { value: "12", label: "December" },
+];
 
 const eventFormSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters"),
@@ -43,6 +69,9 @@ const eventFormSchema = z.object({
   requiresRsvp: z.boolean().default(true),
   danceStyles: z.array(z.string()).default([]),
   tags: z.array(z.string()).default([]),
+  isRecurringSeries: z.boolean().default(false),
+  recurrenceType: z.enum(["weekly", "monthly", "yearly"]).optional(),
+  recurrenceDay: z.number().optional(),
 });
 
 type EventFormValues = z.infer<typeof eventFormSchema>;
@@ -75,6 +104,9 @@ export default function CreateEventPage() {
       requiresRsvp: true,
       danceStyles: [],
       tags: [],
+      isRecurringSeries: false,
+      recurrenceType: undefined,
+      recurrenceDay: undefined,
     },
   });
 
@@ -90,15 +122,31 @@ export default function CreateEventPage() {
       form.setValue("address", parsed.street);
     }
     
-    // Infer timezone and currency from country
     const tz = getTimezoneFromCity(city);
     setUserTimezone(tz);
     const currency = getCurrencyFromCountry(country);
     form.setValue("currency", currency);
   };
 
+  const createSeriesMutation = useMutation({
+    mutationFn: async (seriesData: {
+      name: string;
+      description: string;
+      recurrenceType: string;
+      recurrenceDay: number;
+      city: string;
+      country: string;
+    }) => {
+      return await apiRequest("/api/event-series", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(seriesData),
+      });
+    },
+  });
+
   const createEventMutation = useMutation({
-    mutationFn: async (data: EventFormValues) => {
+    mutationFn: async (data: EventFormValues & { seriesId?: number }) => {
       const formattedPrice = data.price ? `${getCurrencySymbol(data.currency as any)}${data.price}` : null;
       return await apiRequest("/api/events", {
         method: "POST",
@@ -108,11 +156,14 @@ export default function CreateEventPage() {
           price: formattedPrice,
           startDate: new Date(data.startDate),
           endDate: data.endDate ? new Date(data.endDate) : null,
+          isRecurring: data.isRecurringSeries,
+          seriesId: data.seriesId,
         }),
       });
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["/api/events"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/event-series"] });
       toast({
         title: "Event created!",
         description: "Your event has been published successfully.",
@@ -128,11 +179,97 @@ export default function CreateEventPage() {
     },
   });
 
-  const onSubmit = (data: EventFormValues) => {
-    createEventMutation.mutate(data);
+  const onSubmit = async (data: EventFormValues) => {
+    try {
+      let seriesId: number | undefined;
+
+      if (data.isRecurringSeries && data.recurrenceType && data.recurrenceDay !== undefined) {
+        const seriesResult = await createSeriesMutation.mutateAsync({
+          name: data.title,
+          description: data.description,
+          recurrenceType: data.recurrenceType,
+          recurrenceDay: data.recurrenceDay,
+          city: data.city,
+          country: data.country,
+        });
+        seriesId = seriesResult.data?.id;
+      }
+
+      createEventMutation.mutate({ ...data, seriesId });
+    } catch (error: any) {
+      toast({
+        title: "Failed to create series",
+        description: error.message || "Please try again",
+        variant: "destructive",
+      });
+    }
   };
 
   const isPaid = form.watch("isPaid");
+  const isRecurringSeries = form.watch("isRecurringSeries");
+  const recurrenceType = form.watch("recurrenceType");
+  const startDate = form.watch("startDate");
+
+  const getDayOfWeekFromDate = (dateString: string): number => {
+    if (!dateString) return 0;
+    const date = new Date(dateString);
+    return date.getDay();
+  };
+
+  const getDayOfMonthFromDate = (dateString: string): number => {
+    if (!dateString) return 1;
+    const date = new Date(dateString);
+    return date.getDate();
+  };
+
+  const getMonthFromDate = (dateString: string): number => {
+    if (!dateString) return 1;
+    const date = new Date(dateString);
+    return date.getMonth() + 1;
+  };
+
+  const handleRecurrenceToggle = (enabled: boolean) => {
+    form.setValue("isRecurringSeries", enabled);
+    if (enabled && startDate) {
+      const dayOfWeek = getDayOfWeekFromDate(startDate);
+      form.setValue("recurrenceType", "weekly");
+      form.setValue("recurrenceDay", dayOfWeek);
+    } else if (!enabled) {
+      form.setValue("recurrenceType", undefined);
+      form.setValue("recurrenceDay", undefined);
+    }
+  };
+
+  const handleRecurrenceTypeChange = (type: "weekly" | "monthly" | "yearly") => {
+    form.setValue("recurrenceType", type);
+    if (startDate) {
+      if (type === "weekly") {
+        form.setValue("recurrenceDay", getDayOfWeekFromDate(startDate));
+      } else if (type === "monthly") {
+        form.setValue("recurrenceDay", getDayOfMonthFromDate(startDate));
+      } else if (type === "yearly") {
+        form.setValue("recurrenceDay", getMonthFromDate(startDate));
+      }
+    }
+  };
+
+  const getRecurrenceLabel = (): string => {
+    if (!recurrenceType) return "";
+    const day = form.watch("recurrenceDay");
+    
+    if (recurrenceType === "weekly") {
+      const dayName = DAYS_OF_WEEK.find(d => d.value === String(day))?.label || "";
+      return `Every ${dayName}`;
+    } else if (recurrenceType === "monthly") {
+      const suffix = day === 1 ? "st" : day === 2 ? "nd" : day === 3 ? "rd" : "th";
+      return `Every ${day}${suffix} day of the month`;
+    } else if (recurrenceType === "yearly") {
+      const monthName = MONTHS.find(m => m.value === String(day))?.label || "";
+      const dateDay = startDate ? getDayOfMonthFromDate(startDate) : 1;
+      return `Every ${monthName} ${dateDay}`;
+    }
+    return "";
+  };
 
   if (!user) {
     return (
@@ -150,6 +287,8 @@ export default function CreateEventPage() {
       </SelfHealingErrorBoundary>
     );
   }
+
+  const isSubmitting = createEventMutation.isPending || createSeriesMutation.isPending;
 
   return (
     <SelfHealingErrorBoundary pageName="Create Event" fallbackRoute="/events">
@@ -301,6 +440,168 @@ export default function CreateEventPage() {
                         )}
                       />
                     </div>
+
+                    {/* Recurring Series Toggle */}
+                    <FormField
+                      control={form.control}
+                      name="isRecurringSeries"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                          <div className="space-y-0.5">
+                            <FormLabel className="text-base flex items-center gap-2">
+                              <Repeat className="h-4 w-4" />
+                              Make this a recurring series
+                            </FormLabel>
+                            <FormDescription>
+                              Create a series for recurring events (e.g., weekly milongas)
+                            </FormDescription>
+                          </div>
+                          <FormControl>
+                            <Switch
+                              checked={field.value}
+                              onCheckedChange={handleRecurrenceToggle}
+                              data-testid="switch-recurring-series"
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+
+                    {/* Recurrence Options - Only shown when recurring is enabled */}
+                    {isRecurringSeries && (
+                      <div className="space-y-4 rounded-lg border p-4 bg-muted/30">
+                        <FormField
+                          control={form.control}
+                          name="recurrenceType"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Recurrence Pattern</FormLabel>
+                              <Select 
+                                onValueChange={(value) => handleRecurrenceTypeChange(value as "weekly" | "monthly" | "yearly")} 
+                                value={field.value}
+                              >
+                                <FormControl>
+                                  <SelectTrigger data-testid="select-recurrence-type">
+                                    <SelectValue placeholder="Select recurrence pattern" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  <SelectItem value="weekly" data-testid="option-recurrence-weekly">
+                                    Weekly
+                                  </SelectItem>
+                                  <SelectItem value="monthly" data-testid="option-recurrence-monthly">
+                                    Monthly
+                                  </SelectItem>
+                                  <SelectItem value="yearly" data-testid="option-recurrence-yearly">
+                                    Yearly
+                                  </SelectItem>
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        {recurrenceType === "weekly" && (
+                          <FormField
+                            control={form.control}
+                            name="recurrenceDay"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Day of Week</FormLabel>
+                                <Select 
+                                  onValueChange={(value) => field.onChange(parseInt(value))} 
+                                  value={String(field.value ?? "")}
+                                >
+                                  <FormControl>
+                                    <SelectTrigger data-testid="select-recurrence-day-weekly">
+                                      <SelectValue placeholder="Select day of week" />
+                                    </SelectTrigger>
+                                  </FormControl>
+                                  <SelectContent>
+                                    {DAYS_OF_WEEK.map((day) => (
+                                      <SelectItem key={day.value} value={day.value}>
+                                        {day.label}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                                <FormDescription>
+                                  {getRecurrenceLabel()}
+                                </FormDescription>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        )}
+
+                        {recurrenceType === "monthly" && (
+                          <FormField
+                            control={form.control}
+                            name="recurrenceDay"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Day of Month</FormLabel>
+                                <Select 
+                                  onValueChange={(value) => field.onChange(parseInt(value))} 
+                                  value={String(field.value ?? "")}
+                                >
+                                  <FormControl>
+                                    <SelectTrigger data-testid="select-recurrence-day-monthly">
+                                      <SelectValue placeholder="Select day of month" />
+                                    </SelectTrigger>
+                                  </FormControl>
+                                  <SelectContent>
+                                    {Array.from({ length: 31 }, (_, i) => i + 1).map((day) => (
+                                      <SelectItem key={day} value={String(day)}>
+                                        {day}{day === 1 ? "st" : day === 2 ? "nd" : day === 3 ? "rd" : "th"}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                                <FormDescription>
+                                  {getRecurrenceLabel()}
+                                </FormDescription>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        )}
+
+                        {recurrenceType === "yearly" && (
+                          <FormField
+                            control={form.control}
+                            name="recurrenceDay"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Month</FormLabel>
+                                <Select 
+                                  onValueChange={(value) => field.onChange(parseInt(value))} 
+                                  value={String(field.value ?? "")}
+                                >
+                                  <FormControl>
+                                    <SelectTrigger data-testid="select-recurrence-day-yearly">
+                                      <SelectValue placeholder="Select month" />
+                                    </SelectTrigger>
+                                  </FormControl>
+                                  <SelectContent>
+                                    {MONTHS.map((month) => (
+                                      <SelectItem key={month.value} value={month.value}>
+                                        {month.label}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                                <FormDescription>
+                                  {getRecurrenceLabel()}
+                                </FormDescription>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        )}
+                      </div>
+                    )}
 
                     {/* Location using Unified Location Picker */}
                     <FormField
@@ -460,11 +761,11 @@ export default function CreateEventPage() {
                       </Button>
                       <Button
                         type="submit"
-                        disabled={createEventMutation.isPending}
+                        disabled={isSubmitting}
                         data-testid="button-submit"
                       >
                         <Plus className="mr-2 h-4 w-4" />
-                        {createEventMutation.isPending ? "Creating..." : "Create Event"}
+                        {isSubmitting ? "Creating..." : "Create Event"}
                       </Button>
                     </div>
                   </form>

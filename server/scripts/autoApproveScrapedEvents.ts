@@ -12,9 +12,9 @@
  */
 
 import { db } from '@shared/db';
-import { scrapedEvents, events, groups, eventScrapingSources, scrapedProfiles } from '@shared/schema';
+import { scrapedEvents, events, groups, eventScrapingSources, scrapedProfiles, eventSeries } from '@shared/schema';
 import { eventParticipants } from '@shared/eventRolesSchemas';
-import { eq, sql, and, ilike } from 'drizzle-orm';
+import { eq, sql, and, ilike, desc, gte, lte } from 'drizzle-orm';
 import { getCityscapeImage } from '../algorithms/cityCityscape';
 import { extractParticipants, createScrapedProfile, type ExtractedParticipant } from '../services/participant-extraction';
 
@@ -234,6 +234,271 @@ function mergeSources(existing: SourceInfo[], newSource: SourceInfo): SourceInfo
 }
 
 /**
+ * Get day of week (0 = Sunday, 6 = Saturday)
+ */
+function getDayOfWeek(date: Date): number {
+  return date.getDay();
+}
+
+/**
+ * Get day of month (1-31)
+ */
+function getDayOfMonth(date: Date): number {
+  return date.getDate();
+}
+
+/**
+ * Detect recurrence pattern from a list of dates
+ * Returns 'weekly' if events occur on the same day of week
+ * Returns 'monthly' if events occur on the same day of month
+ * Returns 'yearly' if events occur on the same date each year
+ * Returns null if no pattern is detected
+ */
+function detectRecurrencePattern(dates: Date[]): 'weekly' | 'monthly' | 'yearly' | null {
+  if (dates.length < 2) {
+    return null;
+  }
+
+  // Sort dates chronologically
+  const sortedDates = [...dates].sort((a, b) => a.getTime() - b.getTime());
+
+  // Check for weekly pattern (same day of week)
+  const daysOfWeek = sortedDates.map(d => getDayOfWeek(d));
+  const uniqueDaysOfWeek = new Set(daysOfWeek);
+  if (uniqueDaysOfWeek.size === 1) {
+    // All events are on the same day of week - likely weekly
+    // Verify by checking date differences
+    const dayDiffs: number[] = [];
+    for (let i = 1; i < sortedDates.length; i++) {
+      const diffDays = Math.round((sortedDates[i].getTime() - sortedDates[i - 1].getTime()) / (1000 * 60 * 60 * 24));
+      dayDiffs.push(diffDays);
+    }
+    // If most differences are ~7 days (allow for 1-2 day variance), it's weekly
+    const weeklyDiffs = dayDiffs.filter(d => d >= 5 && d <= 9);
+    if (weeklyDiffs.length >= dayDiffs.length * 0.7) {
+      return 'weekly';
+    }
+  }
+
+  // Check for monthly pattern (same day of month, roughly 28-31 days apart)
+  const daysOfMonth = sortedDates.map(d => getDayOfMonth(d));
+  const uniqueDaysOfMonth = new Set(daysOfMonth);
+  if (uniqueDaysOfMonth.size === 1 || uniqueDaysOfMonth.size <= 2) {
+    // Same or very close day of month
+    const dayDiffs: number[] = [];
+    for (let i = 1; i < sortedDates.length; i++) {
+      const diffDays = Math.round((sortedDates[i].getTime() - sortedDates[i - 1].getTime()) / (1000 * 60 * 60 * 24));
+      dayDiffs.push(diffDays);
+    }
+    // Monthly should have differences around 28-31 days
+    const monthlyDiffs = dayDiffs.filter(d => d >= 26 && d <= 35);
+    if (monthlyDiffs.length >= dayDiffs.length * 0.6) {
+      return 'monthly';
+    }
+  }
+
+  // Check for yearly pattern
+  const monthDayPairs = sortedDates.map(d => `${d.getMonth()}-${d.getDate()}`);
+  const uniquePairs = new Set(monthDayPairs);
+  if (uniquePairs.size === 1) {
+    return 'yearly';
+  }
+
+  // Default to weekly if same day of week (most common for milongas)
+  if (uniqueDaysOfWeek.size === 1) {
+    return 'weekly';
+  }
+
+  return null;
+}
+
+/**
+ * Generate a slug from a name
+ */
+function generateSeriesSlug(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .substring(0, 100);
+}
+
+/**
+ * Find existing series by normalized name and venue/location
+ */
+async function findExistingSeries(
+  normalizedName: string, 
+  city: string, 
+  venueAddress: string | null
+): Promise<{ id: number; name: string } | null> {
+  // Try to find by similar name and city
+  const seriesList = await db.query.eventSeries.findMany({
+    where: and(
+      eq(eventSeries.isActive, true),
+      sql`LOWER(${eventSeries.city}) = LOWER(${city})`
+    ),
+    limit: 50
+  });
+
+  for (const series of seriesList) {
+    const existingNormalized = normalizeTitle(series.name);
+    // Exact match or one contains the other
+    if (existingNormalized === normalizedName || 
+        existingNormalized.includes(normalizedName) || 
+        normalizedName.includes(existingNormalized)) {
+      return { id: series.id, name: series.name };
+    }
+  }
+
+  return null;
+}
+
+/**
+ * Create or find an event series based on event data
+ * Returns the series ID
+ */
+async function createOrFindSeries(
+  eventTitle: string,
+  city: string,
+  venueAddress: string | null,
+  recurrenceType: 'weekly' | 'monthly' | 'yearly',
+  recurrenceDay: number,
+  organizerText: string | null
+): Promise<number> {
+  const normalizedName = normalizeTitle(eventTitle);
+  
+  // Check for existing series
+  const existingSeries = await findExistingSeries(normalizedName, city, venueAddress);
+  if (existingSeries) {
+    console.log(`[MB.MD] Found existing series: ${existingSeries.name} (ID: ${existingSeries.id})`);
+    return existingSeries.id;
+  }
+
+  // Create new series
+  const slug = generateSeriesSlug(eventTitle);
+  
+  // Check if slug already exists and make unique if needed
+  const existingSlug = await db.query.eventSeries.findFirst({
+    where: eq(eventSeries.slug, slug)
+  });
+  
+  const finalSlug = existingSlug ? `${slug}-${Date.now()}` : slug;
+
+  const [newSeries] = await db.insert(eventSeries).values({
+    name: eventTitle,
+    slug: finalSlug,
+    description: `Recurring ${recurrenceType} tango event in ${city}`,
+    recurrenceType: recurrenceType,
+    recurrenceDay: recurrenceDay,
+    city: city,
+    isClaimed: false,
+    isActive: true
+  }).returning();
+
+  console.log(`[MB.MD] Created new event series: ${eventTitle} (ID: ${newSeries.id}, ${recurrenceType})`);
+  return newSeries.id;
+}
+
+/**
+ * Find events with similar title in same location to detect series patterns
+ */
+async function findEventsWithSimilarTitle(
+  title: string,
+  city: string,
+  excludeEventId?: number
+): Promise<{ id: number; title: string; startDate: Date; seriesId: number | null; location: string | null }[]> {
+  const normalizedTitle = normalizeTitle(title);
+  
+  // Find events in the same city
+  const cityEvents = await db.query.events.findMany({
+    where: and(
+      sql`LOWER(${events.city}) = LOWER(${city})`,
+      excludeEventId ? sql`${events.id} != ${excludeEventId}` : sql`1=1`
+    ),
+    orderBy: desc(events.startDate),
+    limit: 100
+  });
+
+  // Filter to events with similar titles
+  return cityEvents.filter(event => {
+    const existingNormalized = normalizeTitle(event.title);
+    return existingNormalized === normalizedTitle || 
+           existingNormalized.includes(normalizedTitle) || 
+           normalizedTitle.includes(existingNormalized);
+  }).map(e => ({
+    id: e.id,
+    title: e.title,
+    startDate: e.startDate,
+    seriesId: e.seriesId,
+    location: e.location
+  }));
+}
+
+/**
+ * Check and create series for events with same venue + same day of week pattern
+ */
+async function checkAndCreateSeries(
+  eventId: number,
+  eventTitle: string,
+  eventStartDate: Date,
+  city: string,
+  location: string | null,
+  organizerText: string | null
+): Promise<number | null> {
+  // Find similar events
+  const similarEvents = await findEventsWithSimilarTitle(eventTitle, city, eventId);
+  
+  if (similarEvents.length === 0) {
+    return null;
+  }
+
+  // Check if any already have a series
+  const existingSeriesId = similarEvents.find(e => e.seriesId !== null)?.seriesId;
+  if (existingSeriesId) {
+    console.log(`[MB.MD] Found existing series ID ${existingSeriesId} for similar event`);
+    return existingSeriesId;
+  }
+
+  // Collect all dates including the current event
+  const allDates = [eventStartDate, ...similarEvents.map(e => e.startDate)];
+  
+  // Detect recurrence pattern
+  const recurrenceType = detectRecurrencePattern(allDates);
+  
+  if (!recurrenceType) {
+    console.log(`[MB.MD] No recurrence pattern detected for ${eventTitle}`);
+    return null;
+  }
+
+  // Get recurrence day based on pattern type
+  const recurrenceDay = recurrenceType === 'weekly' 
+    ? getDayOfWeek(eventStartDate)
+    : getDayOfMonth(eventStartDate);
+
+  // Create or find the series
+  const seriesId = await createOrFindSeries(
+    eventTitle,
+    city,
+    location,
+    recurrenceType,
+    recurrenceDay,
+    organizerText
+  );
+
+  // Update all similar events to belong to this series
+  for (const similarEvent of similarEvents) {
+    if (!similarEvent.seriesId) {
+      await db.update(events)
+        .set({ seriesId: seriesId, updatedAt: new Date() })
+        .where(eq(events.id, similarEvent.id));
+      console.log(`[MB.MD] Linked event ${similarEvent.id} to series ${seriesId}`);
+    }
+  }
+
+  return seriesId;
+}
+
+/**
  * Create event participants from extracted data
  */
 async function createEventParticipants(
@@ -343,12 +608,30 @@ async function processScrapedEvent(
     const existingSources = parseSources(existingEvent.sourceUrl);
     const mergedSources = mergeSources(existingSources, newSource);
     
-    // Update event with merged sources
+    // Check and create series for duplicate events (same venue + same day of week pattern)
+    // This is a key indicator that events belong to a recurring series
+    const seriesId = await checkAndCreateSeries(
+      existingEvent.id,
+      scraped.title,
+      scraped.startDate,
+      city,
+      scraped.location,
+      extraction.organizerText
+    );
+    
+    // Update event with merged sources and series_id if detected
+    const updateData: { sourceUrl: string; updatedAt: Date; seriesId?: number } = {
+      sourceUrl: JSON.stringify(mergedSources),
+      updatedAt: new Date()
+    };
+    
+    if (seriesId) {
+      updateData.seriesId = seriesId;
+      console.log(`[MB.MD] Linked merged event ${existingEvent.id} to series ${seriesId}`);
+    }
+    
     await db.update(events)
-      .set({
-        sourceUrl: JSON.stringify(mergedSources),
-        updatedAt: new Date()
-      })
+      .set(updateData)
       .where(eq(events.id, existingEvent.id));
     
     // Add any new participants
@@ -364,6 +647,49 @@ async function processScrapedEvent(
   
   // NEW EVENT - Create it
   const eventType = detectEventType(scraped.title, scraped.description);
+  
+  // Check if there's an existing series this event should belong to
+  // (This catches events that match previously created series patterns)
+  const similarEvents = await findEventsWithSimilarTitle(scraped.title, city);
+  let initialSeriesId: number | null = null;
+  
+  if (similarEvents.length > 0) {
+    // Check if any similar events already have a series
+    const existingSeriesEvent = similarEvents.find(e => e.seriesId !== null);
+    if (existingSeriesEvent?.seriesId) {
+      initialSeriesId = existingSeriesEvent.seriesId;
+      console.log(`[MB.MD] New event matches existing series ${initialSeriesId}`);
+    } else {
+      // Check for recurrence pattern
+      const allDates = [scraped.startDate, ...similarEvents.map(e => e.startDate)];
+      const recurrenceType = detectRecurrencePattern(allDates);
+      
+      if (recurrenceType) {
+        const recurrenceDay = recurrenceType === 'weekly' 
+          ? getDayOfWeek(scraped.startDate)
+          : getDayOfMonth(scraped.startDate);
+          
+        initialSeriesId = await createOrFindSeries(
+          scraped.title,
+          city,
+          scraped.location,
+          recurrenceType,
+          recurrenceDay,
+          extraction.organizerText
+        );
+        
+        // Link all similar events to this series
+        for (const similar of similarEvents) {
+          if (!similar.seriesId) {
+            await db.update(events)
+              .set({ seriesId: initialSeriesId, updatedAt: new Date() })
+              .where(eq(events.id, similar.id));
+            console.log(`[MB.MD] Linked existing event ${similar.id} to new series ${initialSeriesId}`);
+          }
+        }
+      }
+    }
+  }
   
   const [newEvent] = await db.insert(events).values({
     title: scraped.title,
@@ -395,6 +721,8 @@ async function processScrapedEvent(
     // Metadata
     musicStyle: extraction.extractedMetadata.musicStyle,
     dressCode: extraction.extractedMetadata.dressCode,
+    // Series ID if detected
+    seriesId: initialSeriesId,
   }).returning();
   
   // Create event participants
@@ -404,6 +732,10 @@ async function processScrapedEvent(
   await db.update(scrapedEvents)
     .set({ status: 'approved' })
     .where(eq(scrapedEvents.id, scraped.id));
+  
+  if (initialSeriesId) {
+    console.log(`[MB.MD] Created event ${newEvent.id} linked to series ${initialSeriesId}`);
+  }
   
   return { action: 'created', eventId: newEvent.id };
 }

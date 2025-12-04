@@ -7,7 +7,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Users, MapPin, Settings as SettingsIcon, Calendar, Home, Building2, Heart, Check, ChevronRight, ChevronDown, ChevronUp, Music, Mic2, Star, Clock, ExternalLink, Compass, GraduationCap, SlidersHorizontal, Languages, DollarSign, Loader2, Map as MapIcon, Utensils, Coffee, Wine } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Users, MapPin, Settings as SettingsIcon, Calendar, Home, Building2, Heart, Check, ChevronRight, ChevronDown, ChevronUp, Music, Mic2, Star, Clock, ExternalLink, Compass, GraduationCap, SlidersHorizontal, Languages, DollarSign, Loader2, Map as MapIcon, Utensils, Coffee, Wine, List, Search, Repeat, X } from "lucide-react";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { safeDateFormat } from "@/lib/safeDateFormat";
@@ -29,6 +30,12 @@ import { RecommendationsList } from "@/components/recommendations/Recommendation
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+import { Calendar as BigCalendar, momentLocalizer, Views } from 'react-big-calendar';
+import moment from 'moment';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+const localizer = momentLocalizer(moment);
 
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -73,7 +80,9 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
   const { user } = useAuth();
   const { data: myRsvps } = useMyRSVPs();
   const [filters, setFilters] = useState<EventFilterValues>({});
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [mainTab, setMainTab] = useState<"upcoming" | "series">("upcoming");
+  const [viewMode, setViewMode] = useState<"list" | "calendar" | "map">("list");
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   
   const { data: events, isLoading } = useQuery<SelectEvent[]>({
     queryKey: ["/api/events", "group", groupId, groupCity],
@@ -165,6 +174,72 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
     });
   }, [events, filters]);
   
+  const seriesEvents = useMemo(() => {
+    if (!filteredEvents) return [];
+    return filteredEvents.filter(event => event.isRecurring || event.seriesId);
+  }, [filteredEvents]);
+  
+  const upcomingEvents = useMemo(() => {
+    if (!filteredEvents) return [];
+    const now = new Date();
+    return filteredEvents.filter(event => {
+      const eventDate = new Date(event.startDate || event.date || '');
+      return eventDate >= now;
+    }).sort((a, b) => {
+      const dateA = new Date(a.startDate || a.date || '');
+      const dateB = new Date(b.startDate || b.date || '');
+      return dateA.getTime() - dateB.getTime();
+    });
+  }, [filteredEvents]);
+  
+  const displayEvents = mainTab === "series" ? seriesEvents : upcomingEvents;
+  
+  const calendarEvents = useMemo(() => {
+    if (!displayEvents) return [];
+    return displayEvents.map((event: any) => {
+      const dateToUse = event.startDate || event.date || Date.now();
+      return {
+        id: event.id,
+        title: event.title,
+        start: new Date(dateToUse),
+        end: new Date((new Date(dateToUse)).getTime() + 2 * 60 * 60 * 1000),
+        resource: event,
+      };
+    });
+  }, [displayEvents]);
+  
+  const eventsWithCoordinates = useMemo(() => {
+    if (!displayEvents) return [];
+    const cityCoords: { [key: string]: [number, number] } = {
+      'Buenos Aires': [-34.6037, -58.3816],
+      'New York': [40.7128, -74.0060],
+      'Berlin': [52.5200, 13.4050],
+      'Paris': [48.8566, 2.3522],
+      'London': [51.5074, -0.1278],
+    };
+    const defaultCoords = cityCoords[groupCity || ''] || [-34.6037, -58.3816];
+    
+    return displayEvents.map((event, index) => ({
+      ...event,
+      lat: (event.latitude ? parseFloat(event.latitude) : defaultCoords[0]) + (Math.random() - 0.5) * 0.1,
+      lng: (event.longitude ? parseFloat(event.longitude) : defaultCoords[1]) + (Math.random() - 0.5) * 0.1,
+    }));
+  }, [displayEvents, groupCity]);
+  
+  const mapCenter: [number, number] = useMemo(() => {
+    if (eventsWithCoordinates.length > 0) {
+      return [eventsWithCoordinates[0].lat, eventsWithCoordinates[0].lng];
+    }
+    const cityCoords: { [key: string]: [number, number] } = {
+      'Buenos Aires': [-34.6037, -58.3816],
+      'New York': [40.7128, -74.0060],
+      'Berlin': [52.5200, 13.4050],
+      'Paris': [48.8566, 2.3522],
+      'London': [51.5074, -0.1278],
+    };
+    return cityCoords[groupCity || ''] || [-34.6037, -58.3816];
+  }, [eventsWithCoordinates, groupCity]);
+  
   const activeFilterCount = useMemo(() => {
     return [
       filters.q,
@@ -188,7 +263,7 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
 
   if (isLoading) {
     return (
-      <Card className="overflow-hidden">
+      <Card className="overflow-hidden" data-testid="group-events-tab-loading">
         <CardHeader className="border-b">
           <CardTitle className="text-2xl font-serif flex items-center gap-2">
             <Calendar className="h-6 w-6 text-primary" />
@@ -211,279 +286,379 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
     );
   }
 
-  const eventList = filteredEvents;
   const totalEvents = events?.length || 0;
 
   return (
-    <Card className="overflow-hidden">
-      <CardHeader className="border-b">
-        <div className="flex items-center justify-between gap-4">
-          <div>
-            <CardTitle className="text-2xl font-serif flex items-center gap-2">
-              <Calendar className="h-6 w-6 text-primary" />
-              Group Events
-            </CardTitle>
-            <CardDescription>
-              {totalEvents > 0 
-                ? activeFilterCount > 0 
-                  ? `${eventList.length} of ${totalEvents} events (filtered)`
-                  : `${totalEvents} upcoming events in ${groupCity || "this city"}`
-                : `No events scheduled yet in ${groupCity || "this city"}`
-              }
-            </CardDescription>
+    <Card className="overflow-hidden" data-testid="group-events-tab">
+      <CardHeader className="border-b pb-4">
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <CardTitle className="text-2xl font-serif flex items-center gap-2" data-testid="text-group-events-title">
+                <Calendar className="h-6 w-6 text-primary" />
+                Group Events
+              </CardTitle>
+              <CardDescription data-testid="text-group-events-description">
+                {totalEvents > 0 
+                  ? activeFilterCount > 0 
+                    ? `${displayEvents.length} of ${totalEvents} events (filtered)`
+                    : `${displayEvents.length} ${mainTab === "series" ? "recurring" : "upcoming"} events in ${groupCity || "this city"}`
+                  : `No events scheduled yet in ${groupCity || "this city"}`
+                }
+              </CardDescription>
+            </div>
           </div>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="gap-2"
-            onClick={() => setIsFilterOpen(!isFilterOpen)}
-            data-testid="button-event-filters"
-          >
-            <SlidersHorizontal className="h-4 w-4" />
-            Filters
-            {activeFilterCount > 0 && (
-              <Badge variant="secondary" className="ml-1 h-5 w-5 p-0 flex items-center justify-center text-xs">
-                {activeFilterCount}
-              </Badge>
-            )}
-            {isFilterOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-          </Button>
+          
+          <Tabs value={mainTab} onValueChange={(val) => setMainTab(val as "upcoming" | "series")} data-testid="tabs-main-events">
+            <TabsList className="grid w-full grid-cols-2 max-w-xs">
+              <TabsTrigger value="upcoming" className="gap-2" data-testid="tab-upcoming-events">
+                <Calendar className="h-4 w-4" />
+                Upcoming Events
+              </TabsTrigger>
+              <TabsTrigger value="series" className="gap-2" data-testid="tab-series-events">
+                <Repeat className="h-4 w-4" />
+                Series
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
         </div>
       </CardHeader>
       
-      <Collapsible open={isFilterOpen} onOpenChange={setIsFilterOpen}>
-        <CollapsibleContent>
-          <div className="px-8 py-6 border-b bg-muted/30">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-medium text-muted-foreground">Filter Events</h3>
-              {activeFilterCount > 0 && (
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={() => setFilters({})}
-                  className="h-7 text-xs"
-                  data-testid="button-reset-filters"
-                >
-                  Reset all
-                </Button>
-              )}
-            </div>
-            <EventFilters 
-              onFilterChange={(newFilters) => {
-                setFilters(newFilters);
-              }} 
-              initialFilters={filters}
+      <div className="px-6 py-4 border-b bg-muted/30" data-testid="filter-bar">
+        <div className="flex flex-col lg:flex-row gap-3 items-start lg:items-center">
+          <div className="relative flex-1 w-full lg:max-w-md">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search events..."
+              value={filters.q || ""}
+              onChange={(e) => setFilters({ ...filters, q: e.target.value })}
+              className="pl-10"
+              data-testid="input-search-events"
             />
           </div>
-        </CollapsibleContent>
-      </Collapsible>
-      <CardContent className="p-8 space-y-6">
-        {activeFilterCount > 0 && (
-          <div className="flex flex-wrap gap-2 pb-4 border-b">
-            <span className="text-sm text-muted-foreground mr-2">Active filters:</span>
+          
+          <div className="flex flex-wrap gap-2 items-center">
+            <Select
+              value={filters.type || "all"}
+              onValueChange={(value) => setFilters({ ...filters, type: value === "all" ? undefined : value })}
+            >
+              <SelectTrigger className="w-32" data-testid="select-event-type">
+                <SelectValue placeholder="Type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Types</SelectItem>
+                <SelectItem value="milonga">Milonga</SelectItem>
+                <SelectItem value="practica">Practica</SelectItem>
+                <SelectItem value="class">Class</SelectItem>
+                <SelectItem value="workshop">Workshop</SelectItem>
+                <SelectItem value="festival">Festival</SelectItem>
+              </SelectContent>
+            </Select>
+            
+            <Button
+              variant={filters.verified ? "default" : "outline"}
+              size="sm"
+              onClick={() => setFilters({ ...filters, verified: !filters.verified })}
+              className="gap-1"
+              data-testid="button-filter-verified"
+            >
+              <Check className="h-3 w-3" />
+              Verified
+            </Button>
+            
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
+              className="gap-1"
+              data-testid="button-more-filters"
+            >
+              <SlidersHorizontal className="h-4 w-4" />
+              More
+              {activeFilterCount > 0 && (
+                <Badge variant="secondary" className="ml-1 h-5 min-w-5 p-0 flex items-center justify-center text-xs">
+                  {activeFilterCount}
+                </Badge>
+              )}
+            </Button>
+            
+            {activeFilterCount > 0 && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setFilters({})}
+                className="gap-1 text-muted-foreground"
+                data-testid="button-clear-filters"
+              >
+                <X className="h-4 w-4" />
+                Clear
+              </Button>
+            )}
+          </div>
+          
+          <div className="flex items-center gap-2 ml-auto">
+            <Tabs value={viewMode} onValueChange={(val) => setViewMode(val as "list" | "calendar" | "map")} data-testid="tabs-view-mode">
+              <TabsList>
+                <TabsTrigger value="list" data-testid="tab-list-view">
+                  <List className="h-4 w-4" />
+                </TabsTrigger>
+                <TabsTrigger value="calendar" data-testid="tab-calendar-view">
+                  <Calendar className="h-4 w-4" />
+                </TabsTrigger>
+                <TabsTrigger value="map" data-testid="tab-map-view">
+                  <MapIcon className="h-4 w-4" />
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </div>
+        </div>
+        
+        {showAdvancedFilters && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2 }}
+            className="mt-4 pt-4 border-t"
+          >
+            <EventFilters 
+              onFilterChange={(newFilters) => setFilters(newFilters)} 
+              initialFilters={filters}
+            />
+          </motion.div>
+        )}
+        
+        {activeFilterCount > 0 && !showAdvancedFilters && (
+          <div className="flex flex-wrap gap-2 mt-3 pt-3 border-t">
             {filters.q && (
-              <Badge variant="secondary" className="gap-1 cursor-pointer hover-elevate" onClick={() => setFilters({...filters, q: ''})}>
+              <Badge variant="secondary" className="gap-1 cursor-pointer" onClick={() => setFilters({...filters, q: ''})} data-testid="badge-filter-search">
                 Search: {filters.q}
-                <span className="ml-1 text-muted-foreground">&times;</span>
+                <X className="h-3 w-3 ml-1" />
               </Badge>
             )}
             {filters.type && filters.type !== 'all' && (
-              <Badge variant="secondary" className="gap-1 cursor-pointer hover-elevate" onClick={() => setFilters({...filters, type: undefined})}>
-                Type: {filters.type}
-                <span className="ml-1 text-muted-foreground">&times;</span>
+              <Badge variant="secondary" className="gap-1 cursor-pointer" onClick={() => setFilters({...filters, type: undefined})} data-testid="badge-filter-type">
+                {filters.type}
+                <X className="h-3 w-3 ml-1" />
               </Badge>
             )}
-            {filters.dateFrom && (
-              <Badge variant="secondary" className="gap-1 cursor-pointer hover-elevate" onClick={() => setFilters({...filters, dateFrom: undefined})}>
-                From: {filters.dateFrom.toLocaleDateString()}
-                <span className="ml-1 text-muted-foreground">&times;</span>
-              </Badge>
-            )}
-            {filters.dateTo && (
-              <Badge variant="secondary" className="gap-1 cursor-pointer hover-elevate" onClick={() => setFilters({...filters, dateTo: undefined})}>
-                To: {filters.dateTo.toLocaleDateString()}
-                <span className="ml-1 text-muted-foreground">&times;</span>
+            {filters.verified && (
+              <Badge variant="secondary" className="gap-1 cursor-pointer" onClick={() => setFilters({...filters, verified: false})} data-testid="badge-filter-verified">
+                Verified Only
+                <X className="h-3 w-3 ml-1" />
               </Badge>
             )}
             {filters.skillLevel && filters.skillLevel !== 'all' && (
-              <Badge variant="secondary" className="gap-1 cursor-pointer hover-elevate" onClick={() => setFilters({...filters, skillLevel: undefined})}>
-                Level: {filters.skillLevel}
-                <span className="ml-1 text-muted-foreground">&times;</span>
+              <Badge variant="secondary" className="gap-1 cursor-pointer" onClick={() => setFilters({...filters, skillLevel: undefined})} data-testid="badge-filter-level">
+                {filters.skillLevel}
+                <X className="h-3 w-3 ml-1" />
               </Badge>
             )}
             {filters.danceStyle && filters.danceStyle !== 'all' && (
-              <Badge variant="secondary" className="gap-1 cursor-pointer hover-elevate" onClick={() => setFilters({...filters, danceStyle: undefined})}>
-                Style: {filters.danceStyle}
-                <span className="ml-1 text-muted-foreground">&times;</span>
+              <Badge variant="secondary" className="gap-1 cursor-pointer" onClick={() => setFilters({...filters, danceStyle: undefined})} data-testid="badge-filter-style">
+                {filters.danceStyle}
+                <X className="h-3 w-3 ml-1" />
               </Badge>
             )}
             {filters.languages?.map(code => {
               const lang = getLanguageByCode(code);
               return (
-                <Badge key={code} variant="secondary" className="gap-1 cursor-pointer hover-elevate" onClick={() => setFilters({...filters, languages: filters.languages?.filter(l => l !== code)})}>
+                <Badge key={code} variant="secondary" className="gap-1 cursor-pointer" onClick={() => setFilters({...filters, languages: filters.languages?.filter(l => l !== code)})} data-testid={`badge-filter-lang-${code}`}>
                   {lang?.flag} {lang?.name || code}
-                  <span className="ml-1 text-muted-foreground">&times;</span>
+                  <X className="h-3 w-3 ml-1" />
                 </Badge>
               );
             })}
-            {filters.online === true && (
-              <Badge variant="secondary" className="gap-1 cursor-pointer hover-elevate" onClick={() => setFilters({...filters, online: null})}>
-                Online Only
-                <span className="ml-1 text-muted-foreground">&times;</span>
-              </Badge>
-            )}
-            {filters.online === false && (
-              <Badge variant="secondary" className="gap-1 cursor-pointer hover-elevate" onClick={() => setFilters({...filters, online: null})}>
-                In-Person Only
-                <span className="ml-1 text-muted-foreground">&times;</span>
-              </Badge>
-            )}
-            {filters.verified && (
-              <Badge variant="secondary" className="gap-1 cursor-pointer hover-elevate" onClick={() => setFilters({...filters, verified: false})}>
-                Verified Only
-                <span className="ml-1 text-muted-foreground">&times;</span>
-              </Badge>
-            )}
-            {filters.tags?.map(tag => (
-              <Badge key={tag} variant="secondary" className="gap-1 cursor-pointer hover-elevate" onClick={() => setFilters({...filters, tags: filters.tags?.filter(t => t !== tag)})}>
-                {tag}
-                <span className="ml-1 text-muted-foreground">&times;</span>
-              </Badge>
-            ))}
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={() => setFilters({})}
-              className="h-6 text-xs text-muted-foreground"
-              data-testid="button-clear-all-filters"
-            >
-              Clear all
-            </Button>
           </div>
         )}
-        
-        {eventList.length === 0 && totalEvents === 0 ? (
-          <div className="text-center py-12 text-muted-foreground">
-            <Calendar className="h-12 w-12 mx-auto mb-4 opacity-50" />
-            <p className="text-lg">No events scheduled yet</p>
-            <p className="text-sm">Check back soon for upcoming tango events!</p>
-          </div>
-        ) : eventList.length === 0 && totalEvents > 0 ? (
-          <div className="text-center py-12 text-muted-foreground">
-            <SlidersHorizontal className="h-12 w-12 mx-auto mb-4 opacity-50" />
-            <p className="text-lg">No events match your filters</p>
-            <p className="text-sm mb-4">Try adjusting your filter criteria</p>
-            <Button 
-              variant="outline" 
-              onClick={() => setFilters({})}
-              data-testid="button-clear-event-filters"
-            >
-              Clear All Filters
-            </Button>
-          </div>
-        ) : (
-          eventList.slice(0, 10).map((event, index) => {
-            const imageUrl = Array.isArray(event.imageUrl) 
-              ? event.imageUrl[0] 
-              : event.imageUrl;
-            const rsvpStatus = getUserRsvpStatus(event.id);
-            const isGoing = rsvpStatus === "going";
-            
-            return (
-              <motion.div
-                key={event.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
-              >
-                <div className="flex items-start gap-6 p-6 border rounded-xl hover-elevate" data-testid={`event-${event.id}`}>
-                  <Link href={`/events/${event.id}`}>
-                    {imageUrl ? (
-                      <img 
-                        src={imageUrl} 
-                        alt={event.title} 
-                        className="w-16 h-16 rounded-xl object-cover flex-shrink-0 cursor-pointer"
-                      />
-                    ) : (
-                      <div className="w-16 h-16 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0 cursor-pointer">
-                        <Calendar className="h-8 w-8 text-primary" />
-                      </div>
-                    )}
-                  </Link>
-                  <div className="flex-1 min-w-0">
-                    <Link href={`/events/${event.id}`}>
-                      <h3 className="text-xl font-serif font-bold mb-3 truncate cursor-pointer hover:text-primary" dangerouslySetInnerHTML={{ __html: event.title || "Untitled Event" }} />
-                    </Link>
-                    <div className="space-y-2 text-sm text-muted-foreground">
-                      {(event.startDate || event.date) && (
-                        <div className="flex items-center gap-2">
-                          <Calendar className="h-4 w-4 flex-shrink-0" />
-                          {new Date(event.startDate || event.date).toLocaleDateString(undefined, { 
-                            weekday: 'short', 
-                            month: 'short', 
-                            day: 'numeric',
-                            year: 'numeric'
-                          })}
-                          {event.time && ` at ${event.time}`}
-                        </div>
-                      )}
-                      {(event.location || event.city) && (
-                        <div className="flex items-center gap-2">
-                          <MapPin className="h-4 w-4 flex-shrink-0" />
-                          <span className="truncate">{event.location || event.city}</span>
-                        </div>
-                      )}
-                      <div className="flex flex-wrap gap-2">
-                        {event.eventType && (
-                          <Badge variant="secondary" className="text-xs">
-                            {event.eventType.charAt(0).toUpperCase() + event.eventType.slice(1)}
-                          </Badge>
-                        )}
-                        {event.hostLanguages && event.hostLanguages.length > 0 && (
-                          <div className="flex items-center gap-1">
-                            <Languages className="h-3 w-3 text-muted-foreground" />
-                            {event.hostLanguages.slice(0, 3).map((code: string) => {
-                              const lang = getLanguageByCode(code);
-                              return (
-                                <Badge key={code} variant="outline" className="text-xs gap-1 py-0">
-                                  {lang?.flag}
-                                </Badge>
-                              );
-                            })}
-                            {event.hostLanguages.length > 3 && (
-                              <span className="text-xs text-muted-foreground">+{event.hostLanguages.length - 3}</span>
-                            )}
+      </div>
+      
+      <CardContent className="p-6">
+        {viewMode === "list" && (
+          <div className="space-y-4" data-testid="events-list-view">
+            {displayEvents.length === 0 && totalEvents === 0 ? (
+              <div className="text-center py-12 text-muted-foreground" data-testid="empty-state-no-events">
+                <Calendar className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                <p className="text-lg">No events scheduled yet</p>
+                <p className="text-sm">Check back soon for upcoming tango events!</p>
+              </div>
+            ) : displayEvents.length === 0 ? (
+              <div className="text-center py-12 text-muted-foreground" data-testid="empty-state-no-matches">
+                <SlidersHorizontal className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                <p className="text-lg">No events match your filters</p>
+                <p className="text-sm mb-4">Try adjusting your filter criteria</p>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setFilters({})}
+                  data-testid="button-clear-event-filters"
+                >
+                  Clear All Filters
+                </Button>
+              </div>
+            ) : (
+              displayEvents.slice(0, 10).map((event, index) => {
+                const imageUrl = Array.isArray(event.imageUrl) 
+                  ? event.imageUrl[0] 
+                  : event.imageUrl;
+                const rsvpStatus = getUserRsvpStatus(event.id);
+                
+                return (
+                  <motion.div
+                    key={event.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                  >
+                    <div className="flex items-start gap-4 p-4 border rounded-xl hover-elevate" data-testid={`event-card-${event.id}`}>
+                      <Link href={`/events/${event.id}`}>
+                        {imageUrl ? (
+                          <img 
+                            src={imageUrl} 
+                            alt={event.title} 
+                            className="w-16 h-16 rounded-xl object-cover flex-shrink-0 cursor-pointer"
+                            data-testid={`event-image-${event.id}`}
+                          />
+                        ) : (
+                          <div className="w-16 h-16 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0 cursor-pointer">
+                            <Calendar className="h-8 w-8 text-primary" />
                           </div>
                         )}
+                      </Link>
+                      <div className="flex-1 min-w-0">
+                        <Link href={`/events/${event.id}`}>
+                          <h3 className="text-lg font-serif font-bold mb-2 truncate cursor-pointer hover:text-primary" dangerouslySetInnerHTML={{ __html: event.title || "Untitled Event" }} data-testid={`event-title-${event.id}`} />
+                        </Link>
+                        <div className="space-y-1 text-sm text-muted-foreground">
+                          {(event.startDate || event.date) && (
+                            <div className="flex items-center gap-2" data-testid={`event-date-${event.id}`}>
+                              <Calendar className="h-4 w-4 flex-shrink-0" />
+                              {new Date(event.startDate || event.date).toLocaleDateString(undefined, { 
+                                weekday: 'short', 
+                                month: 'short', 
+                                day: 'numeric',
+                                year: 'numeric'
+                              })}
+                              {event.time && ` at ${event.time}`}
+                            </div>
+                          )}
+                          {(event.location || event.city) && (
+                            <div className="flex items-center gap-2" data-testid={`event-location-${event.id}`}>
+                              <MapPin className="h-4 w-4 flex-shrink-0" />
+                              <span className="truncate">{event.location || event.city}</span>
+                            </div>
+                          )}
+                          <div className="flex flex-wrap gap-2 pt-1">
+                            {event.eventType && (
+                              <Badge variant="secondary" className="text-xs" data-testid={`event-type-badge-${event.id}`}>
+                                {event.eventType.charAt(0).toUpperCase() + event.eventType.slice(1)}
+                              </Badge>
+                            )}
+                            {event.isRecurring && (
+                              <Badge variant="outline" className="text-xs gap-1" data-testid={`event-recurring-badge-${event.id}`}>
+                                <Repeat className="h-3 w-3" />
+                                Series
+                              </Badge>
+                            )}
+                            {event.hostLanguages && event.hostLanguages.length > 0 && (
+                              <div className="flex items-center gap-1">
+                                <Languages className="h-3 w-3 text-muted-foreground" />
+                                {event.hostLanguages.slice(0, 3).map((code: string) => {
+                                  const lang = getLanguageByCode(code);
+                                  return (
+                                    <Badge key={code} variant="outline" className="text-xs gap-1 py-0" data-testid={`event-lang-${event.id}-${code}`}>
+                                      {lang?.flag}
+                                    </Badge>
+                                  );
+                                })}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex flex-col gap-2">
+                        <UnifiedRSVPButton
+                          eventId={event.id}
+                          currentStatus={rsvpStatus}
+                          variant="compact"
+                          data-testid={`button-rsvp-event-${event.id}`}
+                        />
+                        <Link href={`/events/${event.id}`}>
+                          <Button size="sm" variant="ghost" data-testid={`button-view-event-${event.id}`}>
+                            Details
+                          </Button>
+                        </Link>
                       </div>
                     </div>
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <UnifiedRSVPButton
-                      eventId={event.id}
-                      currentStatus={rsvpStatus}
-                      variant="compact"
-                      data-testid={`button-rsvp-event-${event.id}`}
-                    />
-                    <Link href={`/events/${event.id}`}>
-                      <Button size="sm" variant="ghost" data-testid={`button-view-event-${event.id}`}>
-                        Details
-                      </Button>
-                    </Link>
-                  </div>
-                </div>
-              </motion.div>
-            );
-          })
+                  </motion.div>
+                );
+              })
+            )}
+            
+            {displayEvents.length > 10 && (
+              <div className="text-center pt-4">
+                <Link href={`/events?city=${groupCity}`}>
+                  <Button variant="outline" data-testid="button-view-all-events">
+                    View All {displayEvents.length} Events
+                  </Button>
+                </Link>
+              </div>
+            )}
+          </div>
         )}
         
-        {eventList.length > 10 && (
-          <div className="text-center pt-4">
-            <Link href={`/events?city=${groupCity}`}>
-              <Button variant="outline" data-testid="button-view-all-events">
-                View All {eventList.length} Events
-              </Button>
-            </Link>
+        {viewMode === "calendar" && (
+          <div style={{ height: '500px' }} data-testid="events-calendar-view">
+            <BigCalendar
+              localizer={localizer}
+              events={calendarEvents}
+              startAccessor="start"
+              endAccessor="end"
+              style={{ height: '100%' }}
+              views={[Views.MONTH, Views.WEEK, Views.DAY]}
+              onSelectEvent={(event) => {
+                window.location.href = `/events/${event.id}`;
+              }}
+              eventPropGetter={() => ({
+                style: {
+                  backgroundColor: 'hsl(var(--primary))',
+                  borderRadius: '4px',
+                  opacity: 0.8,
+                  color: 'white',
+                  border: 'none',
+                  display: 'block'
+                }
+              })}
+            />
+          </div>
+        )}
+        
+        {viewMode === "map" && (
+          <div style={{ height: '500px' }} className="rounded-xl overflow-hidden" data-testid="events-map-view">
+            <MapContainer
+              center={mapCenter}
+              zoom={12}
+              style={{ height: '100%', width: '100%' }}
+            >
+              <TileLayer
+                attribution='&copy; <a href="https://carto.com/attributions">CARTO</a>'
+                url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+              />
+              {eventsWithCoordinates.map((event, index) => (
+                <Marker key={event.id || `map-event-${index}`} position={[event.lat, event.lng]}>
+                  <Popup>
+                    <div className="p-2">
+                      <h3 className="font-semibold mb-1" dangerouslySetInnerHTML={{ __html: event.title || "Event" }} />
+                      <p className="text-sm text-muted-foreground mb-2">
+                        {safeDateFormat(event.startDate || event.date, "MMM dd, yyyy 'at' h:mm a")}
+                      </p>
+                      <Link href={`/events/${event.id}`}>
+                        <Button size="sm" className="w-full" data-testid={`button-map-event-${event.id}`}>View Details</Button>
+                      </Link>
+                    </div>
+                  </Popup>
+                </Marker>
+              ))}
+            </MapContainer>
           </div>
         )}
       </CardContent>
