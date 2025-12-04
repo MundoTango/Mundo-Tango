@@ -1,7 +1,7 @@
 # Mundo Tango
 
 ## Overview
-Mundo Tango is a production-ready social platform designed to connect the global tango community. It features a resilient, self-sovereign architecture with enterprise-grade security and integrates with various business systems and specialized AI agents. The platform aims to monetize through premium services, event hosting, and targeted advertising, capturing a significant share of the global dance market.
+Mundo Tango is a production-ready social platform designed to connect the global tango community. It features a resilient, self-sovereign architecture with enterprise-grade security, integrating with various business systems and specialized AI agents. The platform aims for monetization through premium services, event hosting, and targeted advertising, targeting a significant share of the global dance market.
 
 ## User Preferences
 - Work Simultaneously - Run operations in parallel (use Promise.all, parallel tool calls)
@@ -18,184 +18,43 @@ Mundo Tango is a production-ready social platform designed to connect the global
 ## System Architecture
 
 ### Standardized Components
-The platform uses standardized components like PublicProfileView, UnifiedSidebar, TangoRoles, RoleChangeCascade, CascadeFramework, RBAC/ABAC System, PerRoleExperience, UnifiedLocationPicker, UnifiedMemoriesFeed, LocationChangeCascade, and UnifiedPROTab for consistent functionality and design.
-
-### Profile Tab Architecture
-The profile system includes 8 core tabs: About (with Profile, Privacy, Security, Notifications, Subscription), Feed, Photos, Friends, Events, Travel, Memories, and PRO. The PRO tab integrates with event participation to auto-populate professional portfolios.
+The platform uses standardized components such as PublicProfileView, UnifiedSidebar, TangoRoles, RoleChangeCascade, CascadeFramework, RBAC/ABAC System, PerRoleExperience, UnifiedLocationPicker, UnifiedMemoriesFeed, LocationChangeCascade, and UnifiedPROTab for consistent functionality and design. The profile system includes 8 core tabs: About, Feed, Photos, Friends, Events, Travel, Memories, and PRO.
 
 ### Navigation System
-The Unified Sidebar provides icon-centric navigation with 27 items across Social, Community, PRO Discovery, and Services sections, featuring a 3-column grid, hover-triggered tooltips, and `z-50` layering. A "My Stuff" section offers personalized shortcuts.
+A Unified Sidebar provides icon-centric navigation with 27 items across Social, Community, PRO Discovery, and Services sections, featuring a 3-column grid, hover tooltips, and `z-50` layering.
 
 ### UI/UX
-Mundo Tango employs an "MT Ocean Theme" with ocean blues and warm accents, supporting dark mode via Tailwind CSS. Components are built with `shadcn/ui` and Radix UI, utilizing Lucide React and React Icons for iconography. It supports 68 languages via `i18next` and Wouter for routing. Layouts include `AppLayout`, `DashboardLayout`, and `AdminLayout`. A Visual Editor enables inline editing.
+Mundo Tango uses an "MT Ocean Theme" supporting dark mode via Tailwind CSS. Components are built with `shadcn/ui` and Radix UI, using Lucide React and React Icons for iconography. It supports 68 languages via `i18next` and Wouter for routing, with `AppLayout`, `DashboardLayout`, and `AdminLayout`. A Visual Editor enables inline editing.
 
 ### Backend
-The backend is built with Express and TypeScript, using PostgreSQL (Neon) and Drizzle ORM. It features modular routes, JWT authentication with Google/Facebook OAuth, and an 8-tier RBAC system. Database migrations are automated, and server-side FFmpeg handles video transcoding. The API includes endpoints for PRO tab functionalities, place recommendations, travel plans, and enhanced Talent Match AI with language-based search filtering.
+The backend uses Express and TypeScript with PostgreSQL (Neon) and Drizzle ORM. It features modular routes, JWT authentication with Google/Facebook OAuth, and an 8-tier RBAC system. Database migrations are automated, and server-side FFmpeg handles video transcoding. API endpoints cover PRO tab functionalities, place recommendations, travel plans, and enhanced Talent Match AI.
 
 ### AI Systems
-An extensive AI ecosystem orchestrates 1,218 specialized agents hierarchically, with Replit AI for strategic oversight, Mr. Blue for tactical coordination, and individual agents for atomic tasks. This system includes self-healing infrastructure, a production-ready validation loop, a Visual Validation Framework, contextual agent activation, a comprehensive Backend Agent System, Mr. Blue AI Assistant, and a Bifrost AI Gateway for multi-provider AI interactions.
+An extensive AI ecosystem orchestrates 1,218 specialized agents hierarchically, with Replit AI for strategic oversight, Mr. Blue for tactical coordination, and individual agents for atomic tasks. This includes self-healing infrastructure, a production-ready validation loop, a Visual Validation Framework, contextual agent activation, a Backend Agent System, Mr. Blue AI Assistant, and a Bifrost AI Gateway for multi-provider AI interactions.
 
 ### Groups System
-The Groups system provides community features with 3 discovery tabs (My Groups, Cities, Professional) and 7 detail tabs (Discussion, Events, Housing, Hub, Members, City Guide, Settings). It includes database tables for groups, group members (with role hierarchy), group posts, and categories. API endpoints cover CRUD operations, join/leave flows, membership approval, and integrations with Events, Profile, Location, RSVP, and Notifications.
+The Groups system offers community features with 3 discovery tabs (My Groups, Cities, Professional) and 7 detail tabs. It includes database tables for groups, members, posts, and categories, with API endpoints for CRUD, join/leave flows, and integrations.
 
 ### Platform Features
-Core features encompass social functionalities (events, groups, posts, notifications, media, live streaming, marketplaces, reviews) and business features (Talent Match AI, LIFE CEO AI, Multi-AI Orchestration, Automated Scraping, Admin Dashboard, Stripe Payments, and BullMQ Workers for background processing).
+Core features include social functionalities (events, groups, posts, notifications, media, live streaming, marketplaces, reviews) and business features (Talent Match AI, LIFE CEO AI, Multi-AI Orchestration, Automated Scraping, Admin Dashboard, Stripe Payments, and BullMQ Workers).
 
 ### Testing
-The platform utilizes E2E tests, automated unit test coverage via CI/CD, and visual regression testing with Playwright and Claude Computer Use for AI-powered validation. The E2E testing methodology includes page load tests, API tests, button/link verification, and content verification.
-
-### E2E Testing Methodology (PERMANENT)
-**CRITICAL: Always use the `run_test` tool for E2E testing. It handles all environment setup automatically.**
-
-**Stripe Testing Integration:**
-- The `run_test` tool **automatically injects Stripe testing keys** - no manual configuration needed
-- Testing secrets available: `TESTING_STRIPE_SECRET_KEY`, `TESTING_VITE_STRIPE_PUBLIC_KEY`
-- The testing subagent overrides `STRIPE_SECRET_KEY` and `VITE_STRIPE_PUBLIC_KEY` with test values
-- Test card numbers (official Stripe test cards):
-  - `4242424242424242` - Success
-  - `4000000000000002` - Declined
-  - `4000000000009995` - Insufficient funds
-  - Expiry: `12/25`, CVC: `123`, ZIP: `12345`
-
-**Test Plan Best Practices:**
-1. Use `[New Context]` to start fresh browser context
-2. Use `[Browser]` for navigation and interactions
-3. Use `[Verify]` for assertions (batch related verifications together)
-4. Use `[API]` for direct endpoint testing
-5. Generate unique values with `${nanoid(6)}` for test data isolation
-
-**When to Use run_test:**
-- UI/UX workflows with user interactions
-- Multi-page flows and forms
-- Features with JavaScript dependencies
-- Payment/checkout flows (Stripe auto-configured)
-- Bug fix verification
-
-**When NOT to Use run_test:**
-- Pure backend-only changes with no UI impact
-- Simple text/copy changes
-- Games or non-browser-testable features
-
-**Test Files:**
-- `tests/wave5-stripe-billing.spec.ts` - Stripe billing E2E tests
-- `tests/e2e/` - General E2E test suites
-- `tests/helpers/stripe.ts` - Stripe test utilities
+The platform utilizes E2E tests, automated unit test coverage via CI/CD, and visual regression testing with Playwright and Claude Computer Use for AI-powered validation. E2E testing involves page load, API, button/link, and content verification. The `run_test` tool is critical for E2E testing, handling environment setup and Stripe testing key injection automatically.
 
 ### Production
-Production leverages GitHub Actions for CI/CD, Prometheus/Grafana with Sentry for monitoring, Replit Publishing for deployment, Redis for caching, and PostgreSQL (Neon) with Drizzle ORM for infrastructure.
+Production leverages GitHub Actions for CI/CD, Prometheus/Grafana with Sentry for monitoring, Replit Publishing for deployment, Redis for caching, and PostgreSQL (Neon) with Drizzle ORM.
 
 ### Marketing Site Architecture
-The marketing site includes a Donation Tier System (Tango Legends), a Human to Agent Collaboration (H2AC) Volunteer Program with 6 divisions, and an Ambassador Program. It features marketing page routes for support, supporters, volunteer, Mr. Blue, ambassadors, and open source. All public statistics are wired to a real database.
+The marketing site includes a Donation Tier System, a Human to Agent Collaboration (H2AC) Volunteer Program, and an Ambassador Program. It features marketing page routes for support, supporters, volunteer, Mr. Blue, ambassadors, and open source, with all public statistics wired to a real database.
 
-### Demo System (December 2025)
-The platform includes a comprehensive Video Demo System implemented using MB.MD Patterns 28, 38, + 41:
+### Demo System
+A comprehensive Video Demo System (MB.MD Patterns 28, 38, 41) includes a landing page video demo section with 4 clickable demo cards, a DemoModal (5-slide interactive carousel), a VideoDemoModal (video-style demo player), and a Playwright demo recording script. It adheres to a ZERO fake data policy.
 
-**Core Components:**
-- Landing page video demo section with 4 clickable demo cards (LandingPage.tsx)
-- DemoModal component (client/src/components/marketing/DemoModal.tsx) - 5-slide interactive carousel for "Watch Demo" button
-- VideoDemoModal component (client/src/components/marketing/VideoDemoModal.tsx) - Video-style demo player for feature cards
-- Playwright demo recording script (scripts/record-demo.ts) for automated screenshot capture
-- Real screenshots in public/demos/ (tango-map.png, events-discovery.png, mr-blue-chat.png, profile-view.png)
+### Video Recording System
+An automated video recording system uses Playwright's `recordVideo` capability to capture real customer journeys (MB.MD Patterns 28, 38, 41). This includes a Journey Schema, Video Recorder, Video Service, and API endpoints for recording management. All videos are actual Playwright recordings.
 
-**Video Demo Cards on Landing Page (4 features):**
-1. **Global Tango Map** - Interactive map with animated city markers
-2. **Event Discovery** - Event listing with animated event cards
-3. **Mr. Blue AI** - Chat conversation animation demo
-4. **Your Profile** - Profile stats with animated counters
-
-**VideoDemoModal Features:**
-- Video-style player interface with play/pause controls
-- Auto-advancing slides with progress bar
-- Navigation arrows and slide indicators
-- Animated content specific to each feature
-- Accessibility-compliant with screen reader support
-
-**DemoModal Slides (5 interactive slides via "Watch Demo" button):**
-1. **Meet Mr. Blue** - AI companion chat preview with conversation UI
-2. **Discover Events** - Global calendar with event cards (La Viruta, Berlin Festival, etc.)
-3. **Connect & Dance** - Partner matching with Talent Match AI preview
-4. **Plan Your Journey** - Travel planner with Buenos Aires itinerary example
-5. **3D Avatar Experience** - Interactive 3D avatar with 10 emotional expressions
-
-**LandingPage Video Demo Section:**
-- 4 clickable feature cards with video play overlays
-- Real platform screenshots as thumbnails
-- Click any card to open VideoDemoModal with animated demo
-- data-testid="video-demo-0" through "video-demo-3"
-
-**Design Principles:**
-- ZERO fake data policy enforced - all statistics from real database APIs
-- 7-day free trial with 4 pricing tiers: Free Trial $0, Basic $4.99, Dancer Pro $9.99, Professional $29.99
-- Ocean gradient theme with hover-elevate interactions
-- All CTAs link to /register with "Start 7-Day Trial" messaging
-
-**Technical Files:**
-- DemoModal: client/src/components/marketing/DemoModal.tsx
-- VideoDemoModal: client/src/components/marketing/VideoDemoModal.tsx
-- LandingPage: client/src/pages/LandingPage.tsx  
-- Demo Recording: scripts/record-demo.ts
-- Demo Assets: public/demos/ (tango-map.png, events-discovery.png, mr-blue-chat.png, profile-view.png)
-- PixarAvatar: client/src/components/mr-blue/PixarAvatar.tsx (React Three Fiber 3D avatar with 7 states including 'error')
-
-### Video Recording System (December 2025)
-Complete automated video recording system using Playwright's recordVideo capability for capturing real customer journeys. **ZERO FAKE DATA POLICY: All videos are actual Playwright recordings, not screenshots or animations.**
-
-**Recording Status (7/8 Complete):**
-- ✅ customer/event-discovery.mp4 (723KB, ~15s)
-- ✅ customer/mr-blue-chat.mp4 (855KB, ~20s)
-- ✅ customer/signup.mp4 (448KB, ~12s)
-- ❌ customer/profile-view.mp4 (pending - resource constraints)
-- ✅ marketing/tango-map-promo.mp4 (2.0MB, ~18s)
-- ✅ marketing/community-showcase.mp4 (1.5MB, ~14s)
-- ✅ tour/app-onboarding.mp4 (832KB, ~18s)
-- ✅ tour/feature-highlights.mp4 (831KB, ~18s)
-
-**Architecture (MB.MD Patterns 28, 38, 41):**
-- Pattern 28: Hierarchical Execution - Replit AI (strategic) → Mr. Blue (tactical) → Video agents (execution)
-- Pattern 38: E2E Testing Infrastructure - Playwright video recording
-- Pattern 41: Parallel Execution - All journey recordings run simultaneously
-
-**Core Components:**
-- Journey Schema: scripts/journey-schema.ts - YAML parser for journey definitions
-- Video Recorder: scripts/video-recorder.ts - Playwright recordVideo integration
-- Video Service: server/services/video/VideoRecordingService.ts - Recording orchestration + FFmpeg conversion
-- Video Routes: server/routes/video-recording-routes.ts - API endpoints for recording management
-
-**Journey Types (8 total):**
-1. **Customer Journeys (4):** signup, event-discovery, mr-blue-chat, profile-view
-2. **Marketing Journeys (2):** tango-map-promo, community-showcase (Facebook faceless content)
-3. **Tour Journeys (2):** app-onboarding, feature-highlights (Mr. Blue guided tours)
-
-**API Endpoints:**
-- GET /api/videos/recording/library - List all recorded videos
-- GET /api/videos/recording/journeys/available - List available journey definitions
-- POST /api/videos/recording/record - Trigger single journey recording
-- POST /api/videos/recording/record-all - Batch record all journeys
-
-**Directory Structure:**
-- journeys/customer/ - Customer journey YAMLs
-- journeys/marketing/ - Marketing journey YAMLs
-- journeys/tours/ - Mr. Blue tour YAMLs
-- public/videos/customer/ - Recorded customer videos (.mp4)
-- public/videos/marketing/ - Recorded marketing videos (.mp4)
-- public/videos/tours/ - Recorded tour videos (.mp4)
-- public/videos/manifest.json - Video library metadata
-
-**Video Workflow:**
-1. Journey YAML defines steps (navigate, click, type, scroll, wait)
-2. Playwright recordVideo captures .webm during execution
-3. FFmpeg converts .webm → .mp4 for browser compatibility
-4. Manifest.json updated with recording metadata
-5. VideoDemoModal plays .mp4 via HTML5 video element
-
-**VideoDemoModal Video Player Controls:**
-- data-testid="video-player" - HTML5 video element
-- data-testid="video-play-pause" - Play/pause toggle
-- data-testid="video-progress-bar" - Seekable progress bar
-- data-testid="video-mute" - Mute/unmute
-- data-testid="video-restart" - Restart video
-- data-testid="video-fullscreen" - Fullscreen mode
-- data-testid="video-prev/next" - Journey navigation
+### Event Scraping System
+An automated scraping infrastructure (MB.MD Patterns 28, 38, 41) enriches global tango event and community data using specialized scraping agents (#115-119). It includes a City Group Enrichment Service, community metadata extraction, Admin API endpoints, and GitHub Actions automation for daily scraping.
 
 ## External Dependencies
 - **Infrastructure:** PostgreSQL, Redis, Cloudinary, OpenStreetMap
