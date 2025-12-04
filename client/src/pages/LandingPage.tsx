@@ -193,32 +193,48 @@ export default function LandingPage() {
 
   const screenshots = [
     {
+      id: "tango-map",
+      journeyId: "tango-map-promo",
       title: "Global Tango Map",
-      description: "Find dancers in 95+ cities",
+      description: "Find dancers in 95+ cities worldwide",
       gradient: "from-teal-500 to-cyan-600",
       icon: MapPin,
-      image: "/demos/tango-map.png"
+      image: "/demos/tango-map.png",
+      videoUrl: "/videos/marketing/tango-map-promo.mp4",
+      duration: "0:15"
     },
     {
+      id: "events",
+      journeyId: "event-discovery",
       title: "Event Discovery",
-      description: "Never miss a milonga",
+      description: "Never miss a milonga near you",
       gradient: "from-purple-500 to-indigo-600",
       icon: Calendar,
-      image: "/demos/events-discovery.png"
+      image: "/demos/events-discovery.png",
+      videoUrl: "/videos/customer/event-discovery.mp4",
+      duration: "0:30"
     },
     {
+      id: "mr-blue",
+      journeyId: "mr-blue-chat",
       title: "Mr. Blue AI",
-      description: "Your personal guide",
+      description: "Your personal tango guide",
       gradient: "from-blue-500 to-cyan-500",
       icon: Bot,
-      image: "/demos/mr-blue-chat.png"
+      image: "/demos/mr-blue-chat.png",
+      videoUrl: "/videos/customer/mr-blue-chat.mp4",
+      duration: "0:25"
     },
     {
+      id: "profile",
+      journeyId: "profile-view",
       title: "Your Profile",
-      description: "Showcase your journey",
+      description: "Showcase your tango journey",
       gradient: "from-rose-500 to-pink-600",
       icon: Users,
-      image: "/demos/profile-view.png"
+      image: "/demos/profile-view.png",
+      videoUrl: "/videos/customer/profile-view.mp4",
+      duration: "0:20"
     }
   ];
 
@@ -596,10 +612,17 @@ export default function LandingPage() {
                         </div>
                         
                         {/* Video Duration Badge */}
-                        <div className="absolute top-3 right-3">
-                          <Badge className="bg-black/60 text-white border-0 text-xs">
+                        <div className="absolute top-3 right-3 flex gap-2">
+                          <Badge className="bg-black/70 text-white border-0 text-xs font-mono">
+                            {screenshot.duration}
+                          </Badge>
+                        </div>
+                        
+                        {/* Video Type Badge */}
+                        <div className="absolute top-3 left-3">
+                          <Badge className="bg-primary/90 text-white border-0 text-xs">
                             <Video className="h-3 w-3 mr-1" />
-                            Demo
+                            Video
                           </Badge>
                         </div>
                         
@@ -613,10 +636,10 @@ export default function LandingPage() {
                         </div>
                       </div>
                       <CardContent className="pt-4">
-                        <h3 className="font-semibold text-lg">{screenshot.title}</h3>
+                        <h3 className="font-semibold text-lg" data-testid={`text-demo-title-${screenshot.id}`}>{screenshot.title}</h3>
                         <p className="text-sm text-muted-foreground mt-1">{screenshot.description}</p>
                         <p className="text-xs text-primary mt-2 flex items-center gap-1 group-hover:underline">
-                          <Play className="h-3 w-3" /> Watch demo
+                          <Play className="h-3 w-3" /> Watch video demo
                         </p>
                       </CardContent>
                     </Card>
