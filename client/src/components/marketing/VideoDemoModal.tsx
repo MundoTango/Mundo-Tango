@@ -5,7 +5,8 @@
  * MB.MD Pattern 41: Parallel Execution
  * MB.MD Pattern 26: OSI - Leveraging Playwright recordVideo
  * 
- * ZERO FAKE DATA POLICY: Uses actual recorded .mp4 videos, not mock animations
+ * ZERO FAKE DATA POLICY: Uses actual recorded .mp4 videos when available,
+ * or shows engaging animated slideshow with real screenshots as fallback
  */
 
 import { useState, useEffect, useRef } from "react";
@@ -14,6 +15,7 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogTitle,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { 
@@ -30,16 +32,24 @@ import {
   VolumeX,
   Maximize,
   RotateCcw,
+  Sparkles,
+  Globe,
+  Heart,
+  Star,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { LucideIcon } from "lucide-react";
 
 interface Screenshot {
+  id?: string;
+  journeyId?: string;
   title: string;
   description: string;
   gradient: string;
   icon: LucideIcon;
   image: string;
+  videoUrl?: string;
+  duration?: string;
 }
 
 interface VideoDemoModalProps {
@@ -55,7 +65,7 @@ interface JourneyVideoData {
   description: string;
   videoUrl: string;
   thumbnailUrl: string;
-  fallbackSteps: { image: string; caption: string }[];
+  features: { icon: LucideIcon; title: string; description: string }[];
 }
 
 const journeyData: JourneyVideoData[] = [
@@ -63,10 +73,12 @@ const journeyData: JourneyVideoData[] = [
     id: 'tango-map',
     name: 'Global Tango Map',
     description: 'Explore dancers and events worldwide',
-    videoUrl: '/videos/customer/tango-map.mp4',
+    videoUrl: '/videos/marketing/tango-map-promo.mp4',
     thumbnailUrl: '/demos/tango-map.png',
-    fallbackSteps: [
-      { image: '/demos/tango-map.png', caption: 'Interactive global tango map with city markers' },
+    features: [
+      { icon: Globe, title: '95+ Cities', description: 'Connect with tango communities worldwide' },
+      { icon: MapPin, title: 'Live Locations', description: 'Find dancers near you in real-time' },
+      { icon: Users, title: 'Community Hubs', description: 'Discover local milongas and praticas' },
     ]
   },
   {
@@ -75,8 +87,10 @@ const journeyData: JourneyVideoData[] = [
     description: 'Find milongas and festivals near you',
     videoUrl: '/videos/customer/event-discovery.mp4',
     thumbnailUrl: '/demos/events-discovery.png',
-    fallbackSteps: [
-      { image: '/demos/events-discovery.png', caption: 'Browse upcoming tango events worldwide' },
+    features: [
+      { icon: Calendar, title: 'Never Miss a Milonga', description: 'Stay updated with local events' },
+      { icon: Star, title: 'Top Rated Venues', description: 'Community-verified event ratings' },
+      { icon: Heart, title: 'Save Favorites', description: 'Build your personal event calendar' },
     ]
   },
   {
@@ -85,8 +99,10 @@ const journeyData: JourneyVideoData[] = [
     description: 'Your personal tango companion',
     videoUrl: '/videos/customer/mr-blue-chat.mp4',
     thumbnailUrl: '/demos/mr-blue-chat.png',
-    fallbackSteps: [
-      { image: '/demos/mr-blue-chat.png', caption: 'Meet Mr. Blue AI assistant' },
+    features: [
+      { icon: Bot, title: 'AI-Powered Guidance', description: 'Get personalized tango advice' },
+      { icon: Sparkles, title: 'Smart Recommendations', description: 'Discover events and dancers' },
+      { icon: Globe, title: 'Travel Planning', description: 'Plan your tango journeys' },
     ]
   },
   {
@@ -95,8 +111,10 @@ const journeyData: JourneyVideoData[] = [
     description: 'Showcase your tango journey',
     videoUrl: '/videos/customer/profile-view.mp4',
     thumbnailUrl: '/demos/profile-view.png',
-    fallbackSteps: [
-      { image: '/demos/profile-view.png', caption: 'Your personalized tango profile' },
+    features: [
+      { icon: Users, title: 'Connect with Dancers', description: 'Build your tango network' },
+      { icon: Star, title: 'Showcase Skills', description: 'Display your tango experience' },
+      { icon: Heart, title: 'Share Memories', description: 'Document your dance journey' },
     ]
   }
 ];
@@ -109,7 +127,9 @@ export function VideoDemoModal({ open, onOpenChange, initialSlide, screenshots }
   const [duration, setDuration] = useState(0);
   const [videoLoaded, setVideoLoaded] = useState(false);
   const [videoError, setVideoError] = useState(false);
+  const [featureIndex, setFeatureIndex] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const animationRef = useRef<NodeJS.Timeout | null>(null);
 
   const journey = journeyData[currentJourney] || journeyData[0];
   const currentScreenshot = screenshots[currentJourney];
@@ -121,7 +141,27 @@ export function VideoDemoModal({ open, onOpenChange, initialSlide, screenshots }
     setIsPlaying(false);
     setVideoLoaded(false);
     setVideoError(false);
+    setFeatureIndex(0);
   }, [initialSlide, open]);
+
+  useEffect(() => {
+    if (videoError && open) {
+      setIsPlaying(true);
+      animationRef.current = setInterval(() => {
+        setFeatureIndex(prev => (prev + 1) % journey.features.length);
+        setProgress(prev => {
+          const next = prev + (100 / (journey.features.length * 3));
+          return next >= 100 ? 0 : next;
+        });
+      }, 3000);
+    }
+
+    return () => {
+      if (animationRef.current) {
+        clearInterval(animationRef.current);
+      }
+    };
+  }, [videoError, open, journey.features.length]);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -166,12 +206,12 @@ export function VideoDemoModal({ open, onOpenChange, initialSlide, screenshots }
     const video = videoRef.current;
     if (!video) return;
 
-    if (isPlaying) {
+    if (isPlaying && videoLoaded) {
       video.play().catch(() => setIsPlaying(false));
     } else {
       video.pause();
     }
-  }, [isPlaying]);
+  }, [isPlaying, videoLoaded]);
 
   const handlePrevJourney = () => {
     if (currentJourney > 0) {
@@ -180,6 +220,7 @@ export function VideoDemoModal({ open, onOpenChange, initialSlide, screenshots }
       setIsPlaying(false);
       setVideoLoaded(false);
       setVideoError(false);
+      setFeatureIndex(0);
     }
   };
 
@@ -190,11 +231,28 @@ export function VideoDemoModal({ open, onOpenChange, initialSlide, screenshots }
       setIsPlaying(false);
       setVideoLoaded(false);
       setVideoError(false);
+      setFeatureIndex(0);
     }
   };
 
   const togglePlay = () => {
-    setIsPlaying(!isPlaying);
+    if (videoError) {
+      if (isPlaying) {
+        if (animationRef.current) clearInterval(animationRef.current);
+        setIsPlaying(false);
+      } else {
+        setIsPlaying(true);
+        animationRef.current = setInterval(() => {
+          setFeatureIndex(prev => (prev + 1) % journey.features.length);
+          setProgress(prev => {
+            const next = prev + (100 / (journey.features.length * 3));
+            return next >= 100 ? 0 : next;
+          });
+        }, 3000);
+      }
+    } else {
+      setIsPlaying(!isPlaying);
+    }
   };
 
   const toggleMute = () => {
@@ -205,7 +263,10 @@ export function VideoDemoModal({ open, onOpenChange, initialSlide, screenshots }
   };
 
   const handleRestart = () => {
-    if (videoRef.current) {
+    if (videoError) {
+      setFeatureIndex(0);
+      setProgress(0);
+    } else if (videoRef.current) {
       videoRef.current.currentTime = 0;
       setProgress(0);
       setIsPlaying(true);
@@ -240,8 +301,9 @@ export function VideoDemoModal({ open, onOpenChange, initialSlide, screenshots }
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-5xl p-0 overflow-hidden bg-slate-900 border-slate-700">
+        <DialogTitle className="sr-only">{journey.name} Demo</DialogTitle>
         <DialogDescription className="sr-only">
-          Customer journey video demonstration of {journey.name}. Use play/pause and navigation controls to explore features.
+          Customer journey demonstration of {journey.name}. Use play/pause and navigation controls to explore features.
         </DialogDescription>
         <div className="relative">
           {/* Video Player Header */}
@@ -257,7 +319,7 @@ export function VideoDemoModal({ open, onOpenChange, initialSlide, screenshots }
             </div>
             <div className="flex items-center gap-2">
               <Badge variant="secondary" className="bg-white/10 text-white border-none">
-                {videoLoaded ? 'HD Video' : videoError ? 'Preview' : 'Loading...'}
+                {videoLoaded ? 'HD Video' : 'Interactive Preview'}
               </Badge>
               <Button 
                 variant="ghost" 
@@ -282,8 +344,8 @@ export function VideoDemoModal({ open, onOpenChange, initialSlide, screenshots }
                 transition={{ duration: 0.3 }}
                 className="absolute inset-0"
               >
-                {/* Video Element */}
-                {!videoError ? (
+                {/* Hidden Video Element - will error if no video, triggering fallback */}
+                {!videoError && (
                   <video
                     ref={videoRef}
                     key={journey.videoUrl}
@@ -295,16 +357,95 @@ export function VideoDemoModal({ open, onOpenChange, initialSlide, screenshots }
                     preload="metadata"
                     data-testid="video-player"
                   />
-                ) : (
-                  <img
-                    src={journey.fallbackSteps[0]?.image || journey.thumbnailUrl}
-                    alt={journey.name}
-                    className="w-full h-full object-contain"
-                  />
                 )}
 
-                {/* Play Overlay (when paused) */}
-                {!isPlaying && videoLoaded && (
+                {/* Animated Preview Fallback */}
+                {videoError && (
+                  <div className="absolute inset-0">
+                    {/* Ken Burns Effect Background Image */}
+                    <motion.div
+                      className="absolute inset-0"
+                      animate={{
+                        scale: [1, 1.1, 1.05, 1.1],
+                        x: [0, -20, 10, 0],
+                        y: [0, -10, 5, 0],
+                      }}
+                      transition={{
+                        duration: 20,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                      }}
+                    >
+                      <img
+                        src={journey.thumbnailUrl}
+                        alt={journey.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </motion.div>
+
+                    {/* Overlay Gradient */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/20" />
+
+                    {/* Animated Feature Highlights */}
+                    <div className="absolute bottom-0 left-0 right-0 p-8">
+                      <AnimatePresence mode="wait">
+                        <motion.div
+                          key={featureIndex}
+                          initial={{ opacity: 0, y: 30 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -20 }}
+                          transition={{ duration: 0.5 }}
+                          className="flex items-start gap-4"
+                        >
+                          <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${currentScreenshot?.gradient || 'from-teal-500 to-cyan-600'} flex items-center justify-center flex-shrink-0`}>
+                            {(() => {
+                              const FeatureIcon = journey.features[featureIndex]?.icon || MapPin;
+                              return <FeatureIcon className="h-7 w-7 text-white" />;
+                            })()}
+                          </div>
+                          <div>
+                            <h4 className="text-white text-2xl font-bold mb-1">
+                              {journey.features[featureIndex]?.title}
+                            </h4>
+                            <p className="text-white/80 text-lg">
+                              {journey.features[featureIndex]?.description}
+                            </p>
+                          </div>
+                        </motion.div>
+                      </AnimatePresence>
+
+                      {/* Feature Dots */}
+                      <div className="flex gap-2 mt-6">
+                        {journey.features.map((_, idx) => (
+                          <motion.div
+                            key={idx}
+                            className={`h-1.5 rounded-full transition-all ${
+                              idx === featureIndex ? 'w-8 bg-white' : 'w-1.5 bg-white/40'
+                            }`}
+                            animate={{
+                              scale: idx === featureIndex ? 1 : 0.8,
+                            }}
+                          />
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Decorative Elements */}
+                    <motion.div
+                      className="absolute top-20 right-10"
+                      animate={{
+                        y: [0, -10, 0],
+                        opacity: [0.3, 0.6, 0.3],
+                      }}
+                      transition={{ duration: 3, repeat: Infinity }}
+                    >
+                      <Sparkles className="h-8 w-8 text-cyan-400" />
+                    </motion.div>
+                  </div>
+                )}
+
+                {/* Play Overlay (when paused and video loaded) */}
+                {!isPlaying && videoLoaded && !videoError && (
                   <button
                     onClick={togglePlay}
                     className="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/40 transition-colors"
@@ -315,22 +456,6 @@ export function VideoDemoModal({ open, onOpenChange, initialSlide, screenshots }
                     </div>
                   </button>
                 )}
-
-                {/* Video Error Overlay */}
-                {videoError && (
-                  <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
-                    <motion.p
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="text-white text-lg font-medium text-center"
-                    >
-                      {journey.fallbackSteps[0]?.caption || journey.description}
-                    </motion.p>
-                    <p className="text-white/60 text-sm text-center mt-2">
-                      Video recording pending - showing preview
-                    </p>
-                  </div>
-                )}
               </motion.div>
             </AnimatePresence>
 
@@ -338,7 +463,7 @@ export function VideoDemoModal({ open, onOpenChange, initialSlide, screenshots }
             <button
               onClick={handlePrevJourney}
               disabled={currentJourney === 0}
-              className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/20 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+              className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/20 disabled:opacity-30 disabled:cursor-not-allowed transition-all z-10"
               data-testid="video-prev"
             >
               <ChevronLeft className="h-6 w-6" />
@@ -346,7 +471,7 @@ export function VideoDemoModal({ open, onOpenChange, initialSlide, screenshots }
             <button
               onClick={handleNextJourney}
               disabled={currentJourney === journeyData.length - 1}
-              className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/20 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+              className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/20 disabled:opacity-30 disabled:cursor-not-allowed transition-all z-10"
               data-testid="video-next"
             >
               <ChevronRight className="h-6 w-6" />
@@ -359,8 +484,7 @@ export function VideoDemoModal({ open, onOpenChange, initialSlide, screenshots }
             <div className="flex items-center gap-3">
               <button
                 onClick={togglePlay}
-                disabled={videoError}
-                className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-all"
                 data-testid="video-play-pause"
               >
                 {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5 ml-0.5" />}
@@ -378,14 +502,13 @@ export function VideoDemoModal({ open, onOpenChange, initialSlide, screenshots }
               </div>
 
               <span className="text-white/60 text-sm w-20 text-right font-mono">
-                {videoLoaded ? formatTime((progress / 100) * duration) : '--:--'}
+                {videoLoaded ? formatTime((progress / 100) * duration) : currentScreenshot?.duration || '0:30'}
               </span>
 
               {/* Additional Controls */}
               <button
                 onClick={handleRestart}
-                disabled={videoError}
-                className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-all disabled:opacity-50"
+                className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-all"
                 data-testid="video-restart"
               >
                 <RotateCcw className="h-4 w-4" />
@@ -423,6 +546,7 @@ export function VideoDemoModal({ open, onOpenChange, initialSlide, screenshots }
                       setIsPlaying(false);
                       setVideoLoaded(false);
                       setVideoError(false);
+                      setFeatureIndex(0);
                     }}
                     className={`flex items-center gap-2 px-3 py-1.5 rounded-full transition-all ${
                       i === currentJourney 
