@@ -137,6 +137,56 @@ The platform includes a comprehensive Video Demo System implemented using MB.MD 
 - Demo Assets: public/demos/ (tango-map.png, events-discovery.png, mr-blue-chat.png, profile-view.png)
 - PixarAvatar: client/src/components/mr-blue/PixarAvatar.tsx (React Three Fiber 3D avatar with 7 states including 'error')
 
+### Video Recording System (December 2025)
+Complete automated video recording system using Playwright's recordVideo capability for capturing real customer journeys.
+
+**Architecture (MB.MD Patterns 28, 38, 41):**
+- Pattern 28: Hierarchical Execution - Replit AI (strategic) → Mr. Blue (tactical) → Video agents (execution)
+- Pattern 38: E2E Testing Infrastructure - Playwright video recording
+- Pattern 41: Parallel Execution - All journey recordings run simultaneously
+
+**Core Components:**
+- Journey Schema: scripts/journey-schema.ts - YAML parser for journey definitions
+- Video Recorder: scripts/video-recorder.ts - Playwright recordVideo integration
+- Video Service: server/services/video/VideoRecordingService.ts - Recording orchestration + FFmpeg conversion
+- Video Routes: server/routes/video-recording-routes.ts - API endpoints for recording management
+
+**Journey Types (8 total):**
+1. **Customer Journeys (4):** signup, event-discovery, mr-blue-chat, profile-view
+2. **Marketing Journeys (2):** tango-map-promo, community-showcase (Facebook faceless content)
+3. **Tour Journeys (2):** app-onboarding, feature-highlights (Mr. Blue guided tours)
+
+**API Endpoints:**
+- GET /api/videos/recording/library - List all recorded videos
+- GET /api/videos/recording/journeys/available - List available journey definitions
+- POST /api/videos/recording/record - Trigger single journey recording
+- POST /api/videos/recording/record-all - Batch record all journeys
+
+**Directory Structure:**
+- journeys/customer/ - Customer journey YAMLs
+- journeys/marketing/ - Marketing journey YAMLs
+- journeys/tours/ - Mr. Blue tour YAMLs
+- public/videos/customer/ - Recorded customer videos (.mp4)
+- public/videos/marketing/ - Recorded marketing videos (.mp4)
+- public/videos/tours/ - Recorded tour videos (.mp4)
+- public/videos/manifest.json - Video library metadata
+
+**Video Workflow:**
+1. Journey YAML defines steps (navigate, click, type, scroll, wait)
+2. Playwright recordVideo captures .webm during execution
+3. FFmpeg converts .webm → .mp4 for browser compatibility
+4. Manifest.json updated with recording metadata
+5. VideoDemoModal plays .mp4 via HTML5 video element
+
+**VideoDemoModal Video Player Controls:**
+- data-testid="video-player" - HTML5 video element
+- data-testid="video-play-pause" - Play/pause toggle
+- data-testid="video-progress-bar" - Seekable progress bar
+- data-testid="video-mute" - Mute/unmute
+- data-testid="video-restart" - Restart video
+- data-testid="video-fullscreen" - Fullscreen mode
+- data-testid="video-prev/next" - Journey navigation
+
 ## External Dependencies
 - **Infrastructure:** PostgreSQL, Redis, Cloudinary, OpenStreetMap
 - **Authentication:** Google OAuth, Facebook OAuth, JWT

@@ -1,0 +1,106 @@
+{
+  "version": "1.0.0",
+  "generatedAt": "2025-12-04T00:52:00.000Z",
+  "platform": "Mundo Tango",
+  "description": "Video Recording Library - Customer journeys, marketing content, and tours",
+  "journeys": [
+    {
+      "id": "signup",
+      "name": "User Signup Flow",
+      "description": "Complete registration journey with form validation and onboarding",
+      "type": "customer",
+      "videoFile": "customer/signup.mp4",
+      "thumbnailFile": null,
+      "duration": "~45 seconds",
+      "recordedAt": null,
+      "status": "pending"
+    },
+    {
+      "id": "event-discovery",
+      "name": "Event Discovery",
+      "description": "Browse and discover tango events worldwide",
+      "type": "customer",
+      "videoFile": "customer/event-discovery.mp4",
+      "thumbnailFile": null,
+      "duration": "~30 seconds",
+      "recordedAt": null,
+      "status": "pending"
+    },
+    {
+      "id": "mr-blue-chat",
+      "name": "Mr. Blue AI Chat",
+      "description": "Interactive conversation with Mr. Blue AI assistant",
+      "type": "customer",
+      "videoFile": "customer/mr-blue-chat.mp4",
+      "thumbnailFile": null,
+      "duration": "~25 seconds",
+      "recordedAt": null,
+      "status": "pending"
+    },
+    {
+      "id": "profile-view",
+      "name": "Profile View",
+      "description": "Navigate and interact with user profile features",
+      "type": "customer",
+      "videoFile": "customer/profile-view.mp4",
+      "thumbnailFile": null,
+      "duration": "~20 seconds",
+      "recordedAt": null,
+      "status": "pending"
+    },
+    {
+      "id": "tango-map-promo",
+      "name": "Global Tango Map Promo",
+      "description": "Promotional video showcasing the interactive global tango map",
+      "type": "marketing",
+      "videoFile": "marketing/tango-map-promo.mp4",
+      "thumbnailFile": null,
+      "duration": "~15 seconds",
+      "recordedAt": null,
+      "status": "pending"
+    },
+    {
+      "id": "community-showcase",
+      "name": "Community Features Showcase",
+      "description": "Promotional video highlighting community and connection features",
+      "type": "marketing",
+      "videoFile": "marketing/community-showcase.mp4",
+      "thumbnailFile": null,
+      "duration": "~14 seconds",
+      "recordedAt": null,
+      "status": "pending"
+    },
+    {
+      "id": "app-onboarding",
+      "name": "Mr. Blue App Onboarding Tour",
+      "description": "Mr. Blue welcomes new users and guides them through main features",
+      "type": "tour",
+      "videoFile": "tours/app-onboarding.mp4",
+      "thumbnailFile": null,
+      "duration": "~18 seconds",
+      "recordedAt": null,
+      "status": "pending"
+    },
+    {
+      "id": "feature-highlights",
+      "name": "Feature Highlights Tour",
+      "description": "Mr. Blue highlights the most powerful features of Mundo Tango",
+      "type": "tour",
+      "videoFile": "tours/feature-highlights.mp4",
+      "thumbnailFile": null,
+      "duration": "~18 seconds",
+      "recordedAt": null,
+      "status": "pending"
+    }
+  ],
+  "stats": {
+    "totalJourneys": 8,
+    "recorded": 0,
+    "pending": 8,
+    "categories": {
+      "customer": 4,
+      "marketing": 2,
+      "tour": 2
+    }
+  }
+}
