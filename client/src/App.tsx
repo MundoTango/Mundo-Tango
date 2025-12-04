@@ -773,16 +773,22 @@ function Router() {
       <Route path="/discover" component={DiscoverPage} />
       <Route path="/my-tasks" component={MyTasksPage} />
       <Route path="/gamification" component={GamificationDashboard} />
-      <Route path="/talent-match" component={TalentMatchPage} />
+      <Route path="/talent-match">
+        <AppLayout>
+          <TalentMatchPage />
+        </AppLayout>
+      </Route>
       <Route path="/mr-blue">
         <Suspense fallback={<LoadingFallback message="Loading Mr Blue..." />}>
           <UnifiedMrBlue />
         </Suspense>
       </Route>
       <Route path="/mr-blue-chat">
-        <Suspense fallback={<LoadingFallback />}>
-          <MrBlueChatPage />
-        </Suspense>
+        <AppLayout>
+          <Suspense fallback={<LoadingFallback />}>
+            <MrBlueChatPage />
+          </Suspense>
+        </AppLayout>
       </Route>
       <Route path="/video-studio" component={VideoStudio} />
       <Route path="/mr-blue-demo" component={MrBlueVideoDemo} />
@@ -791,7 +797,11 @@ function Router() {
       <Route path="/mr-blue-avatar-3d" component={MrBlueAvatar3DPage} />
       <Route path="/avatar-designer" component={AvatarDesignerPage} />
       <Route path="/premium-features" component={PremiumFeaturesPage} />
-      <Route path="/life-ceo" component={LifeCEODashboardPage} />
+      <Route path="/life-ceo">
+        <AppLayout>
+          <LifeCEODashboardPage />
+        </AppLayout>
+      </Route>
       <Route path="/life-ceo/health" component={HealthAgentPage} />
       <Route path="/life-ceo/finance" component={FinanceAgentPage} />
       <Route path="/life-ceo/career" component={CareerAgentPage} />
@@ -813,7 +823,11 @@ function Router() {
       <Route path="/life-ceo/relationship" component={RelationshipAgentPage} />
 
       <Route path="/ai-budget-builder" component={AIBudgetBuilder} />
-      <Route path="/enhanced-talent-match" component={EnhancedTalentMatch} />
+      <Route path="/enhanced-talent-match">
+        <AppLayout>
+          <EnhancedTalentMatch />
+        </AppLayout>
+      </Route>
       <Route path="/privacy-hub" component={PrivacyHub} />
 
       <Route path="/admin/talent-pipeline">
