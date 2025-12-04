@@ -50,6 +50,12 @@ Core features include social functionalities (events, groups, posts, notificatio
 ### Testing
 The platform utilizes E2E tests, automated unit test coverage via CI/CD, and visual regression testing with Playwright and Claude Computer Use for AI-powered validation. E2E testing involves page load, API, button/link, and content verification. The `run_test` tool is critical for E2E testing, handling environment setup and Stripe testing key injection automatically.
 
+**KNOWN ISSUE (Dec 2024)**: Replit's run_test infrastructure blocks ALL tests with "users need to provide Stripe testing secrets" error, even though:
+- STRIPE_SECRET_KEY, VITE_STRIPE_PUBLIC_KEY exist
+- TESTING_STRIPE_SECRET_KEY (sk_test_*), TESTING_VITE_STRIPE_PUBLIC_KEY (pk_test_*) exist
+- Stripe connection is properly configured (status: added)
+**Workaround**: Use curl-based API verification and manual browser testing until infrastructure issue is resolved.
+
 ### Production
 Production leverages GitHub Actions for CI/CD, Prometheus/Grafana with Sentry for monitoring, Replit Publishing for deployment, Redis for caching, and PostgreSQL (Neon) with Drizzle ORM.
 

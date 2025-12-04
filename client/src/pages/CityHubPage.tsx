@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, lazy, Suspense } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useLocation, useRoute } from "wouter";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Skeleton } from "@/components/ui/skeleton";
 import { 
   MapPin, 
   Calendar, 
@@ -19,12 +20,15 @@ import {
   Star,
   Clock,
   ArrowRight,
-  Globe
+  Globe,
+  Loader2
 } from "lucide-react";
 import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/UnifiedLocationPicker";
 import { getCityImageUrl } from "@/lib/cityImageMap";
 import { useAuth } from "@/contexts/AuthContext";
 import { format } from "date-fns";
+
+const CommunityMapWithLayers = lazy(() => import("@/components/map/CommunityMapWithLayers").then(m => ({ default: m.CommunityMapWithLayers })));
 
 interface CityData {
   city: string;
@@ -91,6 +95,65 @@ export default function CityHubPage() {
     if (!housing) return [];
     return Array.isArray(housing) ? housing.slice(0, 6) : [];
   }, [housing]);
+
+  const mapLocations = useMemo(() => {
+    const locations: any[] = [];
+    
+    if (events) {
+      events.forEach((item: any) => {
+        const event = item.event || item;
+        const lat = parseFloat(event.latitude);
+        const lng = parseFloat(event.longitude);
+        if (!isNaN(lat) && !isNaN(lng)) {
+          locations.push({
+            id: event.id,
+            type: 'event',
+            title: event.title || event.name,
+            city: event.city || selectedCity.city,
+            country: event.country || selectedCity.country,
+            coordinates: { lat, lng },
+            startDate: event.startDate || event.date,
+            eventType: event.eventType || event.type,
+            address: event.location || event.venue || event.address
+          });
+        }
+      });
+    }
+    
+    if (housing) {
+      const housingItems = Array.isArray(housing) ? housing : [];
+      housingItems.forEach((item: any) => {
+        const listing = item.listing || item;
+        const lat = parseFloat(listing.latitude);
+        const lng = parseFloat(listing.longitude);
+        if (!isNaN(lat) && !isNaN(lng)) {
+          locations.push({
+            id: `housing-${listing.id}`,
+            type: 'housing',
+            title: listing.title,
+            city: listing.city || selectedCity.city,
+            country: listing.country || selectedCity.country,
+            coordinates: { lat, lng },
+            address: listing.address,
+            housing: listing.pricePerNight
+          });
+        }
+      });
+    }
+    
+    return locations;
+  }, [events, housing, selectedCity]);
+
+  const mapCenter: [number, number] = useMemo(() => {
+    if (selectedCity.coords) {
+      return [selectedCity.coords.lat, selectedCity.coords.lng];
+    }
+    if (mapLocations.length > 0) {
+      const firstLoc = mapLocations[0];
+      return [firstLoc.coordinates.lat, firstLoc.coordinates.lng];
+    }
+    return [-34.6037, -58.3816];
+  }, [selectedCity.coords, mapLocations]);
 
   return (
     <main className="min-h-screen bg-background" data-testid="city-hub-page">
@@ -191,6 +254,41 @@ export default function CityHubPage() {
                   <p className="text-muted-foreground">
                     Use the search above to explore events, groups, and housing in any city
                   </p>
+                </CardContent>
+              </Card>
+            ) : viewMode === "map" ? (
+              <Card className="overflow-hidden" data-testid="section-map-view">
+                <CardHeader className="pb-2">
+                  <CardTitle className="flex items-center gap-2">
+                    <Map className="h-5 w-5 text-primary" />
+                    Map View - {selectedCity.city}
+                  </CardTitle>
+                  <CardDescription>
+                    {mapLocations.length} locations with coordinates • Events and housing shown
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="p-0">
+                  <div className="h-[500px] w-full">
+                    <Suspense fallback={
+                      <div className="h-full flex items-center justify-center bg-muted">
+                        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                      </div>
+                    }>
+                      <CommunityMapWithLayers
+                        locations={mapLocations}
+                        layers={[]}
+                        center={mapCenter}
+                        zoom={12}
+                        onCityClick={(loc) => {
+                          if (loc.type === 'housing') {
+                            window.location.href = `/housing/${String(loc.id).replace('housing-', '')}`;
+                          } else {
+                            window.location.href = `/events/${loc.id}`;
+                          }
+                        }}
+                      />
+                    </Suspense>
+                  </div>
                 </CardContent>
               </Card>
             ) : (
