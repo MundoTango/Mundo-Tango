@@ -1,0 +1,71 @@
+# Mundo Tango - Customer Journey: Sign Up
+# Records the user registration experience
+id: signup
+name: User Registration Journey
+description: Watch how easy it is to join the Mundo Tango community - from landing page to profile creation
+type: customer
+startPath: /
+
+viewport:
+  width: 1280
+  height: 720
+
+steps:
+  - action: wait
+    delay: 2000
+    description: Show landing page hero
+
+  - action: scroll
+    value: "400"
+    delay: 1000
+    description: Scroll to see more features
+
+  - action: scroll
+    value: "400"
+    delay: 1000
+    description: Continue scrolling
+
+  - action: navigate
+    target: /register
+    delay: 2000
+    description: Navigate to registration page
+
+  - action: wait
+    delay: 1500
+    description: Show registration form
+
+  - action: click
+    target: '[data-testid="input-email"]'
+    delay: 500
+    description: Focus email field
+
+  - action: type
+    target: '[data-testid="input-email"]'
+    value: dancer@example.com
+    delay: 1000
+    description: Type email address
+
+  - action: type
+    target: '[data-testid="input-password"]'
+    value: "SecureDance2024!"
+    delay: 1000
+    description: Type password
+
+  - action: wait
+    delay: 2000
+    description: Show completed form
+
+output:
+  filename: signup.mp4
+  format: mp4
+  thumbnail: true
+
+metadata:
+  duration: "~15 seconds"
+  category: onboarding
+  tags:
+    - registration
+    - getting-started
+    - onboarding
+  marketingUse: true
+  facebookOptimized: true
