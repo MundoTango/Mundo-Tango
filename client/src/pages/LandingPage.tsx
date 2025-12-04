@@ -158,11 +158,27 @@ export default function LandingPage() {
       popular: false
     },
     {
+      name: "Basic",
+      price: "$4.99",
+      period: "per month",
+      description: "Essential tango tools",
+      features: [
+        "Basic profile & messaging",
+        "Browse events",
+        "Join groups",
+        "Community access",
+        "Limited AI queries"
+      ],
+      cta: "Get Started",
+      popular: false
+    },
+    {
       name: "Dancer Pro",
       price: "$9.99",
       period: "per month",
       description: "For dedicated dancers",
       features: [
+        "Everything in Basic",
         "Unlimited AI assistant",
         "Advanced partner matching",
         "Housing marketplace access",
@@ -503,7 +519,7 @@ export default function LandingPage() {
             </div>
 
             {/* Pricing Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
               {pricingTiers.map((tier, index) => (
                 <motion.div key={index} variants={fadeInUp}>
                   <Card 

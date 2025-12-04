@@ -125,7 +125,7 @@ The platform includes a comprehensive Video Demo System implemented using MB.MD 
 
 **Design Principles:**
 - ZERO fake data policy enforced - all statistics from real database APIs
-- 7-day free trial (not 14-day) with accurate pricing tiers (Free Trial $0, Dancer Pro $9.99, Professional $29.99)
+- 7-day free trial with 4 pricing tiers: Free Trial $0, Basic $4.99, Dancer Pro $9.99, Professional $29.99
 - Ocean gradient theme with hover-elevate interactions
 - All CTAs link to /register with "Start 7-Day Trial" messaging
 
