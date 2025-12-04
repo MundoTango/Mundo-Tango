@@ -10,6 +10,7 @@ export function PublicNavbar() {
 
   const navItems = [
     { label: "Home", path: "/" },
+    { label: "Demos", path: "/demos" },
     { label: "About", path: "/about" },
     { label: "Pricing", path: "/pricing" },
     { label: "FAQ", path: "/faq" },

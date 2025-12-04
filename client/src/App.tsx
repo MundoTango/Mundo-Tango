@@ -40,6 +40,7 @@ const VisualEditorSplitPane = lazy(
 import NotFound from "@/pages/not-found";
 import HomePage from "@/pages/HomePage";
 import LandingPage from "@/pages/LandingPage";
+import DemosPage from "@/pages/DemosPage";
 import LoginPage from "@/pages/LoginPage";
 import RegisterPage from "@/pages/RegisterPage";
 import FacebookCallbackPage from "@/pages/auth/FacebookCallbackPage";
@@ -711,6 +712,7 @@ function Router() {
         <Redirect to="/landing" />
       </Route>
       <Route path="/landing" component={LandingPage} />
+      <Route path="/demos" component={DemosPage} />
       <Route path="/dashboard">
         <ProtectedRoute>
           <AppLayout>
