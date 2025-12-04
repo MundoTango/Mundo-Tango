@@ -75,6 +75,12 @@ const communityItems = [
     tooltip: "Explore the global tango community",
   },
   {
+    title: "City Hub",
+    url: "/city-hub",
+    icon: Map,
+    tooltip: "Explore cities, events, groups, and housing by location",
+  },
+  {
     title: "Events",
     url: "/events",
     icon: Calendar,

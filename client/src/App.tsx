@@ -140,6 +140,7 @@ const EventSeriesPage = lazy(() => import("@/pages/EventSeriesPage"));
 // Community & Events Pages (Pages 11-20)
 const CommunityMapPage = lazy(() => import("@/pages/CommunityMapPage"));
 const CityGroupsPage = lazy(() => import("@/pages/CityGroupsPage"));
+const CityHubPage = lazy(() => import("@/pages/CityHubPage"));
 const ProfessionalGroupsPage = lazy(
   () => import("@/pages/ProfessionalGroupsPage"),
 );
@@ -1113,6 +1114,13 @@ function Router() {
         </ProtectedRoute>
       </Route>
 
+      <Route path="/city-hub">
+        <ProtectedRoute>
+          <AppLayout>
+            <CityHubPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
       <Route path="/city-groups">
         <ProtectedRoute>
           <AppLayout>
