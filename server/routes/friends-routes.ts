@@ -71,6 +71,15 @@ export function createFriendsRoutes(storage: IStorage) {
       });
       res.json(request);
     } catch (error: any) {
+      if (error.message === 'Friend request already exists') {
+        return res.status(409).json({ error: 'You have already sent a friend request to this user' });
+      }
+      if (error.message === 'Cannot send friend request to yourself') {
+        return res.status(400).json({ error: 'Cannot send friend request to yourself' });
+      }
+      if (error.message === 'Already friends') {
+        return res.status(409).json({ error: 'You are already friends with this user' });
+      }
       res.status(500).json({ error: error.message });
     }
   });

@@ -154,6 +154,7 @@ const HousingListingDetailPage = lazy(
   () => import("@/pages/HousingListingDetailPage"),
 );
 const HousingSearchPage = lazy(() => import("@/pages/HousingSearchPage"));
+const CreateListingPage = lazy(() => import("@/pages/housing/CreateListingPage"));
 
 // Week 9 Day 5: Stories, Live Streams, Saved Posts
 const StoriesPage = lazy(() => import("@/pages/StoriesPage"));
@@ -1150,6 +1151,22 @@ function Router() {
         <ProtectedRoute>
           <AppLayout>
             <HousingListingDetailPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/housing/new">
+        <ProtectedRoute>
+          <AppLayout>
+            <CreateListingPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/housing/my-listings">
+        <ProtectedRoute>
+          <AppLayout>
+            <HostHomePage />
           </AppLayout>
         </ProtectedRoute>
       </Route>

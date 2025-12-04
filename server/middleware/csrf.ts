@@ -236,11 +236,15 @@ export function verifyDoubleSubmitCookie(req: Request, res: Response, next: Next
   const journeyEndpoints = ["/api/journey"]; // Internal API for recording development progress
   const travelScrapingEndpoints = ["/api/travel/scrape-accommodation", "/api/travel/scrape-transport"];
   const eventSeriesEndpoints = ["/api/event-series"]; // Event series management (TRACK A)
+  const talentMatchEndpoints = ["/api/v1/volunteers", "/api/v1/clarifier", "/api/talent-match"]; // Talent Match system (JWT protected)
+  const friendsEndpoints = ["/api/friends"]; // Friends system (JWT protected)
   const isAuthEndpoint = authEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint));
   const isJourneyEndpoint = journeyEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint));
   const isTravelScrapingEndpoint = travelScrapingEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint));
   const isEventSeriesEndpoint = eventSeriesEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint));
-  const shouldBypass = isAuthEndpoint || isJourneyEndpoint || isTravelScrapingEndpoint || isEventSeriesEndpoint;
+  const isTalentMatchEndpoint = talentMatchEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint));
+  const isFriendsEndpoint = friendsEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint));
+  const shouldBypass = isAuthEndpoint || isJourneyEndpoint || isTravelScrapingEndpoint || isEventSeriesEndpoint || isTalentMatchEndpoint || isFriendsEndpoint;
   
   console.log(`[CSRF DEBUG] isDev=${isDev}, url=${req.originalUrl}, isAuthEndpoint=${isAuthEndpoint}, isJourneyEndpoint=${isJourneyEndpoint}, shouldBypass=${shouldBypass}`);
   
