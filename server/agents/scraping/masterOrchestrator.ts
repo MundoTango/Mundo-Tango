@@ -44,13 +44,15 @@ export class ScrapingOrchestrator {
       const instagramSources = sources.filter(s => s.platform === 'instagram');
       const websiteSources = sources.filter(s => s.platform === 'website');
       const eventPlatformSources = sources.filter(s => ['eventbrite', 'meetup'].includes(s.platform || ''));
+      const rssSources = sources.filter(s => s.platform === 'rss' || s.rssUrl);
 
       // Step 3: Execute scraping in parallel batches
       const results = await Promise.allSettled([
         this.scrapeSourceBatch(facebookSources, 'agent-118'), // Social Scraper
         this.scrapeSourceBatch(instagramSources, 'agent-118'), // Social Scraper
         this.scrapeSourceBatch(websiteSources, 'agent-116'), // Static Scraper
-        this.scrapeSourceBatch(eventPlatformSources, 'agent-117') // JS Scraper
+        this.scrapeSourceBatch(eventPlatformSources, 'agent-117'), // JS Scraper
+        this.scrapeSourceBatch(rssSources, 'rss-service') // RSS Feed Service
       ]);
 
       // Step 4: Collect statistics
@@ -94,6 +96,8 @@ export class ScrapingOrchestrator {
           result = await this.invokeJSScraper(source);
         } else if (agentId === 'agent-118') {
           result = await this.invokeSocialScraper(source);
+        } else if (agentId === 'rss-service') {
+          result = await this.invokeRSSScraper(source);
         }
 
         eventsScraped += result || 0;
@@ -140,6 +144,15 @@ export class ScrapingOrchestrator {
     const { socialScraper } = await import('./socialScraper');
     console.log(`[Agent #115 → #118] Scraping social platform: ${source.name}`);
     return await socialScraper.scrape(source);
+  }
+
+  /**
+   * Invoke RSS Feed Service
+   */
+  private async invokeRSSScraper(source: any): Promise<number> {
+    const { rssFeedService } = await import('../../services/scraping/RSSFeedService');
+    console.log(`[Agent #115 → RSS] Scraping RSS feed: ${source.name}`);
+    return await rssFeedService.scrapeRSSSource(source);
   }
 
   /**

@@ -6,12 +6,47 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar, MapPin, Users, Share2, DollarSign, CheckCircle2, XCircle, HelpCircle, MessageCircle, Info } from "lucide-react";
+import { Calendar, MapPin, Users, Share2, DollarSign, CheckCircle2, XCircle, HelpCircle, MessageCircle, Info, ExternalLink, Globe } from "lucide-react";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { EventPostFeed } from "@/components/events/EventPostFeed";
 import { useAuth } from "@/contexts/AuthContext";
+
+interface SourceInfo {
+  url: string;
+  name: string;
+  scrapedAt?: string;
+  externalId?: string;
+}
+
+function parseSourceUrl(sourceUrl: string | null | undefined): SourceInfo[] {
+  if (!sourceUrl) return [];
+  
+  try {
+    if (sourceUrl.startsWith('[')) {
+      return JSON.parse(sourceUrl);
+    }
+    return [{ url: sourceUrl, name: 'Unknown', scrapedAt: new Date().toISOString() }];
+  } catch {
+    return [{ url: sourceUrl, name: 'Unknown', scrapedAt: new Date().toISOString() }];
+  }
+}
+
+function extractSiteName(url: string, fallbackName?: string): string {
+  if (fallbackName && fallbackName !== 'Unknown') {
+    return fallbackName;
+  }
+  
+  try {
+    const hostname = new URL(url).hostname;
+    const parts = hostname.replace(/^www\./, '').split('.');
+    const siteName = parts.length > 1 ? parts[parts.length - 2] : parts[0];
+    return siteName.charAt(0).toUpperCase() + siteName.slice(1);
+  } catch {
+    return 'Source';
+  }
+}
 
 export default function EventDetailPage() {
   const { id } = useParams();
@@ -219,6 +254,47 @@ export default function EventDetailPage() {
                     </div>
                   </>
                 )}
+
+                {(() => {
+                  const sources = parseSourceUrl(event.sourceUrl);
+                  if (sources.length === 0) return null;
+                  
+                  return (
+                    <>
+                      <Separator />
+                      <div className="space-y-4">
+                        <div className="flex items-center gap-2">
+                          <Globe className="h-4 w-4 text-muted-foreground" />
+                          <h3 className="font-semibold text-lg">Found on</h3>
+                        </div>
+                        <div className="flex flex-wrap gap-2" data-testid="source-urls-container">
+                          {sources.map((source, index) => (
+                            <a
+                              key={`${source.url}-${index}`}
+                              href={source.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              data-testid={`source-link-${index}`}
+                            >
+                              <Badge 
+                                variant="secondary" 
+                                className="cursor-pointer gap-1.5"
+                              >
+                                <ExternalLink className="h-3 w-3" />
+                                {extractSiteName(source.url, source.name)}
+                              </Badge>
+                            </a>
+                          ))}
+                        </div>
+                        {sources.length > 1 && (
+                          <p className="text-xs text-muted-foreground">
+                            This event was found on {sources.length} different sources
+                          </p>
+                        )}
+                      </div>
+                    </>
+                  );
+                })()}
               </CardContent>
             </Card>
           </TabsContent>

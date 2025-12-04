@@ -119,6 +119,11 @@ export function verifyCsrfToken(req: Request, res: Response, next: NextFunction)
     if (locationEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
       return next();
     }
+    // Skip CSRF for event series endpoints in development (TRACK A)
+    const eventSeriesEndpoints = ["/api/event-series"];
+    if (eventSeriesEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
+      return next();
+    }
   }
   
   const sessionId = (req as any).session?.id || req.ip;
@@ -230,10 +235,12 @@ export function verifyDoubleSubmitCookie(req: Request, res: Response, next: Next
   const authEndpoints = ["/api/auth/login", "/api/auth/register", "/api/auth/refresh"];
   const journeyEndpoints = ["/api/journey"]; // Internal API for recording development progress
   const travelScrapingEndpoints = ["/api/travel/scrape-accommodation", "/api/travel/scrape-transport"];
+  const eventSeriesEndpoints = ["/api/event-series"]; // Event series management (TRACK A)
   const isAuthEndpoint = authEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint));
   const isJourneyEndpoint = journeyEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint));
   const isTravelScrapingEndpoint = travelScrapingEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint));
-  const shouldBypass = isAuthEndpoint || isJourneyEndpoint || isTravelScrapingEndpoint;
+  const isEventSeriesEndpoint = eventSeriesEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint));
+  const shouldBypass = isAuthEndpoint || isJourneyEndpoint || isTravelScrapingEndpoint || isEventSeriesEndpoint;
   
   console.log(`[CSRF DEBUG] isDev=${isDev}, url=${req.originalUrl}, isAuthEndpoint=${isAuthEndpoint}, isJourneyEndpoint=${isJourneyEndpoint}, shouldBypass=${shouldBypass}`);
   

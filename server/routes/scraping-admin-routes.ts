@@ -6,6 +6,7 @@ import { eq, sql, desc, and, gte } from 'drizzle-orm';
 import { scrapingOrchestrator } from '../agents/scraping/masterOrchestrator';
 import { cityGroupEnrichmentService } from '../services/scraping/CityGroupEnrichmentService';
 import { deduplicator } from '../agents/scraping/deduplicator';
+import { rssFeedService } from '../services/scraping/RSSFeedService';
 
 const router = Router();
 
@@ -347,6 +348,166 @@ router.post('/admin/scraping/community-data/:id/approve', authenticateToken, asy
   } catch (error) {
     console.error('Community data approval error:', error);
     res.status(500).json({ error: 'Failed to approve community data' });
+  }
+});
+
+router.post('/admin/scraping/rss-sources', authenticateToken, async (req: AuthRequest, res) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, userId)
+    });
+
+    if (!user || user.role !== 'super_admin') {
+      return res.status(403).json({ error: 'Forbidden: Super Admin access required' });
+    }
+
+    const { name, rssUrl, websiteUrl, country, city } = req.body;
+
+    if (!name || !rssUrl) {
+      return res.status(400).json({ 
+        error: 'Missing required fields',
+        required: ['name', 'rssUrl'],
+        optional: ['websiteUrl', 'country', 'city']
+      });
+    }
+
+    const result = await rssFeedService.addRSSSource({
+      name,
+      rssUrl,
+      websiteUrl,
+      country,
+      city
+    });
+
+    if (!result.success) {
+      return res.status(400).json({ 
+        error: result.error || 'Failed to add RSS source'
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'RSS source added successfully',
+      source: result.source,
+      timestamp: new Date().toISOString()
+    });
+
+  } catch (error) {
+    console.error('RSS source add error:', error);
+    res.status(500).json({ error: 'Failed to add RSS source' });
+  }
+});
+
+router.get('/admin/scraping/rss-sources', authenticateToken, async (req: AuthRequest, res) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, userId)
+    });
+
+    if (!user || user.role !== 'super_admin') {
+      return res.status(403).json({ error: 'Forbidden: Super Admin access required' });
+    }
+
+    const sources = await rssFeedService.getRSSSources();
+
+    res.json({
+      success: true,
+      count: sources.length,
+      sources
+    });
+
+  } catch (error) {
+    console.error('RSS sources fetch error:', error);
+    res.status(500).json({ error: 'Failed to fetch RSS sources' });
+  }
+});
+
+router.post('/admin/scraping/rss-validate', authenticateToken, async (req: AuthRequest, res) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, userId)
+    });
+
+    if (!user || user.role !== 'super_admin') {
+      return res.status(403).json({ error: 'Forbidden: Super Admin access required' });
+    }
+
+    const { feedUrl } = req.body;
+
+    if (!feedUrl) {
+      return res.status(400).json({ error: 'feedUrl is required' });
+    }
+
+    const result = await rssFeedService.validateFeed(feedUrl);
+
+    res.json({
+      success: true,
+      ...result,
+      timestamp: new Date().toISOString()
+    });
+
+  } catch (error) {
+    console.error('RSS validation error:', error);
+    res.status(500).json({ error: 'Failed to validate RSS feed' });
+  }
+});
+
+router.post('/admin/scraping/rss-scrape/:id', authenticateToken, async (req: AuthRequest, res) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, userId)
+    });
+
+    if (!user || user.role !== 'super_admin') {
+      return res.status(403).json({ error: 'Forbidden: Super Admin access required' });
+    }
+
+    const { id } = req.params;
+    
+    const source = await db.query.eventScrapingSources.findFirst({
+      where: and(
+        eq(eventScrapingSources.id, Number(id)),
+        eq(eventScrapingSources.platform, 'rss')
+      )
+    });
+
+    if (!source) {
+      return res.status(404).json({ error: 'RSS source not found' });
+    }
+
+    const eventsScraped = await rssFeedService.scrapeRSSSource(source);
+
+    res.json({
+      success: true,
+      message: `Scraped ${eventsScraped} events from ${source.name}`,
+      sourceId: source.id,
+      eventsScraped,
+      timestamp: new Date().toISOString()
+    });
+
+  } catch (error) {
+    console.error('RSS scrape error:', error);
+    res.status(500).json({ error: 'Failed to scrape RSS source' });
   }
 });
 

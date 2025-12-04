@@ -590,30 +590,39 @@ export const reportedProfiles = pgTable(
 // EVENT SERIES (for grouping recurring events)
 // ============================================================================
 
+export const recurrenceTypeEnum = pgEnum("recurrence_type", [
+  "weekly",
+  "monthly",
+  "yearly",
+]);
+
 export const eventSeries = pgTable(
   "event_series",
   {
     id: serial("id").primaryKey(),
     name: varchar("name", { length: 255 }).notNull(),
+    slug: varchar("slug", { length: 255 }).unique(),
     description: text("description"),
-    recurrencePattern: varchar("recurrence_pattern", { length: 50 }),
-    parentEventId: integer("parent_event_id"),
-    groupId: integer("group_id").references(() => groups.id),
-    organizerId: integer("organizer_id").references(() => users.id),
-    venue: varchar("venue", { length: 255 }),
+    coverPhotoUrl: text("cover_photo_url"),
+    recurrenceType: recurrenceTypeEnum("recurrence_type").default("weekly"),
+    recurrenceDay: integer("recurrence_day"),
+    venueId: integer("venue_id").references(() => venues.id),
     city: varchar("city", { length: 255 }),
     country: varchar("country", { length: 255 }),
-    dayOfWeek: integer("day_of_week"),
-    startTime: varchar("start_time", { length: 10 }),
-    endTime: varchar("end_time", { length: 10 }),
+    latitude: numeric("latitude", { precision: 10, scale: 7 }),
+    longitude: numeric("longitude", { precision: 10, scale: 7 }),
+    organizerId: integer("organizer_id").references(() => users.id),
+    isClaimed: boolean("is_claimed").default(false),
     isActive: boolean("is_active").default(true),
     createdAt: timestamp("created_at").defaultNow(),
     updatedAt: timestamp("updated_at").defaultNow(),
   },
   (table) => ({
     nameIdx: index("event_series_name_idx").on(table.name),
-    groupIdx: index("event_series_group_idx").on(table.groupId),
+    slugIdx: index("event_series_slug_idx").on(table.slug),
+    organizerIdx: index("event_series_organizer_idx").on(table.organizerId),
     cityIdx: index("event_series_city_idx").on(table.city),
+    venueIdx: index("event_series_venue_idx").on(table.venueId),
   }),
 );
 
@@ -13234,6 +13243,7 @@ export const eventScrapingSources = pgTable(
     id: serial("id").primaryKey(),
     name: varchar("name", { length: 255 }).notNull(),
     url: varchar("url", { length: 500 }).notNull(),
+    rssUrl: varchar("rss_url", { length: 500 }),
     platform: varchar("platform", { length: 50 }).notNull(),
     country: varchar("country", { length: 100 }),
     city: varchar("city", { length: 100 }),

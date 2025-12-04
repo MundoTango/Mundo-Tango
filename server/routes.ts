@@ -131,6 +131,7 @@ import healthDataRoutes from "./routes/health-routes";
 import nutritionRoutes from "./routes/nutrition-routes";
 import eventRoutes from "./routes/event-routes";
 import eventRolesRoutes from "./routes/event-roles-routes";
+import eventSeriesRoutes from "./routes/event-series";
 import groupRoutes from "./routes/group-routes";
 import { cityGroupDataIngestionService } from "./services/city-group-data-ingestion";
 import mapRoutes from "./routes/map-routes";
@@ -1027,6 +1028,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // AGENT 10: Events & Groups Systems
   app.use("/api/events", eventRoutes);
+  app.use("/api/event-series", eventSeriesRoutes);
   app.use("/api", eventRolesRoutes); // Event participant roles
   app.use("/api/groups", groupRoutes);
   app.use("/api/map", mapRoutes); // Community map markers
