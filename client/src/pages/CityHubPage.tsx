@@ -587,19 +587,70 @@ export default function CityHubPage() {
             </Card>
           </TabsContent>
 
-          <TabsContent value="visitors" data-testid="content-visitors">
-            <Card>
-              <CardContent className="py-8 text-center">
-                <Plane className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                <h3 className="text-lg font-semibold mb-2">Visitors to {selectedCity.city || "your city"}</h3>
-                <p className="text-muted-foreground mb-4">See who's visiting and plan meetups</p>
-                <Button asChild>
-                  <Link href={`/travel?destination=${encodeURIComponent(selectedCity.city || "")}`}>
-                    View Travelers
-                  </Link>
-                </Button>
-              </CardContent>
-            </Card>
+          <TabsContent value="visitors" className="space-y-6" data-testid="content-visitors">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-semibold flex items-center gap-2">
+                <Plane className="h-5 w-5 text-primary" />
+                All Upcoming Visitors to {selectedCity.city || "City"}
+              </h2>
+              <Button variant="outline" asChild data-testid="button-plan-visit">
+                <Link href="/travel/plan">
+                  Plan Your Visit
+                </Link>
+              </Button>
+            </div>
+            
+            {visitorsLoading ? (
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                  <Card key={i} className="animate-pulse">
+                    <CardContent className="flex items-center gap-4 py-4">
+                      <Skeleton className="h-12 w-12 rounded-full" />
+                      <div className="space-y-2 flex-1">
+                        <Skeleton className="h-4 w-3/4" />
+                        <Skeleton className="h-3 w-1/2" />
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            ) : visitors && visitors.length > 0 ? (
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {visitors.map((visitor: any) => (
+                  <Card key={visitor.id} className="hover-elevate" data-testid={`card-visitor-full-${visitor.id}`}>
+                    <CardContent className="flex items-center gap-4 py-4">
+                      <Avatar className="h-12 w-12">
+                        <AvatarImage src={visitor.profileImage} />
+                        <AvatarFallback className="text-lg">{visitor.name?.charAt(0) || "V"}</AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 min-w-0">
+                        <Link href={`/profile/${visitor.userId}`} className="hover:underline">
+                          <p className="font-medium truncate">{visitor.name}</p>
+                        </Link>
+                        <p className="text-sm text-muted-foreground flex items-center gap-1">
+                          <Calendar className="h-3 w-3" />
+                          {visitor.arrivalDate ? format(new Date(visitor.arrivalDate), "MMM d") : "Soon"}
+                          {visitor.departureDate && ` - ${format(new Date(visitor.departureDate), "MMM d")}`}
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              <Card className="text-center py-12">
+                <CardContent>
+                  <Plane className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
+                  <h3 className="text-lg font-semibold mb-2">No Upcoming Visitors</h3>
+                  <p className="text-muted-foreground mb-4">
+                    Be the first to plan a trip to {selectedCity.city}!
+                  </p>
+                  <Button asChild>
+                    <Link href="/travel/plan">Plan Your Visit</Link>
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
           </TabsContent>
         </Tabs>
       </div>

@@ -115,6 +115,62 @@ router.get("/plans", async (req: AuthRequest, res: Response) => {
   }
 });
 
+// GET /api/travel/upcoming-visitors - Get people visiting a specific city
+router.get("/upcoming-visitors", async (req: AuthRequest, res: Response) => {
+  try {
+    const { city } = req.query;
+    
+    if (!city || typeof city !== 'string') {
+      return res.json([]);
+    }
+
+    const now = new Date();
+    
+    // Find all travel plans to this city with future start dates
+    const visitors = await db.select({
+      id: travelPlans.id,
+      userId: travelPlans.userId,
+      name: users.name,
+      username: users.username,
+      profileImage: users.profileImage,
+      city: travelPlans.city,
+      country: travelPlans.country,
+      startDate: travelPlans.startDate,
+      endDate: travelPlans.endDate,
+      visibility: travelPlans.visibility,
+    })
+    .from(travelPlans)
+    .innerJoin(users, eq(travelPlans.userId, users.id))
+    .where(and(
+      ilike(travelPlans.city, `%${city}%`),
+      gte(travelPlans.startDate, now),
+      or(
+        eq(travelPlans.visibility, 'public'),
+        eq(travelPlans.visibility, 'friends')
+      )
+    ))
+    .orderBy(travelPlans.startDate)
+    .limit(20);
+
+    // Transform to visitor format
+    const visitorList = visitors.map(v => ({
+      id: v.id,
+      userId: v.userId,
+      name: v.name || v.username || 'Traveler',
+      profileImage: v.profileImage,
+      arrivalDate: v.startDate,
+      departureDate: v.endDate,
+      city: v.city,
+      country: v.country,
+    }));
+
+    res.json(visitorList);
+  } catch (error) {
+    console.error("Error fetching upcoming visitors:", error);
+    res.status(500).json({ message: "Failed to fetch visitors" });
+  }
+});
+
 // GET /api/travel/plans/:id - Get single travel plan (auth required)
 router.get("/plans/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
