@@ -433,4 +433,143 @@ router.patch("/:id/booking-requests/:requestId", authenticateToken, async (req: 
   }
 });
 
+/**
+ * GET /api/users/professionals/:role
+ * Get all professionals for a specific role (public endpoint)
+ */
+router.get("/professionals/:role", async (req: Request, res: Response) => {
+  try {
+    const role = req.params.role;
+    const city = req.query.city as string | undefined;
+    const limit = parseInt(req.query.limit as string || '50');
+
+    const conditions = [sql`${users.tangoRoles} @> ARRAY[${role}]::text[]`];
+    if (city) {
+      conditions.push(eq(users.city, city));
+    }
+
+    const professionals = await db
+      .select({
+        id: users.id,
+        name: users.name,
+        username: users.username,
+        profileImage: users.profileImage,
+        city: users.city,
+        country: users.country,
+        bio: users.bio,
+        tangoRoles: users.tangoRoles,
+      })
+      .from(users)
+      .where(and(...conditions))
+      .limit(limit);
+
+    const enrichedProfessionals = await Promise.all(
+      professionals.map(async (p) => {
+        let avgRating = 0;
+        let totalReviews = 0;
+        let eventCount = 0;
+
+        try {
+          const userReviews = await db
+            .select({ rating: reviews.rating })
+            .from(reviews)
+            .where(
+              and(
+                eq(reviews.targetType, 'user'),
+                eq(reviews.targetId, p.id)
+              )
+            );
+
+          if (userReviews.length > 0) {
+            totalReviews = userReviews.length;
+            avgRating = userReviews.reduce((sum, r) => sum + (r.rating || 0), 0) / userReviews.length;
+          }
+        } catch (e) {}
+
+        try {
+          const eventParticipationsTable = await tableExists('event_participants');
+          if (eventParticipationsTable) {
+            const [result] = await db
+              .select({ count: sql<number>`COUNT(*)::int` })
+              .from(eventParticipants)
+              .where(
+                and(
+                  eq(eventParticipants.userId, p.id),
+                  eq(eventParticipants.role, role)
+                )
+              );
+            eventCount = result?.count || 0;
+          }
+        } catch (e) {}
+
+        return {
+          ...p,
+          rating: parseFloat(avgRating.toFixed(1)),
+          reviewCount: totalReviews,
+          eventCount,
+          yearsExperience: 0,
+        };
+      })
+    );
+
+    enrichedProfessionals.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+
+    res.json(enrichedProfessionals);
+  } catch (error: any) {
+    console.error("[PRO] Error fetching professionals:", error);
+    res.status(500).json({ error: "Failed to fetch professionals" });
+  }
+});
+
+/**
+ * GET /api/users/pro-groups/:role
+ * Get info about a specific PRO group by role (public endpoint)
+ */
+router.get("/pro-groups/:role", async (req: Request, res: Response) => {
+  try {
+    const role = req.params.role;
+    const { groups, groupMembers } = await import("@shared/schema");
+
+    const [proGroup] = await db
+      .select({
+        group: groups,
+        memberCount: sql<number>`(
+          SELECT COUNT(*)::int 
+          FROM ${groupMembers} 
+          WHERE ${groupMembers.groupId} = ${groups.id}
+          AND ${groupMembers.status} = 'active'
+        )`.as("member_count"),
+      })
+      .from(groups)
+      .where(
+        and(
+          or(eq(groups.type, "role"), eq(groups.type, "professional")),
+          or(eq(groups.slug, role), sql`${groups.name} ILIKE ${`%${role}%`}`)
+        )
+      )
+      .limit(1);
+
+    if (!proGroup) {
+      return res.json({ 
+        name: role.charAt(0).toUpperCase() + role.slice(1) + 's',
+        slug: role,
+        memberCount: 0,
+        description: `Connect with ${role}s in the tango community`
+      });
+    }
+
+    res.json({
+      id: proGroup.group.id,
+      name: proGroup.group.name,
+      slug: proGroup.group.slug,
+      description: proGroup.group.description,
+      memberCount: proGroup.memberCount || 0,
+      coverImage: proGroup.group.coverImage,
+    });
+  } catch (error: any) {
+    console.error("[PRO] Error fetching PRO group:", error);
+    res.status(500).json({ error: "Failed to fetch PRO group" });
+  }
+});
+
 export default router;

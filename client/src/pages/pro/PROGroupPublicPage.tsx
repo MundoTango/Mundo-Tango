@@ -50,11 +50,11 @@ export function PROGroupPublicPage({ roleSlug, title, description, icon: Icon, c
   const isMember = profile?.tangoRoles?.includes(roleSlug);
 
   const { data: professionals, isLoading } = useQuery<Professional[]>({
-    queryKey: ['/api/professionals', roleSlug],
+    queryKey: ['/api/users/professionals', roleSlug],
   });
 
   const { data: groupInfo } = useQuery({
-    queryKey: ['/api/pro-groups', roleSlug],
+    queryKey: ['/api/users/pro-groups', roleSlug],
   });
 
   const filteredProfessionals = professionals?.filter(p => {
