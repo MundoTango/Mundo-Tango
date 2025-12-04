@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { PublicNavbar } from "@/components/PublicNavbar";
 import { DemoModal } from "@/components/marketing/DemoModal";
+import { VideoDemoModal } from "@/components/marketing/VideoDemoModal";
 import { 
   MapPin, Users, Calendar, Home, Briefcase, Video, 
   Bot, Globe, Check, ArrowRight, Play,
@@ -19,6 +20,8 @@ import { useQuery } from "@tanstack/react-query";
 
 export default function LandingPage() {
   const [demoModalOpen, setDemoModalOpen] = useState(false);
+  const [videoModalOpen, setVideoModalOpen] = useState(false);
+  const [selectedVideoDemo, setSelectedVideoDemo] = useState<number>(0);
 
   // Set page title
   useEffect(() => {
@@ -560,23 +563,46 @@ export default function LandingPage() {
               </motion.p>
             </div>
 
-            {/* Screenshots Grid */}
+            {/* Video Demo Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {screenshots.map((screenshot, index) => {
                 const IconComponent = screenshot.icon;
                 return (
                   <motion.div key={index} variants={fadeInUp}>
-                    <Card className="h-full overflow-hidden hover-elevate" data-testid={`screenshot-${index}`}>
+                    <Card 
+                      className="h-full overflow-hidden hover-elevate cursor-pointer group" 
+                      data-testid={`video-demo-${index}`}
+                      onClick={() => {
+                        setSelectedVideoDemo(index);
+                        setVideoModalOpen(true);
+                      }}
+                    >
                       <div className={`h-48 bg-gradient-to-br ${screenshot.gradient} relative overflow-hidden`}>
                         {screenshot.image && (
                           <img 
                             src={screenshot.image} 
                             alt={screenshot.title}
-                            className="absolute inset-0 w-full h-full object-cover object-top"
+                            className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-105"
                             loading="lazy"
                           />
                         )}
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                        
+                        {/* Video Play Overlay */}
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="w-16 h-16 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-lg transition-all duration-300 group-hover:scale-110 group-hover:bg-white">
+                            <Play className="h-7 w-7 text-primary ml-1" fill="currentColor" />
+                          </div>
+                        </div>
+                        
+                        {/* Video Duration Badge */}
+                        <div className="absolute top-3 right-3">
+                          <Badge className="bg-black/60 text-white border-0 text-xs">
+                            <Video className="h-3 w-3 mr-1" />
+                            Demo
+                          </Badge>
+                        </div>
+                        
                         <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
                           <div className="flex items-center gap-2">
                             <div className="w-8 h-8 rounded-lg bg-white/20 backdrop-blur-sm flex items-center justify-center">
@@ -589,6 +615,9 @@ export default function LandingPage() {
                       <CardContent className="pt-4">
                         <h3 className="font-semibold text-lg">{screenshot.title}</h3>
                         <p className="text-sm text-muted-foreground mt-1">{screenshot.description}</p>
+                        <p className="text-xs text-primary mt-2 flex items-center gap-1 group-hover:underline">
+                          <Play className="h-3 w-3" /> Watch demo
+                        </p>
                       </CardContent>
                     </Card>
                   </motion.div>
@@ -771,6 +800,12 @@ export default function LandingPage() {
       </footer>
 
       <DemoModal open={demoModalOpen} onOpenChange={setDemoModalOpen} />
+      <VideoDemoModal 
+        open={videoModalOpen} 
+        onOpenChange={setVideoModalOpen}
+        initialSlide={selectedVideoDemo}
+        screenshots={screenshots}
+      />
     </div>
   );
 }
