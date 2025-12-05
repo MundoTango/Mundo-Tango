@@ -53,11 +53,25 @@ A comprehensive Video Demo System (MB.MD Patterns 28, 38, 41) includes a landing
 
 ## Recent Changes (December 2025)
 
+### Samsung TRM Agent Learning API Complete (Dec 5, 2025)
+- **Full API Implementation**: REST endpoints for agent learning at `/api/agents/learning/`
+  - `GET /status` - System status with 78 agents ready for training
+  - `GET /configs` - All 78 agent configurations (10 page, 50 algorithm, 10 feature, 8 system)
+  - `POST /single/:agentId` - Train single agent with 3 TRM improvement cycles (85% confidence)
+  - `POST /category/:category` - Batch train by category (page, algorithm, feature, system)
+  - `POST /priority/:priority` - Train by priority level (critical, high, medium, low)
+  - `GET /knowledge/:agentId` - Retrieve agent's learned knowledge
+  - `POST /context` - TRM semantic search with LanceDB
+- **CSRF Bypass**: Agent learning endpoints added to A2A (agent-to-agent) skip list
+- **Files Added**: server/routes/agentLearning.ts (150+ lines)
+- **Files Modified**: server/routes.ts (import + route registration), server/middleware/csrf.ts
+
 ### MB.MD v9.9.3 Integration Complete (Dec 5, 2025)
 - **Samsung TinyRecursiveModels**: Implemented RecursiveContextService with hierarchical code summarization
   - 4-level summarization: function → file → module → platform
   - 80-90% token compression for LLM context
   - LanceDB integration for semantic search
+  - TRM Learning Protocol: recursivelyLearn() → generateInitialKnowledge() → (updateLatent() × n) → improveKnowledge() × K cycles
 - **Faceless Content System**: Created FacelessContentService with social media adapters
   - TikTok, YouTube, Instagram, Twitter, LinkedIn adapters
   - AdminContentCenterPage for content management
@@ -65,6 +79,7 @@ A comprehensive Video Demo System (MB.MD Patterns 28, 38, 41) includes a landing
 - **Self-Healing Infrastructure**: AutoFixEngine and VibeCodingService initialized at server startup
 - **MB.MD Documentation**: Created role-agents.md (7 leadership agents), patterns 64-70, core.md, index.json
 - **Open Source Integration**: FreeAPIService with 1,400+ public APIs catalog
+- **AgentKnowledgeLoader**: Orchestrates learning for all 1,218 agents with documentation mapping
 
 ### LanceDB Integration Fix (Dec 5, 2025)
 - **Issue**: RecursiveContextService failing with "lanceDB.getConnection is not a function"

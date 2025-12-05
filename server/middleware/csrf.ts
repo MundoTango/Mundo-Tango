@@ -94,6 +94,14 @@ export function verifyCsrfToken(req: Request, res: Response, next: NextFunction)
     return next();
   }
   
+  // Skip CSRF for Agent Learning endpoints (MB.MD v9.9.3 + Samsung TRM - A2A communication)
+  const agentLearningEndpoints = [
+    "/api/agents/learning/"
+  ];
+  if (agentLearningEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
+    return next();
+  }
+  
   // Skip CSRF for external API endpoints (Replit AI bridge)
   const externalApiEndpoints = [
     "/api/replit-ai/"
@@ -223,6 +231,14 @@ export function verifyDoubleSubmitCookie(req: Request, res: Response, next: Next
     "/api/a2a/"
   ];
   if (a2aEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
+    return next();
+  }
+  
+  // Skip CSRF for Agent Learning endpoints (MB.MD v9.9.3 + Samsung TRM - A2A communication)
+  const agentLearningEndpoints = [
+    "/api/agents/learning/"
+  ];
+  if (agentLearningEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
     return next();
   }
   

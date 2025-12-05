@@ -476,6 +476,336 @@ Platform summary:`;
     }
     return hash.toString(16);
   }
+
+  // ============================================================================
+  // TRM: SAMSUNG TINYRECURSIVEMODELS RECURSIVE LEARNING PATTERN
+  // "Less is More" - Recursively improve answers through K improvement cycles
+  // Reference: Samsung SAIL - 45% accuracy on ARC-AGI-1 with 7M parameters
+  // ============================================================================
+
+  /**
+   * TRM Core: Recursive Knowledge Learning
+   * Agents learn from documentation by recursively improving their understanding
+   * 
+   * @param agentId - The agent learning (e.g., "A21-Teacher-Student-Matching")
+   * @param documentationPaths - Paths to docs to learn from
+   * @param K - Number of improvement cycles (default: 3)
+   * @param n - Number of latent updates per cycle (default: 2)
+   */
+  async recursivelyLearn(
+    agentId: string,
+    documentationPaths: string[],
+    K: number = 3,
+    n: number = 2
+  ): Promise<AgentKnowledge> {
+    await this.initialize();
+    console.log(`[RecursiveContext/TRM] 🧠 Agent ${agentId} learning from ${documentationPaths.length} docs, K=${K}`);
+
+    // Step 1: Read all documentation
+    let combinedDocContent = '';
+    for (const docPath of documentationPaths) {
+      try {
+        const content = await fs.readFile(docPath, 'utf-8');
+        combinedDocContent += `\n\n=== ${docPath} ===\n${content}`;
+      } catch (error) {
+        console.warn(`[RecursiveContext/TRM] Could not read ${docPath}:`, error);
+      }
+    }
+
+    if (!combinedDocContent) {
+      console.error(`[RecursiveContext/TRM] No documentation content found for ${agentId}`);
+      return {
+        agentId,
+        knowledge: '',
+        confidence: 0,
+        improvementCycles: 0,
+        timestamp: new Date()
+      };
+    }
+
+    // Step 2: Generate initial answer (y₀) and latent (z₀)
+    let currentAnswer = await this.generateInitialKnowledge(agentId, combinedDocContent);
+    let latent = await this.initializeLatent(agentId, combinedDocContent);
+
+    // Step 3: Recursive improvement loop (Samsung TRM core algorithm)
+    for (let k = 0; k < K; k++) {
+      console.log(`[RecursiveContext/TRM] Improvement cycle ${k + 1}/${K} for ${agentId}`);
+
+      // Update latent understanding n times
+      for (let i = 0; i < n; i++) {
+        latent = await this.updateLatent(agentId, combinedDocContent, currentAnswer, latent);
+      }
+
+      // Improve answer based on updated latent understanding
+      currentAnswer = await this.improveKnowledge(agentId, currentAnswer, latent);
+    }
+
+    // Step 4: Calculate confidence score
+    const confidence = await this.calculateKnowledgeConfidence(currentAnswer, combinedDocContent);
+
+    // Step 5: Store in LanceDB
+    const agentKnowledge: AgentKnowledge = {
+      agentId,
+      knowledge: currentAnswer,
+      confidence,
+      improvementCycles: K,
+      timestamp: new Date()
+    };
+
+    await this.storeAgentKnowledge(agentKnowledge);
+    console.log(`[RecursiveContext/TRM] ✅ Agent ${agentId} learned with ${confidence.toFixed(2)} confidence`);
+
+    return agentKnowledge;
+  }
+
+  /**
+   * TRM Step 2a: Generate initial knowledge from documentation
+   */
+  private async generateInitialKnowledge(agentId: string, docContent: string): Promise<string> {
+    const prompt = `You are ${agentId}. Based on this documentation, extract your core knowledge and capabilities.
+Focus on:
+1. Your primary responsibility
+2. Key algorithms/patterns you use
+3. How you interact with other agents
+4. Your success criteria
+
+Documentation:
+${docContent.substring(0, 8000)}
+
+Summarize your core knowledge (max 500 words):`;
+
+    try {
+      const response = await groq.chat.completions.create({
+        model: 'llama-3.1-70b-versatile',
+        messages: [{ role: 'user', content: prompt }],
+        max_tokens: 700,
+        temperature: 0.3
+      });
+      return response.choices[0]?.message?.content || `Initial knowledge for ${agentId}`;
+    } catch (error) {
+      console.error(`[RecursiveContext/TRM] Initial knowledge generation failed:`, error);
+      return `Basic knowledge for ${agentId} from ${docContent.substring(0, 200)}`;
+    }
+  }
+
+  /**
+   * TRM Step 2b: Initialize latent understanding
+   * The "latent" is the agent's hidden understanding that improves each cycle
+   */
+  private async initializeLatent(agentId: string, docContent: string): Promise<string> {
+    const prompt = `Analyze the key patterns, edge cases, and non-obvious insights from this documentation for ${agentId}.
+Focus on implicit knowledge, connections between concepts, and things that might not be obvious from a first read.
+
+Documentation snippet:
+${docContent.substring(0, 4000)}
+
+Hidden insights and patterns:`;
+
+    try {
+      const response = await groq.chat.completions.create({
+        model: 'llama-3.1-8b-instant',
+        messages: [{ role: 'user', content: prompt }],
+        max_tokens: 400,
+        temperature: 0.5
+      });
+      return response.choices[0]?.message?.content || '';
+    } catch (error) {
+      return '';
+    }
+  }
+
+  /**
+   * TRM Step 3a: Update latent understanding
+   * z = f(x, y, z) - Refine hidden understanding based on doc, current answer, and previous latent
+   */
+  private async updateLatent(
+    agentId: string,
+    docContent: string,
+    currentAnswer: string,
+    previousLatent: string
+  ): Promise<string> {
+    const prompt = `You are refining your understanding. Compare what you've learned with what you might have missed.
+
+Agent: ${agentId}
+Current knowledge: ${currentAnswer.substring(0, 1500)}
+Previous insights: ${previousLatent.substring(0, 1000)}
+Original documentation (sample): ${docContent.substring(0, 2000)}
+
+What additional patterns, edge cases, or corrections should be added? Focus on:
+1. What was missed in the current knowledge?
+2. What connections weren't explicitly made?
+3. What could go wrong that isn't addressed?
+
+Updated insights:`;
+
+    try {
+      const response = await groq.chat.completions.create({
+        model: 'llama-3.1-8b-instant',
+        messages: [{ role: 'user', content: prompt }],
+        max_tokens: 400,
+        temperature: 0.4
+      });
+      return response.choices[0]?.message?.content || previousLatent;
+    } catch (error) {
+      return previousLatent;
+    }
+  }
+
+  /**
+   * TRM Step 3b: Improve knowledge based on latent understanding
+   * y = g(y, z) - Enhance answer using refined understanding
+   */
+  private async improveKnowledge(
+    agentId: string,
+    currentAnswer: string,
+    latent: string
+  ): Promise<string> {
+    const prompt = `Improve and expand this knowledge for ${agentId} based on additional insights.
+
+Current knowledge:
+${currentAnswer}
+
+Additional insights to incorporate:
+${latent}
+
+Provide an improved, more complete knowledge summary. Keep what's good, add what's missing, correct any errors:`;
+
+    try {
+      const response = await groq.chat.completions.create({
+        model: 'llama-3.1-70b-versatile',
+        messages: [{ role: 'user', content: prompt }],
+        max_tokens: 800,
+        temperature: 0.3
+      });
+      return response.choices[0]?.message?.content || currentAnswer;
+    } catch (error) {
+      return currentAnswer;
+    }
+  }
+
+  /**
+   * TRM Step 4: Calculate knowledge confidence score
+   * Higher confidence = knowledge covers documentation well
+   */
+  private async calculateKnowledgeConfidence(
+    knowledge: string,
+    docContent: string
+  ): Promise<number> {
+    const prompt = `Rate how well this learned knowledge captures the essential information from the documentation.
+
+Knowledge:
+${knowledge.substring(0, 2000)}
+
+Original documentation sample:
+${docContent.substring(0, 2000)}
+
+Rate the coverage and accuracy from 0.0 to 1.0:
+- 0.9-1.0: Excellent, captures all key points
+- 0.7-0.89: Good, covers most important aspects
+- 0.5-0.69: Adequate, but missing important details
+- Below 0.5: Needs improvement
+
+Respond with ONLY a number between 0.0 and 1.0:`;
+
+    try {
+      const response = await groq.chat.completions.create({
+        model: 'llama-3.1-8b-instant',
+        messages: [{ role: 'user', content: prompt }],
+        max_tokens: 10,
+        temperature: 0.1
+      });
+      const score = parseFloat(response.choices[0]?.message?.content?.match(/\d+\.?\d*/)?.[0] || '0.7');
+      return Math.min(1.0, Math.max(0.0, score));
+    } catch (error) {
+      return 0.7; // Default moderate confidence
+    }
+  }
+
+  /**
+   * TRM Step 5: Store agent knowledge in LanceDB
+   */
+  private async storeAgentKnowledge(knowledge: AgentKnowledge): Promise<void> {
+    try {
+      const content = `[AGENT_KNOWLEDGE] ${knowledge.agentId} | Confidence: ${knowledge.confidence.toFixed(2)} | ${knowledge.knowledge}`;
+      
+      await lanceDB.addMemory('agent_knowledge', {
+        id: `agent_${knowledge.agentId}_${Date.now()}`,
+        content,
+        timestamp: knowledge.timestamp.getTime()
+      });
+
+      console.log(`[RecursiveContext/TRM] 💾 Stored knowledge for ${knowledge.agentId}`);
+    } catch (error) {
+      console.error(`[RecursiveContext/TRM] Failed to store knowledge:`, error);
+    }
+  }
+
+  /**
+   * TRM: Retrieve agent's learned knowledge
+   */
+  async getAgentKnowledge(agentId: string): Promise<AgentKnowledge | null> {
+    try {
+      const results = await lanceDB.searchMemories('agent_knowledge', agentId, 5);
+      
+      if (results.length === 0) return null;
+
+      const mostRecent = results[0];
+      const content = mostRecent.content || '';
+      const confidenceMatch = content.match(/Confidence:\s*([\d.]+)/);
+
+      return {
+        agentId,
+        knowledge: content.replace(/^\[AGENT_KNOWLEDGE\].*?\|.*?\|/, '').trim(),
+        confidence: confidenceMatch ? parseFloat(confidenceMatch[1]) : 0.7,
+        improvementCycles: 3, // Default
+        timestamp: new Date(mostRecent.timestamp || Date.now())
+      };
+    } catch (error) {
+      console.error(`[RecursiveContext/TRM] Failed to retrieve knowledge:`, error);
+      return null;
+    }
+  }
+
+  /**
+   * TRM: Batch learn for multiple agents in parallel
+   */
+  async batchLearn(
+    agentConfigs: Array<{ agentId: string; documentationPaths: string[] }>
+  ): Promise<AgentKnowledge[]> {
+    console.log(`[RecursiveContext/TRM] 🚀 Batch learning for ${agentConfigs.length} agents`);
+
+    const results: AgentKnowledge[] = [];
+    
+    // Process in batches of 5 to avoid rate limits
+    const batchSize = 5;
+    for (let i = 0; i < agentConfigs.length; i += batchSize) {
+      const batch = agentConfigs.slice(i, i + batchSize);
+      const batchResults = await Promise.all(
+        batch.map(config => this.recursivelyLearn(config.agentId, config.documentationPaths))
+      );
+      results.push(...batchResults);
+      
+      // Brief pause between batches
+      if (i + batchSize < agentConfigs.length) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+    }
+
+    console.log(`[RecursiveContext/TRM] ✅ Batch learning complete: ${results.length} agents trained`);
+    return results;
+  }
+}
+
+// ============================================================================
+// TYPES FOR TRM AGENT LEARNING
+// ============================================================================
+
+export interface AgentKnowledge {
+  agentId: string;
+  knowledge: string;
+  confidence: number; // 0.0 - 1.0
+  improvementCycles: number; // K value used
+  timestamp: Date;
 }
 
 // Singleton instance
