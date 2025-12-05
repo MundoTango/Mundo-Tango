@@ -794,3 +794,56 @@ The platform demonstrates exceptional breadth, innovative AI features (H2AC Dash
 ---
 **Session Status**: COMPREHENSIVE AUDIT COMPLETE - Ready for bug fixes and continued testing  
 **Next Steps**: Escalate Bug #002 to development team, continue testing remaining features after fix
+
+
+---
+
+## PAGES WITH ISSUES - CODE ANALYSIS
+
+### 1. CRITICAL: CitySelectionPage.tsx
+**File**: client/src/pages/onboarding/CitySelectionPage.tsx
+**Issue**: Bug #002 - City Selection API Failure
+**Root Cause**:
+- Line 51-62: PATCH to /api/users/me
+- Line 64: Generic error handling - no specific error message
+- Line 66-72: Chained POST to /api/communities/auto-join
+
+**Symptoms**:
+- Onboarding blocked at Step 1
+- No meaningful error feedback to user
+- Cannot proceed past city selection
+
+**Fix Priority**: CRITICAL (30 min fix)
+**Solution**: Add detailed error parsing:
+```
+if (!response.ok) {
+  const errorData = await response.json();
+  throw new Error(`Failed: ${errorData.message || response.statusText}`);
+}
+```
+
+### 2. HIGH: Onboarding Flow - Performance
+**Issue**: Slow page loads, lag during navigation
+**Root Cause**: Likely unoptimized component renders
+**Fix Priority**: HIGH (2-3 hours)
+**Solutions**:
+- Add React.memo() to components
+- Implement React.lazy() for code splitting
+- Use useCallback() for event handlers
+
+### 3. MEDIUM: Profile Edit, Event/Group Creation
+**Issue**: Data persistence - forms not saving properly
+**Files Affected**:
+- EditProfilePage
+- CreateEventPage
+- CreateGroupPage
+**Fix Priority**: MEDIUM (3-4 hours)
+**Solutions**:
+- Add form validation
+- Implement retry logic
+- Better error messages
+
+### 4. MEDIUM: Admin Dashboard
+**Issue**: Stability concerns
+**Fix Priority**: MEDIUM
+**Solution**: Add error boundaries and logging
