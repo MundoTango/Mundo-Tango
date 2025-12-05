@@ -217,3 +217,44 @@ I found the same issues they identified, plus discovered that:
 **Root Cause:** No standardized error handling pattern was enforced during development.
 
 **Recommended Action:** Create a unified `handleApiError()` utility and retrofit all form submissions.
+
+---
+
+## IMPLEMENTATION COMPLETE (Dec 5, 2025)
+
+### MB.MD Pattern 66 (Build Swarm Choreography) Applied:
+
+**SWARM A - Utility Creation:**
+- Created `client/src/lib/apiErrorHandler.ts` with:
+  - `extractApiError()` - Extracts actionable error messages from API responses
+  - `safeFetch()` - Wrapper with automatic error handling
+  - `withRetry()` - 3-strike retry pattern for critical operations
+
+**SWARM B - Parallel Page Fixes:**
+- CitySelectionPage.tsx: Both PATCH and POST now check `response.ok`
+- TangoRolesPage.tsx: Added missing `response.ok` check
+- LanguagesPage.tsx: Added missing `response.ok` check  
+- RegisterPage.tsx: Availability checks now guard against API failures
+
+**SWARM C - Validation:**
+- LSP diagnostics: CLEAN (no errors)
+- API health check: PASSING
+- Server logs: No build errors
+
+**SWARM D - Knowledge Backprop:**
+- replit.md updated with error handling best practices
+
+### User-Visible Improvements:
+| Before | After |
+|--------|-------|
+| Generic "Error" toast | "City Selection Failed: Your session has expired. Please log in again." |
+| Silent failures, user stuck | Descriptive error with actionable guidance |
+| Data not saved but proceeds | Properly blocks navigation until saved |
+
+### Files Changed:
+1. `client/src/lib/apiErrorHandler.ts` (NEW)
+2. `client/src/pages/onboarding/CitySelectionPage.tsx` (FIXED)
+3. `client/src/pages/onboarding/TangoRolesPage.tsx` (FIXED)
+4. `client/src/pages/onboarding/LanguagesPage.tsx` (FIXED)
+5. `client/src/pages/RegisterPage.tsx` (FIXED)
+6. `replit.md` (UPDATED)
