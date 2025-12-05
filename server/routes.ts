@@ -85,6 +85,8 @@ import selfHealingRoutes from "./routes/self-healing-routes";
 import agentHealthRoutes from "./routes/agent-health-routes";
 import predictiveContextRoutes from "./routes/predictive-context-routes";
 import agentLearningRoutes from "./routes/agentLearning";
+import orchestrationPhasesRoutes from "./routes/orchestrationPhases";
+import openSourceIntegrationsRoutes from "./routes/openSourceIntegrations";
 import aiEnhanceRoutes from "./routes/ai-enhance";
 import { DataCompletenessValidator } from "./services/validation/DataCompletenessValidator";
 import { ComponentPRDRegistry } from "./services/validation/ComponentPRDRegistry";
@@ -598,6 +600,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Phase 4 Deployment Blocker Routes
   app.use("/api/agents", agentHealthRoutes);
   app.use("/api/agents/learning", agentLearningRoutes);  // MB.MD v9.9.3 + Samsung TRM Agent Learning
+  app.use("/api/orchestration/phases", orchestrationPhasesRoutes);  // MB.MD v9.9.3 Patterns 66, 67, 68
+  app.use("/api/integrations", openSourceIntegrationsRoutes);  // GenAI Agents, Curriculum, ComfyUI
   app.use("/api/predictive", predictiveContextRoutes);
   
   // TRACK 3 BATCH 13-16: Agent Intelligence API Layer
