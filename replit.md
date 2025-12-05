@@ -50,3 +50,18 @@ A comprehensive Video Demo System (MB.MD Patterns 28, 38, 41) includes a landing
 - **UI Libraries:** shadcn/ui, Radix UI, Framer Motion, Leaflet
 - **Internationalization:** i18next
 - **Other:** Sentry, Playwright, BullMQ, FFmpeg, fluent-ffmpeg, Wouter, Multer, `@octokit/rest`
+
+## Recent Changes (December 2025)
+
+### Registration Flow Fix (Dec 5, 2025)
+- **Root Cause**: Express route ordering issue - `PATCH /api/users/:id` was defined before `PATCH /api/users/me`, causing `:id` to match "me" as a literal ID
+- **Solution**: Moved `PATCH /api/users/me` route BEFORE `PATCH /api/users/:id` in server/routes.ts
+- **Pattern**: In Express, specific routes MUST be defined before parameterized routes
+- **Verified**: All 4 onboarding steps tested via curl - City Selection (formStatus 1) → Tango Roles (2) → Languages (3) → Complete (5) all working correctly
+
+### Route Ordering Best Practice
+```
+// CORRECT ORDER in Express:
+app.patch("/api/users/me", ...)      // Specific route first
+app.patch("/api/users/:id", ...)     // Parameterized route second
+```
