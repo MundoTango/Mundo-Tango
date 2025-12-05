@@ -67,7 +67,7 @@ export default function CitySelectionPage() {
         throw new Error(errorMessage);
       }
 
-      await fetch("/api/communities/auto-join", {
+      const autoJoinResponse = await fetch("/api/communities/auto-join", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -78,6 +78,11 @@ export default function CitySelectionPage() {
           country: selectedCity.country,
         }),
       });
+
+      if (!autoJoinResponse.ok) {
+        const errorMessage = await extractApiError(autoJoinResponse, { context: "Community auto-join" });
+        throw new Error(errorMessage);
+      }
 
       navigate("/onboarding/step-2");
     } catch (error) {
