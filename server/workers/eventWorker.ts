@@ -243,17 +243,19 @@ const eventWorker = createWorker(
       console.error(`[Event Worker] Error:`, error);
       throw error;
     }
-  },
-  { connection }
+  }
 );
 
-eventWorker.on("completed", (job) => {
-  console.log(`✅ Event job ${job.id} completed`);
-});
+// Only attach event listeners if this is a real BullMQ Worker (not InMemoryQueue)
+if ('on' in eventWorker && typeof eventWorker.on === 'function') {
+  eventWorker.on("completed", (job) => {
+    console.log(`✅ Event job ${job.id} completed`);
+  });
 
-eventWorker.on("failed", (job, err) => {
-  console.error(`❌ Event job ${job?.id} failed:`, err.message);
-});
+  eventWorker.on("failed", (job, err) => {
+    console.error(`❌ Event job ${job?.id} failed:`, err.message);
+  });
+}
 
 console.log("🚀 Event Automation Worker started");
 

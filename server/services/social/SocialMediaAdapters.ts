@@ -2,7 +2,7 @@
  * SOCIAL MEDIA PLATFORM ADAPTERS
  * MB.MD v9.9.3 - Multi-Platform Publishing
  * 
- * Adapters for: TikTok, YouTube Shorts, Instagram Reels, Facebook
+ * Adapters for: TikTok, YouTube Shorts, Instagram Reels, Facebook, Twitter/X, LinkedIn
  */
 
 import axios from 'axios';
@@ -392,6 +392,297 @@ export class InstagramReelsAdapter extends SocialMediaAdapter {
 }
 
 // ============================================================================
+// FACEBOOK ADAPTER
+// ============================================================================
+
+export class FacebookAdapter extends SocialMediaAdapter {
+  private appId: string;
+  private appSecret: string;
+
+  constructor() {
+    super('Facebook', 200); // 200 posts per hour
+    this.appId = process.env.FACEBOOK_APP_ID || '';
+    this.appSecret = process.env.FACEBOOK_APP_SECRET || '';
+  }
+
+  getAuthUrl(redirectUri: string): string {
+    const scope = 'pages_manage_posts,pages_read_engagement';
+    return `https://www.facebook.com/v18.0/dialog/oauth?client_id=${this.appId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${scope}&response_type=code`;
+  }
+
+  async refreshTokens(refreshToken: string): Promise<OAuthTokens> {
+    try {
+      const response = await axios.get(
+        `https://graph.facebook.com/v18.0/oauth/access_token?grant_type=fb_exchange_token&client_id=${this.appId}&client_secret=${this.appSecret}&fb_exchange_token=${refreshToken}`
+      );
+
+      return {
+        accessToken: response.data.access_token,
+        refreshToken: response.data.access_token,
+        expiresAt: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000) // 60 days
+      };
+    } catch (error: any) {
+      console.error('[Facebook] Token refresh failed:', error);
+      throw error;
+    }
+  }
+
+  async publish(request: PublishRequest, tokens: OAuthTokens): Promise<PublishResult> {
+    await this.checkRateLimit();
+
+    try {
+      const accountsResponse = await axios.get(
+        `https://graph.facebook.com/v18.0/me/accounts?access_token=${tokens.accessToken}`
+      );
+      
+      const page = accountsResponse.data.data?.[0];
+      if (!page) {
+        return { success: false, error: 'No Facebook Page found' };
+      }
+
+      const pageId = page.id;
+      const pageAccessToken = page.access_token;
+
+      const caption = `${request.caption}\n\n${request.hashtags.join(' ')}`;
+
+      let postResponse;
+      if (request.videoUrl && (request.videoUrl.includes('.jpg') || request.videoUrl.includes('.png') || request.videoUrl.includes('.jpeg'))) {
+        postResponse = await axios.post(
+          `https://graph.facebook.com/v18.0/${pageId}/photos`,
+          {
+            url: request.videoUrl,
+            caption: caption
+          },
+          {
+            params: { access_token: pageAccessToken }
+          }
+        );
+      } else {
+        postResponse = await axios.post(
+          `https://graph.facebook.com/v18.0/${pageId}/feed`,
+          {
+            message: caption,
+            link: request.videoUrl || undefined
+          },
+          {
+            params: { access_token: pageAccessToken }
+          }
+        );
+      }
+
+      const postId = postResponse.data.id || postResponse.data.post_id;
+
+      return {
+        success: true,
+        postId: postId,
+        postUrl: `https://www.facebook.com/${postId}`
+      };
+    } catch (error: any) {
+      console.error('[Facebook] Publish failed:', error);
+      return { success: false, error: error.message };
+    }
+  }
+}
+
+// ============================================================================
+// TWITTER ADAPTER
+// ============================================================================
+
+export class TwitterAdapter extends SocialMediaAdapter {
+  private clientId: string;
+  private clientSecret: string;
+
+  constructor() {
+    super('Twitter', 20); // 300 tweets per 15 min = 20 per minute
+    this.clientId = process.env.TWITTER_CLIENT_ID || '';
+    this.clientSecret = process.env.TWITTER_CLIENT_SECRET || '';
+  }
+
+  getAuthUrl(redirectUri: string): string {
+    const scope = 'tweet.read tweet.write users.read';
+    const state = Math.random().toString(36).substring(7);
+    const codeChallenge = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    return `https://twitter.com/i/oauth2/authorize?response_type=code&client_id=${this.clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scope)}&state=${state}&code_challenge=${codeChallenge}&code_challenge_method=plain`;
+  }
+
+  async refreshTokens(refreshToken: string): Promise<OAuthTokens> {
+    try {
+      const credentials = Buffer.from(`${this.clientId}:${this.clientSecret}`).toString('base64');
+      
+      const response = await axios.post(
+        'https://api.twitter.com/2/oauth2/token',
+        new URLSearchParams({
+          grant_type: 'refresh_token',
+          refresh_token: refreshToken
+        }).toString(),
+        {
+          headers: {
+            'Authorization': `Basic ${credentials}`,
+            'Content-Type': 'application/x-www-form-urlencoded'
+          }
+        }
+      );
+
+      return {
+        accessToken: response.data.access_token,
+        refreshToken: response.data.refresh_token,
+        expiresAt: new Date(Date.now() + response.data.expires_in * 1000)
+      };
+    } catch (error: any) {
+      console.error('[Twitter] Token refresh failed:', error);
+      throw error;
+    }
+  }
+
+  async publish(request: PublishRequest, tokens: OAuthTokens): Promise<PublishResult> {
+    await this.checkRateLimit();
+
+    try {
+      const tweetText = `${request.caption}\n\n${request.hashtags.join(' ')}`.substring(0, 280);
+
+      const response = await axios.post(
+        'https://api.twitter.com/2/tweets',
+        {
+          text: tweetText
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${tokens.accessToken}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      const tweetId = response.data.data?.id;
+
+      return {
+        success: true,
+        postId: tweetId,
+        postUrl: `https://twitter.com/user/status/${tweetId}`
+      };
+    } catch (error: any) {
+      console.error('[Twitter] Publish failed:', error);
+      return { success: false, error: error.message };
+    }
+  }
+}
+
+// ============================================================================
+// LINKEDIN ADAPTER
+// ============================================================================
+
+export class LinkedInAdapter extends SocialMediaAdapter {
+  private clientId: string;
+  private clientSecret: string;
+
+  constructor() {
+    super('LinkedIn', 7); // 100 posts per day ≈ 7 per hour for safety
+    this.clientId = process.env.LINKEDIN_CLIENT_ID || '';
+    this.clientSecret = process.env.LINKEDIN_CLIENT_SECRET || '';
+  }
+
+  getAuthUrl(redirectUri: string): string {
+    const scope = 'w_member_social';
+    const state = Math.random().toString(36).substring(7);
+    return `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${this.clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scope)}&state=${state}`;
+  }
+
+  async refreshTokens(refreshToken: string): Promise<OAuthTokens> {
+    try {
+      const response = await axios.post(
+        'https://www.linkedin.com/oauth/v2/accessToken',
+        new URLSearchParams({
+          grant_type: 'refresh_token',
+          refresh_token: refreshToken,
+          client_id: this.clientId,
+          client_secret: this.clientSecret
+        }).toString(),
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          }
+        }
+      );
+
+      return {
+        accessToken: response.data.access_token,
+        refreshToken: response.data.refresh_token || refreshToken,
+        expiresAt: new Date(Date.now() + response.data.expires_in * 1000)
+      };
+    } catch (error: any) {
+      console.error('[LinkedIn] Token refresh failed:', error);
+      throw error;
+    }
+  }
+
+  async publish(request: PublishRequest, tokens: OAuthTokens): Promise<PublishResult> {
+    await this.checkRateLimit();
+
+    try {
+      const profileResponse = await axios.get(
+        'https://api.linkedin.com/v2/me',
+        {
+          headers: {
+            'Authorization': `Bearer ${tokens.accessToken}`
+          }
+        }
+      );
+
+      const personId = profileResponse.data.id;
+      const caption = `${request.caption}\n\n${request.hashtags.join(' ')}`;
+
+      const postData: any = {
+        author: `urn:li:person:${personId}`,
+        lifecycleState: 'PUBLISHED',
+        specificContent: {
+          'com.linkedin.ugc.ShareContent': {
+            shareCommentary: {
+              text: caption
+            },
+            shareMediaCategory: 'NONE'
+          }
+        },
+        visibility: {
+          'com.linkedin.ugc.MemberNetworkVisibility': 'PUBLIC'
+        }
+      };
+
+      if (request.videoUrl) {
+        postData.specificContent['com.linkedin.ugc.ShareContent'].shareMediaCategory = 'ARTICLE';
+        postData.specificContent['com.linkedin.ugc.ShareContent'].media = [{
+          status: 'READY',
+          originalUrl: request.videoUrl
+        }];
+      }
+
+      const response = await axios.post(
+        'https://api.linkedin.com/v2/ugcPosts',
+        postData,
+        {
+          headers: {
+            'Authorization': `Bearer ${tokens.accessToken}`,
+            'Content-Type': 'application/json',
+            'X-Restli-Protocol-Version': '2.0.0'
+          }
+        }
+      );
+
+      const postUrn = response.data.id || response.headers['x-restli-id'];
+      const postId = postUrn?.split(':').pop();
+
+      return {
+        success: true,
+        postId: postUrn,
+        postUrl: `https://www.linkedin.com/feed/update/${postUrn}`
+      };
+    } catch (error: any) {
+      console.error('[LinkedIn] Publish failed:', error);
+      return { success: false, error: error.message };
+    }
+  }
+}
+
+// ============================================================================
 // FACTORY
 // ============================================================================
 
@@ -405,6 +696,13 @@ export function getSocialMediaAdapter(platform: string): SocialMediaAdapter | nu
     case 'instagram':
     case 'instagram_reels':
       return new InstagramReelsAdapter();
+    case 'facebook':
+      return new FacebookAdapter();
+    case 'twitter':
+    case 'x':
+      return new TwitterAdapter();
+    case 'linkedin':
+      return new LinkedInAdapter();
     default:
       return null;
   }

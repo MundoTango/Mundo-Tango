@@ -276,7 +276,39 @@ export class CrossPlatformScheduler {
   ): Promise<string> {
     console.log(`[CrossPlatformScheduler] Publishing to ${platform}`);
     
-    return `mock_post_id_${Date.now()}`;
+    const { getSocialMediaAdapter } = await import('./SocialMediaAdapters');
+    const adapter = getSocialMediaAdapter(platform);
+    
+    if (!adapter) {
+      console.warn(`[CrossPlatformScheduler] No adapter for ${platform}, using mock`);
+      return `mock_post_id_${Date.now()}`;
+    }
+    
+    const publishRequest = {
+      videoUrl: mediaUrls?.[0] || '',
+      caption: content,
+      hashtags: this.extractHashtags(content),
+      userId: 0
+    };
+    
+    const tokens = {
+      accessToken,
+      refreshToken: '',
+      expiresAt: new Date(Date.now() + 3600000)
+    };
+    
+    const result = await adapter.publish(publishRequest, tokens);
+    
+    if (!result.success) {
+      throw new Error(result.error || `Failed to publish to ${platform}`);
+    }
+    
+    return result.postId || `${platform}_post_${Date.now()}`;
+  }
+  
+  private extractHashtags(content: string): string[] {
+    const matches = content.match(/#\w+/g);
+    return matches ? matches.map(tag => tag.slice(1)) : [];
   }
 
   private async delayForRateLimit(platform: string): Promise<void> {

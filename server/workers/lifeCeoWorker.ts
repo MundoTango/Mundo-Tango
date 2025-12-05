@@ -235,17 +235,19 @@ const lifeCeoWorker = createWorker(
       console.error(`[Life CEO Worker] Error:`, error);
       throw error;
     }
-  },
-  { connection }
+  }
 );
 
-lifeCeoWorker.on("completed", (job) => {
-  console.log(`✅ Life CEO job ${job.id} completed`);
-});
+// Only attach event listeners if this is a real BullMQ Worker (not InMemoryQueue)
+if ('on' in lifeCeoWorker && typeof lifeCeoWorker.on === 'function') {
+  lifeCeoWorker.on("completed", (job) => {
+    console.log(`✅ Life CEO job ${job.id} completed`);
+  });
 
-lifeCeoWorker.on("failed", (job, err) => {
-  console.error(`❌ Life CEO job ${job?.id} failed:`, err.message);
-});
+  lifeCeoWorker.on("failed", (job, err) => {
+    console.error(`❌ Life CEO job ${job?.id} failed:`, err.message);
+  });
+}
 
 console.log("🚀 Life CEO Automation Worker started");
 

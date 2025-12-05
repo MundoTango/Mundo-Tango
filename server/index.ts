@@ -215,6 +215,20 @@ app.use((req, res, next) => {
       logger.error('❌ MB.MD Intelligence initialization failed:', error);
     }
     
+    // MB.MD v9.9.3: Initialize BullMQ Workers (with Redis fallback)
+    try {
+      log('🔧 Initializing BullMQ Workers...');
+      const { initializeRedis } = await import('./workers/redis-fallback');
+      await initializeRedis();
+      
+      await import('./workers/eventWorker');
+      await import('./workers/housingWorker');
+      await import('./workers/lifeCeoWorker');
+      log('[BullMQ Workers] ✅ Initialized 3 core workers');
+    } catch (error) {
+      logger.error('❌ BullMQ Worker initialization failed:', error);
+    }
+    
     // PHASE 0A: Initialize Policy Monitoring System (requires Redis)
     // SKIP in development if Redis is not available to avoid ECONNREFUSED spam
     if (process.env.REDIS_URL) {

@@ -83,3 +83,22 @@ A comprehensive Video Demo System (MB.MD Patterns 28, 38, 41) includes a landing
 app.patch("/api/users/me", ...)      // Specific route first
 app.patch("/api/users/:id", ...)     // Parameterized route second
 ```
+
+### BullMQ Worker Initialization Fix (Dec 5, 2025)
+- **Issue**: Workers crashing with "eventWorker.on is not a function" when Redis unavailable
+- **Root Cause**: InMemoryQueue fallback doesn't have `.on()` method like BullMQ Worker
+- **Solution**: Conditional event listener registration - check if `.on()` exists before attaching
+- **Pattern**: Always check for method existence when using fallback patterns
+```typescript
+// Only attach event listeners if this is a real BullMQ Worker (not InMemoryQueue)
+if ('on' in worker && typeof worker.on === 'function') {
+  worker.on("completed", (job) => { ... });
+  worker.on("failed", (job, err) => { ... });
+}
+```
+- **Files Fixed**: eventWorker.ts, lifeCeoWorker.ts, housingWorker.ts
+
+### Social Media Adapters (Dec 5, 2025)
+- **Added**: FacebookAdapter, TwitterAdapter, LinkedInAdapter with OAuth flows
+- **Wired**: CrossPlatformScheduler now uses `getSocialMediaAdapter()` for real API calls
+- **Location**: server/services/social/SocialMediaAdapters.ts
