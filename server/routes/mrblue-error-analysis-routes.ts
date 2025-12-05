@@ -33,7 +33,7 @@ const analyzeErrorsSchema = z.object({
     errorMessage: z.string().min(1),
     errorStack: z.string().optional(),
     metadata: z.any().optional(),
-  })).min(1).max(100), // Increased from 10 to 100 (MB.MD Pattern 48 fix)
+  })).min(1).max(500), // Increased to 500 to handle batch bursts (MB.MD Pattern 48 fix)
 });
 
 /**

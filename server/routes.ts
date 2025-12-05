@@ -197,6 +197,9 @@ import roleConfirmationRoutes from "./routes/role-confirmation-routes";
 // Marketing Site Public Routes
 import publicStatsRoutes from "./routes/public-stats-routes";
 
+// MB.MD v9.9.3: Faceless Content Marketing
+import contentRoutes from "./routes/content-routes";
+
 import { authenticateToken, optionalAuth, AuthRequest, requireRoleLevel } from "./middleware/auth";
 import { setCsrfToken, verifyCsrfToken } from "./middleware/csrf";
 import { auditLog, getClientIp } from "./middleware/auditLog";
@@ -660,6 +663,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // TRACK 8: Gamification System - Points, Badges, Leaderboard, Progressive Autonomy
   app.use("/api/gamification", gamificationRoutes);
+  
+  // MB.MD v9.9.3: Faceless Content Marketing API
+  app.use("/api/content", contentRoutes);
   
   // Legal Document AI Agents Routes (2 AI Agents for Legal Documents - Agents #185-186)
   app.use("/api/legal/agents", legalAgentsRoutes);

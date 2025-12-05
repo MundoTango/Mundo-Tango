@@ -53,6 +53,24 @@ A comprehensive Video Demo System (MB.MD Patterns 28, 38, 41) includes a landing
 
 ## Recent Changes (December 2025)
 
+### MB.MD v9.9.3 Integration Complete (Dec 5, 2025)
+- **Samsung TinyRecursiveModels**: Implemented RecursiveContextService with hierarchical code summarization
+  - 4-level summarization: function → file → module → platform
+  - 80-90% token compression for LLM context
+  - LanceDB integration for semantic search
+- **Faceless Content System**: Created FacelessContentService with social media adapters
+  - TikTok, YouTube, Instagram, Twitter, LinkedIn adapters
+  - AdminContentCenterPage for content management
+  - AI-powered video script generation
+- **Self-Healing Infrastructure**: AutoFixEngine and VibeCodingService initialized at server startup
+- **MB.MD Documentation**: Created role-agents.md (7 leadership agents), patterns 64-70, core.md, index.json
+- **Open Source Integration**: FreeAPIService with 1,400+ public APIs catalog
+
+### LanceDB Integration Fix (Dec 5, 2025)
+- **Issue**: RecursiveContextService failing with "lanceDB.getConnection is not a function"
+- **Solution**: Updated service to use LanceDBService's `addMemory` and `searchMemories` methods
+- **Pattern**: LanceDB stores flat objects (id, content, timestamp), not nested metadata
+
 ### Registration Flow Fix (Dec 5, 2025)
 - **Root Cause**: Express route ordering issue - `PATCH /api/users/:id` was defined before `PATCH /api/users/me`, causing `:id` to match "me" as a literal ID
 - **Solution**: Moved `PATCH /api/users/me` route BEFORE `PATCH /api/users/:id` in server/routes.ts
