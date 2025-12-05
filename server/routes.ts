@@ -3729,6 +3729,87 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // PATCH /api/users/me - Update current user's profile (for onboarding and profile edits)
+  // IMPORTANT: This route MUST come BEFORE /api/users/:id to prevent :id matching "me"
+  app.patch("/api/users/me", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const userId = req.user!.id;
+
+      const {
+        name,
+        username,
+        bio,
+        city,
+        country,
+        yearsOfDancing,
+        tangoRoles,
+        tangoStartYear,
+        tangoRoleExperience,
+        socialLinks,
+        profileImage,
+        leaderLevel,
+        followerLevel,
+        primaryLanguage,
+        languages,
+        occupation,
+        portfolioUrls,
+        communityWebsiteUrl,
+        privacySettings,
+        formStatus,
+        isOnboardingComplete,
+      } = req.body;
+
+      // Build update data object - only include fields that are provided
+      const updateData: any = {
+        updatedAt: new Date(),
+      };
+
+      // Add profile fields if provided
+      if (name !== undefined) updateData.name = name;
+      if (username !== undefined) updateData.username = username;
+      if (bio !== undefined) updateData.bio = bio;
+      if (city !== undefined) updateData.city = city;
+      if (country !== undefined) updateData.country = country;
+      if (yearsOfDancing !== undefined) updateData.yearsOfDancing = yearsOfDancing;
+      if (tangoRoles !== undefined) updateData.tangoRoles = tangoRoles;
+      if (tangoStartYear !== undefined) updateData.tangoStartYear = tangoStartYear;
+      if (tangoRoleExperience !== undefined) updateData.tangoRoleExperience = tangoRoleExperience;
+      if (socialLinks !== undefined) updateData.socialLinks = socialLinks;
+      if (profileImage !== undefined) updateData.profileImage = profileImage;
+      if (leaderLevel !== undefined) updateData.leaderLevel = leaderLevel;
+      if (followerLevel !== undefined) updateData.followerLevel = followerLevel;
+      if (primaryLanguage !== undefined) updateData.primaryLanguage = primaryLanguage;
+      if (languages !== undefined) updateData.languages = languages;
+      if (occupation !== undefined) updateData.occupation = occupation;
+      if (portfolioUrls !== undefined) updateData.portfolioUrls = portfolioUrls;
+      if (communityWebsiteUrl !== undefined) updateData.communityWebsiteUrl = communityWebsiteUrl;
+      if (formStatus !== undefined) updateData.formStatus = formStatus;
+      if (isOnboardingComplete !== undefined) updateData.isOnboardingComplete = isOnboardingComplete;
+
+      // Handle privacySettings JSONB merge
+      if (privacySettings !== undefined) {
+        updateData.privacySettings = sql`COALESCE(${users.privacySettings}, '{}'::jsonb) || ${JSON.stringify(privacySettings)}::jsonb`;
+      }
+
+      // Update user in database
+      const [updatedUser] = await db
+        .update(users)
+        .set(updateData)
+        .where(eq(users.id, userId))
+        .returning();
+
+      if (!updatedUser) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      console.log(`[PATCH /api/users/me] Updated user ${userId} - city: ${city}, formStatus: ${formStatus}`);
+      res.json(updatedUser);
+    } catch (error) {
+      console.error('[PATCH /api/users/me] Failed to update user profile:', error);
+      res.status(500).json({ message: "Failed to update profile" });
+    }
+  });
+
   app.get("/api/users/:id", async (req: Request, res: Response) => {
     try {
       const param = req.params.id;
@@ -3830,86 +3911,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(updatedUser);
     } catch (error) {
       console.error('Failed to update user profile:', error);
-      res.status(500).json({ message: "Failed to update profile" });
-    }
-  });
-
-  // PATCH /api/users/me - Update current user's profile (for onboarding and profile edits)
-  app.patch("/api/users/me", authenticateToken, async (req: AuthRequest, res: Response) => {
-    try {
-      const userId = req.user!.id;
-
-      const {
-        name,
-        username,
-        bio,
-        city,
-        country,
-        yearsOfDancing,
-        tangoRoles,
-        tangoStartYear,
-        tangoRoleExperience,
-        socialLinks,
-        profileImage,
-        leaderLevel,
-        followerLevel,
-        primaryLanguage,
-        languages,
-        occupation,
-        portfolioUrls,
-        communityWebsiteUrl,
-        privacySettings,
-        formStatus,
-        isOnboardingComplete,
-      } = req.body;
-
-      // Build update data object - only include fields that are provided
-      const updateData: any = {
-        updatedAt: new Date(),
-      };
-
-      // Add profile fields if provided
-      if (name !== undefined) updateData.name = name;
-      if (username !== undefined) updateData.username = username;
-      if (bio !== undefined) updateData.bio = bio;
-      if (city !== undefined) updateData.city = city;
-      if (country !== undefined) updateData.country = country;
-      if (yearsOfDancing !== undefined) updateData.yearsOfDancing = yearsOfDancing;
-      if (tangoRoles !== undefined) updateData.tangoRoles = tangoRoles;
-      if (tangoStartYear !== undefined) updateData.tangoStartYear = tangoStartYear;
-      if (tangoRoleExperience !== undefined) updateData.tangoRoleExperience = tangoRoleExperience;
-      if (socialLinks !== undefined) updateData.socialLinks = socialLinks;
-      if (profileImage !== undefined) updateData.profileImage = profileImage;
-      if (leaderLevel !== undefined) updateData.leaderLevel = leaderLevel;
-      if (followerLevel !== undefined) updateData.followerLevel = followerLevel;
-      if (primaryLanguage !== undefined) updateData.primaryLanguage = primaryLanguage;
-      if (languages !== undefined) updateData.languages = languages;
-      if (occupation !== undefined) updateData.occupation = occupation;
-      if (portfolioUrls !== undefined) updateData.portfolioUrls = portfolioUrls;
-      if (communityWebsiteUrl !== undefined) updateData.communityWebsiteUrl = communityWebsiteUrl;
-      if (formStatus !== undefined) updateData.formStatus = formStatus;
-      if (isOnboardingComplete !== undefined) updateData.isOnboardingComplete = isOnboardingComplete;
-
-      // Handle privacySettings JSONB merge
-      if (privacySettings !== undefined) {
-        updateData.privacySettings = sql`COALESCE(${users.privacySettings}, '{}'::jsonb) || ${JSON.stringify(privacySettings)}::jsonb`;
-      }
-
-      // Update user in database
-      const [updatedUser] = await db
-        .update(users)
-        .set(updateData)
-        .where(eq(users.id, userId))
-        .returning();
-
-      if (!updatedUser) {
-        return res.status(404).json({ message: "User not found" });
-      }
-
-      console.log(`[PATCH /api/users/me] Updated user ${userId} - city: ${city}, formStatus: ${formStatus}`);
-      res.json(updatedUser);
-    } catch (error) {
-      console.error('[PATCH /api/users/me] Failed to update user profile:', error);
       res.status(500).json({ message: "Failed to update profile" });
     }
   });
