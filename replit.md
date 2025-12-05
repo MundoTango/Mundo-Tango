@@ -102,3 +102,27 @@ if ('on' in worker && typeof worker.on === 'function') {
 - **Added**: FacebookAdapter, TwitterAdapter, LinkedInAdapter with OAuth flows
 - **Wired**: CrossPlatformScheduler now uses `getSocialMediaAdapter()` for real API calls
 - **Location**: server/services/social/SocialMediaAdapters.ts
+
+### CTO Audit Fixes - Onboarding Error Handling (Dec 5, 2025)
+- **Issue**: CTO demo showed silent failures in onboarding - users stuck with no feedback
+- **Root Cause**: "Fire and forget" API calls with no `response.ok` checks
+- **Pages Fixed**: CitySelectionPage, TangoRolesPage, LanguagesPage, RegisterPage
+- **Solution**: Created unified `client/src/lib/apiErrorHandler.ts` utility
+- **Pattern Applied**: MB.MD Pattern 66 (Build Swarm Choreography) - parallel fixes
+- **User Impact**: Now shows actionable error messages instead of generic "Error" toasts
+
+### API Error Handling Best Practice
+```typescript
+// BEFORE (Bad - Fire and forget)
+await fetch("/api/users/me", { method: "PATCH", ... });
+navigate("/next-step");  // Navigates even if API failed!
+
+// AFTER (Good - Check response)
+const response = await fetch("/api/users/me", { method: "PATCH", ... });
+if (!response.ok) {
+  const errorMessage = await extractApiError(response, { context: "Profile update" });
+  throw new Error(errorMessage);
+}
+navigate("/next-step");
+```
+- **Files Created**: client/src/lib/apiErrorHandler.ts (unified error extraction utility)
