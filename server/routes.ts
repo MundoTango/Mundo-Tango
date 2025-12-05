@@ -5545,11 +5545,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/users/me/photo", authenticateToken, async (req: any, res: Response) => {
+  app.post("/api/users/me/photo", authenticateToken, profileMediaUpload.single('photo'), async (req: AuthRequest, res: Response) => {
     try {
-      res.json({ imageUrl: "https://via.placeholder.com/400" });
-    } catch (error) {
-      res.status(500).json({ message: "Photo upload failed" });
+      const file = (req as any).file;
+      
+      if (!file) {
+        return res.status(400).json({ message: "No photo file provided" });
+      }
+
+      // Validate file type
+      if (!file.mimetype.startsWith('image/')) {
+        return res.status(400).json({ message: "File must be an image" });
+      }
+
+      // Generate unique filename
+      const timestamp = Date.now();
+      const userId = req.user!.id;
+      const ext = file.originalname.split('.').pop() || 'jpg';
+      const filename = `profile-${userId}-${timestamp}.${ext}`;
+
+      // Upload to Object Storage
+      const { objectStorageService } = await import('./objectStorage');
+      
+      const result = await objectStorageService.uploadBuffer(file.buffer, {
+        filename,
+        contentType: file.mimetype,
+        isPublic: true,
+        directory: 'profile-photos'
+      });
+
+      if (!result.success) {
+        console.error('[POST /api/users/me/photo] Upload failed:', result.error);
+        return res.status(500).json({ message: "Failed to upload photo to storage" });
+      }
+
+      console.log(`[POST /api/users/me/photo] Uploaded photo for user ${userId}: ${result.publicUrl}`);
+      
+      res.json({ 
+        imageUrl: result.publicUrl,
+        objectPath: result.objectPath 
+      });
+    } catch (error: any) {
+      console.error('[POST /api/users/me/photo] Error:', error);
+      res.status(500).json({ message: "Photo upload failed", error: error.message });
     }
   });
 
