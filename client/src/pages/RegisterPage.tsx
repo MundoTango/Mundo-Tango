@@ -56,10 +56,16 @@ export default function RegisterPage() {
         setIsCheckingUsername(true);
         try {
           const response = await fetch(`/api/auth/check-username/${username}`);
+          if (!response.ok) {
+            console.error("Username check failed:", response.status);
+            setUsernameAvailable(null);
+            return;
+          }
           const data = await response.json();
           setUsernameAvailable(data.available);
         } catch (error) {
           console.error("Username check error:", error);
+          setUsernameAvailable(null);
         } finally {
           setIsCheckingUsername(false);
         }
@@ -78,10 +84,16 @@ export default function RegisterPage() {
         setIsCheckingEmail(true);
         try {
           const response = await fetch(`/api/auth/check-email/${encodeURIComponent(email)}`);
+          if (!response.ok) {
+            console.error("Email check failed:", response.status);
+            setEmailAvailable(null);
+            return;
+          }
           const data = await response.json();
           setEmailAvailable(data.available);
         } catch (error) {
           console.error("Email check error:", error);
+          setEmailAvailable(null);
         } finally {
           setIsCheckingEmail(false);
         }

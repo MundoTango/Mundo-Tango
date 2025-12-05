@@ -7,6 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Loader2, Check, Heart, ChevronRight } from "lucide-react";
 import { SEO } from "@/components/SEO";
 import { useAuth } from "@/contexts/AuthContext";
+import { extractApiError } from "@/lib/apiErrorHandler";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { motion } from "framer-motion";
@@ -49,7 +50,7 @@ export default function TangoRolesPage() {
     setIsLoading(true);
     try {
       const accessToken = localStorage.getItem("accessToken");
-      await fetch("/api/users/me", {
+      const response = await fetch("/api/users/me", {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -61,11 +62,17 @@ export default function TangoRolesPage() {
         }),
       });
 
+      if (!response.ok) {
+        const errorMessage = await extractApiError(response, { context: "Tango roles" });
+        throw new Error(errorMessage);
+      }
+
       navigate("/onboarding/step-4");
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Failed to save roles";
       toast({
-        title: "Error",
-        description: "Failed to save roles. Please try again.",
+        title: "Roles Save Failed",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
