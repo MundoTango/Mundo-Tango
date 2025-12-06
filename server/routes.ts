@@ -28,7 +28,7 @@ import videoUploadRoutes from "./routes/video-upload-routes";
 import videoRecordingRoutes from "./routes/video-recording-routes";
 import { objectStorageService } from "./objectStorage";
 import mrblueVideoRoutes from "./routes/mrblue-video-routes";
-import mrBlueRoutes from "./routes/mrBlue";
+import mrBlueRoutes from "./routes/mrblue";
 import mrBlueStreamRoutes from "./routes/mrblue-stream";
 import mrBlueEnhancedRoutes from "./routes/mr-blue-enhanced";
 import mrBlueAgentsRoutes from "./routes/mrBlueAgents";

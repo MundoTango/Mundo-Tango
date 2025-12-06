@@ -18,7 +18,7 @@ import { ContextService } from './ContextService';
 import { CodeGenerator } from './CodeGenerator';
 import { agentEventBus } from './AgentEventBus';
 import { progressTrackingAgent } from './ProgressTrackingAgent';
-import { preferenceExtractor } from './PreferenceExtractor';
+import { preferenceExtractor } from './preferenceExtractor';
 import { clarificationService } from '../clarification/ClarificationService';
 import { sequentialOrchestrator } from '../orchestration/SequentialOrchestrator';
 import { LearningRetentionService } from './LearningRetentionService';
