@@ -71,6 +71,7 @@ import EventsGalleryPrototypePage from "@/pages/EventsGalleryPrototypePage";
 const AboutPage = lazy(() => import("@/pages/AboutPage"));
 const FeaturesPage = lazy(() => import("@/pages/FeaturesPage"));
 const TestimonialsPage = lazy(() => import("@/pages/TestimonialsPage"));
+const FAQPage = lazy(() => import("@/pages/FAQPage"));
 const CalendarPage = lazy(() => import("@/pages/CalendarPage"));
 // Social & Community
 const DiscoverPage = lazy(() => import("@/pages/DiscoverPage"));
@@ -769,6 +770,7 @@ function Router() {
         component={EventsGalleryPrototypePage}
       />
       <Route path="/about" component={AboutPage} />
+      <Route path="/faq" component={FAQPage} />
       <Route path="/features" component={FeaturesPage} />
       <Route path="/testimonials" component={TestimonialsPage} />
       <Route path="/discover" component={DiscoverPage} />
@@ -2517,6 +2519,10 @@ function Router() {
       </Route>
 
       <Route path="/password-reset" component={PasswordResetPage} />
+      {/* /forgot-password alias for password-reset */}
+      <Route path="/forgot-password">
+        <Redirect to="/password-reset" />
+      </Route>
       <Route path="/verify-email" component={EmailVerificationPage} />
 
       <Route path="/settings/2fa">

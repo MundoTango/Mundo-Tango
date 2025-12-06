@@ -10,15 +10,74 @@ import { SEO } from "@/components/SEO";
 import { PublicLayout } from "@/components/PublicLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { motion } from "framer-motion";
-import { Heart, Sparkles, Users } from "lucide-react";
+import { Heart, Sparkles, Users, Loader2 } from "lucide-react";
+import { SiFacebook, SiGoogle } from "react-icons/si";
+import { supabase } from "@/lib/supabase";
 import tangoHeroImage from "@assets/stock_images/elegant_professional_29e89c1e.jpg";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [isFacebookLoading, setIsFacebookLoading] = useState(false);
   const { login } = useAuth();
   const { toast } = useToast();
+
+  const handleGoogleLogin = async () => {
+    try {
+      setIsGoogleLoading(true);
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+      if (error) {
+        toast({
+          title: "Google Login Failed",
+          description: error.message || "Unable to connect with Google",
+          variant: "destructive",
+        });
+      }
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred",
+        variant: "destructive",
+      });
+    } finally {
+      setIsGoogleLoading(false);
+    }
+  };
+
+  const handleFacebookLogin = async () => {
+    try {
+      setIsFacebookLoading(true);
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'facebook',
+        options: {
+          scopes: 'public_profile,email',
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+      if (error) {
+        toast({
+          title: "Facebook Login Failed",
+          description: error.message || "Unable to connect with Facebook",
+          variant: "destructive",
+        });
+      }
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred",
+        variant: "destructive",
+      });
+    } finally {
+      setIsFacebookLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -139,6 +198,54 @@ export default function LoginPage() {
                   >
                     {isLoading ? "Signing in..." : "Sign In"}
                   </Button>
+
+                  <div className="relative my-6">
+                    <div className="absolute inset-0 flex items-center">
+                      <div className="w-full border-t border-white/20" />
+                    </div>
+                    <div className="relative flex justify-center text-sm">
+                      <span className="bg-transparent px-4 text-white/60">or continue with</span>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-3">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="flex-1 bg-white/10 border-white/20 text-white hover:bg-white/20"
+                      onClick={handleGoogleLogin}
+                      disabled={isGoogleLoading || isLoading}
+                      data-testid="button-google-login"
+                      size="lg"
+                    >
+                      {isGoogleLoading ? (
+                        <Loader2 className="h-5 w-5 animate-spin" />
+                      ) : (
+                        <>
+                          <SiGoogle className="h-5 w-5 mr-2" />
+                          Google
+                        </>
+                      )}
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="flex-1 bg-white/10 border-white/20 text-white hover:bg-white/20"
+                      onClick={handleFacebookLogin}
+                      disabled={isFacebookLoading || isLoading}
+                      data-testid="button-facebook-login"
+                      size="lg"
+                    >
+                      {isFacebookLoading ? (
+                        <Loader2 className="h-5 w-5 animate-spin" />
+                      ) : (
+                        <>
+                          <SiFacebook className="h-5 w-5 mr-2" />
+                          Facebook
+                        </>
+                      )}
+                    </Button>
+                  </div>
 
                   <Link 
                     href="/password-reset" 

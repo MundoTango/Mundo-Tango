@@ -221,7 +221,7 @@ export default function EventsPage() {
   const [, navigate] = useLocation();
   const { user } = useAuth();
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState<EventTab>(user ? "upcoming" : "discover");
+  const [activeTab, setActiveTab] = useState<EventTab>("discover");
   const [viewMode, setViewMode] = useState<"list" | "calendar" | "map">("list");
   const [filters, setFilters] = useState<EventFilterValues>({});
   const [page, setPage] = useState(1);
