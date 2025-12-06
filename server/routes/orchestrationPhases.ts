@@ -12,6 +12,7 @@ import { Router } from 'express';
 import { swarmChoreographyController } from '../services/orchestration/SwarmChoreographyController';
 import { validationRelayService } from '../services/orchestration/ValidationRelayService';
 import { strikeTracker } from '../services/orchestration/StrikeTracker';
+import { comprehensiveAuditRunner } from '../services/orchestration/ComprehensiveAuditRunner';
 
 const router = Router();
 
@@ -534,6 +535,56 @@ router.get('/autofix/stats', async (_req, res) => {
     res.status(500).json({
       success: false,
       error: 'Failed to get autofix stats'
+    });
+  }
+});
+
+// ============================================================================
+// COMPREHENSIVE AUDIT RUNNER (MB.MD v9.9.3)
+// ============================================================================
+
+/**
+ * POST /api/orchestration/phases/comprehensive-audit/start
+ * Start full 5-phase audit
+ */
+router.post('/comprehensive-audit/start', async (_req, res) => {
+  try {
+    console.log('[Orchestration] Starting comprehensive audit...');
+    
+    // Run audit asynchronously and return immediately
+    comprehensiveAuditRunner.runFullAudit().catch(err => {
+      console.error('[Orchestration] Comprehensive audit failed:', err);
+    });
+    
+    res.json({
+      success: true,
+      message: 'Comprehensive audit started',
+      progress: comprehensiveAuditRunner.getProgress()
+    });
+  } catch (error) {
+    console.error('[Orchestration] Failed to start audit:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to start comprehensive audit'
+    });
+  }
+});
+
+/**
+ * GET /api/orchestration/phases/comprehensive-audit/progress
+ * Get current audit progress
+ */
+router.get('/comprehensive-audit/progress', async (_req, res) => {
+  try {
+    const progress = comprehensiveAuditRunner.getProgress();
+    res.json({
+      success: true,
+      progress
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: 'Failed to get audit progress'
     });
   }
 });

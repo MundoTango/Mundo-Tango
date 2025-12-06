@@ -102,6 +102,14 @@ export function verifyCsrfToken(req: Request, res: Response, next: NextFunction)
     return next();
   }
   
+  // Skip CSRF for Orchestration Phase endpoints (MB.MD v9.9.3 - A2A communication)
+  const orchestrationPhasesEndpoints = [
+    "/api/orchestration/phases/"
+  ];
+  if (orchestrationPhasesEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
+    return next();
+  }
+  
   // Skip CSRF for external API endpoints (Replit AI bridge)
   const externalApiEndpoints = [
     "/api/replit-ai/"
@@ -247,6 +255,11 @@ export function verifyDoubleSubmitCookie(req: Request, res: Response, next: Next
     "/api/replit-ai/"
   ];
   if (externalApiEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
+    return next();
+  }
+  
+  // Skip CSRF for Orchestration Phase endpoints (MB.MD v9.9.3 - A2A communication)
+  if (req.originalUrl.startsWith("/api/orchestration/phases/")) {
     return next();
   }
   

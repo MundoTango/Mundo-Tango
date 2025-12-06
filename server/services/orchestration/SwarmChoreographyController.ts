@@ -509,6 +509,13 @@ export class SwarmChoreographyController {
       .sort((a, b) => b.auditedAt.getTime() - a.auditedAt.getTime())
       .slice(0, limit);
   }
+
+  /**
+   * Get all issues
+   */
+  getAllIssues(): Issue[] {
+    return Array.from(this.issues.values());
+  }
 }
 
 // Singleton instance
