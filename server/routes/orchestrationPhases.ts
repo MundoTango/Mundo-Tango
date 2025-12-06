@@ -589,4 +589,88 @@ router.get('/comprehensive-audit/progress', async (_req, res) => {
   }
 });
 
+/**
+ * POST /api/orchestration/phases/test-phase5
+ * Quick test of Phase 5 processIssue with synthetic issues
+ */
+router.post('/test-phase5', async (_req, res) => {
+  try {
+    console.log('[Phase5 Test] Starting Phase 5 quick test...');
+    
+    await strikeTracker.initialize();
+    
+    const testIssues = [
+      {
+        id: `test-${Date.now()}-1`,
+        type: 'a11y' as const,
+        severity: 'medium' as const,
+        title: 'Missing alt text on image',
+        description: 'Image element lacks alt attribute for accessibility',
+        pageId: 'test-page-1',
+        pageName: 'TestPage1',
+        location: { line: 10, column: 5 },
+        suggestedFix: 'Add alt="Description" to img element'
+      },
+      {
+        id: `test-${Date.now()}-2`,
+        type: 'ui' as const,
+        severity: 'low' as const,
+        title: 'Button lacks hover state',
+        description: 'Button element needs hover interaction',
+        pageId: 'test-page-2',
+        pageName: 'TestPage2',
+        location: { line: 25, column: 10 },
+        suggestedFix: 'Add hover:bg-opacity-80 class'
+      },
+      {
+        id: `test-${Date.now()}-3`,
+        type: 'performance' as const,
+        severity: 'high' as const,
+        title: 'Large bundle size detected',
+        description: 'Component bundle exceeds recommended size',
+        pageId: 'test-page-3',
+        pageName: 'TestPage3',
+        location: { file: 'bundle.js' },
+        suggestedFix: 'Implement code splitting with dynamic imports'
+      }
+    ];
+    
+    const results = [];
+    
+    for (const issue of testIssues) {
+      const result = await strikeTracker.processIssue(issue);
+      results.push({
+        issueId: issue.id,
+        title: issue.title,
+        status: result.status,
+        strikes: result.strikes,
+        strategy: result.strategy
+      });
+    }
+    
+    const stats = strikeTracker.getStats();
+    
+    console.log(`[Phase5 Test] ✅ Complete: ${results.length} issues processed`);
+    
+    res.json({
+      success: true,
+      message: 'Phase 5 test complete',
+      results,
+      stats: {
+        totalIssues: stats.metrics.totalIssues,
+        fixedIssues: stats.metrics.fixedIssues,
+        escalatedIssues: stats.metrics.escalatedIssues,
+        escalationRate: stats.metrics.escalationRate,
+        withinTarget: stats.metrics.escalationRate < 0.1
+      }
+    });
+  } catch (error) {
+    console.error('[Phase5 Test] Error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Phase 5 test failed'
+    });
+  }
+});
+
 export default router;
