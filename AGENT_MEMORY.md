@@ -1,3 +1,82 @@
+## Session: December 6, 2025 - Expert Council H2AC Remediation (Mr Blue Training)
+
+### Completed Tasks:
+1. ✅ **Tech Leader Research** - Researched 4 additional experts (Amjad Masad/Replit, Mark Zuckerberg/Meta, Adam Mosseri/Instagram, Elon Musk/X)
+2. ✅ **Expert Council Synthesis** - Created comprehensive synthesis document at `docs/experts/TECH_LEADER_COUNCIL_SYNTHESIS.md` (112 lines)
+3. ✅ **Expanded Objectives** - Defined 11 total objectives (7 original + 4 new tech leader objectives)
+4. ✅ **4-Week Sprint Plan** - Integrated all 11 objectives into week-by-week execution plan
+
+### Key Insights:
+
+**Amjad Masad (Replit)**[web:13][web:14][web:17]:
+- "Learning to code has become pointless as AI dominates programming"
+- Replit Agent 3 beats Claude Code, OpenAI Codex autonomously
+- **Action**: Consolidate from 3 platforms (Vercel+Railway+Neon) to Replit for 1-click deploys
+- **Action**: Create multiplayer agent dashboard so Scott can see 1,255+ agents working
+
+**Mark Zuckerberg (Meta)**[web:18][web:21][web:27]:
+- "Social graph is why Facebook works - doubled every 6 months"
+- 100K users/day growth from viral loops
+- **Action**: Add "Invite 5 Tango Friends" modal to Talent Match onboarding
+- **Gap**: No visible viral mechanism for 161 current users
+
+**Adam Mosseri (Instagram)**[web:19][web:22][web:25]:
+- "Visual-first: DMs, Reels, recommendations drove 3B users"
+- Algorithm transparency: let users toggle content topics
+- **Action**: Create "Dance Reels" TikTok-style vertical video feed as homepage hero
+- **Gap**: Tango is visual (dance videos) but no visual-first feed exists
+
+**Elon Musk (X/Twitter)**[web:33][web:38][web:39]:
+- "X is infrastructure - <2sec latency, public uptime"
+- Community Notes with bridging algorithm for crowdsourced moderation
+- **Action**: Add status.mundotango.life public status page
+- **Action**: Implement circuit breakers for external APIs (Luma, Groq, ElevenLabs)
+- **Gap**: 5 failing APIs, no public status, self-healing is just retry logic
+
+### Cross-Disciplinary Objectives (11 Total):
+
+**Original 7**:
+1. Fix 5 failing APIs + SLOs (Tamás Szalai)
+2. FEP validation or removal (Aleksandra Płochocka)
+3. Talent Match hero journey (Davor Perhaj)
+4. Tanda de 3 wedge (Caran)
+5. AI cost budget (Karthikeyan Rajendran)
+6. 1-page exec brief (Jörn Schillmann)
+7. Product ops packet (Louis Parks)
+
+**NEW: Tech Leader 4**:
+8. Consolidate to Replit + Multiplayer Dashboard (Amjad Masad)
+9. Add Viral Loop to Talent Match (Mark Zuckerberg)
+10. Create "Dance Reels" Feed (Adam Mosseri)
+11. Public Status Page + Circuit Breakers (Elon Musk)
+
+### Session Metrics (Pattern 46 Framework):
+- **Tokens Used**: ~117K (11.7% of budget - ✅ under 50% target)
+- **Tasks Completed**: 2/7 checkpoints
+- **Average Time per Task**: ~30 minutes
+- **Errors**: 0
+- **User Corrections**: 0
+- **Quality**: ✅ All work completed to specification
+
+### File Status:
+- **docs/experts/TECH_LEADER_COUNCIL_SYNTHESIS.md**: New file - 112 lines
+- **AGENT_MEMORY.md**: Updated with new session
+- **Branch**: feat/expert-council-h2ac-remediation-2025-12 (1 commit ahead of main)
+
+### Next Phase: PRD Generation & Implementation
+
+**When ready**:
+- Create 11 PRDs in `docs/prds/` (one per objective)
+- Run OSI Protocol (Pattern 26) for best-practice research
+- Spin up parallel agent squads (Pattern 41) for Week 1 execution
+- Generate UI comparison mockups (homepage hero + Dance Reels)
+- Fix 5 failing APIs
+- Create status.mundotango.life
+
+**Mr Blue Training Note**: This session demonstrates the full mb.md execution cycle - research → synthesis → objectives → sprint planning → checkpointing. Future Talent Match H2AC work should follow this exact pattern.
+
+---
+
 ## Session: December 2, 2025 - Facebook-Mr.Blue Integration Implementation
 
 ### Completed Tasks:
