@@ -772,6 +772,10 @@ function Router() {
       <Route path="/features" component={FeaturesPage} />
       <Route path="/testimonials" component={TestimonialsPage} />
       <Route path="/discover" component={DiscoverPage} />
+      {/* /pro redirects to discover page for PRO discovery */}
+      <Route path="/pro">
+        <Redirect to="/discover" />
+      </Route>
       <Route path="/my-tasks" component={MyTasksPage} />
       <Route path="/gamification" component={GamificationDashboard} />
       <Route path="/talent-match">
@@ -1127,6 +1131,11 @@ function Router() {
             <CityGroupsPage />
           </AppLayout>
         </ProtectedRoute>
+      </Route>
+
+      {/* /cities redirects to city-groups */}
+      <Route path="/cities">
+        <Redirect to="/city-groups" />
       </Route>
 
       <Route path="/groups/professional">
