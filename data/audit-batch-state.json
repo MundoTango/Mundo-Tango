@@ -1,7 +1,7 @@
 {
   "version": 1,
   "createdAt": "2025-12-06T05:08:32.805Z",
-  "updatedAt": "2025-12-06T05:15:09.521Z",
+  "updatedAt": "2025-12-06T05:24:39.144Z",
   "batches": [
     {
       "id": "batch-1-1764997712804",
@@ -180,28 +180,29 @@
         "SocialMediaDashboardPage",
         "TeacherProfilePage"
       ],
-      "completedPageIds": [],
-      "remainingPageIds": [
-        "page-adminanalyticspage",
-        "page-admincompliancepage",
+      "completedPageIds": [
+        "page-loginpage",
         "page-admincontentmoderationdetailpage",
-        "page-admindashboard",
-        "page-adminmoderationpage",
-        "page-adminprojecttrackerpage",
-        "page-adminreportspage",
-        "page-adminscrapingpage",
-        "page-adminsettingspage",
-        "page-admintranslationspage",
+        "page-registerpage",
+        "page-adminanalyticspage",
         "page-adminusersmanagementpage",
-        "page-adminuserspage",
         "page-billinghistory",
         "page-billingpage",
-        "page-loginpage",
         "page-managesubscriptionpage",
-        "page-paymentfailedpage",
+        "page-adminmoderationpage",
+        "page-adminscrapingpage",
+        "page-adminprojecttrackerpage",
+        "page-adminreportspage",
+        "page-admincompliancepage",
         "page-paymentintegration",
+        "page-admintranslationspage",
+        "page-paymentfailedpage",
+        "page-adminsettingspage",
         "page-paymentsuccesspage",
-        "page-registerpage",
+        "page-admindashboard",
+        "page-adminuserspage"
+      ],
+      "remainingPageIds": [
         "page-subscriptionplans",
         "page-subscriptionspage",
         "page-twofactorauthpage",
@@ -271,10 +272,11 @@
       "status": "running",
       "priority": "critical",
       "totalPages": 85,
-      "pagesProcessed": 0,
-      "issuesFound": 0,
+      "pagesProcessed": 20,
+      "issuesFound": 80,
       "createdAt": "2025-12-06T05:08:32.804Z",
-      "startedAt": "2025-12-06T05:09:04.554Z"
+      "startedAt": "2025-12-06T05:09:04.554Z",
+      "lastProgressAt": "2025-12-06T05:19:07.834Z"
     },
     {
       "id": "batch-2-1764997712804",
