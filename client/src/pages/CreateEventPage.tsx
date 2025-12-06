@@ -164,6 +164,8 @@ export default function CreateEventPage() {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["/api/events"] });
       queryClient.invalidateQueries({ queryKey: ["/api/event-series"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/events/my-rsvps"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/events/smart"] });
       toast({
         title: "Event created!",
         description: "Your event has been published successfully.",

@@ -188,13 +188,21 @@ router.post("/moderation/:id/action", authenticateToken, requireAdmin, async (re
       })
       .where(eq(moderationQueue.id, parseInt(id)));
 
-    // Log the action
-    await db.insert(moderationActions).values({
-      queueId: parseInt(id),
-      action,
-      moderatorId,
-      reason: notes || null,
-    });
+    // Log the action - handle missing table gracefully
+    try {
+      await db.insert(moderationActions).values({
+        queueId: parseInt(id),
+        action,
+        moderatorId,
+        reason: notes || null,
+      });
+    } catch (tableError: any) {
+      if (tableError.message?.includes('does not exist')) {
+        console.warn('[Admin] moderation_actions table not found, skipping action log');
+      } else {
+        throw tableError;
+      }
+    }
 
     res.json({ success: true, id, action, status: newStatus });
   } catch (error: any) {
@@ -384,23 +392,44 @@ router.get("/moderation/stats", authenticateToken, requireAdmin, async (req, res
       .from(moderationQueue)
       .where(eq(moderationQueue.status, "banned"));
 
-    const flaggedCount = await db.select({ count: count() })
-      .from(flaggedContent);
+    // Handle missing flagged_content table gracefully
+    let flaggedCountValue = 0;
+    try {
+      const flaggedCount = await db.select({ count: count() })
+        .from(flaggedContent);
+      flaggedCountValue = flaggedCount[0]?.count || 0;
+    } catch (tableError: any) {
+      if (tableError.message?.includes('does not exist')) {
+        console.warn('[Admin] flagged_content table not found, returning 0');
+      } else {
+        throw tableError;
+      }
+    }
 
-    // Get recent actions (last 24h)
-    const oneDayAgo = new Date();
-    oneDayAgo.setDate(oneDayAgo.getDate() - 1);
-    const recentActions = await db.select({ count: count() })
-      .from(moderationActions)
-      .where(gte(moderationActions.createdAt, oneDayAgo));
+    // Get recent actions (last 24h) - handle missing table gracefully
+    let recentActionsCount = 0;
+    try {
+      const oneDayAgo = new Date();
+      oneDayAgo.setDate(oneDayAgo.getDate() - 1);
+      const recentActions = await db.select({ count: count() })
+        .from(moderationActions)
+        .where(gte(moderationActions.createdAt, oneDayAgo));
+      recentActionsCount = recentActions[0]?.count || 0;
+    } catch (tableError: any) {
+      if (tableError.message?.includes('does not exist')) {
+        console.warn('[Admin] moderation_actions table not found, returning 0');
+      } else {
+        throw tableError;
+      }
+    }
 
     res.json({
       pending: pendingCount[0]?.count || 0,
       approved: approvedCount[0]?.count || 0,
       removed: removedCount[0]?.count || 0,
       banned: bannedCount[0]?.count || 0,
-      flagged: flaggedCount[0]?.count || 0,
-      recentActions24h: recentActions[0]?.count || 0,
+      flagged: flaggedCountValue,
+      recentActions24h: recentActionsCount,
     });
   } catch (error: any) {
     console.error("Error fetching moderation stats:", error);
@@ -419,17 +448,30 @@ router.get("/moderation/flagged", authenticateToken, requireAdmin, async (req, r
     const limitNum = parseInt(limit as string);
     const offset = (pageNum - 1) * limitNum;
 
-    const results = await db.select()
-      .from(flaggedContent)
-      .orderBy(desc(flaggedContent.createdAt))
-      .limit(limitNum)
-      .offset(offset);
+    // Handle missing flagged_content table gracefully
+    let results: any[] = [];
+    let total = 0;
 
-    const totalCount = await db.select({ count: count() }).from(flaggedContent);
+    try {
+      results = await db.select()
+        .from(flaggedContent)
+        .orderBy(desc(flaggedContent.createdAt))
+        .limit(limitNum)
+        .offset(offset);
+
+      const totalCount = await db.select({ count: count() }).from(flaggedContent);
+      total = totalCount[0]?.count || 0;
+    } catch (tableError: any) {
+      if (tableError.message?.includes('does not exist')) {
+        console.warn('[Admin] flagged_content table not found, returning empty array');
+      } else {
+        throw tableError;
+      }
+    }
 
     res.json({
       flagged: results,
-      total: totalCount[0]?.count || 0,
+      total,
       page: pageNum,
       limit: limitNum,
     });
@@ -450,25 +492,37 @@ router.get("/moderation/audit-log", authenticateToken, requireAdmin, async (req,
     const limitNum = parseInt(limit as string);
     const offset = (pageNum - 1) * limitNum;
 
-    const results = await db.select({
-      action: moderationActions,
-      moderator: {
-        id: users.id,
-        username: users.username,
-        name: users.name,
-      }
-    })
-    .from(moderationActions)
-    .leftJoin(users, eq(moderationActions.moderatorId, users.id))
-    .orderBy(desc(moderationActions.createdAt))
-    .limit(limitNum)
-    .offset(offset);
+    let results: any[] = [];
+    let total = 0;
 
-    const totalCount = await db.select({ count: count() }).from(moderationActions);
+    try {
+      results = await db.select({
+        action: moderationActions,
+        moderator: {
+          id: users.id,
+          username: users.username,
+          name: users.name,
+        }
+      })
+      .from(moderationActions)
+      .leftJoin(users, eq(moderationActions.moderatorId, users.id))
+      .orderBy(desc(moderationActions.createdAt))
+      .limit(limitNum)
+      .offset(offset);
+
+      const totalCount = await db.select({ count: count() }).from(moderationActions);
+      total = totalCount[0]?.count || 0;
+    } catch (tableError: any) {
+      if (tableError.message?.includes('does not exist')) {
+        console.warn('[Admin] moderation_actions table not found, returning empty array');
+      } else {
+        throw tableError;
+      }
+    }
 
     res.json({
       actions: results,
-      total: totalCount[0]?.count || 0,
+      total,
       page: pageNum,
       limit: limitNum,
     });

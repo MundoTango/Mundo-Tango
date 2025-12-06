@@ -1,19 +1,23 @@
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, Zap, Crown, Users, DollarSign } from "lucide-react";
+import { Check, Zap, Crown, Users, DollarSign, Loader2 } from "lucide-react";
 import { PublicLayout } from "@/components/PublicLayout";
 import { SEO } from "@/components/SEO";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { motion } from "framer-motion";
-
-const slugify = (name: string) => name.toLowerCase().replace(/\s+/g, '-');
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
+import { useLocation } from "wouter";
 
 const plans = [
   {
     name: "Free Trial",
     slug: "free-trial",
+    planId: "free",
     price: "$0",
     period: "7 days",
     icon: Users,
@@ -26,11 +30,13 @@ const plans = [
       "Partner matching preview"
     ],
     cta: "Start Free Trial",
-    popular: false
+    popular: false,
+    isFree: true
   },
   {
     name: "Basic",
     slug: "basic",
+    planId: "basic",
     price: "$4.99",
     period: "month",
     icon: Users,
@@ -43,11 +49,13 @@ const plans = [
       "Limited AI queries"
     ],
     cta: "Get Started",
-    popular: false
+    popular: false,
+    isFree: false
   },
   {
     name: "Dancer Pro",
     slug: "dancer-pro",
+    planId: "pro",
     price: "$9.99",
     period: "month",
     icon: Zap,
@@ -62,11 +70,13 @@ const plans = [
       "Travel planning tools"
     ],
     cta: "Start Free Trial",
-    popular: true
+    popular: true,
+    isFree: false
   },
   {
     name: "Professional",
     slug: "professional",
+    planId: "premium",
     price: "$29.99",
     period: "month",
     icon: Crown,
@@ -80,11 +90,75 @@ const plans = [
       "Priority support"
     ],
     cta: "Start Free Trial",
-    popular: false
+    popular: false,
+    isFree: false
   }
 ];
 
 export default function PricingPage() {
+  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+  const { toast } = useToast();
+  const [, setLocation] = useLocation();
+
+  const { data: userData } = useQuery({
+    queryKey: ['/api/auth/me'],
+  });
+
+  const isAuthenticated = !!userData?.user;
+
+  const checkoutMutation = useMutation({
+    mutationFn: async (planId: string) => {
+      const response = await apiRequest('/api/billing/create-subscription', {
+        method: 'POST',
+        body: JSON.stringify({ planId }),
+      });
+      return response;
+    },
+    onSuccess: (data) => {
+      if (data.clientSecret) {
+        toast({
+          title: "Redirecting to payment...",
+          description: "Please complete your payment to activate your subscription.",
+        });
+        setLocation('/subscribe/payment?planId=' + loadingPlan);
+      } else if (data.success) {
+        toast({
+          title: "Plan activated!",
+          description: "Your free plan has been activated.",
+        });
+        setLocation('/feed');
+      }
+      setLoadingPlan(null);
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Subscription Error",
+        description: error.message || "Failed to start subscription. Please try again.",
+        variant: "destructive",
+      });
+      setLoadingPlan(null);
+    },
+  });
+
+  const handlePlanSelect = async (plan: typeof plans[0]) => {
+    if (!isAuthenticated) {
+      toast({
+        title: "Sign in required",
+        description: "Please sign in or create an account to subscribe.",
+      });
+      setLocation('/auth?redirect=/pricing&plan=' + plan.planId);
+      return;
+    }
+
+    if (plan.isFree) {
+      setLocation('/signup?trial=true');
+      return;
+    }
+
+    setLoadingPlan(plan.planId);
+    checkoutMutation.mutate(plan.planId);
+  };
+
   return (
     <SelfHealingErrorBoundary pageName="Pricing" fallbackRoute="/">
     <PageLayout title="Simple, Transparent Pricing" showBreadcrumbs>
@@ -176,8 +250,17 @@ export default function PricingPage() {
                         className="w-full gap-2"
                         variant={plan.popular ? "default" : "outline"}
                         data-testid={`button-cta-${plan.slug}`}
+                        onClick={() => handlePlanSelect(plan)}
+                        disabled={loadingPlan !== null}
                       >
-                        {plan.cta}
+                        {loadingPlan === plan.planId ? (
+                          <>
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                            Processing...
+                          </>
+                        ) : (
+                          plan.cta
+                        )}
                       </Button>
                     </CardContent>
                   </Card>

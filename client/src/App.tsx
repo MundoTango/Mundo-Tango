@@ -135,6 +135,7 @@ const EventDetailsPage = lazy(() => import("@/pages/EventDetailsPage"));
 const EditEventPage = lazy(() => import("@/pages/EditEventPage"));
 const MyEventsPage = lazy(() => import("@/pages/MyEventsPage"));
 const GroupsPage = lazy(() => import("@/pages/GroupsPage"));
+const GroupCreatePage = lazy(() => import("@/pages/GroupCreatePage"));
 const GroupDetailsPage = lazy(() => import("@/pages/GroupDetailsPage"));
 const EventSeriesPage = lazy(() => import("@/pages/EventSeriesPage"));
 
@@ -253,6 +254,9 @@ const UserReportsPage = lazy(() => import("@/pages/admin/UserReportsPage"));
 const RoleRequestsPage = lazy(() => import("@/pages/admin/RoleRequestsPage"));
 const EventApprovalsPage = lazy(
   () => import("@/pages/admin/EventApprovalsPage"),
+);
+const AdminEventsPage = lazy(
+  () => import("@/pages/admin/AdminEventsPage"),
 );
 const HousingReviewsPage = lazy(
   () => import("@/pages/admin/HousingReviewsPage"),
@@ -1039,10 +1043,22 @@ function Router() {
         </ProtectedRoute>
       </Route>
 
+      <Route path="/travel">
+        <ProtectedRoute>
+          <AppLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <TravelTripPlannerPage />
+            </Suspense>
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
       <Route path="/travel/planner">
         <ProtectedRoute>
           <AppLayout>
-            <TravelTripPlannerPage />
+            <Suspense fallback={<LoadingFallback />}>
+              <TravelTripPlannerPage />
+            </Suspense>
           </AppLayout>
         </ProtectedRoute>
       </Route>
@@ -1050,7 +1066,9 @@ function Router() {
       <Route path="/travel/trip/:id">
         <ProtectedRoute>
           <AppLayout>
-            <TravelItineraryPage />
+            <Suspense fallback={<LoadingFallback />}>
+              <TravelItineraryPage />
+            </Suspense>
           </AppLayout>
         </ProtectedRoute>
       </Route>
@@ -1058,7 +1076,9 @@ function Router() {
       <Route path="/travel/trip/:id/expenses">
         <ProtectedRoute>
           <AppLayout>
-            <TravelExpensesPage />
+            <Suspense fallback={<LoadingFallback />}>
+              <TravelExpensesPage />
+            </Suspense>
           </AppLayout>
         </ProtectedRoute>
       </Route>
@@ -1066,7 +1086,9 @@ function Router() {
       <Route path="/travel/events/:eventId">
         <ProtectedRoute>
           <AppLayout>
-            <TravelEventCoordinationPage />
+            <Suspense fallback={<LoadingFallback />}>
+              <TravelEventCoordinationPage />
+            </Suspense>
           </AppLayout>
         </ProtectedRoute>
       </Route>
@@ -1075,6 +1097,40 @@ function Router() {
         <ProtectedRoute>
           <AppLayout>
             <GroupsPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/groups/create">
+        <ProtectedRoute>
+          <AppLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <GroupCreatePage />
+            </Suspense>
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/groups/cities">
+        <ProtectedRoute>
+          <AppLayout>
+            <CityGroupsPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/groups/professional">
+        <ProtectedRoute>
+          <AppLayout>
+            <ProfessionalGroupsPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/groups/custom">
+        <ProtectedRoute>
+          <AppLayout>
+            <CustomGroupsPage />
           </AppLayout>
         </ProtectedRoute>
       </Route>
@@ -1112,14 +1168,6 @@ function Router() {
         </ProtectedRoute>
       </Route>
 
-      <Route path="/groups/cities">
-        <ProtectedRoute>
-          <AppLayout>
-            <CityGroupsPage />
-          </AppLayout>
-        </ProtectedRoute>
-      </Route>
-
       <Route path="/city-hub">
         <ProtectedRoute>
           <AppLayout>
@@ -1138,22 +1186,6 @@ function Router() {
       {/* /cities redirects to city-groups */}
       <Route path="/cities">
         <Redirect to="/city-groups" />
-      </Route>
-
-      <Route path="/groups/professional">
-        <ProtectedRoute>
-          <AppLayout>
-            <ProfessionalGroupsPage />
-          </AppLayout>
-        </ProtectedRoute>
-      </Route>
-
-      <Route path="/groups/custom">
-        <ProtectedRoute>
-          <AppLayout>
-            <CustomGroupsPage />
-          </AppLayout>
-        </ProtectedRoute>
       </Route>
 
       <Route path="/events/calendar">
@@ -2100,6 +2132,16 @@ function Router() {
         <ProtectedRoute>
           <AdminLayout>
             <EventApprovalsPage />
+          </AdminLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/admin/events">
+        <ProtectedRoute>
+          <AdminLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <AdminEventsPage />
+            </Suspense>
           </AdminLayout>
         </ProtectedRoute>
       </Route>

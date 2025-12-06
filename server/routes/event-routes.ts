@@ -1036,6 +1036,23 @@ router.post("/", authenticateToken, requireMinimumRole(3), async (req: AuthReque
       })
       .returning();
 
+    // AUTO-RSVP: Organizer is automatically "going" to their own event
+    try {
+      await db
+        .insert(eventRsvps)
+        .values({
+          eventId: event.id,
+          userId,
+          status: "going",
+          isOrganizer: true,
+        })
+        .onConflictDoNothing();
+      console.log("[Events] Auto-RSVP'd organizer as going to event:", event.id);
+    } catch (rsvpError) {
+      // Non-blocking - event creation still succeeds
+      console.error("[Events] Auto-RSVP failed (non-blocking):", rsvpError);
+    }
+
     // CASCADE: Auto-create city group if new location (Pattern 8: Cascade Detection)
     if (cleanData.city && cleanData.country) {
       try {

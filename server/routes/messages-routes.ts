@@ -592,11 +592,20 @@ router.get("/channels", authenticateToken, async (req: AuthRequest, res: Respons
   try {
     const userId = req.userId!;
 
-    const channels = await db
-      .select()
-      .from(connectedChannels)
-      .where(eq(connectedChannels.userId, userId))
-      .orderBy(desc(connectedChannels.createdAt));
+    let channels: any[] = [];
+    try {
+      channels = await db
+        .select()
+        .from(connectedChannels)
+        .where(eq(connectedChannels.userId, userId))
+        .orderBy(desc(connectedChannels.createdAt));
+    } catch (tableError: any) {
+      if (tableError.message?.includes('does not exist')) {
+        console.warn('[Messages] connected_channels table not found, returning empty array');
+        return res.json([]);
+      }
+      throw tableError;
+    }
 
     // Don't expose tokens in the response
     const sanitizedChannels = channels.map(ch => ({
@@ -627,15 +636,25 @@ router.delete("/channels/:channel", authenticateToken, async (req: AuthRequest, 
     const { channel } = req.params;
 
     // Get the channel connection to access the token for revocation
-    const [existingConnection] = await db.select()
-      .from(connectedChannels)
-      .where(
-        and(
-          eq(connectedChannels.userId, userId),
-          eq(connectedChannels.channel, channel as any)
+    let existingConnection: any = null;
+    try {
+      const [connection] = await db.select()
+        .from(connectedChannels)
+        .where(
+          and(
+            eq(connectedChannels.userId, userId),
+            eq(connectedChannels.channel, channel as any)
+          )
         )
-      )
-      .limit(1);
+        .limit(1);
+      existingConnection = connection;
+    } catch (tableError: any) {
+      if (tableError.message?.includes('does not exist')) {
+        console.warn('[Messages] connected_channels table not found');
+        return res.json({ success: true, message: `Channel ${channel} not connected` });
+      }
+      throw tableError;
+    }
 
     if (existingConnection) {
       // Revoke OAuth tokens with external APIs
@@ -654,14 +673,20 @@ router.delete("/channels/:channel", authenticateToken, async (req: AuthRequest, 
       // WhatsApp: No standard revocation API, just remove from our database
     }
 
-    await db
-      .delete(connectedChannels)
-      .where(
-        and(
-          eq(connectedChannels.userId, userId),
-          eq(connectedChannels.channel, channel as any)
-        )
-      );
+    try {
+      await db
+        .delete(connectedChannels)
+        .where(
+          and(
+            eq(connectedChannels.userId, userId),
+            eq(connectedChannels.channel, channel as any)
+          )
+        );
+    } catch (tableError: any) {
+      if (!tableError.message?.includes('does not exist')) {
+        throw tableError;
+      }
+    }
 
     res.json({ success: true, message: `Channel ${channel} disconnected` });
   } catch (error: any) {
@@ -685,17 +710,26 @@ router.post("/sync", authenticateToken, async (req: AuthRequest, res: Response) 
     const userId = req.userId!;
     const { channel } = req.body;
 
-    // Get connected channels to sync
-    const channelsToSync = await db
-      .select()
-      .from(connectedChannels)
-      .where(
-        and(
-          eq(connectedChannels.userId, userId),
-          eq(connectedChannels.isActive, true),
-          channel ? eq(connectedChannels.channel, channel) : sql`true`
-        )
-      );
+    // Get connected channels to sync - handle missing table gracefully
+    let channelsToSync: any[] = [];
+    try {
+      channelsToSync = await db
+        .select()
+        .from(connectedChannels)
+        .where(
+          and(
+            eq(connectedChannels.userId, userId),
+            eq(connectedChannels.isActive, true),
+            channel ? eq(connectedChannels.channel, channel) : sql`true`
+          )
+        );
+    } catch (tableError: any) {
+      if (tableError.message?.includes('does not exist')) {
+        console.warn('[Messages] connected_channels table not found, returning empty sync');
+        return res.json({ synced: 0, results: [], message: 'No channels connected' });
+      }
+      throw tableError;
+    }
 
     let totalSynced = 0;
     const syncResults: { channel: string; synced: number; error?: string }[] = [];
