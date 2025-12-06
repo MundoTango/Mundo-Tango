@@ -2322,6 +2322,14 @@ function Router() {
         </ProtectedRoute>
       </Route>
 
+      <Route path="/admin/system-health">
+        <ProtectedRoute>
+          <AdminLayout>
+            <SystemHealthPage />
+          </AdminLayout>
+        </ProtectedRoute>
+      </Route>
+
       {/* The Plan: New Admin Pages */}
       <Route path="/admin/project-tracker">
         <ProtectedRoute>

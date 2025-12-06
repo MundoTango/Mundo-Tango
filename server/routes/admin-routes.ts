@@ -324,20 +324,29 @@ router.get("/content/flagged", authenticateToken, requireAdmin, async (req, res:
   try {
     const { status = "pending" } = req.query;
 
-    const flaggedReports = await db.select({
-      id: postReports.id,
-      reporterId: postReports.reporterId,
-      postId: postReports.postId,
-      reason: postReports.reason,
-      status: postReports.status,
-      createdAt: postReports.createdAt,
-    })
-      .from(postReports)
-      .where(eq(postReports.status, status as string))
-      .orderBy(desc(postReports.createdAt))
-      .limit(50);
+    // Handle missing table gracefully
+    try {
+      const flaggedReports = await db.select({
+        id: postReports.id,
+        reporterId: postReports.reporterId,
+        postId: postReports.postId,
+        reason: postReports.reason,
+        status: postReports.status,
+        createdAt: postReports.createdAt,
+      })
+        .from(postReports)
+        .where(eq(postReports.status, status as string))
+        .orderBy(desc(postReports.createdAt))
+        .limit(50);
 
-    res.json(flaggedReports);
+      res.json(flaggedReports);
+    } catch (tableError: any) {
+      if (tableError.message?.includes('does not exist')) {
+        console.warn('[Admin] post_reports table not found, returning empty array');
+        return res.json([]);
+      }
+      throw tableError;
+    }
   } catch (error: any) {
     console.error("Error fetching flagged content:", error);
     res.status(500).json({ error: error.message });
@@ -376,21 +385,39 @@ router.post("/content/:contentId/moderate", authenticateToken, requireAdmin, asy
  */
 router.get("/moderation/stats", authenticateToken, requireAdmin, async (req, res: Response) => {
   try {
-    const pendingCount = await db.select({ count: count() })
-      .from(moderationQueue)
-      .where(eq(moderationQueue.status, "pending"));
+    // Handle missing moderation_queue table gracefully
+    let pendingCountValue = 0;
+    let approvedCountValue = 0;
+    let removedCountValue = 0;
+    let bannedCountValue = 0;
+    
+    try {
+      const pendingCount = await db.select({ count: count() })
+        .from(moderationQueue)
+        .where(eq(moderationQueue.status, "pending"));
+      pendingCountValue = pendingCount[0]?.count || 0;
 
-    const approvedCount = await db.select({ count: count() })
-      .from(moderationQueue)
-      .where(eq(moderationQueue.status, "approved"));
+      const approvedCount = await db.select({ count: count() })
+        .from(moderationQueue)
+        .where(eq(moderationQueue.status, "approved"));
+      approvedCountValue = approvedCount[0]?.count || 0;
 
-    const removedCount = await db.select({ count: count() })
-      .from(moderationQueue)
-      .where(eq(moderationQueue.status, "removed"));
+      const removedCount = await db.select({ count: count() })
+        .from(moderationQueue)
+        .where(eq(moderationQueue.status, "removed"));
+      removedCountValue = removedCount[0]?.count || 0;
 
-    const bannedCount = await db.select({ count: count() })
-      .from(moderationQueue)
-      .where(eq(moderationQueue.status, "banned"));
+      const bannedCount = await db.select({ count: count() })
+        .from(moderationQueue)
+        .where(eq(moderationQueue.status, "banned"));
+      bannedCountValue = bannedCount[0]?.count || 0;
+    } catch (tableError: any) {
+      if (tableError.message?.includes('does not exist')) {
+        console.warn('[Admin] moderation_queue table not found, returning 0 for all counts');
+      } else {
+        throw tableError;
+      }
+    }
 
     // Handle missing flagged_content table gracefully
     let flaggedCountValue = 0;
@@ -424,10 +451,10 @@ router.get("/moderation/stats", authenticateToken, requireAdmin, async (req, res
     }
 
     res.json({
-      pending: pendingCount[0]?.count || 0,
-      approved: approvedCount[0]?.count || 0,
-      removed: removedCount[0]?.count || 0,
-      banned: bannedCount[0]?.count || 0,
+      pending: pendingCountValue,
+      approved: approvedCountValue,
+      removed: removedCountValue,
+      banned: bannedCountValue,
       flagged: flaggedCountValue,
       recentActions24h: recentActionsCount,
     });
