@@ -163,7 +163,7 @@ export class SwarmChoreographyController {
 
     try {
       // Load any persisted issues from LanceDB
-      const memories = await lanceDB.searchMemories('swarm-issue', 100);
+      const memories = await lanceDB.searchMemories('swarm-issues', 'recent issues', 100);
       
       for (const memory of memories) {
         if (memory.id.startsWith('issue-')) {
@@ -206,11 +206,11 @@ export class SwarmChoreographyController {
       this.issues.set(issue.id, issue);
       issues.push(issue);
 
-      // Persist to LanceDB
-      await lanceDB.addMemory(
-        `issue-${issue.id}`,
-        JSON.stringify(issue)
-      );
+      // Persist to LanceDB (flat structure for Arrow compatibility)
+      await lanceDB.addMemory('swarm-issues', {
+        id: issue.id,
+        content: `Issue: ${issue.title} | Type: ${issue.type} | Severity: ${issue.severity} | Page: ${issue.pageName}`
+      });
     }
 
     const result: AuditResult = {
