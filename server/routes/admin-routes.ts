@@ -475,12 +475,24 @@ router.get("/moderation/flagged", authenticateToken, requireAdmin, async (req, r
     const limitNum = parseInt(limit as string);
     const offset = (pageNum - 1) * limitNum;
 
-    // Handle missing flagged_content table gracefully
+    // Handle missing flagged_content table/columns gracefully
     let results: any[] = [];
     let total = 0;
 
     try {
-      results = await db.select()
+      // Select only known columns that exist in the table
+      results = await db.select({
+        id: flaggedContent.id,
+        contentType: flaggedContent.contentType,
+        contentId: flaggedContent.contentId,
+        flagType: flaggedContent.flagType,
+        severity: flaggedContent.severity,
+        confidence: flaggedContent.confidence,
+        detectionMethod: flaggedContent.detectionMethod,
+        flagReason: flaggedContent.flagReason,
+        autoFlagged: flaggedContent.autoFlagged,
+        createdAt: flaggedContent.createdAt,
+      })
         .from(flaggedContent)
         .orderBy(desc(flaggedContent.createdAt))
         .limit(limitNum)
@@ -489,8 +501,13 @@ router.get("/moderation/flagged", authenticateToken, requireAdmin, async (req, r
       const totalCount = await db.select({ count: count() }).from(flaggedContent);
       total = totalCount[0]?.count || 0;
     } catch (tableError: any) {
-      if (tableError.message?.includes('does not exist')) {
-        console.warn('[Admin] flagged_content table not found, returning empty array');
+      // Handle missing table or column errors gracefully
+      if (tableError.message?.includes('does not exist') || 
+          tableError.message?.includes('column') ||
+          tableError.code === '42703' || // PostgreSQL: undefined column
+          tableError.code === '42P01') { // PostgreSQL: undefined table
+        console.warn('[Moderation] Table/column not found, returning empty:', tableError.message);
+        // Return empty result set rather than failing
       } else {
         throw tableError;
       }
