@@ -111,7 +111,9 @@ VITE_HMR_PORT = "5000"
 
 [userenv.shared]
 VITE_STRIPE_PUBLIC_KEY = "pk_test_51R6baSPWgXkvbq8nFPhziGyPhczSPida5cGqS3IISoXYChYG53tYLNCdPCI3MoNdPac48pR5IW2l9Pv3bs4iqiIp00abWe17cI"
-NODE_OPTIONS = "--max-old-space-size=4096"
+
+[userenv.production]
+NODE_OPTIONS = "--max-old-space-size=8192"
 
 [objectStorage]
 defaultBucketID = "replit-objstore-0ea7904b-a034-4a1a-ad8d-b74222395807"
