@@ -52,46 +52,61 @@ router.get("/moderation/queue", authenticateToken, requireAdmin, async (req, res
     const limitNum = parseInt(limit as string);
     const offset = (pageNum - 1) * limitNum;
 
-    let query = db.select({
-      queue: moderationQueue,
-      reporter: {
-        id: users.id,
-        username: users.username,
-        name: users.name,
-      }
-    })
-    .from(moderationQueue)
-    .leftJoin(users, eq(moderationQueue.reportedBy, users.id))
-    .$dynamic();
+    let results: any[] = [];
+    let total = 0;
 
-    // Filter by status
-    if (status && status !== "all") {
-      query = query.where(eq(moderationQueue.status, status as string));
-    }
-
-    // Filter by content type
-    if (contentType) {
-      query = query.where(eq(moderationQueue.contentType, contentType as string));
-    }
-
-    // Filter by priority
-    if (priority) {
-      query = query.where(eq(moderationQueue.priority, parseInt(priority as string)));
-    }
-
-    const results = await query
-      .orderBy(desc(moderationQueue.priority), desc(moderationQueue.createdAt))
-      .limit(limitNum)
-      .offset(offset);
-
-    // Get total count
-    const totalCount = await db.select({ count: count() })
+    try {
+      let query = db.select({
+        queue: moderationQueue,
+        reporter: {
+          id: users.id,
+          username: users.username,
+          name: users.name,
+        }
+      })
       .from(moderationQueue)
-      .where(status && status !== "all" ? eq(moderationQueue.status, status as string) : sql`1=1`);
+      .leftJoin(users, eq(moderationQueue.reportedBy, users.id))
+      .$dynamic();
+
+      // Filter by status
+      if (status && status !== "all") {
+        query = query.where(eq(moderationQueue.status, status as string));
+      }
+
+      // Filter by content type
+      if (contentType) {
+        query = query.where(eq(moderationQueue.contentType, contentType as string));
+      }
+
+      // Filter by priority
+      if (priority) {
+        query = query.where(eq(moderationQueue.priority, parseInt(priority as string)));
+      }
+
+      results = await query
+        .orderBy(desc(moderationQueue.priority), desc(moderationQueue.createdAt))
+        .limit(limitNum)
+        .offset(offset);
+
+      // Get total count
+      const totalCount = await db.select({ count: count() })
+        .from(moderationQueue)
+        .where(status && status !== "all" ? eq(moderationQueue.status, status as string) : sql`1=1`);
+      total = totalCount[0]?.count || 0;
+    } catch (tableError: any) {
+      if (tableError.message?.includes('does not exist') || 
+          tableError.message?.includes('column') ||
+          tableError.code === '42703' || 
+          tableError.code === '42P01') {
+        console.warn('[Moderation] Queue table/column not found, returning empty:', tableError.message);
+      } else {
+        throw tableError;
+      }
+    }
 
     res.json({
       queue: results,
-      total: totalCount[0]?.count || 0,
+      total,
       page: pageNum,
       limit: limitNum,
     });
