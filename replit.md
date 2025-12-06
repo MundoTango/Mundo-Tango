@@ -23,6 +23,27 @@ Mundo Tango is a production-ready social platform connecting the global tango co
 - **SQL Bypass**: Direct SQL table creation when db:push times out (large schema)
 - **Route Priority**: Specific routes before dynamic routes (/groups/create before /groups/:id)
 
+### Bundle Size Optimization (Dec 6, 2025)
+- **moment.js Removal**: Replaced with date-fns across 3 calendar components (~300KB savings)
+  - EventsPage.tsx: dateFnsLocalizer
+  - GroupDetailsPage.tsx: dateFnsLocalizer  
+  - EventCalendarPage.tsx: dateFnsLocalizer
+- **Dynamic Imports**: @xenova/transformers loaded dynamically (827KB separate chunk)
+- **Font Reduction**: Reduced from 20+ to 3 font weights
+
+### Deployment Strategy (CRITICAL - Dec 6, 2025)
+**Problem**: Cloud Run build runs out of memory (2GB limit) with 6,336+ modules
+
+**Solution**: Switch to Reserved VM deployment type
+1. Go to Publishing → Manage tab
+2. Click "Change deployment type"
+3. Select "Reserved VM" (provides more build memory)
+4. Redeploy
+
+**Alternative (if Reserved VM unavailable)**: Sequential build strategy
+- Split `vite build` and `esbuild server/index.ts` into separate npm scripts
+- Requires editing package.json (protected file - ask user permission)
+
 ### Database Workarounds (CRITICAL)
 ```sql
 -- Use execute_sql_tool for missing tables when db:push times out
