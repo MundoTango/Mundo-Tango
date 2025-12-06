@@ -15,6 +15,8 @@
  */
 
 import { lanceDB } from '../../lib/lancedb';
+import { db } from '../../storage';
+import { auditIssues as auditIssuesTable } from '../../../shared/schema';
 
 // ============================================================================
 // TYPES
@@ -211,6 +213,22 @@ export class SwarmChoreographyController {
         id: issue.id,
         content: `Issue: ${issue.title} | Type: ${issue.type} | Severity: ${issue.severity} | Page: ${issue.pageName}`
       });
+
+      // Also persist to PostgreSQL for restart resilience
+      try {
+        await db.insert(auditIssuesTable).values({
+          pageId: issue.pageId,
+          issueType: issue.type,
+          severity: issue.severity,
+          title: issue.title,
+          description: issue.description || '',
+          recommendation: issue.suggestedFix || '',
+          status: 'open',
+          strikeCount: 0,
+        });
+      } catch (dbErr) {
+        console.error(`[SwarmChoreography] Failed to persist issue to database:`, dbErr);
+      }
     }
 
     const result: AuditResult = {

@@ -673,4 +673,174 @@ router.post('/test-phase5', async (_req, res) => {
   }
 });
 
+// ============================================================================
+// BATCH AUDIT ENDPOINTS - Resumable across workflow restarts
+// ============================================================================
+
+/**
+ * POST /api/orchestration/phases/batches/create
+ * Create batches for resumable audit
+ */
+router.post('/batches/create', async (_req, res) => {
+  try {
+    console.log('[Orchestration] Creating audit batches...');
+    const batches = await comprehensiveAuditRunner.createBatches();
+    
+    res.json({
+      success: true,
+      message: `Created ${batches.length} batches`,
+      batches: batches.map(b => ({
+        batchNumber: b.batchNumber,
+        totalPages: b.totalPages,
+        priority: b.priority,
+        status: b.status
+      }))
+    });
+  } catch (error) {
+    console.error('[Orchestration] Failed to create batches:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to create batches'
+    });
+  }
+});
+
+/**
+ * GET /api/orchestration/phases/batches
+ * Get all batches and their status
+ */
+router.get('/batches', async (_req, res) => {
+  try {
+    const batches = await comprehensiveAuditRunner.getBatches();
+    const progress = await comprehensiveAuditRunner.getBatchProgress();
+    
+    res.json({
+      success: true,
+      batches: batches.map(b => ({
+        batchNumber: b.batchNumber,
+        totalPages: b.totalPages,
+        pagesProcessed: b.pagesProcessed,
+        issuesFound: b.issuesFound,
+        priority: b.priority,
+        status: b.status,
+        startedAt: b.startedAt,
+        completedAt: b.completedAt
+      })),
+      progress
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: 'Failed to get batches'
+    });
+  }
+});
+
+/**
+ * POST /api/orchestration/phases/batches/:batchNumber/start
+ * Start a specific batch
+ */
+router.post('/batches/:batchNumber/start', async (req, res) => {
+  try {
+    const batchNumber = parseInt(req.params.batchNumber);
+    console.log(`[Orchestration] Starting batch ${batchNumber}...`);
+    
+    // Run batch asynchronously and return immediately
+    comprehensiveAuditRunner.runBatch(batchNumber).then(result => {
+      console.log(`[Orchestration] Batch ${batchNumber} complete:`, result);
+    }).catch(err => {
+      console.error(`[Orchestration] Batch ${batchNumber} failed:`, err);
+    });
+    
+    res.json({
+      success: true,
+      message: `Batch ${batchNumber} started`,
+      batchNumber
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: 'Failed to start batch'
+    });
+  }
+});
+
+/**
+ * POST /api/orchestration/phases/batches/resume
+ * Resume from next pending batch
+ */
+router.post('/batches/resume', async (_req, res) => {
+  try {
+    console.log('[Orchestration] Resuming audit from next pending batch...');
+    
+    // Run async
+    comprehensiveAuditRunner.resumeFromNextPending().then(result => {
+      console.log('[Orchestration] Resume complete:', result);
+    }).catch(err => {
+      console.error('[Orchestration] Resume failed:', err);
+    });
+    
+    const progress = await comprehensiveAuditRunner.getBatchProgress();
+    
+    res.json({
+      success: true,
+      message: 'Resume initiated',
+      progress
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: 'Failed to resume audit'
+    });
+  }
+});
+
+/**
+ * POST /api/orchestration/phases/batches/:batchNumber/reset
+ * Reset a batch to pending
+ */
+router.post('/batches/:batchNumber/reset', async (req, res) => {
+  try {
+    const batchNumber = parseInt(req.params.batchNumber);
+    const success = await comprehensiveAuditRunner.resetBatch(batchNumber);
+    
+    res.json({
+      success,
+      message: success ? `Batch ${batchNumber} reset` : `Batch ${batchNumber} not found`
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: 'Failed to reset batch'
+    });
+  }
+});
+
+/**
+ * POST /api/orchestration/phases/batches/resume
+ * Resume from next pending or running batch
+ */
+router.post('/batches/resume', async (_req, res) => {
+  try {
+    console.log('[Orchestration] Resuming from next pending batch...');
+    
+    // Resume asynchronously and return immediately
+    comprehensiveAuditRunner.resumeFromNextPending().then(result => {
+      console.log(`[Orchestration] Resume result: ${JSON.stringify(result)}`);
+    }).catch(error => {
+      console.error('[Orchestration] Resume failed:', error);
+    });
+    
+    res.json({
+      success: true,
+      message: 'Resume started'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: 'Failed to resume batch processing'
+    });
+  }
+});
+
 export default router;

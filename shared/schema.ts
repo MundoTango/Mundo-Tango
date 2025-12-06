@@ -19242,6 +19242,108 @@ export type InsertVolunteerApplication = z.infer<typeof insertVolunteerApplicati
 export type SelectVolunteerApplication = typeof volunteerApplications.$inferSelect;
 
 // ============================================================================
+// PAGE INVENTORY - Persistent storage for audit system (survives restarts)
+// ============================================================================
+
+export const pageCategoryEnum = pgEnum("page_category", [
+  "admin",
+  "auth",
+  "dashboard",
+  "profile",
+  "events",
+  "groups",
+  "messages",
+  "mrblue",
+  "lifeceo",
+  "marketing",
+  "prototype",
+  "settings",
+  "billing",
+  "housing",
+  "travel",
+  "professional",
+  "other",
+]);
+
+export const auditPriorityEnum = pgEnum("audit_priority", [
+  "critical",
+  "high",
+  "medium",
+  "low",
+]);
+
+export const pageInventory = pgTable(
+  "page_inventory",
+  {
+    id: varchar("id", { length: 255 }).primaryKey(),
+    name: varchar("name", { length: 255 }).notNull(),
+    path: varchar("path", { length: 500 }).notNull(),
+    category: pageCategoryEnum("category").default("other").notNull(),
+    priority: auditPriorityEnum("priority").default("medium").notNull(),
+    dependencies: text("dependencies").array(),
+    components: text("components").array(),
+    apiEndpoints: text("api_endpoints").array(),
+    roleRequired: integer("role_required").default(0).notNull(),
+    lastAudited: timestamp("last_audited"),
+    issueCount: integer("issue_count").default(0).notNull(),
+    batchNumber: integer("batch_number"),
+    auditStatus: varchar("audit_status", { length: 50 }).default("pending").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  },
+  (table) => ({
+    categoryIdx: index("page_inventory_category_idx").on(table.category),
+    priorityIdx: index("page_inventory_priority_idx").on(table.priority),
+    batchIdx: index("page_inventory_batch_idx").on(table.batchNumber),
+    statusIdx: index("page_inventory_status_idx").on(table.auditStatus),
+  }),
+);
+
+export const insertPageInventorySchema = createInsertSchema(pageInventory).omit({
+  createdAt: true,
+  updatedAt: true,
+});
+export type InsertPageInventory = z.infer<typeof insertPageInventorySchema>;
+export type SelectPageInventory = typeof pageInventory.$inferSelect;
+
+// ============================================================================
+// AUDIT ISSUES - Persistent storage for issues found during audits
+// ============================================================================
+
+export const auditIssues = pgTable(
+  "audit_issues",
+  {
+    id: serial("id").primaryKey(),
+    pageId: varchar("page_id", { length: 255 }).notNull().references(() => pageInventory.id, { onDelete: "cascade" }),
+    issueType: varchar("issue_type", { length: 50 }).notNull(),
+    severity: varchar("severity", { length: 20 }).notNull(),
+    title: varchar("title", { length: 500 }).notNull(),
+    description: text("description"),
+    recommendation: text("recommendation"),
+    strikeCount: integer("strike_count").default(0).notNull(),
+    status: varchar("status", { length: 50 }).default("open").notNull(),
+    fixedAt: timestamp("fixed_at"),
+    escalatedAt: timestamp("escalated_at"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  },
+  (table) => ({
+    pageIdx: index("audit_issues_page_idx").on(table.pageId),
+    typeIdx: index("audit_issues_type_idx").on(table.issueType),
+    statusIdx: index("audit_issues_status_idx").on(table.status),
+    severityIdx: index("audit_issues_severity_idx").on(table.severity),
+  }),
+);
+
+export const insertAuditIssueSchema = createInsertSchema(auditIssues).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+export type InsertAuditIssue = z.infer<typeof insertAuditIssueSchema>;
+export type SelectAuditIssue = typeof auditIssues.$inferSelect;
+
+// ============================================================================
 // PLATFORM INDEPENDENCE SCHEMA (PATH 2)
 // ============================================================================
 

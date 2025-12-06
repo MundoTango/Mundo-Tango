@@ -20,14 +20,16 @@ Mundo Tango is a production-ready social platform connecting the global tango co
 **Applied Methodology**: observe → decide → act → validate → adapt
 
 #### Phase 1-2 (RESEARCH/PLAN) - Complete
-- 352 platform pages indexed across all categories
-- Priority queue: 56 critical, 43 high, 229 medium, 14 low
+- 312 platform pages indexed to PostgreSQL database
+- Priority queue: 53 critical, 40 high, 205 medium, 14 low
+- Full database persistence for restart resilience
 
-#### Phase 3 (BUILD/AUDIT) - Validated
-- SwarmChoreography with 20-page parallel batches
-- Performance: ~8 pages/min, ~100 pages per session
-- Issues found: ~400 issues per full session (4 issues/page avg)
-- Constraint: Workflow auto-restarts every ~20 min (Replit infrastructure)
+#### Phase 3 (BUILD/AUDIT) - Active with PostgreSQL Persistence
+- SwarmChoreography with batch-based processing
+- 4 batches configured: Batch 1 (85 critical), Batch 2 (85 high), Batch 3 (85 medium), Batch 4 (57 medium)
+- **18 accessibility issues** persisted to PostgreSQL (audit_issues table)
+- Issues persist to both LanceDB and PostgreSQL for dual redundancy
+- Performance: ~8 pages/min processing rate
 
 #### Phase 4 (TEST) - Operational
 - ValidationRelayService with 6 validation types active
@@ -41,11 +43,15 @@ Mundo Tango is a production-ready social platform connecting the global tango co
   - Issue 3 (performance): simple→advanced→escalated to human-review
 - Escalation rate: 33% (1/3) - appropriate for performance issues
 
+#### Database Persistence Tables
+- `page_inventory`: 312 pages with URL, priority, category, audit status
+- `audit_issues`: Issue tracking with pageId, type, severity, status, strikeCount
+
 #### Known Constraints
-- Workflow restarts every ~20 min prevent full 352-page completion in single session
-- Adaptation: Focus on critical 56 pages (~7 min) or batch approach
-- WebSocket HMR warning (non-critical): wss://localhost:undefined
-- i18next double initialization (non-critical warning)
+- Workflow restarts every ~20 min - mitigated with PostgreSQL persistence
+- Batch state file: ./data/audit-batch-state.json for quick resume
+- WebSocket HMR warning (non-critical): wss://localhost:undefined - Replit infrastructure
+- ✅ i18next double initialization - RESOLVED via window-level initialization flag
 
 ## System Architecture
 

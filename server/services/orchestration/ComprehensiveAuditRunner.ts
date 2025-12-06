@@ -15,6 +15,56 @@ import { ValidationRelayService } from './ValidationRelayService';
 import { StrikeTracker } from './StrikeTracker';
 import * as fs from 'fs';
 import * as path from 'path';
+import { db } from '../../storage';
+import { pageInventory as pageInventoryTable } from '../../../shared/schema';
+import { sql } from 'drizzle-orm';
+
+// ============================================================================
+// BATCH PERSISTENCE - File-based for reliable restart resilience
+// ============================================================================
+const BATCH_STATE_FILE = path.join(process.cwd(), 'data', 'audit-batch-state.json');
+
+interface BatchStateFile {
+  version: 1;
+  createdAt: string;
+  updatedAt: string;
+  batches: AuditBatch[];
+}
+
+function ensureBatchStateDir(): void {
+  const dir = path.dirname(BATCH_STATE_FILE);
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+}
+
+function saveBatchState(batches: AuditBatch[]): void {
+  ensureBatchStateDir();
+  const state: BatchStateFile = {
+    version: 1,
+    createdAt: fs.existsSync(BATCH_STATE_FILE) 
+      ? JSON.parse(fs.readFileSync(BATCH_STATE_FILE, 'utf-8')).createdAt 
+      : new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    batches
+  };
+  fs.writeFileSync(BATCH_STATE_FILE, JSON.stringify(state, null, 2));
+  console.log(`[BatchPersistence] ✅ Saved ${batches.length} batches to ${BATCH_STATE_FILE}`);
+}
+
+function loadBatchState(): AuditBatch[] | null {
+  if (!fs.existsSync(BATCH_STATE_FILE)) {
+    return null;
+  }
+  try {
+    const data = JSON.parse(fs.readFileSync(BATCH_STATE_FILE, 'utf-8')) as BatchStateFile;
+    console.log(`[BatchPersistence] ✅ Loaded ${data.batches.length} batches from file`);
+    return data.batches;
+  } catch (error) {
+    console.error('[BatchPersistence] Failed to load batch state:', error);
+    return null;
+  }
+}
 
 // ============================================================================
 // TYPES
@@ -108,6 +158,38 @@ export interface PageAuditSummary {
 }
 
 // ============================================================================
+// BATCH TYPES - For resumable audits across workflow restarts
+// ============================================================================
+
+export interface AuditBatch {
+  id: string;
+  batchNumber: number;
+  pageIds: string[];
+  pageNames: string[];
+  completedPageIds: string[];       // Track completed pages for resume
+  remainingPageIds: string[];       // Track remaining pages for resume
+  status: 'pending' | 'running' | 'complete' | 'failed';
+  priority: string;
+  totalPages: number;
+  pagesProcessed: number;
+  issuesFound: number;
+  startedAt?: Date;
+  completedAt?: Date;
+  lastProgressAt?: Date;            // Track last progress for monitoring
+  createdAt: Date;
+}
+
+export interface BatchProgress {
+  totalBatches: number;
+  completedBatches: number;
+  currentBatch: number | null;
+  totalPages: number;
+  pagesProcessed: number;
+  issuesFound: number;
+  status: 'not_started' | 'in_progress' | 'complete';
+}
+
+// ============================================================================
 // COMPREHENSIVE AUDIT RUNNER
 // ============================================================================
 
@@ -118,6 +200,8 @@ export class ComprehensiveAuditRunner {
   private pageInventory: Map<string, PageInventory> = new Map();
   private progress: AuditProgress;
   private auditResults: Map<string, AuditResult> = new Map();
+  private batches: Map<number, AuditBatch> = new Map();
+  private static BATCH_SIZE = 85; // ~10-12 min per batch, fits in 20-min restart window
   
   constructor() {
     this.swarm = new SwarmChoreographyController();
@@ -133,6 +217,316 @@ export class ComprehensiveAuditRunner {
       issuesEscalated: 0,
       startTime: new Date()
     };
+  }
+
+  /**
+   * Load pages from PostgreSQL database (for restart resilience)
+   * This avoids re-indexing the filesystem when workflow restarts
+   */
+  async loadPagesFromDatabase(): Promise<number> {
+    console.log('[ComprehensiveAudit] 📥 Loading pages from database...');
+    try {
+      const rows = await db.select().from(pageInventoryTable);
+      
+      for (const row of rows) {
+        const inventory: PageInventory = {
+          id: row.id,
+          name: row.name,
+          path: row.path,
+          category: row.category as PageCategory,
+          priority: row.priority as 'critical' | 'high' | 'medium' | 'low',
+          dependencies: row.dependencies || [],
+          components: row.components || [],
+          apiEndpoints: row.apiEndpoints || [],
+          roleRequired: row.roleRequired || 'user',
+          issueCount: row.issueCount || 0
+        };
+        this.pageInventory.set(inventory.id, inventory);
+      }
+      
+      this.progress.pagesIndexed = this.pageInventory.size;
+      console.log(`[ComprehensiveAudit] ✅ Loaded ${this.pageInventory.size} pages from database`);
+      return this.pageInventory.size;
+    } catch (err) {
+      console.error('[ComprehensiveAudit] Failed to load pages from database:', err);
+      return 0;
+    }
+  }
+
+  // ============================================================================
+  // BATCH MANAGEMENT - Resumable audit across workflow restarts
+  // ============================================================================
+
+  /**
+   * Create batches from indexed pages (call after phase1Research and phase2Plan)
+   */
+  async createBatches(): Promise<AuditBatch[]> {
+    console.log('[ComprehensiveAudit] 📦 Creating resumable batches...');
+    
+    // Ensure pages are loaded - first try database, then filesystem
+    if (this.pageInventory.size === 0) {
+      const loadedCount = await this.loadPagesFromDatabase();
+      if (loadedCount === 0) {
+        await this.phase1Research();
+      }
+    }
+    
+    const allPages = Array.from(this.pageInventory.values())
+      .sort((a, b) => {
+        const priorityOrder = { critical: 0, high: 1, medium: 2, low: 3 };
+        return priorityOrder[a.priority] - priorityOrder[b.priority];
+      });
+    
+    const batches: AuditBatch[] = [];
+    const batchSize = ComprehensiveAuditRunner.BATCH_SIZE;
+    
+    for (let i = 0; i < allPages.length; i += batchSize) {
+      const batchPages = allPages.slice(i, i + batchSize);
+      const batchNumber = Math.floor(i / batchSize) + 1;
+      
+      const pageIdList = batchPages.map(p => p.id);
+      const batch: AuditBatch = {
+        id: `batch-${batchNumber}-${Date.now()}`,
+        batchNumber,
+        pageIds: pageIdList,
+        pageNames: batchPages.map(p => p.name),
+        completedPageIds: [],                    // Initially empty
+        remainingPageIds: [...pageIdList],        // All pages initially remaining
+        status: 'pending',
+        priority: batchPages[0]?.priority || 'medium',
+        totalPages: batchPages.length,
+        pagesProcessed: 0,
+        issuesFound: 0,
+        createdAt: new Date()
+      };
+      
+      batches.push(batch);
+      this.batches.set(batchNumber, batch);
+    }
+    
+    // Persist to file (replaces in-memory-only storage)
+    saveBatchState(batches);
+    
+    console.log(`[ComprehensiveAudit] ✅ Created ${batches.length} batches of ~${batchSize} pages each`);
+    return batches;
+  }
+
+  /**
+   * Get all batches and their status - loads from file for restart resilience
+   */
+  async getBatches(): Promise<AuditBatch[]> {
+    // First check in-memory cache
+    if (this.batches.size > 0) {
+      return Array.from(this.batches.values()).sort((a, b) => a.batchNumber - b.batchNumber);
+    }
+    
+    // Load from persistent file storage
+    const loadedBatches = loadBatchState();
+    if (loadedBatches && loadedBatches.length > 0) {
+      // Populate in-memory cache
+      for (const batch of loadedBatches) {
+        this.batches.set(batch.batchNumber, batch);
+      }
+      return loadedBatches.sort((a, b) => a.batchNumber - b.batchNumber);
+    }
+    
+    return [];
+  }
+
+  /**
+   * Get overall batch progress
+   */
+  async getBatchProgress(): Promise<BatchProgress> {
+    const batches = await this.getBatches();
+    
+    if (batches.length === 0) {
+      return {
+        totalBatches: 0,
+        completedBatches: 0,
+        currentBatch: null,
+        totalPages: 0,
+        pagesProcessed: 0,
+        issuesFound: 0,
+        status: 'not_started'
+      };
+    }
+    
+    const completedBatches = batches.filter(b => b.status === 'complete').length;
+    const runningBatch = batches.find(b => b.status === 'running');
+    const totalPages = batches.reduce((sum, b) => sum + b.totalPages, 0);
+    const pagesProcessed = batches.reduce((sum, b) => sum + b.pagesProcessed, 0);
+    const issuesFound = batches.reduce((sum, b) => sum + b.issuesFound, 0);
+    
+    return {
+      totalBatches: batches.length,
+      completedBatches,
+      currentBatch: runningBatch?.batchNumber || null,
+      totalPages,
+      pagesProcessed,
+      issuesFound,
+      status: completedBatches === batches.length ? 'complete' : 
+              runningBatch ? 'in_progress' : 'not_started'
+    };
+  }
+
+  /**
+   * Run a specific batch by number
+   */
+  async runBatch(batchNumber: number): Promise<{ success: boolean; issuesFound: number; pagesProcessed: number; message: string }> {
+    console.log(`[ComprehensiveAudit] 🚀 Starting Batch ${batchNumber}...`);
+    
+    // First try to load existing batches from file (restart resilience)
+    if (this.batches.size === 0) {
+      await this.getBatches(); // This hydrates from file if available
+    }
+    
+    // Ensure pages are loaded - first try database, then filesystem
+    if (this.pageInventory.size === 0) {
+      const loadedCount = await this.loadPagesFromDatabase();
+      if (loadedCount === 0) {
+        await this.phase1Research();
+      }
+    }
+    
+    // Only create batches if none exist after loading from file
+    if (this.batches.size === 0) {
+      console.log('[ComprehensiveAudit] No persisted batches found, creating new batches...');
+      await this.createBatches();
+    }
+    
+    const batch = this.batches.get(batchNumber);
+    if (!batch) {
+      return { success: false, issuesFound: 0, pagesProcessed: 0, message: `Batch ${batchNumber} not found` };
+    }
+    
+    if (batch.status === 'complete') {
+      return { success: true, issuesFound: batch.issuesFound, pagesProcessed: batch.pagesProcessed, message: `Batch ${batchNumber} already complete` };
+    }
+    
+    // Update status to running and persist
+    batch.status = 'running';
+    if (!batch.startedAt) {
+      batch.startedAt = new Date();
+    }
+    
+    // Initialize tracking arrays if they don't exist (migration for existing batches)
+    if (!batch.completedPageIds) batch.completedPageIds = [];
+    if (!batch.remainingPageIds) batch.remainingPageIds = [...batch.pageIds];
+    
+    saveBatchState(Array.from(this.batches.values()));
+    
+    await this.swarm.initialize();
+    
+    // Use remainingPageIds for resumability - skip already completed pages
+    const pagesToProcess = batch.remainingPageIds
+      .map(id => this.pageInventory.get(id))
+      .filter(Boolean) as PageInventory[];
+    
+    console.log(`[ComprehensiveAudit] Batch ${batchNumber}: ${batch.completedPageIds.length} pages already done, ${pagesToProcess.length} remaining`);
+    
+    // Process pages in parallel sub-batches of 20
+    const SUB_BATCH_SIZE = 20;
+    let issuesFound = batch.issuesFound; // Start from persisted count
+    let pagesProcessed = batch.pagesProcessed; // Start from persisted count
+    
+    for (let i = 0; i < pagesToProcess.length; i += SUB_BATCH_SIZE) {
+      const subBatch = pagesToProcess.slice(i, i + SUB_BATCH_SIZE);
+      
+      const results = await Promise.all(
+        subBatch.map(async (page) => {
+          const result = await this.swarm.auditPage({
+            pageId: page.id,
+            pageName: page.name,
+            pageUrl: page.path,
+            requestedBy: `batch-${batchNumber}`,
+            roleLevel: 8,
+            auditType: 'full'
+          });
+          
+          this.auditResults.set(page.id, result);
+          pagesProcessed++;
+          issuesFound += result.totalIssues;
+          
+          // Track completion per-page for restart resilience
+          batch.completedPageIds.push(page.id);
+          batch.remainingPageIds = batch.remainingPageIds.filter(id => id !== page.id);
+          
+          return result;
+        })
+      );
+      
+      // Update batch progress after each sub-batch and persist
+      batch.pagesProcessed = pagesProcessed;
+      batch.issuesFound = issuesFound;
+      batch.lastProgressAt = new Date();
+      saveBatchState(Array.from(this.batches.values()));
+      
+      console.log(`[ComprehensiveAudit] Batch ${batchNumber}: ${pagesProcessed}/${batch.totalPages} pages, ${issuesFound} issues`);
+    }
+    
+    // Mark batch complete and persist final state
+    batch.status = 'complete';
+    batch.completedAt = new Date();
+    saveBatchState(Array.from(this.batches.values()));
+    
+    console.log(`[ComprehensiveAudit] ✅ Batch ${batchNumber} complete: ${pagesProcessed} pages, ${issuesFound} issues`);
+    
+    return {
+      success: true,
+      issuesFound,
+      pagesProcessed,
+      message: `Batch ${batchNumber} complete`
+    };
+  }
+
+  /**
+   * Resume from next pending batch
+   */
+  async resumeFromNextPending(): Promise<{ success: boolean; batchNumber: number | null; message: string }> {
+    const batches = await this.getBatches();
+    const nextPending = batches.find(b => b.status === 'pending' || b.status === 'running');
+    
+    if (!nextPending) {
+      return { success: true, batchNumber: null, message: 'All batches complete' };
+    }
+    
+    console.log(`[ComprehensiveAudit] 🔄 Resuming from Batch ${nextPending.batchNumber}...`);
+    
+    const result = await this.runBatch(nextPending.batchNumber);
+    
+    return {
+      success: result.success,
+      batchNumber: nextPending.batchNumber,
+      message: result.message
+    };
+  }
+
+  /**
+   * Reset a batch to pending
+   */
+  async resetBatch(batchNumber: number): Promise<boolean> {
+    // Load batches if not in memory
+    if (this.batches.size === 0) {
+      await this.getBatches();
+    }
+    
+    const batch = this.batches.get(batchNumber);
+    if (!batch) return false;
+    
+    batch.status = 'pending';
+    batch.pagesProcessed = 0;
+    batch.issuesFound = 0;
+    batch.completedPageIds = [];
+    batch.remainingPageIds = [...batch.pageIds];
+    batch.startedAt = undefined;
+    batch.completedAt = undefined;
+    batch.lastProgressAt = undefined;
+    
+    // Persist changes
+    saveBatchState(Array.from(this.batches.values()));
+    
+    console.log(`[ComprehensiveAudit] 🔄 Reset Batch ${batchNumber}`);
+    return true;
   }
 
   /**
@@ -161,6 +555,36 @@ export class ComprehensiveAuditRunner {
         id: inventory.id,
         content: `Page: ${inventory.name} | Category: ${inventory.category} | Priority: ${inventory.priority} | Role: ${inventory.roleRequired}`
       });
+      
+      // Also persist to PostgreSQL for reliable restart resilience
+      try {
+        await db.insert(pageInventoryTable)
+          .values({
+            id: inventory.id,
+            name: inventory.name,
+            path: inventory.path,
+            category: inventory.category as any,
+            priority: inventory.priority as any,
+            dependencies: inventory.dependencies,
+            components: inventory.components,
+            apiEndpoints: inventory.apiEndpoints,
+            roleRequired: inventory.roleRequired,
+            issueCount: inventory.issueCount || 0,
+            auditStatus: 'pending',
+          })
+          .onConflictDoUpdate({
+            target: pageInventoryTable.id,
+            set: {
+              name: inventory.name,
+              path: inventory.path,
+              category: inventory.category as any,
+              priority: inventory.priority as any,
+              updatedAt: new Date(),
+            }
+          });
+      } catch (err) {
+        console.error(`[ComprehensiveAudit] Failed to persist page ${inventory.id} to database:`, err);
+      }
       
       this.progress.pagesIndexed++;
       this.progress.percentComplete = Math.round((this.progress.pagesIndexed / pages.length) * 15);
