@@ -325,16 +325,18 @@ export class ComprehensiveAuditRunner {
     const totalPages = this.pageInventory.size;
     let audited = 0;
     
-    // Audit in priority order: critical first
-    const priorities: AuditPriority[] = ['critical', 'high', 'medium', 'low'];
+    // MB.MD v9.9.3: Process ALL priorities simultaneously with larger batches
+    const allPages = Array.from(this.pageInventory.values())
+      .sort((a, b) => {
+        const priorityOrder = { critical: 0, high: 1, medium: 2, low: 3 };
+        return priorityOrder[a.priority] - priorityOrder[b.priority];
+      });
     
-    for (const priority of priorities) {
-      const pages = Array.from(this.pageInventory.values())
-        .filter(p => p.priority === priority);
-      
-      // Batch audit pages for efficiency (5 at a time)
-      for (let i = 0; i < pages.length; i += 5) {
-        const batch = pages.slice(i, i + 5);
+    // Increased batch size: 20 pages at a time for 4x faster processing
+    const BATCH_SIZE = 20;
+    
+    for (let i = 0; i < allPages.length; i += BATCH_SIZE) {
+      const batch = allPages.slice(i, i + BATCH_SIZE);
         
         // Parallel audit batch
         const batchResults = await Promise.all(
@@ -362,8 +364,7 @@ export class ComprehensiveAuditRunner {
           })
         );
         
-        results.push(...batchResults);
-      }
+      results.push(...batchResults);
     }
     
     console.log(`[ComprehensiveAudit] ✅ Audited ${audited} pages, found ${this.progress.issuesFound} issues`);

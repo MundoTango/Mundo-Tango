@@ -215,11 +215,11 @@ export class ValidationRelayService {
         const result = await this.runValidation(request);
         this.results.set(result.id, result);
 
-        // Persist to LanceDB
-        await lanceDB.addMemory(
-          `result-${result.id}`,
-          JSON.stringify(result)
-        );
+        // Persist to LanceDB (flat structure for Arrow compatibility)
+        await lanceDB.addMemory('validation-results', {
+          id: result.id,
+          content: `Validation ${result.type}: ${result.target} - ${result.passed} passed, ${result.failed} failed`
+        });
       } catch (error) {
         console.error(`[ValidationRelay] Failed to run ${request.type}:`, error);
       }
@@ -438,11 +438,11 @@ export class ValidationRelayService {
 
     this.reports.set(report.id, report);
 
-    // Persist report
-    await lanceDB.addMemory(
-      `validation-report-${report.id}`,
-      JSON.stringify({ ...report, results: results.length })
-    );
+    // Persist report (flat structure for Arrow compatibility)
+    await lanceDB.addMemory('validation-reports', {
+      id: report.id,
+      content: `Validation Report: ${report.name} - ${summary.totalTests} tests, ${summary.passRate.toFixed(1)}% pass rate`
+    });
 
     return report;
   }
@@ -590,6 +590,38 @@ export class ValidationRelayService {
 
     this.queue.splice(index, 1);
     return true;
+  }
+
+  /**
+   * Execute all queued validations and wait for completion
+   * Returns summary of all validation results
+   */
+  async executeQueue(): Promise<{ passed: number; failed: number; total: number }> {
+    // Wait for queue to finish processing
+    const startResults = this.results.size;
+    
+    // If queue is still processing, wait for it
+    while (this.isProcessing || this.queue.length > 0) {
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
+    
+    // Get all results that were added during this execution
+    const allResults = Array.from(this.results.values());
+    const newResults = allResults.slice(startResults);
+    
+    let passed = 0;
+    let failed = 0;
+    
+    for (const result of newResults) {
+      passed += result.passed;
+      failed += result.failed;
+    }
+    
+    return {
+      passed,
+      failed,
+      total: newResults.length
+    };
   }
 
   /**
