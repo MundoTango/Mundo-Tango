@@ -19171,6 +19171,116 @@ export const insertAmbassadorSchema = createInsertSchema(ambassadors).omit({
   deactivatedAt: true,
 });
 export type InsertAmbassador = z.infer<typeof insertAmbassadorSchema>;
+
+
+// ============================================================================
+// SCRAPING INFRASTRUCTURE - BA Event Scraping (MB.MD Phase 1)
+// ============================================================================
+
+// Scraped Events Table - Raw event data before deduplication
+export const scrapedEvents = pgTable('scraped_events', {
+  id: serial('id').primaryKey(),
+  source: varchar('source', { length: 100 }).notNull(),
+  sourceEventId: varchar('source_event_id', { length: 255 }),
+  sourceUrl: text('source_url').notNull(),
+  
+  // Event data
+  title: text('title').notNull(),
+  description: text('description'),
+  venueName: varchar('venue_name', { length: 255 }),
+  venueAddress: text('venue_address'),
+  latitude: numeric('latitude', { precision: 10, scale: 8 }),
+  longitude: numeric('longitude', { precision: 11, scale: 8 }),
+  
+  // Date/time
+  startDate: timestamp('start_date', { withTimezone: true }).notNull(),
+  endDate: timestamp('end_date', { withTimezone: true }),
+  
+  // Classification
+  eventType: varchar('event_type', { length: 50 }),
+  priceInfo: text('price_info'),
+  
+  // Raw data
+  rawHtml: text('raw_html'),
+  rawData: jsonb('raw_data'),
+  
+  // Processing status
+  scrapedAt: timestamp('scraped_at', { withTimezone: true }).defaultNow(),
+  isProcessed: boolean('is_processed').default(false),
+  processedAt: timestamp('processed_at', { withTimezone: true }),
+  matchedEventId: integer('matched_event_id').references(() => events.id),
+  
+  // Audit
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
+});
+
+// Known Tango People Table - Recognized professionals for claiming
+export const knownTangoPeople = pgTable('known_tango_people', {
+  id: serial('id').primaryKey(),
+  
+  // Identity
+  name: varchar('name', { length: 255 }).notNull(),
+  normalizedName: varchar('normalized_name', { length: 255 }).notNull().unique(),
+  aliases: text('aliases').array(),
+  
+  // Platform link
+  userId: integer('user_id').references(() => users.id),
+  
+  // Contact/social
+  email: varchar('email', { length: 255 }),
+  phone: varchar('phone', { length: 50 }),
+  website: text('website'),
+  facebookUrl: text('facebook_url'),
+  instagramHandle: varchar('instagram_handle', { length: 100 }),
+  
+  // Professional info
+  roles: text('roles').array(),
+  bio: text('bio'),
+  profileImageUrl: text('profile_image_url'),
+  
+  // Verification
+  isVerified: boolean('is_verified').default(false),
+  verifiedAt: timestamp('verified_at', { withTimezone: true }),
+  verificationMethod: varchar('verification_method', { length: 50 }),
+  
+  // Stats
+  eventsOrganizedCount: integer('events_organized_count').default(0),
+  eventsDjCount: integer('events_dj_count').default(0),
+  eventsTaughtCount: integer('events_taught_count').default(0),
+  
+  // Discovery metadata
+  firstSeenSource: varchar('first_seen_source', { length: 100 }),
+  firstSeenAt: timestamp('first_seen_at', { withTimezone: true }).defaultNow(),
+  lastSeenAt: timestamp('last_seen_at', { withTimezone: true }).defaultNow(),
+  
+  // Audit
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
+});
+
+// Relations for scraped events
+export const scrapedEventsRelations = relations(scrapedEvents, ({ one }) => ({
+  matchedEvent: one(events, {
+    fields: [scrapedEvents.matchedEventId],
+    references: [events.id],
+  }),
+}));
+
+// Relations for known tango people
+export const knownTangoPeopleRelations = relations(knownTangoPeople, ({ one }) => ({
+  user: one(users, {
+    fields: [knownTangoPeople.userId],
+    references: [users.id],
+  }),
+}));
+
+// Types for insert and select operations
+export type ScrapedEvent = typeof scrapedEvents.$inferSelect;
+export type InsertScrapedEvent = typeof scrapedEvents.$inferInsert;
+export type KnownTangoPerson = typeof knownTangoPeople.$inferSelect;
+export type InsertKnownTangoPerson = typeof knownTangoPeople.$inferInsert;
+
 export type SelectAmbassador = typeof ambassadors.$inferSelect;
 
 // ============================================================================
