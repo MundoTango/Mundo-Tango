@@ -227,6 +227,7 @@ router.get("/", optionalAuth, async (req: AuthRequest, res: Response) => {
       offset = "0",
       category,
       upcoming,
+      past,
       search
     } = req.query;
 
@@ -280,6 +281,11 @@ router.get("/", optionalAuth, async (req: AuthRequest, res: Response) => {
     // Handle upcoming=true: filter for events starting from now
     if (upcoming === "true") {
       conditions.push(gte(events.startDate, new Date()));
+    }
+
+    // Handle past=true: filter for events that have already ended
+    if (past === "true") {
+      conditions.push(lte(events.startDate, new Date()));
     }
 
     if (conditions.length > 0) {
@@ -442,6 +448,7 @@ router.get("/search", optionalAuth, async (req: AuthRequest, res: Response) => {
       tags,
       languages,
       languageMatchOnly,
+      past,
       sortBy = "relevance",
       page = "1",
       limit = "20"
@@ -570,6 +577,14 @@ router.get("/search", optionalAuth, async (req: AuthRequest, res: Response) => {
       // conditions.push(
       //   sql`${events.hostLanguages} && ARRAY[${sql.join(languageArray.map(l => sql`${l}`), sql`, `)}]::text[]`
       // );
+    }
+
+    // Past events filter - show events that have already ended
+    if (past === "true") {
+      conditions.push(lte(events.startDate, new Date()));
+    } else {
+      // By default, only show upcoming events in search
+      conditions.push(gte(events.startDate, new Date()));
     }
 
     if (conditions.length > 0) {

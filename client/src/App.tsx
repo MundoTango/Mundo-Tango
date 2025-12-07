@@ -1132,11 +1132,9 @@ function Router() {
       </Route>
 
       <Route path="/groups/:id">
-        <ProtectedRoute>
-          <AppLayout>
-            <GroupDetailsPage />
-          </AppLayout>
-        </ProtectedRoute>
+        <AppLayout>
+          <GroupDetailsPage />
+        </AppLayout>
       </Route>
 
       <Route path="/event-series/:id">

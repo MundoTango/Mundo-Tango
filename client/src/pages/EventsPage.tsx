@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar as CalendarIcon, MapPin, Search, Users, Plus, Map as MapIconLucide, List, ChevronRight, ChevronDown, Database, Download, ChevronLeft, SlidersHorizontal, Check, Languages } from "lucide-react";
+import { Calendar as CalendarIcon, MapPin, Search, Users, Plus, Map as MapIconLucide, List, ChevronRight, ChevronDown, Database, Download, ChevronLeft, SlidersHorizontal, Check, Languages, Clock } from "lucide-react";
 import { getLanguageByCode } from "@/components/input/UnifiedLanguagePicker";
 import { safeDateFormat } from "@/lib/safeDateFormat";
 import { getTimezoneFromCity } from "@/lib/timezoneUtils";
@@ -223,7 +223,7 @@ function EventCard({ event, index = 0 }: { event: any; index?: number }) {
   );
 }
 
-type EventTab = "my-events" | "upcoming" | "discover";
+type EventTab = "my-events" | "upcoming" | "past" | "discover";
 
 export default function EventsPage() {
   const [, navigate] = useLocation();
@@ -273,7 +273,18 @@ export default function EventsPage() {
     enabled: !!user && activeTab === "upcoming",
   });
 
-  // TAB 3: Discover - Global search
+  // TAB 3: Past - Historical events
+  const { data: pastEventsData, isLoading: isLoadingPast } = useQuery({
+    queryKey: ["/api/events/search", "past", page],
+    queryFn: async () => {
+      const response = await fetch(`/api/events/search?past=true&limit=20&page=${page}`);
+      if (!response.ok) throw new Error("Failed to fetch past events");
+      return response.json();
+    },
+    enabled: activeTab === "past",
+  });
+
+  // TAB 4: Discover - Global search
   const { data: searchResults, isLoading: isLoadingDiscover } = useQuery({
     queryKey: ["/api/events/search", filters, page, sortBy],
     queryFn: async () => {
@@ -292,15 +303,19 @@ export default function EventsPage() {
         return myEventsData || [];
       case "upcoming":
         return upcomingData?.events || [];
+      case "past":
+        return pastEventsData?.events || [];
       case "discover":
       default:
         return searchResults?.events || [];
     }
-  }, [activeTab, myEventsData, upcomingData, searchResults]);
+  }, [activeTab, myEventsData, upcomingData, pastEventsData, searchResults]);
 
-  const pagination = activeTab === "discover" ? searchResults?.pagination : null;
+  const pagination = activeTab === "discover" ? searchResults?.pagination : 
+                     activeTab === "past" ? pastEventsData?.pagination : null;
   const isLoading = activeTab === "my-events" ? isLoadingMyEvents : 
-                    activeTab === "upcoming" ? isLoadingUpcoming : isLoadingDiscover;
+                    activeTab === "upcoming" ? isLoadingUpcoming : 
+                    activeTab === "past" ? isLoadingPast : isLoadingDiscover;
   
   // Active filter count
   const activeFilterCount = Object.keys(filters).filter(
@@ -469,12 +484,12 @@ export default function EventsPage() {
             {/* Ad Banner */}
             <BannerAd placement="events" />
 
-            {/* 3-TAB ARCHITECTURE: My Events | Upcoming | Discover */}
+            {/* 4-TAB ARCHITECTURE: My Events | Upcoming | Past | Discover */}
             <Tabs value={activeTab} onValueChange={(val) => {
               setActiveTab(val as EventTab);
               setPage(1);
             }}>
-              <TabsList className="w-full grid grid-cols-3 h-12">
+              <TabsList className="w-full grid grid-cols-4 h-12">
                 <TabsTrigger 
                   value="my-events" 
                   className="gap-2"
@@ -496,6 +511,15 @@ export default function EventsPage() {
                   <span className="sm:hidden">Soon</span>
                 </TabsTrigger>
                 <TabsTrigger 
+                  value="past" 
+                  className="gap-2"
+                  data-testid="tab-past"
+                >
+                  <Clock className="h-4 w-4" />
+                  <span className="hidden sm:inline">Past</span>
+                  <span className="sm:hidden">Past</span>
+                </TabsTrigger>
+                <TabsTrigger 
                   value="discover" 
                   className="gap-2"
                   data-testid="tab-discover"
@@ -510,6 +534,7 @@ export default function EventsPage() {
             <div className="text-sm text-muted-foreground">
               {activeTab === "my-events" && "Events you've RSVP'd to"}
               {activeTab === "upcoming" && `Events in your city${upcomingData?.filters?.joinedCities?.length ? ` and ${upcomingData.filters.joinedCities.length} followed cities` : ""}`}
+              {activeTab === "past" && "Browse historical events and past milongas"}
               {activeTab === "discover" && "Explore all events worldwide"}
             </div>
 

@@ -88,7 +88,7 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
   const { user } = useAuth();
   const { data: myRsvps } = useMyRSVPs();
   const [filters, setFilters] = useState<EventFilterValues>({});
-  const [mainTab, setMainTab] = useState<"upcoming" | "series">("upcoming");
+  const [mainTab, setMainTab] = useState<"upcoming" | "past" | "series">("upcoming");
   const [viewMode, setViewMode] = useState<"list" | "calendar" | "map">("list");
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   
@@ -200,7 +200,20 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
     });
   }, [filteredEvents]);
   
-  const displayEvents = mainTab === "series" ? seriesEvents : upcomingEvents;
+  const pastEvents = useMemo(() => {
+    if (!filteredEvents) return [];
+    const now = new Date();
+    return filteredEvents.filter(event => {
+      const eventDate = new Date(event.startDate || event.date || '');
+      return eventDate < now;
+    }).sort((a, b) => {
+      const dateA = new Date(a.startDate || a.date || '');
+      const dateB = new Date(b.startDate || b.date || '');
+      return dateB.getTime() - dateA.getTime();
+    });
+  }, [filteredEvents]);
+  
+  const displayEvents = mainTab === "series" ? seriesEvents : mainTab === "past" ? pastEvents : upcomingEvents;
   
   const calendarEvents = useMemo(() => {
     if (!displayEvents) return [];
@@ -310,18 +323,22 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
                 {totalEvents > 0 
                   ? activeFilterCount > 0 
                     ? `${displayEvents.length} of ${totalEvents} events (filtered)`
-                    : `${displayEvents.length} ${mainTab === "series" ? "recurring" : "upcoming"} events in ${groupCity || "this city"}`
+                    : `${displayEvents.length} ${mainTab === "series" ? "recurring" : mainTab === "past" ? "past" : "upcoming"} events in ${groupCity || "this city"}`
                   : `No events scheduled yet in ${groupCity || "this city"}`
                 }
               </CardDescription>
             </div>
           </div>
           
-          <Tabs value={mainTab} onValueChange={(val) => setMainTab(val as "upcoming" | "series")} data-testid="tabs-main-events">
-            <TabsList className="grid w-full grid-cols-2 max-w-xs">
+          <Tabs value={mainTab} onValueChange={(val) => setMainTab(val as "upcoming" | "past" | "series")} data-testid="tabs-main-events">
+            <TabsList className="grid w-full grid-cols-3 max-w-md">
               <TabsTrigger value="upcoming" className="gap-2" data-testid="tab-upcoming-events">
                 <Calendar className="h-4 w-4" />
-                Upcoming Events
+                Upcoming
+              </TabsTrigger>
+              <TabsTrigger value="past" className="gap-2" data-testid="tab-past-events">
+                <Clock className="h-4 w-4" />
+                Past
               </TabsTrigger>
               <TabsTrigger value="series" className="gap-2" data-testid="tab-series-events">
                 <Repeat className="h-4 w-4" />
