@@ -24,7 +24,12 @@ The platform employs an "MT Ocean Theme" with dark mode, built using Tailwind CS
 The backend is developed with Express and TypeScript, utilizing PostgreSQL (Neon) and Drizzle ORM. It features a modular route structure, JWT authentication with Google/Facebook OAuth, and an 8-tier Role-Based Access Control (RBAC) system. Database migrations are automated, and server-side FFmpeg is used for video transcoding. API endpoints support PRO functionalities, place recommendations, and an enhanced Talent Match AI.
 
 ### AI Systems
-An extensive AI ecosystem comprises approximately 43 operational agents, organized hierarchically for strategic oversight and atomic execution. This includes a self-healing infrastructure, a production-ready validation loop, a Visual Validation Framework, contextual agent activation, a Backend Agent System, Mr. Blue AI Assistant, and a Bifrost AI Gateway for multi-provider AI interactions (OpenAI, Anthropic, Groq, Google, Luma, ElevenLabs). The system also integrates a RecursiveContextService for hierarchical code summarization and a TRM Learning Protocol. Additionally, five scraping agents actively gather data from over 200 sources.
+An extensive AI ecosystem comprises **48 operational agents** (audited Dec 7, 2025):
+- **10 Page Agents**: Landing, Feed, Profile, Events, Messages, Admin, Housing, Groups, Financial, MrBlue
+- **33 Feature Agents**: Subordinate to page agents (4 per major page, 3 per minor page)
+- **5 Scraping Agents**: #115 Orchestrator, #116 Static, #117 JS, #118 Social, #119 Deduplicator
+
+The hierarchy provides strategic oversight and atomic execution. This includes a self-healing infrastructure, a production-ready validation loop, a Visual Validation Framework, contextual agent activation, a Backend Agent System, Mr. Blue AI Assistant, and a Bifrost AI Gateway for multi-provider AI interactions (OpenAI, Anthropic, Groq, Google, Luma, ElevenLabs). The system also integrates a RecursiveContextService for hierarchical code summarization and a TRM Learning Protocol. The 5 scraping agents actively gather data from 203+ sources (200 active + 3 newly added).
 
 ### Platform Features
 Core functionalities encompass social features such as events, groups, posts, notifications, media management, live streaming, marketplaces, and reviews. Business-oriented features include Talent Match AI, LIFE CEO AI, Multi-AI Orchestration, automated scraping, an Admin Dashboard, Stripe Payments integration, and BullMQ Workers. Recent enhancements include an Event Series System, redesigned City Groups Events Tab, RSS Feed Scraping, Profile Enrichment Service, OpenStreetMap Geocoding, Housing Friendship Closeness Integration, a Unified Messaging Inbox, and a Faceless Content System with social media adapters.
