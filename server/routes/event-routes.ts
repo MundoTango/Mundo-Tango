@@ -605,7 +605,9 @@ router.get("/search", optionalAuth, async (req: AuthRequest, res: Response) => {
       query = query.where(and(...conditions));
     }
 
-    // Sorting
+    // Sorting - with support for prioritizing big events (festivals, marathons, encuentros)
+    const { prioritizeBigEvents } = req.query;
+    
     switch (sortBy) {
       case "date":
         query = query.orderBy(asc(events.startDate));
@@ -615,7 +617,17 @@ router.get("/search", optionalAuth, async (req: AuthRequest, res: Response) => {
         break;
       case "relevance":
       default:
-        if (q) {
+        if (prioritizeBigEvents === "true") {
+          // Prioritize big events: festivals, marathons, encuentros, competitions first
+          query = query.orderBy(
+            desc(sql`CASE 
+              WHEN ${events.eventType} IN ('festival', 'marathon', 'encuentro', 'competition') THEN 3
+              WHEN ${events.eventType} IN ('workshop', 'performance') THEN 2
+              ELSE 1
+            END`),
+            desc(events.startDate)
+          );
+        } else if (q) {
           query = query.orderBy(
             desc(sql`
               ts_rank(

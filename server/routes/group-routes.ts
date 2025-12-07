@@ -384,17 +384,20 @@ router.get("/:id", async (req: Request, res: Response) => {
 router.get("/:id/events", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { limit = "20", offset = "0", past } = req.query;
+    const { limit = "20", offset = "0", past, showAll } = req.query;
     const now = new Date();
 
     // Build conditions array
     const conditions = [eq(events.groupId, parseInt(id))];
     
-    // Add date filter based on past parameter
-    if (past === "true") {
-      conditions.push(lt(events.startDate, now));
-    } else {
-      conditions.push(gte(events.startDate, now));
+    // Add date filter based on past/showAll parameters
+    // If showAll=true, don't filter by date (show everything)
+    if (showAll !== "true") {
+      if (past === "true") {
+        conditions.push(lt(events.startDate, now));
+      } else {
+        conditions.push(gte(events.startDate, now));
+      }
     }
 
     // Get events linked to this group with date filter

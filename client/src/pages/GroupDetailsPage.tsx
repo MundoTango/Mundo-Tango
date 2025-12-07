@@ -116,7 +116,8 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
     queryKey: ["/api/events", "group", groupId, groupCity, isPast ? "past" : "upcoming"],
     queryFn: async () => {
       const pastParam = isPast ? "&past=true" : "";
-      let res = await fetch(`/api/groups/${groupId}/events?limit=50${pastParam}`, { credentials: "include" });
+      // Use showAll=true to display all events including past scraped events
+      let res = await fetch(`/api/groups/${groupId}/events?limit=50${pastParam}&showAll=true`, { credentials: "include" });
       if (res.ok) {
         const data = await res.json();
         let eventList = data.events || data || [];

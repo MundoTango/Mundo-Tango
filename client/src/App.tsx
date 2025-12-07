@@ -1164,13 +1164,7 @@ function Router() {
         </ProtectedRoute>
       </Route>
 
-      <Route path="/city-hub">
-        <ProtectedRoute>
-          <AppLayout>
-            <CityHubPage />
-          </AppLayout>
-        </ProtectedRoute>
-      </Route>
+      {/* City Hub removed - functionality covered by Community Map + City Groups */}
       <Route path="/city-groups">
         <ProtectedRoute>
           <AppLayout>

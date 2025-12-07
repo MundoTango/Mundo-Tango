@@ -267,8 +267,10 @@ export default function EventsPage() {
     if (filters.dateTo) params.append("dateTo", filters.dateTo.toISOString());
     if (filters.type && filters.type !== "all") {
       params.append("type", filters.type);
+    } else {
+      // Prioritize big events (festivals, marathons, encuentros, competitions) in Discover mode
+      params.append("prioritizeBigEvents", "true");
     }
-    // Don't filter by type by default - show all events in Discover mode
     if (filters.priceMin !== undefined) params.append("priceMin", String(filters.priceMin));
     if (filters.priceMax !== undefined) params.append("priceMax", String(filters.priceMax));
     if (filters.danceStyle && filters.danceStyle !== "all") params.append("danceStyle", filters.danceStyle);
