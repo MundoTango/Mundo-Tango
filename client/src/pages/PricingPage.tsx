@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, Zap, Crown, Users, DollarSign, Loader2 } from "lucide-react";
+import { Check, Zap, Crown, Users, DollarSign, Loader2, Star, Globe, Building2 } from "lucide-react";
 import { PublicLayout } from "@/components/PublicLayout";
 import { SEO } from "@/components/SEO";
 import { PageLayout } from "@/components/PageLayout";
@@ -12,103 +12,67 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
+import { Skeleton } from "@/components/ui/skeleton";
 
-const plans = [
-  {
-    name: "Free Trial",
-    slug: "free-trial",
-    planId: "free",
-    price: "$0",
-    period: "7 days",
-    icon: Users,
-    description: "Try Pro features free",
-    features: [
-      "Full Pro features for 7 days",
-      "No credit card required",
-      "Browse events & community",
-      "AI assistant access",
-      "Partner matching preview"
-    ],
-    cta: "Start Free Trial",
-    popular: false,
-    isFree: true
-  },
-  {
-    name: "Basic",
-    slug: "basic",
-    planId: "basic",
-    price: "$4.99",
-    period: "month",
-    icon: Users,
-    description: "Essential tango tools",
-    features: [
-      "Basic profile & messaging",
-      "Browse events",
-      "Join groups",
-      "Community access",
-      "Limited AI queries"
-    ],
-    cta: "Get Started",
-    popular: false,
-    isFree: false
-  },
-  {
-    name: "Dancer Pro",
-    slug: "dancer-pro",
-    planId: "pro",
-    price: "$9.99",
-    period: "month",
-    icon: Zap,
-    description: "For dedicated dancers",
-    features: [
-      "Everything in Basic",
-      "Unlimited AI assistant",
-      "Advanced partner matching",
-      "Housing marketplace",
-      "Priority notifications",
-      "Ad-free experience",
-      "Travel planning tools"
-    ],
-    cta: "Start Free Trial",
-    popular: true,
-    isFree: false
-  },
-  {
-    name: "Professional",
-    slug: "professional",
-    planId: "premium",
-    price: "$29.99",
-    period: "month",
-    icon: Crown,
-    description: "For teachers & organizers",
-    features: [
-      "Everything in Dancer Pro",
-      "Event creation & management",
-      "Analytics dashboard",
-      "Student management",
-      "Verified badge",
-      "Priority support"
-    ],
-    cta: "Start Free Trial",
-    popular: false,
-    isFree: false
-  }
-];
+interface PricingTier {
+  id: number;
+  name: string;
+  displayName: string;
+  description: string | null;
+  monthlyPrice: number;
+  annualPrice: number | null;
+  isVisible: boolean;
+  roleLevel: number | null;
+}
+
+const getIconForTier = (name: string) => {
+  const iconMap: Record<string, typeof Users> = {
+    'free': Users,
+    'explorer_plus': Zap,
+    'pro': Star,
+    'community_leader': Crown,
+    'super_community_leader': Crown,
+    'enterprise': Building2,
+    'regional_organizer': Globe,
+    'national_organizer': Globe,
+    'international_organizer': Globe,
+    'platform_partner': Building2,
+  };
+  return iconMap[name] || Users;
+};
+
+const formatPrice = (priceInCents: number): string => {
+  if (priceInCents === 0) return "Free";
+  const dollars = priceInCents / 100;
+  return `$${dollars.toFixed(dollars % 1 === 0 ? 0 : 2)}`;
+};
+
+const getPopularTier = (tiers: PricingTier[]): string => {
+  const proTier = tiers.find(t => t.name === 'pro');
+  return proTier?.name || '';
+};
 
 export default function PricingPage() {
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
   const { toast } = useToast();
   const [, setLocation] = useLocation();
 
+  const { data: tiersData, isLoading: tiersLoading } = useQuery<{ tiers: PricingTier[] }>({
+    queryKey: ['/api/pricing/tiers'],
+  });
+
   const { data: userData } = useQuery({
     queryKey: ['/api/auth/me'],
   });
 
   const isAuthenticated = !!userData?.user;
+  const tiers = tiersData?.tiers?.filter(t => t.isVisible) || [];
+  const displayTiers = tiers.slice(0, 4);
+  const popularTierName = getPopularTier(tiers);
 
   const checkoutMutation = useMutation({
-    mutationFn: async (planId: string) => {
-      const response = await apiRequest('POST', '/api/billing/create-subscription', { planId });
+    mutationFn: async (tierName: string) => {
+      const response = await apiRequest('POST', '/api/billing/create-subscription', { planId: tierName });
       return response.json();
     },
     onSuccess: (data) => {
@@ -121,7 +85,7 @@ export default function PricingPage() {
       } else if (data.success) {
         toast({
           title: "Plan activated!",
-          description: "Your free plan has been activated.",
+          description: "Your plan has been activated.",
         });
         setLocation('/feed');
       }
@@ -137,23 +101,23 @@ export default function PricingPage() {
     },
   });
 
-  const handlePlanSelect = async (plan: typeof plans[0]) => {
+  const handlePlanSelect = async (tier: PricingTier) => {
     if (!isAuthenticated) {
       toast({
         title: "Sign in required",
         description: "Please sign in or create an account to subscribe.",
       });
-      setLocation('/auth?redirect=/pricing&plan=' + plan.planId);
+      setLocation('/auth?redirect=/pricing&plan=' + tier.name);
       return;
     }
 
-    if (plan.isFree) {
+    if (tier.monthlyPrice === 0) {
       setLocation('/signup?trial=true');
       return;
     }
 
-    setLoadingPlan(plan.planId);
-    checkoutMutation.mutate(plan.planId);
+    setLoadingPlan(tier.name);
+    checkoutMutation.mutate(tier.name);
   };
 
   return (
@@ -162,10 +126,9 @@ export default function PricingPage() {
 <PublicLayout>
       <SEO
         title="Pricing - Mundo Tango"
-        description="Choose the perfect plan for your tango journey. Free for casual dancers, Pro for dedicated enthusiasts, and Teacher plans for instructors."
+        description="Choose the perfect plan for your tango journey. Free for casual dancers, Pro for dedicated enthusiasts, and organizer plans for event hosts."
       />
       
-      {/* Hero Section */}
       <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">
         <div className="absolute inset-0 bg-cover bg-center" style={{
           backgroundImage: `url('https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=1600&h=900&fit=crop&q=80')`
@@ -197,76 +160,167 @@ export default function PricingPage() {
 
       <div className="bg-background py-16 px-6">
         <div className="container mx-auto max-w-7xl">
-          {/* Plans Grid */}
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4 mb-16" data-testid="pricing-plans-grid">
-            {plans.map((plan, index) => {
-              const IconComponent = plan.icon;
-              return (
-                <motion.div
-                  key={plan.name}
-                  initial={{ opacity: 0, y: 40 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-100px" }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
-                >
-                  <Card
-                    className={`relative h-full ${plan.popular ? "border-primary shadow-2xl" : ""}`}
-                    data-testid={`card-plan-${plan.slug}`}
+            {tiersLoading ? (
+              Array.from({ length: 4 }).map((_, idx) => (
+                <Card key={idx} className="h-full">
+                  <CardHeader className="text-center pb-8">
+                    <Skeleton className="h-16 w-16 rounded-2xl mx-auto mb-6" />
+                    <Skeleton className="h-8 w-32 mx-auto mb-2" />
+                    <Skeleton className="h-4 w-48 mx-auto mb-6" />
+                    <Skeleton className="h-12 w-24 mx-auto" />
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <Skeleton key={i} className="h-4 w-full" />
+                    ))}
+                    <Skeleton className="h-10 w-full" />
+                  </CardContent>
+                </Card>
+              ))
+            ) : displayTiers.length > 0 ? (
+              displayTiers.map((tier, index) => {
+                const IconComponent = getIconForTier(tier.name);
+                const isPopular = tier.name === popularTierName;
+                const isFree = tier.monthlyPrice === 0;
+                
+                return (
+                  <motion.div
+                    key={tier.id}
+                    initial={{ opacity: 0, y: 40 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-100px" }}
+                    transition={{ duration: 0.6, delay: index * 0.1 }}
                   >
-                    {plan.popular && (
-                      <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                        <Badge className="text-xs px-4 py-1.5" data-testid={`badge-popular-${plan.slug}`}>Most Popular</Badge>
-                      </div>
-                    )}
-
-                    <CardHeader className="text-center pb-8">
-                      <div className="flex justify-center mb-6">
-                        <div className="p-4 rounded-2xl bg-primary/10">
-                          <IconComponent className="h-10 w-10 text-primary" />
+                    <Card
+                      className={`relative h-full ${isPopular ? "border-primary shadow-2xl" : ""}`}
+                      data-testid={`card-plan-${tier.name}`}
+                    >
+                      {isPopular && (
+                        <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+                          <Badge className="text-xs px-4 py-1.5" data-testid={`badge-popular-${tier.name}`}>Most Popular</Badge>
                         </div>
-                      </div>
-                      <CardTitle className="text-3xl font-serif font-bold mb-2" data-testid={`text-plan-name-${plan.slug}`}>{plan.name}</CardTitle>
-                      <p className="text-sm text-muted-foreground mb-6" data-testid={`text-plan-description-${plan.slug}`}>{plan.description}</p>
-                      <div className="mb-4" data-testid={`text-price-${plan.slug}`}>
-                        <span className="text-5xl font-serif font-bold" data-testid={`text-price-amount-${plan.slug}`}>{plan.price}</span>
-                        <span className="text-muted-foreground text-lg" data-testid={`text-price-period-${plan.slug}`}>/{plan.period}</span>
-                      </div>
+                      )}
+
+                      <CardHeader className="text-center pb-8">
+                        <div className="flex justify-center mb-6">
+                          <div className="p-4 rounded-2xl bg-primary/10">
+                            <IconComponent className="h-10 w-10 text-primary" />
+                          </div>
+                        </div>
+                        <CardTitle className="text-3xl font-serif font-bold mb-2" data-testid={`text-plan-name-${tier.name}`}>
+                          {tier.displayName}
+                        </CardTitle>
+                        <p className="text-sm text-muted-foreground mb-6" data-testid={`text-plan-description-${tier.name}`}>
+                          {tier.description || "Perfect for your tango journey"}
+                        </p>
+                        <div className="mb-4" data-testid={`text-price-${tier.name}`}>
+                          <span className="text-5xl font-serif font-bold" data-testid={`text-price-amount-${tier.name}`}>
+                            {formatPrice(tier.monthlyPrice)}
+                          </span>
+                          {!isFree && (
+                            <span className="text-muted-foreground text-lg" data-testid={`text-price-period-${tier.name}`}>/month</span>
+                          )}
+                        </div>
+                      </CardHeader>
+
+                      <CardContent className="space-y-6">
+                        <ul className="space-y-4" data-testid={`list-features-${tier.name}`}>
+                          {isFree ? (
+                            <>
+                              <li className="flex items-start gap-3">
+                                <Check className="h-5 w-5 text-green-500 shrink-0 mt-0.5" />
+                                <span className="text-sm leading-relaxed">Browse events & community</span>
+                              </li>
+                              <li className="flex items-start gap-3">
+                                <Check className="h-5 w-5 text-green-500 shrink-0 mt-0.5" />
+                                <span className="text-sm leading-relaxed">Basic profile</span>
+                              </li>
+                              <li className="flex items-start gap-3">
+                                <Check className="h-5 w-5 text-green-500 shrink-0 mt-0.5" />
+                                <span className="text-sm leading-relaxed">Join public groups</span>
+                              </li>
+                            </>
+                          ) : (
+                            <>
+                              <li className="flex items-start gap-3">
+                                <Check className="h-5 w-5 text-green-500 shrink-0 mt-0.5" />
+                                <span className="text-sm leading-relaxed">Everything in Free</span>
+                              </li>
+                              <li className="flex items-start gap-3">
+                                <Check className="h-5 w-5 text-green-500 shrink-0 mt-0.5" />
+                                <span className="text-sm leading-relaxed">Advanced features</span>
+                              </li>
+                              <li className="flex items-start gap-3">
+                                <Check className="h-5 w-5 text-green-500 shrink-0 mt-0.5" />
+                                <span className="text-sm leading-relaxed">Priority support</span>
+                              </li>
+                              <li className="flex items-start gap-3">
+                                <Check className="h-5 w-5 text-green-500 shrink-0 mt-0.5" />
+                                <span className="text-sm leading-relaxed">Ad-free experience</span>
+                              </li>
+                            </>
+                          )}
+                        </ul>
+
+                        <Button
+                          className="w-full gap-2"
+                          variant={isPopular ? "default" : "outline"}
+                          data-testid={`button-cta-${tier.name}`}
+                          onClick={() => handlePlanSelect(tier)}
+                          disabled={loadingPlan !== null}
+                        >
+                          {loadingPlan === tier.name ? (
+                            <>
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                              Processing...
+                            </>
+                          ) : isFree ? (
+                            "Get Started Free"
+                          ) : (
+                            "Start Free Trial"
+                          )}
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                );
+              })
+            ) : (
+              <div className="col-span-4 text-center py-12">
+                <p className="text-muted-foreground">Loading pricing plans...</p>
+              </div>
+            )}
+          </div>
+
+          {tiers.length > 4 && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="mb-16"
+            >
+              <h2 className="text-3xl font-serif font-bold text-center mb-8">Enterprise & Organizer Plans</h2>
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {tiers.slice(4).map((tier) => (
+                  <Card key={tier.id} className="hover-elevate" data-testid={`card-enterprise-${tier.name}`}>
+                    <CardHeader>
+                      <CardTitle className="font-serif">{tier.displayName}</CardTitle>
+                      <p className="text-muted-foreground text-sm">{tier.description}</p>
                     </CardHeader>
-
-                    <CardContent className="space-y-6">
-                      <ul className="space-y-4" data-testid={`list-features-${plan.slug}`}>
-                        {plan.features.map((feature, idx) => (
-                          <li key={idx} className="flex items-start gap-3" data-testid={`feature-${plan.slug}-${idx}`}>
-                            <Check className="h-5 w-5 text-green-500 shrink-0 mt-0.5" />
-                            <span className="text-sm leading-relaxed">{feature}</span>
-                          </li>
-                        ))}
-                      </ul>
-
-                      <Button
-                        className="w-full gap-2"
-                        variant={plan.popular ? "default" : "outline"}
-                        data-testid={`button-cta-${plan.slug}`}
-                        onClick={() => handlePlanSelect(plan)}
-                        disabled={loadingPlan !== null}
-                      >
-                        {loadingPlan === plan.planId ? (
-                          <>
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                            Processing...
-                          </>
-                        ) : (
-                          plan.cta
-                        )}
+                    <CardContent>
+                      <div className="text-3xl font-bold mb-4">{formatPrice(tier.monthlyPrice)}<span className="text-lg text-muted-foreground">/mo</span></div>
+                      <Button variant="outline" className="w-full" onClick={() => handlePlanSelect(tier)}>
+                        Contact Sales
                       </Button>
                     </CardContent>
                   </Card>
-                </motion.div>
-              );
-            })}
-          </div>
+                ))}
+              </div>
+            </motion.div>
+          )}
 
-          {/* FAQ Section */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -289,7 +343,7 @@ export default function PricingPage() {
                 },
                 {
                   q: "Is there a free trial?",
-                  a: "Yes! All plans start with a 7-day free trial with full Pro features. No credit card required."
+                  a: "Yes! All paid plans start with a 7-day free trial with full features. No credit card required."
                 },
                 {
                   q: "Can I cancel anytime?",
@@ -308,7 +362,6 @@ export default function PricingPage() {
             </div>
           </motion.div>
 
-          {/* Questions CTA */}
           <motion.div
             className="mt-16"
             initial={{ opacity: 0, y: 20 }}
