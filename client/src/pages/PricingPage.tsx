@@ -108,11 +108,8 @@ export default function PricingPage() {
 
   const checkoutMutation = useMutation({
     mutationFn: async (planId: string) => {
-      const response = await apiRequest('/api/billing/create-subscription', {
-        method: 'POST',
-        body: JSON.stringify({ planId }),
-      });
-      return response;
+      const response = await apiRequest('POST', '/api/billing/create-subscription', { planId });
+      return response.json();
     },
     onSuccess: (data) => {
       if (data.clientSecret) {

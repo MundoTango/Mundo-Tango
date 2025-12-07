@@ -13,21 +13,29 @@ export function NewPostsBanner({ onLoadNewPosts }: NewPostsBannerProps) {
 
   useEffect(() => {
     // WebSocket connection for real-time post notifications
-    // Skip WebSocket in development with HMR issues - use polling instead
+    // Requires JWT auth token for secure connection
     try {
       if (!window.location.host || window.location.host.includes('undefined') || !window.location.hostname) {
         console.warn('[NewPostsBanner] Skipping WebSocket due to invalid host');
         return;
       }
 
+      // Get JWT token for WebSocket authentication
+      const token = localStorage.getItem('accessToken');
+      if (!token) {
+        console.log('[NewPostsBanner] No auth token, skipping WebSocket (user not logged in)');
+        return;
+      }
+
       const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-      const wsUrl = `${protocol}//${window.location.host}/ws/notifications`;
+      // Include JWT token in WebSocket URL for authentication
+      const wsUrl = `${protocol}//${window.location.host}/ws/notifications?token=${encodeURIComponent(token)}`;
       
       // Validate URL format before creating WebSocket
       try {
-        new URL(wsUrl);
+        new URL(wsUrl.replace('wss:', 'https:').replace('ws:', 'http:'));
       } catch {
-        console.warn('[NewPostsBanner] Skipping WebSocket due to invalid URL format:', wsUrl);
+        console.warn('[NewPostsBanner] Skipping WebSocket due to invalid URL format');
         return;
       }
       
@@ -41,7 +49,7 @@ export function NewPostsBanner({ onLoadNewPosts }: NewPostsBannerProps) {
           reconnectAttempts = 0;
           
           ws.onopen = () => {
-            console.log('[NewPostsBanner] WebSocket connected');
+            console.log('[NewPostsBanner] WebSocket connected with auth');
           };
 
           ws.onmessage = (event) => {
@@ -55,20 +63,19 @@ export function NewPostsBanner({ onLoadNewPosts }: NewPostsBannerProps) {
             }
           };
 
-          ws.onerror = (error) => {
-            console.error('[NewPostsBanner] WebSocket error:', error);
+          ws.onerror = () => {
+            // Silent error - don't spam console when WS fails
           };
 
           ws.onclose = () => {
-            console.log('[NewPostsBanner] WebSocket disconnected');
-            // Attempt reconnection
+            // Attempt reconnection silently
             if (reconnectAttempts < maxReconnectAttempts) {
               reconnectAttempts++;
-              setTimeout(setupWebSocket, 3000);
+              setTimeout(setupWebSocket, 5000);
             }
           };
         } catch (error) {
-          console.error('[NewPostsBanner] Failed to create WebSocket:', error);
+          // Silent fail - WebSocket is optional enhancement
         }
       };
 
@@ -80,7 +87,7 @@ export function NewPostsBanner({ onLoadNewPosts }: NewPostsBannerProps) {
         }
       };
     } catch (error) {
-      console.warn('[NewPostsBanner] WebSocket setup failed:', error);
+      // Silent fail for WebSocket
     }
   }, []);
 

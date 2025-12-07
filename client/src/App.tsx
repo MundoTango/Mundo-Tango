@@ -971,11 +971,9 @@ function Router() {
       </Route>
 
       <Route path="/events">
-        <ProtectedRoute>
-          <AppLayout>
-            <EventsPage />
-          </AppLayout>
-        </ProtectedRoute>
+        <AppLayout>
+          <EventsPage />
+        </AppLayout>
       </Route>
 
       <Route path="/events/search">
@@ -1094,11 +1092,9 @@ function Router() {
       </Route>
 
       <Route path="/groups">
-        <ProtectedRoute>
-          <AppLayout>
-            <GroupsPage />
-          </AppLayout>
-        </ProtectedRoute>
+        <AppLayout>
+          <GroupsPage />
+        </AppLayout>
       </Route>
 
       <Route path="/groups/create">
@@ -1197,11 +1193,9 @@ function Router() {
       </Route>
 
       <Route path="/housing">
-        <ProtectedRoute>
-          <AppLayout>
-            <HousingMarketplacePage />
-          </AppLayout>
-        </ProtectedRoute>
+        <AppLayout>
+          <HousingMarketplacePage />
+        </AppLayout>
       </Route>
 
       <Route path="/housing/search">
@@ -2100,6 +2094,16 @@ function Router() {
         <ProtectedRoute>
           <AdminLayout>
             <AdminDashboardPage />
+          </AdminLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/admin/content">
+        <ProtectedRoute>
+          <AdminLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <ContentModerationPage />
+            </Suspense>
           </AdminLayout>
         </ProtectedRoute>
       </Route>

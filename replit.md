@@ -86,7 +86,37 @@ queryClient.invalidateQueries({ queryKey: ["/api/events"] });
 queryClient.invalidateQueries({ queryKey: ["/api/events/my-rsvps"] });
 ```
 
-## Recent Session Progress (Dec 6, 2025)
+## Recent Session Progress (Dec 7, 2025)
+
+### MB.MD v9.9.3 Continuation - Route Fixes + Stripe Debug
+**Applied Methodology**: observe → decide → act → validate → adapt
+
+#### Fixes Applied This Session
+| Fix | Issue | Solution | Status |
+|-----|-------|----------|--------|
+| Public Routes | /events, /groups, /housing redirected to login | Removed ProtectedRoute wrapper | ✅ VERIFIED |
+| Stripe apiRequest | Wrong call signature caused fetch error | Changed to apiRequest('POST', url, data) | ✅ FIXED |
+| WebSocket Auth | NewPostsBanner had "No token" error | Added JWT token to WebSocket URL | ✅ FIXED |
+
+#### E2E Test Results (Dec 7, 2025)
+- **/events**: PASSED - Public access, loads event content
+- **/groups**: PASSED - Public access, loads group content
+- **/housing**: PASSED - Public access, loads listings
+- **/pricing**: PASSED - 4 tier cards visible
+- **Stripe Subscription**: CONFIG NEEDED - Price IDs must be set
+
+#### Stripe Configuration Required
+The following environment variables need to be set from Stripe dashboard:
+```
+STRIPE_PRICE_BASIC_MONTHLY=price_xxx
+STRIPE_PRICE_PRO_MONTHLY=price_xxx
+STRIPE_PRICE_PREMIUM_MONTHLY=price_xxx
+```
+These are Stripe Price IDs created in the Stripe Products section.
+
+---
+
+## Previous Session Progress (Dec 6, 2025)
 
 ### MB.MD v9.9.3 Full Validation Cycle - EXTENDED
 **Applied Methodology**: observe → decide → act → validate → adapt
