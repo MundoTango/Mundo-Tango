@@ -75,6 +75,21 @@ The marketing site integrates a Donation Tier System, a Human to Agent Collabora
 ### Demo & Video Systems
 A comprehensive Video Demo System provides a landing page section with clickable demo cards, interactive modals, and a Playwright demo recording script. An automated video recording system leverages Playwright's `recordVideo` to capture real customer journeys, adhering to a strict "ZERO fake data" policy.
 
+### Expert Council Remediation (Dec 7, 2025)
+Per MB.MD methodology, 7 industry experts reviewed the platform:
+
+| Expert | Focus | Documentation |
+|--------|-------|---------------|
+| Tamás Szalai | Infra/SLOs | `docs/ARCHITECTURE.md` (SLO appendix) |
+| Aleksandra Płochocka | FEP Theory | `docs/DESIGN_NOTE_FEP.md` |
+| Davor Perhaj | UX/UI | `docs/UX_AUDIT_DAVOR.md` |
+| Caran | Product Wedge | `docs/TANDA_DE_3_WEDGE.md` |
+| Karthikeyan Rajendran | AI Costs | `docs/AI_COST_BUDGET.md` |
+| Jörn Schillmann | Strategy | `docs/EXEC_BRIEF.md` |
+| Louis Parks | Product Ops | `docs/INCIDENT_PLAYBOOK.md` |
+
+OSI References: `docs/prds/PRD_EXPERT_COUNCIL_OSI_REFERENCES.md`
+
 ## External Dependencies
 - **Infrastructure:** PostgreSQL, Redis, Cloudinary, OpenStreetMap, Neon (PostgreSQL)
 - **Authentication:** Google OAuth, Facebook OAuth, JWT
