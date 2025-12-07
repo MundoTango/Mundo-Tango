@@ -92,10 +92,13 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
   const [viewMode, setViewMode] = useState<"list" | "calendar" | "map">("list");
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   
+  const isPast = mainTab === "past";
+  
   const { data: events, isLoading } = useQuery<SelectEvent[]>({
-    queryKey: ["/api/events", "group", groupId, groupCity],
+    queryKey: ["/api/events", "group", groupId, groupCity, isPast ? "past" : "upcoming"],
     queryFn: async () => {
-      let res = await fetch(`/api/groups/${groupId}/events?limit=50`, { credentials: "include" });
+      const pastParam = isPast ? "&past=true" : "";
+      let res = await fetch(`/api/groups/${groupId}/events?limit=50${pastParam}`, { credentials: "include" });
       if (res.ok) {
         const data = await res.json();
         let eventList = data.events || data || [];
@@ -106,7 +109,8 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
       }
       
       if (groupCity) {
-        res = await fetch(`/api/events?city=${encodeURIComponent(groupCity)}&limit=50&upcoming=true`, { credentials: "include" });
+        const dateParam = isPast ? "&past=true" : "&upcoming=true";
+        res = await fetch(`/api/events?city=${encodeURIComponent(groupCity)}&limit=50${dateParam}`, { credentials: "include" });
         if (res.ok) {
           const data = await res.json();
           let eventList = data.events || data || [];

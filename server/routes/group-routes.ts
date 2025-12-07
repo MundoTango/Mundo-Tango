@@ -16,7 +16,7 @@ import {
   housingListings
 } from "@shared/schema";
 import { authenticateToken, AuthRequest } from "../middleware/auth";
-import { eq, and, desc, sql, or, ilike, inArray, count, asc, isNotNull } from "drizzle-orm";
+import { eq, and, desc, sql, or, ilike, inArray, count, asc, isNotNull, lt, gte } from "drizzle-orm";
 import { z } from "zod";
 import { PostingPermissionService } from "../services/PostingPermissionService";
 
@@ -384,9 +384,20 @@ router.get("/:id", async (req: Request, res: Response) => {
 router.get("/:id/events", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { limit = "20", offset = "0" } = req.query;
+    const { limit = "20", offset = "0", past } = req.query;
+    const now = new Date();
 
-    // Get events linked to this group
+    // Build conditions array
+    const conditions = [eq(events.groupId, parseInt(id))];
+    
+    // Add date filter based on past parameter
+    if (past === "true") {
+      conditions.push(lt(events.startDate, now));
+    } else {
+      conditions.push(gte(events.startDate, now));
+    }
+
+    // Get events linked to this group with date filter
     const groupEvents = await db
       .select({
         event: events,
@@ -406,16 +417,16 @@ router.get("/:id/events", async (req: Request, res: Response) => {
       })
       .from(events)
       .leftJoin(users, eq(events.userId, users.id))
-      .where(eq(events.groupId, parseInt(id)))
-      .orderBy(desc(events.startDate))
+      .where(and(...conditions))
+      .orderBy(past === "true" ? desc(events.startDate) : asc(events.startDate))
       .limit(parseInt(limit as string))
       .offset(parseInt(offset as string));
 
-    // Get total count
+    // Get total count with same filter
     const [{ total }] = await db
       .select({ total: count() })
       .from(events)
-      .where(eq(events.groupId, parseInt(id)));
+      .where(and(...conditions));
 
     res.json({
       events: groupEvents,
