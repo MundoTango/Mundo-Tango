@@ -17,6 +17,7 @@ import { contextService } from "../services/mrBlue/ContextService";
 import { memoryService } from "../services/mrBlue/MemoryService";
 import { vibeCodingService } from "../services/mrBlue/VibeCodingService";
 import { conversationOrchestrator } from "../services/ConversationOrchestrator";
+import { CostTracker } from "../services/ai/CostTracker";
 
 const router = Router();
 
@@ -691,6 +692,28 @@ Help users navigate the platform, answer questions, and provide personalized rec
 
       const response = completion.choices[0]?.message?.content || 
         "I'm sorry, I couldn't process that request.";
+
+      // Track AI cost for Mr Blue conversation
+      if (userId && completion.usage) {
+        const costTracker = new CostTracker();
+        const inputTokens = completion.usage.prompt_tokens || 0;
+        const outputTokens = completion.usage.completion_tokens || 0;
+        const totalTokens = inputTokens + outputTokens;
+        // Groq Llama 3.1 8B pricing: ~$0.05 per 1M input tokens, ~$0.08 per 1M output tokens
+        const estimatedCost = (inputTokens * 0.00005 / 1000) + (outputTokens * 0.00008 / 1000);
+        
+        costTracker.trackSpend({
+          userId,
+          platform: 'groq',
+          model: 'llama-3.1-8b-instant',
+          cost: estimatedCost,
+          tokens: totalTokens,
+          inputTokens,
+          outputTokens,
+          requestType: 'mr_blue_chat',
+          useCase: 'conversation'
+        }).catch(err => console.error('[MrBlue] Cost tracking failed:', err));
+      }
 
       // Save messages to history - get or create conversation if needed
       if (userId) {
