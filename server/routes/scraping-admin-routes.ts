@@ -7,6 +7,7 @@ import { scrapingOrchestrator } from '../agents/scraping/masterOrchestrator';
 import { cityGroupEnrichmentService } from '../services/scraping/CityGroupEnrichmentService';
 import { deduplicator } from '../agents/scraping/deduplicator';
 import { rssFeedService } from '../services/scraping/RSSFeedService';
+import { hoyMilongaScraper } from '../services/scraping/HoyMilongaScraper';
 
 const router = Router();
 
@@ -508,6 +509,69 @@ router.post('/admin/scraping/rss-scrape/:id', authenticateToken, async (req: Aut
   } catch (error) {
     console.error('RSS scrape error:', error);
     res.status(500).json({ error: 'Failed to scrape RSS source' });
+  }
+});
+
+router.post('/admin/scraping/hoymilonga', authenticateToken, async (req: AuthRequest, res) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, userId)
+    });
+
+    if (!user || user.role !== 'super_admin') {
+      return res.status(403).json({ error: 'Forbidden: Super Admin access required' });
+    }
+
+    const { city } = req.body;
+
+    if (city) {
+      const result = await hoyMilongaScraper.scrapeCity(city);
+      res.json({
+        success: result.success,
+        message: result.success 
+          ? `Scraped ${result.eventsFound} events from HoyMilonga ${result.city}, stored ${result.eventsStored}`
+          : `Failed to scrape: ${result.error}`,
+        city: result.city,
+        eventsFound: result.eventsFound,
+        eventsStored: result.eventsStored,
+        timestamp: new Date().toISOString()
+      });
+    } else {
+      const result = await hoyMilongaScraper.scrapeAllCities();
+      res.json({
+        success: true,
+        message: `Scraped ${result.totalFound} events from all HoyMilonga cities, stored ${result.totalStored}`,
+        totalFound: result.totalFound,
+        totalStored: result.totalStored,
+        results: result.results,
+        timestamp: new Date().toISOString()
+      });
+    }
+
+  } catch (error) {
+    console.error('HoyMilonga scrape error:', error);
+    res.status(500).json({ error: 'Failed to scrape HoyMilonga' });
+  }
+});
+
+router.get('/admin/scraping/hoymilonga/cities', authenticateToken, async (req: AuthRequest, res) => {
+  try {
+    res.json({
+      cities: [
+        { key: 'buenos-aires', name: 'Buenos Aires', country: 'Argentina' },
+        { key: 'montevideo', name: 'Montevideo', country: 'Uruguay' },
+        { key: 'london', name: 'London', country: 'United Kingdom' },
+        { key: 'istanbul', name: 'Istanbul', country: 'Turkey' }
+      ],
+      note: 'Use POST /api/admin/scraping/hoymilonga with { city: "buenos-aires" } to scrape a specific city'
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to get cities' });
   }
 });
 
