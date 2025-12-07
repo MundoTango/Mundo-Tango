@@ -34,6 +34,35 @@ The hierarchy provides strategic oversight and atomic execution. This includes a
 ### Platform Features
 Core functionalities encompass social features such as events, groups, posts, notifications, media management, live streaming, marketplaces, and reviews. Business-oriented features include Talent Match AI, LIFE CEO AI, Multi-AI Orchestration, automated scraping, an Admin Dashboard, Stripe Payments integration, and BullMQ Workers. Recent enhancements include an Event Series System, redesigned City Groups Events Tab, RSS Feed Scraping, Profile Enrichment Service, OpenStreetMap Geocoding, Housing Friendship Closeness Integration, a Unified Messaging Inbox, and a Faceless Content System with social media adapters.
 
+### International Payment System (MB.MD Pattern 49)
+A comprehensive multi-gateway payment orchestration system supporting global payments:
+
+**Phase 1 - Core Orchestration (Complete):**
+- PaymentOrchestrator.ts - Multi-gateway routing with Stripe as primary
+- CurrencyManager.ts - 30 currencies across 6 regions (US, EU, LATAM, APAC, AFRICA, MENA)
+- WebhookDispatcher.ts - Multi-gateway webhook routing
+
+**Phase 2 - Compliance (Complete):**
+- AMLKYCVerifier.ts - Anti-money laundering verification (BASIC/ENHANCED/PREMIUM)
+- TaxCalculator.ts - VAT/GST for 25+ countries
+- SanctionsScreener.ts - OFAC/UN sanctions screening
+
+**Phase 3 - Gateway Adapters (Built, Pending Credentials):**
+- AdyenAdapter.ts - EU/APAC payments (10+ card types)
+- WiseAdapter.ts - B2B international transfers
+- LocalPaymentMethods.ts - Regional methods (PIX, Boleto, Alipay, WeChat Pay, M-Pesa, UPI, iDEAL, etc.)
+
+**Phase 4 - Frontend (Complete):**
+- PaymentMethodSelector.tsx - Smart method selection by country/region
+- CurrencySelector.tsx - Currency picker with FX preview
+
+**API Endpoints:** `/api/payments/` with currencies, methods, exchange-rate, tax, process, compliance, webhooks
+
+**Known Limitations (Phase 2+ Work):**
+- Adyen/Wise require API credentials for production use
+- Webhook signature verification requires raw body middleware configuration
+- Multi-gateway failover requires additional gateway credentials
+
 ### Testing
 The platform utilizes E2E tests, automated unit test coverage via CI/CD, and visual regression testing with Playwright and Claude Computer Use. The `run_test` tool is essential for E2E testing, managing environment setup and Stripe testing key injection.
 

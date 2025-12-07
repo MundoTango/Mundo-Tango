@@ -174,6 +174,7 @@ import computerUseRoutes from "./routes/computer-use-routes";
 import aiSelectorRoutes from "./routes/ai-selector-routes";
 import journeyRoutes from "./routes/journey-routes";
 import billingRoutes from "./routes/billing-routes";
+import paymentRoutes from "./routes/payment-routes";
 import onboardingRoutes from "./routes/onboarding-routes";
 import messagesRoutes from "./routes/messages-routes";
 import { registerMessagingRoutes } from "./routes/messaging-routes";
@@ -716,6 +717,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/computer-use", computerUseRoutes);
   app.use("/api", aiSelectorRoutes);
   app.use("/api/billing", billingRoutes);
+  app.use("/api/payments", paymentRoutes); // MB.MD Pattern 49: International Payments
   app.use("/api/onboarding", onboardingRoutes);
   app.use("/api/messages", messagesRoutes);
   registerMessagingRoutes(app); // New messaging routes for direct messages, group chats, and threads

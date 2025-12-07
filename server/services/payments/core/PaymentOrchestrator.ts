@@ -211,6 +211,13 @@ export class PaymentOrchestrator {
   }
 
   /**
+   * Check if any payment gateway is configured
+   */
+  isConfigured(): boolean {
+    return this.stripe !== null;
+  }
+
+  /**
    * Select optimal payment gateway based on rules
    */
   private async selectGateway(request: PaymentRequest): Promise<PaymentGateway> {
@@ -230,6 +237,11 @@ export class PaymentOrchestrator {
     
     if (request.amount > 100000) { // Large transactions
       // return PaymentGateway.WISE; // Phase 3
+    }
+    
+    // Safety: Check if Stripe is available before routing to it
+    if (!this.stripe) {
+      throw new Error('No payment gateway configured. Please set STRIPE_SECRET_KEY environment variable.');
     }
     
     // Default: Stripe
