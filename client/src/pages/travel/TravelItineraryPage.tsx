@@ -31,9 +31,8 @@ export default function TravelItineraryPage() {
 
   const deleteItemMutation = useMutation({
     mutationFn: async (itemId: number) => {
-      return await apiRequest(`/api/travel/plans/${id}/destinations/${itemId}`, {
-        method: "DELETE",
-      });
+      const response = await apiRequest("DELETE", `/api/travel/plans/${id}/destinations/${itemId}`);
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/travel/plans", id] });

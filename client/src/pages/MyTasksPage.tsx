@@ -62,10 +62,8 @@ export default function MyTasksPage() {
 
   const updateStatusMutation = useMutation({
     mutationFn: async ({ taskId, status }: { taskId: number; status: TaskStatus }) => {
-      return apiRequest(`/api/volunteer/tasks/${taskId}/status`, {
-        method: "PATCH",
-        body: JSON.stringify({ status }),
-      });
+      const response = await apiRequest("PATCH", `/api/volunteer/tasks/${taskId}/status`, { status });
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/volunteer/my-tasks"] });

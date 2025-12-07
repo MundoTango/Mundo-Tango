@@ -72,11 +72,8 @@ export function AICollaborationPanel() {
   
   const startMutation = useMutation({
     mutationFn: async (request: string) => {
-      const response = await apiRequest('/api/ai-collaboration/start', {
-        method: 'POST',
-        body: JSON.stringify({ request })
-      });
-      return response;
+      const response = await apiRequest('POST', '/api/ai-collaboration/start', { request });
+      return response.json();
     },
     onSuccess: (data: any) => {
       setSession(data.session);
@@ -96,10 +93,8 @@ export function AICollaborationPanel() {
   
   const executeMutation = useMutation({
     mutationFn: async (sessionId: string) => {
-      const response = await apiRequest(`/api/ai-collaboration/${sessionId}/execute`, {
-        method: 'POST'
-      });
-      return response;
+      const response = await apiRequest('POST', `/api/ai-collaboration/${sessionId}/execute`);
+      return response.json();
     },
     onSuccess: (data: any) => {
       setSession(data.session);

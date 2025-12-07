@@ -66,30 +66,24 @@ export default function VisualEditorPage() {
   const saveChangesMutation = useMutation({
     mutationFn: async () => {
       // Step 1: Check for uncommitted changes
-      const statusResponse = await apiRequest('/api/mrblue/git/status');
+      const statusResponse = await apiRequest('GET', '/api/mrblue/git/status').then(r => r.json());
       
       if (!statusResponse.hasUncommittedChanges) {
         throw new Error('No uncommitted changes to save');
       }
 
       // Step 2: Generate AI commit message
-      const messageResponse = await apiRequest('/api/mrblue/git/generate-message', {
-        method: 'POST',
-        body: { 
-          files: ['.'], 
-          description: `Visual Editor changes: ${changes.length} modifications`
-        }
-      });
+      const messageResponse = await apiRequest('POST', '/api/mrblue/git/generate-message', { 
+        files: ['.'], 
+        description: `Visual Editor changes: ${changes.length} modifications`
+      }).then(r => r.json());
 
       // Step 3: Create commit
-      const commitResponse = await apiRequest('/api/mrblue/git/commit', {
-        method: 'POST',
-        body: {
-          files: ['.'],
-          description: messageResponse.message,
-          autoPush: false
-        }
-      });
+      const commitResponse = await apiRequest('POST', '/api/mrblue/git/commit', {
+        files: ['.'],
+        description: messageResponse.message,
+        autoPush: false
+      }).then(r => r.json());
 
       return commitResponse;
     },

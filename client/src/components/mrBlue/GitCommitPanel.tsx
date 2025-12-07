@@ -46,10 +46,8 @@ export function GitCommitPanel() {
   // Mutation: Generate AI commit message
   const generateMessage = useMutation({
     mutationFn: async (filePaths: string[]) => {
-      return await apiRequest('/api/mrblue/git/generate-message', {
-        method: 'POST',
-        body: { filePaths }
-      });
+      const response = await apiRequest('POST', '/api/mrblue/git/generate-message', { filePaths });
+      return response.json();
     },
     onSuccess: (data) => {
       if (data.message) {
@@ -62,10 +60,8 @@ export function GitCommitPanel() {
   // Mutation: Execute commit
   const commitMutation = useMutation({
     mutationFn: async ({ message, files }: { message: string; files: string[] }) => {
-      return await apiRequest('/api/mrblue/git/commit', {
-        method: 'POST',
-        body: { message, files }
-      });
+      const response = await apiRequest('POST', '/api/mrblue/git/commit', { message, files });
+      return response.json();
     },
     onSuccess: () => {
       toast({

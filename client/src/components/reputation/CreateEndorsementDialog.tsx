@@ -56,11 +56,8 @@ export function CreateEndorsementDialog({
       rating: number;
       comment?: string;
     }) => {
-      return apiRequest(`/api/endorsements`, {
-        method: "POST",
-        body: JSON.stringify(data),
-        headers: { "Content-Type": "application/json" },
-      });
+      const response = await apiRequest("POST", `/api/endorsements`, data);
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/endorsements", endorseeId] });

@@ -30,14 +30,11 @@ export default function DirectMessages() {
 
   const sendMutation = useMutation({
     mutationFn: async (content: string) => {
-      return apiRequest(`/api/messages/send`, {
-        method: "POST",
-        body: JSON.stringify({
-          recipientId: parseInt(userId),
-          content,
-        }),
-        headers: { "Content-Type": "application/json" },
+      const response = await apiRequest('POST', '/api/messages/send', {
+        recipientId: parseInt(userId),
+        content,
       });
+      return response.json();
     },
     onSuccess: () => {
       setMessage("");

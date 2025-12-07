@@ -44,7 +44,8 @@ export default function ReputationProfile() {
         selectedRole === "all"
           ? `/api/endorsements/${userId}`
           : `/api/endorsements/${userId}?role=${selectedRole}`;
-      return apiRequest(url);
+      const response = await apiRequest("GET", url);
+      return response.json();
     },
     enabled: !!userId && userId > 0,
   });
@@ -58,9 +59,8 @@ export default function ReputationProfile() {
   // Delete endorsement mutation
   const deleteEndorsementMutation = useMutation({
     mutationFn: async (endorsementId: number) => {
-      return apiRequest(`/api/endorsements/${endorsementId}`, {
-        method: "DELETE",
-      });
+      const response = await apiRequest("DELETE", `/api/endorsements/${endorsementId}`);
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/endorsements", userId] });

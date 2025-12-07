@@ -90,10 +90,8 @@ export default function Albums() {
 
   const createMutation = useMutation({
     mutationFn: async (data: AlbumFormData) => {
-      return await apiRequest("/api/media/albums", {
-        method: "POST",
-        body: JSON.stringify(data),
-      });
+      const response = await apiRequest("POST", "/api/media/albums", data);
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/media/albums"] });
@@ -115,10 +113,8 @@ export default function Albums() {
 
   const updateMutation = useMutation({
     mutationFn: async (data: { id: number; updates: AlbumFormData }) => {
-      return await apiRequest(`/api/media/albums/${data.id}`, {
-        method: "PUT",
-        body: JSON.stringify(data.updates),
-      });
+      const response = await apiRequest("PUT", `/api/media/albums/${data.id}`, data.updates);
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/media/albums"] });
@@ -140,9 +136,8 @@ export default function Albums() {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: number) => {
-      return await apiRequest(`/api/media/albums/${id}`, {
-        method: "DELETE",
-      });
+      const response = await apiRequest("DELETE", `/api/media/albums/${id}`);
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/media/albums"] });

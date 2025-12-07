@@ -71,18 +71,15 @@ export function AccountConnectionModal({ trigger, onSuccess }: AccountConnection
 
   const connectAccount = useMutation({
     mutationFn: async (data: AccountFormData) => {
-      const response = await apiRequest('/api/financial/accounts', {
-        method: 'POST',
-        body: JSON.stringify({
-          provider: data.provider,
-          accountType: data.accountType,
-          accountId: data.accountId,
-          balance: "0",
-          credentials: {
-            apiKey: data.apiKey,
-            apiSecret: data.apiSecret,
-          },
-        }),
+      const response = await apiRequest('POST', '/api/financial/accounts', {
+        provider: data.provider,
+        accountType: data.accountType,
+        accountId: data.accountId,
+        balance: "0",
+        credentials: {
+          apiKey: data.apiKey,
+          apiSecret: data.apiSecret,
+        },
       });
       return response.json();
     },

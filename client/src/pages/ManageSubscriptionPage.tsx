@@ -75,10 +75,8 @@ export default function ManageSubscriptionPage() {
 
   const cancelMutation = useMutation({
     mutationFn: async (subscriptionId: number) => {
-      return await apiRequest(`/api/subscriptions/${subscriptionId}/cancel`, {
-        method: "POST",
-        body: JSON.stringify({ cancelAtPeriodEnd: true }),
-      });
+      const response = await apiRequest("POST", `/api/subscriptions/${subscriptionId}/cancel`, { cancelAtPeriodEnd: true });
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/subscriptions/me"] });
@@ -99,10 +97,8 @@ export default function ManageSubscriptionPage() {
 
   const reactivateMutation = useMutation({
     mutationFn: async (subscriptionId: number) => {
-      return await apiRequest(`/api/subscriptions/${subscriptionId}/reactivate`, {
-        method: "POST",
-        body: JSON.stringify({}),
-      });
+      const response = await apiRequest("POST", `/api/subscriptions/${subscriptionId}/reactivate`, {});
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/subscriptions/me"] });

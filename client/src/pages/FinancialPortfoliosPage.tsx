@@ -64,14 +64,11 @@ export default function FinancialPortfoliosPage() {
 
   const createPortfolio = useMutation({
     mutationFn: async (data: PortfolioFormData) => {
-      const response = await apiRequest('/api/financial/portfolios', {
-        method: 'POST',
-        body: JSON.stringify({
-          name: data.name,
-          type: data.type,
-          totalValue: data.cashBalance || '0',
-          cashBalance: data.cashBalance || '0',
-        }),
+      const response = await apiRequest('POST', '/api/financial/portfolios', {
+        name: data.name,
+        type: data.type,
+        totalValue: data.cashBalance || '0',
+        cashBalance: data.cashBalance || '0',
       });
       return response.json();
     },
@@ -95,9 +92,8 @@ export default function FinancialPortfoliosPage() {
 
   const deletePortfolio = useMutation({
     mutationFn: async (id: number) => {
-      await apiRequest(`/api/financial/portfolios/${id}`, {
-        method: 'DELETE',
-      });
+      const response = await apiRequest('DELETE', `/api/financial/portfolios/${id}`);
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/financial/portfolios'] });

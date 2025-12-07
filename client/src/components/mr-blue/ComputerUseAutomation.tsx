@@ -51,10 +51,8 @@ export function ComputerUseAutomation() {
   // Create automation task
   const createTaskMutation = useMutation({
     mutationFn: async (data: { instruction: string; requiresApproval: boolean; maxSteps: number }) => {
-      return apiRequest('/api/computer-use/automate', {
-        method: 'POST',
-        body: JSON.stringify(data)
-      });
+      const response = await apiRequest('POST', '/api/computer-use/automate', data);
+      return response.json();
     },
     onSuccess: (data) => {
       toast({
@@ -77,9 +75,8 @@ export function ComputerUseAutomation() {
   // Approve task
   const approveTaskMutation = useMutation({
     mutationFn: async (taskId: string) => {
-      return apiRequest(`/api/computer-use/task/${taskId}/approve`, {
-        method: 'POST'
-      });
+      const response = await apiRequest('POST', `/api/computer-use/task/${taskId}/approve`);
+      return response.json();
     },
     onSuccess: () => {
       toast({
@@ -100,10 +97,8 @@ export function ComputerUseAutomation() {
   // Wix extraction shortcut
   const wixExtractionMutation = useMutation({
     mutationFn: async () => {
-      return apiRequest('/api/computer-use/wix-extract', {
-        method: 'POST',
-        body: JSON.stringify({})
-      });
+      const response = await apiRequest('POST', '/api/computer-use/wix-extract', {});
+      return response.json();
     },
     onSuccess: (data) => {
       toast({

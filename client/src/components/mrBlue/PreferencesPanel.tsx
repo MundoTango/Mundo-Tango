@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useQuery, useMutation } from '@tantml:react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -57,10 +57,8 @@ export function PreferencesPanel() {
   // Mutation: Add preference
   const addMutation = useMutation({
     mutationFn: async (pref: typeof newPreference) => {
-      return await apiRequest('/api/mrblue/preferences', {
-        method: 'POST',
-        body: pref
-      });
+      const response = await apiRequest('POST', '/api/mrblue/preferences', pref);
+      return response.json();
     },
     onSuccess: () => {
       toast({
@@ -89,9 +87,8 @@ export function PreferencesPanel() {
   // Mutation: Delete preference
   const deleteMutation = useMutation({
     mutationFn: async (id: number) => {
-      return await apiRequest(`/api/mrblue/preferences/${id}`, {
-        method: 'DELETE'
-      });
+      const response = await apiRequest('DELETE', `/api/mrblue/preferences/${id}`);
+      return response.json();
     },
     onSuccess: () => {
       toast({
@@ -112,10 +109,8 @@ export function PreferencesPanel() {
   // Mutation: Extract preferences from recent interactions
   const extractMutation = useMutation({
     mutationFn: async () => {
-      return await apiRequest('/api/mrblue/preferences/extract', {
-        method: 'POST',
-        body: { interactionText: 'Auto-extract from recent conversations' }
-      });
+      const response = await apiRequest('POST', '/api/mrblue/preferences/extract', { interactionText: 'Auto-extract from recent conversations' });
+      return response.json();
     },
     onSuccess: (data) => {
       if (data.preferences && data.preferences.length > 0) {

@@ -52,11 +52,7 @@ export function RequestAccessModal({
 
     setIsSubmitting(true);
     try {
-      await apiRequest('/api/god-level/request', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ reason })
-      });
+      await apiRequest('POST', '/api/god-level/request', { reason });
 
       toast({
         title: 'Request Submitted',

@@ -149,10 +149,8 @@ export default function OnboardingPage() {
 
   const completeOnboardingMutation = useMutation({
     mutationFn: async () => {
-      return apiRequest('/api/mrblue/onboarding/complete', {
-        method: 'POST',
-        body: JSON.stringify({ completedSteps: Array.from(completedSteps), sentiment }),
-      });
+      const response = await apiRequest('POST', '/api/mrblue/onboarding/complete', { completedSteps: Array.from(completedSteps), sentiment });
+      return response.json();
     },
     onSuccess: () => {
       toast({

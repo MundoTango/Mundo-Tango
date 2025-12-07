@@ -86,9 +86,8 @@ export function MemoryDashboard() {
   // Delete memory mutation
   const deleteMutation = useMutation({
     mutationFn: async (memoryId: number) => {
-      return await apiRequest(`/api/mrblue/memory/${memoryId}`, {
-        method: 'DELETE',
-      });
+      const response = await apiRequest('DELETE', `/api/mrblue/memory/${memoryId}`);
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/mrblue/memory/search'] });

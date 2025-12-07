@@ -29,10 +29,8 @@ export default function VibecodingPage() {
 
   const generateCodeMutation = useMutation({
     mutationFn: async (prompt: string) => {
-      return apiRequest('/api/mrblue/vibecode', {
-        method: 'POST',
-        body: JSON.stringify({ prompt, file: selectedFile }),
-      });
+      const response = await apiRequest('POST', '/api/mrblue/vibecode', { prompt, file: selectedFile });
+      return response.json();
     },
     onSuccess: (data) => {
       const generation: CodeGeneration = {

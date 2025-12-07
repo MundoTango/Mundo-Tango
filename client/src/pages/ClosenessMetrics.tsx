@@ -64,9 +64,8 @@ export default function ClosenessMetrics() {
 
   const recalculateMutation = useMutation({
     mutationFn: async () => {
-      return await apiRequest(`/api/social/calculate-closeness/${user?.id}`, {
-        method: 'POST'
-      });
+      const response = await apiRequest('POST', `/api/social/calculate-closeness/${user?.id}`);
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [`/api/social/stats/${user?.id}`] });
