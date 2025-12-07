@@ -6323,5 +6323,149 @@ You're successfully using Pattern 50 when:
 
 ---
 
+## 🛡️ **PATTERN 51: Data Integrity Enforcement** ⭐⭐⭐⭐⭐ (NEW - Dec 7, 2025)
+
+**All displayed statistics MUST query real database sources. ZERO hardcoded numbers allowed.**
+
+### Core Principle
+
+Every number displayed to users (event counts, user counts, city counts, etc.) MUST come from a live database query. No hardcoded values, no assumptions, no fake data.
+
+### The Problem (December 7, 2025 Incident)
+
+**Discovered:** Marketing pages displayed "10,000+ dancers", "500+ events", "500+ cities"
+**Reality:** Database had 165 users, 274 events, 16 cities
+**Impact:** 60x to 30x exaggeration - critical trust violation
+
+### Rules
+
+```typescript
+// ❌ FORBIDDEN - Hardcoded numbers
+<div>10,000+ dancers worldwide</div>
+<div>500+ cities connected</div>
+const cities = [
+  { name: "Buenos Aires", events: 127 }, // FAKE
+  { name: "Paris", events: 89 }, // FAKE
+];
+
+// ✅ REQUIRED - Real database queries
+const { data: stats } = useQuery({ queryKey: ['/api/stats/public'] });
+<div>{stats?.dancers ?? 'Growing'} dancers worldwide</div>
+<div>{stats?.cities ?? 'Many'} cities connected</div>
+```
+
+### Implementation Checklist
+
+Before any page with statistics ships:
+- [ ] Every number comes from API endpoint (not hardcoded)
+- [ ] API endpoint queries real database table with COUNT(*)
+- [ ] If no data exists, show empty state or "Coming soon" (not fake number)
+- [ ] Marketing claims match database reality (verify with SQL)
+- [ ] Numbers refresh on each page load (not cached forever)
+
+### Display Threshold Pattern
+
+Use thresholds to hide stats that are too low (avoid embarrassment without lying):
+
+```typescript
+const DISPLAY_THRESHOLD = 10;
+
+// Return null if below threshold - UI shows "Growing" instead of small number
+res.json({
+  dancers: totalUsers >= DISPLAY_THRESHOLD ? totalUsers : null,
+  events: totalEvents >= DISPLAY_THRESHOLD ? totalEvents : null,
+});
+```
+
+### Validation Queries
+
+Before closing any task that involves displayed numbers:
+
+```sql
+-- Verify actual database state
+SELECT 
+  (SELECT COUNT(*) FROM users WHERE is_active = true) as real_users,
+  (SELECT COUNT(*) FROM events) as real_events,
+  (SELECT COUNT(DISTINCT city) FROM groups WHERE city IS NOT NULL) as real_cities;
+```
+
+### Integration
+
+- Works with Pattern 28 (Parallel Execution) for multi-page audits
+- Feeds into Pattern 47 (Colleague Collaboration) for cross-agent verification
+- Uses Pattern 39 (PRD Reverse-Engineering) to document data sources
+
+### Success Criteria
+
+You're successfully using Pattern 51 when:
+1. No hardcoded numbers exist in UI code
+2. All stats come from /api/stats/public or similar endpoints
+3. Database queries match displayed values exactly
+4. Marketing claims can be verified with SQL
+5. Empty states show graceful messages, not fake data
+
+**Data Integrity is non-negotiable. Trust is earned through truth.** 🎯
+
+---
+
+## ⚠️ **ANTI-PATTERNS: What NOT to Do**
+
+### Anti-Pattern A: Planning Without Execution
+
+**Problem:** Documentation and planning treated as deliverables without actual implementation.
+
+**Trigger Incident (December 7, 2025):**
+- Scraping system: 226 sources documented, 0% implemented
+- Expert council reviews: All documented, 0% code changes executed
+- Plans said "Ready for implementation in 7-9 hours" → Implementation never happened
+
+**Detection:**
+```
+Plan says "100% complete" BUT:
+- No database rows added
+- No API endpoints created  
+- No cron jobs running
+- No screenshots of working feature
+= Task is actually 0% complete
+```
+
+**Prevention - Execution Gate:**
+
+Every task MUST have proof of execution before closing:
+- [ ] Database has real rows (verified by SQL query)
+- [ ] API returns real data (verified by curl/test)
+- [ ] UI shows real content (verified by screenshot/E2E test)
+- [ ] Cron/worker is running (verified by logs)
+
+**The Rule:** "If it's not verified with live data, it's not done."
+
+### Anti-Pattern B: Assumed Metrics
+
+**Problem:** Displaying numbers that "sound good" without verifying database reality.
+
+**Examples:**
+```typescript
+// ❌ BAD - Assumed/aspirational
+"Join 10,000+ dancers" // When database has 165
+"Events in 500+ cities" // When database has 16
+
+// ✅ GOOD - Real or honest
+"Join our growing community" // If count is low
+{stats?.dancers} dancers // If count is sufficient
+```
+
+### Anti-Pattern C: Mock Data in Production
+
+**Problem:** Placeholder/demo/test data displayed to real users.
+
+**Detection - Search for these patterns:**
+```bash
+grep -r "mock\|fake\|demo\|placeholder\|sample\|test.*data" client/src/
+```
+
+**Any hits in non-test files = immediate fix required.**
+
+---
+
 6. ❓ "Can I help another agent finish their task faster?"
 
