@@ -133,25 +133,6 @@ export default function HomePage() {
               </Link>
             </div>
 
-            {/* Quick Stats */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 pt-8 border-t border-white/20" data-testid="section-stats">
-              <div>
-                <div className="text-4xl md:text-5xl font-serif font-bold text-white">10,000+</div>
-                <div className="text-sm text-white/80 mt-1">Active Dancers</div>
-              </div>
-              <div>
-                <div className="text-4xl md:text-5xl font-serif font-bold text-white">500+</div>
-                <div className="text-sm text-white/80 mt-1">Cities</div>
-              </div>
-              <div>
-                <div className="text-4xl md:text-5xl font-serif font-bold text-white">2,000+</div>
-                <div className="text-sm text-white/80 mt-1">Monthly Events</div>
-              </div>
-              <div>
-                <div className="text-4xl md:text-5xl font-serif font-bold text-white">1,200+</div>
-                <div className="text-sm text-white/80 mt-1">Teachers</div>
-              </div>
-            </div>
           </motion.div>
         </div>
       </section>

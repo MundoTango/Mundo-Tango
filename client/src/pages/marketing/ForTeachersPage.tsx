@@ -40,7 +40,7 @@ const features = [
   {
     icon: Globe,
     title: "Global Visibility",
-    description: "Get discovered by dancers worldwide. Your teaching profile reaches 10,000+ tango enthusiasts."
+    description: "Get discovered by dancers worldwide. Your teaching profile reaches the global tango community."
   }
 ];
 

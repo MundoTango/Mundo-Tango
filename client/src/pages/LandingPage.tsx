@@ -75,7 +75,7 @@ export default function LandingPage() {
     {
       icon: MapPin,
       title: "Global Tango Map",
-      description: "Discover dancers, events, and communities in 95 cities across 50+ countries. Never feel alone in your tango journey."
+      description: "Discover dancers, events, and communities across the globe. Never feel alone in your tango journey."
     },
     {
       icon: Bot,
@@ -212,7 +212,7 @@ export default function LandingPage() {
       id: "tango-map",
       journeyId: "tango-map-promo",
       title: "Global Tango Map",
-      description: "Find dancers in 95+ cities worldwide",
+      description: "Find dancers worldwide",
       gradient: "from-teal-500 to-cyan-600",
       icon: MapPin,
       image: "/demos/tango-map.png",
