@@ -1,6 +1,7 @@
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AdminSidebar } from "./AdminSidebar";
 import { GlobalTopbar } from "./GlobalTopbar";
+import { AudioConversationButton } from '@/components/mr-blue/AudioConversationButton';
 
 /**
  * AdminLayout - Layout component for admin pages
@@ -23,6 +24,9 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
       <div className="flex h-screen w-full flex-col" data-testid="admin-layout">
         {/* Global top bar - consistent across entire site */}
         <GlobalTopbar />
+              
+      {/* Audio Conversation Button - Fixed position for easy access */}
+      <AudioConversationButton />
         
         <div className="flex flex-1 overflow-hidden">
           {/* Admin-specific sidebar */}
