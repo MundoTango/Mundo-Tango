@@ -243,9 +243,10 @@ const TalentPipelinePage = lazy(
 );
 const MyTasksPage = lazy(() => import("@/pages/MyTasksPage"));
 const TaskBoardPage = lazy(() => import("@/pages/admin/TaskBoardPage"));
-const PricingManagerPage = lazy(
-  () => import("@/pages/admin/PricingManagerPage"),
-);
+// DELETED: Pricing system rework per Payment & Billing Audit (Dec 2025)
+// const PricingManagerPage = lazy(
+//   () => import("@/pages/admin/PricingManagerPage"),
+// );
 const SelfHealingPage = lazy(() => import("@/pages/admin/SelfHealingPage"));
 const ProjectTrackerPage = lazy(
   () => import("@/pages/admin/ProjectTrackerPage"),
@@ -539,7 +540,8 @@ const PaymentFailedPage = lazy(() => import("@/pages/PaymentFailedPage"));
 const BookingConfirmationPage = lazy(
   () => import("@/pages/BookingConfirmationPage"),
 );
-const PricingPage = lazy(() => import("@/pages/PricingPage"));
+// DELETED: Pricing system rework per Payment & Billing Audit (Dec 2025)
+// const PricingPage = lazy(() => import("@/pages/PricingPage"));
 const SubscriptionsPage = lazy(() => import("@/pages/SubscriptionsPage"));
 const ManageSubscriptionPage = lazy(
   () => import("@/pages/ManageSubscriptionPage"),
@@ -1923,7 +1925,8 @@ function Router() {
           <VenueRecommendationsPage />
         </ProtectedRoute>
       </Route>
-      <Route path="/pricing" component={PricingPage} />
+      {/* DELETED: Pricing system rework per Payment & Billing Audit (Dec 2025) */}
+      {/* <Route path="/pricing" component={PricingPage} /> */}
 
       <Route path="/checkout">
         <ProtectedRoute>
@@ -2164,13 +2167,14 @@ function Router() {
         </ProtectedRoute>
       </Route>
 
-      <Route path="/admin/pricing-manager">
+      {/* DELETED: Pricing system rework per Payment & Billing Audit (Dec 2025) */}
+      {/* <Route path="/admin/pricing-manager">
         <ProtectedRoute>
           <AdminLayout>
             <PricingManagerPage />
           </AdminLayout>
         </ProtectedRoute>
-      </Route>
+      </Route> */}
 
       <Route path="/admin/self-healing">
         <ProtectedRoute>

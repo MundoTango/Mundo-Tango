@@ -77,7 +77,8 @@ import { registerVoiceCloningRoutes } from "./routes/voiceCloning";
 import { initLivestreamWebSocket } from "./services/livestream-websocket";
 import rbacRoutes from "./routes/rbac-routes";
 import featureFlagsRoutes from "./routes/feature-flags-routes";
-import pricingRoutes from "./routes/pricing-routes";
+// DELETED: Pricing system rework per Payment & Billing Audit (Dec 2025)
+// import pricingRoutes from "./routes/pricing-routes";
 import planRoutes from "./routes/plan-routes";
 import thePlanRoutes from "./routes/thePlanRoutes";
 import syncRoutes from "./routes/sync-routes";
@@ -582,7 +583,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Phase 1 & 2 Deployment Blocker Routes
   app.use("/api/rbac", rbacRoutes);
   app.use("/api/feature-flags", featureFlagsRoutes);
-  app.use("/api/pricing", pricingRoutes);
+  // DELETED: Pricing system rework per Payment & Billing Audit (Dec 2025)
+  // app.use("/api/pricing", pricingRoutes);
   
   // Phase 3 Deployment Blocker Routes
   app.use("/api/plan", planRoutes);

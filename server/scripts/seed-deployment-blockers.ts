@@ -1,6 +1,7 @@
 import { db } from '@shared/db';
 import { platformRoles, platformPermissions, platformRolePermissions, featureFlags, tierLimits, pricingTiers } from '@shared/schema';
-import { PricingManagerService } from '../services/PricingManagerService';
+// DELETED: Pricing system rework per Payment & Billing Audit (Dec 2025)
+// import { PricingManagerService } from '../services/PricingManagerService';
 
 /**
  * Seed script for Phase 1 deployment blockers:
@@ -135,19 +136,12 @@ async function seedDeploymentBlockers() {
 
     for (const tier of pricingData) {
       try {
-        // Create tier with Stripe integration (only if monthly price > 0)
-        if (tier.monthlyPrice > 0) {
-          console.log(`  Creating Stripe product for: ${tier.displayName}...`);
-          await PricingManagerService.createTier(tier);
-          console.log(`  ✅ ${tier.displayName} created with Stripe`);
-        } else {
-          // Free tier - no Stripe product needed
-          await db.insert(pricingTiers).values(tier).onConflictDoNothing();
-          console.log(`  ✅ ${tier.displayName} created (no Stripe)`);
-        }
+        // DELETED: PricingManagerService removed per Payment & Billing Audit (Dec 2025)
+        // New payment system: see PaymentOrchestrator.ts
+        await db.insert(pricingTiers).values(tier).onConflictDoNothing();
+        console.log(`  ✅ ${tier.displayName} created`);
       } catch (error: any) {
         console.error(`  ❌ Error creating ${tier.displayName}:`, error.message);
-        // Continue with next tier
       }
     }
 
