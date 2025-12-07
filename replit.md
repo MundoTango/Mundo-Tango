@@ -1,7 +1,7 @@
 # Mundo Tango
 
 ## Overview
-Mundo Tango is a production-ready social platform connecting the global tango community with a resilient, self-sovereign architecture and enterprise-grade security. It integrates with various business systems and specialized AI agents, aiming for monetization through premium services, event hosting, and targeted advertising within the global dance market.
+Mundo Tango is a production-ready social platform designed to connect the global tango community. It features a resilient, self-sovereign architecture with enterprise-grade security and integrates with various business systems and specialized AI agents. The platform aims for monetization through premium services, event hosting, and targeted advertising within the global dance market. Its core purpose is to facilitate community interaction, event management, and offer advanced functionalities for tango enthusiasts worldwide.
 
 ## User Preferences
 - Work Simultaneously - Run operations in parallel (use Promise.all, parallel tool calls)
@@ -15,239 +15,31 @@ Mundo Tango is a production-ready social platform connecting the global tango co
 - Validation Loop - observe → decide → act → validate → adapt (not just automation)
 - MB.MD Methodology - Apply v9.9.3 patterns systematically: Research → Plan → Build → Test → Fix → Document
 
-## MB.MD v9.9.3 Methodology Learnings
-
-### Parallel Execution Patterns (NEW Dec 6, 2025)
-- **Maximum Parallelism**: 8+ simultaneous E2E tests proven successful
-- **Subagent Swarm**: 6 parallel subagents for concurrent fixes
-- **SQL Bypass**: Direct SQL table creation when db:push times out (large schema)
-- **Route Priority**: Specific routes before dynamic routes (/groups/create before /groups/:id)
-
-### Bundle Size Optimization (Dec 6, 2025)
-- **moment.js Removal**: Replaced with date-fns across 3 calendar components (~300KB savings)
-  - EventsPage.tsx: dateFnsLocalizer
-  - GroupDetailsPage.tsx: dateFnsLocalizer  
-  - EventCalendarPage.tsx: dateFnsLocalizer
-- **Dynamic Imports**: @xenova/transformers loaded dynamically (827KB separate chunk)
-- **Font Reduction**: Reduced from 20+ to 3 font weights
-
-### Deployment Strategy (CRITICAL - Dec 6, 2025)
-**Problem**: Cloud Run build runs out of memory (2GB limit) with 6,336+ modules
-
-**Solution**: Switch to Reserved VM deployment type
-1. Go to Publishing → Manage tab
-2. Click "Change deployment type"
-3. Select "Reserved VM" (provides more build memory)
-4. Redeploy
-
-**Alternative (if Reserved VM unavailable)**: Sequential build strategy
-- Split `vite build` and `esbuild server/index.ts` into separate npm scripts
-- Requires editing package.json (protected file - ask user permission)
-
-### Database Workarounds (CRITICAL)
-```sql
--- Use execute_sql_tool for missing tables when db:push times out
-CREATE TABLE IF NOT EXISTS "table_name" (
-  "id" serial PRIMARY KEY,
-  ...
-);
-```
-
-### Graceful Error Handling Pattern
-```typescript
-// For optional tables that may not exist
-try {
-  const result = await db.select().from(optionalTable);
-  return res.json(result);
-} catch (error) {
-  if (error.message?.includes('does not exist')) {
-    console.warn('[Route] Table not found, returning empty');
-    return res.json([]);
-  }
-  throw error;
-}
-```
-
-### Auto-RSVP Pattern for Event Creators
-```typescript
-// When creating an event, auto-add organizer as attendee
-await db.insert(eventRsvps).values({
-  eventId: newEvent.id,
-  userId: creatorId,
-  status: "going",
-  isOrganizer: true,
-}).onConflictDoNothing();
-```
-
-### Cache Invalidation After Mutations
-```typescript
-// Always invalidate related queries after create/update
-queryClient.invalidateQueries({ queryKey: ["/api/events"] });
-queryClient.invalidateQueries({ queryKey: ["/api/events/my-rsvps"] });
-```
-
-## Recent Session Progress (Dec 7, 2025 - Session 2)
-
-### MB.MD v9.9.3 Massive apiRequest Bug Fix
-**Applied Methodology**: observe → decide → act → validate → adapt
-**Execution Pattern**: Maximum parallelism with 6 subagents
-
-#### Critical Bug Discovery & Fix
-**Issue**: System-wide apiRequest signature bug in 50+ files
-- **Wrong pattern**: `apiRequest('/api/endpoint', { method: 'POST', body: data })`
-- **Correct pattern**: `apiRequest('POST', '/api/endpoint', data)` with `.json()` call
-
-#### Files Fixed (Parallel Subagent Deployment)
-| Category | Files Fixed | Status |
-|----------|-------------|--------|
-| Admin Pages | 6 files (TalentPipeline, UserManagement, PlatformSettings, Integrations, FeatureFlags) | ✅ |
-| Mr Blue Pages | 5 files (VisualEditor, Vibecoding, Settings, Onboarding, ContextMemory) | ✅ |
-| Messaging | 3 files (GroupChat, DirectMessages, useMessageChannels) | ✅ |
-| Financial | 5 files (MyTasks, ManageSubscription, GodLevel, Portfolios, Accounts) | ✅ |
-| MrBlue Components | 10 files (WorkflowBuilder, MessageActions, GitCommit, etc.) | ✅ |
-| Mr-Blue Components | 10 files (VoiceCloning, PageGenerator, Messenger, etc.) | ✅ |
-| Other Pages | 15 files (Travel, Housing, Albums, Stories, Reputation, etc.) | ✅ |
-
-#### ContentModerationPage Wired to Real Data
-- Removed placeholder/fake data
-- Connected to `/api/admin/moderation/stats` and `/api/admin/moderation/queue`
-- Added proper status filter with query parameter
-- Approve/Remove mutations fully functional
-
-#### E2E Test Results (Dec 7, 2025 - Updated)
-- **/events**: PASSED - Public access, loads event content
-- **/groups**: PASSED - Public access, loads group content
-- **/housing**: PASSED - Public access, listings visible
-- **/pricing**: PASSED - 4 tier cards visible
-- **/admin/content**: PASSED - Auth protected, redirects correctly
-
-#### Stripe Configuration - COMPLETE
-All Stripe products and prices created via seed script (scripts/seed-stripe-products.ts):
-
-**Subscription Tiers:**
-| Tier | Monthly Price | Price ID |
-|------|--------------|----------|
-| Free | $0 | price_1SbWX06k8N6PKChVniBnzes2 |
-| Pro | $29 | price_1SbWX06k8N6PKChVPNazDMLa |
-| Business | $79 | price_1SbWX16k8N6PKChV3WXuYZ5s |
-| Enterprise | $299 | price_1SbWX26k8N6PKChVLYQ600aD |
-
-**Add-ons:**
-| Add-on | Price | Price ID |
-|--------|-------|----------|
-| Featured Listing (7 days) | $14.99 | price_1SbWX36k8N6PKChVPybWVANn |
-| Featured Listing (30 days) | $49.99 | price_1SbWX36k8N6PKChVYy1Wp04I |
-| Profile Boost (Weekly) | $9.99 | price_1SbWX46k8N6PKChVSiWxWM77 |
-| Profile Boost (Monthly) | $29.99 | price_1SbWX46k8N6PKChVamFsllQK |
-| Storage 50GB | $4.99/mo | price_1SbWX46k8N6PKChVc7rpDS7q |
-| Priority Matching | $9.99/mo | price_1SbWX56k8N6PKChV1YDJeNkB |
-| Event Analytics | $19.99/mo | price_1SbWX66k8N6PKChVEXuWt9ic |
-
-**API Endpoints:**
-- `GET /api/billing/plans` - Returns all subscription tiers
-- `GET /api/billing/addons` - Returns all add-ons
-
----
-
-## Previous Session Progress (Dec 7, 2025 - Session 1)
-
-### MB.MD v9.9.3 Continuation - Route Fixes + Stripe Debug
-**Applied Methodology**: observe → decide → act → validate → adapt
-
-#### Fixes Applied
-| Fix | Issue | Solution | Status |
-|-----|-------|----------|--------|
-| Public Routes | /events, /groups, /housing redirected to login | Removed ProtectedRoute wrapper | ✅ VERIFIED |
-| Stripe apiRequest | Wrong call signature caused fetch error | Changed to apiRequest('POST', url, data) | ✅ FIXED |
-| WebSocket Auth | NewPostsBanner had "No token" error | Added JWT token to WebSocket URL | ✅ FIXED |
-
----
-
-## Previous Session Progress (Dec 6, 2025)
-
-### MB.MD v9.9.3 Full Validation Cycle - EXTENDED
-**Applied Methodology**: observe → decide → act → validate → adapt
-
-#### Session Metrics
-| Metric | Count | Status |
-|--------|-------|--------|
-| Total Pages Indexed | 312 | Complete |
-| Parallel Tests Executed | 16 | Complete |
-| Parallel Subagents Deployed | 11 | Complete |
-| Issues Fixed This Session | 14 | Verified |
-| Database Tables Created | 4 | Complete |
-| Routes Added/Fixed | 8 | Complete |
-| ZERO FAKE DATA Compliance | 100% | Pass |
-
-#### Phase 1-2 (RESEARCH/PLAN) - Complete
-- 312 platform pages indexed to PostgreSQL database
-- Priority queue: 53 critical, 40 high, 205 medium, 14 low
-- Full database persistence for restart resilience
-
-#### Phase 3 (BUILD/AUDIT) - Extended with Parallel Testing
-- SwarmChoreography with batch-based processing
-- 4 batches configured: Batch 1 (85 critical), Batch 2 (85 high), Batch 3 (85 medium), Batch 4 (57 medium)
-- **16 parallel E2E tests** executed with 8 simultaneous maximum
-- Performance: ~8 pages/min processing rate
-
-#### Phase 4 (TEST) - Parallel Execution Proven
-- ValidationRelayService with 6 validation types active
-- Issues dispatched to SME agents (Accessibility, UI, Performance, i18n)
-- **Maximum Parallelism**: 8+ concurrent tests validated
-
-#### Phase 5 (FIX) - Extended with Parallel Subagents
-- **17+ issues fixed** this session (additional from previous 138)
-- **11 parallel subagents** deployed for concurrent fixes
-- **Database Tables Created via SQL**:
-  - flagged_content (moderation flags + 6 columns added)
-  - moderation_queue (queue items)
-  - moderation_actions (action log)
-  - connected_channels (unified messaging)
-- **Routes Fixed**: /travel, /admin/events, /groups/create, /faq, /forgot-password, /admin/system-health
-- **Features Fixed**: Social login, Events default tab, Auto-RSVP, Stripe CTAs
-- **API Graceful Degradation**: All moderation endpoints now return empty arrays on table errors
-
-#### Phase 6 (DOCUMENT) - Updated
-- docs/UI-AUDIT-RESULTS-DEC-2025.md - Comprehensive audit results
-- docs/UI-AUDIT-PERPLEXITY-COMET.md - Agent handoff guide (94 routes, 11 categories)
-- replit.md - Updated with session progress and patterns
-
-#### Known Constraints (RESOLVED)
-- ~~Workflow restarts every ~20 min~~ - mitigated with PostgreSQL persistence
-- ~~Batch state file~~ - ./data/audit-batch-state.json for quick resume
-- WebSocket HMR warning (non-critical): wss://localhost:undefined - Replit infrastructure limitation
-- ~~/admin/moderation component error~~ - FIXED: All 4 moderation endpoints now have graceful degradation
-
-#### E2E Test Results (Dec 6, 2025)
-- **Marketing Pages**: PASSED (Landing, Pricing, About - real stats verified)
-- **Public Features**: PASSED (Events, Groups, Housing, Pricing tiers)
-- **Admin Pages**: LOADING (Slow but functional - moderation/system-health work)
-
 ## System Architecture
 
 ### UI/UX
-The platform uses an "MT Ocean Theme" with dark mode (Tailwind CSS, shadcn/ui, Radix UI). Iconography is handled by Lucide React and React Icons. It supports 68 languages via `i18next` and Wouter for routing, with `AppLayout`, `DashboardLayout`, and `AdminLayout`. A Visual Editor allows inline editing. Navigation features a Unified Sidebar. Standardized components like `PublicProfileView`, `UnifiedSidebar`, and `PerRoleExperience` ensure consistency.
+The platform employs an "MT Ocean Theme" with dark mode, built using Tailwind CSS, shadcn/ui, and Radix UI. Iconography is provided by Lucide React and React Icons. It supports 68 languages via `i18next` and uses Wouter for routing, with distinct `AppLayout`, `DashboardLayout`, and `AdminLayout` components. Key UI elements include a Visual Editor for inline editing, a Unified Sidebar for navigation, and standardized components like `PublicProfileView` and `PerRoleExperience` to ensure consistency.
 
 ### Backend
-Built with Express and TypeScript, utilizing PostgreSQL (Neon) and Drizzle ORM. It features modular routes, JWT authentication with Google/Facebook OAuth, and an 8-tier RBAC system. Database migrations are automated, and server-side FFmpeg handles video transcoding. API endpoints support PRO functionalities, place recommendations, and enhanced Talent Match AI.
+The backend is developed with Express and TypeScript, utilizing PostgreSQL (Neon) and Drizzle ORM. It features a modular route structure, JWT authentication with Google/Facebook OAuth, and an 8-tier Role-Based Access Control (RBAC) system. Database migrations are automated, and server-side FFmpeg is used for video transcoding. API endpoints support PRO functionalities, place recommendations, and an enhanced Talent Match AI.
 
 ### AI Systems
-An extensive AI ecosystem orchestrates ~43 operational agents (10 page agents + ~33 feature agents) hierarchically, ranging from strategic oversight (Replit AI) to atomic execution. Key components include self-healing infrastructure, a production-ready validation loop, a Visual Validation Framework, contextual agent activation, a Backend Agent System, Mr. Blue AI Assistant, and a Bifrost AI Gateway for multi-provider AI interactions. It also integrates a RecursiveContextService with hierarchical code summarization and a TRM Learning Protocol. Additionally, 5 scraping agents (#115-#119) handle automated event/profile scraping from 200+ active sources.
+An extensive AI ecosystem comprises approximately 43 operational agents, organized hierarchically for strategic oversight and atomic execution. This includes a self-healing infrastructure, a production-ready validation loop, a Visual Validation Framework, contextual agent activation, a Backend Agent System, Mr. Blue AI Assistant, and a Bifrost AI Gateway for multi-provider AI interactions (OpenAI, Anthropic, Groq, Google, Luma, ElevenLabs). The system also integrates a RecursiveContextService for hierarchical code summarization and a TRM Learning Protocol. Additionally, five scraping agents actively gather data from over 200 sources.
 
 ### Platform Features
-Core features include social functionalities (events, groups, posts, notifications, media, live streaming, marketplaces, reviews) and business features (Talent Match AI, LIFE CEO AI, Multi-AI Orchestration, Automated Scraping, Admin Dashboard, Stripe Payments, and BullMQ Workers). Recent additions include an Event Series System, redesigned City Groups Events Tab, RSS Feed Scraping, Profile Enrichment Service, OpenStreetMap Geocoding, Housing Friendship Closeness Integration, and a Unified Messaging Inbox (Gmail, Facebook, Instagram, WhatsApp). A Faceless Content System with social media adapters is also integrated.
+Core functionalities encompass social features such as events, groups, posts, notifications, media management, live streaming, marketplaces, and reviews. Business-oriented features include Talent Match AI, LIFE CEO AI, Multi-AI Orchestration, automated scraping, an Admin Dashboard, Stripe Payments integration, and BullMQ Workers. Recent enhancements include an Event Series System, redesigned City Groups Events Tab, RSS Feed Scraping, Profile Enrichment Service, OpenStreetMap Geocoding, Housing Friendship Closeness Integration, a Unified Messaging Inbox, and a Faceless Content System with social media adapters.
 
 ### Testing
-The platform uses E2E tests, automated unit test coverage via CI/CD, and visual regression testing with Playwright and Claude Computer Use. The `run_test` tool is critical for E2E testing, handling environment setup and Stripe testing key injection.
+The platform utilizes E2E tests, automated unit test coverage via CI/CD, and visual regression testing with Playwright and Claude Computer Use. The `run_test` tool is essential for E2E testing, managing environment setup and Stripe testing key injection.
 
 ### Production
-Production deployments leverage GitHub Actions for CI/CD, Prometheus/Grafana with Sentry for monitoring, Replit Publishing for deployment, Redis for caching, and PostgreSQL (Neon) with Drizzle ORM.
+Production deployments are managed through GitHub Actions for CI/CD. Monitoring is handled by Prometheus/Grafana with Sentry, and deployment is facilitated by Replit Publishing. Redis is used for caching, and PostgreSQL (Neon) with Drizzle ORM serves as the database.
 
 ### Marketing Site Architecture
-The marketing site includes a Donation Tier System, a Human to Agent Collaboration (H2AC) Volunteer Program, and an Ambassador Program, with all public statistics wired to a real database.
+The marketing site integrates a Donation Tier System, a Human to Agent Collaboration (H2AC) Volunteer Program, and an Ambassador Program. All public statistics displayed on the site are wired to real database data.
 
 ### Demo & Video Systems
-A comprehensive Video Demo System includes a landing page section with clickable demo cards, interactive modals, and a Playwright demo recording script. An automated video recording system uses Playwright's `recordVideo` to capture real customer journeys, adhering to a ZERO fake data policy.
+A comprehensive Video Demo System provides a landing page section with clickable demo cards, interactive modals, and a Playwright demo recording script. An automated video recording system leverages Playwright's `recordVideo` to capture real customer journeys, adhering to a strict "ZERO fake data" policy.
 
 ## External Dependencies
 - **Infrastructure:** PostgreSQL, Redis, Cloudinary, OpenStreetMap, Neon (PostgreSQL)
