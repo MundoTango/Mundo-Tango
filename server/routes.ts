@@ -5498,6 +5498,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/friends/friendship/:friendId/shared-data", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const friendId = parseInt(req.params.friendId);
+      const userId = req.user!.id;
+      
+      const sharedData = await storage.getFriendshipSharedData(userId, friendId);
+      
+      if (!sharedData) {
+        return res.status(404).json({ message: "Friendship not found" });
+      }
+      
+      res.json(sharedData);
+    } catch (error) {
+      console.error("[GET /api/friends/friendship/:friendId/shared-data] Error:", error);
+      res.status(500).json({ message: "Failed to fetch shared data" });
+    }
+  });
+
   app.patch("/api/notifications/:id/read", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const notificationId = parseInt(req.params.id);
