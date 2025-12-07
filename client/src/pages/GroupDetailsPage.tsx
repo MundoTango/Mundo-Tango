@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useRoute, Link } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,7 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Users, MapPin, Settings as SettingsIcon, Calendar, Home, Building2, Heart, Check, ChevronRight, ChevronDown, ChevronUp, Music, Mic2, Star, Clock, ExternalLink, Compass, GraduationCap, SlidersHorizontal, Languages, DollarSign, Loader2, Map as MapIcon, Utensils, Coffee, Wine, List, Search, Repeat, X } from "lucide-react";
+import { Users, MapPin, Settings as SettingsIcon, Calendar, Home, Building2, Heart, Check, ChevronRight, ChevronDown, ChevronUp, Music, Mic2, Star, Clock, ExternalLink, Compass, GraduationCap, SlidersHorizontal, Languages, DollarSign, Loader2, Map as MapIcon, Utensils, Coffee, Wine, List, Search, Repeat, X, Database, Globe } from "lucide-react";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { safeDateFormat } from "@/lib/safeDateFormat";
@@ -235,6 +235,13 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
       return dateB.getTime() - dateA.getTime();
     });
   }, [filteredEvents]);
+  
+  // Auto-switch to "past" tab if no upcoming events but past events exist
+  useEffect(() => {
+    if (upcomingEvents.length === 0 && pastEvents.length > 0 && mainTab === "upcoming") {
+      setMainTab("past");
+    }
+  }, [upcomingEvents.length, pastEvents.length, mainTab]);
   
   const displayEvents = mainTab === "series" ? seriesEvents : mainTab === "past" ? pastEvents : upcomingEvents;
   
@@ -1451,7 +1458,77 @@ function GroupCityGuideTab({ group, groupCity, groupCountry }: {
           Community established {safeDateFormat(group.createdAt, "MMMM yyyy")}
         </div>
       )}
+      
+      {/* Data Sources Section - Show where scraped data came from */}
+      <DataSourcesSection groupId={group.id} city={groupCity} />
     </div>
+  );
+}
+
+// Data Sources component to show scraped data origins
+function DataSourcesSection({ groupId, city }: { groupId: number; city?: string | null }) {
+  const { data: sourcesData } = useQuery<{ sources: Array<{ name: string; url: string; type: string; lastScraped?: string }>; totalSources: number }>({
+    queryKey: ['/api/groups', groupId, 'data-sources'],
+    queryFn: async () => {
+      const res = await fetch(`/api/groups/${groupId}/data-sources`, { credentials: 'include' });
+      if (!res.ok) return { sources: [], totalSources: 0 };
+      return res.json();
+    },
+  });
+
+  if (!sourcesData?.sources?.length) return null;
+
+  return (
+    <Card className="overflow-hidden">
+      <CardHeader className="border-b">
+        <CardTitle className="text-xl font-serif flex items-center gap-2">
+          <Database className="h-5 w-5 text-primary" />
+          Data Sources
+        </CardTitle>
+        <CardDescription>
+          Event and community data for {city || "this city"} is sourced from these websites
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="p-6">
+        <div className="grid gap-3 sm:grid-cols-2">
+          {sourcesData.sources.map((source, index) => (
+            <a
+              key={`${source.url}-${index}`}
+              href={source.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 p-3 rounded-lg bg-muted/30 hover-elevate transition-all"
+              data-testid={`link-source-${index}`}
+            >
+              <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <Globe className="h-5 w-5 text-primary" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium truncate">{source.name}</p>
+                <p className="text-xs text-muted-foreground truncate">
+                  {(() => {
+                    try {
+                      return new URL(source.url).hostname.replace('www.', '');
+                    } catch {
+                      return source.url;
+                    }
+                  })()}
+                </p>
+                {source.lastScraped && (
+                  <p className="text-xs text-green-600 dark:text-green-400">
+                    Last updated: {safeDateFormat(source.lastScraped, "MMM d, yyyy")}
+                  </p>
+                )}
+              </div>
+              <ExternalLink className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+            </a>
+          ))}
+        </div>
+        <p className="text-xs text-muted-foreground mt-4 text-center">
+          {sourcesData.totalSources} data source{sourcesData.totalSources !== 1 ? 's' : ''} actively monitored for {city}
+        </p>
+      </CardContent>
+    </Card>
   );
 }
 

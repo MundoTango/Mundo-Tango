@@ -412,15 +412,40 @@ export default function EventsPage() {
     });
   }, [events]);
 
-  // Mock geocoding for map view (in production, use real geocoding)
+  // Use real event coordinates when available, fallback to city-based defaults
   const eventsWithCoordinates = useMemo(() => {
     if (!events) return [];
-    return events.map((event, index) => ({
-      ...event,
-      // Mock coordinates - spread events around Buenos Aires
-      lat: -34.6037 + (Math.random() - 0.5) * 0.2,
-      lng: -58.3816 + (Math.random() - 0.5) * 0.2,
-    }));
+    
+    // City coordinate defaults
+    const cityCoords: Record<string, [number, number]> = {
+      'Buenos Aires': [-34.6037, -58.3816],
+      'New York': [40.7128, -74.0060],
+      'San Francisco': [37.7749, -122.4194],
+      'Los Angeles': [34.0522, -118.2437],
+      'London': [51.5074, -0.1278],
+      'Paris': [48.8566, 2.3522],
+      'Berlin': [52.5200, 13.4050],
+      'Melbourne': [-37.8136, 144.9631],
+      'Sydney': [-33.8688, 151.2093],
+      'Tokyo': [35.6762, 139.6503],
+      'Dubai': [25.2048, 55.2708],
+    };
+    
+    return events.map((event: any, index: number) => {
+      const eventData = event.event || event;
+      const city = eventData.city || 'Buenos Aires';
+      const defaultCoords = cityCoords[city] || [-34.6037, -58.3816];
+      
+      // Use real coordinates if available, otherwise use city default with slight offset
+      const lat = eventData.latitude ? parseFloat(eventData.latitude) : defaultCoords[0] + (Math.random() - 0.5) * 0.05;
+      const lng = eventData.longitude ? parseFloat(eventData.longitude) : defaultCoords[1] + (Math.random() - 0.5) * 0.05;
+      
+      return {
+        ...event,
+        lat,
+        lng,
+      };
+    });
   }, [events]);
 
   return (
