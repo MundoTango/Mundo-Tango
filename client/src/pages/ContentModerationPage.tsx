@@ -47,6 +47,11 @@ export default function ContentModerationPage() {
     total: number;
   }>({
     queryKey: ["/api/admin/moderation/queue", activeTab],
+    queryFn: async () => {
+      const response = await fetch(`/api/admin/moderation/queue?status=${activeTab}`);
+      if (!response.ok) throw new Error("Failed to fetch queue");
+      return response.json();
+    },
   });
 
   const moderationMutation = useMutation({
