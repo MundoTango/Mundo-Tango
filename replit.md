@@ -121,14 +121,31 @@ queryClient.invalidateQueries({ queryKey: ["/api/events/my-rsvps"] });
 - **/pricing**: PASSED - 4 tier cards visible
 - **/admin/content**: PASSED - Auth protected, redirects correctly
 
-#### Stripe Configuration Required
-The following environment variables need to be set from Stripe dashboard:
-```
-STRIPE_PRICE_BASIC_MONTHLY=price_xxx
-STRIPE_PRICE_PRO_MONTHLY=price_xxx
-STRIPE_PRICE_PREMIUM_MONTHLY=price_xxx
-```
-These are Stripe Price IDs created in the Stripe Products section.
+#### Stripe Configuration - COMPLETE
+All Stripe products and prices created via seed script (scripts/seed-stripe-products.ts):
+
+**Subscription Tiers:**
+| Tier | Monthly Price | Price ID |
+|------|--------------|----------|
+| Free | $0 | price_1SbWX06k8N6PKChVniBnzes2 |
+| Pro | $29 | price_1SbWX06k8N6PKChVPNazDMLa |
+| Business | $79 | price_1SbWX16k8N6PKChV3WXuYZ5s |
+| Enterprise | $299 | price_1SbWX26k8N6PKChVLYQ600aD |
+
+**Add-ons:**
+| Add-on | Price | Price ID |
+|--------|-------|----------|
+| Featured Listing (7 days) | $14.99 | price_1SbWX36k8N6PKChVPybWVANn |
+| Featured Listing (30 days) | $49.99 | price_1SbWX36k8N6PKChVYy1Wp04I |
+| Profile Boost (Weekly) | $9.99 | price_1SbWX46k8N6PKChVSiWxWM77 |
+| Profile Boost (Monthly) | $29.99 | price_1SbWX46k8N6PKChVamFsllQK |
+| Storage 50GB | $4.99/mo | price_1SbWX46k8N6PKChVc7rpDS7q |
+| Priority Matching | $9.99/mo | price_1SbWX56k8N6PKChV1YDJeNkB |
+| Event Analytics | $19.99/mo | price_1SbWX66k8N6PKChVEXuWt9ic |
+
+**API Endpoints:**
+- `GET /api/billing/plans` - Returns all subscription tiers
+- `GET /api/billing/addons` - Returns all add-ons
 
 ---
 

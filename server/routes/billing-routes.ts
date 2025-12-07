@@ -15,13 +15,14 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
 
 const router = Router();
 
-// Subscription plan definitions
+// Subscription plan definitions - MB.MD v9.9.3 Stripe Integration
 const SUBSCRIPTION_PLANS = {
   free: {
     id: 'free',
     name: 'Free',
     price: 0,
     interval: 'month',
+    stripePriceId: process.env.STRIPE_PRICE_FREE_MONTHLY || 'price_1SbWX06k8N6PKChVniBnzes2',
     features: [
       'Community features',
       'Basic event browsing',
@@ -29,58 +30,125 @@ const SUBSCRIPTION_PLANS = {
       'Up to 5 event RSVPs per month',
     ],
   },
-  basic: {
-    id: 'basic',
-    name: 'Basic',
-    price: 9.99,
-    interval: 'month',
-    stripePriceId: process.env.STRIPE_PRICE_BASIC_MONTHLY,
-    features: [
-      'Unlimited event RSVPs',
-      'Basic matching algorithm',
-      'Event creation (up to 5/month)',
-      'Group participation',
-      'Direct messaging',
-    ],
-  },
   pro: {
     id: 'pro',
     name: 'Pro',
-    price: 29.99,
+    price: 29,
     interval: 'month',
-    stripePriceId: process.env.STRIPE_PRICE_PRO_MONTHLY,
+    stripePriceId: process.env.STRIPE_PRICE_PRO_MONTHLY || 'price_1SbWX06k8N6PKChVPNazDMLa',
+    stripePriceIdYearly: process.env.STRIPE_PRICE_PRO_YEARLY || 'price_1SbWX16k8N6PKChVAGQBraV2',
     features: [
-      'Everything in Basic',
+      'Unlimited event RSVPs',
       'Advanced matching algorithm',
+      'Unlimited event creation',
+      'Group participation',
+      'Direct messaging',
       'Analytics dashboard',
       'Priority support',
-      'Unlimited event creation',
-      'Custom profile badges',
-      'Early access to features',
     ],
   },
-  premium: {
-    id: 'premium',
-    name: 'Premium',
-    price: 99.99,
+  business: {
+    id: 'business',
+    name: 'Business',
+    price: 79,
     interval: 'month',
-    stripePriceId: process.env.STRIPE_PRICE_PREMIUM_MONTHLY,
+    stripePriceId: process.env.STRIPE_PRICE_BUSINESS_MONTHLY || 'price_1SbWX16k8N6PKChV3WXuYZ5s',
+    stripePriceIdYearly: process.env.STRIPE_PRICE_BUSINESS_YEARLY || 'price_1SbWX26k8N6PKChV0fdsCKXN',
     features: [
       'Everything in Pro',
-      'AI Assistant (Mr. Blue)',
-      'Unlimited everything',
+      'Mr. Blue AI Assistant',
+      'Custom profile badges',
+      'Early access to features',
+      'Advanced analytics',
+      'Promotional tools',
+      'Featured listings',
+      'Priority event placement',
+    ],
+  },
+  enterprise: {
+    id: 'enterprise',
+    name: 'Enterprise',
+    price: 299,
+    interval: 'month',
+    stripePriceId: process.env.STRIPE_PRICE_ENTERPRISE_MONTHLY || 'price_1SbWX26k8N6PKChVLYQ600aD',
+    features: [
+      'Everything in Business',
       'Dedicated account manager',
       'Custom branding options',
       'API access',
       'White-label options',
-      'Priority event placement',
+      'Custom integrations',
+      'SLA guarantee',
+      'Unlimited everything',
     ],
+    contactRequired: true,
+  },
+};
+
+// Add-on definitions
+const ADDONS = {
+  featuredListing7: {
+    id: 'featured-listing-7',
+    name: 'Featured Event Listing (7 Days)',
+    price: 14.99,
+    stripePriceId: 'price_1SbWX36k8N6PKChVPybWVANn',
+    type: 'one-time',
+  },
+  featuredListing30: {
+    id: 'featured-listing-30',
+    name: 'Featured Event Listing (30 Days)',
+    price: 49.99,
+    stripePriceId: 'price_1SbWX36k8N6PKChVYy1Wp04I',
+    type: 'one-time',
+  },
+  profileBoostWeekly: {
+    id: 'profile-boost-weekly',
+    name: 'Profile Boost (Weekly)',
+    price: 9.99,
+    stripePriceId: 'price_1SbWX46k8N6PKChVSiWxWM77',
+    type: 'one-time',
+  },
+  profileBoostMonthly: {
+    id: 'profile-boost-monthly',
+    name: 'Profile Boost (Monthly)',
+    price: 29.99,
+    stripePriceId: 'price_1SbWX46k8N6PKChVamFsllQK',
+    type: 'one-time',
+  },
+  storage50gb: {
+    id: 'storage-50gb',
+    name: 'Additional Storage (50GB)',
+    price: 4.99,
+    stripePriceId: 'price_1SbWX46k8N6PKChVc7rpDS7q',
+    type: 'recurring',
+    interval: 'month',
+  },
+  priorityMatching: {
+    id: 'priority-matching',
+    name: 'Priority Matching',
+    price: 9.99,
+    stripePriceId: 'price_1SbWX56k8N6PKChV1YDJeNkB',
+    type: 'recurring',
+    interval: 'month',
+  },
+  eventAnalytics: {
+    id: 'event-analytics',
+    name: 'Event Analytics Pack',
+    price: 19.99,
+    stripePriceId: 'price_1SbWX66k8N6PKChVEXuWt9ic',
+    type: 'recurring',
+    interval: 'month',
   },
 };
 
 // GET /api/billing/plans - List available plans
 router.get("/plans", (req: Request, res: Response) => {
   res.json({ plans: Object.values(SUBSCRIPTION_PLANS) });
+});
+
+// GET /api/billing/addons - List available add-ons
+router.get("/addons", (req: Request, res: Response) => {
+  res.json({ addons: Object.values(ADDONS) });
 });
 
 // GET /api/billing/subscription - Get current subscription
