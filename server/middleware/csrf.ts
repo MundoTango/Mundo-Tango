@@ -45,6 +45,11 @@ export function verifyCsrfToken(req: Request, res: Response, next: NextFunction)
     return next();
   }
   
+  // Skip CSRF for n8n messaging webhooks (external automation platform)
+  if (req.originalUrl.startsWith("/api/messaging/webhook/")) {
+    return next();
+  }
+  
   // Skip CSRF for public Mr. Blue endpoints (no auth required)
   const publicMrBlueEndpoints = [
     "/api/mrblue/chat",
@@ -190,6 +195,11 @@ export function verifyDoubleSubmitCookie(req: Request, res: Response, next: Next
   
   // Skip CSRF check for API endpoints using JWT (they have their own security)
   if (req.headers.authorization?.startsWith("Bearer ")) {
+    return next();
+  }
+  
+  // Skip CSRF for n8n messaging webhooks (external automation platform)
+  if (req.originalUrl.startsWith("/api/messaging/webhook/")) {
     return next();
   }
   

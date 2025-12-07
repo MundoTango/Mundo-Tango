@@ -178,6 +178,7 @@ import paymentRoutes from "./routes/payment-routes";
 import onboardingRoutes from "./routes/onboarding-routes";
 import messagesRoutes from "./routes/messages-routes";
 import { registerMessagingRoutes } from "./routes/messaging-routes";
+import messagingWebhookRoutes from "./routes/messaging-webhook-routes";
 import adsRoutes from "./routes/ads-routes";
 import revenueRoutes from "./routes/revenue-routes";
 import volunteerTestingRoutes from "./routes/volunteerTesting";
@@ -576,6 +577,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   
   // ============================================================================
+  // WEBHOOK ROUTES (BEFORE CSRF - external platforms cannot send CSRF tokens)
+  // n8n + OpenAI hybrid messaging webhooks for WhatsApp, Telegram, Slack, etc.
+  // ============================================================================
+  app.use("/api", messagingWebhookRoutes);
+  
+  // ============================================================================
   // CSRF PROTECTION: Verify CSRF tokens on all mutating requests (POST/PUT/DELETE/PATCH)
   // Skips: GET/HEAD/OPTIONS and JWT Bearer auth requests (handled in middleware)
   // ============================================================================
@@ -721,6 +728,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/onboarding", onboardingRoutes);
   app.use("/api/messages", messagesRoutes);
   registerMessagingRoutes(app); // New messaging routes for direct messages, group chats, and threads
+  // Note: messaging webhooks moved before CSRF middleware
   app.use("/api/ads", adsRoutes);
   app.use("/api/admin/ads", adsRoutes);
   app.use("/api/revenue", revenueRoutes);
