@@ -84,6 +84,24 @@ interface UserByRole {
   tangoRoles?: string[];
 }
 
+function getEventDate(event: any): Date {
+  if (event.startDateTime) {
+    return new Date(event.startDateTime);
+  }
+  if (event.startDate) {
+    if (event.startTime) {
+      const combined = `${event.startDate.split('T')[0]}T${event.startTime}`;
+      const parsed = new Date(combined);
+      if (!isNaN(parsed.getTime())) return parsed;
+    }
+    return new Date(event.startDate);
+  }
+  if (event.date) {
+    return new Date(event.date);
+  }
+  return new Date(0);
+}
+
 function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: string | null }) {
   const { user } = useAuth();
   const { data: myRsvps } = useMyRSVPs();
@@ -144,12 +162,12 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
       }
       
       if (filters.dateFrom) {
-        const eventDate = new Date(event.startDate || event.date || '');
+        const eventDate = getEventDate(event);
         if (eventDate < filters.dateFrom) return false;
       }
       
       if (filters.dateTo) {
-        const eventDate = new Date(event.startDate || event.date || '');
+        const eventDate = getEventDate(event);
         if (eventDate > filters.dateTo) return false;
       }
       
@@ -195,11 +213,11 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
     if (!filteredEvents) return [];
     const now = new Date();
     return filteredEvents.filter(event => {
-      const eventDate = new Date(event.startDate || event.date || '');
-      return eventDate >= now;
+      const eventDate = getEventDate(event);
+      return eventDate.getTime() > 0 && eventDate >= now;
     }).sort((a, b) => {
-      const dateA = new Date(a.startDate || a.date || '');
-      const dateB = new Date(b.startDate || b.date || '');
+      const dateA = getEventDate(a);
+      const dateB = getEventDate(b);
       return dateA.getTime() - dateB.getTime();
     });
   }, [filteredEvents]);
@@ -208,11 +226,11 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
     if (!filteredEvents) return [];
     const now = new Date();
     return filteredEvents.filter(event => {
-      const eventDate = new Date(event.startDate || event.date || '');
-      return eventDate < now;
+      const eventDate = getEventDate(event);
+      return eventDate.getTime() > 0 && eventDate < now;
     }).sort((a, b) => {
-      const dateA = new Date(a.startDate || a.date || '');
-      const dateB = new Date(b.startDate || b.date || '');
+      const dateA = getEventDate(a);
+      const dateB = getEventDate(b);
       return dateB.getTime() - dateA.getTime();
     });
   }, [filteredEvents]);
@@ -222,12 +240,12 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
   const calendarEvents = useMemo(() => {
     if (!displayEvents) return [];
     return displayEvents.map((event: any) => {
-      const dateToUse = event.startDate || event.date || Date.now();
+      const eventDate = getEventDate(event);
       return {
         id: event.id,
         title: event.title,
-        start: new Date(dateToUse),
-        end: new Date((new Date(dateToUse)).getTime() + 2 * 60 * 60 * 1000),
+        start: eventDate,
+        end: new Date(eventDate.getTime() + 2 * 60 * 60 * 1000),
         resource: event,
       };
     });
@@ -558,18 +576,22 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
                           <h3 className="text-lg font-serif font-bold mb-2 truncate cursor-pointer hover:text-primary" dangerouslySetInnerHTML={{ __html: event.title || "Untitled Event" }} data-testid={`event-title-${event.id}`} />
                         </Link>
                         <div className="space-y-1 text-sm text-muted-foreground">
-                          {(event.startDate || event.date) && (
-                            <div className="flex items-center gap-2" data-testid={`event-date-${event.id}`}>
-                              <Calendar className="h-4 w-4 flex-shrink-0" />
-                              {new Date(event.startDate || event.date).toLocaleDateString(undefined, { 
-                                weekday: 'short', 
-                                month: 'short', 
-                                day: 'numeric',
-                                year: 'numeric'
-                              })}
-                              {event.time && ` at ${event.time}`}
-                            </div>
-                          )}
+                          {(() => {
+                            const eventDate = getEventDate(event);
+                            if (eventDate.getTime() === 0) return null;
+                            return (
+                              <div className="flex items-center gap-2" data-testid={`event-date-${event.id}`}>
+                                <Calendar className="h-4 w-4 flex-shrink-0" />
+                                {eventDate.toLocaleDateString(undefined, { 
+                                  weekday: 'short', 
+                                  month: 'short', 
+                                  day: 'numeric',
+                                  year: 'numeric'
+                                })}
+                                {event.startTime && ` at ${event.startTime}`}
+                              </div>
+                            );
+                          })()}
                           {(event.location || event.city) && (
                             <div className="flex items-center gap-2" data-testid={`event-location-${event.id}`}>
                               <MapPin className="h-4 w-4 flex-shrink-0" />

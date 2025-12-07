@@ -439,6 +439,7 @@ router.get("/search", optionalAuth, async (req: AuthRequest, res: Response) => {
       dateFrom,
       dateTo,
       type,
+      types,
       priceMin,
       priceMax,
       danceStyle,
@@ -498,17 +499,26 @@ router.get("/search", optionalAuth, async (req: AuthRequest, res: Response) => {
       );
     }
 
-    // Date range filter
+    // Date range filter (use startDateTime if startDate is null)
     if (dateFrom) {
-      conditions.push(gte(events.startDate, new Date(dateFrom as string)));
+      conditions.push(
+        sql`COALESCE(${events.startDate}, ${events.startDateTime}::date) >= ${new Date(dateFrom as string)}`
+      );
     }
     if (dateTo) {
-      conditions.push(lte(events.startDate, new Date(dateTo as string)));
+      conditions.push(
+        sql`COALESCE(${events.startDate}, ${events.startDateTime}::date) <= ${new Date(dateTo as string)}`
+      );
     }
 
-    // Event type filter
+    // Event type filter (single or multiple types)
     if (type && typeof type === 'string') {
       conditions.push(eq(events.eventType, type));
+    } else if (types && typeof types === 'string') {
+      const typeList = types.split(',').map(t => t.trim().toLowerCase());
+      conditions.push(
+        sql`LOWER(${events.eventType}) = ANY(ARRAY[${sql.raw(typeList.map(t => `'${t}'`).join(','))}])`
+      );
     }
 
     // Price range filter
@@ -580,12 +590,16 @@ router.get("/search", optionalAuth, async (req: AuthRequest, res: Response) => {
     }
 
     // Past events filter - show events that have already ended
+    // If past=true, show only past events
+    // If past=false or upcoming=true, show only upcoming
+    // If neither is specified (discover mode), show ALL events
+    const { upcoming } = req.query;
     if (past === "true") {
       conditions.push(lte(events.startDate, new Date()));
-    } else {
-      // By default, only show upcoming events in search
+    } else if (upcoming === "true") {
       conditions.push(gte(events.startDate, new Date()));
     }
+    // If neither past nor upcoming is specified, show all events (Discover mode)
 
     if (conditions.length > 0) {
       query = query.where(and(...conditions));

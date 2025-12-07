@@ -47,6 +47,28 @@ const localizer = dateFnsLocalizer({
 
 const CATEGORIES = ["All", "Milonga", "Practica", "Class", "Workshop", "Festival", "Marathon", "Encuentro", "Performance", "Social", "Online"];
 
+const DISCOVER_EVENT_TYPES = ["festival", "marathon", "encuentro", "competition"];
+
+function getEventDate(event: any): Date {
+  const data = event.event || event;
+  if (data.startDateTime) {
+    return new Date(data.startDateTime);
+  }
+  if (data.startDate || data.start_date) {
+    const startDate = data.startDate || data.start_date;
+    if (data.startTime) {
+      const combined = `${String(startDate).split('T')[0]}T${data.startTime}`;
+      const parsed = new Date(combined);
+      if (!isNaN(parsed.getTime())) return parsed;
+    }
+    return new Date(startDate);
+  }
+  if (data.date) {
+    return new Date(data.date);
+  }
+  return new Date(0);
+}
+
 // Fix Leaflet default marker icon
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -243,7 +265,10 @@ export default function EventsPage() {
     if (filters.city) params.append("city", filters.city);
     if (filters.dateFrom) params.append("dateFrom", filters.dateFrom.toISOString());
     if (filters.dateTo) params.append("dateTo", filters.dateTo.toISOString());
-    if (filters.type && filters.type !== "all") params.append("type", filters.type);
+    if (filters.type && filters.type !== "all") {
+      params.append("type", filters.type);
+    }
+    // Don't filter by type by default - show all events in Discover mode
     if (filters.priceMin !== undefined) params.append("priceMin", String(filters.priceMin));
     if (filters.priceMax !== undefined) params.append("priceMax", String(filters.priceMax));
     if (filters.danceStyle && filters.danceStyle !== "all") params.append("danceStyle", filters.danceStyle);
@@ -374,12 +399,12 @@ export default function EventsPage() {
     if (!events) return [];
     return events.map((event: any) => {
       const eventData = event.event || event;
-      const dateToUse = eventData.startDate || eventData.start_date || eventData.date || Date.now();
+      const eventDate = getEventDate(event);
       return {
         id: eventData.id,
         title: eventData.title,
-        start: new Date(dateToUse),
-        end: new Date((new Date(dateToUse)).getTime() + 2 * 60 * 60 * 1000),
+        start: eventDate,
+        end: new Date(eventDate.getTime() + 2 * 60 * 60 * 1000),
         resource: eventData,
       };
     });
