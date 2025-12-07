@@ -795,6 +795,39 @@ npm run dev
 
 ---
 
-**Last Updated:** November 2, 2025  
-**Version:** 1.0  
+**Last Updated:** December 7, 2025  
+**Version:** 1.1  
 **Status:** Living Document (updated with each major release)
+
+---
+
+## Appendix: Service Level Objectives (SLOs)
+
+> Added per Tamás Szalai remediation recommendations (December 2025)
+
+### Core Lane SLOs
+
+| Lane | Service | P99 Latency | Error Budget (30-day) |
+|------|---------|-------------|----------------------|
+| Social Graph | `/api/users/*` | < 200ms | 0.1% |
+| Social Graph | `/api/friendships/*` | < 150ms | 0.1% |
+| Events | `/api/events/*` | < 300ms | 0.5% |
+| Events | `/api/scraped-events/*` | < 400ms | 1.0% |
+| Money | `/api/payments/*` | < 500ms | 0.01% |
+| Talent Match | `/api/talent-match/*` | < 2000ms | 1.0% |
+| AI/Mr. Blue | `/api/mr-blue/*` | < 3000ms | 2.0% |
+
+### Monitoring Integration
+
+SLOs are tracked via:
+- **Prometheus metrics**: `http_request_duration_seconds`, `http_requests_total`
+- **Grafana dashboards**: `grafana/dashboards/slos.json`
+- **Alerting**: Slack webhook on budget < 10%
+
+### Self-Healing Metrics
+
+| Metric | Target | Current |
+|--------|--------|---------|
+| Auto-fix success rate | > 80% | TBD |
+| Mean time to remediation | < 5 min | TBD |
+| Escalation rate | < 10% | TBD |
