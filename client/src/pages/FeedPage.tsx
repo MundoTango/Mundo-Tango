@@ -36,7 +36,6 @@ import { UnifiedMemoriesFeed } from "@/components/feed/UnifiedMemoriesFeed";
 import { NewPostsBanner } from "@/components/feed/NewPostsBanner";
 import { Link } from "wouter";
 import { FeedAd } from "@/components/ads/FeedAd";
-import { FeedLeftSidebar } from "@/components/feed/FeedLeftSidebar";
 
 // Lazy load heavy sidebar components to improve initial page load
 const StoriesCarousel = lazy(() => import("@/components/feed/StoriesCarousel").then(m => ({ default: m.StoriesCarousel })));
@@ -453,17 +452,10 @@ export default function FeedPage() {
         </div>
       </div>
 
-      {/* 3-Column Grid Layout - Responsive */}
+      {/* 2-Column Grid Layout - Responsive (Left sidebar removed) */}
       <div className="grid grid-cols-12 gap-4 lg:gap-6 px-4 lg:px-6 py-6 lg:py-12 max-w-7xl mx-auto">
-        {/* Left Sidebar - Hidden on mobile/tablet, visible on desktop */}
-        <aside className="hidden lg:block lg:col-span-3 xl:col-span-2">
-          <div className="sticky top-20">
-            <FeedLeftSidebar />
-          </div>
-        </aside>
-
-        {/* Main Feed Column - Full width on mobile, adapts on larger screens */}
-        <main className="col-span-12 md:col-span-8 lg:col-span-6 xl:col-span-7 space-y-6">
+        {/* Main Feed Column - Full width on mobile, wider on desktop */}
+        <main className="col-span-12 md:col-span-8 lg:col-span-9 xl:col-span-9 space-y-6">
           {/* Instagram-style Stories Carousel - Lazy loaded */}
           <Suspense fallback={<Card className="p-4 h-24 bg-muted animate-pulse" />}>
             <StoriesCarousel />
