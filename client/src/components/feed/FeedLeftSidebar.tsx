@@ -40,41 +40,5 @@ export function FeedLeftSidebar() {
   const { user } = useAuth();
   const [location] = useLocation();
 
-  return (
-    <aside className="space-y-4" data-testid="feed-left-sidebar">
-      <Card className="p-2" data-testid="card-quick-nav">
-        <nav className="space-y-1">
-          {NAV_ITEMS.map((item) => {
-            const Icon = item.icon;
-            const isActive = location === item.href || 
-              (item.href !== "/feed" && location.startsWith(item.href));
-            
-            return (
-              <Link key={item.href} href={item.href}>
-                <Button
-                  variant={isActive ? "secondary" : "ghost"}
-                  className="w-full justify-start gap-3"
-                  data-testid={`link-nav-${item.label.toLowerCase().replace(/\s+/g, '-')}`}
-                >
-                  <Icon className="h-5 w-5" />
-                  <span>{item.label}</span>
-                </Button>
-              </Link>
-            );
-          })}
-        </nav>
-      </Card>
-
-      {user && (
-        <Card className="p-4" data-testid="card-settings-link">
-          <Link href="/settings">
-            <Button variant="outline" className="w-full justify-start gap-3" data-testid="link-settings">
-              <Settings className="h-5 w-5" />
-              <span>Settings</span>
-            </Button>
-          </Link>
-        </Card>
-      )}
-    </aside>
-  );
+  return null;
 }
