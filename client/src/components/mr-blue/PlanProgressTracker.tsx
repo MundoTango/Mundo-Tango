@@ -190,8 +190,20 @@ export function PlanProgressTracker() {
       if (!response.ok) throw new Error('Failed to fetch roadmap');
       return response.json();
     },
-    enabled: !!userId,
+    enabled: !!user,
   });
+
+  if (!user) {
+    return (
+      <div className="text-center p-12">
+        <AlertCircle className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
+        <p className="text-sm text-muted-foreground mb-4">Please log in to view roadmap progress</p>
+        <Button onClick={() => navigate('/login')} data-testid="button-login-cta">
+          Log In
+        </Button>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (

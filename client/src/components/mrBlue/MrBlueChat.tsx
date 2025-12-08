@@ -360,6 +360,15 @@ Provide natural, conversational assistance based on where the user is in the pla
 
   const sendMessage = async () => {
     if (!input.trim() || isLoading) return;
+    
+    if (!user) {
+      toast({
+        title: "Login Required",
+        description: "Please log in to chat with Mr. Blue",
+        variant: "destructive",
+      });
+      return;
+    }
 
     const messageText = input;
     const userMessage: Message = {

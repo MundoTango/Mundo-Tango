@@ -104,7 +104,7 @@ export function ThePlanView() {
     .reduce((sum, phase) => sum + phase.features, 0);
   const overallProgress = (completedFeatures / totalFeatures) * 100;
 
-  // Fetch real-time progress from API
+  // Fetch real-time progress from API (only when user is authenticated)
   const { data: liveStats } = useQuery<RoadmapStats>({
     queryKey: ['/api/mrblue/plan/stats', userId],
     queryFn: async () => {
@@ -112,6 +112,7 @@ export function ThePlanView() {
       if (!response.ok) return null;
       return response.json();
     },
+    enabled: !!user,
   });
 
   return (
