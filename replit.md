@@ -19,17 +19,18 @@ Mundo Tango is a production-ready social platform connecting the global tango co
 
 ### ZERO FAKE DATA Audit Complete ✅
 **Applied Methodology**: MB.MD v9.9.4 - Research → Plan → Build → Test → Analyze → Fix → Document
+**Architect Review**: PASSED - All RBAC guards meet stated objectives
 
 #### RBAC & Data Integrity Fixes
 1. **Hardcoded userId: 1 → useAuth()**: Fixed in 5 critical files
-   - `MrBlueChat.tsx` - Chat API calls now use authenticated user
-   - `PlanProgressTracker.tsx` - Progress tracking with real user
-   - `ThePlanView.tsx` - Plan view with authenticated context
+   - `MrBlueChat.tsx` - Chat API calls now use authenticated user + auth guard with login toast
+   - `PlanProgressTracker.tsx` - Progress tracking with real user + login CTA
+   - `ThePlanView.tsx` - Plan view with authenticated context + enabled:!!user query guard
    - `TravelExpensesPage.tsx` - Expense tracking uses real user
    - `AdminUsersPage.tsx` - Admin panel RBAC enforcement
 
 2. **Hardcoded Notification Counts Removed**
-   - `GlobalTopbar.tsx` - Now uses useQuery for real notification/message counts
+   - `GlobalTopbar.tsx` - Now uses useQuery with enabled:!!user for real notification/message counts
    - `TopNavigationBar.tsx` - Same fix applied
 
 3. **Test Email Placeholders Removed**
@@ -39,6 +40,11 @@ Mundo Tango is a production-ready social platform connecting the global tango co
 
 4. **Dynamic Component Added**
    - `AuditLogCard.tsx` - Reusable audit log component with API integration
+
+5. **Auth Guards Added** (preventing unauthenticated API calls)
+   - MrBlueChat.tsx: sendMessage() returns early with destructive toast if !user
+   - PlanProgressTracker.tsx: Shows login CTA + disables query if !user
+   - ThePlanView.tsx: Stats query gated by enabled:!!user
 
 ### MB.MD v9.9.4 Full Implementation Complete
 **Applied Methodology**: Capture → Research → Question → Plan → Build → Test → Analyze → Fix → Document
