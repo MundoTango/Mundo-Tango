@@ -33,42 +33,9 @@ interface MonitoringData {
 }
 
 export default function MonitoringPage() {
-  // Mock data - in real app, this would fetch from monitoring service
+  // Fetch real monitoring data from API - ZERO FAKE DATA policy
   const { data: monitoring, isLoading } = useQuery<MonitoringData>({
     queryKey: ["/api/platform/monitoring"],
-    queryFn: async () => ({
-      vercel: {
-        status: "operational",
-        uptime: 99.98,
-        avgResponseTime: 142,
-        requests24h: 12847,
-      },
-      railway: {
-        status: "operational",
-        uptime: 99.95,
-        avgResponseTime: 218,
-        requests24h: 8932,
-      },
-      responseTimeHistory: Array.from({ length: 24 }, (_, i) => ({
-        timestamp: new Date(Date.now() - (23 - i) * 3600000).toISOString(),
-        vercel: Math.floor(120 + Math.random() * 80),
-        railway: Math.floor(180 + Math.random() * 100),
-      })),
-      recentIncidents: [
-        {
-          platform: "Vercel",
-          severity: "info",
-          message: "Deployment completed successfully",
-          timestamp: new Date(Date.now() - 300000).toISOString(),
-        },
-        {
-          platform: "Railway",
-          severity: "warning",
-          message: "Increased response time detected",
-          timestamp: new Date(Date.now() - 1800000).toISOString(),
-        },
-      ],
-    }),
     refetchInterval: 30000, // Refresh every 30 seconds
   });
 

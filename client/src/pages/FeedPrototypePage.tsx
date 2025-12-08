@@ -13,6 +13,7 @@ import { UpcomingEventsSidebar } from "@/components/feed/UpcomingEventsSidebar";
 import { RoleIconBadge } from "@/components/feed/RoleIconBadge";
 import { UnifiedMemoriesFeed } from "@/components/feed/UnifiedMemoriesFeed";
 import { queryClient } from "@/lib/queryClient";
+import { usePosts } from "@/hooks/usePosts";
 import { 
   Heart, MessageCircle, Share2, Bookmark, MoreHorizontal,
   MapPin, Star, TrendingUp, Sun, Moon
@@ -30,66 +31,12 @@ export default function FeedPrototypePage() {
   const [quoteIndex, setQuoteIndex] = useState(0);
   const currentQuote = TANGO_QUOTES[quoteIndex];
 
-  // Mock posts for demonstration
-  const mockPosts = [
-    {
-      id: 1,
-      userId: 1,
-      content: "Last night at Salon Canning was pure magic. The energy, the music, the embrace... moments like these remind me why we dance. 💫",
-      imageUrl: "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=1200&auto=format&fit=crop&q=80",
-      visibility: "public",
-      likes: 142,
-      comments: 28,
-      createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-      tags: ["milonga", "buenos-aires"],
-      location: "Buenos Aires, Argentina",
-      user: {
-        id: 1,
-        name: "Sofia Martinez",
-        username: "sofia_tango",
-        profileImage: "https://api.dicebear.com/7.x/avataaars/svg?seed=sofia",
-        tangoRoles: ["dancer-leader", "teacher", "organizer"],
-        verified: true
-      }
-    },
-    {
-      id: 2,
-      userId: 2,
-      content: "Teaching my first workshop this weekend! 🎓 Topic: The Art of Musicality in Tango. Limited spots available - who's joining?",
-      visibility: "public",
-      likes: 89,
-      comments: 15,
-      createdAt: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
-      location: "Milan, Italy",
-      user: {
-        id: 2,
-        name: "Marco Rossi",
-        username: "marco_dj",
-        profileImage: "https://api.dicebear.com/7.x/avataaars/svg?seed=marco",
-        tangoRoles: ["teacher", "dj"],
-        verified: false
-      }
-    },
-    {
-      id: 3,
-      userId: 3,
-      content: "Festival season is here! Just booked tickets to three festivals across Europe. Who else is planning their tango travel? ✈️🌍",
-      imageUrl: "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1200&auto=format&fit=crop&q=80",
-      visibility: "public",
-      likes: 234,
-      comments: 47,
-      createdAt: new Date(Date.now() - 8 * 60 * 60 * 1000).toISOString(),
-      location: "Barcelona, Spain",
-      user: {
-        id: 3,
-        name: "Elena Volkov",
-        username: "elena_dance",
-        profileImage: "https://api.dicebear.com/7.x/avataaars/svg?seed=elena",
-        tangoRoles: ["organizer", "dancer-follower", "photographer"],
-        verified: true
-      }
-    },
-  ];
+  // Fetch real posts from API - ZERO FAKE DATA policy
+  const { data: postsData, isLoading: postsLoading } = usePosts();
+  // Safely flatten posts from infinite query pages - each page is Post[]
+  const posts = postsData?.pages?.flatMap(page => 
+    Array.isArray(page) ? page : []
+  ).filter(post => post && post.id) || [];
 
   return (
     <div className="min-h-screen bg-background">
@@ -120,8 +67,8 @@ export default function FeedPrototypePage() {
           <div className="flex-1 max-w-4xl space-y-12">
             {/* UnifiedMemoriesFeed with integrated Post Creator and Filters */}
             <UnifiedMemoriesFeed
-              posts={mockPosts as any}
-              isLoading={false}
+              posts={posts}
+              isLoading={postsLoading}
               context={{ type: 'feed' }}
               showPostCreator={true}
               showFilters={true}

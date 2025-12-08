@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import DOMPurify from "dompurify";
 import { useRoute, Link } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -526,7 +527,7 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
                       </Link>
                       <div className="flex-1 min-w-0">
                         <Link href={`/events/${event.id}`}>
-                          <h3 className="text-lg font-serif font-bold mb-2 truncate cursor-pointer hover:text-primary" dangerouslySetInnerHTML={{ __html: event.title || "Untitled Event" }} data-testid={`event-title-${event.id}`} />
+                          <h3 className="text-lg font-serif font-bold mb-2 truncate cursor-pointer hover:text-primary" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(event.title || "Untitled Event") }} data-testid={`event-title-${event.id}`} />
                         </Link>
                         <div className="space-y-1 text-sm text-muted-foreground">
                           {(event.startDate || event.date) && (
@@ -647,7 +648,7 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
                 <Marker key={event.id || `map-event-${index}`} position={[event.lat, event.lng]}>
                   <Popup>
                     <div className="p-2">
-                      <h3 className="font-semibold mb-1" dangerouslySetInnerHTML={{ __html: event.title || "Event" }} />
+                      <h3 className="font-semibold mb-1" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(event.title || "Event") }} />
                       <p className="text-sm text-muted-foreground mb-2">
                         {safeDateFormat(event.startDate || event.date, "MMM dd, yyyy 'at' h:mm a")}
                       </p>
@@ -1208,7 +1209,7 @@ function GroupCityGuideTab({ group, groupCity, groupCountry }: {
           
           {group.description && (
             <div className="prose prose-lg dark:prose-invert max-w-none" data-testid="section-description">
-              <div dangerouslySetInnerHTML={{ __html: group.description }} />
+              <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(group.description || "") }} />
             </div>
           )}
         </CardContent>
@@ -1363,7 +1364,7 @@ function GroupCityGuideTab({ group, groupCity, groupCountry }: {
                 <h4 className="font-semibold mb-3">More About This Community</h4>
                 <div 
                   className="text-muted-foreground prose dark:prose-invert max-w-none"
-                  dangerouslySetInnerHTML={{ __html: group.longDescription }}
+                  dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(group.longDescription || "") }}
                 />
               </div>
             )}
@@ -1386,7 +1387,7 @@ function GroupCityGuideTab({ group, groupCity, groupCountry }: {
                 <h4 className="font-semibold mb-3">Community Guidelines</h4>
                 <div 
                   className="text-muted-foreground prose dark:prose-invert max-w-none"
-                  dangerouslySetInnerHTML={{ __html: group.rules }}
+                  dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(group.rules || "") }}
                 />
               </div>
             )}

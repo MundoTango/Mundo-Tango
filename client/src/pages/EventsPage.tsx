@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import DOMPurify from "dompurify";
 import { Link, useLocation } from "wouter";
 import { useTranslation } from "react-i18next";
 import { useEvents, useEventAttendance, useEventRSVPs, useMyEvents, useUpcomingEvents } from "@/hooks/useEvents";
@@ -149,7 +150,7 @@ function EventCard({ event, index = 0 }: { event: any; index?: number }) {
             <h3 
               className="text-2xl font-serif font-bold line-clamp-2 mb-2" 
               data-testid={`text-event-title-${eventData.id}`}
-              dangerouslySetInnerHTML={{ __html: eventData.title || "Untitled Event" }}
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(eventData.title || "Untitled Event") }}
             />
           </div>
         </div>
@@ -995,7 +996,7 @@ export default function EventsPage() {
                                 <div className="min-w-[200px] max-w-[280px]" data-testid={`popup-event-${eventId}`}>
                                   <h3 
                                     className="font-semibold text-base mb-2 line-clamp-2" 
-                                    dangerouslySetInnerHTML={{ __html: eventData.title || "Untitled Event" }} 
+                                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(eventData.title || "Untitled Event") }} 
                                   />
                                   
                                   {eventType && (
