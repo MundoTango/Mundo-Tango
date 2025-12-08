@@ -290,12 +290,14 @@ class ContinuousAuditService {
       
       // First ensure the page exists in pageAgentRegistry
       const { pageAgentRegistry } = await import('@shared/schema');
+      const pageName = pagePath.split('/').pop()?.replace(/\.tsx?$/, '') || 'Unknown';
       await db.insert(pageAgentRegistry).values({
         pageId,
-        pagePath,
-        pageType: report.pageType || 'unknown',
-        status: 'active',
-        priority: 3
+        pageName,
+        route: `/${pageName.toLowerCase()}`,
+        pageAgentId: 'continuous-audit-agent', // Default audit agent
+        metadata: { pageType: report.pageType || 'unknown' },
+        lastAudit: new Date(),
       }).onConflictDoNothing();
       
       await db.insert(pageAudits).values({

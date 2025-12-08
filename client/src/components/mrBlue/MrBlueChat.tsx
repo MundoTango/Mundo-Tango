@@ -290,17 +290,20 @@ Provide natural, conversational assistance based on where the user is in the pla
             }
           }
 
-          // Save messages
-          for (const msg of messages.slice(-10)) {
-            if (msg.id !== '1') { // Skip welcome message
-              await apiRequest('/api/mrblue/messages', {
-                method: 'POST',
-                body: JSON.stringify({
-                  conversationId: currentConversationId,
-                  role: msg.role,
-                  content: msg.content,
-                }),
-              });
+          // Save messages only if we have a valid conversation ID
+          const convId = currentConversationId;
+          if (convId) {
+            for (const msg of messages.slice(-10)) {
+              if (msg.id !== '1') { // Skip welcome message
+                await apiRequest('/api/mrblue/messages', {
+                  method: 'POST',
+                  body: JSON.stringify({
+                    conversationId: convId,
+                    role: msg.role,
+                    content: msg.content,
+                  }),
+                });
+              }
             }
           }
         } catch (error) {
@@ -504,8 +507,10 @@ Provide natural, conversational assistance based on where the user is in the pla
         
         setMessages(prev => [...prev, assistantMessage]);
         
-        // ✅ FIX: Refetch to update conversation history
-        await refetchMessages();
+        // ✅ FIX: Only refetch if we have a valid conversation ID
+        if (currentConversationId) {
+          await refetchMessages();
+        }
         
         toast({
           title: '✅ Vibe Coding Complete!',
@@ -528,8 +533,10 @@ Provide natural, conversational assistance based on where the user is in the pla
 
       setMessages(prev => [...prev, assistantMessage]);
       
-      // ✅ FIX: Refetch to update conversation history
-      await refetchMessages();
+      // ✅ FIX: Only refetch if we have a valid conversation ID
+      if (currentConversationId) {
+        await refetchMessages();
+      }
 
       // Auto-play audio if available
       if (data.audioUrl && audioRef.current) {
