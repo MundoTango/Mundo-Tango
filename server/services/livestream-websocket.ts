@@ -6,12 +6,39 @@ interface StreamConnection {
   ws: WebSocket;
   streamId: string;
   userId?: number;
+  isAlive: boolean;
+  lastPing?: number;
 }
 
 const connections = new Map<WebSocket, StreamConnection>();
 
+// Heartbeat interval (30 seconds) - P0 Fix (MB.MD v9.9.4)
+const HEARTBEAT_INTERVAL = 30000;
+const HEARTBEAT_TIMEOUT = 35000;
+
 export function initLivestreamWebSocket(server: Server) {
   const wss = new WebSocketServer({ noServer: true });
+
+  // Heartbeat mechanism to detect dead connections - P0 Fix
+  const heartbeatInterval = setInterval(() => {
+    wss.clients.forEach((ws) => {
+      const connection = connections.get(ws);
+      if (connection) {
+        if (!connection.isAlive) {
+          console.log(`[LiveStream WS] Terminating dead connection for stream ${connection.streamId}`);
+          connections.delete(ws);
+          return ws.terminate();
+        }
+        connection.isAlive = false;
+        connection.lastPing = Date.now();
+        ws.ping();
+      }
+    });
+  }, HEARTBEAT_INTERVAL);
+
+  wss.on("close", () => {
+    clearInterval(heartbeatInterval);
+  });
 
   server.on("upgrade", (request, socket, head) => {
     const { pathname } = parse(request.url || "", true);
@@ -37,9 +64,18 @@ export function initLivestreamWebSocket(server: Server) {
     const connection: StreamConnection = {
       ws,
       streamId,
+      isAlive: true,
     };
 
     connections.set(ws, connection);
+
+    // Handle pong response - marks connection as alive
+    ws.on("pong", () => {
+      const conn = connections.get(ws);
+      if (conn) {
+        conn.isAlive = true;
+      }
+    });
 
     ws.on("message", (data) => {
       try {

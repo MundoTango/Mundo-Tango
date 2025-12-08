@@ -484,7 +484,9 @@ router.get("/professionals/:role", async (req: Request, res: Response) => {
             totalReviews = userReviews.length;
             avgRating = userReviews.reduce((sum, r) => sum + (r.rating || 0), 0) / userReviews.length;
           }
-        } catch (e) {}
+        } catch (e: any) {
+          console.warn(`[PRO] Failed to fetch reviews for user ${p.id}:`, e.message);
+        }
 
         try {
           const eventParticipationsTable = await tableExists('event_participants');
@@ -500,7 +502,9 @@ router.get("/professionals/:role", async (req: Request, res: Response) => {
               );
             eventCount = result?.count || 0;
           }
-        } catch (e) {}
+        } catch (e: any) {
+          console.warn(`[PRO] Failed to fetch event count for user ${p.id}:`, e.message);
+        }
 
         return {
           ...p,

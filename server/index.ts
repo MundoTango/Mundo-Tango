@@ -167,6 +167,7 @@ app.use((req, res, next) => {
   // Sentry error handler (must be before other error handlers) - DISABLED (CSP FIX)
   // app.use(getSentryErrorHandler());
 
+  // Global JSON error handler - P0 Fix (MB.MD v9.9.4)
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";
@@ -175,10 +176,19 @@ app.use((req, res, next) => {
     logger.error(`Error ${status}: ${message}`, {
       error: err.message,
       stack: err.stack,
+      path: _req.path,
+      method: _req.method,
     });
 
-    res.status(status).json({ message });
-    throw err;
+    // Always return JSON, never HTML
+    if (!res.headersSent) {
+      res.status(status).json({ 
+        error: message,
+        status,
+        ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
+      });
+    }
+    // DO NOT throw err - this was causing unhandled promise rejections
   });
 
   // importantly only setup vite in development and after
