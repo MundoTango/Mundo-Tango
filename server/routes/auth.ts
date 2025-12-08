@@ -48,6 +48,15 @@ const verify2FASchema = z.object({
   code: z.string().length(6),
 });
 
+const changePasswordSchema = z.object({
+  currentPassword: z.string().min(1, "Current password is required"),
+  newPassword: z.string().min(8, "Password must be at least 8 characters"),
+  confirmPassword: z.string().min(1, "Please confirm your password"),
+}).refine((data) => data.newPassword === data.confirmPassword, {
+  message: "Passwords do not match",
+  path: ["confirmPassword"],
+});
+
 router.get("/check-username/:username", async (req: Request, res: Response) => {
   try {
     const { username } = req.params;
@@ -580,6 +589,40 @@ router.post("/2fa/disable", authenticateToken, async (req: AuthRequest, res: Res
       });
     }
     console.error("Disable 2FA error:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+router.post("/change-password", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ message: "Authentication required" });
+    }
+
+    const { currentPassword, newPassword } = changePasswordSchema.parse(req.body);
+
+    const user = await storage.getUser(req.user.id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const validPassword = await bcrypt.compare(currentPassword, user.password);
+    if (!validPassword) {
+      return res.status(401).json({ message: "Current password is incorrect" });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, BCRYPT_ROUNDS);
+    await storage.updateUser(req.user.id, { password: hashedPassword });
+
+    res.json({ message: "Password changed successfully" });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ 
+        message: "Validation error", 
+        errors: error.errors 
+      });
+    }
+    console.error("Change password error:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 });

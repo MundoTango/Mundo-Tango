@@ -239,9 +239,12 @@ export function generateComponentHTML(type: ComponentType, testId: string): stri
     'link': `
       <a 
         data-testid="${testId}" 
-        href="#" 
-        class="text-primary hover:underline font-medium"
+        href="javascript:void(0)"
+        role="button"
+        aria-label="Placeholder link - configure in editor"
+        class="text-primary hover:underline font-medium cursor-pointer"
         data-component-type="link"
+        data-placeholder="true"
       >
         Link Text
       </a>
@@ -252,12 +255,13 @@ export function generateComponentHTML(type: ComponentType, testId: string): stri
         data-testid="${testId}" 
         class="flex items-center gap-2 text-sm"
         data-component-type="breadcrumbs"
+        aria-label="Breadcrumb navigation"
       >
-        <a href="#" class="text-primary hover:underline">Home</a>
-        <span class="text-muted-foreground">/</span>
-        <a href="#" class="text-primary hover:underline">Category</a>
-        <span class="text-muted-foreground">/</span>
-        <span class="text-foreground font-medium">Current Page</span>
+        <a href="javascript:void(0)" class="text-primary hover:underline cursor-pointer" data-placeholder="true" aria-label="Home placeholder">Home</a>
+        <span class="text-muted-foreground" aria-hidden="true">/</span>
+        <a href="javascript:void(0)" class="text-primary hover:underline cursor-pointer" data-placeholder="true" aria-label="Category placeholder">Category</a>
+        <span class="text-muted-foreground" aria-hidden="true">/</span>
+        <span class="text-foreground font-medium" aria-current="page">Current Page</span>
       </nav>
     `,
     
@@ -283,13 +287,14 @@ export function generateComponentHTML(type: ComponentType, testId: string): stri
         data-testid="${testId}" 
         class="flex items-center justify-between p-4 bg-card border-b border-ocean-divider"
         data-component-type="navbar"
+        aria-label="Main navigation"
       >
         <div class="flex items-center gap-8">
           <span class="text-lg font-bold">Logo</span>
           <div class="flex gap-6">
-            <a href="#" class="text-sm hover:text-primary">Home</a>
-            <a href="#" class="text-sm hover:text-primary">About</a>
-            <a href="#" class="text-sm hover:text-primary">Contact</a>
+            <a href="javascript:void(0)" class="text-sm hover:text-primary cursor-pointer" data-placeholder="true" aria-label="Home navigation placeholder">Home</a>
+            <a href="javascript:void(0)" class="text-sm hover:text-primary cursor-pointer" data-placeholder="true" aria-label="About navigation placeholder">About</a>
+            <a href="javascript:void(0)" class="text-sm hover:text-primary cursor-pointer" data-placeholder="true" aria-label="Contact navigation placeholder">Contact</a>
           </div>
         </div>
         <button class="px-4 py-2 bg-primary text-primary-foreground rounded-md hover-elevate">

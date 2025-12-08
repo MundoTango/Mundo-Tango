@@ -958,6 +958,12 @@ export default function EventDetailsPage() {
                   </motion.div>
                 )}
 
+                {/* Event Team Section - Invited Participants */}
+                <EventParticipantManager 
+                  eventId={eventId} 
+                  isOrganizer={isOrganizer || false} 
+                />
+
                 {/* Source Info Section */}
                 {(event.sourceName || event.sourceUrl || (event.sourceUrls && event.sourceUrls.length > 0)) && (
                   <motion.div
