@@ -31,6 +31,59 @@ This document tracks all work related to Mr Blue's audio conversation capabiliti
 | 9 | Null conversationId in MrBlueChat.tsx | FIXED | P0 | Added checks before refetchMessages() |
 | 10 | Auto-save conversation race condition | FIXED | P1 | Use response.id directly for new conversations |
 
+---
+
+## MB.MD v9.9.4 Recursive Research Findings (2025-12-08)
+
+### CRITICAL ISSUES (P0)
+
+| ID | Issue | File(s) | Description |
+|----|-------|---------|-------------|
+| 11 | **Missing storage.saveAudioConversationSession()** | `server/storage.ts`, `server/services/mrblue/audioConversationService.ts` | Method called but NOT defined in IStorage interface - will cause runtime error |
+| 12 | **Duplicate /transcribe endpoints** | `server/routes/mrBlue.ts` | Two `/transcribe` routes at lines 162-220 and 1603-1672 - Groq Whisper vs OpenAI Whisper conflict |
+| 13 | **God user hardcoded (ID 147)** | `server/routes/mrBlue.ts:1750,1804` | Hardcoded fallback user ID for unauthenticated Mr Blue access - security concern |
+| 14 | **WebSocket URL undefined port** | Browser console logs | `wss://localhost:undefined/?token=...` - Vite HMR WebSocket configuration issue |
+
+### HIGH PRIORITY ISSUES (P1)
+
+| ID | Issue | File(s) | Description |
+|----|-------|---------|-------------|
+| 15 | **BackendOrchestrator TODOs** | `server/services/mrblue/BackendOrchestrator.ts` | 5 unimplemented methods: intelligent analysis (275), schema agent (292), API agent (304), security agent (316), service agent (328), workflow restart (373) |
+| 16 | **AutonomousEngine git rollback TODO** | `server/services/mrBlue/AutonomousEngine.ts:298` | Git rollback not implemented |
+| 17 | **AutoFixEngine test coverage TODO** | `server/services/mrBlue/AutoFixEngine.ts:651` | Test coverage calculation not implemented |
+| 18 | **GlobalKnowledgeBase TODOs** | `server/services/mrblue/GlobalKnowledgeBase.ts` | Persist to PostgreSQL (73), broadcast to agents (90), audit trail storage (93) not implemented |
+| 19 | **VibeCodingService LSP validation missing** | `server/services/mrBlue/VibeCodingService.ts:713-714` | LSP validation is placeholder - defaults to syntax validation |
+| 20 | **VibeCodingService file deletion skipped** | `server/services/mrBlue/VibeCodingService.ts:876` | File deletions are explicitly skipped in applyChanges() |
+| 21 | **Orchestrator fallback not complete** | `server/services/mrBlue/VibeCodingService.ts:599,603` | generateCodeWithOrchestrator falls back to standard - orchestrator incomplete |
+| 22 | **ElevenLabs voice deletion inconsistency** | `server/services/elevenlabsService.ts:322-323` | DB record deleted even if ElevenLabs API deletion fails |
+| 23 | **MrBlueChat optimistic state update** | `client/src/components/mrBlue/MrBlueChat.tsx:591-601` | saveEdit updates state before API success - no rollback on failure |
+| 24 | **MrBlueChat message sync race condition** | `client/src/components/mrBlue/MrBlueChat.tsx:98-110,195-216` | fetchedMessages/realtimeMessages replace state - could lose in-flight messages |
+| 25 | **Breadcrumbs endpoint not implemented** | `server/routes/mrBlue.ts:931-932` | Stores nothing - comment says "implement later" |
+
+### MEDIUM PRIORITY ISSUES (P2)
+
+| ID | Issue | File(s) | Description |
+|----|-------|---------|-------------|
+| 26 | **audioConversationService error handling gaps** | `server/services/mrblue/audioConversationService.ts` | No try-catch around mrBlueService.chat() and analyzeUXFeedback() calls |
+| 27 | **audioConversationService return type inconsistency** | `server/services/mrblue/audioConversationService.ts:135,145` | getSession returns undefined, endSession returns null for "not found" |
+| 28 | **VibeCodingService hardcoded values** | `server/services/mrBlue/VibeCodingService.ts` | maxRounds:2, minClarityThreshold:0.8 (189-191), model 'llama-3.3-70b-versatile' (633), criticalFiles list (683), targetUrl localhost:5000 (802-803) |
+| 29 | **ElevenLabs API key proceeds when missing** | `server/services/premium/elevenlabsVoiceService.ts:31-34` | Warns but continues initialization with empty apiKey |
+| 30 | **Generate/Modify code endpoints no auth middleware** | `server/routes/mrBlue.ts:1290-1329` | Check req.user but no authenticateToken middleware - bypasses auth if req.user set elsewhere |
+| 31 | **vibecodingRouter fallback to AI** | `client/src/lib/vibecodingRouter.ts:142-160` | Unrecognized commands silently fall back to AI - no logging of failure patterns |
+| 32 | **vibecodingRouter iframeInjector dependency** | `client/src/lib/vibecodingRouter.ts:67-92` | Visual changes require iframeInjector on window - fails silently if unavailable |
+| 33 | **MrBlueChat DOM snapshot limits AI context** | `client/src/components/mrBlue/MrBlueChat.tsx:460` | Input values masked with '***' for privacy - may limit AI understanding |
+| 34 | **MrBlueChat error handling silent** | `client/src/components/mrBlue/MrBlueChat.tsx:312-314,600-601,550-552` | Conversation save, edit, audio playback errors logged but no user feedback |
+| 35 | **Duplicate audio conversation services** | `server/services/mrblue/audioConversationService.ts` vs `server/services/mrBlue/AudioConversationService.ts` | Two files with similar names - potential conflict |
+
+### LOW PRIORITY ISSUES (P3)
+
+| ID | Issue | File(s) | Description |
+|----|-------|---------|-------------|
+| 36 | **recordMrBlueExecution hardcoded metrics** | `server/routes/mrBlue.ts:24-57` | quality, efficiency, confidence metrics are hardcoded |
+| 37 | **MrBlueChat vibecoding router cleanup** | `client/src/components/mrBlue/MrBlueChat.tsx:227-246` | No cleanup when enableVibecoding changes - memory leak potential |
+| 38 | **Missing agent_knowledge_versions table** | Server logs | DB relation error 42P01 during operation - table doesn't exist |
+| 39 | **Slow requests logged** | Server logs | `/analyze-error` (1556ms), `/search` (4864ms) - performance optimization needed |
+
 ## Sidebar Analysis (Memory Feed)
 
 ### Duplicate Sidebar Components Found:
