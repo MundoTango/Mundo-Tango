@@ -1,157 +1,72 @@
-import { useState, useRef, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
+import { useState, useEffect, useRef } from 'react';
 import { Mic, MicOff, Volume2, Loader2 } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
-import { cn } from '@/lib/utils';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { Button } from '@/components/ui/button';
 
 interface AudioConversationButtonProps {
-  variant?: 'default' | 'floating' | 'inline';
+  variant?: 'default' | 'floating';
   className?: string;
-  onTranscription?: (text: string) => void;
-  onResponse?: (text: string, audioUrl: string) => void;
 }
 
-export function AudioConversationButton({
-  variant = 'floating',
-  className,
-  onTranscription,
-  onResponse,
+export function AudioConversationButton({ 
+  variant = 'default',
+  className = '' 
 }: AudioConversationButtonProps) {
-  const [isRecording, setIsRecording] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
+  const [isRecording, setIsRecording] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [hasVoiceAccess, setHasVoiceAccess] = useState(false);
+  
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  const { toast } = useToast();
+  const audioContextRef = useRef<AudioContext | null>(null);
 
-  // Check user capabilities
-  const { data: user } = useQuery({ queryKey: ['/api/auth/me'] });
-  const hasVoiceAccess = user && user.tier >= 5; // Voice chat requires tier 5+
-
-  // Start session mutation
-  const startSessionMutation = useMutation({
-    mutationFn: async () => {
+  // Initialize audio session
+  const initializeSession = async () => {
+    try {
       const response = await fetch('/api/mrblue/audio/start', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({
-          context: {
-            page: window.location.pathname,
-            timestamp: new Date().toISOString(),
-          },
-        }),
+        headers: { 'Content-Type': 'application/json' }
       });
-
-      if (!response.ok) {
-        throw new Error('Failed to start audio session');
-      }
-
-      return response.json();
-    },
-    onSuccess: (data) => {
+      const data = await response.json();
       setSessionId(data.sessionId);
-    },
-    onError: (error: Error) => {
-      toast({
-        title: 'Session Error',
-        description: error.message,
-        variant: 'destructive',
-      });
-    },
-  });
-
-  // Process audio mutation
-  const processAudioMutation = useMutation({
-    mutationFn: async (audioBlob: Blob) => {
-      if (!sessionId) {
-        throw new Error('No active session');
-      }
-
-      const formData = new FormData();
-      formData.append('audio', audioBlob, 'recording.webm');
-      formData.append('sessionId', sessionId);
-      formData.append('context', JSON.stringify({
-        page: window.location.pathname,
-        timestamp: new Date().toISOString(),
-      }));
-
-      const response = await fetch('/api/mrblue/audio/process-audio', {
-        method: 'POST',
-        credentials: 'include',
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to process audio');
-      }
-
-      return response.json();
-    },
-    onSuccess: (data) => {
-      // Trigger callbacks
-      onTranscription?.(data.transcription);
-      onResponse?.(data.text, data.audioUrl);
-
-      // Play audio response
-      playAudioResponse(data.audioUrl);
-
-      toast({
-        title: 'Mr. Blue says:',
-        description: data.text.slice(0, 100) + '...',
-      });
-    },
-    onError: (error: Error) => {
-      toast({
-        title: 'Processing Error',
-        description: error.message,
-        variant: 'destructive',
-      });
-    },
-  });
-
-  // Initialize audio element
-  useEffect(() => {
-    audioRef.current = new Audio();
-    audioRef.current.onended = () => setIsPlaying(false);
-    
-    return () => {
-      audioRef.current?.pause();
-      audioRef.current = null;
-    };
-  }, []);
-
-  const playAudioResponse = (audioUrl: string) => {
-    if (audioRef.current) {
-      audioRef.current.src = audioUrl;
-      audioRef.current.play();
-      setIsPlaying(true);
+      return data.sessionId;
+    } catch (error) {
+      console.error('[AudioConversation] Session init error:', error);
+      return null;
     }
   };
 
-  const startRecording = async () => {
-    if (!hasVoiceAccess) {
-      toast({
-        title: 'Upgrade Required',
-        description: 'Voice chat requires Pro Tier 5 or higher',
-        variant: 'destructive',
-      });
-      return;
-    }
+  // Convert blob to base64
+  const blobToBase64 = (blob: Blob): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64 = reader.result as string;
+        resolve(base64.split(',')[1]); // Remove data:audio/webm;base64, prefix
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  };
 
+  // Start recording
+  const startRecording = async () => {
     try {
-      // Start session if not already started
-      if (!sessionId) {
-        await startSessionMutation.mutateAsync();
+      // Request microphone access
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      setHasVoiceAccess(true);
+
+      // Initialize session if needed
+      let currentSessionId = sessionId;
+      if (!currentSessionId) {
+        currentSessionId = await initializeSession();
+        if (!currentSessionId) return;
       }
 
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream, {
-        mimeType: 'audio/webm',
-      });
-
+      // Setup MediaRecorder
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = mediaRecorder;
       audioChunksRef.current = [];
 
       mediaRecorder.ondataavailable = (event) => {
@@ -161,46 +76,105 @@ export function AudioConversationButton({
       };
 
       mediaRecorder.onstop = async () => {
-        const audioBlob = new Blob(audioChunksRef.current, {
-          type: 'audio/webm',
-        });
+        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+        await processAudio(audioBlob, currentSessionId!);
         
-        // Process the audio
-        await processAudioMutation.mutateAsync(audioBlob);
-
-        // Stop tracks
-        stream.getTracks().forEach((track) => track.stop());
+        // Stop all tracks
+        stream.getTracks().forEach(track => track.stop());
       };
 
       mediaRecorder.start();
-      mediaRecorderRef.current = mediaRecorder;
       setIsRecording(true);
-
-      toast({
-        title: 'Recording Started',
-        description: 'Speak now...',
-      });
-    } catch (error: any) {
-      toast({
-        title: 'Microphone Error',
-        description: error.message || 'Failed to access microphone',
-        variant: 'destructive',
-      });
+    } catch (error) {
+      console.error('[AudioConversation] Recording error:', error);
+      alert('Microphone access denied or not available');
     }
   };
 
+  // Stop recording
   const stopRecording = () => {
     if (mediaRecorderRef.current && isRecording) {
       mediaRecorderRef.current.stop();
       setIsRecording(false);
-
-      toast({
-        title: 'Recording Stopped',
-        description: 'Processing your message...',
-      });
     }
   };
 
+  // Process audio (transcribe and get response)
+  const processAudio = async (audioBlob: Blob, sessionId: string) => {
+    try {
+      setIsProcessing(true);
+
+      // Convert to base64
+      const audioBase64 = await blobToBase64(audioBlob);
+
+      // Send to backend
+      const response = await fetch('/api/mrblue/audio/transcribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          sessionId,
+          audioData: audioBase64
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`Transcription failed: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      
+      console.log('[AudioConversation] Transcription:', data.transcription);
+      console.log('[AudioConversation] Response:', data.response);
+      console.log('[AudioConversation] Vibe Coding:', data.isVibeCoding);
+
+      // Play audio response
+      if (data.audioResponse) {
+        await playAudioResponse(data.audioResponse);
+      }
+
+    } catch (error) {
+      console.error('[AudioConversation] Processing error:', error);
+      alert('Failed to process audio. Please try again.');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  // Play audio response from ElevenLabs
+  const playAudioResponse = async (base64Audio: string) => {
+    try {
+      setIsPlaying(true);
+
+      // Convert base64 to array buffer
+      const binaryString = atob(base64Audio);
+      const bytes = new Uint8Array(binaryString.length);
+      for (let i = 0; i < binaryString.length; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+      }
+
+      // Create audio context if needed
+      if (!audioContextRef.current) {
+        audioContextRef.current = new AudioContext();
+      }
+
+      // Decode and play
+      const audioBuffer = await audioContextRef.current.decodeAudioData(bytes.buffer);
+      const source = audioContextRef.current.createBufferSource();
+      source.buffer = audioBuffer;
+      source.connect(audioContextRef.current.destination);
+      
+      source.onended = () => {
+        setIsPlaying(false);
+      };
+
+      source.start(0);
+    } catch (error) {
+      console.error('[AudioConversation] Playback error:', error);
+      setIsPlaying(false);
+    }
+  };
+
+  // Toggle recording
   const toggleRecording = () => {
     if (isRecording) {
       stopRecording();
@@ -209,43 +183,32 @@ export function AudioConversationButton({
     }
   };
 
-  // Floating button variant
-  if (variant === 'floating') {
-    return (
-      <Button
-        onClick={toggleRecording}
-        disabled={processAudioMutation.isPending || !hasVoiceAccess}
-        className={cn(
-          'fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg z-50',
-          isRecording && 'bg-red-500 hover:bg-red-600 animate-pulse',
-          isPlaying && 'bg-blue-500 hover:bg-blue-600',
-          className
-        )}
-        size="icon"
-      >
-        {processAudioMutation.isPending ? (
-          <Loader2 className="h-6 w-6 animate-spin" />
-        ) : isPlaying ? (
-          <Volume2 className="h-6 w-6" />
-        ) : isRecording ? (
-          <MicOff className="h-6 w-6" />
-        ) : (
-          <Mic className="h-6 w-6" />
-        )}
-      </Button>
-    );
-  }
+  // End session on unmount
+  useEffect(() => {
+    return () => {
+      if (sessionId) {
+        fetch('/api/mrblue/audio/stop', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sessionId })
+        }).catch(console.error);
+      }
+    };
+  }, [sessionId]);
 
-  // Inline button variant
+  // Button states
+  const isDisabled = isProcessing || isPlaying;
+  const buttonVariant = isRecording ? 'destructive' : 'default';
+  
   return (
     <Button
       onClick={toggleRecording}
-      disabled={processAudioMutation.isPending || !hasVoiceAccess}
-      variant={isRecording ? 'destructive' : 'default'}
-      className={cn(isRecording && 'animate-pulse', className)}
+      disabled={isDisabled}
+      variant={buttonVariant}
+      className={`animate-pulse ${isRecording ? 'animate-pulse' : ''} ${className}`}
       size="icon"
     >
-      {processAudioMutation.isPending ? (
+      {isProcessing ? (
         <Loader2 className="h-4 w-4 animate-spin" />
       ) : isPlaying ? (
         <Volume2 className="h-4 w-4" />
@@ -257,3 +220,5 @@ export function AudioConversationButton({
     </Button>
   );
 }
+
+export default AudioConversationButton;
