@@ -1,4 +1,4 @@
-import { lumaService } from './luma-service';
+import { lumaVideoService } from './lumaVideoServicee';
 import axios from 'axios';
 
 const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY;
@@ -112,13 +112,13 @@ class MrBlueService {
   private async generateVideo(text: string): Promise<string> {
     try {
       const prompt = `A friendly male tango expert named Mr Blue speaking to camera, professional setting, warm lighting`;
-      const result = await lumaService.generateTextToVideo(prompt, {
+      const result = await lumaVideoService.generateTextToVideo(prompt, {
         model: this.config.videoModel,
         resolution: '720p',
       });
 
       // Poll for completion
-      const completed = await lumaService.waitForCompletion(result.id, 120000, 5000);
+      const completed = await lumaVideoService.waitForCompletion(result.id, 120000, 5000);
       return completed.video?.url || '';
     } catch (error: any) {
       console.error('Video generation error:', error);
@@ -127,7 +127,7 @@ class MrBlueService {
   }
 
   async generateAvatar(prompt: string): Promise<{ videoUrl: string; generationId: string }> {
-    const result = await lumaService.generateTextToVideo(
+    const result = await lumaVideoService.generateTextToVideo(
       `Mr Blue, a friendly tango expert avatar: ${prompt}`,
       { model: this.config.videoModel, resolution: '720p' }
     );
