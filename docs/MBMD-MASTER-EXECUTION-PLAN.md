@@ -10,11 +10,18 @@
 
 | Category | Count | Status |
 |----------|-------|--------|
-| **Total Items** | 124 | In Progress (110/124) |
+| **Total Items** | 134 | In Progress (110/134) |
 | **P0 Critical** | 8 | ✅ COMPLETE |
-| **P1 High** | 65 | 62/65 (95%) - 3 new P1s from Dive #6 |
-| **P2 Medium** | 51 | 48/51 (94%) - 11 new P2s from Dive #6 |
-| **NEW (Dive #6)** | 14 | 0/14 (0%) - Just discovered |
+| **P1 High** | 66 | 62/66 (94%) - 4 new P1s |
+| **P2 Medium** | 60 | 48/60 (80%) - 12 new P2s |
+| **NEW (Dive #6-7)** | 24 | 0/24 (0%) - Recursive analysis |
+
+### Codebase Scale
+| Metric | Count |
+|--------|-------|
+| Client files (.ts/.tsx) | 866 |
+| Server files (.ts) | 760 |
+| **Total TypeScript files** | **1,626** |
 
 **Estimated Time:** 200 hours sequential | **~65 hours with MB.MD parallelism**
 
@@ -262,6 +269,26 @@
 | 123 | **Promise.all without error handling** | server/ (parallel ops may fail silently) | 95 usages | P2 |
 | 124 | **@ts-ignore in UnifiedLocationPicker** | client/src/components/input/ | 13 annotations | P2 |
 
+## Session Dec 8, 2025 - Recursive Dive #7 (Latest)
+
+| # | Finding | Location | Count | Priority |
+|---|---------|----------|-------|----------|
+| 125 | **HACK/XXX/TEMP/WORKAROUND comments** | Codebase-wide (technical debt markers) | 180+ files | P2 |
+| 126 | **Inline styles (style={{)** | client/src (breaks Tailwind conventions) | 800+ usages | P2 |
+| 127 | **!important CSS overrides** | 5 client files (CSS specificity issues) | 5 files | P2 |
+| 128 | **eslint-disable comments** | 2 files bypassing linter rules | 2 files | P2 |
+| 129 | **Direct DOM manipulation** | document.get/query/createElement usages | 42 files | P2 |
+| 130 | **window. global access** | client/src (potential SSR issues) | 100+ usages | P2 |
+| 131 | **JSON.parse/stringify** | client/src (may throw on invalid JSON) | 110+ usages | P2 |
+| 132 | **Accessibility gaps (aria-/role=)** | client/src/pages (only 14 pages with a11y) | 14/170+ pages | P1 |
+| 133 | **Hardcoded px values** | client/src (61 files with px) units) | 61 files | P2 |
+| 134 | **unknown type usages** | client/src (weak typing) | 34 instances | P2 |
+
+### Codebase Scale:
+- **Client files:** 866 .ts/.tsx files
+- **Server files:** 760 .ts files
+- **Total:** 1,626 TypeScript files
+
 ### Critical XSS Files Requiring DOMPurify (P1):
 - `EventsPage.tsx`, `EventDetailsPage.tsx`, `GroupDetailsPage.tsx`
 - `UnifiedInbox.tsx`, `LegalSignaturePage.tsx`, `PostPreview.tsx`
@@ -368,6 +395,7 @@ Add new findings to "NEW FINDINGS LOG" section with date and priority.
 | Dec 8, 2025 | 1.2 | A0-A2 COMPLETE: Fixed 8 P0 blockers, added API key validation (Resend, Facebook), removed 3 backup/deprecated files |
 | Dec 8, 2025 | 1.3 | Added 8 NEW findings from dive #5 (110 total) |
 | Dec 8, 2025 | 1.4 | **Recursive Dive #6**: Added 14 NEW findings (124 total) - XSS risks, type safety epidemic, mock data remnants, hardcoded stats |
+| Dec 8, 2025 | 1.5 | **Recursive Dive #7**: Added 10 NEW findings (134 total) - HACK/TEMP comments, inline styles, accessibility gaps, DOM manipulation, CSS !important |
 
 ---
 
