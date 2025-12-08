@@ -305,10 +305,10 @@ export function PROGroupPublicPage({ roleSlug, title, description, icon: Icon, c
           <TabsContent value="featured" className="space-y-6">
             <Card className="bg-background/50 border-white/10">
               <CardContent className="p-12 text-center">
-                <Star className="w-12 h-12 mx-auto mb-4 text-yellow-500" />
-                <h3 className="text-lg font-semibold mb-2">Featured {title}s Coming Soon</h3>
+                <Star className="w-12 h-12 mx-auto mb-4 text-yellow-500/50" />
+                <h3 className="text-lg font-semibold mb-2">No Featured {title}s Yet</h3>
                 <p className="text-muted-foreground">
-                  Top-rated professionals will be showcased here
+                  Top-rated professionals with verified reviews will be showcased here
                 </p>
               </CardContent>
             </Card>

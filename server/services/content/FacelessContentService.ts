@@ -436,6 +436,15 @@ Format your response as JSON with: title, script, hashtags (array), callToAction
   }
 
   /**
+   * Get all content results
+   */
+  getAllResults(): ContentResult[] {
+    return Array.from(this.results.values()).sort((a, b) => 
+      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+  }
+
+  /**
    * Get all templates
    */
   getTemplates(): ContentTemplate[] {

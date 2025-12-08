@@ -283,6 +283,8 @@ import {
   insertUserPrivacySettingsSchema,
   venues,
   housingListings,
+  notificationPreferences,
+  emailPreferences,
 } from "@shared/schema";
 import { 
   esaAgents,
@@ -9594,6 +9596,59 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('[Email] Update preferences error:', error);
       res.status(500).json({ message: 'Failed to update email preferences' });
+    }
+  });
+
+  // ============================================================================
+  // NOTIFICATION PREFERENCES (Push/In-App)
+  // ============================================================================
+
+  // Get notification preferences
+  app.get("/api/notifications/preferences", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      let prefs = await db.query.notificationPreferences.findFirst({
+        where: eq(notificationPreferences.userId, req.user!.id)
+      });
+      
+      // Create default preferences if none exist
+      if (!prefs) {
+        const created = await db.insert(notificationPreferences)
+          .values({ userId: req.user!.id })
+          .returning();
+        prefs = created[0];
+      }
+      
+      res.json(prefs);
+    } catch (error) {
+      console.error('[Notifications] Get preferences error:', error);
+      res.status(500).json({ message: 'Failed to fetch notification preferences' });
+    }
+  });
+
+  // Update notification preferences
+  app.patch("/api/notifications/preferences", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      // Check if preferences exist, create if not
+      let existing = await db.query.notificationPreferences.findFirst({
+        where: eq(notificationPreferences.userId, req.user!.id)
+      });
+      
+      if (!existing) {
+        const created = await db.insert(notificationPreferences)
+          .values({ userId: req.user!.id, ...req.body })
+          .returning();
+        return res.json(created[0]);
+      }
+
+      const updated = await db.update(notificationPreferences)
+        .set({ ...req.body, updatedAt: new Date() })
+        .where(eq(notificationPreferences.userId, req.user!.id))
+        .returning();
+      
+      res.json(updated[0]);
+    } catch (error) {
+      console.error('[Notifications] Update preferences error:', error);
+      res.status(500).json({ message: 'Failed to update notification preferences' });
     }
   });
 

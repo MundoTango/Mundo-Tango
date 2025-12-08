@@ -16086,6 +16086,50 @@ export type InsertEmailLog = z.infer<typeof insertEmailLogSchema>;
 export type SelectEmailLog = typeof emailLogs.$inferSelect;
 
 // ============================================================================
+// NOTIFICATION PREFERENCES (Push/In-App/Browser)
+// ============================================================================
+
+export const notificationPreferences = pgTable(
+  "notification_preferences",
+  {
+    id: serial("id").primaryKey(),
+    userId: integer("user_id")
+      .references(() => users.id)
+      .notNull()
+      .unique(),
+
+    // Browser Push Notifications
+    browserPushEnabled: boolean("browser_push_enabled").default(false),
+    pushEvents: boolean("push_events").default(true),
+    pushMessages: boolean("push_messages").default(true),
+    pushFriendRequests: boolean("push_friend_requests").default(true),
+    pushGroupInvites: boolean("push_group_invites").default(true),
+    pushReactions: boolean("push_reactions").default(false),
+
+    // In-App Notifications
+    inAppEnabled: boolean("in_app_enabled").default(true),
+    inAppEvents: boolean("in_app_events").default(true),
+    inAppMessages: boolean("in_app_messages").default(true),
+    inAppFriendRequests: boolean("in_app_friend_requests").default(true),
+    inAppGroupInvites: boolean("in_app_group_invites").default(true),
+    inAppReactions: boolean("in_app_reactions").default(true),
+
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => ({
+    userIdIdx: index("notification_preferences_user_id_idx").on(table.userId),
+  }),
+);
+
+export const insertNotificationPreferencesSchema = createInsertSchema(
+  notificationPreferences,
+).omit({ id: true, createdAt: true, updatedAt: true });
+export const selectNotificationPreferencesSchema = createSelectSchema(notificationPreferences);
+export type InsertNotificationPreferences = z.infer<typeof insertNotificationPreferencesSchema>;
+export type SelectNotificationPreferences = typeof notificationPreferences.$inferSelect;
+
+// ============================================================================
 // VISUAL EDITOR + MR. BLUE - UI TESTING & INTELLIGENCE TABLES
 // ============================================================================
 

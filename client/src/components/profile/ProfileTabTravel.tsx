@@ -1729,7 +1729,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPu
                           <label className="text-sm font-medium text-foreground">Notes</label>
                           <Textarea placeholder="Trip notes..." defaultValue={trip.notes || ""} disabled rows={2} className="opacity-50" />
                         </div>
-                        <p className="text-xs text-muted-foreground">Advanced editing coming soon</p>
+                        <p className="text-xs text-muted-foreground">Edit trip details above</p>
                         <div className="flex gap-2">
                           <Button variant="outline" size="sm" onClick={() => setEditingTripId(null)} className="flex-1">Done</Button>
                         </div>

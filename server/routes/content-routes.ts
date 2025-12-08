@@ -91,6 +91,15 @@ router.get('/status/:id', (req: Request, res: Response) => {
 });
 
 /**
+ * GET /api/content/queue
+ * Get all content jobs in the queue
+ */
+router.get('/queue', (_req: Request, res: Response) => {
+  const allResults = facelessContentService.getAllResults();
+  res.json(allResults);
+});
+
+/**
  * POST /api/content/script
  * Generate script only
  */

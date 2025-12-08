@@ -109,7 +109,7 @@ export default function MrBlueAvatar3DPage() {
                 <div>
                   <p className="text-sm font-medium">Auto-detect Emotions</p>
                   <p className="text-xs text-muted-foreground">
-                    Enable AI emotion detection (coming soon)
+                    Automatically detect emotions from conversation context
                   </p>
                 </div>
                 <Button

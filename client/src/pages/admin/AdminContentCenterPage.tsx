@@ -5,17 +5,20 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
 import { 
   Wand2, Mic, Video, Calendar, BarChart3, 
-  Play, Pause, RefreshCw, Download, Share2,
-  Instagram, Youtube, Facebook, Music2
+  RefreshCw, Download, Share2, Clock, CheckCircle2,
+  AlertCircle, Loader2, Upload, Settings, ExternalLink,
+  Instagram, Youtube, Facebook, Music2, Play, Trash2,
+  FileText, TrendingUp, Users, Eye
 } from 'lucide-react';
+import { format } from 'date-fns';
 
 interface ContentTemplate {
   id: string;
@@ -33,6 +36,16 @@ interface ContentResult {
   voiceUrl?: string;
   videoUrl?: string;
   error?: string;
+  createdAt?: string;
+  completedAt?: string;
+}
+
+interface VoiceInfo {
+  voice_id: string;
+  name: string;
+  category?: string;
+  labels?: Record<string, string>;
+  preview_url?: string;
 }
 
 export default function AdminContentCenterPage() {
@@ -44,7 +57,7 @@ export default function AdminContentCenterPage() {
   const [platforms, setPlatforms] = useState<string[]>(['tiktok', 'instagram']);
   const [activeContentId, setActiveContentId] = useState<string | null>(null);
 
-  const { data: templates } = useQuery<ContentTemplate[]>({
+  const { data: templates, isLoading: templatesLoading } = useQuery<ContentTemplate[]>({
     queryKey: ['/api/content/templates']
   });
 
@@ -52,6 +65,16 @@ export default function AdminContentCenterPage() {
     queryKey: ['/api/content/status', activeContentId],
     enabled: !!activeContentId,
     refetchInterval: activeContentId ? 3000 : false
+  });
+
+  const { data: queueData, isLoading: queueLoading, refetch: refetchQueue } = useQuery<ContentResult[]>({
+    queryKey: ['/api/content/queue'],
+    refetchInterval: 10000
+  });
+
+  const { data: voicesData, isLoading: voicesLoading } = useQuery<{ success: boolean; voices: VoiceInfo[] }>({
+    queryKey: ['/api/voice-cloning/voices'],
+    retry: false
   });
 
   const generateMutation = useMutation({
@@ -67,27 +90,11 @@ export default function AdminContentCenterPage() {
     },
     onSuccess: (data) => {
       setActiveContentId(data.id);
+      queryClient.invalidateQueries({ queryKey: ['/api/content/queue'] });
       toast({ title: 'Content generation started!' });
     },
     onError: (error: Error) => {
       toast({ title: 'Generation failed', description: error.message, variant: 'destructive' });
-    }
-  });
-
-  const batchMutation = useMutation({
-    mutationFn: async (topics: string[]) => {
-      const response = await apiRequest('POST', '/api/content/batch', {
-        templates: [selectedTemplate || 'tango_tip_beginner'],
-        topics,
-        count: topics.length,
-        platforms,
-        scheduleDays: 7,
-        userId: 1
-      });
-      return response.json();
-    },
-    onSuccess: () => {
-      toast({ title: 'Batch generation started!' });
     }
   });
 
@@ -109,9 +116,27 @@ export default function AdminContentCenterPage() {
     }
   };
 
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'completed': return <CheckCircle2 className="h-4 w-4 text-green-500" />;
+      case 'failed': return <AlertCircle className="h-4 w-4 text-destructive" />;
+      case 'pending': return <Clock className="h-4 w-4 text-muted-foreground" />;
+      default: return <Loader2 className="h-4 w-4 animate-spin text-primary" />;
+    }
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'completed': return 'default';
+      case 'failed': return 'destructive';
+      case 'pending': return 'secondary';
+      default: return 'outline';
+    }
+  };
+
   return (
     <div className="container mx-auto p-6 max-w-7xl">
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-6 gap-4">
         <div>
           <h1 className="text-3xl font-bold" data-testid="text-page-title">Content Center</h1>
           <p className="text-muted-foreground">Faceless content marketing automation</p>
@@ -238,8 +263,8 @@ export default function AdminContentCenterPage() {
               <CardContent>
                 {contentStatus ? (
                   <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <Badge variant={contentStatus.status === 'completed' ? 'default' : 'secondary'}>
+                    <div className="flex items-center justify-between gap-2">
+                      <Badge variant={getStatusColor(contentStatus.status)}>
                         {contentStatus.status}
                       </Badge>
                       <span className="text-sm text-muted-foreground">
@@ -288,7 +313,9 @@ export default function AdminContentCenterPage() {
                   </div>
                 ) : (
                   <div className="text-center text-muted-foreground py-8">
-                    Generate content to see progress
+                    <FileText className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                    <p>Generate content to see progress</p>
+                    <p className="text-sm mt-1">Enter a topic and click Generate</p>
                   </div>
                 )}
               </CardContent>
@@ -301,113 +328,449 @@ export default function AdminContentCenterPage() {
               <CardDescription>Pre-built templates for quick content creation</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {templates?.map(template => (
-                  <Card 
-                    key={template.id} 
-                    className={`cursor-pointer hover-elevate ${selectedTemplate === template.id ? 'ring-2 ring-primary' : ''}`}
-                    onClick={() => setSelectedTemplate(template.id)}
-                    data-testid={`card-template-${template.id}`}
-                  >
-                    <CardContent className="p-4">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <h4 className="font-semibold">{template.name}</h4>
-                          <p className="text-sm text-muted-foreground capitalize">{template.category.replace('_', ' ')}</p>
+              {templatesLoading ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {[1, 2, 3].map(i => (
+                    <Skeleton key={i} className="h-24 w-full" />
+                  ))}
+                </div>
+              ) : templates && templates.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {templates.map(template => (
+                    <Card 
+                      key={template.id} 
+                      className={`cursor-pointer hover-elevate ${selectedTemplate === template.id ? 'ring-2 ring-primary' : ''}`}
+                      onClick={() => setSelectedTemplate(template.id)}
+                      data-testid={`card-template-${template.id}`}
+                    >
+                      <CardContent className="p-4">
+                        <div className="flex items-start justify-between gap-2">
+                          <div>
+                            <h4 className="font-semibold">{template.name}</h4>
+                            <p className="text-sm text-muted-foreground capitalize">{template.category.replace('_', ' ')}</p>
+                          </div>
+                          <Badge variant="outline">{template.duration}</Badge>
                         </div>
-                        <Badge variant="outline">{template.duration}</Badge>
-                      </div>
-                      <div className="flex gap-1 mt-2">
-                        {template.platforms.map(p => (
-                          <span key={p} className="text-muted-foreground">
-                            {getPlatformIcon(p)}
-                          </span>
-                        ))}
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
+                        <div className="flex gap-1 mt-2">
+                          {template.platforms.map(p => (
+                            <span key={p} className="text-muted-foreground">
+                              {getPlatformIcon(p)}
+                            </span>
+                          ))}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8 text-muted-foreground">
+                  <Wand2 className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                  <p>No templates available</p>
+                  <p className="text-sm mt-1">Templates will appear here once configured</p>
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
 
         <TabsContent value="voice">
-          <Card>
-            <CardHeader>
-              <CardTitle>Voice Studio</CardTitle>
-              <CardDescription>ElevenLabs voice cloning and synthesis</CardDescription>
-            </CardHeader>
-            <CardContent className="text-center py-12">
-              <Mic className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-              <p className="text-muted-foreground">Voice cloning interface coming soon</p>
-              <p className="text-sm text-muted-foreground mt-2">
-                Configure your ElevenLabs voice clones for automated content
-              </p>
-            </CardContent>
-          </Card>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <Card className="lg:col-span-2">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Mic className="h-5 w-5" />
+                  Available Voices
+                </CardTitle>
+                <CardDescription>ElevenLabs voices for content narration</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {voicesLoading ? (
+                  <div className="space-y-3">
+                    {[1, 2, 3].map(i => (
+                      <Skeleton key={i} className="h-16 w-full" />
+                    ))}
+                  </div>
+                ) : voicesData?.voices && voicesData.voices.length > 0 ? (
+                  <div className="space-y-3">
+                    {voicesData.voices.map((voice) => (
+                      <div 
+                        key={voice.voice_id} 
+                        className="flex items-center justify-between p-4 border rounded-lg hover-elevate"
+                        data-testid={`voice-item-${voice.voice_id}`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                            <Mic className="h-5 w-5 text-primary" />
+                          </div>
+                          <div>
+                            <p className="font-medium">{voice.name}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {voice.category || 'Custom Voice'}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex gap-2">
+                          {voice.preview_url && (
+                            <Button size="sm" variant="outline" data-testid={`button-preview-${voice.voice_id}`}>
+                              <Play className="h-4 w-4" />
+                            </Button>
+                          )}
+                          <Button size="sm" variant="outline" data-testid={`button-use-${voice.voice_id}`}>
+                            Use Voice
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <Mic className="h-16 w-16 mx-auto text-muted-foreground/50 mb-4" />
+                    <p className="font-medium">No voices configured</p>
+                    <p className="text-sm text-muted-foreground mt-2 max-w-md mx-auto">
+                      Clone your voice or use ElevenLabs pre-made voices for content narration. 
+                      Connect your ElevenLabs API key in settings to get started.
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Voice Cloning</CardTitle>
+                <CardDescription>Create a custom voice clone</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="border-2 border-dashed rounded-lg p-6 text-center">
+                  <Upload className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
+                  <p className="text-sm text-muted-foreground">
+                    Upload audio samples to create a voice clone
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <p className="text-sm font-medium">Requirements:</p>
+                  <ul className="text-sm text-muted-foreground space-y-1">
+                    <li className="flex items-center gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-green-500" />
+                      3-5 minutes of clear audio
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-green-500" />
+                      Minimal background noise
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-green-500" />
+                      Single speaker only
+                    </li>
+                  </ul>
+                </div>
+                <Button className="w-full" variant="outline" disabled>
+                  <Settings className="h-4 w-4 mr-2" />
+                  Configure in Settings
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
 
         <TabsContent value="avatar">
-          <Card>
-            <CardHeader>
-              <CardTitle>Avatar Video</CardTitle>
-              <CardDescription>D-ID and HeyGen talking avatar generation</CardDescription>
-            </CardHeader>
-            <CardContent className="text-center py-12">
-              <Video className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-              <p className="text-muted-foreground">Avatar video interface coming soon</p>
-              <p className="text-sm text-muted-foreground mt-2">
-                Create talking avatar videos from your scripts
-              </p>
-            </CardContent>
-          </Card>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Video className="h-5 w-5" />
+                  Avatar Video Generation
+                </CardTitle>
+                <CardDescription>Create talking avatar videos with D-ID or HeyGen</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center py-8">
+                  <div className="h-32 w-32 mx-auto mb-4 rounded-full bg-muted flex items-center justify-center">
+                    <Video className="h-16 w-16 text-muted-foreground/50" />
+                  </div>
+                  <p className="font-medium">Avatar video generation</p>
+                  <p className="text-sm text-muted-foreground mt-2 max-w-md mx-auto">
+                    Convert your scripts into engaging talking avatar videos. 
+                    Perfect for faceless content creation across social platforms.
+                  </p>
+                  <div className="flex justify-center gap-3 mt-6">
+                    <Button variant="outline" disabled>
+                      <Settings className="h-4 w-4 mr-2" />
+                      Configure D-ID
+                    </Button>
+                    <Button variant="outline" disabled>
+                      <Settings className="h-4 w-4 mr-2" />
+                      Configure HeyGen
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>How It Works</CardTitle>
+                <CardDescription>Avatar video creation process</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="flex gap-4 items-start">
+                    <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-sm font-medium shrink-0">1</div>
+                    <div>
+                      <p className="font-medium">Generate Script</p>
+                      <p className="text-sm text-muted-foreground">AI creates an engaging script from your topic</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-4 items-start">
+                    <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-sm font-medium shrink-0">2</div>
+                    <div>
+                      <p className="font-medium">Synthesize Voice</p>
+                      <p className="text-sm text-muted-foreground">Your cloned voice narrates the script</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-4 items-start">
+                    <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-sm font-medium shrink-0">3</div>
+                    <div>
+                      <p className="font-medium">Create Avatar</p>
+                      <p className="text-sm text-muted-foreground">D-ID or HeyGen generates a talking avatar video</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-4 items-start">
+                    <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-sm font-medium shrink-0">4</div>
+                    <div>
+                      <p className="font-medium">Publish</p>
+                      <p className="text-sm text-muted-foreground">Schedule or post directly to social platforms</p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
 
         <TabsContent value="queue">
           <Card>
-            <CardHeader>
-              <CardTitle>Processing Queue</CardTitle>
-              <CardDescription>Batch content generation status</CardDescription>
+            <CardHeader className="flex flex-row items-center justify-between gap-4 space-y-0">
+              <div>
+                <CardTitle>Processing Queue</CardTitle>
+                <CardDescription>Content generation jobs</CardDescription>
+              </div>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => refetchQueue()}
+                data-testid="button-refresh-queue"
+              >
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Refresh
+              </Button>
             </CardHeader>
-            <CardContent className="text-center py-12">
-              <RefreshCw className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-              <p className="text-muted-foreground">Queue management interface coming soon</p>
-              <p className="text-sm text-muted-foreground mt-2">
-                Monitor and manage batch content generation jobs
-              </p>
+            <CardContent>
+              {queueLoading ? (
+                <div className="space-y-3">
+                  {[1, 2, 3].map(i => (
+                    <Skeleton key={i} className="h-20 w-full" />
+                  ))}
+                </div>
+              ) : queueData && queueData.length > 0 ? (
+                <div className="space-y-3">
+                  {queueData.map((item) => (
+                    <div 
+                      key={item.id} 
+                      className="p-4 border rounded-lg"
+                      data-testid={`queue-item-${item.id}`}
+                    >
+                      <div className="flex items-center justify-between gap-4 mb-2">
+                        <div className="flex items-center gap-3">
+                          {getStatusIcon(item.status)}
+                          <div>
+                            <p className="font-medium">{item.script?.title || 'Generating...'}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {item.createdAt ? format(new Date(item.createdAt), 'MMM d, yyyy h:mm a') : 'Processing'}
+                            </p>
+                          </div>
+                        </div>
+                        <Badge variant={getStatusColor(item.status)}>
+                          {item.status}
+                        </Badge>
+                      </div>
+                      <Progress value={item.progress} className="h-2" />
+                      {item.error && (
+                        <p className="text-sm text-destructive mt-2">{item.error}</p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <RefreshCw className="h-16 w-16 mx-auto text-muted-foreground/50 mb-4" />
+                  <p className="font-medium">No jobs in queue</p>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    Generated content jobs will appear here. Start by creating content in the Scripts tab.
+                  </p>
+                  <Button 
+                    className="mt-4"
+                    variant="outline"
+                    onClick={() => setActiveTab('scripts')}
+                    data-testid="button-go-to-scripts"
+                  >
+                    <Wand2 className="h-4 w-4 mr-2" />
+                    Generate Content
+                  </Button>
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
 
         <TabsContent value="schedule">
-          <Card>
-            <CardHeader>
-              <CardTitle>Content Calendar</CardTitle>
-              <CardDescription>Schedule posts across all platforms</CardDescription>
-            </CardHeader>
-            <CardContent className="text-center py-12">
-              <Calendar className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-              <p className="text-muted-foreground">Content calendar interface coming soon</p>
-              <p className="text-sm text-muted-foreground mt-2">
-                View and manage scheduled posts
-              </p>
-            </CardContent>
-          </Card>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <Card className="lg:col-span-2">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Calendar className="h-5 w-5" />
+                  Content Calendar
+                </CardTitle>
+                <CardDescription>Scheduled posts across all platforms</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center py-12">
+                  <Calendar className="h-16 w-16 mx-auto text-muted-foreground/50 mb-4" />
+                  <p className="font-medium">No scheduled posts</p>
+                  <p className="text-sm text-muted-foreground mt-2 max-w-md mx-auto">
+                    Schedule content for automatic posting. Generated content can be scheduled 
+                    for optimal posting times across your connected platforms.
+                  </p>
+                  <Button 
+                    className="mt-4"
+                    variant="outline"
+                    onClick={() => setActiveTab('scripts')}
+                    data-testid="button-schedule-content"
+                  >
+                    <Wand2 className="h-4 w-4 mr-2" />
+                    Create Content to Schedule
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Platform Connections</CardTitle>
+                <CardDescription>Connected social accounts</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {['TikTok', 'Instagram', 'YouTube', 'Facebook'].map((platform) => (
+                  <div 
+                    key={platform}
+                    className="flex items-center justify-between p-3 border rounded-lg"
+                  >
+                    <div className="flex items-center gap-3">
+                      {getPlatformIcon(platform.toLowerCase())}
+                      <span className="font-medium">{platform}</span>
+                    </div>
+                    <Badge variant="outline">
+                      Not Connected
+                    </Badge>
+                  </div>
+                ))}
+                <Button className="w-full mt-4" variant="outline" disabled>
+                  <ExternalLink className="h-4 w-4 mr-2" />
+                  Connect Accounts
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
 
         <TabsContent value="analytics">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between gap-2">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Total Content</p>
+                    <p className="text-2xl font-bold">{queueData?.length || 0}</p>
+                  </div>
+                  <FileText className="h-8 w-8 text-muted-foreground/50" />
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between gap-2">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Completed</p>
+                    <p className="text-2xl font-bold">
+                      {queueData?.filter(item => item.status === 'completed').length || 0}
+                    </p>
+                  </div>
+                  <CheckCircle2 className="h-8 w-8 text-green-500/50" />
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between gap-2">
+                  <div>
+                    <p className="text-sm text-muted-foreground">In Progress</p>
+                    <p className="text-2xl font-bold">
+                      {queueData?.filter(item => !['completed', 'failed', 'pending'].includes(item.status)).length || 0}
+                    </p>
+                  </div>
+                  <Loader2 className="h-8 w-8 text-primary/50" />
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between gap-2">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Failed</p>
+                    <p className="text-2xl font-bold">
+                      {queueData?.filter(item => item.status === 'failed').length || 0}
+                    </p>
+                  </div>
+                  <AlertCircle className="h-8 w-8 text-destructive/50" />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
           <Card>
             <CardHeader>
-              <CardTitle>Performance Analytics</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <BarChart3 className="h-5 w-5" />
+                Performance Analytics
+              </CardTitle>
               <CardDescription>Track content performance across platforms</CardDescription>
             </CardHeader>
-            <CardContent className="text-center py-12">
-              <BarChart3 className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-              <p className="text-muted-foreground">Analytics dashboard coming soon</p>
-              <p className="text-sm text-muted-foreground mt-2">
-                Monitor engagement, reach, and ROI
-              </p>
+            <CardContent>
+              <div className="text-center py-12">
+                <TrendingUp className="h-16 w-16 mx-auto text-muted-foreground/50 mb-4" />
+                <p className="font-medium">Analytics available after publishing</p>
+                <p className="text-sm text-muted-foreground mt-2 max-w-md mx-auto">
+                  Once you publish content to connected platforms, you'll see engagement metrics, 
+                  reach, and ROI data here. Connect your social accounts to enable analytics tracking.
+                </p>
+                <div className="flex justify-center gap-3 mt-6">
+                  <div className="text-center p-4 border rounded-lg">
+                    <Eye className="h-6 w-6 mx-auto text-muted-foreground mb-1" />
+                    <p className="text-sm text-muted-foreground">Views</p>
+                    <p className="text-xl font-bold">-</p>
+                  </div>
+                  <div className="text-center p-4 border rounded-lg">
+                    <TrendingUp className="h-6 w-6 mx-auto text-muted-foreground mb-1" />
+                    <p className="text-sm text-muted-foreground">Engagement</p>
+                    <p className="text-xl font-bold">-</p>
+                  </div>
+                  <div className="text-center p-4 border rounded-lg">
+                    <Users className="h-6 w-6 mx-auto text-muted-foreground mb-1" />
+                    <p className="text-sm text-muted-foreground">Followers</p>
+                    <p className="text-xl font-bold">-</p>
+                  </div>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>

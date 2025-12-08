@@ -19,6 +19,7 @@ import { healthCheckHandler, readinessCheckHandler, livenessCheckHandler } from 
 import { PolicyMonitoringJobs } from "./jobs/policy-monitoring-jobs";
 import { recursiveContextService } from "./services/intelligence/RecursiveContextService";
 import { facelessContentService } from "./services/content/FacelessContentService";
+import { AutoFixEngine } from "./services/self-healing";
 console.log("✅ [DEBUG] All imports complete in server/index.ts");
 // ============================================================================
 // SENTRY DISABLED: CSP VIOLATIONS FIX (MB.MD SUBAGENT 3)
@@ -223,6 +224,21 @@ app.use((req, res, next) => {
       log('✅ MB.MD Intelligence Services initialized');
     } catch (error) {
       logger.error('❌ MB.MD Intelligence initialization failed:', error);
+    }
+    
+    // C5-1 to C5-3: Initialize Auto-Fix Engine with 3-Strike Protocol and Continuous Mode
+    try {
+      log('🔧 Initializing Self-Healing Auto-Fix Engine...');
+      await AutoFixEngine.initialize({
+        enableContinuousMode: true,
+        intervalMs: 30000,
+        strikeThreshold: 3,
+        maxConcurrentPages: 5,
+        cooldownPeriodMs: 300000
+      });
+      log('✅ Self-Healing Auto-Fix Engine initialized (Continuous Mode: ACTIVE)');
+    } catch (error) {
+      logger.error('❌ Auto-Fix Engine initialization failed:', error);
     }
     
     // MB.MD v9.9.3: Initialize BullMQ Workers (with Redis fallback)

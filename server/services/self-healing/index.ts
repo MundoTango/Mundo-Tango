@@ -12,6 +12,7 @@ export { PreFlightCheckService } from './PreFlightCheckService';
 export { PredictiveAnalysisService } from './PredictiveAnalysisService';
 export { AgentCoordinationService } from './AgentCoordinationService';
 export { AgentOrchestrationService } from './AgentOrchestrationService';
+export { AutoFixEngine } from './AutoFixEngine';
 
 export type { AuditIssue, AuditResults } from './PageAuditService';
 export type { NavigationPattern } from './UXValidationService';

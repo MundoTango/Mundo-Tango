@@ -83,7 +83,7 @@ const ACTIVITY_FEED = [
   {
     id: 3,
     type: "post",
-    content: "New choreography coming soon... 👀",
+    content: "Working on a new choreography for the festival performance",
     likes: 156,
     comments: 23,
     timestamp: "3 days ago",

@@ -17,6 +17,42 @@ import { contextService } from "../services/mrBlue/ContextService";
 import { memoryService } from "../services/mrBlue/MemoryService";
 import { vibeCodingService } from "../services/mrBlue/VibeCodingService";
 import { conversationOrchestrator } from "../services/ConversationOrchestrator";
+import { AgentLearningService, type AgentExecutionResult } from "../services/learning/AgentLearningService";
+
+async function recordMrBlueExecution(
+  task: string,
+  outcome: 'success' | 'failure' | 'partial',
+  startTime: number,
+  result: any,
+  userId?: number,
+  mode?: string,
+  error?: any
+): Promise<void> {
+  try {
+    const endTime = Date.now();
+    const execution: AgentExecutionResult = {
+      agentId: 'mr-blue-assistant',
+      task: task.substring(0, 500),
+      outcome,
+      result: typeof result === 'string' ? result.substring(0, 1000) : result,
+      errorMessage: error?.message,
+      errorType: error?.name,
+      startedAt: new Date(startTime),
+      completedAt: new Date(endTime),
+      durationMs: endTime - startTime,
+      quality: outcome === 'success' ? 0.85 : outcome === 'partial' ? 0.6 : 0.2,
+      efficiency: 0.7,
+      confidence: outcome === 'success' ? 0.9 : 0.5,
+      context: { mode: mode || 'chat' },
+      metadata: { source: 'mr-blue-chat' }
+    };
+    
+    await AgentLearningService.recordExecution(execution, userId);
+    console.log(`[MrBlue Learning] ✅ Recorded execution: ${outcome}`);
+  } catch (learningError) {
+    console.error('[MrBlue Learning] Failed to record execution:', learningError);
+  }
+}
 
 const router = Router();
 
@@ -293,6 +329,7 @@ You MUST respond in this EXACT JSON format:
 
 // Mr. Blue Chat
 router.post("/chat", traceRoute("mr-blue-chat"), async (req: Request, res: Response) => {
+    const startTime = Date.now();
     try {
       const { message, context, conversationHistory, conversationId, userId } = req.body;
 
@@ -360,6 +397,8 @@ router.post("/chat", traceRoute("mr-blue-chat"), async (req: Request, res: Respo
           }
         }
         
+        recordMrBlueExecution(message, questionResponse.success ? 'success' : 'failure', startTime, questionResponse.response, userId, 'question');
+        
         return res.json({
           success: questionResponse.success,
           mode: 'question',
@@ -373,6 +412,8 @@ router.post("/chat", traceRoute("mr-blue-chat"), async (req: Request, res: Respo
         console.log('[Mr. Blue] 🔍 Handling as PAGE ANALYSIS');
         const pageId = parsedContext.currentPage || 'unknown-page';
         const analysisResult = await conversationOrchestrator.analyzePage(pageId, false);
+        
+        recordMrBlueExecution(message, analysisResult.success ? 'success' : 'failure', startTime, analysisResult, userId, 'page_analysis');
         
         return res.json({
           success: analysisResult.success,
@@ -409,6 +450,8 @@ router.post("/chat", traceRoute("mr-blue-chat"), async (req: Request, res: Respo
             console.error('[MrBlue] Failed to save action messages:', error);
           }
         }
+        
+        recordMrBlueExecution(message, actionResponse.success ? 'success' : 'failure', startTime, actionResponse.vibecodingResult?.interpretation || 'Action processed', userId, 'action');
         
         return res.json({
           success: actionResponse.success,

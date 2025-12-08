@@ -38,6 +38,11 @@ export default function StreamDetailPage() {
     queryKey: ["/api/livestreams", id],
   });
 
+  const { data: relatedStreams, isLoading: isLoadingRelated } = useQuery<SelectLiveStream[]>({
+    queryKey: ["/api/livestreams"],
+    select: (data) => data?.filter(s => String(s.id) !== id).slice(0, 3) || [],
+  });
+
   if (isLoading) {
     return (
       <PageLayout title="Live Stream" showBreadcrumbs>
@@ -249,14 +254,75 @@ export default function StreamDetailPage() {
                   More Live Streams
                 </h2>
                 <div className="grid gap-6 md:grid-cols-3">
-                  {/* Placeholder for related streams */}
-                  <Card className="hover-elevate cursor-pointer">
-                    <div className="aspect-video bg-muted" />
-                    <CardContent className="pt-4">
-                      <Badge variant="outline" className="mb-2">Coming Soon</Badge>
-                      <h3 className="font-serif font-bold">Related Stream</h3>
-                    </CardContent>
-                  </Card>
+                  {isLoadingRelated ? (
+                    Array.from({ length: 3 }).map((_, i) => (
+                      <Card key={i} className="overflow-hidden" data-testid={`skeleton-stream-${i}`}>
+                        <div className="aspect-video bg-muted animate-pulse" />
+                        <CardContent className="pt-4 space-y-2">
+                          <div className="h-4 bg-muted rounded animate-pulse w-1/3" />
+                          <div className="h-5 bg-muted rounded animate-pulse w-3/4" />
+                        </CardContent>
+                      </Card>
+                    ))
+                  ) : relatedStreams && relatedStreams.length > 0 ? (
+                    relatedStreams.map((relatedStream) => (
+                      <Link key={relatedStream.id} href={`/live-stream/${relatedStream.id}`}>
+                        <Card 
+                          className="hover-elevate cursor-pointer overflow-hidden" 
+                          data-testid={`card-related-stream-${relatedStream.id}`}
+                        >
+                          <div className="relative aspect-video bg-muted">
+                            {relatedStream.thumbnail && (
+                              <img 
+                                src={relatedStream.thumbnail} 
+                                alt={relatedStream.title}
+                                className="w-full h-full object-cover"
+                              />
+                            )}
+                            {relatedStream.isLive && (
+                              <div className="absolute top-2 left-2">
+                                <Badge variant="destructive" className="flex items-center gap-1 px-2 py-0.5 text-xs">
+                                  <Radio className="h-2.5 w-2.5 animate-pulse" />
+                                  LIVE
+                                </Badge>
+                              </div>
+                            )}
+                            {relatedStream.viewers !== null && relatedStream.viewers !== undefined && (
+                              <div className="absolute bottom-2 right-2">
+                                <Badge className="bg-black/60 backdrop-blur-sm text-white text-xs flex items-center gap-1">
+                                  <Eye className="h-2.5 w-2.5" />
+                                  {relatedStream.viewers?.toLocaleString() || '0'}
+                                </Badge>
+                              </div>
+                            )}
+                          </div>
+                          <CardContent className="pt-4">
+                            {!relatedStream.isLive && relatedStream.scheduledDate && (
+                              <Badge variant="secondary" className="mb-2 text-xs">
+                                Scheduled
+                              </Badge>
+                            )}
+                            <h3 className="font-serif font-bold line-clamp-2">{relatedStream.title}</h3>
+                            {relatedStream.host && (
+                              <p className="text-sm text-muted-foreground mt-1">{relatedStream.host}</p>
+                            )}
+                          </CardContent>
+                        </Card>
+                      </Link>
+                    ))
+                  ) : (
+                    <Card className="col-span-full" data-testid="no-related-streams">
+                      <CardContent className="py-12 text-center">
+                        <Radio className="mx-auto h-10 w-10 mb-3 text-muted-foreground opacity-50" />
+                        <p className="text-muted-foreground">No other streams available</p>
+                        <Link href="/live-streams">
+                          <Button variant="outline" className="mt-4" data-testid="button-browse-streams">
+                            Browse All Streams
+                          </Button>
+                        </Link>
+                      </CardContent>
+                    </Card>
+                  )}
                 </div>
               </div>
             </FadeInSection>

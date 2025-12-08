@@ -1,62 +1,119 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Layers, Users, Calendar, Building2 } from "lucide-react";
+import { MapPin, Layers, Users, Calendar, Building2, Globe } from "lucide-react";
 import { CommunityMapWithLayers } from "@/components/map/CommunityMapWithLayers";
 import { UnifiedLocationPicker } from "@/components/input/UnifiedLocationPicker";
 import "leaflet/dist/leaflet.css";
 
-interface EventMarker {
+interface CityMarker {
   id: number;
-  title: string;
   city: string;
   country: string;
+  region: string;
   coordinates: { lat: number; lng: number };
-  eventType: string;
-  startDate: string;
-  address: string;
   memberCount: number;
   activeEvents: number;
+  tangoScene: 'major' | 'active' | 'growing' | 'emerging';
+  hasTeachers: boolean;
+  hasSchools: boolean;
   recommendations: number;
   housing: number;
   isActive: boolean;
 }
 
+interface CityStats {
+  totalCities: number;
+  byScene: {
+    major: number;
+    active: number;
+    growing: number;
+    emerging: number;
+  };
+  totalEstimatedDancers: number;
+  totalWeeklyMilongas: number;
+}
+
 export default function CommunityMapPage() {
   const [searchLocation, setSearchLocation] = useState("");
   const [mapCenter, setMapCenter] = useState<[number, number] | null>(null);
-
-  const { data: eventMarkers = [], isLoading } = useQuery<EventMarker[]>({
-    queryKey: ["/api/map/markers"],
+  const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
+  const [selectedScene, setSelectedScene] = useState<string | null>(null);
+  const [enabledLayers, setEnabledLayers] = useState({
+    cities: true,
+    events: false,
+    housing: false,
   });
 
-  // Convert event markers to city location format for map display
-  const locations: any[] = eventMarkers.map(marker => {
-    // Ensure coordinates are numbers, not strings
-    const lat = typeof marker.coordinates.lat === 'string' ? parseFloat(marker.coordinates.lat) : marker.coordinates.lat;
-    const lng = typeof marker.coordinates.lng === 'string' ? parseFloat(marker.coordinates.lng) : marker.coordinates.lng;
-    return {
-      id: marker.id,
-      city: marker.city,
-      country: marker.country,
-      coordinates: { lat, lng },
-      memberCount: 0,
-      activeEvents: 1,
-      recommendations: 0,
-      housing: 0,
-      isActive: true,
-      groupId: marker.id,
-      title: marker.title,
-      eventType: marker.eventType,
-      address: marker.address,
-    };
+  const { data: cityMarkers = [], isLoading: citiesLoading } = useQuery<CityMarker[]>({
+    queryKey: ["/api/map/cities", selectedRegion, selectedScene],
   });
+
+  const { data: cityStats } = useQuery<CityStats>({
+    queryKey: ["/api/map/cities/stats"],
+  });
+
+  const filteredLocations = useMemo(() => {
+    let cities = cityMarkers;
+    
+    if (selectedRegion) {
+      cities = cities.filter(c => c.region === selectedRegion);
+    }
+    
+    if (selectedScene) {
+      cities = cities.filter(c => c.tangoScene === selectedScene);
+    }
+    
+    return cities.map(marker => {
+      const lat = typeof marker.coordinates.lat === 'string' ? parseFloat(marker.coordinates.lat as unknown as string) : marker.coordinates.lat;
+      const lng = typeof marker.coordinates.lng === 'string' ? parseFloat(marker.coordinates.lng as unknown as string) : marker.coordinates.lng;
+      return {
+        id: marker.id,
+        city: marker.city,
+        country: marker.country,
+        region: marker.region,
+        coordinates: { lat, lng },
+        memberCount: marker.memberCount,
+        activeEvents: marker.activeEvents,
+        tangoScene: marker.tangoScene,
+        hasTeachers: marker.hasTeachers,
+        hasSchools: marker.hasSchools,
+        recommendations: marker.recommendations || 0,
+        housing: marker.housing || 0,
+        isActive: marker.isActive,
+      };
+    });
+  }, [cityMarkers, selectedRegion, selectedScene]);
+
+  const toggleLayer = (layerId: string) => {
+    setEnabledLayers(prev => ({
+      ...prev,
+      [layerId]: !prev[layerId as keyof typeof prev],
+    }));
+  };
+
+  const regions = [
+    "South America",
+    "North America", 
+    "Europe",
+    "Asia",
+    "Oceania",
+    "Africa",
+    "Middle East",
+  ];
+
+  const sceneTypes = [
+    { id: "major", label: "Major Scenes", color: "bg-primary" },
+    { id: "active", label: "Active", color: "bg-green-500" },
+    { id: "growing", label: "Growing", color: "bg-yellow-500" },
+    { id: "emerging", label: "Emerging", color: "bg-blue-500" },
+  ];
 
   const layers = [
-    { id: "events", label: "Events", enabled: true, icon: Calendar },
-    { id: "housing", label: "Housing", enabled: false, icon: Building2 },
-    { id: "recommendations", label: "Recommendations", enabled: false, icon: MapPin },
+    { id: "cities", label: "Cities", enabled: enabledLayers.cities, icon: Globe },
+    { id: "events", label: "Events", enabled: enabledLayers.events, icon: Calendar },
+    { id: "housing", label: "Housing", enabled: enabledLayers.housing, icon: Building2 },
   ];
 
   return (
@@ -65,7 +122,9 @@ export default function CommunityMapPage() {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
             <h1 className="text-3xl font-bold" data-testid="heading-community-map">Tango Community Map</h1>
-            <p className="text-muted-foreground">Explore tango communities around the world</p>
+            <p className="text-muted-foreground">
+              Explore {cityStats?.totalCities || 230}+ tango communities around the world
+            </p>
           </div>
           
           <div className="flex gap-2">
@@ -84,41 +143,133 @@ export default function CommunityMapPage() {
           </div>
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Layers className="h-5 w-5" />
-              Filter by Layer
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-wrap gap-2">
-              {layers.map(layer => (
+        {cityStats && (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center gap-2">
+                  <Globe className="h-5 w-5 text-primary" />
+                  <div>
+                    <p className="text-2xl font-bold" data-testid="stat-total-cities">{cityStats.totalCities}</p>
+                    <p className="text-sm text-muted-foreground">Cities Worldwide</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center gap-2">
+                  <Users className="h-5 w-5 text-primary" />
+                  <div>
+                    <p className="text-2xl font-bold" data-testid="stat-dancers">
+                      {(cityStats.totalEstimatedDancers / 1000).toFixed(0)}K+
+                    </p>
+                    <p className="text-sm text-muted-foreground">Estimated Dancers</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-5 w-5 text-primary" />
+                  <div>
+                    <p className="text-2xl font-bold" data-testid="stat-milongas">{cityStats.totalWeeklyMilongas}+</p>
+                    <p className="text-sm text-muted-foreground">Weekly Milongas</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center gap-2">
+                  <MapPin className="h-5 w-5 text-primary" />
+                  <div>
+                    <p className="text-2xl font-bold" data-testid="stat-major-cities">{cityStats.byScene.major}</p>
+                    <p className="text-sm text-muted-foreground">Major Tango Hubs</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Card>
+            <CardHeader className="py-3">
+              <CardTitle className="flex items-center gap-2 text-base">
+                <Layers className="h-4 w-4" />
+                Filter by Region
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <div className="flex flex-wrap gap-2">
                 <Badge
-                  key={layer.id}
-                  variant={layer.enabled ? "default" : "outline"}
+                  variant={selectedRegion === null ? "default" : "outline"}
                   className="cursor-pointer"
-                  onClick={() => toggleLayer(layer.id)}
-                  data-testid={`badge-layer-${layer.id}`}
+                  onClick={() => setSelectedRegion(null)}
+                  data-testid="badge-region-all"
                 >
-                  <layer.icon className="h-3 w-3 mr-1" />
-                  {layer.label}
+                  All Regions
                 </Badge>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+                {regions.map(region => (
+                  <Badge
+                    key={region}
+                    variant={selectedRegion === region ? "default" : "outline"}
+                    className="cursor-pointer"
+                    onClick={() => setSelectedRegion(selectedRegion === region ? null : region)}
+                    data-testid={`badge-region-${region.toLowerCase().replace(' ', '-')}`}
+                  >
+                    {region}
+                  </Badge>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="py-3">
+              <CardTitle className="flex items-center gap-2 text-base">
+                <MapPin className="h-4 w-4" />
+                Filter by Scene
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <div className="flex flex-wrap gap-2">
+                <Badge
+                  variant={selectedScene === null ? "default" : "outline"}
+                  className="cursor-pointer"
+                  onClick={() => setSelectedScene(null)}
+                  data-testid="badge-scene-all"
+                >
+                  All Scenes
+                </Badge>
+                {sceneTypes.map(scene => (
+                  <Badge
+                    key={scene.id}
+                    variant={selectedScene === scene.id ? "default" : "outline"}
+                    className="cursor-pointer"
+                    onClick={() => setSelectedScene(selectedScene === scene.id ? null : scene.id)}
+                    data-testid={`badge-scene-${scene.id}`}
+                  >
+                    {scene.label}
+                  </Badge>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
         <Card>
           <CardContent className="p-0">
-            {isLoading ? (
+            {citiesLoading ? (
               <div className="h-[600px] flex items-center justify-center">
-                <p className="text-muted-foreground">Loading map...</p>
+                <p className="text-muted-foreground">Loading {cityStats?.totalCities || 230}+ tango cities...</p>
               </div>
             ) : (
               <div className="h-[600px] rounded-b-lg overflow-hidden" data-testid="map-container">
                 <CommunityMapWithLayers
-                  locations={locations}
+                  locations={filteredLocations}
                   layers={layers}
                   center={mapCenter || [20, 0]}
                   zoom={2}
@@ -128,6 +279,19 @@ export default function CommunityMapPage() {
                 />
               </div>
             )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="py-3">
+            <CardTitle className="text-base">Currently Showing</CardTitle>
+          </CardHeader>
+          <CardContent className="pt-0">
+            <p className="text-sm text-muted-foreground">
+              Displaying <span className="font-semibold text-foreground" data-testid="filtered-count">{filteredLocations.length}</span> tango communities
+              {selectedRegion && <> in <span className="font-semibold text-foreground">{selectedRegion}</span></>}
+              {selectedScene && <> with <span className="font-semibold text-foreground">{sceneTypes.find(s => s.id === selectedScene)?.label}</span> status</>}
+            </p>
           </CardContent>
         </Card>
       </div>

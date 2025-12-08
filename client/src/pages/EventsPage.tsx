@@ -395,16 +395,139 @@ export default function EventsPage() {
     });
   }, [events]);
 
-  // Mock geocoding for map view (in production, use real geocoding)
+  // Use real coordinates from events API, or geocode based on city
   const eventsWithCoordinates = useMemo(() => {
     if (!events) return [];
-    return events.map((event, index) => ({
-      ...event,
-      // Mock coordinates - spread events around Buenos Aires
-      lat: -34.6037 + (Math.random() - 0.5) * 0.2,
-      lng: -58.3816 + (Math.random() - 0.5) * 0.2,
-    }));
+    
+    // City coordinate lookup for fallback geocoding
+    const cityCoordinates: Record<string, { lat: number; lng: number }> = {
+      "Buenos Aires": { lat: -34.6037, lng: -58.3816 },
+      "Berlin": { lat: 52.5200, lng: 13.4050 },
+      "Paris": { lat: 48.8566, lng: 2.3522 },
+      "New York": { lat: 40.7128, lng: -74.0060 },
+      "London": { lat: 51.5074, lng: -0.1278 },
+      "Tokyo": { lat: 35.6762, lng: 139.6503 },
+      "Sydney": { lat: -33.8688, lng: 151.2093 },
+      "Melbourne": { lat: -37.8136, lng: 144.9631 },
+      "Barcelona": { lat: 41.3851, lng: 2.1734 },
+      "Madrid": { lat: 40.4168, lng: -3.7038 },
+      "Amsterdam": { lat: 52.3676, lng: 4.9041 },
+      "Vienna": { lat: 48.2082, lng: 16.3738 },
+      "Munich": { lat: 48.1351, lng: 11.5820 },
+      "Rome": { lat: 41.9028, lng: 12.4964 },
+      "Milan": { lat: 45.4642, lng: 9.1900 },
+      "Athens": { lat: 37.9838, lng: 23.7275 },
+      "Istanbul": { lat: 41.0082, lng: 28.9784 },
+      "São Paulo": { lat: -23.5505, lng: -46.6333 },
+      "Rio de Janeiro": { lat: -22.9068, lng: -43.1729 },
+      "Montevideo": { lat: -34.9011, lng: -56.1645 },
+      "Santiago": { lat: -33.4489, lng: -70.6693 },
+      "Los Angeles": { lat: 34.0522, lng: -118.2437 },
+      "San Francisco": { lat: 37.7749, lng: -122.4194 },
+      "Chicago": { lat: 41.8781, lng: -87.6298 },
+      "Toronto": { lat: 43.6532, lng: -79.3832 },
+      "Montreal": { lat: 45.5017, lng: -73.5673 },
+      "Moscow": { lat: 55.7558, lng: 37.6173 },
+      "Stockholm": { lat: 59.3293, lng: 18.0686 },
+      "Copenhagen": { lat: 55.6761, lng: 12.5683 },
+      "Prague": { lat: 50.0755, lng: 14.4378 },
+      "Budapest": { lat: 47.4979, lng: 19.0402 },
+      "Warsaw": { lat: 52.2297, lng: 21.0122 },
+      "Lisbon": { lat: 38.7223, lng: -9.1393 },
+      "Brussels": { lat: 50.8503, lng: 4.3517 },
+      "Zurich": { lat: 47.3769, lng: 8.5417 },
+      "Geneva": { lat: 46.2044, lng: 6.1432 },
+      "Singapore": { lat: 1.3521, lng: 103.8198 },
+      "Hong Kong": { lat: 22.3193, lng: 114.1694 },
+      "Seoul": { lat: 37.5665, lng: 126.9780 },
+      "Shanghai": { lat: 31.2304, lng: 121.4737 },
+      "Beijing": { lat: 39.9042, lng: 116.4074 },
+      "Dubai": { lat: 25.2048, lng: 55.2708 },
+      "Tel Aviv": { lat: 32.0853, lng: 34.7818 },
+      "Cape Town": { lat: -33.9249, lng: 18.4241 },
+      "Auckland": { lat: -36.8485, lng: 174.7633 },
+    };
+    
+    return events.map((event, index) => {
+      const eventData = event.event || event;
+      
+      // Try to use real coordinates from the event data
+      const lat = eventData.latitude || eventData.lat;
+      const lng = eventData.longitude || eventData.lng || eventData.lon;
+      
+      if (lat && lng) {
+        return { ...event, lat: Number(lat), lng: Number(lng) };
+      }
+      
+      // Fallback: use city coordinates with small random offset for spread
+      const city = eventData.city;
+      if (city) {
+        const cityMatch = Object.keys(cityCoordinates).find(
+          c => city.toLowerCase().includes(c.toLowerCase()) || c.toLowerCase().includes(city.toLowerCase())
+        );
+        if (cityMatch) {
+          const coords = cityCoordinates[cityMatch];
+          return {
+            ...event,
+            lat: coords.lat + (Math.random() - 0.5) * 0.05,
+            lng: coords.lng + (Math.random() - 0.5) * 0.05,
+          };
+        }
+      }
+      
+      // Default fallback: Buenos Aires with offset based on index
+      const angle = (index / (events.length || 1)) * Math.PI * 2;
+      const radius = 0.02 + (index % 5) * 0.01;
+      return {
+        ...event,
+        lat: -34.6037 + Math.sin(angle) * radius,
+        lng: -58.3816 + Math.cos(angle) * radius,
+      };
+    });
   }, [events]);
+  
+  // Calculate map center based on events
+  const mapCenter = useMemo<[number, number]>(() => {
+    if (!eventsWithCoordinates || eventsWithCoordinates.length === 0) {
+      return [20, 0]; // World center
+    }
+    
+    const validEvents = eventsWithCoordinates.filter(e => e.lat && e.lng);
+    if (validEvents.length === 0) {
+      return [20, 0];
+    }
+    
+    const avgLat = validEvents.reduce((sum, e) => sum + e.lat, 0) / validEvents.length;
+    const avgLng = validEvents.reduce((sum, e) => sum + e.lng, 0) / validEvents.length;
+    
+    return [avgLat, avgLng];
+  }, [eventsWithCoordinates]);
+  
+  // Calculate zoom level based on event spread
+  const mapZoom = useMemo(() => {
+    if (!eventsWithCoordinates || eventsWithCoordinates.length <= 1) {
+      return 2; // World view
+    }
+    
+    const validEvents = eventsWithCoordinates.filter(e => e.lat && e.lng);
+    if (validEvents.length <= 1) return 2;
+    
+    const lats = validEvents.map(e => e.lat);
+    const lngs = validEvents.map(e => e.lng);
+    
+    const latSpread = Math.max(...lats) - Math.min(...lats);
+    const lngSpread = Math.max(...lngs) - Math.min(...lngs);
+    const maxSpread = Math.max(latSpread, lngSpread);
+    
+    if (maxSpread > 100) return 2;
+    if (maxSpread > 50) return 3;
+    if (maxSpread > 20) return 4;
+    if (maxSpread > 10) return 5;
+    if (maxSpread > 5) return 6;
+    if (maxSpread > 2) return 8;
+    if (maxSpread > 0.5) return 10;
+    return 12;
+  }, [eventsWithCoordinates]);
 
   return (
     <SelfHealingErrorBoundary pageName="Events" fallbackRoute="/feed">
@@ -826,14 +949,29 @@ export default function EventsPage() {
                   </Card>
                 )}
 
-                {/* Map View */}
+                {/* Map View - World Map */}
                 {viewMode === "map" && (
-                  <Card className="p-0 overflow-hidden">
+                  <Card className="p-0 overflow-hidden" data-testid="events-world-map">
+                    <div className="p-4 border-b bg-muted/50">
+                      <div className="flex items-center justify-between gap-4 flex-wrap">
+                        <div className="flex items-center gap-2">
+                          <MapIconLucide className="h-5 w-5 text-primary" />
+                          <h3 className="font-semibold">World Map View</h3>
+                          <Badge variant="secondary" data-testid="badge-map-event-count">
+                            {eventsWithCoordinates.length} event{eventsWithCoordinates.length !== 1 ? 's' : ''}
+                          </Badge>
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                          Click markers to view event details
+                        </p>
+                      </div>
+                    </div>
                     <div style={{ height: '600px' }}>
                       <MapContainer
-                        center={[-34.6037, -58.3816]}
-                        zoom={12}
+                        center={mapCenter}
+                        zoom={mapZoom}
                         style={{ height: '100%', width: '100%' }}
+                        scrollWheelZoom={true}
                       >
                         <TileLayer
                           attribution='&copy; <a href="https://carto.com/attributions">CARTO</a>'
@@ -842,16 +980,47 @@ export default function EventsPage() {
                         {eventsWithCoordinates.map((event, index) => {
                           const eventData = event.event || event;
                           const eventId = eventData.id;
+                          const dateToUse = eventData.startDate || eventData.start_date || eventData.date;
+                          const location = eventData.venue || eventData.location || eventData.city || "Location TBD";
+                          const eventType = eventData.type || eventData.category;
+                          
                           return (
-                            <Marker key={eventId || `map-event-${index}`} position={[event.lat, event.lng]}>
+                            <Marker 
+                              key={eventId || `map-event-${index}`} 
+                              position={[event.lat, event.lng]}
+                            >
                               <Popup>
-                                <div className="p-2">
-                                  <h3 className="font-semibold mb-1" dangerouslySetInnerHTML={{ __html: eventData.title || "Event" }} />
-                                  <p className="text-sm text-muted-foreground mb-2">
-                                    {safeDateFormat(eventData.startDate || eventData.date, "MMM dd, yyyy 'at' h:mm a")}
-                                  </p>
+                                <div className="min-w-[200px] max-w-[280px]" data-testid={`popup-event-${eventId}`}>
+                                  <h3 
+                                    className="font-semibold text-base mb-2 line-clamp-2" 
+                                    dangerouslySetInnerHTML={{ __html: eventData.title || "Untitled Event" }} 
+                                  />
+                                  
+                                  {eventType && (
+                                    <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium mb-2 ${getEventTypeBadgeClass(eventType)}`}>
+                                      {getEventTypeLabel(eventType)}
+                                    </span>
+                                  )}
+                                  
+                                  <div className="space-y-1.5 text-sm mb-3">
+                                    <div className="flex items-center gap-1.5">
+                                      <CalendarIcon className="h-3.5 w-3.5 flex-shrink-0 text-primary" />
+                                      <span>
+                                        {safeDateFormat(dateToUse, "MMM dd, yyyy 'at' h:mm a", "Date TBD")}
+                                      </span>
+                                    </div>
+                                    
+                                    <div className="flex items-center gap-1.5">
+                                      <MapPin className="h-3.5 w-3.5 flex-shrink-0 text-primary" />
+                                      <span className="line-clamp-1">{location}</span>
+                                    </div>
+                                  </div>
+                                  
                                   <Link href={`/events/${eventId}`}>
-                                    <Button size="sm" className="w-full">View Details</Button>
+                                    <Button size="sm" className="w-full gap-1" data-testid={`button-map-view-event-${eventId}`}>
+                                      View Details
+                                      <ChevronRight className="h-3.5 w-3.5" />
+                                    </Button>
                                   </Link>
                                 </div>
                               </Popup>
@@ -860,6 +1029,20 @@ export default function EventsPage() {
                         })}
                       </MapContainer>
                     </div>
+                    
+                    {eventsWithCoordinates.length === 0 && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm">
+                        <div className="text-center p-6">
+                          <MapIconLucide className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                          <h3 className="font-semibold mb-2">No Events to Display</h3>
+                          <p className="text-muted-foreground text-sm">
+                            {activeTab === "discover" 
+                              ? "Try adjusting your filters to find events"
+                              : "No events found in the current view"}
+                          </p>
+                        </div>
+                      </div>
+                    )}
                   </Card>
                 )}
               </>

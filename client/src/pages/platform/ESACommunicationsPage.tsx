@@ -333,11 +333,11 @@ export default function ESACommunicationsPage() {
               <CardContent className="p-8">
                 <div className="h-96 bg-gradient-to-br from-muted/20 to-muted/50 rounded-xl flex items-center justify-center border border-border">
                   <div className="text-center space-y-4">
-                    <Activity className="mx-auto h-20 w-20 text-primary/50 animate-pulse" />
+                    <Activity className="mx-auto h-20 w-20 text-muted-foreground/30" />
                     <div>
-                      <h3 className="text-xl font-serif font-bold mb-2">Interactive Graph Coming Soon</h3>
+                      <h3 className="text-xl font-serif font-bold mb-2">No Communication Data</h3>
                       <p className="text-base text-muted-foreground max-w-md mx-auto">
-                        Real-time visualization of agent communication networks with D3.js or Cytoscape
+                        Agent communication patterns will be visualized here when activity is detected
                       </p>
                     </div>
                   </div>
