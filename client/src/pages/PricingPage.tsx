@@ -1,67 +1,109 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, Zap, Crown, Users, DollarSign, Loader2 } from "lucide-react";
+import { Check, Zap, Crown, Users, DollarSign, Loader2, Compass, Plane, Globe, Building } from "lucide-react";
 import { PublicLayout } from "@/components/PublicLayout";
 import { SEO } from "@/components/SEO";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
+import { Skeleton } from "@/components/ui/skeleton";
 import { motion } from "framer-motion";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
 
-const plans = [
+interface PricingTier {
+  id: number;
+  name: string;
+  displayName: string;
+  description: string | null;
+  monthlyPrice: number;
+  annualPrice: number | null;
+  isPopular: boolean;
+  features: string[] | null;
+  displayOrder: number;
+}
+
+interface PlanDisplay {
+  name: string;
+  slug: string;
+  planId: string;
+  price: string;
+  period: string;
+  icon: typeof Users;
+  description: string;
+  features: string[];
+  cta: string;
+  popular: boolean;
+  isFree: boolean;
+  tierId?: number;
+}
+
+const getTierIcon = (tierName: string) => {
+  const name = tierName.toLowerCase();
+  if (name.includes('explorer') || name === 'free') return Compass;
+  if (name.includes('traveler') || name === 'basic') return Plane;
+  if (name.includes('global') || name === 'pro') return Globe;
+  if (name.includes('organizer') || name === 'premium' || name === 'enterprise') return Building;
+  return Users;
+};
+
+const formatPrice = (priceInCents: number): string => {
+  if (priceInCents === 0) return "$0";
+  return `$${(priceInCents / 100).toFixed(2)}`;
+};
+
+const defaultPlans: PlanDisplay[] = [
   {
-    name: "Free Trial",
-    slug: "free-trial",
+    name: "Explorer",
+    slug: "explorer",
     planId: "free",
     price: "$0",
-    period: "7 days",
-    icon: Users,
-    description: "Try Pro features free",
+    period: "forever",
+    icon: Compass,
+    description: "Start your tango journey",
     features: [
-      "Full Pro features for 7 days",
-      "No credit card required",
       "Browse events & community",
-      "AI assistant access",
-      "Partner matching preview"
+      "Basic profile",
+      "Join public groups",
+      "Limited AI queries",
+      "Community access"
     ],
-    cta: "Start Free Trial",
+    cta: "Start Free",
     popular: false,
     isFree: true
   },
   {
-    name: "Basic",
-    slug: "basic",
+    name: "Traveler",
+    slug: "traveler",
     planId: "basic",
     price: "$4.99",
     period: "month",
-    icon: Users,
+    icon: Plane,
     description: "Essential tango tools",
     features: [
-      "Basic profile & messaging",
-      "Browse events",
-      "Join groups",
-      "Community access",
-      "Limited AI queries"
+      "Everything in Explorer",
+      "Enhanced profile & messaging",
+      "Create & join groups",
+      "Extended AI queries",
+      "Event notifications"
     ],
     cta: "Get Started",
     popular: false,
     isFree: false
   },
   {
-    name: "Dancer Pro",
-    slug: "dancer-pro",
+    name: "Global Dancer",
+    slug: "global-dancer",
     planId: "pro",
     price: "$9.99",
     period: "month",
-    icon: Zap,
+    icon: Globe,
     description: "For dedicated dancers",
     features: [
-      "Everything in Basic",
+      "Everything in Traveler",
       "Unlimited AI assistant",
       "Advanced partner matching",
       "Housing marketplace",
@@ -69,27 +111,27 @@ const plans = [
       "Ad-free experience",
       "Travel planning tools"
     ],
-    cta: "Start Free Trial",
+    cta: "Get Started",
     popular: true,
     isFree: false
   },
   {
-    name: "Professional",
-    slug: "professional",
+    name: "Organizer Pro",
+    slug: "organizer-pro",
     planId: "premium",
     price: "$29.99",
     period: "month",
-    icon: Crown,
+    icon: Building,
     description: "For teachers & organizers",
     features: [
-      "Everything in Dancer Pro",
+      "Everything in Global Dancer",
       "Event creation & management",
       "Analytics dashboard",
       "Student management",
       "Verified badge",
       "Priority support"
     ],
-    cta: "Start Free Trial",
+    cta: "Get Started",
     popular: false,
     isFree: false
   }
@@ -104,7 +146,34 @@ export default function PricingPage() {
     queryKey: ['/api/auth/me'],
   });
 
+  const { data: tiersData, isLoading: tiersLoading } = useQuery<{ tiers: PricingTier[] }>({
+    queryKey: ['/api/pricing/tiers'],
+  });
+
   const isAuthenticated = !!userData?.user;
+
+  const plans: PlanDisplay[] = useMemo(() => {
+    if (!tiersData?.tiers || tiersData.tiers.length === 0) {
+      return defaultPlans;
+    }
+
+    return tiersData.tiers
+      .sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0))
+      .map((tier): PlanDisplay => ({
+        name: tier.displayName,
+        slug: tier.name.toLowerCase().replace(/\s+/g, '-'),
+        planId: tier.name,
+        price: formatPrice(tier.monthlyPrice),
+        period: tier.monthlyPrice === 0 ? "forever" : "month",
+        icon: getTierIcon(tier.displayName),
+        description: tier.description || "",
+        features: tier.features || [],
+        cta: tier.monthlyPrice === 0 ? "Start Free" : "Get Started",
+        popular: tier.isPopular || false,
+        isFree: tier.monthlyPrice === 0,
+        tierId: tier.id,
+      }));
+  }, [tiersData]);
 
   const checkoutMutation = useMutation({
     mutationFn: async (planId: string) => {
@@ -140,7 +209,7 @@ export default function PricingPage() {
     },
   });
 
-  const handlePlanSelect = async (plan: typeof plans[0]) => {
+  const handlePlanSelect = async (plan: PlanDisplay) => {
     if (!isAuthenticated) {
       toast({
         title: "Sign in required",
@@ -202,7 +271,31 @@ export default function PricingPage() {
         <div className="container mx-auto max-w-7xl">
           {/* Plans Grid */}
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4 mb-16" data-testid="pricing-plans-grid">
-            {plans.map((plan, index) => {
+            {tiersLoading ? (
+              Array.from({ length: 4 }).map((_, index) => (
+                <Card key={index} className="h-full">
+                  <CardHeader className="text-center pb-8">
+                    <div className="flex justify-center mb-6">
+                      <Skeleton className="h-16 w-16 rounded-2xl" />
+                    </div>
+                    <Skeleton className="h-8 w-32 mx-auto mb-2" />
+                    <Skeleton className="h-4 w-40 mx-auto mb-6" />
+                    <Skeleton className="h-12 w-24 mx-auto" />
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <div className="space-y-4">
+                      {Array.from({ length: 5 }).map((_, idx) => (
+                        <div key={idx} className="flex items-start gap-3">
+                          <Skeleton className="h-5 w-5 rounded-full shrink-0" />
+                          <Skeleton className="h-4 w-full" />
+                        </div>
+                      ))}
+                    </div>
+                    <Skeleton className="h-10 w-full" />
+                  </CardContent>
+                </Card>
+              ))
+            ) : plans.map((plan, index) => {
               const IconComponent = plan.icon;
               return (
                 <motion.div

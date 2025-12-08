@@ -34,6 +34,7 @@ import {
 } from "@/components/ui/select";
 import { SiInstagram, SiFacebook, SiYoutube, SiTiktok, SiX, SiLinkedin } from "react-icons/si";
 import { AboutSubTabs, AboutSubTabContent, type AboutSubTab } from "./AboutSubTabs";
+import { SkillEndorsements } from "./SkillEndorsements";
 import NotificationsSubTab from "./settings/NotificationsSubTab";
 import SecuritySubTab from "./settings/SecuritySubTab";
 import SubscriptionSubTab from "./settings/SubscriptionSubTab";
@@ -1475,6 +1476,7 @@ export default function ProfileTabAbout({ user, isOwnProfile, isPublicView = fal
       {profileContent}
       {locationContent}
       {tangoContent}
+      <SkillEndorsements userId={user.id} isOwnProfile={isOwnProfile} />
       {languagesContent}
     </div>
   );

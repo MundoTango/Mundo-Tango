@@ -21,7 +21,7 @@ export function FeedRightSidebar() {
   ];
 
   return (
-    <aside className="w-[320px] space-y-4" data-testid="feed-right-sidebar">
+    <aside className="space-y-4" data-testid="feed-right-sidebar">
       {/* Note: Upcoming Events moved to UpcomingEventsSidebar component */}
       
       {/* E40 - Online Users / Who to Follow */}

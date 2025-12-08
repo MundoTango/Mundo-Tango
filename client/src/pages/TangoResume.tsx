@@ -17,6 +17,7 @@ import { Award, Star, Users, TrendingUp, CheckCircle, Edit, Save, X, Loader2, Th
 import { useToast } from "@/hooks/use-toast";
 import { useUser } from "@/hooks/use-user";
 import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/UnifiedLocationPicker";
+import { SkillEndorsements } from "@/components/profile/SkillEndorsements";
 
 const resumeSchema = z.object({
   headline: z.string().optional(),
@@ -563,42 +564,9 @@ export default function TangoResume() {
         </TabsContent>
 
         <TabsContent value="endorsements">
-          <Card>
-            <CardHeader>
-              <CardTitle>Skill Endorsements</CardTitle>
-              <CardDescription>Endorsements from the community</CardDescription>
-            </CardHeader>
-            <CardContent>
-              {loadingEndorsements ? (
-                <div className="flex justify-center py-8">
-                  <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-                </div>
-              ) : endorsements.length === 0 ? (
-                <div className="text-center py-8">
-                  <ThumbsUp className="h-12 w-12 mx-auto mb-4 text-muted-foreground opacity-50" />
-                  <p className="text-muted-foreground">No endorsements yet</p>
-                  <p className="text-sm text-muted-foreground mt-1">Ask community members to endorse your skills</p>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {endorsements.map((endorsement: any) => (
-                    <div key={endorsement.id} className="flex items-start gap-4 p-4 border rounded-lg" data-testid={`endorsement-${endorsement.id}`}>
-                      <ThumbsUp className="h-5 w-5 text-primary flex-shrink-0 mt-1" />
-                      <div className="flex-1">
-                        <p className="font-medium">{endorsement.skill || 'General'}</p>
-                        {endorsement.comment && (
-                          <p className="text-sm text-muted-foreground mt-1">{endorsement.comment}</p>
-                        )}
-                        <p className="text-xs text-muted-foreground mt-2">
-                          From {endorsement.endorser?.name || 'Anonymous'}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
+          {user?.id && (
+            <SkillEndorsements userId={user.id} isOwnProfile={true} />
+          )}
         </TabsContent>
 
         <TabsContent value="confirmations">

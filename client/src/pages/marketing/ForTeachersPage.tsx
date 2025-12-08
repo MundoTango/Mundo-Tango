@@ -55,14 +55,14 @@ const benefits = [
 
 const pricingTiers = [
   {
-    name: "Basic",
+    name: "Traveler",
     price: "$4.99",
     period: "/month",
     description: "Essential teaching tools",
     features: ["Profile listing", "5 class listings", "Basic analytics", "Community access"]
   },
   {
-    name: "Teacher Pro",
+    name: "Organizer Pro",
     price: "$29.99",
     period: "/month",
     description: "Everything you need to grow",

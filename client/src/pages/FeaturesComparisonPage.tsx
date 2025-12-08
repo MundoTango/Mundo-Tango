@@ -10,7 +10,7 @@ import { motion } from "framer-motion";
 
 const plans = [
   {
-    name: "Free",
+    name: "Explorer",
     price: "$0",
     description: "Perfect for social dancers",
     features: [
@@ -26,12 +26,12 @@ const plans = [
     ]
   },
   {
-    name: "Pro",
-    price: "$12/mo",
+    name: "Global Dancer",
+    price: "$9.99/mo",
     description: "For teachers and active dancers",
     featured: true,
     features: [
-      { name: "All Free features", included: true },
+      { name: "All Explorer features", included: true },
       { name: "Priority event listings", included: true },
       { name: "Video lesson uploads", included: true },
       { name: "Advanced search filters", included: true },
@@ -43,11 +43,11 @@ const plans = [
     ]
   },
   {
-    name: "Enterprise",
-    price: "Custom",
+    name: "Organizer Pro",
+    price: "$29.99/mo",
     description: "For organizers and schools",
     features: [
-      { name: "All Pro features", included: true },
+      { name: "All Global Dancer features", included: true },
       { name: "Custom branding", included: true },
       { name: "API access", included: true },
       { name: "Dedicated support", included: true },

@@ -143,42 +143,42 @@ export default function LandingPage() {
 
   const pricingTiers = [
     {
-      name: "Free Trial",
+      name: "Explorer",
       price: "$0",
-      period: "7 days",
-      description: "Try Pro features free",
+      period: "forever",
+      description: "Start your tango journey",
       features: [
-        "Full Pro features for 7 days",
-        "No credit card required",
-        "Event discovery",
-        "Community access",
-        "AI assistant access"
+        "Browse events & community",
+        "Basic profile",
+        "Join public groups",
+        "Limited AI queries",
+        "Community access"
       ],
-      cta: "Start Free Trial",
+      cta: "Start Free",
       popular: false
     },
     {
-      name: "Basic",
+      name: "Traveler",
       price: "$4.99",
       period: "per month",
       description: "Essential tango tools",
       features: [
-        "Basic profile & messaging",
-        "Browse events",
-        "Join groups",
-        "Community access",
-        "Limited AI queries"
+        "Everything in Explorer",
+        "Enhanced profile & messaging",
+        "Create & join groups",
+        "Extended AI queries",
+        "Event notifications"
       ],
       cta: "Get Started",
       popular: false
     },
     {
-      name: "Dancer Pro",
+      name: "Global Dancer",
       price: "$9.99",
       period: "per month",
       description: "For dedicated dancers",
       features: [
-        "Everything in Basic",
+        "Everything in Traveler",
         "Unlimited AI assistant",
         "Advanced partner matching",
         "Housing marketplace access",
@@ -186,23 +186,23 @@ export default function LandingPage() {
         "Ad-free experience",
         "Travel planning tools"
       ],
-      cta: "Start Free Trial",
+      cta: "Get Started",
       popular: true
     },
     {
-      name: "Professional",
+      name: "Organizer Pro",
       price: "$29.99",
       period: "per month",
       description: "For teachers & organizers",
       features: [
-        "Everything in Dancer Pro",
+        "Everything in Global Dancer",
         "Event creation & management",
         "Analytics dashboard",
         "Student management tools",
         "Verified badge",
         "Priority support"
       ],
-      cta: "Start Free Trial",
+      cta: "Get Started",
       popular: false
     }
   ];

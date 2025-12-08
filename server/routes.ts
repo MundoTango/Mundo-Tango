@@ -120,6 +120,7 @@ import musicRoutes from "./routes/music-routes";
 import travelRoutes from "./routes/travel-routes";
 import achievementRoutes from "./routes/achievement-routes";
 import reputationRoutes from "./routes/reputation-routes";
+import skillRoutes from "./routes/skill-routes";
 import profileRoutes from "./routes/profileRoutes";
 import profileMediaRoutes from "./routes/profileMediaRoutes";
 import profileAnalyticsRoutes from "./routes/profileAnalyticsRoutes";
@@ -2600,6 +2601,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/achievements", achievementRoutes);
   app.use("/api/endorsements", reputationRoutes);
   app.use("/api/reputation", reputationRoutes);
+  app.use("/api/skills", skillRoutes);
   
   // MB.MD Protocol Phase 1: PART_10 Completion API Routes
   console.log("✅ [MB.MD Phase 1] Registering invitation batching routes");
