@@ -54,9 +54,10 @@ interface MrBlueChatProps {
   enableVoice?: boolean;
   enableVibecoding?: boolean;
   mode?: MrBlueMode;
+  onExitVoiceMode?: () => void;
 }
 
-export function MrBlueChat({ enableVoice = false, enableVibecoding = false, mode = 'text' }: MrBlueChatProps = {}) {
+export function MrBlueChat({ enableVoice = false, enableVibecoding = false, mode = 'text', onExitVoiceMode }: MrBlueChatProps = {}) {
   const { user } = useAuth();
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -714,6 +715,21 @@ Provide natural, conversational assistance based on where the user is in the pla
       {/* Voice controls (only in voice/vibecoding modes) */}
       {showVoiceControls && (
         <div className="p-4 border-b bg-muted/20 space-y-4">
+          {/* Exit Voice Mode button (when in dedicated voice mode) */}
+          {onExitVoiceMode && (
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold">Voice Conversation with Mr. Blue</h2>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={onExitVoiceMode}
+                data-testid="button-exit-voice-mode"
+              >
+                <X className="w-4 h-4 mr-2" />
+                Exit Voice Mode
+              </Button>
+            </div>
+          )}
           {/* Voice Mode Selection */}
           <div className="flex items-center gap-4 flex-wrap">
             <div className="flex items-center gap-2">

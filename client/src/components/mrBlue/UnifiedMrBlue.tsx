@@ -26,10 +26,12 @@ export function UnifiedMrBlue() {
       {/* Screen-reader-only h1 for accessibility */}
       <h1 className="sr-only">Mr. Blue AI Assistant</h1>
       
-      {/* Mode switcher header */}
-      <div className="p-4 border-b">
-        <ModeSwitcher currentMode={mode} onModeChange={handleModeChange} />
-      </div>
+      {/* Mode switcher header - hidden in voice mode for cleaner audio experience */}
+      {mode !== 'voice' && (
+        <div className="p-4 border-b">
+          <ModeSwitcher currentMode={mode} onModeChange={handleModeChange} />
+        </div>
+      )}
       
       {/* Content area - each child component handles its own main landmark */}
       <div className="flex-1 overflow-hidden">
@@ -40,6 +42,7 @@ export function UnifiedMrBlue() {
             enableVoice={mode === 'voice' || continuousVoiceEnabled}
             enableVibecoding={vibecodingEnabled}
             mode={mode}
+            onExitVoiceMode={mode === 'voice' ? () => setMode('text') : undefined}
           />
         )}
       </div>
