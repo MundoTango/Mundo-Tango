@@ -10,11 +10,11 @@
 
 | Category | Count | Status |
 |----------|-------|--------|
-| **Total Items** | 134 | In Progress (110/134) |
+| **Total Items** | 139 | In Progress (110/139) |
 | **P0 Critical** | 8 | ✅ COMPLETE |
-| **P1 High** | 66 | 62/66 (94%) - 4 new P1s |
-| **P2 Medium** | 60 | 48/60 (80%) - 12 new P2s |
-| **NEW (Dive #6-7)** | 24 | 0/24 (0%) - Recursive analysis |
+| **P1 High** | 68 | 62/68 (91%) - 6 new P1s |
+| **P2 Medium** | 63 | 48/63 (76%) - 15 new P2s |
+| **NEW (Dive #6-8)** | 29 | 0/29 (0%) - Recursive analysis |
 
 ### Codebase Scale
 | Metric | Count |
@@ -269,7 +269,22 @@
 | 123 | **Promise.all without error handling** | server/ (parallel ops may fail silently) | 95 usages | P2 |
 | 124 | **@ts-ignore in UnifiedLocationPicker** | client/src/components/input/ | 13 annotations | P2 |
 
-## Session Dec 8, 2025 - Recursive Dive #7 (Latest)
+## Session Dec 8, 2025 - Recursive Dive #8 (Latest)
+
+| # | Finding | Location | Count | Priority |
+|---|---------|----------|-------|----------|
+| 135 | **API calls without error handling** | client/src (fetch/axios calls) | 150+ files | P1 |
+| 136 | **try/catch imbalance** | client/src (more try than catch blocks) | 190 try vs 170 catch | P2 |
+| 137 | **Loading states inconsistent** | client/src/pages (some pages lack loading) | 150+ pages | P1 |
+| 138 | **Skeleton/spinner usage gaps** | client/src/pages (should match loading states) | varies | P2 |
+| 139 | **data-testid coverage** | client/src (good coverage but inconsistent) | 1500+ usages | P2 |
+
+### Loading State Analysis:
+- Pages WITH loading states: ~150 pages
+- Pages potentially MISSING loading: ~20+ pages  
+- Should verify each API-driven page has proper loading UX
+
+## Session Dec 8, 2025 - Recursive Dive #7
 
 | # | Finding | Location | Count | Priority |
 |---|---------|----------|-------|----------|
@@ -396,6 +411,7 @@ Add new findings to "NEW FINDINGS LOG" section with date and priority.
 | Dec 8, 2025 | 1.3 | Added 8 NEW findings from dive #5 (110 total) |
 | Dec 8, 2025 | 1.4 | **Recursive Dive #6**: Added 14 NEW findings (124 total) - XSS risks, type safety epidemic, mock data remnants, hardcoded stats |
 | Dec 8, 2025 | 1.5 | **Recursive Dive #7**: Added 10 NEW findings (134 total) - HACK/TEMP comments, inline styles, accessibility gaps, DOM manipulation, CSS !important |
+| Dec 8, 2025 | 1.6 | **Recursive Dive #8**: Added 5 NEW findings (139 total) - API error handling, try/catch imbalance, loading states, data-testid coverage |
 
 ---
 
