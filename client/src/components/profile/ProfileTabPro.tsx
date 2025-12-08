@@ -171,8 +171,8 @@ function getRolePortfolioItems(roleValue: string): PortfolioItem[] {
       { title: "Live Performance", subtitle: "Concert recording", icon: Music, stats: ["234 plays", "67 likes"] },
     ],
     "organizer": [
-      { title: "Summer Tango Festival", subtitle: "500+ attendees", icon: Calendar, stats: ["5 events", "⭐ 4.9"] },
-      { title: "Weekly Milongas", subtitle: "52 events/year", icon: Calendar, stats: ["2,500+ total attendees"] },
+      { title: "Summer Tango Festival", subtitle: "Major event", icon: Calendar, stats: ["5 events", "⭐ 4.9"] },
+      { title: "Weekly Milongas", subtitle: "52 events/year", icon: Calendar, stats: ["Growing attendance"] },
       { title: "Workshops Series", subtitle: "12 expert sessions", icon: Calendar, stats: ["480 attendees", "⭐ 4.8"] },
     ],
     "venue-owner": [
@@ -186,12 +186,12 @@ function getRolePortfolioItems(roleValue: string): PortfolioItem[] {
       { title: "Online Courses", subtitle: "Self-paced learning", icon: Book, stats: ["234 enrolled", "⭐ 4.7"] },
     ],
     "mc": [
-      { title: "Festival Hosting", subtitle: "5 appearances", icon: Headphones, stats: ["500+ attendees", "⭐ 5.0"] },
-      { title: "Weekly Show", subtitle: "52 episodes", icon: Headphones, stats: ["1,000+ regular listeners"] },
+      { title: "Festival Hosting", subtitle: "5 appearances", icon: Headphones, stats: ["Major events", "⭐ 5.0"] },
+      { title: "Weekly Show", subtitle: "52 episodes", icon: Headphones, stats: ["Growing audience"] },
       { title: "Grand Opening", subtitle: "Special event", icon: Zap, stats: ["300 attendees", "⭐ 4.9"] },
     ],
     "community-builder": [
-      { title: "Tango Meetup Group", subtitle: "450 members", icon: Users, stats: ["2,000+ total attendees"] },
+      { title: "Tango Meetup Group", subtitle: "Growing community", icon: Users, stats: ["Active members"] },
       { title: "Mentorship Program", subtitle: "12 mentees", icon: Users, stats: ["⭐ 4.9 satisfaction"] },
       { title: "Community Blog", subtitle: "Monthly articles", icon: Book, stats: ["8,500 subscribers"] },
     ],

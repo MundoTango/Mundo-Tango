@@ -40,7 +40,7 @@ const features = [
   {
     icon: Globe,
     title: "Global Reach",
-    description: "Promote to 10,000+ dancers worldwide. Travelers discover your events before arriving."
+    description: "Promote to dancers worldwide. Travelers discover your events before arriving."
   }
 ];
 

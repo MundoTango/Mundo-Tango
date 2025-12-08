@@ -169,7 +169,7 @@ const demoSlides = [
       "AI-powered itineraries",
       "Local insider tips",
       "Pre-trip connections",
-      "City guides for 50+ cities"
+      "City guides worldwide"
     ],
     color: "from-orange-500 to-amber-500",
     preview: (

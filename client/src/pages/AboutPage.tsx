@@ -109,7 +109,7 @@ export default function AboutPage() {
                   <h3 className="text-2xl font-serif font-bold">Global Reach</h3>
                 <p className="text-sm text-muted-foreground">
                   From Buenos Aires to Tokyo, we connect tango communities across
-                  500+ cities worldwide, celebrating diversity and cultural exchange.
+                  cities worldwide, celebrating diversity and cultural exchange.
                 </p>
               </CardContent>
             </Card>
@@ -173,8 +173,8 @@ export default function AboutPage() {
             <p>
               What started as a small event directory has grown into a comprehensive
               platform serving thousands of dancers worldwide. Today, Mundo Tango helps
-              organize over 2,000 monthly events, connects dancers across 500+ cities,
-              and supports a vibrant community of 10,000+ active members.
+              organize events around the world, connects dancers across cities globally,
+              and supports a vibrant, growing tango community.
             </p>
             <p>
               We're proud to be dancer-owned and operated, with deep roots in the tango

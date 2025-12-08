@@ -60,7 +60,7 @@ export default function CityGuidesPage() {
                 </h1>
                 
                 <p className="text-xl text-white/80 max-w-2xl mx-auto" data-testid="text-page-subtitle">
-                  Your guide to dancing tango in 500+ cities worldwide
+                  Your guide to dancing tango in cities worldwide
                 </p>
               </motion.div>
             </div>

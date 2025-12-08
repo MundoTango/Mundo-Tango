@@ -30,7 +30,7 @@ const testimonials = [
     image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop"
   },
   {
-    quote: "We organize one of Europe's largest tango marathons, and Mundo Tango has become essential for our operations. Registration, RSVPs, communications—everything runs smoothly. Plus, the global reach helps us attract dancers from 40+ countries.",
+    quote: "We organize one of Europe's largest tango marathons, and Mundo Tango has become essential for our operations. Registration, RSVPs, communications—everything runs smoothly. Plus, the global reach helps us attract dancers from around the world.",
     author: "Isabella Marino",
     location: "Berlin, Germany",
     role: "Festival Organizer",
@@ -102,7 +102,7 @@ export default function TestimonialsPage() {
                 className="text-center max-w-3xl mx-auto mb-12"
               >
                 <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">
-                  Join 10,000+ Happy Dancers
+                  Join Happy Dancers Worldwide
                 </h2>
                 <p className="text-lg text-muted-foreground">
                   From complete beginners to world-renowned maestros, Mundo Tango serves the entire 

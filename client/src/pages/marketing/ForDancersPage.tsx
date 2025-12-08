@@ -59,7 +59,7 @@ export default function ForDancersPage() {
     <SelfHealingErrorBoundary pageName="For Dancers" fallbackRoute="/">
       <SEO 
         title="For Dancers - Mundo Tango"
-        description="Join 10,000+ tango dancers worldwide. Find partners, discover events, and connect with the global tango community."
+        description="Join tango dancers worldwide. Find partners, discover events, and connect with the global tango community."
       />
       
       <div className="min-h-screen bg-background overflow-x-hidden">

@@ -150,7 +150,7 @@ export default function GroupsPrototypePage() {
     <div className="min-h-screen bg-background">
       <SEO
         title="Tango Groups & Communities | Mundo Tango"
-        description="Join tango communities worldwide. Connect with city groups, professional networks, and interest-based communities. Find your tango family in 180+ cities."
+        description="Join tango communities worldwide. Connect with city groups, professional networks, and interest-based communities. Find your tango family globally."
       />
       {/* Theme Toggle - Fixed Position */}
       <div className="fixed top-6 right-6 z-50">

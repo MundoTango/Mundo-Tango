@@ -91,7 +91,7 @@ export default function MissionPage() {
                         <h3 className="text-2xl font-serif font-bold">Connect Dancers Worldwide</h3>
                         <p className="text-sm text-muted-foreground">
                           Break down geographical barriers and create meaningful connections between dancers 
-                          across 500+ cities globally. From Buenos Aires to Tokyo, Moscow to Melbourne—we bring 
+                          across cities globally. From Buenos Aires to Tokyo, Moscow to Melbourne—we bring 
                           the tango community together.
                         </p>
                       </CardContent>

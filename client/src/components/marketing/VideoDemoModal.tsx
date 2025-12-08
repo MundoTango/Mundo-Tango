@@ -76,7 +76,7 @@ const journeyData: JourneyVideoData[] = [
     videoUrl: '/videos/marketing/tango-map-promo.mp4',
     thumbnailUrl: '/demos/tango-map.png',
     features: [
-      { icon: Globe, title: '95+ Cities', description: 'Connect with tango communities worldwide' },
+      { icon: Globe, title: 'Global Network', description: 'Connect with tango communities worldwide' },
       { icon: MapPin, title: 'Live Locations', description: 'Find dancers near you in real-time' },
       { icon: Users, title: 'Community Hubs', description: 'Discover local milongas and praticas' },
     ]

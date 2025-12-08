@@ -189,21 +189,7 @@ export default function RegisterPage() {
                   {t('register.hero.subtitle')}
                 </p>
 
-                {/* Community Stats */}
-                <div className="flex gap-6 justify-center mb-8 text-white/70 text-sm flex-wrap">
-                  <div className="flex items-center gap-2">
-                    <Users className="w-4 h-4" />
-                    <span>10,000+ dancers</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Sparkles className="w-4 h-4" />
-                    <span>500+ events</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Globe className="w-4 h-4" />
-                    <span>120 cities</span>
-                  </div>
-                </div>
+                {/* Community Stats - Hidden when no real data */}
               </div>
 
               {/* Glassmorphic Registration Form */}

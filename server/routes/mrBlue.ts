@@ -16,6 +16,7 @@ import { getMrBlueCapabilities, getTierName } from '../utils/mrBlueCapabilities'
 import { contextService } from "../services/mrBlue/ContextService";
 import { memoryService } from "../services/mrBlue/MemoryService";
 import { vibeCodingService } from "../services/mrBlue/VibeCodingService";
+import { audioConversationService } from '../services/mrBlue/AudioConversationService';
 import { conversationOrchestrator } from "../services/ConversationOrchestrator";
 import { AgentLearningService, type AgentExecutionResult } from "../services/learning/AgentLearningService";
 
@@ -1851,3 +1852,132 @@ router.post("/messages", optionalAuth, async (req: AuthRequest, res: Response) =
 });
 
 export default router;
+
+// ========================================
+// AUDIO CONVERSATION ROUTES
+// ========================================
+
+/**
+ * Start audio conversation session
+ */
+router.post('/audio/start', optionalAuth, async (req, res) => {
+  try {
+    const sessionId = `audio_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const userId = req.user?.id || null;
+
+    const session = await audioConversationService.startSession(sessionId, userId);
+
+    res.json({
+      success: true,
+      sessionId: session.id,
+      status: 'ready',
+      message: 'Audio conversation session started'
+    });
+  } catch (error: any) {
+    console.error('[mrBlue] Audio start error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * Transcribe and process audio message
+ */
+router.post('/audio/transcribe', optionalAuth, async (req, res) => {
+  try {
+    const { sessionId, audioData } = req.body;
+
+    if (!sessionId || !audioData) {
+      return res.status(400).json({ error: 'Missing sessionId or audioData' });
+    }
+
+    // Convert base64 to buffer
+    const audioBuffer = Buffer.from(audioData, 'base64');
+
+    // Transcribe audio
+    const transcription = await audioConversationService.transcribeAudio(audioBuffer);
+
+    // Process message and generate response
+    const response = await audioConversationService.processMessage(sessionId, transcription);
+
+    // Generate speech from response
+    const audioResponse = await audioConversationService.generateSpeech(response.text);
+
+    res.json({
+      success: true,
+      transcription,
+      response: response.text,
+      isVibeCoding: response.isVibeCoding,
+      audioResponse: audioResponse.toString('base64')
+    });
+  } catch (error: any) {
+    console.error('[mrBlue] Audio transcribe error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * Track click event during conversation
+ */
+router.post('/audio/track-click', optionalAuth, async (req, res) => {
+  try {
+    const { sessionId, clickEvent } = req.body;
+
+    if (!sessionId || !clickEvent) {
+      return res.status(400).json({ error: 'Missing sessionId or clickEvent' });
+    }
+
+    audioConversationService.trackClick(sessionId, clickEvent);
+
+    res.json({ success: true });
+  } catch (error: any) {
+    console.error('[mrBlue] Click tracking error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * End audio conversation session
+ */
+router.post('/audio/stop', optionalAuth, async (req, res) => {
+  try {
+    const { sessionId } = req.body;
+
+    if (!sessionId) {
+      return res.status(400).json({ error: 'Missing sessionId' });
+    }
+
+    audioConversationService.endSession(sessionId);
+
+    res.json({
+      success: true,
+      message: 'Audio conversation session ended'
+    });
+  } catch (error: any) {
+    console.error('[mrBlue] Audio stop error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * Get session info
+ */
+router.get('/audio/session/:sessionId', optionalAuth, async (req, res) => {
+  try {
+    const { sessionId } = req.params;
+
+    const session = audioConversationService.getSession(sessionId);
+
+    if (!session) {
+      return res.status(404).json({ error: 'Session not found' });
+    }
+
+    res.json({
+      success: true,
+      session
+    });
+  } catch (error: any) {
+    console.error('[mrBlue] Session info error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+

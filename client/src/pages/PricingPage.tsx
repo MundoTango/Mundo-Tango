@@ -57,8 +57,8 @@ const formatPrice = (priceInCents: number): string => {
 
 const defaultPlans: PlanDisplay[] = [
   {
-    name: "Explorer",
-    slug: "explorer",
+    name: "Free",
+    slug: "free",
     planId: "free",
     price: "$0",
     period: "forever",
@@ -76,15 +76,15 @@ const defaultPlans: PlanDisplay[] = [
     isFree: true
   },
   {
-    name: "Traveler",
-    slug: "traveler",
+    name: "Basic",
+    slug: "basic",
     planId: "basic",
     price: "$4.99",
     period: "month",
     icon: Plane,
     description: "Essential tango tools",
     features: [
-      "Everything in Explorer",
+      "Everything in Free",
       "Enhanced profile & messaging",
       "Create & join groups",
       "Extended AI queries",
@@ -95,15 +95,15 @@ const defaultPlans: PlanDisplay[] = [
     isFree: false
   },
   {
-    name: "Global Dancer",
-    slug: "global-dancer",
+    name: "Pro",
+    slug: "pro",
     planId: "pro",
     price: "$9.99",
     period: "month",
     icon: Globe,
-    description: "For dedicated dancers",
+    description: "For active participants",
     features: [
-      "Everything in Traveler",
+      "Everything in Basic",
       "Unlimited AI assistant",
       "Advanced partner matching",
       "Housing marketplace",
@@ -116,15 +116,15 @@ const defaultPlans: PlanDisplay[] = [
     isFree: false
   },
   {
-    name: "Organizer Pro",
-    slug: "organizer-pro",
-    planId: "premium",
+    name: "Professional",
+    slug: "professional",
+    planId: "professional",
     price: "$29.99",
     period: "month",
     icon: Building,
     description: "For teachers & organizers",
     features: [
-      "Everything in Global Dancer",
+      "Everything in Pro",
       "Event creation & management",
       "Analytics dashboard",
       "Student management",

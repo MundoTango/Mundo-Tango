@@ -215,10 +215,10 @@ export default function DiscoverPage() {
 
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
             {[
-              { icon: Music, title: "Milongas", count: "450+", color: "text-primary" },
-              { icon: Calendar, title: "Festivals", count: "120+", color: "text-secondary" },
-              { icon: Star, title: "Workshops", count: "300+", color: "text-accent" },
-              { icon: Globe, title: "Online Events", count: "80+", color: "text-primary" }
+              { icon: Music, title: "Milongas", count: "", color: "text-primary" },
+              { icon: Calendar, title: "Festivals", count: "", color: "text-secondary" },
+              { icon: Star, title: "Workshops", count: "", color: "text-accent" },
+              { icon: Globe, title: "Online Events", count: "", color: "text-primary" }
             ].map((category, idx) => (
               <motion.div 
                 key={idx} 
@@ -228,7 +228,6 @@ export default function DiscoverPage() {
                 <Card className="hover-elevate text-center p-8 space-y-4" data-testid={`card-category-${idx}`}>
                   <category.icon className={`h-12 w-12 mx-auto ${category.color}`} />
                   <h3 className="text-xl font-serif font-bold">{category.title}</h3>
-                  <p className="text-3xl font-serif font-bold text-primary">{category.count}</p>
                   <p className="text-base text-muted-foreground">Events worldwide</p>
                 </Card>
               </motion.div>

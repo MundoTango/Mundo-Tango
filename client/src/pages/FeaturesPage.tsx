@@ -266,29 +266,7 @@ export default function FeaturesPage() {
               </motion.div>
 
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
-                {[
-                  { value: "50,000+", label: "Active Dancers" },
-                  { value: "500+", label: "Cities" },
-                  { value: "10,000+", label: "Events Monthly" },
-                  { value: "1,000+", label: "Teachers" }
-                ].map((stat, index) => (
-                  <motion.div
-                    key={stat.label}
-                    initial={{ opacity: 0, y: 40 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: "-100px" }}
-                    transition={{ duration: 0.6, delay: index * 0.1 }}
-                    className="text-center"
-                    data-testid={`stat-${index}`}
-                  >
-                    <div className="text-5xl md:text-6xl font-bold text-primary mb-2">
-                      {stat.value}
-                    </div>
-                    <div className="text-lg text-muted-foreground">
-                      {stat.label}
-                    </div>
-                  </motion.div>
-                ))}
+                {/* Stats hidden - no hardcoded data */}
               </div>
             </div>
           </div>

@@ -87,7 +87,7 @@ export default function MarketingPrototype() {
             transition={{ duration: 1, delay: 0.5 }}
             className="text-xl md:text-2xl text-white/90 mb-12 max-w-3xl mx-auto leading-relaxed"
           >
-            Connect with 10,000+ dancers worldwide. Discover events, find partners, and immerse yourself in the global tango movement.
+            Connect with dancers worldwide. Discover events, find partners, and immerse yourself in the global tango movement.
           </motion.p>
 
           <motion.div
@@ -152,7 +152,7 @@ export default function MarketingPrototype() {
       <ChapterSection
         title="THE COMMUNITY"
         subtitle="Connect with dancers worldwide"
-        description="Join 10,000+ passionate dancers from 50+ countries. Find your tribe, share your journey, and experience tango culture together."
+        description="Join passionate dancers from around the world. Find your tribe, share your journey, and experience tango culture together."
         icon={<Users size={80} className="text-purple-500" />}
         gradient="from-purple-600/20 to-cyan-500/20"
         iconPosition="right"
@@ -179,9 +179,7 @@ export default function MarketingPrototype() {
 
           {/* Stats Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <StatCard number="10,000+" label="Active Dancers" delay={0.2} />
-            <StatCard number="50+" label="Countries" delay={0.4} />
-            <StatCard number="1,000+" label="Events Monthly" delay={0.6} />
+            {/* Stats hidden - no hardcoded data */}
           </div>
         </div>
       </section>

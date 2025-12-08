@@ -134,25 +134,7 @@ export default function HomePage() {
               </Link>
             </div>
 
-            {/* Quick Stats */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 pt-8 border-t border-white/20" data-testid="section-stats">
-              <div>
-                <div className="text-4xl md:text-5xl font-serif font-bold text-white">10,000+</div>
-                <div className="text-sm text-white/80 mt-1">{t('home.hero.stats.dancers')}</div>
-              </div>
-              <div>
-                <div className="text-4xl md:text-5xl font-serif font-bold text-white">500+</div>
-                <div className="text-sm text-white/80 mt-1">{t('home.hero.stats.cities')}</div>
-              </div>
-              <div>
-                <div className="text-4xl md:text-5xl font-serif font-bold text-white">2,000+</div>
-                <div className="text-sm text-white/80 mt-1">{t('home.hero.stats.events')}</div>
-              </div>
-              <div>
-                <div className="text-4xl md:text-5xl font-serif font-bold text-white">1,200+</div>
-                <div className="text-sm text-white/80 mt-1">{t('home.hero.stats.teachers')}</div>
-              </div>
-            </div>
+            {/* Quick Stats - Hidden until real data available */}
           </motion.div>
         </div>
       </section>

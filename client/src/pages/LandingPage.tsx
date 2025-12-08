@@ -18,6 +18,52 @@ import {
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 
+// Generate features array with dynamic stats
+const getFeatures = (cities: number | null, countries: number | null) => [
+  {
+    icon: MapPin,
+    title: "Global Tango Map",
+    description: cities && countries 
+      ? `Discover dancers, events, and communities in ${cities}+ cities across ${countries}+ countries.`
+      : "Discover dancers, events, and communities worldwide. Never feel alone in your tango journey."
+  },
+  {
+    icon: Bot,
+    title: "AI-Powered Matching",
+    description: "Mr. Blue AI connects you with dancers who match your level, style, and interests. Smart recommendations that grow with you."
+  },
+  {
+    icon: Calendar,
+    title: "Event Discovery",
+    description: "Find milongas, practicas, festivals, and workshops happening near you or plan your tango travels worldwide."
+  },
+  {
+    icon: Home,
+    title: "Housing Marketplace",
+    description: "Stay with local tango dancers when traveling. Offer your home to visiting dancers. Build friendships through shared spaces."
+  },
+  {
+    icon: Briefcase,
+    title: "Professional Networking",
+    description: "Connect with teachers, organizers, DJs, and performers. Grow your tango career or find the perfect instructor."
+  },
+  {
+    icon: Video,
+    title: "Live Streaming",
+    description: "Attend virtual milongas, watch live performances, and take online classes from maestros around the world."
+  },
+  {
+    icon: Bot,
+    title: "Mr. Blue AI Assistant",
+    description: "Your personal tango companion answers questions, suggests events, helps plan trips, and provides learning resources 24/7."
+  },
+  {
+    icon: Globe,
+    title: "Multi-Language Support",
+    description: "Platform available in English, Spanish, Portuguese, French, Italian, and more. Tango speaks all languages."
+  }
+];
+
 export default function LandingPage() {
   const [demoModalOpen, setDemoModalOpen] = useState(false);
   const [videoModalOpen, setVideoModalOpen] = useState(false);
@@ -71,49 +117,6 @@ export default function LandingPage() {
     }
   };
 
-  const features = [
-    {
-      icon: MapPin,
-      title: "Global Tango Map",
-      description: "Discover dancers, events, and communities in 95 cities across 50+ countries. Never feel alone in your tango journey."
-    },
-    {
-      icon: Bot,
-      title: "AI-Powered Matching",
-      description: "Mr. Blue AI connects you with dancers who match your level, style, and interests. Smart recommendations that grow with you."
-    },
-    {
-      icon: Calendar,
-      title: "Event Discovery",
-      description: "Find milongas, practicas, festivals, and workshops happening near you or plan your tango travels worldwide."
-    },
-    {
-      icon: Home,
-      title: "Housing Marketplace",
-      description: "Stay with local tango dancers when traveling. Offer your home to visiting dancers. Build friendships through shared spaces."
-    },
-    {
-      icon: Briefcase,
-      title: "Professional Networking",
-      description: "Connect with teachers, organizers, DJs, and performers. Grow your tango career or find the perfect instructor."
-    },
-    {
-      icon: Video,
-      title: "Live Streaming",
-      description: "Attend virtual milongas, watch live performances, and take online classes from maestros around the world."
-    },
-    {
-      icon: Bot,
-      title: "Mr. Blue AI Assistant",
-      description: "Your personal tango companion answers questions, suggests events, helps plan trips, and provides learning resources 24/7."
-    },
-    {
-      icon: Globe,
-      title: "Multi-Language Support",
-      description: "Platform available in English, Spanish, Portuguese, French, Italian, and more. Tango speaks all languages."
-    }
-  ];
-
   const steps = [
     {
       number: 1,
@@ -143,7 +146,7 @@ export default function LandingPage() {
 
   const pricingTiers = [
     {
-      name: "Explorer",
+      name: "Free",
       price: "$0",
       period: "forever",
       description: "Start your tango journey",
@@ -158,12 +161,12 @@ export default function LandingPage() {
       popular: false
     },
     {
-      name: "Traveler",
+      name: "Basic",
       price: "$4.99",
       period: "per month",
       description: "Essential tango tools",
       features: [
-        "Everything in Explorer",
+        "Everything in Free",
         "Enhanced profile & messaging",
         "Create & join groups",
         "Extended AI queries",
@@ -173,12 +176,12 @@ export default function LandingPage() {
       popular: false
     },
     {
-      name: "Global Dancer",
+      name: "Pro",
       price: "$9.99",
       period: "per month",
       description: "For dedicated dancers",
       features: [
-        "Everything in Traveler",
+        "Everything in Basic",
         "Unlimited AI assistant",
         "Advanced partner matching",
         "Housing marketplace access",
@@ -190,12 +193,12 @@ export default function LandingPage() {
       popular: true
     },
     {
-      name: "Organizer Pro",
+      name: "Professional",
       price: "$29.99",
       period: "per month",
       description: "For teachers & organizers",
       features: [
-        "Everything in Global Dancer",
+        "Everything in Pro",
         "Event creation & management",
         "Analytics dashboard",
         "Student management tools",
@@ -212,7 +215,7 @@ export default function LandingPage() {
       id: "tango-map",
       journeyId: "tango-map-promo",
       title: "Global Tango Map",
-      description: "Find dancers in 95+ cities worldwide",
+      description: "Find dancers in cities worldwide",
       gradient: "from-teal-500 to-cyan-600",
       icon: MapPin,
       image: "/demos/tango-map.png",
@@ -285,6 +288,12 @@ export default function LandingPage() {
     publicStats?.cities ? { value: publicStats.cities.toString(), label: "Cities" } : null,
     publicStats?.countries ? { value: `${publicStats.countries}+`, label: "Countries" } : null,
   ].filter(Boolean) as { value: string; label: string }[];
+
+  // Get features with dynamic stats (cities/countries)
+  const features = getFeatures(
+    publicStats?.cities ? Number(publicStats.cities) : null, 
+    publicStats?.countries
+  );
 
   return (
     <div className="min-h-screen bg-background">

@@ -40,7 +40,7 @@ const features = [
   {
     icon: Globe,
     title: "Global Visibility",
-    description: "Get discovered by dancers worldwide. Your teaching profile reaches 10,000+ tango enthusiasts."
+    description: "Get discovered by dancers worldwide. Your teaching profile reaches tango enthusiasts globally."
   }
 ];
 
@@ -55,14 +55,14 @@ const benefits = [
 
 const pricingTiers = [
   {
-    name: "Traveler",
+    name: "Basic",
     price: "$4.99",
     period: "/month",
     description: "Essential teaching tools",
     features: ["Profile listing", "5 class listings", "Basic analytics", "Community access"]
   },
   {
-    name: "Organizer Pro",
+    name: "Professional",
     price: "$29.99",
     period: "/month",
     description: "Everything you need to grow",

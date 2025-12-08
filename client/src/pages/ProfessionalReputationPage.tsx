@@ -46,7 +46,7 @@ export default function ProfessionalReputationPage() {
       professionalism: 4.6,
       communication: 4.5,
     },
-    badges: ['Top Teacher 2024', 'Verified Professional', '100+ Students'],
+    badges: ['Top Teacher 2024', 'Verified Professional', 'Active Educator'],
     verified: true,
   };
 
