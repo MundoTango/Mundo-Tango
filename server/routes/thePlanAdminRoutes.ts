@@ -4,6 +4,7 @@ import { pageInventory, auditIssues } from '@shared/schema';
 import { THE_PLAN_PAGES } from '@shared/thePlanPages';
 import { eq, desc, sql } from 'drizzle-orm';
 import { ComprehensiveAuditRunner } from '../services/orchestration/ComprehensiveAuditRunner';
+import { videoRecordingService } from '../services/video/VideoRecordingService';
 
 const router = Router();
 
@@ -206,10 +207,20 @@ router.post('/capture-video/:pageId', async (req, res) => {
       return res.status(404).json({ error: 'Page not found' });
     }
     
+    const { pageVideoCaptureService } = await import('../services/video/PageVideoCaptureService');
+    
+    const { queued, position } = await pageVideoCaptureService.queueCapture({
+      pageId: page[0].id,
+      pageName: page[0].name,
+      pagePath: page[0].path
+    });
+    
     res.json({ 
       success: true, 
       message: `Video capture queued for ${page[0].name}`,
-      pageId
+      pageId,
+      queuePosition: position,
+      queued
     });
   } catch (error) {
     console.error('[The Plan Admin] Error capturing video:', error);
@@ -229,9 +240,20 @@ router.get('/issues', async (req, res) => {
 
 router.get('/videos', async (req, res) => {
   try {
+    const { pageVideoCaptureService } = await import('../services/video/PageVideoCaptureService');
+    
+    const pageVideos = await pageVideoCaptureService.getPageVideos();
+    const journeyVideos = await videoRecordingService.getVideoLibrary();
+    const queueStatus = pageVideoCaptureService.getQueueStatus();
+    
     res.json({ 
-      videos: [], 
-      message: 'Video capture system ready. Run audits to generate demo videos.' 
+      pageVideos,
+      journeyVideos: journeyVideos.videos,
+      totalCount: pageVideos.length + journeyVideos.totalCount,
+      queueStatus,
+      message: pageVideos.length === 0 && journeyVideos.totalCount === 0 
+        ? 'Video capture system ready. Click capture buttons to record page demos.' 
+        : undefined
     });
   } catch (error) {
     console.error('[The Plan Admin] Error fetching videos:', error);
@@ -241,9 +263,17 @@ router.get('/videos', async (req, res) => {
 
 router.get('/tours', async (req, res) => {
   try {
+    const { tourGenerationService } = await import('../services/tour/TourGenerationService');
+    
+    const tours = await tourGenerationService.generateToursFromAuditData();
+    const stats = await tourGenerationService.getTourStats();
+    
     res.json({ 
-      tours: [], 
-      message: 'Tour generation ready. Complete audits to create Mr Blue user tours.' 
+      tours,
+      stats,
+      message: tours.length === 0 
+        ? 'Tour generation ready. Complete page audits to create Mr Blue user tours.' 
+        : undefined
     });
   } catch (error) {
     console.error('[The Plan Admin] Error fetching tours:', error);

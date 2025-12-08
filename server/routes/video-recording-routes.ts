@@ -190,4 +190,56 @@ router.post('/record-all', async (req: Request, res: Response) => {
   }
 });
 
+/**
+ * GET /api/videos/marketing/demos
+ * Get all demo videos for marketing/landing page use
+ * Combines journey videos and page videos
+ */
+router.get('/marketing/demos', async (req: Request, res: Response) => {
+  try {
+    const { pageVideoCaptureService } = await import('../services/video/PageVideoCaptureService');
+    
+    const [journeyLibrary, pageVideos] = await Promise.all([
+      videoRecordingService.getVideoLibrary('marketing'),
+      pageVideoCaptureService.getPageVideos()
+    ]);
+    
+    const demos = [
+      ...journeyLibrary.videos.map(v => ({
+        id: v.id,
+        type: 'journey' as const,
+        name: v.name,
+        description: v.description,
+        videoUrl: v.videoUrl,
+        thumbnailUrl: v.thumbnailUrl,
+        duration: v.duration,
+        category: 'marketing'
+      })),
+      ...pageVideos.slice(0, 10).map(v => ({
+        id: v.id,
+        type: 'page' as const,
+        name: v.pageName,
+        description: `Demo of ${v.pageName}`,
+        videoUrl: v.videoUrl,
+        thumbnailUrl: v.screenshotUrl,
+        duration: v.duration,
+        category: 'page'
+      }))
+    ];
+    
+    res.json({
+      success: true,
+      demos,
+      totalCount: demos.length,
+      lastUpdated: journeyLibrary.lastUpdated
+    });
+  } catch (error) {
+    console.error('Error fetching marketing demos:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch marketing demos',
+    });
+  }
+});
+
 export default router;

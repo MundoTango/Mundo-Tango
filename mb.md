@@ -109,10 +109,33 @@ See:
    - SwarmChoreographyController with 9 SME agents for issue assignment
    - PostgreSQL persistence for audit issues with restart resilience
 
-#### ⏳ PENDING
-8. **Video/Photo Collection** - Capture demos during audits
-9. **Mr Blue User Tours** - Generate from audit data
-10. **Marketing Site Integration** - Wire media to landing page
+#### ✅ COMPLETED (Dec 8, 2025) - Phase 2
+8. **Video/Photo Collection** - Full implementation
+   - PageVideoCaptureService: server/services/video/PageVideoCaptureService.ts
+   - Queue-based video capture for individual pages
+   - Playwright page recording with screenshots
+   - Capture script auto-generation (scripts/capture-page-video.ts)
+   - Manifest management for captured videos
+   - Integration with existing VideoRecordingService for journey videos
+   - /api/admin/the-plan/capture-video/:pageId - Queue video capture
+   - /api/admin/the-plan/videos - Return combined page + journey videos
+
+9. **Mr Blue User Tours** - Full implementation
+   - TourGenerationService: server/services/tour/TourGenerationService.ts
+   - Dynamic tour generation from pageInventory audit data
+   - Category-based tour organization (dashboard, events, profile, etc.)
+   - Integration with existing tourGuideAgent predefined tours
+   - Fallback chain: predefined tours → dynamically generated tours
+   - /api/admin/the-plan/tours - Return generated tours with stats
+   - /api/mr-blue/agents/tour/:feature - Enhanced with dynamic tour support
+
+#### ✅ COMPLETED (Dec 8, 2025) - Phase 3
+10. **Marketing Site Integration** - Full implementation
+    - GET /api/videos/recording/marketing/demos - Combined marketing/page videos endpoint
+    - Integrates with existing VideoDemoModal on LandingPage
+    - Supports both journey videos (marketing) and page demo videos
+    - Returns: demos array with id, type, name, description, videoUrl, thumbnailUrl
+    - Existing infrastructure leveraged: VideoRecordingService, PageVideoCaptureService
 
 ---
 

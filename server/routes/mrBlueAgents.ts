@@ -265,7 +265,19 @@ router.get("/tour/list", async (_req: Request, res: Response) => {
 router.get("/tour/:feature", async (req: Request, res: Response) => {
   try {
     const { feature } = req.params;
-    const tour = tourGuideAgent.getTourByFeature(feature);
+    
+    // First check predefined tours
+    let tour = tourGuideAgent.getTourByFeature(feature);
+
+    // If not found, check dynamically generated tours from audit data
+    if (!tour) {
+      try {
+        const { tourGenerationService } = await import('../services/tour/TourGenerationService');
+        tour = await tourGenerationService.getTourByFeature(feature);
+      } catch (importError) {
+        console.warn('[MrBlueAgents] TourGenerationService not available:', importError);
+      }
+    }
 
     if (!tour) {
       return res.status(404).json({
