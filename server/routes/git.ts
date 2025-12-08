@@ -6,6 +6,7 @@
 import { Router } from 'express';
 import { AutonomousGitService } from '../services/git/AutonomousGitService';
 import { authenticateToken } from '../middleware/auth';
+import logger from "../middleware/logger";
 
 const router = Router();
 

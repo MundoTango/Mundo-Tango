@@ -3,6 +3,7 @@ import { PageAuditService } from '../services/self-healing/PageAuditService';
 import { SelfHealingService } from '../services/self-healing/SelfHealingService';
 import { AgentActivationService } from '../services/self-healing/AgentActivationService';
 import { spawn } from 'child_process';
+import logger from "../middleware/logger";
 
 const router = Router();
 

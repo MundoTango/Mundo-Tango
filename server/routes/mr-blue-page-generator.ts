@@ -5,6 +5,7 @@
 
 import { Router } from 'express';
 import { pageGeneratorService } from '../services/page-generator/PageGeneratorService';
+import logger from "../middleware/logger";
 
 const router = Router();
 

@@ -4,6 +4,7 @@ import * as pointsService from "../services/gamification/pointsService";
 import * as badgeService from "../services/gamification/badgeService";
 import * as leaderboardService from "../services/gamification/leaderboardService";
 import * as autonomyService from "../services/gamification/autonomyService";
+import logger from "../middleware/logger";
 
 const router = Router();
 

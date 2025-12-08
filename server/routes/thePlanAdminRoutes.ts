@@ -5,6 +5,7 @@ import { THE_PLAN_PAGES } from '@shared/thePlanPages';
 import { eq, desc, sql } from 'drizzle-orm';
 import { ComprehensiveAuditRunner } from '../services/orchestration/ComprehensiveAuditRunner';
 import { videoRecordingService } from '../services/video/VideoRecordingService';
+import logger from "../middleware/logger";
 
 const router = Router();
 

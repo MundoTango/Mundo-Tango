@@ -2,6 +2,7 @@ import express from 'express';
 import { lumaService } from '../services/lumaAvatarService';
 import fs from 'fs';
 import path from 'path';
+import logger from "../middleware/logger";
 
 const router = express.Router();
 

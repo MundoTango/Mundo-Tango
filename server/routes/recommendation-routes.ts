@@ -11,6 +11,7 @@ import { RecommendationEngine } from "../services/RecommendationEngine";
 import { db } from "@shared/db";
 import { users, events, teachers, posts } from "@shared/schema";
 import { eq, inArray } from "drizzle-orm";
+import logger from "../middleware/logger";
 
 const router = Router();
 

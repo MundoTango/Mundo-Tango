@@ -8,6 +8,7 @@ import { AuthRequest } from '../middleware/auth';
 import { db } from '@shared/db';
 import { codeOfConductAgreements } from '@shared/schema';
 import { eq } from 'drizzle-orm';
+import logger from "../middleware/logger";
 
 const router = Router();
 

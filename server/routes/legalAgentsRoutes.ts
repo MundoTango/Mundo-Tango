@@ -4,6 +4,7 @@ import IORedis from 'ioredis';
 import { legalOrchestrator } from '../services/legal/LegalOrchestrator';
 import type { LegalJobData } from '../workers/legalAgentWorker';
 import { z } from 'zod';
+import logger from "../middleware/logger";
 
 const router = Router();
 

@@ -1,6 +1,7 @@
 import express from 'express';
 import { OpenAI } from 'openai';
 import { authenticateToken } from '../middleware/auth';
+import logger from "../middleware/logger";
 
 const router = express.Router();
 

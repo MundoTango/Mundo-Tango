@@ -5,6 +5,7 @@ import { eq, desc, and, gte, lte, or, ilike, isNotNull } from "drizzle-orm";
 import { authenticateToken, AuthRequest } from "../middleware/auth";
 import * as cheerio from "cheerio";
 import axios from "axios";
+import logger from "../middleware/logger";
 
 // TypeScript types for scraping responses
 interface ScrapedAccommodation {

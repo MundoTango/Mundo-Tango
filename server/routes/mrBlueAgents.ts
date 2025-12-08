@@ -4,6 +4,7 @@ import { avatarAgent, type AvatarEmotion } from "../services/mrBlue/avatarAgent"
 import { tourGuideAgent } from "../services/mrBlue/tourGuideAgent";
 import { subscriptionAgent } from "../services/mrBlue/subscriptionAgent";
 import { qualityValidatorAgent } from "../services/mrBlue/qualityValidatorAgent";
+import logger from "../middleware/logger";
 
 const router = Router();
 

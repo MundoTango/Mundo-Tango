@@ -5,6 +5,7 @@ import { AgentOrchestrationService } from '../services/self-healing';
 import { storage } from '../storage';
 import { z } from 'zod';
 import { THE_PLAN_PAGES } from '@shared/thePlanPages';
+import logger from "../middleware/logger";
 
 /**
  * BLOCKER 5: Self-Healing System Routes

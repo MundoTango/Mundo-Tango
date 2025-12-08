@@ -14,6 +14,7 @@ import {
 } from "../../shared/schema";
 import { eq, and, desc, sql, gte, lt, or, inArray } from "drizzle-orm";
 import { authenticateToken, optionalAuth, AuthRequest } from "../middleware/auth";
+import logger from "../middleware/logger";
 
 const router = Router();
 

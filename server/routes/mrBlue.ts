@@ -19,6 +19,7 @@ import { vibeCodingService } from "../services/mrBlue/VibeCodingService";
 import { audioConversationService } from '../services/mrBlue/AudioConversationService';
 import { conversationOrchestrator } from "../services/ConversationOrchestrator";
 import { AgentLearningService, type AgentExecutionResult } from "../services/learning/AgentLearningService";
+import logger from "../middleware/logger";
 
 async function recordMrBlueExecution(
   task: string,

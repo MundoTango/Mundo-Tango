@@ -3,6 +3,7 @@ import { db } from "@shared/db";
 import { djProfiles, users } from "@shared/schema";
 import { eq, desc, and, or, ilike, sql } from "drizzle-orm";
 import { authenticateToken, AuthRequest } from "../middleware/auth";
+import logger from "../middleware/logger";
 
 const router = Router();
 

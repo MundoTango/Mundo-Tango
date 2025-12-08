@@ -18,6 +18,7 @@ import { agentKnowledgeLoader, LearningReport } from '../services/intelligence/A
 import { recursiveContextService } from '../services/intelligence/RecursiveContextService';
 import { AgentLearningService, type AgentExecutionResult } from '../services/learning/AgentLearningService';
 import { PatternRecognition } from '../services/learning/PatternRecognition';
+import logger from "../middleware/logger";
 
 const router = Router();
 

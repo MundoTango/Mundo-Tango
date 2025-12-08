@@ -4,6 +4,7 @@ import { authenticateToken, requireRoleLevel, AuthRequest } from '../middleware/
 import { db } from '@shared/db';
 import { featureFlags, tierLimits, userFeatureUsage } from '@shared/schema';
 import { eq } from 'drizzle-orm';
+import logger from "../middleware/logger";
 
 const router = Router();
 

@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { db, checkDatabaseConnection } from '../../shared/db';
 import { getRedisClient } from '../cache/redis-cache';
+import logger from "../middleware/logger";
 
 const router = Router();
 

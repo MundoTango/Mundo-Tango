@@ -16,6 +16,7 @@ import { comprehensiveAuditRunner } from '../services/orchestration/Comprehensiv
 import { db } from '../storage';
 import { auditIssues } from '../../shared/schema';
 import { eq } from 'drizzle-orm';
+import logger from "../middleware/logger";
 
 const router = Router();
 

@@ -3,6 +3,7 @@ import { authenticateToken, requireRoleLevel, AuthRequest } from '../middleware/
 import { GitHubSyncService } from '../services/GitHubSyncService';
 import { JiraSyncService } from '../services/JiraSyncService';
 import { db, executeRawQuery } from '@shared/db';
+import logger from "../middleware/logger";
 
 /**
  * BLOCKER 7: GitHub/Jira Sync Routes

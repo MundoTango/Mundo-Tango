@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { RoleConfirmationService } from '../services/reputation/RoleConfirmationService';
 import { authenticateToken } from '../middleware/auth';
 import { z } from 'zod';
+import logger from "../middleware/logger";
 
 const router = Router();
 

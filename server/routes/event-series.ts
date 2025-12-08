@@ -1,5 +1,6 @@
 import { Router, type Request, type Response } from "express";
 import { db } from "@shared/db";
+import logger from "../middleware/logger";
 import {
   eventSeries,
   events,
@@ -9,6 +10,7 @@ import {
 import { authenticateToken, optionalAuth, AuthRequest } from "../middleware/auth";
 import { eq, and, desc, gte, lt, sql } from "drizzle-orm";
 import { z } from "zod";
+import logger from "../middleware/logger";
 
 const router = Router();
 

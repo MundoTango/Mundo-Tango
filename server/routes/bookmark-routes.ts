@@ -2,6 +2,7 @@ import { Router } from "express";
 import { z } from "zod";
 import type { IStorage } from "../storage";
 import { authenticateToken, AuthRequest } from "../middleware/auth";
+import logger from "../middleware/logger";
 
 // ✅ SECURITY-FIRST: Zod schemas for input validation (mb.md v8.0)
 const createBookmarkSchema = z.object({

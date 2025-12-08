@@ -3,6 +3,7 @@ import { storage } from "../storage";
 import { authenticateToken, AuthRequest } from "../middleware/auth";
 import { db } from "@shared/db";
 import { eq, and, or, ilike, sql, desc } from "drizzle-orm";
+import logger from "../middleware/logger";
 import {
   wellnessProfiles,
   tourOperatorProfiles,
@@ -18,6 +19,7 @@ import {
   insertOrganizerProfileSchema,
 } from "@shared/schema";
 import { z } from "zod";
+import logger from "../middleware/logger";
 
 const router = Router();
 

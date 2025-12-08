@@ -4,6 +4,7 @@ import { profileClaims, venues, users, teachers } from "@shared/schema";
 import { eq, and } from "drizzle-orm";
 import { authenticateToken, AuthRequest } from "../middleware/auth";
 import { z } from "zod";
+import logger from "../middleware/logger";
 
 const router = Router();
 

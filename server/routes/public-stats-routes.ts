@@ -1,11 +1,13 @@
 import { Router } from "express";
 import { db } from "../db";
+import logger from "../middleware/logger";
 import { 
   platformDonations, 
   ambassadors,
   users,
 } from "@shared/schema";
 import { sql, eq, and, sum, count } from "drizzle-orm";
+import logger from "../middleware/logger";
 
 const router = Router();
 

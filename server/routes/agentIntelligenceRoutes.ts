@@ -19,6 +19,7 @@ import { AgentCollaborationService } from "../services/collaboration/agentCollab
 import { KnowledgeGraphService } from "../services/knowledge/knowledgeGraphService";
 import { db } from "../../shared/db";
 import { esaAgents, agentTasks } from "../../shared/platform-schema";
+import logger from "../middleware/logger";
 import { 
   learningPatterns, 
   validationResults,
@@ -26,6 +27,7 @@ import {
   agentPerformanceAlerts
 } from "../../shared/schema";
 import { eq, desc, and, gte, sql, count, or } from "drizzle-orm";
+import logger from "../middleware/logger";
 
 console.log('[DEBUG] 🔄 agentIntelligenceRoutes.ts - Starting module load...');
 

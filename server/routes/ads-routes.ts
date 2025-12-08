@@ -6,6 +6,7 @@ import { authenticateToken, AuthRequest, requireRole } from "../middleware/auth"
 import { eq, and, desc, sql, gte, lte, isNull, or } from "drizzle-orm";
 import { z } from "zod";
 import { fromZodError } from "zod-validation-error";
+import logger from "../middleware/logger";
 
 const router = Router();
 

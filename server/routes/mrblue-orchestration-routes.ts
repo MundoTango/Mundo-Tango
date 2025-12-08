@@ -23,6 +23,7 @@ import { commitChanges, type CommitRequest } from '../services/mrBlue/gitCommitG
 import { VibeCodingService } from '../services/mrBlue/VibeCodingService';
 import { ErrorAnalysisAgent } from '../services/mrBlue/errorAnalysisAgent';
 import { z } from 'zod';
+import logger from "../middleware/logger";
 
 const router = Router();
 
@@ -451,6 +452,7 @@ import { a2aProtocolService } from '../services/orchestration/A2AProtocolService
 import { orchestratorAgent } from '../services/orchestration/OrchestratorAgent';
 import { agentCardRegistry } from '../services/orchestration/AgentCardRegistry';
 import type { A2AMessage } from '../../shared/types/a2a';
+import logger from "../middleware/logger";
 
 /**
  * POST /api/v1/a2a/:agentId
@@ -566,6 +568,7 @@ router.get('/stats', authenticateToken, async (req: Request, res: Response) => {
 // ==================== BROWSER AUTOMATION (Agent #38) ====================
 
 import { browserAutomationService } from '../services/mrBlue/BrowserAutomationService';
+import logger from "../middleware/logger";
 
 /**
  * GET /api/v1/orchestration/browser-automation/recordings

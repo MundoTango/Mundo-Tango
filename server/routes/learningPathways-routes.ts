@@ -10,6 +10,7 @@ import { tourCompletionPathway } from "../services/pathways/tourCompletionPathwa
 import { featureUsagePathway } from "../services/pathways/featureUsagePathway";
 import { errorPatternPathway } from "../services/pathways/errorPatternPathway";
 import { socialSentimentPathway } from "../services/pathways/socialSentimentPathway";
+import logger from "../middleware/logger";
 
 export function registerLearningPathwaysRoutes(app: Router) {
   // ============================================================================

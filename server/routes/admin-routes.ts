@@ -15,6 +15,7 @@ import { authenticateToken, AuthRequest } from "../middleware/auth";
 import { requireMinimumRole } from "../middleware/tierEnforcement";
 import { storage } from "../storage";
 import { AnalyticsService } from "../services/AnalyticsService";
+import logger from "../middleware/logger";
 
 const router = Router();
 

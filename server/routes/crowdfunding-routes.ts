@@ -1,5 +1,6 @@
 import { Express, Request, Response } from "express";
 import { db } from "@shared/db";
+import logger from "../middleware/logger";
 import { 
   fundingCampaigns, 
   campaignDonations, 
@@ -14,6 +15,7 @@ import {
 } from "@shared/schema";
 import { eq, desc, sql, and, or, gte, lte, ilike } from "drizzle-orm";
 import { authenticateToken, AuthRequest } from "../middleware/auth";
+import logger from "../middleware/logger";
 
 export default function crowdfundingRoutes(app: Express) {
   

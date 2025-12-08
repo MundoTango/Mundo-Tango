@@ -3,6 +3,7 @@ import { lumaVideoService } from '../services/lumaVideoService';
 import { didService, DID_VOICE_PRESETS, MRBLUE_AVATAR_PRESETS } from '../services/didService';
 import { insertLumaVideoSchema } from '@shared/schema';
 import multer from 'multer';
+import logger from "../middleware/logger";
 
 const router = Router();
 const upload = multer({ storage: multer.memoryStorage() });

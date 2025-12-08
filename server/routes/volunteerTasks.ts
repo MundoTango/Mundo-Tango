@@ -4,6 +4,7 @@ import { planItems, planLinks, workLogs, users } from "@shared/schema";
 import { eq, and, desc, sql, or } from "drizzle-orm";
 import { insertPlanItemSchema, insertWorkLogSchema } from "@shared/schema";
 import { z } from "zod";
+import logger from "../middleware/logger";
 
 const router = Router();
 

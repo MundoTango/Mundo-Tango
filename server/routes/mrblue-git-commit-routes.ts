@@ -4,6 +4,7 @@
  */
 
 import { Router, Request, Response } from 'express';
+import logger from "../middleware/logger";
 import { 
   commitChanges, 
   getCommitHistory, 
@@ -11,6 +12,7 @@ import {
   generateCommitMessage 
 } from '../services/mrBlue/gitCommitGenerator';
 import { authenticateToken, type AuthRequest } from '../middleware/auth';
+import logger from "../middleware/logger";
 
 const router = Router();
 

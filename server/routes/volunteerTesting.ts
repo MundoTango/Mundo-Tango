@@ -10,6 +10,7 @@ import { volunteerService } from "../services/volunteer/volunteerService";
 import { authenticateToken, AuthRequest } from "../middleware/auth";
 import { requireMinimumRole } from "../middleware/tierEnforcement";
 import { insertUiTestScenarioSchema, insertUiTestResultSchema } from "@shared/schema";
+import logger from "../middleware/logger";
 
 const router = Router();
 

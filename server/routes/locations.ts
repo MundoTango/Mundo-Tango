@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
 import rateLimit from 'express-rate-limit';
+import logger from "../middleware/logger";
 
 const router = Router();
 

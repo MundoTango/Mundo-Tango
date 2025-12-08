@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { storage } from '../storage';
 import { z } from 'zod';
 import { THE_PLAN_PAGES, getTotalPages, getPageById } from '@shared/thePlanPages';
+import logger from "../middleware/logger";
 
 const router = Router();
 

@@ -10,6 +10,7 @@ import { storage } from "../storage";
 import { authenticateToken, type AuthRequest } from "../middleware/auth";
 import { Agent105_MasterOrchestrator } from "../services/financial/AgentOrchestrator";
 import { RateLimitedAIOrchestrator } from "../services/ai/integration/rate-limited-orchestrator";
+import logger from "../middleware/logger";
 
 const router = Router();
 

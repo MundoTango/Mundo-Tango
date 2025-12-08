@@ -8,6 +8,7 @@ import { facebookScraper } from '../services/FacebookScraperService';
 import { authenticateToken, requireRoleLevel } from '../middleware/auth';
 import * as fs from 'fs/promises';
 import * as path from 'path';
+import logger from "../middleware/logger";
 
 const router = Router();
 

@@ -3,6 +3,7 @@ import { authenticateToken, AuthRequest } from "../middleware/auth";
 import { storage, db } from "../storage";
 import { groups, groupMembers, users } from "@shared/schema";
 import { eq, and, or, ilike, sql } from "drizzle-orm";
+import logger from "../middleware/logger";
 
 const router = Router();
 

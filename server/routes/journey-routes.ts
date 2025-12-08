@@ -20,6 +20,7 @@ import { Router, type Request, type Response } from 'express';
 import { journeyRecorder } from '../services/documentation/JourneyRecorder';
 import { bookChapterGenerator } from '../services/documentation/BookChapterGenerator';
 import { z } from 'zod';
+import logger from "../middleware/logger";
 
 const router = Router();
 

@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import { governanceService } from '../services/documentation/governanceService';
 import { authenticateToken, AuthRequest, requireRoleLevel } from '../middleware/auth';
 import { z } from 'zod';
+import logger from "../middleware/logger";
 
 const router = Router();
 

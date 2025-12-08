@@ -9,6 +9,7 @@ import { authenticateToken, type AuthRequest } from '../middleware/auth';
 import { db } from '../db';
 import { userMemories, conversationSummaries, userPreferences } from '@shared/schema';
 import { eq, and, desc } from 'drizzle-orm';
+import logger from "../middleware/logger";
 
 const router = Router();
 

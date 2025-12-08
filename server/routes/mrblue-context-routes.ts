@@ -9,6 +9,7 @@ import { Router, Request, Response } from 'express';
 import { contextService } from '../services/mrBlue/ContextService';
 import { authenticateToken, AuthRequest } from '../middleware/auth';
 import { requireGodLevel } from '../middleware/requireGodLevel';
+import logger from "../middleware/logger";
 
 const router = Router();
 

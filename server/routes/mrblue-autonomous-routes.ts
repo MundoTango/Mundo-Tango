@@ -5,6 +5,7 @@
 
 import { Router, Request, Response } from 'express';
 import { AutonomousEngine, AutonomousRequest } from '../services/mrBlue/AutonomousEngine';
+import logger from "../middleware/logger";
 
 const router = Router();
 

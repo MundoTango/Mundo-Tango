@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { authenticateToken } from '../middleware/auth';
+import logger from "../middleware/logger";
 import { 
   startAutonomousLoop, 
   stopAutonomousLoop, 

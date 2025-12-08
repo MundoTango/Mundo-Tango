@@ -9,6 +9,7 @@
 import { Router, type Response } from "express";
 import { authenticateToken, type AuthRequest, requireRoleLevel } from "../middleware/auth";
 import { db } from "../../shared/db";
+import logger from "../middleware/logger";
 import { 
   esaAgents,
   agentTasks,
@@ -20,6 +21,7 @@ import {
   agentHealth,
 } from "../../shared/schema";
 import { eq, desc, and, gte, sql, count } from "drizzle-orm";
+import logger from "../middleware/logger";
 
 console.log('[DEBUG] 🔄 monitoringRoutes.ts - Starting module load...');
 

@@ -4,6 +4,7 @@ import { AudioConversationService } from '../services/mrblue/audioConversationSe
 import { requireAuth } from '../middleware/auth';
 import { db } from '../db';
 import multer from 'multer';
+import logger from "../middleware/logger";
 
 const router = Router();
 const upload = multer({ storage: multer.memoryStorage() });

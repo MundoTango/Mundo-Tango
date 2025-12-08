@@ -8,6 +8,7 @@ import { InventoryManagerAgent } from "../services/marketplace/InventoryManager"
 import { SellerSupportAgent } from "../services/marketplace/SellerSupport";
 import { TransactionMonitorAgent } from "../services/marketplace/TransactionMonitor";
 import { QualityAssuranceAgent } from "../services/marketplace/QualityAssurance";
+import logger from "../middleware/logger";
 import {
   queueFraudCheck,
   queuePriceOptimization,

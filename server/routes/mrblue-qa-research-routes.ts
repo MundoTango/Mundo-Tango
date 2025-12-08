@@ -12,6 +12,7 @@ import { agentRegistry } from '../services/mrblue/AgentRegistry';
 import { agentTestOrchestrator } from '../services/mrblue/AgentTestOrchestrator';
 import { BasePageAgent } from '../services/mrblue/agents/BasePageAgent';
 import { BaseFeatureAgent } from '../services/mrblue/agents/BaseFeatureAgent';
+import logger from "../middleware/logger";
 
 const router = Router();
 

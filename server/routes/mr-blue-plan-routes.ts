@@ -2,6 +2,7 @@ import { Router, type Request, Response } from "express";
 import { planTrackerService } from "../services/mrBlue/PlanTrackerService";
 import { insertPlanProgressSchema } from "../../shared/schema";
 import { z } from "zod";
+import logger from "../middleware/logger";
 
 const router = Router();
 

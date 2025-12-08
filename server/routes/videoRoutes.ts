@@ -1,5 +1,6 @@
 import express from 'express';
 import { lumaVideoService } from '../services/lumaVideoService';
+import logger from "../middleware/logger";
 
 const router = express.Router();
 

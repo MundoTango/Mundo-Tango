@@ -4,6 +4,7 @@ import { db } from "@shared/db";
 import { billingAddons, users } from "@shared/schema";
 import { eq, and } from "drizzle-orm";
 import { authenticateToken, AuthRequest } from "../middleware/auth";
+import logger from "../middleware/logger";
 
 if (!process.env.STRIPE_SECRET_KEY) {
   throw new Error('Missing required Stripe secret: STRIPE_SECRET_KEY');

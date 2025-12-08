@@ -11,6 +11,7 @@ import { db } from '@db';
 import { computerUseTasks, computerUseScreenshots } from '@shared/schema';
 import { eq } from 'drizzle-orm';
 import { nanoid } from 'nanoid';
+import logger from "../middleware/logger";
 
 const router = Router();
 

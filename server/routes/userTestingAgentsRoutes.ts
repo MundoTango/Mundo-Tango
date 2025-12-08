@@ -3,6 +3,7 @@ import { SessionSchedulerAgent } from "../services/userTesting/sessionSchedulerA
 import { LiveObserverAgent } from "../services/userTesting/liveObserverAgent";
 import { BugDetectorAgent } from "../services/userTesting/bugDetectorAgent";
 import { UxPatternAgent } from "../services/userTesting/uxPatternAgent";
+import logger from "../middleware/logger";
 
 const router = Router();
 

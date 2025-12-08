@@ -5,6 +5,7 @@
 
 import { Router, Request, Response } from 'express';
 import { AuthRequest } from '../middleware/auth';
+import logger from "../middleware/logger";
 import {
   requestDataExport,
   getDataExportStatus,
@@ -13,6 +14,7 @@ import {
 import { db } from '@shared/db';
 import { users, userPrivacySettings } from '@shared/schema';
 import { eq } from 'drizzle-orm';
+import logger from "../middleware/logger";
 
 const router = Router();
 

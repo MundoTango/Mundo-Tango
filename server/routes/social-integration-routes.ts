@@ -4,6 +4,7 @@ import { authenticateToken, AuthRequest } from '../middleware/auth';
 import { MultiPlatformScraper, validateFacebookDYIData } from '../services/facebook/MultiPlatformScraper';
 import { ClosenessCalculator } from '../services/facebook/ClosenessCalculator';
 import multer from 'multer';
+import logger from "../middleware/logger";
 
 const router = Router();
 

@@ -18,6 +18,7 @@ import { getMrBlueCapabilities } from "../utils/mrBlueCapabilities";
 import { vibeCodeApplier } from "../services/mrblue/VibeCodeApplier";
 import { agentCommunication } from "../services/mrblue/AgentCommunication";
 import type { StyleChange } from "../services/mrblue/agents/BasePageAgent";
+import logger from "../middleware/logger";
 
 const router = Router();
 

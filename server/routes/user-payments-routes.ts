@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { z } from "zod";
+import logger from "../middleware/logger";
 import {
   createEncryptedUserPayment,
   getDecryptedUserPayments,

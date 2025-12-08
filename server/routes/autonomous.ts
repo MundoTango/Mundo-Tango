@@ -16,6 +16,7 @@ import { authenticateToken, requireRoleLevel, type AuthRequest } from "../middle
 import { traceRoute } from "../metrics/tracing";
 import { mbmdEngine } from "../services/mrBlue/mbmdEngine";
 import { CodeGenerator } from "../services/mrBlue/CodeGenerator";
+import logger from "../middleware/logger";
 const codeGenerator = new CodeGenerator();
 import { validator } from "../services/mrBlue/validator";
 import { autonomousAgent } from "../services/mrBlue/autonomousAgent";
@@ -29,6 +30,7 @@ import { eq, and, gte, count, desc } from "drizzle-orm";
 import { commitChanges, hasUncommittedChanges, getCommitHistory } from "../services/mrBlue/gitCommitGenerator";
 import { changeGroupManager, AtomicChangeGroup } from "../services/mrBlue/atomicChanges";
 import { fileDependencyTracker } from "../services/mrBlue/fileDependencyTracker";
+import logger from "../middleware/logger";
 
 const router = Router();
 

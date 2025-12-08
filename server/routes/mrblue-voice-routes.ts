@@ -9,6 +9,7 @@ import { voiceCloningService, SUPPORTED_LANGUAGES } from '../services/mrBlue/Voi
 import { voiceTrainer } from '../services/mrBlue/VoiceTrainer';
 import { elevenLabsService } from '../services/elevenlabsService';
 import { z } from 'zod';
+import logger from "../middleware/logger";
 
 const router = Router();
 

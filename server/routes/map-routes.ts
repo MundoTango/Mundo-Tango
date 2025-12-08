@@ -3,6 +3,7 @@ import { db } from "@shared/db";
 import { users, events, groups } from "@shared/schema";
 import { eq, and, isNotNull, sql } from "drizzle-orm";
 import { tangoCities, searchCities, getCitiesByRegion, getCitiesByScene, type TangoCity } from "@shared/data/tangoCities";
+import logger from "../middleware/logger";
 
 const router = Router();
 

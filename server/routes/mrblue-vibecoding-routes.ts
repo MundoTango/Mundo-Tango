@@ -11,6 +11,7 @@ import { getMrBlueCapabilities } from "../utils/mrBlueCapabilities";
 import { db } from "../db";
 import { mrBlueConversations } from "@shared/schema";
 import { eq } from "drizzle-orm";
+import logger from "../middleware/logger";
 
 const router = Router();
 

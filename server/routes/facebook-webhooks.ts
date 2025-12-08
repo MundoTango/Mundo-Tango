@@ -18,6 +18,7 @@ import { db } from '../db';
 import { users } from '../../shared/schema';
 import { eq } from 'drizzle-orm';
 import { FacebookMessengerService } from '../services/facebook/FacebookMessengerService';
+import logger from "../middleware/logger";
 
 const router = Router();
 

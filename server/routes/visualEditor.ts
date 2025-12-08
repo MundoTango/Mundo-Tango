@@ -9,6 +9,7 @@ import { gitService } from "../services/gitService";
 import { traceRoute } from "../metrics/tracing";
 import { GroqService, GROQ_MODELS } from "../services/ai/GroqService";
 import * as path from "path";
+import logger from "../middleware/logger";
 
 const router = Router();
 

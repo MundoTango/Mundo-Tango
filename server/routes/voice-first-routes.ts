@@ -16,6 +16,7 @@ import { Router } from 'express';
 import multer from 'multer';
 import VoiceFirstService from '../services/mrBlue/VoiceFirstService';
 import { authenticateToken } from '../middleware/auth';
+import logger from "../middleware/logger";
 
 const router = Router();
 

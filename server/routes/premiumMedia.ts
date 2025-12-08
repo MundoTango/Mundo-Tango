@@ -4,6 +4,7 @@ import { didVideoService } from '../services/premium/didVideoService';
 import { elevenlabsVoiceService } from '../services/premium/elevenlabsVoiceService';
 import { openaiRealtimeService } from '../services/premium/openaiRealtimeService';
 import { costOptimizerService } from '../services/premium/costOptimizerService';
+import logger from "../middleware/logger";
 
 const router = Router();
 

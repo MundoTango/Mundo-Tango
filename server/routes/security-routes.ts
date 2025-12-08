@@ -5,6 +5,7 @@
 
 import { Router, Request, Response } from 'express';
 import { AuthRequest } from '../middleware/auth';
+import logger from "../middleware/logger";
 import {
   setupTOTP,
   verifyTOTP,

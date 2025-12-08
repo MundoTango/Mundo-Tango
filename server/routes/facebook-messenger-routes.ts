@@ -13,6 +13,7 @@ import { FacebookTokenGenerator } from '../services/facebook/FacebookTokenGenera
 import { eq, desc, and, gte, sql } from 'drizzle-orm';
 import { z } from 'zod';
 import crypto from 'crypto';
+import logger from "../middleware/logger";
 
 const router = Router();
 

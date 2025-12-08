@@ -5,6 +5,7 @@ import { drizzle } from "drizzle-orm/neon-http";
 import { neon } from "@neondatabase/serverless";
 import { esaAgents, agentTasks, agentCommunications } from "../../shared/platform-schema";
 import { sql, eq, asc, desc } from "drizzle-orm";
+import logger from "../middleware/logger";
 
 const router = Router();
 

@@ -6,6 +6,7 @@
 import { Router } from 'express';
 import { z } from 'zod';
 import { authenticateToken } from '../middleware/auth';
+import logger from "../middleware/logger";
 import { 
   findMatchingIssues, 
   getSolution, 
@@ -21,6 +22,7 @@ import { db } from '@db';
 import { computerUseTasks, computerUseScreenshots } from '@shared/schema';
 import { nanoid } from 'nanoid';
 import { eq } from 'drizzle-orm';
+import logger from "../middleware/logger";
 
 const router = Router();
 const elevenlabsService = new ElevenLabsVoiceService();

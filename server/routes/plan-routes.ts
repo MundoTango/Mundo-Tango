@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { authenticateToken, requireRoleLevel, AuthRequest } from '../middleware/auth';
 import { db, executeRawQuery } from '@shared/db';
+import logger from "../middleware/logger";
 
 /**
  * BLOCKER 6: "The Plan" Project Tracker API Routes

@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { createQueue } from "../workers/redis-fallback";
+import logger from "../middleware/logger";
 
 // Initialize queues with automatic Redis fallback
 const userLifecycleQueue = createQueue("user-lifecycle");

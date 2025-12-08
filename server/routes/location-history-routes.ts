@@ -4,6 +4,7 @@ import { db } from "../storage";
 import { userLocationHistory, groups, groupMembers, users } from "@shared/schema";
 import { eq, and, desc, ilike, sql } from "drizzle-orm";
 import { z } from "zod";
+import logger from "../middleware/logger";
 
 const router = Router();
 

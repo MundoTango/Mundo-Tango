@@ -5,6 +5,7 @@ import { db } from '@shared/db';
 import { pricingTiers, subscriptions, promoCodes, upgradeEvents, checkoutSessions, tierLimits } from '@shared/schema';
 import { eq, and } from 'drizzle-orm';
 import Stripe from 'stripe';
+import logger from "../middleware/logger";
 
 const router = Router();
 

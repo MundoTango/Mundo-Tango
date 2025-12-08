@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { mrBlueService } from '../services/mr-blue-service';
+import logger from "../middleware/logger";
 
 const router = Router();
 

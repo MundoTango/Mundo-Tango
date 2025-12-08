@@ -7,6 +7,7 @@ import { ErrorAnalysisAgent } from "../services/mrBlue/errorAnalysisAgent";
 import { SolutionSuggesterAgent } from "../services/mrBlue/solutionSuggesterAgent";
 import { contextService } from "../services/mrBlue/ContextService";
 import { getAutoFixEngine } from "../services/mrBlue/AutoFixEngine";
+import logger from "../middleware/logger";
 
 const router = Router();
 

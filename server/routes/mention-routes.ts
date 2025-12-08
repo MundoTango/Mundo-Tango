@@ -5,6 +5,7 @@ import { db } from "@shared/db";
 import { eq, ilike, or, and, sql } from "drizzle-orm";
 import { users, events, groups, communities, posts } from "@shared/schema";
 import { notificationService } from "../services/notification-service";
+import logger from "../middleware/logger";
 
 const router = Router();
 

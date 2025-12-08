@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { z } from "zod";
+import logger from "../middleware/logger";
 import {
   createEncryptedFinancialGoal,
   getDecryptedFinancialGoals,
@@ -7,6 +8,7 @@ import {
   updateEncryptedFinancialGoal,
 } from "../db/encrypted";
 import { insertFinancialGoalSchema } from "@shared/schema";
+import logger from "../middleware/logger";
 
 const router = Router();
 

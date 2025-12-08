@@ -28,6 +28,7 @@ import { LIMICurator } from '../services/ai/LIMICurator';
 import { db } from '../db';
 import { routingDecisions } from '@shared/schema';
 import { eq } from 'drizzle-orm';
+import logger from "../middleware/logger";
 
 // ============================================================================
 // ZOD SCHEMAS

@@ -5,6 +5,7 @@
 
 import { Router, type Request, Response } from "express";
 import axios from "axios";
+import logger from "../middleware/logger";
 
 const router = Router();
 

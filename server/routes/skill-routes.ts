@@ -4,6 +4,7 @@ import { db } from "../db";
 import { userSkills, skillEndorsements, users } from "../../shared/schema";
 import { eq, and, sql, desc } from "drizzle-orm";
 import { z } from "zod";
+import logger from "../middleware/logger";
 
 const router = Router();
 

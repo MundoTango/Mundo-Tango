@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { spawn } from 'child_process';
 import path from 'path';
+import logger from "../middleware/logger";
 
 const router = Router();
 

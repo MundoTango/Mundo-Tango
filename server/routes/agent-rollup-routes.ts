@@ -14,6 +14,7 @@
 import { Router, Request, Response } from 'express';
 import { agentKnowledgeSync } from '../services/intelligence/AgentKnowledgeSync';
 import { intelligenceBase } from '../services/intelligence/MBMDIntelligenceBase';
+import logger from "../middleware/logger";
 
 const router = Router();
 

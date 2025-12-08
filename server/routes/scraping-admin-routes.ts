@@ -7,6 +7,7 @@ import { scrapingOrchestrator } from '../agents/scraping/masterOrchestrator';
 import { cityGroupEnrichmentService } from '../services/scraping/CityGroupEnrichmentService';
 import { deduplicator } from '../agents/scraping/deduplicator';
 import { rssFeedService } from '../services/scraping/RSSFeedService';
+import logger from "../middleware/logger";
 
 const router = Router();
 

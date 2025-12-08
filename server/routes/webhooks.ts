@@ -5,6 +5,7 @@
 import { Router, Request, Response } from "express";
 import { storage } from "../storage";
 import Stripe from "stripe";
+import logger from "../middleware/logger";
 
 const router = Router();
 

@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { db } from "../db";
+import logger from "../middleware/logger";
 import { 
   analyticsEvents, 
   userAnalytics, 
@@ -17,6 +18,7 @@ import { authenticateToken, AuthRequest } from "../middleware/auth";
 import { eq, and, gte, desc, count, sql } from "drizzle-orm";
 import { AnalyticsService } from "../services/AnalyticsService";
 import { apiRateLimiter } from "../middleware/rateLimiter";
+import logger from "../middleware/logger";
 // Temporarily disabled profanity filter due to import issues
 // import * as BadWordsModule from "bad-words";
 // const Filter = (BadWordsModule as any).default || BadWordsModule;

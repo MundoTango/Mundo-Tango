@@ -5,6 +5,7 @@ import { authenticateToken, AuthRequest } from "../middleware/auth";
 import { db } from "@shared/db";
 import { housingListings } from "@shared/schema";
 import { eq, and } from "drizzle-orm";
+import logger from "../middleware/logger";
 
 const upload = multer({ storage: multer.memoryStorage() });
 const router = Router();

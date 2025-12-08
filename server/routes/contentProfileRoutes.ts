@@ -16,6 +16,7 @@
 import { Router, type Response } from "express";
 import { storage } from "../storage";
 import { db } from "@shared/db";
+import logger from "../middleware/logger";
 import {
   contentCreatorProfiles,
   learningResourceProfiles,
@@ -32,6 +33,7 @@ import {
 import { eq, and, desc, sql, ilike, gte, lte } from "drizzle-orm";
 import { authenticateToken, type AuthRequest } from "../middleware/auth";
 import { z } from "zod";
+import logger from "../middleware/logger";
 
 const router = Router();
 

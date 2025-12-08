@@ -6,6 +6,7 @@ import { z } from "zod";
 import { fromZodError } from "zod-validation-error";
 import { db } from "@shared/db";
 import { eq, and } from "drizzle-orm";
+import logger from "../middleware/logger";
 
 const validateRequest = (schema: z.ZodSchema) => {
   return (req: Request, res: Response, next: Function) => {

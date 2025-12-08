@@ -3,6 +3,7 @@ import { authenticateToken, type AuthRequest } from "../middleware/auth";
 import { reputationService } from "../services/reputation/ReputationService";
 import { insertProfessionalEndorsementSchema } from "../../shared/schema";
 import { z } from "zod";
+import logger from "../middleware/logger";
 
 const router = Router();
 

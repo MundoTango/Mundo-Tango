@@ -19,6 +19,7 @@ import { authenticateToken, AuthRequest } from "../middleware/auth";
 import { eq, and, desc, sql, or, ilike, inArray, count, asc, isNotNull } from "drizzle-orm";
 import { z } from "zod";
 import { PostingPermissionService } from "../services/PostingPermissionService";
+import logger from "../middleware/logger";
 
 const router = Router();
 

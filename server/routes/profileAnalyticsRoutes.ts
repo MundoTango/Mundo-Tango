@@ -14,6 +14,7 @@
 
 import { Router, type Response } from "express";
 import { db } from "@shared/db";
+import logger from "../middleware/logger";
 import { 
   profileAnalytics,
   profileInquiries,
@@ -27,6 +28,7 @@ import {
 import { eq, desc, and, sql, gte, count, isNull } from "drizzle-orm";
 import { authenticateToken, type AuthRequest } from "../middleware/auth";
 import { z } from "zod";
+import logger from "../middleware/logger";
 
 const router = Router();
 

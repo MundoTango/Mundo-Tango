@@ -3,6 +3,7 @@ import { db } from "@shared/db";
 import { reviews, users, teachers, venues, events } from "@shared/schema";
 import { eq, sql, and, desc } from "drizzle-orm";
 import { authenticateToken, type AuthRequest } from "../middleware/auth";
+import logger from "../middleware/logger";
 
 const router = Router();
 

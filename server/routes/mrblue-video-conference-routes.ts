@@ -1,6 +1,7 @@
 import { Router, type Request, type Response } from "express";
 import { authenticateToken, type AuthRequest } from "../middleware/auth";
 import { videoConferenceService } from "../services/mrBlue/VideoConferenceService";
+import logger from "../middleware/logger";
 
 const router = Router();
 

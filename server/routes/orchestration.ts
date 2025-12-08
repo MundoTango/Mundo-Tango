@@ -17,11 +17,13 @@
 
 import { Router, type Response } from 'express';
 import { authenticateToken, type AuthRequest } from '../middleware/auth';
+import logger from "../middleware/logger";
 import { 
   workflowExecutionService, 
   type ExecuteWorkflowRequest 
 } from '../services/orchestration/WorkflowExecutionService';
 import { z } from 'zod';
+import logger from "../middleware/logger";
 
 const router = Router();
 

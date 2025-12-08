@@ -11,6 +11,7 @@ import { Router, type Request, type Response } from 'express';
 import { a2aProtocolService } from '../services/orchestration/A2AProtocolService';
 import { agentCardRegistry } from '../services/orchestration/AgentCardRegistry';
 import type { A2AMessage } from '../../shared/types/a2a';
+import logger from "../middleware/logger";
 
 const router = Router();
 

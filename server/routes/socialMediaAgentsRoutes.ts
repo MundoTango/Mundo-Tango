@@ -8,6 +8,7 @@ import { engagementAnalyzer } from '../services/social/EngagementAnalyzer';
 import { marketingAssistant } from '../services/social/MarketingAssistant';
 import { socialMediaOrchestrator } from '../services/social/SocialMediaOrchestrator';
 import type { SocialMediaJobData } from '../workers/socialMediaAgentWorker';
+import logger from "../middleware/logger";
 
 const router = Router();
 

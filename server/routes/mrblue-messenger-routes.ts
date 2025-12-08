@@ -7,6 +7,7 @@ import { Router, type Request, type Response } from 'express';
 import { authenticateToken, type AuthRequest, requireRoleLevel } from '../middleware/auth';
 import { messengerService } from '../services/mrBlue/MessengerService';
 import { z } from 'zod';
+import logger from "../middleware/logger";
 
 const router = Router();
 

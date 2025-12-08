@@ -6,6 +6,7 @@ import { authenticateToken, optionalAuth, type AuthRequest } from "../middleware
 import { objectStorageService } from "../objectStorage";
 import multer from "multer";
 import { randomUUID } from "crypto";
+import logger from "../middleware/logger";
 
 const router = Router();
 

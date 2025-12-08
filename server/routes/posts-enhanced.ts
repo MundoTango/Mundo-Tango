@@ -5,6 +5,7 @@ import { db } from "../db";
 import { posts, postDrafts, users } from "../../shared/schema";
 import { authenticateToken, type AuthRequest } from "../middleware/auth";
 import { eq, and, like, or, desc, sql, ilike } from "drizzle-orm";
+import logger from "../middleware/logger";
 
 const router = Router();
 

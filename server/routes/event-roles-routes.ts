@@ -5,6 +5,7 @@
 
 import { Router } from "express";
 import { db } from "@shared/db";
+import logger from "../middleware/logger";
 import { 
   eventParticipants, 
   eventRoleInvitations, 
@@ -23,6 +24,7 @@ import { eq, and, desc, sql } from "drizzle-orm";
 import { authenticateToken } from "../middleware/auth";
 import { randomBytes } from "crypto";
 import { notificationService } from "../services/notification-service";
+import logger from "../middleware/logger";
 
 const router = Router();
 

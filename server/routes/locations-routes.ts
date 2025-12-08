@@ -1,5 +1,6 @@
 import { Router, Response } from "express";
 import fetch from "node-fetch";
+import logger from "../middleware/logger";
 
 const router = Router();
 

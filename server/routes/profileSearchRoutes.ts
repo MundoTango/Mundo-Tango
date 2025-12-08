@@ -2,6 +2,7 @@ import { Router, type Response } from "express";
 import { storage } from "../storage";
 import { authenticateToken, AuthRequest } from "../middleware/auth";
 import { z } from "zod";
+import logger from "../middleware/logger";
 
 const router = Router();
 

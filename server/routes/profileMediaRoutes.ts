@@ -12,6 +12,7 @@
 
 import { Router, type Response } from "express";
 import { db } from "@shared/db";
+import logger from "../middleware/logger";
 import { 
   profileMedia, 
   users,
@@ -24,6 +25,7 @@ import { authenticateToken, type AuthRequest } from "../middleware/auth";
 import { z } from "zod";
 import multer from "multer";
 import { v2 as cloudinary } from "cloudinary";
+import logger from "../middleware/logger";
 
 const router = Router();
 

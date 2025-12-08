@@ -7,6 +7,7 @@ import { eq } from 'drizzle-orm';
 import { Queue } from 'bullmq';
 import IORedis from 'ioredis';
 import { z } from 'zod';
+import logger from "../middleware/logger";
 
 const router = Router();
 

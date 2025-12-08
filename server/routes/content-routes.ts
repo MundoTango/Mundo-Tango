@@ -5,6 +5,7 @@
 
 import { Router, Request, Response } from 'express';
 import { facelessContentService, CONTENT_TEMPLATES } from '../services/content/FacelessContentService';
+import logger from "../middleware/logger";
 
 const router = Router();
 

@@ -6,6 +6,7 @@ import { accommodationFinder } from '../services/travel/AccommodationFinder';
 import { flightHunter } from '../services/travel/FlightHunter';
 import { localRecommendations } from '../services/travel/LocalRecommendations';
 import { travelOrchestrator } from '../services/travel/TravelOrchestrator';
+import logger from "../middleware/logger";
 
 const router = Router();
 

@@ -17,6 +17,7 @@ import { AgentPerformanceTracker } from "../services/monitoring/agentPerformance
 import { db } from "../../shared/db";
 import { agentCommunications, esaAgents, agentChangeBroadcasts, agentTasks } from "../../shared/platform-schema";
 import { eq, desc, and, or, gte, count, sql, inArray } from "drizzle-orm";
+import logger from "../middleware/logger";
 
 console.log('[DEBUG] 🔄 agentCommunicationRoutes.ts - Starting module load...');
 

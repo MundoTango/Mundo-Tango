@@ -8,6 +8,7 @@ import { OpenAI } from "openai";
 import multer, { type FileFilterCallback } from "multer";
 import fs from "fs";
 import path from "path";
+import logger from "../middleware/logger";
 
 const router = Router();
 

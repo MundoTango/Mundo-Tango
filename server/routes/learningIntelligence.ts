@@ -5,6 +5,7 @@ import { solutionSuggesterAgent } from "../services/mrBlue/solutionSuggesterAgen
 import { db } from "@db";
 import { sessionBugsFound } from "@shared/schema";
 import { eq } from "drizzle-orm";
+import logger from "../middleware/logger";
 
 const router = Router();
 

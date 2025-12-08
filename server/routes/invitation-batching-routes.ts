@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { Response } from 'express';
 import { createQueue } from '../workers/redis-fallback';
 import { DEFAULT_BATCH_DELAY } from '../workers/jobs/invitationBatchingJob';
+import logger from "../middleware/logger";
 
 const router = Router();
 

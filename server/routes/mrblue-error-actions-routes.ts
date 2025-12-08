@@ -15,6 +15,7 @@ import { z } from "zod";
 import { VibeCodingService } from "../services/mrBlue/VibeCodingService";
 import { AutoFixEngine } from "../services/mrBlue/AutoFixEngine";
 import { broadcastToUser } from "../services/websocket";
+import logger from "../middleware/logger";
 
 const router = Router();
 

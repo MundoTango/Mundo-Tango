@@ -7,6 +7,7 @@ import { z } from "zod";
 import { authenticateToken, AuthRequest } from "../middleware/auth";
 import { storage } from "../storage";
 import crypto from "crypto";
+import logger from "../middleware/logger";
 
 const router = Router();
 

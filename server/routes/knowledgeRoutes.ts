@@ -13,6 +13,7 @@ import { fromZodError } from "zod-validation-error";
 import { knowledgeGraphService } from "../services/knowledge/knowledgeGraphService";
 import { LearningCoordinatorService } from "../services/learning/learningCoordinator";
 import { db } from "../../shared/db";
+import logger from "../middleware/logger";
 import { 
   knowledgeGraphNodes,
   knowledgeGraphEdges,
@@ -20,6 +21,7 @@ import {
 } from "../../shared/platform-schema";
 import { learningPatterns } from "../../shared/schema";
 import { eq, desc, and, or, gte, like, sql, count } from "drizzle-orm";
+import logger from "../middleware/logger";
 
 console.log('[DEBUG] 🔄 knowledgeRoutes.ts - Starting module load...');
 

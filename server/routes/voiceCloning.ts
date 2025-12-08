@@ -3,6 +3,7 @@ import { VoiceCloningService } from '../services/voiceCloningService';
 import { db } from '../db';
 import { users } from '../../shared/schema';
 import { eq } from 'drizzle-orm';
+import logger from "../middleware/logger";
 
 const voiceCloningService = new VoiceCloningService();
 

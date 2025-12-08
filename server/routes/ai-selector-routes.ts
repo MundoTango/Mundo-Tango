@@ -6,6 +6,7 @@ import { eq } from 'drizzle-orm';
 import OpenAI from 'openai';
 import axios from 'axios';
 import * as cheerio from 'cheerio';
+import logger from "../middleware/logger";
 
 const router = Router();
 

@@ -28,6 +28,7 @@ import { SemanticCacheService } from '../services/ai/SemanticCacheService';
 import { rateLimiter } from '../services/ai/RateLimiterService';
 import { getCachedAIResponse, cacheAIResponse } from '../services/caching/RedisCache';
 import { getCacheStats as getBasicCacheStats, clearAllAICache } from '../services/caching/RedisCache';
+import logger from "../middleware/logger";
 
 console.log('[DEBUG] 🔄 multiAIRoutes.ts - Starting module load...');
 

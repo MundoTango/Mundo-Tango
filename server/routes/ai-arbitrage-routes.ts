@@ -14,6 +14,7 @@ import { CostTracker } from '../services/ai/CostTracker';
 import { db } from '../db';
 import { routingDecisions } from '@shared/schema';
 import { eq } from 'drizzle-orm';
+import logger from "../middleware/logger";
 
 // ============================================================================
 // ZOD SCHEMAS

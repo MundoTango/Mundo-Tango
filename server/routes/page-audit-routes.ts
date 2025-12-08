@@ -8,6 +8,7 @@
 import { Router } from 'express';
 import { pageAuditService } from '../services/page-audit/PageAuditService';
 import { continuousAuditService } from '../services/auditing/AuditService';
+import logger from "../middleware/logger";
 
 const router = Router();
 

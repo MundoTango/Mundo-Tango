@@ -3,6 +3,7 @@ import { db } from "@shared/db";
 import { liveStreams, liveStreamMessages, users } from "@shared/schema";
 import { authenticateToken, AuthRequest } from "../middleware/auth";
 import { eq, desc, sql } from "drizzle-orm";
+import logger from "../middleware/logger";
 
 const router = Router();
 

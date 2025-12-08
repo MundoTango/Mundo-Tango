@@ -16,6 +16,7 @@ import * as fs from "fs/promises";
 import * as path from "path";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
+import logger from "../middleware/logger";
 
 const execAsync = promisify(exec);
 

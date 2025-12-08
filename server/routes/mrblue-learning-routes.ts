@@ -6,6 +6,7 @@
 import { Router, Request, Response } from 'express';
 import { learningCoordinator } from '../services/mrBlue/learningCoordinator';
 import { authenticateToken, type AuthRequest } from '../middleware/auth';
+import logger from "../middleware/logger";
 
 const router = Router();
 

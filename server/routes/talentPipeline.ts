@@ -2,6 +2,7 @@ import { Router, Request, Response } from "express";
 import { db } from "@db";
 import { candidatePipelines, volunteers, users, resumes } from "@shared/schema";
 import { eq, sql, desc, and } from "drizzle-orm";
+import logger from "../middleware/logger";
 
 const router = Router();
 

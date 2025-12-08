@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import logger from "../middleware/logger";
 
 export const getSuggestions = async (req: Request, res: Response, next: NextFunction) => {
   try {

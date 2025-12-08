@@ -5,6 +5,7 @@ import fs from 'fs';
 import { videoCompressionService } from '../services/videoCompression';
 import { objectStorageService } from '../objectStorage';
 import { authenticateToken, AuthRequest } from '../middleware/auth';
+import logger from "../middleware/logger";
 
 const router = Router();
 

@@ -3,6 +3,7 @@ import { Response } from "express";
 import { TangoResumeService } from '../services/reputation/TangoResumeService';
 import { authenticateToken } from '../middleware/auth';
 import { z } from 'zod';
+import logger from "../middleware/logger";
 
 const router = Router();
 
