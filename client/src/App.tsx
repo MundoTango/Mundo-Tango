@@ -305,6 +305,9 @@ const AdminTranslationsPage = lazy(
   () => import("@/pages/AdminTranslationsPage"),
 );
 const AdminScrapingPage = lazy(() => import("@/pages/AdminScrapingPage"));
+const VendorManagementPage = lazy(
+  () => import("@/pages/admin/VendorManagementPage"),
+);
 const ClosenessMetricsDashboardPage = lazy(
   () => import("@/pages/ClosenessMetricsDashboardPage"),
 );
@@ -2109,6 +2112,14 @@ function Router() {
         <ProtectedRoute>
           <AdminLayout>
             <ModerationDashboard />
+          </AdminLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/admin/vendors">
+        <ProtectedRoute>
+          <AdminLayout>
+            <VendorManagementPage />
           </AdminLayout>
         </ProtectedRoute>
       </Route>

@@ -19,7 +19,7 @@ import { healthCheckHandler, readinessCheckHandler, livenessCheckHandler } from 
 import { PolicyMonitoringJobs } from "./jobs/policy-monitoring-jobs";
 import { recursiveContextService } from "./services/intelligence/RecursiveContextService";
 import { facelessContentService } from "./services/content/FacelessContentService";
-import { AutoFixEngine } from "./services/self-healing";
+import { AutoFixEngine, PredictivePreCheckService } from "./services/self-healing";
 console.log("✅ [DEBUG] All imports complete in server/index.ts");
 // ============================================================================
 // SENTRY DISABLED: CSP VIOLATIONS FIX (MB.MD SUBAGENT 3)
@@ -239,6 +239,28 @@ app.use((req, res, next) => {
       log('✅ Self-Healing Auto-Fix Engine initialized (Continuous Mode: ACTIVE)');
     } catch (error) {
       logger.error('❌ Auto-Fix Engine initialization failed:', error);
+    }
+    
+    // C5-4: Initialize Predictive Pre-Check Service
+    try {
+      log('🔮 Initializing Predictive Pre-Check Service...');
+      
+      // Run initial predictive checks on high-risk routes
+      const highRiskRoutes = ['/feed', '/events', '/admin', '/settings', '/profile'];
+      
+      for (const pageId of highRiskRoutes) {
+        try {
+          await PredictivePreCheckService.checkPagesNavigatesTo(pageId);
+          const efe = await PredictivePreCheckService.calculateEFE(pageId);
+          logger.info(`[PredictivePreCheck] ${pageId}: EFE=${efe.efe.toFixed(3)} (${efe.details})`);
+        } catch (pageErr) {
+          logger.warn(`[PredictivePreCheck] Skipped ${pageId}: ${(pageErr as any).message}`);
+        }
+      }
+      
+      log('✅ Predictive Pre-Check Service initialized (High-risk routes pre-checked)');
+    } catch (error) {
+      logger.error('❌ Predictive Pre-Check Service initialization failed:', error);
     }
     
     // C6-1: Initialize Continuous Auditing Service

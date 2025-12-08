@@ -8,7 +8,7 @@ import { db } from "@shared/db";
 import { 
   users, posts, postReports, events, userReports, roleRequests, housingListings,
   moderationQueue, moderationActions, flaggedContent, postComments,
-  roleInvitations, talentMatches
+  roleInvitations, talentMatches, vendorProfiles
 } from "@shared/schema";
 import { eq, desc, like, or, and, gte, count, sql, inArray } from "drizzle-orm";
 import { authenticateToken, AuthRequest } from "../middleware/auth";
@@ -1979,6 +1979,213 @@ router.get("/analytics/export", authenticateToken, requireAdmin, async (req, res
     res.send(csv);
   } catch (error: any) {
     console.error("Error exporting analytics:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * GET /api/admin/vendors
+ * Get all vendors with their profile data and service counts
+ */
+router.get("/vendors", authenticateToken, requireAdmin, async (req: AuthRequest, res: Response) => {
+  try {
+    const { search = "", status = "all" } = req.query;
+
+    // Query vendor profiles with user data
+    const vendorData = await db
+      .select({
+        vendor: vendorProfiles,
+        user: {
+          id: users.id,
+          name: users.name,
+          email: users.email,
+          username: users.username,
+          profileImage: users.profileImage,
+          stripeCustomerId: users.stripeCustomerId,
+          subscriptionStatus: users.subscriptionStatus,
+          createdAt: users.createdAt,
+          isActive: users.isActive,
+        },
+      })
+      .from(vendorProfiles)
+      .innerJoin(users, eq(vendorProfiles.userId, users.id))
+      .orderBy(desc(vendorProfiles.createdAt));
+
+    // Transform data for frontend
+    const vendors = vendorData.map((item) => ({
+      id: item.vendor.id,
+      userId: item.vendor.userId,
+      businessName: item.vendor.businessName,
+      bio: item.vendor.bio,
+      productCategories: item.vendor.productCategories || [],
+      servicesOffered: item.vendor.servicesOffered || [],
+      products: item.vendor.products || [],
+      priceRange: item.vendor.priceRange,
+      websiteUrl: item.vendor.websiteUrl,
+      shopUrl: item.vendor.shopUrl,
+      email: item.vendor.email || item.user.email,
+      phoneNumber: item.vendor.phoneNumber,
+      isActive: item.vendor.isActive,
+      averageRating: item.vendor.averageRating,
+      totalReviews: item.vendor.totalReviews,
+      createdAt: item.vendor.createdAt,
+      // User details
+      userName: item.user.name,
+      userEmail: item.user.email,
+      userUsername: item.user.username,
+      userProfileImage: item.user.profileImage,
+      userIsActive: item.user.isActive,
+      userJoinedAt: item.user.createdAt,
+      // Stripe info
+      hasStripeConnected: !!item.user.stripeCustomerId,
+      stripeStatus: item.user.subscriptionStatus || 'none',
+      // Computed counts
+      serviceCount: (item.vendor.servicesOffered || []).length,
+      productCount: (item.vendor.products || []).length,
+      categoryCount: (item.vendor.productCategories || []).length,
+    }));
+
+    // Filter by search
+    let filteredVendors = vendors;
+    if (search) {
+      const searchLower = (search as string).toLowerCase();
+      filteredVendors = vendors.filter(
+        (v) =>
+          v.businessName?.toLowerCase().includes(searchLower) ||
+          v.userName?.toLowerCase().includes(searchLower) ||
+          v.userEmail?.toLowerCase().includes(searchLower)
+      );
+    }
+
+    // Filter by status
+    if (status === "active") {
+      filteredVendors = filteredVendors.filter((v) => v.isActive);
+    } else if (status === "inactive") {
+      filteredVendors = filteredVendors.filter((v) => !v.isActive);
+    } else if (status === "stripe_connected") {
+      filteredVendors = filteredVendors.filter((v) => v.hasStripeConnected);
+    }
+
+    res.json({
+      vendors: filteredVendors,
+      total: filteredVendors.length,
+      stats: {
+        total: vendors.length,
+        active: vendors.filter((v) => v.isActive).length,
+        stripeConnected: vendors.filter((v) => v.hasStripeConnected).length,
+      },
+    });
+  } catch (error: any) {
+    console.error("Error fetching vendors:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * GET /api/admin/analytics/event-stats
+ * Event counts by category/type
+ */
+router.get("/analytics/event-stats", authenticateToken, requireAdmin, async (req, res: Response) => {
+  try {
+    const { timeframe = "30d" } = req.query;
+    const days = parseInt(timeframe as string) || 30;
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - days);
+
+    const byCategory = await db.select({
+      category: sql<string>`COALESCE(${events.category}, 'Uncategorized')`,
+      count: count(),
+    })
+      .from(events)
+      .where(gte(events.createdAt, startDate))
+      .groupBy(sql`COALESCE(${events.category}, 'Uncategorized')`)
+      .orderBy(desc(count()));
+
+    const byEventType = await db.select({
+      eventType: events.eventType,
+      count: count(),
+    })
+      .from(events)
+      .where(gte(events.createdAt, startDate))
+      .groupBy(events.eventType)
+      .orderBy(desc(count()));
+
+    res.json({
+      byCategory,
+      byEventType,
+      timeframe,
+    });
+  } catch (error: any) {
+    console.error("Error fetching event stats:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * GET /api/admin/analytics/geo-distribution
+ * Geographic distribution of users by country/city
+ */
+router.get("/analytics/geo-distribution", authenticateToken, requireAdmin, async (req, res: Response) => {
+  try {
+    const byCountry = await db.select({
+      country: sql<string>`COALESCE(${users.country}, 'Unknown')`,
+      count: count(),
+    })
+      .from(users)
+      .where(sql`${users.country} IS NOT NULL AND ${users.country} != ''`)
+      .groupBy(sql`COALESCE(${users.country}, 'Unknown')`)
+      .orderBy(desc(count()))
+      .limit(10);
+
+    const byCity = await db.select({
+      city: sql<string>`COALESCE(${users.city}, 'Unknown')`,
+      country: sql<string>`COALESCE(${users.country}, 'Unknown')`,
+      count: count(),
+    })
+      .from(users)
+      .where(sql`${users.city} IS NOT NULL AND ${users.city} != ''`)
+      .groupBy(sql`COALESCE(${users.city}, 'Unknown')`, sql`COALESCE(${users.country}, 'Unknown')`)
+      .orderBy(desc(count()))
+      .limit(15);
+
+    const totalUsers = await db.select({ count: count() }).from(users);
+
+    res.json({
+      byCountry,
+      byCity,
+      totalUsers: totalUsers[0]?.count || 0,
+    });
+  } catch (error: any) {
+    console.error("Error fetching geo distribution:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * GET /api/admin/analytics/daily-active-users
+ * Daily active users over time
+ */
+router.get("/analytics/daily-active-users", authenticateToken, requireAdmin, async (req, res: Response) => {
+  try {
+    const { days = "30" } = req.query;
+    const daysNum = parseInt(days as string) || 30;
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - daysNum);
+
+    const dailyActiveUsers = await db.execute(sql`
+      SELECT 
+        DATE(last_login_at) as date,
+        COUNT(DISTINCT id)::integer as active_users
+      FROM users
+      WHERE last_login_at >= ${startDate}
+        AND last_login_at IS NOT NULL
+      GROUP BY DATE(last_login_at)
+      ORDER BY date ASC
+    `);
+
+    res.json(dailyActiveUsers.rows);
+  } catch (error: any) {
+    console.error("Error fetching daily active users:", error);
     res.status(500).json({ error: error.message });
   }
 });

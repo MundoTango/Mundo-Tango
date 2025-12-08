@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   Users,
   Activity,
@@ -12,11 +13,29 @@ import {
   AlertTriangle,
   CheckCircle,
   Clock,
-  Shield
+  Shield,
+  Globe,
+  BarChart3
 } from 'lucide-react';
 import { Link } from 'wouter';
-import { Line, LineChart, Bar, BarChart, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
-import { formatDistanceToNow } from 'date-fns';
+import { 
+  Line, 
+  LineChart, 
+  Bar, 
+  BarChart, 
+  Area,
+  AreaChart,
+  Pie,
+  PieChart,
+  Cell,
+  ResponsiveContainer, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip,
+  Legend
+} from 'recharts';
+import { formatDistanceToNow, format } from 'date-fns';
 
 interface DashboardStats {
   totalUsers: number;
@@ -44,11 +63,48 @@ interface SystemHealth {
   apis: boolean;
 }
 
-interface ChartData {
-  name: string;
-  users: number;
-  events: number;
-  revenue: number;
+interface UserGrowthData {
+  date: string;
+  count: number;
+}
+
+interface EventStatsData {
+  byCategory: { category: string; count: number }[];
+  byEventType: { eventType: string; count: number }[];
+  timeframe: string;
+}
+
+interface GeoDistributionData {
+  byCountry: { country: string; count: number }[];
+  byCity: { city: string; country: string; count: number }[];
+  totalUsers: number;
+}
+
+interface DailyActiveUsersData {
+  date: string;
+  active_users: number;
+}
+
+const CHART_COLORS = [
+  'hsl(var(--primary))',
+  'hsl(var(--chart-2))',
+  'hsl(var(--chart-3))',
+  'hsl(var(--chart-4))',
+  'hsl(var(--chart-5))',
+  '#8884d8',
+  '#82ca9d',
+  '#ffc658',
+  '#ff7300',
+  '#00C49F',
+];
+
+function ChartSkeleton({ height = 300 }: { height?: number }) {
+  return (
+    <div className="space-y-3">
+      <Skeleton className="h-4 w-32" />
+      <Skeleton className={`w-full`} style={{ height }} />
+    </div>
+  );
 }
 
 export default function AdminDashboardPage() {
@@ -65,22 +121,23 @@ export default function AdminDashboardPage() {
     refetchInterval: 30000,
   });
 
-  const { data: chartData, isLoading: chartLoading } = useQuery<ChartData[]>({
-    queryKey: ['/api/admin/analytics/overview'],
+  const { data: userGrowth, isLoading: userGrowthLoading } = useQuery<UserGrowthData[]>({
+    queryKey: ['/api/admin/analytics/user-growth'],
   });
 
-  const loading = statsLoading || activitiesLoading || healthLoading || chartLoading;
+  const { data: eventStats, isLoading: eventStatsLoading } = useQuery<EventStatsData>({
+    queryKey: ['/api/admin/analytics/event-stats'],
+  });
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center space-y-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto" />
-          <p className="text-muted-foreground">Loading dashboard...</p>
-        </div>
-      </div>
-    );
-  }
+  const { data: geoDistribution, isLoading: geoLoading } = useQuery<GeoDistributionData>({
+    queryKey: ['/api/admin/analytics/geo-distribution'],
+  });
+
+  const { data: dailyActiveUsers, isLoading: dauLoading } = useQuery<DailyActiveUsersData[]>({
+    queryKey: ['/api/admin/analytics/daily-active-users'],
+  });
+
+  const basicLoading = statsLoading || activitiesLoading || healthLoading;
 
   const getGrowthIcon = (growth: number) => {
     if (growth > 0) return <TrendingUp className="h-4 w-4 text-green-500" />;
@@ -100,9 +157,40 @@ export default function AdminDashboardPage() {
 
   const allHealthy = health && Object.values(health).every(status => status);
 
+  const formattedUserGrowth = userGrowth?.map(item => ({
+    name: format(new Date(item.date), 'MMM d'),
+    users: item.count,
+  })) || [];
+
+  const formattedDauData = dailyActiveUsers?.map(item => ({
+    name: format(new Date(item.date), 'MMM d'),
+    activeUsers: item.active_users,
+  })) || [];
+
+  const formattedEventStats = eventStats?.byCategory?.map(item => ({
+    name: item.category,
+    events: item.count,
+  })) || [];
+
+  const formattedGeoData = geoDistribution?.byCountry?.map(item => ({
+    name: item.country,
+    value: item.count,
+  })) || [];
+
+  if (basicLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center space-y-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto" />
+          <p className="text-muted-foreground">Loading dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-8" data-testid="page-admin-dashboard">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-2">
         <div>
           <h1 className="text-3xl font-bold">Admin Dashboard</h1>
           <p className="text-muted-foreground mt-2">
@@ -117,57 +205,57 @@ export default function AdminDashboardPage() {
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card data-testid="card-total-users">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="flex flex-row items-center justify-between gap-1 space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Users</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats?.totalUsers.toLocaleString()}</div>
+            <div className="text-2xl font-bold">{stats?.totalUsers?.toLocaleString() || 0}</div>
             <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
-              {stats && getGrowthIcon(stats.userGrowth)}
-              <span>{stats?.userGrowth > 0 ? '+' : ''}{stats?.userGrowth}% from last month</span>
+              {stats && getGrowthIcon(stats.userGrowth || 0)}
+              <span>{(stats?.userGrowth || 0) > 0 ? '+' : ''}{stats?.userGrowth || 0}% from last month</span>
             </p>
           </CardContent>
         </Card>
 
         <Card data-testid="card-active-today">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="flex flex-row items-center justify-between gap-1 space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Active Today</CardTitle>
             <Activity className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats?.activeToday.toLocaleString()}</div>
+            <div className="text-2xl font-bold">{stats?.activeToday?.toLocaleString() || 0}</div>
             <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
-              {stats && getGrowthIcon(stats.activeGrowth)}
-              <span>{stats?.activeGrowth > 0 ? '+' : ''}{stats?.activeGrowth}% from yesterday</span>
+              {stats && getGrowthIcon(stats.activeGrowth || 0)}
+              <span>{(stats?.activeGrowth || 0) > 0 ? '+' : ''}{stats?.activeGrowth || 0}% from yesterday</span>
             </p>
           </CardContent>
         </Card>
 
         <Card data-testid="card-events-this-month">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="flex flex-row items-center justify-between gap-1 space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Events This Month</CardTitle>
             <Calendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats?.eventsThisMonth.toLocaleString()}</div>
+            <div className="text-2xl font-bold">{stats?.eventsThisMonth?.toLocaleString() || 0}</div>
             <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
-              {stats && getGrowthIcon(stats.eventGrowth)}
-              <span>{stats?.eventGrowth > 0 ? '+' : ''}{stats?.eventGrowth}% from last month</span>
+              {stats && getGrowthIcon(stats.eventGrowth || 0)}
+              <span>{(stats?.eventGrowth || 0) > 0 ? '+' : ''}{stats?.eventGrowth || 0}% from last month</span>
             </p>
           </CardContent>
         </Card>
 
         <Card data-testid="card-revenue">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="flex flex-row items-center justify-between gap-1 space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Revenue (MRR)</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">${stats?.revenue.toLocaleString()}</div>
+            <div className="text-2xl font-bold">${stats?.revenue?.toLocaleString() || 0}</div>
             <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
-              {stats && getGrowthIcon(stats.revenueGrowth)}
-              <span>{stats?.revenueGrowth > 0 ? '+' : ''}{stats?.revenueGrowth}% from last month</span>
+              {stats && getGrowthIcon(stats.revenueGrowth || 0)}
+              <span>{(stats?.revenueGrowth || 0) > 0 ? '+' : ''}{stats?.revenueGrowth || 0}% from last month</span>
             </p>
           </CardContent>
         </Card>
@@ -176,19 +264,44 @@ export default function AdminDashboardPage() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
         <Card className="col-span-4" data-testid="card-user-growth-chart">
           <CardHeader>
-            <CardTitle>User Growth</CardTitle>
-            <CardDescription>New user registrations over time</CardDescription>
+            <CardTitle className="flex items-center gap-2">
+              <TrendingUp className="h-5 w-5" />
+              User Growth
+            </CardTitle>
+            <CardDescription>New user registrations over the last 30 days</CardDescription>
           </CardHeader>
           <CardContent className="pl-2">
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Line type="monotone" dataKey="users" stroke="hsl(var(--primary))" strokeWidth={2} />
-              </LineChart>
-            </ResponsiveContainer>
+            {userGrowthLoading ? (
+              <ChartSkeleton />
+            ) : formattedUserGrowth.length > 0 ? (
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={formattedUserGrowth}>
+                  <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                  <XAxis dataKey="name" className="text-xs" />
+                  <YAxis className="text-xs" />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: 'hsl(var(--card))', 
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: '8px'
+                    }}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="users" 
+                    stroke="hsl(var(--primary))" 
+                    strokeWidth={2}
+                    dot={{ fill: 'hsl(var(--primary))', strokeWidth: 2 }}
+                    activeDot={{ r: 6 }}
+                    name="New Users"
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="flex items-center justify-center h-[300px] text-muted-foreground">
+                No user growth data available
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -211,12 +324,146 @@ export default function AdminDashboardPage() {
                   </div>
                 </div>
               ))}
+              {(!activities || activities.length === 0) && (
+                <p className="text-muted-foreground text-sm">No recent activity</p>
+              )}
             </div>
           </CardContent>
         </Card>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
+        <Card data-testid="card-daily-active-users-chart">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Activity className="h-5 w-5" />
+              Daily Active Users
+            </CardTitle>
+            <CardDescription>User login activity over the last 30 days</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {dauLoading ? (
+              <ChartSkeleton height={250} />
+            ) : formattedDauData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={250}>
+                <AreaChart data={formattedDauData}>
+                  <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                  <XAxis dataKey="name" className="text-xs" />
+                  <YAxis className="text-xs" />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: 'hsl(var(--card))', 
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: '8px'
+                    }}
+                  />
+                  <Area 
+                    type="monotone" 
+                    dataKey="activeUsers" 
+                    stroke="hsl(var(--chart-2))" 
+                    fill="hsl(var(--chart-2))"
+                    fillOpacity={0.3}
+                    strokeWidth={2}
+                    name="Active Users"
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="flex items-center justify-center h-[250px] text-muted-foreground">
+                No daily active user data available
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card data-testid="card-event-stats-chart">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <BarChart3 className="h-5 w-5" />
+              Events by Category
+            </CardTitle>
+            <CardDescription>Event distribution by category (last 30 days)</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {eventStatsLoading ? (
+              <ChartSkeleton height={250} />
+            ) : formattedEventStats.length > 0 ? (
+              <ResponsiveContainer width="100%" height={250}>
+                <BarChart data={formattedEventStats} layout="vertical">
+                  <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                  <XAxis type="number" className="text-xs" />
+                  <YAxis dataKey="name" type="category" width={100} className="text-xs" />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: 'hsl(var(--card))', 
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: '8px'
+                    }}
+                  />
+                  <Bar 
+                    dataKey="events" 
+                    fill="hsl(var(--primary))" 
+                    radius={[0, 4, 4, 0]}
+                    name="Events"
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="flex items-center justify-center h-[250px] text-muted-foreground">
+                No event data available
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <Card data-testid="card-geo-distribution-chart">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Globe className="h-5 w-5" />
+              Geographic Distribution
+            </CardTitle>
+            <CardDescription>Users by country</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {geoLoading ? (
+              <ChartSkeleton height={250} />
+            ) : formattedGeoData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={250}>
+                <PieChart>
+                  <Pie
+                    data={formattedGeoData}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    outerRadius={80}
+                    fill="hsl(var(--primary))"
+                    dataKey="value"
+                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                  >
+                    {formattedGeoData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: 'hsl(var(--card))', 
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: '8px'
+                    }}
+                    formatter={(value: number) => [`${value} users`, 'Count']}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="flex items-center justify-center h-[250px] text-muted-foreground">
+                No geographic data available
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
         <Card data-testid="card-quick-actions">
           <CardHeader>
             <CardTitle>Quick Actions</CardTitle>

@@ -1,6 +1,7 @@
 // FEATURE 1: DEPLOYMENT AUTOMATION - Backend API
 // Routes: POST /api/deployments, GET /api/deployments, GET /api/deployments/:id
 // Created: October 31, 2025
+// C5-4: Integrated with Predictive Pre-Check System
 
 import { Router, Request, Response } from "express";
 import { z } from "zod";
@@ -9,12 +10,95 @@ import { storage } from "../storage";
 import * as githubClient from "../lib/github-client";
 import * as vercelClient from "../lib/vercel-client";
 import * as railwayClient from "../lib/railway-client";
+import { PredictivePreCheckService, AutoFixEngine } from "../services/self-healing";
+import logger from "../middleware/logger";
 
 const router = Router();
+
+// C5-4: Run predictive pre-checks before deployment
+async function runPreDeploymentChecks(deploymentId: number): Promise<{
+  proceed: boolean;
+  criticalIssues: number;
+  recommendation: string;
+}> {
+  try {
+    logger.info('🔮 [PreDeployment] Running predictive pre-checks before deployment', {
+      deploymentId
+    });
+
+    const highRiskRoutes = [
+      '/feed', '/events', '/admin', '/settings', '/profile',
+      '/housing', '/marketplace', '/messages', '/groups'
+    ];
+
+    let totalIssues = 0;
+    let criticalIssues = 0;
+
+    for (const pageId of highRiskRoutes) {
+      try {
+        await PredictivePreCheckService.checkPagesNavigatesTo(pageId);
+        const cached = await PredictivePreCheckService.getCachedPreCheck(pageId);
+        
+        if (cached) {
+          totalIssues += cached.issuesPredicted || 0;
+          criticalIssues += cached.criticalPredicted || 0;
+        }
+      } catch (err) {
+        logger.warn(`[PreDeployment] Failed to check ${pageId}`);
+      }
+    }
+
+    const recommendation = criticalIssues === 0 
+      ? 'proceed' 
+      : criticalIssues > 3 
+        ? 'block' 
+        : 'proceed_with_caution';
+
+    logger.info('✅ [PreDeployment] Pre-checks complete', {
+      deploymentId,
+      totalIssues,
+      criticalIssues,
+      recommendation
+    });
+
+    return {
+      proceed: recommendation !== 'block',
+      criticalIssues,
+      recommendation
+    };
+  } catch (error: any) {
+    logger.error('❌ [PreDeployment] Pre-check failed', { error: error.message });
+    return { proceed: true, criticalIssues: 0, recommendation: 'proceed_with_warning' };
+  }
+}
 
 // Background function to trigger Vercel + Railway deployments
 async function triggerDeployment(deploymentId: number, branch: string, commitSha?: string) {
   try {
+    // C5-4: Run predictive pre-checks before deployment
+    const preCheckResult = await runPreDeploymentChecks(deploymentId);
+    
+    if (!preCheckResult.proceed) {
+      logger.error('🛑 [Deployment] Blocked by predictive pre-checks', {
+        deploymentId,
+        criticalIssues: preCheckResult.criticalIssues
+      });
+      
+      await storage.updateDeployment(deploymentId, {
+        status: 'failed',
+        errorMessage: `Deployment blocked: ${preCheckResult.criticalIssues} critical issues predicted. Run AutoFix first.`,
+        completedAt: new Date(),
+      });
+      return;
+    }
+    
+    if (preCheckResult.recommendation === 'proceed_with_caution') {
+      logger.warn('⚠️ [Deployment] Proceeding with caution due to predicted issues', {
+        deploymentId,
+        criticalIssues: preCheckResult.criticalIssues
+      });
+    }
+
     // Validate all required environment variables
     const missingVars = [];
     if (!process.env.GITHUB_REPO_ID) missingVars.push('GITHUB_REPO_ID');
