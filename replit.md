@@ -17,6 +17,20 @@ Mundo Tango is a production-ready social platform connecting the global tango co
 
 ## Recent Session Progress (Dec 8, 2025)
 
+### P1 Batch Fixes Complete ✅
+**Applied Methodology**: MB.MD v9.9.4 parallel execution
+**Architect Review**: PASSED - Security and ZERO FAKE DATA objectives met
+
+#### Security Hardening (A1-1)
+- JWT_SECRET fallback removed in routes.ts (line 8474)
+- OPENAI_API_KEY empty string defaults fixed in 10 files with graceful degradation warnings
+- All AI services now validate API keys before instantiation
+
+#### ZERO FAKE DATA Enforcement (B5-2, B5-3, B4-3)
+- TravelExpensesPage.tsx: Removed mock expenses, replaced with API query
+- NewPostsBanner.tsx: Added auth guard to prevent unauthenticated WebSocket connections
+- HousingListingDetailPage.tsx: Fixed enabled:false to enabled:!!id
+
 ### ZERO FAKE DATA Audit Complete ✅
 **Applied Methodology**: MB.MD v9.9.4 - Research → Plan → Build → Test → Analyze → Fix → Document
 **Architect Review**: PASSED - All RBAC guards meet stated objectives
