@@ -728,6 +728,35 @@ export default function EventDetailsPage() {
                       </p>
                     </div>
                   </motion.div>
+
+                  {/* B1-4: Source URL Display */}
+                  {event.sourceUrl && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.65 }}
+                      className="flex items-start gap-4"
+                    >
+                      <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                        <ExternalLink className="h-7 w-7 text-primary" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-lg font-semibold mb-2">Original Source</p>
+                        <a 
+                          href={event.sourceUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-base text-primary hover:underline break-all"
+                          data-testid="link-event-source"
+                        >
+                          {new URL(event.sourceUrl).hostname.replace('www.', '')}
+                        </a>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          View original event listing
+                        </p>
+                      </div>
+                    </motion.div>
+                  )}
                 </div>
                 )}
 
@@ -929,65 +958,92 @@ export default function EventDetailsPage() {
                   </motion.div>
                 )}
 
-                {/* Source Info + Last Updated Section */}
-                {(event.sourceName || event.sourceUrl || (event.sourceUrls && event.sourceUrls.length > 0) || event.updatedAt) && (
+                {/* Source Info Section */}
+                {(event.sourceName || event.sourceUrl || (event.sourceUrls && event.sourceUrls.length > 0)) && (
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.695 }}
                     className="pt-6 border-t"
                   >
-                    <div className="flex flex-wrap items-center justify-between gap-4">
-                      {(event.sourceName || event.sourceUrl || (event.sourceUrls && event.sourceUrls.length > 0)) && (
-                        <div>
-                          <h4 className="text-sm font-medium text-muted-foreground mb-2">Event Source</h4>
-                          <div className="flex flex-wrap gap-3">
-                            {event.sourceUrl && (
+                    <div>
+                      <h4 className="text-sm font-medium text-muted-foreground mb-2">Event Source</h4>
+                      <div className="flex flex-wrap gap-3">
+                        {event.sourceUrl && (
+                          <a
+                            href={event.sourceUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 text-sm text-primary hover:underline"
+                            data-testid="link-source-url"
+                          >
+                            <ExternalLink className="h-4 w-4" />
+                            {event.sourceName || new URL(event.sourceUrl).hostname.replace('www.', '')}
+                          </a>
+                        )}
+                        {!event.sourceUrl && event.sourceName && (
+                          <span className="text-sm text-muted-foreground" data-testid="text-source-name">
+                            Source: {event.sourceName}
+                          </span>
+                        )}
+                        {event.sourceUrls && event.sourceUrls.length > 0 && (
+                          <div className="flex flex-wrap gap-2">
+                            {event.sourceUrls.map((url: string, index: number) => (
                               <a
-                                href={event.sourceUrl}
+                                key={index}
+                                href={url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center gap-2 text-sm text-primary hover:underline"
-                                data-testid="link-source-url"
+                                className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary transition-colors"
+                                data-testid={`link-source-${index}`}
                               >
-                                <ExternalLink className="h-4 w-4" />
-                                {event.sourceName || new URL(event.sourceUrl).hostname.replace('www.', '')}
+                                <ExternalLink className="h-3 w-3" />
+                                {new URL(url).hostname.replace('www.', '')}
                               </a>
-                            )}
-                            {!event.sourceUrl && event.sourceName && (
-                              <span className="text-sm text-muted-foreground" data-testid="text-source-name">
-                                Source: {event.sourceName}
-                              </span>
-                            )}
-                            {event.sourceUrls && event.sourceUrls.length > 0 && (
-                              <div className="flex flex-wrap gap-2">
-                                {event.sourceUrls.map((url: string, index: number) => (
-                                  <a
-                                    key={index}
-                                    href={url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary transition-colors"
-                                    data-testid={`link-source-${index}`}
-                                  >
-                                    <ExternalLink className="h-3 w-3" />
-                                    {new URL(url).hostname.replace('www.', '')}
-                                  </a>
-                                ))}
-                              </div>
-                            )}
+                            ))}
                           </div>
+                        )}
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* B1-5: Last Updated Dates Section */}
+                {(event.createdAt || event.updatedAt) && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.7 }}
+                    className="pt-6 border-t"
+                  >
+                    <div className="flex items-start gap-4">
+                      <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                        <Clock className="h-7 w-7 text-primary" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-lg font-semibold mb-2">Listing Information</p>
+                        <div className="space-y-2">
+                          {event.createdAt && (
+                            <p className="text-sm text-muted-foreground flex items-center gap-2" data-testid="text-created-at">
+                              <span className="font-medium">Added to Mundo Tango:</span>
+                              {safeDateFormat(event.createdAt, "MMMM d, yyyy")}
+                            </p>
+                          )}
+                          {event.updatedAt && event.createdAt && 
+                           new Date(event.updatedAt).getTime() !== new Date(event.createdAt).getTime() && (
+                            <p className="text-sm text-muted-foreground flex items-center gap-2" data-testid="text-last-updated">
+                              <span className="font-medium">Last updated:</span>
+                              {safeDateFormat(event.updatedAt, "MMMM d, yyyy 'at' h:mm a")}
+                            </p>
+                          )}
+                          {event.updatedAt && !event.createdAt && (
+                            <p className="text-sm text-muted-foreground flex items-center gap-2" data-testid="text-last-updated">
+                              <span className="font-medium">Last updated:</span>
+                              {safeDateFormat(event.updatedAt, "MMMM d, yyyy 'at' h:mm a")}
+                            </p>
+                          )}
                         </div>
-                      )}
-                      {event.updatedAt && (
-                        <div className="text-right">
-                          <h4 className="text-sm font-medium text-muted-foreground mb-1">Last Updated</h4>
-                          <p className="text-xs text-muted-foreground flex items-center gap-1 justify-end" data-testid="text-last-updated">
-                            <Clock className="h-3 w-3" />
-                            {safeDateFormat(event.updatedAt, "MMM d, yyyy 'at' h:mm a")}
-                          </p>
-                        </div>
-                      )}
+                      </div>
                     </div>
                   </motion.div>
                 )}

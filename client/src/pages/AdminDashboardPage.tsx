@@ -296,7 +296,43 @@ export default function AdminDashboardPage() {
               <CardTitle>Platform Analytics</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-muted-foreground">Analytics charts coming soon...</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <h4 className="font-medium text-sm text-muted-foreground">User Metrics</h4>
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm">Total Users</span>
+                      <span className="font-semibold" data-testid="text-analytics-total-users">{stats.totalUsers.toLocaleString()}</span>
+                    </div>
+                    <div className="w-full bg-secondary rounded-full h-2">
+                      <div className="bg-primary h-2 rounded-full" style={{ width: `${Math.min((stats.activeUsers / Math.max(stats.totalUsers, 1)) * 100, 100)}%` }} />
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm">Active Users (24h)</span>
+                      <span className="font-semibold" data-testid="text-analytics-active-users">{stats.activeUsers.toLocaleString()}</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <h4 className="font-medium text-sm text-muted-foreground">Content Metrics</h4>
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm">Total Posts</span>
+                      <span className="font-semibold" data-testid="text-analytics-total-posts">{stats.totalPosts.toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm">Total Events</span>
+                      <span className="font-semibold" data-testid="text-analytics-total-events">{stats.totalEvents.toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm">Pending Reports</span>
+                      <Badge variant={stats.pendingReports > 0 ? "destructive" : "secondary"} data-testid="badge-pending-reports">
+                        {stats.pendingReports}
+                      </Badge>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>

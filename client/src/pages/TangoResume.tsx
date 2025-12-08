@@ -13,7 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Award, Star, Users, TrendingUp, CheckCircle, Edit, Save, X } from "lucide-react";
+import { Award, Star, Users, TrendingUp, CheckCircle, Edit, Save, X, Loader2, ThumbsUp, UserCheck } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useUser } from "@/hooks/use-user";
 import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/UnifiedLocationPicker";
@@ -49,6 +49,18 @@ export default function TangoResume() {
   // Fetch stats
   const { data: stats } = useQuery({
     queryKey: ["/api/resumes", user?.id, "stats"],
+    enabled: !!user?.id
+  });
+
+  // Fetch endorsements (real API data)
+  const { data: endorsements = [], isLoading: loadingEndorsements } = useQuery({
+    queryKey: ["/api/endorsements", user?.id],
+    enabled: !!user?.id
+  });
+
+  // Fetch role confirmations (real API data)
+  const { data: roleConfirmations = [], isLoading: loadingConfirmations } = useQuery({
+    queryKey: ["/api/role-confirmations", user?.id],
     enabled: !!user?.id
   });
 
@@ -557,7 +569,34 @@ export default function TangoResume() {
               <CardDescription>Endorsements from the community</CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="text-muted-foreground">Endorsements feature coming soon...</p>
+              {loadingEndorsements ? (
+                <div className="flex justify-center py-8">
+                  <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                </div>
+              ) : endorsements.length === 0 ? (
+                <div className="text-center py-8">
+                  <ThumbsUp className="h-12 w-12 mx-auto mb-4 text-muted-foreground opacity-50" />
+                  <p className="text-muted-foreground">No endorsements yet</p>
+                  <p className="text-sm text-muted-foreground mt-1">Ask community members to endorse your skills</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {endorsements.map((endorsement: any) => (
+                    <div key={endorsement.id} className="flex items-start gap-4 p-4 border rounded-lg" data-testid={`endorsement-${endorsement.id}`}>
+                      <ThumbsUp className="h-5 w-5 text-primary flex-shrink-0 mt-1" />
+                      <div className="flex-1">
+                        <p className="font-medium">{endorsement.skill || 'General'}</p>
+                        {endorsement.comment && (
+                          <p className="text-sm text-muted-foreground mt-1">{endorsement.comment}</p>
+                        )}
+                        <p className="text-xs text-muted-foreground mt-2">
+                          From {endorsement.endorser?.name || 'Anonymous'}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -569,7 +608,37 @@ export default function TangoResume() {
               <CardDescription>Peer validations of your tango roles</CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="text-muted-foreground">Role confirmations feature coming soon...</p>
+              {loadingConfirmations ? (
+                <div className="flex justify-center py-8">
+                  <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                </div>
+              ) : roleConfirmations.length === 0 ? (
+                <div className="text-center py-8">
+                  <UserCheck className="h-12 w-12 mx-auto mb-4 text-muted-foreground opacity-50" />
+                  <p className="text-muted-foreground">No role confirmations yet</p>
+                  <p className="text-sm text-muted-foreground mt-1">Other dancers can confirm your roles (DJ, Teacher, etc.)</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {roleConfirmations.map((confirmation: any) => (
+                    <div key={confirmation.id} className="flex items-start gap-4 p-4 border rounded-lg" data-testid={`confirmation-${confirmation.id}`}>
+                      <UserCheck className="h-5 w-5 text-green-500 flex-shrink-0 mt-1" />
+                      <div className="flex-1">
+                        <Badge variant="secondary" className="mb-2 capitalize">{confirmation.role}</Badge>
+                        {confirmation.context && (
+                          <p className="text-sm text-muted-foreground">{confirmation.context}</p>
+                        )}
+                        <p className="text-xs text-muted-foreground mt-2">
+                          Confirmed by {confirmation.confirmer?.name || 'Anonymous'}
+                        </p>
+                      </div>
+                      {confirmation.isVerified && (
+                        <CheckCircle className="h-5 w-5 text-green-500" />
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>

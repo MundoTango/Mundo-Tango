@@ -30,7 +30,8 @@ import {
   Tag,
   X,
   Search,
-  Languages
+  Languages,
+  Users
 } from "lucide-react";
 import { format } from "date-fns";
 import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/UnifiedLocationPicker";
@@ -57,6 +58,8 @@ export interface EventFilterValues {
   tags?: string[];
   languages?: string[];
   languageMatchOnly?: boolean;
+  minAttendees?: number; // B1-1: Filter for large events
+  largeEventsOnly?: boolean; // B1-1: Quick toggle for 50+ attendees
 }
 
 const DANCE_STYLES = [
@@ -101,6 +104,8 @@ export function EventFilters({ onFilterChange, initialFilters = {} }: EventFilte
     tags: initialFilters.tags || [],
     languages: initialFilters.languages || [],
     languageMatchOnly: initialFilters.languageMatchOnly ?? false,
+    largeEventsOnly: initialFilters.largeEventsOnly ?? false,
+    minAttendees: initialFilters.minAttendees,
   });
 
   const updateFilters = (updates: Partial<EventFilterValues>) => {
@@ -118,6 +123,8 @@ export function EventFilters({ onFilterChange, initialFilters = {} }: EventFilte
       tags: [],
       languages: [],
       languageMatchOnly: false,
+      largeEventsOnly: false,
+      minAttendees: undefined,
     };
     setFilters(emptyFilters);
     onFilterChange(emptyFilters);
@@ -143,6 +150,7 @@ export function EventFilters({ onFilterChange, initialFilters = {} }: EventFilte
     filters.verified,
     (filters.tags?.length || 0) > 0,
     (filters.languages?.length || 0) > 0,
+    filters.largeEventsOnly,
   ].filter(Boolean).length;
 
   return (
@@ -403,6 +411,29 @@ export function EventFilters({ onFilterChange, initialFilters = {} }: EventFilte
               checked={filters.verified}
               onCheckedChange={(checked) => updateFilters({ verified: checked })}
               data-testid="switch-verified"
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-sm font-medium flex items-center gap-2">
+            <Users className="w-4 h-4" />
+            Attendees
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-between">
+            <Label htmlFor="large-events-toggle">Large events only (50+)</Label>
+            <Switch
+              id="large-events-toggle"
+              checked={filters.largeEventsOnly}
+              onCheckedChange={(checked) => updateFilters({ 
+                largeEventsOnly: checked,
+                minAttendees: checked ? 50 : undefined 
+              })}
+              data-testid="switch-large-events"
             />
           </div>
         </CardContent>

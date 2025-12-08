@@ -32,12 +32,36 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { BannerAd } from "@/components/ads/BannerAd";
 import { EventFilters, type EventFilterValues } from "@/components/events/EventFilters";
 import { getCityImageUrl } from "@/lib/cityImageMap";
+import { getEventTypeLabel } from "@/lib/eventTypes";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 const localizer = momentLocalizer(moment);
 
 const CATEGORIES = ["All", "Milonga", "Practica", "Class", "Workshop", "Festival", "Marathon", "Encuentro", "Performance", "Social", "Online"];
+
+function getEventTypeBadgeClass(eventType: string): string {
+  const type = eventType?.toLowerCase() || "";
+  switch (type) {
+    case "milonga":
+      return "bg-primary text-primary-foreground";
+    case "workshop":
+    case "class":
+      return "bg-blue-500 text-white dark:bg-blue-600";
+    case "festival":
+    case "marathon":
+    case "encuentro":
+      return "bg-purple-500 text-white dark:bg-purple-600";
+    case "practica":
+      return "bg-green-500 text-white dark:bg-green-600";
+    case "concert":
+    case "performance":
+    case "show":
+      return "bg-orange-500 text-white dark:bg-orange-600";
+    default:
+      return "bg-muted text-muted-foreground";
+  }
+}
 
 // Fix Leaflet default marker icon
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -130,6 +154,15 @@ function EventCard({ event, index = 0 }: { event: any; index?: number }) {
         </div>
 
         <CardContent className="p-6 space-y-3">
+          {(eventData.type || eventData.category) && (
+            <Badge 
+              className={getEventTypeBadgeClass(eventData.type || eventData.category)}
+              data-testid={`badge-event-type-${eventData.id}`}
+            >
+              {getEventTypeLabel(eventData.type || eventData.category)}
+            </Badge>
+          )}
+
           <div className="flex items-center gap-2 text-sm">
             <CalendarIcon className="h-4 w-4 flex-shrink-0 text-primary" />
             <span data-testid={`text-event-date-${eventData.id}`}>

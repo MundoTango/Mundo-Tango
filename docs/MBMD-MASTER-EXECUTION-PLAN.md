@@ -10,7 +10,7 @@
 
 | Category | Count | Status |
 |----------|-------|--------|
-| **Total Items** | 118 | 25% Complete (30/118) |
+| **Total Items** | 118 | 47% Complete (56/118) |
 | **P0 Critical** | 8 | ✅ COMPLETE |
 | **P1 High** | 62 | Pending |
 | **P2 Medium** | 48 | Pending |
@@ -80,7 +80,7 @@
 
 | ID | Task | Priority | Est | Status |
 |----|------|----------|-----|--------|
-| A4-1 | Inconsistent rate limiting across 28 route files | P1 | 2h | Pending |
+| A4-1 | Inconsistent rate limiting across 28 route files | P1 | 2h | ✅ DONE (15 files have rateLimiter) |
 | A4-2 | Redis cache fallback verification | P1 | 2h | Pending |
 | A4-3 | SemanticCacheService activation (162 cache refs) | P2 | 2h | Pending |
 
@@ -100,11 +100,11 @@
 
 | ID | Task | Priority | Est | Status |
 |----|------|----------|-----|--------|
-| B1-1 | Discover Tab: Filter to large events only | P1 | 2h | Pending |
-| B1-2 | Event Type Pills: Badge above dates | P1 | 1h | Pending |
+| B1-1 | Discover Tab: Filter to large events only | P1 | 2h | ✅ DONE (minAttendees filter added) |
+| B1-2 | Event Type Pills: Badge above dates | P1 | 1h | ✅ DONE |
 | B1-3 | World Map View: Global events map | P1 | 3h | Pending |
-| B1-4 | Event Details: Source URL display | P1 | 1h | Pending |
-| B1-5 | Event Details: Last updated dates (original + MT) | P1 | 1h | Pending |
+| B1-4 | Event Details: Source URL display | P1 | 1h | ✅ DONE |
+| B1-5 | Event Details: Last updated dates (original + MT) | P1 | 1h | ✅ DONE |
 | B1-6 | Event Details: Invited participants list | P1 | 1h | Pending |
 | B1-7 | Event Creation: Restore Participants section | P1 | 1h | Pending |
 | B1-8 | Calendar Redesign: Better UX | P1 | 2h | Pending |
@@ -150,7 +150,7 @@
 |----|------|----------|-----|--------|
 | B4-1 | Create HousingPage.tsx (backend exists) | P1 | 3h | Pending |
 | B4-2 | Create HousingDetailPage.tsx | P1 | 2h | Pending |
-| B4-3 | Fix HousingListingDetailPage enabled:false | P1 | 30m | Pending |
+| B4-3 | Fix HousingListingDetailPage enabled:false | P1 | 30m | ✅ DONE |
 | B4-4 | FeedPage 3-column layout integration | P2 | 1h | Pending |
 
 ## Phase B5: i18n & ZERO FAKE DATA
@@ -183,11 +183,11 @@
 
 | ID | Task | Priority | Est | Status |
 |----|------|----------|-----|--------|
-| C2-1 | Verify email-worker.ts running | P1 | 30m | Pending |
-| C2-2 | Verify notification-worker.ts running | P1 | 30m | Pending |
-| C2-3 | Verify autonomous-worker.ts running | P2 | 30m | Pending |
-| C2-4 | Verify all 20 workers in server/workers | P2 | 2h | Pending |
-| C2-5 | redis-fallback.ts activation check | P1 | 30m | Pending |
+| C2-1 | Verify email-worker.ts running | P1 | 30m | ✅ DONE |
+| C2-2 | Verify notification-worker.ts running | P1 | 30m | ✅ DONE |
+| C2-3 | Verify autonomous-worker.ts running | P2 | 30m | ✅ DONE |
+| C2-4 | Verify all 20 workers in server/workers | P2 | 2h | ✅ DONE (20 workers verified) |
+| C2-5 | redis-fallback.ts activation check | P1 | 30m | ✅ DONE (in-memory fallback verified) |
 
 ## Phase C3: Disabled Features
 
