@@ -80,6 +80,7 @@ import featureFlagsRoutes from "./routes/feature-flags-routes";
 import pricingRoutes from "./routes/pricing-routes";
 import planRoutes from "./routes/plan-routes";
 import thePlanRoutes from "./routes/thePlanRoutes";
+import thePlanAdminRoutes from "./routes/thePlanAdminRoutes";
 import syncRoutes from "./routes/sync-routes";
 import selfHealingRoutes from "./routes/self-healing-routes";
 import agentHealthRoutes from "./routes/agent-health-routes";
@@ -590,6 +591,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // The Plan routes use optional auth - allows unauthenticated /progress checks,
   // but POST endpoints (/start, /skip) require auth at route level
   app.use("/api/the-plan", optionalAuth, thePlanRoutes);
+  app.use("/api/admin/the-plan", authenticateToken, thePlanAdminRoutes);
   
   app.use("/api/sync", syncRoutes);
   

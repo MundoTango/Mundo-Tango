@@ -247,6 +247,7 @@ const PricingManagerPage = lazy(
   () => import("@/pages/admin/PricingManagerPage"),
 );
 const SelfHealingPage = lazy(() => import("@/pages/admin/SelfHealingPage"));
+const ThePlanAdminPage = lazy(() => import("@/pages/admin/ThePlanAdminPage"));
 const ProjectTrackerPage = lazy(
   () => import("@/pages/admin/ProjectTrackerPage"),
 );
@@ -2174,6 +2175,14 @@ function Router() {
         <ProtectedRoute>
           <AdminLayout>
             <SelfHealingPage />
+          </AdminLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/admin/the-plan">
+        <ProtectedRoute>
+          <AdminLayout>
+            <ThePlanAdminPage />
           </AdminLayout>
         </ProtectedRoute>
       </Route>

@@ -46,10 +46,173 @@ See:
 
 # MB.MD - Mundo Blue Methodology Directive
 
-61
-9.9 PARALLEL AGENT EXECUTION PROTOCOL - 41 PATTERNS  
+## 📊 v9.9.4 - THE PLAN MULTI-PERSPECTIVE AUDIT PROTOCOL (Dec 8, 2025)
 **Created:** October 30, 2025  
-**Last Updated:** December 2, 2025**Project:** Mundo Tango - The Anti-Facebook (927 features, 20-week strategy)
+**Last Updated:** December 8, 2025
+**Project:** Mundo Tango - The Anti-Facebook (927 features, 20-week strategy)
+
+---
+
+### 📋 CURRENT SESSION PROGRESS (Dec 8, 2025)
+
+**Active Task: MB.MD v9.9.4 Full Implementation**
+
+#### ✅ COMPLETED (Dec 8, 2025)
+1. **Pattern 0: MB.MD v9.9.4 Methodology** - Added to mb.md
+   - 9-phase execution cycle: Capture → Research → Question → Plan → Build → Test → Analyze → Fix → Document
+   - Critical principles (Work Simultaneously, Recursively, Critically)
+   - 3-Strike AutoFix Protocol documented
+
+2. **Pattern 51: ZERO FAKE DATA Policy** - Added to mb.md
+   - Strict enforcement rules
+   - Conditional rendering patterns
+   - API-only content policy
+
+3. **Pattern 52: Multi-Perspective Audit Protocol** - Added to mb.md
+   - 6 perspectives: CTO, Marketing, UI, UX, Graphic Designer, Customer Journey
+   - Agent squad assignments per perspective
+   - Implementation code template
+
+4. **The Plan Admin UI** - `/admin/the-plan`
+   - Multi-perspective audit controls (CTO, Marketing, UI, UX, Graphic Designer, Customer Journey)
+   - 50 page inventory from THE_PLAN_PAGES with auto-seeding on first API call
+   - Stats dashboard (Total, Pending, Auditing, Completed, Failed, Issues Found, Issues Resolved)
+   - Video capture queue button per-page (backend stub - awaiting Playwright recorder)
+   - Tour tab UI (backend stub - tours generated after audits complete)
+   - ZERO FAKE DATA compliant - all content from API responses, Loader2 spinners for loading, API message rendering for empty states
+   - Query invalidation with specific keys for proper cache management
+   - Comprehensive data-testid attributes on all interactive elements
+   - Table and Grid view modes with 3 filter dropdowns (category, priority, status)
+
+5. **Backend API Routes** - `server/routes/thePlanAdminRoutes.ts`
+   - GET /api/admin/the-plan/pages - Page inventory (auto-seeds from THE_PLAN_PAGES)
+   - GET /api/admin/the-plan/stats - Audit statistics
+   - POST /api/admin/the-plan/audit/start - Start multi-perspective audit (async ComprehensiveAuditRunner)
+   - POST /api/admin/the-plan/audit/stop - Stop running audit
+   - GET /api/admin/the-plan/audit/progress - Get batch processing progress
+   - POST /api/admin/the-plan/capture-video/:pageId - Queue video capture
+   - GET /api/admin/the-plan/issues - Get audit issues
+   - GET /api/admin/the-plan/videos - Get captured videos (with message)
+   - GET /api/admin/the-plan/tours - Get Mr Blue tours (with message)
+
+6. **Frontend Route Registration** - `client/src/App.tsx`
+   - ThePlanAdminPage lazy import added
+   - Route /admin/the-plan registered with AdminLayout + ProtectedRoute
+
+#### ✅ INTEGRATED & REVIEWED
+7. **Multi-Agent Page Audits** - Backend fully integrated (Architect reviewed ✅)
+   - thePlanAdminRoutes uses ComprehensiveAuditRunner singleton
+   - Start audit triggers async batch processing via createBatches() + resumeFromNextPending()
+   - Stop audit clears running flag, resets runner, and resets page statuses
+   - GET /api/admin/the-plan/audit/progress endpoint for batch progress
+   - pageInventory seeding with correct schema fields (name, path, valid category enum)
+   - SwarmChoreographyController with 9 SME agents for issue assignment
+   - PostgreSQL persistence for audit issues with restart resilience
+
+#### ⏳ PENDING
+8. **Video/Photo Collection** - Capture demos during audits
+9. **Mr Blue User Tours** - Generate from audit data
+10. **Marketing Site Integration** - Wire media to landing page
+
+---
+
+### 📋 PATTERN 0: MB.MD v9.9.4 METHODOLOGY ⭐⭐⭐⭐⭐ (FOUNDATIONAL)
+
+**The 9-Phase Execution Cycle:**
+
+```
+Capture → Research → Question → Plan → Build → Test → Analyze → Fix → Document
+```
+
+| Phase | Action | Output |
+|-------|--------|--------|
+| **1. Capture** | Gather all requirements, context, constraints | Requirements doc |
+| **2. Research** | Analyze codebase, find existing patterns | Context understanding |
+| **3. Question** | Identify gaps, clarify ambiguities | Clarified requirements |
+| **4. Plan** | Create task list, define success criteria | Task breakdown |
+| **5. Build** | Implement with ZERO FAKE DATA policy | Working code |
+| **6. Test** | E2E testing with Playwright, manual verification | Test results |
+| **7. Analyze** | Review issues, identify patterns | Issue inventory |
+| **8. Fix** | 3-Strike Protocol (simple→advanced→escalate) | Resolved issues |
+| **9. Document** | Update mb.md, replit.md with learnings | Updated docs |
+
+**Critical Principles:**
+- **Work Simultaneously**: Run operations in parallel (Promise.all, parallel tool calls)
+- **Work Recursively**: Deep analysis, not surface-level (read imports, dependencies)
+- **Work Critically**: Target 95-99/100 quality (test before complete, validate edge cases)
+- **Check Infrastructure First**: Use existing systems before building new
+- **Test Before Complete**: Run E2E tests for UI, unit tests for backend
+- **Validation Loop**: observe → decide → act → validate → adapt
+
+**3-Strike AutoFix Protocol:**
+```
+Strike 1: Simple fix (regex, direct replacement)
+Strike 2: Advanced fix (AI-assisted, context-aware)
+Strike 3: Escalate to human with full context
+Target: <10% escalation rate
+```
+
+---
+
+### 📋 PATTERN 51: ZERO FAKE DATA POLICY ⭐⭐⭐ (CRITICAL)
+
+**Problem:** Hardcoded mock data, placeholder content, and fallback strings violate production readiness and mislead users.
+
+**Solution:** Strict enforcement of real data only:
+
+```typescript
+// ❌ WRONG - Hardcoded fallback
+<p>{data?.message || 'No items found'}</p>
+
+// ✅ CORRECT - Only show API message if present
+{data?.message && <p>{data.message}</p>}
+
+// ❌ WRONG - Hardcoded tour data
+const tours = [
+  { name: 'Onboarding', pages: 5, status: 'active' }
+];
+
+// ✅ CORRECT - Fetch from API with loading state
+const { data: toursData, isLoading } = useQuery({
+  queryKey: ['/api/admin/the-plan/tours']
+});
+{isLoading ? <Loader2 /> : toursData?.tours.map(...)}
+```
+
+**Enforcement:**
+- All content must come from database/API responses
+- Loading states required for all async data
+- Empty states show API-provided messages only
+- No hardcoded placeholder content ever
+
+---
+
+### 📋 PATTERN 52: MULTI-PERSPECTIVE AUDIT PROTOCOL ⭐⭐⭐ (NEW)
+
+**Problem:** Single-perspective audits miss issues visible from other viewpoints.
+
+**Solution:** Run audits from 6+ simultaneous perspectives:
+
+| Perspective | Focus Areas | Agent Squad |
+|------------|-------------|-------------|
+| **CTO** | Architecture, performance, security, scalability | ArchitectureAgent, SecurityAgent, PerformanceAgent |
+| **Marketing** | Conversion, brand, SEO, user acquisition | ConversionAgent, BrandAgent, SEOAgent |
+| **UI Design** | Layout, spacing, visual hierarchy, consistency | LayoutAgent, SpacingAgent, TypographyAgent |
+| **UX** | Usability, flow, accessibility, friction points | UsabilityAgent, AccessibilityAgent, FlowAgent |
+| **Graphic Designer** | Colors, imagery, visual appeal, iconography | ColorAgent, ImageryAgent, IconographyAgent |
+| **Customer Journey** | User flows, onboarding, engagement, retention | OnboardingAgent, EngagementAgent, RetentionAgent |
+
+**Implementation:**
+```typescript
+const perspectives = ['cto', 'marketing', 'ui', 'ux', 'graphic', 'journey'];
+const results = await Promise.all(
+  perspectives.map(p => auditFromPerspective(page, p))
+);
+const mergedIssues = deduplicateIssues(results.flat());
+await persistToDatabase(mergedIssues);
+```
+
+---
 
 **New in v9.9.1 (DRIZZLE ORM LEFTJOIN FIX - Dec 1, 2025):**
 - 📋 **PATTERN 42**: Drizzle ORM LeftJoin Flat Column Selection Protocol

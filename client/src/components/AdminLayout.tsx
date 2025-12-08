@@ -1,7 +1,7 @@
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AdminSidebar } from "./AdminSidebar";
 import { GlobalTopbar } from "./GlobalTopbar";
-import { AudioConversationButton } from '@/components/mr-blue/AudioConversationButton';
+import { AudioConversationButton } from '@/components/AudioConversationButton';
 
 /**
  * AdminLayout - Layout component for admin pages
