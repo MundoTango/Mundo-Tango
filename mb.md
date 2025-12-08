@@ -4400,8 +4400,8 @@ export function getCityImageUrl(city?: string | null): string {
 | EventDetailsPage | client/src/pages/EventDetailsPage.tsx | ✅ |
 | EventCard | client/src/components/EventCard.tsx | ✅ |
 | CityGuidesPage | client/src/pages/CityGuidesPage.tsx | ✅ |
-| TravelPage | client/src/pages/TravelPage.tsx | Pending |
-| HousingMarketplacePage | client/src/pages/HousingMarketplacePage.tsx | Pending |
+| TravelPlannerPage | client/src/pages/TravelPlannerPage.tsx | ✅ |
+| HousingMarketplacePage | client/src/pages/HousingMarketplacePage.tsx | ✅ |
 
 **Execution Pattern (Pattern 28 Compliant):**
 

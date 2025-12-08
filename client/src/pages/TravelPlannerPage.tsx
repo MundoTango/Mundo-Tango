@@ -13,6 +13,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
 import { SEO } from "@/components/SEO";
+import { getCityImageUrl } from "@/lib/cityImageMap";
 
 interface TravelPackage {
   id: number;
@@ -183,7 +184,7 @@ export default function TravelPlannerPage() {
                         <Card className="overflow-hidden hover-elevate" data-testid={`package-${pkg.id}`}>
                           <div className="relative aspect-[16/9] overflow-hidden">
                             <motion.img
-                              src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=800&h=450&fit=crop&q=80"
+                              src={getCityImageUrl(pkg.location)}
                               alt={pkg.title}
                               className="w-full h-full object-cover"
                               whileHover={{ scale: 1.05 }}
@@ -251,7 +252,7 @@ export default function TravelPlannerPage() {
                       <Card className="overflow-hidden hover-elevate" data-testid={`destination-${dest.id}`}>
                         <div className="relative aspect-[16/9] overflow-hidden">
                           <motion.img
-                            src={dest.image || "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=800&h=450&fit=crop&q=80"}
+                            src={dest.image || getCityImageUrl(dest.name)}
                             alt={dest.name}
                             className="w-full h-full object-cover"
                             whileHover={{ scale: 1.05 }}

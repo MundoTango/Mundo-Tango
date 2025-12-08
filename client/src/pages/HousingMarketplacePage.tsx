@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search, MapPin, DollarSign, Users, Heart, Home, Plus } from "lucide-react";
 import { UnifiedLocationPicker } from "@/components/input/UnifiedLocationPicker";
+import { getCityImageUrl } from "@/lib/cityImageMap";
 
 export default function HousingMarketplacePage() {
   const [city, setCity] = useState("");
@@ -101,23 +102,17 @@ export default function HousingMarketplacePage() {
             {listings.map((item: any) => {
               const listing = item.listing;
               const host = item.host;
-              const coverImage = listing.coverPhotoUrl || listing.images?.[0];
+              const coverImage = listing.coverPhotoUrl || listing.images?.[0] || getCityImageUrl(listing.city);
 
               return (
                 <Card key={listing.id} className="hover-elevate overflow-hidden" data-testid={`card-listing-${listing.id}`}>
                   <Link href={`/housing/listing/${listing.id}`}>
                     <div className="relative h-48 overflow-hidden">
-                      {coverImage ? (
-                        <img
-                          src={coverImage}
-                          alt={listing.title}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full bg-muted flex items-center justify-center">
-                          <Home className="h-12 w-12 text-muted-foreground" />
-                        </div>
-                      )}
+                      <img
+                        src={coverImage}
+                        alt={listing.title}
+                        className="w-full h-full object-cover"
+                      />
                       <Button
                         size="icon"
                         variant="ghost"
