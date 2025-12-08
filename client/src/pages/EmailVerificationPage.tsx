@@ -68,7 +68,7 @@ export default function EmailVerificationPage() {
                   <div className="bg-muted p-6 rounded-lg">
                     <div className="flex items-center gap-3 justify-center">
                       <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
-                      <span className="text-sm font-medium">Email sent to: john@example.com</span>
+                      <span className="text-sm font-medium">Check your email inbox for the verification link</span>
                     </div>
                   </div>
 

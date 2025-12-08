@@ -2,13 +2,30 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { User, Mail, Globe, Trash2 } from "lucide-react";
+import { User, Mail, Globe, Trash2, Loader2 } from "lucide-react";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from '@/components/SelfHealingErrorBoundary';
 import { SEO } from "@/components/SEO";
 import { motion } from "framer-motion";
+import { useQuery } from "@tanstack/react-query";
 
 export default function AccountSettingsPage() {
+  const { data: userData, isLoading } = useQuery({
+    queryKey: ['/api/auth/me'],
+  });
+
+  const user = userData?.user;
+
+  if (isLoading) {
+    return (
+      <PageLayout title="Account Settings" showBreadcrumbs>
+        <div className="flex items-center justify-center min-h-[50vh]">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      </PageLayout>
+    );
+  }
+
   return (
     <PageLayout title="Account Settings" showBreadcrumbs>
 <SelfHealingErrorBoundary pageName="Account Settings" fallbackRoute="/settings">
@@ -48,11 +65,11 @@ export default function AccountSettingsPage() {
               <CardContent className="space-y-6 p-8 pt-0">
               <div>
                 <Label htmlFor="username">Username</Label>
-                <Input id="username" defaultValue="@johndoe" data-testid="input-username" />
+                <Input id="username" defaultValue={user?.username || ''} data-testid="input-username" />
               </div>
               <div>
                 <Label htmlFor="display-name">Display Name</Label>
-                <Input id="display-name" defaultValue="John Doe" data-testid="input-display-name" />
+                <Input id="display-name" defaultValue={user?.displayName || user?.firstName || ''} data-testid="input-display-name" />
               </div>
             </CardContent>
             </Card>
@@ -74,7 +91,7 @@ export default function AccountSettingsPage() {
               <CardContent className="space-y-6 p-8 pt-0">
               <div>
                 <Label htmlFor="email">Email Address</Label>
-                <Input id="email" type="email" defaultValue="john@example.com" data-testid="input-email" />
+                <Input id="email" type="email" defaultValue={user?.email || ''} data-testid="input-email" />
               </div>
               <div>
                 <Label htmlFor="password">Password</Label>

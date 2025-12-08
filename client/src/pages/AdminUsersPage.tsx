@@ -2,17 +2,18 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Users } from "lucide-react";
+import { Users, Loader2 } from "lucide-react";
 import { SelfHealingErrorBoundary } from '@/components/SelfHealingErrorBoundary';
 import { motion } from "framer-motion";
 import { SEO } from "@/components/SEO";
+import { useQuery } from "@tanstack/react-query";
 
 export default function AdminUsersPage() {
-  const users = [
-    { id: 1, name: "John Doe", email: "john@example.com", role: "User", status: "Active" },
-    { id: 2, name: "Jane Smith", email: "jane@example.com", role: "Teacher", status: "Active" },
-    { id: 3, name: "Bob Wilson", email: "bob@example.com", role: "Admin", status: "Active" }
-  ];
+  const { data: usersData, isLoading } = useQuery({
+    queryKey: ['/api/admin/users'],
+  });
+
+  const users = usersData?.users || [];
 
   return (
     <SelfHealingErrorBoundary pageName="Admin Users" fallbackRoute="/admin">
@@ -65,37 +66,47 @@ export default function AdminUsersPage() {
                   <CardTitle className="text-2xl font-serif">All Users ({users.length})</CardTitle>
                 </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              {users.map((user) => (
-                <div
-                  key={user.id}
-                  className="flex items-center justify-between py-3 border-b last:border-0"
-                  data-testid={`user-${user.id}`}
-                >
-                  <div className="flex items-center gap-3">
-                    <Avatar>
-                      <AvatarImage src="" />
-                      <AvatarFallback>{user.name[0]}</AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <p className="font-semibold">{user.name}</p>
-                      <p className="text-sm text-muted-foreground">{user.email}</p>
+            {isLoading ? (
+              <div className="flex items-center justify-center py-12">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              </div>
+            ) : users.length === 0 ? (
+              <div className="text-center py-12 text-muted-foreground">
+                No users found
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {users.map((user: any) => (
+                  <div
+                    key={user.id}
+                    className="flex items-center justify-between py-3 border-b last:border-0"
+                    data-testid={`user-${user.id}`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <Avatar>
+                        <AvatarImage src={user.avatarUrl || user.profileImage || ''} />
+                        <AvatarFallback>{(user.displayName || user.firstName || user.email || 'U')[0].toUpperCase()}</AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <p className="font-semibold">{user.displayName || user.firstName || 'User'}</p>
+                        <p className="text-sm text-muted-foreground">{user.email}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Badge variant={user.role === "admin" ? "default" : "secondary"}>
+                        {user.role || 'User'}
+                      </Badge>
+                      <Badge variant={user.isActive !== false ? "default" : "destructive"}>
+                        {user.isActive !== false ? 'Active' : 'Inactive'}
+                      </Badge>
+                      <Button variant="outline" size="sm" data-testid={`button-edit-${user.id}`}>
+                        Edit
+                      </Button>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <Badge variant={user.role === "Admin" ? "default" : "secondary"}>
-                      {user.role}
-                    </Badge>
-                    <Badge variant={user.status === "Active" ? "default" : "destructive"}>
-                      {user.status}
-                    </Badge>
-                    <Button variant="outline" size="sm" data-testid={`button-edit-${user.id}`}>
-                      Edit
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </CardContent>
               </Card>
             </motion.div>

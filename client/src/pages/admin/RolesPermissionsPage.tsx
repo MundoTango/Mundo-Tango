@@ -54,6 +54,51 @@ const permissions: Permission[] = [
   { id: 'settings.edit', name: 'Edit Settings', description: 'Modify platform settings', category: 'Settings' },
 ];
 
+function AuditLogCard() {
+  const { data: auditData, isLoading } = useQuery({
+    queryKey: ['/api/admin/audit-log'],
+  });
+
+  const auditLogs = auditData?.logs || [];
+
+  return (
+    <Card data-testid="card-audit-log">
+      <CardHeader>
+        <CardTitle>Audit Log</CardTitle>
+        <CardDescription>Recent role and permission changes</CardDescription>
+      </CardHeader>
+      <CardContent>
+        {isLoading ? (
+          <div className="text-center py-8 text-muted-foreground">Loading audit logs...</div>
+        ) : auditLogs.length === 0 ? (
+          <div className="text-center py-8 text-muted-foreground">No audit logs available</div>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Timestamp</TableHead>
+                <TableHead>Admin</TableHead>
+                <TableHead>Action</TableHead>
+                <TableHead>Details</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {auditLogs.map((log: any, index: number) => (
+                <TableRow key={log.id || index} data-testid={`audit-${index}`}>
+                  <TableCell>{new Date(log.timestamp).toLocaleString()}</TableCell>
+                  <TableCell>{log.adminEmail}</TableCell>
+                  <TableCell>{log.action}</TableCell>
+                  <TableCell>{log.details}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
 export default function RolesPermissionsPage() {
   const [selectedRole, setSelectedRole] = useState('admin');
   const [permissionsMatrix, setPermissionsMatrix] = useState<Record<string, boolean>>({
@@ -173,38 +218,7 @@ export default function RolesPermissionsPage() {
         </Card>
       </div>
 
-      <Card data-testid="card-audit-log">
-        <CardHeader>
-          <CardTitle>Audit Log</CardTitle>
-          <CardDescription>Recent role and permission changes</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Timestamp</TableHead>
-                <TableHead>Admin</TableHead>
-                <TableHead>Action</TableHead>
-                <TableHead>Details</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <TableRow data-testid="audit-1">
-                <TableCell>2024-01-15 14:32</TableCell>
-                <TableCell>admin@mundotango.com</TableCell>
-                <TableCell>Role Updated</TableCell>
-                <TableCell>Changed user john@example.com to Moderator</TableCell>
-              </TableRow>
-              <TableRow data-testid="audit-2">
-                <TableCell>2024-01-15 10:15</TableCell>
-                <TableCell>admin@mundotango.com</TableCell>
-                <TableCell>Permission Modified</TableCell>
-                <TableCell>Granted events.delete to DJ role</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+      <AuditLogCard />
     </div>
   );
 }
