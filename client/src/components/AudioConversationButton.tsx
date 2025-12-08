@@ -3,13 +3,17 @@ import { Mic, MicOff, Volume2, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface AudioConversationButtonProps {
-  variant?: 'default' | 'floating';
+  variant?: 'default' | 'floating' | 'inline';
   className?: string;
+  onTranscription?: (text: string) => void;
+  onResponse?: (text: string, audioUrl?: string) => void;
 }
 
 export function AudioConversationButton({ 
   variant = 'default',
-  className = '' 
+  className = '',
+  onTranscription,
+  onResponse
 }: AudioConversationButtonProps) {
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [isRecording, setIsRecording] = useState(false);
@@ -127,6 +131,16 @@ export function AudioConversationButton({
       console.log('[AudioConversation] Response:', data.response);
       console.log('[AudioConversation] Vibe Coding:', data.isVibeCoding);
 
+      // Call onTranscription callback if provided
+      if (onTranscription && data.transcription) {
+        onTranscription(data.transcription);
+      }
+
+      // Call onResponse callback if provided
+      if (onResponse && data.response) {
+        onResponse(data.response, data.audioResponse);
+      }
+
       // Play audio response
       if (data.audioResponse) {
         await playAudioResponse(data.audioResponse);
@@ -200,22 +214,28 @@ export function AudioConversationButton({
   const isDisabled = isProcessing || isPlaying;
   const buttonVariant = isRecording ? 'destructive' : 'default';
   
+  // For inline variant, use larger button size for better voice chat UX
+  const isInline = variant === 'inline';
+  const buttonSize = isInline ? 'lg' : 'icon';
+  const iconSize = isInline ? 'h-6 w-6' : 'h-4 w-4';
+  
   return (
     <Button
       onClick={toggleRecording}
       disabled={isDisabled}
       variant={buttonVariant}
-      className={`animate-pulse ${isRecording ? 'animate-pulse' : ''} ${className}`}
-      size="icon"
+      className={`${isRecording ? 'animate-pulse' : ''} ${isInline ? 'h-16 w-16 rounded-full' : ''} ${className}`}
+      size={buttonSize}
+      data-testid="button-audio-conversation"
     >
       {isProcessing ? (
-        <Loader2 className="h-4 w-4 animate-spin" />
+        <Loader2 className={`${iconSize} animate-spin`} />
       ) : isPlaying ? (
-        <Volume2 className="h-4 w-4" />
+        <Volume2 className={iconSize} />
       ) : isRecording ? (
-        <MicOff className="h-4 w-4" />
+        <MicOff className={iconSize} />
       ) : (
-        <Mic className="h-4 w-4" />
+        <Mic className={iconSize} />
       )}
     </Button>
   );
