@@ -15,37 +15,26 @@ Mundo Tango is a production-ready social platform connecting the global tango co
 - Validation Loop - observe → decide → act → validate → adapt (not just automation)
 - MB.MD Methodology - Apply v9.9.3 patterns systematically: Research → Plan → Build → Test → Fix → Document
 
-## Recent Session Progress (Dec 6, 2025)
-### MB.MD v9.9.3 Full Validation Cycle Complete
-**Applied Methodology**: observe → decide → act → validate → adapt
+## Recent Session Progress (Dec 8, 2025)
+### MB.MD v9.9.4 Full Implementation Complete
+**Applied Methodology**: Capture → Research → Question → Plan → Build → Test → Analyze → Fix → Document
 
-#### Phase 1-2 (RESEARCH/PLAN) - Complete
-- 312 platform pages indexed to PostgreSQL database
-- Priority queue: 53 critical, 40 high, 205 medium, 14 low
-- Full database persistence for restart resilience
+#### All 10 Core Tasks Complete ✅
+1. **Pattern 0**: MB.MD v9.9.4 Methodology - 9-phase execution cycle documented
+2. **Pattern 51**: ZERO FAKE DATA Policy - Strict enforcement rules
+3. **Pattern 52**: Multi-Perspective Audit Protocol - 6 perspectives with agent squads
+4. **The Plan Admin UI**: /admin/the-plan with multi-perspective controls
+5. **Backend API Routes**: Full thePlanAdminRoutes.ts implementation
+6. **Frontend Route Registration**: Lazy loading + ProtectedRoute
+7. **Multi-Agent Page Audits**: ComprehensiveAuditRunner with PostgreSQL persistence
+8. **Video/Photo Collection**: PageVideoCaptureService with queue-based capture
+9. **Mr Blue User Tours**: TourGenerationService with dynamic generation
+10. **Marketing Site Integration**: Combined marketing/page videos endpoint
 
-#### Phase 3 (BUILD/AUDIT) - Active with PostgreSQL Persistence
-- SwarmChoreography with batch-based processing
-- 4 batches configured: Batch 1 (85 critical), Batch 2 (85 high), Batch 3 (85 medium), Batch 4 (57 medium)
-- **138 issues found** and persisted to PostgreSQL (audit_issues table)
-- Issues persist to both LanceDB and PostgreSQL for dual redundancy
-- Performance: ~8 pages/min processing rate
-
-#### Phase 4 (TEST) - Operational
-- ValidationRelayService with 6 validation types active
-- Issues dispatched to SME agents (Accessibility, UI, Performance, i18n)
-
-#### Phase 5 (FIX) - Fully Operational ✅
-- **Batch AutoFix Endpoint**: POST /api/orchestration/phases/autofix/batch-process
-- **138/138 issues resolved** (100% success rate)
-- **0% escalation rate** (target: <10%) ✅
-- **Average 1 attempt** to resolve each issue
-- 3-Strike Protocol verified with simple→advanced→escalate flow
-- **By Issue Type:**
-  - Accessibility: 59 resolved
-  - UX: 39 resolved  
-  - Performance: 20 resolved
-  - i18n: 20 resolved
+#### Pattern 40: City Imagery Standardization ✅
+- **All 10 components updated** to use centralized getCityImageUrl() utility
+- Three-tier fallback: coverImage → getCityImageUrl(city) → generic fallback
+- Components: GroupsPage, GroupDetailsPage, GroupCard, CityGroupsPage, ProfessionalGroupsPage, EventDetailsPage, EventCard, CityGuidesPage, TravelPlannerPage, HousingMarketplacePage
 
 #### Database Persistence Tables
 - `page_inventory`: 312 pages with URL, priority, category, audit status
@@ -54,8 +43,7 @@ Mundo Tango is a production-ready social platform connecting the global tango co
 #### Known Constraints
 - Workflow restarts every ~20 min - mitigated with PostgreSQL persistence
 - Batch state file: ./data/audit-batch-state.json for quick resume
-- WebSocket HMR warning (non-critical): wss://localhost:undefined - Replit infrastructure
-- ✅ i18next double initialization - RESOLVED via window-level initialization flag
+- WebSocket notifications require auth token (expected behavior for unauthenticated users)
 
 ## System Architecture
 
