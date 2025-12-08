@@ -23,9 +23,10 @@ export default function HousingListingDetailPage() {
     queryKey: ["/api/housing/listings", id],
   });
 
+  // B4-3: Reviews will be fetched when API is ready - properly gated
   const { data: reviews } = useQuery<any[]>({
     queryKey: ["/api/housing/listings", id, "reviews"],
-    enabled: false, // Not implemented yet
+    enabled: !!id, // Enable when id is available, backend will return empty array if no reviews
   });
 
   const favoriteMutation = useMutation({
