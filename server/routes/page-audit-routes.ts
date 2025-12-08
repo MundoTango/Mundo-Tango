@@ -1,10 +1,13 @@
 /**
  * PAGE AUDIT API ROUTES - MB.MD PROTOCOL v9.2
  * November 20, 2025
+ * 
+ * Updated December 2025: Added continuous auditing status endpoint (C6-1)
  */
 
 import { Router } from 'express';
 import { pageAuditService } from '../services/page-audit/PageAuditService';
+import { continuousAuditService } from '../services/auditing/AuditService';
 
 const router = Router();
 
@@ -143,6 +146,47 @@ router.get('/categories', (req, res) => {
       }
     ]
   });
+});
+
+/**
+ * GET /api/audit/status
+ * Get current continuous audit status (C6-1)
+ */
+router.get('/status', (req, res) => {
+  try {
+    const status = continuousAuditService.getStatus();
+    res.json({
+      success: true,
+      status
+    });
+  } catch (error) {
+    console.error('[API] Audit status failed:', error);
+    res.status(500).json({
+      error: 'Failed to get audit status',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
+/**
+ * POST /api/audit/trigger
+ * Trigger an immediate audit cycle (C6-1)
+ */
+router.post('/trigger', async (req, res) => {
+  try {
+    console.log('🔄 [API] Manual audit trigger requested');
+    await continuousAuditService.triggerAudit();
+    res.json({
+      success: true,
+      message: 'Audit cycle triggered'
+    });
+  } catch (error) {
+    console.error('[API] Audit trigger failed:', error);
+    res.status(500).json({
+      error: 'Failed to trigger audit',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
 });
 
 export default router;

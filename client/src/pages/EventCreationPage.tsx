@@ -11,7 +11,9 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
-import { Calendar as CalendarIcon, MapPin, DollarSign, Users, Image as ImageIcon, ChevronLeft, Music, Clock, Sparkles, X, Upload } from "lucide-react";
+import { Calendar as CalendarIcon, MapPin, DollarSign, Users, Image as ImageIcon, ChevronLeft, Music, Clock, Sparkles, X, Upload, UserPlus, Mail, Loader2 } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
@@ -58,6 +60,17 @@ export default function EventCreationPage() {
   const [additionalPhotos, setAdditionalPhotos] = useState<File[]>([]);
   const [additionalPhotoPreviews, setAdditionalPhotoPreviews] = useState<string[]>([]);
   const [uploadingPhotos, setUploadingPhotos] = useState(false);
+  
+  // Participants state
+  interface PendingInvite {
+    id: string;
+    type: 'email' | 'name';
+    email?: string;
+    name?: string;
+  }
+  const [pendingInvites, setPendingInvites] = useState<PendingInvite[]>([]);
+  const [inviteInput, setInviteInput] = useState("");
+  const [sendingInvites, setSendingInvites] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -75,6 +88,74 @@ export default function EventCreationPage() {
     musicStyle: "mixed",
     level: "all",
   });
+
+  // Helper to validate email format
+  const isValidEmail = (email: string) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
+
+  // Add a participant invite (by email or name)
+  const handleAddInvite = () => {
+    const trimmedInput = inviteInput.trim();
+    if (!trimmedInput) return;
+
+    // Check for duplicates
+    const isDuplicate = pendingInvites.some(inv => 
+      (inv.email && inv.email.toLowerCase() === trimmedInput.toLowerCase()) ||
+      (inv.name && inv.name.toLowerCase() === trimmedInput.toLowerCase())
+    );
+
+    if (isDuplicate) {
+      toast({ title: "This person is already in the invite list", variant: "destructive" });
+      return;
+    }
+
+    const isEmail = isValidEmail(trimmedInput);
+    const newInvite: PendingInvite = {
+      id: `invite-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      type: isEmail ? 'email' : 'name',
+      email: isEmail ? trimmedInput : undefined,
+      name: !isEmail ? trimmedInput : undefined,
+    };
+
+    setPendingInvites([...pendingInvites, newInvite]);
+    setInviteInput("");
+  };
+
+  // Remove a pending invite
+  const handleRemoveInvite = (id: string) => {
+    setPendingInvites(pendingInvites.filter(inv => inv.id !== id));
+  };
+
+  // Send invitations to an event
+  const sendInvitations = async (eventId: number) => {
+    if (pendingInvites.length === 0) return;
+    
+    setSendingInvites(true);
+    try {
+      const emailInvites = pendingInvites
+        .filter(inv => inv.type === 'email' && inv.email)
+        .map(inv => ({ email: inv.email, name: inv.name }));
+      
+      const nameInvites = pendingInvites
+        .filter(inv => inv.type === 'name' && inv.name)
+        .map(inv => ({ email: null, name: inv.name }));
+
+      const allEmailInvites = [...emailInvites, ...nameInvites];
+      
+      if (allEmailInvites.length > 0) {
+        await apiRequest("POST", `/api/events/${eventId}/invitations`, {
+          emails: allEmailInvites,
+          message: `You're invited to ${formData.title}!`,
+          role: 'guest'
+        });
+      }
+    } catch (error) {
+      console.error("[EventCreation] Failed to send some invitations:", error);
+    } finally {
+      setSendingInvites(false);
+    }
+  };
 
   const createMutation = useMutation({
     mutationFn: async (data: any) => {
@@ -103,8 +184,17 @@ export default function EventCreationPage() {
         setUploadingPhotos(false);
       }
     },
-    onSuccess: (event) => {
-      toast({ title: "Event created successfully!" });
+    onSuccess: async (event) => {
+      // Send invitations after event creation
+      if (pendingInvites.length > 0) {
+        await sendInvitations(event.id);
+        toast({ 
+          title: "Event created!", 
+          description: `${pendingInvites.length} invitation(s) sent` 
+        });
+      } else {
+        toast({ title: "Event created successfully!" });
+      }
       navigate(`/events/${event.id}`);
     },
     onError: (error: any) => {
@@ -538,6 +628,103 @@ export default function EventCreationPage() {
 
             <Separator />
 
+            {/* Participants */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold flex items-center gap-2">
+                <UserPlus className="h-5 w-5" />
+                Invite Participants
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                Add people to invite to your event. Enter email addresses or names.
+              </p>
+              
+              <div className="flex gap-2">
+                <div className="relative flex-1">
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Enter email or name (e.g., john@example.com or Maria)"
+                    value={inviteInput}
+                    onChange={(e) => setInviteInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        handleAddInvite();
+                      }
+                    }}
+                    className="pl-10 h-12"
+                    data-testid="input-invite-participant"
+                  />
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleAddInvite}
+                  disabled={!inviteInput.trim()}
+                  className="h-12 px-4"
+                  data-testid="button-add-invite"
+                >
+                  <UserPlus className="h-4 w-4" />
+                </Button>
+              </div>
+
+              {pendingInvites.length > 0 && (
+                <div className="space-y-2">
+                  <Label className="text-sm text-muted-foreground">
+                    Pending Invitations ({pendingInvites.length})
+                  </Label>
+                  <div className="border rounded-xl divide-y">
+                    {pendingInvites.map((invite) => (
+                      <div 
+                        key={invite.id}
+                        className="flex items-center justify-between p-3 group"
+                        data-testid={`invite-item-${invite.id}`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <Avatar className="h-9 w-9">
+                            <AvatarFallback className="bg-primary/10 text-primary text-sm">
+                              {(invite.email || invite.name || "?").charAt(0).toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <p className="text-sm font-medium">
+                              {invite.email || invite.name}
+                            </p>
+                            <Badge variant="secondary" className="text-xs">
+                              {invite.type === 'email' ? 'Email invite' : 'Name only'}
+                            </Badge>
+                          </div>
+                        </div>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleRemoveInvite(invite.id)}
+                          className="opacity-0 group-hover:opacity-100 transition-opacity"
+                          data-testid={`button-remove-invite-${invite.id}`}
+                        >
+                          <X className="h-4 w-4 text-muted-foreground" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {pendingInvites.length === 0 && (
+                <div className="text-center py-6 rounded-xl border-2 border-dashed">
+                  <Users className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
+                  <p className="text-sm text-muted-foreground">
+                    No participants invited yet
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Enter an email or name above to invite people
+                  </p>
+                </div>
+              )}
+            </div>
+
+            <Separator />
+
             {/* Photos */}
             <div className="space-y-4">
               <h3 className="text-lg font-semibold">Photos</h3>
@@ -626,12 +813,26 @@ export default function EventCreationPage() {
               <Button
                 type="button"
                 onClick={handleSubmit}
-                disabled={createMutation.isPending || uploadingPhotos}
+                disabled={createMutation.isPending || uploadingPhotos || sendingInvites}
                 className="gap-2"
                 data-testid="button-publish"
               >
-                {createMutation.isPending || uploadingPhotos ? "Publishing..." : "Publish Event"}
-                <Sparkles className="h-4 w-4" />
+                {(createMutation.isPending || uploadingPhotos || sendingInvites) ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    {sendingInvites ? "Sending Invites..." : "Publishing..."}
+                  </>
+                ) : (
+                  <>
+                    Publish Event
+                    {pendingInvites.length > 0 && (
+                      <Badge variant="secondary" className="ml-1 text-xs">
+                        +{pendingInvites.length} invites
+                      </Badge>
+                    )}
+                    <Sparkles className="h-4 w-4" />
+                  </>
+                )}
               </Button>
             </div>
           </CardContent>

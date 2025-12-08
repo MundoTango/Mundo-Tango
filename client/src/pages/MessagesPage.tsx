@@ -21,7 +21,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Send, MessageCircle, Users, Heart, Search, PenSquare, Settings, Mail, Inbox } from "lucide-react";
+import { Send, MessageCircle, Users, Heart, Search, PenSquare, Settings, Mail, Inbox, Check, CheckCheck } from "lucide-react";
 import { SiFacebook, SiWhatsapp, SiGmail, SiInstagram } from "react-icons/si";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/AuthContext";
@@ -480,14 +480,22 @@ function ConversationView({ conversationId }: { conversationId: string }) {
                     >
                       <p className="text-sm leading-relaxed">{msg.content}</p>
                     </motion.div>
-                    <p 
-                      className="text-xs text-muted-foreground px-2" 
+                    <div 
+                      className="flex items-center gap-1 px-2" 
                       data-testid={`timestamp-${msg.id}`}
                     >
-                      {safeDateDistance(msg.created_at, {
-                        addSuffix: true,
-                      })}
-                    </p>
+                      <p className="text-xs text-muted-foreground">
+                        {safeDateDistance(msg.created_at, {
+                          addSuffix: true,
+                        })}
+                      </p>
+                      {isOwn && (
+                        <MessageDeliveryStatus 
+                          isRead={(msg as any).is_read || false}
+                          isDelivered={true}
+                        />
+                      )}
+                    </div>
                   </div>
                 </motion.div>
               );
@@ -573,5 +581,35 @@ function ConversationView({ conversationId }: { conversationId: string }) {
         </p>
       </form>
     </motion.div>
+  );
+}
+
+function MessageDeliveryStatus({ isRead, isDelivered }: { isRead: boolean; isDelivered: boolean }) {
+  if (isRead) {
+    return (
+      <CheckCheck 
+        className="w-3.5 h-3.5 text-primary" 
+        data-testid="status-read"
+        aria-label="Read"
+      />
+    );
+  }
+  
+  if (isDelivered) {
+    return (
+      <CheckCheck 
+        className="w-3.5 h-3.5 text-muted-foreground" 
+        data-testid="status-delivered"
+        aria-label="Delivered"
+      />
+    );
+  }
+  
+  return (
+    <Check 
+      className="w-3.5 h-3.5 text-muted-foreground" 
+      data-testid="status-sent"
+      aria-label="Sent"
+    />
   );
 }

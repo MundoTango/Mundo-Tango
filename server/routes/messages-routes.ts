@@ -858,29 +858,62 @@ router.get("/unified", authenticateToken, async (req: AuthRequest, res: Response
       .offset(parseInt(offset as string));
 
     // Get MT internal messages (existing chatMessages table)
-    // TODO: Join with chatMessages table to include internal MT messages
-    // const internalMsgs = await db
-    //   .select()
-    //   .from(chatMessages)
-    //   .where(eq(chatMessages.userId, userId))
-    //   .orderBy(desc(chatMessages.createdAt))
-    //   .limit(parseInt(limit as string));
+    // Join with chatRoomUsers to get messages from rooms the user is in
+    const internalMsgs = await db
+      .selectDistinct({
+        id: chatMessages.id,
+        chatRoomId: chatMessages.chatRoomId,
+        userId: chatMessages.userId,
+        message: chatMessages.message,
+        mediaUrl: chatMessages.mediaUrl,
+        mediaType: chatMessages.mediaType,
+        readBy: chatMessages.readBy,
+        createdAt: chatMessages.createdAt,
+      })
+      .from(chatMessages)
+      .innerJoin(
+        sql`chat_room_users`,
+        sql`chat_room_users.chat_room_id = ${chatMessages.chatRoomId} AND chat_room_users.user_id = ${userId}`
+      )
+      .where(
+        unreadOnly === 'true' 
+          ? sql`(${chatMessages.readBy} IS NULL OR NOT (${String(userId)} = ANY(${chatMessages.readBy})))`
+          : sql`true`
+      )
+      .orderBy(desc(chatMessages.createdAt))
+      .limit(parseInt(limit as string))
+      .offset(parseInt(offset as string));
 
     // Combine and sort by date
     const unifiedMessages = [
       ...externalMsgs.map(msg => ({
         ...msg,
-        source: 'external',
+        source: 'external' as const,
         type: msg.channel,
       })),
-      // ...internalMsgs.map(msg => ({
-      //   ...msg,
-      //   source: 'internal',
-      //   type: 'mt',
-      // }))
+      ...internalMsgs.map(msg => ({
+        id: msg.id,
+        userId: msg.userId,
+        channel: 'mt' as const,
+        externalId: String(msg.id),
+        threadId: String(msg.chatRoomId),
+        from: null,
+        to: null,
+        subject: null,
+        body: msg.message,
+        isRead: msg.readBy?.includes(String(userId)) ?? false,
+        isStarred: false,
+        labels: null,
+        receivedAt: msg.createdAt,
+        syncedAt: msg.createdAt,
+        source: 'internal' as const,
+        type: 'mt' as const,
+        mediaUrl: msg.mediaUrl,
+        mediaType: msg.mediaType,
+      }))
     ].sort((a, b) => {
-      const dateA = new Date(a.receivedAt || a.createdAt).getTime();
-      const dateB = new Date(b.receivedAt || b.createdAt).getTime();
+      const dateA = new Date(a.receivedAt || a.syncedAt || 0).getTime();
+      const dateB = new Date(b.receivedAt || b.syncedAt || 0).getTime();
       return dateB - dateA;
     });
 
@@ -1142,11 +1175,14 @@ router.post("/schedule", authenticateToken, async (req: AuthRequest, res: Respon
       ...data,
     }).returning();
 
-    // TODO: Set up background job to send message at scheduled time
-    // Could use BullMQ, node-cron, or similar
-    // queue.add('send-scheduled-message', { messageId: scheduledMessage.id }, { 
-    //   delay: scheduledTime.getTime() - Date.now() 
-    // });
+    // Set up background job to send message at scheduled time using BullMQ
+    try {
+      const { scheduleMessage } = await import('../workers/messaging-worker');
+      await scheduleMessage(scheduledMessage.id, scheduledTime);
+      console.log(`[Messages] Scheduled message ${scheduledMessage.id} for ${scheduledTime.toISOString()}`);
+    } catch (workerError: any) {
+      console.warn('[Messages] Could not schedule background job (Redis may be unavailable):', workerError.message);
+    }
 
     res.json(scheduledMessage);
   } catch (error: any) {
@@ -1296,10 +1332,14 @@ router.post("/automations", authenticateToken, async (req: AuthRequest, res: Res
       ...validation.data,
     }).returning();
 
-    // TODO: Register automation with background processor
-    // If automationType is 'auto_reply', set up webhook handler
-    // If automationType is 'scheduled', set up cron job
-    // If automationType is 'routing', configure routing rules
+    // Register automation with background processor
+    try {
+      const { registerAutomation } = await import('../workers/messaging-worker');
+      await registerAutomation(automation.id);
+      console.log(`[Messages] Registered automation ${automation.id}: ${automation.name}`);
+    } catch (workerError: any) {
+      console.warn('[Messages] Could not register automation (Redis may be unavailable):', workerError.message);
+    }
 
     res.json(automation);
   } catch (error: any) {
@@ -1364,6 +1404,15 @@ router.delete("/automations/:id", authenticateToken, async (req: AuthRequest, re
     const userId = req.userId!;
     const automationId = parseInt(req.params.id);
 
+    // Unregister automation from background processor first
+    try {
+      const { unregisterAutomation } = await import('../workers/messaging-worker');
+      await unregisterAutomation(automationId);
+      console.log(`[Messages] Unregistered automation ${automationId}`);
+    } catch (workerError: any) {
+      console.warn('[Messages] Could not unregister automation (Redis may be unavailable):', workerError.message);
+    }
+
     await db
       .delete(messageAutomations)
       .where(
@@ -1372,9 +1421,6 @@ router.delete("/automations/:id", authenticateToken, async (req: AuthRequest, re
           eq(messageAutomations.userId, userId)
         )
       );
-
-    // TODO: Unregister automation from background processor
-    // Remove webhooks, cron jobs, routing rules, etc.
 
     res.json({ success: true, message: "Automation deleted" });
   } catch (error: any) {

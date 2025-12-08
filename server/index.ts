@@ -241,6 +241,18 @@ app.use((req, res, next) => {
       logger.error('❌ Auto-Fix Engine initialization failed:', error);
     }
     
+    // C6-1: Initialize Continuous Auditing Service
+    try {
+      log('🔍 Initializing Continuous Auditing Service...');
+      const { continuousAuditService } = await import('./services/auditing/AuditService');
+      await continuousAuditService.initialize({
+        intervalMs: 5 * 60 * 1000 // 5 minutes
+      });
+      log('✅ Continuous Auditing Service initialized (5-minute intervals)');
+    } catch (error) {
+      logger.error('❌ Continuous Auditing Service initialization failed:', error);
+    }
+    
     // MB.MD v9.9.3: Initialize BullMQ Workers (with Redis fallback)
     try {
       log('🔧 Initializing BullMQ Workers...');
