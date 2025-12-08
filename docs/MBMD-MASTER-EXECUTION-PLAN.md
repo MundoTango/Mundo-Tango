@@ -10,7 +10,7 @@
 
 | Category | Count | Status |
 |----------|-------|--------|
-| **Total Items** | 118 | 12% Complete (14/118) |
+| **Total Items** | 118 | 13% Complete (15/118) |
 | **P0 Critical** | 8 | ✅ COMPLETE |
 | **P1 High** | 62 | Pending |
 | **P2 Medium** | 48 | Pending |
@@ -64,7 +64,7 @@
 |----|------|----------|-----|--------|
 | A2-1 | Vercel Webhook signature verification | P2 | 1h | Pending |
 | A2-2 | Railway Webhook signature verification | P2 | 1h | Pending |
-| A2-3 | Facebook APP_SECRET validation (empty warning) | P1 | 30m | Pending |
+| A2-3 | Facebook APP_SECRET validation (empty warning) | P1 | 30m | ✅ DONE |
 | A2-4 | CSRF monitoring dashboard setup | P2 | 2h | Pending |
 | A2-5 | Remove csp.ts.deprecated file | P2 | 5m | ✅ DONE |
 
@@ -330,6 +330,7 @@ Add new findings to "NEW FINDINGS LOG" section with date and priority.
 |------|---------|---------|
 | Dec 8, 2025 | 1.0 | Initial creation with 86 items |
 | Dec 8, 2025 | 1.1 | Added 16 NEW findings from dive #4 (102 total) |
+| Dec 8, 2025 | 1.2 | A0-A2 COMPLETE: Fixed 8 P0 blockers, added API key validation (Resend, Facebook), removed 3 backup/deprecated files |
 | Dec 8, 2025 | 1.2 | Added 8 NEW findings from dive #5 (118 total) |
 
 ---
