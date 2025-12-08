@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/breadcrumb';
 import { useBreadcrumbs } from '@/hooks/useBreadcrumbs';
 import { ChevronRight, Home } from 'lucide-react';
+import { AudioConversationButton } from './AudioConversationButton';
 
 interface PageLayoutProps {
   children: ReactNode;
@@ -75,6 +76,7 @@ export function PageLayout({
       {/* Page Content */}
       <div className="flex-1 overflow-auto">
         {children}
+              <AudioConversationButton variant="floating" />
       </div>
     </div>
   );
