@@ -21,32 +21,50 @@ const KEY_VERSION = 1; // Current encryption key version (for rotation)
 /**
  * Derive encryption key from environment secret
  * Uses scrypt for key derivation from SECRETS_ENCRYPTION_KEY
+ * 
+ * 🔒 SECURITY FIX (P0 #92): Removed insecure fallback key - now requires proper configuration
  */
 function getKey(): Buffer {
   const secret = process.env.SECRETS_ENCRYPTION_KEY || process.env.ENCRYPTION_KEY || process.env.SESSION_SECRET;
   
   if (!secret) {
-    console.warn('⚠️  WARNING: SECRETS_ENCRYPTION_KEY not set! Using fallback key.');
-    console.warn('⚠️  This is INSECURE for production. Set SECRETS_ENCRYPTION_KEY immediately.');
+    // 🔒 SECURITY: In production, throw error instead of using fallback
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('CRITICAL: SECRETS_ENCRYPTION_KEY must be set in production. Encryption is not available without a proper key.');
+    }
+    console.warn('⚠️  WARNING: SECRETS_ENCRYPTION_KEY not set! Using SESSION_SECRET fallback.');
+    console.warn('⚠️  Set SECRETS_ENCRYPTION_KEY for production use.');
+    // In development, use SESSION_SECRET if available, otherwise throw
+    if (!process.env.SESSION_SECRET) {
+      throw new Error('Encryption key not configured. Set SECRETS_ENCRYPTION_KEY or SESSION_SECRET.');
+    }
+    return crypto.scryptSync(process.env.SESSION_SECRET, 'mundo-tango-salt-v1', KEY_LENGTH);
   }
-  
-  const finalSecret = secret || 'dev-key-insecure-replace-me-32chars!!';
   
   // Use a fixed salt for key derivation to ensure consistency
   // In production, this should be stored securely
-  return crypto.scryptSync(finalSecret, 'mundo-tango-salt-v1', KEY_LENGTH);
+  return crypto.scryptSync(secret, 'mundo-tango-salt-v1', KEY_LENGTH);
 }
 
 /**
  * Derive a 256-bit encryption key with custom salt
  * This allows us to use different salts per encryption for additional security
+ * 
+ * 🔒 SECURITY FIX (P0 #92): Removed insecure fallback key
  */
 function deriveKeyWithSalt(salt: Buffer): Buffer {
   const secret = process.env.SECRETS_ENCRYPTION_KEY || process.env.ENCRYPTION_KEY || process.env.SESSION_SECRET;
-  const finalSecret = secret || 'dev-key-insecure-replace-me-32chars!!';
+  
+  if (!secret) {
+    // 🔒 SECURITY: Require proper key configuration
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('CRITICAL: Encryption key must be set in production.');
+    }
+    throw new Error('Encryption key not configured. Set SECRETS_ENCRYPTION_KEY or SESSION_SECRET.');
+  }
   
   return crypto.pbkdf2Sync(
-    finalSecret,
+    secret,
     salt,
     100000, // iterations
     32, // key length (256 bits)

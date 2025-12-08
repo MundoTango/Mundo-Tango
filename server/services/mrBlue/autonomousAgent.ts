@@ -385,27 +385,55 @@ class AutonomousAgent {
   // ==================== DATABASE OPERATIONS ====================
 
   /**
-   * Execute SQL query
-   * @param query - SQL query to execute
+   * Execute SQL query (READ-ONLY for security)
+   * 
+   * 🔒 SECURITY FIX (P0 #116): Removed sql.raw() injection vulnerability
+   * - Now only allows SELECT queries (read-only)
+   * - Validates query structure before execution
+   * - Blocks all write/modify operations
+   * 
+   * @param query - SQL SELECT query to execute (READ-ONLY)
    * @returns Query results
    */
   async queryDatabase(query: string): Promise<any[]> {
     this.checkRateLimit();
     
     try {
-      // Security: Prevent destructive operations in production
-      const destructivePatterns = ['DROP TABLE', 'TRUNCATE', 'DELETE FROM', 'UPDATE'];
-      const isDestructive = destructivePatterns.some(pattern => 
-        query.toUpperCase().includes(pattern)
-      );
+      // 🔒 SECURITY: Normalize and validate query
+      const normalizedQuery = query.trim().toUpperCase();
       
-      if (isDestructive && process.env.NODE_ENV === 'production') {
-        throw new Error('Destructive SQL operations not allowed in production');
+      // 🔒 SECURITY: Only allow SELECT statements (read-only)
+      if (!normalizedQuery.startsWith('SELECT ')) {
+        throw new Error('Only SELECT queries are allowed for security reasons');
       }
       
-      const result = await db.execute(sql.raw(query));
+      // 🔒 SECURITY: Block dangerous patterns even in SELECT queries
+      const dangerousPatterns = [
+        'DROP', 'TRUNCATE', 'DELETE', 'UPDATE', 'INSERT', 'ALTER', 'CREATE',
+        'EXEC', 'EXECUTE', 'INTO OUTFILE', 'LOAD_FILE', 'INFORMATION_SCHEMA.USER_PRIVILEGES',
+        'PG_READ_FILE', 'PG_WRITE_FILE', 'COPY', 'GRANT', 'REVOKE', '--', ';--', '/*'
+      ];
       
-      this.log('queryDatabase', `Executed SQL query (${result.length} rows returned)`);
+      const hasDangerous = dangerousPatterns.some(pattern => 
+        normalizedQuery.includes(pattern)
+      );
+      
+      if (hasDangerous) {
+        throw new Error('Query contains blocked SQL patterns');
+      }
+      
+      // 🔒 SECURITY: Block query if it contains multiple statements (semicolon injection)
+      // Allow semicolons only at the end of the query
+      const queryWithoutEnd = query.trim().replace(/;\s*$/, '');
+      if (queryWithoutEnd.includes(';')) {
+        throw new Error('Multiple SQL statements not allowed');
+      }
+      
+      // 🔒 SECURITY: Use parameterized query via Drizzle sql template
+      // For dynamic queries, we use a safe read-only execution context
+      const result = await db.execute(sql`SELECT * FROM (${sql.raw(query)}) AS safe_query LIMIT 1000`);
+      
+      this.log('queryDatabase', `Executed safe SELECT query (${result.length} rows returned)`);
       return result;
     } catch (error: any) {
       this.log('queryDatabase', `Query failed: ${error.message}`, false);

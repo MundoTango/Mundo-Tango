@@ -1674,25 +1674,18 @@ router.post("/transcribe", upload.single('audio'), async (req: Request, res: Res
 // ================== PHASE 1: CONVERSATION PERSISTENCE API ==================
 
 // 🔥 FIX: GET /conversations - Frontend was getting HTML because this route was missing
+// 🔒 SECURITY FIX: Require authentication - removed God User bypass (P0 #91)
 router.get("/conversations", optionalAuth, async (req: AuthRequest, res: Response) => {
   try {
-    // ✅ AGENT #15: God-Mode Test User - Use existing god user for unauthenticated sessions
-    let userId = req.user?.id;
+    const userId = req.user?.id;
     
-    // Use god user (ID 147) as Mr. Blue test identity for unauthenticated access
+    // 🔒 SECURITY: Return 401 for unauthenticated requests instead of granting admin access
     if (!userId) {
-      const MR_BLUE_GOD_USER_ID = 147; // admin5mundotangol (god role, full permissions)
-      console.log(`[MrBlue] ✅ AGENT #15: Using god user #${MR_BLUE_GOD_USER_ID} for conversation listing`);
-      
-      const { storage } = await import("../storage");
-      const godUser = await storage.getUserById(MR_BLUE_GOD_USER_ID);
-      
-      if (!godUser) {
-        return res.status(500).json({ success: false, error: 'Mr. Blue test user not found. Contact admin.', conversations: [] });
-      }
-      
-      userId = godUser.id;
-      req.user = godUser;
+      return res.status(401).json({ 
+        success: false, 
+        error: 'Authentication required to access conversations', 
+        conversations: [] 
+      });
     }
 
     const { storage } = await import("../storage");
@@ -1707,25 +1700,14 @@ router.get("/conversations", optionalAuth, async (req: AuthRequest, res: Respons
   }
 });
 
+// 🔒 SECURITY FIX: Require authentication - removed God User bypass (P0 #91)
 router.post("/conversations", optionalAuth, async (req: AuthRequest, res: Response) => {
   try {
-    // ✅ AGENT #15: God-Mode Test User - Use existing god user for unauthenticated sessions
-    let userId = req.user?.id;
+    const userId = req.user?.id;
     
-    // Use god user (ID 147) as Mr. Blue test identity for unauthenticated access
+    // 🔒 SECURITY: Return 401 for unauthenticated requests instead of granting admin access
     if (!userId) {
-      const MR_BLUE_GOD_USER_ID = 147; // admin5mundotangol (god role, full permissions)
-      console.log(`[MrBlue] ✅ AGENT #15: Using god user #${MR_BLUE_GOD_USER_ID} for unauthenticated session`);
-      
-      const { storage } = await import("../storage");
-      const godUser = await storage.getUserById(MR_BLUE_GOD_USER_ID);
-      
-      if (!godUser) {
-        return res.status(500).json({ error: 'Mr. Blue test user not found. Contact admin.' });
-      }
-      
-      userId = godUser.id;
-      req.user = godUser;
+      return res.status(401).json({ error: 'Authentication required to create conversations' });
     }
 
     const { storage } = await import("../storage");
@@ -1740,16 +1722,14 @@ router.post("/conversations", optionalAuth, async (req: AuthRequest, res: Respon
   }
 });
 
+// 🔒 SECURITY FIX: Require authentication - removed God User bypass (P0 #91)
 router.get("/conversations/:id/messages", optionalAuth, async (req: AuthRequest, res: Response) => {
   try {
-    // ✅ AGENT #15: God-Mode Test User - Use existing god user for unauthenticated sessions
-    let userId = req.user?.id;
+    const userId = req.user?.id;
     
-    // Use god user (ID 147) as Mr. Blue test identity for unauthenticated access
+    // 🔒 SECURITY: Return 401 for unauthenticated requests instead of granting admin access
     if (!userId) {
-      const MR_BLUE_GOD_USER_ID = 147; // admin5mundotangol (god role, full permissions)
-      console.log(`[MrBlue] ✅ AGENT #15: Using god user #${MR_BLUE_GOD_USER_ID} for message retrieval`);
-      userId = MR_BLUE_GOD_USER_ID;
+      return res.status(401).json({ error: 'Authentication required to access messages' });
     }
 
     const conversationId = parseInt(req.params.id);
@@ -1774,14 +1754,15 @@ router.get("/conversations/:id/messages", optionalAuth, async (req: AuthRequest,
   }
 });
 
+// 🔒 SECURITY FIX: Require authentication - removed God User bypass (P0 #91)
 router.post("/messages", optionalAuth, async (req: AuthRequest, res: Response) => {
   try {
-    // ✅ AGENT #15: God-Mode Test User - Use existing god user for unauthenticated sessions
-    let userId = req.user?.id;
+    const userId = req.user?.id;
     
-    // 🔍 DEBUG: Log what we're receiving
-    console.log('[DEBUG] POST /messages - req.body:', JSON.stringify(req.body, null, 2));
-    console.log('[DEBUG] POST /messages - Content-Type:', req.headers['content-type']);
+    // 🔒 SECURITY: Return 401 for unauthenticated requests instead of granting admin access
+    if (!userId) {
+      return res.status(401).json({ error: 'Authentication required to save messages' });
+    }
     
     const { conversationId, role, content, metadata } = req.body;
 
@@ -1799,40 +1780,14 @@ router.post("/messages", optionalAuth, async (req: AuthRequest, res: Response) =
     
     const conversation = await storage.getMrBlueConversationById(conversationId);
     
-    // Use god user (ID 147) as Mr. Blue test identity for unauthenticated access
-    if (!userId) {
-      const MR_BLUE_GOD_USER_ID = 147; // admin5mundotangol (god role, full permissions)
-      console.log(`[MrBlue] ✅ AGENT #15: Using god user #${MR_BLUE_GOD_USER_ID} for message save`);
-      
-      const godUser = await storage.getUserById(MR_BLUE_GOD_USER_ID);
-      
-      if (!godUser) {
-        return res.status(500).json({ error: 'Mr. Blue test user not found. Contact admin.' });
-      }
-      
-      userId = godUser.id;
-      req.user = godUser;
-      
-      // Update conversation to belong to god user
-      if (conversation && conversation.userId !== userId) {
-        await db.update(mrBlueConversations)
-          .set({ userId: userId })
-          .where(eq(mrBlueConversations.id, conversationId));
-      }
-    }
-    
-    // Verify conversation ownership (now with god user)
+    // Verify conversation exists
     if (!conversation) {
       return res.status(404).json({ error: 'Conversation not found' });
     }
     
-    // ✅ MB.MD v9.5.1 P0-9 FIX: Allow authenticated users to reassign orphaned conversations
+    // Verify conversation ownership - only allow access to own conversations
     if (conversation.userId !== userId) {
-      // Reassign orphaned conversation to current authenticated user
-      console.log(`[MrBlue] 🔄 Reassigning conversation ${conversationId} from user ${conversation.userId} to ${userId}`);
-      await db.update(mrBlueConversations)
-        .set({ userId: userId })
-        .where(eq(mrBlueConversations.id, conversationId));
+      return res.status(403).json({ error: 'Unauthorized access to conversation' });
     }
 
     const message = await storage.createMrBlueMessage({
