@@ -124,6 +124,57 @@ const KNOWN_PATTERNS: KnownPattern[] = [
     fix: 'No fix needed - i18next double initialization warning is benign',
     affectedFiles: [],
   },
+  // ==================== SERVER-SIDE ERROR PATTERNS (MB.MD v9.9.4) ====================
+  // Added to catch backend errors that were previously missed
+  {
+    pattern: /500.*Internal Server Error.*\/api\//i,
+    errorType: 'server_500_error',
+    confidence: 75,
+    fix: 'Investigate Express route handler for uncaught exceptions or invalid data handling',
+    affectedFiles: ['server/routes.ts', 'server/routes/*.ts'],
+  },
+  {
+    pattern: /parseInt.*NaN|isNaN.*true.*id|Cannot.*read.*properties.*undefined/i,
+    errorType: 'route_param_parsing_error',
+    confidence: 90,
+    fix: 'Add "me" alias route handler BEFORE parameterized :id route, add NaN validation',
+    affectedFiles: ['server/talent-match-routes.ts', 'server/routes.ts'],
+  },
+  {
+    pattern: /volunteers.*me.*500|\/api\/v1\/volunteers\/me.*error/i,
+    errorType: 'volunteer_api_me_alias',
+    confidence: 95,
+    fix: 'Add dedicated /volunteers/me route handler before /:id route',
+    affectedFiles: ['server/talent-match-routes.ts'],
+  },
+  {
+    pattern: /ECONNREFUSED.*127\.0\.0\.1:6379|Redis.*connection.*refused/i,
+    errorType: 'redis_not_running',
+    confidence: 90,
+    fix: 'Redis not running - graceful fallback to in-memory cache or disable Redis features',
+    affectedFiles: ['server/redis.ts', 'server/cache.ts'],
+  },
+  {
+    pattern: /Cannot.*POST.*\/api\/|Cannot.*GET.*\/api\/.*404/i,
+    errorType: 'api_route_not_found',
+    confidence: 85,
+    fix: 'Check route registration order and path prefixes in Express router',
+    affectedFiles: ['server/routes.ts', 'server/index.ts'],
+  },
+  {
+    pattern: /CORS.*blocked|Access-Control-Allow-Origin/i,
+    errorType: 'cors_error',
+    confidence: 85,
+    fix: 'Update CORS configuration to include requesting origin',
+    affectedFiles: ['server/index.ts'],
+  },
+  {
+    pattern: /auth.*required|401.*Unauthorized.*\/api\/((?!ads).)/i,
+    errorType: 'auth_middleware_error',
+    confidence: 80,
+    fix: 'Check auth middleware is applied correctly to protected routes',
+    affectedFiles: ['server/middleware/auth.ts', 'server/routes.ts'],
+  },
 ];
 
 // ==================== AUTO-FIX ENGINE ====================
@@ -460,6 +511,7 @@ export class AutoFixEngine {
   
   /**
    * Escalate to manual review (low confidence)
+   * MB.MD v9.9.4: Added frequency-based escalation - if same error occurs 3+ times/hour, force notification
    */
   private async escalateToManualReview(error: ErrorContext, analysis: FixAnalysis): Promise<AutoFixResult> {
     console.log('[AutoFixEngine] ⚠️  ESCALATING TO MANUAL REVIEW (low confidence)...');
@@ -467,9 +519,24 @@ export class AutoFixEngine {
     this.updateStatus('complete', 100, 'Requires manual review', error.id, analysis.confidence);
     
     // Just log the analysis for user to review
-    console.log(`[AutoFixEngine] 📊 Analysis available for manual review`);
-    console.log(`[AutoFixEngine] 📝 Root Cause: ${analysis.rootCause}`);
-    console.log(`[AutoFixEngine] 🔧 Suggested Fix: ${analysis.suggestedFix}`);
+    console.log(`[AutoFixEngine] Analysis available for manual review`);
+    console.log(`[AutoFixEngine] Root Cause: ${analysis.rootCause}`);
+    console.log(`[AutoFixEngine] Suggested Fix: ${analysis.suggestedFix}`);
+    
+    // MB.MD v9.9.4: Frequency-based escalation - notify human if error repeats
+    const ESCALATION_FREQUENCY_THRESHOLD = 3; // If same error occurs 3+ times
+    if (error.frequency >= ESCALATION_FREQUENCY_THRESHOLD) {
+      console.log(`[AutoFixEngine] [ALERT] HIGH FREQUENCY: Error occurred ${error.frequency} times!`);
+      console.log(`[AutoFixEngine] Sending escalation notification to admin...`);
+      
+      // Create an urgent notification for the admin
+      try {
+        await this.createEscalationNotification(error, analysis);
+        console.log(`[AutoFixEngine] Escalation notification created`);
+      } catch (notifyError) {
+        console.error(`[AutoFixEngine] Failed to create notification:`, notifyError);
+      }
+    }
     
     return {
       success: true,
@@ -478,6 +545,49 @@ export class AutoFixEngine {
       fixAnalysis: analysis,
       // No vibeCodeResult because no code generated
     };
+  }
+  
+  /**
+   * Create escalation notification for high-frequency errors
+   * MB.MD v9.9.4: New method to ensure critical errors don't go unnoticed
+   */
+  private async createEscalationNotification(error: ErrorContext, analysis: FixAnalysis): Promise<void> {
+    // Insert into notifications table if it exists
+    try {
+      const notificationContent = {
+        type: 'system_alert',
+        title: `[ALERT] Repeated Error: ${error.errorType}`,
+        message: `Error occurred ${error.frequency} times. Root cause: ${analysis.rootCause}. Suggested fix: ${analysis.suggestedFix}`,
+        priority: 'high',
+        errorId: error.id,
+        autoFixConfidence: analysis.confidence,
+      };
+      
+      // Log prominently to server console for immediate visibility
+      console.log(`\n${'='.repeat(60)}`);
+      console.log(`[AutoFixEngine] *** CRITICAL ESCALATION ***`);
+      console.log(`Error Type: ${error.errorType}`);
+      console.log(`Frequency: ${error.frequency} occurrences`);
+      console.log(`Confidence: ${analysis.confidence}%`);
+      console.log(`Root Cause: ${analysis.rootCause}`);
+      console.log(`Suggested Fix: ${analysis.suggestedFix}`);
+      console.log(`Files Affected: ${analysis.affectedFiles.join(', ')}`);
+      console.log(`${'='.repeat(60)}\n`);
+      
+      // Store in database for dashboard visibility
+      await db.insert(errorPatterns).values({
+        errorType: 'escalation_notification',
+        errorMessage: notificationContent.message,
+        status: 'pending',
+        frequency: 1,
+        metadata: notificationContent,
+        lastSeen: new Date(),
+      }).onConflictDoNothing();
+      
+    } catch (err) {
+      // Silently fail - notification is best-effort
+      console.error('[AutoFixEngine] Notification creation failed:', err);
+    }
   }
   
   /**
