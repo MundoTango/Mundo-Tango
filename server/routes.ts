@@ -114,6 +114,7 @@ import teacherRoutes from "./routes/teacher-routes";
 import djRoutes from "./routes/dj-routes";
 import musicianRoutes from "./routes/musician-routes";
 import venueRoutes from "./routes/venue-routes";
+import profileClaimRoutes from "./routes/profile-claim-routes";
 import workshopRoutes from "./routes/workshop-routes";
 import musicRoutes from "./routes/music-routes";
 import travelRoutes from "./routes/travel-routes";
@@ -2592,6 +2593,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   app.use("/api/venues", venueRoutes);
+  app.use("/api/profiles", profileClaimRoutes);
   app.use("/api/workshops", workshopRoutes);
   app.use("/api/music", musicRoutes);
   app.use("/api/travel", travelRoutes);

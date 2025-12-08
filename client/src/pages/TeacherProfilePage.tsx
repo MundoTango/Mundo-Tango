@@ -8,6 +8,7 @@ import { Star, MapPin, Calendar, GraduationCap, Award, MessageCircle, Users, Che
 import { motion } from "framer-motion";
 import { SEO } from "@/components/SEO";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
+import { ClaimProfileButton } from "@/components/profile/ClaimProfileButton";
 
 interface Teacher {
   id: number;
@@ -241,6 +242,16 @@ export default function TeacherProfilePage() {
                         <Button variant="outline" className="w-full" data-testid="button-book-lesson">
                           Book a Lesson
                         </Button>
+                      </div>
+
+                      <div className="pt-4 border-t">
+                        <ClaimProfileButton
+                          profileType="teacher"
+                          profileId={teacher.id}
+                          profileName={teacher.name}
+                          variant="outline"
+                          className="w-full"
+                        />
                       </div>
                     </CardContent>
                   </Card>

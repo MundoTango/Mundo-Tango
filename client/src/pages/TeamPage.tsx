@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Users, Linkedin, Mail } from "lucide-react";
+import { Users, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PublicLayout } from "@/components/PublicLayout";
 import { SEO } from "@/components/SEO";
@@ -14,7 +14,6 @@ const team = [
     role: "Founder & CEO",
     bio: "Professional tango dancer with 15+ years of experience. Former software engineer turned entrepreneur.",
     imageUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop",
-    linkedin: "#",
     email: "sofia@mundotango.com"
   },
   {
@@ -22,7 +21,6 @@ const team = [
     role: "CTO",
     bio: "Full-stack developer and tango enthusiast. Building scalable platforms for global communities.",
     imageUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop",
-    linkedin: "#",
     email: "carlos@mundotango.com"
   },
   {
@@ -30,7 +28,6 @@ const team = [
     role: "Head of Community",
     bio: "Passionate about connecting dancers worldwide. Organizer of international tango festivals.",
     imageUrl: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop",
-    linkedin: "#",
     email: "isabella@mundotango.com"
   },
   {
@@ -38,7 +35,6 @@ const team = [
     role: "Product Designer",
     bio: "UX designer with a love for elegant interfaces and smooth user experiences.",
     imageUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop",
-    linkedin: "#",
     email: "marco@mundotango.com"
   },
   {
@@ -46,7 +42,6 @@ const team = [
     role: "Head of Content",
     bio: "Tango journalist and cultural historian. Documenting the global tango movement.",
     imageUrl: "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=400&h=400&fit=crop",
-    linkedin: "#",
     email: "ana@mundotango.com"
   },
   {
@@ -54,7 +49,6 @@ const team = [
     role: "Lead Developer",
     bio: "Backend specialist focused on performance and reliability. Weekend milonga regular.",
     imageUrl: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=400&fit=crop",
-    linkedin: "#",
     email: "david@mundotango.com"
   }
 ];
@@ -144,11 +138,6 @@ export default function TeamPage() {
                           </p>
                         </div>
                         <div className="flex gap-2 pt-2">
-                          <Button variant="outline" size="icon" asChild>
-                            <a href={member.linkedin} aria-label={`${member.name} LinkedIn`}>
-                              <Linkedin className="h-4 w-4" />
-                            </a>
-                          </Button>
                           <Button variant="outline" size="icon" asChild>
                             <a href={`mailto:${member.email}`} aria-label={`Email ${member.name}`}>
                               <Mail className="h-4 w-4" />

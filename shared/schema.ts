@@ -3020,10 +3020,13 @@ export const venues = pgTable(
     rating: integer("rating").default(0),
     reviewCount: integer("review_count").default(0),
     verified: boolean("verified").default(false),
+    claimedBy: integer("claimed_by").references(() => users.id, { onDelete: "set null" }),
+    claimedAt: timestamp("claimed_at"),
     createdAt: timestamp("created_at").defaultNow(),
   },
   (table) => ({
     cityIdx: index("venues_city_idx").on(table.city),
+    claimedByIdx: index("venues_claimed_by_idx").on(table.claimedBy),
   }),
 );
 
@@ -19386,6 +19389,50 @@ export const insertAuditIssueSchema = createInsertSchema(auditIssues).omit({
 });
 export type InsertAuditIssue = z.infer<typeof insertAuditIssueSchema>;
 export type SelectAuditIssue = typeof auditIssues.$inferSelect;
+
+// ============================================================================
+// PROFILE CLAIMS - Track profile ownership claims (venues, teachers, etc.)
+// ============================================================================
+
+export const claimStatusEnum = pgEnum("claim_status", [
+  "pending",
+  "approved",
+  "rejected",
+]);
+
+export const profileClaims = pgTable(
+  "profile_claims",
+  {
+    id: serial("id").primaryKey(),
+    userId: integer("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    profileType: varchar("profile_type", { length: 50 }).notNull(), // 'venue', 'teacher', 'dj', 'musician'
+    profileId: integer("profile_id").notNull(),
+    status: claimStatusEnum("status").default("pending").notNull(),
+    verificationInfo: text("verification_info"), // User-provided info to prove ownership
+    verificationDocuments: text("verification_documents").array(), // URLs to uploaded docs
+    adminNotes: text("admin_notes"),
+    reviewedBy: integer("reviewed_by").references(() => users.id, { onDelete: "set null" }),
+    reviewedAt: timestamp("reviewed_at"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  },
+  (table) => ({
+    userIdx: index("profile_claims_user_idx").on(table.userId),
+    profileIdx: index("profile_claims_profile_idx").on(table.profileType, table.profileId),
+    statusIdx: index("profile_claims_status_idx").on(table.status),
+  }),
+);
+
+export const insertProfileClaimSchema = createInsertSchema(profileClaims).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  reviewedAt: true,
+});
+export type InsertProfileClaim = z.infer<typeof insertProfileClaimSchema>;
+export type SelectProfileClaim = typeof profileClaims.$inferSelect;
 
 // ============================================================================
 // PLATFORM INDEPENDENCE SCHEMA (PATH 2)

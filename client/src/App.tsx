@@ -153,8 +153,14 @@ const EventDetailPage = lazy(() => import("@/pages/EventDetailPage"));
 const HousingMarketplacePage = lazy(
   () => import("@/pages/HousingMarketplacePage"),
 );
+const HousingPage = lazy(
+  () => import("@/pages/HousingPage"),
+);
 const HousingListingDetailPage = lazy(
   () => import("@/pages/HousingListingDetailPage"),
+);
+const HousingDetailPage = lazy(
+  () => import("@/pages/HousingDetailPage"),
 );
 const HousingSearchPage = lazy(() => import("@/pages/HousingSearchPage"));
 const CreateListingPage = lazy(() => import("@/pages/housing/CreateListingPage"));
@@ -589,6 +595,7 @@ const GroupsDetailPage = lazy(() => import("@/pages/GroupsDetailPage"));
 const AdminSettingsPage = lazy(() => import("@/pages/AdminSettingsPage"));
 const AdminReportsPage = lazy(() => import("@/pages/AdminReportsPage"));
 const TeacherProfilePage = lazy(() => import("@/pages/TeacherProfilePage"));
+const VenueProfilePage = lazy(() => import("@/pages/VenueProfilePage"));
 const MarketplaceItemDetailPage = lazy(
   () => import("@/pages/MarketplaceItemDetailPage"),
 );
@@ -1203,7 +1210,7 @@ function Router() {
       <Route path="/housing">
         <ProtectedRoute>
           <AppLayout>
-            <HousingMarketplacePage />
+            <HousingPage />
           </AppLayout>
         </ProtectedRoute>
       </Route>
@@ -1212,6 +1219,14 @@ function Router() {
         <ProtectedRoute>
           <AppLayout>
             <HousingSearchPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/housing/:id">
+        <ProtectedRoute>
+          <AppLayout>
+            <HousingDetailPage />
           </AppLayout>
         </ProtectedRoute>
       </Route>
@@ -1432,6 +1447,16 @@ function Router() {
         <ProtectedRoute>
           <AppLayout>
             <VenuesPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/venues/:venueId">
+        <ProtectedRoute>
+          <AppLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <VenueProfilePage />
+            </Suspense>
           </AppLayout>
         </ProtectedRoute>
       </Route>
