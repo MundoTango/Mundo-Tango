@@ -12,8 +12,12 @@ import OpenAI from 'openai';
 // - Semantic caching (60-80% cost savings)
 // - Load balancing across multiple API keys
 // - Budget management and observability
+const apiKey = process.env.OPENAI_API_KEY;
+if (!apiKey) {
+  console.warn('⚠️  OPENAI_API_KEY not configured - AI code generation disabled');
+}
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY || '',
+  apiKey: apiKey || undefined,
   baseURL: process.env.BIFROST_BASE_URL || undefined, // e.g., 'http://localhost:8080/v1'
 });
 

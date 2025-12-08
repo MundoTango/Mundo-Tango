@@ -10,7 +10,7 @@
 
 | Category | Count | Status |
 |----------|-------|--------|
-| **Total Items** | 118 | 13% Complete (15/118) |
+| **Total Items** | 118 | 20% Complete (24/118) |
 | **P0 Critical** | 8 | ✅ COMPLETE |
 | **P1 High** | 62 | Pending |
 | **P2 Medium** | 48 | Pending |
@@ -48,7 +48,7 @@
 
 | ID | Task | Priority | Est | Status |
 |----|------|----------|-----|--------|
-| A1-1 | API key validation - 15+ empty string defaults | P1 | 2h | In Progress |
+| A1-1 | API key validation - 15+ empty string defaults | P1 | 2h | ✅ DONE |
 | A1-2 | Remove console.logs from 40+ pages | P2 | 2h | Pending |
 | A1-3 | Remove @ts-ignore annotations (300+) | P2 | 4h | Pending |
 | A1-4 | Fix any type usages across codebase | P2 | 4h | Pending |
@@ -158,8 +158,8 @@
 | ID | Task | Priority | Est | Status |
 |----|------|----------|-----|--------|
 | B5-1 | i18n: 10 core pages minimum (0/77 done) | P1 | 8h | Pending |
-| B5-2 | ZERO FAKE DATA: NewPostsBanner auth | P1 | 1h | Pending |
-| B5-3 | ZERO FAKE DATA: TravelExpensesPage API | P1 | 2h | Pending |
+| B5-2 | ZERO FAKE DATA: NewPostsBanner auth | P1 | 1h | ✅ DONE |
+| B5-3 | ZERO FAKE DATA: TravelExpensesPage API | P1 | 2h | ✅ DONE |
 | B5-4 | ZERO FAKE DATA: href="#" placeholders | P1 | 2h | Pending |
 | B5-5 | ZERO FAKE DATA: Pricing Tier Naming | P2 | 30m | Pending |
 

@@ -16,8 +16,12 @@ import OpenAI from 'openai';
 import * as path from 'path';
 
 // OpenAI client with Bifrost gateway support
+const apiKey = process.env.OPENAI_API_KEY;
+if (!apiKey) {
+  console.warn('⚠️  OPENAI_API_KEY not configured - LanceDB AI features disabled');
+}
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY || '',
+  apiKey: apiKey || undefined,
   baseURL: process.env.BIFROST_BASE_URL || undefined,
 });
 

@@ -140,7 +140,11 @@ async function generateSelectorsForSource(source: any): Promise<SelectorResult> 
   const htmlStructure = extractHTMLStructure($);
 
   // Call GPT-4 to generate selectors
-  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY || '' });
+  // A1-1 Fix: Validate OpenAI API key exists before use
+  if (!process.env.OPENAI_API_KEY) {
+    return { ...source, selectors: null, confidence: 0, error: 'OPENAI_API_KEY not configured' };
+  }
+  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
   const prompt = `You are an expert web scraper. Analyze this tango event website and generate Cheerio selectors to extract event data.
 

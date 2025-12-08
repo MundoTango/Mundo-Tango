@@ -8468,7 +8468,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (authHeader?.startsWith('Bearer ')) {
         try {
           const token = authHeader.substring(7);
-          const decoded = require('jsonwebtoken').verify(token, process.env.JWT_SECRET || 'fallback-secret');
+          // A1-1 Security Fix: Use validated JWT_SECRET from auth.ts, no fallback
+          const decoded = require('jsonwebtoken').verify(token, process.env.JWT_SECRET!);
           viewerUserId = (decoded as any).userId;
           
           // Don't track self-views

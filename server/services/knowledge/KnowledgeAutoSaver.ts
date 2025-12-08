@@ -16,8 +16,12 @@ import { eq, desc, and, gte } from 'drizzle-orm';
 import { lanceDB } from '../../lib/lancedb';
 import OpenAI from 'openai';
 
+const knowledgeApiKey = process.env.OPENAI_API_KEY;
+if (!knowledgeApiKey) {
+  console.warn('⚠️  OPENAI_API_KEY not configured - Knowledge auto-saver AI disabled');
+}
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY || '',
+  apiKey: knowledgeApiKey || undefined,
   baseURL: process.env.BIFROST_BASE_URL || undefined,
 });
 

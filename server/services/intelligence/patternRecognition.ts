@@ -36,8 +36,12 @@ import { eq, desc, sql, and, gte, lte, or, ilike, inArray } from "drizzle-orm";
 // CONFIGURATION
 // ============================================================================
 
+const patternRecogApiKey = process.env.OPENAI_API_KEY;
+if (!patternRecogApiKey) {
+  console.warn('⚠️  OPENAI_API_KEY not configured - Pattern recognition AI disabled');
+}
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY || '',
+  apiKey: patternRecogApiKey || undefined,
   baseURL: process.env.BIFROST_BASE_URL || undefined,
 });
 

@@ -41,42 +41,23 @@ export default function TravelExpensesPage() {
     enabled: !!id,
   });
 
-  // Mock expenses data (would come from API in production)
-  const expenses = [
-    {
-      id: 1,
-      description: "Hotel Booking - 5 nights",
-      amount: 500,
-      currency: "USD",
-      category: "accommodation",
-      date: "2024-03-15",
-      payer: { id: 1, name: "You", profileImage: undefined },
-      splitType: "equal" as const,
-      participants: 2,
-    },
-    {
-      id: 2,
-      description: "Flight Tickets",
-      amount: 350,
-      currency: "USD",
-      category: "transport",
-      date: "2024-03-14",
-      payer: { id: 1, name: "You", profileImage: undefined },
-      splitType: "equal" as const,
-      participants: 2,
-    },
-    {
-      id: 3,
-      description: "Dinner at La Cabrera",
-      amount: 80,
-      currency: "USD",
-      category: "food",
-      date: "2024-03-16",
-      payer: { id: 1, name: "You", profileImage: undefined },
-      splitType: "equal" as const,
-      participants: 2,
-    },
-  ];
+  // B5-3 ZERO FAKE DATA: Fetch expenses from API
+  const { data: expensesData, isLoading: expensesLoading } = useQuery<{
+    id: number;
+    description: string;
+    amount: number;
+    currency: string;
+    category: string;
+    date: string;
+    payer: { id: number; name: string; profileImage?: string };
+    splitType: "equal" | "percentage" | "exact";
+    participants: number;
+  }[]>({
+    queryKey: ["/api/travel/plans", id, "expenses"],
+    enabled: !!id && !!user,
+  });
+  
+  const expenses = expensesData || [];
 
   const form = useForm<ExpenseForm>({
     resolver: zodResolver(expenseSchema),
@@ -119,7 +100,7 @@ export default function TravelExpensesPage() {
     { userId: 0, userName: "Travel Partner", amount: totalExpenses / 2 },
   ];
 
-  if (tripLoading) {
+  if (tripLoading || expensesLoading) {
     return (
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         <Skeleton className="h-12 w-1/3 mb-8" />

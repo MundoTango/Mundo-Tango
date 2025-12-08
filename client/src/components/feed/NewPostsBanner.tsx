@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { RefreshCw, ChevronUp } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface NewPostsBannerProps {
   onLoadNewPosts: () => void;
@@ -10,8 +11,14 @@ interface NewPostsBannerProps {
 
 export function NewPostsBanner({ onLoadNewPosts }: NewPostsBannerProps) {
   const [newPostsCount, setNewPostsCount] = useState(0);
+  const { user } = useAuth();
 
   useEffect(() => {
+    // B5-2 ZERO FAKE DATA: Only connect WebSocket if user is authenticated
+    if (!user) {
+      return; // Skip WebSocket for unauthenticated users
+    }
+    
     // WebSocket connection for real-time post notifications
     // Skip WebSocket in development with HMR issues - use polling instead
     try {
@@ -87,7 +94,7 @@ export function NewPostsBanner({ onLoadNewPosts }: NewPostsBannerProps) {
     } catch (error) {
       console.warn('[NewPostsBanner] WebSocket setup failed:', error);
     }
-  }, []);
+  }, [user]);
 
   const handleClick = () => {
     onLoadNewPosts();

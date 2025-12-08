@@ -119,8 +119,12 @@ if (redis) {
   });
 }
 
+const semanticCacheApiKey = process.env.OPENAI_API_KEY;
+if (!semanticCacheApiKey) {
+  console.warn('⚠️  OPENAI_API_KEY not configured - Semantic cache disabled');
+}
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY || '',
+  apiKey: semanticCacheApiKey || undefined,
   baseURL: process.env.BIFROST_BASE_URL || undefined,
 });
 

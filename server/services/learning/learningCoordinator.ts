@@ -22,8 +22,12 @@ import { eq, desc, sql, and, gte, inArray } from "drizzle-orm";
 import { logInfo, logError, logDebug } from "../../../server/middleware/logger";
 
 // OpenAI client with Bifrost gateway support
+const learningApiKey = process.env.OPENAI_API_KEY;
+if (!learningApiKey) {
+  console.warn('⚠️  OPENAI_API_KEY not configured - Learning coordinator AI disabled');
+}
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY || '',
+  apiKey: learningApiKey || undefined,
   baseURL: process.env.BIFROST_BASE_URL || undefined,
 });
 

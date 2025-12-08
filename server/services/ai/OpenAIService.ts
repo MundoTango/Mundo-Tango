@@ -5,8 +5,12 @@
 
 import OpenAI from 'openai';
 
+const apiKey = process.env.OPENAI_API_KEY;
+if (!apiKey) {
+  console.warn('⚠️  OPENAI_API_KEY not configured - OpenAI service disabled');
+}
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY || '',
+  apiKey: apiKey || undefined,
   baseURL: process.env.BIFROST_BASE_URL || undefined,
 });
 

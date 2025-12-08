@@ -3,8 +3,12 @@ import { db } from "@db";
 import { mrBlueKnowledgeBase } from "@shared/schema";
 import * as CodeOptimization from '../CodeOptimizationService';
 
+const qualityApiKey = process.env.OPENAI_API_KEY;
+if (!qualityApiKey) {
+  console.warn('⚠️  OPENAI_API_KEY not configured - Quality validator AI disabled');
+}
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY || '',
+  apiKey: qualityApiKey || undefined,
 });
 
 // Simple profanity filter (basic word list)
