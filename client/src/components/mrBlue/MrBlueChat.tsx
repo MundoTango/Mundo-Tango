@@ -272,26 +272,29 @@ Provide natural, conversational assistance based on where the user is in the pla
         try {
           const title = messages[1]?.content.slice(0, 50) + (messages[1]?.content.length > 50 ? '...' : '');
           
-          if (currentConversationId) {
+          // Track the conversation ID - use existing or get from newly created
+          let convId = currentConversationId;
+          
+          if (convId) {
             // Update existing conversation
-            await apiRequest(`/api/mrblue/conversations/${currentConversationId}`, {
+            await apiRequest(`/api/mrblue/conversations/${convId}`, {
               method: 'PUT',
               body: JSON.stringify({ title, lastMessageAt: new Date() }),
             });
           } else {
-            // Create new conversation
+            // Create new conversation and get the ID
             const response = await apiRequest('/api/mrblue/conversations', {
               method: 'POST',
               body: JSON.stringify({ title }),
             });
             
             if (response && typeof response === 'object' && 'id' in response) {
-              setCurrentConversationId(response.id as number);
+              convId = response.id as number;
+              setCurrentConversationId(convId);
             }
           }
 
-          // Save messages only if we have a valid conversation ID
-          const convId = currentConversationId;
+          // Save messages using the conversation ID (either existing or newly created)
           if (convId) {
             for (const msg of messages.slice(-10)) {
               if (msg.id !== '1') { // Skip welcome message

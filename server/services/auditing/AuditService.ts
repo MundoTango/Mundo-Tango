@@ -295,7 +295,7 @@ class ContinuousAuditService {
         pageId,
         pageName,
         route: `/${pageName.toLowerCase()}`,
-        pageAgentId: 'continuous-audit-agent', // Default audit agent
+        pageAgentId: 'test-agent', // Use existing test agent for audits
         metadata: { pageType: report.pageType || 'unknown' },
         lastAudit: new Date(),
       }).onConflictDoNothing();
