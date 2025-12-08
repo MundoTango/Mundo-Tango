@@ -10,11 +10,11 @@
 
 | Category | Count | Status |
 |----------|-------|--------|
-| **Total Items** | 217 | In Progress (110/217) |
-| **P0 Critical** | 8 | ✅ COMPLETE |
-| **P1 High** | 82 | 62/82 (76%) - 20 P1s |
-| **P2 Medium** | 80 | 48/80 (60%) - 32 P2s |
-| **NEW (Dive #6-13)** | 107 | 0/107 (0%) - Multi-Agent Analysis |
+| **Total Items** | 231 | In Progress (112/231) |
+| **P0 Critical** | 9 | 8/9 (89%) - 1 NEW (#218 Volunteer /me) |
+| **P1 High** | 93 | 63/93 (68%) - 30 P1s (+11 new) |
+| **P2 Medium** | 83 | 48/83 (58%) - 35 P2s (+3 new) |
+| **NEW (Dive #14)** | 14 | 0/14 (0%) - Talent Match + Mr Blue gaps |
 | **PATTERN DETECTED** | 58 | ⚠️ Needs actual code review (counts only) |
 
 ### ⚠️ PATTERN DETECTION (58 Areas - Require Actual Review)
@@ -666,6 +666,61 @@ Add new findings to "NEW FINDINGS LOG" section with date and priority.
 | Dec 8, 2025 | 2.1 | **Recursive Dive #13**: Business Domain Agents (217 total) - 13 NEW findings. Housing, Role, Admin, Travel, Crowdfunding, Worker/Queue agents. |
 | Dec 8, 2025 | 2.2 | **METHODOLOGY CORRECTION**: 58 "GOOD" findings downgraded to "PATTERN DETECTED". Grep counts ≠ quality verification. Need sample-based code review, The Plan cross-reference, and acceptance criteria validation. |
 | Dec 8, 2025 | 2.3 | **REAL CODE REVIEW (8% → 83%)**: Actual file inspection with line-specific fixes. XSS: Added DOMPurify to 4 files (DocumentViewer, EventsPage, EventDetailsPage, GroupDetailsPage - 10 usages fixed). ZERO FAKE DATA: Replaced mock posts in FeedPrototypePage with usePosts() hook, removed inline mock in MonitoringPage. |
+| Dec 8, 2025 | 2.4 | **Recursive Dive #14 - TALENT MATCH BROKEN** (231 total) - 14 NEW findings. User-triggered audit revealed Page/Feature/Algorithm agents missed critical failures. Volunteer /me endpoint parseInt(NaN), TalentMatch no results UI, 7 AuthContext stubs, ESA agent stubs, account deletion stub. PLUS 4 Mr. Blue auto-healing gaps identified (no backend patterns, silent manual-review, no frequency escalation). |
+
+---
+
+## 🚨 RECURSIVE DIVE #14: TALENT MATCH INVESTIGATION (10 NEW)
+
+**Trigger:** User reported "Talent Match not working" - Page agents should have caught this.
+
+### NEW P0 Critical (1)
+
+| ID | Task | File:Line | Issue | Est |
+|----|------|-----------|-------|-----|
+| #218 | **Volunteer API /me returns 500** | server/talent-match-routes.ts:41-50 | `parseInt("me")` = NaN, breaks TalentMatch AND H2ACDashboard entirely | 30m |
+
+### NEW P1 High (6)
+
+| ID | Task | File:Line | Issue | Est |
+|----|------|-----------|-------|-----|
+| #219 | **TalentMatchPage never shows results** | client/src/pages/TalentMatchPage.tsx:21,157 | `setStep` defined but only "upload" works, immediately redirects to mr-blue-chat | 2h |
+| #220 | **AuthContext 7 features stubbed** | client/src/contexts/AuthContext.tsx:376-486 | Avatar upload, subscription fetch, preferences, follow/unfollow, follower counts all "not yet implemented" | 4h |
+| #221 | **ESA agent routes return stubs** | server/routes/platform.ts:100-114 | GET /api/platform/esa/agents/:code always 404, POST returns "Not implemented yet" | 2h |
+| #222 | **Account deletion is stub** | server/routes.ts:1020 | Returns "stub - full implementation pending", GDPR non-compliant | 3h |
+| #223 | **Travel destinations mock data** | server/routes.ts:7127 | GET /api/travel/destinations uses hardcoded mock data | 1h |
+| #224 | **CSP 'unsafe-dynamic' still appearing** | Browser console logs | Despite Sentry disabled, browsers show CSP errors (cache issue or another source) | 1h |
+
+### NEW P2 Medium (3)
+
+| ID | Task | File:Line | Issue | Est |
+|----|------|-----------|-------|-----|
+| #225 | **HousingPage map "coming soon"** | client/src/pages/HousingPage.tsx:231 | Interactive map shows placeholder instead of actual map | 3h |
+| #226 | **SkillEndorsements "coming soon"** | client/src/components/profile/SkillEndorsements.tsx:198 | Skills feature shows "coming soon" placeholder | 2h |
+| #227 | **Messages internal messaging placeholder** | server/routes/messages-routes.ts:1116-1124 | MT internal messaging marked as "placeholder for future implementation" | 2h |
+
+---
+
+## 🔴 WHY MR. BLUE AUTO-HEALING MISSED THIS
+
+**Root Cause Analysis:**
+
+| Gap | File:Line | Issue |
+|-----|-----------|-------|
+| **KNOWN_PATTERNS only 5 client-side cases** | server/services/mrBlue/AutoFixEngine.ts:91-127 | Only covers image errors, tour 404s, i18next - NO server 500 patterns |
+| **Low confidence = silent "manual-review"** | AutoFixEngine.ts:137-139 | <70% confidence goes to manual review with NO notification |
+| **Escalation ignores frequency** | AutoFixEngine.ts | 40+ identical errors don't trigger escalation - frequency threshold missing |
+| **No telemetry for volunteer API** | N/A | No success/failure history, confidence stays undefined |
+| **ErrorAnalysisAgent lacks backend playbooks** | server/services/mrBlue/ErrorAnalysisAgent.ts | No patterns for Express route alias bugs or parseInt errors |
+
+### NEW P1 Mr. Blue Auto-Healing Gaps (4)
+
+| ID | Task | File:Line | Issue | Est |
+|----|------|-----------|-------|-----|
+| #228 | **Add server 500 pattern to KNOWN_PATTERNS** | server/services/mrBlue/AutoFixEngine.ts:91+ | Add patterns for: parseInt NaN, route alias bugs, API 500 errors | 2h |
+| #229 | **Escalation on error frequency** | server/services/mrBlue/AutoFixEngine.ts | If same error >3 times/hour AND <70% confidence → notify human immediately | 1h |
+| #230 | **ErrorAnalysisAgent backend playbooks** | server/services/mrBlue/ErrorAnalysisAgent.ts | Add Express routing patterns, ID parsing patterns, volunteer API patterns | 3h |
+| #231 | **Manual-review must notify** | server/services/mrBlue/AutoFixEngine.ts:56 | "manual-review" action should create notification/toast, not silent ignore | 1h |
 
 ---
 

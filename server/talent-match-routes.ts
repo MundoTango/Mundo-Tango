@@ -37,10 +37,30 @@ export function createTalentMatchRoutes(storage: IStorage) {
     }
   });
 
-  // Get volunteer by ID
+  // Get current user's volunteer profile (alias "me")
+  router.get("/volunteers/me", async (req: any, res) => {
+    try {
+      if (!req.user?.id) {
+        return res.status(401).json({ error: "Authentication required" });
+      }
+      const volunteer = await storage.getVolunteerByUserId(req.user.id);
+      if (!volunteer) {
+        return res.status(404).json({ error: "Volunteer profile not found. Please complete Talent Match first." });
+      }
+      res.json(volunteer);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Get volunteer by ID (must be after /me route to prevent "me" being parsed as ID)
   router.get("/volunteers/:id", async (req, res) => {
     try {
-      const volunteer = await storage.getVolunteerById(parseInt(req.params.id));
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ error: "Invalid volunteer ID" });
+      }
+      const volunteer = await storage.getVolunteerById(id);
       if (!volunteer) {
         return res.status(404).json({ error: "Volunteer not found" });
       }
