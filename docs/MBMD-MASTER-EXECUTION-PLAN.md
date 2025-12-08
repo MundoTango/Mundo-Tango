@@ -10,10 +10,11 @@
 
 | Category | Count | Status |
 |----------|-------|--------|
-| **Total Items** | 118 | 100% Complete (118/118) |
+| **Total Items** | 124 | In Progress (110/124) |
 | **P0 Critical** | 8 | ✅ COMPLETE |
-| **P1 High** | 62 | 62/62 ✅ (100%) |
-| **P2 Medium** | 48 | 48/48 ✅ (100%) |
+| **P1 High** | 65 | 62/65 (95%) - 3 new P1s from Dive #6 |
+| **P2 Medium** | 51 | 48/51 (94%) - 11 new P2s from Dive #6 |
+| **NEW (Dive #6)** | 14 | 0/14 (0%) - Just discovered |
 
 **Estimated Time:** 200 hours sequential | **~65 hours with MB.MD parallelism**
 
@@ -242,7 +243,41 @@
 
 # NEW FINDINGS LOG
 
-## Session Dec 8, 2025 - Recursive Dive #5 (Latest)
+## Session Dec 8, 2025 - Recursive Dive #6 (Latest)
+
+| # | Finding | Location | Count | Priority |
+|---|---------|----------|-------|----------|
+| 111 | **dangerouslySetInnerHTML XSS risk** | 11 client files (EventsPage, GroupDetailsPage, UnifiedInbox, etc.) | 11 files | P1 |
+| 112 | **setTimeout/setInterval without cleanup** | server/ (increased from 60) | 68 instances | P2 |
+| 113 | **`any` type usage epidemic** | client/src (ProfileTabAbout 24, postInteractions 13, iframeInjector 11) | 200+ instances | P2 |
+| 114 | **console.log statements in pages** | client/src/pages (debug logs remaining) | 23 pages | P2 |
+| 115 | **Mock/fake/placeholder data references** | client files still reference mock data | 30+ files | P1 |
+| 116 | **N/A/TBD placeholder text** | files display "N/A", "TBD", "TBA" to users | 78 files | P2 |
+| 117 | **Hardcoded stat numbers (10,000+)** | client files with fake large numbers | 17 files | P1 |
+| 118 | **"Coming Soon" remaining** | HousingPage.tsx, SkillEndorsements.tsx | 2 files | P2 |
+| 119 | **Empty catch blocks in tests** | tests/ (swallowing errors silently) | 23 files | P2 |
+| 120 | **localhost/127.0.0.1 hardcoded** | 57 files with hardcoded local URLs | 57 files | P2 |
+| 121 | **Explicit React imports** | client/src (unnecessary with Vite JSX transform) | 145+ files | P2 |
+| 122 | **throw new Error patterns** | server/ (error handling inconsistency) | 180+ usages | P2 |
+| 123 | **Promise.all without error handling** | server/ (parallel ops may fail silently) | 95 usages | P2 |
+| 124 | **@ts-ignore in UnifiedLocationPicker** | client/src/components/input/ | 13 annotations | P2 |
+
+### Critical XSS Files Requiring DOMPurify (P1):
+- `EventsPage.tsx`, `EventDetailsPage.tsx`, `GroupDetailsPage.tsx`
+- `UnifiedInbox.tsx`, `LegalSignaturePage.tsx`, `PostPreview.tsx`
+- `SimpleMentionsInput.tsx`, `chart.tsx`, `DocumentViewer.tsx`
+- `iframeInjector.ts`, `hotModuleReload.ts`
+
+### Worst `any` Type Offenders:
+| File | Count |
+|------|-------|
+| ProfileTabAbout.tsx | 24 |
+| usePostInteractions.ts | 13 |
+| iframeInjector.ts | 11 |
+| hotModuleReload.ts | 7 |
+| GroupDetailsPage.tsx | 6 |
+
+## Session Dec 8, 2025 - Recursive Dive #5
 
 | # | Finding | Location | Priority |
 |---|---------|----------|----------|
@@ -331,7 +366,8 @@ Add new findings to "NEW FINDINGS LOG" section with date and priority.
 | Dec 8, 2025 | 1.0 | Initial creation with 86 items |
 | Dec 8, 2025 | 1.1 | Added 16 NEW findings from dive #4 (102 total) |
 | Dec 8, 2025 | 1.2 | A0-A2 COMPLETE: Fixed 8 P0 blockers, added API key validation (Resend, Facebook), removed 3 backup/deprecated files |
-| Dec 8, 2025 | 1.2 | Added 8 NEW findings from dive #5 (118 total) |
+| Dec 8, 2025 | 1.3 | Added 8 NEW findings from dive #5 (110 total) |
+| Dec 8, 2025 | 1.4 | **Recursive Dive #6**: Added 14 NEW findings (124 total) - XSS risks, type safety epidemic, mock data remnants, hardcoded stats |
 
 ---
 
