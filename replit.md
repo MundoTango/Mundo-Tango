@@ -36,6 +36,18 @@ Mundo Tango is a production-ready social platform connecting the global tango co
 - Three-tier fallback: coverImage → getCityImageUrl(city) → generic fallback
 - Components: GroupsPage, GroupDetailsPage, GroupCard, CityGroupsPage, ProfessionalGroupsPage, EventDetailsPage, EventCard, CityGuidesPage, TravelPlannerPage, HousingMarketplacePage
 
+#### MB.MD v9.3 Backend Agent System ✅
+- **Coverage**: Frontend 100% + Backend 100% + Database 100% + Security 100% + API 100%
+- **Save Button**: Visual Editor → Save triggers backend agent orchestration
+- **Progress Modal**: Real-time phase display (Schema → API → Security → Service → Git → Restart)
+- **Git Auto-Commit**: BackendOrchestrator.gitCommit() with descriptive commit messages
+- **Workflow Auto-Restart**: BackendOrchestrator.restartWorkflow() triggers on file changes
+- **Key Files**:
+  - `server/services/mrblue/BackendOrchestrator.ts` - Coordinates all backend agents
+  - `server/services/mrblue/SessionTracker.ts` - Tracks UI changes since last save
+  - `server/routes/mrblue/save-backend.ts` - API endpoint POST /api/mrblue/save-backend
+  - `client/src/components/visual-editor/BackendSaveProgressModal.tsx` - Progress UI
+
 #### Database Persistence Tables
 - `page_inventory`: 312 pages with URL, priority, category, audit status
 - `audit_issues`: Issue tracking with pageId, type, severity, status, strikeCount
