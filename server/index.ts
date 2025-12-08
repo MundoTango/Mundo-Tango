@@ -262,7 +262,8 @@ app.use((req, res, next) => {
       await import('./workers/eventWorker');
       await import('./workers/housingWorker');
       await import('./workers/lifeCeoWorker');
-      log('[BullMQ Workers] ✅ Initialized 3 core workers');
+      await import('./workers/messaging-worker');
+      log('[BullMQ Workers] ✅ Initialized 4 core workers (including messaging)');
     } catch (error) {
       logger.error('❌ BullMQ Worker initialization failed:', error);
     }
@@ -283,3 +284,24 @@ app.use((req, res, next) => {
     }
   });
 })();
+
+// Graceful shutdown handlers for continuous services
+process.on('SIGTERM', async () => {
+  console.log('🛑 SIGTERM received, shutting down gracefully...');
+  try {
+    // Stop AutoFixEngine
+    AutoFixEngine.stopProductionLoop?.();
+    // Stop ContinuousAuditService
+    const { continuousAuditService } = await import('./services/auditing/AuditService');
+    continuousAuditService.stop?.();
+    console.log('✅ Continuous services stopped');
+  } catch (error) {
+    console.error('Error during shutdown:', error);
+  }
+  process.exit(0);
+});
+
+process.on('SIGINT', async () => {
+  console.log('🛑 SIGINT received, shutting down gracefully...');
+  process.exit(0);
+});
