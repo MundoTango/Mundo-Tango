@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "wouter";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,6 +16,7 @@ import { motion } from "framer-motion";
 import tangoHeroImage from "@assets/stock_images/elegant_professional_e4da136e.jpg";
 
 export default function RegisterPage() {
+  const { t } = useTranslation('pages');
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -176,15 +178,15 @@ export default function RegisterPage() {
               <div className="text-center mb-8">
                 <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-welcome">
                   <Sparkles className="w-3 h-3 mr-1" />
-                  Begin Your Journey
+                  {t('register.hero.badge')}
                 </Badge>
                 
                 <h1 className="text-5xl md:text-6xl font-serif font-bold text-white mb-4 tracking-tight leading-tight" data-testid="heading-hero">
-                  Join Mundo Tango
+                  {t('register.hero.headline')}
                 </h1>
                 
                 <p className="text-lg text-white/80 max-w-md mx-auto mb-8">
-                  Connect with dancers worldwide, discover milongas, and immerse yourself in the passionate world of Argentine tango
+                  {t('register.hero.subtitle')}
                 </p>
 
                 {/* Community Stats */}
@@ -216,7 +218,7 @@ export default function RegisterPage() {
                 <div className="space-y-4">
                   <div className="grid md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="name" className="text-sm font-medium text-white">Full Name</Label>
+                      <Label htmlFor="name" className="text-sm font-medium text-white">{t('register.form.fullName')}</Label>
                       <Input
                         id="name"
                         type="text"
@@ -231,7 +233,7 @@ export default function RegisterPage() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="email" className="text-sm font-medium text-white">Email</Label>
+                      <Label htmlFor="email" className="text-sm font-medium text-white">{t('register.form.email')}</Label>
                       <div className="relative">
                         <Input
                           id="email"
@@ -264,7 +266,7 @@ export default function RegisterPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="username" className="text-sm font-medium text-white">Username</Label>
+                    <Label htmlFor="username" className="text-sm font-medium text-white">{t('register.form.username')}</Label>
                     <div className="relative">
                       <Input
                         id="username"
@@ -299,7 +301,7 @@ export default function RegisterPage() {
 
                   <div className="grid md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="password" className="text-sm font-medium text-white">Password</Label>
+                      <Label htmlFor="password" className="text-sm font-medium text-white">{t('register.form.password')}</Label>
                       <div className="relative">
                         <Input
                           id="password"
@@ -338,7 +340,7 @@ export default function RegisterPage() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="confirmPassword" className="text-sm font-medium text-white">Confirm Password</Label>
+                      <Label htmlFor="confirmPassword" className="text-sm font-medium text-white">{t('register.form.confirmPassword')}</Label>
                       <div className="relative">
                         <Input
                           id="confirmPassword"
@@ -402,12 +404,12 @@ export default function RegisterPage() {
                     {isLoading ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Creating your account...
+                        {t('register.form.submitting')}
                       </>
                     ) : (
                       <>
                         <Heart className="mr-2 h-4 w-4" />
-                        Create Account
+                        {t('register.form.submit')}
                       </>
                     )}
                   </Button>
@@ -420,13 +422,13 @@ export default function RegisterPage() {
                 transition={{ duration: 0.8, delay: 0.4 }}
                 className="text-sm text-center text-white/70 mt-6"
               >
-                Already have an account?{" "}
+                {t('register.links.hasAccount')}{" "}
                 <Link 
                   href="/login" 
                   className="text-white hover:underline font-medium" 
                   data-testid="link-login"
                 >
-                  Sign in
+                  {t('register.links.login')}
                 </Link>
               </motion.p>
             </motion.div>

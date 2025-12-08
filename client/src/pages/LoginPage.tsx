@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "wouter";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,6 +17,7 @@ import { supabase } from "@/lib/supabase";
 import tangoHeroImage from "@assets/stock_images/elegant_professional_29e89c1e.jpg";
 
 export default function LoginPage() {
+  const { t } = useTranslation('pages');
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -125,15 +127,15 @@ export default function LoginPage() {
               <div className="text-center mb-8">
                 <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-welcome">
                   <Heart className="w-3 h-3 mr-1" />
-                  Welcome Back
+                  {t('login.hero.badge')}
                 </Badge>
                 
                 <h1 className="text-5xl md:text-6xl font-serif font-bold text-white mb-4 tracking-tight leading-tight" data-testid="heading-hero">
-                  Your Tango Journey Continues
+                  {t('login.hero.headline')}
                 </h1>
                 
                 <p className="text-lg text-white/80 max-w-md mx-auto mb-8">
-                  Sign in to connect with dancers worldwide, discover events, and share your passion
+                  {t('login.hero.subtitle')}
                 </p>
 
                 {/* Community Stats */}
@@ -160,11 +162,11 @@ export default function LoginPage() {
               >
                 <div className="space-y-5">
                   <div className="space-y-2">
-                    <Label htmlFor="email" className="text-sm font-medium text-white">Email</Label>
+                    <Label htmlFor="email" className="text-sm font-medium text-white">{t('login.form.email')}</Label>
                     <Input
                       id="email"
                       type="email"
-                      placeholder="your@email.com"
+                      placeholder={t('login.form.emailPlaceholder')}
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
@@ -175,11 +177,11 @@ export default function LoginPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="password" className="text-sm font-medium text-white">Password</Label>
+                    <Label htmlFor="password" className="text-sm font-medium text-white">{t('login.form.password')}</Label>
                     <Input
                       id="password"
                       type="password"
-                      placeholder="••••••••"
+                      placeholder={t('login.form.passwordPlaceholder')}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
@@ -196,7 +198,7 @@ export default function LoginPage() {
                     data-testid="button-login"
                     size="lg"
                   >
-                    {isLoading ? "Signing in..." : "Sign In"}
+                    {isLoading ? t('login.form.submitting') : t('login.form.submit')}
                   </Button>
 
                   <div className="relative my-6">
@@ -204,7 +206,7 @@ export default function LoginPage() {
                       <div className="w-full border-t border-white/20" />
                     </div>
                     <div className="relative flex justify-center text-sm">
-                      <span className="bg-transparent px-4 text-white/60">or continue with</span>
+                      <span className="bg-transparent px-4 text-white/60">{t('login.social.divider')}</span>
                     </div>
                   </div>
 
@@ -252,7 +254,7 @@ export default function LoginPage() {
                     className="block text-center text-sm text-white/80 hover:text-white mt-4 transition-colors" 
                     data-testid="link-forgot-password"
                   >
-                    Forgot password?
+                    {t('login.links.forgotPassword')}
                   </Link>
                 </div>
               </motion.form>
@@ -263,13 +265,13 @@ export default function LoginPage() {
                 transition={{ duration: 0.8, delay: 0.4 }}
                 className="text-sm text-center text-white/70 mt-6"
               >
-                Don't have an account?{" "}
+                {t('login.links.noAccount')}{" "}
                 <Link 
                   href="/register" 
                   className="text-white hover:underline font-medium" 
                   data-testid="link-register"
                 >
-                  Create one now
+                  {t('login.links.register')}
                 </Link>
               </motion.p>
             </motion.div>

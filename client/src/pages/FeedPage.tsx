@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback, Fragment, useMemo, lazy, Suspense } from "react";
+import { useTranslation } from "react-i18next";
 import { usePosts, useCreatePost, useToggleLike, useComments, useCreateComment, useUpdateComment, useDeleteComment } from "@/hooks/usePosts";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery } from "@tanstack/react-query";
@@ -91,6 +92,7 @@ const RECOMMENDATION_CATEGORIES = [
 ];
 
 export default function FeedPage() {
+  const { t } = useTranslation('pages');
   // Feed algorithm state (Features 12-13)
   const [feedType, setFeedType] = useState<"following" | "discover">("following");
   const [filter, setFilter] = useState<"all" | "friends" | "public" | "saved" | "my-posts" | "mentions">("all");
@@ -473,8 +475,8 @@ export default function FeedPage() {
               queryClient.invalidateQueries({ queryKey: ['infinite-feed'] });
               setRefreshKey(prev => prev + 1);
               toast({
-                title: "🎉 Memory shared!",
-                description: "Your memory has been posted to the community.",
+                title: t('feed.postCreated'),
+                description: t('feed.postCreatedDesc'),
               });
             }}
             context={{ type: 'feed' }}
@@ -501,14 +503,14 @@ export default function FeedPage() {
       <Dialog open={showRecommendationDialog} onOpenChange={setShowRecommendationDialog}>
         <DialogContent data-testid="dialog-recommendation">
           <DialogHeader>
-            <DialogTitle>Add Recommendation</DialogTitle>
+            <DialogTitle>{t('feed.recommendation.dialogTitle')}</DialogTitle>
             <DialogDescription>
-              Recommend a {RECOMMENDATION_CATEGORIES.find(c => c.id === selectedCategory)?.label.toLowerCase()} and specify its location.
+              {t('feed.recommendation.dialogDescription', { category: RECOMMENDATION_CATEGORIES.find(c => c.id === selectedCategory)?.label.toLowerCase() })}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="rec-name">Name *</Label>
+              <Label htmlFor="rec-name">{t('feed.recommendation.nameLabel')}</Label>
               <Input
                 id="rec-name"
                 placeholder={`Enter ${RECOMMENDATION_CATEGORIES.find(c => c.id === selectedCategory)?.label.toLowerCase()} name`}
@@ -518,7 +520,7 @@ export default function FeedPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="rec-location">Location</Label>
+              <Label htmlFor="rec-location">{t('feed.recommendation.locationLabel')}</Label>
               <UnifiedLocationPicker
                 value={recLocation}
                 coordinates={recCoordinates}
@@ -543,13 +545,13 @@ export default function FeedPage() {
               }}
               data-testid="button-cancel-rec"
             >
-              Cancel
+              {t('feed.recommendation.cancel')}
             </Button>
             <Button
               onClick={addRecommendation}
               data-testid="button-add-rec"
             >
-              Add Recommendation
+              {t('feed.recommendation.add')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -567,13 +569,13 @@ export default function FeedPage() {
       <AlertDialog open={deletingPostId !== null} onOpenChange={(open) => !open && setDeletingPostId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Post</AlertDialogTitle>
+            <AlertDialogTitle>{t('feed.deletePost.title')}</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete this post? This action cannot be undone.
+              {t('feed.deletePost.description')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t('feed.deletePost.cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={async () => {
                 if (deletingPostId) {

@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { Link } from "wouter";
+import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -38,6 +39,7 @@ const calculateDistance = (city: string | null): number => {
 };
 
 export default function GroupsPage() {
+  const { t } = useTranslation('pages');
   const { user } = useAuth();
   const [isCreating, setIsCreating] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -366,15 +368,15 @@ export default function GroupsPage() {
                 className="max-w-4xl"
               >
                 <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm">
-                  Global Tango Communities
+                  {t('groups.hero.badge')}
                 </Badge>
                 
                 <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6">
-                  Find Your Community
+                  {t('groups.hero.headline')}
                 </h1>
                 
                 <p className="text-xl text-white/80 max-w-2xl mx-auto">
-                  Connect with local dancers, join professional networks, and build lasting friendships worldwide
+                  {t('groups.hero.subtitle')}
                 </p>
               </motion.div>
             </div>
@@ -392,7 +394,7 @@ export default function GroupsPage() {
                     <Input
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      placeholder="Search groups, cities, interests..."
+                      placeholder={t('groups.searchPlaceholder')}
                       className="pl-12 h-12 text-base"
                       data-testid="input-search-groups"
                     />
@@ -419,9 +421,9 @@ export default function GroupsPage() {
                     <TabsContent value="my-groups" className="space-y-8">
                       <div className="flex items-center justify-between mb-6">
                         <div>
-                          <h2 className="text-3xl font-serif font-bold">My Groups</h2>
+                          <h2 className="text-3xl font-serif font-bold">{t('groups.myGroups.title')}</h2>
                           <p className="text-muted-foreground mt-2">
-                            Organized by your current city, tango history, and professional roles
+                            {t('groups.myGroups.subtitle')}
                           </p>
                         </div>
                       </div>
@@ -439,7 +441,7 @@ export default function GroupsPage() {
                             <section>
                               <div className="flex items-center gap-2 mb-4">
                                 <Home className="w-5 h-5 text-primary" />
-                                <h3 className="text-xl font-semibold">Current City</h3>
+                                <h3 className="text-xl font-semibold">{t('groups.myGroups.currentCity')}</h3>
                                 <Badge variant="default" className="ml-2">
                                   {myGroupsData?.userProfile?.currentCity || 'Your City'}
                                 </Badge>

@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { Link, useLocation } from "wouter";
+import { useTranslation } from "react-i18next";
 import { useEvents, useEventAttendance, useEventRSVPs, useMyEvents, useUpcomingEvents } from "@/hooks/useEvents";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
@@ -251,6 +252,7 @@ function EventCard({ event, index = 0 }: { event: any; index?: number }) {
 type EventTab = "my-events" | "upcoming" | "discover";
 
 export default function EventsPage() {
+  const { t } = useTranslation('pages');
   const [, navigate] = useLocation();
   const { user } = useAuth();
   const { toast } = useToast();
@@ -533,8 +535,8 @@ export default function EventsPage() {
     <SelfHealingErrorBoundary pageName="Events" fallbackRoute="/feed">
       <>
         <SEO
-          title="Discover Events"
-          description="Find tango events, milongas, and workshops near you. Join the global tango community and discover authentic Argentine tango experiences worldwide."
+          title={t('events.title')}
+          description={t('events.description')}
         />
         
         {/* Hero Section */}
@@ -552,15 +554,15 @@ export default function EventsPage() {
               transition={{ duration: 1, ease: "easeOut" }}
             >
               <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm">
-                Events & Milongas
+                {t('events.hero.badge')}
               </Badge>
               
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6">
-                Discover Tango Events
+                {t('events.hero.headline')}
               </h1>
               
               <p className="text-xl text-white/80 max-w-2xl mx-auto mb-8">
-                Find milongas, workshops, and performances near you. Join the global tango community.
+                {t('events.hero.subtitle')}
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 items-center justify-center flex-wrap">
@@ -571,7 +573,7 @@ export default function EventsPage() {
                   onClick={() => navigate("/events/create")}
                 >
                   <Plus className="h-5 w-5" />
-                  Create Event
+                  {t('events.createEvent')}
                   <ChevronRight className="h-5 w-5" />
                 </Button>
                 
@@ -656,9 +658,9 @@ export default function EventsPage() {
 
             {/* Tab Descriptions */}
             <div className="text-sm text-muted-foreground">
-              {activeTab === "my-events" && "Events you've RSVP'd to"}
-              {activeTab === "upcoming" && `Events in your city${upcomingData?.filters?.joinedCities?.length ? ` and ${upcomingData.filters.joinedCities.length} followed cities` : ""}`}
-              {activeTab === "discover" && "Explore all events worldwide"}
+              {activeTab === "my-events" && t('events.tabs.myEventsDesc')}
+              {activeTab === "upcoming" && t('events.tabs.upcomingDesc', { count: upcomingData?.filters?.joinedCities?.length || 0 })}
+              {activeTab === "discover" && t('events.tabs.discoverDesc')}
             </div>
 
             {/* Search Bar & Controls - Only show for Discover tab */}

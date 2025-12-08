@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import { 
   useConversations, 
@@ -32,6 +33,7 @@ import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary"
 import { ChannelSettingsPanel } from "@/components/messages/ChannelSettingsPanel";
 
 export default function MessagesPage() {
+  const { t } = useTranslation('pages');
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeChannel, setActiveChannel] = useState<'all' | MessageChannel>('all');
@@ -82,15 +84,15 @@ export default function MessagesPage() {
                   data-testid="badge-hero-category"
                 >
                   <MessageCircle className="w-3 h-3 mr-1" />
-                  Stay Connected
+                  {t('messages.hero.badge')}
                 </Badge>
                 
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-white font-bold leading-tight">
-                  Your Conversations
+                  {t('messages.hero.headline')}
                 </h1>
                 
                 <p className="text-xl text-white/80 max-w-2xl mx-auto">
-                  Build meaningful connections with dancers around the world
+                  {t('messages.hero.subtitle')}
                 </p>
 
                 <div className="flex items-center justify-center gap-8 mt-8">
@@ -151,7 +153,7 @@ export default function MessagesPage() {
                   <div className="p-4 border-b space-y-3">
                     <div className="flex items-center justify-between gap-2">
                       <h2 className="text-xl font-serif font-bold" data-testid="heading-messages">
-                        Messages
+                        {t('messages.title')}
                       </h2>
                       <div className="flex items-center gap-1">
                         <Dialog open={showSettings} onOpenChange={setShowSettings}>
@@ -211,7 +213,7 @@ export default function MessagesPage() {
                     <div className="relative">
                       <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input
-                        placeholder="Search conversations..."
+                        placeholder={t('messages.searchConversations')}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="pl-9"
@@ -312,9 +314,9 @@ export default function MessagesPage() {
                       >
                         <MessageCircle className="w-12 h-12 mx-auto text-muted-foreground opacity-50" />
                         <div>
-                          <p className="font-medium text-muted-foreground">No messages yet</p>
+                          <p className="font-medium text-muted-foreground">{t('messages.noMessages')}</p>
                           <p className="text-sm text-muted-foreground/70 mt-1">
-                            Start connecting with dancers
+                            {t('messages.startConversation')}
                           </p>
                         </div>
                       </motion.div>
@@ -336,10 +338,10 @@ export default function MessagesPage() {
                       <MessageCircle className="w-16 h-16 text-muted-foreground opacity-30" />
                       <div>
                         <h3 className="text-xl font-serif font-bold text-muted-foreground">
-                          Select a conversation
+                          {t('messages.selectConversation')}
                         </h3>
                         <p className="text-sm text-muted-foreground/70 mt-2">
-                          Choose a conversation from the list to start messaging
+                          {t('messages.selectConversationDesc')}
                         </p>
                       </div>
                     </motion.div>

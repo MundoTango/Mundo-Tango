@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { PublicLayout } from "@/components/PublicLayout";
 import { SEO } from "@/components/SEO";
 import { PageLayout } from "@/components/PageLayout";
@@ -18,6 +19,7 @@ import featureImage1 from "@assets/stock_images/global_world_map_con_0c38d510.jp
 import featureImage2 from "@assets/IMG_9422-Mejorado-NR_1762013316898.jpg";
 
 export default function HomePage() {
+  const { t } = useTranslation('pages');
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   const fadeInUp = {
@@ -105,30 +107,29 @@ export default function HomePage() {
             transition={{ duration: 1, ease: "easeOut" }}
           >
             <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
-              Welcome to the Global Tango Community
+              {t('home.hero.badgeWelcome')}
             </Badge>
             
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif font-bold text-white mb-6 tracking-tight leading-tight" data-testid="heading-hero">
-              Where Tango Meets Community
+              {t('home.hero.headline')}
             </h1>
             
             <p className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto mb-8 leading-relaxed">
-              Share memories, find events, and help us build the future of tango tech.
-              Join thousands of passionate dancers connecting worldwide.
+              {t('home.hero.subtitle')}
             </p>
             
             <div className="flex flex-wrap gap-4 justify-center mb-12">
               <Link href="/register">
                 <Button size="lg" className="gap-2 bg-white/20 border-white/30 backdrop-blur-sm hover-elevate" data-testid="button-get-started">
                   <Sparkles className="h-5 w-5" />
-                  Get Started Free
+                  {t('home.hero.ctaGetStarted')}
                   <ChevronRight className="h-5 w-5" />
                 </Button>
               </Link>
               <Link href="/volunteer">
                 <Button size="lg" variant="outline" className="gap-2 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="button-volunteer">
                   <Heart className="h-5 w-5" />
-                  Volunteer to Help Build MT
+                  {t('home.hero.ctaVolunteer')}
                 </Button>
               </Link>
             </div>
@@ -137,19 +138,19 @@ export default function HomePage() {
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 pt-8 border-t border-white/20" data-testid="section-stats">
               <div>
                 <div className="text-4xl md:text-5xl font-serif font-bold text-white">10,000+</div>
-                <div className="text-sm text-white/80 mt-1">Active Dancers</div>
+                <div className="text-sm text-white/80 mt-1">{t('home.hero.stats.dancers')}</div>
               </div>
               <div>
                 <div className="text-4xl md:text-5xl font-serif font-bold text-white">500+</div>
-                <div className="text-sm text-white/80 mt-1">Cities</div>
+                <div className="text-sm text-white/80 mt-1">{t('home.hero.stats.cities')}</div>
               </div>
               <div>
                 <div className="text-4xl md:text-5xl font-serif font-bold text-white">2,000+</div>
-                <div className="text-sm text-white/80 mt-1">Monthly Events</div>
+                <div className="text-sm text-white/80 mt-1">{t('home.hero.stats.events')}</div>
               </div>
               <div>
                 <div className="text-4xl md:text-5xl font-serif font-bold text-white">1,200+</div>
-                <div className="text-sm text-white/80 mt-1">Teachers</div>
+                <div className="text-sm text-white/80 mt-1">{t('home.hero.stats.teachers')}</div>
               </div>
             </div>
           </motion.div>
@@ -160,9 +161,9 @@ export default function HomePage() {
       <section className="py-24 px-6 bg-gradient-to-b from-background to-primary/5">
         <div className="container mx-auto max-w-6xl">
           <motion.div {...fadeInUp} className="mb-16 text-center">
-            <h2 className="mb-6 text-3xl md:text-4xl lg:text-5xl font-serif font-bold">How It Works</h2>
+            <h2 className="mb-6 text-3xl md:text-4xl lg:text-5xl font-serif font-bold">{t('home.howItWorks.title')}</h2>
             <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              Start your tango journey in three simple steps
+              {t('home.howItWorks.subtitle')}
             </p>
           </motion.div>
 

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useRoute, Link, useSearch, useLocation } from "wouter";
+import { useTranslation } from "react-i18next";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -66,6 +67,7 @@ interface Post {
 }
 
 export default function ProfilePage() {
+  const { t } = useTranslation('pages');
   const [, params] = useRoute("/profile/:id");
   const searchString = useSearch();
   const { user: currentUser } = useAuth();
@@ -371,9 +373,9 @@ export default function ProfilePage() {
             <div className="w-24 h-24 mx-auto rounded-full bg-muted flex items-center justify-center">
               <Users className="w-12 h-12 text-muted-foreground" />
             </div>
-            <h1 className="text-2xl font-bold" data-testid="text-user-not-found-title">User Not Found</h1>
+            <h1 className="text-2xl font-bold" data-testid="text-user-not-found-title">{t('profile.notFound.title')}</h1>
             <p className="text-muted-foreground max-w-md" data-testid="text-user-not-found-message">
-              The profile you're looking for doesn't exist or may have been removed.
+              {t('profile.notFound.message')}
             </p>
           </div>
           <div className="flex gap-4">
@@ -382,12 +384,12 @@ export default function ProfilePage() {
               onClick={() => window.history.back()}
               data-testid="button-go-back"
             >
-              Go Back
+              {t('profile.notFound.goBack')}
             </Button>
             <Link href="/feed">
               <Button data-testid="button-go-home">
                 <Home className="w-4 h-4 mr-2" />
-                Go to Feed
+                {t('profile.notFound.goHome')}
               </Button>
             </Link>
           </div>
@@ -499,7 +501,7 @@ export default function ProfilePage() {
                 {user.role === 'super_admin' && (
                   <Badge className="bg-primary text-white border-0 text-xs" data-testid="badge-verified">
                     <CheckCircle className="w-2 h-2 mr-1" />
-                    Verified
+                    {t('profile.verified')}
                   </Badge>
                 )}
               </div>

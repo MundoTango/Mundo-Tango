@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -155,6 +156,7 @@ function EmptyState() {
 }
 
 export default function CalendarPage() {
+  const { t } = useTranslation('pages');
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
   const { data: events, isLoading, error } = useQuery<CalendarEvent[]>({
@@ -208,15 +210,15 @@ export default function CalendarPage() {
               transition={{ duration: 1, ease: "easeOut" }}
             >
               <Badge variant="outline" className="mb-4 md:mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm">
-                Event Calendar
+                {t('calendar.hero.badge')}
               </Badge>
               
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif text-white font-bold leading-tight mb-3 md:mb-4">
-                Tango Event Calendar
+                {t('calendar.hero.headline')}
               </h1>
               
               <p className="text-base md:text-lg text-white/80 max-w-2xl mx-auto">
-                Discover upcoming milongas, workshops, and performances
+                {t('calendar.hero.subtitle')}
               </p>
             </motion.div>
           </div>
@@ -229,7 +231,7 @@ export default function CalendarPage() {
             transition={{ duration: 0.8, delay: 0.2 }}
           >
             <div className="flex flex-wrap items-center gap-2 mb-6">
-              <span className="text-sm text-muted-foreground mr-2">Event Types:</span>
+              <span className="text-sm text-muted-foreground mr-2">{t('calendar.eventTypes')}</span>
               {Object.entries(eventTypeColors).map(([type, colors]) => (
                 <Badge 
                   key={type} 
@@ -264,6 +266,7 @@ export default function CalendarPage() {
                       size="icon"
                       onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
                       data-testid="button-prev-month"
+                      aria-label={t('calendar.navigation.prevMonth')}
                     >
                       <ChevronLeft className="h-4 w-4" />
                     </Button>
@@ -272,13 +275,14 @@ export default function CalendarPage() {
                       onClick={() => setCurrentMonth(new Date())}
                       data-testid="button-today"
                     >
-                      Today
+                      {t('calendar.navigation.today')}
                     </Button>
                     <Button
                       variant="outline"
                       size="icon"
                       onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
                       data-testid="button-next-month"
+                      aria-label={t('calendar.navigation.nextMonth')}
                     >
                       <ChevronRight className="h-4 w-4" />
                     </Button>
@@ -384,7 +388,7 @@ export default function CalendarPage() {
 
             {hasEvents && (
               <div className="mt-8 md:mt-12">
-                <h2 className="text-2xl md:text-3xl font-serif font-bold mb-6">Upcoming Events</h2>
+                <h2 className="text-2xl md:text-3xl font-serif font-bold mb-6">{t('calendar.upcomingEvents')}</h2>
                 <div className="grid gap-4 md:gap-6 sm:grid-cols-2">
                   {events.slice(0, 4).map((event, index) => {
                     const eventType = event.eventType || event.event_type;
