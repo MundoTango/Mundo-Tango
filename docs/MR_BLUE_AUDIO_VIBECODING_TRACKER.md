@@ -84,6 +84,68 @@ This document tracks all work related to Mr Blue's audio conversation capabiliti
 | 38 | **Missing agent_knowledge_versions table** | Server logs | DB relation error 42P01 during operation - table doesn't exist |
 | 39 | **Slow requests logged** | Server logs | `/analyze-error` (1556ms), `/search` (4864ms) - performance optimization needed |
 
+---
+
+## MB.MD v9.9.4 Recursive Research Phase 2 (2025-12-08)
+
+### CRITICAL ARCHITECTURE ISSUES (P0)
+
+| ID | Issue | File(s) | Description |
+|----|-------|---------|-------------|
+| 40 | **DUPLICATE DIRECTORIES: mrblue vs mrBlue** | `server/services/mrblue/` vs `server/services/mrBlue/` | Two directories with different casing - case-sensitive file system conflicts, imports mixed |
+| 41 | **DUPLICATE AudioConversationService** | `mrblue/audioConversationService.ts` vs `mrBlue/AudioConversationService.ts` | Two COMPLETELY DIFFERENT implementations (204 lines vs 320 lines), both exported with same name |
+| 42 | **DUPLICATE PlanTrackerService** | `mrblue/PlanTrackerService.ts` vs `mrBlue/PlanTrackerService.ts` | Two different implementations (227 lines vs 292 lines), both exported with same name |
+| 43 | **Mixed imports across routes** | Various route files | Some routes import from `mrblue/`, others from `mrBlue/` - inconsistent behavior |
+
+### NEW HIGH PRIORITY ISSUES (P1)
+
+| ID | Issue | File(s) | Description |
+|----|-------|---------|-------------|
+| 44 | **No rate limiting on mrBlue.ts endpoints** | `server/routes/mrBlue.ts:821` | Only error message mentions rate limit but no actual middleware applied |
+| 45 | **parseInt without radix/NaN check** | `server/routes/mrBlue.ts:971,1002,1028,1755-1757` | `parseInt(id)` used without radix parameter or NaN validation |
+| 46 | **ComputerUseService actions not implemented** | `server/services/mrBlue/ComputerUseService.ts:305-322` | mouse_move, left_click, type, key actions return "Not implemented" errors |
+| 47 | **BrowserAutomationService custom automation not implemented** | `server/services/mrBlue/BrowserAutomationService.ts:297` | Throws "not yet implemented" error |
+| 48 | **Test coverage calculation is stub** | `server/services/mrBlue/AutoFixEngine.ts:654` | Returns hardcoded 50% - "Stub: Return 50% for now" |
+| 49 | **EvidenceCollector placeholder values** | `server/services/mrBlue/EvidenceCollector.ts:112,117,127,178,187` | passedCount hardcoded 10, duration "0s", screenshot URLs are placeholders |
+| 50 | **MemoryService update is placeholder** | `server/services/mrBlue/MemoryService.ts:505` | "LanceDB doesn't support easy updates, so this is a placeholder" |
+| 51 | **Multiple transcribe endpoints conflict** | `server/routes/mrBlue.ts` vs `server/routes/whisper.ts` | `/api/mrblue/transcribe` (Groq) vs `/api/whisper/transcribe` (OpenAI) - different APIs |
+| 52 | **MessengerService encryption uses default key** | `server/services/mrBlue/MessengerService.ts:78,89` | `'default-encryption-key-change-in-production'` fallback |
+
+### NEW MEDIUM PRIORITY ISSUES (P2)
+
+| ID | Issue | File(s) | Description |
+|----|-------|---------|-------------|
+| 53 | **Excessive 'any' types in services** | Multiple mrBlue services | 50+ `as any`, `: any`, `any[]` patterns reduce type safety |
+| 54 | **Missing WebSocket cleanup in hooks** | `client/src/hooks/useWebSocket.ts`, `useRealtimeVoice.ts` | WebSocket connections may not be properly cleaned up on unmount |
+| 55 | **Whisper file size limit inconsistency** | `server/routes/voice-first-routes.ts:27` | 25MB limit comment but actual enforcement unclear |
+| 56 | **LiveStream WebSocket skips on invalid host** | `client/src/components/LiveStreamChat.tsx:69-71` | Silently skips WebSocket without user notification |
+| 57 | **Console logging in production** | `client/src/components/mrBlue/MrBlueChat.tsx` | 20+ console.log statements would appear in production |
+| 58 | **learningCoordinator feedback analysis placeholder** | `server/services/mrBlue/learningCoordinator.ts:970` | "Placeholder - would analyze feedback sentiment over time" |
+| 59 | **No audio conversation session cleanup** | `server/services/mrblue/audioConversationService.ts` | Sessions stored in Map without TTL or cleanup mechanism |
+| 60 | **AI collaboration sessions never cleaned** | `server/services/mrblue/AICollaborationService.ts` | Sessions stored in Map indefinitely |
+
+### NEW LOW PRIORITY ISSUES (P3)
+
+| ID | Issue | File(s) | Description |
+|----|-------|---------|-------------|
+| 61 | **Duplicate elevenLabsService** | `server/services/mrblue/elevenLabsService.ts` vs others | Multiple ElevenLabs service implementations |
+| 62 | **API key warnings but proceeds** | Multiple services | Many services warn about missing API keys but continue with degraded functionality |
+| 63 | **WorkflowPatternTracker duplicate files** | `WorkflowPatternTracker.ts` vs `workflowPatternTracker.ts` | Same file, different casing |
+| 64 | **PreferenceExtractor duplicate files** | `PreferenceExtractor.ts` vs `preferenceExtractor.ts` | Same file, different casing |
+| 65 | **main.tsx WebSocket error suppression** | `client/src/main.tsx:7-45` | Aggressive suppression of WebSocket errors may hide real issues |
+
+---
+
+## Total Issues Found
+
+| Priority | Count | Description |
+|----------|-------|-------------|
+| P0 Critical | 8 | Architecture issues, duplicates, missing storage methods |
+| P1 High | 20 | Unimplemented features, stubs, race conditions |
+| P2 Medium | 18 | Missing validation, error handling, type safety |
+| P3 Low | 9 | Code cleanup, logging, minor improvements |
+| **TOTAL** | **55** | Comprehensive catalog of audio/vibe coding issues |
+
 ## Sidebar Analysis (Memory Feed)
 
 ### Duplicate Sidebar Components Found:
