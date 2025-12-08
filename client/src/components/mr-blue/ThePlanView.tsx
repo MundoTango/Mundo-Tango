@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { PlanProgressTracker } from './PlanProgressTracker';
 import { useQuery } from '@tanstack/react-query';
+import { useAuth } from '@/contexts/AuthContext';
 
 /**
  * THE PLAN VIEW - Roadmap visualization
@@ -95,7 +96,8 @@ interface RoadmapStats {
 }
 
 export function ThePlanView() {
-  const userId = 1; // TODO: Get from auth context
+  const { user } = useAuth();
+  const userId = user?.id || 0;
   const totalFeatures = PLAN_PHASES.reduce((sum, phase) => sum + phase.features, 0);
   const completedFeatures = PLAN_PHASES
     .filter(p => p.status === 'complete')

@@ -18,6 +18,7 @@ import { useVoiceInput } from "@/hooks/useVoiceInput";
 import { useOpenAIRealtime } from "@/hooks/useOpenAIRealtime";
 import { VibecodingRouter } from "@/lib/vibecodingRouter";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 import type { MrBlueMode } from "./ModeSwitcher";
 import { VibeCodingResult } from "./VibeCodingResult";
 import { PageAwarenessIndicator } from "./PageAwarenessIndicator";
@@ -56,6 +57,7 @@ interface MrBlueChatProps {
 }
 
 export function MrBlueChat({ enableVoice = false, enableVibecoding = false, mode = 'text' }: MrBlueChatProps = {}) {
+  const { user } = useAuth();
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -470,8 +472,8 @@ Provide natural, conversational assistance based on where the user is in the pla
             userIntent,
             domSnapshot, // Send DOM snapshot
           },
-          conversationId: currentConversationId, // ✅ FIX: Include conversation ID for persistence
-          userId: 1, // ✅ FIX: Include user ID (TODO: Get from auth context)
+          conversationId: currentConversationId,
+          userId: user?.id || 0,
           voiceEnabled: elevenLabsVoiceEnabled,
           selectedVoiceId: selectedElevenLabsVoice
         })

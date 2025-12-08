@@ -27,6 +27,7 @@ import {
 import { apiRequest, queryClient } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
 import { useLocation } from 'wouter';
+import { useAuth } from '@/contexts/AuthContext';
 
 /**
  * Plan Progress Tracker
@@ -179,7 +180,8 @@ function ValidationDialog({ page, userId, onValidate }: ValidationDialogProps) {
 export function PlanProgressTracker() {
   const [, navigate] = useLocation();
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const userId = 1; // TODO: Get from auth context
+  const { user } = useAuth();
+  const userId = user?.id || 0;
 
   const { data: roadmap, isLoading } = useQuery<RoadmapData>({
     queryKey: ['/api/mrblue/plan/roadmap', userId],
@@ -188,6 +190,7 @@ export function PlanProgressTracker() {
       if (!response.ok) throw new Error('Failed to fetch roadmap');
       return response.json();
     },
+    enabled: !!userId,
   });
 
   if (isLoading) {

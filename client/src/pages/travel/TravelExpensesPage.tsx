@@ -18,6 +18,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import { useAuth } from "@/contexts/AuthContext";
 
 const expenseSchema = z.object({
   description: z.string().min(1, "Description is required"),
@@ -32,6 +33,7 @@ export default function TravelExpensesPage() {
   const { id } = useParams();
   const [, navigate] = useLocation();
   const { toast } = useToast();
+  const { user } = useAuth();
   const [showAddExpense, setShowAddExpense] = useState(false);
 
   const { data: trip, isLoading: tripLoading } = useQuery({
@@ -113,8 +115,8 @@ export default function TravelExpensesPage() {
 
   // Calculate balances (who owes whom)
   const balances = [
-    { userId: 1, userName: "You", amount: 0 },
-    { userId: 2, userName: "Travel Partner", amount: totalExpenses / 2 },
+    { userId: user?.id || 0, userName: user?.firstName || 'You', amount: 0 },
+    { userId: 0, userName: "Travel Partner", amount: totalExpenses / 2 },
   ];
 
   if (tripLoading) {
