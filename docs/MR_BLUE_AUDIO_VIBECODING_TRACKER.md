@@ -22,12 +22,14 @@ This document tracks all work related to Mr Blue's audio conversation capabiliti
 |----|-------|--------|----------|-------|
 | 1 | Git merge conflict in mr-blue-service.ts | FIXED | P0 | Resolved lumaVideoService import |
 | 2 | Application failing to start | FIXED | P0 | Fixed import paths and exports |
-| 3 | Duplicate FeedLeftSidebar components | IDENTIFIED | P1 | Two versions exist - root and feed/ folder |
-| 4 | Empty ActiveUsersSidebar component | IDENTIFIED | P1 | Renders empty Card - should delete or populate |
+| 3 | Duplicate FeedLeftSidebar components | FIXED | P1 | Deleted root/FeedLeftSidebar.tsx orphan |
+| 4 | Empty ActiveUsersSidebar component | FIXED | P1 | Deleted empty ActiveUsersSidebar.tsx |
 | 5 | Audio conversation not wired end-to-end | IN PROGRESS | P1 | ElevenLabs integration partially built |
 | 6 | Voice input needs testing (50% text, 50% audio) | PENDING | P1 | Test suite needed |
 | 7 | Redis ECONNREFUSED 127.0.0.1:6379 | KNOWN | P2 | In-memory fallback working |
-| 8 | Page audit null constraint on page_name | KNOWN | P2 | Non-blocking |
+| 8 | Page audit null constraint on page_name | FIXED | P2 | Added required pageName, route, pageAgentId |
+| 9 | Null conversationId in MrBlueChat.tsx | FIXED | P0 | Added checks before refetchMessages() |
+| 10 | Auto-save conversation race condition | FIXED | P1 | Use response.id directly for new conversations |
 
 ## Sidebar Analysis (Memory Feed)
 
