@@ -136,15 +136,64 @@ This document tracks all work related to Mr Blue's audio conversation capabiliti
 
 ---
 
+## MB.MD v9.9.4 Recursive Research Phase 3 (2025-12-08)
+
+### CRITICAL SECURITY ISSUES (P0)
+
+| ID | Issue | File(s) | Description |
+|----|-------|---------|-------------|
+| 66 | **Duplicate /transcribe endpoints** | `server/routes/mrBlue.ts:164,1612` | TWO identical `/api/mrblue/transcribe` endpoints registered - second overwrites first |
+| 67 | **Mixed directory imports cause runtime errors** | 40+ route files | Some import `mrblue/`, others `mrBlue/` - Linux case-sensitive, Windows not - deployment failures |
+| 68 | **No request body validation on chat endpoint** | `server/routes/mrBlue.ts:336` | `message, context, conversationHistory` extracted from req.body with no Zod validation |
+| 69 | **dangerouslySetInnerHTML widespread** | 15+ client components | Used with DOMPurify but some have custom sanitization that could bypass XSS protection |
+
+### NEW HIGH PRIORITY ISSUES (P1)
+
+| ID | Issue | File(s) | Description |
+|----|-------|---------|-------------|
+| 70 | **9 useEffect hooks with missing dependencies** | `client/src/components/mrBlue/MrBlueChat.tsx:98-267` | Multiple useEffects using variables not in dependency arrays |
+| 71 | **No AbortController for fetch requests** | `client/src/components/mrBlue/*.tsx` | Fetch requests don't cancel on component unmount - memory leaks |
+| 72 | **Regex.exec() in while loops without lastIndex reset** | Multiple services | `while ((match = regex.exec(text)) !== null)` - can cause infinite loops with global regex |
+| 73 | **Audio format mismatch** | Hooks vs Services | Frontend sends `audio/webm`, Groq expects `audio/webm` but some backends try to process as wav |
+| 74 | **VibeCodingService session cache never expires** | `server/services/mrBlue/VibeCodingService.ts:89,495,885` | sessionCache Map grows indefinitely without TTL |
+| 75 | **AutonomousEngine rollback not implemented** | `server/services/mrBlue/AutonomousEngine.ts:298` | "TODO: Implement git rollback" - rollbackTask() doesn't actually rollback |
+| 76 | **Storage interface missing from VibeCodingService** | `VibeCodingService.ts:130` | Uses `storage.searchErrorPatterns()` but storage may not have this method |
+| 77 | **setTimeout in useEffect without cleanup** | `client/src/components/mrBlue/MrBlueChat.tsx:130` | setTimeout without clearTimeout in cleanup - timer continues after unmount |
+
+### NEW MEDIUM PRIORITY ISSUES (P2)
+
+| ID | Issue | File(s) | Description |
+|----|-------|---------|-------------|
+| 78 | **conversationContext has TTL but no max size** | `server/services/mrBlue/conversationContext.ts:52-58` | 2-hour TTL but no limit on number of contexts - memory exhaustion |
+| 79 | **File operations without path traversal protection** | Multiple services | `path.join(process.cwd(), change.filePath)` - no validation of filePath for `../` |
+| 80 | **MemoryService retention not enforced** | `server/services/mrBlue/MemoryService.ts:76` | memoryRetentionDays=365 defined but never used to delete old memories |
+| 81 | **WorkflowPatternTracker requires storage injection** | `server/services/mrBlue/WorkflowPatternTracker.ts:56` | Constructor requires IStorage but some usages may not provide it |
+| 82 | **PreferenceExtractor storage coupling** | `server/services/mrBlue/PreferenceExtractor.ts:170,189` | Uses storage.saveUserPreference/getUserPreferences - may not exist |
+| 83 | **VideoConferenceService room cleanup incomplete** | `server/services/mrBlue/VideoConferenceService.ts:174-186` | cleanupExpiredRooms() exists but never scheduled to run |
+| 84 | **gitCommitGenerator error swallowed** | `server/services/mrBlue/gitCommitGenerator.ts:263-271` | Falls back to simple message on error - no logging of root cause |
+| 85 | **No health check endpoint for Mr Blue** | `server/routes/mrBlue.ts` | No `/api/mrblue/health` endpoint for monitoring |
+
+### NEW LOW PRIORITY ISSUES (P3)
+
+| ID | Issue | File(s) | Description |
+|----|-------|---------|-------------|
+| 86 | **Excessive console.log in production services** | Multiple mrBlue services | 100+ console.log statements across services |
+| 87 | **Inconsistent error response formats** | `server/routes/mrBlue.ts` | Some use `{error: 'msg'}`, others `{message: 'msg'}`, others `{success: false, error: 'msg'}` |
+| 88 | **Circular dependency detection exists but unused** | `server/services/mrBlue/mbmdEngine.ts:472-483` | detectCircularDependencies() called but result only logged |
+| 89 | **Magic numbers in validators** | `server/services/mrBlue/validator.ts` | Hardcoded thresholds like 5 errors, 10000ms timeout without constants |
+| 90 | **Missing TypeScript strict null checks** | Multiple services | Many `| undefined` returns without proper null guards |
+
+---
+
 ## Total Issues Found
 
 | Priority | Count | Description |
 |----------|-------|-------------|
-| P0 Critical | 8 | Architecture issues, duplicates, missing storage methods |
-| P1 High | 20 | Unimplemented features, stubs, race conditions |
-| P2 Medium | 18 | Missing validation, error handling, type safety |
-| P3 Low | 9 | Code cleanup, logging, minor improvements |
-| **TOTAL** | **55** | Comprehensive catalog of audio/vibe coding issues |
+| P0 Critical | 12 | Architecture issues, duplicates, security, missing storage methods |
+| P1 High | 28 | Unimplemented features, stubs, race conditions, memory leaks |
+| P2 Medium | 26 | Missing validation, error handling, type safety, cleanup |
+| P3 Low | 14 | Code cleanup, logging, minor improvements |
+| **TOTAL** | **80** | Comprehensive catalog of audio/vibe coding issues |
 
 ## Sidebar Analysis (Memory Feed)
 
