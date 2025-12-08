@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
-import { Bot, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Bot, Loader2, CheckCircle2, AlertCircle, ChevronDown, ChevronRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import {
@@ -9,6 +9,11 @@ import {
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 interface Agent {
   id: string;
@@ -21,7 +26,7 @@ export function ActiveAgentsPanel() {
   const [location] = useLocation();
   const [agents, setAgents] = useState<Agent[]>([]);
   const [loading, setLoading] = useState(true);
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
   
   useEffect(() => {
     const fetchActiveAgents = async () => {
@@ -72,31 +77,39 @@ export function ActiveAgentsPanel() {
     <Collapsible
       open={isOpen}
       onOpenChange={setIsOpen}
-      className="border-b border-border"
       data-testid="active-agents-panel"
     >
-      <CollapsibleTrigger asChild>
-        <Button
-          variant="ghost"
-          className="w-full justify-between px-3 py-2 h-auto hover-elevate"
-          data-testid="toggle-agents-panel"
-        >
-          <div className="flex items-center gap-2">
-            <Bot className="w-4 h-4 text-primary" />
-            <span className="font-medium text-sm">Active Agents</span>
-            {loading ? (
-              <Loader2 className="w-3 h-3 animate-spin" />
-            ) : (
-              <Badge variant="secondary" className="text-xs" data-testid="agent-count">
-                {agents.length}
-              </Badge>
-            )}
-          </div>
-          <span className="text-xs text-muted-foreground">
-            {isOpen ? 'Hide' : 'Show'}
-          </span>
-        </Button>
-      </CollapsibleTrigger>
+      <div className="flex items-center gap-1">
+        <CollapsibleTrigger asChild>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-6 w-6 hover-elevate"
+                data-testid="toggle-agents-panel"
+              >
+                {loading ? (
+                  <Loader2 className="w-3 h-3 animate-spin" />
+                ) : (
+                  <div className="relative">
+                    <Bot className="w-4 h-4 text-primary" />
+                    <span className="absolute -top-1 -right-1 text-[9px] font-bold text-primary">
+                      {agents.length}
+                    </span>
+                  </div>
+                )}
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">
+              <p>{agents.length} agents monitoring this page</p>
+            </TooltipContent>
+          </Tooltip>
+        </CollapsibleTrigger>
+        {isOpen && (
+          <span className="text-xs text-muted-foreground">Active Agents</span>
+        )}
+      </div>
       
       <CollapsibleContent>
         <ScrollArea className="max-h-[200px]">

@@ -1,7 +1,7 @@
 import { ElevenLabsClient, ElevenLabs } from 'elevenlabs';
 import { v4 as uuidv4 } from 'uuid';
-import { mrBlueService } from './mrBlueService';
-import { storage } from '../../storage/storage';
+import { mrBlueService } from '../mr-blue-service';
+import { storage } from '../../storage';
 
 interface AudioSession {
   sessionId: string;
@@ -17,7 +17,7 @@ interface AudioSession {
   isActive: boolean;
 }
 
-class AudioConversationService {
+export class AudioConversationService {
   private client: ElevenLabsClient;
   private sessions: Map<string, AudioSession> = new Map();
 

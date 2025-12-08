@@ -120,6 +120,7 @@
     "dompurify": "^3.3.0",
     "drizzle-orm": "^0.44.7",
     "drizzle-zod": "^0.7.0",
+    "elevenlabs": "^1.59.0",
     "embla-carousel-react": "^8.6.0",
     "eventsource": "^4.0.0",
     "express": "^4.21.2",

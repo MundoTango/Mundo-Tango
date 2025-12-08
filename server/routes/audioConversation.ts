@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { ElevenLabsService } from '../services/mrblue/elevenLabsService';
 import { AudioConversationService } from '../services/mrblue/audioConversationService';
-import { requireAuth } from '../middleware/auth';
+import { authenticateToken } from '../middleware/auth';
 import { db } from '../db';
 import multer from 'multer';
 import logger from "../middleware/logger";
@@ -15,7 +15,7 @@ const audioConversationService = new AudioConversationService();
 /**
  * Start a new audio conversation session
  */
-router.post('/start', requireAuth, async (req, res) => {
+router.post('/start', authenticateToken, async (req, res) => {
   try {
     const userId = req.user!.id;
     const { context } = req.body;
@@ -50,7 +50,7 @@ router.post('/start', requireAuth, async (req, res) => {
 /**
  * Process audio input from user
  */
-router.post('/process-audio', requireAuth, upload.single('audio'), async (req, res) => {
+router.post('/process-audio', authenticateToken, upload.single('audio'), async (req, res) => {
   try {
     const userId = req.user!.id;
     const { sessionId, context } = req.body;
@@ -103,7 +103,7 @@ router.post('/process-audio', requireAuth, upload.single('audio'), async (req, r
 /**
  * Get conversation history
  */
-router.get('/history/:sessionId', requireAuth, async (req, res) => {
+router.get('/history/:sessionId', authenticateToken, async (req, res) => {
   try {
     const userId = req.user!.id;
     const { sessionId } = req.params;
@@ -125,7 +125,7 @@ router.get('/history/:sessionId', requireAuth, async (req, res) => {
 /**
  * End audio conversation session
  */
-router.post('/end/:sessionId', requireAuth, async (req, res) => {
+router.post('/end/:sessionId', authenticateToken, async (req, res) => {
   try {
     const userId = req.user!.id;
     const { sessionId } = req.params;
@@ -147,7 +147,7 @@ router.post('/end/:sessionId', requireAuth, async (req, res) => {
 /**
  * Track user click during audio conversation
  */
-router.post('/track-click', requireAuth, async (req, res) => {
+router.post('/track-click', authenticateToken, async (req, res) => {
   try {
     const userId = req.user!.id;
     const { sessionId, element, page, timestamp } = req.body;
