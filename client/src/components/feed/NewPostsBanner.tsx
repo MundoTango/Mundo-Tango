@@ -55,13 +55,18 @@ export function NewPostsBanner({ onLoadNewPosts }: NewPostsBannerProps) {
             }
           };
 
-          ws.onerror = (error) => {
-            console.error('[NewPostsBanner] WebSocket error:', error);
+          ws.onerror = () => {
+            // Expected for unauthenticated users - silent handling
           };
 
-          ws.onclose = () => {
-            console.log('[NewPostsBanner] WebSocket disconnected');
-            // Attempt reconnection
+          ws.onclose = (event) => {
+            // 4001 = custom auth required code, 1006 = abnormal closure (often auth failure)
+            const isAuthFailure = event.code === 4001 || event.code === 1006;
+            if (isAuthFailure) {
+              // Don't retry for auth failures - expected for logged-out users
+              return;
+            }
+            // Attempt reconnection for other disconnects
             if (reconnectAttempts < maxReconnectAttempts) {
               reconnectAttempts++;
               setTimeout(setupWebSocket, 3000);

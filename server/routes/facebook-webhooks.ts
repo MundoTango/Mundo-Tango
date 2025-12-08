@@ -21,10 +21,15 @@ import { FacebookMessengerService } from '../services/facebook/FacebookMessenger
 
 const router = Router();
 
-// Environment variables
+// Environment variables with validation - A2-3 Fix (MB.MD v9.9.4)
 const VERIFY_TOKEN = process.env.FACEBOOK_WEBHOOK_VERIFY_TOKEN || 'mundo_tango_webhook_2025';
-const APP_SECRET = process.env.FACEBOOK_APP_SECRET || '';
+const APP_SECRET = process.env.FACEBOOK_APP_SECRET;
 const PAGE_ID = process.env.FACEBOOK_PAGE_ID;
+
+// Validate Facebook App Secret at startup
+if (!APP_SECRET || APP_SECRET.length < 10) {
+  console.warn('⚠️  FACEBOOK_APP_SECRET not configured - webhook signature verification disabled');
+}
 
 /**
  * GET /webhooks/facebook - Webhook Verification

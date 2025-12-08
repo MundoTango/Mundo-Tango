@@ -3,7 +3,14 @@ import { db } from '@shared/db';
 import { emailQueue, emailPreferences, emailLogs } from '@shared/schema';
 import { eq, and, gte, sql } from 'drizzle-orm';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// API Key Validation - A1-7 Fix (MB.MD v9.9.4)
+const RESEND_API_KEY = process.env.RESEND_API_KEY;
+const isResendConfigured = Boolean(RESEND_API_KEY && RESEND_API_KEY.length > 10);
+const resend = isResendConfigured ? new Resend(RESEND_API_KEY) : null;
+
+if (!isResendConfigured) {
+  console.warn('⚠️  RESEND_API_KEY not configured - email sending will be disabled');
+}
 
 export class EmailService {
   // Check if user can receive emails (rate limiting)
@@ -80,7 +87,15 @@ export class EmailService {
           .set({ status: 'sending', attempts: email.attempts + 1 })
           .where(eq(emailQueue.id, email.id));
         
-        // Send via Resend
+        // Send via Resend (skip if not configured)
+        if (!resend) {
+          console.log(`[Email] Skipping email ${email.id} - Resend not configured`);
+          await db.update(emailQueue)
+            .set({ status: 'skipped', errorMessage: 'Resend API not configured' })
+            .where(eq(emailQueue.id, email.id));
+          continue;
+        }
+        
         const html = this.renderTemplate(email.templateName, email.templateData);
         
         await resend.emails.send({
