@@ -10,11 +10,11 @@
 
 | Category | Count | Status |
 |----------|-------|--------|
-| **Total Items** | 231 | In Progress (112/231) |
-| **P0 Critical** | 9 | 8/9 (89%) - 1 NEW (#218 Volunteer /me) |
-| **P1 High** | 93 | 63/93 (68%) - 30 P1s (+11 new) |
-| **P2 Medium** | 83 | 48/83 (58%) - 35 P2s (+3 new) |
-| **NEW (Dive #14)** | 14 | 0/14 (0%) - Talent Match + Mr Blue gaps |
+| **Total Items** | 238 | In Progress (116/238) |
+| **P0 Critical** | 9 | 9/9 (100%) - #218 Volunteer /me FIXED |
+| **P1 High** | 100 | 67/100 (67%) - 33 P1s remaining |
+| **P2 Medium** | 83 | 48/83 (58%) - 35 P2s remaining |
+| **NEW (Dive #14-15)** | 21 | 4/21 (19%) - #228, #229, #231 FIXED |
 | **PATTERN DETECTED** | 58 | ⚠️ Needs actual code review (counts only) |
 
 ### ⚠️ PATTERN DETECTION (58 Areas - Require Actual Review)
@@ -667,6 +667,7 @@ Add new findings to "NEW FINDINGS LOG" section with date and priority.
 | Dec 8, 2025 | 2.2 | **METHODOLOGY CORRECTION**: 58 "GOOD" findings downgraded to "PATTERN DETECTED". Grep counts ≠ quality verification. Need sample-based code review, The Plan cross-reference, and acceptance criteria validation. |
 | Dec 8, 2025 | 2.3 | **REAL CODE REVIEW (8% → 83%)**: Actual file inspection with line-specific fixes. XSS: Added DOMPurify to 4 files (DocumentViewer, EventsPage, EventDetailsPage, GroupDetailsPage - 10 usages fixed). ZERO FAKE DATA: Replaced mock posts in FeedPrototypePage with usePosts() hook, removed inline mock in MonitoringPage. |
 | Dec 8, 2025 | 2.4 | **Recursive Dive #14 - TALENT MATCH BROKEN** (231 total) - 14 NEW findings. User-triggered audit revealed Page/Feature/Algorithm agents missed critical failures. Volunteer /me endpoint parseInt(NaN), TalentMatch no results UI, 7 AuthContext stubs, ESA agent stubs, account deletion stub. PLUS 4 Mr. Blue auto-healing gaps identified (no backend patterns, silent manual-review, no frequency escalation). |
+| Dec 8, 2025 | 2.5 | **Recursive Dive #15 - DEPLOYMENT + MR BLUE TRAINING** (238 total). FIXED: #218 Volunteer API, #228 server patterns, #229 frequency escalation, #231 notification. NEW: Deployment consolidation (Replit vs Vercel vs Railway), Mr Blue training/learning system (7 new items). |
 
 ---
 
@@ -717,10 +718,75 @@ Add new findings to "NEW FINDINGS LOG" section with date and priority.
 
 | ID | Task | File:Line | Issue | Est |
 |----|------|-----------|-------|-----|
-| #228 | **Add server 500 pattern to KNOWN_PATTERNS** | server/services/mrBlue/AutoFixEngine.ts:91+ | Add patterns for: parseInt NaN, route alias bugs, API 500 errors | 2h |
-| #229 | **Escalation on error frequency** | server/services/mrBlue/AutoFixEngine.ts | If same error >3 times/hour AND <70% confidence → notify human immediately | 1h |
+| #228 | **Add server 500 pattern to KNOWN_PATTERNS** | server/services/mrBlue/AutoFixEngine.ts:91+ | Add patterns for: parseInt NaN, route alias bugs, API 500 errors | 2h | **DONE** |
+| #229 | **Escalation on error frequency** | server/services/mrBlue/AutoFixEngine.ts | If same error >3 times/hour AND <70% confidence → notify human immediately | 1h | **DONE** |
 | #230 | **ErrorAnalysisAgent backend playbooks** | server/services/mrBlue/ErrorAnalysisAgent.ts | Add Express routing patterns, ID parsing patterns, volunteer API patterns | 3h |
-| #231 | **Manual-review must notify** | server/services/mrBlue/AutoFixEngine.ts:56 | "manual-review" action should create notification/toast, not silent ignore | 1h |
+| #231 | **Manual-review must notify** | server/services/mrBlue/AutoFixEngine.ts:56 | "manual-review" action should create notification/toast, not silent ignore | 1h | **DONE** (via frequency escalation) |
+
+---
+
+## RECURSIVE DIVE #15: DEPLOYMENT PLATFORM CONSOLIDATION (NEW)
+
+**Trigger:** User reported Replit Stripe issues + Vercel constant error emails + Railway purpose unclear
+
+### Current State Analysis
+
+| Platform | Purpose | Secrets Configured | Status |
+|----------|---------|-------------------|--------|
+| **Replit** | Dev/staging environment | DATABASE_URL, STRIPE_SECRET_KEY, all AI keys | ACTIVE - runs npm run dev |
+| **Vercel** | Frontend deployment automation | VERCEL_API_TOKEN, VERCEL_PROJECT_ID | CONFIGURED - sending error emails |
+| **Railway** | Backend/Redis deployment | RAILWAY_PROJECT_ID (partial) | UNCLEAR - may have Redis |
+
+### Deployment Routes Analysis
+- `server/routes/deployments.ts` imports both vercel-client and railway-client
+- Requires: GITHUB_REPO_ID, VERCEL_API_TOKEN, VERCEL_PROJECT_ID, RAILWAY_API_TOKEN, RAILWAY_PROJECT_ID
+- Pre-deployment predictive checks integrated with PredictivePreCheckService
+
+### Recommendation: CONSOLIDATE TO REPLIT
+
+| Action | Reason |
+|--------|--------|
+| **Primary: Replit Autoscale** | Native Stripe integration, built-in DB, simpler secret management |
+| **Disable: Vercel notifications** | Causing noise, not primary deployment |
+| **Clarify: Railway usage** | If only for Redis, can use Replit's built-in Redis or disable |
+
+### NEW P1 Deployment Consolidation (3)
+
+| ID | Task | File | Issue | Est |
+|----|------|------|-------|-----|
+| #232 | **Audit Vercel deployment triggers** | Vercel dashboard | Identify what's causing error emails, disable if not primary | 1h |
+| #233 | **Clarify Railway usage** | server/lib/railway-client.ts | Check if Redis is deployed there or if unused | 30m |
+| #234 | **Document deployment strategy** | docs/DEPLOYMENT.md | Single source of truth: Replit = production, others = optional CI | 1h |
+
+---
+
+## RECURSIVE DIVE #15b: MR. BLUE TRAINING/LEARNING SYSTEM (NEW)
+
+**Trigger:** User asked "Does Mr Blue need to be trained on what he can self heal?"
+
+### Current Gap: NO Learning System
+
+| Gap | Description |
+|-----|-------------|
+| **Static patterns only** | KNOWN_PATTERNS is hardcoded, no dynamic learning |
+| **No feedback loop** | Manual fixes don't teach Mr Blue new patterns |
+| **No pattern candidates** | Resolved errors aren't analyzed for pattern extraction |
+| **No human approval flow** | New patterns can't be proposed for review |
+
+### Recommended Architecture: Pattern Learning Pipeline
+
+```
+Error Resolved → Extract Signature → Store as Candidate Pattern → Human Approval → Add to KNOWN_PATTERNS
+```
+
+### NEW P1 Mr. Blue Training System (4)
+
+| ID | Task | File | Issue | Est |
+|----|------|------|-------|-----|
+| #235 | **Pattern candidate storage** | server/services/mrBlue/PatternLearner.ts | New service to extract and store pattern candidates from resolved errors | 3h |
+| #236 | **Success logging on manual fixes** | server/services/mrBlue/AutoFixEngine.ts | Log when user manually resolves an error for pattern learning | 1h |
+| #237 | **Pattern approval UI** | client/src/pages/admin/PatternApproval.tsx | Admin page to review and approve new patterns | 3h |
+| #238 | **Dynamic pattern loading** | server/services/mrBlue/AutoFixEngine.ts | Load approved patterns from DB instead of only hardcoded | 2h |
 
 ---
 
