@@ -22,6 +22,7 @@ import { z } from "zod";
 import { PostingPermissionService } from "../services/PostingPermissionService";
 import multer from "multer";
 import { v2 as cloudinary } from "cloudinary";
+import logger from "../middleware/logger";
 
 const router = Router();
 
@@ -216,6 +217,7 @@ const sampleEvents = [
 // GET /api/events - List events with filters
 router.get("/", optionalAuth, async (req: AuthRequest, res: Response) => {
   try {
+    logger.info("[Events] Fetching events list", { query: req.query });
     const {
       city,
       country,
@@ -296,9 +298,10 @@ router.get("/", optionalAuth, async (req: AuthRequest, res: Response) => {
       return res.json(sampleEvents);
     }
 
+    logger.debug("[Events] Events fetched successfully", { count: results.length });
     res.json(results);
   } catch (error) {
-    console.error("[Events] Error fetching events:", error);
+    logger.error("[Events] Error fetching events", { error: error instanceof Error ? error.message : error });
     res.status(500).json({ message: "Failed to fetch events" });
   }
 });
@@ -310,6 +313,7 @@ router.get("/", optionalAuth, async (req: AuthRequest, res: Response) => {
 // GET /api/events/smart - Smart filtering based on user's city + followed groups + RSVP'd events
 router.get("/smart", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
+    logger.info("[Events] Smart event filtering", { userId: req.user!.id });
     const userId = req.user!.id;
     const { limit = "20", offset = "0" } = req.query;
 
@@ -406,6 +410,7 @@ router.get("/smart", authenticateToken, async (req: AuthRequest, res: Response) 
       .limit(parseInt(limit as string))
       .offset(parseInt(offset as string));
 
+    logger.debug("[Events] Smart events fetched", { count: results.length, userId });
     res.json({
       events: results,
       filters: {
@@ -415,7 +420,7 @@ router.get("/smart", authenticateToken, async (req: AuthRequest, res: Response) 
       }
     });
   } catch (error) {
-    console.error("[Events] Error fetching smart events:", error);
+    logger.error("[Events] Error fetching smart events", { error: error instanceof Error ? error.message : error });
     res.status(500).json({ message: "Failed to fetch personalized events" });
   }
 });
@@ -427,6 +432,7 @@ router.get("/smart", authenticateToken, async (req: AuthRequest, res: Response) 
 // GET /api/events/search - Advanced search with 12 filters
 router.get("/search", optionalAuth, async (req: AuthRequest, res: Response) => {
   try {
+    logger.info("[Events] Advanced search", { query: req.query });
     const {
       q,
       city,
@@ -615,6 +621,7 @@ router.get("/search", optionalAuth, async (req: AuthRequest, res: Response) => {
       .limit(parseInt(limit as string))
       .offset(offset);
 
+    logger.debug("[Events] Search completed", { resultsCount: results.length, total });
     res.json({
       events: results,
       pagination: {
@@ -625,7 +632,7 @@ router.get("/search", optionalAuth, async (req: AuthRequest, res: Response) => {
       }
     });
   } catch (error) {
-    console.error("[Events] Error in advanced search:", error);
+    logger.error("[Events] Error in advanced search", { error: error instanceof Error ? error.message : error });
     res.status(500).json({ message: "Failed to search events" });
   }
 });
@@ -670,9 +677,10 @@ router.get("/calendar", async (req: Request, res: Response) => {
 
     const results = await query.orderBy(asc(events.startDate));
 
+    logger.debug("[Events] Calendar events fetched", { count: results.length });
     res.json(results);
   } catch (error) {
-    console.error("[Events] Error fetching calendar events:", error);
+    logger.error("[Events] Error fetching calendar events", { error: error instanceof Error ? error.message : error });
     res.status(500).json({ message: "Failed to fetch calendar events" });
   }
 });

@@ -3,6 +3,7 @@ import { db } from "../db";
 import { socialMessages, users, groups, groupMembers } from "@shared/schema";
 import { eq, and, or, desc, sql, inArray } from "drizzle-orm";
 import { z } from "zod";
+import logger from "../middleware/logger";
 
 const sendMessageSchema = z.object({
   recipientId: z.number().optional(),
@@ -17,6 +18,7 @@ export function registerMessagingRoutes(app: Express) {
     if (!req.user) return res.status(401).send("Unauthorized");
 
     try {
+      logger.info("[Messaging] Fetching conversations", { userId: req.user.id });
       // Get direct message conversations
       const directMessages = await db
         .select({
@@ -60,9 +62,10 @@ export function registerMessagingRoutes(app: Express) {
         (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
       );
 
+      logger.debug("[Messaging] Conversations fetched", { count: conversations.length });
       res.json(conversations);
     } catch (error: any) {
-      console.error("Error fetching conversations:", error);
+      logger.error("[Messaging] Error fetching conversations", { error: error.message });
       res.status(500).send("Failed to fetch conversations");
     }
   });
@@ -102,9 +105,10 @@ export function registerMessagingRoutes(app: Express) {
         )
         .orderBy(socialMessages.createdAt);
 
+      logger.debug("[Messaging] Direct messages fetched", { count: messages.length });
       res.json(messages);
     } catch (error: any) {
-      console.error("Error fetching direct messages:", error);
+      logger.error("[Messaging] Error fetching direct messages", { error: error.message });
       res.status(500).send("Failed to fetch messages");
     }
   });
@@ -168,13 +172,14 @@ export function registerMessagingRoutes(app: Express) {
         .where(eq(socialMessages.groupId, groupId))
         .orderBy(socialMessages.createdAt);
 
+      logger.debug("[Messaging] Group messages fetched", { groupId, messageCount: messages.length });
       res.json({
         group,
         members,
         messages,
       });
     } catch (error: any) {
-      console.error("Error fetching group messages:", error);
+      logger.error("[Messaging] Error fetching group messages", { error: error.message });
       res.status(500).send("Failed to fetch group messages");
     }
   });
@@ -195,6 +200,7 @@ export function registerMessagingRoutes(app: Express) {
     }
 
     try {
+      logger.info("[Messaging] Sending message", { senderId: req.user.id, recipientId, groupId });
       const [message] = await db
         .insert(socialMessages)
         .values({
@@ -207,9 +213,10 @@ export function registerMessagingRoutes(app: Express) {
         })
         .returning();
 
+      logger.debug("[Messaging] Message sent", { messageId: message.id });
       res.json(message);
     } catch (error: any) {
-      console.error("Error sending message:", error);
+      logger.error("[Messaging] Error sending message", { error: error.message });
       res.status(500).send("Failed to send message");
     }
   });
@@ -232,9 +239,10 @@ export function registerMessagingRoutes(app: Express) {
           )
         );
 
+      logger.debug("[Messaging] Message marked as read", { messageId });
       res.json({ success: true });
     } catch (error: any) {
-      console.error("Error marking message as read:", error);
+      logger.error("[Messaging] Error marking message as read", { error: error.message });
       res.status(500).send("Failed to mark message as read");
     }
   });
@@ -256,9 +264,10 @@ export function registerMessagingRoutes(app: Express) {
           )
         );
 
+      logger.info("[Messaging] Message deleted", { messageId });
       res.json({ success: true });
     } catch (error: any) {
-      console.error("Error deleting message:", error);
+      logger.error("[Messaging] Error deleting message", { error: error.message });
       res.status(500).send("Failed to delete message");
     }
   });

@@ -13,6 +13,7 @@ import {
   type AuthRequest,
 } from "../middleware/auth";
 import { insertUserSchema } from "@shared/schema";
+import logger from "../middleware/logger";
 
 const router = Router();
 
@@ -60,10 +61,11 @@ const changePasswordSchema = z.object({
 router.get("/check-username/:username", async (req: Request, res: Response) => {
   try {
     const { username } = req.params;
+    logger.debug("[Auth] Checking username availability", { username });
     const existingUser = await storage.getUserByUsername(username);
     res.json({ available: !existingUser });
   } catch (error) {
-    console.error("Username check error:", error);
+    logger.error("[Auth] Username check error", { error: error instanceof Error ? error.message : error });
     res.status(500).json({ message: "Internal server error" });
   }
 });
@@ -71,16 +73,18 @@ router.get("/check-username/:username", async (req: Request, res: Response) => {
 router.get("/check-email/:email", async (req: Request, res: Response) => {
   try {
     const { email } = req.params;
+    logger.debug("[Auth] Checking email availability", { email: decodeURIComponent(email) });
     const existingUser = await storage.getUserByEmail(decodeURIComponent(email));
     res.json({ available: !existingUser });
   } catch (error) {
-    console.error("Email check error:", error);
+    logger.error("[Auth] Email check error", { error: error instanceof Error ? error.message : error });
     res.status(500).json({ message: "Internal server error" });
   }
 });
 
 router.post("/register", async (req: Request, res: Response) => {
   try {
+    logger.info("[Auth] Registration attempt", { email: req.body.email, username: req.body.username });
     const validatedData = registerSchema.parse(req.body);
 
     const existingEmail = await storage.getUserByEmail(validatedData.email);
@@ -140,6 +144,7 @@ router.post("/register", async (req: Request, res: Response) => {
       formStatus: user.formStatus,
     };
 
+    logger.info("[Auth] Registration successful", { userId: user.id, email: user.email });
     res.status(201).json({
       message: "Registration successful",
       user: userResponse,
@@ -153,13 +158,14 @@ router.post("/register", async (req: Request, res: Response) => {
         errors: error.errors 
       });
     }
-    console.error("Registration error:", error);
+    logger.error("[Auth] Registration error", { error: error instanceof Error ? error.message : error });
     res.status(500).json({ message: "Internal server error" });
   }
 });
 
 router.post("/login", async (req: Request, res: Response) => {
   try {
+    logger.info("[Auth] Login attempt", { email: req.body.email });
     const { email, password, twoFactorCode } = loginSchema.parse(req.body);
 
     const user = await storage.getUserByEmail(email);
@@ -252,6 +258,7 @@ router.post("/login", async (req: Request, res: Response) => {
       path: "/",
     });
 
+    logger.info("[Auth] Login successful", { userId: user.id, email: user.email });
     res.json({
       message: "Login successful",
       accessToken,
@@ -264,13 +271,14 @@ router.post("/login", async (req: Request, res: Response) => {
         errors: error.errors 
       });
     }
-    console.error("Login error:", error);
+    logger.error("[Auth] Login error", { error: error instanceof Error ? error.message : error });
     res.status(500).json({ message: "Internal server error" });
   }
 });
 
 router.post("/logout", async (req: Request, res: Response) => {
   try {
+    logger.info("[Auth] Logout request");
     const refreshToken = req.cookies.refreshToken;
     
     if (refreshToken) {
@@ -284,9 +292,10 @@ router.post("/logout", async (req: Request, res: Response) => {
       path: "/",
     });
 
+    logger.debug("[Auth] Logout successful");
     res.json({ message: "Logout successful" });
   } catch (error) {
-    console.error("Logout error:", error);
+    logger.error("[Auth] Logout error", { error: error instanceof Error ? error.message : error });
     res.status(500).json({ message: "Internal server error" });
   }
 });
@@ -333,17 +342,19 @@ router.post("/refresh", async (req: Request, res: Response) => {
       path: "/",
     });
 
+    logger.debug("[Auth] Token refresh successful");
     res.json({
       accessToken: newAccessToken,
     });
   } catch (error) {
-    console.error("Refresh token error:", error);
+    logger.error("[Auth] Refresh token error", { error: error instanceof Error ? error.message : error });
     res.status(401).json({ message: "Invalid refresh token" });
   }
 });
 
 router.post("/verify-email", async (req: Request, res: Response) => {
   try {
+    logger.info("[Auth] Email verification attempt");
     const { token } = verifyEmailSchema.parse(req.body);
 
     const verificationToken = await storage.getEmailVerificationToken(token);
@@ -357,6 +368,7 @@ router.post("/verify-email", async (req: Request, res: Response) => {
 
     await storage.deleteEmailVerificationToken(token);
 
+    logger.info("[Auth] Email verified successfully", { userId: verificationToken.userId });
     res.json({ message: "Email verified successfully" });
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -365,13 +377,14 @@ router.post("/verify-email", async (req: Request, res: Response) => {
         errors: error.errors 
       });
     }
-    console.error("Email verification error:", error);
+    logger.error("[Auth] Email verification error", { error: error instanceof Error ? error.message : error });
     res.status(500).json({ message: "Internal server error" });
   }
 });
 
 router.post("/forgot-password", async (req: Request, res: Response) => {
   try {
+    logger.info("[Auth] Forgot password request", { email: req.body.email });
     const { email } = forgotPasswordSchema.parse(req.body);
 
     const user = await storage.getUserByEmail(email);
@@ -392,6 +405,7 @@ router.post("/forgot-password", async (req: Request, res: Response) => {
       expiresAt,
     });
 
+    logger.debug("[Auth] Password reset token created", { userId: user.id });
     res.json({ 
       message: "If the email exists, a password reset link has been sent",
       resetToken,
@@ -403,13 +417,14 @@ router.post("/forgot-password", async (req: Request, res: Response) => {
         errors: error.errors 
       });
     }
-    console.error("Forgot password error:", error);
+    logger.error("[Auth] Forgot password error", { error: error instanceof Error ? error.message : error });
     res.status(500).json({ message: "Internal server error" });
   }
 });
 
 router.post("/reset-password", async (req: Request, res: Response) => {
   try {
+    logger.info("[Auth] Password reset attempt");
     const { token, newPassword } = resetPasswordSchema.parse(req.body);
 
     const resetToken = await storage.getPasswordResetToken(token);
@@ -423,6 +438,7 @@ router.post("/reset-password", async (req: Request, res: Response) => {
     await storage.deletePasswordResetToken(token);
     await storage.deleteUserRefreshTokens(resetToken.userId);
 
+    logger.info("[Auth] Password reset successful", { userId: resetToken.userId });
     res.json({ message: "Password reset successful" });
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -431,7 +447,7 @@ router.post("/reset-password", async (req: Request, res: Response) => {
         errors: error.errors 
       });
     }
-    console.error("Reset password error:", error);
+    logger.error("[Auth] Reset password error", { error: error instanceof Error ? error.message : error });
     res.status(500).json({ message: "Internal server error" });
   }
 });
@@ -456,7 +472,7 @@ router.get("/me", authenticateToken, async (req: AuthRequest, res: Response) => 
 
     res.json({ user: userResponse });
   } catch (error) {
-    console.error("Get current user error:", error);
+    logger.error("[Auth] Get current user error", { error: error instanceof Error ? error.message : error });
     res.status(500).json({ message: "Internal server error" });
   }
 });
@@ -466,6 +482,8 @@ router.post("/2fa/enable", authenticateToken, async (req: AuthRequest, res: Resp
     if (!req.user) {
       return res.status(401).json({ message: "Not authenticated" });
     }
+
+    logger.info("[Auth] 2FA enable request", { userId: req.user.id });
 
     if (req.user.twoFactorEnabled) {
       return res.status(400).json({ message: "2FA is already enabled" });
@@ -488,6 +506,7 @@ router.post("/2fa/enable", authenticateToken, async (req: AuthRequest, res: Resp
 
     const qrCodeUrl = await QRCode.toDataURL(secret.otpauth_url!);
 
+    logger.debug("[Auth] 2FA setup initiated", { userId: req.user.id });
     res.json({
       message: "2FA setup initiated",
       secret: secret.base32,
@@ -495,7 +514,7 @@ router.post("/2fa/enable", authenticateToken, async (req: AuthRequest, res: Resp
       backupCodes,
     });
   } catch (error) {
-    console.error("Enable 2FA error:", error);
+    logger.error("[Auth] Enable 2FA error", { error: error instanceof Error ? error.message : error });
     res.status(500).json({ message: "Internal server error" });
   }
 });
@@ -528,6 +547,7 @@ router.post("/2fa/verify", authenticateToken, async (req: AuthRequest, res: Resp
       twoFactorEnabled: true,
     });
 
+    logger.info("[Auth] 2FA enabled successfully", { userId: req.user.id });
     res.json({ 
       message: "2FA enabled successfully",
       backupCodes: twoFactorSecret.backupCodes 
@@ -539,7 +559,7 @@ router.post("/2fa/verify", authenticateToken, async (req: AuthRequest, res: Resp
         errors: error.errors 
       });
     }
-    console.error("Verify 2FA error:", error);
+    logger.error("[Auth] Verify 2FA error", { error: error instanceof Error ? error.message : error });
     res.status(500).json({ message: "Internal server error" });
   }
 });
@@ -580,6 +600,7 @@ router.post("/2fa/disable", authenticateToken, async (req: AuthRequest, res: Res
 
     await storage.deleteTwoFactorSecret(req.user.id);
 
+    logger.info("[Auth] 2FA disabled successfully", { userId: req.user.id });
     res.json({ message: "2FA disabled successfully" });
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -588,7 +609,7 @@ router.post("/2fa/disable", authenticateToken, async (req: AuthRequest, res: Res
         errors: error.errors 
       });
     }
-    console.error("Disable 2FA error:", error);
+    logger.error("[Auth] Disable 2FA error", { error: error instanceof Error ? error.message : error });
     res.status(500).json({ message: "Internal server error" });
   }
 });
@@ -614,6 +635,7 @@ router.post("/change-password", authenticateToken, async (req: AuthRequest, res:
     const hashedPassword = await bcrypt.hash(newPassword, BCRYPT_ROUNDS);
     await storage.updateUser(req.user.id, { password: hashedPassword });
 
+    logger.info("[Auth] Password changed successfully", { userId: req.user.id });
     res.json({ message: "Password changed successfully" });
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -622,7 +644,7 @@ router.post("/change-password", authenticateToken, async (req: AuthRequest, res:
         errors: error.errors 
       });
     }
-    console.error("Change password error:", error);
+    logger.error("[Auth] Change password error", { error: error instanceof Error ? error.message : error });
     res.status(500).json({ message: "Internal server error" });
   }
 });

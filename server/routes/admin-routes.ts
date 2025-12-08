@@ -7,7 +7,8 @@ import { Router, Response } from "express";
 import { db } from "@shared/db";
 import { 
   users, posts, postReports, events, userReports, roleRequests, housingListings,
-  moderationQueue, moderationActions, flaggedContent, postComments
+  moderationQueue, moderationActions, flaggedContent, postComments,
+  roleInvitations, talentMatches
 } from "@shared/schema";
 import { eq, desc, like, or, and, gte, count, sql, inArray } from "drizzle-orm";
 import { authenticateToken, AuthRequest } from "../middleware/auth";
@@ -312,6 +313,124 @@ router.delete("/users/:userId", authenticateToken, requireAdmin, async (req, res
     res.json({ success: true, userId, action });
   } catch (error: any) {
     console.error("Error deleting user:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * GET /api/admin/invitations
+ * Get all role invitations with pagination
+ */
+router.get("/invitations", authenticateToken, requireAdmin, async (req, res: Response) => {
+  try {
+    const { status = "" } = req.query;
+
+    let query = db.select({
+      id: roleInvitations.id,
+      inviterId: roleInvitations.inviterId,
+      inviteeId: roleInvitations.inviteeId,
+      role: roleInvitations.role,
+      status: roleInvitations.status,
+      createdAt: roleInvitations.createdAt,
+    })
+    .from(roleInvitations)
+    .$dynamic();
+
+    if (status && typeof status === "string") {
+      query = query.where(eq(roleInvitations.status, status));
+    }
+
+    const results = await query.orderBy(desc(roleInvitations.createdAt)).limit(100);
+
+    // Fetch inviter and invitee details
+    const inviterIds = results.map(r => r.inviterId).filter(Boolean) as number[];
+    const inviteeIds = results.map(r => r.inviteeId).filter(Boolean) as number[];
+    const allUserIds = [...new Set([...inviterIds, ...inviteeIds])];
+
+    let userMap: Record<number, any> = {};
+    if (allUserIds.length > 0) {
+      const userDetails = await db.select({
+        id: users.id,
+        name: users.name,
+        email: users.email,
+        displayName: users.displayName,
+        profileImage: users.profileImage,
+      })
+      .from(users)
+      .where(inArray(users.id, allUserIds));
+
+      userMap = Object.fromEntries(userDetails.map(u => [u.id, u]));
+    }
+
+    const enrichedResults = results.map(inv => ({
+      ...inv,
+      inviter: inv.inviterId ? userMap[inv.inviterId] : null,
+      invitee: inv.inviteeId ? userMap[inv.inviteeId] : null,
+    }));
+
+    res.json(enrichedResults);
+  } catch (error: any) {
+    console.error("Error fetching invitations:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * GET /api/admin/talent-matches
+ * Get all talent matches for admin review
+ */
+router.get("/talent-matches", authenticateToken, requireAdmin, async (req, res: Response) => {
+  try {
+    const { status = "" } = req.query;
+
+    let query = db.select({
+      id: talentMatches.id,
+      seekerId: talentMatches.seekerId,
+      talentId: talentMatches.talentId,
+      matchScore: talentMatches.matchScore,
+      matchReason: talentMatches.matchReason,
+      status: talentMatches.status,
+      createdAt: talentMatches.createdAt,
+    })
+    .from(talentMatches)
+    .$dynamic();
+
+    if (status && typeof status === "string") {
+      query = query.where(eq(talentMatches.status, status));
+    }
+
+    const results = await query.orderBy(desc(talentMatches.matchScore)).limit(100);
+
+    // Fetch talent user details
+    const talentIds = results.map(r => r.talentId).filter(Boolean) as number[];
+    const seekerIds = results.map(r => r.seekerId).filter(Boolean) as number[];
+    const allUserIds = [...new Set([...talentIds, ...seekerIds])];
+
+    let userMap: Record<number, any> = {};
+    if (allUserIds.length > 0) {
+      const userDetails = await db.select({
+        id: users.id,
+        name: users.name,
+        email: users.email,
+        displayName: users.displayName,
+        profileImage: users.profileImage,
+        role: users.role,
+      })
+      .from(users)
+      .where(inArray(users.id, allUserIds));
+
+      userMap = Object.fromEntries(userDetails.map(u => [u.id, u]));
+    }
+
+    const enrichedResults = results.map(match => ({
+      ...match,
+      talent: match.talentId ? userMap[match.talentId] : null,
+      seeker: match.seekerId ? userMap[match.seekerId] : null,
+    }));
+
+    res.json(enrichedResults);
+  } catch (error: any) {
+    console.error("Error fetching talent matches:", error);
     res.status(500).json({ error: error.message });
   }
 });

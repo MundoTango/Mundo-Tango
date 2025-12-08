@@ -18,20 +18,24 @@ export default function SubscriptionSubTab() {
   const handleManageSubscription = async () => {
     setIsRedirecting(true);
     try {
-      const response = await apiRequest('POST', '/api/stripe/create-portal-session');
+      const response = await apiRequest('GET', '/api/billing/customer-portal');
       const data = await response.json();
       if (data.url) {
         window.open(data.url, '_blank');
       } else {
         toast({
-          title: "Subscription Management",
-          description: "Billing portal coming soon. Contact support for billing changes.",
+          title: "Error",
+          description: "Unable to create billing portal session. Please try again.",
+          variant: "destructive",
         });
       }
-    } catch (error) {
+    } catch (error: any) {
+      const errorMessage = error?.message || "";
       toast({
         title: "Error",
-        description: "Unable to open billing portal. Please try again.",
+        description: errorMessage.includes("No Stripe customer") 
+          ? "No billing information found. Subscribe to a paid plan first." 
+          : "Unable to open billing portal. Please try again.",
         variant: "destructive",
       });
     } finally {

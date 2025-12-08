@@ -13,6 +13,7 @@ import { eq, and, desc, gte, lte, sql, or } from "drizzle-orm";
 import multer from "multer";
 import { uploadImage, deleteImage, validateCloudinaryConfig } from "../utils/cloudinary";
 import crypto from "crypto";
+import logger from "../middleware/logger";
 
 const router = Router();
 
@@ -23,6 +24,7 @@ const router = Router();
 // GET /api/housing/listings - Get all active housing listings with filters
 router.get("/listings", async (req: Request, res: Response) => {
   try {
+    logger.info("[Housing] Fetching listings", { query: req.query });
     const {
       city,
       country,
@@ -69,9 +71,10 @@ router.get("/listings", async (req: Request, res: Response) => {
       .limit(parseInt(limit as string))
       .offset(parseInt(offset as string));
 
+    logger.debug("[Housing] Listings fetched", { count: results.length });
     res.json(results);
   } catch (error) {
-    console.error("[Housing] Error fetching listings:", error);
+    logger.error("[Housing] Error fetching listings", { error: error instanceof Error ? error.message : error });
     res.status(500).json({ message: "Failed to fetch listings" });
   }
 });
@@ -79,6 +82,7 @@ router.get("/listings", async (req: Request, res: Response) => {
 // POST /api/housing/search - Advanced search for housing
 router.post("/search", async (req: Request, res: Response) => {
   try {
+    logger.info("[Housing] Advanced search", { filters: req.body });
     const {
       checkInDate,
       checkOutDate,
@@ -130,9 +134,10 @@ router.post("/search", async (req: Request, res: Response) => {
       .limit(parseInt(limit))
       .offset(parseInt(offset));
 
+    logger.debug("[Housing] Search completed", { count: results.length });
     res.json(results);
   } catch (error) {
-    console.error("[Housing] Error searching listings:", error);
+    logger.error("[Housing] Error searching listings", { error: error instanceof Error ? error.message : error });
     res.status(500).json({ message: "Failed to search listings" });
   }
 });
@@ -160,9 +165,10 @@ router.get("/listings/:id", async (req: Request, res: Response) => {
       return res.status(404).json({ message: "Listing not found" });
     }
 
+    logger.debug("[Housing] Listing fetched", { listingId: id });
     res.json(result[0]);
   } catch (error) {
-    console.error("[Housing] Error fetching listing:", error);
+    logger.error("[Housing] Error fetching listing", { error: error instanceof Error ? error.message : error });
     res.status(500).json({ message: "Failed to fetch listing" });
   }
 });
@@ -170,6 +176,7 @@ router.get("/listings/:id", async (req: Request, res: Response) => {
 // POST /api/housing/listings - Create new listing (auth required)
 router.post("/listings", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
+    logger.info("[Housing] Creating new listing", { hostId: req.userId });
     const hostId = req.userId!;
     const {
       title,
@@ -214,9 +221,10 @@ router.post("/listings", authenticateToken, async (req: AuthRequest, res: Respon
       })
       .returning();
 
+    logger.info("[Housing] Listing created successfully", { listingId: listing.id, hostId });
     res.status(201).json(listing);
   } catch (error) {
-    console.error("[Housing] Error creating listing:", error);
+    logger.error("[Housing] Error creating listing", { error: error instanceof Error ? error.message : error });
     res.status(500).json({ message: "Failed to create listing" });
   }
 });
@@ -251,9 +259,10 @@ router.patch("/listings/:id", authenticateToken, async (req: AuthRequest, res: R
       .where(eq(housingListings.id, parseInt(id)))
       .returning();
 
+    logger.info("[Housing] Listing updated", { listingId: id });
     res.json(updated);
   } catch (error) {
-    console.error("[Housing] Error updating listing:", error);
+    logger.error("[Housing] Error updating listing", { error: error instanceof Error ? error.message : error });
     res.status(500).json({ message: "Failed to update listing" });
   }
 });
@@ -283,9 +292,10 @@ router.delete("/listings/:id", authenticateToken, async (req: AuthRequest, res: 
       .delete(housingListings)
       .where(eq(housingListings.id, parseInt(id)));
 
+    logger.info("[Housing] Listing deleted", { listingId: id });
     res.json({ message: "Listing deleted successfully" });
   } catch (error) {
-    console.error("[Housing] Error deleting listing:", error);
+    logger.error("[Housing] Error deleting listing", { error: error instanceof Error ? error.message : error });
     res.status(500).json({ message: "Failed to delete listing" });
   }
 });
@@ -325,9 +335,10 @@ router.get("/bookings", authenticateToken, async (req: AuthRequest, res: Respons
 
     const results = await query.orderBy(desc(housingBookings.createdAt));
 
+    logger.debug("[Housing] Bookings fetched", { userId, count: results.length });
     res.json(results);
   } catch (error) {
-    console.error("[Housing] Error fetching bookings:", error);
+    logger.error("[Housing] Error fetching bookings", { error: error instanceof Error ? error.message : error });
     res.status(500).json({ message: "Failed to fetch bookings" });
   }
 });
@@ -397,9 +408,10 @@ router.post("/bookings", authenticateToken, async (req: AuthRequest, res: Respon
       })
       .returning();
 
+    logger.info("[Housing] Booking created", { bookingId: booking.id, listingId, guestId });
     res.status(201).json(booking);
   } catch (error) {
-    console.error("[Housing] Error creating booking:", error);
+    logger.error("[Housing] Error creating booking", { error: error instanceof Error ? error.message : error });
     res.status(500).json({ message: "Failed to create booking" });
   }
 });
@@ -445,9 +457,10 @@ router.patch("/bookings/:id/status", authenticateToken, async (req: AuthRequest,
       .where(eq(housingBookings.id, parseInt(id)))
       .returning();
 
+    logger.info("[Housing] Booking status updated", { bookingId: id, status });
     res.json(updated);
   } catch (error) {
-    console.error("[Housing] Error updating booking status:", error);
+    logger.error("[Housing] Error updating booking status", { error: error instanceof Error ? error.message : error });
     res.status(500).json({ message: "Failed to update booking status" });
   }
 });
@@ -474,9 +487,10 @@ router.get("/listings/:listingId/reviews", async (req: Request, res: Response) =
       .where(eq(housingReviews.listingId, parseInt(listingId)))
       .orderBy(desc(housingReviews.createdAt));
 
+    logger.debug("[Housing] Reviews fetched", { listingId, count: reviews.length });
     res.json(reviews);
   } catch (error) {
-    console.error("[Housing] Error fetching reviews:", error);
+    logger.error("[Housing] Error fetching reviews", { error: error instanceof Error ? error.message : error });
     res.status(500).json({ message: "Failed to fetch reviews" });
   }
 });
@@ -527,9 +541,10 @@ router.post("/listings/:listingId/reviews", authenticateToken, async (req: AuthR
       })
       .returning();
 
+    logger.info("[Housing] Review created", { reviewId: newReview.id, listingId, userId });
     res.status(201).json(newReview);
   } catch (error) {
-    console.error("[Housing] Error creating review:", error);
+    logger.error("[Housing] Error creating review", { error: error instanceof Error ? error.message : error });
     res.status(500).json({ message: "Failed to create review" });
   }
 });
@@ -558,9 +573,10 @@ router.get("/favorites", authenticateToken, async (req: AuthRequest, res: Respon
       .where(eq(housingFavorites.userId, userId))
       .orderBy(desc(housingFavorites.createdAt));
 
+    logger.debug("[Housing] Favorites fetched", { userId, count: favorites.length });
     res.json(favorites);
   } catch (error) {
-    console.error("[Housing] Error fetching favorites:", error);
+    logger.error("[Housing] Error fetching favorites", { error: error instanceof Error ? error.message : error });
     res.status(500).json({ message: "Failed to fetch favorites" });
   }
 });
@@ -593,9 +609,10 @@ router.post("/favorites/:listingId", authenticateToken, async (req: AuthRequest,
       })
       .returning();
 
+    logger.debug("[Housing] Favorite added", { userId, listingId });
     res.status(201).json(favorite);
   } catch (error) {
-    console.error("[Housing] Error adding favorite:", error);
+    logger.error("[Housing] Error adding favorite", { error: error instanceof Error ? error.message : error });
     res.status(500).json({ message: "Failed to add favorite" });
   }
 });
@@ -613,9 +630,10 @@ router.delete("/favorites/:listingId", authenticateToken, async (req: AuthReques
         eq(housingFavorites.listingId, parseInt(listingId))
       ));
 
+    logger.debug("[Housing] Favorite removed", { userId, listingId });
     res.json({ message: "Removed from favorites" });
   } catch (error) {
-    console.error("[Housing] Error removing favorite:", error);
+    logger.error("[Housing] Error removing favorite", { error: error instanceof Error ? error.message : error });
     res.status(500).json({ message: "Failed to remove favorite" });
   }
 });
@@ -711,9 +729,10 @@ router.post("/photos", authenticateToken, upload.single('file'), async (req: Aut
       })
       .where(eq(housingListings.id, parseInt(listingId)));
 
+    logger.info("[Housing] Photo uploaded", { listingId, photoId });
     res.status(201).json(newPhoto);
   } catch (error) {
-    console.error("[Housing] Error uploading photo:", error);
+    logger.error("[Housing] Error uploading photo", { error: error instanceof Error ? error.message : error });
     res.status(500).json({ 
       message: error instanceof Error ? error.message : "Failed to upload photo" 
     });

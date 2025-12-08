@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -28,6 +28,9 @@ import { SEO } from "@/components/SEO";
 import { UnifiedLocationPicker } from "@/components/input/UnifiedLocationPicker";
 import type { SelectHousingListing } from "@shared/schema";
 import heroImage from "@assets/stock_images/professional_office__9e53fcce.jpg";
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 
 // Standard amenities list from HOUSING_TABLES.md
 const STANDARD_AMENITIES = [
@@ -152,6 +155,24 @@ function HostHomesPageContent() {
 
   // Extract listings from nested API response {listing: {...}, host: {...}}
   const homes = apiResponse?.map(item => item.listing) || [];
+
+  // Filter homes that have valid coordinates for map view
+  const homesWithCoords = useMemo(() => 
+    homes.filter(home => home.latitude && home.longitude && 
+      !isNaN(parseFloat(home.latitude)) && !isNaN(parseFloat(home.longitude))
+    ), [homes]
+  );
+
+  // Calculate map center from first home or default to Buenos Aires
+  const mapCenter = useMemo(() => {
+    if (homesWithCoords.length > 0) {
+      return {
+        lat: parseFloat(homesWithCoords[0].latitude!),
+        lng: parseFloat(homesWithCoords[0].longitude!)
+      };
+    }
+    return { lat: -34.6037, lng: -58.3816 }; // Buenos Aires default
+  }, [homesWithCoords]);
 
   // Create listing mutation
   const createListingMutation = useMutation({
@@ -652,17 +673,56 @@ function HostHomesPageContent() {
                   </Card>
                 )
               ) : (
-                // Map View
+                // Map View with Leaflet
                 <Card className="h-[600px] overflow-hidden">
-                  <CardContent className="h-full flex items-center justify-center">
-                    <div className="text-center">
-                      <MapIcon className="mx-auto h-16 w-16 mb-6 text-muted-foreground/50" />
-                      <h3 className="text-2xl font-serif font-bold mb-3">Map View</h3>
-                      <p className="text-lg text-muted-foreground mb-2">Interactive map integration coming soon</p>
-                      <p className="text-sm text-muted-foreground">
-                        Will display all listings using latitude/longitude coordinates
-                      </p>
-                    </div>
+                  <CardContent className="h-full p-0">
+                    {homesWithCoords.length > 0 ? (
+                      <MapContainer
+                        center={[mapCenter.lat, mapCenter.lng]}
+                        zoom={3}
+                        style={{ width: '100%', height: '100%' }}
+                        className="rounded-lg"
+                      >
+                        <TileLayer
+                          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+                          attribution='&copy; OpenStreetMap contributors &copy; CartoDB'
+                        />
+                        {homesWithCoords.map((home) => (
+                          <Marker
+                            key={home.id}
+                            position={[parseFloat(home.latitude!), parseFloat(home.longitude!)]}
+                            icon={L.divIcon({
+                              html: `<div class="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-primary to-primary/80 rounded-full border-2 border-white shadow-lg font-bold text-white text-xs">$${(home.pricePerNight / 100).toFixed(0)}</div>`,
+                              iconSize: [40, 40],
+                              className: 'custom-marker',
+                            })}
+                          >
+                            <Popup>
+                              <div className="w-48 p-1">
+                                <h3 className="font-bold text-sm mb-1">{home.title}</h3>
+                                <p className="text-xs text-gray-600 mb-2">{home.city}, {home.country}</p>
+                                <div className="flex items-center justify-between">
+                                  <span className="font-bold text-primary">${(home.pricePerNight / 100).toFixed(0)}/night</span>
+                                  <Link href={`/host-homes/${home.id}`}>
+                                    <Button size="sm" variant="outline" data-testid={`map-btn-${home.id}`}>View</Button>
+                                  </Link>
+                                </div>
+                              </div>
+                            </Popup>
+                          </Marker>
+                        ))}
+                      </MapContainer>
+                    ) : (
+                      <div className="h-full flex items-center justify-center">
+                        <div className="text-center">
+                          <MapIcon className="mx-auto h-16 w-16 mb-6 text-muted-foreground/50" />
+                          <h3 className="text-2xl font-serif font-bold mb-3">No Locations Available</h3>
+                          <p className="text-lg text-muted-foreground">
+                            Listings without coordinates will appear when hosts add location data
+                          </p>
+                        </div>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               )}

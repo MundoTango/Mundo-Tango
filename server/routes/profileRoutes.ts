@@ -2,6 +2,7 @@ import { Router, type Request, type Response } from "express";
 import { storage } from "../storage";
 import { authenticateToken, AuthRequest } from "../middleware/auth";
 import { z } from "zod";
+import logger from "../middleware/logger";
 import {
   updateTeacherProfileSchema,
   updateDJProfileSchema,
@@ -50,6 +51,7 @@ const router = Router();
 router.get("/:userId", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     const userId = parseInt(req.params.userId);
+    logger.info("[Profile] Fetching profile", { userId });
     
     if (isNaN(userId)) {
       return res.status(400).json({ message: "Invalid user ID" });
@@ -61,9 +63,10 @@ router.get("/:userId", authenticateToken, async (req: AuthRequest, res: Response
       return res.status(404).json({ message: "Profile not found" });
     }
 
+    logger.debug("[Profile] Profile fetched successfully", { userId });
     res.json(profile);
   } catch (error) {
-    console.error("[Profile] Error fetching profile:", error);
+    logger.error("[Profile] Error fetching profile", { error: error instanceof Error ? error.message : error });
     res.status(500).json({ message: "Failed to fetch profile" });
   }
 });
@@ -111,6 +114,7 @@ router.put("/:userId", authenticateToken, async (req: AuthRequest, res: Response
       return res.status(404).json({ message: "Profile not found" });
     }
 
+    logger.info("[Profile] Profile updated successfully", { userId });
     res.json(updatedProfile);
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -119,7 +123,7 @@ router.put("/:userId", authenticateToken, async (req: AuthRequest, res: Response
         errors: error.errors 
       });
     }
-    console.error("[Profile] Error updating profile:", error);
+    logger.error("[Profile] Error updating profile", { error: error instanceof Error ? error.message : error });
     res.status(500).json({ message: "Failed to update profile" });
   }
 });
@@ -139,9 +143,10 @@ router.get("/:userId/public", async (req: Request, res: Response) => {
       return res.status(404).json({ message: "Profile not found" });
     }
 
+    logger.debug("[Profile] Public profile fetched", { userId });
     res.json(publicProfile);
   } catch (error) {
-    console.error("[Profile] Error fetching public profile:", error);
+    logger.error("[Profile] Error fetching public profile", { error: error instanceof Error ? error.message : error });
     res.status(500).json({ message: "Failed to fetch public profile" });
   }
 });
@@ -170,9 +175,10 @@ router.get("/:userId/settings", authenticateToken, async (req: AuthRequest, res:
       return res.status(404).json({ message: "Settings not found" });
     }
 
+    logger.debug("[Profile] Settings fetched", { userId });
     res.json(settings);
   } catch (error) {
-    console.error("[Profile] Error fetching settings:", error);
+    logger.error("[Profile] Error fetching settings", { error: error instanceof Error ? error.message : error });
     res.status(500).json({ message: "Failed to fetch settings" });
   }
 });
@@ -214,6 +220,7 @@ router.put("/:userId/settings", authenticateToken, async (req: AuthRequest, res:
       return res.status(404).json({ message: "Settings not found" });
     }
 
+    logger.info("[Profile] Settings updated", { userId });
     res.json(updatedSettings);
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -222,7 +229,7 @@ router.put("/:userId/settings", authenticateToken, async (req: AuthRequest, res:
         errors: error.errors 
       });
     }
-    console.error("[Profile] Error updating settings:", error);
+    logger.error("[Profile] Error updating settings", { error: error instanceof Error ? error.message : error });
     res.status(500).json({ message: "Failed to update settings" });
   }
 });
@@ -246,9 +253,10 @@ router.post("/:userId/view", authenticateToken, async (req: AuthRequest, res: Re
 
     await storage.trackProfileView(req.userId, viewedUserId);
 
+    logger.debug("[Profile] Profile view tracked", { viewerId: req.userId, viewedUserId });
     res.json({ success: true, message: "Profile view tracked" });
   } catch (error) {
-    console.error("[Profile] Error tracking profile view:", error);
+    logger.error("[Profile] Error tracking profile view", { error: error instanceof Error ? error.message : error });
     res.status(500).json({ message: "Failed to track profile view" });
   }
 });
@@ -264,9 +272,10 @@ router.get("/:userId/stats", async (req: Request, res: Response) => {
 
     const stats = await storage.getProfileStats(userId);
 
+    logger.debug("[Profile] Profile stats fetched", { userId });
     res.json(stats);
   } catch (error) {
-    console.error("[Profile] Error fetching profile stats:", error);
+    logger.error("[Profile] Error fetching profile stats", { error: error instanceof Error ? error.message : error });
     res.status(500).json({ message: "Failed to fetch profile stats" });
   }
 });
@@ -282,9 +291,10 @@ router.get("/:userId/analytics", async (req: Request, res: Response) => {
 
     const analytics = await storage.getProfileAnalytics(userId);
 
+    logger.debug("[Profile] Profile analytics fetched", { userId });
     res.json(analytics);
   } catch (error) {
-    console.error("[Profile] Error fetching profile analytics:", error);
+    logger.error("[Profile] Error fetching profile analytics", { error: error instanceof Error ? error.message : error });
     res.status(500).json({ message: "Failed to fetch profile analytics" });
   }
 });
@@ -300,9 +310,10 @@ router.get("/:userId/insights", async (req: Request, res: Response) => {
 
     const insights = await storage.getProfileInsights(userId);
 
+    logger.debug("[Profile] Profile insights fetched", { userId });
     res.json(insights);
   } catch (error) {
-    console.error("[Profile] Error fetching profile insights:", error);
+    logger.error("[Profile] Error fetching profile insights", { error: error instanceof Error ? error.message : error });
     res.status(500).json({ message: "Failed to fetch profile insights" });
   }
 });
@@ -328,9 +339,10 @@ router.get("/search", async (req: Request, res: Response) => {
       offset: parseInt(offset as string),
     });
 
+    logger.debug("[Profile] Profile search completed", { query, resultsCount: profiles.length });
     res.json(profiles);
   } catch (error) {
-    console.error("[Profile] Error searching profiles:", error);
+    logger.error("[Profile] Error searching profiles", { error: error instanceof Error ? error.message : error });
     res.status(500).json({ message: "Failed to search profiles" });
   }
 });
@@ -511,9 +523,10 @@ router.get("/:userId/type/:profileType", async (req: Request, res: Response) => 
       return res.status(404).json({ message: `${profileType} profile not found` });
     }
 
+    logger.debug("[Profile] Profile type fetched", { userId, profileType });
     res.json(profile);
   } catch (error) {
-    console.error(`[Profile] Error fetching ${req.params.profileType} profile:`, error);
+    logger.error(`[Profile] Error fetching ${req.params.profileType} profile`, { error: error instanceof Error ? error.message : error });
     res.status(500).json({ message: "Failed to fetch profile" });
   }
 });
@@ -553,6 +566,7 @@ router.put("/:userId/type/:profileType", authenticateToken, async (req: AuthRequ
       return res.status(404).json({ message: `${profileType} profile not found` });
     }
 
+    logger.info("[Profile] Profile type updated", { userId, profileType });
     res.json(profile);
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -561,7 +575,7 @@ router.put("/:userId/type/:profileType", authenticateToken, async (req: AuthRequ
         errors: error.errors 
       });
     }
-    console.error(`[Profile] Error updating ${req.params.profileType} profile:`, error);
+    logger.error(`[Profile] Error updating ${req.params.profileType} profile`, { error: error instanceof Error ? error.message : error });
     res.status(500).json({ message: "Failed to update profile" });
   }
 });
@@ -596,9 +610,10 @@ router.delete("/:userId/type/:profileType", authenticateToken, async (req: AuthR
     const deleteMethod = typeConfig.deleteMethod as keyof typeof storage;
     await (storage[deleteMethod] as any)(userId);
 
+    logger.info("[Profile] Profile type deleted", { userId, profileType });
     res.json({ success: true, message: `${profileType} profile deleted successfully` });
   } catch (error) {
-    console.error(`[Profile] Error deleting ${req.params.profileType} profile:`, error);
+    logger.error(`[Profile] Error deleting ${req.params.profileType} profile`, { error: error instanceof Error ? error.message : error });
     res.status(500).json({ message: "Failed to delete profile" });
   }
 });
@@ -645,6 +660,7 @@ router.post("/:userId/visibility", authenticateToken, async (req: AuthRequest, r
       return res.status(404).json({ message: "User settings not found" });
     }
 
+    logger.info("[Profile] Visibility settings updated", { userId });
     res.json({ 
       success: true, 
       message: "Visibility settings updated successfully",
@@ -657,7 +673,7 @@ router.post("/:userId/visibility", authenticateToken, async (req: AuthRequest, r
         errors: error.errors 
       });
     }
-    console.error("[Profile] Error updating visibility settings:", error);
+    logger.error("[Profile] Error updating visibility settings", { error: error instanceof Error ? error.message : error });
     res.status(500).json({ message: "Failed to update visibility settings" });
   }
 });
