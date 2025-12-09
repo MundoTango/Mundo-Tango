@@ -554,15 +554,16 @@ export default function FriendsListPage() {
               </div>
             )}
             <div>
-              <Label htmlFor="message">Personal Message *</Label>
+              <Label htmlFor="message">Your Message *</Label>
               <Textarea
                 id="message"
-                placeholder="Hi! I'd love to connect..."
+                placeholder="Hi! Include your personal message and any memories about when you met..."
                 value={requestData.message}
                 onChange={(e) => setRequestData({ ...requestData, message: e.target.value })}
-                className="mt-1"
+                className="mt-1 min-h-24"
                 data-testid="input-friend-request-message"
               />
+              <p className="text-xs text-muted-foreground mt-1">This will be the first thing they see</p>
             </div>
 
             <div className="flex items-center space-x-2">
@@ -590,19 +591,6 @@ export default function FriendsListPage() {
                     }
                     className="mt-1"
                     data-testid="input-dance-location"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="danceStory">Share the memory</Label>
-                  <Textarea
-                    id="danceStory"
-                    placeholder="Tell them about when you met..."
-                    value={requestData.danceStory}
-                    onChange={(e) =>
-                      setRequestData({ ...requestData, danceStory: e.target.value })
-                    }
-                    className="mt-1"
-                    data-testid="textarea-dance-story"
                   />
                 </div>
                 

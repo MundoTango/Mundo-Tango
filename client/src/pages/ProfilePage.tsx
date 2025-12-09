@@ -28,6 +28,7 @@ import DashboardCustomerToggle from "@/components/profile/DashboardCustomerToggl
 import { PhotoUploadDialog } from "@/components/PhotoUploadDialog";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 
 interface User {
   id: number;
@@ -90,6 +91,7 @@ export default function ProfilePage() {
   const [coverPhotoDialogOpen, setCoverPhotoDialogOpen] = useState(false);
   const [friendRequestModalOpen, setFriendRequestModalOpen] = useState(false);
   const [pendingFriendRequest, setPendingFriendRequest] = useState<any>(null);
+  const [receiverMessage, setReceiverMessage] = useState("");
 
   // Upload profile photo mutation (send compressed base64)
   const uploadPhotoMutation = useMutation({
@@ -378,7 +380,9 @@ export default function ProfilePage() {
   // Accept friend request mutation (from modal)
   const acceptRequestMutation = useMutation({
     mutationFn: async (requestId: number) => {
-      return await apiRequest('POST', `/api/friends/requests/${requestId}/accept`);
+      return await apiRequest('POST', `/api/friends/requests/${requestId}/accept`, {
+        receiverMessage: receiverMessage || undefined
+      });
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['/api/friends'] });
@@ -386,6 +390,7 @@ export default function ProfilePage() {
       await queryClient.invalidateQueries({ queryKey: ['/api/notifications', { limit: 10 }] });
       setFriendRequestModalOpen(false);
       setPendingFriendRequest(null);
+      setReceiverMessage("");
       // Remove the query param from URL
       navigate(`/profile/${params?.id || user?.id}`);
       toast({
@@ -1056,43 +1061,58 @@ export default function ProfilePage() {
               </p>
             </div>
 
-            {/* Personal Message - READ ONLY */}
-            <div>
-              <Label htmlFor="message" className="text-sm font-medium">Personal Message</Label>
-              <div className="mt-1 p-3 bg-muted/50 rounded-lg border text-sm text-muted-foreground min-h-20 flex items-start">
-                "{pendingFriendRequest?.senderMessage || '(No message included)'}"
-              </div>
-            </div>
-
-            {/* We've met section - READ ONLY */}
-            <div className="flex items-center space-x-2 p-2 rounded-lg bg-muted/30">
-              <div className="w-5 h-5 rounded border border-muted-foreground flex items-center justify-center">
-                {pendingFriendRequest?.didWeDance && (
-                  <div className="w-3 h-3 bg-muted-foreground rounded-sm" />
-                )}
-              </div>
-              <Label className="text-sm font-medium cursor-pointer">We've met!</Label>
-            </div>
-
-            {/* Meeting Story Fields - READ ONLY (always visible) */}
+            {/* Combined Message & Memory - READ ONLY */}
             <div className="space-y-3 p-4 bg-gradient-to-br from-cyan-50 to-blue-50 dark:from-cyan-950/20 dark:to-blue-950/20 rounded-lg border border-cyan-200 dark:border-cyan-800">
               <div>
-                <Label htmlFor="danceLocation" className="text-sm font-medium">Where did we meet?</Label>
-                <div className="mt-1 p-2 bg-white dark:bg-slate-900 rounded border text-sm text-muted-foreground min-h-9 flex items-center">
-                  {pendingFriendRequest?.didWeDance && pendingFriendRequest?.danceLocation 
-                    ? pendingFriendRequest.danceLocation 
-                    : `(${!pendingFriendRequest?.didWeDance ? 'Not answered' : 'No location provided'})`}
-                </div>
-              </div>
-              <div>
-                <Label htmlFor="danceStory" className="text-sm font-medium">Their memory</Label>
+                <Label className="text-sm font-medium">Their Message</Label>
                 <div className="mt-1 p-3 bg-white dark:bg-slate-900 rounded border text-sm text-muted-foreground min-h-20 flex items-start">
-                  {pendingFriendRequest?.didWeDance && pendingFriendRequest?.danceStory 
-                    ? `"${pendingFriendRequest.danceStory}"` 
-                    : `(${!pendingFriendRequest?.didWeDance ? 'Not answered' : 'No memory shared'})`}
+                  "{pendingFriendRequest?.senderMessage || '(No message included)'}"
                 </div>
               </div>
+
+              {/* We've met section - READ ONLY */}
+              <div className="flex items-center space-x-2 p-2 rounded-lg bg-muted/30">
+                <div className="w-5 h-5 rounded border border-muted-foreground flex items-center justify-center">
+                  {pendingFriendRequest?.didWeDance && (
+                    <div className="w-3 h-3 bg-muted-foreground rounded-sm" />
+                  )}
+                </div>
+                <Label className="text-sm font-medium cursor-pointer">We've met!</Label>
+              </div>
+
+              {/* Meeting Details - READ ONLY */}
+              {pendingFriendRequest?.didWeDance && (
+                <div className="space-y-2">
+                  <div>
+                    <Label className="text-sm font-medium text-cyan-700 dark:text-cyan-300">Where we met</Label>
+                    <div className="mt-1 p-2 bg-white dark:bg-slate-900 rounded border text-sm text-muted-foreground">
+                      {pendingFriendRequest?.danceLocation || '(No location provided)'}
+                    </div>
+                  </div>
+                  <div>
+                    <Label className="text-sm font-medium text-cyan-700 dark:text-cyan-300">Their memory</Label>
+                    <div className="mt-1 p-3 bg-white dark:bg-slate-900 rounded border text-sm text-muted-foreground min-h-16 flex items-start">
+                      {pendingFriendRequest?.danceStory 
+                        ? `"${pendingFriendRequest.danceStory}"` 
+                        : '(No memory shared)'}
+                    </div>
+                  </div>
+                </div>
+              )}
               
+              {/* Your Response Message */}
+              <div>
+                <Label htmlFor="receiverMessage" className="text-sm font-medium">Your Reply (optional)</Label>
+                <Textarea
+                  id="receiverMessage"
+                  placeholder="Write your message here..."
+                  value={receiverMessage}
+                  onChange={(e) => setReceiverMessage(e.target.value)}
+                  className="mt-1"
+                  data-testid="textarea-receiver-message"
+                />
+              </div>
+
               {/* Media Gallery - READ ONLY */}
               <div>
                 <Label className="text-sm font-medium">Photos/Videos</Label>
