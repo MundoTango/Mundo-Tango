@@ -212,6 +212,72 @@ router.post("/moderation/:id/action", authenticateToken, requireAdmin, async (re
       }
     }
 
+    // Send notifications to affected users
+    try {
+      // Get content owner ID
+      let contentOwnerId: number | null = null;
+      if (queueItem.contentType === "post") {
+        const post = await db.query.posts.findFirst({
+          where: eq(posts.id, queueItem.contentId)
+        });
+        contentOwnerId = post?.userId || null;
+      } else if (queueItem.contentType === "comment") {
+        const comment = await db.query.postComments.findFirst({
+          where: eq(postComments.id, queueItem.contentId)
+        });
+        contentOwnerId = comment?.userId || null;
+      } else if (queueItem.contentType === "user") {
+        contentOwnerId = queueItem.contentId;
+      }
+
+      // Notify content owner based on action
+      if (contentOwnerId && action !== "reopen" && action !== "approve") {
+        const notificationMessages: Record<string, { type: string; title: string; message: string }> = {
+          remove: {
+            type: "content_removed",
+            title: "Content Removed",
+            message: `Your ${queueItem.contentType} has been removed by our moderation team for violating community guidelines.${notes ? ` Reason: ${notes}` : ""}`
+          },
+          ban_user: {
+            type: "account_banned",
+            title: "Account Suspended",
+            message: `Your account has been suspended due to repeated violations of community guidelines.${notes ? ` Reason: ${notes}` : ""}`
+          },
+          warn_user: {
+            type: "warning",
+            title: "Community Guidelines Warning",
+            message: `This is a warning regarding your ${queueItem.contentType}. Please review our community guidelines to avoid future issues.${notes ? ` Details: ${notes}` : ""}`
+          }
+        };
+
+        const notifData = notificationMessages[action];
+        if (notifData) {
+          await storage.createNotification({
+            userId: contentOwnerId,
+            type: notifData.type,
+            title: notifData.title,
+            message: notifData.message,
+            data: { queueId: parseInt(id), action, contentType: queueItem.contentType },
+          });
+          console.log(`[Moderation] Sent ${notifData.type} notification to user ${contentOwnerId}`);
+        }
+      }
+
+      // Notify reporter when their report is resolved
+      if (queueItem.reportedBy && (action === "remove" || action === "ban_user")) {
+        await storage.createNotification({
+          userId: queueItem.reportedBy,
+          type: "report_resolved",
+          title: "Report Resolved",
+          message: `Thank you for your report. We've taken action on the ${queueItem.contentType} you reported.`,
+          data: { queueId: parseInt(id), action, contentType: queueItem.contentType },
+        });
+        console.log(`[Moderation] Sent report_resolved notification to reporter ${queueItem.reportedBy}`);
+      }
+    } catch (notifError: any) {
+      console.warn('[Moderation] Failed to send notification:', notifError.message);
+    }
+
     res.json({ success: true, id, action, status: newStatus });
   } catch (error: any) {
     console.error("Error performing moderation action:", error);
