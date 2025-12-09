@@ -190,12 +190,15 @@ router.post("/moderation/:id/action", authenticateToken, requireAdmin, async (re
       })
       .where(eq(moderationQueue.id, parseInt(id)));
 
-    // Log the action - handle missing table gracefully
+    // Log the action - provide all required NOT NULL fields
     try {
       await db.insert(moderationActions).values({
-        queueId: parseInt(id),
-        action,
         moderatorId,
+        actionType: action,                    // Required: 'approve' | 'remove' | 'ban_user' | 'warn'
+        targetType: queueItem.contentType,     // Required: 'post' | 'comment' | 'event' | 'user'
+        targetId: queueItem.contentId,         // Required: ID of the content
+        queueId: parseInt(id),                 // Legacy field for backwards compatibility
+        action,                                // Legacy field
         reason: notes || null,
       });
     } catch (tableError: any) {
