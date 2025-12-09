@@ -1074,21 +1074,51 @@ export default function ProfilePage() {
               <Label className="text-sm font-medium cursor-pointer">We've met!</Label>
             </div>
 
-            {/* Dance Story Fields - READ ONLY */}
+            {/* Meeting Story Fields - READ ONLY */}
             {pendingFriendRequest?.didWeDance && (
               <div className="space-y-3 p-4 bg-gradient-to-br from-cyan-50 to-blue-50 dark:from-cyan-950/20 dark:to-blue-950/20 rounded-lg border border-cyan-200 dark:border-cyan-800">
                 <div>
-                  <Label htmlFor="danceLocation" className="text-sm font-medium">Where did we dance?</Label>
+                  <Label htmlFor="danceLocation" className="text-sm font-medium">Where did we meet?</Label>
                   <div className="mt-1 p-2 bg-white dark:bg-slate-900 rounded border text-sm text-muted-foreground min-h-9 flex items-center">
                     {pendingFriendRequest.danceLocation || '(No location provided)'}
                   </div>
                 </div>
                 <div>
-                  <Label htmlFor="danceStory" className="text-sm font-medium">Share the memory</Label>
+                  <Label htmlFor="danceStory" className="text-sm font-medium">Their memory</Label>
                   <div className="mt-1 p-3 bg-white dark:bg-slate-900 rounded border text-sm text-muted-foreground min-h-20 flex items-start">
                     "{pendingFriendRequest.danceStory || '(No memory shared)'}"
                   </div>
                 </div>
+                
+                {/* Media Gallery - READ ONLY */}
+                {pendingFriendRequest.mediaUrls && pendingFriendRequest.mediaUrls.length > 0 && (
+                  <div>
+                    <Label className="text-sm font-medium">Photos/Videos</Label>
+                    <div className="mt-2 grid grid-cols-3 gap-2">
+                      {pendingFriendRequest.mediaUrls.map((url: string, index: number) => (
+                        <div
+                          key={index}
+                          className="relative aspect-square rounded-lg overflow-hidden border border-cyan-200 dark:border-cyan-800"
+                        >
+                          {url.match(/\.(mp4|webm|mov|avi)$/i) ? (
+                            <video
+                              src={url}
+                              className="w-full h-full object-cover"
+                              controls
+                            />
+                          ) : (
+                            <img
+                              src={url}
+                              alt={`Memory ${index + 1}`}
+                              className="w-full h-full object-cover cursor-pointer hover:opacity-90 transition-opacity"
+                              onClick={() => window.open(url, '_blank')}
+                            />
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
