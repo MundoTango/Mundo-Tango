@@ -89,11 +89,11 @@ export default function UnifiedInbox() {
   return (
     <div className="flex h-[calc(100vh-4rem)] bg-background">
       {/* Sidebar */}
-      <div className="w-64 border-r bg-sidebar flex flex-col">
-        <div className="p-4 border-b shrink-0">
+      <div className="w-64 border-r bg-sidebar flex flex-col overflow-hidden">
+        <div className="p-4 border-b shrink-0 relative z-10">
           <Dialog open={showCompose} onOpenChange={setShowCompose}>
             <DialogTrigger asChild>
-              <Button className="w-full" data-testid="button-compose">
+              <Button className="w-full relative z-10" data-testid="button-compose">
                 <Plus className="mr-2 h-4 w-4" />
                 Compose
               </Button>
