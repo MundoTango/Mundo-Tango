@@ -17,7 +17,9 @@ interface ModerationQueueItem {
     contentType: string;
     contentId: number;
     reportedBy: number | null;
-    reason: string;
+    reportReason: string | null;
+    reportDetails: string | null;
+    reason: string | null;
     description: string | null;
     status: string;
     priority: number;
@@ -82,10 +84,7 @@ export default function ModerationDashboard() {
     queue: ModerationQueueItem[];
     total: number;
   }>({
-    queryKey: ["/api/admin/moderation/queue", statusFilter],
-    queryFn: () => fetch(`/api/admin/moderation/queue?status=${statusFilter}`, {
-      credentials: 'include'
-    }).then(r => r.json()),
+    queryKey: [`/api/admin/moderation/queue?status=${statusFilter}`],
   });
 
   const { data: flaggedData } = useQuery<{
@@ -284,14 +283,14 @@ export default function ModerationDashboard() {
                           <Badge variant="outline" data-testid={`badge-type-${item.queue.contentType}`}>
                             {item.queue.contentType}
                           </Badge>
-                          <Badge variant="outline" data-testid={`badge-reason-${item.queue.reason}`}>
-                            {item.queue.reason}
+                          <Badge variant="outline" data-testid={`badge-reason-${item.queue.id}`}>
+                            {item.queue.reportReason || item.queue.reason || "No reason"}
                           </Badge>
                           {getPriorityBadge(item.queue.priority)}
                         </div>
                         
                         <p className="text-sm" data-testid={`text-description-${item.queue.id}`}>
-                          {item.queue.description || "No description provided"}
+                          {item.queue.reportDetails || item.queue.description || "No description provided"}
                         </p>
                         
                         <div className="flex items-center gap-4 text-xs text-muted-foreground">
