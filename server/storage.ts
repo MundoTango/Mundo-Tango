@@ -313,6 +313,9 @@ export interface IStorage {
     sharedEvents: number;
     sharedGroups: number;
     lastInteraction: string | null;
+    firstMetAt?: string | null;
+    metLocation?: string | null;
+    ourStory?: string | null;
   } | null>;
   checkFriendship(userId1: number, userId2: number): Promise<boolean>;
   
@@ -2512,6 +2515,9 @@ export class DbStorage implements IStorage {
     sharedEvents: number;
     sharedGroups: number;
     lastInteraction: string | null;
+    firstMetAt?: string | null;
+    metLocation?: string | null;
+    ourStory?: string | null;
   } | null> {
     // Get friendship record (bidirectional, either userId-friendId or friendId-userId)
     const friendship = await db.select()
@@ -2528,7 +2534,7 @@ export class DbStorage implements IStorage {
       return null;
     }
 
-    const friendshipData = friendship[0];
+    const friendshipData = friendship[0] as any;
     
     // Calculate days since friendship
     const createdAt = new Date(friendshipData.createdAt);
@@ -2567,6 +2573,9 @@ export class DbStorage implements IStorage {
       sharedEvents: sharedEventIds.length,
       sharedGroups: sharedGroupIds.length,
       lastInteraction: friendshipData.lastInteractionAt ? friendshipData.lastInteractionAt.toISOString() : null,
+      firstMetAt: friendshipData.firstMetAt ? friendshipData.firstMetAt.toISOString() : null,
+      metLocation: friendshipData.metLocation || null,
+      ourStory: friendshipData.ourStory || null,
     };
   }
 

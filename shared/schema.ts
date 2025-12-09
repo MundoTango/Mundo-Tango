@@ -3628,6 +3628,11 @@ export const friendships = pgTable(
     connectionDegree: integer("connection_degree").default(1).notNull(), // Always 1 for direct friends
     lastInteractionAt: timestamp("last_interaction_at").defaultNow(),
     status: varchar("status").default("active").notNull(), // active, blocked
+    
+    // Friendship story fields (MB.MD requirement)
+    firstMetAt: timestamp("first_met_at"), // When they first met
+    metLocation: varchar("met_location", { length: 255 }), // Where they met (city, event, etc.)
+    ourStory: text("our_story"), // Personal story of their friendship
   },
   (table) => ({
     userIdx: index("friendships_user_idx").on(table.userId),
