@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { MessageCircle, Mail, Search, Plus, Star, Archive } from "lucide-react";
 import { SiFacebook, SiInstagram, SiWhatsapp } from "react-icons/si";
@@ -48,7 +47,6 @@ export default function UnifiedInbox() {
   const [searchQuery, setSearchQuery] = useState("");
   const [showCompose, setShowCompose] = useState(false);
 
-  // Only God Level admins can see all channels, others only see MT Messages
   const isGodLevel = user?.role === 'god';
   
   const availableChannels = useMemo(() => {
@@ -83,17 +81,17 @@ export default function UnifiedInbox() {
 
   const ChannelIcon = ({ channel }: { channel: string }) => {
     const Icon = channelIcons[channel as keyof typeof channelIcons];
-    return <Icon className="h-4 w-4" />;
+    return Icon ? <Icon className="h-4 w-4" /> : <MessageCircle className="h-4 w-4" />;
   };
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] bg-background">
-      {/* Sidebar */}
-      <div className="w-64 border-r bg-sidebar flex flex-col overflow-hidden">
-        <div className="p-4 border-b shrink-0 relative z-10">
+    <div className="flex h-full">
+      {/* Left Sidebar - Channel List */}
+      <div className="w-64 border-r bg-sidebar flex flex-col shrink-0">
+        <div className="p-4 border-b">
           <Dialog open={showCompose} onOpenChange={setShowCompose}>
             <DialogTrigger asChild>
-              <Button className="w-full relative z-10" data-testid="button-compose">
+              <Button className="w-full" data-testid="button-compose">
                 <Plus className="mr-2 h-4 w-4" />
                 Compose
               </Button>
@@ -104,12 +102,12 @@ export default function UnifiedInbox() {
           </Dialog>
         </div>
 
-        <ScrollArea className="flex-1 min-h-0">
-          <div className="p-4 space-y-2">
-            <h3 className="text-sm font-medium text-sidebar-foreground mb-4">
-              Channels
-            </h3>
-            
+        <div className="flex-1 overflow-y-auto p-4">
+          <h3 className="text-sm font-medium text-sidebar-foreground mb-4">
+            Channels
+          </h3>
+          
+          <div className="space-y-2">
             {availableChannels.map((channel) => {
               const Icon = channel === "all" ? MessageCircle : channelIcons[channel as keyof typeof channelIcons];
               const count = getChannelCount(channel);
@@ -137,7 +135,7 @@ export default function UnifiedInbox() {
               );
             })}
           </div>
-        </ScrollArea>
+        </div>
 
         <div className="p-4 border-t">
           <div className="text-xs text-muted-foreground">
@@ -146,8 +144,8 @@ export default function UnifiedInbox() {
         </div>
       </div>
 
-      {/* Message List */}
-      <div className="w-96 border-r flex flex-col">
+      {/* Middle - Message List */}
+      <div className="w-96 border-r flex flex-col shrink-0">
         <div className="p-4 border-b">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -161,7 +159,7 @@ export default function UnifiedInbox() {
           </div>
         </div>
 
-        <ScrollArea className="flex-1">
+        <div className="flex-1 overflow-y-auto">
           {isLoading ? (
             <div className="p-8 text-center text-muted-foreground">
               Loading messages...
@@ -185,7 +183,7 @@ export default function UnifiedInbox() {
           ) : (
             <div className="divide-y">
               {filteredMessages.map((message: any) => {
-                const Icon = channelIcons[message.channel as keyof typeof channelIcons];
+                const Icon = channelIcons[message.channel as keyof typeof channelIcons] || MessageCircle;
                 const isSelected = selectedMessage?.id === message.id;
                 
                 return (
@@ -202,9 +200,9 @@ export default function UnifiedInbox() {
                     <div className="flex items-start gap-3">
                       <div
                         className="p-2 rounded-md"
-                        style={{ backgroundColor: `${channelColors[message.channel as keyof typeof channelColors]}15` }}
+                        style={{ backgroundColor: `${channelColors[message.channel as keyof typeof channelColors] || channelColors.mt}15` }}
                       >
-                        <Icon className="h-4 w-4" style={{ color: channelColors[message.channel as keyof typeof channelColors] }} />
+                        <Icon className="h-4 w-4" style={{ color: channelColors[message.channel as keyof typeof channelColors] || channelColors.mt }} />
                       </div>
                       
                       <div className="flex-1 min-w-0">
@@ -229,7 +227,7 @@ export default function UnifiedInbox() {
                         
                         <div className="flex items-center gap-2 mt-2">
                           <span className="text-xs text-muted-foreground">
-                            {format(new Date(message.receivedAt), "MMM d, h:mm a")}
+                            {message.receivedAt ? format(new Date(message.receivedAt), "MMM d, h:mm a") : ""}
                           </span>
                           {message.isStarred && (
                             <Star className="h-3 w-3 text-yellow-500 fill-yellow-500" />
@@ -242,24 +240,24 @@ export default function UnifiedInbox() {
               })}
             </div>
           )}
-        </ScrollArea>
+        </div>
       </div>
 
-      {/* Message Preview */}
-      <div className="flex-1 flex flex-col">
+      {/* Right - Message Preview */}
+      <div className="flex-1 flex flex-col min-w-0">
         {selectedMessage ? (
           <>
-            <div className="p-6 border-b">
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex items-center gap-3">
+            <div className="p-6 border-b shrink-0">
+              <div className="flex items-start justify-between mb-4 gap-4">
+                <div className="flex items-center gap-3 min-w-0">
                   <div
-                    className="p-3 rounded-md"
-                    style={{ backgroundColor: `${channelColors[selectedMessage.channel as keyof typeof channelColors]}15` }}
+                    className="p-3 rounded-md shrink-0"
+                    style={{ backgroundColor: `${channelColors[selectedMessage.channel as keyof typeof channelColors] || channelColors.mt}15` }}
                   >
                     <ChannelIcon channel={selectedMessage.channel} />
                   </div>
-                  <div>
-                    <h2 className="text-xl font-semibold" data-testid="preview-subject">
+                  <div className="min-w-0">
+                    <h2 className="text-xl font-semibold truncate" data-testid="preview-subject">
                       {selectedMessage.subject || "No Subject"}
                     </h2>
                     <p className="text-sm text-muted-foreground">
@@ -268,7 +266,7 @@ export default function UnifiedInbox() {
                   </div>
                 </div>
                 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 shrink-0">
                   <Button variant="ghost" size="icon" data-testid="button-star-message">
                     <Star className={cn("h-4 w-4", selectedMessage.isStarred && "fill-yellow-500 text-yellow-500")} />
                   </Button>
@@ -279,11 +277,11 @@ export default function UnifiedInbox() {
               </div>
               
               <div className="text-sm text-muted-foreground">
-                {format(new Date(selectedMessage.receivedAt), "MMMM d, yyyy 'at' h:mm a")}
+                {selectedMessage.receivedAt ? format(new Date(selectedMessage.receivedAt), "MMMM d, yyyy 'at' h:mm a") : ""}
               </div>
             </div>
 
-            <ScrollArea className="flex-1 p-6">
+            <div className="flex-1 overflow-y-auto p-6">
               <div className="prose max-w-none" data-testid="preview-body">
                 {selectedMessage.htmlBody ? (
                   <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(selectedMessage.htmlBody) }} />
@@ -307,10 +305,10 @@ export default function UnifiedInbox() {
                   </div>
                 </div>
               )}
-            </ScrollArea>
+            </div>
 
-            <div className="p-6 border-t">
-              <div className="flex gap-4">
+            <div className="p-6 border-t shrink-0">
+              <div className="flex gap-4 flex-wrap">
                 <Button data-testid="button-reply">
                   <Mail className="mr-2 h-4 w-4" />
                   Reply
