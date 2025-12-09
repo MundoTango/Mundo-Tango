@@ -47,6 +47,7 @@ export function PROGroupPublicPage({ roleSlug, title, singularTitle, description
   const [searchQuery, setSearchQuery] = useState("");
   const [cityFilter, setCityFilter] = useState("all");
   const [sortBy, setSortBy] = useState("rating");
+  const [activeTab, setActiveTab] = useState("discover");
 
   // Use singularTitle if provided, otherwise derive from title by removing trailing 's'
   const singular = singularTitle || title.replace(/s$/, '');
@@ -116,7 +117,7 @@ export function PROGroupPublicPage({ roleSlug, title, singularTitle, description
           </div>
 
           {isMember ? (
-            <div className="mt-6 flex gap-3">
+            <div className="mt-6 flex flex-wrap items-center gap-3">
               <Badge 
                 className="px-3 py-1"
                 style={{ background: `${color}30`, color }}
@@ -124,14 +125,26 @@ export function PROGroupPublicPage({ roleSlug, title, singularTitle, description
                 You are a {singular}
               </Badge>
               <Button 
+                onClick={() => {
+                  setActiveTab("group");
+                  document.getElementById("pro-tabs")?.scrollIntoView({ behavior: "smooth" });
+                }}
+                data-testid="button-access-pro-group"
+                style={{ background: color }}
+                className="text-white"
+              >
+                <Users className="w-4 h-4 mr-2" />
+                Access PRO Group
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+              <Button 
                 variant="outline"
                 size="sm"
                 onClick={() => navigate('/profile?tab=pro')}
                 data-testid="button-view-pro-tab"
                 style={{ borderColor: color, color }}
               >
-                View Your PRO Tab
-                <ArrowRight className="w-4 h-4 ml-2" />
+                Edit PRO Profile
               </Button>
             </div>
           ) : (
@@ -152,11 +165,17 @@ export function PROGroupPublicPage({ roleSlug, title, singularTitle, description
           )}
         </div>
 
-        <Tabs defaultValue="discover" className="space-y-6">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6" id="pro-tabs">
           <TabsList className="bg-background/50 border border-white/10">
             <TabsTrigger value="discover" data-testid="tab-discover">
               Discover Professionals
             </TabsTrigger>
+            {isMember && (
+              <TabsTrigger value="group" data-testid="tab-group" style={{ color }}>
+                <Users className="w-4 h-4 mr-1" />
+                PRO Group
+              </TabsTrigger>
+            )}
             <TabsTrigger value="featured" data-testid="tab-featured">
               Featured
             </TabsTrigger>
@@ -305,6 +324,144 @@ export function PROGroupPublicPage({ roleSlug, title, singularTitle, description
               </div>
             )}
           </TabsContent>
+
+          {/* PRO Group Tab - Members Only */}
+          {isMember && (
+            <TabsContent value="group" className="space-y-6">
+              <div className="grid md:grid-cols-3 gap-6">
+                {/* Group Welcome Card */}
+                <Card className="md:col-span-2 bg-background/50 border-white/10">
+                  <CardHeader>
+                    <div className="flex items-center gap-3">
+                      <div 
+                        className="p-3 rounded-lg"
+                        style={{ background: `${color}20` }}
+                      >
+                        <Icon className="w-6 h-6" style={{ color }} />
+                      </div>
+                      <div>
+                        <CardTitle>{title} PRO Group</CardTitle>
+                        <CardDescription>
+                          Welcome to your exclusive {singular} community
+                        </CardDescription>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="p-4 rounded-lg border border-dashed" style={{ borderColor: `${color}40` }}>
+                      <div className="flex items-center gap-2 mb-2">
+                        <Heart className="w-4 h-4" style={{ color }} />
+                        <span className="font-medium">Member Benefits</span>
+                      </div>
+                      <ul className="text-sm text-muted-foreground space-y-1 ml-6 list-disc">
+                        <li>Connect with other {title.toLowerCase()} worldwide</li>
+                        <li>Share tips, opportunities, and resources</li>
+                        <li>Get featured in the PRO directory</li>
+                        <li>Access exclusive group discussions</li>
+                      </ul>
+                    </div>
+                    
+                    <div className="flex gap-3">
+                      <Button 
+                        variant="outline"
+                        onClick={() => navigate('/messages')}
+                        data-testid="button-group-discussions"
+                        style={{ borderColor: color, color }}
+                      >
+                        <Users className="w-4 h-4 mr-2" />
+                        Group Discussions
+                      </Button>
+                      <Button 
+                        variant="outline"
+                        onClick={() => navigate('/events/create')}
+                        data-testid="button-create-event"
+                      >
+                        <Calendar className="w-4 h-4 mr-2" />
+                        Create Event
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Member Stats Card */}
+                <Card className="bg-background/50 border-white/10">
+                  <CardHeader>
+                    <CardTitle className="text-lg">Group Stats</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-muted-foreground">Total Members</span>
+                      <span className="font-bold" style={{ color }}>{professionals?.length || 0}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-muted-foreground">Your Status</span>
+                      <Badge style={{ background: `${color}30`, color }}>Active</Badge>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-muted-foreground">Network</span>
+                      <span className="font-medium">Global</span>
+                    </div>
+                    <div className="pt-4 border-t">
+                      <Button 
+                        className="w-full text-white"
+                        style={{ background: color }}
+                        onClick={() => navigate('/profile?tab=pro')}
+                        data-testid="button-edit-pro-profile"
+                      >
+                        Edit PRO Profile
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Fellow Members Section */}
+              <Card className="bg-background/50 border-white/10">
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <CardTitle>Fellow {title}</CardTitle>
+                    <Button variant="ghost" size="sm" style={{ color }}>
+                      View All
+                      <ArrowRight className="w-4 h-4 ml-1" />
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  {professionals && professionals.length > 0 ? (
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {professionals.slice(0, 6).map((pro) => (
+                        <div 
+                          key={pro.id}
+                          className="flex items-center gap-3 p-3 rounded-lg hover-elevate cursor-pointer"
+                          onClick={() => navigate(`/profile/${pro.username}`)}
+                        >
+                          <Avatar className="h-10 w-10">
+                            <AvatarImage src={pro.profileImage} />
+                            <AvatarFallback style={{ background: `${color}20`, color }}>
+                              {pro.name.charAt(0)}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium truncate">{pro.name}</p>
+                            {pro.city && (
+                              <p className="text-xs text-muted-foreground truncate">
+                                <MapPin className="w-3 h-3 inline mr-1" />
+                                {pro.city}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-center text-muted-foreground py-8">
+                      Be the first to join this PRO community!
+                    </p>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+          )}
 
           <TabsContent value="featured" className="space-y-6">
             <Card className="bg-background/50 border-white/10">
