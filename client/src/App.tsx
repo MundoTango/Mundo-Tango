@@ -119,7 +119,6 @@ const SearchPage = lazy(() => import("@/pages/SearchPage"));
 const CommunityWorldMapPage = lazy(
   () => import("@/pages/CommunityWorldMapPage"),
 );
-const RecommendationsPage = lazy(() => import("@/pages/RecommendationsPage"));
 const InvitationsPage = lazy(() => import("@/pages/InvitationsPage"));
 const FacebookInvites = lazy(() => import("@/pages/FacebookInvites"));
 const FacebookTestWorkflow = lazy(() => import("@/pages/FacebookTestWorkflow"));
@@ -870,13 +869,6 @@ function Router() {
         </ProtectedRoute>
       </Route>
 
-      <Route path="/recommendations">
-        <ProtectedRoute>
-          <AppLayout>
-            <RecommendationsPage />
-          </AppLayout>
-        </ProtectedRoute>
-      </Route>
 
       <Route path="/community-world-map">
         <ProtectedRoute>

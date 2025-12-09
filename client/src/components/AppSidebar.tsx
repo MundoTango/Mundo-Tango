@@ -93,12 +93,6 @@ const communityItems = [
     tooltip: "Manage your friends",
   },
   {
-    title: "Recommendations",
-    url: "/recommendations",
-    icon: Sparkles,
-    tooltip: "Personalized recommendations",
-  },
-  {
     title: "Messages",
     url: "/messages",
     icon: MessageSquare,
