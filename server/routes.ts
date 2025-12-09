@@ -4921,6 +4921,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/messages/unified/all/", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const userId = req.user!.id;
+      console.log("[Unified Inbox] Fetching messages for user:", userId);
       
       // Import socialMessages table - get all messages sent or received by this user
       const allMessages = await db.select({
@@ -4936,6 +4937,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           eq(socialMessages.recipientId, userId)
         ))
         .orderBy(desc(socialMessages.createdAt));
+      
+      console.log("[Unified Inbox] Found raw messages:", allMessages.length);
       
       if (allMessages.length === 0) {
         return res.json([]);
@@ -4976,6 +4979,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         })
       );
       
+      console.log("[Unified Inbox] Returning conversations:", messages.length);
       res.json(messages);
     } catch (error) {
       console.error("Get unified messages error:", error);
