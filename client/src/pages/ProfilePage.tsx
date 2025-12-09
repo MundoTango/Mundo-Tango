@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Settings, UserPlus, UserMinus, UserCheck, Plane, Calendar, CheckCircle, Instagram, Facebook, Twitter, Linkedin, Youtube, Globe, Award, Plus, Camera, Music, Users, ImageIcon, Mic2, Home, Briefcase, BookOpen, Heart, Eye } from "lucide-react";
+import { MapPin, Settings, UserPlus, UserMinus, UserCheck, Plane, Calendar, CheckCircle, Instagram, Facebook, Twitter, Linkedin, Youtube, Globe, Award, Plus, Camera, Music, Users, ImageIcon, Mic2, Home, Briefcase, BookOpen, Heart, Eye, Loader2 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useAuth } from "@/contexts/AuthContext";
 import { SEO } from "@/components/SEO";
@@ -27,6 +27,7 @@ import ProfileTabPro from "@/components/profile/ProfileTabPro";
 import DashboardCustomerToggle from "@/components/profile/DashboardCustomerToggle";
 import { PhotoUploadDialog } from "@/components/PhotoUploadDialog";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
 
 interface User {
   id: number;
@@ -1040,29 +1041,68 @@ export default function ProfilePage() {
           navigate(`/profile/${params?.id || user?.id}`);
         }
       }}>
-        <DialogContent className="sm:max-w-md" data-testid="dialog-friend-request">
+        <DialogContent className="backdrop-blur-xl bg-white/90 dark:bg-slate-900/90 max-w-md" data-testid="dialog-friend-request">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <UserPlus className="h-5 w-5" style={{ color: '#40E0D0' }} />
-              Friend Request
+            <DialogTitle className="text-xl bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent">
+              Friend Request from {pendingFriendRequest?.sender?.name}
             </DialogTitle>
-            <DialogDescription>
-              {pendingFriendRequest?.sender?.name || user?.name} wants to connect with you!
-            </DialogDescription>
           </DialogHeader>
           
-          <div className="space-y-4 py-4">
-            {/* Sender info */}
-            <div className="flex items-center gap-3">
+          <div className="space-y-4">
+            {/* Sender info header */}
+            <div className="p-3 bg-blue-50 dark:bg-blue-950/30 rounded-lg border border-blue-200 dark:border-blue-800">
+              <p className="text-sm text-blue-900 dark:text-blue-100">
+                <span className="font-semibold">{pendingFriendRequest?.sender?.name}</span> (@{pendingFriendRequest?.sender?.username}) sent you a friend request
+              </p>
+            </div>
+
+            {/* Personal Message */}
+            {pendingFriendRequest?.senderMessage && (
+              <div>
+                <Label className="text-sm font-medium">Their Message</Label>
+                <div className="mt-2 p-3 bg-muted/50 rounded-lg border">
+                  <p className="text-sm">"{pendingFriendRequest.senderMessage}"</p>
+                </div>
+              </div>
+            )}
+
+            {/* Dance Story Section */}
+            {pendingFriendRequest?.didWeDance && (
+              <div className="space-y-3 p-4 bg-gradient-to-br from-cyan-50 to-blue-50 dark:from-cyan-950/20 dark:to-blue-950/20 rounded-lg border border-cyan-200 dark:border-cyan-800">
+                <div className="flex items-center gap-2">
+                  <Heart className="h-4 w-4" style={{ color: '#40E0D0' }} />
+                  <span className="text-sm font-medium" style={{ color: '#40E0D0' }}>We danced together!</span>
+                </div>
+                
+                {pendingFriendRequest.danceLocation && (
+                  <div>
+                    <p className="text-xs font-semibold text-muted-foreground mb-1">Location</p>
+                    <p className="text-sm text-muted-foreground flex items-center gap-1">
+                      <MapPin className="h-3 w-3" />
+                      {pendingFriendRequest.danceLocation}
+                    </p>
+                  </div>
+                )}
+                
+                {pendingFriendRequest.danceStory && (
+                  <div>
+                    <p className="text-xs font-semibold text-muted-foreground mb-1">Their Story</p>
+                    <p className="text-sm italic text-muted-foreground">"{pendingFriendRequest.danceStory}"</p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Sender Profile Preview */}
+            <div className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg">
               <Avatar className="h-12 w-12 ring-2 ring-cyan-400/50">
-                <AvatarImage src={pendingFriendRequest?.sender?.profileImage || user?.profileImage} />
+                <AvatarImage src={pendingFriendRequest?.sender?.profileImage} />
                 <AvatarFallback className="bg-gradient-to-br from-cyan-400 to-blue-500 text-white">
-                  {(pendingFriendRequest?.sender?.name || user?.name)?.charAt(0)}
+                  {pendingFriendRequest?.sender?.name?.charAt(0)}
                 </AvatarFallback>
               </Avatar>
-              <div>
-                <p className="font-semibold">{pendingFriendRequest?.sender?.name || user?.name}</p>
-                <p className="text-sm text-muted-foreground">@{pendingFriendRequest?.sender?.username || user?.username}</p>
+              <div className="flex-1">
+                <p className="font-semibold text-sm">{pendingFriendRequest?.sender?.name}</p>
                 {pendingFriendRequest?.sender?.city && (
                   <p className="text-xs text-muted-foreground flex items-center gap-1">
                     <MapPin className="h-3 w-3" />
@@ -1071,35 +1111,9 @@ export default function ProfilePage() {
                 )}
               </div>
             </div>
-
-            {/* Message */}
-            {pendingFriendRequest?.senderMessage && (
-              <div className="bg-muted/50 rounded-lg p-3 border">
-                <p className="text-sm italic">"{pendingFriendRequest.senderMessage}"</p>
-              </div>
-            )}
-
-            {/* Dance info */}
-            {pendingFriendRequest?.didWeDance && (
-              <div className="bg-cyan-500/10 border border-cyan-500/30 rounded-lg p-3 space-y-2">
-                <div className="flex items-center gap-2">
-                  <Heart className="h-4 w-4" style={{ color: '#40E0D0' }} />
-                  <span className="text-sm font-medium" style={{ color: '#40E0D0' }}>We danced together!</span>
-                </div>
-                {pendingFriendRequest.danceLocation && (
-                  <p className="text-sm text-muted-foreground flex items-center gap-1">
-                    <MapPin className="h-3 w-3" />
-                    {pendingFriendRequest.danceLocation}
-                  </p>
-                )}
-                {pendingFriendRequest.danceStory && (
-                  <p className="text-sm italic text-muted-foreground">"{pendingFriendRequest.danceStory}"</p>
-                )}
-              </div>
-            )}
           </div>
 
-          <DialogFooter className="flex gap-2 sm:gap-2">
+          <DialogFooter className="flex gap-2 sm:gap-2 justify-end">
             <Button
               variant="outline"
               onClick={() => pendingFriendRequest && declineRequestMutation.mutate(pendingFriendRequest.id)}
@@ -1111,10 +1125,17 @@ export default function ProfilePage() {
             <Button
               onClick={() => pendingFriendRequest && acceptRequestMutation.mutate(pendingFriendRequest.id)}
               disabled={acceptRequestMutation.isPending}
-              className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600"
+              className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700"
               data-testid="button-accept-request"
             >
-              {acceptRequestMutation.isPending ? 'Accepting...' : 'Accept Request'}
+              {acceptRequestMutation.isPending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Accepting...
+                </>
+              ) : (
+                "Accept"
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>
