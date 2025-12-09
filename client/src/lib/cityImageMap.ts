@@ -6,13 +6,13 @@
 
 export const CITY_IMAGE_MAP: Record<string, string> = {
   // South America
-  "Buenos Aires": "https://images.unsplash.com/photo-1528392175875-4ce3ab32663c?w=1200&h=675&fit=crop",
+  "Buenos Aires": "https://images.unsplash.com/photo-1612294037637-ec328d0e075e?w=1200&h=675&fit=crop",
   "Rio de Janeiro": "https://images.unsplash.com/photo-1483729558449-99ef09a8c325?w=1200&h=675&fit=crop",
   "Sao Paulo": "https://images.unsplash.com/photo-1554168804-91c9e85a9336?w=1200&h=675&fit=crop",
   "São Paulo": "https://images.unsplash.com/photo-1554168804-91c9e85a9336?w=1200&h=675&fit=crop",
   
   // Europe
-  "Paris": "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=1200&h=675&fit=crop",
+  "Paris": "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=1200&h=675&fit=crop",
   "Barcelona": "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=1200&h=675&fit=crop",
   "Berlin": "https://images.unsplash.com/photo-1560969184-10fe8719e047?w=1200&h=675&fit=crop",
   "London": "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=1200&h=675&fit=crop",
@@ -33,12 +33,13 @@ export const CITY_IMAGE_MAP: Record<string, string> = {
   "San Francisco": "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=1200&h=675&fit=crop",
   "Miami": "https://images.unsplash.com/photo-1533106497176-45ae19e68ba2?w=1200&h=675&fit=crop",
   "Chicago": "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1200&h=675&fit=crop",
-  "Toronto": "https://images.unsplash.com/photo-1534430480872-3498386e7856?w=1200&h=675&fit=crop",
+  "Toronto": "https://images.unsplash.com/photo-1517090504586-fde19ea6066f?w=1200&h=675&fit=crop",
   "Mexico City": "https://images.unsplash.com/photo-1518659526054-190340b32735?w=1200&h=675&fit=crop",
+  "McCloud": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=675&fit=crop",
   
   // Asia
-  "Tokyo": "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=1200&h=675&fit=crop",
-  "Shanghai": "https://images.unsplash.com/photo-1537531383496-f4749b8032cf?w=1200&h=675&fit=crop",
+  "Tokyo": "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=1200&h=675&fit=crop",
+  "Shanghai": "https://images.unsplash.com/photo-1538428494232-9c0d8a3ab403?w=1200&h=675&fit=crop",
   "Bangkok": "https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=1200&h=675&fit=crop",
   "Singapore": "https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=1200&h=675&fit=crop",
   "Hong Kong": "https://images.unsplash.com/photo-1536599018102-9f803c140fc1?w=1200&h=675&fit=crop",
