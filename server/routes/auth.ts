@@ -248,6 +248,12 @@ router.post("/login", async (req: Request, res: Response) => {
       isVerified: user.isVerified,
       role: user.role,
       twoFactorEnabled: user.twoFactorEnabled,
+      // Include profile data needed for sidebar "My Stuff" section
+      tangoRoles: (user as any).tango_roles || (user as any).tangoRoles || [],
+      city: user.city,
+      country: user.country,
+      profileImage: user.profileImage,
+      bio: user.bio,
     };
 
     res.cookie("refreshToken", refreshToken, {
