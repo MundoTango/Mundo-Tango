@@ -834,6 +834,7 @@ export default function ProfilePage() {
         onTabChange={setActiveTab}
         isOwnProfile={isOwnProfile}
         isPublicView={isPublicView}
+        isFriend={isFriend}
       />
       {/* Tab Content */}
       <div className="max-w-5xl mx-auto px-6 py-12">

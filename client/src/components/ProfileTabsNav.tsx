@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { 
@@ -9,7 +10,8 @@ import {
   Users, 
   Image, 
   Info,
-  Briefcase
+  Briefcase,
+  Handshake
 } from "lucide-react";
 
 interface User {
@@ -24,6 +26,7 @@ interface ProfileTabsNavProps {
   onTabChange: (tab: string) => void;
   isOwnProfile: boolean;
   isPublicView?: boolean;
+  isFriend?: boolean;
 }
 
 const PROFESSIONAL_ROLES = [
@@ -61,9 +64,10 @@ export const getVisibleTabs = (user: User): Array<{ id: string; label: string; i
   return allTabs;
 };
 
-export default function ProfileTabsNav({ user, activeTab, onTabChange, isOwnProfile, isPublicView }: ProfileTabsNavProps) {
+export default function ProfileTabsNav({ user, activeTab, onTabChange, isOwnProfile, isPublicView, isFriend }: ProfileTabsNavProps) {
   const visibleTabs = getVisibleTabs(user);
   const [hoveredTab, setHoveredTab] = useState<string | null>(null);
+  const [, navigate] = useLocation();
   
   return (
     <div className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-40">
@@ -125,6 +129,27 @@ export default function ProfileTabsNav({ user, activeTab, onTabChange, isOwnProf
               </motion.div>
             );
           })}
+          
+          {/* See Friendship Button - Shows when viewing a friend's profile */}
+          {isFriend && !isOwnProfile && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: visibleTabs.length * 0.05 }}
+              className="ml-auto"
+            >
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate(`/friendship/${user.id}`)}
+                className="gap-2 px-4 py-2 h-auto border-primary/30 text-primary hover-elevate"
+                data-testid={`button-see-friendship-tab-${user.id}`}
+              >
+                <Handshake className="w-4 h-4" />
+                <span className="font-medium">See Friendship</span>
+              </Button>
+            </motion.div>
+          )}
         </div>
       </div>
     </div>

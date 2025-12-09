@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { MessageCircle, Share2, Bookmark, BookmarkCheck, Users, Plane, Pizza, Drama, Mountain, Moon, Leaf, Palette, Music, Dumbbell, Camera as PhotoIcon, HeartHandshake, UserPlus, Briefcase, Target, PartyPopper } from "lucide-react";
+import { MessageCircle, Share2, Bookmark, BookmarkCheck, Users, Plane, Pizza, Drama, Mountain, Moon, Leaf, Palette, Music, Dumbbell, Camera as PhotoIcon, HeartHandshake, UserPlus, Briefcase, Target, PartyPopper, Handshake } from "lucide-react";
 import { safeDateDistance } from "@/lib/safeDateFormat";
 import { Link } from "wouter";
 import { ReactionSelector } from "@/components/ui/ReactionSelector";
@@ -344,38 +344,41 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
             <Share2 className="w-4 h-4" />
           </Button>
 
-          {/* See Friendship Button - Only for accepted friends */}
-          {post.user?.friendshipStatus === 'accepted' && post.user?.id !== user?.id && (
+          {/* Right side actions */}
+          <div className="flex items-center gap-1 ml-auto">
+            {/* See Friendship Button - Only for accepted friends */}
+            {post.user?.friendshipStatus === 'accepted' && post.user?.id !== user?.id && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="hover-elevate gap-2"
+                asChild
+                data-testid={`button-see-friendship-${post.user.id}`}
+              >
+                <Link href={`/friendship/${post.user.id}`}>
+                  <Handshake className="w-4 h-4" style={{ color: '#14B8A6' }} />
+                  <span className="text-xs hidden sm:inline">Friendship</span>
+                </Link>
+              </Button>
+            )}
+
             <Button
               variant="ghost"
               size="sm"
-              className="hover-elevate gap-2"
-              asChild
-              data-testid={`button-see-friendship-${post.user.id}`}
+              className="hover-elevate"
+              onClick={handleSave}
+              disabled={isSaveLoading}
+              data-testid={`button-save-${post.id}`}
             >
-              <Link href={`/friendship/${post.user.id}`}>
-                <Users className="w-4 h-4" style={{ color: '#14B8A6' }} />
-                <span className="text-xs hidden sm:inline">See Friendship</span>
-              </Link>
+              {isSaveLoading ? (
+                <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+              ) : isSaved ? (
+                <BookmarkCheck className="w-4 h-4" style={{ color: '#40E0D0' }} />
+              ) : (
+                <Bookmark className="w-4 h-4" />
+              )}
             </Button>
-          )}
-
-          <Button
-            variant="ghost"
-            size="sm"
-            className="hover-elevate ml-auto"
-            onClick={handleSave}
-            disabled={isSaveLoading}
-            data-testid={`button-save-${post.id}`}
-          >
-            {isSaveLoading ? (
-              <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-            ) : isSaved ? (
-              <BookmarkCheck className="w-4 h-4" style={{ color: '#40E0D0' }} />
-            ) : (
-              <Bookmark className="w-4 h-4" />
-            )}
-          </Button>
+          </div>
         </div>
 
         {/* Comments Section */}
