@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useRoute, Link, useSearch, useLocation } from "wouter";
+import { useRoute, useSearch, useLocation } from "wouter";
 import { useTranslation } from "react-i18next";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -257,6 +257,11 @@ export default function ProfilePage() {
   const profileIdentifier = params?.id || currentUser?.id?.toString();
 
   const [, navigate] = useLocation();
+
+  // Handler for navigating to friendship page
+  const handleSeeFriendship = (friendId: number) => {
+    navigate(`/friendship/${friendId}`);
+  };
 
   const { data: user, isLoading: userLoading, isError: userError } = useQuery<User>({
     queryKey: ["user", profileIdentifier],
@@ -763,16 +768,15 @@ export default function ProfilePage() {
           <div className="absolute top-8 right-8 z-30 flex gap-3">
             {isFriend ? (
                 <>
-                  <Link href={`/friendship/${user.id}`}>
-                    <Button 
-                      variant="outline"
-                      className="gap-2 text-white border-white/30 bg-black/20 backdrop-blur-sm hover:bg-black/30"
-                      data-testid={`button-see-friendship-${user.id}`}
-                    >
-                      <Handshake className="h-4 w-4" />
-                      See Friendship
-                    </Button>
-                  </Link>
+                  <Button 
+                    variant="outline"
+                    className="gap-2 text-white border-white/30 bg-black/20 backdrop-blur-sm hover:bg-black/30"
+                    onClick={() => handleSeeFriendship(user.id)}
+                    data-testid={`button-see-friendship-${user.id}`}
+                  >
+                    <Handshake className="h-4 w-4" />
+                    See Friendship
+                  </Button>
                   <Button 
                     variant="outline"
                     className="gap-2 text-white border-white/30 bg-black/20 backdrop-blur-sm hover:bg-black/30"
