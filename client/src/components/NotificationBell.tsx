@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { safeDateDistance } from "@/lib/safeDateFormat";
 import { Link, useLocation } from "wouter";
+import { queryClient } from "@/lib/queryClient";
 
 interface Notification {
   id: number;
@@ -29,10 +30,25 @@ interface Notification {
 
 function NotificationBellComponent() {
   const [, setLocation] = useLocation();
+  const [isOpen, setIsOpen] = useState(false);
   const { data: notifications = [] } = useQuery<Notification[]>({
     queryKey: ["/api/notifications"],
     refetchInterval: 30000, // Poll every 30 seconds
   });
+
+  // Prefetch user data when hovering over profile notifications
+  const handlePrefetch = (notification: Notification) => {
+    if (notification.actionUrl?.startsWith("/profile/")) {
+      const userId = notification.actionUrl.split("/profile/")[1]?.split("?")[0];
+      if (userId && !isNaN(parseInt(userId))) {
+        // Prefetch user data in the background
+        queryClient.prefetchQuery({
+          queryKey: ["user", userId],
+          staleTime: 5000,
+        });
+      }
+    }
+  };
 
   const unreadCount = notifications.filter((n) => !n.read).length;
   const recentNotifications = notifications.slice(0, 5);
@@ -78,6 +94,7 @@ function NotificationBellComponent() {
                   className={`p-4 hover:bg-accent/50 transition-colors cursor-pointer ${
                     !notification.read ? "bg-accent/30" : ""
                   }`}
+                  onMouseEnter={() => handlePrefetch(notification)}
                   onClick={() => {
                     if (notification.actionUrl) {
                       setLocation(notification.actionUrl);

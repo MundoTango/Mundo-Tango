@@ -75,7 +75,7 @@ export default function ProfilePage() {
   const searchString = useSearch();
   const { user: currentUser } = useAuth();
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState<string>('feed');
+  const [activeTab, setActiveTab] = useState<string>('about');
   
   // Detect public view mode from ?view=public query param
   const searchParams = new URLSearchParams(searchString);
@@ -284,7 +284,7 @@ export default function ProfilePage() {
       if (!res.ok) throw new Error("Failed to load posts");
       return res.json();
     },
-    enabled: !!user?.id,
+    enabled: !!user?.id && activeTab === 'feed',
   });
 
   // Fetch friends to check if already friends
@@ -299,7 +299,7 @@ export default function ProfilePage() {
     enabled: !!(currentUser && user && currentUser.id !== user.id),
   });
 
-  // Fetch upcoming travel plans for this user
+  // Fetch upcoming travel plans for this user - only when travel tab is active
   const { data: upcomingTravel = [] } = useQuery<any[]>({
     queryKey: ['/api/travel/plans', user?.id],
     queryFn: async () => {
@@ -310,10 +310,10 @@ export default function ProfilePage() {
       const now = new Date();
       return plans.filter((trip: any) => new Date(trip.startDate) > now).slice(0, 3);
     },
-    enabled: !!user?.id,
+    enabled: !!user?.id && activeTab === 'travel',
   });
 
-  // Fetch face photos for this user
+  // Fetch face photos for this user - only when photos tab is active
   const { data: facePhotos = [] } = useQuery<{ id: number; url: string; order: number }[]>({
     queryKey: ['/api/profile/photos', user?.id],
     queryFn: async () => {
@@ -321,7 +321,7 @@ export default function ProfilePage() {
       if (!res.ok) return [];
       return res.json();
     },
-    enabled: !!user?.id,
+    enabled: !!user?.id && activeTab === 'photos',
   });
 
   const isOwnProfile = currentUser?.id === user?.id;
