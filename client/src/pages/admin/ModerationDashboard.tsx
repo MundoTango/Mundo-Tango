@@ -72,7 +72,7 @@ interface AuditLogItem {
 export default function ModerationDashboard() {
   const { toast } = useToast();
   const [selectedTab, setSelectedTab] = useState("queue");
-  const [statusFilter, setStatusFilter] = useState("pending");
+  const [statusFilter, setStatusFilter] = useState("all");
   const [selectedItem, setSelectedItem] = useState<ModerationQueueItem | null>(null);
   const [moderatorNotes, setModeratorNotes] = useState("");
 
