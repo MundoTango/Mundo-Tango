@@ -4921,24 +4921,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/messages/unified/all/", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const userId = req.user!.id;
+      
+      // Get all messages where user is sender or receiver
+      const allMessages = await db.select({
+        id: chatMessages.id,
+        chatRoomId: chatMessages.chatRoomId,
+        userId: chatMessages.userId,
+        body: chatMessages.body,
+        createdAt: chatMessages.createdAt,
+      }).from(chatMessages).orderBy(desc(chatMessages.createdAt));
+      
+      // Get conversations for this user
       const conversations = await storage.getUserConversations(userId);
       
-      // Map conversations to message format expected by UnifiedInbox
-      const messages = conversations.flatMap((conv: any) => {
-        const otherUser = conv.participants?.find((p: any) => p.id !== userId);
-        return {
-          id: conv.id,
-          channel: "mt",
-          from: otherUser?.username || otherUser?.name || "Unknown",
-          fromId: otherUser?.id,
-          subject: `Chat with ${otherUser?.name || otherUser?.username}`,
-          body: conv.lastMessage || "",
-          timestamp: conv.updatedAt || new Date(),
-          isRead: false,
-          conversationId: conv.id,
-          participant: otherUser
-        };
-      });
+      // Build messages list with participant info
+      const messages = await Promise.all(
+        conversations.map(async (conv: any) => {
+          // Get all users in this conversation
+          const roomUsers = await db.select({
+            userId: chatRoomUsers.userId,
+          }).from(chatRoomUsers).where(eq(chatRoomUsers.chatRoomId, conv.id));
+          
+          const otherUserId = roomUsers.find(u => u.userId !== userId)?.userId;
+          const otherUser = otherUserId ? await storage.getUserById(otherUserId) : null;
+          
+          // Get last message in this room
+          const lastMsg = allMessages.find(m => m.chatRoomId === conv.id);
+          
+          return {
+            id: conv.id,
+            channel: "mt",
+            from: otherUser?.name || otherUser?.username || "Unknown",
+            fromId: otherUserId,
+            subject: `Chat with ${otherUser?.name || otherUser?.username}`,
+            body: lastMsg?.body || "",
+            timestamp: lastMsg?.createdAt || conv.lastMessageAt || new Date(),
+            isRead: false,
+            receivedAt: lastMsg?.createdAt || conv.lastMessageAt || new Date(),
+            conversationId: conv.id,
+            participant: otherUser
+          };
+        })
+      );
       
       res.json(messages);
     } catch (error) {
