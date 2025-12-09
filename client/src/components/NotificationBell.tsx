@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { safeDateDistance } from "@/lib/safeDateFormat";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 
 interface Notification {
   id: number;
@@ -28,6 +28,7 @@ interface Notification {
 }
 
 function NotificationBellComponent() {
+  const [, setLocation] = useLocation();
   const { data: notifications = [] } = useQuery<Notification[]>({
     queryKey: ["/api/notifications"],
     refetchInterval: 30000, // Poll every 30 seconds
@@ -79,7 +80,7 @@ function NotificationBellComponent() {
                   }`}
                   onClick={() => {
                     if (notification.actionUrl) {
-                      window.location.href = notification.actionUrl;
+                      setLocation(notification.actionUrl);
                     }
                   }}
                   data-testid={`notification-item-${notification.id}`}
