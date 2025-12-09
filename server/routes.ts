@@ -4918,6 +4918,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/messages/unified/all/", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const userId = req.user!.id;
+      const conversations = await storage.getUserConversations(userId);
+      
+      // Map conversations to message format expected by UnifiedInbox
+      const messages = conversations.flatMap((conv: any) => {
+        const otherUser = conv.participants?.find((p: any) => p.id !== userId);
+        return {
+          id: conv.id,
+          channel: "mt",
+          from: otherUser?.username || otherUser?.name || "Unknown",
+          fromId: otherUser?.id,
+          subject: `Chat with ${otherUser?.name || otherUser?.username}`,
+          body: conv.lastMessage || "",
+          timestamp: conv.updatedAt || new Date(),
+          isRead: false,
+          conversationId: conv.id,
+          participant: otherUser
+        };
+      });
+      
+      res.json(messages);
+    } catch (error) {
+      console.error("Get unified messages error:", error);
+      res.json([]);
+    }
+  });
+
   app.get("/api/messages/unread-count", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const userId = req.user!.id;

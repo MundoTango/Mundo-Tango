@@ -312,16 +312,21 @@ export default function ProfileTabsNav({ user, activeTab, onTabChange, isOwnProf
               <div className="space-y-3 p-4 bg-gradient-to-br from-cyan-50 to-blue-50 dark:from-cyan-950/20 dark:to-blue-950/20 rounded-lg border border-cyan-200 dark:border-cyan-800">
                 <div>
                   <Label htmlFor="danceLocation">Where did we meet?</Label>
-                  <Input
-                    id="danceLocation"
-                    placeholder="e.g., Buenos Aires, Paris"
-                    value={requestData.danceLocation}
-                    onChange={(e) =>
-                      setRequestData({ ...requestData, danceLocation: e.target.value })
-                    }
-                    className="mt-1"
-                    data-testid="input-dance-location"
-                  />
+                  <div className="relative">
+                    <Input
+                      id="danceLocation"
+                      placeholder="e.g., Buenos Aires, Paris"
+                      value={requestData.danceLocation}
+                      onChange={(e) =>
+                        setRequestData({ ...requestData, danceLocation: e.target.value })
+                      }
+                      className="mt-1"
+                      data-testid="input-dance-location"
+                    />
+                    {requestData.danceLocation && (
+                      <p className="text-xs text-muted-foreground mt-1">Try cities like: Buenos Aires, Paris, Vienna, New York</p>
+                    )}
+                  </div>
                 </div>
               </div>
             )}
