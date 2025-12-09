@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AppLayout } from "@/components/AppLayout";
 import { LoadingFallback } from "@/components/LoadingFallback";
+import { PostItem, type PostItemData } from "@/components/feed/PostItem";
 import { 
   Users, Calendar, MessageCircle, Heart, MapPin, 
   ChevronRight, BookOpen, Camera, Music, Briefcase, 
@@ -33,17 +34,7 @@ interface User {
   yearsOfDancing?: number;
 }
 
-interface Post {
-  id: number;
-  content: string;
-  imageUrl?: string;
-  videoUrl?: string;
-  createdAt: string;
-  likes: number;
-  userId: number;
-  userName: string;
-  userProfileImage?: string;
-}
+// Posts use PostItemData interface from PostItem component
 
 interface SharedMedia {
   id: number;
@@ -94,7 +85,7 @@ export default function FriendshipPage() {
     enabled: !!friendId,
   });
 
-  const { data: sharedPosts = [], isLoading: isLoadingPosts } = useQuery<Post[]>({
+  const { data: sharedPosts = [], isLoading: isLoadingPosts } = useQuery<PostItemData[]>({
     queryKey: ["/api/friends/shared/posts", friendId, feedFilter],
     queryFn: async () => {
       const token = localStorage.getItem('accessToken');
@@ -418,38 +409,7 @@ export default function FriendshipPage() {
             ) : (
               <div className="space-y-4">
                 {sharedPosts.map((post) => (
-                  <Card key={post.id} className="overflow-hidden hover-elevate" data-testid={`post-${post.id}`}>
-                    <CardContent className="p-6">
-                      <div className="flex items-start gap-4">
-                        <Avatar className="w-10 h-10">
-                          <AvatarImage src={post.userProfileImage} />
-                          <AvatarFallback>{post.userName?.charAt(0)}</AvatarFallback>
-                        </Avatar>
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-2">
-                            <span className="font-semibold">{post.userName}</span>
-                            <span className="text-xs text-muted-foreground">
-                              {safeDateDistance(post.createdAt, { addSuffix: true })}
-                            </span>
-                          </div>
-                          <p className="text-sm mb-3">{post.content}</p>
-                          {post.imageUrl && (
-                            <img 
-                              src={post.imageUrl} 
-                              alt="" 
-                              className="rounded-lg max-h-80 object-cover w-full"
-                            />
-                          )}
-                          <div className="flex items-center gap-4 mt-4 text-sm text-muted-foreground">
-                            <span className="flex items-center gap-1">
-                              <Heart className="w-4 h-4" />
-                              {post.likes}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
+                  <PostItem key={post.id} post={post} />
                 ))}
               </div>
             )}

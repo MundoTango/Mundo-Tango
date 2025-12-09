@@ -2588,22 +2588,57 @@ export class DbStorage implements IStorage {
     await db.delete(notifications).where(eq(notifications.id, notificationId));
   }
 
-  // Shared content for FriendshipPage
+  // Shared content for FriendshipPage - returns PostItemData format
   async getSharedPosts(userId: number, friendId: number, filter: string): Promise<any[]> {
     try {
+      // Helper to transform posts to PostItemData format
+      const transformToPostItemData = (rawPosts: any[]) => {
+        return rawPosts.map(p => ({
+          id: p.id,
+          userId: p.userId,
+          content: p.content,
+          imageUrl: p.imageUrl,
+          videoUrl: p.videoUrl,
+          videoThumbnail: p.videoThumbnail,
+          visibility: p.visibility || 'public',
+          likes: p.likes || 0,
+          comments: p.comments || 0,
+          createdAt: p.createdAt?.toISOString() || new Date().toISOString(),
+          isSaved: false,
+          currentReaction: null,
+          reactions: {},
+          tags: p.tags || [],
+          user: {
+            id: p.authorId,
+            name: p.authorName || 'Unknown',
+            username: p.authorUsername || '',
+            profileImage: p.authorProfileImage,
+            friendshipStatus: 'accepted' as const,
+            tangoRoles: p.authorTangoRoles,
+          }
+        }));
+      };
+
       // Get posts based on filter
       if (filter === 'our') {
         // Posts authored by either user
         const result = await db.select({
           id: posts.id,
+          userId: posts.userId,
           content: posts.content,
           imageUrl: posts.imageUrl,
           videoUrl: posts.videoUrl,
-          createdAt: posts.createdAt,
+          videoThumbnail: posts.videoThumbnail,
+          visibility: posts.visibility,
           likes: posts.likes,
-          userId: posts.userId,
-          userName: users.name,
-          userProfileImage: users.profileImage,
+          comments: posts.comments,
+          createdAt: posts.createdAt,
+          tags: posts.tags,
+          authorId: users.id,
+          authorName: users.name,
+          authorUsername: users.username,
+          authorProfileImage: users.profileImage,
+          authorTangoRoles: users.tangoRoles,
         })
         .from(posts)
         .leftJoin(users, eq(posts.userId, users.id))
@@ -2611,10 +2646,7 @@ export class DbStorage implements IStorage {
         .orderBy(desc(posts.createdAt))
         .limit(50);
         
-        return result.map(p => ({
-          ...p,
-          createdAt: p.createdAt?.toISOString(),
-        }));
+        return transformToPostItemData(result);
       } else if (filter === 'liked') {
         // Posts both users have liked
         const userLikes = await db.select({ postId: postLikes.postId })
@@ -2633,14 +2665,21 @@ export class DbStorage implements IStorage {
         
         const result = await db.select({
           id: posts.id,
+          userId: posts.userId,
           content: posts.content,
           imageUrl: posts.imageUrl,
           videoUrl: posts.videoUrl,
-          createdAt: posts.createdAt,
+          videoThumbnail: posts.videoThumbnail,
+          visibility: posts.visibility,
           likes: posts.likes,
-          userId: posts.userId,
-          userName: users.name,
-          userProfileImage: users.profileImage,
+          comments: posts.comments,
+          createdAt: posts.createdAt,
+          tags: posts.tags,
+          authorId: users.id,
+          authorName: users.name,
+          authorUsername: users.username,
+          authorProfileImage: users.profileImage,
+          authorTangoRoles: users.tangoRoles,
         })
         .from(posts)
         .leftJoin(users, eq(posts.userId, users.id))
@@ -2648,10 +2687,7 @@ export class DbStorage implements IStorage {
         .orderBy(desc(posts.createdAt))
         .limit(50);
         
-        return result.map(p => ({
-          ...p,
-          createdAt: p.createdAt?.toISOString(),
-        }));
+        return transformToPostItemData(result);
       } else if (filter === 'commented') {
         // Posts both users have commented on
         const userComments = await db.select({ postId: postComments.postId })
@@ -2670,14 +2706,21 @@ export class DbStorage implements IStorage {
         
         const result = await db.select({
           id: posts.id,
+          userId: posts.userId,
           content: posts.content,
           imageUrl: posts.imageUrl,
           videoUrl: posts.videoUrl,
-          createdAt: posts.createdAt,
+          videoThumbnail: posts.videoThumbnail,
+          visibility: posts.visibility,
           likes: posts.likes,
-          userId: posts.userId,
-          userName: users.name,
-          userProfileImage: users.profileImage,
+          comments: posts.comments,
+          createdAt: posts.createdAt,
+          tags: posts.tags,
+          authorId: users.id,
+          authorName: users.name,
+          authorUsername: users.username,
+          authorProfileImage: users.profileImage,
+          authorTangoRoles: users.tangoRoles,
         })
         .from(posts)
         .leftJoin(users, eq(posts.userId, users.id))
@@ -2685,33 +2728,51 @@ export class DbStorage implements IStorage {
         .orderBy(desc(posts.createdAt))
         .limit(50);
         
-        return result.map(p => ({
-          ...p,
-          createdAt: p.createdAt?.toISOString(),
-        }));
+        return transformToPostItemData(result);
       } else {
-        // All - Posts by either user or that both have interacted with
+        // All - Posts where BOTH users are @mentioned together
+        // Get usernames for both users to search in mentions
+        const [userData, friendData] = await Promise.all([
+          db.select({ username: users.username }).from(users).where(eq(users.id, userId)).limit(1),
+          db.select({ username: users.username }).from(users).where(eq(users.id, friendId)).limit(1),
+        ]);
+        
+        const userUsername = userData[0]?.username;
+        const friendUsername = friendData[0]?.username;
+        
+        if (!userUsername || !friendUsername) return [];
+        
+        // Find posts where both usernames appear in mentions array
         const result = await db.select({
           id: posts.id,
+          userId: posts.userId,
           content: posts.content,
           imageUrl: posts.imageUrl,
           videoUrl: posts.videoUrl,
-          createdAt: posts.createdAt,
+          videoThumbnail: posts.videoThumbnail,
+          visibility: posts.visibility,
           likes: posts.likes,
-          userId: posts.userId,
-          userName: users.name,
-          userProfileImage: users.profileImage,
+          comments: posts.comments,
+          createdAt: posts.createdAt,
+          tags: posts.tags,
+          authorId: users.id,
+          authorName: users.name,
+          authorUsername: users.username,
+          authorProfileImage: users.profileImage,
+          authorTangoRoles: users.tangoRoles,
         })
         .from(posts)
         .leftJoin(users, eq(posts.userId, users.id))
-        .where(or(eq(posts.userId, userId), eq(posts.userId, friendId)))
+        .where(
+          and(
+            arrayContains(posts.mentions, [userUsername]),
+            arrayContains(posts.mentions, [friendUsername])
+          )
+        )
         .orderBy(desc(posts.createdAt))
         .limit(50);
         
-        return result.map(p => ({
-          ...p,
-          createdAt: p.createdAt?.toISOString(),
-        }));
+        return transformToPostItemData(result);
       }
     } catch (error) {
       console.error('[getSharedPosts] Error:', error);
