@@ -52,7 +52,8 @@ export function PROGroupPublicPage({ roleSlug, title, singularTitle, description
   // Use singularTitle if provided, otherwise derive from title by removing trailing 's'
   const singular = singularTitle || title.replace(/s$/, '');
 
-  const isMember = profile?.tangoRoles?.includes(roleSlug);
+  // tangoRoles is on user object, not profile
+  const isMember = user?.tangoRoles?.includes(roleSlug);
 
   const { data: professionals, isLoading } = useQuery<Professional[]>({
     queryKey: ['/api/users/professionals', roleSlug],
