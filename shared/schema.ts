@@ -1578,6 +1578,43 @@ export const chatMessages = pgTable(
 );
 
 // ============================================================================
+// DIRECT MESSAGES (User-to-User Messaging)
+// ============================================================================
+
+export const directMessages = pgTable(
+  "direct_messages",
+  {
+    id: serial("id").primaryKey(),
+    senderId: integer("sender_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    recipientId: integer("recipient_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    content: text("content").notNull(),
+    isRead: boolean("is_read").default(false).notNull(),
+    createdAt: timestamp("created_at").defaultNow(),
+  },
+  (table) => ({
+    senderIdx: index("direct_messages_sender_idx").on(table.senderId),
+    recipientIdx: index("direct_messages_recipient_idx").on(table.recipientId),
+    createdAtIdx: index("direct_messages_created_at_idx").on(table.createdAt),
+    conversationIdx: index("direct_messages_conversation_idx").on(
+      table.senderId,
+      table.recipientId,
+    ),
+  }),
+);
+
+export const insertDirectMessageSchema = createInsertSchema(directMessages).omit({
+  id: true,
+  createdAt: true,
+  isRead: true,
+});
+export type InsertDirectMessage = z.infer<typeof insertDirectMessageSchema>;
+export type SelectDirectMessage = typeof directMessages.$inferSelect;
+
+// ============================================================================
 // NOTIFICATIONS
 // ============================================================================
 

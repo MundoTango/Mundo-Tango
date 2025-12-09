@@ -31,7 +31,7 @@ import {
   type MessageAutomation,
   type ScheduledMessage,
 } from "@shared/schema";
-import { chatMessages } from "@shared/schema";
+import { chatMessages, directMessages, users } from "@shared/schema";
 import { eq, and, or, desc, sql } from "drizzle-orm";
 import { z } from "zod";
 import { encrypt, decrypt } from "../utils/encryption";
@@ -842,60 +842,62 @@ router.get("/unified", authenticateToken, async (req: AuthRequest, res: Response
     const userId = req.userId!;
     const { limit = 50, offset = 0, channel, unreadOnly } = req.query;
 
-    // Get MT internal messages from socialMessages table
-    // Include messages where user is sender OR recipient
+    console.log(`[Messages] Fetching unified messages for user ${userId}, channel=${channel}`);
+
+    // Simple query: get all messages where user is sender OR recipient
     const internalMsgs = await db
-      .select({
-        id: socialMessages.id,
-        senderId: socialMessages.senderId,
-        recipientId: socialMessages.recipientId,
-        content: socialMessages.content,
-        createdAt: socialMessages.createdAt,
-        isRead: socialMessages.isRead,
-      })
-      .from(socialMessages)
+      .select()
+      .from(directMessages)
       .where(
-        and(
-          or(
-            eq(socialMessages.senderId, userId),
-            eq(socialMessages.recipientId, userId)
-          ),
-          channel === 'mt' || !channel ? sql`true` : sql`false`,
-          unreadOnly === 'true' ? eq(socialMessages.isRead, false) : sql`true`
+        or(
+          eq(directMessages.senderId, userId),
+          eq(directMessages.recipientId, userId)
         )
       )
-      .orderBy(desc(socialMessages.createdAt))
-      .limit(parseInt(limit as string))
-      .offset(parseInt(offset as string));
+      .orderBy(desc(directMessages.createdAt))
+      .limit(parseInt(limit as string) || 50)
+      .offset(parseInt(offset as string) || 0);
+
+    console.log(`[Messages] Found ${internalMsgs.length} internal messages`);
 
     // Map MT messages to unified format with sender/recipient names
-    const mtMessages = await Promise.all(internalMsgs.map(async (msg) => {
-      const [sender] = await db.select({ name: users.name, username: users.username }).from(users).where(eq(users.id, msg.senderId));
-      const [recipient] = await db.select({ name: users.name, username: users.username }).from(users).where(eq(users.id, msg.recipientId));
-      
-      return {
-        id: msg.id,
-        channel: 'mt' as const,
-        from: sender?.name || sender?.username || `User ${msg.senderId}`,
-        to: recipient?.name || recipient?.username || `User ${msg.recipientId}`,
-        subject: null,
-        body: msg.content,
-        receivedAt: msg.createdAt,
-        createdAt: msg.createdAt,
-        isRead: msg.isRead,
-        isStarred: false,
-        source: 'internal',
-        senderId: msg.senderId,
-        recipientId: msg.recipientId,
-      };
-    }));
+    const mtMessages = [];
+    for (const msg of internalMsgs) {
+      try {
+        const senderResults = await db.select({ name: users.name, username: users.username }).from(users).where(eq(users.id, msg.senderId));
+        const recipientResults = await db.select({ name: users.name, username: users.username }).from(users).where(eq(users.id, msg.recipientId));
+        
+        const sender = senderResults[0];
+        const recipient = recipientResults[0];
+        
+        mtMessages.push({
+          id: msg.id,
+          channel: 'mt' as const,
+          from: sender?.name || sender?.username || `User ${msg.senderId}`,
+          to: recipient?.name || recipient?.username || `User ${msg.recipientId}`,
+          subject: null,
+          body: msg.content || '',
+          receivedAt: msg.createdAt ? msg.createdAt.toISOString() : new Date().toISOString(),
+          createdAt: msg.createdAt ? msg.createdAt.toISOString() : new Date().toISOString(),
+          isRead: msg.isRead ?? false,
+          isStarred: false,
+          source: 'internal',
+          senderId: msg.senderId,
+          recipientId: msg.recipientId,
+        });
+      } catch (mappingError) {
+        console.error(`[Messages] Error mapping message ${msg.id}:`, mappingError);
+      }
+    }
 
     // Sort by date (newest first)
     const unifiedMessages = mtMessages.sort((a, b) => {
-      const dateA = new Date(a.receivedAt || a.createdAt).getTime();
-      const dateB = new Date(b.receivedAt || b.createdAt).getTime();
+      const dateA = new Date(a.receivedAt).getTime();
+      const dateB = new Date(b.receivedAt).getTime();
       return dateB - dateA;
     });
+
+    console.log(`[Messages] Returning ${unifiedMessages.length} unified messages`);
 
     // Return as flat array (frontend expects this)
     res.json(unifiedMessages);
@@ -1090,15 +1092,34 @@ router.post("/send", authenticateToken, async (req: AuthRequest, res: Response) 
     }
 
     if (channel === 'mt') {
-      // MT internal messaging - placeholder for future implementation
-      sentMessage = {
-        id: `mt-${Date.now()}`,
-        channel: 'mt',
-        to,
-        body,
-        sentAt: new Date(),
-      };
-      console.log('[Messages] MT internal message (placeholder):', sentMessage.id);
+      // MT internal messaging - insert into directMessages table
+      try {
+        // Parse recipientId (could be numeric ID or string)
+        const recipientId = parseInt(to);
+        if (isNaN(recipientId)) {
+          return res.status(400).json({ error: 'Invalid recipient ID for MT messages' });
+        }
+        
+        const [insertedMsg] = await db.insert(directMessages).values({
+          senderId: userId,
+          recipientId,
+          content: body,
+        }).returning();
+        
+        sentMessage = {
+          id: insertedMsg.id,
+          channel: 'mt',
+          to,
+          recipientId: insertedMsg.recipientId,
+          senderId: insertedMsg.senderId,
+          body: insertedMsg.content,
+          sentAt: insertedMsg.createdAt,
+        };
+        console.log('[Messages] MT internal message sent:', insertedMsg.id);
+      } catch (mtError: any) {
+        sendError = mtError.message || 'Failed to send MT message';
+        console.error('[Messages] MT send error:', mtError);
+      }
     }
 
     if (sendError) {
