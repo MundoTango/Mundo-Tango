@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,6 +13,7 @@ import { ComposeMessage } from "@/components/messages/ComposeMessage";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import DOMPurify from 'dompurify';
+import { useAuth } from "@/contexts/AuthContext";
 
 const channelIcons = {
   mt: MessageCircle,
@@ -41,10 +42,21 @@ const channelColors = {
 type Channel = "all" | "mt" | "gmail" | "facebook" | "instagram" | "whatsapp";
 
 export default function UnifiedInbox() {
+  const { user } = useAuth();
   const [selectedChannel, setSelectedChannel] = useState<Channel>("all");
   const [selectedMessage, setSelectedMessage] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [showCompose, setShowCompose] = useState(false);
+
+  // Only God Level admins can see all channels, others only see MT Messages
+  const isGodLevel = user?.role === 'god';
+  
+  const availableChannels = useMemo(() => {
+    if (isGodLevel) {
+      return ["all", "mt", "gmail", "facebook", "instagram", "whatsapp"] as Channel[];
+    }
+    return ["all", "mt"] as Channel[];
+  }, [isGodLevel]);
 
   const { data: messages, isLoading } = useQuery({
     queryKey: ["/api/messages/unified", selectedChannel, searchQuery],
@@ -75,7 +87,7 @@ export default function UnifiedInbox() {
   };
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className="flex h-[calc(100vh-4rem)] bg-background">
       {/* Sidebar */}
       <div className="w-64 border-r bg-sidebar flex flex-col">
         <div className="p-4 border-b">
@@ -98,7 +110,7 @@ export default function UnifiedInbox() {
               Channels
             </h3>
             
-            {(["all", "mt", "gmail", "facebook", "instagram", "whatsapp"] as Channel[]).map((channel) => {
+            {availableChannels.map((channel) => {
               const Icon = channel === "all" ? MessageCircle : channelIcons[channel as keyof typeof channelIcons];
               const count = getChannelCount(channel);
               const isConnected = channel === "all" || channels?.find((c: any) => c.channel === channel && c.isActive);
