@@ -347,19 +347,132 @@ export default function RecommendationsPage() {
                   )}
                 </TabsContent>
 
-                {['events', 'people', 'content', 'venues'].map((type) => (
-                  <TabsContent key={type} value={type} className="mt-8">
-                    <Card>
-                      <CardContent className="py-16 text-center">
-                        <Sparkles className="mx-auto h-16 w-16 text-muted-foreground/50 mb-4" />
-                        <h3 className="text-xl font-semibold font-serif mb-2 capitalize">{type} Recommendations</h3>
-                        <p className="text-muted-foreground">
-                          Showing filtered recommendations for {type}
-                        </p>
-                      </CardContent>
-                    </Card>
-                  </TabsContent>
-                ))}
+                {['events', 'people', 'content', 'venues'].map((tabType) => {
+                  const typeMapping: Record<string, string[]> = {
+                    events: ['event'],
+                    people: ['person'],
+                    content: ['content'],
+                    venues: ['venue']
+                  };
+                  const filteredRecs = recommendations.filter(r => typeMapping[tabType]?.includes(r.type));
+                  const Icon = recommendationTypeIcons[filteredRecs[0]?.type] || Sparkles;
+                  
+                  return (
+                    <TabsContent key={tabType} value={tabType} className="mt-8">
+                      {filteredRecs.length > 0 ? (
+                        <motion.div
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ duration: 0.6 }}
+                          className="grid grid-cols-1 md:grid-cols-2 gap-6"
+                        >
+                          {filteredRecs.map((rec, index) => {
+                            const RecIcon = recommendationTypeIcons[rec.type];
+                            return (
+                              <motion.div
+                                key={rec.id}
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ duration: 0.6, delay: index * 0.1 }}
+                              >
+                                <Card 
+                                  className="overflow-hidden hover-elevate h-full" 
+                                  data-testid={`recommendation-${tabType}-${rec.id}`}
+                                >
+                                  <div className="relative">
+                                    {rec.imageUrl && (
+                                      <div className="relative aspect-[16/9] overflow-hidden">
+                                        <motion.img
+                                          src={rec.imageUrl}
+                                          alt={rec.title}
+                                          className="w-full h-full object-cover"
+                                          whileHover={{ scale: 1.05 }}
+                                          transition={{ duration: 0.6 }}
+                                        />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                                      </div>
+                                    )}
+                                    <div className="absolute top-4 right-4 flex gap-2">
+                                      <Badge className={recommendationTypeColors[rec.type]}>
+                                        <RecIcon className="h-3 w-3 mr-1" />
+                                        {rec.type}
+                                      </Badge>
+                                      <Badge variant="secondary" className="bg-background/90 backdrop-blur">
+                                        {rec.score}% match
+                                      </Badge>
+                                    </div>
+                                  </div>
+                                  <CardHeader>
+                                    <CardTitle className="line-clamp-2 text-xl font-serif">
+                                      {rec.title}
+                                    </CardTitle>
+                                    <CardDescription className="line-clamp-2">
+                                      {rec.description}
+                                    </CardDescription>
+                                  </CardHeader>
+                                  <CardContent className="space-y-4">
+                                    {rec.metadata && (
+                                      <div className="flex flex-wrap gap-3 text-sm text-muted-foreground">
+                                        {rec.metadata.location && (
+                                          <div className="flex items-center gap-1">
+                                            <MapPin className="h-4 w-4" />
+                                            {rec.metadata.location}
+                                          </div>
+                                        )}
+                                        {rec.metadata.date && (
+                                          <div className="flex items-center gap-1">
+                                            <Calendar className="h-4 w-4" />
+                                            {rec.metadata.date}
+                                          </div>
+                                        )}
+                                        {rec.metadata.followers !== undefined && (
+                                          <div className="flex items-center gap-1">
+                                            <Heart className="h-4 w-4" />
+                                            {rec.metadata.followers} likes
+                                          </div>
+                                        )}
+                                      </div>
+                                    )}
+                                    <div className="p-3 bg-muted/50 rounded-lg">
+                                      <div className="flex items-start gap-2">
+                                        <Sparkles className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                                        <p className="text-sm text-muted-foreground">
+                                          {rec.reason}
+                                        </p>
+                                      </div>
+                                    </div>
+                                    <div className="flex gap-2 pt-2">
+                                      <Button className="flex-1" data-testid={`button-view-${tabType}-${rec.id}`}>
+                                        View Details
+                                      </Button>
+                                      <Button variant="outline" size="icon" data-testid={`button-save-${tabType}-${rec.id}`}>
+                                        <Bookmark className="h-4 w-4" />
+                                      </Button>
+                                    </div>
+                                  </CardContent>
+                                </Card>
+                              </motion.div>
+                            );
+                          })}
+                        </motion.div>
+                      ) : (
+                        <Card>
+                          <CardContent className="py-16 text-center">
+                            <Icon className="mx-auto h-16 w-16 text-muted-foreground/50 mb-4" />
+                            <h3 className="text-xl font-semibold font-serif mb-2 capitalize">No {tabType} recommendations yet</h3>
+                            <p className="text-muted-foreground mb-6">
+                              Start exploring {tabType} to get personalized suggestions
+                            </p>
+                            <Button data-testid={`button-explore-${tabType}`}>
+                              Explore {tabType.charAt(0).toUpperCase() + tabType.slice(1)}
+                            </Button>
+                          </CardContent>
+                        </Card>
+                      )}
+                    </TabsContent>
+                  );
+                })}
               </Tabs>
             </div>
           </div>

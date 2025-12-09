@@ -17,7 +17,7 @@ const router = Router();
 
 /**
  * GET /api/recommendations
- * Get all personalized recommendations (combined)
+ * Get all personalized recommendations (combined) with full entity data
  */
 router.get("/", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
@@ -31,11 +31,129 @@ router.get("/", authenticateToken, async (req: AuthRequest, res: Response) => {
       RecommendationEngine.recommendContent(userId, limit),
     ]);
 
+    // Fetch full entity data for each recommendation type
+    const friendIds = friendRecs.map(r => r.id);
+    const eventIds = eventRecs.map(r => r.id);
+    const teacherIds = teacherRecs.map(r => r.id);
+    const contentIds = contentRecs.map(r => r.id);
+
+    const [friendUsers, eventData, teacherData, contentData] = await Promise.all([
+      friendIds.length > 0 ? db.select({
+        id: users.id,
+        name: users.name,
+        username: users.username,
+        profileImage: users.profileImage,
+        city: users.city,
+        country: users.country,
+        bio: users.bio
+      }).from(users).where(inArray(users.id, friendIds)) : [],
+      
+      eventIds.length > 0 ? db.select({
+        id: events.id,
+        title: events.title,
+        description: events.description,
+        imageUrl: events.imageUrl,
+        city: events.city,
+        country: events.country,
+        startDate: events.startDate,
+        eventType: events.eventType
+      }).from(events).where(inArray(events.id, eventIds)) : [],
+      
+      teacherIds.length > 0 ? db.select({
+        id: teachers.id,
+        name: teachers.name,
+        bio: teachers.bio,
+        profileImage: teachers.profileImage,
+        city: teachers.city,
+        country: teachers.country,
+        specialties: teachers.specialties
+      }).from(teachers).where(inArray(teachers.id, teacherIds)) : [],
+      
+      contentIds.length > 0 ? db.select({
+        id: posts.id,
+        content: posts.content,
+        mediaUrls: posts.mediaUrls,
+        userId: posts.userId,
+        likesCount: posts.likesCount
+      }).from(posts).where(inArray(posts.id, contentIds)) : []
+    ]);
+
+    // Get authors for content posts
+    const authorIds = contentData.map(p => p.userId);
+    const authors = authorIds.length > 0 ? await db.select({
+      id: users.id,
+      name: users.name,
+      profileImage: users.profileImage
+    }).from(users).where(inArray(users.id, authorIds)) : [];
+
+    // Build complete recommendations with full data
     const recommendations = [
-      ...friendRecs.map(f => ({ ...f, type: 'person' as const })),
-      ...eventRecs.map(e => ({ ...e, type: 'event' as const })),
-      ...teacherRecs.map(t => ({ ...t, type: 'teacher' as const })),
-      ...contentRecs.map(c => ({ ...c, type: 'content' as const })),
+      ...friendRecs.map(rec => {
+        const user = friendUsers.find(u => u.id === rec.id);
+        return {
+          id: rec.id,
+          type: 'person' as const,
+          title: user?.name || 'Unknown User',
+          description: user?.bio || `Tango dancer from ${user?.city || 'somewhere beautiful'}`,
+          imageUrl: user?.profileImage,
+          score: rec.score,
+          reason: rec.reasons?.[0] || 'Similar dance interests',
+          metadata: {
+            location: user?.city && user?.country ? `${user.city}, ${user.country}` : undefined,
+            username: user?.username
+          }
+        };
+      }),
+      ...eventRecs.map(rec => {
+        const event = eventData.find(e => e.id === rec.id);
+        return {
+          id: rec.id,
+          type: 'event' as const,
+          title: event?.title || 'Tango Event',
+          description: event?.description?.substring(0, 200) || 'Join this exciting tango event',
+          imageUrl: event?.imageUrl,
+          score: rec.score,
+          reason: rec.reasons?.[0] || 'Matches your interests',
+          metadata: {
+            location: event?.city && event?.country ? `${event.city}, ${event.country}` : undefined,
+            date: event?.startDate ? new Date(event.startDate).toLocaleDateString() : undefined,
+            eventType: event?.eventType
+          }
+        };
+      }),
+      ...teacherRecs.map(rec => {
+        const teacher = teacherData.find(t => t.id === rec.id);
+        return {
+          id: rec.id,
+          type: 'person' as const,
+          title: teacher?.name || 'Tango Teacher',
+          description: teacher?.bio?.substring(0, 200) || `Professional tango instructor from ${teacher?.city || 'the community'}`,
+          imageUrl: teacher?.profileImage,
+          score: rec.score,
+          reason: rec.reasons?.[0] || 'Recommended teacher for your level',
+          metadata: {
+            location: teacher?.city && teacher?.country ? `${teacher.city}, ${teacher.country}` : undefined,
+            specialties: teacher?.specialties?.join(', ')
+          }
+        };
+      }),
+      ...contentRecs.map(rec => {
+        const post = contentData.find(p => p.id === rec.id);
+        const author = authors.find(a => a.id === post?.userId);
+        return {
+          id: rec.id,
+          type: 'content' as const,
+          title: author?.name ? `Post by ${author.name}` : 'Community Post',
+          description: post?.content?.substring(0, 200) || 'Check out this tango content',
+          imageUrl: post?.mediaUrls?.[0] || author?.profileImage,
+          score: rec.score,
+          reason: rec.reasons?.[0] || 'Popular in your network',
+          metadata: {
+            followers: post?.likesCount || 0,
+            authorName: author?.name
+          }
+        };
+      }),
     ].sort((a, b) => b.score - a.score);
 
     res.json(recommendations);
