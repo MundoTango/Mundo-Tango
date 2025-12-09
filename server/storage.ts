@@ -2085,29 +2085,10 @@ export class DbStorage implements IStorage {
   }
 
   async getFriendRequests(userId: number): Promise<any[]> {
-    const pending = await db
-      .select({
-        id: friendRequests.id,
-        senderId: friendRequests.senderId,
-        receiverId: friendRequests.receiverId,
-        senderMessage: friendRequests.senderMessage,
-        receiverMessage: friendRequests.receiverMessage,
-        didWeDance: friendRequests.didWeDance,
-        danceLocation: friendRequests.danceLocation,
-        danceStory: friendRequests.danceStory,
-        mediaUrls: friendRequests.mediaUrls,
-        status: friendRequests.status,
-        createdAt: friendRequests.createdAt,
-        respondedAt: friendRequests.respondedAt,
-        senderName: users.name,
-        senderUsername: users.username,
-        senderEmail: users.email,
-        senderProfileImage: users.profileImage,
-        senderBio: users.bio,
-        senderCity: users.city,
-      })
+    // First, get pending requests
+    const pendingRequests = await db
+      .select()
       .from(friendRequests)
-      .leftJoin(users, eq(friendRequests.senderId, users.id))
       .where(
         and(
           eq(friendRequests.receiverId, userId),
@@ -2115,29 +2096,50 @@ export class DbStorage implements IStorage {
         )
       );
     
-    return pending.map(row => ({
-      id: row.id,
-      senderId: row.senderId,
-      receiverId: row.receiverId,
-      senderMessage: row.senderMessage,
-      receiverMessage: row.receiverMessage,
-      didWeDance: row.didWeDance,
-      danceLocation: row.danceLocation,
-      danceStory: row.danceStory,
-      mediaUrls: row.mediaUrls,
-      status: row.status,
-      createdAt: row.createdAt,
-      respondedAt: row.respondedAt,
-      sender: {
-        id: row.senderId,
-        name: row.senderName,
-        username: row.senderUsername,
-        email: row.senderEmail,
-        profileImage: row.senderProfileImage,
-        bio: row.senderBio,
-        city: row.senderCity,
-      }
-    }));
+    // Then fetch sender data for each request
+    const requests = await Promise.all(
+      pendingRequests.map(async (req: any) => {
+        const sender = await db
+          .select()
+          .from(users)
+          .where(eq(users.id, req.senderId))
+          .limit(1);
+        
+        return {
+          id: req.id,
+          senderId: req.senderId,
+          receiverId: req.receiverId,
+          senderMessage: req.senderMessage,
+          receiverMessage: req.receiverMessage,
+          didWeDance: req.didWeDance,
+          danceLocation: req.danceLocation,
+          danceStory: req.danceStory,
+          mediaUrls: req.mediaUrls,
+          status: req.status,
+          createdAt: req.createdAt,
+          respondedAt: req.respondedAt,
+          sender: sender.length > 0 ? {
+            id: sender[0].id,
+            name: sender[0].name,
+            username: sender[0].username,
+            email: sender[0].email,
+            profileImage: sender[0].profileImage,
+            bio: sender[0].bio,
+            city: sender[0].city,
+          } : {
+            id: req.senderId,
+            name: 'Unknown User',
+            username: 'unknown',
+            email: '',
+            profileImage: null,
+            bio: null,
+            city: null,
+          }
+        };
+      })
+    );
+    
+    return requests;
   }
 
   async getFriendSuggestions(userId: number): Promise<any[]> {
