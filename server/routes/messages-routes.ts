@@ -1705,4 +1705,196 @@ router.get("/channels/whatsapp/webhook-status", authenticateToken, async (req: A
   }
 });
 
+// ============================================================================
+// FACEBOOK MESSENGER-STYLE CONVERSATION ENDPOINTS
+// ============================================================================
+
+/**
+ * GET /api/messages/conversations
+ * Get all conversations grouped by partner (for FB Messenger-style UI)
+ * Returns list of conversation partners with last message preview
+ */
+router.get("/conversations", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.userId!;
+
+    // Get all messages where user is sender or recipient
+    const allMessages = await db
+      .select({
+        id: directMessages.id,
+        senderId: directMessages.senderId,
+        recipientId: directMessages.recipientId,
+        content: directMessages.content,
+        isRead: directMessages.isRead,
+        createdAt: directMessages.createdAt,
+      })
+      .from(directMessages)
+      .where(
+        or(
+          eq(directMessages.senderId, userId),
+          eq(directMessages.recipientId, userId)
+        )
+      )
+      .orderBy(desc(directMessages.createdAt));
+
+    // Group messages by conversation partner
+    const conversationsMap = new Map<number, {
+      partnerId: number;
+      lastMessage: typeof allMessages[0];
+      unreadCount: number;
+    }>();
+
+    for (const msg of allMessages) {
+      const partnerId = msg.senderId === userId ? msg.recipientId : msg.senderId;
+      
+      if (!conversationsMap.has(partnerId)) {
+        conversationsMap.set(partnerId, {
+          partnerId,
+          lastMessage: msg,
+          unreadCount: 0,
+        });
+      }
+      
+      // Count unread messages from partner
+      if (msg.senderId === partnerId && !msg.isRead) {
+        const conv = conversationsMap.get(partnerId)!;
+        conv.unreadCount++;
+      }
+    }
+
+    // Fetch partner user info
+    const partnerIds = Array.from(conversationsMap.keys());
+    const partners = partnerIds.length > 0 
+      ? await db
+          .select({
+            id: users.id,
+            name: users.name,
+            username: users.username,
+            profileImage: users.profileImage,
+          })
+          .from(users)
+          .where(sql`${users.id} IN (${sql.join(partnerIds.map(id => sql`${id}`), sql`, `)})`)
+      : [];
+
+    // Build conversation list with partner info
+    const conversations = Array.from(conversationsMap.values()).map(conv => {
+      const partner = partners.find(p => p.id === conv.partnerId);
+      return {
+        partnerId: conv.partnerId,
+        partnerName: partner?.name || partner?.username || `User ${conv.partnerId}`,
+        partnerUsername: partner?.username,
+        partnerImage: partner?.profileImage,
+        lastMessage: {
+          id: conv.lastMessage.id,
+          content: conv.lastMessage.content,
+          createdAt: conv.lastMessage.createdAt,
+          isMine: conv.lastMessage.senderId === userId,
+        },
+        unreadCount: conv.unreadCount,
+      };
+    });
+
+    // Sort by last message time (most recent first)
+    conversations.sort((a, b) => {
+      const timeA = new Date(a.lastMessage.createdAt || 0).getTime();
+      const timeB = new Date(b.lastMessage.createdAt || 0).getTime();
+      return timeB - timeA;
+    });
+
+    res.json(conversations);
+  } catch (error: any) {
+    console.error("[Messages] Get conversations error:", error);
+    res.status(500).json({ error: "Failed to get conversations", message: error.message });
+  }
+});
+
+/**
+ * GET /api/messages/conversations/:partnerId
+ * Get full message thread with a specific partner
+ */
+router.get("/conversations/:partnerId", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.userId!;
+    const partnerId = parseInt(req.params.partnerId);
+
+    if (isNaN(partnerId)) {
+      return res.status(400).json({ error: "Invalid partner ID" });
+    }
+
+    // Get partner info
+    const [partner] = await db
+      .select({
+        id: users.id,
+        name: users.name,
+        username: users.username,
+        profileImage: users.profileImage,
+      })
+      .from(users)
+      .where(eq(users.id, partnerId));
+
+    if (!partner) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Get all messages between user and partner
+    const messages = await db
+      .select({
+        id: directMessages.id,
+        senderId: directMessages.senderId,
+        recipientId: directMessages.recipientId,
+        content: directMessages.content,
+        isRead: directMessages.isRead,
+        createdAt: directMessages.createdAt,
+      })
+      .from(directMessages)
+      .where(
+        or(
+          and(
+            eq(directMessages.senderId, userId),
+            eq(directMessages.recipientId, partnerId)
+          ),
+          and(
+            eq(directMessages.senderId, partnerId),
+            eq(directMessages.recipientId, userId)
+          )
+        )
+      )
+      .orderBy(directMessages.createdAt); // Oldest first for chat view
+
+    // Mark unread messages from partner as read
+    await db
+      .update(directMessages)
+      .set({ isRead: true })
+      .where(
+        and(
+          eq(directMessages.senderId, partnerId),
+          eq(directMessages.recipientId, userId),
+          eq(directMessages.isRead, false)
+        )
+      );
+
+    // Format messages for chat view
+    const formattedMessages = messages.map(msg => ({
+      id: msg.id,
+      content: msg.content,
+      createdAt: msg.createdAt,
+      isMine: msg.senderId === userId,
+      isRead: msg.isRead,
+    }));
+
+    res.json({
+      partner: {
+        id: partner.id,
+        name: partner.name || partner.username || `User ${partner.id}`,
+        username: partner.username,
+        profileImage: partner.profileImage,
+      },
+      messages: formattedMessages,
+    });
+  } catch (error: any) {
+    console.error("[Messages] Get conversation thread error:", error);
+    res.status(500).json({ error: "Failed to get conversation", message: error.message });
+  }
+});
+
 export default router;
