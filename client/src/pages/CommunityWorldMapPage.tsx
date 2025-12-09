@@ -26,7 +26,6 @@ import { CommunityMapWithLayers } from "@/components/map/CommunityMapWithLayers"
 import { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import { getCityImageUrl } from "@/lib/cityImageMap";
-import type { SelectGroup } from "@shared/schema";
 
 // Fix Leaflet default marker icon
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -95,15 +94,11 @@ export default function CommunityWorldMapPage() {
     queryKey: ["/api/community/stats"],
   });
 
-  // Fetch city groups for the city cards section
-  const { data: groups, isLoading: isLoadingGroups } = useQuery<SelectGroup[]>({
-    queryKey: ["/api/groups"],
-  });
-
-  // Filter to get only city groups
-  const cityGroups = useMemo(() => {
-    return (groups || []).filter(item => item.group?.type === "city").map(item => item.group);
-  }, [groups]);
+  // City locations for the city cards section - use the same data as the map
+  // Filter to only show locations with groupId (actual city communities)
+  const cityLocations = useMemo(() => {
+    return (locations || []).filter(loc => loc.groupId);
+  }, [locations]);
 
   // Buenos Aires flagship city data (fallback)
   const buenosAires: CommunityLocation = {
@@ -426,11 +421,11 @@ export default function CommunityWorldMapPage() {
               </p>
             </div>
             <Badge variant="secondary" className="text-sm">
-              {cityGroups.length} Cities
+              {cityLocations.length} Cities
             </Badge>
           </div>
 
-          {isLoadingGroups ? (
+          {isLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[1, 2, 3].map((i) => (
                 <Card key={i} className="overflow-hidden">
@@ -447,23 +442,23 @@ export default function CommunityWorldMapPage() {
                 </Card>
               ))}
             </div>
-          ) : cityGroups.length > 0 ? (
+          ) : cityLocations.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {cityGroups.map((group) => (
+              {cityLocations.map((location) => (
                 <motion.div
-                  key={group.id}
+                  key={location.groupId}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   whileHover={{ y: -4 }}
                   className="group cursor-pointer"
-                  data-testid={`card-city-group-${group.id}`}
+                  data-testid={`card-city-group-${location.groupId}`}
                 >
                   <Card className="overflow-hidden hover-elevate h-full">
                     <div className="relative aspect-[16/9] overflow-hidden">
                       <motion.img
-                        src={getCityImageUrl(group.city)}
-                        alt={group.city || group.name}
+                        src={getCityImageUrl(location.city)}
+                        alt={location.city}
                         className="w-full h-full object-cover"
                         whileHover={{ scale: 1.05 }}
                         transition={{ duration: 0.6 }}
@@ -471,38 +466,40 @@ export default function CommunityWorldMapPage() {
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
                       
                       <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-                        <h3 className="text-2xl font-serif font-bold">{group.city || group.name}</h3>
+                        <h3 className="text-2xl font-serif font-bold">{location.city}</h3>
                       </div>
                     </div>
 
                     <div className="p-6 space-y-4">
-                      <p className="text-sm text-muted-foreground line-clamp-2">{group.description}</p>
+                      <p className="text-sm text-muted-foreground line-clamp-2">
+                        Connect with tango dancers in {location.city}, {location.country}. Share events, find milongas, and grow together.
+                      </p>
                       
                       <div className="grid grid-cols-4 gap-3 text-sm">
                         <div className="flex flex-col items-center gap-1 p-2 bg-muted/50 rounded-lg">
                           <Users className="w-4 h-4 text-cyan-500" />
-                          <div className="font-semibold text-center">{(group.memberCount || 0).toLocaleString()}</div>
+                          <div className="font-semibold text-center">{(location.memberCount || 0).toLocaleString()}</div>
                           <div className="text-xs text-muted-foreground text-center">Members</div>
                         </div>
                         <div className="flex flex-col items-center gap-1 p-2 bg-muted/50 rounded-lg">
                           <Calendar className="w-4 h-4 text-blue-500" />
-                          <div className="font-semibold text-center">{group.eventCount || 0}</div>
+                          <div className="font-semibold text-center">{location.activeEvents || 0}</div>
                           <div className="text-xs text-muted-foreground text-center">Events</div>
                         </div>
                         <div className="flex flex-col items-center gap-1 p-2 bg-muted/50 rounded-lg">
                           <Sparkles className="w-4 h-4 text-purple-500" />
-                          <div className="font-semibold text-center">{group.recommendationCount || 0}</div>
+                          <div className="font-semibold text-center">{location.recommendations || 0}</div>
                           <div className="text-xs text-muted-foreground text-center">Recs</div>
                         </div>
                         <div className="flex flex-col items-center gap-1 p-2 bg-muted/50 rounded-lg">
                           <Home className="w-4 h-4 text-amber-500" />
-                          <div className="font-semibold text-center">{group.housingCount || 0}</div>
+                          <div className="font-semibold text-center">{location.housing || 0}</div>
                           <div className="text-xs text-muted-foreground text-center">Housing</div>
                         </div>
                       </div>
 
-                      <Link href={`/groups/${group.id}`} className="w-full">
-                        <Button className="w-full gap-2" data-testid={`button-view-city-${group.id}`}>
+                      <Link href={`/groups/${location.groupId}`} className="w-full">
+                        <Button className="w-full gap-2" data-testid={`button-view-city-${location.groupId}`}>
                           <ChevronRight className="w-4 h-4" />
                           Explore City
                         </Button>
