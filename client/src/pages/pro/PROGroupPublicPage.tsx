@@ -126,19 +126,6 @@ export function PROGroupPublicPage({ roleSlug, title, singularTitle, description
                 You are a {singular}
               </Badge>
               <Button 
-                onClick={() => {
-                  setActiveTab("group");
-                  document.getElementById("pro-tabs")?.scrollIntoView({ behavior: "smooth" });
-                }}
-                data-testid="button-access-pro-group"
-                style={{ background: color }}
-                className="text-white"
-              >
-                <Users className="w-4 h-4 mr-2" />
-                Access PRO Group
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-              <Button 
                 variant="outline"
                 size="sm"
                 onClick={() => navigate('/profile?tab=pro')}
