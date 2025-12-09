@@ -172,7 +172,9 @@ function UnifiedTopBar({
     if (!url) {
       switch (notif.type) {
         case 'friend_request':
-          url = '/friends?tab=requests';
+          url = notif.data?.requestId 
+            ? `/friends?tab=requests&requestId=${notif.data.requestId}`
+            : '/friends?tab=requests';
           break;
         case 'warning':
         case 'content_removed':

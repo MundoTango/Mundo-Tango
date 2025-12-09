@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useLocation } from "wouter";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -43,9 +44,11 @@ interface FriendRequest {
 }
 
 export default function FriendsListPage() {
+  const [location] = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
   const [showRequestDialog, setShowRequestDialog] = useState(false);
   const [selectedUser, setSelectedUser] = useState<Friend | null>(null);
+  const [selectedRequest, setSelectedRequest] = useState<FriendRequest | null>(null);
   const [requestData, setRequestData] = useState({
     message: "",
     didWeDance: false,
@@ -120,8 +123,36 @@ export default function FriendsListPage() {
     },
   });
 
+  // Auto-open request form from notification click
+  useEffect(() => {
+    const params = new URLSearchParams(location.split('?')[1]);
+    const requestId = params.get('requestId');
+    
+    if (requestId && requests.length > 0) {
+      const request = requests.find(r => r.id === parseInt(requestId));
+      if (request) {
+        setSelectedRequest(request);
+        setShowRequestDialog(true);
+        // Pre-populate form data from the request
+        setRequestData({
+          message: request.senderMessage || "",
+          didWeDance: request.didWeDance || false,
+          danceLocation: request.danceLocation || "",
+          danceStory: request.danceStory || "",
+        });
+      }
+    }
+  }, [location, requests]);
+
   const handleSendRequest = (friend: Friend) => {
+    setSelectedRequest(null);
     setSelectedUser(friend);
+    setRequestData({
+      message: "",
+      didWeDance: false,
+      danceLocation: "",
+      danceStory: "",
+    });
     setShowRequestDialog(true);
   };
 
@@ -504,15 +535,24 @@ export default function FriendsListPage() {
         </Tabs>
       </div>
 
-      {/* Send Request Dialog with Dance Story */}
+      {/* Send/View Request Dialog with Dance Story */}
       <Dialog open={showRequestDialog} onOpenChange={setShowRequestDialog}>
         <DialogContent className="backdrop-blur-xl bg-white/90 dark:bg-slate-900/90">
           <DialogHeader>
             <DialogTitle className="text-xl bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent">
-              Send Friend Request to {selectedUser?.name}
+              {selectedRequest 
+                ? `Friend Request from ${selectedRequest.sender?.name}` 
+                : `Send Friend Request to ${selectedUser?.name}`}
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
+            {selectedRequest && (
+              <div className="p-3 bg-blue-50 dark:bg-blue-950/30 rounded-lg border border-blue-200 dark:border-blue-800">
+                <p className="text-sm text-blue-900 dark:text-blue-100">
+                  <span className="font-semibold">{selectedRequest.sender?.name}</span> (@{selectedRequest.sender?.username}) sent you a friend request on {new Date(selectedRequest.createdAt).toLocaleDateString()}
+                </p>
+              </div>
+            )}
             <div>
               <Label htmlFor="message">Personal Message *</Label>
               <Textarea
@@ -640,24 +680,59 @@ export default function FriendsListPage() {
             )}
 
             <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setShowRequestDialog(false)}>
-                Cancel
-              </Button>
-              <Button
-                onClick={submitRequest}
-                disabled={!requestData.message || sendRequestMutation.isPending || isUploading}
-                className="bg-gradient-to-r from-cyan-500 to-blue-600"
-                data-testid="button-submit-friend-request"
-              >
-                {isUploading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Uploading...
-                  </>
-                ) : (
-                  "Send Request"
-                )}
-              </Button>
+              {selectedRequest ? (
+                <>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => {
+                      rejectRequestMutation.mutate(selectedRequest.id);
+                      setShowRequestDialog(false);
+                    }}
+                    data-testid="button-decline-request"
+                  >
+                    Decline
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      acceptRequestMutation.mutate(selectedRequest.id);
+                      setShowRequestDialog(false);
+                    }}
+                    disabled={acceptRequestMutation.isPending}
+                    className="bg-gradient-to-r from-cyan-500 to-blue-600"
+                    data-testid="button-accept-request"
+                  >
+                    {acceptRequestMutation.isPending ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Accepting...
+                      </>
+                    ) : (
+                      "Accept"
+                    )}
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button variant="outline" onClick={() => setShowRequestDialog(false)}>
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={submitRequest}
+                    disabled={!requestData.message || sendRequestMutation.isPending || isUploading}
+                    className="bg-gradient-to-r from-cyan-500 to-blue-600"
+                    data-testid="button-submit-friend-request"
+                  >
+                    {isUploading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Uploading...
+                      </>
+                    ) : (
+                      "Send Request"
+                    )}
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         </DialogContent>
