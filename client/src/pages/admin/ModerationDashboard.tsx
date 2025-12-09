@@ -139,15 +139,16 @@ export default function ModerationDashboard() {
   };
 
   const getPriorityBadge = (priority: number) => {
+    // Priority scale: 1=Critical/highest, 5=Low/lowest (per schema comments)
     const variants = {
-      1: { label: "Low", className: "bg-blue-500" },
-      2: { label: "Medium", className: "bg-yellow-500" },
+      1: { label: "Critical", className: "bg-red-700" },
+      2: { label: "Urgent", className: "bg-red-500" },
       3: { label: "High", className: "bg-orange-500" },
-      4: { label: "Urgent", className: "bg-red-500" },
-      5: { label: "Critical", className: "bg-red-700" },
+      4: { label: "Medium", className: "bg-yellow-500" },
+      5: { label: "Low", className: "bg-blue-500" },
     };
     
-    const config = variants[priority as keyof typeof variants] || variants[1];
+    const config = variants[priority as keyof typeof variants] || variants[3];
     return <Badge className={config.className} data-testid={`badge-priority-${priority}`}>{config.label}</Badge>;
   };
 
