@@ -85,13 +85,12 @@ export function ComposeMessage({ onClose, defaultChannel = "mt", defaultRecipien
 
   const sendMutation = useMutation({
     mutationFn: async (data: ComposeFormData) => {
-      // Transform data to match backend API schema
+      // Send in the format expected by /api/messages/send: { channel, to, body }
       const payload = {
-        recipientId: parseInt(data.to) || undefined,
-        recipientUsername: data.to,
-        content: data.body,
-        subject: data.subject,
         channel: data.channel,
+        to: data.to,
+        body: data.body,
+        subject: data.subject,
         scheduledFor: data.scheduledFor,
       };
       

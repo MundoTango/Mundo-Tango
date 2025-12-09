@@ -40,7 +40,6 @@ import { z } from "zod";
 import { encrypt, decrypt } from "../utils/encryption";
 import { getUncachableGmailClient, sendEmail } from "../lib/gmail-client";
 import { facebookOAuthService } from "../services/facebook/FacebookOAuthService";
-import logger from "../middleware/logger";
 
 const router = Router();
 

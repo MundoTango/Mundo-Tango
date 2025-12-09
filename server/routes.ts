@@ -289,6 +289,7 @@ import {
   housingListings,
   notificationPreferences,
   emailPreferences,
+  socialMessages,
 } from "@shared/schema";
 import { 
   esaAgents,
