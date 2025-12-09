@@ -5522,6 +5522,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Shared content endpoints for FriendshipPage
+  app.get("/api/friends/shared/:friendId/posts", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const friendId = parseInt(req.params.friendId);
+      const filter = (req.query.filter as string) || 'all';
+      const posts = await storage.getSharedPosts(req.user!.id, friendId, filter);
+      res.json(posts);
+    } catch (error) {
+      console.error("[GET /api/friends/shared/:friendId/posts] Error:", error);
+      res.status(500).json({ message: "Failed to fetch shared posts" });
+    }
+  });
+
+  app.get("/api/friends/shared/:friendId/media", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const friendId = parseInt(req.params.friendId);
+      const media = await storage.getSharedMedia(req.user!.id, friendId);
+      res.json(media);
+    } catch (error) {
+      console.error("[GET /api/friends/shared/:friendId/media] Error:", error);
+      res.status(500).json({ message: "Failed to fetch shared media" });
+    }
+  });
+
+  app.get("/api/friends/shared/:friendId/events", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const friendId = parseInt(req.params.friendId);
+      const events = await storage.getSharedEvents(req.user!.id, friendId);
+      res.json(events);
+    } catch (error) {
+      console.error("[GET /api/friends/shared/:friendId/events] Error:", error);
+      res.status(500).json({ message: "Failed to fetch shared events" });
+    }
+  });
+
   app.patch("/api/notifications/:id/read", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const notificationId = parseInt(req.params.id);

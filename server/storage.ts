@@ -1,6 +1,6 @@
 import { drizzle } from "drizzle-orm/neon-http";
 import { neon } from "@neondatabase/serverless";
-import { eq, and, gt, desc, asc, or, ilike, inArray, sql, lt, gte, lte, ne, notInArray } from "drizzle-orm";
+import { eq, and, gt, desc, asc, or, ilike, inArray, sql, lt, gte, lte, ne, notInArray, isNotNull } from "drizzle-orm";
 import {
   users,
   refreshTokens,
@@ -318,6 +318,11 @@ export interface IStorage {
     ourStory?: string | null;
   } | null>;
   checkFriendship(userId1: number, userId2: number): Promise<boolean>;
+  
+  // Shared content for FriendshipPage
+  getSharedPosts(userId: number, friendId: number, filter: string): Promise<any[]>;
+  getSharedMedia(userId: number, friendId: number): Promise<any[]>;
+  getSharedEvents(userId: number, friendId: number): Promise<any[]>;
   
   // Communities
   getCommunityByCity(cityName: string): Promise<any | undefined>;
@@ -2581,6 +2586,211 @@ export class DbStorage implements IStorage {
 
   async deleteNotification(notificationId: number): Promise<void> {
     await db.delete(notifications).where(eq(notifications.id, notificationId));
+  }
+
+  // Shared content for FriendshipPage
+  async getSharedPosts(userId: number, friendId: number, filter: string): Promise<any[]> {
+    try {
+      // Get posts based on filter
+      if (filter === 'our') {
+        // Posts authored by either user
+        const result = await db.select({
+          id: posts.id,
+          content: posts.content,
+          imageUrl: posts.imageUrl,
+          videoUrl: posts.videoUrl,
+          createdAt: posts.createdAt,
+          likes: posts.likes,
+          userId: posts.userId,
+          userName: users.name,
+          userProfileImage: users.profileImage,
+        })
+        .from(posts)
+        .leftJoin(users, eq(posts.userId, users.id))
+        .where(or(eq(posts.userId, userId), eq(posts.userId, friendId)))
+        .orderBy(desc(posts.createdAt))
+        .limit(50);
+        
+        return result.map(p => ({
+          ...p,
+          createdAt: p.createdAt?.toISOString(),
+        }));
+      } else if (filter === 'liked') {
+        // Posts both users have liked
+        const userLikes = await db.select({ postId: postLikes.postId })
+          .from(postLikes)
+          .where(eq(postLikes.userId, userId));
+        
+        const friendLikes = await db.select({ postId: postLikes.postId })
+          .from(postLikes)
+          .where(eq(postLikes.userId, friendId));
+        
+        const userLikeIds = userLikes.map(l => l.postId);
+        const friendLikeIds = friendLikes.map(l => l.postId);
+        const sharedLikeIds = userLikeIds.filter(id => friendLikeIds.includes(id));
+        
+        if (sharedLikeIds.length === 0) return [];
+        
+        const result = await db.select({
+          id: posts.id,
+          content: posts.content,
+          imageUrl: posts.imageUrl,
+          videoUrl: posts.videoUrl,
+          createdAt: posts.createdAt,
+          likes: posts.likes,
+          userId: posts.userId,
+          userName: users.name,
+          userProfileImage: users.profileImage,
+        })
+        .from(posts)
+        .leftJoin(users, eq(posts.userId, users.id))
+        .where(inArray(posts.id, sharedLikeIds))
+        .orderBy(desc(posts.createdAt))
+        .limit(50);
+        
+        return result.map(p => ({
+          ...p,
+          createdAt: p.createdAt?.toISOString(),
+        }));
+      } else if (filter === 'commented') {
+        // Posts both users have commented on
+        const userComments = await db.select({ postId: postComments.postId })
+          .from(postComments)
+          .where(eq(postComments.userId, userId));
+        
+        const friendComments = await db.select({ postId: postComments.postId })
+          .from(postComments)
+          .where(eq(postComments.userId, friendId));
+        
+        const userCommentIds = [...new Set(userComments.map(c => c.postId))];
+        const friendCommentIds = [...new Set(friendComments.map(c => c.postId))];
+        const sharedCommentIds = userCommentIds.filter(id => friendCommentIds.includes(id));
+        
+        if (sharedCommentIds.length === 0) return [];
+        
+        const result = await db.select({
+          id: posts.id,
+          content: posts.content,
+          imageUrl: posts.imageUrl,
+          videoUrl: posts.videoUrl,
+          createdAt: posts.createdAt,
+          likes: posts.likes,
+          userId: posts.userId,
+          userName: users.name,
+          userProfileImage: users.profileImage,
+        })
+        .from(posts)
+        .leftJoin(users, eq(posts.userId, users.id))
+        .where(inArray(posts.id, sharedCommentIds))
+        .orderBy(desc(posts.createdAt))
+        .limit(50);
+        
+        return result.map(p => ({
+          ...p,
+          createdAt: p.createdAt?.toISOString(),
+        }));
+      } else {
+        // All - Posts by either user or that both have interacted with
+        const result = await db.select({
+          id: posts.id,
+          content: posts.content,
+          imageUrl: posts.imageUrl,
+          videoUrl: posts.videoUrl,
+          createdAt: posts.createdAt,
+          likes: posts.likes,
+          userId: posts.userId,
+          userName: users.name,
+          userProfileImage: users.profileImage,
+        })
+        .from(posts)
+        .leftJoin(users, eq(posts.userId, users.id))
+        .where(or(eq(posts.userId, userId), eq(posts.userId, friendId)))
+        .orderBy(desc(posts.createdAt))
+        .limit(50);
+        
+        return result.map(p => ({
+          ...p,
+          createdAt: p.createdAt?.toISOString(),
+        }));
+      }
+    } catch (error) {
+      console.error('[getSharedPosts] Error:', error);
+      return [];
+    }
+  }
+
+  async getSharedMedia(userId: number, friendId: number): Promise<any[]> {
+    try {
+      // Get posts with images from both users
+      const result = await db.select({
+        id: posts.id,
+        url: posts.imageUrl,
+        createdAt: posts.createdAt,
+        location: posts.location,
+        postId: posts.id,
+      })
+      .from(posts)
+      .where(
+        and(
+          or(eq(posts.userId, userId), eq(posts.userId, friendId)),
+          isNotNull(posts.imageUrl)
+        )
+      )
+      .orderBy(desc(posts.createdAt))
+      .limit(50);
+      
+      return result.map(m => ({
+        id: m.id,
+        url: m.url,
+        type: 'image' as const,
+        createdAt: m.createdAt?.toISOString(),
+        location: m.location || null,
+        postId: m.postId,
+      }));
+    } catch (error) {
+      console.error('[getSharedMedia] Error:', error);
+      return [];
+    }
+  }
+
+  async getSharedEvents(userId: number, friendId: number): Promise<any[]> {
+    try {
+      // Get events both users RSVP'd to
+      const userEvents = await db.select({ eventId: eventRsvps.eventId })
+        .from(eventRsvps)
+        .where(eq(eventRsvps.userId, userId));
+      
+      const friendEvents = await db.select({ eventId: eventRsvps.eventId })
+        .from(eventRsvps)
+        .where(eq(eventRsvps.userId, friendId));
+      
+      const userEventIds = userEvents.map(e => e.eventId);
+      const friendEventIds = friendEvents.map(e => e.eventId);
+      const sharedEventIds = userEventIds.filter(id => friendEventIds.includes(id));
+      
+      if (sharedEventIds.length === 0) return [];
+      
+      const result = await db.select({
+        id: events.id,
+        title: events.title,
+        date: events.startDate,
+        location: events.location,
+        city: events.city,
+        imageUrl: events.imageUrl,
+      })
+      .from(events)
+      .where(inArray(events.id, sharedEventIds))
+      .orderBy(desc(events.startDate))
+      .limit(50);
+      
+      return result.map(e => ({
+        ...e,
+        date: e.date?.toISOString(),
+      }));
+    } catch (error) {
+      console.error('[getSharedEvents] Error:', error);
+      return [];
+    }
   }
 
   // Communities
