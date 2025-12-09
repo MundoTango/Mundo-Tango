@@ -7,6 +7,7 @@ import logger from "../middleware/logger";
 
 const sendMessageSchema = z.object({
   recipientId: z.number().optional(),
+  recipientUsername: z.string().optional(),
   groupId: z.number().optional(),
   content: z.string().min(1),
   attachments: z.array(z.string()).optional(),
@@ -190,17 +191,33 @@ export function registerMessagingRoutes(app: Express) {
 
     const validation = sendMessageSchema.safeParse(req.body);
     if (!validation.success) {
+      logger.error("[Messaging] Validation failed", { error: validation.error, body: req.body });
       return res.status(400).json({ error: validation.error });
     }
 
-    const { recipientId, groupId, content, attachments } = validation.data;
+    let { recipientId, recipientUsername, groupId, content, attachments } = validation.data;
+
+    // If recipientId not provided but recipientUsername is, look up the user
+    if (!recipientId && recipientUsername) {
+      const recipientUser = await db.select().from(users)
+        .where(or(
+          eq(users.username, recipientUsername),
+          eq(users.email, recipientUsername),
+          eq(users.id, parseInt(recipientUsername) || 0)
+        ))
+        .limit(1);
+      
+      if (recipientUser.length > 0) {
+        recipientId = recipientUser[0].id;
+      }
+    }
 
     if (!recipientId && !groupId) {
       return res.status(400).send("Must specify recipientId or groupId");
     }
 
     try {
-      logger.info("[Messaging] Sending message", { senderId: req.user.id, recipientId, groupId });
+      logger.info("[Messaging] Sending message", { senderId: req.user.id, recipientId, groupId, content });
       const [message] = await db
         .insert(socialMessages)
         .values({
@@ -213,10 +230,10 @@ export function registerMessagingRoutes(app: Express) {
         })
         .returning();
 
-      logger.debug("[Messaging] Message sent", { messageId: message.id });
+      logger.debug("[Messaging] Message sent successfully", { messageId: message.id });
       res.json(message);
     } catch (error: any) {
-      logger.error("[Messaging] Error sending message", { error: error.message });
+      logger.error("[Messaging] Error sending message", { error: error.message, stack: error.stack });
       res.status(500).send("Failed to send message");
     }
   });

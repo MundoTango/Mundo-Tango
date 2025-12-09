@@ -17575,26 +17575,39 @@ export type SelectFriendInvitation = typeof friendInvitations.$inferSelect;
 // PART 10: MULTI-PLATFORM DATA INTEGRATION (Part 10)
 // ============================================================================
 
-// Social Messages - Multi-platform data from FB/IG/WhatsApp
+// Social Messages - Multi-platform data from FB/IG/WhatsApp AND direct MT messages
 export const socialMessages = pgTable(
   "social_messages",
   {
     id: serial("id").primaryKey(),
     userId: integer("user_id")
-      .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    platform: varchar("platform", { length: 50 }).notNull(), // 'facebook', 'instagram', 'whatsapp'
-    friendName: varchar("friend_name", { length: 255 }).notNull(),
+    // Direct messaging fields (MT platform)
+    senderId: integer("sender_id")
+      .references(() => users.id, { onDelete: "cascade" }),
+    recipientId: integer("recipient_id")
+      .references(() => users.id, { onDelete: "cascade" }),
+    groupId: integer("group_id")
+      .references(() => groups.id, { onDelete: "cascade" }),
+    content: text("content"),
+    attachments: text("attachments").array(),
+    isRead: boolean("is_read").default(false),
+    // Multi-platform fields (FB/IG/WhatsApp)
+    platform: varchar("platform", { length: 50 }), // 'facebook', 'instagram', 'whatsapp', 'mt'
+    friendName: varchar("friend_name", { length: 255 }),
     friendProfileUrl: text("friend_profile_url"),
     messageText: text("message_text"),
     interactionType: varchar("interaction_type", { length: 50 }), // 'message', 'like', 'comment', 'share', 'story_view'
-    timestamp: timestamp("timestamp").notNull(),
+    timestamp: timestamp("timestamp"),
     sentiment: varchar("sentiment", { length: 20 }), // 'positive', 'negative', 'neutral'
     metadata: jsonb("metadata"), // Additional platform-specific data
     createdAt: timestamp("created_at").defaultNow(),
   },
   (table) => ({
     userIdx: index("social_messages_user_idx").on(table.userId),
+    senderIdx: index("social_messages_sender_idx").on(table.senderId),
+    recipientIdx: index("social_messages_recipient_idx").on(table.recipientId),
+    groupIdx: index("social_messages_group_idx").on(table.groupId),
     platformIdx: index("social_messages_platform_idx").on(table.platform),
     friendIdx: index("social_messages_friend_idx").on(table.friendName),
     timestampIdx: index("social_messages_timestamp_idx").on(table.timestamp),

@@ -85,10 +85,20 @@ export function ComposeMessage({ onClose, defaultChannel = "mt", defaultRecipien
 
   const sendMutation = useMutation({
     mutationFn: async (data: ComposeFormData) => {
+      // Transform data to match backend API schema
+      const payload = {
+        recipientId: parseInt(data.to) || undefined,
+        recipientUsername: data.to,
+        content: data.body,
+        subject: data.subject,
+        channel: data.channel,
+        scheduledFor: data.scheduledFor,
+      };
+      
       if (data.scheduledFor) {
-        return apiRequest("POST", "/api/messages/schedule", data);
+        return apiRequest("POST", "/api/messages/schedule", payload);
       }
-      return apiRequest("POST", "/api/messages/send", data);
+      return apiRequest("POST", "/api/messages/send", payload);
     },
     onSuccess: () => {
       toast({
@@ -97,6 +107,7 @@ export function ComposeMessage({ onClose, defaultChannel = "mt", defaultRecipien
           ? `Your message will be sent on ${format(scheduleDate, "PPP 'at' p")}`
           : "Your message has been sent successfully.",
       });
+      queryClient.invalidateQueries({ queryKey: ["/api/messages/unified/all"] });
       queryClient.invalidateQueries({ queryKey: ["/api/messages/unified"] });
       form.reset();
       onClose?.();
