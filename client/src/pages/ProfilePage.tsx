@@ -6,7 +6,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Settings, UserPlus, UserMinus, UserCheck, Plane, Calendar, CheckCircle, Instagram, Facebook, Twitter, Linkedin, Youtube, Globe, Award, Plus, Camera, Music, Users, ImageIcon, Mic2, Home, Briefcase, BookOpen, Heart, Eye } from "lucide-react";
+import { MapPin, Settings, UserPlus, UserMinus, UserCheck, Plane, Calendar, CheckCircle, Instagram, Facebook, Twitter, Linkedin, Youtube, Globe, Award, Plus, Camera, Music, Users, ImageIcon, Mic2, Home, Briefcase, BookOpen, Heart, Eye, MessageCircle } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { ComposeMessage } from "@/components/messages/ComposeMessage";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useAuth } from "@/contexts/AuthContext";
 import { SEO } from "@/components/SEO";
@@ -84,6 +91,7 @@ export default function ProfilePage() {
   const [uploadingCover, setUploadingCover] = useState(false);
   const [profilePhotoDialogOpen, setProfilePhotoDialogOpen] = useState(false);
   const [coverPhotoDialogOpen, setCoverPhotoDialogOpen] = useState(false);
+  const [messageDialogOpen, setMessageDialogOpen] = useState(false);
 
   // Upload profile photo mutation (send compressed base64)
   const uploadPhotoMutation = useMutation({
@@ -701,6 +709,15 @@ export default function ProfilePage() {
                   {sendFriendRequestMutation.isPending ? 'Sending...' : 'Add Friend'}
                 </Button>
               )}
+              <Button 
+                variant="outline"
+                className="gap-2 text-white border-white/30 bg-black/20 backdrop-blur-sm hover:bg-black/30"
+                onClick={() => setMessageDialogOpen(true)}
+                data-testid="button-message"
+              >
+                <MessageCircle className="h-4 w-4" />
+                Message
+              </Button>
           </div>
         )}
       </div>
@@ -719,6 +736,19 @@ export default function ProfilePage() {
         type="cover"
         isUploading={uploadingCover}
       />
+      {/* Message Dialog */}
+      <Dialog open={messageDialogOpen} onOpenChange={setMessageDialogOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Send Message to {user.name}</DialogTitle>
+          </DialogHeader>
+          <ComposeMessage 
+            onClose={() => setMessageDialogOpen(false)}
+            defaultChannel="mt"
+            defaultRecipient={String(user.id)}
+          />
+        </DialogContent>
+      </Dialog>
       {/* Tab Navigation */}
       <ProfileTabsNav
         user={user}

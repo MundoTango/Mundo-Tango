@@ -60,9 +60,10 @@ const channelLabels = {
 interface ComposeMessageProps {
   onClose?: () => void;
   defaultChannel?: "mt" | "gmail" | "facebook" | "instagram" | "whatsapp";
+  defaultRecipient?: string;
 }
 
-export function ComposeMessage({ onClose, defaultChannel = "mt" }: ComposeMessageProps) {
+export function ComposeMessage({ onClose, defaultChannel = "mt", defaultRecipient = "" }: ComposeMessageProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [scheduleDate, setScheduleDate] = useState<Date>();
@@ -72,7 +73,7 @@ export function ComposeMessage({ onClose, defaultChannel = "mt" }: ComposeMessag
     resolver: zodResolver(composeSchema),
     defaultValues: {
       channel: defaultChannel,
-      to: "",
+      to: defaultRecipient,
       subject: "",
       body: "",
     },

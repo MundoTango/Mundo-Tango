@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useParams } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { AppLayout } from "@/components/AppLayout";
@@ -6,6 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { 
   MapPin, 
   Calendar, 
@@ -20,6 +27,7 @@ import {
 import { safeDateFormat } from "@/lib/safeDateFormat";
 import { motion } from "framer-motion";
 import { SEO } from "@/components/SEO";
+import { ComposeMessage } from "@/components/messages/ComposeMessage";
 
 interface UserProfile {
   id: number;
@@ -43,6 +51,7 @@ interface UserProfile {
 
 export default function UserProfilePublicPage() {
   const { userId } = useParams();
+  const [messageDialogOpen, setMessageDialogOpen] = useState(false);
 
   const { data: profile, isLoading } = useQuery<UserProfile>({
     queryKey: ['/api/users', userId, 'profile'],
@@ -172,7 +181,11 @@ export default function UserProfilePublicPage() {
                           <UserPlus className="h-4 w-4 mr-2" />
                           Add Friend
                         </Button>
-                        <Button variant="outline" data-testid="button-message">
+                        <Button 
+                          variant="outline" 
+                          data-testid="button-message"
+                          onClick={() => setMessageDialogOpen(true)}
+                        >
                           <MessageCircle className="h-4 w-4 mr-2" />
                           Message
                         </Button>
@@ -288,6 +301,20 @@ export default function UserProfilePublicPage() {
           </Tabs>
           </div>
         </div>
+
+        {/* Message Dialog */}
+        <Dialog open={messageDialogOpen} onOpenChange={setMessageDialogOpen}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Send Message to {profile.name}</DialogTitle>
+            </DialogHeader>
+            <ComposeMessage 
+              onClose={() => setMessageDialogOpen(false)}
+              defaultChannel="mt"
+              defaultRecipient={String(profile.id)}
+            />
+          </DialogContent>
+        </Dialog>
       </>
     </AppLayout>
   );
