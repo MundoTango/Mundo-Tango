@@ -251,6 +251,38 @@ psql $DATABASE_URL -c "SELECT COUNT(*) FROM eventScrapingSources;"
 # Should return: 200+
 ```
 
+
+#### ⚠️ CRITICAL: Social Media Rate Limiting
+
+**Facebook & Instagram scraping must stay WAY UNDER platform rate limits to avoid blocks/bans.**
+
+**Rate Limit Configuration:**
+```typescript
+// In socialScraper.ts - MANDATORY RATE LIMITS
+const SOCIAL_RATE_LIMITS = {
+  facebook: {
+    requestsPerMinute: 10,      // Conservative: well under FB limits
+    delayBetweenRequests: 6000, // 6 seconds between requests
+    maxConcurrent: 1,           // Serial execution only
+    dailyCapPerGroup: 100       // Max 100 requests per group/day
+  },
+  instagram: {
+    requestsPerMinute: 5,       // Very conservative for IG
+    delayBetweenRequests: 12000, // 12 seconds between requests
+    maxConcurrent: 1,
+    dailyCapPerAccount: 50
+  }
+};
+```
+
+**Implementation Requirements:**
+- Serial execution (no parallel scraping of social sources)
+- Exponential backoff on errors
+- Respect robots.txt and platform ToS
+- Monitor for 429/rate limit responses
+- Auto-throttle if approaching limits
+
+
 ### Step 3: Run All Scrapers
 
 ```bash
