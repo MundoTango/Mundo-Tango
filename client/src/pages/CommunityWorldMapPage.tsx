@@ -462,8 +462,8 @@ export default function CommunityWorldMapPage() {
                   <Card className="overflow-hidden hover-elevate h-full">
                     <div className="relative aspect-[16/9] overflow-hidden">
                       <motion.img
-                        src={group.coverImage || getCityImageUrl(group.city)}
-                        alt={group.name}
+                        src={getCityImageUrl(group.city)}
+                        alt={group.city || group.name}
                         className="w-full h-full object-cover"
                         whileHover={{ scale: 1.05 }}
                         transition={{ duration: 0.6 }}
@@ -471,8 +471,7 @@ export default function CommunityWorldMapPage() {
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
                       
                       <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-                        <h3 className="text-2xl font-serif font-bold mb-1">{group.name}</h3>
-                        <p className="text-sm text-white/80">{group.city}</p>
+                        <h3 className="text-2xl font-serif font-bold">{group.city || group.name}</h3>
                       </div>
                     </div>
 
