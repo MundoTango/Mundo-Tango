@@ -39,8 +39,8 @@ export function GlobalTopbar() {
   return (
     <header className="glass-topbar sticky top-0 z-50 w-full" data-testid="global-topbar">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between gap-4">
-        {/* E101 - Logo */}
-        <Link href="/">
+        {/* E101 - Logo - goes to feed (Memory) when logged in */}
+        <Link href="/feed">
           <div className="flex items-center gap-2 hover-elevate px-3 py-2 rounded-lg cursor-pointer" data-testid="link-logo">
             <div className="w-8 h-8 ocean-gradient rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-lg">MT</span>

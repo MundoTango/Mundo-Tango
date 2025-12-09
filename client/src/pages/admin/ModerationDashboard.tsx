@@ -103,10 +103,7 @@ export default function ModerationDashboard() {
 
   const moderationMutation = useMutation({
     mutationFn: async ({ id, action, notes }: { id: number; action: string; notes: string }) => {
-      return apiRequest(`/api/admin/moderation/${id}/action`, {
-        method: "POST",
-        body: { action, notes },
-      });
+      return apiRequest("POST", `/api/admin/moderation/${id}/action`, { action, notes });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/moderation/queue"] });
