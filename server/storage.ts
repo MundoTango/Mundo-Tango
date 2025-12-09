@@ -2198,6 +2198,27 @@ export class DbStorage implements IStorage {
         mediaUrls: data.mediaUrls,
         status: 'pending',
       }).returning();
+      
+      // Get sender info for notification
+      const sender = await db.query.users.findFirst({
+        where: eq(users.id, data.senderId)
+      });
+      
+      // Create notification for receiver
+      if (sender && result[0]) {
+        const message = data.senderMessage 
+          ? `${sender.name} (@${sender.username}) wants to connect! They said: "${data.senderMessage}"`
+          : `${sender.name} (@${sender.username}) wants to be your friend!`;
+        
+        await this.createNotification({
+          userId: data.receiverId,
+          type: 'friend_request',
+          title: 'New Friend Request',
+          message,
+          data: { senderId: data.senderId, requestId: result[0].id },
+        });
+      }
+      
       return result[0];
     } catch (error) {
       throw new Error('Friend request already exists');
