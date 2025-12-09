@@ -217,7 +217,7 @@ export default function GroupsDetailPage() {
                   className="bg-white/10 backdrop-blur-sm border-white/30 text-white hover:bg-white/20"
                   data-testid="button-back"
                 >
-                  <Link href="/groups">
+                  <Link href="/community-world-map">
                     <ArrowLeft className="h-4 w-4 mr-2" />
                     Back
                   </Link>

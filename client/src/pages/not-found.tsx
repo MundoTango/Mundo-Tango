@@ -118,9 +118,9 @@ export default function NotFound() {
                             Events
                           </Button>
                         </Link>
-                        <Link href="/groups">
-                          <Button variant="outline" className="w-full" data-testid="link-groups">
-                            Groups
+                        <Link href="/community-world-map">
+                          <Button variant="outline" className="w-full" data-testid="link-community">
+                            Community
                           </Button>
                         </Link>
                         <Link href="/profile">

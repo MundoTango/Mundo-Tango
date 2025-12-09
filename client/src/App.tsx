@@ -134,19 +134,12 @@ const EventSearchPage = lazy(() => import("@/pages/events/EventSearchPage"));
 const EventDetailsPage = lazy(() => import("@/pages/EventDetailsPage"));
 const EditEventPage = lazy(() => import("@/pages/EditEventPage"));
 const MyEventsPage = lazy(() => import("@/pages/MyEventsPage"));
-const GroupsPage = lazy(() => import("@/pages/GroupsPage"));
-const GroupCreatePage = lazy(() => import("@/pages/GroupCreatePage"));
 const GroupDetailsPage = lazy(() => import("@/pages/GroupDetailsPage"));
 const EventSeriesPage = lazy(() => import("@/pages/EventSeriesPage"));
 
 // Community & Events Pages (Pages 11-20)
 const CommunityMapPage = lazy(() => import("@/pages/CommunityMapPage"));
-const CityGroupsPage = lazy(() => import("@/pages/CityGroupsPage"));
 const CityHubPage = lazy(() => import("@/pages/CityHubPage"));
-const ProfessionalGroupsPage = lazy(
-  () => import("@/pages/ProfessionalGroupsPage"),
-);
-const CustomGroupsPage = lazy(() => import("@/pages/CustomGroupsPage"));
 const EventCalendarPage = lazy(() => import("@/pages/EventCalendarPage"));
 const EventCreationPage = lazy(() => import("@/pages/EventCreationPage"));
 const EventDetailPage = lazy(() => import("@/pages/EventDetailPage"));
@@ -1104,48 +1097,28 @@ function Router() {
         </ProtectedRoute>
       </Route>
 
+      {/* Groups pages redirected to Community World Map as part of Groups page turn-down */}
       <Route path="/groups">
-        <ProtectedRoute>
-          <AppLayout>
-            <GroupsPage />
-          </AppLayout>
-        </ProtectedRoute>
+        <Redirect to="/community-world-map" />
       </Route>
 
       <Route path="/groups/create">
-        <ProtectedRoute>
-          <AppLayout>
-            <Suspense fallback={<LoadingFallback />}>
-              <GroupCreatePage />
-            </Suspense>
-          </AppLayout>
-        </ProtectedRoute>
+        <Redirect to="/community-world-map" />
       </Route>
 
       <Route path="/groups/cities">
-        <ProtectedRoute>
-          <AppLayout>
-            <CityGroupsPage />
-          </AppLayout>
-        </ProtectedRoute>
+        <Redirect to="/community-world-map" />
       </Route>
 
       <Route path="/groups/professional">
-        <ProtectedRoute>
-          <AppLayout>
-            <ProfessionalGroupsPage />
-          </AppLayout>
-        </ProtectedRoute>
+        <Redirect to="/pro/teaching" />
       </Route>
 
       <Route path="/groups/custom">
-        <ProtectedRoute>
-          <AppLayout>
-            <CustomGroupsPage />
-          </AppLayout>
-        </ProtectedRoute>
+        <Redirect to="/community-world-map" />
       </Route>
 
+      {/* Keep group details for now - individual groups may still be viewed */}
       <Route path="/groups/:id">
         <ProtectedRoute>
           <AppLayout>
@@ -1186,17 +1159,13 @@ function Router() {
           </AppLayout>
         </ProtectedRoute>
       </Route>
+      {/* City groups redirected to Community World Map as part of Groups page turn-down */}
       <Route path="/city-groups">
-        <ProtectedRoute>
-          <AppLayout>
-            <CityGroupsPage />
-          </AppLayout>
-        </ProtectedRoute>
+        <Redirect to="/community-world-map" />
       </Route>
 
-      {/* /cities redirects to city-groups */}
       <Route path="/cities">
-        <Redirect to="/city-groups" />
+        <Redirect to="/community-world-map" />
       </Route>
 
       <Route path="/events/calendar">
