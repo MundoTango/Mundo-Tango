@@ -31,9 +31,7 @@ export function ReportModal({ open, onOpenChange, postId, contentType }: ReportM
 
   const reportMutation = useMutation({
     mutationFn: async () => {
-      await apiRequest('POST', '/api/reports', {
-        contentType,
-        contentId: postId,
+      await apiRequest('POST', `/api/posts/${postId}/report`, {
         reason,
         details,
       });
