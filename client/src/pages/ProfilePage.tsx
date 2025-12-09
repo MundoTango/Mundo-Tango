@@ -285,7 +285,12 @@ export default function ProfilePage() {
   const { data: posts = [], isLoading: postsLoading } = useQuery<Post[]>({
     queryKey: ["user-posts", user?.id],
     queryFn: async () => {
-      const res = await fetch(`/api/posts?userId=${user?.id}&limit=50`);
+      const token = localStorage.getItem('accessToken');
+      const headers: Record<string, string> = {};
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+      const res = await fetch(`/api/posts?userId=${user?.id}&limit=50`, { headers, credentials: "include" });
       if (!res.ok) throw new Error("Failed to load posts");
       return res.json();
     },
