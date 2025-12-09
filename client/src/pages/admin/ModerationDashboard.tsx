@@ -83,7 +83,9 @@ export default function ModerationDashboard() {
     total: number;
   }>({
     queryKey: ["/api/admin/moderation/queue", statusFilter],
-    queryFn: () => fetch(`/api/admin/moderation/queue?status=${statusFilter}`).then(r => r.json()),
+    queryFn: () => fetch(`/api/admin/moderation/queue?status=${statusFilter}`, {
+      credentials: 'include'
+    }).then(r => r.json()),
   });
 
   const { data: flaggedData } = useQuery<{
@@ -267,7 +269,7 @@ export default function ModerationDashboard() {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {queueData?.queue.map((item) => (
+                {(queueData?.queue || []).map((item) => (
                   <div
                     key={item.queue.id}
                     className={`p-4 border rounded-lg cursor-pointer hover-elevate ${
@@ -307,7 +309,7 @@ export default function ModerationDashboard() {
                   </div>
                 ))}
 
-                {queueData?.queue.length === 0 && (
+                {(queueData?.queue || []).length === 0 && (
                   <p className="text-center text-muted-foreground py-8" data-testid="text-empty-queue">
                     No items in the queue
                   </p>
@@ -391,7 +393,7 @@ export default function ModerationDashboard() {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {flaggedData?.flagged.map((item) => (
+                {(flaggedData?.flagged || []).map((item) => (
                   <div
                     key={item.id}
                     className="p-4 border rounded-lg"
@@ -443,7 +445,7 @@ export default function ModerationDashboard() {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {auditData?.actions.map(({ action, moderator }) => (
+                {(auditData?.actions || []).map(({ action, moderator }) => (
                   <div
                     key={action.id}
                     className="p-4 border rounded-lg"
