@@ -365,7 +365,9 @@ export function PROGroupPublicPage({ roleSlug, title, singularTitle, description
                     <div className="flex gap-3">
                       <Button 
                         variant="outline"
-                        onClick={() => navigate('/messages')}
+                        onClick={() => {
+                          document.getElementById("pro-discussions")?.scrollIntoView({ behavior: "smooth" });
+                        }}
                         data-testid="button-group-discussions"
                         style={{ borderColor: color, color }}
                       >
@@ -459,6 +461,49 @@ export function PROGroupPublicPage({ roleSlug, title, singularTitle, description
                       Be the first to join this PRO community!
                     </p>
                   )}
+                </CardContent>
+              </Card>
+
+              {/* PRO Group Discussions Section */}
+              <Card id="pro-discussions" className="bg-background/50 border-white/10">
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Users className="w-5 h-5" style={{ color }} />
+                      <CardTitle>{title} Discussions</CardTitle>
+                    </div>
+                    <Button 
+                      size="sm"
+                      style={{ background: color }}
+                      className="text-white"
+                      data-testid="button-start-discussion"
+                    >
+                      Start Discussion
+                    </Button>
+                  </div>
+                  <CardDescription>
+                    Connect with fellow {title.toLowerCase()}, share tips, and discuss opportunities
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {/* Placeholder for future discussions - will be populated from API */}
+                    <div className="text-center py-8 border border-dashed rounded-lg" style={{ borderColor: `${color}30` }}>
+                      <Users className="w-10 h-10 mx-auto mb-3 opacity-40" style={{ color }} />
+                      <h4 className="font-medium mb-1">No discussions yet</h4>
+                      <p className="text-sm text-muted-foreground mb-4">
+                        Be the first to start a conversation with other {title.toLowerCase()}!
+                      </p>
+                      <Button 
+                        variant="outline"
+                        size="sm"
+                        style={{ borderColor: color, color }}
+                        data-testid="button-first-discussion"
+                      >
+                        Start the First Discussion
+                      </Button>
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
             </TabsContent>
