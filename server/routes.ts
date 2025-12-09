@@ -1,6 +1,7 @@
 console.log("🔍 [DEBUG] Starting server/routes.ts module loading...");
 import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
+import jwt from "jsonwebtoken";
 import { storage } from "./storage";
 import authRoutes from "./routes/auth";
 import facebookOAuthRoutes from "./routes/auth/facebook-oauth-routes";
@@ -2901,7 +2902,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!currentUserId && req.headers.authorization) {
         try {
           const token = req.headers.authorization.split(" ")[1];
-          const decoded = require('jsonwebtoken').verify(token, process.env.JWT_SECRET!) as any;
+          const decoded = jwt.verify(token, process.env.JWT_SECRET!) as any;
           currentUserId = decoded.userId || decoded.id;
           console.log('[GET /api/posts] Decoded userId from token:', currentUserId);
         } catch (e) {
