@@ -346,8 +346,8 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
 
           {/* Right side actions */}
           <div className="flex items-center gap-1 ml-auto">
-            {/* See Friendship Button - Only for accepted friends */}
-            {post.user?.friendshipStatus === 'accepted' && post.user?.id !== user?.id && (
+            {/* See Friendship Button - Only for accepted friends (status can be 'accepted' or 'active') */}
+            {(post.user?.friendshipStatus === 'accepted' || post.user?.friendshipStatus === 'active') && post.user?.id !== user?.id && (
               <Button
                 variant="ghost"
                 size="sm"
