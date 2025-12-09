@@ -2894,7 +2894,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/posts", async (req: Request & { userId?: number; user?: any }, res: Response) => {
     try {
       const { userId, limit = "20", offset = "0", type } = req.query;
-      const currentUserId = req.user?.id; // From auth middleware if authenticated (optional for public route)
+      // Try to authenticate if token is provided, but don't require it
+      let currentUserId = req.user?.id;
+      if (!currentUserId && req.headers.authorization) {
+        try {
+          const token = req.headers.authorization.split(" ")[1];
+          const decoded = require('jsonwebtoken').verify(token, process.env.JWT_SECRET!) as any;
+          currentUserId = decoded.userId || decoded.id;
+        } catch (e) {
+          // Token verification failed, continue as unauthenticated
+        }
+      }
       
       // Filter by type only if explicitly specified (no default - show all post types)
       const posts = await storage.getPosts({
