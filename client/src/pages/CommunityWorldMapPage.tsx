@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import L from 'leaflet';
+import { Link } from "wouter";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -8,6 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
+import { Skeleton } from "@/components/ui/skeleton";
 import { 
   Globe, 
   MapPin, 
@@ -15,12 +17,16 @@ import {
   Calendar, 
   Home,
   Building2,
+  Sparkles,
+  ChevronRight,
   X
 } from "lucide-react";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { CommunityMapWithLayers } from "@/components/map/CommunityMapWithLayers";
 import { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
+import { getCityImageUrl } from "@/lib/cityImageMap";
+import type { SelectGroup } from "@shared/schema";
 
 // Fix Leaflet default marker icon
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -88,6 +94,16 @@ export default function CommunityWorldMapPage() {
   }>({
     queryKey: ["/api/community/stats"],
   });
+
+  // Fetch city groups for the city cards section
+  const { data: groups, isLoading: isLoadingGroups } = useQuery<SelectGroup[]>({
+    queryKey: ["/api/groups"],
+  });
+
+  // Filter to get only city groups
+  const cityGroups = useMemo(() => {
+    return (groups || []).filter(item => item.group?.type === "city").map(item => item.group);
+  }, [groups]);
 
   // Buenos Aires flagship city data (fallback)
   const buenosAires: CommunityLocation = {
@@ -395,6 +411,119 @@ export default function CommunityWorldMapPage() {
               </Card>
             )}
           </div>
+        </div>
+
+        {/* City Groups Section */}
+        <div className="mt-8">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-2xl font-bold flex items-center gap-2">
+                <Globe className="h-6 w-6 text-primary" />
+                Explore City Communities
+              </h2>
+              <p className="text-muted-foreground mt-1">
+                Connect with tango dancers in cities around the world
+              </p>
+            </div>
+            <Badge variant="secondary" className="text-sm">
+              {cityGroups.length} Cities
+            </Badge>
+          </div>
+
+          {isLoadingGroups ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[1, 2, 3].map((i) => (
+                <Card key={i} className="overflow-hidden">
+                  <Skeleton className="aspect-[16/9] w-full" />
+                  <div className="p-6 space-y-4">
+                    <Skeleton className="h-4 w-3/4" />
+                    <Skeleton className="h-4 w-full" />
+                    <div className="grid grid-cols-4 gap-3">
+                      {[1, 2, 3, 4].map((j) => (
+                        <Skeleton key={j} className="h-16 rounded-lg" />
+                      ))}
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          ) : cityGroups.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {cityGroups.map((group) => (
+                <motion.div
+                  key={group.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  whileHover={{ y: -4 }}
+                  className="group cursor-pointer"
+                  data-testid={`card-city-group-${group.id}`}
+                >
+                  <Card className="overflow-hidden hover-elevate h-full">
+                    <div className="relative aspect-[16/9] overflow-hidden">
+                      <motion.img
+                        src={group.coverImage || getCityImageUrl(group.city)}
+                        alt={group.name}
+                        className="w-full h-full object-cover"
+                        whileHover={{ scale: 1.05 }}
+                        transition={{ duration: 0.6 }}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+                      
+                      <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+                        <h3 className="text-2xl font-serif font-bold mb-1">{group.name}</h3>
+                        <p className="text-sm text-white/80">{group.city}</p>
+                      </div>
+                    </div>
+
+                    <div className="p-6 space-y-4">
+                      <p className="text-sm text-muted-foreground line-clamp-2">{group.description}</p>
+                      
+                      <div className="grid grid-cols-4 gap-3 text-sm">
+                        <div className="flex flex-col items-center gap-1 p-2 bg-muted/50 rounded-lg">
+                          <Users className="w-4 h-4 text-cyan-500" />
+                          <div className="font-semibold text-center">{(group.memberCount || 0).toLocaleString()}</div>
+                          <div className="text-xs text-muted-foreground text-center">Members</div>
+                        </div>
+                        <div className="flex flex-col items-center gap-1 p-2 bg-muted/50 rounded-lg">
+                          <Calendar className="w-4 h-4 text-blue-500" />
+                          <div className="font-semibold text-center">{group.eventCount || 0}</div>
+                          <div className="text-xs text-muted-foreground text-center">Events</div>
+                        </div>
+                        <div className="flex flex-col items-center gap-1 p-2 bg-muted/50 rounded-lg">
+                          <Sparkles className="w-4 h-4 text-purple-500" />
+                          <div className="font-semibold text-center">{group.recommendationCount || 0}</div>
+                          <div className="text-xs text-muted-foreground text-center">Recs</div>
+                        </div>
+                        <div className="flex flex-col items-center gap-1 p-2 bg-muted/50 rounded-lg">
+                          <Home className="w-4 h-4 text-amber-500" />
+                          <div className="font-semibold text-center">{group.housingCount || 0}</div>
+                          <div className="text-xs text-muted-foreground text-center">Housing</div>
+                        </div>
+                      </div>
+
+                      <Link href={`/groups/${group.id}`} className="w-full">
+                        <Button className="w-full gap-2" data-testid={`button-view-city-${group.id}`}>
+                          <ChevronRight className="w-4 h-4" />
+                          Explore City
+                        </Button>
+                      </Link>
+                    </div>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+          ) : (
+            <Card className="p-12">
+              <div className="flex flex-col items-center justify-center text-center">
+                <Globe className="w-16 h-16 text-muted-foreground/50 mb-4" />
+                <h3 className="text-xl font-semibold mb-2">No City Communities Yet</h3>
+                <p className="text-muted-foreground max-w-md">
+                  City communities will appear here as they are created. Check back soon!
+                </p>
+              </div>
+            </Card>
+          )}
         </div>
     </SelfHealingErrorBoundary>
   );

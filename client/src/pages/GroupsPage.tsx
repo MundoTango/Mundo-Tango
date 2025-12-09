@@ -402,14 +402,10 @@ export default function GroupsPage() {
 
                   {/* Tabs Navigation */}
                   <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                    <TabsList className="grid w-full grid-cols-3 mb-8">
+                    <TabsList className="grid w-full grid-cols-2 mb-8">
                       <TabsTrigger value="my-groups" className="text-base">
                         <Star className="w-4 h-4 mr-2" />
                         My Groups
-                      </TabsTrigger>
-                      <TabsTrigger value="cities" className="text-base">
-                        <Building2 className="w-4 h-4 mr-2" />
-                        Cities
                       </TabsTrigger>
                       <TabsTrigger value="professional" className="text-base">
                         <Globe className="w-4 h-4 mr-2" />
@@ -528,43 +524,16 @@ export default function GroupsPage() {
                             Explore Cities and Professional groups to expand your network
                           </p>
                           <div className="flex gap-3 justify-center">
-                            <Button variant="outline" onClick={() => setActiveTab("cities")}>
-                              Browse Cities
-                            </Button>
+                            <Link href="/community-world-map">
+                              <Button variant="outline">
+                                <MapPin className="w-4 h-4 mr-2" />
+                                Browse Cities
+                              </Button>
+                            </Link>
                             <Button onClick={() => setActiveTab("professional")}>
                               Professional Groups
                             </Button>
                           </div>
-                        </Card>
-                      )}
-                    </TabsContent>
-
-                    {/* CITIES Tab */}
-                    <TabsContent value="cities" className="space-y-8">
-                      <div className="mb-6">
-                        <h2 className="text-3xl font-serif font-bold">Tango Cities Worldwide</h2>
-                        <p className="text-muted-foreground mt-2">
-                          Connect with dancers in cities around the globe
-                        </p>
-                      </div>
-
-                      {isLoading ? (
-                        <div className="grid grid-cols-2 gap-6">
-                          {[...Array(6)].map((_, i) => (
-                            <Skeleton key={i} className="h-96 w-full" />
-                          ))}
-                        </div>
-                      ) : cityGroups.length > 0 ? (
-                        <div className="grid grid-cols-2 gap-6">
-                          {cityGroups.map((group) => renderCityCard(group))}
-                        </div>
-                      ) : (
-                        <Card className="p-8 text-center">
-                          <MapPin className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-                          <h3 className="text-lg font-semibold mb-2">No City Groups Yet</h3>
-                          <p className="text-sm text-muted-foreground mb-4">
-                            City groups will appear here as they're created
-                          </p>
                         </Card>
                       )}
                     </TabsContent>
@@ -619,10 +588,6 @@ export default function GroupsPage() {
                       <div className="flex items-center justify-between">
                         <span className="text-sm text-muted-foreground">Total Groups</span>
                         <span className="font-bold">{enrichedGroups.length}</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-muted-foreground">City Groups</span>
-                        <span className="font-bold">{cityGroups.length}</span>
                       </div>
                       <div className="flex items-center justify-between">
                         <span className="text-sm text-muted-foreground">Professional</span>

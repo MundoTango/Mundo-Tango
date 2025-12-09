@@ -69,10 +69,10 @@ const socialItems = [
 
 const communityItems = [
   {
-    title: "Community Map",
+    title: "Cities & Map",
     url: "/community-world-map",
     icon: Globe,
-    tooltip: "Explore the global tango community",
+    tooltip: "Explore city communities and the global tango map",
   },
   {
     title: "City Hub",
