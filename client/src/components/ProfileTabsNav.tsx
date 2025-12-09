@@ -93,6 +93,7 @@ export default function ProfileTabsNav({ user, activeTab, onTabChange, isOwnProf
   // Dialog states
   const [showFriendRequestDialog, setShowFriendRequestDialog] = useState(false);
   const [showMessageDialog, setShowMessageDialog] = useState(false);
+  const [requestSent, setRequestSent] = useState(false);
   
   // Friend request form state
   const [requestData, setRequestData] = useState({
@@ -114,6 +115,7 @@ export default function ProfileTabsNav({ user, activeTab, onTabChange, isOwnProf
       queryClient.invalidateQueries({ queryKey: ["/api/friends"] });
       setShowFriendRequestDialog(false);
       setRequestData({ message: "", didWeDance: false, danceLocation: "" });
+      setRequestSent(true);
     },
     onError: (error: Error) => {
       toast({
@@ -226,14 +228,26 @@ export default function ProfileTabsNav({ user, activeTab, onTabChange, isOwnProf
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.3, delay: visibleTabs.length * 0.05 }}
                 >
-                  <Button
-                    onClick={() => setShowFriendRequestDialog(true)}
-                    className="gap-2 px-5 py-2.5 h-auto text-base font-semibold bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 shadow-lg hover:shadow-xl transition-all"
-                    data-testid="button-send-friend-request"
-                  >
-                    <UserPlus className="w-5 h-5" />
-                    <span>Add Friend</span>
-                  </Button>
+                  {requestSent ? (
+                    <Button
+                      disabled
+                      variant="outline"
+                      className="gap-2 px-5 py-2.5 h-auto text-base font-semibold border-green-500 text-green-600 dark:text-green-400"
+                      data-testid="button-request-sent"
+                    >
+                      <UserPlus className="w-5 h-5" />
+                      <span>Request Sent</span>
+                    </Button>
+                  ) : (
+                    <Button
+                      onClick={() => setShowFriendRequestDialog(true)}
+                      className="gap-2 px-5 py-2.5 h-auto text-base font-semibold bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 shadow-lg hover:shadow-xl transition-all"
+                      data-testid="button-send-friend-request"
+                    >
+                      <UserPlus className="w-5 h-5" />
+                      <span>Add Friend</span>
+                    </Button>
+                  )}
                 </motion.div>
               )}
               
