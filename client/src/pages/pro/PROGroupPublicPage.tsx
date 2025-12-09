@@ -20,6 +20,7 @@ import { TANGO_ROLES, getRoleByValue, type TangoRole } from "@/lib/tangoRoles";
 interface PROGroupPublicPageProps {
   roleSlug: string;
   title: string;
+  singularTitle?: string; // Singular form for "Become a Teacher" vs "Teachers"
   description: string;
   icon: React.ElementType;
   color: string;
@@ -40,12 +41,15 @@ interface Professional {
   yearsExperience?: number;
 }
 
-export function PROGroupPublicPage({ roleSlug, title, description, icon: Icon, color }: PROGroupPublicPageProps) {
+export function PROGroupPublicPage({ roleSlug, title, singularTitle, description, icon: Icon, color }: PROGroupPublicPageProps) {
   const [, navigate] = useLocation();
   const { user, profile } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
   const [cityFilter, setCityFilter] = useState("all");
   const [sortBy, setSortBy] = useState("rating");
+
+  // Use singularTitle if provided, otherwise derive from title by removing trailing 's'
+  const singular = singularTitle || title.replace(/s$/, '');
 
   const isMember = profile?.tangoRoles?.includes(roleSlug);
 
@@ -117,7 +121,7 @@ export function PROGroupPublicPage({ roleSlug, title, description, icon: Icon, c
                 className="px-3 py-1"
                 style={{ background: `${color}30`, color }}
               >
-                You are a {title}
+                You are a {singular}
               </Badge>
               <Button 
                 variant="outline"
@@ -138,7 +142,7 @@ export function PROGroupPublicPage({ roleSlug, title, description, icon: Icon, c
                 style={{ background: color }}
                 className="text-white"
               >
-                Become a {title}
+                Become a {singular}
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
               <p className="text-xs text-muted-foreground mt-2">
@@ -166,7 +170,7 @@ export function PROGroupPublicPage({ roleSlug, title, description, icon: Icon, c
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
-                  placeholder={`Search ${title.toLowerCase()}s by name or city...`}
+                  placeholder={`Search ${title.toLowerCase()} by name or city...`}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-10 bg-background/50 border-white/10"
@@ -216,7 +220,7 @@ export function PROGroupPublicPage({ roleSlug, title, description, icon: Icon, c
               <Card className="bg-background/50 border-white/10">
                 <CardContent className="p-12 text-center">
                   <Icon className="w-12 h-12 mx-auto mb-4 opacity-50" style={{ color }} />
-                  <h3 className="text-lg font-semibold mb-2">No {title}s Found</h3>
+                  <h3 className="text-lg font-semibold mb-2">No {title} Found</h3>
                   <p className="text-muted-foreground mb-4">
                     {searchQuery ? "Try adjusting your search criteria" : "Be the first to join this PRO network!"}
                   </p>
@@ -227,7 +231,7 @@ export function PROGroupPublicPage({ roleSlug, title, description, icon: Icon, c
                       className="text-white"
                       data-testid="button-be-first"
                     >
-                      Become a {title}
+                      Become a {singular}
                     </Button>
                   )}
                 </CardContent>
@@ -306,7 +310,7 @@ export function PROGroupPublicPage({ roleSlug, title, description, icon: Icon, c
             <Card className="bg-background/50 border-white/10">
               <CardContent className="p-12 text-center">
                 <Star className="w-12 h-12 mx-auto mb-4 text-yellow-500/50" />
-                <h3 className="text-lg font-semibold mb-2">No Featured {title}s Yet</h3>
+                <h3 className="text-lg font-semibold mb-2">No Featured {title} Yet</h3>
                 <p className="text-muted-foreground">
                   Top-rated professionals with verified reviews will be showcased here
                 </p>
@@ -318,9 +322,9 @@ export function PROGroupPublicPage({ roleSlug, title, description, icon: Icon, c
             <Card className="bg-background/50 border-white/10">
               <CardContent className="p-12 text-center">
                 <Calendar className="w-12 h-12 mx-auto mb-4 opacity-50" style={{ color }} />
-                <h3 className="text-lg font-semibold mb-2">Upcoming {title} Events</h3>
+                <h3 className="text-lg font-semibold mb-2">Upcoming {singular} Events</h3>
                 <p className="text-muted-foreground mb-4">
-                  Workshops, masterclasses, and performances by {title.toLowerCase()}s
+                  Workshops, masterclasses, and performances by {title.toLowerCase()}
                 </p>
                 <Button 
                   variant="outline"
@@ -343,6 +347,7 @@ export function LearningPage() {
     <PROGroupPublicPage
       roleSlug="teacher"
       title="Teachers"
+      singularTitle="Teacher"
       description="Discover tango teachers and educators from around the world"
       icon={GraduationCap}
       color="#10B981"
@@ -355,6 +360,7 @@ export function MusicPage() {
     <PROGroupPublicPage
       roleSlug="dj"
       title="DJs & Musicians"
+      singularTitle="DJ/Musician"
       description="Find talented tango DJs and musicians for your events"
       icon={Music}
       color="#8B5CF6"
@@ -367,6 +373,7 @@ export function MediaGalleryPage() {
     <PROGroupPublicPage
       roleSlug="photographer"
       title="Photographers & Videographers"
+      singularTitle="Photographer/Videographer"
       description="Professional tango photographers and videographers"
       icon={Camera}
       color="#EF4444"
@@ -379,6 +386,7 @@ export function PerformancesPage() {
     <PROGroupPublicPage
       roleSlug="performer"
       title="Performers"
+      singularTitle="Performer"
       description="World-class tango performers and show artists"
       icon={Drama}
       color="#F59E0B"
@@ -391,6 +399,7 @@ export function VenuesPage() {
     <PROGroupPublicPage
       roleSlug="venue-owner"
       title="Venue Owners"
+      singularTitle="Venue Owner"
       description="Tango venues, milongas, and dance spaces worldwide"
       icon={Building2}
       color="#6B7280"
@@ -403,6 +412,7 @@ export function OrganizersPage() {
     <PROGroupPublicPage
       roleSlug="organizer"
       title="Event Organizers"
+      singularTitle="Event Organizer"
       description="Professional tango event organizers and promoters"
       icon={Calendar}
       color="#3B82F6"
@@ -415,6 +425,7 @@ export function StoriesBlogPage() {
     <PROGroupPublicPage
       roleSlug="journalist"
       title="Journalists & Bloggers"
+      singularTitle="Journalist/Blogger"
       description="Tango writers, bloggers, and content creators"
       icon={PenLine}
       color="#14B8A6"
@@ -427,6 +438,7 @@ export function ArtistsPage() {
     <PROGroupPublicPage
       roleSlug="artist"
       title="Designers & Artists"
+      singularTitle="Designer/Artist"
       description="Tango visual artists, graphic designers, and creatives"
       icon={Palette}
       color="#EC4899"
@@ -439,6 +451,7 @@ export function MusiciansPage() {
     <PROGroupPublicPage
       roleSlug="musician"
       title="Musicians"
+      singularTitle="Musician"
       description="Live tango musicians and orchestras"
       icon={Piano}
       color="#A855F7"
@@ -451,6 +464,7 @@ export function ClothingDesignersPage() {
     <PROGroupPublicPage
       roleSlug="clothing-designer"
       title="Clothing & Shoe Designers"
+      singularTitle="Clothing/Shoe Designer"
       description="Tango fashion designers and shoemakers"
       icon={Shirt}
       color="#EC4899"
@@ -463,6 +477,7 @@ export function HistoriansPage() {
     <PROGroupPublicPage
       roleSlug="historian"
       title="Historians"
+      singularTitle="Historian"
       description="Tango history scholars and researchers"
       icon={BookOpen}
       color="#8B5CF6"
@@ -475,6 +490,7 @@ export function CoachesPage() {
     <PROGroupPublicPage
       roleSlug="coach"
       title="Coaches & Mentors"
+      singularTitle="Coach/Mentor"
       description="Personal tango coaches and mentors"
       icon={Target}
       color="#10B981"
@@ -487,6 +503,7 @@ export function HostsMCsPage() {
     <PROGroupPublicPage
       roleSlug="mc"
       title="MCs & Hosts"
+      singularTitle="MC/Host"
       description="Professional tango event hosts and MCs"
       icon={Mic}
       color="#F97316"
@@ -499,6 +516,7 @@ export function VendorsPage() {
     <PROGroupPublicPage
       roleSlug="business"
       title="Vendors & Businesses"
+      singularTitle="Vendor/Business"
       description="Tango-related businesses and service providers"
       icon={Briefcase}
       color="#6366F1"
@@ -511,6 +529,7 @@ export function CommunityBuildersPage() {
     <PROGroupPublicPage
       roleSlug="community-builder"
       title="Community Builders"
+      singularTitle="Community Builder"
       description="Tango community leaders and ambassadors"
       icon={Globe}
       color="#40E0D0"
@@ -523,6 +542,7 @@ export function TaxiDancersPage() {
     <PROGroupPublicPage
       roleSlug="taxi-dancer"
       title="Taxi Dancers"
+      singularTitle="Taxi Dancer"
       description="Professional taxi dancers available at milongas"
       icon={Users}
       color="#F97316"
