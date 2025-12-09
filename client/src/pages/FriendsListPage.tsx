@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useLocation } from "wouter";
+import { useLocation, Link } from "wouter";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,7 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { Users, UserPlus, Clock, Search, Heart, Star, TrendingUp, Upload, X, Image as ImageIcon, Loader2 } from "lucide-react";
+import { Users, UserPlus, Clock, Search, Heart, Star, TrendingUp, Upload, X, Image as ImageIcon, Loader2, Handshake } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { PageLayout } from "@/components/PageLayout";
@@ -326,15 +326,28 @@ export default function FriendsListPage() {
             Add Friend
           </Button>
         ) : (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => removeFriendMutation.mutate(friend.id)}
-            disabled={removeFriendMutation.isPending}
-            data-testid={`button-remove-friend-${friend.id}`}
-          >
-            Remove
-          </Button>
+          <div className="flex gap-2">
+            <Link href={`/friendship/${friend.id}`}>
+              <Button
+                variant="outline"
+                size="sm"
+                data-testid={`button-see-friendship-${friend.id}`}
+                className="border-cyan-400/50 hover:bg-cyan-50 dark:hover:bg-cyan-950/50"
+              >
+                <Handshake className="h-4 w-4 mr-1" />
+                See Friendship
+              </Button>
+            </Link>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => removeFriendMutation.mutate(friend.id)}
+              disabled={removeFriendMutation.isPending}
+              data-testid={`button-remove-friend-${friend.id}`}
+            >
+              Remove
+            </Button>
+          </div>
         )}
       </div>
     </Card>

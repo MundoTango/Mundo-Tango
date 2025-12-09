@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Settings, UserPlus, UserMinus, UserCheck, Plane, Calendar, CheckCircle, Instagram, Facebook, Twitter, Linkedin, Youtube, Globe, Award, Plus, Camera, Music, Users, ImageIcon, Mic2, Home, Briefcase, BookOpen, Heart, Eye, Loader2 } from "lucide-react";
+import { MapPin, Settings, UserPlus, UserMinus, UserCheck, Plane, Calendar, CheckCircle, Instagram, Facebook, Twitter, Linkedin, Youtube, Globe, Award, Plus, Camera, Music, Users, ImageIcon, Mic2, Home, Briefcase, BookOpen, Heart, Eye, Loader2, Handshake } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useAuth } from "@/contexts/AuthContext";
 import { SEO } from "@/components/SEO";
@@ -762,16 +762,28 @@ export default function ProfilePage() {
         {!isOwnProfile && (
           <div className="absolute top-8 right-8 z-30 flex gap-3">
             {isFriend ? (
-                <Button 
-                  variant="outline"
-                  className="gap-2 text-white border-white/30 bg-black/20 backdrop-blur-sm hover:bg-black/30"
-                  onClick={() => removeFriendMutation.mutate()}
-                  disabled={removeFriendMutation.isPending}
-                  data-testid={`button-remove-friend-${user.id}`}
-                >
-                  <UserMinus className="h-4 w-4" />
-                  {removeFriendMutation.isPending ? 'Removing...' : 'Remove Friend'}
-                </Button>
+                <>
+                  <Link href={`/friendship/${user.id}`}>
+                    <Button 
+                      variant="outline"
+                      className="gap-2 text-white border-white/30 bg-black/20 backdrop-blur-sm hover:bg-black/30"
+                      data-testid={`button-see-friendship-${user.id}`}
+                    >
+                      <Handshake className="h-4 w-4" />
+                      See Friendship
+                    </Button>
+                  </Link>
+                  <Button 
+                    variant="outline"
+                    className="gap-2 text-white border-white/30 bg-black/20 backdrop-blur-sm hover:bg-black/30"
+                    onClick={() => removeFriendMutation.mutate()}
+                    disabled={removeFriendMutation.isPending}
+                    data-testid={`button-remove-friend-${user.id}`}
+                  >
+                    <UserMinus className="h-4 w-4" />
+                    {removeFriendMutation.isPending ? 'Removing...' : 'Remove Friend'}
+                  </Button>
+                </>
               ) : hasPendingRequest ? (
                 <Button 
                   variant="outline"
