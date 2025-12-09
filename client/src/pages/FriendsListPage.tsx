@@ -574,16 +574,16 @@ export default function FriendsListPage() {
                 }
                 data-testid="checkbox-did-we-dance"
               />
-              <Label htmlFor="didWeDance" className="cursor-pointer">We've met!💃🕺</Label>
+              <Label htmlFor="didWeDance" className="cursor-pointer">We've met!</Label>
             </div>
 
             {requestData.didWeDance && (
               <div className="space-y-3 p-4 bg-gradient-to-br from-cyan-50 to-blue-50 dark:from-cyan-950/20 dark:to-blue-950/20 rounded-lg border border-cyan-200 dark:border-cyan-800">
                 <div>
-                  <Label htmlFor="danceLocation">Where did we dance?</Label>
+                  <Label htmlFor="danceLocation">Where did we meet?</Label>
                   <Input
                     id="danceLocation"
-                    placeholder="e.g., Salon Canning, Buenos Aires"
+                    placeholder="e.g., Buenos Aires, Paris"
                     value={requestData.danceLocation}
                     onChange={(e) =>
                       setRequestData({ ...requestData, danceLocation: e.target.value })
@@ -596,7 +596,7 @@ export default function FriendsListPage() {
                   <Label htmlFor="danceStory">Share the memory</Label>
                   <Textarea
                     id="danceStory"
-                    placeholder="Tell them about your dance together..."
+                    placeholder="Tell them about when you met..."
                     value={requestData.danceStory}
                     onChange={(e) =>
                       setRequestData({ ...requestData, danceStory: e.target.value })
