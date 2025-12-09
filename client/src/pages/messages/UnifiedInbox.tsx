@@ -59,7 +59,7 @@ export default function UnifiedInbox() {
   }, [isGodLevel]);
 
   const { data: messages, isLoading } = useQuery({
-    queryKey: ["/api/messages/unified", selectedChannel, searchQuery],
+    queryKey: ["/api/messages/unified/all/"],
     refetchInterval: 30000,
   });
 
@@ -90,7 +90,7 @@ export default function UnifiedInbox() {
     <div className="flex h-[calc(100vh-4rem)] bg-background">
       {/* Sidebar */}
       <div className="w-64 border-r bg-sidebar flex flex-col">
-        <div className="p-4 border-b">
+        <div className="p-4 border-b shrink-0">
           <Dialog open={showCompose} onOpenChange={setShowCompose}>
             <DialogTrigger asChild>
               <Button className="w-full" data-testid="button-compose">
@@ -104,7 +104,7 @@ export default function UnifiedInbox() {
           </Dialog>
         </div>
 
-        <ScrollArea className="flex-1">
+        <ScrollArea className="flex-1 min-h-0">
           <div className="p-4 space-y-2">
             <h3 className="text-sm font-medium text-sidebar-foreground mb-4">
               Channels
