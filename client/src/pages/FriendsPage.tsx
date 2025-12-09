@@ -194,12 +194,18 @@ export default function FriendsPage() {
                   <Card key={request.id} data-testid={`request-card-${request.id}`}>
                     <CardContent className="flex items-center gap-4 pt-6">
                       <Avatar className="h-16 w-16">
-                        <AvatarImage src={request.profileImage} />
-                        <AvatarFallback>{request.name[0]}</AvatarFallback>
+                        <AvatarImage src={request.sender?.profileImage || request.profileImage} />
+                        <AvatarFallback>{(request.sender?.name || request.name || "?")[0]}</AvatarFallback>
                       </Avatar>
                       <div className="flex-1">
-                        <h3 className="font-semibold">{request.name}</h3>
-                        <p className="text-sm text-muted-foreground">@{request.username}</p>
+                        <h3 className="font-semibold">{request.sender?.name || request.name}</h3>
+                        <p className="text-sm text-muted-foreground">@{request.sender?.username || request.username}</p>
+                        {request.senderMessage && (
+                          <p className="text-sm text-muted-foreground mt-1 italic">"{request.senderMessage}"</p>
+                        )}
+                        {request.didWeDance && (
+                          <Badge variant="secondary" className="mt-1">Danced together</Badge>
+                        )}
                       </div>
                       <div className="flex gap-2">
                         <Button 
