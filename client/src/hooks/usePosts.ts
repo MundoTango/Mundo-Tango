@@ -79,7 +79,16 @@ export function usePosts() {
       const offset = pageParam as number;
       
       try {
-        const res = await fetch(`/api/posts?limit=${limit}&offset=${offset}`);
+        // Include Authorization header for friendship status calculation
+        const token = localStorage.getItem('accessToken');
+        const headers: Record<string, string> = {};
+        if (token) {
+          headers["Authorization"] = `Bearer ${token}`;
+        }
+        const res = await fetch(`/api/posts?limit=${limit}&offset=${offset}`, { 
+          headers, 
+          credentials: "include" 
+        });
         
         // Handle authentication errors gracefully
         if (res.status === 401 || res.status === 403) {
