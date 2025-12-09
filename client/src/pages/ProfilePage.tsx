@@ -1041,7 +1041,7 @@ export default function ProfilePage() {
           navigate(`/profile/${params?.id || user?.id}`);
         }
       }}>
-        <DialogContent className="backdrop-blur-xl bg-white/90 dark:bg-slate-900/90 max-w-md" data-testid="dialog-friend-request">
+        <DialogContent className="backdrop-blur-xl bg-white/90 dark:bg-slate-900/90 max-w-md max-h-[80vh] overflow-y-auto" data-testid="dialog-friend-request">
           <DialogHeader>
             <DialogTitle className="text-xl bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent">
               Friend Request from {pendingFriendRequest?.sender?.name}
@@ -1052,44 +1052,43 @@ export default function ProfilePage() {
             {/* Sender info header */}
             <div className="p-3 bg-blue-50 dark:bg-blue-950/30 rounded-lg border border-blue-200 dark:border-blue-800">
               <p className="text-sm text-blue-900 dark:text-blue-100">
-                <span className="font-semibold">{pendingFriendRequest?.sender?.name}</span> (@{pendingFriendRequest?.sender?.username}) sent you a friend request
+                <span className="font-semibold">{pendingFriendRequest?.sender?.name}</span> (@{pendingFriendRequest?.sender?.username}) sent you a friend request on {new Date(pendingFriendRequest?.createdAt || '').toLocaleDateString()}
               </p>
             </div>
 
-            {/* Personal Message */}
-            {pendingFriendRequest?.senderMessage && (
-              <div>
-                <Label className="text-sm font-medium">Their Message</Label>
-                <div className="mt-2 p-3 bg-muted/50 rounded-lg border">
-                  <p className="text-sm">"{pendingFriendRequest.senderMessage}"</p>
-                </div>
+            {/* Personal Message - READ ONLY */}
+            <div>
+              <Label htmlFor="message" className="text-sm font-medium">Personal Message</Label>
+              <div className="mt-1 p-3 bg-muted/50 rounded-lg border text-sm text-muted-foreground min-h-20 flex items-start">
+                "{pendingFriendRequest?.senderMessage || '(No message included)'}"
               </div>
-            )}
+            </div>
 
-            {/* Dance Story Section */}
+            {/* We've met section - READ ONLY */}
+            <div className="flex items-center space-x-2 p-2 rounded-lg bg-muted/30">
+              <div className="w-5 h-5 rounded border border-muted-foreground flex items-center justify-center">
+                {pendingFriendRequest?.didWeDance && (
+                  <div className="w-3 h-3 bg-muted-foreground rounded-sm" />
+                )}
+              </div>
+              <Label className="text-sm font-medium cursor-pointer">We've met!</Label>
+            </div>
+
+            {/* Dance Story Fields - READ ONLY */}
             {pendingFriendRequest?.didWeDance && (
               <div className="space-y-3 p-4 bg-gradient-to-br from-cyan-50 to-blue-50 dark:from-cyan-950/20 dark:to-blue-950/20 rounded-lg border border-cyan-200 dark:border-cyan-800">
-                <div className="flex items-center gap-2">
-                  <Heart className="h-4 w-4" style={{ color: '#40E0D0' }} />
-                  <span className="text-sm font-medium" style={{ color: '#40E0D0' }}>We danced together!</span>
+                <div>
+                  <Label htmlFor="danceLocation" className="text-sm font-medium">Where did we dance?</Label>
+                  <div className="mt-1 p-2 bg-white dark:bg-slate-900 rounded border text-sm text-muted-foreground min-h-9 flex items-center">
+                    {pendingFriendRequest.danceLocation || '(No location provided)'}
+                  </div>
                 </div>
-                
-                {pendingFriendRequest.danceLocation && (
-                  <div>
-                    <p className="text-xs font-semibold text-muted-foreground mb-1">Location</p>
-                    <p className="text-sm text-muted-foreground flex items-center gap-1">
-                      <MapPin className="h-3 w-3" />
-                      {pendingFriendRequest.danceLocation}
-                    </p>
+                <div>
+                  <Label htmlFor="danceStory" className="text-sm font-medium">Share the memory</Label>
+                  <div className="mt-1 p-3 bg-white dark:bg-slate-900 rounded border text-sm text-muted-foreground min-h-20 flex items-start">
+                    "{pendingFriendRequest.danceStory || '(No memory shared)'}"
                   </div>
-                )}
-                
-                {pendingFriendRequest.danceStory && (
-                  <div>
-                    <p className="text-xs font-semibold text-muted-foreground mb-1">Their Story</p>
-                    <p className="text-sm italic text-muted-foreground">"{pendingFriendRequest.danceStory}"</p>
-                  </div>
-                )}
+                </div>
               </div>
             )}
 
