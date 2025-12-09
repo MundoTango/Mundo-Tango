@@ -26,6 +26,7 @@ import ProfileTabMemories from "@/components/profile/ProfileTabMemories";
 import ProfileTabPro from "@/components/profile/ProfileTabPro";
 import DashboardCustomerToggle from "@/components/profile/DashboardCustomerToggle";
 import { PhotoUploadDialog } from "@/components/PhotoUploadDialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 
 interface User {
   id: number;
@@ -86,6 +87,8 @@ export default function ProfilePage() {
   const [uploadingCover, setUploadingCover] = useState(false);
   const [profilePhotoDialogOpen, setProfilePhotoDialogOpen] = useState(false);
   const [coverPhotoDialogOpen, setCoverPhotoDialogOpen] = useState(false);
+  const [friendRequestModalOpen, setFriendRequestModalOpen] = useState(false);
+  const [pendingFriendRequest, setPendingFriendRequest] = useState<any>(null);
 
   // Upload profile photo mutation (send compressed base64)
   const uploadPhotoMutation = useMutation({
@@ -218,6 +221,34 @@ export default function ProfilePage() {
       setActiveTab(tabParam);
     }
   }, [searchString]);
+
+  // Handle friendRequestId query param - show friend request modal
+  useEffect(() => {
+    const urlParams = new URLSearchParams(searchString);
+    const friendRequestId = urlParams.get('friendRequestId');
+    
+    if (friendRequestId) {
+      // Fetch the specific friend request by ID using dedicated endpoint
+      const fetchRequest = async () => {
+        try {
+          const token = localStorage.getItem('accessToken');
+          const res = await fetch(`/api/friends/requests/${friendRequestId}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          if (res.ok) {
+            const request = await res.json();
+            if (request && request.status === 'pending') {
+              setPendingFriendRequest(request);
+              setFriendRequestModalOpen(true);
+            }
+          }
+        } catch (error) {
+          console.error('Failed to fetch friend request:', error);
+        }
+      };
+      fetchRequest();
+    }
+  }, [searchString]);
   
   // Support both numeric ID and username - use username/ID from URL or current user's ID
   const profileIdentifier = params?.id || currentUser?.id?.toString();
@@ -338,6 +369,59 @@ export default function ProfilePage() {
       toast({
         variant: "destructive",
         title: "Failed to remove friend",
+        description: error.message || "Something went wrong",
+      });
+    },
+  });
+
+  // Accept friend request mutation (from modal)
+  const acceptRequestMutation = useMutation({
+    mutationFn: async (requestId: number) => {
+      return await apiRequest('POST', `/api/friends/requests/${requestId}/accept`);
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['/api/friends'] });
+      await queryClient.invalidateQueries({ queryKey: ['/api/friends/requests'] });
+      await queryClient.invalidateQueries({ queryKey: ['/api/notifications', { limit: 10 }] });
+      setFriendRequestModalOpen(false);
+      setPendingFriendRequest(null);
+      // Remove the query param from URL
+      navigate(`/profile/${params?.id || user?.id}`);
+      toast({
+        title: "Friend request accepted!",
+        description: `You are now friends with ${pendingFriendRequest?.sender?.name || user?.name}`,
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        variant: "destructive",
+        title: "Failed to accept request",
+        description: error.message || "Something went wrong",
+      });
+    },
+  });
+
+  // Decline friend request mutation (from modal)
+  const declineRequestMutation = useMutation({
+    mutationFn: async (requestId: number) => {
+      return await apiRequest('POST', `/api/friends/requests/${requestId}/reject`);
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['/api/friends/requests'] });
+      await queryClient.invalidateQueries({ queryKey: ['/api/notifications', { limit: 10 }] });
+      setFriendRequestModalOpen(false);
+      setPendingFriendRequest(null);
+      // Remove the query param from URL
+      navigate(`/profile/${params?.id || user?.id}`);
+      toast({
+        title: "Request declined",
+        description: "The friend request has been declined",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        variant: "destructive",
+        title: "Failed to decline request",
         description: error.message || "Something went wrong",
       });
     },
@@ -947,6 +1031,94 @@ export default function ProfilePage() {
           </motion.div>
         )}
       </div>
+
+      {/* Friend Request Modal - shows when navigating from notification */}
+      <Dialog open={friendRequestModalOpen} onOpenChange={(open) => {
+        setFriendRequestModalOpen(open);
+        if (!open) {
+          setPendingFriendRequest(null);
+          navigate(`/profile/${params?.id || user?.id}`);
+        }
+      }}>
+        <DialogContent className="sm:max-w-md" data-testid="dialog-friend-request">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <UserPlus className="h-5 w-5" style={{ color: '#40E0D0' }} />
+              Friend Request
+            </DialogTitle>
+            <DialogDescription>
+              {pendingFriendRequest?.sender?.name || user?.name} wants to connect with you!
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            {/* Sender info */}
+            <div className="flex items-center gap-3">
+              <Avatar className="h-12 w-12 ring-2 ring-cyan-400/50">
+                <AvatarImage src={pendingFriendRequest?.sender?.profileImage || user?.profileImage} />
+                <AvatarFallback className="bg-gradient-to-br from-cyan-400 to-blue-500 text-white">
+                  {(pendingFriendRequest?.sender?.name || user?.name)?.charAt(0)}
+                </AvatarFallback>
+              </Avatar>
+              <div>
+                <p className="font-semibold">{pendingFriendRequest?.sender?.name || user?.name}</p>
+                <p className="text-sm text-muted-foreground">@{pendingFriendRequest?.sender?.username || user?.username}</p>
+                {pendingFriendRequest?.sender?.city && (
+                  <p className="text-xs text-muted-foreground flex items-center gap-1">
+                    <MapPin className="h-3 w-3" />
+                    {pendingFriendRequest?.sender?.city}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {/* Message */}
+            {pendingFriendRequest?.senderMessage && (
+              <div className="bg-muted/50 rounded-lg p-3 border">
+                <p className="text-sm italic">"{pendingFriendRequest.senderMessage}"</p>
+              </div>
+            )}
+
+            {/* Dance info */}
+            {pendingFriendRequest?.didWeDance && (
+              <div className="bg-cyan-500/10 border border-cyan-500/30 rounded-lg p-3 space-y-2">
+                <div className="flex items-center gap-2">
+                  <Heart className="h-4 w-4" style={{ color: '#40E0D0' }} />
+                  <span className="text-sm font-medium" style={{ color: '#40E0D0' }}>We danced together!</span>
+                </div>
+                {pendingFriendRequest.danceLocation && (
+                  <p className="text-sm text-muted-foreground flex items-center gap-1">
+                    <MapPin className="h-3 w-3" />
+                    {pendingFriendRequest.danceLocation}
+                  </p>
+                )}
+                {pendingFriendRequest.danceStory && (
+                  <p className="text-sm italic text-muted-foreground">"{pendingFriendRequest.danceStory}"</p>
+                )}
+              </div>
+            )}
+          </div>
+
+          <DialogFooter className="flex gap-2 sm:gap-2">
+            <Button
+              variant="outline"
+              onClick={() => pendingFriendRequest && declineRequestMutation.mutate(pendingFriendRequest.id)}
+              disabled={declineRequestMutation.isPending}
+              data-testid="button-decline-request"
+            >
+              {declineRequestMutation.isPending ? 'Declining...' : 'Decline'}
+            </Button>
+            <Button
+              onClick={() => pendingFriendRequest && acceptRequestMutation.mutate(pendingFriendRequest.id)}
+              disabled={acceptRequestMutation.isPending}
+              className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600"
+              data-testid="button-accept-request"
+            >
+              {acceptRequestMutation.isPending ? 'Accepting...' : 'Accept Request'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </SelfHealingErrorBoundary>
   );
 }

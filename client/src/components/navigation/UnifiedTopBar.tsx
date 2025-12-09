@@ -172,8 +172,9 @@ function UnifiedTopBar({
     if (!url) {
       switch (notif.type) {
         case 'friend_request':
-          url = notif.data?.requestId 
-            ? `/friends?tab=requests&requestId=${notif.data.requestId}`
+          // Navigate to requesting user's profile with friend request modal
+          url = notif.data?.senderId && notif.data?.requestId
+            ? `/profile/${notif.data.senderId}?friendRequestId=${notif.data.requestId}`
             : '/friends?tab=requests';
           break;
         case 'warning':

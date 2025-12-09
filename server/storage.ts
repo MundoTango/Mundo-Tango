@@ -298,6 +298,7 @@ export interface IStorage {
   
   getUserFriends(userId: number): Promise<any[]>;
   getFriendRequests(userId: number): Promise<any[]>;
+  getFriendRequestById(requestId: number, userId: number): Promise<any | null>;
   getFriendSuggestions(userId: number): Promise<any[]>;
   sendFriendRequest(data: { senderId: number; receiverId: number; [key: string]: any }): Promise<any>;
   acceptFriendRequest(requestId: number): Promise<void>;
@@ -2140,6 +2141,65 @@ export class DbStorage implements IStorage {
     );
     
     return requests;
+  }
+
+  async getFriendRequestById(requestId: number, userId: number): Promise<any | null> {
+    // Get the specific request by ID
+    const result = await db
+      .select()
+      .from(friendRequests)
+      .where(eq(friendRequests.id, requestId))
+      .limit(1);
+    
+    if (result.length === 0) {
+      return null;
+    }
+    
+    const req = result[0];
+    
+    // Verify the current user is involved in this request (either sender or receiver)
+    if (req.senderId !== userId && req.receiverId !== userId) {
+      return null;
+    }
+    
+    // Fetch sender data
+    const sender = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, req.senderId))
+      .limit(1);
+    
+    return {
+      id: req.id,
+      senderId: req.senderId,
+      receiverId: req.receiverId,
+      senderMessage: req.senderMessage,
+      receiverMessage: req.receiverMessage,
+      didWeDance: req.didWeDance,
+      danceLocation: req.danceLocation,
+      danceStory: req.danceStory,
+      mediaUrls: req.mediaUrls,
+      status: req.status,
+      createdAt: req.createdAt,
+      respondedAt: req.respondedAt,
+      sender: sender.length > 0 ? {
+        id: sender[0].id,
+        name: sender[0].name,
+        username: sender[0].username,
+        email: sender[0].email,
+        profileImage: sender[0].profileImage,
+        bio: sender[0].bio,
+        city: sender[0].city,
+      } : {
+        id: req.senderId,
+        name: 'Unknown User',
+        username: 'unknown',
+        email: '',
+        profileImage: null,
+        bio: null,
+        city: null,
+      }
+    };
   }
 
   async getFriendSuggestions(userId: number): Promise<any[]> {

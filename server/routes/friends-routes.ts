@@ -25,6 +25,23 @@ export function createFriendsRoutes(storage: IStorage) {
     }
   });
 
+  // Get a specific friend request by ID (for modal deep-linking from notifications)
+  router.get("/friends/requests/:requestId", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const userId = req.userId!;
+      const requestId = parseInt(req.params.requestId);
+      
+      // Get the specific request and validate the current user is involved
+      const request = await storage.getFriendRequestById(requestId, userId);
+      if (!request) {
+        return res.status(404).json({ error: 'Friend request not found' });
+      }
+      res.json(request);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   router.get("/friends/suggestions", authenticateToken, async (req: AuthRequest, res) => {
     try {
       const userId = req.userId!;
