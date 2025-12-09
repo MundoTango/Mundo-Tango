@@ -1285,28 +1285,30 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
             </Button>
           </motion.div>
 
-          {/* 6. Live Stream */}
-          <motion.div
-            custom={5}
-            initial="hidden"
-            animate="visible"
-            variants={iconButtonVariants}
-          >
-            <Button
-              type="button"
-              size="icon"
-              variant="ghost"
-              onClick={() => window.location.href = '/live-stream'}
-              className="relative group"
-              data-testid="button-go-live"
-              title="Go Live - Start a live stream"
+          {/* 6. Live Stream - God Level admins only */}
+          {user?.role === 'god' && (
+            <motion.div
+              custom={5}
+              initial="hidden"
+              animate="visible"
+              variants={iconButtonVariants}
             >
-              <div className="relative">
-                <Video className="w-5 h-5 transition-transform group-hover:scale-110" />
-                <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-              </div>
-            </Button>
-          </motion.div>
+              <Button
+                type="button"
+                size="icon"
+                variant="ghost"
+                onClick={() => window.location.href = '/live-stream'}
+                className="relative group"
+                data-testid="button-go-live"
+                title="Go Live - Start a live stream"
+              >
+                <div className="relative">
+                  <Video className="w-5 h-5 transition-transform group-hover:scale-110" />
+                  <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+                </div>
+              </Button>
+            </motion.div>
+          )}
 
           {/* 7. Cross-Post Toggle */}
           <motion.div
