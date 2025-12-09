@@ -4922,43 +4922,55 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = req.user!.id;
       
-      // Get all messages where user is sender or receiver
+      // Import socialMessages table - get all messages sent or received by this user
       const allMessages = await db.select({
-        id: chatMessages.id,
-        chatRoomId: chatMessages.chatRoomId,
-        userId: chatMessages.userId,
-        body: chatMessages.body,
-        createdAt: chatMessages.createdAt,
-      }).from(chatMessages).orderBy(desc(chatMessages.createdAt));
+        id: socialMessages.id,
+        senderId: socialMessages.senderId,
+        recipientId: socialMessages.recipientId,
+        content: socialMessages.content,
+        createdAt: socialMessages.createdAt,
+        isRead: socialMessages.isRead,
+      }).from(socialMessages)
+        .where(or(
+          eq(socialMessages.senderId, userId),
+          eq(socialMessages.recipientId, userId)
+        ))
+        .orderBy(desc(socialMessages.createdAt));
       
-      // Get conversations for this user
-      const conversations = await storage.getUserConversations(userId);
+      if (allMessages.length === 0) {
+        return res.json([]);
+      }
       
-      // Build messages list with participant info
+      // Group messages by conversation (sender/recipient pair)
+      const conversations = new Map<string, any[]>();
+      
+      allMessages.forEach((msg: any) => {
+        const otherUserId = msg.senderId === userId ? msg.recipientId : msg.senderId;
+        const key = [userId, otherUserId].sort().join("_");
+        if (!conversations.has(key)) {
+          conversations.set(key, []);
+        }
+        conversations.get(key)!.push({...msg, otherUserId});
+      });
+      
+      // Build unified message list
       const messages = await Promise.all(
-        conversations.map(async (conv: any) => {
-          // Get all users in this conversation
-          const roomUsers = await db.select({
-            userId: chatRoomUsers.userId,
-          }).from(chatRoomUsers).where(eq(chatRoomUsers.chatRoomId, conv.id));
-          
-          const otherUserId = roomUsers.find(u => u.userId !== userId)?.userId;
-          const otherUser = otherUserId ? await storage.getUserById(otherUserId) : null;
-          
-          // Get last message in this room
-          const lastMsg = allMessages.find(m => m.chatRoomId === conv.id);
+        Array.from(conversations.entries()).map(async ([key, msgs]) => {
+          const otherUserId = msgs[0].otherUserId;
+          const otherUser = await storage.getUserById(otherUserId);
+          const lastMsg = msgs[0]; // Already sorted by createdAt DESC
           
           return {
-            id: conv.id,
+            id: lastMsg.id,
             channel: "mt",
             from: otherUser?.name || otherUser?.username || "Unknown",
             fromId: otherUserId,
             subject: `Chat with ${otherUser?.name || otherUser?.username}`,
-            body: lastMsg?.body || "",
-            timestamp: lastMsg?.createdAt || conv.lastMessageAt || new Date(),
-            isRead: false,
-            receivedAt: lastMsg?.createdAt || conv.lastMessageAt || new Date(),
-            conversationId: conv.id,
+            body: lastMsg.content || "",
+            timestamp: lastMsg.createdAt || new Date(),
+            isRead: lastMsg.isRead || false,
+            receivedAt: lastMsg.createdAt || new Date(),
+            conversationId: key,
             participant: otherUser
           };
         })
