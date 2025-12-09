@@ -1969,7 +1969,15 @@ export class DbStorage implements IStorage {
   }
 
   async reportPost(report: { contentType: string; contentId: number; reporterId: number; reason: string; details: string | null }): Promise<void> {
-    await db.insert(moderationQueue).values(report);
+    await db.insert(moderationQueue).values({
+      contentType: report.contentType,
+      contentId: report.contentId,
+      reportedBy: report.reporterId,
+      reportReason: report.reason,
+      reportDetails: report.details,
+      status: 'pending',
+      priority: 3,
+    });
   }
 
   async createPostComment(comment: InsertPostComment): Promise<SelectPostComment> {
