@@ -70,13 +70,13 @@ export default function FriendshipPage() {
   const [activeTab, setActiveTab] = useState("memory");
   const [feedFilter, setFeedFilter] = useState<"all" | "our" | "liked" | "commented">("all");
 
-  const { data: friendData, isLoading: isLoadingFriend } = useQuery({
-    queryKey: ["/api/users", friendId],
+  const { data: friendData, isLoading: isLoadingFriend } = useQuery<{ user: User }>({
+    queryKey: [`/api/users/${friendId}`],
     enabled: !!friendId,
   });
 
-  const { data: currentUserData } = useQuery({
-    queryKey: ["/api/users", currentUser?.id],
+  const { data: currentUserData } = useQuery<{ user: User }>({
+    queryKey: [`/api/users/${currentUser?.id}`],
     enabled: !!currentUser?.id,
   });
 
