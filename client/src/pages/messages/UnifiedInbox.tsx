@@ -47,7 +47,7 @@ export default function UnifiedInbox() {
   const [showCompose, setShowCompose] = useState(false);
 
   const { data: messages, isLoading } = useQuery({
-    queryKey: ["/api/messages/unified", selectedChannel, searchQuery],
+    queryKey: ["/api/messages/unified", { channel: selectedChannel === "all" ? undefined : selectedChannel, search: searchQuery || undefined }],
     refetchInterval: 30000,
   });
 

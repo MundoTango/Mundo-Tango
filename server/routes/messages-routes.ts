@@ -842,53 +842,63 @@ router.get("/unified", authenticateToken, async (req: AuthRequest, res: Response
     const userId = req.userId!;
     const { limit = 50, offset = 0, channel, unreadOnly } = req.query;
 
-    // Get external messages (Gmail, FB, IG, WhatsApp)
-    const externalMsgs = await db
-      .select()
-      .from(externalMessages)
+    // Get MT internal messages from socialMessages table
+    // Include messages where user is sender OR recipient
+    const internalMsgs = await db
+      .select({
+        id: socialMessages.id,
+        senderId: socialMessages.senderId,
+        recipientId: socialMessages.recipientId,
+        content: socialMessages.content,
+        createdAt: socialMessages.createdAt,
+        isRead: socialMessages.isRead,
+      })
+      .from(socialMessages)
       .where(
         and(
-          eq(externalMessages.userId, userId),
-          channel ? eq(externalMessages.channel, channel as any) : sql`true`,
-          unreadOnly === 'true' ? eq(externalMessages.isRead, false) : sql`true`
+          or(
+            eq(socialMessages.senderId, userId),
+            eq(socialMessages.recipientId, userId)
+          ),
+          channel === 'mt' || !channel ? sql`true` : sql`false`,
+          unreadOnly === 'true' ? eq(socialMessages.isRead, false) : sql`true`
         )
       )
-      .orderBy(desc(externalMessages.receivedAt))
+      .orderBy(desc(socialMessages.createdAt))
       .limit(parseInt(limit as string))
       .offset(parseInt(offset as string));
 
-    // Get MT internal messages (existing chatMessages table)
-    // TODO: Join with chatMessages table to include internal MT messages
-    // const internalMsgs = await db
-    //   .select()
-    //   .from(chatMessages)
-    //   .where(eq(chatMessages.userId, userId))
-    //   .orderBy(desc(chatMessages.createdAt))
-    //   .limit(parseInt(limit as string));
+    // Map MT messages to unified format with sender/recipient names
+    const mtMessages = await Promise.all(internalMsgs.map(async (msg) => {
+      const [sender] = await db.select({ name: users.name, username: users.username }).from(users).where(eq(users.id, msg.senderId));
+      const [recipient] = await db.select({ name: users.name, username: users.username }).from(users).where(eq(users.id, msg.recipientId));
+      
+      return {
+        id: msg.id,
+        channel: 'mt' as const,
+        from: sender?.name || sender?.username || `User ${msg.senderId}`,
+        to: recipient?.name || recipient?.username || `User ${msg.recipientId}`,
+        subject: null,
+        body: msg.content,
+        receivedAt: msg.createdAt,
+        createdAt: msg.createdAt,
+        isRead: msg.isRead,
+        isStarred: false,
+        source: 'internal',
+        senderId: msg.senderId,
+        recipientId: msg.recipientId,
+      };
+    }));
 
-    // Combine and sort by date
-    const unifiedMessages = [
-      ...externalMsgs.map(msg => ({
-        ...msg,
-        source: 'external',
-        type: msg.channel,
-      })),
-      // ...internalMsgs.map(msg => ({
-      //   ...msg,
-      //   source: 'internal',
-      //   type: 'mt',
-      // }))
-    ].sort((a, b) => {
+    // Sort by date (newest first)
+    const unifiedMessages = mtMessages.sort((a, b) => {
       const dateA = new Date(a.receivedAt || a.createdAt).getTime();
       const dateB = new Date(b.receivedAt || b.createdAt).getTime();
       return dateB - dateA;
     });
 
-    res.json({
-      messages: unifiedMessages,
-      total: unifiedMessages.length,
-      hasMore: unifiedMessages.length === parseInt(limit as string),
-    });
+    // Return as flat array (frontend expects this)
+    res.json(unifiedMessages);
   } catch (error: any) {
     console.error("[Messages] Unified inbox error:", error);
     res.status(500).json({ error: "Failed to fetch messages", message: error.message });
