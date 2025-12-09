@@ -2,8 +2,8 @@
 
 **Purpose**: Comprehensive documentation of all scrapers, fields extracted, data flow, and UI destinations.
 
-**Last Updated**: 2025-01-16  
-**Branch**: `server/services/scrapers`  
+**Last Updated**: 2025-01-16 (Merged with Comprehensive Sources Index)
+**Branch**: `server/services/scrapers`
 **Location**: `server/agents/scraping/`
 
 ---
@@ -158,6 +158,247 @@ VALUES (
 ```
 
 Then the master orchestrator will automatically include it in the next 24-hour scraping cycle.
+
+#### **Complete Site List** (120+ Sources)
+
+**CRITICAL**: This is the exhaustive master list of ALL sites Mundo Tango scrapes. When adding a new site, it gets added to this list AND the eventScrapingSources table.
+
+##### **🌍 CITY EVENT CALENDARS** (120+ cities across 45+ countries)
+
+**AMERICAS:**
+
+*🇦🇷 Argentina:*
+- Buenos Aires: https://www.facebook.com/groups/tangoBA (Facebook Group) - Agent #118
+- Ushuaia: https://www.facebook.com/groups/tangoUshuaia (Facebook Group) - Agent #118
+- Córdoba: TBD
+- Rosario: TBD
+- Mendoza: TBD
+
+*🇨🇦 Canada:*
+- Toronto: TBD
+- Montreal: TBD  
+- Vancouver: TBD
+
+*🇺🇸 United States:*
+- New York: TBD
+- San Francisco: TBD
+- Los Angeles: TBD
+- Chicago: TBD
+- Austin: TBD
+- Seattle: TBD
+- Portland: TBD
+- Denver: TBD
+- Miami: TBD
+- Boston: TBD
+
+*🇧🇷 Brazil:*
+- São Paulo: TBD
+- Rio de Janeiro: TBD
+
+*🇲🇽 Mexico:*
+- Mexico City: TBD
+
+**EUROPE:**
+
+*🇦🇹 Austria:*
+- Vienna: http://www.tango-vienna.at/termine - Agent #116
+
+*🇧🇪 Belgium:*
+- Brussels: https://www.tangobrussel.com/agenda - Agent #116
+
+*🇩🇪 Germany:*
+- Berlin: TBD
+- Munich: TBD
+- Hamburg: TBD
+
+*🇫🇷 France:*
+- Paris: TBD
+- Lyon: TBD
+
+*🇬🇧 United Kingdom:*
+- London: TBD
+- Manchester: TBD
+
+*🇮🇹 Italy:*
+- Rome: TBD
+- Milan: TBD
+
+*🇪🇸 Spain:*
+- Madrid: TBD
+- Barcelona: TBD
+
+*🇳🇱 Netherlands:*
+- Amsterdam: TBD
+
+**ASIA-PACIFIC:**
+
+*🇦🇺 Australia:*
+- Melbourne: https://tangoclub.melbourne/melbourne-tango-calendar - Agent #116
+- Sydney: https://tangoevents.au/ - Agent #116
+
+*🇯🇵 Japan:*
+- Tokyo: TBD
+
+*🇰🇷 South Korea:*
+- Seoul: TBD
+
+*🇸🇬 Singapore:*
+- Singapore: TBD
+
+**Note**: TBD = To Be Documented (sites exist in conversation history, need URL extraction)
+
+##### **📚 TEACHER DIRECTORIES** (15+ sources)
+
+1. **TangoTeachers.com** - https://tangoteachers.com - Global directory - Agent #116
+2. **Instructor profiles on TangoCat** - Embedded in event sites - Agent #116
+3. **Facebook Teacher Pages** - 100+ pages - Agent #118
+4. **Instagram Teacher Accounts** - 50+ accounts - Agent #118
+5. _(More TBD from research)_
+
+##### **👠 SHOE VENDORS** (10+ sources)
+
+1. **Neo Tango** - https://www.neotango.com - Agent #116
+2. **Comme il Faut** - https://commeilfautshoes.com - Agent #116  
+3. **Tango Leike** - TBD
+4. **PortDance** - TBD
+5. _(More TBD)_
+
+##### **🎶 ORCHESTRA/DJ LISTINGS** (8+ sources)
+
+1. **TangoDJ.org** - https://tangodj.org/milongas - Agent #116
+2. **Orchestra listings on TodoTango** - Agent #117
+3. _(More TBD)_
+
+##### **🎉 FESTIVAL DIRECTORIES** (5+ sources)
+
+1. **TangoFestivals.net** - https://tangofestivals.net/events - Agent #116
+2. **Festival section on Tangopolix** - Already scraped
+3. _(More TBD)_
+
+##### **💬 COMMUNITY FORUMS** (20+ sources)
+
+1. **Facebook Groups** - 100+ groups - Agent #118
+2. **Reddit r/tango** - TBD
+3. _(More TBD)_
+
+---
+
+#### **Adding a New Site: Complete Workflow**
+
+When you discover a new tango site to scrape, follow this process:
+
+**Step 1: Determine Scraper Type**
+
+```bash
+# Inspect the site
+curl -I https://new-site.com/events
+
+# Check if it's:
+# - Static HTML (no JavaScript required) → Agent #116 (staticScraper.ts)
+# - JS-rendered (requires Playwright) → Agent #117 (jsScraper.ts)  
+# - Social Media (Facebook/Instagram) → Agent #118 (socialScraper.ts)
+```
+
+**Step 2: Add to eventScrapingSources Table**
+
+```sql
+-- Insert the new source
+INSERT INTO "eventScrapingSources" (
+  url, 
+  platform, 
+  scraperType, 
+  city,
+  country,
+  active
+)
+VALUES (
+  'https://new-site.com/events',
+  'website',  -- or 'facebook', 'instagram', 'eventbrite', 'meetup'
+  'static',   -- or 'js', 'social'
+  'Paris',    -- City name
+  'France',   -- Country name
+  true
+);
+```
+
+**Step 3: Update THIS Document**
+
+Add the site to the appropriate section above:
+- If it's a city calendar → Add to CITY EVENT CALENDARS section
+- If it's a teacher directory → Add to TEACHER DIRECTORIES section  
+- If it's a vendor → Add to SHOE VENDORS section
+- etc.
+
+**Step 4: Master Orchestrator Auto-Includes It**
+
+The `masterOrchestrator.ts` (Agent #115) runs every 24 hours and will:
+1. ✅ Query `eventScrapingSources` table for `active = true`
+2. ✅ Group by `scraperType` 
+3. ✅ Route to appropriate scraper (Agent #116, #117, or #118)
+4. ✅ Scrape the new site automatically
+5. ✅ Store events in `scrapedEvents` table
+6. ✅ Run deduplication (Agent #119)
+7. ✅ Auto-create city if new location detected
+
+**Step 5: Verify Data in UI**
+
+Within 24 hours, check:
+- `/events` page → New events should appear
+- EventCards should show platform badge ("From New Site")
+- Map view should show new locations
+- Community profiles should show enriched data
+
+---
+
+#### **What Happens After a Site is Added?**
+
+```mermaid
+graph TD
+    A[New Site Added to DB] --> B[Wait for Next 24h Cron]
+    B --> C[Master Orchestrator Runs]
+    C --> D{Scraper Type?}
+    D -->|static| E[Agent #116]
+    D -->|js| F[Agent #117]
+    D -->|social| G[Agent #118]
+    E --> H[Scrape Site]
+    F --> H
+    G --> H
+    H --> I[Store in scrapedEvents]
+    I --> J[Agent #119 Deduplicates]
+    J --> K[Auto-Create City if New]
+    K --> L[Data Available in UI]
+    L --> M[/events Page]
+    L --> N[Map View]
+    L --> O[Community Profiles]
+```
+
+**Timeline:**
+- **T+0**: Site added to database
+- **T+24h**: First scrape happens (next 4 AM UTC cron)
+- **T+24h+5min**: Data deduplicated and available in UI
+- **T+48h**: Second scrape (updates/new events)
+- **Ongoing**: Scrapes every 24 hours automatically
+
+**Monitoring:**
+- Admin Dashboard (`/admin/scraping`) shows:
+  - Scraping success rate per source
+  - Last scraped timestamp
+  - Error logs if scraping fails
+  - Total events scraped
+
+**Manual Trigger** (for testing new sources immediately):
+
+```bash
+# Run scraper immediately without waiting for cron
+npm run scrape:all
+
+# Or run specific scraper type:
+npm run scrape:static  # For Agent #116 sources
+npm run scrape:js      # For Agent #117 sources  
+npm run scrape:social  # For Agent #118 sources
+```
+
+
 
 
 
