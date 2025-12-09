@@ -82,6 +82,14 @@ export default function FriendshipPage() {
     ourStory?: string | null;
   }>({
     queryKey: ["/api/friends/friendship", friendId, "stats"],
+    queryFn: async () => {
+      const token = localStorage.getItem('accessToken');
+      const res = await fetch(`/api/friends/friendship/${friendId}/stats`, {
+        headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+      });
+      if (!res.ok) return null;
+      return res.json();
+    },
     enabled: !!friendId,
   });
 
