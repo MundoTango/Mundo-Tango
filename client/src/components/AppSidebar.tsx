@@ -205,25 +205,18 @@ const proDiscoveryItems = [
     color: "#1E90FF",
     tooltip: "Find the perfect match",
   },
-];
-
-const servicesItems = [
-  {
-    title: "Life CEO",
-    url: "/life-ceo",
-    icon: Brain,
-    tooltip: "AI-powered life management",
-  },
   {
     title: "Marketplace",
     url: "/marketplace",
     icon: ShoppingBag,
+    color: "#F97316",
     tooltip: "Browse products and services",
   },
   {
     title: "Housing",
     url: "/housing",
     icon: HousingIcon,
+    color: "#06B6D4",
     tooltip: "Find tango-friendly accommodations",
   },
 ];
@@ -254,6 +247,17 @@ function AppSidebarComponent() {
   const avatarUrl = profile?.profileImage;
   const userCity = profile?.city || user?.city;
   const userTangoRoles = user?.tangoRoles || [];
+  const isGodLevel = user?.role === 'god';
+  
+  // God Level only services
+  const servicesItems = isGodLevel ? [
+    {
+      title: "Life CEO",
+      url: "/life-ceo",
+      icon: Brain,
+      tooltip: "AI-powered life management",
+    },
+  ] : [];
 
   const myStuffItems = useMemo(() => {
     const items: Array<{
@@ -451,14 +455,17 @@ function AppSidebarComponent() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <SidebarGroup className="border-b border-white/10 pb-4">
-          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">
-            Services
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            {renderIconGrid(servicesItems)}
-          </SidebarGroupContent>
-        </SidebarGroup>
+        {servicesItems.length > 0 && (
+          <SidebarGroup className="border-b border-white/10 pb-4">
+            <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60 flex items-center gap-1">
+              <Brain className="h-3 w-3" style={{ color: "#FFD700" }} />
+              God Level
+            </SidebarGroupLabel>
+            <SidebarGroupContent>
+              {renderIconGrid(servicesItems)}
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
       </SidebarContent>
 
       <SidebarFooter
