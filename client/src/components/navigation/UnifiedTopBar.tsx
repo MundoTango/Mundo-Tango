@@ -165,35 +165,60 @@ function UnifiedTopBar({
 
   // Handle individual notification click - navigate and close dropdown
   const handleNotificationClick = async (notif: any) => {
-    console.log('[DEBUG] Notification clicked:', { id: notif.id, actionUrl: notif.actionUrl, isRead: notif.isRead, read: notif.read, title: notif.title });
-    const url = notif.actionUrl || notif.link;
+    console.log('[DEBUG] Notification clicked:', { id: notif.id, type: notif.type, actionUrl: notif.actionUrl, isRead: notif.isRead, title: notif.title });
+    
+    // Determine URL based on notification type if no explicit URL
+    let url = notif.actionUrl || notif.link;
+    if (!url) {
+      switch (notif.type) {
+        case 'friend_request':
+          url = '/friends?tab=requests';
+          break;
+        case 'warning':
+        case 'content_removed':
+        case 'account_banned':
+        case 'report_resolved':
+          url = '/notifications';
+          break;
+        case 'event_invite':
+        case 'event_update':
+        case 'event_rsvp':
+          url = notif.data?.eventId ? `/events/${notif.data.eventId}` : '/events';
+          break;
+        case 'group_join':
+        case 'group_leave':
+          url = notif.data?.groupId ? `/groups/${notif.data.groupId}` : '/community';
+          break;
+        case 'location_change':
+          url = '/community';
+          break;
+        default:
+          url = '/notifications';
+      }
+    }
     console.log('[DEBUG] Navigation URL:', url);
     
-    if (url) {
-      // Mark individual notification as read if not already read (isRead is the Drizzle mapped field name)
-      if (!notif.isRead && notif.id) {
-        try {
-          const token = localStorage.getItem('accessToken');
-          await fetch(`/api/notifications/${notif.id}/read`, {
-            method: 'PUT',
-            headers: {
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json',
-            },
-            credentials: 'include',
-          });
-          queryClient.invalidateQueries({ queryKey: ['/api/notifications/count'] });
-          queryClient.invalidateQueries({ queryKey: ['/api/notifications', { limit: 10 }] });
-        } catch (error) {
-          console.error('[Notifications] Failed to mark as read:', error);
-        }
+    // Mark notification as read if not already
+    if (!notif.isRead && notif.id) {
+      try {
+        const token = localStorage.getItem('accessToken');
+        await fetch(`/api/notifications/${notif.id}/read`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+        });
+        queryClient.invalidateQueries({ queryKey: ['/api/notifications/count'] });
+        queryClient.invalidateQueries({ queryKey: ['/api/notifications', { limit: 10 }] });
+      } catch (error) {
+        console.error('[Notifications] Failed to mark as read:', error);
       }
-      // Navigate to the notification target
-      console.log('[DEBUG] Navigating to:', url);
-      setLocation(url);
-    } else {
-      console.warn('[WARNING] No actionUrl or link found in notification:', notif);
     }
+    
+    // Navigate to the notification target
+    setLocation(url);
   };
 
   // Fetch message count - uses default queryFn which includes auth headers
