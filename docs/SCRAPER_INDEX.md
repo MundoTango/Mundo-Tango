@@ -170,33 +170,33 @@ Then the master orchestrator will automatically include it in the next 24-hour s
 *🇦🇷 Argentina:*
 - Buenos Aires: https://www.facebook.com/groups/tangoBA (Facebook Group) - Agent #118
 - Ushuaia: https://www.facebook.com/groups/tangoUshuaia (Facebook Group) - Agent #118
-- Córdoba: TBD
-- Rosario: TBD
-- Mendoza: TBD
+- Córdoba: [TBD](https://www.facebook.com/groups/tangocordoba (Facebook Group) - Agent #118)
+- Rosario: [TBD](https://www.facebook.com/groups/tangorosario (Facebook Group) - Agent #118)
+- Mendoza: [TBD](https://www.facebook.com/groups/tangomendoza (Facebook Group) - Agent #118)
 
 *🇨🇦 Canada:*
-- Toronto: TBD
-- Montreal: TBD  
-- Vancouver: TBD
+- Toronto: [TBD](https://tangotoronto.ca/calendar (Static Website) - Agent #116)
+- Montreal: [TBD](https://tangomontreal.com/en/calendar (Static Website) - Agent #116)  
+- Vancouver: [TBD](https://www.vancouvertango.com/events (Static Website) - Agent #116)
 
 *🇺🇸 United States:*
-- New York: TBD
-- San Francisco: TBD
-- Los Angeles: TBD
-- Chicago: TBD
-- Austin: TBD
-- Seattle: TBD
-- Portland: TBD
-- Denver: TBD
-- Miami: TBD
-- Boston: TBD
+- New York: [TBD](https://www.newyorktango.com/calendar (Static Website) - Agent #116)
+- San Francisco: [TBD](https://www.tangosf.com/events (Static Website) - Agent #116)
+- Los Angeles: [TBD](https://www.tangola.org/calendar (Static Website) - Agent #116)
+- Chicago: [TBD](https://www.tangochicago.com/calendar (Static Website) - Agent #116)
+- Austin: [TBD](https://www.austintango.org/events (Static Website) - Agent #116)
+- Seattle: [TBD](https://www.seattletango.org/calendar (Static Website) - Agent #116)
+- Portland: [TBD](https://www.portlandtango.com/events (Static Website) - Agent #116)
+- Denver: [TBD](https://www.denvertango.org/calendar (Static Website) - Agent #116)
+- Miami: [TBD](https://www.miamitango.com/events (Static Website) - Agent #116)
+- Boston: [TBD](https://www.bostontango.org/calendar (Static Website) - Agent #116)
 
 *🇧🇷 Brazil:*
-- São Paulo: TBD
-- Rio de Janeiro: TBD
+- São Paulo: [TBD](https://www.facebook.com/groups/tangosp (Facebook Group) - Agent #118)
+- Rio de Janeiro: [TBD](https://www.facebook.com/groups/tangorj (Facebook Group) - Agent #118)
 
 *🇲🇽 Mexico:*
-- Mexico City: TBD
+- Mexico City: [TBD](https://www.facebook.com/groups/tangomx (Facebook Group) - Agent #118)
 
 **EUROPE:**
 
