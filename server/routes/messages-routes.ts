@@ -21,6 +21,8 @@ import {
   messageTemplates,
   messageAutomations,
   scheduledMessages,
+  socialMessages,
+  users,
   insertConnectedChannelSchema,
   insertExternalMessageSchema,
   insertMessageTemplateSchema,
@@ -1115,15 +1117,66 @@ router.post("/send", authenticateToken, async (req: AuthRequest, res: Response) 
     }
 
     if (channel === 'mt') {
-      // MT internal messaging - placeholder for future implementation
-      sentMessage = {
-        id: `mt-${Date.now()}`,
-        channel: 'mt',
-        to,
-        body,
-        sentAt: new Date(),
-      };
-      console.log('[Messages] MT internal message (placeholder):', sentMessage.id);
+      // MT internal messaging - save to socialMessages table
+      try {
+        // Look up recipient by ID or username
+        let recipientId: number | null = null;
+        const parsedId = parseInt(to);
+        
+        if (!isNaN(parsedId)) {
+          recipientId = parsedId;
+        } else {
+          // Try to find user by username or email
+          const [recipientUser] = await db.select({ id: users.id })
+            .from(users)
+            .where(or(
+              eq(users.username, to),
+              eq(users.email, to)
+            ))
+            .limit(1);
+          if (recipientUser) {
+            recipientId = recipientUser.id;
+          }
+        }
+
+        if (!recipientId) {
+          return res.status(404).json({ error: `Recipient not found: ${to}` });
+        }
+
+        // Get recipient name for legacy fields
+        const [recipient] = await db.select({ name: users.name, username: users.username })
+          .from(users)
+          .where(eq(users.id, recipientId))
+          .limit(1);
+        const recipientName = recipient?.name || recipient?.username || "Unknown";
+
+        // Insert message into socialMessages
+        const [message] = await db
+          .insert(socialMessages)
+          .values({
+            userId: userId,
+            platform: "mt",
+            friendName: recipientName,
+            timestamp: new Date(),
+            senderId: userId,
+            recipientId: recipientId,
+            content: body,
+            isRead: false,
+          })
+          .returning();
+
+        sentMessage = {
+          id: message.id,
+          channel: 'mt',
+          to: recipientId,
+          body,
+          sentAt: new Date(),
+        };
+        console.log('[Messages] MT message sent successfully:', message.id);
+      } catch (mtError: any) {
+        sendError = mtError.message || 'Failed to send MT message';
+        console.error('[Messages] MT send error:', mtError);
+      }
     }
 
     if (sendError) {

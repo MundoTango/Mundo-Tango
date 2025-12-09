@@ -1,5 +1,10 @@
-import { useParams } from "wouter";
-import { useQuery } from "@tanstack/react-query";
+import { useParams, useLocation } from "wouter";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 import { AppLayout } from "@/components/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -43,6 +48,11 @@ interface UserProfile {
 
 export default function UserProfilePublicPage() {
   const { userId } = useParams();
+  const [, setLocation] = useLocation();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const [messageDialogOpen, setMessageDialogOpen] = useState(false);
+  const [messageContent, setMessageContent] = useState("");
 
   const { data: profile, isLoading } = useQuery<UserProfile>({
     queryKey: ['/api/users', userId, 'profile'],
@@ -55,6 +65,45 @@ export default function UserProfilePublicPage() {
   const { data: recentEvents = [] } = useQuery<any[]>({
     queryKey: ['/api/users', userId, 'events'],
   });
+
+  const sendMessageMutation = useMutation({
+    mutationFn: async (content: string) => {
+      return apiRequest("POST", "/api/messages/send", {
+        channel: "mt",
+        to: userId || "0",
+        body: content,
+      });
+    },
+    onSuccess: () => {
+      toast({
+        title: "Message sent",
+        description: `Your message to ${profile?.name} has been sent.`,
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/messages/unified/all/"] });
+      setMessageDialogOpen(false);
+      setMessageContent("");
+      setLocation("/messages");
+    },
+    onError: (error: Error) => {
+      toast({
+        variant: "destructive",
+        title: "Failed to send message",
+        description: error.message,
+      });
+    },
+  });
+
+  const handleSendMessage = () => {
+    if (!messageContent.trim()) {
+      toast({
+        variant: "destructive", 
+        title: "Message required",
+        description: "Please enter a message.",
+      });
+      return;
+    }
+    sendMessageMutation.mutate(messageContent);
+  };
 
   if (isLoading || !profile) {
     return (
@@ -172,7 +221,11 @@ export default function UserProfilePublicPage() {
                           <UserPlus className="h-4 w-4 mr-2" />
                           Add Friend
                         </Button>
-                        <Button variant="outline" data-testid="button-message">
+                        <Button 
+                          variant="outline" 
+                          onClick={() => setMessageDialogOpen(true)}
+                          data-testid="button-message"
+                        >
                           <MessageCircle className="h-4 w-4 mr-2" />
                           Message
                         </Button>
@@ -180,6 +233,39 @@ export default function UserProfilePublicPage() {
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
                       </div>
+
+                      {/* Send Message Dialog */}
+                      <Dialog open={messageDialogOpen} onOpenChange={setMessageDialogOpen}>
+                        <DialogContent className="sm:max-w-[500px]">
+                          <DialogHeader>
+                            <DialogTitle>Send Message to {profile.name}</DialogTitle>
+                          </DialogHeader>
+                          <div className="space-y-4 pt-4">
+                            <Textarea
+                              placeholder="Write your message..."
+                              className="min-h-[150px]"
+                              value={messageContent}
+                              onChange={(e) => setMessageContent(e.target.value)}
+                              data-testid="textarea-profile-message"
+                            />
+                            <div className="flex justify-end gap-2">
+                              <Button 
+                                variant="outline" 
+                                onClick={() => setMessageDialogOpen(false)}
+                              >
+                                Cancel
+                              </Button>
+                              <Button 
+                                onClick={handleSendMessage}
+                                disabled={sendMessageMutation.isPending}
+                                data-testid="button-send-profile-message"
+                              >
+                                {sendMessageMutation.isPending ? "Sending..." : "Send Message"}
+                              </Button>
+                            </div>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
                     </div>
                   </div>
                 </CardContent>

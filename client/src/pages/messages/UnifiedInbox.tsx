@@ -1,154 +1,193 @@
-import { useState, useMemo } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { MessageCircle, Mail, Search, Plus, Star, Archive } from "lucide-react";
-import { SiFacebook, SiInstagram, SiWhatsapp } from "react-icons/si";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogHeader, 
+  DialogTitle,
+  DialogTrigger 
+} from "@/components/ui/dialog";
+import { MessageCircle, Plus, Search, Send, Mail, User } from "lucide-react";
 import { format } from "date-fns";
-import { ComposeMessage } from "@/components/messages/ComposeMessage";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
 import { cn } from "@/lib/utils";
-import DOMPurify from 'dompurify';
-import { useAuth } from "@/contexts/AuthContext";
 
-const channelIcons = {
-  mt: MessageCircle,
-  gmail: Mail,
-  facebook: SiFacebook,
-  instagram: SiInstagram,
-  whatsapp: SiWhatsapp,
-};
-
-const channelLabels = {
-  mt: "MT Messages",
-  gmail: "Gmail",
-  facebook: "Facebook",
-  instagram: "Instagram",
-  whatsapp: "WhatsApp",
-};
-
-const channelColors = {
-  mt: "hsl(var(--primary))",
-  gmail: "hsl(0, 72%, 51%)",
-  facebook: "hsl(221, 44%, 41%)",
-  instagram: "hsl(329, 70%, 58%)",
-  whatsapp: "hsl(142, 70%, 49%)",
-};
-
-type Channel = "all" | "mt" | "gmail" | "facebook" | "instagram" | "whatsapp";
+interface Message {
+  id: number;
+  channel: string;
+  from: string;
+  fromId: number;
+  subject: string;
+  body: string;
+  timestamp: string;
+  isRead: boolean;
+  receivedAt: string;
+  conversationId: string;
+  participant?: {
+    id: number;
+    name: string;
+    username: string;
+    avatarUrl?: string;
+  };
+}
 
 export default function UnifiedInbox() {
-  const { user } = useAuth();
-  const [selectedChannel, setSelectedChannel] = useState<Channel>("all");
-  const [selectedMessage, setSelectedMessage] = useState<any>(null);
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [showCompose, setShowCompose] = useState(false);
+  const [composeOpen, setComposeOpen] = useState(false);
+  const [recipientId, setRecipientId] = useState("");
+  const [messageContent, setMessageContent] = useState("");
 
-  const isGodLevel = user?.role === 'god';
-  
-  const availableChannels = useMemo(() => {
-    if (isGodLevel) {
-      return ["all", "mt", "gmail", "facebook", "instagram", "whatsapp"] as Channel[];
-    }
-    return ["all", "mt"] as Channel[];
-  }, [isGodLevel]);
-
-  const { data: messages, isLoading } = useQuery({
+  const { data: messages = [], isLoading, error } = useQuery<Message[]>({
     queryKey: ["/api/messages/unified/all/"],
     refetchInterval: 30000,
   });
 
-  const { data: channels } = useQuery({
-    queryKey: ["/api/messages/channels"],
+  const sendMutation = useMutation({
+    mutationFn: async (data: { recipientId: string; content: string }) => {
+      return apiRequest("POST", "/api/messages/send", {
+        channel: "mt",
+        to: data.recipientId,
+        body: data.content,
+      });
+    },
+    onSuccess: () => {
+      toast({
+        title: "Message sent",
+        description: "Your message has been sent successfully.",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/messages/unified/all/"] });
+      setComposeOpen(false);
+      setRecipientId("");
+      setMessageContent("");
+    },
+    onError: (error: Error) => {
+      toast({
+        variant: "destructive",
+        title: "Failed to send message",
+        description: error.message,
+      });
+    },
   });
 
-  const filteredMessages = messages?.filter((msg: any) => {
-    const matchesChannel = selectedChannel === "all" || msg.channel === selectedChannel;
-    const matchesSearch = searchQuery === "" || 
-      msg.subject?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      msg.body?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      msg.from?.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesChannel && matchesSearch;
-  }) || [];
-
-  const getChannelCount = (channel: Channel) => {
-    if (channel === "all") return messages?.length || 0;
-    return messages?.filter((m: any) => m.channel === channel).length || 0;
+  const handleSend = () => {
+    if (!recipientId.trim() || !messageContent.trim()) {
+      toast({
+        variant: "destructive",
+        title: "Missing fields",
+        description: "Please enter both recipient and message.",
+      });
+      return;
+    }
+    sendMutation.mutate({ recipientId, content: messageContent });
   };
 
-  const ChannelIcon = ({ channel }: { channel: string }) => {
-    const Icon = channelIcons[channel as keyof typeof channelIcons];
-    return Icon ? <Icon className="h-4 w-4" /> : <MessageCircle className="h-4 w-4" />;
-  };
+  const filteredMessages = messages.filter((msg) => {
+    if (!searchQuery) return true;
+    const query = searchQuery.toLowerCase();
+    return (
+      msg.from?.toLowerCase().includes(query) ||
+      msg.subject?.toLowerCase().includes(query) ||
+      msg.body?.toLowerCase().includes(query)
+    );
+  });
 
   return (
-    <div className="flex h-full">
-      {/* Left Sidebar - Channel List */}
+    <div className="flex h-full min-h-[600px]" data-testid="messages-container">
+      {/* Left Sidebar */}
       <div className="w-64 border-r bg-sidebar flex flex-col shrink-0">
         <div className="p-4 border-b">
-          <Dialog open={showCompose} onOpenChange={setShowCompose}>
+          <Dialog open={composeOpen} onOpenChange={setComposeOpen}>
             <DialogTrigger asChild>
-              <Button className="w-full" data-testid="button-compose">
-                <Plus className="mr-2 h-4 w-4" />
-                Compose
+              <Button className="w-full gap-2" data-testid="button-compose">
+                <Plus className="h-4 w-4" />
+                <span>Compose</span>
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-2xl">
-              <ComposeMessage onClose={() => setShowCompose(false)} />
+            <DialogContent className="sm:max-w-[500px]">
+              <DialogHeader>
+                <DialogTitle>New Message</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4 pt-4">
+                <div>
+                  <label className="text-sm font-medium mb-2 block">To (User ID or Username)</label>
+                  <Input
+                    placeholder="Enter recipient ID or username"
+                    value={recipientId}
+                    onChange={(e) => setRecipientId(e.target.value)}
+                    data-testid="input-recipient"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Message</label>
+                  <Textarea
+                    placeholder="Write your message..."
+                    className="min-h-[150px]"
+                    value={messageContent}
+                    onChange={(e) => setMessageContent(e.target.value)}
+                    data-testid="textarea-message"
+                  />
+                </div>
+                <div className="flex justify-end gap-2">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setComposeOpen(false)}
+                    data-testid="button-cancel"
+                  >
+                    Cancel
+                  </Button>
+                  <Button 
+                    onClick={handleSend}
+                    disabled={sendMutation.isPending}
+                    data-testid="button-send"
+                  >
+                    {sendMutation.isPending ? "Sending..." : (
+                      <>
+                        <Send className="mr-2 h-4 w-4" />
+                        Send
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </div>
             </DialogContent>
           </Dialog>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-4">
-          <h3 className="text-sm font-medium text-sidebar-foreground mb-4">
-            Channels
-          </h3>
-          
-          <div className="space-y-2">
-            {availableChannels.map((channel) => {
-              const Icon = channel === "all" ? MessageCircle : channelIcons[channel as keyof typeof channelIcons];
-              const count = getChannelCount(channel);
-              const isConnected = channel === "all" || channels?.find((c: any) => c.channel === channel && c.isActive);
-              
-              return (
-                <Button
-                  key={channel}
-                  variant={selectedChannel === channel ? "default" : "ghost"}
-                  className="w-full justify-start"
-                  onClick={() => setSelectedChannel(channel)}
-                  disabled={channel !== "all" && !isConnected}
-                  data-testid={`button-filter-${channel}`}
-                >
-                  <Icon className="mr-2 h-4 w-4" />
-                  <span className="flex-1 text-left">
-                    {channel === "all" ? "All Messages" : channelLabels[channel]}
-                  </span>
-                  {count > 0 && (
-                    <Badge variant="secondary" className="ml-auto" data-testid={`badge-count-${channel}`}>
-                      {count}
-                    </Badge>
-                  )}
-                </Button>
-              );
-            })}
+        <div className="flex-1 p-4">
+          <h3 className="text-sm font-medium text-muted-foreground mb-4">Channels</h3>
+          <div className="space-y-1">
+            <Button variant="secondary" className="w-full justify-start" data-testid="button-channel-all">
+              <MessageCircle className="mr-2 h-4 w-4" />
+              All Messages
+              <Badge variant="secondary" className="ml-auto">{messages.length}</Badge>
+            </Button>
+            <Button variant="ghost" className="w-full justify-start" data-testid="button-channel-mt">
+              <Mail className="mr-2 h-4 w-4" />
+              MT Messages
+            </Button>
           </div>
         </div>
 
-        <div className="p-4 border-t">
-          <div className="text-xs text-muted-foreground">
-            {channels?.filter((c: any) => c.isActive).length || 0} of 5 channels connected
-          </div>
+        <div className="p-4 border-t text-xs text-muted-foreground">
+          Unified Messaging Platform
         </div>
       </div>
 
-      {/* Middle - Message List */}
-      <div className="w-96 border-r flex flex-col shrink-0">
+      {/* Message List */}
+      <div className="w-80 border-r flex flex-col shrink-0">
         <div className="p-4 border-b">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search messages..."
               className="pl-10"
@@ -164,167 +203,109 @@ export default function UnifiedInbox() {
             <div className="p-8 text-center text-muted-foreground">
               Loading messages...
             </div>
+          ) : error ? (
+            <div className="p-8 text-center text-destructive">
+              Failed to load messages. Please login first.
+            </div>
           ) : filteredMessages.length === 0 ? (
             <div className="p-8 text-center">
               <MessageCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="font-semibold mb-2">No messages found</h3>
+              <h3 className="font-semibold mb-2">No messages yet</h3>
               <p className="text-sm text-muted-foreground mb-4">
-                {selectedChannel === "all" 
-                  ? "Connect your channels to start receiving messages"
-                  : `No messages in ${channelLabels[selectedChannel]}`
-                }
+                Click Compose to send your first message
               </p>
-              {selectedChannel === "all" && (
-                <Button variant="outline" data-testid="button-connect-channels">
-                  Connect Channels
-                </Button>
-              )}
             </div>
           ) : (
             <div className="divide-y">
-              {filteredMessages.map((message: any) => {
-                const Icon = channelIcons[message.channel as keyof typeof channelIcons] || MessageCircle;
-                const isSelected = selectedMessage?.id === message.id;
-                
-                return (
-                  <div
-                    key={message.id}
-                    className={cn(
-                      "p-4 cursor-pointer transition-colors hover-elevate",
-                      isSelected && "bg-accent",
-                      !message.isRead && "bg-muted/30"
-                    )}
-                    onClick={() => setSelectedMessage(message)}
-                    data-testid={`message-item-${message.id}`}
-                  >
-                    <div className="flex items-start gap-3">
-                      <div
-                        className="p-2 rounded-md"
-                        style={{ backgroundColor: `${channelColors[message.channel as keyof typeof channelColors] || channelColors.mt}15` }}
-                      >
-                        <Icon className="h-4 w-4" style={{ color: channelColors[message.channel as keyof typeof channelColors] || channelColors.mt }} />
-                      </div>
-                      
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className={cn("font-medium truncate", !message.isRead && "font-semibold")}>
-                            {message.from}
-                          </span>
-                          {!message.isRead && (
-                            <div className="w-2 h-2 bg-primary rounded-full" data-testid={`unread-indicator-${message.id}`} />
-                          )}
-                        </div>
-                        
-                        {message.subject && (
-                          <div className={cn("text-sm truncate mb-1", !message.isRead && "font-medium")}>
-                            {message.subject}
-                          </div>
+              {filteredMessages.map((message) => (
+                <div
+                  key={message.id}
+                  className={cn(
+                    "p-4 cursor-pointer hover-elevate",
+                    selectedMessage?.id === message.id && "bg-accent",
+                    !message.isRead && "bg-muted/30"
+                  )}
+                  onClick={() => setSelectedMessage(message)}
+                  data-testid={`conversation-${message.id}`}
+                >
+                  <div className="flex items-start gap-3">
+                    <Avatar className="h-10 w-10 shrink-0">
+                      <AvatarImage src={message.participant?.avatarUrl} />
+                      <AvatarFallback>
+                        <User className="h-4 w-4" />
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className={cn(
+                          "font-medium truncate",
+                          !message.isRead && "font-semibold"
+                        )}>
+                          {message.from}
+                        </span>
+                        {!message.isRead && (
+                          <div className="w-2 h-2 bg-primary rounded-full shrink-0" data-testid={`badge-unread-${message.id}`} />
                         )}
-                        
-                        <div className="text-sm text-muted-foreground truncate">
-                          {message.body?.substring(0, 100)}...
-                        </div>
-                        
-                        <div className="flex items-center gap-2 mt-2">
-                          <span className="text-xs text-muted-foreground">
-                            {message.receivedAt ? format(new Date(message.receivedAt), "MMM d, h:mm a") : ""}
-                          </span>
-                          {message.isStarred && (
-                            <Star className="h-3 w-3 text-yellow-500 fill-yellow-500" />
-                          )}
-                        </div>
                       </div>
+                      <p className="text-sm text-muted-foreground truncate">
+                        {message.body?.substring(0, 50) || "No content"}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {message.receivedAt ? format(new Date(message.receivedAt), "MMM d, h:mm a") : ""}
+                      </p>
                     </div>
                   </div>
-                );
-              })}
+                </div>
+              ))}
             </div>
           )}
         </div>
       </div>
 
-      {/* Right - Message Preview */}
+      {/* Message Detail */}
       <div className="flex-1 flex flex-col min-w-0">
         {selectedMessage ? (
           <>
             <div className="p-6 border-b shrink-0">
-              <div className="flex items-start justify-between mb-4 gap-4">
-                <div className="flex items-center gap-3 min-w-0">
-                  <div
-                    className="p-3 rounded-md shrink-0"
-                    style={{ backgroundColor: `${channelColors[selectedMessage.channel as keyof typeof channelColors] || channelColors.mt}15` }}
-                  >
-                    <ChannelIcon channel={selectedMessage.channel} />
-                  </div>
-                  <div className="min-w-0">
-                    <h2 className="text-xl font-semibold truncate" data-testid="preview-subject">
-                      {selectedMessage.subject || "No Subject"}
-                    </h2>
-                    <p className="text-sm text-muted-foreground">
-                      from <span className="font-medium">{selectedMessage.from}</span>
-                    </p>
-                  </div>
+              <div className="flex items-center gap-4">
+                <Avatar className="h-12 w-12">
+                  <AvatarImage src={selectedMessage.participant?.avatarUrl} />
+                  <AvatarFallback>
+                    <User className="h-5 w-5" />
+                  </AvatarFallback>
+                </Avatar>
+                <div>
+                  <h2 className="text-xl font-semibold" data-testid="message-from">
+                    {selectedMessage.from}
+                  </h2>
+                  <p className="text-sm text-muted-foreground">
+                    {selectedMessage.receivedAt ? format(new Date(selectedMessage.receivedAt), "MMMM d, yyyy 'at' h:mm a") : ""}
+                  </p>
                 </div>
-                
-                <div className="flex items-center gap-2 shrink-0">
-                  <Button variant="ghost" size="icon" data-testid="button-star-message">
-                    <Star className={cn("h-4 w-4", selectedMessage.isStarred && "fill-yellow-500 text-yellow-500")} />
-                  </Button>
-                  <Button variant="ghost" size="icon" data-testid="button-archive-message">
-                    <Archive className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-              
-              <div className="text-sm text-muted-foreground">
-                {selectedMessage.receivedAt ? format(new Date(selectedMessage.receivedAt), "MMMM d, yyyy 'at' h:mm a") : ""}
               </div>
             </div>
 
             <div className="flex-1 overflow-y-auto p-6">
-              <div className="prose max-w-none" data-testid="preview-body">
-                {selectedMessage.htmlBody ? (
-                  <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(selectedMessage.htmlBody) }} />
-                ) : (
-                  <p className="whitespace-pre-wrap">{selectedMessage.body}</p>
-                )}
-              </div>
-
-              {selectedMessage.attachments && selectedMessage.attachments.length > 0 && (
-                <div className="mt-6">
-                  <h3 className="font-semibold mb-4">Attachments</h3>
-                  <div className="space-y-2">
-                    {selectedMessage.attachments.map((attachment: any, index: number) => (
-                      <Card key={index} className="p-3">
-                        <div className="flex items-center gap-3">
-                          <div className="text-sm font-medium">{attachment.filename}</div>
-                          <Badge variant="secondary">{attachment.size}</Badge>
-                        </div>
-                      </Card>
-                    ))}
-                  </div>
-                </div>
-              )}
+              <Card className="p-4">
+                <p className="whitespace-pre-wrap" data-testid="message-body">
+                  {selectedMessage.body}
+                </p>
+              </Card>
             </div>
 
-            <div className="p-6 border-t shrink-0">
-              <div className="flex gap-4 flex-wrap">
-                <Button data-testid="button-reply">
-                  <Mail className="mr-2 h-4 w-4" />
-                  Reply
-                </Button>
-                <Button variant="outline" data-testid="button-forward">
-                  Forward
-                </Button>
-              </div>
+            <div className="p-4 border-t shrink-0">
+              <Button data-testid="button-reply">
+                <Mail className="mr-2 h-4 w-4" />
+                Reply
+              </Button>
             </div>
           </>
         ) : (
           <div className="flex-1 flex items-center justify-center text-muted-foreground">
             <div className="text-center">
-              <MessageCircle className="h-16 w-16 mx-auto mb-4 text-muted-foreground/50" />
-              <h3 className="text-lg font-medium">Select a message</h3>
-              <p className="text-sm mt-2">Choose a message from the list to view its content</p>
+              <MessageCircle className="h-16 w-16 mx-auto mb-4 opacity-50" />
+              <h3 className="text-lg font-medium">Select a conversation</h3>
+              <p className="text-sm mt-2">Choose a message from the list to view details</p>
             </div>
           </div>
         )}
