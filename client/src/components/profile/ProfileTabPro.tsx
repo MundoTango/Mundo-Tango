@@ -477,8 +477,10 @@ function ProStatsGrid({
     },
   ];
 
+  const roleColor = role?.color || "#3B82F6";
+
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
       {statItems.map((item, index) => (
         <motion.div
           key={item.label}
@@ -487,16 +489,15 @@ function ProStatsGrid({
           transition={{ duration: 0.4, delay: index * 0.1 }}
         >
           <Card className="hover-elevate" data-testid={`card-stat-${item.label.toLowerCase().replace(/\s/g, "-")}`}>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-lg bg-primary/10">
-                  <item.icon className="w-5 h-5 text-primary" />
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground">{item.label}</p>
-                  <p className="text-xl font-bold">{item.value}</p>
-                </div>
+            <CardContent className="p-4 text-center">
+              <div 
+                className="w-10 h-10 rounded-full mx-auto mb-2 flex items-center justify-center"
+                style={{ background: `${roleColor}15` }}
+              >
+                <item.icon className="w-5 h-5" style={{ color: roleColor }} />
               </div>
+              <p className="text-2xl font-bold">{item.value}</p>
+              <p className="text-xs text-muted-foreground">{item.label}</p>
             </CardContent>
           </Card>
         </motion.div>
