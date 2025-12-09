@@ -352,17 +352,6 @@ export function PROGroupPublicPage({ roleSlug, title, singularTitle, description
                     <div className="flex gap-3">
                       <Button 
                         variant="outline"
-                        onClick={() => {
-                          document.getElementById("pro-discussions")?.scrollIntoView({ behavior: "smooth" });
-                        }}
-                        data-testid="button-group-discussions"
-                        style={{ borderColor: color, color }}
-                      >
-                        <Users className="w-4 h-4 mr-2" />
-                        Group Discussions
-                      </Button>
-                      <Button 
-                        variant="outline"
                         onClick={() => navigate('/events/create')}
                         data-testid="button-create-event"
                       >
