@@ -3,6 +3,7 @@ import { useLocation } from "wouter";
 import { Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useQuery } from "@tanstack/react-query";
 
 interface SearchResult {
   type: 'post' | 'event' | 'user' | 'group';
@@ -23,56 +24,58 @@ interface SearchResponse {
 export function InlineSearchInput() {
   const [location, setLocation] = useLocation();
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<SearchResponse>({});
-  const [isLoading, setIsLoading] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const [debouncedQuery, setDebouncedQuery] = useState("");
 
-  // Debounce search
+  // Debounce query
   useEffect(() => {
-    if (!query.trim()) {
-      setResults({});
-      setShowResults(false);
-      return;
-    }
-
-    setShowResults(true);
-    setIsLoading(true);
-    
-    const timer = setTimeout(async () => {
-      try {
-        const token = localStorage.getItem('accessToken');
-        const headers: Record<string, string> = {};
-        
-        if (token) {
-          headers["Authorization"] = `Bearer ${token}`;
-        }
-        
-        const response = await fetch(
-          `/api/user/global-search?q=${encodeURIComponent(query)}`,
-          {
-            headers,
-            credentials: "include",
-          }
-        );
-        if (response.ok) {
-          const data = await response.json();
-          setResults(data);
-        }
-      } catch (error) {
-        console.error("Search error:", error);
-      } finally {
-        setIsLoading(false);
-      }
+    const timer = setTimeout(() => {
+      setDebouncedQuery(query.trim());
     }, 300);
 
     return () => clearTimeout(timer);
   }, [query]);
 
+  // Use React Query for caching
+  const { data: results = {}, isLoading } = useQuery({
+    queryKey: ["/api/user/global-search", debouncedQuery],
+    queryFn: async () => {
+      if (!debouncedQuery) return {};
+      
+      const token = localStorage.getItem('accessToken');
+      const headers: Record<string, string> = {};
+      
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+      
+      const response = await fetch(
+        `/api/user/global-search?q=${encodeURIComponent(debouncedQuery)}`,
+        {
+          headers,
+          credentials: "include",
+        }
+      );
+      if (!response.ok) throw new Error("Search failed");
+      return response.json();
+    },
+    enabled: !!debouncedQuery,
+    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+  });
+
+  // Show results when query is not empty
+  useEffect(() => {
+    if (!query.trim()) {
+      setShowResults(false);
+    } else {
+      setShowResults(true);
+    }
+  }, [query]);
+
   const handleResultClick = (type: string, id: string | number) => {
     setQuery("");
-    setResults({});
     setShowResults(false);
 
     switch (type) {
@@ -127,7 +130,6 @@ export function InlineSearchInput() {
           <button
             onClick={() => {
               setQuery("");
-              setResults({});
               setShowResults(false);
               inputRef.current?.focus();
             }}
