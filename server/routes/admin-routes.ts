@@ -130,6 +130,9 @@ router.post("/moderation/:id/action", authenticateToken, requireAdmin, async (re
     let newStatus = "pending";
     
     switch (action) {
+      case "reopen":
+        newStatus = "pending";
+        break;
       case "approve":
         newStatus = "approved";
         break;

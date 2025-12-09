@@ -106,9 +106,11 @@ export default function ModerationDashboard() {
       return apiRequest("POST", `/api/admin/moderation/${id}/action`, { action, notes });
     },
     onSuccess: () => {
+      // Invalidate all queue queries regardless of status filter
       queryClient.invalidateQueries({ queryKey: ["/api/admin/moderation/queue"] });
       queryClient.invalidateQueries({ queryKey: ["/api/admin/moderation/stats"] });
       queryClient.invalidateQueries({ queryKey: ["/api/admin/moderation/audit-log"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/moderation/flagged"] });
       setSelectedItem(null);
       setModeratorNotes("");
       toast({
@@ -278,6 +280,16 @@ export default function ModerationDashboard() {
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex-1 space-y-2">
                         <div className="flex items-center gap-2 flex-wrap">
+                          <Badge 
+                            variant={
+                              item.queue.status === "pending" ? "secondary" :
+                              item.queue.status === "approved" ? "outline" :
+                              "destructive"
+                            }
+                            data-testid={`badge-status-${item.queue.id}`}
+                          >
+                            {item.queue.status}
+                          </Badge>
                           <Badge variant="outline" data-testid={`badge-type-${item.queue.contentType}`}>
                             {item.queue.contentType}
                           </Badge>
@@ -318,9 +330,24 @@ export default function ModerationDashboard() {
           {selectedItem && (
             <Card data-testid="card-moderation-actions">
               <CardHeader>
-                <CardTitle>Moderation Actions</CardTitle>
+                <CardTitle className="flex items-center gap-2">
+                  Moderation Actions
+                  {selectedItem.queue.status !== "pending" && (
+                    <Badge 
+                      variant={selectedItem.queue.status === "approved" ? "outline" : "destructive"}
+                      data-testid="badge-current-status"
+                    >
+                      Current: {selectedItem.queue.status}
+                    </Badge>
+                  )}
+                </CardTitle>
                 <CardDescription>
                   Take action on: {selectedItem.queue.contentType} #{selectedItem.queue.contentId}
+                  {selectedItem.queue.status !== "pending" && (
+                    <span className="block text-orange-500 mt-1">
+                      This item was already processed. You can change its status.
+                    </span>
+                  )}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -335,10 +362,22 @@ export default function ModerationDashboard() {
                 </div>
 
                 <div className="flex gap-2 flex-wrap">
+                  {selectedItem.queue.status !== "pending" && (
+                    <Button
+                      variant="secondary"
+                      onClick={() => handleModerationAction("reopen")}
+                      disabled={moderationMutation.isPending}
+                      data-testid="button-reopen"
+                    >
+                      <Shield className="h-4 w-4 mr-2" />
+                      Reopen (Set to Pending)
+                    </Button>
+                  )}
+                  
                   <Button
                     variant="outline"
                     onClick={() => handleModerationAction("approve")}
-                    disabled={moderationMutation.isPending}
+                    disabled={moderationMutation.isPending || selectedItem.queue.status === "approved"}
                     data-testid="button-approve"
                   >
                     <CheckCircle className="h-4 w-4 mr-2" />
@@ -348,7 +387,7 @@ export default function ModerationDashboard() {
                   <Button
                     variant="destructive"
                     onClick={() => handleModerationAction("remove")}
-                    disabled={moderationMutation.isPending}
+                    disabled={moderationMutation.isPending || selectedItem.queue.status === "removed"}
                     data-testid="button-remove"
                   >
                     <XCircle className="h-4 w-4 mr-2" />
@@ -358,7 +397,7 @@ export default function ModerationDashboard() {
                   <Button
                     variant="destructive"
                     onClick={() => handleModerationAction("ban_user")}
-                    disabled={moderationMutation.isPending}
+                    disabled={moderationMutation.isPending || selectedItem.queue.status === "banned"}
                     data-testid="button-ban-user"
                   >
                     <Ban className="h-4 w-4 mr-2" />
