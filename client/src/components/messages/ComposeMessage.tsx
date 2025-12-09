@@ -107,8 +107,7 @@ export function ComposeMessage({ onClose, defaultChannel = "mt", defaultRecipien
           ? `Your message will be sent on ${format(scheduleDate, "PPP 'at' p")}`
           : "Your message has been sent successfully.",
       });
-      queryClient.invalidateQueries({ queryKey: ["/api/messages/unified/all"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/messages/unified"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/messages/unified/all/"] });
       form.reset();
       onClose?.();
     },

@@ -217,10 +217,28 @@ export function registerMessagingRoutes(app: Express) {
     }
 
     try {
+      // Get recipient name for legacy fields
+      let recipientName = "Unknown";
+      if (recipientId) {
+        const recipient = await db.select({ name: users.name, username: users.username })
+          .from(users)
+          .where(eq(users.id, recipientId))
+          .limit(1);
+        if (recipient.length > 0) {
+          recipientName = recipient[0].name || recipient[0].username || "Unknown";
+        }
+      }
+
       logger.info("[Messaging] Sending message", { senderId: req.user.id, recipientId, groupId, content });
       const [message] = await db
         .insert(socialMessages)
         .values({
+          // Legacy required fields
+          userId: req.user.id,
+          platform: "mt",
+          friendName: recipientName,
+          timestamp: new Date(),
+          // New messaging fields  
           senderId: req.user.id,
           recipientId: recipientId || null,
           groupId: groupId || null,
