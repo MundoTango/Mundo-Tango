@@ -595,12 +595,24 @@ export default function UnifiedInbox() {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.05 }}
                   className={cn(
-                    "flex items-center gap-3 px-3 py-2.5 mx-2 rounded-xl cursor-pointer transition-all",
+                    "flex items-center gap-3 px-3 py-2.5 mx-2 rounded-xl cursor-pointer transition-all pointer-events-auto",
                     selectedPartnerId === conv.partnerId 
                       ? "bg-primary/10 shadow-sm" 
                       : "hover:bg-muted/50"
                   )}
-                  onClick={() => setSelectedPartnerId(conv.partnerId)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setSelectedPartnerId(conv.partnerId);
+                  }}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      setSelectedPartnerId(conv.partnerId);
+                    }
+                  }}
                   data-testid={`conversation-item-${conv.partnerId}`}
                 >
                   {/* Avatar with online indicator */}
