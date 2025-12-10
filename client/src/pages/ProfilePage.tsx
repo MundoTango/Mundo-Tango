@@ -348,13 +348,14 @@ export default function ProfilePage() {
   // Send friend request mutation with questionnaire data
   // Maps frontend fields to backend schema: whereWeMet → danceLocation, ourStory → danceStory, privateNote → senderPrivateNote
   const sendFriendRequestMutation = useMutation({
-    mutationFn: async (questionnaireData?: { whenWeMet?: Date; whereWeMet: string; ourStory: string; privateNote?: string }) => {
+    mutationFn: async (questionnaireData?: { whenWeMet?: Date; whereWeMet: string; ourStory: string; privateNote?: string; mediaUrls?: string[] }) => {
       // Map questionnaire fields to backend schema
       const payload = questionnaireData ? {
         danceLocation: questionnaireData.whereWeMet,
         danceStory: questionnaireData.ourStory,
         senderPrivateNote: questionnaireData.privateNote,
         senderMessage: questionnaireData.ourStory || `Hi! I'd love to connect with you.`,
+        mediaUrls: questionnaireData.mediaUrls,
       } : undefined;
       return await apiRequest('POST', `/api/friends/request/${user?.id}`, payload);
     },
@@ -765,7 +766,7 @@ export default function ProfilePage() {
         actionButtons={!isOwnProfile && (
           <>
             {isFriend ? (
-              <Link href={`/friendship/${user.id}`}>
+              <Link href={`/friends/${user.id}`}>
                 <Button 
                   size="sm"
                   className="gap-2"
