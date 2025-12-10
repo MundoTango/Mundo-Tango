@@ -1,5 +1,7 @@
-import { drizzle } from "drizzle-orm/neon-http";
+import { drizzle as drizzleNeon } from "drizzle-orm/neon-http";
+import { drizzle as drizzlePg } from "drizzle-orm/node-postgres";
 import { neon } from "@neondatabase/serverless";
+import { Pool } from "pg";
 import { eq, and, gt, desc, asc, or, ilike, inArray, sql, lt, gte, lte, ne, notInArray } from "drizzle-orm";
 import {
   users,
@@ -226,25 +228,52 @@ if (!databaseUrl) {
   throw new Error("SUPABASE_DATABASE_URL or DATABASE_URL must be set");
 }
 
-console.log(`[Database] Connecting to ${process.env.SUPABASE_DATABASE_URL ? 'Supabase' : 'Neon'} database`);
-const sqlClient = neon(databaseUrl);
-// MB.MD FIX (Nov 19, 2025): Pass schema to enable db.query API for mrBlueConversations
-const db = drizzle(sqlClient, { schema: {
-  users, refreshTokens, emailVerificationTokens, passwordResetTokens, twoFactorSecrets,
-  posts, postLikes, postComments, reactions, follows, profileViews,
-  events, eventRsvps, eventPhotos, eventComments, eventReminders,
-  groups, groupMembers, groupInvites, groupPosts, groupCategories, groupCategoryAssignments,
-  chatRooms, chatRoomUsers, chatMessages, notifications, savedPosts,
-  friendRequests, friendships, friendshipActivities, friendshipMedia,
-  moderationQueue, communities, communityMembers, workshops, reviews, liveStreams,
-  media, activityLogs, blockedUsers, blockedContent, teachers, venues, tutorials,
-  blogPosts, newsletterSubscriptions, bookings, payments, volunteers, resumes,
-  clarifierSessions, tasks, assignments,
-  lifeCeoDomains, lifeCeoGoals, lifeCeoTasks, lifeCeoMilestones, lifeCeoRecommendations,
-  h2acMessages, memories, recommendations, roleInvitations, favorites,
-  communityStats, facebookImports, facebookPosts, facebookFriends,
-  mrBlueConversations, mrBlueMessages, // FIX: Added for Mr. Blue chat memory
-}});
+const isSupabase = !!process.env.SUPABASE_DATABASE_URL;
+console.log(`[Database] Connecting to ${isSupabase ? 'Supabase' : 'Neon'} database`);
+
+// Create appropriate database driver based on database type
+let sqlClient: any;
+let db: any;
+
+if (isSupabase) {
+  // Use pg Pool for Supabase (standard PostgreSQL)
+  const pool = new Pool({ connectionString: databaseUrl });
+  db = drizzlePg(pool, { schema: {
+    users, refreshTokens, emailVerificationTokens, passwordResetTokens, twoFactorSecrets,
+    posts, postLikes, postComments, reactions, follows, profileViews,
+    events, eventRsvps, eventPhotos, eventComments, eventReminders,
+    groups, groupMembers, groupInvites, groupPosts, groupCategories, groupCategoryAssignments,
+    chatRooms, chatRoomUsers, chatMessages, notifications, savedPosts,
+    friendRequests, friendships, friendshipActivities, friendshipMedia,
+    moderationQueue, communities, communityMembers, workshops, reviews, liveStreams,
+    media, activityLogs, blockedUsers, blockedContent, teachers, venues, tutorials,
+    blogPosts, newsletterSubscriptions, bookings, payments, volunteers, resumes,
+    clarifierSessions, tasks, assignments,
+    lifeCeoDomains, lifeCeoGoals, lifeCeoTasks, lifeCeoMilestones, lifeCeoRecommendations,
+    h2acMessages, memories, recommendations, roleInvitations, favorites,
+    communityStats, facebookImports, facebookPosts, facebookFriends,
+    mrBlueConversations, mrBlueMessages, // FIX: Added for Mr. Blue chat memory
+  }});
+} else {
+  // Use Neon HTTP driver for Neon databases
+  sqlClient = neon(databaseUrl);
+  db = drizzleNeon(sqlClient, { schema: {
+    users, refreshTokens, emailVerificationTokens, passwordResetTokens, twoFactorSecrets,
+    posts, postLikes, postComments, reactions, follows, profileViews,
+    events, eventRsvps, eventPhotos, eventComments, eventReminders,
+    groups, groupMembers, groupInvites, groupPosts, groupCategories, groupCategoryAssignments,
+    chatRooms, chatRoomUsers, chatMessages, notifications, savedPosts,
+    friendRequests, friendships, friendshipActivities, friendshipMedia,
+    moderationQueue, communities, communityMembers, workshops, reviews, liveStreams,
+    media, activityLogs, blockedUsers, blockedContent, teachers, venues, tutorials,
+    blogPosts, newsletterSubscriptions, bookings, payments, volunteers, resumes,
+    clarifierSessions, tasks, assignments,
+    lifeCeoDomains, lifeCeoGoals, lifeCeoTasks, lifeCeoMilestones, lifeCeoRecommendations,
+    h2acMessages, memories, recommendations, roleInvitations, favorites,
+    communityStats, facebookImports, facebookPosts, facebookFriends,
+    mrBlueConversations, mrBlueMessages, // FIX: Added for Mr. Blue chat memory
+  }});
+}
 
 // Export db for use in other modules
 export { db };
