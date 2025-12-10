@@ -129,10 +129,9 @@ function MessageReactionBar({
   messageId: number;
   reactions: Record<string, number>;
   userReaction: string | null;
-  onReact: (messageId: number, reactionType: string) => void;
+  onReact: (messageId: number, reactionType: string, currentUserReaction: string | null) => void;
 }) {
   const [showPicker, setShowPicker] = useState(false);
-  const totalReactions = Object.values(reactions).reduce((sum, count) => sum + count, 0);
 
   return (
     <Popover open={showPicker} onOpenChange={setShowPicker}>
@@ -164,7 +163,7 @@ function MessageReactionBar({
               <button
                 key={reaction.id}
                 onClick={() => {
-                  onReact(messageId, reaction.id);
+                  onReact(messageId, reaction.id, userReaction);
                   setShowPicker(false);
                 }}
                 className={cn(
@@ -339,7 +338,10 @@ export default function UnifiedInbox() {
   });
 
   const reactToMessageMutation = useMutation({
-    mutationFn: async (data: { messageId: number; reactionType: string }) => {
+    mutationFn: async (data: { messageId: number; reactionType: string; isRemove: boolean }) => {
+      if (data.isRemove) {
+        return apiRequest("DELETE", `/api/messages/dm/${data.messageId}/react`);
+      }
       return apiRequest("POST", `/api/messages/dm/${data.messageId}/react`, {
         reactionType: data.reactionType,
       });
@@ -388,8 +390,9 @@ export default function UnifiedInbox() {
     }
   };
 
-  const handleReaction = (messageId: number, reactionType: string) => {
-    reactToMessageMutation.mutate({ messageId, reactionType });
+  const handleReaction = (messageId: number, reactionType: string, currentUserReaction: string | null) => {
+    const isRemove = currentUserReaction === reactionType;
+    reactToMessageMutation.mutate({ messageId, reactionType, isRemove });
   };
 
   return (

@@ -1990,23 +1990,18 @@ router.post("/dm/:messageId/react", authenticateToken, async (req: AuthRequest, 
       return res.status(403).json({ error: "Not authorized to react to this message" });
     }
 
-    // Upsert reaction (replace existing or create new)
+    // Upsert reaction using onConflictDoUpdate for atomic operation
     await db
-      .delete(directMessageReactions)
-      .where(
-        and(
-          eq(directMessageReactions.messageId, messageId),
-          eq(directMessageReactions.userId, userId)
-        )
-      );
-
-    if (reactionType) {
-      await db.insert(directMessageReactions).values({
+      .insert(directMessageReactions)
+      .values({
         messageId,
         userId,
         reactionType,
+      })
+      .onConflictDoUpdate({
+        target: [directMessageReactions.messageId, directMessageReactions.userId],
+        set: { reactionType, createdAt: new Date() },
       });
-    }
 
     // Get updated reactions for this message
     const reactions = await db
