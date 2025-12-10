@@ -281,10 +281,8 @@ export class StaticScraper {
                       const locationString = event.location || event.address || '';
                       const matchResult = await cityMatcherService.matchEventLocation(locationString);
                       if (matchResult) {
-                                  groupId = matchResult.groupId;
-                                  console.log(`[Agent #116] 🎯 Matched "${event.title}" to group ${groupId} via ${matchResult.method}`);
+                                  groupId = matchResult;
                                 }
-                    }
       
       try {
         await db.insert(scrapedEvents).values({
