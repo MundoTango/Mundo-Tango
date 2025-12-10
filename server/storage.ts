@@ -330,10 +330,13 @@ export interface IStorage {
   
   getUserFriends(userId: number): Promise<any[]>;
   getFriendRequests(userId: number): Promise<any[]>;
+  getReceivedFriendRequests(userId: number): Promise<any[]>;
+  getSentFriendRequests(userId: number): Promise<any[]>;
   getFriendSuggestions(userId: number): Promise<any[]>;
   sendFriendRequest(data: { senderId: number; receiverId: number; [key: string]: any }): Promise<any>;
   acceptFriendRequest(requestId: number): Promise<void>;
-  declineFriendRequest(requestId: number): Promise<void>;
+  declineFriendRequest(requestId: number, userId?: number): Promise<void>;
+  cancelFriendRequest(requestId: number, userId: number): Promise<void>;
   getMutualFriends(userId1: number, userId2: number): Promise<SelectUser[]>;
   getConnectionDegree(userId1: number, userId2: number): Promise<number | null>;
   snoozeFriendRequest(requestId: number, days: number): Promise<void>;
@@ -2261,7 +2264,17 @@ export class DbStorage implements IStorage {
     ]);
   }
 
-  async declineFriendRequest(requestId: number): Promise<void> {
+  async declineFriendRequest(requestId: number, userId?: number): Promise<void> {
+    if (userId) {
+      const request = await db.select({
+        id: friendRequests.id,
+        receiverId: friendRequests.receiverId,
+      }).from(friendRequests).where(eq(friendRequests.id, requestId)).limit(1);
+      
+      if (!request[0]) throw new Error('Request not found');
+      if (request[0].receiverId !== userId) throw new Error('You can only decline requests sent to you');
+    }
+    
     await db
       .update(friendRequests)
       .set({ status: 'declined', respondedAt: new Date() })
@@ -2278,6 +2291,98 @@ export class DbStorage implements IStorage {
         snoozedUntil,
       })
       .where(eq(friendRequests.id, requestId));
+  }
+
+  async getReceivedFriendRequests(userId: number): Promise<any[]> {
+    const requests = await db.select({
+      id: friendRequests.id,
+      senderId: friendRequests.senderId,
+      receiverId: friendRequests.receiverId,
+      status: friendRequests.status,
+      createdAt: friendRequests.createdAt,
+      message: friendRequests.message,
+      senderName: users.name,
+      senderUsername: users.username,
+      senderProfileImage: users.profileImage,
+      senderCity: users.city,
+      senderCountry: users.country,
+    })
+      .from(friendRequests)
+      .leftJoin(users, eq(friendRequests.senderId, users.id))
+      .where(and(
+        eq(friendRequests.receiverId, userId),
+        eq(friendRequests.status, 'pending')
+      ))
+      .orderBy(desc(friendRequests.createdAt));
+
+    return requests.map(r => ({
+      id: r.id,
+      senderId: r.senderId,
+      receiverId: r.receiverId,
+      status: r.status,
+      createdAt: r.createdAt,
+      message: r.message,
+      sender: {
+        id: r.senderId,
+        name: r.senderName,
+        username: r.senderUsername,
+        profileImage: r.senderProfileImage,
+        city: r.senderCity,
+        country: r.senderCountry,
+      },
+    }));
+  }
+
+  async getSentFriendRequests(userId: number): Promise<any[]> {
+    const requests = await db.select({
+      id: friendRequests.id,
+      senderId: friendRequests.senderId,
+      receiverId: friendRequests.receiverId,
+      status: friendRequests.status,
+      createdAt: friendRequests.createdAt,
+      message: friendRequests.message,
+      receiverName: users.name,
+      receiverUsername: users.username,
+      receiverProfileImage: users.profileImage,
+      receiverCity: users.city,
+      receiverCountry: users.country,
+    })
+      .from(friendRequests)
+      .leftJoin(users, eq(friendRequests.receiverId, users.id))
+      .where(and(
+        eq(friendRequests.senderId, userId),
+        eq(friendRequests.status, 'pending')
+      ))
+      .orderBy(desc(friendRequests.createdAt));
+
+    return requests.map(r => ({
+      id: r.id,
+      senderId: r.senderId,
+      receiverId: r.receiverId,
+      status: r.status,
+      createdAt: r.createdAt,
+      message: r.message,
+      receiver: {
+        id: r.receiverId,
+        name: r.receiverName,
+        username: r.receiverUsername,
+        profileImage: r.receiverProfileImage,
+        city: r.receiverCity,
+        country: r.receiverCountry,
+      },
+    }));
+  }
+
+  async cancelFriendRequest(requestId: number, userId: number): Promise<void> {
+    const request = await db.select({
+      id: friendRequests.id,
+      senderId: friendRequests.senderId,
+    }).from(friendRequests).where(eq(friendRequests.id, requestId)).limit(1);
+    
+    if (!request[0]) throw new Error('Request not found');
+    if (request[0].senderId !== userId) throw new Error('You can only cancel your own requests');
+    
+    await db.delete(friendRequests).where(eq(friendRequests.id, requestId));
   }
 
   async getMutualFriends(userId1: number, userId2: number): Promise<any[]> {
