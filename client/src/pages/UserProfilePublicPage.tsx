@@ -205,40 +205,53 @@ export default function UserProfilePublicPage() {
                       </div>
 
                       <div className="flex gap-3 flex-wrap">
-                        {friendshipStatus?.status === 'friends' ? (
-                          <Button variant="default" disabled data-testid="button-friends">
-                            <Users className="h-4 w-4 mr-2" />
-                            Friends
-                          </Button>
-                        ) : friendshipStatus?.status === 'pending' ? (
-                          <Button 
-                            variant="outline"
-                            onClick={() => cancelFriendRequestMutation.mutate()}
-                            disabled={cancelFriendRequestMutation.isPending}
-                            data-testid="button-cancel-request"
-                          >
-                            <UserPlus className="h-4 w-4 mr-2" />
-                            Requested
-                          </Button>
-                        ) : friendshipStatus?.status === 'received' ? (
-                          <Button 
-                            onClick={() => sendFriendRequestMutation.mutate()}
-                            disabled={sendFriendRequestMutation.isPending}
-                            data-testid="button-accept-request"
-                          >
-                            <UserPlus className="h-4 w-4 mr-2" />
-                            Accept Request
-                          </Button>
-                        ) : (
-                          <Button 
-                            onClick={() => sendFriendRequestMutation.mutate()}
-                            disabled={sendFriendRequestMutation.isPending}
-                            data-testid="button-add-friend"
-                          >
-                            <UserPlus className="h-4 w-4 mr-2" />
-                            Friend Request
-                          </Button>
-                        )}
+                        {(() => {
+                          const status = friendshipStatus?.status;
+                          
+                          if (status === 'friends') {
+                            return (
+                              <Button variant="default" disabled data-testid="button-friends">
+                                <Users className="h-4 w-4 mr-2" />
+                                Friends
+                              </Button>
+                            );
+                          } else if (status === 'pending') {
+                            return (
+                              <Button 
+                                variant="outline"
+                                onClick={() => cancelFriendRequestMutation.mutate()}
+                                disabled={cancelFriendRequestMutation.isPending}
+                                data-testid="button-cancel-request"
+                              >
+                                <UserPlus className="h-4 w-4 mr-2" />
+                                Requested
+                              </Button>
+                            );
+                          } else if (status === 'received') {
+                            return (
+                              <Button 
+                                onClick={() => sendFriendRequestMutation.mutate()}
+                                disabled={sendFriendRequestMutation.isPending}
+                                data-testid="button-accept-request"
+                              >
+                                <UserPlus className="h-4 w-4 mr-2" />
+                                Accept Request
+                              </Button>
+                            );
+                          }
+                          
+                          // Default: show Friend Request button
+                          return (
+                            <Button 
+                              onClick={() => sendFriendRequestMutation.mutate()}
+                              disabled={sendFriendRequestMutation.isPending}
+                              data-testid="button-add-friend"
+                            >
+                              <UserPlus className="h-4 w-4 mr-2" />
+                              Friend Request
+                            </Button>
+                          );
+                        })()}
                         <Button 
                           variant="outline" 
                           data-testid="button-message"
