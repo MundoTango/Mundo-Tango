@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useParams } from "wouter";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { apiRequest, queryClient } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 import { AppLayout } from "@/components/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -51,6 +53,7 @@ interface UserProfile {
 
 export default function UserProfilePublicPage() {
   const { userId } = useParams();
+  const { toast } = useToast();
   const [messageDialogOpen, setMessageDialogOpen] = useState(false);
 
   const { data: profile, isLoading } = useQuery<UserProfile>({
@@ -63,6 +66,31 @@ export default function UserProfilePublicPage() {
 
   const { data: recentEvents = [] } = useQuery<any[]>({
     queryKey: ['/api/users', userId, 'events'],
+  });
+
+  const { data: friendshipStatus } = useQuery<{ status: 'none' | 'friends' | 'pending' | 'received' }>({
+    queryKey: ['/api/friends/status', userId],
+    enabled: !!userId,
+  });
+
+  const sendFriendRequestMutation = useMutation({
+    mutationFn: async () => {
+      return apiRequest('POST', `/api/friends/request`, { recipientId: parseInt(userId!) });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/friends/status', userId] });
+      toast({ title: 'Friend request sent!' });
+    },
+  });
+
+  const cancelFriendRequestMutation = useMutation({
+    mutationFn: async () => {
+      return apiRequest('DELETE', `/api/friends/request/${userId}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/friends/status', userId] });
+      toast({ title: 'Friend request cancelled' });
+    },
   });
 
   if (isLoading || !profile) {
@@ -177,10 +205,40 @@ export default function UserProfilePublicPage() {
                       </div>
 
                       <div className="flex gap-3 flex-wrap">
-                        <Button data-testid="button-add-friend">
-                          <UserPlus className="h-4 w-4 mr-2" />
-                          Add Friend
-                        </Button>
+                        {friendshipStatus?.status === 'friends' ? (
+                          <Button variant="default" disabled data-testid="button-friends">
+                            <Users className="h-4 w-4 mr-2" />
+                            Friends
+                          </Button>
+                        ) : friendshipStatus?.status === 'pending' ? (
+                          <Button 
+                            variant="outline"
+                            onClick={() => cancelFriendRequestMutation.mutate()}
+                            disabled={cancelFriendRequestMutation.isPending}
+                            data-testid="button-cancel-request"
+                          >
+                            <UserPlus className="h-4 w-4 mr-2" />
+                            Requested
+                          </Button>
+                        ) : friendshipStatus?.status === 'received' ? (
+                          <Button 
+                            onClick={() => sendFriendRequestMutation.mutate()}
+                            disabled={sendFriendRequestMutation.isPending}
+                            data-testid="button-accept-request"
+                          >
+                            <UserPlus className="h-4 w-4 mr-2" />
+                            Accept Request
+                          </Button>
+                        ) : (
+                          <Button 
+                            onClick={() => sendFriendRequestMutation.mutate()}
+                            disabled={sendFriendRequestMutation.isPending}
+                            data-testid="button-add-friend"
+                          >
+                            <UserPlus className="h-4 w-4 mr-2" />
+                            Friend Request
+                          </Button>
+                        )}
                         <Button 
                           variant="outline" 
                           data-testid="button-message"
