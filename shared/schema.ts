@@ -1592,6 +1592,8 @@ export const directMessages = pgTable(
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
     content: text("content").notNull(),
+    mediaUrl: text("media_url"),
+    mediaType: varchar("media_type", { length: 32 }),
     isRead: boolean("is_read").default(false).notNull(),
     createdAt: timestamp("created_at").defaultNow(),
   },
@@ -1613,6 +1615,40 @@ export const insertDirectMessageSchema = createInsertSchema(directMessages).omit
 });
 export type InsertDirectMessage = z.infer<typeof insertDirectMessageSchema>;
 export type SelectDirectMessage = typeof directMessages.$inferSelect;
+
+// ============================================================================
+// DIRECT MESSAGE REACTIONS
+// ============================================================================
+
+export const directMessageReactions = pgTable(
+  "direct_message_reactions",
+  {
+    id: serial("id").primaryKey(),
+    messageId: integer("message_id")
+      .notNull()
+      .references(() => directMessages.id, { onDelete: "cascade" }),
+    userId: integer("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    reactionType: varchar("reaction_type", { length: 32 }).notNull(),
+    createdAt: timestamp("created_at").defaultNow(),
+  },
+  (table) => ({
+    messageIdx: index("dm_reactions_message_idx").on(table.messageId),
+    userIdx: index("dm_reactions_user_idx").on(table.userId),
+    uniqueReaction: uniqueIndex("unique_dm_reaction").on(
+      table.messageId,
+      table.userId,
+    ),
+  }),
+);
+
+export const insertDirectMessageReactionSchema = createInsertSchema(directMessageReactions).omit({
+  id: true,
+  createdAt: true,
+});
+export type InsertDirectMessageReaction = z.infer<typeof insertDirectMessageReactionSchema>;
+export type SelectDirectMessageReaction = typeof directMessageReactions.$inferSelect;
 
 // ============================================================================
 // NOTIFICATIONS

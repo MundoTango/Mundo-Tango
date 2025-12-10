@@ -31,8 +31,8 @@ import {
   type MessageAutomation,
   type ScheduledMessage,
 } from "@shared/schema";
-import { chatMessages, directMessages, users } from "@shared/schema";
-import { eq, and, or, desc, sql } from "drizzle-orm";
+import { chatMessages, directMessages, directMessageReactions, users } from "@shared/schema";
+import { eq, and, or, desc, sql, inArray } from "drizzle-orm";
 import { z } from "zod";
 import { encrypt, decrypt } from "../utils/encryption";
 import { getUncachableGmailClient, sendEmail } from "../lib/gmail-client";
@@ -1901,13 +1901,42 @@ router.get("/conversations/:partnerId", authenticateToken, async (req: AuthReque
         )
       );
 
-    // Format messages for chat view
+    // Get reactions for all messages
+    const messageIds = messages.map(m => m.id);
+    const allReactions = messageIds.length > 0 
+      ? await db
+          .select({
+            messageId: directMessageReactions.messageId,
+            reactionType: directMessageReactions.reactionType,
+            userId: directMessageReactions.userId,
+          })
+          .from(directMessageReactions)
+          .where(inArray(directMessageReactions.messageId, messageIds))
+      : [];
+
+    // Group reactions by message
+    const reactionsByMessage = allReactions.reduce((acc, r) => {
+      if (!acc[r.messageId]) {
+        acc[r.messageId] = { reactions: {}, userReaction: null };
+      }
+      acc[r.messageId].reactions[r.reactionType] = (acc[r.messageId].reactions[r.reactionType] || 0) + 1;
+      if (r.userId === userId) {
+        acc[r.messageId].userReaction = r.reactionType;
+      }
+      return acc;
+    }, {} as Record<number, { reactions: Record<string, number>; userReaction: string | null }>);
+
+    // Format messages for chat view with reactions
     const formattedMessages = messages.map(msg => ({
       id: msg.id,
       content: msg.content,
+      mediaUrl: (msg as any).mediaUrl,
+      mediaType: (msg as any).mediaType,
       createdAt: msg.createdAt,
       isMine: msg.senderId === userId,
       isRead: msg.isRead,
+      reactions: reactionsByMessage[msg.id]?.reactions || {},
+      userReaction: reactionsByMessage[msg.id]?.userReaction || null,
     }));
 
     res.json({
@@ -1922,6 +1951,133 @@ router.get("/conversations/:partnerId", authenticateToken, async (req: AuthReque
   } catch (error: any) {
     console.error("[Messages] Get conversation thread error:", error);
     res.status(500).json({ error: "Failed to get conversation", message: error.message });
+  }
+});
+
+// ============================================================================
+// MESSAGE REACTIONS API
+// ============================================================================
+
+/**
+ * POST /api/messages/dm/:messageId/react
+ * Add or update a reaction to a direct message
+ */
+router.post("/dm/:messageId/react", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.userId!;
+    const messageId = parseInt(req.params.messageId);
+    const { reactionType } = req.body;
+
+    if (isNaN(messageId)) {
+      return res.status(400).json({ error: "Invalid message ID" });
+    }
+
+    if (!reactionType || typeof reactionType !== "string") {
+      return res.status(400).json({ error: "Reaction type is required" });
+    }
+
+    // Verify the message exists and user is part of the conversation
+    const [message] = await db
+      .select()
+      .from(directMessages)
+      .where(eq(directMessages.id, messageId));
+
+    if (!message) {
+      return res.status(404).json({ error: "Message not found" });
+    }
+
+    if (message.senderId !== userId && message.recipientId !== userId) {
+      return res.status(403).json({ error: "Not authorized to react to this message" });
+    }
+
+    // Upsert reaction (replace existing or create new)
+    await db
+      .delete(directMessageReactions)
+      .where(
+        and(
+          eq(directMessageReactions.messageId, messageId),
+          eq(directMessageReactions.userId, userId)
+        )
+      );
+
+    if (reactionType) {
+      await db.insert(directMessageReactions).values({
+        messageId,
+        userId,
+        reactionType,
+      });
+    }
+
+    // Get updated reactions for this message
+    const reactions = await db
+      .select({
+        reactionType: directMessageReactions.reactionType,
+        userId: directMessageReactions.userId,
+      })
+      .from(directMessageReactions)
+      .where(eq(directMessageReactions.messageId, messageId));
+
+    const reactionCounts = reactions.reduce((acc, r) => {
+      acc[r.reactionType] = (acc[r.reactionType] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    const userReaction = reactions.find(r => r.userId === userId)?.reactionType || null;
+
+    res.json({
+      success: true,
+      reactions: reactionCounts,
+      userReaction,
+    });
+  } catch (error: any) {
+    console.error("[Messages] Add reaction error:", error);
+    res.status(500).json({ error: "Failed to add reaction", message: error.message });
+  }
+});
+
+/**
+ * DELETE /api/messages/dm/:messageId/react
+ * Remove reaction from a direct message
+ */
+router.delete("/dm/:messageId/react", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.userId!;
+    const messageId = parseInt(req.params.messageId);
+
+    if (isNaN(messageId)) {
+      return res.status(400).json({ error: "Invalid message ID" });
+    }
+
+    await db
+      .delete(directMessageReactions)
+      .where(
+        and(
+          eq(directMessageReactions.messageId, messageId),
+          eq(directMessageReactions.userId, userId)
+        )
+      );
+
+    // Get updated reactions for this message
+    const reactions = await db
+      .select({
+        reactionType: directMessageReactions.reactionType,
+      })
+      .from(directMessageReactions)
+      .where(eq(directMessageReactions.messageId, messageId));
+
+    const reactionCounts = reactions.reduce((acc, r) => {
+      acc[r.reactionType] = (acc[r.reactionType] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    res.json({
+      success: true,
+      reactions: reactionCounts,
+      userReaction: null,
+    });
+  } catch (error: any) {
+    console.error("[Messages] Remove reaction error:", error);
+    res.status(500).json({ error: "Failed to remove reaction", message: error.message });
   }
 });
 
