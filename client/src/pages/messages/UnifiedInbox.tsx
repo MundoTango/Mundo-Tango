@@ -119,6 +119,19 @@ export default function UnifiedInbox() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [thread?.messages]);
 
+  // When conversation is opened, the backend marks messages as read
+  // Invalidate unread count to update the top nav badge
+  useEffect(() => {
+    if (selectedPartnerId && thread) {
+      // Small delay to ensure backend has marked messages as read
+      const timer = setTimeout(() => {
+        queryClient.invalidateQueries({ queryKey: ["/api/messages/unread-count"] });
+        queryClient.invalidateQueries({ queryKey: ["/api/messages/conversations"] });
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [selectedPartnerId, thread]);
+
   const filteredConversations = conversations.filter((conv) => {
     if (!searchQuery) return true;
     return (
