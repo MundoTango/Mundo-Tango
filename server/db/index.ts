@@ -6,19 +6,31 @@
  * 2. User-aware connection (getDbWithUser) - for RLS-protected queries
  */
 
-import { drizzle } from "drizzle-orm/neon-http";
-import { neon, NeonQueryFunction } from "@neondatabase/serverless";
+import { Pool } from "pg";
+import { drizzle as drizzlePg } from "drizzle-orm/node-postgres";
 import * as schema from "../../shared/schema";
 
 // Re-export the standard db instance from storage.ts for backward compatibility
 export { db } from '../storage';
 
+// Determine database type - prefer Supabase if available
+const databaseUrl = process.env.SUPABASE_DATABASE_URL || process.env.DATABASE_URL;
+const isSupabase = !!process.env.SUPABASE_DATABASE_URL;
+
+// Create shared pool for user context operations
+let sharedPool: Pool | null = null;
+function getPool(): Pool {
+  if (!sharedPool && databaseUrl) {
+    sharedPool = new Pool({ connectionString: databaseUrl });
+  }
+  if (!sharedPool) {
+    throw new Error('Database URL not configured');
+  }
+  return sharedPool;
+}
+
 /**
  * Create a user-aware database connection that enforces Row Level Security (RLS)
- * 
- * IMPORTANT: With Neon HTTP driver, we need to set the user context before each query.
- * This function returns a wrapper that executes queries within a transaction that sets
- * the RLS context.
  * 
  * @param userId - The ID of the currently authenticated user
  * @returns Object with query method that wraps database operations with RLS context
@@ -38,9 +50,8 @@ export function getDbWithUser(userId: number) {
     throw new Error('getDbWithUser requires a valid user ID');
   }
 
-  const dbUrl = process.env.SUPABASE_DATABASE_URL || process.env.DATABASE_URL!;
-  const sql = neon(dbUrl);
-  const db = drizzle(sql, { schema });
+  const pool = getPool();
+  const db = drizzlePg(pool, { schema });
 
   return {
     /**
@@ -48,14 +59,23 @@ export function getDbWithUser(userId: number) {
      * The callback receives a transaction object with the user context already set
      */
     execute: async <T>(callback: (tx: typeof db) => Promise<T>): Promise<T> => {
-      // Use a transaction to ensure the user context persists
-      return await db.transaction(async (tx) => {
-        // Set the user context for RLS policies
-        await tx.execute(sql`SELECT set_config('app.current_user_id', ${userId.toString()}, true)`);
+      // For Supabase/PostgreSQL, use a transaction with session variable
+      const client = await pool.connect();
+      try {
+        await client.query('BEGIN');
+        await client.query(`SELECT set_config('app.current_user_id', $1, true)`, [userId.toString()]);
         
-        // Execute the callback with the transaction object
-        return await callback(tx);
-      });
+        // Execute the callback with the db instance
+        const result = await callback(db);
+        
+        await client.query('COMMIT');
+        return result;
+      } catch (error) {
+        await client.query('ROLLBACK');
+        throw error;
+      } finally {
+        client.release();
+      }
     },
     
     /**
@@ -83,9 +103,6 @@ export function canUserAccess(userId: number, resourceOwnerId: number): boolean 
  * 
  * This is a simpler alternative to getDbWithUser() for when you need to execute
  * a single query or operation with RLS context.
- * 
- * IMPORTANT: This uses the standard db connection and sets/resets the session variable.
- * For complex operations with multiple queries, prefer getDbWithUser().execute()
  * 
  * @param userId - The ID of the currently authenticated user
  * @param fn - Async function containing the database operation

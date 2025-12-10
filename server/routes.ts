@@ -2852,21 +2852,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const currentUserId = req.user?.id;
       
-      // Get active stories using Drizzle directly
-      const { and, eq, gt } = await import("drizzle-orm");
-      const { posts: postsTable } = await import("@shared/schema");
-      const { db } = await import("./db");
+      // Get active stories using raw SQL to avoid schema mismatch with Supabase
+      // Supabase posts table has different columns than Drizzle schema
+      const { db } = await import("./storage");
+      const { sql } = await import("drizzle-orm");
       
-      const stories = await db.select()
-        .from(postsTable)
-        .where(
-          and(
-            eq(postsTable.type, 'story'),
-            gt(postsTable.expiresAt, new Date())
-          )
-        )
-        .orderBy(postsTable.createdAt)
-        .limit(20);
+      const result = await db.execute(sql`
+        SELECT id, user_id as "userId", content, image_url as "imageUrl", 
+               visibility, type, expires_at as "expiresAt", 
+               created_at as "createdAt", updated_at as "updatedAt"
+        FROM posts 
+        WHERE type = 'story' AND expires_at > NOW()
+        ORDER BY created_at DESC
+        LIMIT 20
+      `);
+      
+      const stories = result.rows || [];
       
       // Enrich with user data
       const { enrichPostContentWithGroupTypes } = await import("./utils/enrich-mentions");
@@ -2875,7 +2876,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           const user = await storage.getUserById(story.userId);
           return {
             ...story,
-            content: await enrichPostContentWithGroupTypes(story.content),
+            content: await enrichPostContentWithGroupTypes(story.content || ''),
             user: user ? {
               id: user.id,
               name: user.name,
