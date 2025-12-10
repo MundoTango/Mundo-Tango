@@ -33,6 +33,41 @@ import ProfileTabPro from "@/components/profile/ProfileTabPro";
 import DashboardCustomerToggle from "@/components/profile/DashboardCustomerToggle";
 import { PhotoUploadDialog } from "@/components/PhotoUploadDialog";
 
+function MessageDialogWithNavigation({ 
+  open, 
+  onOpenChange, 
+  recipientName, 
+  recipientId 
+}: { 
+  open: boolean; 
+  onOpenChange: (open: boolean) => void; 
+  recipientName: string; 
+  recipientId: string;
+}) {
+  const [, setLocation] = useLocation();
+  
+  const handleSuccess = () => {
+    onOpenChange(false);
+    setLocation('/messages');
+  };
+  
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-2xl">
+        <DialogHeader>
+          <DialogTitle>Send Message to {recipientName}</DialogTitle>
+        </DialogHeader>
+        <ComposeMessage 
+          onClose={() => onOpenChange(false)}
+          onSuccess={handleSuccess}
+          defaultChannel="mt"
+          defaultRecipient={recipientId}
+        />
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 interface User {
   id: number;
   email: string;
@@ -303,8 +338,9 @@ export default function ProfilePage() {
   
   // Check friendship status
   const isFriend = friends.some((f: any) => f.id === user?.id);
+  // hasPendingRequest: Check if CURRENT user sent a pending request TO this profile user
   const hasPendingRequest = friendRequests.some(
-    (r: any) => r.receiverId === user?.id && r.status === 'pending'
+    (r: any) => r.receiverId === user?.id && r.senderId === currentUser?.id && r.status === 'pending'
   );
 
   // Send friend request mutation
@@ -677,53 +713,6 @@ export default function ProfilePage() {
           </Card>
         </motion.div>
         
-        {/* Friend Action Buttons - Top Right (Non-Own Profile Only) */}
-        {/* z-50 ensures buttons appear above sticky ProfileTabsNav (z-40) */}
-        {!isOwnProfile && (
-          <div className="absolute top-8 right-8 z-50 flex gap-3">
-            {isFriend ? (
-                <Button 
-                  variant="outline"
-                  className="gap-2 text-white border-white/30 bg-black/20 backdrop-blur-sm hover:bg-black/30"
-                  onClick={() => removeFriendMutation.mutate()}
-                  disabled={removeFriendMutation.isPending}
-                  data-testid={`button-remove-friend-${user.id}`}
-                >
-                  <UserMinus className="h-4 w-4" />
-                  {removeFriendMutation.isPending ? 'Removing...' : 'Remove Friend'}
-                </Button>
-              ) : hasPendingRequest ? (
-                <Button 
-                  variant="outline"
-                  className="gap-2 text-white border-white/30 bg-black/20 backdrop-blur-sm"
-                  disabled
-                  data-testid="button-request-pending"
-                >
-                  <UserCheck className="h-4 w-4" />
-                  Request Sent
-                </Button>
-              ) : (
-                <Button 
-                  className="gap-2 text-white bg-primary/80 backdrop-blur-sm hover:bg-primary"
-                  onClick={() => sendFriendRequestMutation.mutate()}
-                  disabled={sendFriendRequestMutation.isPending}
-                  data-testid={`button-add-friend-${user.id}`}
-                >
-                  <UserPlus className="h-4 w-4" />
-                  {sendFriendRequestMutation.isPending ? 'Sending...' : 'Add Friend'}
-                </Button>
-              )}
-              <Button 
-                variant="outline"
-                className="gap-2 text-white border-white/30 bg-black/20 backdrop-blur-sm hover:bg-black/30"
-                onClick={() => setMessageDialogOpen(true)}
-                data-testid="button-message"
-              >
-                <MessageCircle className="h-4 w-4" />
-                Message
-              </Button>
-          </div>
-        )}
       </div>
       {/* Photo Upload Dialogs */}
       <PhotoUploadDialog
@@ -741,18 +730,12 @@ export default function ProfilePage() {
         isUploading={uploadingCover}
       />
       {/* Message Dialog */}
-      <Dialog open={messageDialogOpen} onOpenChange={setMessageDialogOpen}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Send Message to {user.name}</DialogTitle>
-          </DialogHeader>
-          <ComposeMessage 
-            onClose={() => setMessageDialogOpen(false)}
-            defaultChannel="mt"
-            defaultRecipient={String(user.id)}
-          />
-        </DialogContent>
-      </Dialog>
+      <MessageDialogWithNavigation
+        open={messageDialogOpen}
+        onOpenChange={setMessageDialogOpen}
+        recipientName={user.name}
+        recipientId={String(user.id)}
+      />
       {/* Tab Navigation */}
       <ProfileTabsNav
         user={user}
@@ -760,6 +743,55 @@ export default function ProfilePage() {
         onTabChange={setActiveTab}
         isOwnProfile={isOwnProfile}
         isPublicView={isPublicView}
+        actionButtons={!isOwnProfile && (
+          <>
+            {isFriend ? (
+              <Button 
+                variant="outline"
+                size="sm"
+                className="gap-2"
+                onClick={() => removeFriendMutation.mutate()}
+                disabled={removeFriendMutation.isPending}
+                data-testid={`button-remove-friend-${user.id}`}
+              >
+                <UserMinus className="h-4 w-4" />
+                {removeFriendMutation.isPending ? 'Removing...' : 'Remove Friend'}
+              </Button>
+            ) : hasPendingRequest ? (
+              <Button 
+                variant="outline"
+                size="sm"
+                className="gap-2"
+                disabled
+                data-testid="button-request-pending"
+              >
+                <UserCheck className="h-4 w-4" />
+                Request Sent
+              </Button>
+            ) : (
+              <Button 
+                size="sm"
+                className="gap-2"
+                onClick={() => sendFriendRequestMutation.mutate()}
+                disabled={sendFriendRequestMutation.isPending}
+                data-testid={`button-add-friend-${user.id}`}
+              >
+                <UserPlus className="h-4 w-4" />
+                {sendFriendRequestMutation.isPending ? 'Sending...' : 'Add Friend'}
+              </Button>
+            )}
+            <Button 
+              variant="outline"
+              size="sm"
+              className="gap-2"
+              onClick={() => setMessageDialogOpen(true)}
+              data-testid="button-message"
+            >
+              <MessageCircle className="h-4 w-4" />
+              Message
+            </Button>
+          </>
+        )}
       />
       {/* Tab Content */}
       <div className="max-w-5xl mx-auto px-6 py-12">

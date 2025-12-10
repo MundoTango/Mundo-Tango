@@ -59,11 +59,12 @@ const channelLabels = {
 
 interface ComposeMessageProps {
   onClose?: () => void;
+  onSuccess?: () => void;
   defaultChannel?: "mt" | "gmail" | "facebook" | "instagram" | "whatsapp";
   defaultRecipient?: string;
 }
 
-export function ComposeMessage({ onClose, defaultChannel = "mt", defaultRecipient = "" }: ComposeMessageProps) {
+export function ComposeMessage({ onClose, onSuccess, defaultChannel = "mt", defaultRecipient = "" }: ComposeMessageProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [scheduleDate, setScheduleDate] = useState<Date>();
@@ -100,6 +101,7 @@ export function ComposeMessage({ onClose, defaultChannel = "mt", defaultRecipien
       queryClient.invalidateQueries({ queryKey: ["/api/messages/unified"] });
       form.reset();
       onClose?.();
+      onSuccess?.();
     },
     onError: (error: Error) => {
       toast({
