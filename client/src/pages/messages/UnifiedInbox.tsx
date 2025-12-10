@@ -308,8 +308,11 @@ export default function UnifiedInbox() {
   const [searchQuery, setSearchQuery] = useState("");
   const [messageText, setMessageText] = useState("");
   const [showChannelHub, setShowChannelHub] = useState(false);
-  const [uploadedMediaUrl, setUploadedMediaUrl] = useState<string | null>(null);
+  const [mediaFiles, setMediaFiles] = useState<File[]>([]);
+  const [mediaPreviews, setMediaPreviews] = useState<string[]>([]);
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [inputKey, setInputKey] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -336,10 +339,15 @@ export default function UnifiedInbox() {
     },
     onSuccess: () => {
       setMessageText("");
-      setUploadedMediaUrl(null);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
+      mediaPreviews.forEach(url => {
+        if (url.startsWith('blob:')) {
+          URL.revokeObjectURL(url);
+        }
+      });
+      setMediaFiles([]);
+      setMediaPreviews([]);
+      setUploadProgress(0);
+      setInputKey(prev => prev + 1);
       queryClient.invalidateQueries({ queryKey: ["/api/messages/conversations"] });
       queryClient.invalidateQueries({ queryKey: ["/api/messages/conversations", selectedPartnerId] });
       queryClient.invalidateQueries({ queryKey: ["/api/messages/unread-count"] });
@@ -384,36 +392,81 @@ export default function UnifiedInbox() {
     );
   });
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    if (files.length === 0) return;
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFiles = Array.from(e.target.files || []);
+    if (selectedFiles.length === 0) return;
 
-    setIsUploading(true);
-    try {
-      const result = await uploadMediaFile(files[0]);
-      setUploadedMediaUrl(result.url);
+    // Validate total files (max 10 per message)
+    if (mediaFiles.length + selectedFiles.length > 10) {
       toast({
-        title: "Media uploaded",
-        description: "Your file is ready to send",
-      });
-    } catch (error) {
-      toast({
-        title: "Upload failed",
-        description: error instanceof Error ? error.message : "Failed to upload media",
+        title: "Too many files",
+        description: "Maximum 10 files per message",
         variant: "destructive",
       });
-    } finally {
-      setIsUploading(false);
+      return;
     }
+
+    // Create blob URLs for INSTANT preview
+    const blobUrls = selectedFiles.map(file => URL.createObjectURL(file));
+    
+    // Store files and previews - NO upload yet
+    setMediaFiles(prev => [...prev, ...selectedFiles]);
+    setMediaPreviews(prev => [...prev, ...blobUrls]);
+    
+    toast({
+      title: "Media added!",
+      description: `${selectedFiles.length} file(s) ready to send`,
+    });
   };
 
-  const handleSendMessage = () => {
-    if ((!messageText.trim() && !uploadedMediaUrl) || !selectedPartnerId) return;
-    sendMessageMutation.mutate({
-      to: selectedPartnerId.toString(),
-      body: messageText.trim(),
-      mediaUrl: uploadedMediaUrl || undefined,
-    });
+  const removeMedia = (index: number) => {
+    const urlToRemove = mediaPreviews[index];
+    if (urlToRemove && urlToRemove.startsWith('blob:')) {
+      URL.revokeObjectURL(urlToRemove);
+    }
+    setMediaFiles(mediaFiles.filter((_, i) => i !== index));
+    setMediaPreviews(mediaPreviews.filter((_, i) => i !== index));
+  };
+
+  const handleSendMessage = async () => {
+    if ((!messageText.trim() && mediaFiles.length === 0) || !selectedPartnerId) return;
+    
+    setIsUploading(true);
+    setUploadProgress(0);
+
+    try {
+      let mediaUrl: string | undefined;
+      
+      // Upload first media file during send (PostCreator pattern)
+      if (mediaFiles.length > 0) {
+        setUploadProgress(10);
+        const firstFile = mediaFiles[0];
+        
+        try {
+          const result = await uploadMediaFile(firstFile);
+          mediaUrl = result.url;
+          setUploadProgress(70);
+        } catch (err) {
+          toast({
+            title: "Upload failed",
+            description: err instanceof Error ? err.message : "Could not upload media",
+            variant: "destructive",
+          });
+          setIsUploading(false);
+          return;
+        }
+      }
+
+      setUploadProgress(80);
+      
+      sendMessageMutation.mutate({
+        to: selectedPartnerId.toString(),
+        body: messageText.trim(),
+        mediaUrl,
+      });
+    } finally {
+      setUploadProgress(0);
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -798,6 +851,32 @@ export default function UnifiedInbox() {
 
             {/* Message Input - Enhanced */}
             <div className="px-4 py-3 border-t bg-gradient-to-r from-muted/20 via-background to-muted/20">
+              {/* Media Preview */}
+              {mediaPreviews.length > 0 && (
+                <div className="mb-3 flex gap-2 overflow-x-auto pb-2">
+                  {mediaPreviews.map((preview, index) => (
+                    <div key={index} className="relative flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border border-primary/30 bg-muted/50 group">
+                      {mediaFiles[index]?.type.startsWith('image') ? (
+                        <img src={preview} alt="preview" className="w-full h-full object-cover" />
+                      ) : mediaFiles[index]?.type.startsWith('video') ? (
+                        <video src={preview} className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-xs text-muted-foreground">
+                          {mediaFiles[index]?.name.split('.').pop()?.toUpperCase()}
+                        </div>
+                      )}
+                      <button
+                        onClick={() => removeMedia(index)}
+                        className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
+                        data-testid={`button-remove-media-${index}`}
+                      >
+                        <X className="h-4 w-4 text-white" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
               <div className="flex items-center gap-2">
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -805,7 +884,7 @@ export default function UnifiedInbox() {
                       <Button 
                         variant="ghost" 
                         size="icon" 
-                        className="h-9 w-9 text-primary hover:bg-primary/10" 
+                        className={`h-9 w-9 text-primary hover:bg-primary/10 ${mediaFiles.length > 0 ? 'bg-gradient-to-br from-blue-500 to-purple-500 text-white' : ''}`}
                         data-testid="button-attach-media"
                         asChild
                       >
@@ -815,7 +894,13 @@ export default function UnifiedInbox() {
                   </TooltipTrigger>
                   <TooltipContent>Attach Media or File</TooltipContent>
                 </Tooltip>
+                {mediaFiles.length > 0 && (
+                  <span className="text-xs font-semibold text-primary bg-primary/20 px-2 py-1 rounded-full">
+                    {mediaFiles.length}
+                  </span>
+                )}
                 <input
+                  key={inputKey}
                   ref={fileInputRef}
                   id="media-upload"
                   type="file"
@@ -843,11 +928,11 @@ export default function UnifiedInbox() {
                     <Button
                       size="icon"
                       onClick={handleSendMessage}
-                      disabled={!messageText.trim() || sendMessageMutation.isPending}
+                      disabled={(!messageText.trim() && mediaFiles.length === 0) || isUploading || sendMessageMutation.isPending}
                       className="rounded-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-md"
                       data-testid="button-send-message"
                     >
-                      {sendMessageMutation.isPending ? (
+                      {isUploading || sendMessageMutation.isPending ? (
                         <Loader2 className="h-5 w-5 animate-spin" />
                       ) : (
                         <Send className="h-5 w-5" />
