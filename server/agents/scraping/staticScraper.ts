@@ -15,6 +15,7 @@ import axios from 'axios';
 import * as cheerio from 'cheerio';
 import { db } from '@shared/db';
 import { scrapedEvents, eventScrapingSources, scrapedCommunityData } from '@shared/schema';
+import { cityMatcherService } from '@/services/CityMatcherService';
 
 interface ScrapedEventData {
   title: string;
@@ -273,6 +274,18 @@ export class StaticScraper {
    */
   private async storeEvents(events: ScrapedEventData[], sourceId: number): Promise<void> {
     for (const event of events) {
+            // Match event location to city group using CityMatcherService
+            let groupId: number | null = null;
+
+            if (event.location || event.address) {
+                      const locationString = event.location || event.address || '';
+                      const matchResult = await cityMatcherService.matchEventLocation(locationString);
+                      if (matchResult) {
+                                  groupId = matchResult.groupId;
+                                  console.log(`[Agent #116] 🎯 Matched "${event.title}" to group ${groupId} via ${matchResult.method}`);
+                                }
+                    }
+      
       try {
         await db.insert(scrapedEvents).values({
           sourceId,
@@ -288,6 +301,7 @@ export class StaticScraper {
           price: event.price ? event.price.toString() : null,
           imageUrl: event.imageUrl,
           externalId: event.externalId,
+                    groupId,
           status: 'pending_review'
         });
       } catch (err) {
