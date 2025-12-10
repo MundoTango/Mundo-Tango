@@ -66,6 +66,18 @@ When adding floating/absolute UI elements, follow this z-index hierarchy:
 
 **Root Cause Fix (Dec 10, 2025)**: Friend/Message buttons on ProfilePage were hidden behind sticky ProfileTabsNav. Buttons had z-30, nav had z-40. Fixed by bumping buttons to z-50 with explanatory comment.
 
+#### FriendDetailPage "Friend Not Found" Bug - RESOLVED (Dec 10, 2025)
+**Root Cause**: queryKey pattern mismatch with endpoint
+- FriendDetailPage used queryKey: `['/api/friends', friendId, user?.id]` 
+- Default fetcher only uses first element → tried `/api/friends` instead of `/api/friends/:friendId`
+- Endpoint `/api/friends/:friendId` was added but never called
+**Fix Applied**:
+- Changed queryKey to: `[`/api/friends/${friendId}`]` to match endpoint
+- Updated cache invalidation accordingly
+- Added `getFriendshipById()` storage method returning full friendship + friend object
+- New GET `/api/friends/:friendId` endpoint properly returns friend details
+- **Status**: ✅ Fixed and tested - endpoint returning 200 with valid token
+
 ## System Architecture
 
 ### UI/UX

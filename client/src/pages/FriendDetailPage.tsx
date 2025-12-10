@@ -79,7 +79,7 @@ export default function FriendDetailPage() {
 
   // Fetch friendship details
   const { data: friendship, isLoading } = useQuery<Friendship>({
-    queryKey: ['/api/friends', friendId, user?.id],
+    queryKey: [`/api/friends/${friendId}`],
     enabled: !!friendId && !!user,
   });
 
@@ -117,7 +117,7 @@ export default function FriendDetailPage() {
       return await apiRequest('PATCH', `/api/friends/${friendId}/note`, { privateNote: note });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/friends', friendId] });
+      queryClient.invalidateQueries({ queryKey: [`/api/friends/${friendId}`] });
       toast({
         title: "Note saved",
         description: "Your private note has been updated.",
