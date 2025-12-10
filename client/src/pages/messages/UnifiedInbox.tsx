@@ -470,6 +470,11 @@ export default function UnifiedInbox() {
       setIsUploading(false);
     } catch (err) {
       console.error('Send message error:', err);
+      toast({
+        title: "Failed to send message",
+        description: err instanceof Error ? err.message : "Could not send message",
+        variant: "destructive",
+      });
       setIsUploading(false);
       setUploadProgress(0);
     }
