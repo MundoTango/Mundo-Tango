@@ -45,6 +45,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { uploadMediaFile } from "@/lib/mediaUpload";
+import { useToast } from "@/hooks/use-toast";
 
 // Tango-themed reaction types matching MT design system
 const REACTION_TYPES = [
@@ -301,10 +303,14 @@ function ConversationSkeleton() {
 
 export default function UnifiedInbox() {
   const { user } = useAuth();
+  const { toast } = useToast();
   const [selectedPartnerId, setSelectedPartnerId] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [messageText, setMessageText] = useState("");
   const [showChannelHub, setShowChannelHub] = useState(false);
+  const [uploadedMediaUrl, setUploadedMediaUrl] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const isGodAdmin = user?.role === 'god' || user?.role === 'admin';
@@ -320,15 +326,20 @@ export default function UnifiedInbox() {
   });
 
   const sendMessageMutation = useMutation({
-    mutationFn: async (data: { to: string; body: string }) => {
+    mutationFn: async (data: { to: string; body: string; mediaUrl?: string }) => {
       return apiRequest("POST", "/api/messages/send", {
         channel: "mt",
         to: data.to,
         body: data.body,
+        mediaUrl: data.mediaUrl,
       });
     },
     onSuccess: () => {
       setMessageText("");
+      setUploadedMediaUrl(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
       queryClient.invalidateQueries({ queryKey: ["/api/messages/conversations"] });
       queryClient.invalidateQueries({ queryKey: ["/api/messages/conversations", selectedPartnerId] });
       queryClient.invalidateQueries({ queryKey: ["/api/messages/unread-count"] });
@@ -373,11 +384,35 @@ export default function UnifiedInbox() {
     );
   });
 
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+
+    setIsUploading(true);
+    try {
+      const result = await uploadMediaFile(files[0]);
+      setUploadedMediaUrl(result.url);
+      toast({
+        title: "Media uploaded",
+        description: "Your file is ready to send",
+      });
+    } catch (error) {
+      toast({
+        title: "Upload failed",
+        description: error instanceof Error ? error.message : "Failed to upload media",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
   const handleSendMessage = () => {
-    if (!messageText.trim() || !selectedPartnerId) return;
+    if ((!messageText.trim() && !uploadedMediaUrl) || !selectedPartnerId) return;
     sendMessageMutation.mutate({
       to: selectedPartnerId.toString(),
       body: messageText.trim(),
+      mediaUrl: uploadedMediaUrl || undefined,
     });
   };
 
@@ -781,11 +816,14 @@ export default function UnifiedInbox() {
                   <TooltipContent>Attach Media or File</TooltipContent>
                 </Tooltip>
                 <input
+                  ref={fileInputRef}
                   id="media-upload"
                   type="file"
                   multiple
                   accept="image/*,video/*,.pdf,.doc,.docx,.xls,.xlsx,.txt"
                   className="hidden"
+                  onChange={handleFileUpload}
+                  disabled={isUploading}
                   data-testid="input-media-upload"
                 />
                 
