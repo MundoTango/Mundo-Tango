@@ -217,6 +217,20 @@ const proDiscoveryItems = [
     color: "#1E90FF",
     tooltip: "Find the perfect match",
   },
+  {
+    title: "Marketplace",
+    url: "/marketplace",
+    icon: ShoppingBag,
+    color: "#F59E0B",
+    tooltip: "Browse products and services",
+  },
+  {
+    title: "Housing",
+    url: "/housing",
+    icon: HousingIcon,
+    color: "#10B981",
+    tooltip: "Find tango-friendly accommodations",
+  },
 ];
 
 const servicesItems = [
@@ -225,18 +239,6 @@ const servicesItems = [
     url: "/life-ceo",
     icon: Brain,
     tooltip: "AI-powered life management",
-  },
-  {
-    title: "Marketplace",
-    url: "/marketplace",
-    icon: ShoppingBag,
-    tooltip: "Browse products and services",
-  },
-  {
-    title: "Housing",
-    url: "/housing",
-    icon: HousingIcon,
-    tooltip: "Find tango-friendly accommodations",
   },
 ];
 

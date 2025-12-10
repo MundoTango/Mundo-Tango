@@ -568,9 +568,6 @@ const LeaderboardPage = lazy(() => import("@/pages/LeaderboardPage"));
 const HelpPage = lazy(() => import("@/pages/HelpPage"));
 const HelpCenterPage = lazy(() => import("@/pages/HelpCenterPage"));
 const ContactPage = lazy(() => import("@/pages/ContactPage"));
-const UserProfilePublicPage = lazy(
-  () => import("@/pages/UserProfilePublicPage"),
-);
 const MessagesDetailPage = lazy(() => import("@/pages/MessagesDetailPage"));
 const CheckoutSuccessPage = lazy(() => import("@/pages/CheckoutSuccessPage"));
 const AboutTangoPage = lazy(() => import("@/pages/AboutTangoPage"));
