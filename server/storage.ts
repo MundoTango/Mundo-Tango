@@ -297,6 +297,7 @@ export interface IStorage {
   getPostComments(postId: number): Promise<SelectPostComment[]>;
   
   getUserFriends(userId: number): Promise<any[]>;
+  getFriendshipById(userId: number, friendId: number): Promise<any | undefined>;
   getFriendRequests(userId: number): Promise<any[]>;
   getFriendSuggestions(userId: number): Promise<any[]>;
   sendFriendRequest(data: { senderId: number; receiverId: number; [key: string]: any }): Promise<any>;
@@ -2074,6 +2075,61 @@ export class DbStorage implements IStorage {
       .where(eq(friendships.userId, userId));
     
     return friendshipsData;
+  }
+
+  async getFriendshipById(userId: number, friendId: number): Promise<any | undefined> {
+    const result = await db
+      .select({
+        id: friendships.id,
+        userId: friendships.userId,
+        friendId: friendships.friendId,
+        createdAt: friendships.createdAt,
+        closenessScore: friendships.closenessScore,
+        lastInteractionAt: friendships.lastInteractionAt,
+        status: friendships.status,
+        ourStory: friendships.ourStory,
+        whenWeMet: friendships.whenWeMet,
+        whereWeMet: friendships.whereWeMet,
+        friendId: users.id,
+        friendName: users.name,
+        friendUsername: users.username,
+        friendEmail: users.email,
+        friendProfileImage: users.profileImage,
+        friendBio: users.bio,
+        friendCity: users.city,
+        friendCountry: users.country,
+        friendTangoRoles: users.tangoRoles,
+      })
+      .from(friendships)
+      .leftJoin(users, eq(friendships.friendId, users.id))
+      .where(and(eq(friendships.userId, userId), eq(friendships.friendId, friendId)))
+      .limit(1);
+    
+    if (!result[0]) return undefined;
+    
+    return {
+      id: result[0].id,
+      userId: result[0].userId,
+      friendId: result[0].friendId,
+      createdAt: result[0].createdAt,
+      closenessScore: result[0].closenessScore,
+      lastInteractionAt: result[0].lastInteractionAt,
+      status: result[0].status,
+      ourStory: result[0].ourStory,
+      whenWeMet: result[0].whenWeMet,
+      whereWeMet: result[0].whereWeMet,
+      friend: {
+        id: result[0].friendId,
+        name: result[0].friendName,
+        username: result[0].friendUsername,
+        email: result[0].friendEmail,
+        profileImage: result[0].friendProfileImage,
+        bio: result[0].friendBio,
+        city: result[0].friendCity,
+        country: result[0].friendCountry,
+        tangoRoles: result[0].friendTangoRoles,
+      },
+    };
   }
 
   async getFriendRequests(userId: number): Promise<any[]> {

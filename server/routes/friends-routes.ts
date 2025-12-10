@@ -15,6 +15,17 @@ export function createFriendsRoutes(storage: IStorage) {
     }
   });
 
+  router.get("/friends/:friendId", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const userId = req.userId!;
+      const friendId = parseInt(req.params.friendId);
+      const friendship = await storage.getFriendshipById(userId, friendId);
+      res.json(friendship);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   router.get("/friends/requests", authenticateToken, async (req: AuthRequest, res) => {
     try {
       const userId = req.userId!;
