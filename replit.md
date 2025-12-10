@@ -90,6 +90,28 @@ Per MB.MD methodology, 7 industry experts reviewed the platform:
 
 OSI References: `docs/prds/PRD_EXPERT_COUNCIL_OSI_REFERENCES.md`
 
+### Recent Schema Fixes (Dec 10, 2025)
+Resolved systematic UUID/integer type mismatches in the database:
+
+**Tables Recreated (empty, 0 data loss):**
+- `posts` - ID and user_id changed from UUID to INTEGER
+- `events` - ID and user_id changed from UUID to INTEGER, added 55+ missing columns
+- `communities` - ID changed from UUID to INTEGER, added missing columns
+- `community_members` - All IDs changed from UUID to INTEGER
+- `subscriptions` - ID and user_id changed from UUID to INTEGER
+
+**Tables Fixed (columns added):**
+- `follows` - Recreated with integer types
+- `prediction_cache` - Added `confidence_scores` and `cache_warmed_at` columns
+
+**All Core APIs Now Operational:**
+- Auth/Login ✅
+- Posts API ✅
+- Feed API ✅
+- Messaging API ✅
+- Events API ✅
+- Users API ✅
+
 ## External Dependencies
 - **Infrastructure:** PostgreSQL, Redis, Cloudinary, OpenStreetMap, Neon (PostgreSQL)
 - **Authentication:** Google OAuth, Facebook OAuth, JWT
