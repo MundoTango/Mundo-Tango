@@ -52,20 +52,23 @@ interface UserProfile {
 }
 
 export default function UserProfilePublicPage() {
-  const { userId } = useParams();
+  const { id: userId } = useParams();
   const { toast } = useToast();
   const [messageDialogOpen, setMessageDialogOpen] = useState(false);
 
   const { data: profile, isLoading } = useQuery<UserProfile>({
     queryKey: ['/api/users', userId, 'profile'],
+    enabled: !!userId,
   });
 
   const { data: recentPosts = [] } = useQuery<any[]>({
     queryKey: ['/api/users', userId, 'posts'],
+    enabled: !!userId,
   });
 
   const { data: recentEvents = [] } = useQuery<any[]>({
     queryKey: ['/api/users', userId, 'events'],
+    enabled: !!userId,
   });
 
   const { data: friendshipStatus } = useQuery<{ status: 'none' | 'friends' | 'pending' | 'received' }>({

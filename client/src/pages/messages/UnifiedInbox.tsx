@@ -332,6 +332,22 @@ export default function UnifiedInbox() {
 
   const { data: thread, isLoading: threadLoading } = useQuery<ThreadResponse>({
     queryKey: ["/api/messages/conversations", selectedPartnerId, messageOffset],
+    queryFn: async () => {
+      const token = localStorage.getItem('accessToken');
+      const headers: Record<string, string> = {};
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+      const res = await fetch(
+        `/api/messages/conversations/${selectedPartnerId}?limit=30&offset=${messageOffset}`,
+        { headers, credentials: "include" }
+      );
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(`${res.status}: ${text}`);
+      }
+      return res.json();
+    },
     enabled: !!selectedPartnerId,
   });
 

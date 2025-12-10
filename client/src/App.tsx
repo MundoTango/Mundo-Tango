@@ -960,9 +960,7 @@ function Router() {
       </Route>
 
       <Route path="/profile/:id">
-        <AppLayout>
-          <ProfilePage />
-        </AppLayout>
+        <UserProfilePublicPage />
       </Route>
       <Route path="/reputation/:userId">
         <AppLayout>
