@@ -1,116 +1,265 @@
-import { type Express } from "express";
+import { type Express, Response } from "express";
 import { db } from "../db";
-import { socialMessages, users, groups, groupMembers } from "@shared/schema";
+import { chatMessages, chatRooms, chatRoomUsers, users, groups, groupMembers } from "@shared/schema";
 import { eq, and, or, desc, sql, inArray } from "drizzle-orm";
 import { z } from "zod";
+import { authenticateToken, AuthRequest } from "../middleware/auth";
 
 const sendMessageSchema = z.object({
   recipientId: z.number().optional(),
+  chatRoomId: z.number().optional(),
   groupId: z.number().optional(),
   content: z.string().min(1),
-  attachments: z.array(z.string()).optional(),
+  mediaUrl: z.string().optional(),
+  mediaType: z.string().optional(),
 });
 
 export function registerMessagingRoutes(app: Express) {
-  // Get all conversations (threads)
-  app.get("/api/messages/conversations", async (req, res) => {
+  // Get all conversations (threads) - using chatRooms for direct & groups for group chats
+  app.get("/api/chat/conversations", authenticateToken, async (req: AuthRequest, res: Response) => {
     if (!req.user) return res.status(401).send("Unauthorized");
 
     try {
-      // Get direct message conversations
-      const directMessages = await db
-        .select({
-          id: socialMessages.id,
-          userId: socialMessages.senderId,
-          userName: users.name,
-          userImage: users.profileImage,
-          lastMessage: socialMessages.content,
-          timestamp: socialMessages.createdAt,
-          isRead: socialMessages.isRead,
-          type: sql<string>`'direct'`,
-        })
-        .from(socialMessages)
-        .leftJoin(users, eq(socialMessages.senderId, users.id))
-        .where(
-          or(
-            eq(socialMessages.senderId, req.user.id),
-            eq(socialMessages.recipientId, req.user.id)
-          )
-        )
-        .orderBy(desc(socialMessages.createdAt))
-        .limit(50);
+      console.log("[messaging] Fetching conversations for user:", req.user.id);
+      
+      // Step 1: Get chat rooms - using raw SQL to avoid Drizzle issues
+      const userChatRoomsResult = await db.execute(sql`
+        SELECT cr.id, cr.type, cr.name, cr.avatar, cr.last_message_at
+        FROM chat_rooms cr
+        INNER JOIN chat_room_users cru ON cru.chat_room_id = cr.id
+        WHERE cru.user_id = ${req.user.id}
+        ORDER BY cr.last_message_at DESC NULLS LAST
+        LIMIT 50
+      `);
+      
+      console.log("[messaging] Found chat rooms:", userChatRoomsResult.rows?.length || 0);
+      const userChatRooms = (userChatRoomsResult.rows || []) as any[];
 
-      // Get group conversations
-      const userGroups = await db
-        .select({
-          id: groups.id,
-          name: groups.name,
-          image: groups.profileImage,
-          lastMessage: sql<string>`''`,
-          timestamp: groups.createdAt,
-          isRead: sql<boolean>`true`,
-          type: sql<string>`'group'`,
-        })
-        .from(groups)
-        .innerJoin(groupMembers, eq(groupMembers.groupId, groups.id))
-        .where(eq(groupMembers.userId, req.user.id));
+      // Step 2: Get group conversations from groups table
+      const userGroupsResult = await db.execute(sql`
+        SELECT g.id, g.name, g.image_url as avatar, g.created_at
+        FROM groups g
+        INNER JOIN group_members gm ON gm.group_id = g.id
+        WHERE gm.user_id = ${req.user.id}
+      `);
+      
+      console.log("[messaging] Found user groups:", userGroupsResult.rows?.length || 0);
+      const userGroups = (userGroupsResult.rows || []) as any[];
 
-      // Combine and deduplicate
-      const conversations = [...directMessages, ...userGroups].sort(
-        (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+      // Step 3: Build conversations from chat rooms
+      const chatRoomConversations = await Promise.all(
+        userChatRooms.map(async (room) => {
+          // Get participants - alias columns to camelCase for frontend
+          const participantsResult = await db.execute(sql`
+            SELECT u.id, u.name, u.profile_image as "profileImage"
+            FROM chat_room_users cru
+            INNER JOIN users u ON u.id = cru.user_id
+            WHERE cru.chat_room_id = ${room.id} AND cru.user_id != ${req.user!.id}
+          `);
+          const participants = (participantsResult.rows || []) as Array<{
+            id: number;
+            name: string;
+            profileImage: string | null;
+          }>;
+
+          // Get latest message
+          const latestMessageResult = await db.execute(sql`
+            SELECT message, user_id as sender_id, created_at
+            FROM chat_messages
+            WHERE chat_room_id = ${room.id}
+            ORDER BY created_at DESC
+            LIMIT 1
+          `);
+          const latestMessage = (latestMessageResult.rows || [])[0] as any;
+
+          return {
+            id: room.id,
+            type: room.type || "direct",
+            name: room.name || participants.map((p) => p.name).join(", ") || "Conversation",
+            avatar: room.avatar || (participants[0]?.profileImage || null),
+            participants,
+            lastMessage: latestMessage?.message || null,
+            lastMessageAt: latestMessage?.created_at || room.last_message_at,
+            unreadCount: 0,
+          };
+        })
       );
 
-      res.json(conversations);
+      // Step 4: Build group conversations
+      const groupConversations = userGroups.map((group) => ({
+        id: `group-${group.id}`,
+        type: "group",
+        name: group.name,
+        avatar: group.avatar,
+        participants: [],
+        lastMessage: null,
+        lastMessageAt: group.created_at,
+        unreadCount: 0,
+      }));
+
+      // Combine and sort by last message time
+      const allConversations = [...chatRoomConversations, ...groupConversations].sort(
+        (a, b) => {
+          const aTime = a.lastMessageAt ? new Date(a.lastMessageAt).getTime() : 0;
+          const bTime = b.lastMessageAt ? new Date(b.lastMessageAt).getTime() : 0;
+          return bTime - aTime;
+        }
+      );
+
+      console.log("[messaging] Total conversations:", allConversations.length);
+      res.json(allConversations);
     } catch (error: any) {
       console.error("Error fetching conversations:", error);
-      res.status(500).send("Failed to fetch conversations");
+      res.status(500).json({ error: "Failed to fetch conversations", details: error.message });
     }
   });
 
-  // Get direct messages with a specific user
-  app.get("/api/messages/direct/:userId", async (req, res) => {
+  // Get messages for a specific chat room
+  app.get("/api/chat/room/:roomId", authenticateToken, async (req: AuthRequest, res: Response) => {
     if (!req.user) return res.status(401).send("Unauthorized");
 
-    const userId = parseInt(req.params.userId);
-    if (isNaN(userId)) return res.status(400).send("Invalid user ID");
+    const roomId = parseInt(req.params.roomId);
+    if (isNaN(roomId)) return res.status(400).send("Invalid room ID");
 
     try {
-      const messages = await db
-        .select({
-          id: socialMessages.id,
-          senderId: socialMessages.senderId,
-          senderName: users.name,
-          senderImage: users.profileImage,
-          content: socialMessages.content,
-          attachments: socialMessages.attachments,
-          isRead: socialMessages.isRead,
-          createdAt: socialMessages.createdAt,
-        })
-        .from(socialMessages)
-        .leftJoin(users, eq(socialMessages.senderId, users.id))
+      // Verify user is a member of the room
+      const membership = await db
+        .select()
+        .from(chatRoomUsers)
         .where(
-          or(
-            and(
-              eq(socialMessages.senderId, req.user.id),
-              eq(socialMessages.recipientId, userId)
-            ),
-            and(
-              eq(socialMessages.senderId, userId),
-              eq(socialMessages.recipientId, req.user.id)
-            )
+          and(
+            eq(chatRoomUsers.chatRoomId, roomId),
+            eq(chatRoomUsers.userId, req.user.id)
           )
         )
-        .orderBy(socialMessages.createdAt);
+        .limit(1);
+
+      if (membership.length === 0) {
+        return res.status(403).send("Not a member of this chat room");
+      }
+
+      // Get messages with sender info
+      const messages = await db
+        .select({
+          id: chatMessages.id,
+          senderId: chatMessages.userId,
+          senderName: users.name,
+          senderImage: users.profileImage,
+          message: chatMessages.message,
+          mediaUrl: chatMessages.mediaUrl,
+          mediaType: chatMessages.mediaType,
+          createdAt: chatMessages.createdAt,
+          isOwn: sql<boolean>`${chatMessages.userId} = ${req.user.id}`,
+        })
+        .from(chatMessages)
+        .leftJoin(users, eq(users.id, chatMessages.userId))
+        .where(eq(chatMessages.chatRoomId, roomId))
+        .orderBy(chatMessages.createdAt)
+        .limit(100);
+
+      // Update last read
+      await db
+        .update(chatRoomUsers)
+        .set({ lastReadAt: new Date() })
+        .where(
+          and(
+            eq(chatRoomUsers.chatRoomId, roomId),
+            eq(chatRoomUsers.userId, req.user.id)
+          )
+        );
 
       res.json(messages);
     } catch (error: any) {
+      console.error("Error fetching room messages:", error);
+      res.status(500).json({ error: "Failed to fetch messages", details: error.message });
+    }
+  });
+
+  // Get or create direct message room with a user
+  app.get("/api/chat/direct/:userId", authenticateToken, async (req: AuthRequest, res: Response) => {
+    if (!req.user) return res.status(401).send("Unauthorized");
+
+    const otherUserId = parseInt(req.params.userId);
+    if (isNaN(otherUserId)) return res.status(400).send("Invalid user ID");
+
+    try {
+      // Find existing direct chat room between these users
+      const existingRoom = await db.execute(sql`
+        SELECT cr.id 
+        FROM chat_rooms cr
+        INNER JOIN chat_room_users cru1 ON cru1.chat_room_id = cr.id AND cru1.user_id = ${req.user.id}
+        INNER JOIN chat_room_users cru2 ON cru2.chat_room_id = cr.id AND cru2.user_id = ${otherUserId}
+        WHERE cr.type = 'direct'
+        AND (SELECT COUNT(*) FROM chat_room_users WHERE chat_room_id = cr.id) = 2
+        LIMIT 1
+      `);
+
+      let roomId: number;
+
+      if (existingRoom.rows && existingRoom.rows.length > 0) {
+        roomId = (existingRoom.rows[0] as any).id;
+      } else {
+        // Create new direct chat room
+        const [newRoom] = await db
+          .insert(chatRooms)
+          .values({
+            type: "direct",
+            lastMessageAt: new Date(),
+          })
+          .returning();
+
+        roomId = newRoom.id;
+
+        // Add both users to the room
+        await db.insert(chatRoomUsers).values([
+          { chatRoomId: roomId, userId: req.user.id },
+          { chatRoomId: roomId, userId: otherUserId },
+        ]);
+      }
+
+      // Get messages
+      const messages = await db
+        .select({
+          id: chatMessages.id,
+          senderId: chatMessages.userId,
+          senderName: users.name,
+          senderImage: users.profileImage,
+          message: chatMessages.message,
+          mediaUrl: chatMessages.mediaUrl,
+          mediaType: chatMessages.mediaType,
+          createdAt: chatMessages.createdAt,
+          isOwn: sql<boolean>`${chatMessages.userId} = ${req.user.id}`,
+        })
+        .from(chatMessages)
+        .leftJoin(users, eq(users.id, chatMessages.userId))
+        .where(eq(chatMessages.chatRoomId, roomId))
+        .orderBy(chatMessages.createdAt)
+        .limit(100);
+
+      // Get other user info
+      const [otherUser] = await db
+        .select({
+          id: users.id,
+          name: users.name,
+          profileImage: users.profileImage,
+        })
+        .from(users)
+        .where(eq(users.id, otherUserId))
+        .limit(1);
+
+      res.json({
+        roomId,
+        otherUser,
+        messages,
+      });
+    } catch (error: any) {
       console.error("Error fetching direct messages:", error);
-      res.status(500).send("Failed to fetch messages");
+      res.status(500).json({ error: "Failed to fetch messages", details: error.message });
     }
   });
 
   // Get group messages
-  app.get("/api/messages/group/:groupId", async (req, res) => {
+  app.get("/api/chat/group/:groupId", authenticateToken, async (req: AuthRequest, res: Response) => {
     if (!req.user) return res.status(401).send("Unauthorized");
 
     const groupId = parseInt(req.params.groupId);
@@ -152,35 +301,19 @@ export function registerMessagingRoutes(app: Express) {
         .leftJoin(users, eq(groupMembers.userId, users.id))
         .where(eq(groupMembers.groupId, groupId));
 
-      // Get messages
-      const messages = await db
-        .select({
-          id: socialMessages.id,
-          senderId: socialMessages.senderId,
-          senderName: users.name,
-          senderImage: users.profileImage,
-          content: socialMessages.content,
-          attachments: socialMessages.attachments,
-          createdAt: socialMessages.createdAt,
-        })
-        .from(socialMessages)
-        .leftJoin(users, eq(socialMessages.senderId, users.id))
-        .where(eq(socialMessages.groupId, groupId))
-        .orderBy(socialMessages.createdAt);
-
       res.json({
         group,
         members,
-        messages,
+        messages: [], // Group messages would need a separate table
       });
     } catch (error: any) {
       console.error("Error fetching group messages:", error);
-      res.status(500).send("Failed to fetch group messages");
+      res.status(500).json({ error: "Failed to fetch group messages", details: error.message });
     }
   });
 
   // Send a message
-  app.post("/api/messages/send", async (req, res) => {
+  app.post("/api/chat/send", authenticateToken, async (req: AuthRequest, res: Response) => {
     if (!req.user) return res.status(401).send("Unauthorized");
 
     const validation = sendMessageSchema.safeParse(req.body);
@@ -188,59 +321,116 @@ export function registerMessagingRoutes(app: Express) {
       return res.status(400).json({ error: validation.error });
     }
 
-    const { recipientId, groupId, content, attachments } = validation.data;
-
-    if (!recipientId && !groupId) {
-      return res.status(400).send("Must specify recipientId or groupId");
-    }
+    const { recipientId, chatRoomId, content, mediaUrl, mediaType } = validation.data;
 
     try {
+      let roomId = chatRoomId;
+
+      // If recipientId is provided, get or create direct chat room
+      if (recipientId && !chatRoomId) {
+        const existingRoom = await db.execute(sql`
+          SELECT cr.id 
+          FROM chat_rooms cr
+          INNER JOIN chat_room_users cru1 ON cru1.chat_room_id = cr.id AND cru1.user_id = ${req.user.id}
+          INNER JOIN chat_room_users cru2 ON cru2.chat_room_id = cr.id AND cru2.user_id = ${recipientId}
+          WHERE cr.type = 'direct'
+          AND (SELECT COUNT(*) FROM chat_room_users WHERE chat_room_id = cr.id) = 2
+          LIMIT 1
+        `);
+
+        if (existingRoom.rows && existingRoom.rows.length > 0) {
+          roomId = (existingRoom.rows[0] as any).id;
+        } else {
+          // Create new direct chat room
+          const [newRoom] = await db
+            .insert(chatRooms)
+            .values({
+              type: "direct",
+              lastMessageAt: new Date(),
+            })
+            .returning();
+
+          roomId = newRoom.id;
+
+          // Add both users to the room
+          await db.insert(chatRoomUsers).values([
+            { chatRoomId: roomId, userId: req.user.id },
+            { chatRoomId: roomId, userId: recipientId },
+          ]);
+        }
+      }
+
+      if (!roomId) {
+        return res.status(400).send("Must specify recipientId or chatRoomId");
+      }
+
+      // Insert message
       const [message] = await db
-        .insert(socialMessages)
+        .insert(chatMessages)
         .values({
-          senderId: req.user.id,
-          recipientId: recipientId || null,
-          groupId: groupId || null,
-          content,
-          attachments: attachments || [],
-          isRead: false,
+          chatRoomId: roomId,
+          userId: req.user.id,
+          message: content,
+          mediaUrl: mediaUrl || null,
+          mediaType: mediaType || null,
         })
         .returning();
 
-      res.json(message);
+      // Update room's last message time
+      await db
+        .update(chatRooms)
+        .set({ lastMessageAt: new Date() })
+        .where(eq(chatRooms.id, roomId));
+
+      // Get sender info
+      const [sender] = await db
+        .select({
+          name: users.name,
+          profileImage: users.profileImage,
+        })
+        .from(users)
+        .where(eq(users.id, req.user.id))
+        .limit(1);
+
+      res.json({
+        ...message,
+        senderName: sender.name,
+        senderImage: sender.profileImage,
+        isOwn: true,
+      });
     } catch (error: any) {
       console.error("Error sending message:", error);
-      res.status(500).send("Failed to send message");
+      res.status(500).json({ error: "Failed to send message", details: error.message });
     }
   });
 
-  // Mark message as read
-  app.put("/api/messages/:id/read", async (req, res) => {
+  // Mark messages as read
+  app.put("/api/chat/room/:roomId/read", authenticateToken, async (req: AuthRequest, res: Response) => {
     if (!req.user) return res.status(401).send("Unauthorized");
 
-    const messageId = parseInt(req.params.id);
-    if (isNaN(messageId)) return res.status(400).send("Invalid message ID");
+    const roomId = parseInt(req.params.roomId);
+    if (isNaN(roomId)) return res.status(400).send("Invalid room ID");
 
     try {
       await db
-        .update(socialMessages)
-        .set({ isRead: true })
+        .update(chatRoomUsers)
+        .set({ lastReadAt: new Date() })
         .where(
           and(
-            eq(socialMessages.id, messageId),
-            eq(socialMessages.recipientId, req.user.id)
+            eq(chatRoomUsers.chatRoomId, roomId),
+            eq(chatRoomUsers.userId, req.user.id)
           )
         );
 
       res.json({ success: true });
     } catch (error: any) {
-      console.error("Error marking message as read:", error);
-      res.status(500).send("Failed to mark message as read");
+      console.error("Error marking messages as read:", error);
+      res.status(500).json({ error: "Failed to mark messages as read", details: error.message });
     }
   });
 
   // Delete a message
-  app.delete("/api/messages/:id", async (req, res) => {
+  app.delete("/api/chat/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
     if (!req.user) return res.status(401).send("Unauthorized");
 
     const messageId = parseInt(req.params.id);
@@ -248,18 +438,18 @@ export function registerMessagingRoutes(app: Express) {
 
     try {
       await db
-        .delete(socialMessages)
+        .delete(chatMessages)
         .where(
           and(
-            eq(socialMessages.id, messageId),
-            eq(socialMessages.senderId, req.user.id)
+            eq(chatMessages.id, messageId),
+            eq(chatMessages.userId, req.user.id)
           )
         );
 
       res.json({ success: true });
     } catch (error: any) {
       console.error("Error deleting message:", error);
-      res.status(500).send("Failed to delete message");
+      res.status(500).json({ error: "Failed to delete message", details: error.message });
     }
   });
 }

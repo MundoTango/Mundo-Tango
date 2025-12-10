@@ -1,11 +1,12 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { 
   useConversations, 
   useConversation, 
   useSendMessage,
-  useMessagesRealtime,
-  useMarkMessagesAsRead 
+  useMarkAsRead,
+  type ChatMessage,
+  type Conversation
 } from "@/hooks/useMessages";
 import {
   useConnectedChannels,
@@ -32,7 +33,7 @@ import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary"
 import { ChannelSettingsPanel } from "@/components/messages/ChannelSettingsPanel";
 
 export default function MessagesPage() {
-  const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
+  const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeChannel, setActiveChannel] = useState<'all' | MessageChannel>('all');
   const [showSettings, setShowSettings] = useState(false);
@@ -258,9 +259,9 @@ export default function MessagesPage() {
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: index * 0.05 }}
                             whileHover={{ x: 4 }}
-                            onClick={() => setSelectedConversationId(conversation.id)}
+                            onClick={() => setSelectedConversation(conversation)}
                             className={`w-full p-4 rounded-xl hover-elevate active-elevate-2 text-left transition-colors ${
-                              selectedConversationId === conversation.id ? "bg-accent" : ""
+                              selectedConversation?.id === conversation.id ? "bg-accent" : ""
                             }`}
                             data-testid={`button-conversation-${conversation.id}`}
                           >
@@ -324,8 +325,8 @@ export default function MessagesPage() {
 
                 {/* Right Panel - Active Conversation (2/3 width) */}
                 <div className="flex-[2] bg-background">
-                  {selectedConversationId ? (
-                    <ConversationView conversationId={selectedConversationId} />
+                  {selectedConversation ? (
+                    <ConversationView conversation={selectedConversation} />
                   ) : (
                     <motion.div 
                       className="h-full flex flex-col items-center justify-center text-center p-8 space-y-4" 
@@ -354,22 +355,20 @@ export default function MessagesPage() {
   );
 }
 
-function ConversationView({ conversationId }: { conversationId: string }) {
+function ConversationView({ conversation }: { conversation: Conversation }) {
   const [message, setMessage] = useState("");
   const { user } = useAuth();
-  const { data: messages, isLoading } = useConversation(conversationId);
-  const sendMessage = useSendMessage(conversationId);
+  const roomId = typeof conversation.id === "number" ? conversation.id : null;
+  const { data: messages, isLoading } = useConversation(roomId);
+  const sendMessage = useSendMessage();
+  const markAsRead = useMarkAsRead();
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  
-  const { typingUsers, broadcastTyping } = useMessagesRealtime(conversationId);
-  const markAsRead = useMarkMessagesAsRead(conversationId);
 
   useEffect(() => {
-    if (conversationId) {
-      markAsRead.mutate();
+    if (roomId) {
+      markAsRead.mutate(roomId);
     }
-  }, [conversationId]);
+  }, [roomId]);
 
   useEffect(() => {
     if (messages && messages.length > 0) {
@@ -377,35 +376,22 @@ function ConversationView({ conversationId }: { conversationId: string }) {
     }
   }, [messages]);
 
-  const handleTyping = useCallback(() => {
-    if (typingTimeoutRef.current) {
-      clearTimeout(typingTimeoutRef.current);
-    }
-
-    broadcastTyping(true);
-
-    typingTimeoutRef.current = setTimeout(() => {
-      broadcastTyping(false);
-    }, 500);
-  }, [broadcastTyping]);
-
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!message.trim()) return;
+    if (!message.trim() || !roomId) return;
 
     try {
-      await sendMessage.mutateAsync(message.trim());
+      await sendMessage.mutateAsync({
+        chatRoomId: roomId,
+        content: message.trim()
+      });
       setMessage("");
-      broadcastTyping(false);
-      if (typingTimeoutRef.current) {
-        clearTimeout(typingTimeoutRef.current);
-      }
     } catch (error) {
       console.error("Failed to send message:", error);
     }
   };
 
-  const conversationName = "Conversation";
+  const conversationName = conversation.name || "Conversation";
 
   return (
     <motion.div 
@@ -417,6 +403,7 @@ function ConversationView({ conversationId }: { conversationId: string }) {
       {/* Chat Header */}
       <div className="p-6 border-b flex items-center gap-4 bg-card" data-testid="header-conversation">
         <Avatar className="h-12 w-12">
+          <AvatarImage src={conversation.avatar || undefined} />
           <AvatarFallback className="text-lg font-semibold">
             {conversationName.charAt(0)?.toUpperCase()}
           </AvatarFallback>
@@ -425,7 +412,9 @@ function ConversationView({ conversationId }: { conversationId: string }) {
           <h3 className="text-xl font-serif font-bold" data-testid="text-conversation-header-name">
             {conversationName}
           </h3>
-          <p className="text-sm text-muted-foreground">Active now</p>
+          <p className="text-sm text-muted-foreground">
+            {conversation.type === "group" ? "Group chat" : "Direct message"}
+          </p>
         </div>
       </div>
 
@@ -448,10 +437,10 @@ function ConversationView({ conversationId }: { conversationId: string }) {
           </div>
         ) : messages && messages.length > 0 ? (
           <div className="space-y-6">
-            {messages.map((msg, index) => {
-              const isOwn = String(msg.sender_id) === String(user?.id);
-              const senderName = (msg as any).profiles?.username || "User";
-              const senderAvatar = (msg as any).profiles?.avatar_url;
+            {messages.map((msg: ChatMessage, index: number) => {
+              const isOwn = msg.isOwn || msg.senderId === user?.id;
+              const senderName = msg.senderName || "User";
+              const senderAvatar = msg.senderImage;
               
               return (
                 <motion.div
@@ -478,13 +467,33 @@ function ConversationView({ conversationId }: { conversationId: string }) {
                       }`}
                       data-testid={`bubble-${msg.id}`}
                     >
-                      <p className="text-sm leading-relaxed">{msg.content}</p>
+                      <p className="text-sm leading-relaxed">{msg.message}</p>
+                      {msg.mediaUrl && (
+                        <div className="mt-2">
+                          {msg.mediaType?.startsWith("image") ? (
+                            <img 
+                              src={msg.mediaUrl} 
+                              alt="Shared media" 
+                              className="rounded-lg max-w-full max-h-48 object-cover"
+                            />
+                          ) : (
+                            <a 
+                              href={msg.mediaUrl} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="text-xs underline"
+                            >
+                              View attachment
+                            </a>
+                          )}
+                        </div>
+                      )}
                     </motion.div>
                     <p 
                       className="text-xs text-muted-foreground px-2" 
                       data-testid={`timestamp-${msg.id}`}
                     >
-                      {safeDateDistance(msg.created_at, {
+                      {safeDateDistance(msg.createdAt, {
                         addSuffix: true,
                       })}
                     </p>
@@ -492,29 +501,6 @@ function ConversationView({ conversationId }: { conversationId: string }) {
                 </motion.div>
               );
             })}
-            {typingUsers.length > 0 && (
-              <motion.div 
-                className="flex gap-4" 
-                data-testid="typing-indicator"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-              >
-                <Avatar className="h-10 w-10 flex-shrink-0">
-                  <AvatarFallback className="text-sm font-semibold">
-                    {typingUsers[0].username.charAt(0)?.toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex flex-col gap-1">
-                  <div className="max-w-md rounded-2xl p-4 bg-muted">
-                    <p className="text-sm text-muted-foreground italic">
-                      {typingUsers.length === 1 
-                        ? `${typingUsers[0].username} is typing...`
-                        : `${typingUsers.length} people are typing...`}
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
-            )}
             <div ref={messagesEndRef} />
           </div>
         ) : (
