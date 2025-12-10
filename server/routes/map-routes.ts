@@ -111,8 +111,8 @@ router.get("/markers", async (req: Request, res: Response) => {
         .from(groups)
         .where(and(
           isNotNull(groups.latitude),
-          isNotNull(groups.longitude),,
-                    eq(groups.type, 'city'),
+          isNotNull(groups.longitude),
+          eq(groups.type, 'city'),
           city ? eq(groups.city, city as string) : sql`1=1`,
           country ? eq(groups.country, country as string) : sql`1=1`
         ))
