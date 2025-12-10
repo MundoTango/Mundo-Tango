@@ -32,6 +32,7 @@ import ProfileTabMemories from "@/components/profile/ProfileTabMemories";
 import ProfileTabPro from "@/components/profile/ProfileTabPro";
 import DashboardCustomerToggle from "@/components/profile/DashboardCustomerToggle";
 import { PhotoUploadDialog } from "@/components/PhotoUploadDialog";
+import { FriendshipQuestionnaire } from "@/components/friendship/FriendshipQuestionnaire";
 
 function MessageDialogWithNavigation({ 
   open, 
@@ -130,6 +131,7 @@ export default function ProfilePage() {
   const [profilePhotoDialogOpen, setProfilePhotoDialogOpen] = useState(false);
   const [coverPhotoDialogOpen, setCoverPhotoDialogOpen] = useState(false);
   const [messageDialogOpen, setMessageDialogOpen] = useState(false);
+  const [friendRequestDialogOpen, setFriendRequestDialogOpen] = useState(false);
 
   // Upload profile photo mutation (send compressed base64)
   const uploadPhotoMutation = useMutation({
@@ -343,12 +345,13 @@ export default function ProfilePage() {
     (r: any) => r.receiverId === user?.id && r.senderId === currentUser?.id && r.status === 'pending'
   );
 
-  // Send friend request mutation
+  // Send friend request mutation with questionnaire data
   const sendFriendRequestMutation = useMutation({
-    mutationFn: async () => {
-      return await apiRequest('POST', `/api/friends/request/${user?.id}`);
+    mutationFn: async (questionnaireData?: { whenWeMet?: Date; whereWeMet: string; ourStory: string; privateNote?: string }) => {
+      return await apiRequest('POST', `/api/friends/request/${user?.id}`, questionnaireData);
     },
     onSuccess: async () => {
+      setFriendRequestDialogOpen(false);
       await queryClient.invalidateQueries({ queryKey: ['/api/friends/requests'] });
       await queryClient.refetchQueries({ queryKey: ['/api/friends/requests'] });
       toast({
@@ -736,6 +739,14 @@ export default function ProfilePage() {
         recipientName={user.name}
         recipientId={String(user.id)}
       />
+      {/* Friend Request Questionnaire Dialog */}
+      <FriendshipQuestionnaire
+        open={friendRequestDialogOpen}
+        onOpenChange={setFriendRequestDialogOpen}
+        friendName={user.name}
+        onSubmit={(data) => sendFriendRequestMutation.mutate(data)}
+        isLoading={sendFriendRequestMutation.isPending}
+      />
       {/* Tab Navigation */}
       <ProfileTabsNav
         user={user}
@@ -772,12 +783,11 @@ export default function ProfilePage() {
               <Button 
                 size="sm"
                 className="gap-2"
-                onClick={() => sendFriendRequestMutation.mutate()}
-                disabled={sendFriendRequestMutation.isPending}
+                onClick={() => setFriendRequestDialogOpen(true)}
                 data-testid={`button-add-friend-${user.id}`}
               >
                 <UserPlus className="h-4 w-4" />
-                {sendFriendRequestMutation.isPending ? 'Sending...' : 'Add Friend'}
+                Add Friend
               </Button>
             )}
             <Button 
