@@ -39,7 +39,7 @@ export class PredictiveContextService {
     try {
       // Check if pattern exists
       const [existing] = await executeRawQuery<any>(
-        `SELECT id, transition_count, avg_time_on_page_ms FROM user_patterns
+        `SELECT id, transition_count, avg_time_on_page FROM user_patterns
          WHERE user_id = $1 AND from_page = $2 AND to_page = $3`,
         [userId, fromPage, toPage]
       );
@@ -48,13 +48,13 @@ export class PredictiveContextService {
         // Update existing pattern
         const newCount = existing.transition_count + 1;
         const newAvgTime = Math.round(
-          (existing.avg_time_on_page_ms * existing.transition_count + timeOnPage) / newCount
+          (existing.avg_time_on_page * existing.transition_count + timeOnPage) / newCount
         );
 
         await executeRawQuery(
           `UPDATE user_patterns SET
             transition_count = $1,
-            avg_time_on_page_ms = $2,
+            avg_time_on_page = $2,
             last_transition_at = NOW()
           WHERE id = $3`,
           [newCount, newAvgTime, existing.id]
@@ -63,7 +63,7 @@ export class PredictiveContextService {
         // Create new pattern
         await executeRawQuery(
           `INSERT INTO user_patterns (
-            user_id, from_page, to_page, transition_count, avg_time_on_page_ms,
+            user_id, from_page, to_page, transition_count, avg_time_on_page,
             last_transition_at, created_at
           ) VALUES ($1, $2, $3, 1, $4, NOW(), NOW())`,
           [userId, fromPage, toPage, timeOnPage]
@@ -81,7 +81,7 @@ export class PredictiveContextService {
     try {
       // Get all transitions from current page for this user
       const patterns = await executeRawQuery<any>(
-        `SELECT to_page, transition_count, avg_time_on_page_ms
+        `SELECT to_page, transition_count, avg_time_on_page
          FROM user_patterns
          WHERE user_id = $1 AND from_page = $2
          ORDER BY transition_count DESC
@@ -334,7 +334,7 @@ export class PredictiveContextService {
   static async getUserPatternsSummary(userId: number): Promise<UserPattern[]> {
     try {
       const results = await executeRawQuery<any>(
-        `SELECT user_id, from_page, to_page, transition_count, avg_time_on_page_ms
+        `SELECT user_id, from_page, to_page, transition_count, avg_time_on_page
          FROM user_patterns
          WHERE user_id = $1
          ORDER BY transition_count DESC
@@ -347,7 +347,7 @@ export class PredictiveContextService {
         fromPage: r.from_page,
         toPage: r.to_page,
         transitionCount: r.transition_count,
-        avgTimeOnPage: r.avg_time_on_page_ms,
+        avgTimeOnPage: r.avg_time_on_page,
       }));
     } catch (error) {
       return [];
