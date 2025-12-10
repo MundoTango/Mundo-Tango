@@ -488,21 +488,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Public stats endpoint for landing page (no auth required)
-  // Displays real data only - no fake numbers. Stats hidden if below threshold.
-  const DISPLAY_THRESHOLD = 10;
+  // Displays real data - lower threshold for early stage platform
+  const DISPLAY_THRESHOLD = 1;
   
   app.get("/api/stats/public", async (req: Request, res: Response) => {
     try {
       const { db } = await import("./db");
       const { users, events } = await import("@shared/schema");
-      const { count, sql, eq, and, gte } = await import("drizzle-orm");
+      const { count, sql, eq, gte } = await import("drizzle-orm");
       
-      // Get active users count with role breakdowns
+      // Get active users count with role breakdowns (case-insensitive role matching)
       const usersResult = await db.select({ 
         total: count(),
-        teachers: sql<number>`COUNT(CASE WHEN 'teacher' = ANY(tango_roles) THEN 1 END)`,
-        organizers: sql<number>`COUNT(CASE WHEN 'organizer' = ANY(tango_roles) THEN 1 END)`,
-      }).from(users).where(and(eq(users.isActive, true), eq(users.suspended, false)));
+        teachers: sql<number>`COUNT(CASE WHEN 'Teacher' = ANY(tango_roles) OR 'teacher' = ANY(tango_roles) THEN 1 END)`,
+        organizers: sql<number>`COUNT(CASE WHEN 'Organizer' = ANY(tango_roles) OR 'organizer' = ANY(tango_roles) THEN 1 END)`,
+      }).from(users).where(eq(users.isActive, true));
       
       const totalUsers = usersResult[0]?.total || 0;
       const teacherCount = usersResult[0]?.teachers || 0;
