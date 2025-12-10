@@ -1,0 +1,74 @@
+MB.MD IMPLEMENTATION PLAN - Event Scraping & City Matching
+
+I've created CityMatcherService.ts on GitHub (commit 848d61e). Now implement these remaining fixes:
+
+1. ADD IMPORTS to server/agents/scraping/masterOrchestrator.ts:
+```
+import { cityMatcherService } from '../../services/CityMatcherService';
+import { geocodingService } from '../../services/GeocodingService';
+import { groups } from '@shared/schema';
+```
+
+2. REPLACE autoCreateCities() function (line 170-173) with this complete implementation:
+```typescript
+private async autoCreateCities(): Promise<void> {
+  console.log('[Agent #115] Processing scraped events for city matching...');
+  
+  // Get all scraped events that don't have a group assignment yet
+  const unmatchedEvents = await db.query.scrapedEvents.findMany({
+    where: sql`${scrapedEvents.groupId} IS NULL`,
+    columns: {
+      id: true,
+      location: true,
+      city: true,
+    }
+  });
+  
+  console.log(`[Agent #115] Found ${unmatchedEvents.length} events without city groups`);
+  
+  let matched = 0;
+  let newCitiesNeeded: Set<string> = new Set();
+  
+  for (const event of unmatchedEvents) {
+    const locationString = event.location || event.city;
+    if (!locationString) continue;
+    
+    // Try to match to existing city group
+    const groupId = await cityMatcherService.matchEventLocation(locationString);
+    
+    if (groupId) {
+      // Update event with matched group
+      await db.update(scrapedEvents)
+        .set({ groupId })
+        .where(eq(scrapedEvents.id, event.id));
+      matched++;
+    } else {
+      // Parse and track genuinely new cities
+      const parsed = cityMatcherService.parseLocation(locationString);
+      if (parsed.city) {
+        newCitiesNeeded.add(parsed.city);
+      }
+    }
+  }
+  
+  console.log(`[Agent #115] ✅ Matched ${matched} events to existing cities`);
+  
+  if (newCitiesNeeded.size > 0) {
+    console.log(`[Agent #115] 🆕 Detected ${newCitiesNeeded.size} genuinely new cities:`);
+    newCitiesNeeded.forEach(city => console.log(`  - ${city}`));
+    console.log('[Agent #115] ⚠️  New cities require manual admin approval before creating groups');
+  }
+}
+```
+
+3. FIX EVENT DISPLAY QUERY in server/routes/group-routes.ts:
+Find the query that fetches events for a group and remove date filtering that's hiding past events. The query should show ALL events linked to group_id, not just future ones.
+
+4. PULL from GitHub to Replit:
+```bash
+git pull origin main
+```
+
+5. VERIFY: Check that /groups/89 (Buenos Aires) now shows the 262 events that exist in database.
+
+EXECUTE ALL STEPS and report results.

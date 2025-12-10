@@ -1710,6 +1710,34 @@ router.get("/channels/whatsapp/webhook-status", authenticateToken, async (req: A
 // ============================================================================
 
 /**
+ * GET /api/messages/unread-count
+ * Get total count of unread messages for the current user
+ * Used for notification badge in top navigation bar
+ */
+router.get("/unread-count", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.userId!;
+
+    const result = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(directMessages)
+      .where(
+        and(
+          eq(directMessages.recipientId, userId),
+          eq(directMessages.isRead, false)
+        )
+      );
+
+    const unreadCount = Number(result[0]?.count) || 0;
+
+    res.json({ unreadCount });
+  } catch (error: any) {
+    console.error("[Messages] Get unread count error:", error);
+    res.status(500).json({ error: "Failed to get unread count", message: error.message });
+  }
+});
+
+/**
  * GET /api/messages/conversations
  * Get all conversations grouped by partner (for FB Messenger-style UI)
  * Returns list of conversation partners with last message preview
