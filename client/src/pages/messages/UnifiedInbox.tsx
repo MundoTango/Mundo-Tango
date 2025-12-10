@@ -313,6 +313,8 @@ export default function UnifiedInbox() {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [inputKey, setInputKey] = useState(0);
+  const [messageOffset, setMessageOffset] = useState(0);
+  const [hasMoreMessages, setHasMoreMessages] = useState(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -323,8 +325,13 @@ export default function UnifiedInbox() {
     refetchInterval: 10000,
   });
 
-  const { data: thread, isLoading: threadLoading } = useQuery<ConversationThread>({
-    queryKey: ["/api/messages/conversations", selectedPartnerId],
+  interface ThreadResponse extends ConversationThread {
+    hasMore?: boolean;
+    totalCount?: number;
+  }
+
+  const { data: thread, isLoading: threadLoading } = useQuery<ThreadResponse>({
+    queryKey: ["/api/messages/conversations", selectedPartnerId, messageOffset],
     enabled: !!selectedPartnerId,
   });
 
@@ -371,6 +378,12 @@ export default function UnifiedInbox() {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [thread?.messages]);
+
+  // Reset pagination when partner changes
+  useEffect(() => {
+    setMessageOffset(0);
+    setHasMoreMessages(true);
+  }, [selectedPartnerId]);
 
   // When conversation is opened, the backend marks messages as read
   // Invalidate unread count to update the top nav badge
@@ -747,6 +760,18 @@ export default function UnifiedInbox() {
                 </motion.div>
               ) : (
                 <div className="space-y-1 py-2">
+                  {thread?.hasMore && (
+                    <div className="flex justify-center py-3">
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => setMessageOffset(prev => prev + 30)}
+                        data-testid="button-load-more-messages"
+                      >
+                        Load more messages
+                      </Button>
+                    </div>
+                  )}
                   {thread.messages.map((msg, index) => {
                     const showAvatar = !msg.isMine && (index === 0 || thread.messages[index - 1]?.isMine);
                     const isLastInGroup = index === thread.messages.length - 1 || thread.messages[index + 1]?.isMine !== msg.isMine;

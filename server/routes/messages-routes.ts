@@ -1838,12 +1838,14 @@ router.get("/conversations", authenticateToken, async (req: AuthRequest, res: Re
 
 /**
  * GET /api/messages/conversations/:partnerId
- * Get full message thread with a specific partner
+ * Get full message thread with a specific partner (supports pagination)
  */
 router.get("/conversations/:partnerId", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.userId!;
     const partnerId = parseInt(req.params.partnerId);
+    const limit = parseInt(req.query.limit as string) || 30;
+    const offset = parseInt(req.query.offset as string) || 0;
 
     if (isNaN(partnerId)) {
       return res.status(400).json({ error: "Invalid partner ID" });
@@ -1864,7 +1866,7 @@ router.get("/conversations/:partnerId", authenticateToken, async (req: AuthReque
       return res.status(404).json({ error: "User not found" });
     }
 
-    // Get all messages between user and partner
+    // Get messages between user and partner with pagination
     const messages = await db
       .select({
         id: directMessages.id,
@@ -1887,7 +1889,13 @@ router.get("/conversations/:partnerId", authenticateToken, async (req: AuthReque
           )
         )
       )
-      .orderBy(directMessages.createdAt); // Oldest first for chat view
+      .orderBy(directMessages.createdAt)
+      .limit(limit + 1)
+      .offset(offset);
+
+    // Check if there are more messages
+    const hasMore = messages.length > limit;
+    const displayMessages = hasMore ? messages.slice(0, -1) : messages;
 
     // Mark unread messages from partner as read
     await db
@@ -1946,7 +1954,9 @@ router.get("/conversations/:partnerId", authenticateToken, async (req: AuthReque
         username: partner.username,
         profileImage: partner.profileImage,
       },
-      messages: formattedMessages,
+      messages: formattedMessages.slice(0, limit),
+      hasMore,
+      totalCount: messages.length,
     });
   } catch (error: any) {
     console.error("[Messages] Get conversation thread error:", error);
