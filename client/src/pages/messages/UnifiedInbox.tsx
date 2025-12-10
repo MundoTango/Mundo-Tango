@@ -764,12 +764,14 @@ export default function UnifiedInbox() {
                         {!msg.isMine && (
                           <div className="w-8 flex-shrink-0">
                             {showAvatar && (
-                              <Avatar className="h-8 w-8">
-                                <AvatarImage src={thread.partner.profileImage || undefined} alt={thread.partner.name} />
-                                <AvatarFallback className="text-xs bg-gradient-to-br from-primary/60 to-primary text-primary-foreground">
-                                  {getInitials(thread.partner.name)}
-                                </AvatarFallback>
-                              </Avatar>
+                              <Link href={`/profile/${thread.partner.id}`}>
+                                <Avatar className="h-8 w-8 cursor-pointer hover:ring-2 hover:ring-primary transition-all">
+                                  <AvatarImage src={thread.partner.profileImage || undefined} alt={thread.partner.name} />
+                                  <AvatarFallback className="text-xs bg-gradient-to-br from-primary/60 to-primary text-primary-foreground">
+                                    {getInitials(thread.partner.name)}
+                                  </AvatarFallback>
+                                </Avatar>
+                              </Link>
                             )}
                           </div>
                         )}
