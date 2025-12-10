@@ -220,11 +220,14 @@ import {
   type InsertPreviewDeployment,
 } from "@shared/platform-schema";
 
-if (!process.env.DATABASE_URL) {
-  throw new Error("DATABASE_URL must be set");
+// Use Supabase database URL if available, otherwise fall back to DATABASE_URL
+const databaseUrl = process.env.SUPABASE_DATABASE_URL || process.env.DATABASE_URL;
+if (!databaseUrl) {
+  throw new Error("SUPABASE_DATABASE_URL or DATABASE_URL must be set");
 }
 
-const sqlClient = neon(process.env.DATABASE_URL);
+console.log(`[Database] Connecting to ${process.env.SUPABASE_DATABASE_URL ? 'Supabase' : 'Neon'} database`);
+const sqlClient = neon(databaseUrl);
 // MB.MD FIX (Nov 19, 2025): Pass schema to enable db.query API for mrBlueConversations
 const db = drizzle(sqlClient, { schema: {
   users, refreshTokens, emailVerificationTokens, passwordResetTokens, twoFactorSecrets,

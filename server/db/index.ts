@@ -38,7 +38,8 @@ export function getDbWithUser(userId: number) {
     throw new Error('getDbWithUser requires a valid user ID');
   }
 
-  const sql = neon(process.env.DATABASE_URL!);
+  const dbUrl = process.env.SUPABASE_DATABASE_URL || process.env.DATABASE_URL!;
+  const sql = neon(dbUrl);
   const db = drizzle(sql, { schema });
 
   return {
