@@ -15,9 +15,8 @@ import {
   Phone, 
   Video, 
   Info,
-  Image as ImageIcon,
+  Camera,
   Smile,
-  Paperclip,
   MoreHorizontal,
   Check,
   CheckCheck,
@@ -34,7 +33,6 @@ import {
   Phone as WhatsAppIcon,
   Settings2,
   X,
-  Upload,
   Loader2
 } from "lucide-react";
 import { SiFacebook, SiInstagram, SiWhatsapp, SiGmail } from "react-icons/si";
@@ -766,42 +764,40 @@ export default function UnifiedInbox() {
             {/* Message Input - Enhanced */}
             <div className="px-4 py-3 border-t bg-gradient-to-r from-muted/20 via-background to-muted/20">
               <div className="flex items-center gap-2">
-                <div className="flex items-center gap-1">
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button variant="ghost" size="icon" className="h-9 w-9 text-primary hover:bg-primary/10" data-testid="button-attach">
-                        <Paperclip className="h-5 w-5" />
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <label htmlFor="media-upload">
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-9 w-9 text-primary hover:bg-primary/10" 
+                        data-testid="button-attach-media"
+                        asChild
+                      >
+                        <Camera className="h-5 w-5" />
                       </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>Attach File</TooltipContent>
-                  </Tooltip>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button variant="ghost" size="icon" className="h-9 w-9 text-primary hover:bg-primary/10" data-testid="button-image">
-                        <ImageIcon className="h-5 w-5" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>Send Image</TooltipContent>
-                  </Tooltip>
-                </div>
+                    </label>
+                  </TooltipTrigger>
+                  <TooltipContent>Attach Media or File</TooltipContent>
+                </Tooltip>
+                <input
+                  id="media-upload"
+                  type="file"
+                  multiple
+                  accept="image/*,video/*,.pdf,.doc,.docx,.xls,.xlsx,.txt"
+                  className="hidden"
+                  data-testid="input-media-upload"
+                />
                 
-                <div className="flex-1 relative">
+                <div className="flex-1">
                   <Input
                     placeholder="Type a message..."
                     value={messageText}
                     onChange={(e) => setMessageText(e.target.value)}
                     onKeyDown={handleKeyPress}
-                    className="pr-10 rounded-full bg-muted/50 border-0 focus-visible:ring-1 focus-visible:ring-primary"
+                    className="rounded-full bg-muted/50 border-0 focus-visible:ring-1 focus-visible:ring-primary"
                     data-testid="input-message"
                   />
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7"
-                    data-testid="button-emoji"
-                  >
-                    <Smile className="h-5 w-5 text-primary" />
-                  </Button>
                 </div>
                 
                 <Tooltip>
