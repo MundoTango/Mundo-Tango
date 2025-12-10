@@ -333,7 +333,7 @@ function AppSidebarComponent() {
               style={{
                 color:
                   item.color ||
-                  (isActive(item.url) ? "#40E0D0" : "currentColor"),
+                  (isActive(item.url) ? "#40E0D0" : "#9CA3AF"),
               }}
             />
           </div>
