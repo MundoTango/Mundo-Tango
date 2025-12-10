@@ -57,6 +57,15 @@ Mundo Tango is a production-ready social platform connecting the global tango co
 - WebSocket HMR warning (non-critical): wss://localhost:undefined - Replit infrastructure
 - ✅ i18next double initialization - RESOLVED via window-level initialization flag
 
+#### Z-Index Hierarchy (IMPORTANT - prevents UI element hiding)
+When adding floating/absolute UI elements, follow this z-index hierarchy:
+- z-30: Standard floating elements
+- z-40: Sticky navigation bars (ProfileTabsNav, etc.)
+- z-50: Action buttons that must appear above sticky navs (Friend/Message buttons on ProfilePage)
+- z-60+: Modals, dialogs, dropdowns
+
+**Root Cause Fix (Dec 10, 2025)**: Friend/Message buttons on ProfilePage were hidden behind sticky ProfileTabsNav. Buttons had z-30, nav had z-40. Fixed by bumping buttons to z-50 with explanatory comment.
+
 ## System Architecture
 
 ### UI/UX

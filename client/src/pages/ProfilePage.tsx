@@ -678,8 +678,9 @@ export default function ProfilePage() {
         </motion.div>
         
         {/* Friend Action Buttons - Top Right (Non-Own Profile Only) */}
+        {/* z-50 ensures buttons appear above sticky ProfileTabsNav (z-40) */}
         {!isOwnProfile && (
-          <div className="absolute top-8 right-8 z-30 flex gap-3">
+          <div className="absolute top-8 right-8 z-50 flex gap-3">
             {isFriend ? (
                 <Button 
                   variant="outline"
