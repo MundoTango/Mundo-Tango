@@ -176,6 +176,38 @@ VALUES
 ('https://www.tangoshoes.com', 'website', 'static', 'shoes', true);
 
 
+-- =====================================================================================
+-- PART 4: HOY MILONGA SOURCES (PRIORITY 1 - CRITICAL)
+-- Event calendar websites with hundreds of events per city
+-- =====================================================================================
+
+INSERT INTO "eventScrapingSources" (url, platform, "scraperType", city, country, active)
+VALUES
+-- 🇦🇷 Argentina
+('https://hoy-milonga.com/buenos-aires/es/milongas', 'website', 'hoy-milonga', 'Buenos Aires', 'Argentina', true),
+
+-- 🇧🇷 Brazil
+('https://hoy-milonga.com/sao-paulo/es/milongas', 'website', 'hoy-milonga', 'São Paulo', 'Brazil', true),
+
+-- 🇩🇪 Germany
+('https://hoy-milonga.com/berlin/en/milongas', 'website', 'hoy-milonga', 'Berlin', 'Germany', true),
+
+-- 🇬🇷 Greece
+('https://hoy-milonga.com/athens/en/milongas', 'website', 'hoy-milonga', 'Athens', 'Greece', true),
+
+-- 🇹🇷 Turkey
+('https://hoy-milonga.com/istanbul/en/milongas', 'website', 'hoy-milonga', 'Istanbul', 'Turkey', true),
+
+-- 🇬🇧 United Kingdom
+('https://hoy-milonga.com/london/en/milongas', 'website', 'hoy-milonga', 'London', 'United Kingdom', true),
+
+-- 🇺🇸 United States
+('https://hoy-milonga.com/miami/en/milongas', 'website', 'hoy-milonga', 'Miami', 'United States', true),
+
+-- 🇺🇾 Uruguay
+('https://hoy-milonga.com/montevideo/es/milongas', 'website', 'hoy-milonga', 'Montevideo', 'Uruguay', true);
+
+
 -- ============================================================================
 -- END OF SEED FILE
 -- ============================================================================
