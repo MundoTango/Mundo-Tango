@@ -112,6 +112,32 @@ Resolved systematic UUID/integer type mismatches in the database:
 - Events API ✅
 - Users API ✅
 
+### Database Migration to Supabase (Dec 10, 2025)
+Successfully migrated from Neon to Supabase PostgreSQL:
+
+**Database Connection:**
+- Primary: Supabase PostgreSQL (`SUPABASE_DATABASE_URL`)
+- Fallback: Neon (disabled endpoint)
+- Connection logic: `shared/db.ts` prioritizes Supabase when available
+
+**Data Seeded:**
+- 5 test users with tango roles (admin, teacher, DJ, organizer, dancer)
+- 198 tango events across 10 cities (milongas, practicas, festivals, workshops)
+- 143 community scraping sources across 46 countries
+
+**Seed Scripts:**
+- `server/scripts/seed-users-simple.ts` - Creates test users with tango_roles
+- `server/scripts/seedTangoData.ts` - Creates 100 realistic tango events
+- `server/scripts/populateTangoCommunities.ts` - Populates 143 community sources
+
+**Public Stats API (`/api/stats/public`):**
+- dancers: 5 (active users)
+- teachers: 3 (users with Teacher role)
+- organizers: 2 (users with Organizer role)
+- events: 198 (future-dated events)
+- cities: 4 (unique user cities)
+- countries: 4 (unique user countries)
+
 ## External Dependencies
 - **Infrastructure:** PostgreSQL, Redis, Cloudinary, OpenStreetMap, Neon (PostgreSQL)
 - **Authentication:** Google OAuth, Facebook OAuth, JWT

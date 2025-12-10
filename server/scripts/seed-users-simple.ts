@@ -15,6 +15,7 @@ async function seedUsers() {
       bio: 'Platform administrator',
       city: 'Buenos Aires',
       country: 'Argentina',
+      tangoRoles: ['Organizer', 'Teacher'],
     },
     {
       email: 'maria@tango.com',
@@ -25,6 +26,7 @@ async function seedUsers() {
       bio: 'Professional tango teacher from Buenos Aires. 20+ years experience.',
       city: 'Buenos Aires',
       country: 'Argentina',
+      tangoRoles: ['Teacher', 'Performer'],
     },
     {
       email: 'carlos@tango.com',
@@ -35,6 +37,7 @@ async function seedUsers() {
       bio: 'Tango DJ specializing in golden age orchestras.',
       city: 'Madrid',
       country: 'Spain',
+      tangoRoles: ['DJ', 'Dancer'],
     },
     {
       email: 'sofia@tango.com',
@@ -45,6 +48,7 @@ async function seedUsers() {
       bio: 'Event organizer and milonga host.',
       city: 'New York',
       country: 'United States',
+      tangoRoles: ['Organizer', 'Dancer'],
     },
     {
       email: 'pablo@tango.com',
@@ -55,6 +59,7 @@ async function seedUsers() {
       bio: 'Passionate tango dancer and teacher.',
       city: 'Berlin',
       country: 'Germany',
+      tangoRoles: ['Dancer', 'Teacher'],
     },
   ];
 
@@ -73,6 +78,7 @@ async function seedUsers() {
         bio: user.bio,
         city: user.city,
         country: user.country,
+        tangoRoles: user.tangoRoles,
         role: user.email.includes('admin') ? 'admin' : 'user',
         isActive: true,
         isVerified: true,

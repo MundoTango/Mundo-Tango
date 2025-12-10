@@ -500,8 +500,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Get active users count with role breakdowns (case-insensitive role matching)
       const usersResult = await db.select({ 
         total: count(),
-        teachers: sql<number>`COUNT(CASE WHEN 'Teacher' = ANY(tango_roles) OR 'teacher' = ANY(tango_roles) THEN 1 END)`,
-        organizers: sql<number>`COUNT(CASE WHEN 'Organizer' = ANY(tango_roles) OR 'organizer' = ANY(tango_roles) THEN 1 END)`,
+        teachers: sql<number>`CAST(COUNT(CASE WHEN 'Teacher' = ANY(tango_roles) OR 'teacher' = ANY(tango_roles) THEN 1 END) AS INTEGER)`,
+        organizers: sql<number>`CAST(COUNT(CASE WHEN 'Organizer' = ANY(tango_roles) OR 'organizer' = ANY(tango_roles) THEN 1 END) AS INTEGER)`,
       }).from(users).where(eq(users.isActive, true));
       
       const totalUsers = usersResult[0]?.total || 0;
@@ -514,19 +514,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
         .where(gte(events.startDate, new Date()));
       const totalEvents = eventsResult[0]?.count || 0;
       
-      // Get unique cities count
+      // Get unique cities count (cast to integer)
       const citiesResult = await db
-        .select({ count: sql<number>`COUNT(DISTINCT city)` })
+        .select({ count: sql<number>`CAST(COUNT(DISTINCT city) AS INTEGER)` })
         .from(users)
         .where(sql`city IS NOT NULL AND city != '' AND is_active = true`);
-      const totalCities = citiesResult[0]?.count || 0;
+      const totalCities = Number(citiesResult[0]?.count) || 0;
       
-      // Get unique countries count
+      // Get unique countries count (cast to integer)
       const countriesResult = await db
-        .select({ count: sql<number>`COUNT(DISTINCT country)` })
+        .select({ count: sql<number>`CAST(COUNT(DISTINCT country) AS INTEGER)` })
         .from(users)
         .where(sql`country IS NOT NULL AND country != '' AND is_active = true`);
-      const totalCountries = countriesResult[0]?.count || 0;
+      const totalCountries = Number(countriesResult[0]?.count) || 0;
       
       // Platform stats (always shown - these are founder facts)
       const platformStats = {
