@@ -43,6 +43,7 @@ export class ScrapingOrchestrator {
       const facebookSources = sources.filter(s => s.platform === 'facebook');
       const instagramSources = sources.filter(s => s.platform === 'instagram');
       const websiteSources = sources.filter(s => s.platform === 'website');
+          const hoyMilongaSources = sources.filter(s => s.scraperType === 'hoy-milonga');
       const eventPlatformSources = sources.filter(s => ['eventbrite', 'meetup'].includes(s.platform || ''));
       const rssSources = sources.filter(s => s.platform === 'rss' || s.rssUrl);
 
@@ -52,7 +53,8 @@ export class ScrapingOrchestrator {
         this.scrapeSourceBatch(instagramSources, 'agent-118'), // Social Scraper
         this.scrapeSourceBatch(websiteSources, 'agent-116'), // Static Scraper
         this.scrapeSourceBatch(eventPlatformSources, 'agent-117'), // JS Scraper
-        this.scrapeSourceBatch(rssSources, 'rss-service') // RSS Feed Service
+        this.scrapeSourceBatch(rssSources, 'rss-service') // RSS Feed Service,
+        this.scrapeHoyMilongaSources(hoyMilongaSources) // Hoy Milonga Scraper
       ]);
 
       // Step 4: Collect statistics
@@ -153,6 +155,77 @@ export class ScrapingOrchestrator {
     const { rssFeedService } = await import('../../services/scraping/RSSFeedService');
     console.log(`[Agent #115 → RSS] Scraping RSS feed: ${source.name}`);
     return await rssFeedService.scrapeRSSSource(source);
+  }
+
+  /**
+   * Scrape Hoy Milonga sources (dedicated scraper for hoy-milonga.com)
+   */
+  private async scrapeHoyMilongaSources(sources: any[]): Promise<number> {
+    if (sources.length === 0) return 0;
+    
+    console.log(`[Agent #115] Dispatching ${sources.length} Hoy Milonga sources...`);
+    
+    const { hoyMilongaScraper } = await import('./HoyMilongaScraper');
+    let totalEvents = 0;
+    
+    // Group sources by city to avoid duplicate scraping
+    const citiesProcessed = new Set<string>();
+    
+    for (const source of sources) {
+      try {
+        const city = source.city;
+        
+        // Skip if we've already processed this city
+        if (citiesProcessed.has(city)) {
+          console.log(`[Agent #115] Skipping ${city} - already processed`);
+          continue;
+        }
+        
+        console.log(`[Agent #115 → HoyMilonga] Scraping ${city}...`);
+        
+        // HoyMilongaScraper handles city-specific scraping
+        const cityCode = this.getCityCode(city);
+        if (!cityCode) {
+          console.warn(`[Agent #115] No city code mapping for ${city}`);
+          continue;
+        }
+        
+        const events = await hoyMilongaScraper.scrapeCity(city, cityCode, source.id);
+        totalEvents += events;
+        citiesProcessed.add(city);
+        
+        // Update last scraped timestamp
+        await db.update(eventScrapingSources)
+          .set({ 
+            lastScrapedAt: new Date(),
+            totalEventsScraped: (source.totalEventsScraped || 0) + events
+          })
+          .where(eq(eventScrapingSources.id, source.id));
+          
+      } catch (error) {
+        console.error(`[Agent #115] Failed to scrape Hoy Milonga ${source.city}:`, error);
+      }
+    }
+    
+    console.log(`[Agent #115] Hoy Milonga scraping complete: ${totalEvents} events`);
+    return totalEvents;
+  }
+  
+  /**
+   * Get city code for Hoy Milonga URL
+   */
+  private getCityCode(cityName: string): string | null {
+    const cityCodeMap: Record<string, string> = {
+      'Buenos Aires': 'buenos-aires',
+      'São Paulo': 'sao-paulo',
+      'Berlin': 'berlin',
+      'Athens': 'athens',
+      'Istanbul': 'istanbul',
+      'London': 'london',
+      'Miami': 'miami',
+      'Montevideo': 'montevideo'
+    };
+    return cityCodeMap[cityName] || null;
   }
 
   /**
