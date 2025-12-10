@@ -78,6 +78,19 @@ When adding floating/absolute UI elements, follow this z-index hierarchy:
 - New GET `/api/friends/:friendId` endpoint properly returns friend details
 - **Status**: ✅ Fixed and tested - endpoint returning 200 with valid token
 
+#### AppSidebar "My Stuff" Disappearing Bug - RESOLVED (Dec 10, 2025)
+**Root Cause**: Race condition during auth loading
+- Sidebar rendered before `user` data finished loading from `/api/auth/me`
+- `myStuffItems` computed with empty `user?.tangoRoles` and `profile?.city`
+- Showed "Set your city in profile settings" even when data existed
+**Fix Applied**:
+- Added `isLoading` to destructured values from `useAuth()`
+- Show "Loading..." state while auth is initializing
+- Only show empty state after loading completes AND myStuffItems is truly empty
+- Also added `loadCurrentUser()` call in `updateProfile()` to sync user state after profile updates
+- Icon color fix: Changed inactive icons from `currentColor` to `#9CA3AF` for visibility
+- **Status**: ✅ Fixed - "My stuff" persists correctly during page loads
+
 ## System Architecture
 
 ### UI/UX

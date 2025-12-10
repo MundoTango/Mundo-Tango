@@ -261,7 +261,7 @@ const roleToProDiscoveryMap: Record<string, string> = {
 
 function AppSidebarComponent() {
   const [location] = useLocation();
-  const { user, profile, logout } = useAuth();
+  const { user, profile, logout, isLoading } = useAuth();
 
   const displayName = profile?.name || user?.email?.split("@")[0] || "User";
   const username = profile?.username || user?.email?.split("@")[0] || "user";
@@ -441,7 +441,11 @@ function AppSidebarComponent() {
             My Stuff
           </SidebarGroupLabel>
           <SidebarGroupContent>
-            {myStuffItems.length > 0 ? (
+            {isLoading ? (
+              <div className="px-2 py-3 text-xs text-muted-foreground/60 text-center">
+                Loading...
+              </div>
+            ) : myStuffItems.length > 0 ? (
               renderIconGrid(myStuffItems)
             ) : (
               <div className="px-2 py-3 text-xs text-muted-foreground/60 text-center">
