@@ -459,12 +459,18 @@ export default function UnifiedInbox() {
 
       setUploadProgress(80);
       
-      sendMessageMutation.mutate({
+      // Use mutateAsync to properly await the mutation
+      await sendMessageMutation.mutateAsync({
         to: selectedPartnerId.toString(),
         body: messageText.trim(),
         mediaUrl,
       });
-    } finally {
+      
+      setUploadProgress(100);
+      setIsUploading(false);
+    } catch (err) {
+      console.error('Send message error:', err);
+      setIsUploading(false);
       setUploadProgress(0);
     }
   };
