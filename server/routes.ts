@@ -6807,7 +6807,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       })
       .from(groups)
       .where(and(
-        eq(groups.type, 'City'),
+        eq(groups.type, 'city'),
         isNotNull(groups.city)
       ));
 
