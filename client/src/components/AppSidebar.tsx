@@ -75,22 +75,10 @@ const communityItems = [
     tooltip: "Explore the global tango community",
   },
   {
-    title: "City Hub",
-    url: "/city-hub",
-    icon: Map,
-    tooltip: "Explore cities, events, groups, and housing by location",
-  },
-  {
     title: "Events",
     url: "/events",
     icon: Calendar,
     tooltip: "Browse events - list, calendar, or map view",
-  },
-  {
-    title: "Groups",
-    url: "/groups",
-    icon: Users,
-    tooltip: "Browse and join groups",
   },
   {
     title: "Friends",
@@ -99,22 +87,10 @@ const communityItems = [
     tooltip: "Manage your friends",
   },
   {
-    title: "Recommendations",
-    url: "/recommendations",
-    icon: Sparkles,
-    tooltip: "Personalized recommendations",
-  },
-  {
     title: "Messages",
     url: "/messages",
     icon: MessageSquare,
     tooltip: "Your conversations",
-  },
-  {
-    title: "Leaderboard",
-    url: "/leaderboard",
-    icon: Trophy,
-    tooltip: "Top contributors",
   },
 ];
 
@@ -268,6 +244,9 @@ function AppSidebarComponent() {
   const avatarUrl = profile?.profileImage;
   const userCity = profile?.city || user?.city;
   const userTangoRoles = user?.tangoRoles || [];
+  
+  // Debug logging for My Stuff
+  console.log('[AppSidebar] isLoading:', isLoading, 'userCity:', userCity, 'userTangoRoles:', userTangoRoles, 'profile?.city:', profile?.city, 'user?.city:', user?.city);
 
   const myStuffItems = useMemo(() => {
     const items: Array<{
