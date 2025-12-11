@@ -315,7 +315,30 @@ export interface IStorage {
     lastInteraction: string | null;
   } | null>;
   getFriendshipSharedData(userId: number, friendId: number): Promise<{
-    sharedPosts: Array<{ id: number; content: string; createdAt: string; authorName: string }>;
+    sharedPosts: Array<{
+      id: number;
+      userId: number;
+      content: string;
+      imageUrl?: string | null;
+      videoUrl?: string | null;
+      videoThumbnail?: string | null;
+      visibility: string;
+      likes: number;
+      comments: number;
+      createdAt: string;
+      isSaved?: boolean;
+      currentReaction?: string | null;
+      reactions?: Record<string, number>;
+      tags?: string[] | null;
+      user?: {
+        id: number;
+        name: string;
+        username: string;
+        profileImage?: string | null;
+        friendshipStatus?: 'accepted' | 'pending' | 'none' | null;
+        tangoRoles?: string[] | null;
+      };
+    }>;
     sharedLikes: Array<{ postId: number; postTitle: string; likedAt: string }>;
     sharedTravel: Array<{ city: string; country: string; startDate: string; endDate: string | null }>;
     sharedComments: Array<{ id: number; postId: number; content: string; createdAt: string }>;
@@ -2600,7 +2623,30 @@ export class DbStorage implements IStorage {
   }
 
   async getFriendshipSharedData(userId: number, friendId: number): Promise<{
-    sharedPosts: Array<{ id: number; content: string; createdAt: string; authorName: string; imageUrl?: string }>;
+    sharedPosts: Array<{
+      id: number;
+      userId: number;
+      content: string;
+      imageUrl?: string | null;
+      videoUrl?: string | null;
+      videoThumbnail?: string | null;
+      visibility: string;
+      likes: number;
+      comments: number;
+      createdAt: string;
+      isSaved?: boolean;
+      currentReaction?: string | null;
+      reactions?: Record<string, number>;
+      tags?: string[] | null;
+      user?: {
+        id: number;
+        name: string;
+        username: string;
+        profileImage?: string | null;
+        friendshipStatus?: 'accepted' | 'pending' | 'none' | null;
+        tangoRoles?: string[] | null;
+      };
+    }>;
     sharedLikes: Array<{ postId: number; postTitle: string; likedAt: string }>;
     sharedTravel: Array<{ city: string; country: string; startDate: string; endDate: string | null }>;
     sharedComments: Array<{ id: number; postId: number; content: string; createdAt: string }>;
@@ -2614,14 +2660,37 @@ export class DbStorage implements IStorage {
       }
 
       // Initialize empty arrays for all data types
-      const sharedPosts: Array<{ id: number; content: string; createdAt: string; authorName: string }> = [];
+      const sharedPosts: Array<{
+        id: number;
+        userId: number;
+        content: string;
+        imageUrl?: string | null;
+        videoUrl?: string | null;
+        videoThumbnail?: string | null;
+        visibility: string;
+        likes: number;
+        comments: number;
+        createdAt: string;
+        isSaved?: boolean;
+        currentReaction?: string | null;
+        reactions?: Record<string, number>;
+        tags?: string[] | null;
+        user?: {
+          id: number;
+          name: string;
+          username: string;
+          profileImage?: string | null;
+          friendshipStatus?: 'accepted' | 'pending' | 'none' | null;
+          tangoRoles?: string[] | null;
+        };
+      }> = [];
       const sharedLikes: Array<{ postId: number; postTitle: string; likedAt: string }> = [];
       const sharedTravel: Array<{ city: string; country: string; startDate: string; endDate: string | null }> = [];
       const sharedComments: Array<{ id: number; postId: number; content: string; createdAt: string }> = [];
       const commonCities: Array<{ city: string; country: string; userStartDate: string; friendStartDate: string }> = [];
       const sharedEventsDetails: Array<{ id: number; title: string; date: string; location: string }> = [];
 
-      // Get posts by both users
+      // Get posts by both users with full data for PostItem component
       try {
         const userPosts = await db.select().from(posts).where(eq(posts.userId, userId)).limit(20);
         const friendPosts = await db.select().from(posts).where(eq(posts.userId, friendId)).limit(20);
@@ -2631,13 +2700,74 @@ export class DbStorage implements IStorage {
 
         for (const post of allPosts) {
           try {
-            const author = await db.select({ name: users.name }).from(users).where(eq(users.id, post.userId)).limit(1);
+            // Get author info
+            const author = await db.select({
+              id: users.id,
+              name: users.name,
+              username: users.username,
+              profileImage: users.profileImage,
+              tangoRoles: users.tangoRoles
+            }).from(users).where(eq(users.id, post.userId)).limit(1);
+
+            // Get like count
+            const likeCount = await db.select({ count: sql<number>`count(*)::int` })
+              .from(postLikes)
+              .where(eq(postLikes.postId, post.id));
+
+            // Get comment count
+            const commentCount = await db.select({ count: sql<number>`count(*)::int` })
+              .from(postComments)
+              .where(eq(postComments.postId, post.id));
+
+            // Check if current user saved this post
+            const savedCheck = await db.select()
+              .from(savedPosts)
+              .where(and(eq(savedPosts.postId, post.id), eq(savedPosts.userId, userId)))
+              .limit(1);
+
+            // Get current user's reaction
+            const userReaction = await db.select({ reactionType: postLikes.reactionType })
+              .from(postLikes)
+              .where(and(eq(postLikes.postId, post.id), eq(postLikes.userId, userId)))
+              .limit(1);
+
+            // Get reaction counts
+            const reactionCounts = await db.select({ 
+              reactionType: postLikes.reactionType, 
+              count: sql<number>`count(*)::int` 
+            })
+              .from(postLikes)
+              .where(eq(postLikes.postId, post.id))
+              .groupBy(postLikes.reactionType);
+
+            const reactions: Record<string, number> = {};
+            reactionCounts.forEach(r => {
+              if (r.reactionType) reactions[r.reactionType] = r.count;
+            });
+
             sharedPosts.push({
               id: post.id,
-              content: post.content?.substring(0, 200) || '',
+              userId: post.userId,
+              content: post.content || '',
+              imageUrl: post.imageUrl || null,
+              videoUrl: post.videoUrl || null,
+              videoThumbnail: post.videoThumbnail || null,
+              visibility: post.visibility || 'public',
+              likes: likeCount[0]?.count || 0,
+              comments: commentCount[0]?.count || 0,
               createdAt: post.createdAt?.toISOString() || new Date().toISOString(),
-              authorName: author[0]?.name || 'Unknown',
-              imageUrl: post.imageUrl || undefined
+              isSaved: savedCheck.length > 0,
+              currentReaction: userReaction[0]?.reactionType || null,
+              reactions,
+              tags: post.tags || null,
+              user: author[0] ? {
+                id: author[0].id,
+                name: author[0].name,
+                username: author[0].username,
+                profileImage: author[0].profileImage || null,
+                friendshipStatus: 'accepted' as const,
+                tangoRoles: author[0].tangoRoles || null
+              } : undefined
             });
           } catch (e) {
             console.error(`Error processing post ${post.id}:`, e);

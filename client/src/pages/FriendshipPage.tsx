@@ -20,6 +20,7 @@ import { motion } from "framer-motion";
 import { renderMentionPills } from "@/utils/renderMentionPills";
 import { PostCreator } from "@/components/universal/PostCreator";
 import { useToast } from "@/hooks/use-toast";
+import { PostItem, type PostItemData } from "@/components/feed/PostItem";
 import tangoHeroImage from "@assets/IMG_9144-Mejorado-NR_1762013255726.jpg";
 
 interface UserProfile {
@@ -39,7 +40,7 @@ interface UserProfile {
 }
 
 interface SharedData {
-  sharedPosts: Array<{ id: number; content: string; createdAt: string; authorName: string; imageUrl?: string }>;
+  sharedPosts: PostItemData[];
   sharedLikes: Array<{ postId: number; postTitle: string; likedAt: string }>;
   sharedTravel: Array<{ city: string; country: string; startDate: string; endDate: string | null }>;
   sharedComments: Array<{ id: number; postId: number; content: string; createdAt: string }>;
@@ -515,41 +516,9 @@ export default function FriendshipPage() {
                         Posts & Mentions
                       </h3>
                       {sharedData?.sharedPosts && sharedData.sharedPosts.length > 0 ? (
-                        <div className="space-y-4">
+                        <div className="space-y-4" data-testid="shared-posts-list">
                           {sharedData.sharedPosts.map((post) => (
-                            <Card key={post.id} className="hover-elevate cursor-pointer" data-testid={`shared-post-${post.id}`}>
-                              <Link href={`/feed?post=${post.id}`}>
-                                <CardContent className="p-4">
-                                  <div className="flex items-start gap-3">
-                                    <Avatar className="w-10 h-10">
-                                      <AvatarFallback className="bg-primary/10 text-primary text-sm font-medium">
-                                        {post.authorName?.split(' ').map(n => n[0]).join('') || 'U'}
-                                      </AvatarFallback>
-                                    </Avatar>
-                                    <div className="flex-1 min-w-0">
-                                      <div className="flex items-center gap-2 mb-1">
-                                        <p className="font-semibold text-sm">{post.authorName}</p>
-                                        <span className="text-xs text-muted-foreground">
-                                          {post.createdAt ? safeDateDistance(post.createdAt, { addSuffix: true }) : 'Recently'}
-                                        </span>
-                                      </div>
-                                      <div className="text-sm whitespace-pre-wrap">
-                                        {renderMentionPills(post.content || '')}
-                                      </div>
-                                      {post.imageUrl && (
-                                        <div className="mt-3 rounded-lg overflow-hidden">
-                                          <img 
-                                            src={post.imageUrl} 
-                                            alt="Post image" 
-                                            className="w-full h-auto max-h-64 object-cover"
-                                          />
-                                        </div>
-                                      )}
-                                    </div>
-                                  </div>
-                                </CardContent>
-                              </Link>
-                            </Card>
+                            <PostItem key={post.id} post={post} />
                           ))}
                         </div>
                       ) : (
