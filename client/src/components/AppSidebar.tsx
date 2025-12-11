@@ -75,10 +75,22 @@ const communityItems = [
     tooltip: "Explore the global tango community",
   },
   {
+    title: "City Hub",
+    url: "/city-hub",
+    icon: Map,
+    tooltip: "Explore cities, events, groups, and housing by location",
+  },
+  {
     title: "Events",
     url: "/events",
     icon: Calendar,
     tooltip: "Browse events - list, calendar, or map view",
+  },
+  {
+    title: "Groups",
+    url: "/groups",
+    icon: Users,
+    tooltip: "Browse and join groups",
   },
   {
     title: "Friends",
@@ -87,10 +99,22 @@ const communityItems = [
     tooltip: "Manage your friends",
   },
   {
+    title: "Recommendations",
+    url: "/recommendations",
+    icon: Sparkles,
+    tooltip: "Personalized recommendations",
+  },
+  {
     title: "Messages",
     url: "/messages",
     icon: MessageSquare,
     tooltip: "Your conversations",
+  },
+  {
+    title: "Leaderboard",
+    url: "/leaderboard",
+    icon: Trophy,
+    tooltip: "Top contributors",
   },
 ];
 
@@ -237,16 +261,13 @@ const roleToProDiscoveryMap: Record<string, string> = {
 
 function AppSidebarComponent() {
   const [location] = useLocation();
-  const { user, profile, logout, isLoading } = useAuth();
+  const { user, profile, logout } = useAuth();
 
   const displayName = profile?.name || user?.email?.split("@")[0] || "User";
   const username = profile?.username || user?.email?.split("@")[0] || "user";
   const avatarUrl = profile?.profileImage;
   const userCity = profile?.city || user?.city;
   const userTangoRoles = user?.tangoRoles || [];
-  
-  // Debug logging for My Stuff
-  console.log('[AppSidebar] isLoading:', isLoading, 'userCity:', userCity, 'userTangoRoles:', userTangoRoles, 'profile?.city:', profile?.city, 'user?.city:', user?.city);
 
   const myStuffItems = useMemo(() => {
     const items: Array<{
@@ -420,11 +441,7 @@ function AppSidebarComponent() {
             My Stuff
           </SidebarGroupLabel>
           <SidebarGroupContent>
-            {isLoading ? (
-              <div className="px-2 py-3 text-xs text-muted-foreground/60 text-center">
-                Loading...
-              </div>
-            ) : myStuffItems.length > 0 ? (
+            {myStuffItems.length > 0 ? (
               renderIconGrid(myStuffItems)
             ) : (
               <div className="px-2 py-3 text-xs text-muted-foreground/60 text-center">

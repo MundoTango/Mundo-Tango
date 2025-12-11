@@ -445,9 +445,6 @@ router.get("/me", authenticateToken, async (req: AuthRequest, res: Response) => 
       country: userWithoutPassword.country,
     };
 
-    // Debug: Log what we're returning for My Stuff
-    console.log('[Auth /me] Returning user data - city:', userResponse.city, 'tangoRoles:', userResponse.tangoRoles);
-
     res.json({ user: userResponse });
   } catch (error) {
     console.error("Get current user error:", error);
