@@ -213,13 +213,19 @@ export default function ProfilePage() {
   };
   
   // Read tab from URL query params (e.g., /profile?tab=memories)
+  // Also auto-open friend request review modal if ?reviewRequest=true
   useEffect(() => {
     const urlParams = new URLSearchParams(searchString);
     const tabParam = urlParams.get('tab');
     if (tabParam) {
       setActiveTab(tabParam);
     }
-  }, [searchString]);
+    
+    const reviewRequest = urlParams.get('reviewRequest');
+    if (reviewRequest === 'true' && hasIncomingRequest) {
+      setFriendRequestReviewOpen(true);
+    }
+  }, [searchString, hasIncomingRequest]);
   
   // Support both numeric ID and username - use username/ID from URL or current user's ID
   const profileIdentifier = params?.id || currentUser?.id?.toString();
@@ -258,7 +264,7 @@ export default function ProfilePage() {
   // Fetch friendship status with this specific user
   const isOtherProfile = !!(currentUser && user && currentUser.id !== user.id);
   
-  const { data: friendshipStatus, isLoading: friendshipLoading } = useQuery<{
+  const { data: friendshipStatus, isLoading: friendshipLoading, refetch: refetchFriendshipStatus } = useQuery<{
     isFriend: boolean;
     hasIncomingRequest: boolean;
     hasOutgoingRequest: boolean;
@@ -266,8 +272,13 @@ export default function ProfilePage() {
     outgoingRequest: any | null;
   }>({
     queryKey: ['/api/friends/status', user?.id],
+    queryFn: async () => {
+      const res = await fetch(`/api/friends/status/${user?.id}`);
+      if (!res.ok) throw new Error('Failed to fetch friendship status');
+      return res.json();
+    },
     enabled: isOtherProfile,
-    staleTime: 10000, // Cache for 10 seconds
+    staleTime: 5000, // Cache for 5 seconds
   });
 
   // Debug: Log friendship status
