@@ -34,6 +34,8 @@ The hierarchy provides strategic oversight and atomic execution. This includes a
 ### Platform Features
 Core functionalities encompass social features such as events, groups, posts, notifications, media management, live streaming, marketplaces, and reviews. Business-oriented features include Talent Match AI, LIFE CEO AI, Multi-AI Orchestration, automated scraping, an Admin Dashboard, Stripe Payments integration, and BullMQ Workers. Recent enhancements include an Event Series System, redesigned City Groups Events Tab, RSS Feed Scraping, Profile Enrichment Service, OpenStreetMap Geocoding, Housing Friendship Closeness Integration, a Unified Messaging Inbox, and a Faceless Content System with social media adapters.
 
+**FriendshipPage Enhancement (Dec 11, 2025):** The FriendshipPage Posts tab now uses `UnifiedMemoriesFeed` component instead of a manual PostItem loop, providing consistent animations and styling with the main feed. This ensures shared posts between friends display with the same visual experience as the main social feed.
+
 ### International Payment System (MB.MD Pattern 49)
 A comprehensive multi-gateway payment orchestration system supporting global payments:
 
