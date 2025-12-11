@@ -54,7 +54,7 @@ export class ScrapingOrchestrator {
         this.scrapeSourceBatch(websiteSources, 'agent-116'), // Static Scraper
         this.scrapeSourceBatch(eventPlatformSources, 'agent-117'), // JS Scraper
         this.scrapeSourceBatch(rssSources, 'rss-service') // RSS Feed Service,
-        this.scrapeHoyMilongaSources(hoyMilongaSources) // Hoy Milonga Scraper
+        this.scrapeHoyMilongaSources(hoyMilongaSources) // Hoy Milonga Scraper,
         this.invokePriorityScrapers() // Priority scrapers (HoyMilonga, TangoCat, TangoFestivals),
       ]);
 
