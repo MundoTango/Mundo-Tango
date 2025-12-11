@@ -2127,7 +2127,7 @@ export class DbStorage implements IStorage {
       .where(
         and(
           eq(friendRequests.receiverId, userId),
-          eq(friendRequests.status, 'pending')
+          inArray(friendRequests.status, ['pending', 'snoozed'])
         )
       );
     
