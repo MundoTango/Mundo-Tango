@@ -192,7 +192,7 @@ export default function FriendshipPage() {
     queryKey: ["/api/auth/me"],
   });
 
-  const { data: friendData, isLoading: isLoadingFriend } = useQuery<{ user: UserProfile }>({
+  const { data: friendData, isLoading: isLoadingFriend } = useQuery<UserProfile>({
     queryKey: ["/api/users", friendId],
     enabled: !!friendId,
   });
@@ -232,7 +232,7 @@ export default function FriendshipPage() {
   }
 
   const currentUser = currentUserData?.user;
-  const friend = friendData?.user;
+  const friend = friendData;
 
   const friendshipDate = friendshipInfo?.createdAt 
     ? safeDateDistance(friendshipInfo.createdAt, { addSuffix: true })
