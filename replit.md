@@ -17,6 +17,39 @@ Mundo Tango is a production-ready social platform connecting the global tango co
 
 ## Recent Session Progress (Dec 11, 2025)
 
+### Playwright E2E Testing Infrastructure - Fixed (Dec 11, 2025)
+**Applied Methodology**: Research → Plan → Build → Test → Fix → Document
+
+#### Root Cause Analysis
+**Problem**: Playwright tests failing with timeouts and `ERR_INSUFFICIENT_RESOURCES`
+**Root Causes Identified**:
+1. `networkidle` wait strategy incompatible with SPA's continuous background activity (WebSocket, real-time updates)
+2. Single browser instance exhausts memory after multiple page loads (~4-5 navigations)
+3. Large SPA bundle causes significant memory consumption per browser context
+
+#### Solutions Implemented
+1. **Changed waitUntil strategy**: `networkidle` → `domcontentloaded` + 1-2s JS initialization wait
+2. **Browser recycling**: Close and restart browser between test sections (every 3-4 tests)
+3. **Reduced viewport**: 1920x1080 → 1280x720 to lower memory footprint
+4. **Single-process mode**: `--single-process` Chromium flag for Replit environment
+
+#### Test Runner Configuration
+- **File**: `e2e/ui-test-runner.ts`
+- **Chromium Path**: `/nix/store/zi4f80l169xlmivz8vja8wlphq74qqk0-chromium-125.0.6422.141/bin/chromium`
+- **Browser Args**: `--no-sandbox --disable-gpu --disable-dev-shm-usage --disable-setuid-sandbox --single-process`
+
+#### Test Coverage Results (100% Pass Rate)
+- **22 tests** across **9 categories**: Public, Social, Comm, Events, Commerce, AI, Discovery, Settings, Admin
+- All major pages verified: Landing, Login, Register, Feed, Profile, Friends, Messages, Notifications, Events, Groups, Calendar, Workshops, Marketplace, Housing, Mr Blue Chat, Life CEO, Travel Planner, Community Map, Discover, Music Library, Settings, Admin Dashboard
+
+#### Key Technical Notes
+- **NEVER use `networkidle`** - SPA has continuous background WebSocket/API activity
+- **Recycle browser** between test sections to prevent memory exhaustion
+- **Use `domcontentloaded`** + short timeout for JS framework initialization
+- Admin credentials for testing: `admin@mundotango.life` / `admin123`
+
+---
+
 ### Volunteer Testing System - MB.MD v9.9.4 (Latest)
 **Applied Methodology**: Research → Plan → Build → Test → Fix → Document
 
