@@ -274,15 +274,16 @@ export class StaticScraper {
    */
   private async storeEvents(events: ScrapedEventData[], sourceId: number): Promise<void> {
     for (const event of events) {
-            // Match event location to city group using CityMatcherService
-            let groupId: number | null = null;
+      // Match event location to city group using CityMatcherService
+      let groupId: number | null = null;
 
-            if (event.location || event.address) {
-                      const locationString = event.location || event.address || '';
-                      const matchResult = await cityMatcherService.matchEventLocation(locationString);
-                      if (matchResult) {
-                                  groupId = matchResult;
-                                }
+      if (event.location || event.address) {
+        const locationString = event.location || event.address || '';
+        const matchResult = await cityMatcherService.matchEventLocation(locationString);
+        if (matchResult) {
+          groupId = matchResult;
+        }
+      }
       
       try {
         await db.insert(scrapedEvents).values({
@@ -299,7 +300,7 @@ export class StaticScraper {
           price: event.price ? event.price.toString() : null,
           imageUrl: event.imageUrl,
           externalId: event.externalId,
-                    groupId,
+          groupId,
           status: 'pending_review'
         });
       } catch (err) {
