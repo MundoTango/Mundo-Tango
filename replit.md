@@ -16,30 +16,54 @@ Mundo Tango is a production-ready social platform connecting the global tango co
 - MB.MD Methodology - Apply v9.9.3 patterns systematically: Research → Plan → Build → Test → Fix → Document
 
 ## Recent Session Progress (Dec 11, 2025)
-### Database Restoration - MB.MD v9.9.4
+### Event Scraping Infrastructure - MB.MD v9.9.4
 **Applied Methodology**: Research → Plan → Build → Test → Fix → Document
 
-#### Issue Identified
-- Development database was empty (0 records) after git revert to `server/services/scrapers` branch
-- Schema tables existed but all data was lost
-- Production database unaffected (separate environment)
+#### Event Scraping Flow
+```
+scrapedEvents table → autoApproveScrapedEvents.ts → events table → Event Detail Pages
+                                                  ↓
+                                    City auto-created via getOrCreateCityGroup()
+                                                  ↓
+                                    Events added to City Groups automatically
+```
 
-#### Restoration Applied
-1. **Verified database connection** - PostgreSQL connected and schema intact
-2. **Seeded admin user** with credentials:
-   - Email: `admin@mundotango.life`
-   - Password: `admin123`
-   - Role: admin
-   - City: Buenos Aires
-   - TangoRoles: Leader, Organizer, Teacher
-3. **Seeded page inventory** - 9 critical pages for audit system
-4. **E2E verified** - Login test passed, redirect to /feed working
+#### Priority Scrapers Implemented
+1. **HoyMilongaScraper** (`server/agents/scraping/HoyMilongaScraper.ts`)
+   - Scrapes hoy-milonga.com for Melbourne, Sydney, and other cities
+   - Returns milonga schedules, workshops, and practicas
+
+2. **TangoCatScraper** (`server/agents/scraping/TangoCatScraper.ts`)
+   - Scrapes tangocat.net/2025/ and /2026/ for festivals and marathons
+   - Extracts: title, dates, location, organizers, pricing
+
+3. **TangoFestivalsScraper** (`server/agents/scraping/TangoFestivalsScraper.ts`)
+   - Scrapes tangofestivals.net/events/ for global events
+   - Categorizes: festivals, marathons, encuentros, competitions
+
+#### Master Orchestrator (#115)
+- Coordinates 5 agent scrapers: #116 (static), #117 (JS), #118 (social), #119 (deduplication)
+- Priority scrapers run automatically with `invokePriorityScrapers()`
+- Auto-creates cities when new locations detected in scraped events
+
+#### Test Data Created
+- **Admin User**: admin@mundotango.life / admin123
+- **Test Users**: Maria (Buenos Aires), Carlos (Berlin), Sofia (Montevideo), Diego (NYC), Luna (Paris)
+- **2 Friend Requests** to admin from Maria and Carlos
+- **5 Direct Messages** to admin from all test users
+- **8 Posts** including @admin mentions
+
+#### Route Fix Applied (Dec 11)
+**Issue**: Express route ordering - `/friends/:friendId` matched before `/friends/requests`
+**Fix**: Moved specific routes (`/friends/requests`, `/friends/suggestions`) before parameterized route
+**File**: `server/routes/friends-routes.ts`
 
 #### Current Dev Database State
-- Users: 2 (admin + test)
-- Posts: 3 sample posts
-- Page Inventory: 9 pages
-- Audit Issues: 0 (ready for new audit cycle)
+- Users: 7 (admin + 5 test users + 1 default)
+- Posts: 8 posts with mentions
+- Friend Requests: 2 pending
+- Direct Messages: 5 conversations
+- Groups: 5 city groups
 
 ---
 
