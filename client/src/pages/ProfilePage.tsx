@@ -213,19 +213,13 @@ export default function ProfilePage() {
   };
   
   // Read tab from URL query params (e.g., /profile?tab=memories)
-  // Also auto-open friend request review modal if ?reviewRequest=true
   useEffect(() => {
     const urlParams = new URLSearchParams(searchString);
     const tabParam = urlParams.get('tab');
     if (tabParam) {
       setActiveTab(tabParam);
     }
-    
-    const reviewRequest = urlParams.get('reviewRequest');
-    if (reviewRequest === 'true' && hasIncomingRequest) {
-      setFriendRequestReviewOpen(true);
-    }
-  }, [searchString, hasIncomingRequest]);
+  }, [searchString]);
   
   // Support both numeric ID and username - use username/ID from URL or current user's ID
   const profileIdentifier = params?.id || currentUser?.id?.toString();
@@ -292,6 +286,15 @@ export default function ProfilePage() {
       });
     }
   }, [currentUser?.id, user?.id, friendshipStatus, friendshipLoading, isOtherProfile]);
+
+  // Auto-open friend request review modal if ?reviewRequest=true and there's an incoming request
+  useEffect(() => {
+    const urlParams = new URLSearchParams(searchString);
+    const reviewRequest = urlParams.get('reviewRequest');
+    if (reviewRequest === 'true' && hasIncomingRequest && !friendshipLoading) {
+      setFriendRequestReviewOpen(true);
+    }
+  }, [searchString, hasIncomingRequest, friendshipLoading]);
 
   // Fetch upcoming travel plans for this user
   const { data: upcomingTravel = [] } = useQuery<any[]>({
