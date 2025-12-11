@@ -416,11 +416,6 @@ export default function FriendshipPage() {
                 <Loader2 className="w-8 h-8 animate-spin text-primary" />
                 <span className="ml-3 text-muted-foreground">Loading shared content...</span>
               </div>
-            ) : isSharedDataError ? (
-              <div className="flex items-center justify-center py-12 text-destructive">
-                <AlertCircle className="w-6 h-6 mr-2" />
-                <span>Failed to load shared content</span>
-              </div>
             ) : (
               <Tabs defaultValue="posts" className="w-full">
                 <TabsList className="grid w-full grid-cols-3">

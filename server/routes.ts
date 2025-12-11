@@ -5492,6 +5492,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get friendship info (base route)
+  app.get("/api/friends/friendship/:friendId", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const friendId = parseInt(req.params.friendId);
+      const friendshipInfo = await storage.getFriendshipInfo(req.user!.id, friendId);
+      
+      if (!friendshipInfo) {
+        return res.status(404).json({ error: "Friendship not found" });
+      }
+      
+      res.json(friendshipInfo);
+    } catch (error) {
+      console.error("[GET /api/friends/friendship/:friendId] Error:", error);
+      res.status(500).json({ message: "Failed to fetch friendship info" });
+    }
+  });
+
   app.get("/api/friends/friendship/:friendId/stats", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const friendId = parseInt(req.params.friendId);
