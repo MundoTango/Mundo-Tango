@@ -92,6 +92,8 @@ export function FriendRequestReviewModal({
       queryClient.invalidateQueries({ queryKey: ['/api/friends'] });
       queryClient.invalidateQueries({ queryKey: ['/api/friends/requests'] });
       queryClient.invalidateQueries({ queryKey: ['/api/notifications'] });
+      // Invalidate friendship status for both users
+      queryClient.invalidateQueries({ queryKey: ['/api/friends/status', request?.senderId] });
       toast({
         title: "Friend request accepted!",
         description: `You are now friends with ${request?.sender?.name}`,
@@ -116,6 +118,8 @@ export function FriendRequestReviewModal({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/friends/requests'] });
       queryClient.invalidateQueries({ queryKey: ['/api/notifications'] });
+      // Invalidate friendship status for the sender
+      queryClient.invalidateQueries({ queryKey: ['/api/friends/status', request?.senderId] });
       toast({
         title: "Request declined",
         description: "The friend request has been declined",

@@ -255,17 +255,32 @@ export default function ProfilePage() {
     enabled: !!user?.id,
   });
 
-  // Fetch friends to check if already friends
-  const { data: friends = [] } = useQuery<any[]>({
-    queryKey: ['/api/friends'],
-    enabled: !!(currentUser && user && currentUser.id !== user.id),
+  // Fetch friendship status with this specific user
+  const isOtherProfile = !!(currentUser && user && currentUser.id !== user.id);
+  
+  const { data: friendshipStatus, isLoading: friendshipLoading } = useQuery<{
+    isFriend: boolean;
+    hasIncomingRequest: boolean;
+    hasOutgoingRequest: boolean;
+    incomingRequest: any | null;
+    outgoingRequest: any | null;
+  }>({
+    queryKey: ['/api/friends/status', user?.id],
+    enabled: isOtherProfile,
+    staleTime: 10000, // Cache for 10 seconds
   });
 
-  // Fetch friend requests to check if pending
-  const { data: friendRequests = [] } = useQuery<any[]>({
-    queryKey: ['/api/friends/requests'],
-    enabled: !!(currentUser && user && currentUser.id !== user.id),
-  });
+  // Debug: Log friendship status
+  useEffect(() => {
+    if (isOtherProfile) {
+      console.log('[ProfilePage] Friendship status:', {
+        currentUserId: currentUser?.id,
+        profileUserId: user?.id,
+        friendshipStatus,
+        friendshipLoading,
+      });
+    }
+  }, [currentUser?.id, user?.id, friendshipStatus, friendshipLoading, isOtherProfile]);
 
   // Fetch upcoming travel plans for this user
   const { data: upcomingTravel = [] } = useQuery<any[]>({
@@ -294,17 +309,11 @@ export default function ProfilePage() {
 
   const isOwnProfile = currentUser?.id === user?.id;
   
-  // Check friendship status
-  const isFriend = friends.some((f: any) => f.id === user?.id);
-  // Check if current user has sent a request to profile user (outgoing)
-  const hasPendingRequest = friendRequests.some(
-    (r: any) => r.receiverId === user?.id && r.status === 'pending'
-  );
-  // Check if profile user has sent a request to current user (incoming)
-  const incomingRequest = friendRequests.find(
-    (r: any) => r.senderId === user?.id && r.receiverId === currentUser?.id && r.status === 'pending'
-  );
-  const hasIncomingRequest = !!incomingRequest;
+  // Use friendship status from API
+  const isFriend = friendshipStatus?.isFriend ?? false;
+  const hasPendingRequest = friendshipStatus?.hasOutgoingRequest ?? false;
+  const hasIncomingRequest = friendshipStatus?.hasIncomingRequest ?? false;
+  const incomingRequest = friendshipStatus?.incomingRequest;
   
   // Prepare incoming request data with sender info for review modal
   const incomingRequestWithSender = incomingRequest ? {
@@ -338,8 +347,9 @@ export default function ProfilePage() {
       return await apiRequest('POST', `/api/friends/request/${user?.id}`, payload);
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['/api/friends/requests'] });
-      await queryClient.refetchQueries({ queryKey: ['/api/friends/requests'] });
+      // Invalidate friendship status for this profile
+      await queryClient.invalidateQueries({ queryKey: ['/api/friends/status', user?.id] });
+      await queryClient.refetchQueries({ queryKey: ['/api/friends/status', user?.id] });
       setFriendshipQuestionnaireOpen(false);
       toast({
         title: "Friend request sent!",
@@ -361,9 +371,9 @@ export default function ProfilePage() {
       return await apiRequest('DELETE', `/api/friends/${user?.id}`);
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['/api/friends'] });
-      await queryClient.refetchQueries({ queryKey: ['/api/friends'] });
-      await queryClient.invalidateQueries({ queryKey: ['/api/friends/requests'] });
+      // Invalidate friendship status for this profile
+      await queryClient.invalidateQueries({ queryKey: ['/api/friends/status', user?.id] });
+      await queryClient.refetchQueries({ queryKey: ['/api/friends/status', user?.id] });
       toast({
         title: "Friend removed",
         description: `Removed ${user?.name} from friends`,

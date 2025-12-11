@@ -298,6 +298,7 @@ export interface IStorage {
   
   getUserFriends(userId: number): Promise<any[]>;
   getFriendRequests(userId: number): Promise<any[]>;
+  getOutgoingFriendRequest(senderId: number, receiverId: number): Promise<any | null>;
   getFriendSuggestions(userId: number): Promise<any[]>;
   sendFriendRequest(data: { senderId: number; receiverId: number; [key: string]: any }): Promise<any>;
   acceptFriendRequest(requestId: number, receiverData?: { receiverMessage?: string; receiverPrivateNote?: string }): Promise<void>;
@@ -2153,6 +2154,22 @@ export class DbStorage implements IStorage {
         city: row.senderCity,
       }
     }));
+  }
+
+  async getOutgoingFriendRequest(senderId: number, receiverId: number): Promise<any | null> {
+    const [request] = await db
+      .select()
+      .from(friendRequests)
+      .where(
+        and(
+          eq(friendRequests.senderId, senderId),
+          eq(friendRequests.receiverId, receiverId),
+          eq(friendRequests.status, 'pending')
+        )
+      )
+      .limit(1);
+    
+    return request || null;
   }
 
   async getFriendSuggestions(userId: number): Promise<any[]> {

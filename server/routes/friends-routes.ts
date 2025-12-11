@@ -35,6 +35,44 @@ export function createFriendsRoutes(storage: IStorage) {
     }
   });
 
+  // Get friendship status with a specific user (for profile page buttons)
+  router.get("/friends/status/:userId", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const currentUserId = req.userId!;
+      const targetUserId = parseInt(req.params.userId);
+      
+      console.log(`[FriendsAPI] Getting friendship status: currentUser=${currentUserId}, targetUser=${targetUserId}`);
+      
+      // Check if they're friends
+      const friends = await storage.getUserFriends(currentUserId);
+      const isFriend = friends.some((f: any) => f.id === targetUserId);
+      
+      // Check for incoming request (target sent to current user)
+      const incomingRequests = await storage.getFriendRequests(currentUserId);
+      const incomingRequest = incomingRequests.find((r: any) => r.senderId === targetUserId);
+      
+      // Check for outgoing request (current user sent to target)
+      const outgoingRequest = await storage.getOutgoingFriendRequest(currentUserId, targetUserId);
+      
+      console.log(`[FriendsAPI] Friendship status result:`, {
+        isFriend,
+        hasIncomingRequest: !!incomingRequest,
+        hasOutgoingRequest: !!outgoingRequest,
+      });
+      
+      res.json({
+        isFriend,
+        incomingRequest: incomingRequest || null,
+        outgoingRequest: outgoingRequest || null,
+        hasIncomingRequest: !!incomingRequest,
+        hasOutgoingRequest: !!outgoingRequest,
+      });
+    } catch (error: any) {
+      console.error(`[FriendsAPI] Error getting friendship status:`, error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   router.get("/friends/mutual/:userId", authenticateToken, async (req: AuthRequest, res) => {
     try {
       const currentUserId = req.userId!;
