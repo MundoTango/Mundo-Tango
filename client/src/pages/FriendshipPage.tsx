@@ -20,7 +20,8 @@ import { motion } from "framer-motion";
 import { renderMentionPills } from "@/utils/renderMentionPills";
 import { PostCreator } from "@/components/universal/PostCreator";
 import { useToast } from "@/hooks/use-toast";
-import { PostItem, type PostItemData } from "@/components/feed/PostItem";
+import { type PostItemData } from "@/components/feed/PostItem";
+import { UnifiedMemoriesFeed } from "@/components/feed/UnifiedMemoriesFeed";
 import tangoHeroImage from "@assets/IMG_9144-Mejorado-NR_1762013255726.jpg";
 
 interface UserProfile {
@@ -510,20 +511,19 @@ export default function FriendshipPage() {
 
                   {/* Shared Posts with @mentions - show in "all" and "posts" */}
                   {(postsSubTab === 'all' || postsSubTab === 'posts') && (
-                    <div>
+                    <div data-testid="shared-posts-list">
                       <h3 className="text-sm font-semibold mb-4 flex items-center gap-2">
                         <MessageSquare className="w-4 h-4 text-primary" />
                         Posts & Mentions
                       </h3>
-                      {sharedData?.sharedPosts && sharedData.sharedPosts.length > 0 ? (
-                        <div className="space-y-4" data-testid="shared-posts-list">
-                          {sharedData.sharedPosts.map((post) => (
-                            <PostItem key={post.id} post={post} />
-                          ))}
-                        </div>
-                      ) : (
-                        <p className="text-center text-muted-foreground py-6">No shared posts yet</p>
-                      )}
+                      <UnifiedMemoriesFeed
+                        posts={sharedData?.sharedPosts || []}
+                        isLoading={false}
+                        context={{ type: 'memory', name: friend?.name }}
+                        showPostCreator={false}
+                        showFilters={false}
+                        emptyMessage="No shared posts yet. Create memories together!"
+                      />
                     </div>
                   )}
 
