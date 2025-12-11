@@ -81,22 +81,10 @@ const communityItems = [
     tooltip: "Browse events - list, calendar, or map view",
   },
   {
-    title: "Groups",
-    url: "/groups",
-    icon: Users,
-    tooltip: "Browse and join groups",
-  },
-  {
     title: "Friends",
     url: "/friends",
     icon: UserPlus,
     tooltip: "Manage your friends",
-  },
-  {
-    title: "Recommendations",
-    url: "/recommendations",
-    icon: Sparkles,
-    tooltip: "Personalized recommendations",
   },
   {
     title: "Messages",

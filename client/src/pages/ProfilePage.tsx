@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Settings, UserPlus, UserMinus, UserCheck, Plane, Calendar, CheckCircle, Instagram, Facebook, Twitter, Linkedin, Youtube, Globe, Award, Plus, Camera, Music, Users, ImageIcon, Mic2, Home, Briefcase, BookOpen, Heart, Eye } from "lucide-react";
+import { MapPin, Settings, UserPlus, UserMinus, UserCheck, Plane, Calendar, CheckCircle, Instagram, Facebook, Twitter, Linkedin, Youtube, Globe, Award, Plus, Camera, Music, Users, ImageIcon, Mic2, Home, Briefcase, BookOpen, Heart, Eye, MessageSquare, HeartHandshake } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useAuth } from "@/contexts/AuthContext";
 import { SEO } from "@/components/SEO";
@@ -669,38 +669,50 @@ export default function ProfilePage() {
         {/* Friend Action Buttons - Top Right (Non-Own Profile Only) */}
         {!isOwnProfile && (
           <div className="absolute top-8 right-8 z-30 flex gap-3">
+            {/* Message Button - Always visible */}
+            <Link href={`/messages/compose?to=${user.id}`}>
+              <Button 
+                variant="outline"
+                className="gap-2 text-white border-white/30 bg-black/20 backdrop-blur-sm hover:bg-black/30"
+                data-testid={`button-message-${user.id}`}
+              >
+                <MessageSquare className="h-4 w-4" />
+                Message
+              </Button>
+            </Link>
+            
+            {/* Friend Status Button */}
             {isFriend ? (
-                <Button 
-                  variant="outline"
-                  className="gap-2 text-white border-white/30 bg-black/20 backdrop-blur-sm hover:bg-black/30"
-                  onClick={() => removeFriendMutation.mutate()}
-                  disabled={removeFriendMutation.isPending}
-                  data-testid={`button-remove-friend-${user.id}`}
-                >
-                  <UserMinus className="h-4 w-4" />
-                  {removeFriendMutation.isPending ? 'Removing...' : 'Remove Friend'}
-                </Button>
-              ) : hasPendingRequest ? (
-                <Button 
-                  variant="outline"
-                  className="gap-2 text-white border-white/30 bg-black/20 backdrop-blur-sm"
-                  disabled
-                  data-testid="button-request-pending"
-                >
-                  <UserCheck className="h-4 w-4" />
-                  Request Sent
-                </Button>
-              ) : (
+              <Link href={`/friendship/${user.id}`}>
                 <Button 
                   className="gap-2 text-white bg-primary/80 backdrop-blur-sm hover:bg-primary"
-                  onClick={() => sendFriendRequestMutation.mutate()}
-                  disabled={sendFriendRequestMutation.isPending}
-                  data-testid={`button-add-friend-${user.id}`}
+                  data-testid={`button-see-friendship-${user.id}`}
                 >
-                  <UserPlus className="h-4 w-4" />
-                  {sendFriendRequestMutation.isPending ? 'Sending...' : 'Add Friend'}
+                  <HeartHandshake className="h-4 w-4" />
+                  See Friendship
                 </Button>
-              )}
+              </Link>
+            ) : hasPendingRequest ? (
+              <Button 
+                variant="outline"
+                className="gap-2 text-white border-white/30 bg-black/20 backdrop-blur-sm"
+                disabled
+                data-testid="button-request-pending"
+              >
+                <UserCheck className="h-4 w-4" />
+                Request Sent
+              </Button>
+            ) : (
+              <Button 
+                className="gap-2 text-white bg-primary/80 backdrop-blur-sm hover:bg-primary"
+                onClick={() => sendFriendRequestMutation.mutate()}
+                disabled={sendFriendRequestMutation.isPending}
+                data-testid={`button-add-friend-${user.id}`}
+              >
+                <UserPlus className="h-4 w-4" />
+                {sendFriendRequestMutation.isPending ? 'Sending...' : 'Add Friend'}
+              </Button>
+            )}
           </div>
         )}
       </div>
