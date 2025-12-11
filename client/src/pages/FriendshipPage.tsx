@@ -7,10 +7,20 @@ import { Badge } from "@/components/ui/badge";
 import { AppLayout } from "@/components/AppLayout";
 import { LoadingFallback } from "@/components/LoadingFallback";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Users, Calendar, MessageCircle, Heart, MapPin, UserCheck, ChevronRight, ThumbsUp, MessageSquare, Plane, Building2, Loader2, AlertCircle } from "lucide-react";
+import { Users, Calendar, MessageCircle, Heart, MapPin, UserCheck, ChevronRight, ThumbsUp, MessageSquare, Plane, Building2, Loader2, AlertCircle, Music, Sparkles } from "lucide-react";
 import { safeDateDistance, safeFormat } from "@/lib/safeDateFormat";
 import { motion } from "framer-motion";
 import tangoHeroImage from "@assets/IMG_9144-Mejorado-NR_1762013255726.jpg";
+
+interface CurrentUser {
+  id: number;
+  name: string;
+  username: string;
+  profileImage?: string;
+  coverImage?: string;
+  city?: string;
+  country?: string;
+}
 
 interface SharedData {
   sharedPosts: Array<{ id: number; content: string; createdAt: string; authorName: string }>;
@@ -32,9 +42,29 @@ function formatEventDate(dateStr: string | undefined | null): string {
   }
 }
 
+interface FriendshipInfo {
+  id: number;
+  closenessScore: number;
+  createdAt: string;
+  lastInteractionAt?: string;
+  friendRequest?: {
+    id: number;
+    senderMessage?: string;
+    receiverMessage?: string;
+    danceLocation?: string;
+    danceStory?: string;
+    didWeDance?: boolean;
+    createdAt: string;
+  };
+}
+
 export default function FriendshipPage() {
   const { userId } = useParams<{ userId: string }>();
   const friendId = parseInt(userId || "0");
+
+  const { data: currentUserData } = useQuery<{ user: CurrentUser }>({
+    queryKey: ["/api/auth/me"],
+  });
 
   const { data: friendData, isLoading: isLoadingFriend } = useQuery({
     queryKey: ["/api/users", friendId],
@@ -43,6 +73,11 @@ export default function FriendshipPage() {
 
   const { data: mutualFriends, isLoading: isLoadingMutual } = useQuery({
     queryKey: ["/api/friends/mutual", friendId],
+    enabled: !!friendId,
+  });
+
+  const { data: friendshipInfo } = useQuery<FriendshipInfo>({
+    queryKey: ["/api/friends/friendship", friendId],
     enabled: !!friendId,
   });
 
@@ -70,42 +105,158 @@ export default function FriendshipPage() {
     );
   }
 
+  const currentUser = currentUserData?.user;
   const friend = friendData?.user;
+
+  const friendshipDate = friendshipInfo?.createdAt 
+    ? safeDateDistance(friendshipInfo.createdAt, { addSuffix: true })
+    : "Recently";
 
   return (
     <AppLayout>
-      <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">
-        <motion.div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: `url('${tangoHeroImage}')` }}
-          initial={{ scale: 1.1 }}
-          animate={{ scale: 1 }}
-          transition={{ duration: 1.5 }}
-        >
-          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
-        </motion.div>
-
-        <div className="relative z-10 flex flex-col items-center justify-center h-full px-8 text-center">
+      <div className="relative h-[40vh] md:h-[50vh] w-full overflow-hidden">
+        <div className="absolute inset-0 flex">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, ease: "easeOut" }}
-            className="max-w-4xl"
+            className="w-1/2 bg-cover bg-center relative"
+            style={{ 
+              backgroundImage: currentUser?.coverImage 
+                ? `url(${currentUser.coverImage})` 
+                : `url('${tangoHeroImage}')`
+            }}
+            initial={{ x: -50, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ duration: 0.8 }}
           >
-            <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm">
-              Friendship
-            </Badge>
-
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6" data-testid="heading-page-title">
-              {friend?.name || 'Friend'}
-            </h1>
-
-            <p className="text-xl text-white/80 max-w-2xl mx-auto" data-testid="text-hero-subtitle">
-              Your connection in the tango community
-            </p>
+            <div className="absolute inset-0 bg-gradient-to-r from-black/40 to-black/60" />
+          </motion.div>
+          <motion.div
+            className="w-1/2 bg-cover bg-center relative"
+            style={{ 
+              backgroundImage: friend?.coverImage 
+                ? `url(${friend.coverImage})` 
+                : `url('${tangoHeroImage}')`
+            }}
+            initial={{ x: 50, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ duration: 0.8 }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-l from-black/40 to-black/60" />
           </motion.div>
         </div>
+
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="flex items-center gap-4 md:gap-8">
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+            >
+              <Link href={`/profile/${currentUser?.username || currentUser?.id}`}>
+                <div className="text-center">
+                  <Avatar className="w-20 h-20 md:w-28 md:h-28 border-4 border-background shadow-2xl cursor-pointer hover:scale-105 transition-transform">
+                    <AvatarImage src={currentUser?.profileImage} alt={currentUser?.name} />
+                    <AvatarFallback className="text-2xl md:text-3xl">{currentUser?.name?.charAt(0) || "U"}</AvatarFallback>
+                  </Avatar>
+                  <p className="text-white text-sm md:text-base font-semibold mt-2 drop-shadow-lg">{currentUser?.name}</p>
+                </div>
+              </Link>
+            </motion.div>
+
+            <motion.div
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.4, delay: 0.5 }}
+              className="flex flex-col items-center"
+            >
+              <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-primary flex items-center justify-center shadow-2xl">
+                <Heart className="w-7 h-7 md:w-8 md:h-8 text-primary-foreground fill-primary-foreground" />
+              </div>
+              <Badge variant="secondary" className="mt-3 text-xs md:text-sm backdrop-blur-sm" data-testid="badge-friends-since">
+                Friends {friendshipDate}
+              </Badge>
+            </motion.div>
+
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+            >
+              <Link href={`/profile/${friend?.username || friend?.id}`}>
+                <div className="text-center">
+                  <Avatar className="w-20 h-20 md:w-28 md:h-28 border-4 border-background shadow-2xl cursor-pointer hover:scale-105 transition-transform">
+                    <AvatarImage src={friend?.profileImage} alt={friend?.name} />
+                    <AvatarFallback className="text-2xl md:text-3xl">{friend?.name?.charAt(0) || "F"}</AvatarFallback>
+                  </Avatar>
+                  <p className="text-white text-sm md:text-base font-semibold mt-2 drop-shadow-lg">{friend?.name}</p>
+                </div>
+              </Link>
+            </motion.div>
+          </div>
+        </div>
       </div>
+
+      {friendshipInfo?.friendRequest && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="max-w-5xl mx-auto px-6 py-6"
+        >
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Music className="w-5 h-5 text-primary" />
+                Our Tango Story
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {friendshipInfo.friendRequest.didWeDance && (
+                <Badge className="bg-primary/10 text-primary border-primary/20">
+                  <Heart className="w-3 h-3 mr-1 fill-current" />
+                  We danced together!
+                </Badge>
+              )}
+              
+              {friendshipInfo.friendRequest.danceLocation && (
+                <div>
+                  <p className="text-xs text-muted-foreground mb-1">Where we met</p>
+                  <p className="text-sm flex items-center gap-2">
+                    <MapPin className="w-4 h-4 text-muted-foreground" />
+                    {friendshipInfo.friendRequest.danceLocation}
+                  </p>
+                </div>
+              )}
+              
+              {friendshipInfo.friendRequest.danceStory && (
+                <div>
+                  <p className="text-xs text-muted-foreground mb-1">Our story</p>
+                  <p className="text-sm italic text-muted-foreground" data-testid="text-dance-story">
+                    "{friendshipInfo.friendRequest.danceStory}"
+                  </p>
+                </div>
+              )}
+              
+              {friendshipInfo.friendRequest.senderMessage && (
+                <div className="border-l-2 border-primary/30 pl-3">
+                  <p className="text-xs text-muted-foreground mb-1">Friend request message</p>
+                  <p className="text-sm" data-testid="text-sender-message">
+                    {friendshipInfo.friendRequest.senderMessage}
+                  </p>
+                </div>
+              )}
+              
+              {friendshipInfo.friendRequest.receiverMessage && (
+                <div className="border-l-2 border-primary/30 pl-3">
+                  <p className="text-xs text-muted-foreground mb-1">Response message</p>
+                  <p className="text-sm" data-testid="text-receiver-message">
+                    {friendshipInfo.friendRequest.receiverMessage}
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </motion.div>
+      )}
 
       <div className="max-w-5xl mx-auto px-6 py-16 space-y-8">
         <motion.div
@@ -387,7 +538,7 @@ export default function FriendshipPage() {
           )}
 
           <div className="flex gap-4 justify-center pt-8">
-            <Link href={`/messages/${friendId}`}>
+            <Link href={`/messages/direct/${friendId}`}>
               <Button
                 size="lg"
                 className="gap-2"

@@ -31,8 +31,8 @@ import {
   type MessageAutomation,
   type ScheduledMessage,
 } from "@shared/schema";
-import { chatMessages } from "@shared/schema";
-import { eq, and, or, desc, sql } from "drizzle-orm";
+import { chatMessages, chatRooms, chatRoomUsers, users } from "@shared/schema";
+import { eq, and, or, desc, asc, sql, inArray } from "drizzle-orm";
 import { z } from "zod";
 import { encrypt, decrypt } from "../utils/encryption";
 import { getUncachableGmailClient, sendEmail } from "../lib/gmail-client";
@@ -1671,6 +1671,227 @@ router.get("/channels/whatsapp/webhook-status", authenticateToken, async (req: A
       error: "Failed to get webhook status", 
       message: error.message 
     });
+  }
+});
+
+/**
+ * GET /api/messages/direct/:userId
+ * Get direct messages with a specific user
+ */
+router.get("/direct/:userId", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const currentUserId = req.userId!;
+    const otherUserId = parseInt(req.params.userId);
+
+    if (isNaN(otherUserId)) {
+      return res.status(400).json({ error: "Invalid user ID" });
+    }
+
+    // Find or create a direct chat room between the two users
+    const currentUserRooms = await db.select({ chatRoomId: chatRoomUsers.chatRoomId })
+      .from(chatRoomUsers)
+      .where(eq(chatRoomUsers.userId, currentUserId));
+
+    const otherUserRooms = await db.select({ chatRoomId: chatRoomUsers.chatRoomId })
+      .from(chatRoomUsers)
+      .where(eq(chatRoomUsers.userId, otherUserId));
+
+    const currentUserRoomIds = currentUserRooms.map(r => r.chatRoomId);
+    const otherUserRoomIds = otherUserRooms.map(r => r.chatRoomId);
+    
+    // Find common direct rooms
+    const commonRoomIds = currentUserRoomIds.filter(id => otherUserRoomIds.includes(id));
+
+    let chatRoomId: number | null = null;
+    
+    for (const roomId of commonRoomIds) {
+      const [room] = await db.select()
+        .from(chatRooms)
+        .where(and(eq(chatRooms.id, roomId), eq(chatRooms.type, 'direct')));
+      
+      if (room) {
+        // Verify it's a 2-person room
+        const participants = await db.select()
+          .from(chatRoomUsers)
+          .where(eq(chatRoomUsers.chatRoomId, roomId));
+        
+        if (participants.length === 2) {
+          chatRoomId = roomId;
+          break;
+        }
+      }
+    }
+
+    // If no room exists, return empty array
+    if (!chatRoomId) {
+      return res.json([]);
+    }
+
+    // Get messages with sender info
+    const messages = await db.select({
+      id: chatMessages.id,
+      senderId: chatMessages.userId,
+      content: chatMessages.message,
+      createdAt: chatMessages.createdAt,
+      mediaUrl: chatMessages.mediaUrl,
+      mediaType: chatMessages.mediaType,
+      senderName: users.name,
+      senderImage: users.profileImage,
+    })
+    .from(chatMessages)
+    .leftJoin(users, eq(chatMessages.userId, users.id))
+    .where(eq(chatMessages.chatRoomId, chatRoomId))
+    .orderBy(asc(chatMessages.createdAt));
+
+    // Transform to expected format
+    const formattedMessages = messages.map(msg => ({
+      id: msg.id,
+      senderId: msg.senderId,
+      recipientId: msg.senderId === currentUserId ? otherUserId : currentUserId,
+      content: msg.content,
+      createdAt: msg.createdAt,
+      senderName: msg.senderName,
+      senderImage: msg.senderImage,
+      media: msg.mediaUrl ? [{
+        id: String(msg.id),
+        type: msg.mediaType?.startsWith('image') ? 'image' : 'file',
+        url: msg.mediaUrl,
+        name: 'attachment',
+      }] : undefined,
+      reactions: [],
+    }));
+
+    res.json(formattedMessages);
+  } catch (error: any) {
+    console.error("[Messages] Direct messages fetch error:", error);
+    res.status(500).json({ error: "Failed to fetch messages" });
+  }
+});
+
+/**
+ * POST /api/messages/react
+ * Add a reaction to a message (placeholder - chatMessages doesn't have reactions column)
+ */
+router.post("/react", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.userId!;
+    const { messageId, reaction } = req.body;
+
+    if (!messageId || !reaction) {
+      return res.status(400).json({ error: "Message ID and reaction are required" });
+    }
+
+    // For now, just return success (reactions stored client-side or future enhancement)
+    // The chatMessages table doesn't have a reactions column
+    res.json({ success: true, reactions: [{ userId, reaction }] });
+  } catch (error: any) {
+    console.error("[Messages] Reaction error:", error);
+    res.status(500).json({ error: "Failed to add reaction" });
+  }
+});
+
+/**
+ * POST /api/messages/send-direct
+ * Send a direct message to another user (internal MT messaging)
+ */
+router.post("/send-direct", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const senderId = req.userId!;
+    const { recipientId, content } = req.body;
+
+    if (!recipientId || !content) {
+      return res.status(400).json({ error: "Recipient ID and content are required" });
+    }
+
+    const otherUserId = parseInt(recipientId);
+    if (isNaN(otherUserId)) {
+      return res.status(400).json({ error: "Invalid recipient ID" });
+    }
+
+    // Find or create a direct chat room between the two users
+    const currentUserRooms = await db.select({ chatRoomId: chatRoomUsers.chatRoomId })
+      .from(chatRoomUsers)
+      .where(eq(chatRoomUsers.userId, senderId));
+
+    const otherUserRooms = await db.select({ chatRoomId: chatRoomUsers.chatRoomId })
+      .from(chatRoomUsers)
+      .where(eq(chatRoomUsers.userId, otherUserId));
+
+    const currentUserRoomIds = currentUserRooms.map(r => r.chatRoomId);
+    const otherUserRoomIds = otherUserRooms.map(r => r.chatRoomId);
+    const commonRoomIds = currentUserRoomIds.filter(id => otherUserRoomIds.includes(id));
+
+    let chatRoomId: number | null = null;
+    
+    for (const roomId of commonRoomIds) {
+      const [room] = await db.select()
+        .from(chatRooms)
+        .where(and(eq(chatRooms.id, roomId), eq(chatRooms.type, 'direct')));
+      
+      if (room) {
+        const participants = await db.select()
+          .from(chatRoomUsers)
+          .where(eq(chatRoomUsers.chatRoomId, roomId));
+        
+        if (participants.length === 2) {
+          chatRoomId = roomId;
+          break;
+        }
+      }
+    }
+
+    // Create new chat room if none exists
+    if (!chatRoomId) {
+      const [newRoom] = await db.insert(chatRooms)
+        .values({ type: 'direct' })
+        .returning();
+      
+      chatRoomId = newRoom.id;
+
+      // Add both users to the room
+      await db.insert(chatRoomUsers).values([
+        { chatRoomId, userId: senderId },
+        { chatRoomId, userId: otherUserId },
+      ]);
+    }
+
+    // Insert the message
+    const [newMessage] = await db.insert(chatMessages)
+      .values({
+        chatRoomId,
+        userId: senderId,
+        message: content,
+      })
+      .returning();
+
+    // Update chat room last message time
+    await db.update(chatRooms)
+      .set({ lastMessageAt: new Date() })
+      .where(eq(chatRooms.id, chatRoomId));
+
+    // Get sender info
+    const [sender] = await db.select({
+      name: users.name,
+      profileImage: users.profileImage,
+    })
+    .from(users)
+    .where(eq(users.id, senderId));
+
+    res.json({
+      success: true,
+      message: {
+        id: newMessage.id,
+        senderId,
+        recipientId: otherUserId,
+        content: newMessage.message,
+        createdAt: newMessage.createdAt,
+        senderName: sender?.name,
+        senderImage: sender?.profileImage,
+      },
+    });
+  } catch (error: any) {
+    console.error("[Messages] Send direct error:", error);
+    res.status(500).json({ error: "Failed to send message", message: error.message });
   }
 });
 

@@ -300,7 +300,7 @@ export interface IStorage {
   getFriendRequests(userId: number): Promise<any[]>;
   getFriendSuggestions(userId: number): Promise<any[]>;
   sendFriendRequest(data: { senderId: number; receiverId: number; [key: string]: any }): Promise<any>;
-  acceptFriendRequest(requestId: number): Promise<void>;
+  acceptFriendRequest(requestId: number, receiverData?: { receiverMessage?: string; receiverPrivateNote?: string }): Promise<void>;
   declineFriendRequest(requestId: number): Promise<void>;
   getMutualFriends(userId1: number, userId2: number): Promise<SelectUser[]>;
   getConnectionDegree(userId1: number, userId2: number): Promise<number | null>;
@@ -322,6 +322,21 @@ export interface IStorage {
     sharedEventsDetails: Array<{ id: number; title: string; date: string; location: string }>;
   } | null>;
   checkFriendship(userId1: number, userId2: number): Promise<boolean>;
+  getFriendshipInfo(userId: number, friendId: number): Promise<{
+    id: number;
+    closenessScore: number;
+    createdAt: string;
+    lastInteractionAt?: string;
+    friendRequest?: {
+      id: number;
+      senderMessage?: string;
+      receiverMessage?: string;
+      danceLocation?: string;
+      danceStory?: string;
+      didWeDance?: boolean;
+      createdAt: string;
+    };
+  } | null>;
   
   // Communities
   getCommunityByCity(cityName: string): Promise<any | undefined>;
@@ -2204,7 +2219,7 @@ export class DbStorage implements IStorage {
     }
   }
 
-  async acceptFriendRequest(requestId: number): Promise<void> {
+  async acceptFriendRequest(requestId: number, receiverData?: { receiverMessage?: string; receiverPrivateNote?: string }): Promise<void> {
     const request = await db.select({
       id: friendRequests.id,
       senderId: friendRequests.senderId,
@@ -2219,7 +2234,9 @@ export class DbStorage implements IStorage {
     await db.update(friendRequests)
       .set({ 
         status: 'accepted', 
-        respondedAt: new Date()
+        respondedAt: new Date(),
+        ...(receiverData?.receiverMessage && { receiverMessage: receiverData.receiverMessage }),
+        ...(receiverData?.receiverPrivateNote && { receiverPrivateNote: receiverData.receiverPrivateNote }),
       })
       .where(eq(friendRequests.id, requestId));
     
@@ -2406,6 +2423,75 @@ export class DbStorage implements IStorage {
       .limit(1);
     
     return friendship.length > 0;
+  }
+
+  async getFriendshipInfo(userId: number, friendId: number): Promise<{
+    id: number;
+    closenessScore: number;
+    createdAt: string;
+    lastInteractionAt?: string;
+    friendRequest?: {
+      id: number;
+      senderMessage?: string;
+      receiverMessage?: string;
+      danceLocation?: string;
+      danceStory?: string;
+      didWeDance?: boolean;
+      createdAt: string;
+    };
+  } | null> {
+    const friendship = await db.select()
+      .from(friendships)
+      .where(
+        or(
+          and(eq(friendships.userId, userId), eq(friendships.friendId, friendId)),
+          and(eq(friendships.userId, friendId), eq(friendships.friendId, userId))
+        )
+      )
+      .limit(1);
+
+    if (friendship.length === 0) {
+      return null;
+    }
+
+    const friendshipData = friendship[0];
+
+    const friendRequest = await db.select({
+      id: friendRequests.id,
+      senderMessage: friendRequests.senderMessage,
+      receiverMessage: friendRequests.receiverMessage,
+      danceLocation: friendRequests.danceLocation,
+      danceStory: friendRequests.danceStory,
+      didWeDance: friendRequests.didWeDance,
+      createdAt: friendRequests.createdAt,
+    })
+      .from(friendRequests)
+      .where(
+        and(
+          or(
+            and(eq(friendRequests.senderId, userId), eq(friendRequests.receiverId, friendId)),
+            and(eq(friendRequests.senderId, friendId), eq(friendRequests.receiverId, userId))
+          ),
+          eq(friendRequests.status, 'accepted')
+        )
+      )
+      .limit(1);
+
+    return {
+      id: friendshipData.id,
+      closenessScore: friendshipData.closenessScore,
+      createdAt: friendshipData.createdAt.toISOString(),
+      lastInteractionAt: friendshipData.lastInteractionAt?.toISOString(),
+      friendRequest: friendRequest[0] ? {
+        id: friendRequest[0].id,
+        senderMessage: friendRequest[0].senderMessage || undefined,
+        receiverMessage: friendRequest[0].receiverMessage || undefined,
+        danceLocation: friendRequest[0].danceLocation || undefined,
+        danceStory: friendRequest[0].danceStory || undefined,
+        didWeDance: friendRequest[0].didWeDance || undefined,
+        createdAt: friendRequest[0].createdAt?.toISOString() || new Date().toISOString(),
+      } : undefined,
+    };
   }
 
   async removeFriend(userId: number, friendId: number): Promise<void> {

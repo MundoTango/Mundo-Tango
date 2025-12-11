@@ -87,7 +87,11 @@ export function createFriendsRoutes(storage: IStorage) {
   router.post("/friends/requests/:requestId/accept", authenticateToken, async (req: AuthRequest, res) => {
     try {
       const requestId = parseInt(req.params.requestId);
-      await storage.acceptFriendRequest(requestId);
+      const receiverData = req.body ? {
+        receiverMessage: req.body.receiverMessage,
+        receiverPrivateNote: req.body.receiverPrivateNote,
+      } : undefined;
+      await storage.acceptFriendRequest(requestId, receiverData);
       res.json({ success: true });
     } catch (error: any) {
       res.status(500).json({ error: error.message });
@@ -122,6 +126,21 @@ export function createFriendsRoutes(storage: IStorage) {
       
       await storage.removeFriend(userId, friendId);
       res.json({ success: true });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  router.get("/friends/friendship/:friendId", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const userId = req.userId!;
+      const friendId = parseInt(req.params.friendId);
+      
+      const friendship = await storage.getFriendshipInfo(userId, friendId);
+      if (!friendship) {
+        return res.status(404).json({ error: "Friendship not found" });
+      }
+      res.json(friendship);
     } catch (error: any) {
       res.status(500).json({ error: error.message });
     }

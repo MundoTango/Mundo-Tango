@@ -26,6 +26,7 @@ import ProfileTabPro from "@/components/profile/ProfileTabPro";
 import DashboardCustomerToggle from "@/components/profile/DashboardCustomerToggle";
 import { PhotoUploadDialog } from "@/components/PhotoUploadDialog";
 import { FriendshipQuestionnaire } from "@/components/friendship/FriendshipQuestionnaire";
+import { FriendRequestReviewModal } from "@/components/friendship/FriendRequestReviewModal";
 
 interface User {
   id: number;
@@ -86,6 +87,7 @@ export default function ProfilePage() {
   const [profilePhotoDialogOpen, setProfilePhotoDialogOpen] = useState(false);
   const [coverPhotoDialogOpen, setCoverPhotoDialogOpen] = useState(false);
   const [friendshipQuestionnaireOpen, setFriendshipQuestionnaireOpen] = useState(false);
+  const [friendRequestReviewOpen, setFriendRequestReviewOpen] = useState(false);
 
   // Upload profile photo mutation (send compressed base64)
   const uploadPhotoMutation = useMutation({
@@ -294,9 +296,28 @@ export default function ProfilePage() {
   
   // Check friendship status
   const isFriend = friends.some((f: any) => f.id === user?.id);
+  // Check if current user has sent a request to profile user (outgoing)
   const hasPendingRequest = friendRequests.some(
     (r: any) => r.receiverId === user?.id && r.status === 'pending'
   );
+  // Check if profile user has sent a request to current user (incoming)
+  const incomingRequest = friendRequests.find(
+    (r: any) => r.senderId === user?.id && r.receiverId === currentUser?.id && r.status === 'pending'
+  );
+  const hasIncomingRequest = !!incomingRequest;
+  
+  // Prepare incoming request data with sender info for review modal
+  const incomingRequestWithSender = incomingRequest ? {
+    ...incomingRequest,
+    sender: {
+      id: user?.id,
+      name: user?.name,
+      username: user?.username,
+      profileImage: user?.profileImage,
+      city: user?.city,
+      country: user?.country,
+    },
+  } : null;
 
   // Send friend request mutation with questionnaire data
   const sendFriendRequestMutation = useMutation({
@@ -686,7 +707,7 @@ export default function ProfilePage() {
         {!isOwnProfile && (
           <div className="absolute top-8 right-8 z-30 flex gap-3">
             {/* Message Button - Always visible */}
-            <Link href={`/messages/compose?to=${user.id}`}>
+            <Link href={`/messages/direct/${user.id}`}>
               <Button 
                 variant="outline"
                 className="gap-2 text-white border-white/30 bg-black/20 backdrop-blur-sm hover:bg-black/30"
@@ -708,6 +729,15 @@ export default function ProfilePage() {
                   See Friendship
                 </Button>
               </Link>
+            ) : hasIncomingRequest ? (
+              <Button 
+                className="gap-2 text-white bg-primary/80 backdrop-blur-sm hover:bg-primary"
+                onClick={() => setFriendRequestReviewOpen(true)}
+                data-testid={`button-review-request-${user.id}`}
+              >
+                <UserCheck className="h-4 w-4" />
+                Review Request
+              </Button>
             ) : hasPendingRequest ? (
               <Button 
                 variant="outline"
@@ -755,6 +785,18 @@ export default function ProfilePage() {
           friendName={user.name}
           onSubmit={(data) => sendFriendRequestMutation.mutate(data)}
           isLoading={sendFriendRequestMutation.isPending}
+        />
+      )}
+      {/* Friend Request Review Modal (for incoming requests) */}
+      {incomingRequestWithSender && (
+        <FriendRequestReviewModal
+          open={friendRequestReviewOpen}
+          onOpenChange={setFriendRequestReviewOpen}
+          request={incomingRequestWithSender}
+          onActionComplete={() => {
+            queryClient.invalidateQueries({ queryKey: ['/api/friends'] });
+            queryClient.invalidateQueries({ queryKey: ['/api/friends/requests'] });
+          }}
         />
       )}
       {/* Tab Navigation */}
