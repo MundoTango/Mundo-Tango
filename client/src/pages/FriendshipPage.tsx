@@ -1,5 +1,6 @@
+import { useState } from "react";
 import { useParams, Link } from "wouter";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -11,11 +12,14 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { 
   Users, Calendar, MessageCircle, Heart, MapPin, UserCheck, ChevronRight, 
   ThumbsUp, MessageSquare, Plane, Building2, Loader2, AlertCircle, Music, 
-  Award, BookOpen, Camera, Home, Mic2, Briefcase, CheckCircle, Image as ImageIcon
+  Award, BookOpen, Camera, Home, Mic2, Briefcase, CheckCircle, Image as ImageIcon,
+  LayoutGrid
 } from "lucide-react";
 import { safeDateDistance, safeFormat } from "@/lib/safeDateFormat";
 import { motion } from "framer-motion";
 import { renderMentionPills } from "@/utils/renderMentionPills";
+import { PostCreator } from "@/components/universal/PostCreator";
+import { useToast } from "@/hooks/use-toast";
 import tangoHeroImage from "@assets/IMG_9144-Mejorado-NR_1762013255726.jpg";
 
 interface UserProfile {
@@ -191,6 +195,9 @@ function UserProfileCard({ user, side }: { user: UserProfile | undefined; side: 
 export default function FriendshipPage() {
   const { userId } = useParams<{ userId: string }>();
   const friendId = parseInt(userId || "0");
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+  const [postsSubTab, setPostsSubTab] = useState<string>("all");
 
   const { data: currentUserData } = useQuery<{ user: UserProfile }>({
     queryKey: ["/api/auth/me"],
@@ -456,79 +463,127 @@ export default function FriendshipPage() {
 
                 {/* Posts Tab */}
                 <TabsContent value="posts" className="mt-6 space-y-6">
-                  {/* Shared Posts with @mentions */}
-                  <div>
-                    <h3 className="text-sm font-semibold mb-4 flex items-center gap-2">
-                      <MessageSquare className="w-4 h-4 text-primary" />
+                  {/* PostCreator with auto-mentions */}
+                  <PostCreator
+                    onPostCreated={() => {
+                      queryClient.invalidateQueries({ queryKey: ['/api/friends/friendship', friendId, 'shared-data'] });
+                      toast({ title: "Posted!", description: "Your memory has been shared with your friend." });
+                    }}
+                    context={{ type: 'memory', name: friend?.name }}
+                    initialMentions={[
+                      currentUser ? `@user:user_${currentUser.id}:${currentUser.username || currentUser.name?.replace(/\s+/g, '_')}` : '',
+                      friend ? `@user:user_${friend.id}:${friend.username || friend.name?.replace(/\s+/g, '_')}` : ''
+                    ].filter(Boolean).join(' ') + ' '}
+                  />
+
+                  {/* Sub-tabs: All, Posts & Mentions, Liked Together */}
+                  <div className="flex gap-2 mb-4 flex-wrap" data-testid="posts-subtabs">
+                    <Button 
+                      size="sm" 
+                      variant={postsSubTab === 'all' ? 'default' : 'outline'} 
+                      onClick={() => setPostsSubTab('all')}
+                      data-testid="subtab-all"
+                    >
+                      <LayoutGrid className="w-3 h-3 mr-1" />
+                      All
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      variant={postsSubTab === 'posts' ? 'default' : 'outline'} 
+                      onClick={() => setPostsSubTab('posts')}
+                      data-testid="subtab-posts"
+                    >
+                      <MessageSquare className="w-3 h-3 mr-1" />
                       Posts & Mentions
-                    </h3>
-                    {sharedData?.sharedPosts && sharedData.sharedPosts.length > 0 ? (
-                      <div className="space-y-4">
-                        {sharedData.sharedPosts.map((post) => (
-                          <Card key={post.id} className="hover-elevate cursor-pointer" data-testid={`shared-post-${post.id}`}>
-                            <Link href={`/feed?post=${post.id}`}>
-                              <CardContent className="p-4">
-                                <div className="flex items-start gap-3">
-                                  <Avatar className="w-10 h-10">
-                                    <AvatarFallback className="bg-primary/10 text-primary text-sm font-medium">
-                                      {post.authorName?.split(' ').map(n => n[0]).join('') || 'U'}
-                                    </AvatarFallback>
-                                  </Avatar>
-                                  <div className="flex-1 min-w-0">
-                                    <div className="flex items-center gap-2 mb-1">
-                                      <p className="font-semibold text-sm">{post.authorName}</p>
-                                      <span className="text-xs text-muted-foreground">
-                                        {post.createdAt ? safeDateDistance(post.createdAt, { addSuffix: true }) : 'Recently'}
-                                      </span>
-                                    </div>
-                                    <div className="text-sm whitespace-pre-wrap">
-                                      {renderMentionPills(post.content || '')}
-                                    </div>
-                                    {post.imageUrl && (
-                                      <div className="mt-3 rounded-lg overflow-hidden">
-                                        <img 
-                                          src={post.imageUrl} 
-                                          alt="Post image" 
-                                          className="w-full h-auto max-h-64 object-cover"
-                                        />
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      variant={postsSubTab === 'liked' ? 'default' : 'outline'} 
+                      onClick={() => setPostsSubTab('liked')}
+                      data-testid="subtab-liked"
+                    >
+                      <ThumbsUp className="w-3 h-3 mr-1" />
+                      Liked Together
+                    </Button>
+                  </div>
+
+                  {/* Shared Posts with @mentions - show in "all" and "posts" */}
+                  {(postsSubTab === 'all' || postsSubTab === 'posts') && (
+                    <div>
+                      <h3 className="text-sm font-semibold mb-4 flex items-center gap-2">
+                        <MessageSquare className="w-4 h-4 text-primary" />
+                        Posts & Mentions
+                      </h3>
+                      {sharedData?.sharedPosts && sharedData.sharedPosts.length > 0 ? (
+                        <div className="space-y-4">
+                          {sharedData.sharedPosts.map((post) => (
+                            <Card key={post.id} className="hover-elevate cursor-pointer" data-testid={`shared-post-${post.id}`}>
+                              <Link href={`/feed?post=${post.id}`}>
+                                <CardContent className="p-4">
+                                  <div className="flex items-start gap-3">
+                                    <Avatar className="w-10 h-10">
+                                      <AvatarFallback className="bg-primary/10 text-primary text-sm font-medium">
+                                        {post.authorName?.split(' ').map(n => n[0]).join('') || 'U'}
+                                      </AvatarFallback>
+                                    </Avatar>
+                                    <div className="flex-1 min-w-0">
+                                      <div className="flex items-center gap-2 mb-1">
+                                        <p className="font-semibold text-sm">{post.authorName}</p>
+                                        <span className="text-xs text-muted-foreground">
+                                          {post.createdAt ? safeDateDistance(post.createdAt, { addSuffix: true }) : 'Recently'}
+                                        </span>
                                       </div>
-                                    )}
+                                      <div className="text-sm whitespace-pre-wrap">
+                                        {renderMentionPills(post.content || '')}
+                                      </div>
+                                      {post.imageUrl && (
+                                        <div className="mt-3 rounded-lg overflow-hidden">
+                                          <img 
+                                            src={post.imageUrl} 
+                                            alt="Post image" 
+                                            className="w-full h-auto max-h-64 object-cover"
+                                          />
+                                        </div>
+                                      )}
+                                    </div>
                                   </div>
-                                </div>
-                              </CardContent>
+                                </CardContent>
+                              </Link>
+                            </Card>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-center text-muted-foreground py-6">No shared posts yet</p>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Shared Likes - show in "all" and "liked" */}
+                  {(postsSubTab === 'all' || postsSubTab === 'liked') && (
+                    <div>
+                      <h3 className="text-sm font-semibold mb-4 flex items-center gap-2">
+                        <ThumbsUp className="w-4 h-4 text-primary" />
+                        Posts You Both Liked
+                      </h3>
+                      {sharedData?.sharedLikes && sharedData.sharedLikes.length > 0 ? (
+                        <div className="space-y-3">
+                          {sharedData.sharedLikes.slice(0, 5).map((like, index) => (
+                            <Link key={index} href={`/feed?post=${like.postId}`}>
+                              <div className="flex items-center gap-4 p-3 border rounded-lg hover-elevate cursor-pointer" data-testid={`shared-like-${like.postId}`}>
+                                <ThumbsUp className="w-4 h-4 text-primary" />
+                                <p className="text-sm truncate flex-1">{like.postTitle || 'Untitled post'}</p>
+                              </div>
                             </Link>
-                          </Card>
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="text-center text-muted-foreground py-6">No shared posts yet</p>
-                    )}
-                  </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-center text-muted-foreground py-4 text-sm">No shared likes yet</p>
+                      )}
+                    </div>
+                  )}
 
-                  {/* Shared Likes */}
-                  <div>
-                    <h3 className="text-sm font-semibold mb-4 flex items-center gap-2">
-                      <ThumbsUp className="w-4 h-4 text-primary" />
-                      Posts You Both Liked
-                    </h3>
-                    {sharedData?.sharedLikes && sharedData.sharedLikes.length > 0 ? (
-                      <div className="space-y-3">
-                        {sharedData.sharedLikes.slice(0, 5).map((like, index) => (
-                          <Link key={index} href={`/feed?post=${like.postId}`}>
-                            <div className="flex items-center gap-4 p-3 border rounded-lg hover-elevate cursor-pointer" data-testid={`shared-like-${like.postId}`}>
-                              <ThumbsUp className="w-4 h-4 text-primary" />
-                              <p className="text-sm truncate flex-1">{like.postTitle || 'Untitled post'}</p>
-                            </div>
-                          </Link>
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="text-center text-muted-foreground py-4 text-sm">No shared likes yet</p>
-                    )}
-                  </div>
-
-                  {/* Shared Comments */}
-                  {sharedData?.sharedComments && sharedData.sharedComments.length > 0 && (
+                  {/* Shared Comments - only show in "all" */}
+                  {postsSubTab === 'all' && sharedData?.sharedComments && sharedData.sharedComments.length > 0 && (
                     <div>
                       <h3 className="text-sm font-semibold mb-4 flex items-center gap-2">
                         <MessageCircle className="w-4 h-4 text-primary" />
