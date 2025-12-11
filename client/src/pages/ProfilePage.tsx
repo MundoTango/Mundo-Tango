@@ -6,7 +6,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Settings, UserPlus, UserMinus, UserCheck, Plane, Calendar, CheckCircle, Instagram, Facebook, Twitter, Linkedin, Youtube, Globe, Award, Plus, Camera, Music, Users, ImageIcon, Mic2, Home, Briefcase, BookOpen, Heart, Eye } from "lucide-react";
+import { MapPin, Settings, UserPlus, UserMinus, UserCheck, Plane, Calendar, CheckCircle, Instagram, Facebook, Twitter, Linkedin, Youtube, Globe, Award, Plus, Camera, Music, Users, ImageIcon, Mic2, Home, Briefcase, BookOpen, Heart, Eye, MessageCircle } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { ComposeMessage } from "@/components/messages/ComposeMessage";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useAuth } from "@/contexts/AuthContext";
 import { SEO } from "@/components/SEO";
@@ -25,6 +32,42 @@ import ProfileTabMemories from "@/components/profile/ProfileTabMemories";
 import ProfileTabPro from "@/components/profile/ProfileTabPro";
 import DashboardCustomerToggle from "@/components/profile/DashboardCustomerToggle";
 import { PhotoUploadDialog } from "@/components/PhotoUploadDialog";
+import { FriendshipQuestionnaire } from "@/components/friendship/FriendshipQuestionnaire";
+
+function MessageDialogWithNavigation({ 
+  open, 
+  onOpenChange, 
+  recipientName, 
+  recipientId 
+}: { 
+  open: boolean; 
+  onOpenChange: (open: boolean) => void; 
+  recipientName: string; 
+  recipientId: string;
+}) {
+  const [, setLocation] = useLocation();
+  
+  const handleSuccess = () => {
+    onOpenChange(false);
+    setLocation('/messages');
+  };
+  
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-2xl">
+        <DialogHeader>
+          <DialogTitle>Send Message to {recipientName}</DialogTitle>
+        </DialogHeader>
+        <ComposeMessage 
+          onClose={() => onOpenChange(false)}
+          onSuccess={handleSuccess}
+          defaultChannel="mt"
+          defaultRecipient={recipientId}
+        />
+      </DialogContent>
+    </Dialog>
+  );
+}
 
 interface User {
   id: number;
@@ -66,7 +109,10 @@ interface Post {
 }
 
 export default function ProfilePage() {
-  const [, params] = useRoute("/profile/:id");
+  // Support multiple route patterns: /profile/:id and /users/:userId
+  const [, profileParams] = useRoute("/profile/:id");
+  const [, userParams] = useRoute("/users/:userId");
+  const params = profileParams || (userParams ? { id: userParams.userId } : null);
   const searchString = useSearch();
   const { user: currentUser } = useAuth();
   const { toast } = useToast();
@@ -84,6 +130,8 @@ export default function ProfilePage() {
   const [uploadingCover, setUploadingCover] = useState(false);
   const [profilePhotoDialogOpen, setProfilePhotoDialogOpen] = useState(false);
   const [coverPhotoDialogOpen, setCoverPhotoDialogOpen] = useState(false);
+  const [messageDialogOpen, setMessageDialogOpen] = useState(false);
+  const [friendRequestDialogOpen, setFriendRequestDialogOpen] = useState(false);
 
   // Upload profile photo mutation (send compressed base64)
   const uploadPhotoMutation = useMutation({
@@ -292,16 +340,27 @@ export default function ProfilePage() {
   
   // Check friendship status
   const isFriend = friends.some((f: any) => f.id === user?.id);
+  // hasPendingRequest: Check if CURRENT user sent a pending request TO this profile user
   const hasPendingRequest = friendRequests.some(
-    (r: any) => r.receiverId === user?.id && r.status === 'pending'
+    (r: any) => r.receiverId === user?.id && r.senderId === currentUser?.id && r.status === 'pending'
   );
 
-  // Send friend request mutation
+  // Send friend request mutation with questionnaire data
+  // Maps frontend fields to backend schema: whereWeMet → danceLocation, ourStory → danceStory, privateNote → senderPrivateNote
   const sendFriendRequestMutation = useMutation({
-    mutationFn: async () => {
-      return await apiRequest('POST', `/api/friends/request/${user?.id}`);
+    mutationFn: async (questionnaireData?: { whenWeMet?: Date; whereWeMet: string; ourStory: string; privateNote?: string; mediaUrls?: string[] }) => {
+      // Map questionnaire fields to backend schema
+      const payload = questionnaireData ? {
+        danceLocation: questionnaireData.whereWeMet,
+        danceStory: questionnaireData.ourStory,
+        senderPrivateNote: questionnaireData.privateNote,
+        senderMessage: questionnaireData.ourStory || `Hi! I'd love to connect with you.`,
+        mediaUrls: questionnaireData.mediaUrls,
+      } : undefined;
+      return await apiRequest('POST', `/api/friends/request/${user?.id}`, payload);
     },
     onSuccess: async () => {
+      setFriendRequestDialogOpen(false);
       await queryClient.invalidateQueries({ queryKey: ['/api/friends/requests'] });
       await queryClient.refetchQueries({ queryKey: ['/api/friends/requests'] });
       toast({
@@ -666,43 +725,6 @@ export default function ProfilePage() {
           </Card>
         </motion.div>
         
-        {/* Friend Action Buttons - Top Right (Non-Own Profile Only) */}
-        {!isOwnProfile && (
-          <div className="absolute top-8 right-8 z-30 flex gap-3">
-            {isFriend ? (
-                <Button 
-                  variant="outline"
-                  className="gap-2 text-white border-white/30 bg-black/20 backdrop-blur-sm hover:bg-black/30"
-                  onClick={() => removeFriendMutation.mutate()}
-                  disabled={removeFriendMutation.isPending}
-                  data-testid={`button-remove-friend-${user.id}`}
-                >
-                  <UserMinus className="h-4 w-4" />
-                  {removeFriendMutation.isPending ? 'Removing...' : 'Remove Friend'}
-                </Button>
-              ) : hasPendingRequest ? (
-                <Button 
-                  variant="outline"
-                  className="gap-2 text-white border-white/30 bg-black/20 backdrop-blur-sm"
-                  disabled
-                  data-testid="button-request-pending"
-                >
-                  <UserCheck className="h-4 w-4" />
-                  Request Sent
-                </Button>
-              ) : (
-                <Button 
-                  className="gap-2 text-white bg-primary/80 backdrop-blur-sm hover:bg-primary"
-                  onClick={() => sendFriendRequestMutation.mutate()}
-                  disabled={sendFriendRequestMutation.isPending}
-                  data-testid={`button-add-friend-${user.id}`}
-                >
-                  <UserPlus className="h-4 w-4" />
-                  {sendFriendRequestMutation.isPending ? 'Sending...' : 'Add Friend'}
-                </Button>
-              )}
-          </div>
-        )}
       </div>
       {/* Photo Upload Dialogs */}
       <PhotoUploadDialog
@@ -719,6 +741,21 @@ export default function ProfilePage() {
         type="cover"
         isUploading={uploadingCover}
       />
+      {/* Message Dialog */}
+      <MessageDialogWithNavigation
+        open={messageDialogOpen}
+        onOpenChange={setMessageDialogOpen}
+        recipientName={user.name}
+        recipientId={String(user.id)}
+      />
+      {/* Friend Request Questionnaire Dialog */}
+      <FriendshipQuestionnaire
+        open={friendRequestDialogOpen}
+        onOpenChange={setFriendRequestDialogOpen}
+        friendName={user.name}
+        onSubmit={(data) => sendFriendRequestMutation.mutate(data)}
+        isLoading={sendFriendRequestMutation.isPending}
+      />
       {/* Tab Navigation */}
       <ProfileTabsNav
         user={user}
@@ -726,6 +763,53 @@ export default function ProfilePage() {
         onTabChange={setActiveTab}
         isOwnProfile={isOwnProfile}
         isPublicView={isPublicView}
+        actionButtons={!isOwnProfile && (
+          <>
+            {isFriend ? (
+              <Link href={`/friends/${user.id}`}>
+                <Button 
+                  size="sm"
+                  className="gap-2"
+                  data-testid={`button-see-friendship-${user.id}`}
+                >
+                  <Heart className="h-4 w-4" />
+                  See Friendship
+                </Button>
+              </Link>
+            ) : hasPendingRequest ? (
+              <Button 
+                variant="outline"
+                size="sm"
+                className="gap-2"
+                disabled
+                data-testid="button-request-pending"
+              >
+                <UserCheck className="h-4 w-4" />
+                Request Sent
+              </Button>
+            ) : (
+              <Button 
+                size="sm"
+                className="gap-2"
+                onClick={() => setFriendRequestDialogOpen(true)}
+                data-testid={`button-add-friend-${user.id}`}
+              >
+                <UserPlus className="h-4 w-4" />
+                Add Friend
+              </Button>
+            )}
+            <Button 
+              variant="outline"
+              size="sm"
+              className="gap-2"
+              onClick={() => setMessageDialogOpen(true)}
+              data-testid="button-message"
+            >
+              <MessageCircle className="h-4 w-4" />
+              Message
+            </Button>
+          </>
+        )}
       />
       {/* Tab Content */}
       <div className="max-w-5xl mx-auto px-6 py-12">

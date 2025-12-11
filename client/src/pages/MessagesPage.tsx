@@ -1,12 +1,12 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import { 
   useConversations, 
   useConversation, 
   useSendMessage,
-  useMarkAsRead,
-  type ChatMessage,
-  type Conversation
+  useMessagesRealtime,
+  useMarkMessagesAsRead 
 } from "@/hooks/useMessages";
 import {
   useConnectedChannels,
@@ -22,7 +22,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Send, MessageCircle, Users, Heart, Search, PenSquare, Settings, Mail, Inbox } from "lucide-react";
+import { Send, MessageCircle, Users, Heart, Search, PenSquare, Settings, Mail, Inbox, Check, CheckCheck } from "lucide-react";
 import { SiFacebook, SiWhatsapp, SiGmail, SiInstagram } from "react-icons/si";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/AuthContext";
@@ -33,7 +33,8 @@ import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary"
 import { ChannelSettingsPanel } from "@/components/messages/ChannelSettingsPanel";
 
 export default function MessagesPage() {
-  const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
+  const { t } = useTranslation('pages');
+  const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeChannel, setActiveChannel] = useState<'all' | MessageChannel>('all');
   const [showSettings, setShowSettings] = useState(false);
@@ -83,15 +84,15 @@ export default function MessagesPage() {
                   data-testid="badge-hero-category"
                 >
                   <MessageCircle className="w-3 h-3 mr-1" />
-                  Stay Connected
+                  {t('messages.hero.badge')}
                 </Badge>
                 
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-white font-bold leading-tight">
-                  Your Conversations
+                  {t('messages.hero.headline')}
                 </h1>
                 
                 <p className="text-xl text-white/80 max-w-2xl mx-auto">
-                  Build meaningful connections with dancers around the world
+                  {t('messages.hero.subtitle')}
                 </p>
 
                 <div className="flex items-center justify-center gap-8 mt-8">
@@ -152,7 +153,7 @@ export default function MessagesPage() {
                   <div className="p-4 border-b space-y-3">
                     <div className="flex items-center justify-between gap-2">
                       <h2 className="text-xl font-serif font-bold" data-testid="heading-messages">
-                        Messages
+                        {t('messages.title')}
                       </h2>
                       <div className="flex items-center gap-1">
                         <Dialog open={showSettings} onOpenChange={setShowSettings}>
@@ -212,7 +213,7 @@ export default function MessagesPage() {
                     <div className="relative">
                       <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input
-                        placeholder="Search conversations..."
+                        placeholder={t('messages.searchConversations')}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="pl-9"
@@ -259,9 +260,9 @@ export default function MessagesPage() {
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: index * 0.05 }}
                             whileHover={{ x: 4 }}
-                            onClick={() => setSelectedConversation(conversation)}
+                            onClick={() => setSelectedConversationId(conversation.id)}
                             className={`w-full p-4 rounded-xl hover-elevate active-elevate-2 text-left transition-colors ${
-                              selectedConversation?.id === conversation.id ? "bg-accent" : ""
+                              selectedConversationId === conversation.id ? "bg-accent" : ""
                             }`}
                             data-testid={`button-conversation-${conversation.id}`}
                           >
@@ -313,9 +314,9 @@ export default function MessagesPage() {
                       >
                         <MessageCircle className="w-12 h-12 mx-auto text-muted-foreground opacity-50" />
                         <div>
-                          <p className="font-medium text-muted-foreground">No messages yet</p>
+                          <p className="font-medium text-muted-foreground">{t('messages.noMessages')}</p>
                           <p className="text-sm text-muted-foreground/70 mt-1">
-                            Start connecting with dancers
+                            {t('messages.startConversation')}
                           </p>
                         </div>
                       </motion.div>
@@ -325,8 +326,8 @@ export default function MessagesPage() {
 
                 {/* Right Panel - Active Conversation (2/3 width) */}
                 <div className="flex-[2] bg-background">
-                  {selectedConversation ? (
-                    <ConversationView conversation={selectedConversation} />
+                  {selectedConversationId ? (
+                    <ConversationView conversationId={selectedConversationId} />
                   ) : (
                     <motion.div 
                       className="h-full flex flex-col items-center justify-center text-center p-8 space-y-4" 
@@ -337,10 +338,10 @@ export default function MessagesPage() {
                       <MessageCircle className="w-16 h-16 text-muted-foreground opacity-30" />
                       <div>
                         <h3 className="text-xl font-serif font-bold text-muted-foreground">
-                          Select a conversation
+                          {t('messages.selectConversation')}
                         </h3>
                         <p className="text-sm text-muted-foreground/70 mt-2">
-                          Choose a conversation from the list to start messaging
+                          {t('messages.selectConversationDesc')}
                         </p>
                       </div>
                     </motion.div>
@@ -355,20 +356,22 @@ export default function MessagesPage() {
   );
 }
 
-function ConversationView({ conversation }: { conversation: Conversation }) {
+function ConversationView({ conversationId }: { conversationId: string }) {
   const [message, setMessage] = useState("");
   const { user } = useAuth();
-  const roomId = typeof conversation.id === "number" ? conversation.id : null;
-  const { data: messages, isLoading } = useConversation(roomId);
-  const sendMessage = useSendMessage();
-  const markAsRead = useMarkAsRead();
+  const { data: messages, isLoading } = useConversation(conversationId);
+  const sendMessage = useSendMessage(conversationId);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  
+  const { typingUsers, broadcastTyping } = useMessagesRealtime(conversationId);
+  const markAsRead = useMarkMessagesAsRead(conversationId);
 
   useEffect(() => {
-    if (roomId) {
-      markAsRead.mutate(roomId);
+    if (conversationId) {
+      markAsRead.mutate();
     }
-  }, [roomId]);
+  }, [conversationId]);
 
   useEffect(() => {
     if (messages && messages.length > 0) {
@@ -376,22 +379,35 @@ function ConversationView({ conversation }: { conversation: Conversation }) {
     }
   }, [messages]);
 
+  const handleTyping = useCallback(() => {
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
+
+    broadcastTyping(true);
+
+    typingTimeoutRef.current = setTimeout(() => {
+      broadcastTyping(false);
+    }, 500);
+  }, [broadcastTyping]);
+
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!message.trim() || !roomId) return;
+    if (!message.trim()) return;
 
     try {
-      await sendMessage.mutateAsync({
-        chatRoomId: roomId,
-        content: message.trim()
-      });
+      await sendMessage.mutateAsync(message.trim());
       setMessage("");
+      broadcastTyping(false);
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
     } catch (error) {
       console.error("Failed to send message:", error);
     }
   };
 
-  const conversationName = conversation.name || "Conversation";
+  const conversationName = "Conversation";
 
   return (
     <motion.div 
@@ -403,7 +419,6 @@ function ConversationView({ conversation }: { conversation: Conversation }) {
       {/* Chat Header */}
       <div className="p-6 border-b flex items-center gap-4 bg-card" data-testid="header-conversation">
         <Avatar className="h-12 w-12">
-          <AvatarImage src={conversation.avatar || undefined} />
           <AvatarFallback className="text-lg font-semibold">
             {conversationName.charAt(0)?.toUpperCase()}
           </AvatarFallback>
@@ -412,9 +427,7 @@ function ConversationView({ conversation }: { conversation: Conversation }) {
           <h3 className="text-xl font-serif font-bold" data-testid="text-conversation-header-name">
             {conversationName}
           </h3>
-          <p className="text-sm text-muted-foreground">
-            {conversation.type === "group" ? "Group chat" : "Direct message"}
-          </p>
+          <p className="text-sm text-muted-foreground">Active now</p>
         </div>
       </div>
 
@@ -437,10 +450,10 @@ function ConversationView({ conversation }: { conversation: Conversation }) {
           </div>
         ) : messages && messages.length > 0 ? (
           <div className="space-y-6">
-            {messages.map((msg: ChatMessage, index: number) => {
-              const isOwn = msg.isOwn || msg.senderId === user?.id;
-              const senderName = msg.senderName || "User";
-              const senderAvatar = msg.senderImage;
+            {messages.map((msg, index) => {
+              const isOwn = String(msg.sender_id) === String(user?.id);
+              const senderName = (msg as any).profiles?.username || "User";
+              const senderAvatar = (msg as any).profiles?.avatar_url;
               
               return (
                 <motion.div
@@ -467,40 +480,51 @@ function ConversationView({ conversation }: { conversation: Conversation }) {
                       }`}
                       data-testid={`bubble-${msg.id}`}
                     >
-                      <p className="text-sm leading-relaxed">{msg.message}</p>
-                      {msg.mediaUrl && (
-                        <div className="mt-2">
-                          {msg.mediaType?.startsWith("image") ? (
-                            <img 
-                              src={msg.mediaUrl} 
-                              alt="Shared media" 
-                              className="rounded-lg max-w-full max-h-48 object-cover"
-                            />
-                          ) : (
-                            <a 
-                              href={msg.mediaUrl} 
-                              target="_blank" 
-                              rel="noopener noreferrer"
-                              className="text-xs underline"
-                            >
-                              View attachment
-                            </a>
-                          )}
-                        </div>
-                      )}
+                      <p className="text-sm leading-relaxed">{msg.content}</p>
                     </motion.div>
-                    <p 
-                      className="text-xs text-muted-foreground px-2" 
+                    <div 
+                      className="flex items-center gap-1 px-2" 
                       data-testid={`timestamp-${msg.id}`}
                     >
-                      {safeDateDistance(msg.createdAt, {
-                        addSuffix: true,
-                      })}
-                    </p>
+                      <p className="text-xs text-muted-foreground">
+                        {safeDateDistance(msg.created_at, {
+                          addSuffix: true,
+                        })}
+                      </p>
+                      {isOwn && (
+                        <MessageDeliveryStatus 
+                          isRead={(msg as any).is_read || false}
+                          isDelivered={true}
+                        />
+                      )}
+                    </div>
                   </div>
                 </motion.div>
               );
             })}
+            {typingUsers.length > 0 && (
+              <motion.div 
+                className="flex gap-4" 
+                data-testid="typing-indicator"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+              >
+                <Avatar className="h-10 w-10 flex-shrink-0">
+                  <AvatarFallback className="text-sm font-semibold">
+                    {typingUsers[0].username.charAt(0)?.toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex flex-col gap-1">
+                  <div className="max-w-md rounded-2xl p-4 bg-muted">
+                    <p className="text-sm text-muted-foreground italic">
+                      {typingUsers.length === 1 
+                        ? `${typingUsers[0].username} is typing...`
+                        : `${typingUsers.length} people are typing...`}
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
+            )}
             <div ref={messagesEndRef} />
           </div>
         ) : (
@@ -559,5 +583,35 @@ function ConversationView({ conversation }: { conversation: Conversation }) {
         </p>
       </form>
     </motion.div>
+  );
+}
+
+function MessageDeliveryStatus({ isRead, isDelivered }: { isRead: boolean; isDelivered: boolean }) {
+  if (isRead) {
+    return (
+      <CheckCheck 
+        className="w-3.5 h-3.5 text-primary" 
+        data-testid="status-read"
+        aria-label="Read"
+      />
+    );
+  }
+  
+  if (isDelivered) {
+    return (
+      <CheckCheck 
+        className="w-3.5 h-3.5 text-muted-foreground" 
+        data-testid="status-delivered"
+        aria-label="Delivered"
+      />
+    );
+  }
+  
+  return (
+    <Check 
+      className="w-3.5 h-3.5 text-muted-foreground" 
+      data-testid="status-sent"
+      aria-label="Sent"
+    />
   );
 }
