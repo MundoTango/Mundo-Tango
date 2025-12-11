@@ -16,6 +16,47 @@ Mundo Tango is a production-ready social platform connecting the global tango co
 - MB.MD Methodology - Apply v9.9.3 patterns systematically: Research → Plan → Build → Test → Fix → Document
 
 ## Recent Session Progress (Dec 11, 2025)
+
+### Volunteer Testing System - MB.MD v9.9.4 (Latest)
+**Applied Methodology**: Research → Plan → Build → Test → Fix → Document
+
+#### Architecture Overview
+```
+VolunteerDashboard → TestScenarios → TestResults → IssueRouting → AutoFix Pipeline
+                                                        ↓
+                                          GamificationRewards (XP + Badges)
+```
+
+#### Components Built
+1. **IssueRoutingService** (`server/services/volunteer/issueRouting.ts`)
+   - Routes stuck points to `audit_issues` table for auto-fix processing
+   - Calculates severity based on time spent stuck
+   - Classifies issue types: ux, navigation, form, performance, media
+   - Auto-determines auto-fix candidates
+
+2. **GamificationRewardsService** (`server/services/volunteer/gamificationRewards.ts`)
+   - Awards XP for completed test scenarios
+   - XP values: Easy=10, Medium=25, Hard=50 + bonuses
+   - Badges at milestones: First Test, Regular, Dedicated, Expert, Elite, Master
+
+3. **ScenarioGenerator** (`server/services/volunteer/scenarioGenerator.ts`)
+   - 32 comprehensive test scenarios across 14 domains
+   - Priority distribution: P0-Critical=10, P1-High=14, P2-Medium=8
+   - 307 total minutes of testing coverage
+
+#### API Endpoints
+- `GET /api/volunteer/scenarios` - List test scenarios
+- `GET /api/scenarios/coverage` - Get coverage statistics
+- `GET /api/scenarios/domains` - List all 14 test domains
+- `POST /api/volunteer/results` - Submit results with auto issue routing & XP awards
+
+#### Coverage Stats
+- **14 domains**: Social Features, Events, Groups, Profile, Messages, AI/ML, Media, Payments, Auth, Admin, Marketplace, Settings, Discovery, Notifications
+- **32 scenarios** total with priority-based distribution
+- **307 minutes** estimated total testing time
+
+---
+
 ### Event Scraping Infrastructure - MB.MD v9.9.4
 **Applied Methodology**: Research → Plan → Build → Test → Fix → Document
 
