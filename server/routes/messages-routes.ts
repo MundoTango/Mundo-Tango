@@ -31,8 +31,8 @@ import {
   type MessageAutomation,
   type ScheduledMessage,
 } from "@shared/schema";
-import { chatMessages } from "@shared/schema";
-import { eq, and, or, desc, sql } from "drizzle-orm";
+import { chatMessages, directMessages, directMessageReactions, users } from "@shared/schema";
+import { eq, and, or, desc, sql, inArray } from "drizzle-orm";
 import { z } from "zod";
 import { encrypt, decrypt } from "../utils/encryption";
 import { getUncachableGmailClient, sendEmail } from "../lib/gmail-client";
@@ -842,53 +842,65 @@ router.get("/unified", authenticateToken, async (req: AuthRequest, res: Response
     const userId = req.userId!;
     const { limit = 50, offset = 0, channel, unreadOnly } = req.query;
 
-    // Get external messages (Gmail, FB, IG, WhatsApp)
-    const externalMsgs = await db
+    console.log(`[Messages] Fetching unified messages for user ${userId}, channel=${channel}`);
+
+    // Simple query: get all messages where user is sender OR recipient
+    const internalMsgs = await db
       .select()
-      .from(externalMessages)
+      .from(directMessages)
       .where(
-        and(
-          eq(externalMessages.userId, userId),
-          channel ? eq(externalMessages.channel, channel as any) : sql`true`,
-          unreadOnly === 'true' ? eq(externalMessages.isRead, false) : sql`true`
+        or(
+          eq(directMessages.senderId, userId),
+          eq(directMessages.recipientId, userId)
         )
       )
-      .orderBy(desc(externalMessages.receivedAt))
-      .limit(parseInt(limit as string))
-      .offset(parseInt(offset as string));
+      .orderBy(desc(directMessages.createdAt))
+      .limit(parseInt(limit as string) || 50)
+      .offset(parseInt(offset as string) || 0);
 
-    // Get MT internal messages (existing chatMessages table)
-    // TODO: Join with chatMessages table to include internal MT messages
-    // const internalMsgs = await db
-    //   .select()
-    //   .from(chatMessages)
-    //   .where(eq(chatMessages.userId, userId))
-    //   .orderBy(desc(chatMessages.createdAt))
-    //   .limit(parseInt(limit as string));
+    console.log(`[Messages] Found ${internalMsgs.length} internal messages`);
 
-    // Combine and sort by date
-    const unifiedMessages = [
-      ...externalMsgs.map(msg => ({
-        ...msg,
-        source: 'external',
-        type: msg.channel,
-      })),
-      // ...internalMsgs.map(msg => ({
-      //   ...msg,
-      //   source: 'internal',
-      //   type: 'mt',
-      // }))
-    ].sort((a, b) => {
-      const dateA = new Date(a.receivedAt || a.createdAt).getTime();
-      const dateB = new Date(b.receivedAt || b.createdAt).getTime();
+    // Map MT messages to unified format with sender/recipient names
+    const mtMessages = [];
+    for (const msg of internalMsgs) {
+      try {
+        const senderResults = await db.select({ name: users.name, username: users.username }).from(users).where(eq(users.id, msg.senderId));
+        const recipientResults = await db.select({ name: users.name, username: users.username }).from(users).where(eq(users.id, msg.recipientId));
+        
+        const sender = senderResults[0];
+        const recipient = recipientResults[0];
+        
+        mtMessages.push({
+          id: msg.id,
+          channel: 'mt' as const,
+          from: sender?.name || sender?.username || `User ${msg.senderId}`,
+          to: recipient?.name || recipient?.username || `User ${msg.recipientId}`,
+          subject: null,
+          body: msg.content || '',
+          receivedAt: msg.createdAt ? msg.createdAt.toISOString() : new Date().toISOString(),
+          createdAt: msg.createdAt ? msg.createdAt.toISOString() : new Date().toISOString(),
+          isRead: msg.isRead ?? false,
+          isStarred: false,
+          source: 'internal',
+          senderId: msg.senderId,
+          recipientId: msg.recipientId,
+        });
+      } catch (mappingError) {
+        console.error(`[Messages] Error mapping message ${msg.id}:`, mappingError);
+      }
+    }
+
+    // Sort by date (newest first)
+    const unifiedMessages = mtMessages.sort((a, b) => {
+      const dateA = new Date(a.receivedAt).getTime();
+      const dateB = new Date(b.receivedAt).getTime();
       return dateB - dateA;
     });
 
-    res.json({
-      messages: unifiedMessages,
-      total: unifiedMessages.length,
-      hasMore: unifiedMessages.length === parseInt(limit as string),
-    });
+    console.log(`[Messages] Returning ${unifiedMessages.length} unified messages`);
+
+    // Return as flat array (frontend expects this)
+    res.json(unifiedMessages);
   } catch (error: any) {
     console.error("[Messages] Unified inbox error:", error);
     res.status(500).json({ error: "Failed to fetch messages", message: error.message });
@@ -1080,15 +1092,34 @@ router.post("/send", authenticateToken, async (req: AuthRequest, res: Response) 
     }
 
     if (channel === 'mt') {
-      // MT internal messaging - placeholder for future implementation
-      sentMessage = {
-        id: `mt-${Date.now()}`,
-        channel: 'mt',
-        to,
-        body,
-        sentAt: new Date(),
-      };
-      console.log('[Messages] MT internal message (placeholder):', sentMessage.id);
+      // MT internal messaging - insert into directMessages table
+      try {
+        // Parse recipientId (could be numeric ID or string)
+        const recipientId = parseInt(to);
+        if (isNaN(recipientId)) {
+          return res.status(400).json({ error: 'Invalid recipient ID for MT messages' });
+        }
+        
+        const [insertedMsg] = await db.insert(directMessages).values({
+          senderId: userId,
+          recipientId,
+          content: body,
+        }).returning();
+        
+        sentMessage = {
+          id: insertedMsg.id,
+          channel: 'mt',
+          to,
+          recipientId: insertedMsg.recipientId,
+          senderId: insertedMsg.senderId,
+          body: insertedMsg.content,
+          sentAt: insertedMsg.createdAt,
+        };
+        console.log('[Messages] MT internal message sent:', insertedMsg.id);
+      } catch (mtError: any) {
+        sendError = mtError.message || 'Failed to send MT message';
+        console.error('[Messages] MT send error:', mtError);
+      }
     }
 
     if (sendError) {
@@ -1671,6 +1702,387 @@ router.get("/channels/whatsapp/webhook-status", authenticateToken, async (req: A
       error: "Failed to get webhook status", 
       message: error.message 
     });
+  }
+});
+
+// ============================================================================
+// FACEBOOK MESSENGER-STYLE CONVERSATION ENDPOINTS
+// ============================================================================
+
+/**
+ * GET /api/messages/unread-count
+ * Get total count of unread messages for the current user
+ * Used for notification badge in top navigation bar
+ */
+router.get("/unread-count", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.userId!;
+
+    const result = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(directMessages)
+      .where(
+        and(
+          eq(directMessages.recipientId, userId),
+          eq(directMessages.isRead, false)
+        )
+      );
+
+    const unreadCount = Number(result[0]?.count) || 0;
+
+    res.json({ unreadCount });
+  } catch (error: any) {
+    console.error("[Messages] Get unread count error:", error);
+    res.status(500).json({ error: "Failed to get unread count", message: error.message });
+  }
+});
+
+/**
+ * GET /api/messages/conversations
+ * Get all conversations grouped by partner (for FB Messenger-style UI)
+ * Returns list of conversation partners with last message preview
+ */
+router.get("/conversations", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.userId!;
+
+    // Get all messages where user is sender or recipient
+    const allMessages = await db
+      .select({
+        id: directMessages.id,
+        senderId: directMessages.senderId,
+        recipientId: directMessages.recipientId,
+        content: directMessages.content,
+        isRead: directMessages.isRead,
+        createdAt: directMessages.createdAt,
+      })
+      .from(directMessages)
+      .where(
+        or(
+          eq(directMessages.senderId, userId),
+          eq(directMessages.recipientId, userId)
+        )
+      )
+      .orderBy(desc(directMessages.createdAt));
+
+    // Group messages by conversation partner
+    const conversationsMap = new Map<number, {
+      partnerId: number;
+      lastMessage: typeof allMessages[0];
+      unreadCount: number;
+    }>();
+
+    for (const msg of allMessages) {
+      const partnerId = msg.senderId === userId ? msg.recipientId : msg.senderId;
+      
+      if (!conversationsMap.has(partnerId)) {
+        conversationsMap.set(partnerId, {
+          partnerId,
+          lastMessage: msg,
+          unreadCount: 0,
+        });
+      }
+      
+      // Count unread messages from partner
+      if (msg.senderId === partnerId && !msg.isRead) {
+        const conv = conversationsMap.get(partnerId)!;
+        conv.unreadCount++;
+      }
+    }
+
+    // Fetch partner user info
+    const partnerIds = Array.from(conversationsMap.keys());
+    const partners = partnerIds.length > 0 
+      ? await db
+          .select({
+            id: users.id,
+            name: users.name,
+            username: users.username,
+            profileImage: users.profileImage,
+          })
+          .from(users)
+          .where(sql`${users.id} IN (${sql.join(partnerIds.map(id => sql`${id}`), sql`, `)})`)
+      : [];
+
+    // Build conversation list with partner info
+    const conversations = Array.from(conversationsMap.values()).map(conv => {
+      const partner = partners.find(p => p.id === conv.partnerId);
+      return {
+        partnerId: conv.partnerId,
+        partnerName: partner?.name || partner?.username || `User ${conv.partnerId}`,
+        partnerUsername: partner?.username,
+        partnerImage: partner?.profileImage,
+        lastMessage: {
+          id: conv.lastMessage.id,
+          content: conv.lastMessage.content,
+          createdAt: conv.lastMessage.createdAt,
+          isMine: conv.lastMessage.senderId === userId,
+        },
+        unreadCount: conv.unreadCount,
+      };
+    });
+
+    // Sort by last message time (most recent first)
+    conversations.sort((a, b) => {
+      const timeA = new Date(a.lastMessage.createdAt || 0).getTime();
+      const timeB = new Date(b.lastMessage.createdAt || 0).getTime();
+      return timeB - timeA;
+    });
+
+    res.json(conversations);
+  } catch (error: any) {
+    console.error("[Messages] Get conversations error:", error);
+    res.status(500).json({ error: "Failed to get conversations", message: error.message });
+  }
+});
+
+/**
+ * GET /api/messages/conversations/:partnerId
+ * Get full message thread with a specific partner (supports pagination)
+ */
+router.get("/conversations/:partnerId", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.userId!;
+    const partnerId = parseInt(req.params.partnerId);
+    const limit = parseInt(req.query.limit as string) || 30;
+    const offset = parseInt(req.query.offset as string) || 0;
+
+    if (isNaN(partnerId)) {
+      return res.status(400).json({ error: "Invalid partner ID" });
+    }
+
+    // Get partner info
+    const [partner] = await db
+      .select({
+        id: users.id,
+        name: users.name,
+        username: users.username,
+        profileImage: users.profileImage,
+      })
+      .from(users)
+      .where(eq(users.id, partnerId));
+
+    if (!partner) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Get messages between user and partner with pagination
+    const messages = await db
+      .select({
+        id: directMessages.id,
+        senderId: directMessages.senderId,
+        recipientId: directMessages.recipientId,
+        content: directMessages.content,
+        isRead: directMessages.isRead,
+        createdAt: directMessages.createdAt,
+      })
+      .from(directMessages)
+      .where(
+        or(
+          and(
+            eq(directMessages.senderId, userId),
+            eq(directMessages.recipientId, partnerId)
+          ),
+          and(
+            eq(directMessages.senderId, partnerId),
+            eq(directMessages.recipientId, userId)
+          )
+        )
+      )
+      .orderBy(directMessages.createdAt)
+      .limit(limit + 1)
+      .offset(offset);
+
+    // Check if there are more messages
+    const hasMore = messages.length > limit;
+    const displayMessages = hasMore ? messages.slice(0, -1) : messages;
+
+    // Mark unread messages from partner as read
+    await db
+      .update(directMessages)
+      .set({ isRead: true })
+      .where(
+        and(
+          eq(directMessages.senderId, partnerId),
+          eq(directMessages.recipientId, userId),
+          eq(directMessages.isRead, false)
+        )
+      );
+
+    // Get reactions for all messages
+    const messageIds = messages.map(m => m.id);
+    const allReactions = messageIds.length > 0 
+      ? await db
+          .select({
+            messageId: directMessageReactions.messageId,
+            reactionType: directMessageReactions.reactionType,
+            userId: directMessageReactions.userId,
+          })
+          .from(directMessageReactions)
+          .where(inArray(directMessageReactions.messageId, messageIds))
+      : [];
+
+    // Group reactions by message
+    const reactionsByMessage = allReactions.reduce((acc, r) => {
+      if (!acc[r.messageId]) {
+        acc[r.messageId] = { reactions: {}, userReaction: null };
+      }
+      acc[r.messageId].reactions[r.reactionType] = (acc[r.messageId].reactions[r.reactionType] || 0) + 1;
+      if (r.userId === userId) {
+        acc[r.messageId].userReaction = r.reactionType;
+      }
+      return acc;
+    }, {} as Record<number, { reactions: Record<string, number>; userReaction: string | null }>);
+
+    // Format messages for chat view with reactions
+    const formattedMessages = messages.map(msg => ({
+      id: msg.id,
+      content: msg.content,
+      mediaUrl: (msg as any).mediaUrl,
+      mediaType: (msg as any).mediaType,
+      createdAt: msg.createdAt,
+      isMine: msg.senderId === userId,
+      isRead: msg.isRead,
+      reactions: reactionsByMessage[msg.id]?.reactions || {},
+      userReaction: reactionsByMessage[msg.id]?.userReaction || null,
+    }));
+
+    res.json({
+      partner: {
+        id: partner.id,
+        name: partner.name || partner.username || `User ${partner.id}`,
+        username: partner.username,
+        profileImage: partner.profileImage,
+      },
+      messages: formattedMessages.slice(0, limit),
+      hasMore,
+      totalCount: messages.length,
+    });
+  } catch (error: any) {
+    console.error("[Messages] Get conversation thread error:", error);
+    res.status(500).json({ error: "Failed to get conversation", message: error.message });
+  }
+});
+
+// ============================================================================
+// MESSAGE REACTIONS API
+// ============================================================================
+
+/**
+ * POST /api/messages/dm/:messageId/react
+ * Add or update a reaction to a direct message
+ */
+router.post("/dm/:messageId/react", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.userId!;
+    const messageId = parseInt(req.params.messageId);
+    const { reactionType } = req.body;
+
+    if (isNaN(messageId)) {
+      return res.status(400).json({ error: "Invalid message ID" });
+    }
+
+    if (!reactionType || typeof reactionType !== "string") {
+      return res.status(400).json({ error: "Reaction type is required" });
+    }
+
+    // Verify the message exists and user is part of the conversation
+    const [message] = await db
+      .select()
+      .from(directMessages)
+      .where(eq(directMessages.id, messageId));
+
+    if (!message) {
+      return res.status(404).json({ error: "Message not found" });
+    }
+
+    if (message.senderId !== userId && message.recipientId !== userId) {
+      return res.status(403).json({ error: "Not authorized to react to this message" });
+    }
+
+    // Upsert reaction using onConflictDoUpdate for atomic operation
+    await db
+      .insert(directMessageReactions)
+      .values({
+        messageId,
+        userId,
+        reactionType,
+      })
+      .onConflictDoUpdate({
+        target: [directMessageReactions.messageId, directMessageReactions.userId],
+        set: { reactionType, createdAt: new Date() },
+      });
+
+    // Get updated reactions for this message
+    const reactions = await db
+      .select({
+        reactionType: directMessageReactions.reactionType,
+        userId: directMessageReactions.userId,
+      })
+      .from(directMessageReactions)
+      .where(eq(directMessageReactions.messageId, messageId));
+
+    const reactionCounts = reactions.reduce((acc, r) => {
+      acc[r.reactionType] = (acc[r.reactionType] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    const userReaction = reactions.find(r => r.userId === userId)?.reactionType || null;
+
+    res.json({
+      success: true,
+      reactions: reactionCounts,
+      userReaction,
+    });
+  } catch (error: any) {
+    console.error("[Messages] Add reaction error:", error);
+    res.status(500).json({ error: "Failed to add reaction", message: error.message });
+  }
+});
+
+/**
+ * DELETE /api/messages/dm/:messageId/react
+ * Remove reaction from a direct message
+ */
+router.delete("/dm/:messageId/react", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.userId!;
+    const messageId = parseInt(req.params.messageId);
+
+    if (isNaN(messageId)) {
+      return res.status(400).json({ error: "Invalid message ID" });
+    }
+
+    await db
+      .delete(directMessageReactions)
+      .where(
+        and(
+          eq(directMessageReactions.messageId, messageId),
+          eq(directMessageReactions.userId, userId)
+        )
+      );
+
+    // Get updated reactions for this message
+    const reactions = await db
+      .select({
+        reactionType: directMessageReactions.reactionType,
+      })
+      .from(directMessageReactions)
+      .where(eq(directMessageReactions.messageId, messageId));
+
+    const reactionCounts = reactions.reduce((acc, r) => {
+      acc[r.reactionType] = (acc[r.reactionType] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    res.json({
+      success: true,
+      reactions: reactionCounts,
+      userReaction: null,
+    });
+  } catch (error: any) {
+    console.error("[Messages] Remove reaction error:", error);
+    res.status(500).json({ error: "Failed to remove reaction", message: error.message });
   }
 });
 

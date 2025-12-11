@@ -183,6 +183,7 @@ import adsRoutes from "./routes/ads-routes";
 import revenueRoutes from "./routes/revenue-routes";
 import volunteerTestingRoutes from "./routes/volunteerTesting";
 import volunteerTasksRoutes from "./routes/volunteerTasks";
+import scenarioGeneratorRoutes from "./routes/scenarioGeneratorRoutes";
 import talentPipelineRoutes from "./routes/talentPipeline";
 import gamificationRoutes from "./routes/gamification";
 import { registerLearningPathwaysRoutes } from "./routes/learningPathways-routes";
@@ -667,6 +668,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // TRACK 6: Volunteer Testing System - Scenarios + Recruitment + UI
   app.use("/api/volunteer", volunteerTestingRoutes);
+  
+  // MB.MD v9.9.4: Scenario Generator for comprehensive testing coverage
+  app.use("/api/scenarios", scenarioGeneratorRoutes);
   
   // Volunteer Task Management - Plan Items, Work Logs, Stats
   app.use("/api/volunteer", volunteerTasksRoutes);

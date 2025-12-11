@@ -22,9 +22,10 @@ export class VolunteerService {
     const [result] = await db.insert(volunteerStats)
       .values({
         userId,
-        totalSessions: 0,
-        completedSessions: 0,
+        totalSessionsCompleted: 0,
+        totalMinutesTested: 0,
         bugsFound: 0,
+        averageCompletionRate: 0,
         skillLevel: 'beginner'
       })
       .returning({ id: volunteerStats.id });
@@ -43,36 +44,33 @@ export class VolunteerService {
       return this.updateStats(userId, sessionResults);
     }
 
-    const newTotalSessions = stats.totalSessions + 1;
-    const newCompletedSessions = sessionResults.completed 
-      ? stats.completedSessions + 1 
-      : stats.completedSessions;
+    const newTotalSessions = (stats.totalSessionsCompleted || 0) + 1;
+    const estimatedMinutes = sessionResults.durationSeconds 
+      ? Math.floor(sessionResults.durationSeconds / 60) 
+      : 5;
+    const newTotalMinutes = (stats.totalMinutesTested || 0) + estimatedMinutes;
 
     const allResults = await db.select()
       .from(uiTestResults)
       .where(eq(uiTestResults.userId, userId));
 
-    const ratingsWithValues = allResults
-      .filter(r => r.difficultyRating !== null && r.difficultyRating !== undefined)
-      .map(r => r.difficultyRating!);
-
-    const avgRating = ratingsWithValues.length > 0
-      ? ratingsWithValues.reduce((sum, rating) => sum + rating, 0) / ratingsWithValues.length
-      : null;
+    const completedCount = allResults.filter(r => r.completed).length;
+    const totalCount = allResults.length;
+    const completionRate = totalCount > 0 ? (completedCount / totalCount) * 100 : 0;
 
     const newStats = {
-      totalSessions: newTotalSessions,
-      completedSessions: newCompletedSessions,
+      totalSessionsCompleted: newTotalSessions,
+      totalMinutesTested: newTotalMinutes,
       bugsFound: stats.bugsFound,
-      averageDifficultyRating: avgRating,
-      lastSessionAt: new Date(),
+      averageCompletionRate: completionRate,
+      lastActiveAt: new Date(),
       updatedAt: new Date()
     };
 
     const skillLevel = this.calculateSkillLevel({
       ...stats,
       ...newStats
-    });
+    } as SelectVolunteerStats);
 
     await db.update(volunteerStats)
       .set({ ...newStats, skillLevel })
@@ -83,27 +81,26 @@ export class VolunteerService {
     return await db.select()
       .from(volunteerStats)
       .orderBy(
-        desc(volunteerStats.completedSessions),
+        desc(volunteerStats.totalSessionsCompleted),
         desc(volunteerStats.bugsFound),
-        desc(volunteerStats.totalSessions)
+        desc(volunteerStats.totalMinutesTested)
       )
       .limit(limit);
   }
 
   calculateSkillLevel(stats: SelectVolunteerStats): 'beginner' | 'intermediate' | 'advanced' {
-    const completionRate = stats.totalSessions > 0
-      ? (stats.completedSessions / stats.totalSessions) * 100
-      : 0;
+    const totalSessions = stats.totalSessionsCompleted || 0;
+    const completionRate = stats.averageCompletionRate || 0;
 
-    if (stats.totalSessions < 5 || completionRate < 60) {
+    if (totalSessions < 5 || completionRate < 60) {
       return 'beginner';
     }
 
-    if (stats.totalSessions <= 20 && completionRate >= 60 && completionRate <= 85) {
+    if (totalSessions <= 20 && completionRate >= 60 && completionRate <= 85) {
       return 'intermediate';
     }
 
-    if (stats.totalSessions > 20 && completionRate > 85) {
+    if (totalSessions > 20 && completionRate > 85) {
       return 'advanced';
     }
 
@@ -138,6 +135,22 @@ export class VolunteerService {
     return await db.select()
       .from(volunteerStats)
       .orderBy(desc(volunteerStats.createdAt));
+  }
+
+  async incrementBugsFound(userId: number): Promise<void> {
+    const [stats] = await db.select()
+      .from(volunteerStats)
+      .where(eq(volunteerStats.userId, userId))
+      .limit(1);
+
+    if (stats) {
+      await db.update(volunteerStats)
+        .set({ 
+          bugsFound: (stats.bugsFound || 0) + 1,
+          updatedAt: new Date()
+        })
+        .where(eq(volunteerStats.userId, userId));
+    }
   }
 }
 

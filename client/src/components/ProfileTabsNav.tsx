@@ -24,6 +24,7 @@ interface ProfileTabsNavProps {
   onTabChange: (tab: string) => void;
   isOwnProfile: boolean;
   isPublicView?: boolean;
+  actionButtons?: React.ReactNode;
 }
 
 const PROFESSIONAL_ROLES = [
@@ -61,14 +62,15 @@ export const getVisibleTabs = (user: User): Array<{ id: string; label: string; i
   return allTabs;
 };
 
-export default function ProfileTabsNav({ user, activeTab, onTabChange, isOwnProfile, isPublicView }: ProfileTabsNavProps) {
+export default function ProfileTabsNav({ user, activeTab, onTabChange, isOwnProfile, isPublicView, actionButtons }: ProfileTabsNavProps) {
   const visibleTabs = getVisibleTabs(user);
   const [hoveredTab, setHoveredTab] = useState<string | null>(null);
   
   return (
     <div className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-40">
       <div className="max-w-5xl mx-auto px-6">
-        <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide py-2">
+        <div className="flex items-center justify-between gap-2 py-2">
+          <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide">
           {visibleTabs.map((tab, index) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -125,6 +127,12 @@ export default function ProfileTabsNav({ user, activeTab, onTabChange, isOwnProf
               </motion.div>
             );
           })}
+          </div>
+          {actionButtons && (
+            <div className="flex items-center gap-2 flex-shrink-0">
+              {actionButtons}
+            </div>
+          )}
         </div>
       </div>
     </div>

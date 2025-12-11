@@ -211,6 +211,20 @@ const proDiscoveryItems = [
     color: "#1E90FF",
     tooltip: "Find the perfect match",
   },
+  {
+    title: "Marketplace",
+    url: "/marketplace",
+    icon: ShoppingBag,
+    color: "#F59E0B",
+    tooltip: "Browse products and services",
+  },
+  {
+    title: "Housing",
+    url: "/housing",
+    icon: HousingIcon,
+    color: "#10B981",
+    tooltip: "Find tango-friendly accommodations",
+  },
 ];
 
 const servicesItems = [
@@ -219,18 +233,6 @@ const servicesItems = [
     url: "/life-ceo",
     icon: Brain,
     tooltip: "AI-powered life management",
-  },
-  {
-    title: "Marketplace",
-    url: "/marketplace",
-    icon: ShoppingBag,
-    tooltip: "Browse products and services",
-  },
-  {
-    title: "Housing",
-    url: "/housing",
-    icon: HousingIcon,
-    tooltip: "Find tango-friendly accommodations",
   },
 ];
 
@@ -325,7 +327,7 @@ function AppSidebarComponent() {
               style={{
                 color:
                   item.color ||
-                  (isActive(item.url) ? "#40E0D0" : "currentColor"),
+                  (isActive(item.url) ? "#40E0D0" : "#9CA3AF"),
               }}
             />
           </div>
@@ -427,17 +429,21 @@ function AppSidebarComponent() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {myStuffItems.length > 0 && (
-          <SidebarGroup className="border-b border-white/10 pb-4">
-            <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60 flex items-center gap-1">
-              <Star className="h-3 w-3" style={{ color: "#FFD700" }} />
-              My Stuff
-            </SidebarGroupLabel>
-            <SidebarGroupContent>
-              {renderIconGrid(myStuffItems)}
-            </SidebarGroupContent>
-          </SidebarGroup>
-        )}
+        <SidebarGroup className="border-b border-white/10 pb-4">
+          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60 flex items-center gap-1">
+            <Star className="h-3 w-3" style={{ color: "#FFD700" }} />
+            My Stuff
+          </SidebarGroupLabel>
+          <SidebarGroupContent>
+            {myStuffItems.length > 0 ? (
+              renderIconGrid(myStuffItems)
+            ) : (
+              <div className="px-2 py-3 text-xs text-muted-foreground/60 text-center">
+                Set your city in profile settings
+              </div>
+            )}
+          </SidebarGroupContent>
+        </SidebarGroup>
 
         <SidebarGroup className="border-b border-white/10 pb-4">
           <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">

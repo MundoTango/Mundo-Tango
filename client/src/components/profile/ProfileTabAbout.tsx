@@ -274,11 +274,15 @@ export default function ProfileTabAbout({ user, isOwnProfile, isPublicView = fal
       return res.json();
     },
     onSuccess: async (_data, variables) => {
+      // Invalidate all possible query key variations (number and string IDs)
+      // ProfilePage uses ["user", profileIdentifier] where profileIdentifier can be string ID or username
       queryClient.invalidateQueries({ queryKey: ["user", user.id] });
+      queryClient.invalidateQueries({ queryKey: ["user", String(user.id)] }); // String version for URL params
       queryClient.invalidateQueries({ queryKey: ["user", user.username] });
       queryClient.invalidateQueries({ queryKey: ["/api/users"] });
       queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
       queryClient.invalidateQueries({ queryKey: ["/api/users", user.id] });
+      queryClient.invalidateQueries({ queryKey: ["/api/users", String(user.id)] });
       queryClient.invalidateQueries({ queryKey: [`/api/users/${user.id}`] });
       
       await refreshCurrentUser();

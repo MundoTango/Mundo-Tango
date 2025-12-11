@@ -21,6 +21,9 @@ import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary"
 import { CommunityMapWithLayers } from "@/components/map/CommunityMapWithLayers";
 import { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
+import { Link } from "wouter";
+import { Skeleton } from "@/components/ui/skeleton";
+import { getCityImageUrl } from "@/lib/cityImageMap";
 
 // Fix Leaflet default marker icon
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -184,6 +187,11 @@ export default function CommunityWorldMapPage() {
     });
     return sorted;
   }, [filteredLocations, filters.sortBy]);
+
+  // Filter to only locations with groups (city communities)
+  const cityLocations = useMemo(() => {
+    return sortedLocations.filter(loc => loc.groupId);
+  }, [sortedLocations]);
 
   const toggleLayer = (id: string) => {
     setLayers(prev => prev.map(layer => 
@@ -394,6 +402,106 @@ export default function CommunityWorldMapPage() {
                 </CardContent>
               </Card>
             )}
+
+            {/* City Groups Section */}
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-2xl font-bold" data-testid="heading-city-groups">City Groups</h2>
+                  <p className="text-muted-foreground">Connect with tango communities around the world</p>
+                </div>
+                <Button variant="outline" asChild data-testid="button-view-all-groups">
+                  <Link href="/city-groups">
+                    View All
+                  </Link>
+                </Button>
+              </div>
+
+              {isLoading ? (
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  {[1, 2, 3, 4, 5, 6].map((i) => (
+                    <Card key={i}>
+                      <Skeleton className="h-32 w-full rounded-t-lg" />
+                      <CardHeader className="space-y-2">
+                        <Skeleton className="h-6 w-3/4" />
+                        <Skeleton className="h-4 w-1/2" />
+                      </CardHeader>
+                      <CardContent>
+                        <Skeleton className="h-16 w-full" />
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              ) : cityLocations.length > 0 ? (
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3" data-testid="city-groups-grid">
+                  {cityLocations.map((loc) => (
+                    <Card key={loc.id} className="hover-elevate overflow-hidden" data-testid={`card-city-group-${loc.id}`}>
+                      <div className="h-32 overflow-hidden">
+                        <img
+                          src={getCityImageUrl(loc.city)}
+                          alt={`${loc.city} tango community`}
+                          className="w-full h-full object-cover transition-transform hover:scale-105"
+                        />
+                      </div>
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                          <MapPin className="h-4 w-4 text-primary" />
+                          {loc.city}
+                        </CardTitle>
+                        <CardDescription>{loc.country}</CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="grid grid-cols-2 gap-2 text-sm mb-4">
+                          <div className="flex items-center gap-1 text-muted-foreground">
+                            <Users className="h-3 w-3" />
+                            <span>{loc.memberCount.toLocaleString()} members</span>
+                          </div>
+                          <div className="flex items-center gap-1 text-muted-foreground">
+                            <Calendar className="h-3 w-3" />
+                            <span>{loc.activeEvents} events</span>
+                          </div>
+                          <div className="flex items-center gap-1 text-muted-foreground">
+                            <Building2 className="h-3 w-3" />
+                            <span>{loc.recommendations} venues</span>
+                          </div>
+                          <div className="flex items-center gap-1 text-muted-foreground">
+                            <Home className="h-3 w-3" />
+                            <span>{loc.housing} housing</span>
+                          </div>
+                        </div>
+                        <Button 
+                          className="w-full" 
+                          variant="outline"
+                          onClick={() => {
+                            if (loc.groupId) {
+                              window.location.href = `/groups/${loc.groupId}`;
+                            }
+                          }}
+                          data-testid={`button-explore-${loc.id}`}
+                        >
+                          Explore Community
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <Card>
+                  <CardContent className="py-12 text-center">
+                    <Globe className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                    <h3 className="text-lg font-semibold mb-2">No city communities yet</h3>
+                    <p className="text-muted-foreground mb-4">
+                      Be the first to start a tango community in your city
+                    </p>
+                    <Button asChild>
+                      <Link href="/groups/create">
+                        Create City Group
+                      </Link>
+                    </Button>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
           </div>
         </div>
     </SelfHealingErrorBoundary>

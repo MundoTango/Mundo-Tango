@@ -124,7 +124,12 @@ export default function ProfileEditPage() {
       return await apiRequest('PATCH', `/api/users/${currentUser?.id}`, data);
     },
     onSuccess: async () => {
+      // Invalidate all cache variants (string and number IDs, plus username)
+      await queryClient.invalidateQueries({ queryKey: ["user", currentUser?.id] });
+      await queryClient.invalidateQueries({ queryKey: ["user", String(currentUser?.id)] });
+      await queryClient.invalidateQueries({ queryKey: ["user", currentUser?.username] });
       await queryClient.invalidateQueries({ queryKey: [`/api/users/${currentUser?.id}`] });
+      await queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
       
       // Trigger location change effects if city changed (auto-join/auto-create city group)
       if (city && country) {

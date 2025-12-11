@@ -7,6 +7,8 @@ import { Router, Response } from "express";
 import { testScenarioService } from "../services/volunteer/testScenarioService";
 import { testResultsService } from "../services/volunteer/testResultsService";
 import { volunteerService } from "../services/volunteer/volunteerService";
+import { issueRoutingService } from "../services/volunteer/issueRouting";
+import { gamificationRewardsService } from "../services/volunteer/gamificationRewards";
 import { authenticateToken, AuthRequest } from "../middleware/auth";
 import { requireMinimumRole } from "../middleware/tierEnforcement";
 import { insertUiTestScenarioSchema, insertUiTestResultSchema } from "@shared/schema";
@@ -109,9 +111,58 @@ router.post("/results", authenticateToken, async (req: AuthRequest, res: Respons
     const sessionResult = await testResultsService.detectStuckPoints(validatedData.sessionId);
     await volunteerService.updateStats(userId, validatedData as any);
 
+    // MB.MD v9.9.4: Route stuck points to auto-fix system
+    // Route both user-reported stuck points AND server-detected stuck points
+    let issueRoutingResults: any[] = [];
+    
+    // Route user-reported stuck points from request body
+    if (req.body.stuckPoints && req.body.stuckPoints.length > 0) {
+      for (const sp of req.body.stuckPoints) {
+        const routingResult = await issueRoutingService.routeStuckPoint({
+          stepIndex: sp.stepIndex,
+          timeSpentSeconds: sp.timeSpentSeconds || 0,
+          scenarioId: req.body.scenarioId,
+        });
+        issueRoutingResults.push(routingResult);
+      }
+    }
+    
+    // Route server-detected stuck points from sessionResult
+    if (sessionResult && Array.isArray(sessionResult) && sessionResult.length > 0) {
+      for (const detectedSp of sessionResult) {
+        const routingResult = await issueRoutingService.routeStuckPoint({
+          stepIndex: detectedSp.stepIndex || 0,
+          timeSpentSeconds: detectedSp.timeSpentSeconds || detectedSp.duration || 0,
+          scenarioId: req.body.scenarioId,
+          volunteerFeedback: detectedSp.feedback || "Server-detected stuck point",
+        });
+        issueRoutingResults.push(routingResult);
+      }
+    }
+
+    // MB.MD v9.9.4: Award gamification rewards
+    let rewards = null;
+    try {
+      rewards = await gamificationRewardsService.awardTestCompletion({
+        userId,
+        scenarioId: req.body.scenarioId,
+        completed: req.body.completed || false,
+        difficulty: req.body.difficulty || "medium",
+        timeSpentSeconds: req.body.timeSpentSeconds || 0,
+        stuckPointsCount: req.body.stuckPoints?.length || 0,
+        difficultyRating: req.body.difficultyRating,
+        clarityRating: req.body.clarityRating,
+        feedbackProvided: !!(req.body.feedback && req.body.feedback.length > 0),
+      });
+    } catch (rewardError) {
+      console.error("Failed to award rewards:", rewardError);
+    }
+
     res.json({ 
       resultId, 
       stuckPoints: sessionResult,
+      issuesRouted: issueRoutingResults.filter(r => r.routed).length,
+      rewards,
       success: true 
     });
   } catch (error: any) {
