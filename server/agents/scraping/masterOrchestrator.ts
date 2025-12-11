@@ -242,7 +242,70 @@ export class ScrapingOrchestrator {
    */
   private async autoCreateCities(): Promise<void> {
     console.log('[Agent #115] Auto-creating cities from scraped locations...');
-    // TODO: Implement city auto-creation logic
+    
+    try {
+      const { db } = await import('@shared/db');
+      const { scrapedEvents, groups } = await import('@shared/schema');
+      const { ensureCityGroupExists } = await import('../../utils/cityGroupAutomation');
+      const { eq, and, isNull, sql } = await import('drizzle-orm');
+      
+      // Get distinct cities from scraped events that don't have groups yet
+      const eventsWithLocations = await db
+        .selectDistinct({
+          location: scrapedEvents.location,
+        })
+        .from(scrapedEvents)
+        .where(
+          and(
+            sql`${scrapedEvents.location} IS NOT NULL`,
+            eq(scrapedEvents.status, 'pending_review')
+          )
+        )
+        .limit(50);
+      
+      const processedCities = new Set<string>();
+      let createdCount = 0;
+      
+      for (const event of eventsWithLocations) {
+        if (!event.location) continue;
+        
+        // Parse city from location string (typically "Venue, Neighborhood, City" or "Venue, City")
+        const parts = event.location.split(',').map(p => p.trim());
+        const city = parts[parts.length - 1] || parts[parts.length - 2];
+        
+        if (!city || processedCities.has(city.toLowerCase())) continue;
+        processedCities.add(city.toLowerCase());
+        
+        // Try to determine country from known city mappings
+        const cityCountryMap: Record<string, string> = {
+          'buenos aires': 'Argentina',
+          'montevideo': 'Uruguay',
+          'berlin': 'Germany',
+          'london': 'United Kingdom',
+          'paris': 'France',
+          'new york': 'United States',
+          'miami': 'United States',
+          'athens': 'Greece',
+          'istanbul': 'Turkey',
+          'são paulo': 'Brazil',
+          'sao paulo': 'Brazil',
+        };
+        
+        const country = cityCountryMap[city.toLowerCase()] || 'Unknown';
+        
+        if (country !== 'Unknown') {
+          const result = await ensureCityGroupExists(city, country, 1); // System user ID 1
+          if (result?.wasCreated) {
+            createdCount++;
+            console.log(`[Agent #115] Created city group: ${result.groupName}`);
+          }
+        }
+      }
+      
+      console.log(`[Agent #115] Auto-created ${createdCount} new city groups`);
+    } catch (error) {
+      console.error('[Agent #115] Failed to auto-create cities:', error);
+    }
   }
 
   /**

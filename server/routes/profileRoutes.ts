@@ -111,6 +111,17 @@ router.put("/:userId", authenticateToken, async (req: AuthRequest, res: Response
       return res.status(404).json({ message: "Profile not found" });
     }
 
+    // Auto-create city group when user updates their city
+    if (validatedData.city && validatedData.country) {
+      try {
+        const { ensureCityGroupExists } = await import('../utils/cityGroupAutomation');
+        await ensureCityGroupExists(validatedData.city, validatedData.country, userId);
+      } catch (cityError) {
+        console.error('[Profile] Failed to auto-create city group:', cityError);
+        // Non-blocking - profile update still succeeds
+      }
+    }
+
     res.json(updatedProfile);
   } catch (error) {
     if (error instanceof z.ZodError) {
