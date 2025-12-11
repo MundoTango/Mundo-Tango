@@ -170,7 +170,7 @@ export class PredictiveContextService {
         // Update existing cache
         await executeRawQuery(
           `UPDATE prediction_cache SET
-            predicted_pages = $1,
+            predicted_pages = $1::text[],
             confidence = $2,
             metadata = $3,
             cache_warmed = true,
@@ -178,7 +178,7 @@ export class PredictiveContextService {
             expires_at = NOW() + INTERVAL '24 hours',
             updated_at = NOW()
           WHERE id = $4`,
-          [JSON.stringify(prediction.predictedPages), prediction.confidence, JSON.stringify({ overall: prediction.confidence }), existing.id]
+          [prediction.predictedPages, prediction.confidence, JSON.stringify({ overall: prediction.confidence }), existing.id]
         );
       } else {
         // Create new cache entry
@@ -186,8 +186,8 @@ export class PredictiveContextService {
           `INSERT INTO prediction_cache (
             user_id, current_page, predicted_pages, confidence, metadata,
             cache_warmed, warmed_at, hit_count, created_at, expires_at
-          ) VALUES ($1, $2, $3, $4, $5, true, NOW(), 0, NOW(), NOW() + INTERVAL '24 hours')`,
-          [userId, currentPage, JSON.stringify(prediction.predictedPages), prediction.confidence, JSON.stringify({ overall: prediction.confidence })]
+          ) VALUES ($1, $2, $3::text[], $4, $5, true, NOW(), 0, NOW(), NOW() + INTERVAL '24 hours')`,
+          [userId, currentPage, prediction.predictedPages, prediction.confidence, JSON.stringify({ overall: prediction.confidence })]
         );
       }
 
