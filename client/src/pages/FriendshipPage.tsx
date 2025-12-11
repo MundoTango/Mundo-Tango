@@ -405,6 +405,21 @@ export default function FriendshipPage() {
                     </p>
                   </div>
                 )}
+
+                {(() => {
+                  const userPrivateNote = currentUser?.id === friendshipInfo.friendRequest.senderId
+                    ? friendshipInfo.friendRequest.senderPrivateNote
+                    : friendshipInfo.friendRequest.receiverPrivateNote;
+                  
+                  return userPrivateNote ? (
+                    <div className="border-l-2 border-primary/30 pl-3 bg-primary/5 p-3 rounded">
+                      <p className="text-xs text-muted-foreground mb-1">Your private message</p>
+                      <p className="text-sm italic" data-testid="text-private-note">
+                        {userPrivateNote}
+                      </p>
+                    </div>
+                  ) : null;
+                })()}
               </CardContent>
             </Card>
           </motion.div>
