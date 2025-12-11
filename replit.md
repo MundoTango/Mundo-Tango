@@ -160,11 +160,16 @@ Restored critical files from 10+ feature branches using MB.MD v9.9.4 methodology
 - 9 posts with full user data and tango roles
 - 198 tango events (38KB API response)
 - 5 users with diverse tango roles
+- 10 city community groups (Buenos Aires, Paris, NYC, Berlin, London, Tokyo, Rome, Istanbul, Barcelona, São Paulo)
+- 8 tango venues (milongas, studios)
+- 5 tango housing listings
 
 **API Status (All Operational):**
 - Posts API: 9 posts with reactions and user profiles
 - Events API: 198 events (38KB data)
 - Stats API: 5 dancers, 3 teachers, 2 organizers, 198 events, 4 cities, 4 countries
+- Community Locations API: 10 cities with 12,331 total members
+- Community Stats API: 10 cities, 10 countries, 403 events, 8 venues, 5 housing
 - Health API: Healthy with 277+ seconds uptime
 
 ## External Dependencies
