@@ -190,7 +190,7 @@
     "size-limit": "^11.2.0",
     "speakeasy": "^2.0.0",
     "stripe": "^18.5.0",
-    "stripe-replit-sync": "^0.0.12",
+    "stripe-replit-sync": "^1.0.0",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
     "tailwind-merge": "^2.6.0",
