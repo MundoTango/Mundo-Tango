@@ -17,7 +17,7 @@ interface CurrentUser {
   name: string;
   username: string;
   profileImage?: string;
-  coverImage?: string;
+  backgroundImage?: string;
   city?: string;
   country?: string;
 }
@@ -119,8 +119,8 @@ export default function FriendshipPage() {
           <motion.div
             className="w-1/2 bg-cover bg-center relative"
             style={{ 
-              backgroundImage: currentUser?.coverImage 
-                ? `url(${currentUser.coverImage})` 
+              backgroundImage: currentUser?.backgroundImage 
+                ? `url(${currentUser.backgroundImage})` 
                 : `url('${tangoHeroImage}')`
             }}
             initial={{ x: -50, opacity: 0 }}
@@ -132,8 +132,8 @@ export default function FriendshipPage() {
           <motion.div
             className="w-1/2 bg-cover bg-center relative"
             style={{ 
-              backgroundImage: friend?.coverImage 
-                ? `url(${friend.coverImage})` 
+              backgroundImage: friend?.backgroundImage 
+                ? `url(${friend.backgroundImage})` 
                 : `url('${tangoHeroImage}')`
             }}
             initial={{ x: 50, opacity: 0 }}
