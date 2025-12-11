@@ -45,6 +45,7 @@ interface FriendshipQuestionnaireProps {
   friendName: string;
   onSubmit: (data: QuestionnaireFormData) => void;
   isLoading?: boolean;
+  mode?: 'send' | 'accept'; // 'send' for sending request, 'accept' for accepting request
 }
 
 export function FriendshipQuestionnaire({
@@ -53,7 +54,11 @@ export function FriendshipQuestionnaire({
   friendName,
   onSubmit,
   isLoading = false,
+  mode = 'send',
 }: FriendshipQuestionnaireProps) {
+  const buttonText = mode === 'send' 
+    ? (isLoading ? "Sending..." : "Send Friend Request")
+    : (isLoading ? "Accepting..." : "Accept & Confirm");
   const [showPreview, setShowPreview] = useState(false);
 
   const form = useForm<QuestionnaireFormData>({
@@ -244,7 +249,7 @@ export function FriendshipQuestionnaire({
                   disabled={isLoading}
                   data-testid="button-submit"
                 >
-                  {isLoading ? "Accepting..." : "Accept & Confirm"}
+                  {buttonText}
                 </Button>
               </DialogFooter>
             </form>
@@ -330,7 +335,7 @@ export function FriendshipQuestionnaire({
                 disabled={isLoading}
                 data-testid="button-submit-preview"
               >
-                {isLoading ? "Accepting..." : "Accept & Confirm"}
+                {buttonText}
               </Button>
             </DialogFooter>
           </div>
