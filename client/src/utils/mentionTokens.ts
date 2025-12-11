@@ -47,7 +47,8 @@ export function parseCanonicalToTokens(canonical: string): Token[] {
   // Match both formats:
   // 1. @group:professional:group_1:name (new format with groupType)
   // 2. @type:id:name (standard format)
-  const regex = /@(user|event|group|city):(?:(professional|city):)?([^:]+):([^@]*?)(?=\s*(?:@|$))/g;
+  // Name matches one or more words (allowing internal spaces) but stops at trailing spaces
+  const regex = /@(user|event|group|city):(?:(professional|city):)?([^:]+):(\S+(?:\s+\S+)*)(?=\s*(?:@|$))/g;
   let lastIndex = 0;
   let match: RegExpExecArray | null;
   
