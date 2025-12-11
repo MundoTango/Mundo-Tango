@@ -47,8 +47,8 @@ export function parseCanonicalToTokens(canonical: string): Token[] {
   // Match both formats:
   // 1. @group:professional:group_1:name (new format with groupType)
   // 2. @type:id:name (standard format)
-  // Name matches one or more words (allowing internal spaces) but stops at trailing spaces
-  const regex = /@(user|event|group|city):(?:(professional|city):)?([^:]+):(\S+(?:\s+\S+)*)(?=\s*(?:@|$))/g;
+  // Name is a single word (no spaces) - typically underscore-separated like "elena_tango"
+  const regex = /@(user|event|group|city):(?:(professional|city):)?([^:\s]+):([^\s]+)/g;
   let lastIndex = 0;
   let match: RegExpExecArray | null;
   
@@ -59,13 +59,13 @@ export function parseCanonicalToTokens(canonical: string): Token[] {
       tokens.push({ kind: 'text', text });
     }
     
-    // Add mention token with trimmed name
+    // Add mention token
     const [, type, groupType, id, name] = match;
     const token: MentionToken = {
       kind: 'mention',
       type: type as EntityType,
       id,
-      name: name.trim(), // Remove any trailing whitespace
+      name: name,
     };
     
     // Add groupType if present (for groups)

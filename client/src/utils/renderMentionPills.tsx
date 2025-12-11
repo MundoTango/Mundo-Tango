@@ -27,22 +27,22 @@ const getMentionPath = (type: EntityType, id: string): string => {
   }
 };
 
-// Get Tailwind classes for mention pills - simple, clean design like Facebook
+// Get Tailwind classes for mention pills - styled pill with background and border
 const getMentionPillClasses = (type: EntityType, groupType?: string): string => {
-  const baseClasses = "inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-sm font-medium cursor-pointer transition-colors";
+  const baseClasses = "inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium cursor-pointer transition-all border";
   
   switch (type) {
     case 'group':
       if (groupType === 'professional') {
-        return `${baseClasses} text-amber-600 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-900/30`;
+        return `${baseClasses} bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 border-amber-300 dark:border-amber-700 hover:bg-amber-200 dark:hover:bg-amber-800/40`;
       }
-      return `${baseClasses} text-purple-600 dark:text-purple-400 hover:bg-purple-100 dark:hover:bg-purple-900/30`;
+      return `${baseClasses} bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 border-purple-300 dark:border-purple-700 hover:bg-purple-200 dark:hover:bg-purple-800/40`;
     case 'city':
-      return `${baseClasses} text-green-600 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/30`;
+      return `${baseClasses} bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 border-green-300 dark:border-green-700 hover:bg-green-200 dark:hover:bg-green-800/40`;
     case 'event':
-      return `${baseClasses} text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30`;
-    default: // user - primary color like Facebook mentions
-      return `${baseClasses} text-primary hover:bg-primary/10`;
+      return `${baseClasses} bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-300 dark:border-blue-700 hover:bg-blue-200 dark:hover:bg-blue-800/40`;
+    default: // user - teal/cyan theme
+      return `${baseClasses} bg-cyan-100 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-300 border-cyan-300 dark:border-cyan-700 hover:bg-cyan-200 dark:hover:bg-cyan-800/40`;
   }
 };
 
@@ -96,7 +96,8 @@ function ClickableMentionPill({
         }
       }}
     >
-      @{name.replace(/_/g, ' ')}
+      {getMentionIcon(type)}
+      <span>{name.replace(/_/g, ' ')}</span>
     </span>
   );
 }
