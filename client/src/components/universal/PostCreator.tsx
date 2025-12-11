@@ -74,16 +74,17 @@ interface PostCreatorProps {
   existingPost?: any;
   className?: string;
   showStoryToggle?: boolean;
+  initialContent?: string;
 }
 
-export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMode = false, existingPost, className, showStoryToggle = false }: PostCreatorProps) {
+export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMode = false, existingPost, className, showStoryToggle = false, initialContent = "" }: PostCreatorProps) {
   const { user } = useAuth();
   const { toast } = useToast();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Content state
-  const [content, setContent] = useState(existingPost?.content || "");
+  const [content, setContent] = useState(existingPost?.content || initialContent || "");
   const [richContent, setRichContent] = useState(existingPost?.richContent || "");
   const [mentions, setMentions] = useState<MentionEntity[]>(existingPost?.mentions || []);
   const [mentionIds, setMentionIds] = useState<string[]>([]);

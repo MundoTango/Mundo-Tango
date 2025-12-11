@@ -470,9 +470,9 @@ export default function FriendshipPage() {
                       toast({ title: "Posted!", description: "Your memory has been shared with your friend." });
                     }}
                     context={{ type: 'memory', name: friend?.name }}
-                    initialMentions={[
-                      currentUser ? `@user:user_${currentUser.id}:${currentUser.username || currentUser.name?.replace(/\s+/g, '_')}` : '',
-                      friend ? `@user:user_${friend.id}:${friend.username || friend.name?.replace(/\s+/g, '_')}` : ''
+                    initialContent={[
+                      currentUser ? `@${currentUser.username || currentUser.name?.replace(/\s+/g, '_')}` : '',
+                      friend ? `@${friend.username || friend.name?.replace(/\s+/g, '_')}` : ''
                     ].filter(Boolean).join(' ') + ' '}
                   />
 
