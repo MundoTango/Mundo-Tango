@@ -57,9 +57,8 @@ export function parseCanonicalToTokens(canonical: string): Token[] {
   
   // Combined regex that matches:
   // 1. Full canonical format: @type:id:name or @group:groupType:id:name
-  // 2. Plain mention format: @username (word characters and underscores only)
+  // 2. Plain mention format: @username (must be preceded by whitespace or start of string, not part of email)
   const canonicalRegex = /@(user|event|group|city):(?:(professional|city):)?([^:\s]+):([^\s]+)/g;
-  const plainMentionRegex = /@([a-zA-Z0-9_]+)/g;
   
   // First pass: find all canonical mentions
   const canonicalMatches: Array<{ index: number; length: number; token: MentionToken }> = [];
@@ -80,25 +79,29 @@ export function parseCanonicalToTokens(canonical: string): Token[] {
   }
   
   // Second pass: find plain mentions that aren't part of canonical mentions
+  // Plain mentions must be preceded by whitespace or start of string (to avoid matching emails)
   const plainMatches: Array<{ index: number; length: number; token: MentionToken }> = [];
+  const plainMentionRegex = /(?:^|[\s\n])@([a-zA-Z][a-zA-Z0-9_]*)/g;
   
   while ((match = plainMentionRegex.exec(canonical)) !== null) {
     const [fullMatch, username] = match;
-    const matchStart = match.index;
-    const matchEnd = matchStart + fullMatch.length;
+    // Calculate actual @ position (may have leading whitespace)
+    const atIndex = canonical.indexOf('@', match.index);
+    const mentionLength = username.length + 1; // +1 for @
+    const matchEnd = atIndex + mentionLength;
     
     // Check if this plain mention overlaps with any canonical mention
     const overlapsWithCanonical = canonicalMatches.some(cm => {
       const cmEnd = cm.index + cm.length;
-      return (matchStart >= cm.index && matchStart < cmEnd) || 
+      return (atIndex >= cm.index && atIndex < cmEnd) || 
              (matchEnd > cm.index && matchEnd <= cmEnd) ||
-             (matchStart <= cm.index && matchEnd >= cmEnd);
+             (atIndex <= cm.index && matchEnd >= cmEnd);
     });
     
     if (!overlapsWithCanonical) {
       plainMatches.push({
-        index: matchStart,
-        length: fullMatch.length,
+        index: atIndex,
+        length: mentionLength,
         token: {
           kind: 'mention',
           type: 'user',
