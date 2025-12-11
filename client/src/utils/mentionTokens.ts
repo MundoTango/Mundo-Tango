@@ -27,55 +27,102 @@ export interface MentionToken {
 /**
  * Parse canonical format string into token array
  * 
- * Supports two formats:
+ * Supports three formats:
  * 1. Standard: @type:id:name
  * 2. Group with type: @group:groupType:id:name
+ * 3. Plain mention: @username (treated as user mention with placeholder ID)
  * 
  * Example:
- * Input: "Dancing with @user:user_123:maria rodriguez at @group:professional:group_1:Buenos Aires Tango Community"
+ * Input: "Dancing with @user:user_123:maria_rodriguez at @group:professional:group_1:Buenos_Aires_Tango"
  * Output: [
  *   { kind: 'text', text: 'Dancing with ' },
- *   { kind: 'mention', type: 'user', id: 'user_123', name: 'maria rodriguez' },
+ *   { kind: 'mention', type: 'user', id: 'user_123', name: 'maria_rodriguez' },
  *   { kind: 'text', text: ' at ' },
- *   { kind: 'mention', type: 'group', id: 'group_1', name: 'Buenos Aires Tango Community', groupType: 'professional' }
+ *   { kind: 'mention', type: 'group', id: 'group_1', name: 'Buenos_Aires_Tango', groupType: 'professional' }
+ * ]
+ * 
+ * Plain mention example:
+ * Input: "@scott_the_tango_nomad @elena_tango "
+ * Output: [
+ *   { kind: 'mention', type: 'user', id: 'user_scott_the_tango_nomad', name: 'scott_the_tango_nomad' },
+ *   { kind: 'text', text: ' ' },
+ *   { kind: 'mention', type: 'user', id: 'user_elena_tango', name: 'elena_tango' },
+ *   { kind: 'text', text: ' ' }
  * ]
  */
 export function parseCanonicalToTokens(canonical: string): Token[] {
   if (!canonical) return [];
   
   const tokens: Token[] = [];
-  // Match both formats:
-  // 1. @group:professional:group_1:name (new format with groupType)
-  // 2. @type:id:name (standard format)
-  // Name is a single word (no spaces) - typically underscore-separated like "elena_tango"
-  const regex = /@(user|event|group|city):(?:(professional|city):)?([^:\s]+):([^\s]+)/g;
-  let lastIndex = 0;
+  
+  // Combined regex that matches:
+  // 1. Full canonical format: @type:id:name or @group:groupType:id:name
+  // 2. Plain mention format: @username (word characters and underscores only)
+  const canonicalRegex = /@(user|event|group|city):(?:(professional|city):)?([^:\s]+):([^\s]+)/g;
+  const plainMentionRegex = /@([a-zA-Z0-9_]+)/g;
+  
+  // First pass: find all canonical mentions
+  const canonicalMatches: Array<{ index: number; length: number; token: MentionToken }> = [];
   let match: RegExpExecArray | null;
   
-  while ((match = regex.exec(canonical)) !== null) {
-    // Add text before mention
-    if (match.index > lastIndex) {
-      const text = canonical.substring(lastIndex, match.index);
-      tokens.push({ kind: 'text', text });
-    }
-    
-    // Add mention token
-    const [, type, groupType, id, name] = match;
+  while ((match = canonicalRegex.exec(canonical)) !== null) {
+    const [fullMatch, type, groupType, id, name] = match;
     const token: MentionToken = {
       kind: 'mention',
       type: type as EntityType,
       id,
       name: name,
     };
-    
-    // Add groupType if present (for groups)
     if (type === 'group' && groupType) {
       token.groupType = groupType;
     }
+    canonicalMatches.push({ index: match.index, length: fullMatch.length, token });
+  }
+  
+  // Second pass: find plain mentions that aren't part of canonical mentions
+  const plainMatches: Array<{ index: number; length: number; token: MentionToken }> = [];
+  
+  while ((match = plainMentionRegex.exec(canonical)) !== null) {
+    const [fullMatch, username] = match;
+    const matchStart = match.index;
+    const matchEnd = matchStart + fullMatch.length;
     
-    tokens.push(token);
+    // Check if this plain mention overlaps with any canonical mention
+    const overlapsWithCanonical = canonicalMatches.some(cm => {
+      const cmEnd = cm.index + cm.length;
+      return (matchStart >= cm.index && matchStart < cmEnd) || 
+             (matchEnd > cm.index && matchEnd <= cmEnd) ||
+             (matchStart <= cm.index && matchEnd >= cmEnd);
+    });
     
-    lastIndex = regex.lastIndex;
+    if (!overlapsWithCanonical) {
+      plainMatches.push({
+        index: matchStart,
+        length: fullMatch.length,
+        token: {
+          kind: 'mention',
+          type: 'user',
+          id: `user_${username}`, // Placeholder ID based on username
+          name: username,
+        }
+      });
+    }
+  }
+  
+  // Combine and sort all matches by index
+  const allMatches = [...canonicalMatches, ...plainMatches].sort((a, b) => a.index - b.index);
+  
+  // Build tokens array
+  let lastIndex = 0;
+  for (const m of allMatches) {
+    // Add text before this mention
+    if (m.index > lastIndex) {
+      const text = canonical.substring(lastIndex, m.index);
+      tokens.push({ kind: 'text', text });
+    }
+    
+    tokens.push(m.token);
+    lastIndex = m.index + m.length;
   }
   
   // Add remaining text
