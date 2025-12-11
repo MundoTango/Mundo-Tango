@@ -41,10 +41,8 @@ export default function LiveStreamChat({ streamId, isLive, currentUserId }: Live
 
   const sendMessageMutation = useMutation({
     mutationFn: async (message: string) => {
-      return apiRequest(`/api/livestreams/${streamId}/messages`, {
-        method: "POST",
-        body: JSON.stringify({ message }),
-      });
+      const response = await apiRequest("POST", `/api/livestreams/${streamId}/messages`, { message });
+      return response.json();
     },
     onSuccess: (newMessage: ChatMessage) => {
       if (ws && ws.readyState === WebSocket.OPEN) {

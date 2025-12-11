@@ -16,7 +16,18 @@ interface TangoCommunity {
 }
 
 const tangoCommunities: TangoCommunity[] = [
-  // ARGENTINA
+  // ARGENTINA - CRITICAL: Buenos Aires is tango's birthplace!
+  { country: 'Argentina', city: 'Buenos Aires', urls: [
+    'https://hoy-milonga.com/buenos-aires/en',  // PRIMARY - HoyMilonga BA
+    'https://tangopolix.com/',                   // Tangopolix
+    'https://www.tangocat.com/',                 // TangoCat calendar
+    'https://www.todotango.com/calendar/',       // TodoTango
+    'https://www.facebook.com/groups/milongasenbuenosaires/',
+    'https://www.facebook.com/groups/tangobuenosaires/'
+  ]},
+  { country: 'Argentina', city: 'Córdoba', urls: ['https://www.facebook.com/groups/tangocordoba/'] },
+  { country: 'Argentina', city: 'Rosario', urls: ['https://www.facebook.com/groups/tangorosario/'] },
+  { country: 'Argentina', city: 'Mendoza', urls: ['https://www.facebook.com/groups/tangomendoza/'] },
   { country: 'Argentina', city: 'Ushuaia', urls: ['https://www.facebook.com/groups/1651720055131986/'] },
   
   // AUSTRALIA
@@ -172,13 +183,26 @@ const tangoCommunities: TangoCommunity[] = [
   { country: 'Thailand', city: 'Bangkok', urls: ['https://www.facebook.com/groups/bangkoktango'] },
   
   // TURKEY
-  { country: 'Turkey', city: 'Istanbul', urls: ['https://www.facebook.com/groups/tangoinistanbul'] },
+  { country: 'Turkey', city: 'Istanbul', urls: [
+    'https://hoy-milonga.com/turkiye/en',  // HoyMilonga Turkey
+    'https://www.facebook.com/groups/tangoinistanbul'
+  ]},
   
   // UKRAINE
   { country: 'Ukraine', city: 'Kyiv', urls: ['https://www.facebook.com/groups/tangokyiv'] },
   
+  // UNITED ARAB EMIRATES
+  { country: 'UAE', city: 'Dubai', urls: ['https://www.facebook.com/fantasiaarts'] },
+  
   // UNITED KINGDOM
-  { country: 'UK', city: 'London', urls: ['https://www.londontango.co.uk/', 'https://www.tangocity.co.uk/'] },
+  { country: 'UK', city: 'London', urls: [
+    'https://www.hoy-milonga.com/england/',   // HoyMilonga England
+    'https://londonmilongas.co.uk/calendar/',
+    'https://web.pointsoftango.app/',
+    'https://www.tanguito.co.uk/tango-culture/milonguear-in-london/',
+    'https://www.londontango.co.uk/',
+    'https://www.tangocity.co.uk/'
+  ]},
   { country: 'UK', city: 'Brighton', urls: ['https://brightontango.com/'] },
   { country: 'UK', city: 'Manchester', urls: ['https://www.facebook.com/groups/manchestertango'] },
   
@@ -192,7 +216,20 @@ const tangoCommunities: TangoCommunity[] = [
   { country: 'USA', city: 'Portland', urls: ['https://www.portlandtango.com/'] },
   { country: 'USA', city: 'Miami', urls: ['https://www.miamitango.org/'] },
   { country: 'USA', city: 'Denver', urls: ['https://www.denvertango.org/'] },
-  { country: 'USA', city: 'Boston', urls: ['https://www.bostontango.org/'] },
+  { country: 'USA', city: 'Boston', urls: ['https://bostontangocalendar.com/', 'https://www.bostontango.org/'] },
+  { country: 'USA', city: 'Atlanta', urls: ['https://www.facebook.com/groups/tangobaratlanta'] },
+  { country: 'USA', city: 'San Diego', urls: ['https://www.sdtangocalendar.com/'] },
+  { country: 'USA', city: 'Washington DC', urls: ['https://sites.google.com/site/dctangocalendar/', 'https://www.facebook.com/groups/47769243908/'] },
+  
+  // URUGUAY - Critical: Close to Buenos Aires, major tango city
+  { country: 'Uruguay', city: 'Montevideo', urls: [
+    'https://www.hoy-milonga.com/montevideo/',  // HoyMilonga Montevideo
+    'https://www.facebook.com/groups/tangomontevideo/'
+  ]},
+  
+  // VIETNAM
+  { country: 'Vietnam', city: 'Hanoi', urls: ['https://www.facebook.com/tango.hanoi.association'] },
+  { country: 'Vietnam', city: 'Ho Chi Minh City', urls: ['https://www.facebook.com/saigontangodance'] },
 ];
 
 /**

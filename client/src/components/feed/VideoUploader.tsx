@@ -72,10 +72,8 @@ export function VideoUploader({
         setUploadProgress(prev => Math.min(prev + 10, 90));
       }, 200);
 
-      const response = await apiRequest('/api/posts/videos', {
-        method: 'POST',
-        body: formData,
-      });
+      const res = await apiRequest('POST', '/api/posts/videos', formData);
+      const response = await res.json();
 
       clearInterval(progressInterval);
       setUploadProgress(100);

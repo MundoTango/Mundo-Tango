@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useRoute, Link } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,7 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Users, MapPin, Settings as SettingsIcon, Calendar, Home, Building2, Heart, Check, ChevronRight, ChevronDown, ChevronUp, Music, Mic2, Star, Clock, ExternalLink, Compass, GraduationCap, SlidersHorizontal, Languages, DollarSign, Loader2, Map as MapIcon, Utensils, Coffee, Wine, List, Search, Repeat, X } from "lucide-react";
+import { Users, MapPin, Settings as SettingsIcon, Calendar, Home, Building2, Heart, Check, ChevronRight, ChevronDown, ChevronUp, Music, Mic2, Star, Clock, ExternalLink, Compass, GraduationCap, SlidersHorizontal, Languages, DollarSign, Loader2, Map as MapIcon, Utensils, Coffee, Wine, List, Search, Repeat, X, Database, Globe } from "lucide-react";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { safeDateFormat } from "@/lib/safeDateFormat";
@@ -30,12 +30,20 @@ import { RecommendationsList } from "@/components/recommendations/Recommendation
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-import { Calendar as BigCalendar, momentLocalizer, Views } from 'react-big-calendar';
-import moment from 'moment';
+import { Calendar as BigCalendar, dateFnsLocalizer, Views } from 'react-big-calendar';
+import { format, parse, startOfWeek, getDay } from 'date-fns';
+import { enUS } from 'date-fns/locale';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-const localizer = momentLocalizer(moment);
+const locales = { 'en-US': enUS };
+const localizer = dateFnsLocalizer({
+  format,
+  parse,
+  startOfWeek,
+  getDay,
+  locales,
+});
 
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -76,18 +84,40 @@ interface UserByRole {
   tangoRoles?: string[];
 }
 
+function getEventDate(event: any): Date {
+  if (event.startDateTime) {
+    return new Date(event.startDateTime);
+  }
+  if (event.startDate) {
+    if (event.startTime) {
+      const combined = `${event.startDate.split('T')[0]}T${event.startTime}`;
+      const parsed = new Date(combined);
+      if (!isNaN(parsed.getTime())) return parsed;
+    }
+    return new Date(event.startDate);
+  }
+  if (event.date) {
+    return new Date(event.date);
+  }
+  return new Date(0);
+}
+
 function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: string | null }) {
   const { user } = useAuth();
   const { data: myRsvps } = useMyRSVPs();
   const [filters, setFilters] = useState<EventFilterValues>({});
-  const [mainTab, setMainTab] = useState<"upcoming" | "series">("upcoming");
+  const [mainTab, setMainTab] = useState<"upcoming" | "past" | "series">("upcoming");
   const [viewMode, setViewMode] = useState<"list" | "calendar" | "map">("list");
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   
+  const isPast = mainTab === "past";
+  
   const { data: events, isLoading } = useQuery<SelectEvent[]>({
-    queryKey: ["/api/events", "group", groupId, groupCity],
+    queryKey: ["/api/events", "group", groupId, groupCity, isPast ? "past" : "upcoming"],
     queryFn: async () => {
-      let res = await fetch(`/api/groups/${groupId}/events?limit=50`, { credentials: "include" });
+      const pastParam = isPast ? "&past=true" : "";
+      // Use showAll=true to display all events including past scraped events
+      let res = await fetch(`/api/groups/${groupId}/events?limit=50${pastParam}&showAll=true`, { credentials: "include" });
       if (res.ok) {
         const data = await res.json();
         let eventList = data.events || data || [];
@@ -98,7 +128,8 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
       }
       
       if (groupCity) {
-        res = await fetch(`/api/events?city=${encodeURIComponent(groupCity)}&limit=50&upcoming=true`, { credentials: "include" });
+        const dateParam = isPast ? "&past=true" : "&upcoming=true";
+        res = await fetch(`/api/events?city=${encodeURIComponent(groupCity)}&limit=50${dateParam}`, { credentials: "include" });
         if (res.ok) {
           const data = await res.json();
           let eventList = data.events || data || [];
@@ -132,12 +163,12 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
       }
       
       if (filters.dateFrom) {
-        const eventDate = new Date(event.startDate || event.date || '');
+        const eventDate = getEventDate(event);
         if (eventDate < filters.dateFrom) return false;
       }
       
       if (filters.dateTo) {
-        const eventDate = new Date(event.startDate || event.date || '');
+        const eventDate = getEventDate(event);
         if (eventDate > filters.dateTo) return false;
       }
       
@@ -183,26 +214,46 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
     if (!filteredEvents) return [];
     const now = new Date();
     return filteredEvents.filter(event => {
-      const eventDate = new Date(event.startDate || event.date || '');
-      return eventDate >= now;
+      const eventDate = getEventDate(event);
+      return eventDate.getTime() > 0 && eventDate >= now;
     }).sort((a, b) => {
-      const dateA = new Date(a.startDate || a.date || '');
-      const dateB = new Date(b.startDate || b.date || '');
+      const dateA = getEventDate(a);
+      const dateB = getEventDate(b);
       return dateA.getTime() - dateB.getTime();
     });
   }, [filteredEvents]);
   
-  const displayEvents = mainTab === "series" ? seriesEvents : upcomingEvents;
+  const pastEvents = useMemo(() => {
+    if (!filteredEvents) return [];
+    const now = new Date();
+    return filteredEvents.filter(event => {
+      const eventDate = getEventDate(event);
+      return eventDate.getTime() > 0 && eventDate < now;
+    }).sort((a, b) => {
+      const dateA = getEventDate(a);
+      const dateB = getEventDate(b);
+      return dateB.getTime() - dateA.getTime();
+    });
+  }, [filteredEvents]);
+  
+  // Auto-switch to "past" tab if no upcoming events but past events exist
+  useEffect(() => {
+    if (upcomingEvents.length === 0 && pastEvents.length > 0 && mainTab === "upcoming") {
+      setMainTab("past");
+    }
+  }, [upcomingEvents.length, pastEvents.length, mainTab]);
+  
+  const displayEvents = mainTab === "series" ? seriesEvents : mainTab === "past" ? pastEvents : upcomingEvents;
   
   const calendarEvents = useMemo(() => {
     if (!displayEvents) return [];
     return displayEvents.map((event: any) => {
-      const dateToUse = event.startDate || event.date || Date.now();
+      const eventDate = getEventDate(event);
       return {
         id: event.id,
         title: event.title,
-        start: new Date(dateToUse),
-        end: new Date((new Date(dateToUse)).getTime() + 2 * 60 * 60 * 1000),
+        start: eventDate,
+        end: new Date(eventDate.getTime() + 2 * 60 * 60 * 1000),
         resource: event,
       };
     });
@@ -302,18 +353,22 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
                 {totalEvents > 0 
                   ? activeFilterCount > 0 
                     ? `${displayEvents.length} of ${totalEvents} events (filtered)`
-                    : `${displayEvents.length} ${mainTab === "series" ? "recurring" : "upcoming"} events in ${groupCity || "this city"}`
+                    : `${displayEvents.length} ${mainTab === "series" ? "recurring" : mainTab === "past" ? "past" : "upcoming"} events in ${groupCity || "this city"}`
                   : `No events scheduled yet in ${groupCity || "this city"}`
                 }
               </CardDescription>
             </div>
           </div>
           
-          <Tabs value={mainTab} onValueChange={(val) => setMainTab(val as "upcoming" | "series")} data-testid="tabs-main-events">
-            <TabsList className="grid w-full grid-cols-2 max-w-xs">
+          <Tabs value={mainTab} onValueChange={(val) => setMainTab(val as "upcoming" | "past" | "series")} data-testid="tabs-main-events">
+            <TabsList className="grid w-full grid-cols-3 max-w-md">
               <TabsTrigger value="upcoming" className="gap-2" data-testid="tab-upcoming-events">
                 <Calendar className="h-4 w-4" />
-                Upcoming Events
+                Upcoming
+              </TabsTrigger>
+              <TabsTrigger value="past" className="gap-2" data-testid="tab-past-events">
+                <Clock className="h-4 w-4" />
+                Past
               </TabsTrigger>
               <TabsTrigger value="series" className="gap-2" data-testid="tab-series-events">
                 <Repeat className="h-4 w-4" />
@@ -529,18 +584,22 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
                           <h3 className="text-lg font-serif font-bold mb-2 truncate cursor-pointer hover:text-primary" dangerouslySetInnerHTML={{ __html: event.title || "Untitled Event" }} data-testid={`event-title-${event.id}`} />
                         </Link>
                         <div className="space-y-1 text-sm text-muted-foreground">
-                          {(event.startDate || event.date) && (
-                            <div className="flex items-center gap-2" data-testid={`event-date-${event.id}`}>
-                              <Calendar className="h-4 w-4 flex-shrink-0" />
-                              {new Date(event.startDate || event.date).toLocaleDateString(undefined, { 
-                                weekday: 'short', 
-                                month: 'short', 
-                                day: 'numeric',
-                                year: 'numeric'
-                              })}
-                              {event.time && ` at ${event.time}`}
-                            </div>
-                          )}
+                          {(() => {
+                            const eventDate = getEventDate(event);
+                            if (eventDate.getTime() === 0) return null;
+                            return (
+                              <div className="flex items-center gap-2" data-testid={`event-date-${event.id}`}>
+                                <Calendar className="h-4 w-4 flex-shrink-0" />
+                                {eventDate.toLocaleDateString(undefined, { 
+                                  weekday: 'short', 
+                                  month: 'short', 
+                                  day: 'numeric',
+                                  year: 'numeric'
+                                })}
+                                {event.startTime && ` at ${event.startTime}`}
+                              </div>
+                            );
+                          })()}
                           {(event.location || event.city) && (
                             <div className="flex items-center gap-2" data-testid={`event-location-${event.id}`}>
                               <MapPin className="h-4 w-4 flex-shrink-0" />
@@ -1399,7 +1458,77 @@ function GroupCityGuideTab({ group, groupCity, groupCountry }: {
           Community established {safeDateFormat(group.createdAt, "MMMM yyyy")}
         </div>
       )}
+      
+      {/* Data Sources Section - Show where scraped data came from */}
+      <DataSourcesSection groupId={group.id} city={groupCity} />
     </div>
+  );
+}
+
+// Data Sources component to show scraped data origins
+function DataSourcesSection({ groupId, city }: { groupId: number; city?: string | null }) {
+  const { data: sourcesData } = useQuery<{ sources: Array<{ name: string; url: string; type: string; lastScraped?: string }>; totalSources: number }>({
+    queryKey: ['/api/groups', groupId, 'data-sources'],
+    queryFn: async () => {
+      const res = await fetch(`/api/groups/${groupId}/data-sources`, { credentials: 'include' });
+      if (!res.ok) return { sources: [], totalSources: 0 };
+      return res.json();
+    },
+  });
+
+  if (!sourcesData?.sources?.length) return null;
+
+  return (
+    <Card className="overflow-hidden">
+      <CardHeader className="border-b">
+        <CardTitle className="text-xl font-serif flex items-center gap-2">
+          <Database className="h-5 w-5 text-primary" />
+          Data Sources
+        </CardTitle>
+        <CardDescription>
+          Event and community data for {city || "this city"} is sourced from these websites
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="p-6">
+        <div className="grid gap-3 sm:grid-cols-2">
+          {sourcesData.sources.map((source, index) => (
+            <a
+              key={`${source.url}-${index}`}
+              href={source.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 p-3 rounded-lg bg-muted/30 hover-elevate transition-all"
+              data-testid={`link-source-${index}`}
+            >
+              <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <Globe className="h-5 w-5 text-primary" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium truncate">{source.name}</p>
+                <p className="text-xs text-muted-foreground truncate">
+                  {(() => {
+                    try {
+                      return new URL(source.url).hostname.replace('www.', '');
+                    } catch {
+                      return source.url;
+                    }
+                  })()}
+                </p>
+                {source.lastScraped && (
+                  <p className="text-xs text-green-600 dark:text-green-400">
+                    Last updated: {safeDateFormat(source.lastScraped, "MMM d, yyyy")}
+                  </p>
+                )}
+              </div>
+              <ExternalLink className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+            </a>
+          ))}
+        </div>
+        <p className="text-xs text-muted-foreground mt-4 text-center">
+          {sourcesData.totalSources} data source{sourcesData.totalSources !== 1 ? 's' : ''} actively monitored for {city}
+        </p>
+      </CardContent>
+    </Card>
   );
 }
 

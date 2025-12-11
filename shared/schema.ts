@@ -13298,6 +13298,9 @@ export const scrapedEvents = pgTable(
       .default("pending_review")
       .notNull(),
     claimedByUserId: integer("claimed_by_user_id").references(() => users.id),
+    city: varchar("city", { length: 100 }),
+    country: varchar("country", { length: 100 }),
+    groupId: integer("group_id").references(() => groups.id),
     createdAt: timestamp("created_at").defaultNow(),
     updatedAt: timestamp("updated_at").defaultNow(),
   },
@@ -13306,6 +13309,8 @@ export const scrapedEvents = pgTable(
     statusIdx: index("scraped_events_status_idx").on(table.status),
     startDateIdx: index("scraped_events_start_date_idx").on(table.startDate),
     claimedIdx: index("scraped_events_claimed_idx").on(table.claimedByUserId),
+    cityCountryIdx: index("scraped_events_city_country_idx").on(table.city, table.country),
+    groupIdx: index("scraped_events_group_idx").on(table.groupId),
   }),
 );
 
@@ -19415,6 +19420,65 @@ export const insertAuditIssueSchema = createInsertSchema(auditIssues).omit({
 });
 export type InsertAuditIssue = z.infer<typeof insertAuditIssueSchema>;
 export type SelectAuditIssue = typeof auditIssues.$inferSelect;
+
+// ============================================================================
+// THE PLAN - Real Human-Confirmed Task Data (MB.MD v9.9.3)
+// ============================================================================
+
+export const planTaskStatusEnum = pgEnum("plan_task_status", [
+  "pending",
+  "in_progress",
+  "completed",
+  "blocked",
+  "skipped",
+]);
+
+export const planTaskPriorityEnum = pgEnum("plan_task_priority", [
+  "critical",
+  "high",
+  "medium",
+  "low",
+]);
+
+export const planTasks = pgTable(
+  "plan_tasks",
+  {
+    id: serial("id").primaryKey(),
+    phaseNumber: integer("phase_number").notNull(),
+    phaseName: varchar("phase_name", { length: 255 }).notNull(),
+    taskName: varchar("task_name", { length: 500 }).notNull(),
+    description: text("description"),
+    status: planTaskStatusEnum("status").default("pending").notNull(),
+    priority: planTaskPriorityEnum("priority").default("medium").notNull(),
+    assignedAgentId: integer("assigned_agent_id"),
+    dependsOnTaskIds: integer("depends_on_task_ids").array(),
+    estimatedHours: numeric("estimated_hours", { precision: 5, scale: 1 }),
+    actualHours: numeric("actual_hours", { precision: 5, scale: 1 }),
+    completedAt: timestamp("completed_at"),
+    completedByUserId: integer("completed_by_user_id").references(() => users.id),
+    verifiedByUserId: integer("verified_by_user_id").references(() => users.id),
+    notes: text("notes"),
+    blockerReason: text("blocker_reason"),
+    displayOrder: integer("display_order").default(0).notNull(),
+    isVisible: boolean("is_visible").default(true).notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  },
+  (table) => ({
+    phaseIdx: index("plan_tasks_phase_idx").on(table.phaseNumber),
+    statusIdx: index("plan_tasks_status_idx").on(table.status),
+    priorityIdx: index("plan_tasks_priority_idx").on(table.priority),
+    orderIdx: index("plan_tasks_order_idx").on(table.displayOrder),
+  }),
+);
+
+export const insertPlanTaskSchema = createInsertSchema(planTasks).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+export type InsertPlanTask = z.infer<typeof insertPlanTaskSchema>;
+export type SelectPlanTask = typeof planTasks.$inferSelect;
 
 // ============================================================================
 // PLATFORM INDEPENDENCE SCHEMA (PATH 2)

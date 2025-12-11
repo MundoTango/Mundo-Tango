@@ -13,6 +13,7 @@ import { motion } from "framer-motion";
 import { Heart, Sparkles, Users, Loader2 } from "lucide-react";
 import { SiFacebook, SiGoogle } from "react-icons/si";
 import { supabase } from "@/lib/supabase";
+import { useQuery } from "@tanstack/react-query";
 import tangoHeroImage from "@assets/stock_images/elegant_professional_29e89c1e.jpg";
 
 export default function LoginPage() {
@@ -23,6 +24,15 @@ export default function LoginPage() {
   const [isFacebookLoading, setIsFacebookLoading] = useState(false);
   const { login } = useAuth();
   const { toast } = useToast();
+  
+  const { data: stats } = useQuery<{
+    dancers: number | null;
+    events: number | null;
+    cities: number | null;
+  }>({
+    queryKey: ["/api/stats/public"],
+    staleTime: 5 * 60 * 1000,
+  });
 
   const handleGoogleLogin = async () => {
     try {
@@ -136,17 +146,23 @@ export default function LoginPage() {
                   Sign in to connect with dancers worldwide, discover events, and share your passion
                 </p>
 
-                {/* Community Stats */}
-                <div className="flex gap-6 justify-center mb-8 text-white/70 text-sm">
-                  <div className="flex items-center gap-2">
-                    <Users className="w-4 h-4" />
-                    <span>10,000+ dancers</span>
+                {/* Community Stats - Real data from /api/stats/public */}
+                {(stats?.dancers || stats?.events) && (
+                  <div className="flex gap-6 justify-center mb-8 text-white/70 text-sm">
+                    {stats?.dancers && (
+                      <div className="flex items-center gap-2">
+                        <Users className="w-4 h-4" />
+                        <span>{stats.dancers}+ dancers</span>
+                      </div>
+                    )}
+                    {stats?.events && (
+                      <div className="flex items-center gap-2">
+                        <Sparkles className="w-4 h-4" />
+                        <span>{stats.events}+ events</span>
+                      </div>
+                    )}
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Sparkles className="w-4 h-4" />
-                    <span>500+ events</span>
-                  </div>
-                </div>
+                )}
               </div>
 
               {/* Glassmorphic Login Card */}

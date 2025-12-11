@@ -51,10 +51,8 @@ export default function HostHomePage() {
 
   const updateMutation = useMutation({
     mutationFn: async (data: Partial<HousingListing>) => {
-      return apiRequest(`/api/housing/listings/${listingId}`, {
-        method: "PATCH",
-        body: JSON.stringify(data),
-      });
+      const response = await apiRequest("PATCH", `/api/housing/listings/${listingId}`, data);
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/housing/listings", listingId] });

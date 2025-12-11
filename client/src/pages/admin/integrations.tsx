@@ -29,9 +29,8 @@ export default function IntegrationsPage() {
   const connectMutation = useMutation({
     mutationFn: async (provider: string) => {
       // Initiate OAuth flow
-      const result = await apiRequest(`/api/admin/integrations/${provider}/connect`, {
-        method: 'POST',
-      });
+      const response = await apiRequest('POST', `/api/admin/integrations/${provider}/connect`);
+      const result = await response.json();
       
       // Redirect to OAuth provider
       if (result.authUrl) {
@@ -51,9 +50,8 @@ export default function IntegrationsPage() {
 
   const disconnectMutation = useMutation({
     mutationFn: async (provider: string) => {
-      return await apiRequest(`/api/admin/integrations/${provider}/disconnect`, {
-        method: 'POST',
-      });
+      const response = await apiRequest('POST', `/api/admin/integrations/${provider}/disconnect`);
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/integrations'] });

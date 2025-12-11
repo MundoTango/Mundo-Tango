@@ -76,16 +76,13 @@ export function PageAuditPanel() {
   // Audit mutation
   const auditMutation = useMutation({
     mutationFn: async () => {
-      return await apiRequest('/api/page-audit/audit', {
-        method: 'POST',
-        body: JSON.stringify({
-          pagePath,
-          category: selectedCategory,
-          handoffReference: handoffReference || undefined,
-          autoFix
-        }),
-        headers: { 'Content-Type': 'application/json' }
+      const response = await apiRequest('POST', '/api/page-audit/audit', {
+        pagePath,
+        category: selectedCategory,
+        handoffReference: handoffReference || undefined,
+        autoFix
       });
+      return response.json();
     },
     onSuccess: (data: any) => {
       setCurrentReport(data.report);
@@ -106,11 +103,8 @@ export function PageAuditPanel() {
   // Auto-fix mutation
   const autoFixMutation = useMutation({
     mutationFn: async (report: AuditReport) => {
-      return await apiRequest('/api/page-audit/auto-fix', {
-        method: 'POST',
-        body: JSON.stringify({ report }),
-        headers: { 'Content-Type': 'application/json' }
-      });
+      const response = await apiRequest('POST', '/api/page-audit/auto-fix', { report });
+      return response.json();
     },
     onSuccess: (data: any) => {
       toast({

@@ -133,10 +133,8 @@ export function VoiceCloning() {
   // Start training mutation
   const trainMutation = useMutation({
     mutationFn: async (data: { voiceName: string; audioUrls: string[]; description?: string }) => {
-      return apiRequest('/api/mrblue/voice/train', {
-        method: 'POST',
-        body: JSON.stringify(data),
-      });
+      const response = await apiRequest('POST', '/api/mrblue/voice/train', data);
+      return response.json();
     },
     onSuccess: (data: any) => {
       toast({
@@ -161,10 +159,8 @@ export function VoiceCloning() {
       voiceId?: string; 
       language?: string;
     }) => {
-      return apiRequest('/api/mrblue/voice/generate', {
-        method: 'POST',
-        body: JSON.stringify(data),
-      });
+      const response = await apiRequest('POST', '/api/mrblue/voice/generate', data);
+      return response.json();
     },
     onSuccess: (data: any) => {
       // Play the generated audio
@@ -185,9 +181,8 @@ export function VoiceCloning() {
   // Delete voice clone mutation
   const deleteCloneMutation = useMutation({
     mutationFn: async (cloneId: number) => {
-      return apiRequest(`/api/mrblue/voice/clone/${cloneId}`, {
-        method: 'DELETE',
-      });
+      const response = await apiRequest('DELETE', `/api/mrblue/voice/clone/${cloneId}`);
+      return response.json();
     },
     onSuccess: () => {
       toast({
@@ -209,9 +204,8 @@ export function VoiceCloning() {
   // Set default voice mutation
   const setDefaultMutation = useMutation({
     mutationFn: async (cloneId: number) => {
-      return apiRequest(`/api/mrblue/voice/set-default/${cloneId}`, {
-        method: 'POST',
-      });
+      const response = await apiRequest('POST', `/api/mrblue/voice/set-default/${cloneId}`);
+      return response.json();
     },
     onSuccess: () => {
       toast({
@@ -233,10 +227,8 @@ export function VoiceCloning() {
   // Preview voice mutation
   const previewMutation = useMutation({
     mutationFn: async (data: { voiceId: string; text: string; language?: string }) => {
-      return apiRequest('/api/mrblue/voice/preview', {
-        method: 'POST',
-        body: JSON.stringify(data),
-      });
+      const response = await apiRequest('POST', '/api/mrblue/voice/preview', data);
+      return response.json();
     },
     onSuccess: (data: any) => {
       const audio = new Audio(data.audio);

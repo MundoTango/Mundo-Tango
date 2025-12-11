@@ -28,10 +28,8 @@ export function MessageActions({
 
   const handleReact = async (emoji: string) => {
     try {
-      await apiRequest(`/api/mrblue/messages/${messageId}/react`, {
-        method: 'POST',
-        body: JSON.stringify({ emoji }),
-      });
+      const response = await apiRequest('POST', `/api/mrblue/messages/${messageId}/react`, { emoji });
+      await response.json();
 
       setShowEmojiPicker(false);
       
@@ -50,12 +48,10 @@ export function MessageActions({
 
   const handleBookmark = async () => {
     try {
-      const response = await apiRequest(`/api/mrblue/messages/${messageId}/bookmark`, {
-        method: 'POST',
-        body: JSON.stringify({}),
-      });
+      const response = await apiRequest('POST', `/api/mrblue/messages/${messageId}/bookmark`, {});
+      const result = await response.json();
 
-      const action = (response as any)?.action || 'added';
+      const action = result?.action || 'added';
       
       toast({
         title: action === 'added' ? "Bookmarked" : "Bookmark removed",
@@ -75,11 +71,10 @@ export function MessageActions({
 
   const handleShare = async () => {
     try {
-      const response = await apiRequest(`/api/mrblue/messages/${messageId}/share`, {
-        method: 'POST',
-      });
+      const response = await apiRequest('POST', `/api/mrblue/messages/${messageId}/share`, {});
+      const result = await response.json();
 
-      const url = (response as any)?.url;
+      const url = result?.url;
       
       if (url) {
         await navigator.clipboard.writeText(url);
@@ -103,9 +98,8 @@ export function MessageActions({
 
     setIsDeleting(true);
     try {
-      await apiRequest(`/api/mrblue/messages/${messageId}`, {
-        method: 'DELETE',
-      });
+      const response = await apiRequest('DELETE', `/api/mrblue/messages/${messageId}`);
+      await response.json();
 
       onDelete();
       

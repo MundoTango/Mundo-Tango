@@ -38,10 +38,8 @@ export function TaskBreakdownPanel() {
   // Mutation: Decompose task
   const decomposeMutation = useMutation({
     mutationFn: async (description: string) => {
-      return await apiRequest('/api/mrblue/task-planner/decompose', {
-        method: 'POST',
-        body: { taskDescription: description }
-      });
+      const response = await apiRequest('POST', '/api/mrblue/task-planner/decompose', { taskDescription: description });
+      return response.json();
     },
     onSuccess: (data) => {
       setDecomposition(data);
@@ -62,10 +60,8 @@ export function TaskBreakdownPanel() {
   // Mutation: Execute subtask
   const executeMutation = useMutation({
     mutationFn: async (subtaskId: string) => {
-      return await apiRequest('/api/mrblue/task-planner/execute', {
-        method: 'POST',
-        body: { subtaskId }
-      });
+      const response = await apiRequest('POST', '/api/mrblue/task-planner/execute', { subtaskId });
+      return response.json();
     },
     onSuccess: (data) => {
       toast({

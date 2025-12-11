@@ -52,7 +52,8 @@ export default function TalentPipelinePage() {
 
   const approveMutation = useMutation({
     mutationFn: async (id: number) => {
-      return apiRequest(`/api/talent-pipeline/${id}/approve`, { method: "PATCH" });
+      const response = await apiRequest("PATCH", `/api/talent-pipeline/${id}/approve`);
+      return response.json();
     },
     onSuccess: () => {
       toast({ title: "Candidate Approved", description: "The volunteer has been approved." });
@@ -66,7 +67,8 @@ export default function TalentPipelinePage() {
 
   const rejectMutation = useMutation({
     mutationFn: async (id: number) => {
-      return apiRequest(`/api/talent-pipeline/${id}/reject`, { method: "PATCH" });
+      const response = await apiRequest("PATCH", `/api/talent-pipeline/${id}/reject`);
+      return response.json();
     },
     onSuccess: () => {
       toast({ title: "Candidate Rejected", description: "The volunteer has been rejected." });

@@ -162,16 +162,13 @@ export default function EditEventPage() {
   const updateEventMutation = useMutation({
     mutationFn: async (data: EventFormValues) => {
       const formattedPrice = data.price ? `${getCurrencySymbol(data.currency as any)}${data.price}` : null;
-      return await apiRequest(`/api/events/${eventId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...data,
-          price: formattedPrice,
-          startDate: new Date(data.startDate),
-          endDate: data.endDate ? new Date(data.endDate) : null,
-        }),
+      const response = await apiRequest("PUT", `/api/events/${eventId}`, {
+        ...data,
+        price: formattedPrice,
+        startDate: new Date(data.startDate),
+        endDate: data.endDate ? new Date(data.endDate) : null,
       });
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/events"] });

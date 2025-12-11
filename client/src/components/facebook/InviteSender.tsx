@@ -41,15 +41,13 @@ export function InviteSender({ onSendComplete }: InviteSenderProps) {
   // Generate invite mutation
   const generateMutation = useMutation({
     mutationFn: async (data: { friendName: string; friendEmail?: string }) => {
-      return apiRequest('/api/facebook/generate-invite', {
-        method: 'POST',
-        body: JSON.stringify({
-          friendName: data.friendName,
-          friendEmail: data.friendEmail,
-          relationship: 'Close friend',
-          sharedInterests: ['Tango dancing']
-        })
+      const response = await apiRequest('POST', '/api/facebook/generate-invite', {
+        friendName: data.friendName,
+        friendEmail: data.friendEmail,
+        relationship: 'Close friend',
+        sharedInterests: ['Tango dancing']
       });
+      return response.json();
     },
     onSuccess: (data) => {
       setGeneratedMessage(data.message);
@@ -72,15 +70,13 @@ export function InviteSender({ onSendComplete }: InviteSenderProps) {
   // Send invite mutation
   const sendMutation = useMutation({
     mutationFn: async (data: { friendName: string; friendEmail: string; message: string }) => {
-      return apiRequest('/api/facebook/send-invite', {
-        method: 'POST',
-        body: JSON.stringify({
-          friendName: data.friendName,
-          friendEmail: data.friendEmail,
-          message: data.message,
-          closenessScore: 80
-        })
+      const response = await apiRequest('POST', '/api/facebook/send-invite', {
+        friendName: data.friendName,
+        friendEmail: data.friendEmail,
+        message: data.message,
+        closenessScore: 80
       });
+      return response.json();
     },
     onSuccess: (data) => {
       // Check if automation succeeded or needs manual fallback
@@ -179,15 +175,12 @@ export function InviteSender({ onSendComplete }: InviteSenderProps) {
   const handleManualComplete = async () => {
     try {
       // Record manual completion to database
-      await apiRequest('/api/facebook/record-manual-action', {
-        method: 'POST',
-        body: JSON.stringify({
-          recipientName: friendName,
-          recipientEmail: friendEmail,
-          message: message,
-          actionType: 'manual_facebook_message',
-          completedAt: new Date().toISOString()
-        })
+      await apiRequest('POST', '/api/facebook/record-manual-action', {
+        recipientName: friendName,
+        recipientEmail: friendEmail,
+        message: message,
+        actionType: 'manual_facebook_message',
+        completedAt: new Date().toISOString()
       });
 
       toast({

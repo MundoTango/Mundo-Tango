@@ -28,9 +28,7 @@ export default function FinancialAccountsPage() {
 
   const syncAccount = useMutation({
     mutationFn: async (accountId: number) => {
-      const response = await apiRequest(`/api/financial/accounts/${accountId}/sync`, {
-        method: 'POST',
-      });
+      const response = await apiRequest('POST', `/api/financial/accounts/${accountId}/sync`);
       return response.json();
     },
     onSuccess: () => {

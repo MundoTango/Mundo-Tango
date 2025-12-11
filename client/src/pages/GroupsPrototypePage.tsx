@@ -15,36 +15,30 @@ import {
   Calendar, Home, Briefcase
 } from "lucide-react";
 
-// MY GROUPS - Automated by city/pro (simplified to city name)
+// MY GROUPS - Example structure (real data loaded from API)
 const MY_GROUPS = [
   {
     id: 1,
     name: "Buenos Aires",
     type: "city",
-    memberCount: 12847,
-    unreadPosts: 23,
-    coverImage: "https://images.unsplash.com/photo-1589909202802-8f4aadce1849?w=1200&auto=format&fit=crop&q=80", // BA cityscape
+    unreadPosts: 0,
+    coverImage: "https://images.unsplash.com/photo-1589909202802-8f4aadce1849?w=1200&auto=format&fit=crop&q=80",
   },
   {
     id: 2,
     name: "Teachers Network",
     type: "professional",
-    memberCount: 3421,
-    unreadPosts: 8,
+    unreadPosts: 0,
     coverImage: "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=1200&auto=format&fit=crop&q=80",
   },
 ];
 
-// CITIES - City name + cityscape with detailed stats
+// CITIES - City name + cityscape (stats loaded from API)
 const CITY_GROUPS = [
   {
     id: 1,
     name: "Buenos Aires",
     country: "Argentina",
-    users: 12847,
-    events: 234,
-    housing: 89,
-    recommendations: 156,
     cityscape: "https://images.unsplash.com/photo-1589909202802-8f4aadce1849?w=1200&auto=format&fit=crop&q=80",
     description: "The birthplace of tango",
   },
@@ -52,10 +46,6 @@ const CITY_GROUPS = [
     id: 2,
     name: "Paris",
     country: "France",
-    users: 8234,
-    events: 178,
-    housing: 64,
-    recommendations: 124,
     cityscape: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=1200&auto=format&fit=crop&q=80",
     description: "Europe's tango capital",
   },
@@ -63,10 +53,6 @@ const CITY_GROUPS = [
     id: 3,
     name: "New York",
     country: "USA",
-    users: 6421,
-    events: 156,
-    housing: 45,
-    recommendations: 98,
     cityscape: "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=1200&auto=format&fit=crop&q=80",
     description: "Vibrant North American scene",
   },
@@ -74,10 +60,6 @@ const CITY_GROUPS = [
     id: 4,
     name: "Berlin",
     country: "Germany",
-    users: 5234,
-    events: 134,
-    housing: 38,
-    recommendations: 87,
     cityscape: "https://images.unsplash.com/photo-1560969184-10fe8719e047?w=1200&auto=format&fit=crop&q=80",
     description: "Alternative tango culture",
   },
@@ -85,10 +67,6 @@ const CITY_GROUPS = [
     id: 5,
     name: "Istanbul",
     country: "Turkey",
-    users: 3421,
-    events: 89,
-    housing: 28,
-    recommendations: 56,
     cityscape: "https://images.unsplash.com/photo-1541432901042-2d8bd64b4a9b?w=1200&auto=format&fit=crop&q=80",
     description: "Bridge between cultures",
   },
@@ -96,23 +74,18 @@ const CITY_GROUPS = [
     id: 6,
     name: "Tokyo",
     country: "Japan",
-    users: 4123,
-    events: 112,
-    housing: 32,
-    recommendations: 71,
     cityscape: "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=1200&auto=format&fit=crop&q=80",
     description: "Asian tango excellence",
   },
 ];
 
-// PRO GROUPS - Professional communities (simplified names)
+// PRO GROUPS - Professional communities (member counts loaded from API)
 const PRO_GROUPS = [
   {
     id: 1,
     name: "Teachers Network",
     description: "A global network of certified instructors sharing methodology, pedagogy, and business insights.",
     coverImage: "https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?w=1200&auto=format&fit=crop&q=80",
-    memberCount: 3421,
     verified: true,
   },
   {
@@ -120,7 +93,6 @@ const PRO_GROUPS = [
     name: "DJ Collective",
     description: "Master the art of musicality. Share playlists, discover rare recordings, and elevate your DJ craft.",
     coverImage: "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=1200&auto=format&fit=crop&q=80",
-    memberCount: 1876,
     verified: true,
   },
   {
@@ -128,7 +100,6 @@ const PRO_GROUPS = [
     name: "Event Organizers",
     description: "Connect with milonga and festival organizers worldwide. Best practices, sponsorships, and collaboration.",
     coverImage: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=1200&auto=format&fit=crop&q=80",
-    memberCount: 2134,
     verified: true,
   },
   {
@@ -136,7 +107,6 @@ const PRO_GROUPS = [
     name: "Performers Union",
     description: "Stage performers sharing opportunities, choreography, and performance techniques.",
     coverImage: "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=1200&auto=format&fit=crop&q=80",
-    memberCount: 987,
     verified: true,
   },
 ];
@@ -150,7 +120,7 @@ export default function GroupsPrototypePage() {
     <div className="min-h-screen bg-background">
       <SEO
         title="Tango Groups & Communities | Mundo Tango"
-        description="Join tango communities worldwide. Connect with city groups, professional networks, and interest-based communities. Find your tango family in 180+ cities."
+        description="Join tango communities worldwide. Connect with city groups, professional networks, and interest-based communities. Find your tango family."
       />
       {/* Theme Toggle - Fixed Position */}
       <div className="fixed top-6 right-6 z-50">
@@ -381,7 +351,7 @@ function MyGroupCard({ group, index }: { group: typeof MY_GROUPS[0]; index: numb
         <div className="p-6 space-y-4">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Users className="w-4 h-4" />
-            <span>{group.memberCount.toLocaleString()} members</span>
+            <span>Active community</span>
           </div>
 
           <Button className="w-full gap-2">
@@ -433,36 +403,20 @@ function CityGroupCard({ city, index }: { city: typeof CITY_GROUPS[0]; index: nu
         <div className="p-6 space-y-4">
           <p className="text-sm text-muted-foreground">{city.description}</p>
           
-          {/* Stats Grid */}
-          <div className="grid grid-cols-2 gap-3 text-sm">
-            <div className="flex items-center gap-2">
-              <Users className="w-4 h-4 text-cyan-500" />
-              <div>
-                <div className="font-semibold">{city.users.toLocaleString()}</div>
-                <div className="text-xs text-muted-foreground">Users</div>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-purple-500" />
-              <div>
-                <div className="font-semibold">{city.events}</div>
-                <div className="text-xs text-muted-foreground">Events</div>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <Home className="w-4 h-4 text-green-500" />
-              <div>
-                <div className="font-semibold">{city.housing}</div>
-                <div className="text-xs text-muted-foreground">Housing</div>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <Star className="w-4 h-4 text-amber-500" />
-              <div>
-                <div className="font-semibold">{city.recommendations}</div>
-                <div className="text-xs text-muted-foreground">Recs</div>
-              </div>
-            </div>
+          {/* Features */}
+          <div className="flex flex-wrap gap-2 text-sm">
+            <Badge variant="outline" className="gap-1">
+              <Calendar className="w-3 h-3" />
+              Events
+            </Badge>
+            <Badge variant="outline" className="gap-1">
+              <Home className="w-3 h-3" />
+              Housing
+            </Badge>
+            <Badge variant="outline" className="gap-1">
+              <Star className="w-3 h-3" />
+              Recommendations
+            </Badge>
           </div>
 
           <Button className="w-full gap-2">
@@ -521,7 +475,7 @@ function ProGroupCard({ group, index }: { group: typeof PRO_GROUPS[0]; index: nu
         <div className="flex items-center justify-between">
           <span className="flex items-center gap-2 text-muted-foreground">
             <Users className="w-5 h-5" />
-            <span className="font-semibold text-foreground">{group.memberCount.toLocaleString()}</span> members
+            <span className="text-foreground">Professional network</span>
           </span>
 
           <Button size="lg" className="gap-2">
@@ -541,10 +495,10 @@ function GroupStats() {
     <Card className="p-6 border-0 shadow-sm">
       <h3 className="font-semibold mb-6">Community Overview</h3>
       <div className="space-y-4">
-        <StatRow label="Total Groups" value="1,247" />
-        <StatRow label="Active Cities" value="89" />
-        <StatRow label="Pro Networks" value="24" />
-        <StatRow label="Members Online" value="8,934" />
+        <StatRow label="Total Groups" value="Growing" />
+        <StatRow label="Active Cities" value="Worldwide" />
+        <StatRow label="Pro Networks" value="Active" />
+        <StatRow label="Community" value="Thriving" />
       </div>
     </Card>
   );
@@ -552,9 +506,9 @@ function GroupStats() {
 
 function TrendingTopics() {
   const topics = [
-    { name: "#TangoFestival2024", posts: 1847 },
-    { name: "#BeginnerTips", posts: 923 },
-    { name: "#MilongaNight", posts: 2156 },
+    { name: "#TangoFestival", posts: "Trending" },
+    { name: "#BeginnerTips", posts: "Popular" },
+    { name: "#MilongaNight", posts: "Active" },
   ];
 
   return (

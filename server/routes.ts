@@ -28,7 +28,7 @@ import videoUploadRoutes from "./routes/video-upload-routes";
 import videoRecordingRoutes from "./routes/video-recording-routes";
 import { objectStorageService } from "./objectStorage";
 import mrblueVideoRoutes from "./routes/mrblue-video-routes";
-import mrBlueRoutes from "./routes/mrBlue";
+import mrBlueRoutes from "./routes/mrblue";
 import mrBlueStreamRoutes from "./routes/mrblue-stream";
 import mrBlueEnhancedRoutes from "./routes/mr-blue-enhanced";
 import mrBlueAgentsRoutes from "./routes/mrBlueAgents";
@@ -77,7 +77,8 @@ import { registerVoiceCloningRoutes } from "./routes/voiceCloning";
 import { initLivestreamWebSocket } from "./services/livestream-websocket";
 import rbacRoutes from "./routes/rbac-routes";
 import featureFlagsRoutes from "./routes/feature-flags-routes";
-import pricingRoutes from "./routes/pricing-routes";
+// DELETED: Pricing system rework per Payment & Billing Audit (Dec 2025)
+// import pricingRoutes from "./routes/pricing-routes";
 import planRoutes from "./routes/plan-routes";
 import thePlanRoutes from "./routes/thePlanRoutes";
 import syncRoutes from "./routes/sync-routes";
@@ -173,9 +174,11 @@ import computerUseRoutes from "./routes/computer-use-routes";
 import aiSelectorRoutes from "./routes/ai-selector-routes";
 import journeyRoutes from "./routes/journey-routes";
 import billingRoutes from "./routes/billing-routes";
+import paymentRoutes from "./routes/payment-routes";
 import onboardingRoutes from "./routes/onboarding-routes";
 import messagesRoutes from "./routes/messages-routes";
 import { registerMessagingRoutes } from "./routes/messaging-routes";
+import messagingWebhookRoutes from "./routes/messaging-webhook-routes";
 import adsRoutes from "./routes/ads-routes";
 import revenueRoutes from "./routes/revenue-routes";
 import volunteerTestingRoutes from "./routes/volunteerTesting";
@@ -575,6 +578,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   
   // ============================================================================
+  // WEBHOOK ROUTES (BEFORE CSRF - external platforms cannot send CSRF tokens)
+  // n8n + OpenAI hybrid messaging webhooks for WhatsApp, Telegram, Slack, etc.
+  // ============================================================================
+  app.use("/api", messagingWebhookRoutes);
+  
+  // ============================================================================
   // CSRF PROTECTION: Verify CSRF tokens on all mutating requests (POST/PUT/DELETE/PATCH)
   // Skips: GET/HEAD/OPTIONS and JWT Bearer auth requests (handled in middleware)
   // ============================================================================
@@ -583,7 +592,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Phase 1 & 2 Deployment Blocker Routes
   app.use("/api/rbac", rbacRoutes);
   app.use("/api/feature-flags", featureFlagsRoutes);
-  app.use("/api/pricing", pricingRoutes);
+  // DELETED: Pricing system rework per Payment & Billing Audit (Dec 2025)
+  // app.use("/api/pricing", pricingRoutes);
   
   // Phase 3 Deployment Blocker Routes
   app.use("/api/plan", planRoutes);
@@ -718,9 +728,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/computer-use", computerUseRoutes);
   app.use("/api", aiSelectorRoutes);
   app.use("/api/billing", billingRoutes);
+  app.use("/api/payments", paymentRoutes); // MB.MD Pattern 49: International Payments
   app.use("/api/onboarding", onboardingRoutes);
   app.use("/api/messages", messagesRoutes);
   registerMessagingRoutes(app); // New messaging routes for direct messages, group chats, and threads
+  // Note: messaging webhooks moved before CSRF middleware
   app.use("/api/ads", adsRoutes);
   app.use("/api/admin/ads", adsRoutes);
   app.use("/api/revenue", revenueRoutes);
@@ -5497,6 +5509,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("[GET /api/friends/friendship/:friendId/stats] Error:", error);
       res.status(500).json({ message: "Failed to fetch friendship stats" });
+    }
+  });
+
+  app.get("/api/friends/friendship/:friendId/shared-data", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const friendId = parseInt(req.params.friendId);
+      const userId = req.user!.id;
+      
+      const sharedData = await storage.getFriendshipSharedData(userId, friendId);
+      
+      if (!sharedData) {
+        return res.status(404).json({ message: "Friendship not found" });
+      }
+      
+      res.json(sharedData);
+    } catch (error) {
+      console.error("[GET /api/friends/friendship/:friendId/shared-data] Error:", error);
+      res.status(500).json({ message: "Failed to fetch shared data" });
     }
   });
 

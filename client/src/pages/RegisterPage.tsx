@@ -12,6 +12,7 @@ import { Eye, EyeOff, Check, X, Loader2, Sparkles, Heart, Users, Globe } from "l
 import { PublicLayout } from "@/components/PublicLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { motion } from "framer-motion";
+import { useQuery } from "@tanstack/react-query";
 import tangoHeroImage from "@assets/stock_images/elegant_professional_e4da136e.jpg";
 
 export default function RegisterPage() {
@@ -30,6 +31,16 @@ export default function RegisterPage() {
   const [isCheckingEmail, setIsCheckingEmail] = useState(false);
   const { register } = useAuth();
   const { toast } = useToast();
+  
+  const { data: stats } = useQuery<{
+    dancers: number | null;
+    events: number | null;
+    cities: number | null;
+    countries: number | null;
+  }>({
+    queryKey: ["/api/stats/public"],
+    staleTime: 5 * 60 * 1000,
+  });
 
   const calculatePasswordStrength = (pwd: string): { score: number; label: string; color: string } => {
     let score = 0;
@@ -187,21 +198,29 @@ export default function RegisterPage() {
                   Connect with dancers worldwide, discover milongas, and immerse yourself in the passionate world of Argentine tango
                 </p>
 
-                {/* Community Stats */}
-                <div className="flex gap-6 justify-center mb-8 text-white/70 text-sm flex-wrap">
-                  <div className="flex items-center gap-2">
-                    <Users className="w-4 h-4" />
-                    <span>10,000+ dancers</span>
+                {/* Community Stats - Real data from /api/stats/public */}
+                {(stats?.dancers || stats?.events || stats?.cities) && (
+                  <div className="flex gap-6 justify-center mb-8 text-white/70 text-sm flex-wrap">
+                    {stats?.dancers && (
+                      <div className="flex items-center gap-2">
+                        <Users className="w-4 h-4" />
+                        <span>{stats.dancers}+ dancers</span>
+                      </div>
+                    )}
+                    {stats?.events && (
+                      <div className="flex items-center gap-2">
+                        <Sparkles className="w-4 h-4" />
+                        <span>{stats.events}+ events</span>
+                      </div>
+                    )}
+                    {stats?.cities && (
+                      <div className="flex items-center gap-2">
+                        <Globe className="w-4 h-4" />
+                        <span>{stats.cities} cities</span>
+                      </div>
+                    )}
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Sparkles className="w-4 h-4" />
-                    <span>500+ events</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Globe className="w-4 h-4" />
-                    <span>120 cities</span>
-                  </div>
-                </div>
+                )}
               </div>
 
               {/* Glassmorphic Registration Form */}

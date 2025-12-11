@@ -227,6 +227,7 @@ router.get("/", optionalAuth, async (req: AuthRequest, res: Response) => {
       offset = "0",
       category,
       upcoming,
+      past,
       search
     } = req.query;
 
@@ -280,6 +281,11 @@ router.get("/", optionalAuth, async (req: AuthRequest, res: Response) => {
     // Handle upcoming=true: filter for events starting from now
     if (upcoming === "true") {
       conditions.push(gte(events.startDate, new Date()));
+    }
+
+    // Handle past=true: filter for events that have already ended
+    if (past === "true") {
+      conditions.push(lte(events.startDate, new Date()));
     }
 
     if (conditions.length > 0) {
@@ -433,6 +439,7 @@ router.get("/search", optionalAuth, async (req: AuthRequest, res: Response) => {
       dateFrom,
       dateTo,
       type,
+      types,
       priceMin,
       priceMax,
       danceStyle,
@@ -442,6 +449,7 @@ router.get("/search", optionalAuth, async (req: AuthRequest, res: Response) => {
       tags,
       languages,
       languageMatchOnly,
+      past,
       sortBy = "relevance",
       page = "1",
       limit = "20"
@@ -491,17 +499,26 @@ router.get("/search", optionalAuth, async (req: AuthRequest, res: Response) => {
       );
     }
 
-    // Date range filter
+    // Date range filter (use startDateTime if startDate is null)
     if (dateFrom) {
-      conditions.push(gte(events.startDate, new Date(dateFrom as string)));
+      conditions.push(
+        sql`COALESCE(${events.startDate}, ${events.startDateTime}::date) >= ${new Date(dateFrom as string)}`
+      );
     }
     if (dateTo) {
-      conditions.push(lte(events.startDate, new Date(dateTo as string)));
+      conditions.push(
+        sql`COALESCE(${events.startDate}, ${events.startDateTime}::date) <= ${new Date(dateTo as string)}`
+      );
     }
 
-    // Event type filter
+    // Event type filter (single or multiple types)
     if (type && typeof type === 'string') {
       conditions.push(eq(events.eventType, type));
+    } else if (types && typeof types === 'string') {
+      const typeList = types.split(',').map(t => t.trim().toLowerCase());
+      conditions.push(
+        sql`LOWER(${events.eventType}) = ANY(ARRAY[${sql.raw(typeList.map(t => `'${t}'`).join(','))}])`
+      );
     }
 
     // Price range filter
@@ -572,11 +589,25 @@ router.get("/search", optionalAuth, async (req: AuthRequest, res: Response) => {
       // );
     }
 
+    // Past events filter - show events that have already ended
+    // If past=true, show only past events
+    // If past=false or upcoming=true, show only upcoming
+    // If neither is specified (discover mode), show ALL events
+    const { upcoming } = req.query;
+    if (past === "true") {
+      conditions.push(lte(events.startDate, new Date()));
+    } else if (upcoming === "true") {
+      conditions.push(gte(events.startDate, new Date()));
+    }
+    // If neither past nor upcoming is specified, show all events (Discover mode)
+
     if (conditions.length > 0) {
       query = query.where(and(...conditions));
     }
 
-    // Sorting
+    // Sorting - with support for prioritizing big events (festivals, marathons, encuentros)
+    const { prioritizeBigEvents } = req.query;
+    
     switch (sortBy) {
       case "date":
         query = query.orderBy(asc(events.startDate));
@@ -586,7 +617,17 @@ router.get("/search", optionalAuth, async (req: AuthRequest, res: Response) => {
         break;
       case "relevance":
       default:
-        if (q) {
+        if (prioritizeBigEvents === "true") {
+          // Prioritize big events: festivals, marathons, encuentros, competitions first
+          query = query.orderBy(
+            desc(sql`CASE 
+              WHEN ${events.eventType} IN ('festival', 'marathon', 'encuentro', 'competition') THEN 3
+              WHEN ${events.eventType} IN ('workshop', 'performance') THEN 2
+              ELSE 1
+            END`),
+            desc(events.startDate)
+          );
+        } else if (q) {
           query = query.orderBy(
             desc(sql`
               ts_rank(

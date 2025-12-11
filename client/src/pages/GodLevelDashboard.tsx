@@ -98,9 +98,7 @@ export default function GodLevelDashboard() {
 
   const handleApprove = async (userId: number) => {
     try {
-      await apiRequest(`/api/god-level/approve/${userId}`, {
-        method: 'POST'
-      });
+      await apiRequest('POST', `/api/god-level/approve/${userId}`);
 
       toast({
         title: 'Request Approved',
@@ -122,11 +120,7 @@ export default function GodLevelDashboard() {
     if (!reason) return;
 
     try {
-      await apiRequest(`/api/god-level/reject/${userId}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ reason })
-      });
+      await apiRequest('POST', `/api/god-level/reject/${userId}`, { reason });
 
       toast({
         title: 'Request Rejected',

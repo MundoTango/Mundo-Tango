@@ -22,10 +22,8 @@ export function PageGeneratorPanel() {
   
   const generateMutation = useMutation({
     mutationFn: async (data: { description: string; type?: string }) => {
-      return await apiRequest('/api/mr-blue/generate-page', {
-        method: 'POST',
-        body: JSON.stringify(data)
-      });
+      const response = await apiRequest('POST', '/api/mr-blue/generate-page', data);
+      return response.json();
     },
     onSuccess: (data: any) => {
       toast({

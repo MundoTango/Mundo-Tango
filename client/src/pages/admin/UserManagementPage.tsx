@@ -22,7 +22,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Search, UserCog, Ban, Mail, Download, Shield, Users } from 'lucide-react';
+import { Search, UserCog, Ban, Mail, Download, Shield, Users, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { queryClient, apiRequest } from '@/lib/queryClient';
 import { formatDistanceToNow } from 'date-fns';
@@ -39,6 +39,13 @@ interface User {
   createdAt: Date;
 }
 
+interface UsersResponse {
+  users: User[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
 export default function UserManagementPage() {
   const { toast } = useToast();
   const [search, setSearch] = useState('');
@@ -46,16 +53,21 @@ export default function UserManagementPage() {
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [showEditDialog, setShowEditDialog] = useState(false);
+  const [page, setPage] = useState(1);
+  const [limit] = useState(50);
 
-  const { data: users, isLoading } = useQuery<User[]>({
-    queryKey: ['/api/admin/users', { search, role: roleFilter, status: statusFilter }],
+  const { data: usersResponse, isLoading } = useQuery<UsersResponse>({
+    queryKey: ['/api/admin/users', { search, role: roleFilter !== 'all' ? roleFilter : '', page, limit }],
   });
+  
+  const users = usersResponse?.users || [];
+  const total = usersResponse?.total || 0;
+  const totalPages = Math.ceil(total / limit);
 
   const deleteUserMutation = useMutation({
     mutationFn: async (userId: number) => {
-      return apiRequest(`/api/admin/users/${userId}`, {
-        method: 'DELETE',
-      });
+      const response = await apiRequest('DELETE', `/api/admin/users/${userId}`);
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/users'] });
@@ -247,6 +259,40 @@ export default function UserManagementPage() {
           )}
         </CardContent>
       </Card>
+
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between" data-testid="pagination-controls">
+          <p className="text-sm text-muted-foreground">
+            Showing {(page - 1) * limit + 1} to {Math.min(page * limit, total)} of {total} users
+          </p>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setPage(p => Math.max(1, p - 1))}
+              disabled={page === 1}
+              data-testid="button-prev-page"
+            >
+              <ChevronLeft className="h-4 w-4" />
+              Previous
+            </Button>
+            <span className="text-sm">
+              Page {page} of {totalPages}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+              disabled={page === totalPages}
+              data-testid="button-next-page"
+            >
+              Next
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      )}
 
       <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
         <DialogContent data-testid="dialog-edit-user">

@@ -78,7 +78,7 @@ export default function MarketingPrototypeEnhanced() {
             transition={{ duration: 1, delay: 0.3 }}
             className="text-xl text-white/90 mb-10 max-w-3xl mx-auto leading-relaxed"
           >
-            Connect with 10,000+ dancers worldwide. Discover events, find partners, and immerse yourself in the global tango movement.
+            Connect with dancers worldwide. Discover events, find partners, and immerse yourself in the global tango movement.
           </motion.p>
 
           <motion.div
@@ -119,15 +119,12 @@ export default function MarketingPrototypeEnhanced() {
         </motion.div>
       </motion.section>
 
-      {/* STATS SECTION */}
-      <section className="py-16 bg-background" data-testid="section-stats">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            <StatCard number="10,000+" label="Active Dancers" delay={0.1} />
-            <StatCard number="50+" label="Countries" delay={0.2} />
-            <StatCard number="500+" label="Events Monthly" delay={0.3} />
-            <StatCard number="100+" label="Cities" delay={0.4} />
-          </div>
+      {/* COMMUNITY SECTION */}
+      <section className="py-16 bg-background" data-testid="section-community">
+        <div className="max-w-7xl mx-auto px-6 text-center">
+          <p className="text-xl text-muted-foreground">
+            Building connections across continents, one dance at a time
+          </p>
         </div>
       </section>
 
@@ -290,7 +287,7 @@ export default function MarketingPrototypeEnhanced() {
                 Ready to Dance?
               </h2>
               <p className="text-xl text-white/90 mb-10 max-w-2xl mx-auto">
-                Join 10,000+ dancers from around the world
+                Join dancers from around the world
               </p>
               
               <div className="flex flex-wrap gap-4 justify-center">

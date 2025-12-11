@@ -100,10 +100,8 @@ export function GitPanel({ currentFile, onBranchSwitch }: GitPanelProps) {
   // Create branch mutation
   const createBranchMutation = useMutation({
     mutationFn: async (branchName: string) => {
-      return apiRequest('/api/visual-editor/git/branch', {
-        method: 'POST',
-        body: JSON.stringify({ name: branchName }),
-      });
+      const response = await apiRequest('POST', '/api/visual-editor/git/branch', { name: branchName });
+      return response.json();
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['/api/visual-editor/git/branches'] });
@@ -126,10 +124,8 @@ export function GitPanel({ currentFile, onBranchSwitch }: GitPanelProps) {
   // Switch branch mutation
   const switchBranchMutation = useMutation({
     mutationFn: async (branchName: string) => {
-      return apiRequest('/api/visual-editor/git/switch-branch', {
-        method: 'POST',
-        body: JSON.stringify({ branchName }),
-      });
+      const response = await apiRequest('POST', '/api/visual-editor/git/switch-branch', { branchName });
+      return response.json();
     },
     onSuccess: (data, branchName) => {
       queryClient.invalidateQueries({ queryKey: ['/api/visual-editor/git/branches'] });
@@ -155,13 +151,11 @@ export function GitPanel({ currentFile, onBranchSwitch }: GitPanelProps) {
   // Revert mutation
   const revertMutation = useMutation({
     mutationFn: async (commitHash: string) => {
-      return apiRequest('/api/visual-editor/revert', {
-        method: 'POST',
-        body: JSON.stringify({
-          pagePath: currentFile,
-          commitHash,
-        }),
+      const response = await apiRequest('POST', '/api/visual-editor/revert', {
+        pagePath: currentFile,
+        commitHash,
       });
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/visual-editor/git/history'] });

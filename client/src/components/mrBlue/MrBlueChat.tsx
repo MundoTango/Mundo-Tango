@@ -272,33 +272,27 @@ Provide natural, conversational assistance based on where the user is in the pla
           
           if (currentConversationId) {
             // Update existing conversation
-            await apiRequest(`/api/mrblue/conversations/${currentConversationId}`, {
-              method: 'PUT',
-              body: JSON.stringify({ title, lastMessageAt: new Date() }),
-            });
+            const updateRes = await apiRequest('PUT', `/api/mrblue/conversations/${currentConversationId}`, { title, lastMessageAt: new Date() });
+            await updateRes.json();
           } else {
             // Create new conversation
-            const response = await apiRequest('/api/mrblue/conversations', {
-              method: 'POST',
-              body: JSON.stringify({ title }),
-            });
+            const createRes = await apiRequest('POST', '/api/mrblue/conversations', { title });
+            const result = await createRes.json();
             
-            if (response && typeof response === 'object' && 'id' in response) {
-              setCurrentConversationId(response.id as number);
+            if (result && typeof result === 'object' && 'id' in result) {
+              setCurrentConversationId(result.id as number);
             }
           }
 
           // Save messages
           for (const msg of messages.slice(-10)) {
             if (msg.id !== '1') { // Skip welcome message
-              await apiRequest('/api/mrblue/messages', {
-                method: 'POST',
-                body: JSON.stringify({
-                  conversationId: currentConversationId,
-                  role: msg.role,
-                  content: msg.content,
-                }),
+              const msgRes = await apiRequest('POST', '/api/mrblue/messages', {
+                conversationId: currentConversationId,
+                role: msg.role,
+                content: msg.content,
               });
+              await msgRes.json();
             }
           }
         } catch (error) {
@@ -562,10 +556,8 @@ Provide natural, conversational assistance based on where the user is in the pla
     if (!editingMessageId || !editContent.trim()) return;
 
     try {
-      await apiRequest(`/api/mrblue/messages/${editingMessageId}`, {
-        method: 'PATCH',
-        body: JSON.stringify({ content: editContent }),
-      });
+      const response = await apiRequest('PATCH', `/api/mrblue/messages/${editingMessageId}`, { content: editContent });
+      await response.json();
 
       setMessages(prev => prev.map(msg => 
         msg.id === editingMessageId 
@@ -591,7 +583,8 @@ Provide natural, conversational assistance based on where the user is in the pla
 
   const refreshReactions = async (messageId: string) => {
     try {
-      const reactions = await apiRequest(`/api/mrblue/messages/${messageId}/reactions`);
+      const response = await apiRequest('GET', `/api/mrblue/messages/${messageId}/reactions`);
+      const reactions = await response.json();
       
       setMessages(prev => prev.map(msg =>
         msg.id === messageId

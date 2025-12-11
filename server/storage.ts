@@ -314,6 +314,14 @@ export interface IStorage {
     sharedGroups: number;
     lastInteraction: string | null;
   } | null>;
+  getFriendshipSharedData(userId: number, friendId: number): Promise<{
+    sharedPosts: Array<{ id: number; content: string; createdAt: string; authorName: string }>;
+    sharedLikes: Array<{ postId: number; postTitle: string; likedAt: string }>;
+    sharedTravel: Array<{ city: string; country: string; startDate: string; endDate: string | null }>;
+    sharedComments: Array<{ id: number; postId: number; content: string; createdAt: string }>;
+    commonCities: Array<{ city: string; country: string; userStartDate: string; friendStartDate: string }>;
+    sharedEventsDetails: Array<{ id: number; title: string; date: string; location: string }>;
+  } | null>;
   checkFriendship(userId1: number, userId2: number): Promise<boolean>;
   
   // Communities
@@ -2532,6 +2540,147 @@ export class DbStorage implements IStorage {
       sharedEvents: sharedEventIds.length,
       sharedGroups: sharedGroupIds.length,
       lastInteraction: friendshipData.lastInteractionAt ? friendshipData.lastInteractionAt.toISOString() : null,
+    };
+  }
+
+  async getFriendshipSharedData(userId: number, friendId: number): Promise<{
+    sharedPosts: Array<{ id: number; content: string; createdAt: string; authorName: string }>;
+    sharedLikes: Array<{ postId: number; postTitle: string; likedAt: string }>;
+    sharedTravel: Array<{ city: string; country: string; startDate: string; endDate: string | null }>;
+    sharedComments: Array<{ id: number; postId: number; content: string; createdAt: string }>;
+    commonCities: Array<{ city: string; country: string; userStartDate: string; friendStartDate: string }>;
+    sharedEventsDetails: Array<{ id: number; title: string; date: string; location: string }>;
+  } | null> {
+    const isFriends = await this.checkFriendship(userId, friendId);
+    if (!isFriends) {
+      return null;
+    }
+
+    // Get posts where both user and friend engaged (liked or commented)
+    const userLikedPosts = await db.select({ postId: postLikes.postId }).from(postLikes).where(eq(postLikes.userId, userId));
+    const friendLikedPosts = await db.select({ postId: postLikes.postId }).from(postLikes).where(eq(postLikes.userId, friendId));
+    const userLikedIds = userLikedPosts.map(p => p.postId);
+    const friendLikedIds = friendLikedPosts.map(p => p.postId);
+    const sharedLikedPostIds = userLikedIds.filter(id => friendLikedIds.includes(id));
+
+    // Get shared liked posts details
+    const sharedLikes: Array<{ postId: number; postTitle: string; likedAt: string }> = [];
+    for (const postId of sharedLikedPostIds.slice(0, 10)) {
+      const post = await db.select().from(posts).where(eq(posts.id, postId)).limit(1);
+      if (post[0]) {
+        sharedLikes.push({
+          postId,
+          postTitle: post[0].content?.substring(0, 100) || 'Untitled',
+          likedAt: new Date().toISOString()
+        });
+      }
+    }
+
+    // Get shared comments (posts both commented on)
+    const userComments = await db.select({ postId: postComments.postId, id: postComments.id, content: postComments.content, createdAt: postComments.createdAt })
+      .from(postComments).where(eq(postComments.userId, userId)).limit(50);
+    const friendCommentedPostIds = await db.select({ postId: postComments.postId })
+      .from(postComments).where(eq(postComments.userId, friendId));
+    const friendCommentPostIds = friendCommentedPostIds.map(c => c.postId);
+    
+    const sharedComments = userComments
+      .filter(c => friendCommentPostIds.includes(c.postId))
+      .slice(0, 10)
+      .map(c => ({
+        id: c.id,
+        postId: c.postId,
+        content: c.content,
+        createdAt: c.createdAt?.toISOString() || new Date().toISOString()
+      }));
+
+    // Get location history for both users to find common cities
+    const userLocations = await db.select()
+      .from(userLocationHistory)
+      .where(eq(userLocationHistory.userId, userId));
+    const friendLocations = await db.select()
+      .from(userLocationHistory)
+      .where(eq(userLocationHistory.userId, friendId));
+
+    const commonCities: Array<{ city: string; country: string; userStartDate: string; friendStartDate: string }> = [];
+    for (const userLoc of userLocations) {
+      const matchingFriendLoc = friendLocations.find(
+        fl => fl.city?.toLowerCase() === userLoc.city?.toLowerCase()
+      );
+      if (matchingFriendLoc) {
+        commonCities.push({
+          city: userLoc.city,
+          country: userLoc.country || '',
+          userStartDate: userLoc.startDate,
+          friendStartDate: matchingFriendLoc.startDate
+        });
+      }
+    }
+
+    // Get shared events with details
+    const userEventRsvps = await db.select({ eventId: eventRsvps.eventId }).from(eventRsvps).where(eq(eventRsvps.userId, userId));
+    const friendEventRsvps = await db.select({ eventId: eventRsvps.eventId }).from(eventRsvps).where(eq(eventRsvps.userId, friendId));
+    const userEventIds = userEventRsvps.map(e => e.eventId);
+    const friendEventIds = friendEventRsvps.map(e => e.eventId);
+    const sharedEventIds = userEventIds.filter(id => friendEventIds.includes(id));
+
+    const sharedEventsDetails: Array<{ id: number; title: string; date: string; location: string }> = [];
+    for (const eventId of sharedEventIds.slice(0, 10)) {
+      const event = await db.select().from(events).where(eq(events.id, eventId)).limit(1);
+      if (event[0]) {
+        sharedEventsDetails.push({
+          id: event[0].id,
+          title: event[0].name || event[0].title || 'Untitled Event',
+          date: event[0].startDate?.toISOString() || new Date().toISOString(),
+          location: event[0].location || event[0].city || 'Unknown'
+        });
+      }
+    }
+
+    // Get shared travel (overlap in location history dates)
+    const sharedTravel: Array<{ city: string; country: string; startDate: string; endDate: string | null }> = [];
+    for (const userLoc of userLocations) {
+      const matchingFriendLoc = friendLocations.find(fl => {
+        if (fl.city?.toLowerCase() !== userLoc.city?.toLowerCase()) return false;
+        const userStart = new Date(userLoc.startDate);
+        const userEnd = userLoc.endDate ? new Date(userLoc.endDate) : new Date();
+        const friendStart = new Date(fl.startDate);
+        const friendEnd = fl.endDate ? new Date(fl.endDate) : new Date();
+        return userStart <= friendEnd && friendStart <= userEnd;
+      });
+      if (matchingFriendLoc) {
+        sharedTravel.push({
+          city: userLoc.city,
+          country: userLoc.country || '',
+          startDate: userLoc.startDate,
+          endDate: userLoc.endDate
+        });
+      }
+    }
+
+    // Get posts by both users
+    const userPosts = await db.select().from(posts).where(eq(posts.userId, userId)).limit(20);
+    const friendPosts = await db.select().from(posts).where(eq(posts.userId, friendId)).limit(20);
+    const allPosts = [...userPosts, ...friendPosts]
+      .sort((a, b) => (b.createdAt?.getTime() || 0) - (a.createdAt?.getTime() || 0))
+      .slice(0, 10);
+
+    const sharedPosts = await Promise.all(allPosts.map(async (post) => {
+      const author = await db.select({ name: users.name }).from(users).where(eq(users.id, post.userId)).limit(1);
+      return {
+        id: post.id,
+        content: post.content?.substring(0, 200) || '',
+        createdAt: post.createdAt?.toISOString() || new Date().toISOString(),
+        authorName: author[0]?.name || 'Unknown'
+      };
+    }));
+
+    return {
+      sharedPosts,
+      sharedLikes,
+      sharedTravel,
+      sharedComments,
+      commonCities,
+      sharedEventsDetails
     };
   }
 

@@ -34,9 +34,8 @@ export function ConversationSidebar({
     e.stopPropagation();
 
     try {
-      await apiRequest(`/api/mrblue/conversations/${id}`, {
-        method: 'DELETE',
-      });
+      const response = await apiRequest('DELETE', `/api/mrblue/conversations/${id}`);
+      await response.json();
 
       queryClient.invalidateQueries({ queryKey: ['/api/mrblue/conversations'] });
 

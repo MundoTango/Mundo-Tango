@@ -1,388 +1,265 @@
 /**
- * PREFERENCE EXTRACTOR - AGENT #42
- * Automatically extract and store user preferences from conversations
+ * MR BLUE PREFERENCE EXTRACTOR - PHASE 3
+ * Extracts user preferences from conversations
+ * 
+ * Week 1, Day 1 Implementation - MB.MD v7.1
  * 
  * Features:
- * - Pattern-based preference detection (16 regex patterns)
+ * - Pattern-based preference extraction (regex + semantic)
  * - Confidence scoring (0-1 scale)
- * - Category classification (coding_style, tech_stack, design, etc.)
- * - De-duplication via unique keys
- * - Context injection for code generation
+ * - Automatic preference storage
+ * - Category classification
+ * - De-duplication (updates existing preferences)
  */
 
-import { db } from '@db';
-import { mrBlueUserPreferences } from '@shared/schema';
-import { eq, and } from 'drizzle-orm';
+import { storage } from '../../storage';
 
-// ==================== TYPES ====================
+export interface PreferencePattern {
+  regex: RegExp;
+  category: string;
+  confidenceMultiplier: number; // 0-1, multiplies base confidence
+  extractValue: (match: RegExpMatchArray) => string;
+}
 
-export interface DetectedPreference {
+export interface ExtractedPreference {
   userId: number;
-  category: PreferenceCategory;
-  key: string; // Unique identifier for de-duplication
-  value: string;
-  confidence: number; // 0-1
-  extractedFrom: string; // Original message
-  timestamp: Date;
-}
-
-export type PreferenceCategory =
-  | 'coding_style'
-  | 'tech_stack'
-  | 'design_preference'
-  | 'naming_convention'
-  | 'architecture'
-  | 'testing'
-  | 'documentation'
-  | 'accessibility'
-  | 'performance'
-  | 'security'
-  | 'deployment'
-  | 'collaboration'
-  | 'other';
-
-// ==================== PREFERENCE PATTERNS ====================
-
-interface PreferencePattern {
-  category: PreferenceCategory;
-  pattern: RegExp;
-  keyExtractor: (match: RegExpMatchArray) => string;
-  valueExtractor: (match: RegExpMatchArray) => string;
+  preferenceKey: string;
+  preferenceValue: string;
+  category: string;
   confidence: number;
+  extractedFrom: string;
+  metadata?: Record<string, any>;
 }
-
-const PREFERENCE_PATTERNS: PreferencePattern[] = [
-  // Coding Style
-  {
-    category: 'coding_style',
-    pattern: /I (prefer|like|love|always use) (tabs|spaces|semicolons|arrow functions|async\/await)/gi,
-    keyExtractor: (m) => `coding_style_${m[2].toLowerCase().replace(/\s+/g, '_')}`,
-    valueExtractor: (m) => m[2],
-    confidence: 0.9,
-  },
-  {
-    category: 'coding_style',
-    pattern: /don't (use|like|want) (var|let|const|semicolons|callbacks)/gi,
-    keyExtractor: (m) => `avoid_${m[2].toLowerCase().replace(/\s+/g, '_')}`,
-    valueExtractor: (m) => `avoid ${m[2]}`,
-    confidence: 0.85,
-  },
-
-  // Tech Stack
-  {
-    category: 'tech_stack',
-    pattern: /I (use|prefer|work with) (React|Vue|Angular|Next\.js|TypeScript|JavaScript|Python|Node\.js)/gi,
-    keyExtractor: (m) => `tech_${m[2].toLowerCase().replace(/\./g, '_')}`,
-    valueExtractor: (m) => m[2],
-    confidence: 0.95,
-  },
-  {
-    category: 'tech_stack',
-    pattern: /my (stack|setup) (is|includes) ([^.]+)/gi,
-    keyExtractor: () => 'tech_stack',
-    valueExtractor: (m) => m[3].trim(),
-    confidence: 0.8,
-  },
-
-  // Design Preferences
-  {
-    category: 'design_preference',
-    pattern: /I (like|prefer|want) (dark mode|light mode|minimalist|modern|colorful) (designs?|themes?|UI)/gi,
-    keyExtractor: (m) => `design_${m[2].toLowerCase().replace(/\s+/g, '_')}`,
-    valueExtractor: (m) => m[2],
-    confidence: 0.85,
-  },
-  {
-    category: 'design_preference',
-    pattern: /use (Tailwind|Bootstrap|Material UI|shadcn|CSS modules)/gi,
-    keyExtractor: (m) => `design_framework_${m[1].toLowerCase().replace(/\s+/g, '_')}`,
-    valueExtractor: (m) => m[1],
-    confidence: 0.9,
-  },
-
-  // Naming Conventions
-  {
-    category: 'naming_convention',
-    pattern: /I (name|call) (components|files|functions|variables) (in )?(camelCase|PascalCase|snake_case|kebab-case)/gi,
-    keyExtractor: (m) => `naming_${m[2].toLowerCase()}_${m[4].toLowerCase()}`,
-    valueExtractor: (m) => m[4],
-    confidence: 0.9,
-  },
-
-  // Architecture
-  {
-    category: 'architecture',
-    pattern: /I (organize|structure|arrange) (code|files|components) (using|with|in) ([^.]+)/gi,
-    keyExtractor: () => 'code_organization',
-    valueExtractor: (m) => m[4].trim(),
-    confidence: 0.75,
-  },
-  {
-    category: 'architecture',
-    pattern: /(monorepo|microservices|serverless|MVC|MVVM|clean architecture)/gi,
-    keyExtractor: (m) => `architecture_${m[1].toLowerCase().replace(/\s+/g, '_')}`,
-    valueExtractor: (m) => m[1],
-    confidence: 0.8,
-  },
-
-  // Testing
-  {
-    category: 'testing',
-    pattern: /I (use|prefer|test with) (Jest|Vitest|Mocha|Playwright|Cypress)/gi,
-    keyExtractor: (m) => `testing_framework_${m[2].toLowerCase()}`,
-    valueExtractor: (m) => m[2],
-    confidence: 0.9,
-  },
-
-  // Documentation
-  {
-    category: 'documentation',
-    pattern: /I (like|prefer|use) (JSDoc|TypeDoc|comments|inline docs)/gi,
-    keyExtractor: (m) => `documentation_style_${m[2].toLowerCase().replace(/\s+/g, '_')}`,
-    valueExtractor: (m) => m[2],
-    confidence: 0.85,
-  },
-
-  // Accessibility
-  {
-    category: 'accessibility',
-    pattern: /(WCAG|accessibility|a11y|screen readers?) (is|are) (important|priority)/gi,
-    keyExtractor: () => 'accessibility_priority',
-    valueExtractor: () => 'high priority',
-    confidence: 0.9,
-  },
-
-  // Performance
-  {
-    category: 'performance',
-    pattern: /focus on (performance|speed|optimization)/gi,
-    keyExtractor: () => 'performance_focus',
-    valueExtractor: () => 'high priority',
-    confidence: 0.85,
-  },
-
-  // Security
-  {
-    category: 'security',
-    pattern: /(security|auth|authentication) (is|should be) (important|priority|key)/gi,
-    keyExtractor: () => 'security_priority',
-    valueExtractor: () => 'high priority',
-    confidence: 0.9,
-  },
-
-  // Deployment
-  {
-    category: 'deployment',
-    pattern: /I (deploy|host|use) (Vercel|Netlify|AWS|GCP|Azure|Railway|Fly\.io)/gi,
-    keyExtractor: (m) => `deployment_platform_${m[2].toLowerCase().replace(/\./g, '_')}`,
-    valueExtractor: (m) => m[2],
-    confidence: 0.9,
-  },
-];
-
-// ==================== PREFERENCE EXTRACTOR ====================
 
 export class PreferenceExtractor {
-  private initialized: boolean = false;
-
-  constructor() {
-    console.log('[PreferenceExtractor] Initialized auto-learning system');
-  }
-
   /**
-   * Initialize the service
+   * Initialize the preference extractor (no-op, for compatibility)
    */
   async initialize(): Promise<void> {
-    if (this.initialized) return;
-    this.initialized = true;
-    console.log('[PreferenceExtractor] ✅ Ready to extract preferences');
+    console.log('[PreferenceExtractor] Initialized');
   }
 
   /**
-   * Extract preferences from a user message
+   * Preference extraction patterns
+   * Ordered by confidence (most explicit first)
    */
-  async extractPreferences(message: string): Promise<DetectedPreference[]> {
-    const detected: DetectedPreference[] = [];
+  private patterns: PreferencePattern[] = [
+    // EXPLICIT PREFERENCES (high confidence: 0.9-1.0)
+    {
+      regex: /I (?:always|only) (?:use|prefer|like|want) ([\w\s-]+?)(?:\s+(?:for|when|in|over|instead)|\.|,|$)/i,
+      category: 'explicit_preference',
+      confidenceMultiplier: 1.0,
+      extractValue: (match) => match[1].trim(),
+    },
+    {
+      regex: /I prefer ([\w\s-]+) over ([\w\s-]+)/i,
+      category: 'comparative_preference',
+      confidenceMultiplier: 0.95,
+      extractValue: (match) => `${match[1].trim()} (over ${match[2].trim()})`,
+    },
+    {
+      regex: /Always use ([\w\s-]+?)(?:\s+(?:for|when|in)|\.|,|$)/i,
+      category: 'coding_style',
+      confidenceMultiplier: 0.95,
+      extractValue: (match) => match[1].trim(),
+    },
+    {
+      regex: /Never use ([\w\s-]+?)(?:\s+(?:for|when|in)|\.|,|$)/i,
+      category: 'coding_avoid',
+      confidenceMultiplier: 0.95,
+      extractValue: (match) => `avoid_${match[1].trim()}`,
+    },
+    
+    // STRONG PREFERENCES (medium-high confidence: 0.7-0.9)
+    {
+      regex: /I (?:really |definitely )?like ([\w\s-]+?)(?:\s+style|\s+approach|\.|,|$)/i,
+      category: 'style_preference',
+      confidenceMultiplier: 0.85,
+      extractValue: (match) => match[1].trim(),
+    },
+    {
+      regex: /Make (?:it|this|everything) ([\w\s-]+?)(?:\s+style|\.|,|$)/i,
+      category: 'design_directive',
+      confidenceMultiplier: 0.8,
+      extractValue: (match) => match[1].trim(),
+    },
+    {
+      regex: /Use ([\w\s-]+) for (?:all |the )?([\w\s-]+)/i,
+      category: 'tool_preference',
+      confidenceMultiplier: 0.85,
+      extractValue: (match) => `${match[1].trim()} for ${match[2].trim()}`,
+    },
+    
+    // IMPLICIT PREFERENCES (medium confidence: 0.5-0.7)
+    {
+      regex: /I (?:think|feel) ([\w\s-]+) (?:is|are) (?:better|cleaner|easier|simpler)/i,
+      category: 'opinion',
+      confidenceMultiplier: 0.6,
+      extractValue: (match) => match[1].trim(),
+    },
+    {
+      regex: /(?:Can you |Please )(?:use|make it) ([\w\s-]+)/i,
+      category: 'request',
+      confidenceMultiplier: 0.65,
+      extractValue: (match) => match[1].trim(),
+    },
+    
+    // TECHNOLOGY PREFERENCES (auto-categorized by keywords)
+    {
+      regex: /(?:TypeScript|JavaScript|Python|React|Vue|Angular|Tailwind|Bootstrap|CSS)/i,
+      category: 'tech_stack',
+      confidenceMultiplier: 0.7,
+      extractValue: (match) => match[0],
+    },
+  ];
 
-    for (const pattern of PREFERENCE_PATTERNS) {
-      const matches = message.matchAll(pattern.pattern);
+  /**
+   * Extract preferences from a message
+   */
+  async extractFromMessage(
+    userId: number,
+    message: string,
+    conversationId?: number
+  ): Promise<ExtractedPreference[]> {
+    const extracted: ExtractedPreference[] = [];
+    
+    console.log(`[PreferenceExtractor] Scanning message for user ${userId}...`);
 
-      for (const match of matches) {
-        try {
-          const key = pattern.keyExtractor(match);
-          const value = pattern.valueExtractor(match);
-
-          detected.push({
-            userId: 0, // Will be set by caller
-            category: pattern.category,
-            key,
-            value,
-            confidence: pattern.confidence,
-            extractedFrom: message.substring(0, 200), // First 200 chars for context
-            timestamp: new Date(),
-          });
-        } catch (error) {
-          console.error('[PreferenceExtractor] Error extracting preference:', error);
+    for (const pattern of this.patterns) {
+      const matches = message.match(pattern.regex);
+      
+      if (matches) {
+        const value = pattern.extractValue(matches);
+        
+        // Skip if value is too short or generic
+        if (value.length < 2 || ['it', 'this', 'that'].includes(value.toLowerCase())) {
+          continue;
         }
+
+        // Generate preference key (lowercase, underscored)
+        const key = `${pattern.category}:${value.toLowerCase().replace(/\s+/g, '_')}`;
+        
+        const preference: ExtractedPreference = {
+          userId,
+          preferenceKey: key,
+          preferenceValue: value,
+          category: pattern.category,
+          confidence: pattern.confidenceMultiplier * 0.8, // Base confidence 0.8
+          extractedFrom: message.substring(0, 200), // First 200 chars
+          metadata: {
+            conversationId,
+            extractedAt: new Date().toISOString(),
+            pattern: pattern.regex.source,
+          },
+        };
+
+        extracted.push(preference);
+        console.log(`[PreferenceExtractor] ✅ Found preference: ${key} = ${value} (confidence: ${preference.confidence.toFixed(2)})`);
       }
     }
 
-    return detected;
+    return extracted;
   }
 
   /**
-   * Extract and save preferences to database
+   * Extract and save preferences from a message
    */
   async extractAndSave(
     userId: number,
     message: string,
-    conversationId: number
-  ): Promise<DetectedPreference[]> {
-    console.log(`[PreferenceExtractor] Analyzing message for user ${userId}...`);
-
-    const detected = await this.extractPreferences(message);
-
-    if (detected.length === 0) {
-      return [];
-    }
-
-    console.log(`[PreferenceExtractor] 🎯 Found ${detected.length} preferences`);
-
-    // Save to database (de-duplicate by userId + key)
-    for (const pref of detected) {
+    conversationId?: number
+  ): Promise<number> {
+    const preferences = await this.extractFromMessage(userId, message, conversationId);
+    
+    let savedCount = 0;
+    for (const pref of preferences) {
       try {
-        // Check if preference already exists
-        const existing = await db.query.mrBlueUserPreferences.findFirst({
-          where: and(
-            eq(mrBlueUserPreferences.userId, userId),
-            eq(mrBlueUserPreferences.preferenceKey, pref.key)
-          ),
-        });
-
-        if (existing) {
-          // Update confidence if new detection has higher confidence
-          if (pref.confidence > existing.confidence) {
-            await db
-              .update(mrBlueUserPreferences)
-              .set({
-                preferenceValue: pref.value,
-                confidence: pref.confidence,
-                extractedFrom: pref.extractedFrom,
-                lastDetectedAt: new Date(),
-              })
-              .where(eq(mrBlueUserPreferences.id, existing.id));
-
-            console.log(`[PreferenceExtractor] ✅ Updated preference: ${pref.key}`);
-          }
-        } else {
-          // Insert new preference
-          await db.insert(mrBlueUserPreferences).values({
-            userId,
-            category: pref.category,
-            preferenceKey: pref.key,
-            preferenceValue: pref.value,
-            confidence: pref.confidence,
-            extractedFrom: pref.extractedFrom,
-            detectedAt: new Date(),
-            lastDetectedAt: new Date(),
-          });
-
-          console.log(`[PreferenceExtractor] ✅ Saved new preference: ${pref.key} = ${pref.value}`);
-        }
-      } catch (error) {
-        console.error('[PreferenceExtractor] Failed to save preference:', error);
+        await storage.saveUserPreference(pref);
+        savedCount++;
+      } catch (error: any) {
+        console.error(`[PreferenceExtractor] Failed to save preference:`, error.message);
       }
     }
 
-    return detected;
+    if (savedCount > 0) {
+      console.log(`[PreferenceExtractor] 💾 Saved ${savedCount} preferences for user ${userId}`);
+    }
+
+    return savedCount;
   }
 
   /**
-   * Get all preferences for a user
-   */
-  async getUserPreferences(userId: number): Promise<Array<{
-    category: string;
-    key: string;
-    value: string;
-    confidence: number;
-  }>> {
-    const preferences = await db.query.mrBlueUserPreferences.findMany({
-      where: eq(mrBlueUserPreferences.userId, userId),
-    });
-
-    return preferences.map((p) => ({
-      category: p.category,
-      key: p.preferenceKey,
-      value: p.preferenceValue,
-      confidence: p.confidence,
-    }));
-  }
-
-  /**
-   * Build preference context for code generation
-   * This gets injected into AI prompts
+   * Build preference context string for code generation
+   * Returns a formatted string of user preferences to inject into prompts
    */
   async buildPreferenceContext(userId: number): Promise<string> {
-    const preferences = await this.getUserPreferences(userId);
-
+    const preferences = await storage.getUserPreferences(userId);
+    
     if (preferences.length === 0) {
       return '';
     }
 
     // Group by category
-    const byCategory = preferences.reduce((acc, pref) => {
-      if (!acc[pref.category]) {
-        acc[pref.category] = [];
+    const grouped: Record<string, any[]> = {};
+    for (const pref of preferences) {
+      const category = this.getCategoryFromKey(pref.preferenceKey);
+      if (!grouped[category]) {
+        grouped[category] = [];
       }
-      acc[pref.category].push(pref);
-      return {};
-    }, {} as Record<string, typeof preferences>);
-
-    // Build context string
-    let context = '\n\n**USER PREFERENCES:**\n';
-
-    for (const [category, prefs] of Object.entries(byCategory)) {
-      context += `\n${category.replace(/_/g, ' ').toUpperCase()}:\n`;
-      for (const pref of prefs) {
-        if (pref.confidence >= 0.7) {
-          // Only include high-confidence preferences
-          context += `- ${pref.value}\n`;
-        }
-      }
+      grouped[category].push(pref);
     }
 
-    console.log(`[PreferenceExtractor] 📚 Built context with ${preferences.length} preferences`);
+    // Build context string
+    let context = '\n\n## USER PREFERENCES (apply these automatically):\n';
+    
+    for (const [category, prefs] of Object.entries(grouped)) {
+      context += `\n### ${this.formatCategory(category)}:\n`;
+      
+      // Sort by confidence (highest first)
+      prefs.sort((a, b) => b.confidence - a.confidence);
+      
+      for (const pref of prefs.slice(0, 5)) { // Top 5 per category
+        context += `- ${pref.preferenceValue} (confidence: ${(pref.confidence * 100).toFixed(0)}%)\n`;
+      }
+    }
 
     return context;
   }
 
   /**
-   * Delete a specific preference
+   * Extract category from preference key (e.g., 'coding_style:typescript' -> 'coding_style')
    */
-  async deletePreference(userId: number, key: string): Promise<void> {
-    await db
-      .delete(mrBlueUserPreferences)
-      .where(
-        and(
-          eq(mrBlueUserPreferences.userId, userId),
-          eq(mrBlueUserPreferences.preferenceKey, key)
-        )
-      );
-
-    console.log(`[PreferenceExtractor] 🗑️ Deleted preference: ${key}`);
+  private getCategoryFromKey(key: string): string {
+    const parts = key.split(':');
+    return parts[0] || 'general';
   }
 
   /**
-   * Clear all preferences for a user
+   * Format category for display
    */
-  async clearAllPreferences(userId: number): Promise<void> {
-    await db
-      .delete(mrBlueUserPreferences)
-      .where(eq(mrBlueUserPreferences.userId, userId));
+  private formatCategory(category: string): string {
+    return category
+      .split('_')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  }
 
-    console.log(`[PreferenceExtractor] 🗑️ Cleared all preferences for user ${userId}`);
+  /**
+   * Get specific preference by key
+   */
+  async getPreference(userId: number, key: string): Promise<string | null> {
+    const pref = await storage.getUserPreferenceByKey(userId, key);
+    return pref ? pref.preferenceValue : null;
+  }
+
+  /**
+   * Check if user has a specific preference
+   */
+  async hasPreference(userId: number, category: string, value: string): Promise<boolean> {
+    const key = `${category}:${value.toLowerCase().replace(/\s+/g, '_')}`;
+    const pref = await storage.getUserPreferenceByKey(userId, key);
+    return !!pref;
   }
 }
 
-// Singleton instance
 export const preferenceExtractor = new PreferenceExtractor();

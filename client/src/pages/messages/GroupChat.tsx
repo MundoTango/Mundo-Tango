@@ -28,14 +28,11 @@ export default function GroupChat() {
 
   const sendMutation = useMutation({
     mutationFn: async (content: string) => {
-      return apiRequest(`/api/messages/send`, {
-        method: "POST",
-        body: JSON.stringify({
-          groupId: parseInt(groupId),
-          content,
-        }),
-        headers: { "Content-Type": "application/json" },
+      const response = await apiRequest('POST', '/api/messages/send', {
+        groupId: parseInt(groupId),
+        content,
       });
+      return response.json();
     },
     onSuccess: () => {
       setMessage("");

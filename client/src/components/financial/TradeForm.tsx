@@ -64,19 +64,16 @@ export function TradeForm({ portfolio, onSuccess }: TradeFormProps) {
 
   const executeTrade = useMutation({
     mutationFn: async (data: TradeFormData) => {
-      const response = await apiRequest(`/api/financial/portfolios/${portfolio.id}/trades`, {
-        method: 'POST',
-        body: JSON.stringify({
-          portfolioId: portfolio.id,
-          symbol: data.symbol.toUpperCase(),
-          tradeType: data.tradeType,
-          quantity: data.quantity,
-          price: data.price,
-          totalAmount: totalAmount,
-          fees: fees.toFixed(2),
-          status: 'pending',
-          executedAt: new Date().toISOString(),
-        }),
+      const response = await apiRequest('POST', `/api/financial/portfolios/${portfolio.id}/trades`, {
+        portfolioId: portfolio.id,
+        symbol: data.symbol.toUpperCase(),
+        tradeType: data.tradeType,
+        quantity: data.quantity,
+        price: data.price,
+        totalAmount: totalAmount,
+        fees: fees.toFixed(2),
+        status: 'pending',
+        executedAt: new Date().toISOString(),
       });
       return response.json();
     },

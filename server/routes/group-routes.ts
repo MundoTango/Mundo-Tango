@@ -13,10 +13,11 @@ import {
   insertGroupSchema,
   insertGroupPostSchema,
   placeRecommendations,
-  housingListings
+  housingListings,
+  eventScrapingSources
 } from "@shared/schema";
 import { authenticateToken, AuthRequest } from "../middleware/auth";
-import { eq, and, desc, sql, or, ilike, inArray, count, asc, isNotNull } from "drizzle-orm";
+import { eq, and, desc, sql, or, ilike, inArray, count, asc, isNotNull, lt, gte } from "drizzle-orm";
 import { z } from "zod";
 import { PostingPermissionService } from "../services/PostingPermissionService";
 
@@ -384,9 +385,23 @@ router.get("/:id", async (req: Request, res: Response) => {
 router.get("/:id/events", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { limit = "20", offset = "0" } = req.query;
+    const { limit = "20", offset = "0", past, showAll } = req.query;
+    const now = new Date();
 
-    // Get events linked to this group
+    // Build conditions array
+    const conditions = [eq(events.groupId, parseInt(id))];
+    
+    // Add date filter based on past/showAll parameters
+    // If showAll=true, don't filter by date (show everything)
+    if (showAll !== "true") {
+      if (past === "true") {
+        conditions.push(lt(events.startDate, now));
+      } else {
+        conditions.push(gte(events.startDate, now));
+      }
+    }
+
+    // Get events linked to this group with date filter
     const groupEvents = await db
       .select({
         event: events,
@@ -406,16 +421,16 @@ router.get("/:id/events", async (req: Request, res: Response) => {
       })
       .from(events)
       .leftJoin(users, eq(events.userId, users.id))
-      .where(eq(events.groupId, parseInt(id)))
-      .orderBy(desc(events.startDate))
+      .where(and(...conditions))
+      .orderBy(past === "true" ? desc(events.startDate) : asc(events.startDate))
       .limit(parseInt(limit as string))
       .offset(parseInt(offset as string));
 
-    // Get total count
+    // Get total count with same filter
     const [{ total }] = await db
       .select({ total: count() })
       .from(events)
-      .where(eq(events.groupId, parseInt(id)));
+      .where(and(...conditions));
 
     res.json({
       events: groupEvents,
@@ -429,6 +444,73 @@ router.get("/:id/events", async (req: Request, res: Response) => {
   } catch (error) {
     console.error("[Groups] Error fetching group events:", error);
     res.status(500).json({ message: "Failed to fetch group events" });
+  }
+});
+
+// GET /api/groups/:id/data-sources - Get scraping sources for a group's city
+router.get("/:id/data-sources", async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    
+    // Get the group to find its city
+    const group = await db.query.groups.findFirst({
+      where: eq(groups.id, parseInt(id))
+    });
+    
+    if (!group) {
+      return res.status(404).json({ message: "Group not found" });
+    }
+    
+    // Get distinct sources from events linked to this group
+    const eventSources = await db
+      .selectDistinct({
+        sourceName: events.sourceName,
+        sourceUrl: events.sourceUrl
+      })
+      .from(events)
+      .where(and(
+        eq(events.groupId, parseInt(id)),
+        sql`${events.sourceName} IS NOT NULL`
+      ));
+    
+    // Get scraping sources for this city
+    const scrapingSources = await db.query.eventScrapingSources.findMany({
+      where: eq(eventScrapingSources.city, group.city || '')
+    });
+    
+    // Combine and deduplicate sources
+    const sources = [
+      ...eventSources.map(s => ({
+        name: s.sourceName,
+        url: typeof s.sourceUrl === 'string' && s.sourceUrl.startsWith('[') 
+          ? JSON.parse(s.sourceUrl)?.[0]?.url || s.sourceUrl 
+          : s.sourceUrl,
+        type: 'event'
+      })),
+      ...scrapingSources.map(s => ({
+        name: s.name,
+        url: s.url,
+        type: 'scraping_source',
+        lastScraped: s.lastScrapedAt
+      }))
+    ];
+    
+    // Deduplicate by URL
+    const uniqueSources = sources.reduce((acc, source) => {
+      if (!acc.some(s => s.url === source.url)) {
+        acc.push(source);
+      }
+      return acc;
+    }, [] as typeof sources);
+    
+    res.json({
+      city: group.city,
+      sources: uniqueSources,
+      totalSources: uniqueSources.length
+    });
+  } catch (error) {
+    console.error("[Groups] Error fetching data sources:", error);
+    res.status(500).json({ message: "Failed to fetch data sources" });
   }
 });
 

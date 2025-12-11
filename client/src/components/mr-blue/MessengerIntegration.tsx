@@ -172,10 +172,8 @@ export function MessengerIntegration() {
   // Connect page mutation
   const connectMutation = useMutation({
     mutationFn: async (data: { pageId: string; pageName: string; accessToken: string }) => {
-      return apiRequest('/api/mrblue/messenger/connect', {
-        method: 'POST',
-        body: JSON.stringify(data),
-      });
+      const response = await apiRequest('POST', '/api/mrblue/messenger/connect', data);
+      return response.json();
     },
     onSuccess: () => {
       setWizardStep(WizardStep.SUCCESS);
@@ -201,9 +199,8 @@ export function MessengerIntegration() {
   // Disconnect mutation
   const disconnectMutation = useMutation({
     mutationFn: async () => {
-      return apiRequest('/api/mrblue/messenger/disconnect', {
-        method: 'DELETE',
-      });
+      const response = await apiRequest('DELETE', '/api/mrblue/messenger/disconnect');
+      return response.json();
     },
     onSuccess: () => {
       toast({
@@ -226,10 +223,8 @@ export function MessengerIntegration() {
   // Send message mutation
   const sendMessageMutation = useMutation({
     mutationFn: async (data: { recipientId: string; message: string }) => {
-      return apiRequest('/api/mrblue/messenger/send', {
-        method: 'POST',
-        body: JSON.stringify(data),
-      });
+      const response = await apiRequest('POST', '/api/mrblue/messenger/send', data);
+      return response.json();
     },
     onSuccess: () => {
       setMessageText("");
@@ -257,10 +252,8 @@ export function MessengerIntegration() {
       quickReplies?: QuickReply[];
       buttons?: MessageButton[];
     }) => {
-      return apiRequest('/api/mrblue/messenger/send-template', {
-        method: 'POST',
-        body: JSON.stringify(data),
-      });
+      const response = await apiRequest('POST', '/api/mrblue/messenger/send-template', data);
+      return response.json();
     },
     onSuccess: () => {
       setMessageText("");

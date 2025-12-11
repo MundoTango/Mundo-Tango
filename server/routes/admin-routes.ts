@@ -52,46 +52,61 @@ router.get("/moderation/queue", authenticateToken, requireAdmin, async (req, res
     const limitNum = parseInt(limit as string);
     const offset = (pageNum - 1) * limitNum;
 
-    let query = db.select({
-      queue: moderationQueue,
-      reporter: {
-        id: users.id,
-        username: users.username,
-        name: users.name,
-      }
-    })
-    .from(moderationQueue)
-    .leftJoin(users, eq(moderationQueue.reportedBy, users.id))
-    .$dynamic();
+    let results: any[] = [];
+    let total = 0;
 
-    // Filter by status
-    if (status && status !== "all") {
-      query = query.where(eq(moderationQueue.status, status as string));
-    }
-
-    // Filter by content type
-    if (contentType) {
-      query = query.where(eq(moderationQueue.contentType, contentType as string));
-    }
-
-    // Filter by priority
-    if (priority) {
-      query = query.where(eq(moderationQueue.priority, parseInt(priority as string)));
-    }
-
-    const results = await query
-      .orderBy(desc(moderationQueue.priority), desc(moderationQueue.createdAt))
-      .limit(limitNum)
-      .offset(offset);
-
-    // Get total count
-    const totalCount = await db.select({ count: count() })
+    try {
+      let query = db.select({
+        queue: moderationQueue,
+        reporter: {
+          id: users.id,
+          username: users.username,
+          name: users.name,
+        }
+      })
       .from(moderationQueue)
-      .where(status && status !== "all" ? eq(moderationQueue.status, status as string) : sql`1=1`);
+      .leftJoin(users, eq(moderationQueue.reportedBy, users.id))
+      .$dynamic();
+
+      // Filter by status
+      if (status && status !== "all") {
+        query = query.where(eq(moderationQueue.status, status as string));
+      }
+
+      // Filter by content type
+      if (contentType) {
+        query = query.where(eq(moderationQueue.contentType, contentType as string));
+      }
+
+      // Filter by priority
+      if (priority) {
+        query = query.where(eq(moderationQueue.priority, parseInt(priority as string)));
+      }
+
+      results = await query
+        .orderBy(desc(moderationQueue.priority), desc(moderationQueue.createdAt))
+        .limit(limitNum)
+        .offset(offset);
+
+      // Get total count
+      const totalCount = await db.select({ count: count() })
+        .from(moderationQueue)
+        .where(status && status !== "all" ? eq(moderationQueue.status, status as string) : sql`1=1`);
+      total = totalCount[0]?.count || 0;
+    } catch (tableError: any) {
+      if (tableError.message?.includes('does not exist') || 
+          tableError.message?.includes('column') ||
+          tableError.code === '42703' || 
+          tableError.code === '42P01') {
+        console.warn('[Moderation] Queue table/column not found, returning empty:', tableError.message);
+      } else {
+        throw tableError;
+      }
+    }
 
     res.json({
       queue: results,
-      total: totalCount[0]?.count || 0,
+      total,
       page: pageNum,
       limit: limitNum,
     });
@@ -324,20 +339,29 @@ router.get("/content/flagged", authenticateToken, requireAdmin, async (req, res:
   try {
     const { status = "pending" } = req.query;
 
-    const flaggedReports = await db.select({
-      id: postReports.id,
-      reporterId: postReports.reporterId,
-      postId: postReports.postId,
-      reason: postReports.reason,
-      status: postReports.status,
-      createdAt: postReports.createdAt,
-    })
-      .from(postReports)
-      .where(eq(postReports.status, status as string))
-      .orderBy(desc(postReports.createdAt))
-      .limit(50);
+    // Handle missing table gracefully
+    try {
+      const flaggedReports = await db.select({
+        id: postReports.id,
+        reporterId: postReports.reporterId,
+        postId: postReports.postId,
+        reason: postReports.reason,
+        status: postReports.status,
+        createdAt: postReports.createdAt,
+      })
+        .from(postReports)
+        .where(eq(postReports.status, status as string))
+        .orderBy(desc(postReports.createdAt))
+        .limit(50);
 
-    res.json(flaggedReports);
+      res.json(flaggedReports);
+    } catch (tableError: any) {
+      if (tableError.message?.includes('does not exist')) {
+        console.warn('[Admin] post_reports table not found, returning empty array');
+        return res.json([]);
+      }
+      throw tableError;
+    }
   } catch (error: any) {
     console.error("Error fetching flagged content:", error);
     res.status(500).json({ error: error.message });
@@ -376,21 +400,39 @@ router.post("/content/:contentId/moderate", authenticateToken, requireAdmin, asy
  */
 router.get("/moderation/stats", authenticateToken, requireAdmin, async (req, res: Response) => {
   try {
-    const pendingCount = await db.select({ count: count() })
-      .from(moderationQueue)
-      .where(eq(moderationQueue.status, "pending"));
+    // Handle missing moderation_queue table gracefully
+    let pendingCountValue = 0;
+    let approvedCountValue = 0;
+    let removedCountValue = 0;
+    let bannedCountValue = 0;
+    
+    try {
+      const pendingCount = await db.select({ count: count() })
+        .from(moderationQueue)
+        .where(eq(moderationQueue.status, "pending"));
+      pendingCountValue = pendingCount[0]?.count || 0;
 
-    const approvedCount = await db.select({ count: count() })
-      .from(moderationQueue)
-      .where(eq(moderationQueue.status, "approved"));
+      const approvedCount = await db.select({ count: count() })
+        .from(moderationQueue)
+        .where(eq(moderationQueue.status, "approved"));
+      approvedCountValue = approvedCount[0]?.count || 0;
 
-    const removedCount = await db.select({ count: count() })
-      .from(moderationQueue)
-      .where(eq(moderationQueue.status, "removed"));
+      const removedCount = await db.select({ count: count() })
+        .from(moderationQueue)
+        .where(eq(moderationQueue.status, "removed"));
+      removedCountValue = removedCount[0]?.count || 0;
 
-    const bannedCount = await db.select({ count: count() })
-      .from(moderationQueue)
-      .where(eq(moderationQueue.status, "banned"));
+      const bannedCount = await db.select({ count: count() })
+        .from(moderationQueue)
+        .where(eq(moderationQueue.status, "banned"));
+      bannedCountValue = bannedCount[0]?.count || 0;
+    } catch (tableError: any) {
+      if (tableError.message?.includes('does not exist')) {
+        console.warn('[Admin] moderation_queue table not found, returning 0 for all counts');
+      } else {
+        throw tableError;
+      }
+    }
 
     // Handle missing flagged_content table gracefully
     let flaggedCountValue = 0;
@@ -424,10 +466,10 @@ router.get("/moderation/stats", authenticateToken, requireAdmin, async (req, res
     }
 
     res.json({
-      pending: pendingCount[0]?.count || 0,
-      approved: approvedCount[0]?.count || 0,
-      removed: removedCount[0]?.count || 0,
-      banned: bannedCount[0]?.count || 0,
+      pending: pendingCountValue,
+      approved: approvedCountValue,
+      removed: removedCountValue,
+      banned: bannedCountValue,
       flagged: flaggedCountValue,
       recentActions24h: recentActionsCount,
     });
@@ -448,12 +490,24 @@ router.get("/moderation/flagged", authenticateToken, requireAdmin, async (req, r
     const limitNum = parseInt(limit as string);
     const offset = (pageNum - 1) * limitNum;
 
-    // Handle missing flagged_content table gracefully
+    // Handle missing flagged_content table/columns gracefully
     let results: any[] = [];
     let total = 0;
 
     try {
-      results = await db.select()
+      // Select only known columns that exist in the table
+      results = await db.select({
+        id: flaggedContent.id,
+        contentType: flaggedContent.contentType,
+        contentId: flaggedContent.contentId,
+        flagType: flaggedContent.flagType,
+        severity: flaggedContent.severity,
+        confidence: flaggedContent.confidence,
+        detectionMethod: flaggedContent.detectionMethod,
+        flagReason: flaggedContent.flagReason,
+        autoFlagged: flaggedContent.autoFlagged,
+        createdAt: flaggedContent.createdAt,
+      })
         .from(flaggedContent)
         .orderBy(desc(flaggedContent.createdAt))
         .limit(limitNum)
@@ -462,8 +516,13 @@ router.get("/moderation/flagged", authenticateToken, requireAdmin, async (req, r
       const totalCount = await db.select({ count: count() }).from(flaggedContent);
       total = totalCount[0]?.count || 0;
     } catch (tableError: any) {
-      if (tableError.message?.includes('does not exist')) {
-        console.warn('[Admin] flagged_content table not found, returning empty array');
+      // Handle missing table or column errors gracefully
+      if (tableError.message?.includes('does not exist') || 
+          tableError.message?.includes('column') ||
+          tableError.code === '42703' || // PostgreSQL: undefined column
+          tableError.code === '42P01') { // PostgreSQL: undefined table
+        console.warn('[Moderation] Table/column not found, returning empty:', tableError.message);
+        // Return empty result set rather than failing
       } else {
         throw tableError;
       }

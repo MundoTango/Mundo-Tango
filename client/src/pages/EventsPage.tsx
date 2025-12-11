@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar as CalendarIcon, MapPin, Search, Users, Plus, Map as MapIconLucide, List, ChevronRight, ChevronDown, Database, Download, ChevronLeft, SlidersHorizontal, Check, Languages } from "lucide-react";
+import { Calendar as CalendarIcon, MapPin, Search, Users, Plus, Map as MapIconLucide, List, ChevronRight, ChevronDown, Database, Download, ChevronLeft, SlidersHorizontal, Check, Languages, Clock } from "lucide-react";
 import { getLanguageByCode } from "@/components/input/UnifiedLanguagePicker";
 import { safeDateFormat } from "@/lib/safeDateFormat";
 import { getTimezoneFromCity } from "@/lib/timezoneUtils";
@@ -20,8 +20,9 @@ import { supabase } from "@/lib/supabase";
 import type { RSVP, EventWithProfile } from "@shared/supabase-types";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
-import { Calendar, momentLocalizer, Views } from 'react-big-calendar';
-import moment from 'moment';
+import { Calendar, dateFnsLocalizer, Views } from 'react-big-calendar';
+import { format, parse, startOfWeek, getDay } from 'date-fns';
+import { enUS } from 'date-fns/locale';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -35,9 +36,38 @@ import { getCityImageUrl } from "@/lib/cityImageMap";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
-const localizer = momentLocalizer(moment);
+const locales = { 'en-US': enUS };
+const localizer = dateFnsLocalizer({
+  format,
+  parse,
+  startOfWeek,
+  getDay,
+  locales,
+});
 
 const CATEGORIES = ["All", "Milonga", "Practica", "Class", "Workshop", "Festival", "Marathon", "Encuentro", "Performance", "Social", "Online"];
+
+const DISCOVER_EVENT_TYPES = ["festival", "marathon", "encuentro", "competition"];
+
+function getEventDate(event: any): Date {
+  const data = event.event || event;
+  if (data.startDateTime) {
+    return new Date(data.startDateTime);
+  }
+  if (data.startDate || data.start_date) {
+    const startDate = data.startDate || data.start_date;
+    if (data.startTime) {
+      const combined = `${String(startDate).split('T')[0]}T${data.startTime}`;
+      const parsed = new Date(combined);
+      if (!isNaN(parsed.getTime())) return parsed;
+    }
+    return new Date(startDate);
+  }
+  if (data.date) {
+    return new Date(data.date);
+  }
+  return new Date(0);
+}
 
 // Fix Leaflet default marker icon
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -215,7 +245,7 @@ function EventCard({ event, index = 0 }: { event: any; index?: number }) {
   );
 }
 
-type EventTab = "my-events" | "upcoming" | "discover";
+type EventTab = "my-events" | "upcoming" | "past" | "discover";
 
 export default function EventsPage() {
   const [, navigate] = useLocation();
@@ -235,7 +265,12 @@ export default function EventsPage() {
     if (filters.city) params.append("city", filters.city);
     if (filters.dateFrom) params.append("dateFrom", filters.dateFrom.toISOString());
     if (filters.dateTo) params.append("dateTo", filters.dateTo.toISOString());
-    if (filters.type && filters.type !== "all") params.append("type", filters.type);
+    if (filters.type && filters.type !== "all") {
+      params.append("type", filters.type);
+    } else {
+      // Prioritize big events (festivals, marathons, encuentros, competitions) in Discover mode
+      params.append("prioritizeBigEvents", "true");
+    }
     if (filters.priceMin !== undefined) params.append("priceMin", String(filters.priceMin));
     if (filters.priceMax !== undefined) params.append("priceMax", String(filters.priceMax));
     if (filters.danceStyle && filters.danceStyle !== "all") params.append("danceStyle", filters.danceStyle);
@@ -265,7 +300,18 @@ export default function EventsPage() {
     enabled: !!user && activeTab === "upcoming",
   });
 
-  // TAB 3: Discover - Global search
+  // TAB 3: Past - Historical events
+  const { data: pastEventsData, isLoading: isLoadingPast } = useQuery({
+    queryKey: ["/api/events/search", "past", page],
+    queryFn: async () => {
+      const response = await fetch(`/api/events/search?past=true&limit=20&page=${page}`);
+      if (!response.ok) throw new Error("Failed to fetch past events");
+      return response.json();
+    },
+    enabled: activeTab === "past",
+  });
+
+  // TAB 4: Discover - Global search
   const { data: searchResults, isLoading: isLoadingDiscover } = useQuery({
     queryKey: ["/api/events/search", filters, page, sortBy],
     queryFn: async () => {
@@ -284,15 +330,19 @@ export default function EventsPage() {
         return myEventsData || [];
       case "upcoming":
         return upcomingData?.events || [];
+      case "past":
+        return pastEventsData?.events || [];
       case "discover":
       default:
         return searchResults?.events || [];
     }
-  }, [activeTab, myEventsData, upcomingData, searchResults]);
+  }, [activeTab, myEventsData, upcomingData, pastEventsData, searchResults]);
 
-  const pagination = activeTab === "discover" ? searchResults?.pagination : null;
+  const pagination = activeTab === "discover" ? searchResults?.pagination : 
+                     activeTab === "past" ? pastEventsData?.pagination : null;
   const isLoading = activeTab === "my-events" ? isLoadingMyEvents : 
-                    activeTab === "upcoming" ? isLoadingUpcoming : isLoadingDiscover;
+                    activeTab === "upcoming" ? isLoadingUpcoming : 
+                    activeTab === "past" ? isLoadingPast : isLoadingDiscover;
   
   // Active filter count
   const activeFilterCount = Object.keys(filters).filter(
@@ -351,26 +401,51 @@ export default function EventsPage() {
     if (!events) return [];
     return events.map((event: any) => {
       const eventData = event.event || event;
-      const dateToUse = eventData.startDate || eventData.start_date || eventData.date || Date.now();
+      const eventDate = getEventDate(event);
       return {
         id: eventData.id,
         title: eventData.title,
-        start: new Date(dateToUse),
-        end: new Date((new Date(dateToUse)).getTime() + 2 * 60 * 60 * 1000),
+        start: eventDate,
+        end: new Date(eventDate.getTime() + 2 * 60 * 60 * 1000),
         resource: eventData,
       };
     });
   }, [events]);
 
-  // Mock geocoding for map view (in production, use real geocoding)
+  // Use real event coordinates when available, fallback to city-based defaults
   const eventsWithCoordinates = useMemo(() => {
     if (!events) return [];
-    return events.map((event, index) => ({
-      ...event,
-      // Mock coordinates - spread events around Buenos Aires
-      lat: -34.6037 + (Math.random() - 0.5) * 0.2,
-      lng: -58.3816 + (Math.random() - 0.5) * 0.2,
-    }));
+    
+    // City coordinate defaults
+    const cityCoords: Record<string, [number, number]> = {
+      'Buenos Aires': [-34.6037, -58.3816],
+      'New York': [40.7128, -74.0060],
+      'San Francisco': [37.7749, -122.4194],
+      'Los Angeles': [34.0522, -118.2437],
+      'London': [51.5074, -0.1278],
+      'Paris': [48.8566, 2.3522],
+      'Berlin': [52.5200, 13.4050],
+      'Melbourne': [-37.8136, 144.9631],
+      'Sydney': [-33.8688, 151.2093],
+      'Tokyo': [35.6762, 139.6503],
+      'Dubai': [25.2048, 55.2708],
+    };
+    
+    return events.map((event: any, index: number) => {
+      const eventData = event.event || event;
+      const city = eventData.city || 'Buenos Aires';
+      const defaultCoords = cityCoords[city] || [-34.6037, -58.3816];
+      
+      // Use real coordinates if available, otherwise use city default with slight offset
+      const lat = eventData.latitude ? parseFloat(eventData.latitude) : defaultCoords[0] + (Math.random() - 0.5) * 0.05;
+      const lng = eventData.longitude ? parseFloat(eventData.longitude) : defaultCoords[1] + (Math.random() - 0.5) * 0.05;
+      
+      return {
+        ...event,
+        lat,
+        lng,
+      };
+    });
   }, [events]);
 
   return (
@@ -461,12 +536,12 @@ export default function EventsPage() {
             {/* Ad Banner */}
             <BannerAd placement="events" />
 
-            {/* 3-TAB ARCHITECTURE: My Events | Upcoming | Discover */}
+            {/* 4-TAB ARCHITECTURE: My Events | Upcoming | Past | Discover */}
             <Tabs value={activeTab} onValueChange={(val) => {
               setActiveTab(val as EventTab);
               setPage(1);
             }}>
-              <TabsList className="w-full grid grid-cols-3 h-12">
+              <TabsList className="w-full grid grid-cols-4 h-12">
                 <TabsTrigger 
                   value="my-events" 
                   className="gap-2"
@@ -488,6 +563,15 @@ export default function EventsPage() {
                   <span className="sm:hidden">Soon</span>
                 </TabsTrigger>
                 <TabsTrigger 
+                  value="past" 
+                  className="gap-2"
+                  data-testid="tab-past"
+                >
+                  <Clock className="h-4 w-4" />
+                  <span className="hidden sm:inline">Past</span>
+                  <span className="sm:hidden">Past</span>
+                </TabsTrigger>
+                <TabsTrigger 
                   value="discover" 
                   className="gap-2"
                   data-testid="tab-discover"
@@ -502,6 +586,7 @@ export default function EventsPage() {
             <div className="text-sm text-muted-foreground">
               {activeTab === "my-events" && "Events you've RSVP'd to"}
               {activeTab === "upcoming" && `Events in your city${upcomingData?.filters?.joinedCities?.length ? ` and ${upcomingData.filters.joinedCities.length} followed cities` : ""}`}
+              {activeTab === "past" && "Browse historical events and past milongas"}
               {activeTab === "discover" && "Explore all events worldwide"}
             </div>
 

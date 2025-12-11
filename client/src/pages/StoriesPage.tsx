@@ -67,10 +67,10 @@ export default function StoriesPage() {
 
   // Create story mutation
   const createStoryMutation = useMutation({
-    mutationFn: (data: any) => apiRequest('/api/stories', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    }),
+    mutationFn: async (data: any) => {
+      const response = await apiRequest('POST', '/api/stories', data);
+      return response.json();
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/stories/feed'] });
       queryClient.invalidateQueries({ queryKey: ['/api/stories/my'] });
@@ -92,9 +92,10 @@ export default function StoriesPage() {
 
   // Record story view mutation
   const recordViewMutation = useMutation({
-    mutationFn: (storyId: number) => apiRequest(`/api/stories/${storyId}/view`, {
-      method: 'POST',
-    }),
+    mutationFn: async (storyId: number) => {
+      const response = await apiRequest('POST', `/api/stories/${storyId}/view`);
+      return response.json();
+    },
   });
 
   const handleCreateStory = () => {

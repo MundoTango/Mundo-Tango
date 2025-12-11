@@ -39,3 +39,9 @@ export function safeDateDistance(
     return fallback;
   }
 }
+
+/**
+ * Alias for safeDateFormat for convenience
+ * Usage: safeFormat(date, 'MMM d, yyyy')
+ */
+export const safeFormat = safeDateFormat;

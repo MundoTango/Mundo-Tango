@@ -74,10 +74,8 @@ export function useUnreadCount() {
 export function useConnectChannel() {
   return useMutation({
     mutationFn: async (data: { channel: MessageChannel; accessToken?: string; refreshToken?: string; accountId?: string; accountName?: string }) => {
-      return apiRequest('/api/messages/channels/connect', {
-        method: 'POST',
-        body: JSON.stringify(data),
-      });
+      const response = await apiRequest('POST', '/api/messages/channels/connect', data);
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/messages/channels'] });
@@ -90,9 +88,8 @@ export function useConnectChannel() {
 export function useDisconnectChannel() {
   return useMutation({
     mutationFn: async (channel: MessageChannel) => {
-      return apiRequest(`/api/messages/channels/${channel}`, {
-        method: 'DELETE',
-      });
+      const response = await apiRequest('DELETE', `/api/messages/channels/${channel}`);
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/messages/channels'] });
@@ -105,10 +102,8 @@ export function useDisconnectChannel() {
 export function useSyncMessages() {
   return useMutation({
     mutationFn: async (channel?: MessageChannel) => {
-      return apiRequest('/api/messages/sync', {
-        method: 'POST',
-        body: JSON.stringify({ channel }),
-      });
+      const response = await apiRequest('POST', '/api/messages/sync', { channel });
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/messages/unified'] });
@@ -126,10 +121,8 @@ export function useSendExternalMessage() {
       body: string;
       replyToMessageId?: string;
     }) => {
-      return apiRequest('/api/messages/send', {
-        method: 'POST',
-        body: JSON.stringify(data),
-      });
+      const response = await apiRequest('POST', '/api/messages/send', data);
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/messages/unified'] });

@@ -117,10 +117,10 @@ const demoCategories: DemoCategory[] = [
   {
     id: "guides",
     title: "City Guides",
-    description: "Comprehensive guides to tango scenes worldwide. Find the best milongas, schools, and communities in 95+ cities across 50+ countries.",
+    description: "Comprehensive guides to tango scenes worldwide. Find the best milongas, schools, and communities in cities across the globe.",
     icon: BookOpen,
     color: "from-amber-500 to-orange-500",
-    features: ["95+ cities covered", "Local recommendations", "Community reviews", "Updated regularly"],
+    features: ["Growing city coverage", "Local recommendations", "Community reviews", "Updated regularly"],
     image: "/demos/tango-map.png",
     route: "/city-guides"
   }

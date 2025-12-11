@@ -8,9 +8,17 @@
  * - neutral: Informational, factual messages
  */
 
-import { pipeline, type PipelineType } from '@xenova/transformers';
-
 export type Sentiment = 'positive' | 'negative' | 'neutral';
+
+// Dynamic import to avoid bundling the large transformers library
+let pipelineModule: any = null;
+const loadPipeline = async () => {
+  if (!pipelineModule) {
+    const module = await import('@xenova/transformers');
+    pipelineModule = module.pipeline;
+  }
+  return pipelineModule;
+};
 
 export interface SentimentResult {
   sentiment: Sentiment;
@@ -48,8 +56,9 @@ class TransformersSentimentAnalyzer {
       
       // Use DistilBERT fine-tuned for sentiment analysis
       // Fast, accurate, and browser-friendly
+      const pipeline = await loadPipeline();
       this.classifier = await pipeline(
-        'sentiment-analysis' as PipelineType,
+        'sentiment-analysis',
         'Xenova/distilbert-base-uncased-finetuned-sst-2-english'
       );
       
