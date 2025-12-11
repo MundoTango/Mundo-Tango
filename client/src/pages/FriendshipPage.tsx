@@ -234,6 +234,8 @@ export default function FriendshipPage() {
   const currentUser = currentUserData?.user;
   const friend = friendData;
 
+  console.log('[FriendshipPage] Debug:', { friendId, friendData, friend, isLoadingFriend });
+
   const friendshipDate = friendshipInfo?.createdAt 
     ? safeDateDistance(friendshipInfo.createdAt, { addSuffix: true })
     : "Recently";
