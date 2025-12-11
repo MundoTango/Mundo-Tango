@@ -55,6 +55,7 @@ export class ScrapingOrchestrator {
         this.scrapeSourceBatch(eventPlatformSources, 'agent-117'), // JS Scraper
         this.scrapeSourceBatch(rssSources, 'rss-service') // RSS Feed Service,
         this.scrapeHoyMilongaSources(hoyMilongaSources) // Hoy Milonga Scraper
+        this.invokePriorityScrapers() // Priority scrapers (HoyMilonga, TangoCat, TangoFestivals),
       ]);
 
       // Step 4: Collect statistics
@@ -158,7 +159,7 @@ export class ScrapingOrchestrator {
   }
 
   /**
-   * Scrape Hoy Milonga sources (dedicated scraper for hoy-milonga.com)
+
    */
   private async scrapeHoyMilongaSources(sources: any[]): Promise<number> {
     if (sources.length === 0) return 0;
@@ -226,6 +227,89 @@ export class ScrapingOrchestrator {
       'Montevideo': 'montevideo'
     };
     return cityCodeMap[cityName] || null;
+  }
+
+   * These are high-value sources that run every orchestration cycle
+   */
+  private async invokePriorityScrapers(): Promise<number> {
+    console.log('[Agent #115] 🌟 Running priority scrapers...');
+    let totalEvents = 0;
+
+    try {
+      // Get or create source IDs for priority scrapers
+      const prioritySources = await this.ensurePrioritySourcesExist();
+
+      // Run HoyMilonga Scraper
+      try {
+        const { hoyMilongaScraper } = await import('./HoyMilongaScraper');
+        const hoyMilongaEvents = await hoyMilongaScraper.scrapeAllCities(prioritySources.hoyMilonga);
+        totalEvents += hoyMilongaEvents;
+        console.log(`[Agent #115] HoyMilonga: ${hoyMilongaEvents} events`);
+      } catch (err) {
+        console.error('[Agent #115] HoyMilonga scraper failed:', err);
+      }
+
+      // Run TangoCat Scraper
+      try {
+        const { tangoCatScraper } = await import('./TangoCatScraper');
+        const tangoCatEvents = await tangoCatScraper.scrapeAllYears(prioritySources.tangoCat);
+        totalEvents += tangoCatEvents;
+        console.log(`[Agent #115] TangoCat: ${tangoCatEvents} events`);
+      } catch (err) {
+        console.error('[Agent #115] TangoCat scraper failed:', err);
+      }
+
+      // Run TangoFestivals Scraper
+      try {
+        const { tangoFestivalsScraper } = await import('./TangoFestivalsScraper');
+        const tangoFestivalsEvents = await tangoFestivalsScraper.scrapeAllEvents(prioritySources.tangoFestivals);
+        totalEvents += tangoFestivalsEvents;
+        console.log(`[Agent #115] TangoFestivals: ${tangoFestivalsEvents} events`);
+      } catch (err) {
+        console.error('[Agent #115] TangoFestivals scraper failed:', err);
+      }
+
+      console.log(`[Agent #115] 🌟 Priority scrapers complete: ${totalEvents} total events`);
+    } catch (error) {
+      console.error('[Agent #115] Priority scrapers failed:', error);
+    }
+
+    return totalEvents;
+  }
+
+  /**
+   * Ensure priority source records exist in database
+   */
+  private async ensurePrioritySourcesExist(): Promise<{ hoyMilonga: number; tangoCat: number; tangoFestivals: number }> {
+    const sources = {
+      hoyMilonga: { name: 'Hoy Milonga', url: 'https://hoy-milonga.com', platform: 'website' },
+      tangoCat: { name: 'TangoCat', url: 'https://tangocat.net', platform: 'website' },
+      tangoFestivals: { name: 'TangoFestivals.net', url: 'https://tangofestivals.net', platform: 'website' }
+    };
+
+    const result: { hoyMilonga: number; tangoCat: number; tangoFestivals: number } = { hoyMilonga: 0, tangoCat: 0, tangoFestivals: 0 };
+
+    for (const [key, source] of Object.entries(sources)) {
+      let existing = await db.query.eventScrapingSources.findFirst({
+        where: eq(eventScrapingSources.name, source.name)
+      });
+
+      if (!existing) {
+        const [created] = await db.insert(eventScrapingSources).values({
+          name: source.name,
+          url: source.url,
+          platform: source.platform,
+          scraperType: 'static',
+          isActive: true,
+          priority: 'critical',
+        }).returning();
+        existing = created;
+      }
+
+      result[key as keyof typeof result] = existing.id;
+    }
+
+    return result;
   }
 
   /**
