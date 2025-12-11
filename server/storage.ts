@@ -2713,7 +2713,15 @@ export class DbStorage implements IStorage {
         // Combine and dedupe posts
         const postMap = new Map<number, typeof userPosts[0]>();
         [...userPosts, ...friendPosts, ...mentionPosts].forEach(p => postMap.set(p.id, p));
+        
+        // Filter to ONLY posts mentioning BOTH users together
         const allPosts = Array.from(postMap.values())
+          .filter(p => {
+            const content = (p.content || '').toLowerCase();
+            const hasBothMentions = content.includes('@' + userUsername.toLowerCase()) && 
+                                   content.includes('@' + friendUsername.toLowerCase());
+            return hasBothMentions;
+          })
           .sort((a, b) => (b.createdAt?.getTime() || 0) - (a.createdAt?.getTime() || 0))
           .slice(0, 15);
 
