@@ -265,12 +265,7 @@ export default function ProfilePage() {
     incomingRequest: any | null;
     outgoingRequest: any | null;
   }>({
-    queryKey: ['/api/friends/status', user?.id],
-    queryFn: async () => {
-      const res = await fetch(`/api/friends/status/${user?.id}`);
-      if (!res.ok) throw new Error('Failed to fetch friendship status');
-      return res.json();
-    },
+    queryKey: [`/api/friends/status/${user?.id}`],
     enabled: isOtherProfile,
     staleTime: 5000, // Cache for 5 seconds
   });
