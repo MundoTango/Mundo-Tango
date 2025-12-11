@@ -287,15 +287,6 @@ export default function ProfilePage() {
     }
   }, [currentUser?.id, user?.id, friendshipStatus, friendshipLoading, isOtherProfile]);
 
-  // Auto-open friend request review modal if ?reviewRequest=true and there's an incoming request
-  useEffect(() => {
-    const urlParams = new URLSearchParams(searchString);
-    const reviewRequest = urlParams.get('reviewRequest');
-    if (reviewRequest === 'true' && hasIncomingRequest && !friendshipLoading) {
-      setFriendRequestReviewOpen(true);
-    }
-  }, [searchString, hasIncomingRequest, friendshipLoading]);
-
   // Fetch upcoming travel plans for this user
   const { data: upcomingTravel = [] } = useQuery<any[]>({
     queryKey: ['/api/travel/plans', user?.id],
@@ -341,6 +332,15 @@ export default function ProfilePage() {
       country: user?.country,
     },
   } : null;
+
+  // Auto-open friend request review modal if ?reviewRequest=true and there's an incoming request
+  useEffect(() => {
+    const urlParams = new URLSearchParams(searchString);
+    const reviewRequest = urlParams.get('reviewRequest');
+    if (reviewRequest === 'true' && hasIncomingRequest && !friendshipLoading) {
+      setFriendRequestReviewOpen(true);
+    }
+  }, [searchString, hasIncomingRequest, friendshipLoading]);
 
   // Send friend request mutation with questionnaire data
   const sendFriendRequestMutation = useMutation({
