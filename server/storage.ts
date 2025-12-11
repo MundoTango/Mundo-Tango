@@ -2703,19 +2703,12 @@ export class DbStorage implements IStorage {
         const friendPosts = await db.select().from(posts).where(eq(posts.userId, friendId)).limit(20);
         
         // Get posts mentioning either user (search for @username in content)
-        let mentionPosts: typeof userPosts = [];
-        const mentionConditions = [];
-        if (userUsername) {
-          mentionConditions.push(ilike(posts.content, `%@${userUsername}%`));
-        }
-        if (friendUsername) {
-          mentionConditions.push(ilike(posts.content, `%@${friendUsername}%`));
-        }
-        if (mentionConditions.length > 0) {
-          mentionPosts = await db.select().from(posts).where(
-            mentionConditions.length === 1 ? mentionConditions[0] : or(...mentionConditions)
-          ).limit(30);
-        }
+        const mentionPosts = await db.select().from(posts).where(
+          or(
+            sql`${posts.content} ILIKE ${'%@' + userUsername + '%'}`,
+            sql`${posts.content} ILIKE ${'%@' + friendUsername + '%'}`
+          )
+        ).limit(30);
         
         // Combine and dedupe posts
         const postMap = new Map<number, typeof userPosts[0]>();
