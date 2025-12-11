@@ -28,6 +28,7 @@ const HEADLESS_ARGS = [
 
 export default defineConfig({
   testDir: './tests',
+  globalSetup: './e2e/global-setup.ts',
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
