@@ -2098,7 +2098,6 @@ export class DbStorage implements IStorage {
         ourStory: friendships.ourStory,
         whenWeMet: friendships.whenWeMet,
         whereWeMet: friendships.whereWeMet,
-        friendId: users.id,
         friendName: users.name,
         friendUsername: users.username,
         friendEmail: users.email,
