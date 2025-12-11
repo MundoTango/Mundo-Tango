@@ -246,8 +246,8 @@ function AppSidebarComponent() {
   const displayName = profile?.name || user?.email?.split("@")[0] || "User";
   const username = profile?.username || user?.email?.split("@")[0] || "user";
   const avatarUrl = profile?.profileImage;
-  const userCity = profile?.city || user?.city;
-  const userTangoRoles = user?.tangoRoles || [];
+  const userCity = profile?.city || (user as any)?.city;
+  const userTangoRoles = (profile as any)?.tangoRoles || (user as any)?.tangoRoles || [];
 
   const myStuffItems = useMemo(() => {
     const items: Array<{
