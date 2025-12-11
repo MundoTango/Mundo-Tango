@@ -138,8 +138,37 @@ Successfully migrated from Neon to Supabase PostgreSQL:
 - cities: 4 (unique user cities)
 - countries: 4 (unique user countries)
 
+### Branch Merge Recovery (Dec 11, 2025)
+Restored critical files from 10+ feature branches using MB.MD v9.9.4 methodology:
+
+**Branches Analyzed:**
+- `server/services/scrapers` - 496 files (scrapers, sidebar, friends)
+- `feature/audio-conversation` - 776 files (messaging UI, auto-fix engine)
+- `feature/friends-list` - SendFriendRequestModal, FriendsPage
+- `qa-remediation/sprint1-critical-fixes` - 103 documented issues
+
+**Key Components Restored/Verified:**
+- MessagesPage.tsx - 617 lines with i18n, conversation list, channel filtering
+- FriendshipQuestionnaire.tsx - 341 lines with form validation and preview
+- UnifiedInbox.tsx - 324 lines with multi-channel support (FB, WhatsApp, Gmail, Instagram)
+- ProfilePage.tsx - 1034 lines upgraded from scrapers branch
+- FeedPage.tsx - 606 lines with reactions, comments, media
+- AutoFixEngine.ts - Self-healing system
+- BaseEventScraper.ts, TangopolixScraper.ts - Event scraping infrastructure
+
+**Data Seeded (Dec 11, 2025):**
+- 9 posts with full user data and tango roles
+- 198 tango events (38KB API response)
+- 5 users with diverse tango roles
+
+**API Status (All Operational):**
+- Posts API: 9 posts with reactions and user profiles
+- Events API: 198 events (38KB data)
+- Stats API: 5 dancers, 3 teachers, 2 organizers, 198 events, 4 cities, 4 countries
+- Health API: Healthy with 277+ seconds uptime
+
 ## External Dependencies
-- **Infrastructure:** PostgreSQL, Redis, Cloudinary, OpenStreetMap, Neon (PostgreSQL)
+- **Infrastructure:** PostgreSQL (Supabase primary), Redis, Cloudinary, OpenStreetMap
 - **Authentication:** Google OAuth, Facebook OAuth, JWT
 - **AI/ML:** OpenAI, Anthropic, Groq, Google, Luma, ElevenLabs, Bifrost Gateway, LanceDB
 - **Real-time:** Supabase Realtime, WebSocket
