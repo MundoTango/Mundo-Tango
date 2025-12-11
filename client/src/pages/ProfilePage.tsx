@@ -708,70 +708,6 @@ export default function ProfilePage() {
                   <span>{[user.city, user.country].filter(Boolean).join(', ')}</span>
                 </div>
               )}
-              
-              {/* Friend Action Buttons - Inside Card (Non-Own Profile Only) */}
-              {!isOwnProfile && (
-                <div className="flex gap-2 pt-3 mt-3 border-t border-border/50">
-                  {/* Message Button - Always visible */}
-                  <Link href={`/messages/direct/${user.id}`}>
-                    <Button 
-                      variant="outline"
-                      size="sm"
-                      className="gap-2"
-                      data-testid={`button-message-${user.id}`}
-                    >
-                      <MessageSquare className="h-4 w-4" />
-                      Message
-                    </Button>
-                  </Link>
-                  
-                  {/* Friend Status Button */}
-                  {isFriend ? (
-                    <Link href={`/friendship/${user.id}`}>
-                      <Button 
-                        size="sm"
-                        className="gap-2"
-                        data-testid={`button-see-friendship-${user.id}`}
-                      >
-                        <HeartHandshake className="h-4 w-4" />
-                        See Friendship
-                      </Button>
-                    </Link>
-                  ) : hasIncomingRequest ? (
-                    <Button 
-                      size="sm"
-                      className="gap-2"
-                      onClick={() => setFriendRequestReviewOpen(true)}
-                      data-testid={`button-review-request-${user.id}`}
-                    >
-                      <UserCheck className="h-4 w-4" />
-                      Review Request
-                    </Button>
-                  ) : hasPendingRequest ? (
-                    <Button 
-                      variant="outline"
-                      size="sm"
-                      className="gap-2"
-                      disabled
-                      data-testid="button-request-pending"
-                    >
-                      <UserCheck className="h-4 w-4" />
-                      Request Sent
-                    </Button>
-                  ) : (
-                    <Button 
-                      size="sm"
-                      className="gap-2"
-                      onClick={() => setFriendshipQuestionnaireOpen(true)}
-                      disabled={sendFriendRequestMutation.isPending}
-                      data-testid={`button-add-friend-${user.id}`}
-                    >
-                      <UserPlus className="h-4 w-4" />
-                      Add Friend
-                    </Button>
-                  )}
-                </div>
-              )}
             </div>
           </div>
           </Card>
@@ -822,6 +758,14 @@ export default function ProfilePage() {
         onTabChange={setActiveTab}
         isOwnProfile={isOwnProfile}
         isPublicView={isPublicView}
+        friendshipState={!isOwnProfile ? {
+          isFriend,
+          hasPendingRequest,
+          hasIncomingRequest,
+        } : undefined}
+        onAddFriend={() => setFriendshipQuestionnaireOpen(true)}
+        onReviewRequest={() => setFriendRequestReviewOpen(true)}
+        isAddingFriend={sendFriendRequestMutation.isPending}
       />
       {/* Tab Content */}
       <div className="max-w-5xl mx-auto px-6 py-12">
