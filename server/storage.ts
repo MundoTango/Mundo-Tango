@@ -2690,13 +2690,32 @@ export class DbStorage implements IStorage {
       const commonCities: Array<{ city: string; country: string; userStartDate: string; friendStartDate: string }> = [];
       const sharedEventsDetails: Array<{ id: number; title: string; date: string; location: string }> = [];
 
-      // Get posts by both users with full data for PostItem component
+      // Get posts by both users OR posts mentioning either user with full data for PostItem component
       try {
+        // Get usernames to search for mentions
+        const userData = await db.select({ username: users.username, name: users.name }).from(users).where(eq(users.id, userId)).limit(1);
+        const friendData = await db.select({ username: users.username, name: users.name }).from(users).where(eq(users.id, friendId)).limit(1);
+        const userUsername = userData[0]?.username || '';
+        const friendUsername = friendData[0]?.username || '';
+        
+        // Get posts authored by either user
         const userPosts = await db.select().from(posts).where(eq(posts.userId, userId)).limit(20);
         const friendPosts = await db.select().from(posts).where(eq(posts.userId, friendId)).limit(20);
-        const allPosts = [...userPosts, ...friendPosts]
+        
+        // Get posts mentioning either user (search for @username in content)
+        const mentionPosts = await db.select().from(posts).where(
+          or(
+            sql`${posts.content} ILIKE ${'%@' + userUsername + '%'}`,
+            sql`${posts.content} ILIKE ${'%@' + friendUsername + '%'}`
+          )
+        ).limit(30);
+        
+        // Combine and dedupe posts
+        const postMap = new Map<number, typeof userPosts[0]>();
+        [...userPosts, ...friendPosts, ...mentionPosts].forEach(p => postMap.set(p.id, p));
+        const allPosts = Array.from(postMap.values())
           .sort((a, b) => (b.createdAt?.getTime() || 0) - (a.createdAt?.getTime() || 0))
-          .slice(0, 10);
+          .slice(0, 15);
 
         for (const post of allPosts) {
           try {
