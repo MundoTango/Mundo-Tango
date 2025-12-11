@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { safeDateDistance, safeFormat } from "@/lib/safeDateFormat";
 import { motion } from "framer-motion";
+import { renderMentionPills } from "@/utils/renderMentionPills";
 import tangoHeroImage from "@assets/IMG_9144-Mejorado-NR_1762013255726.jpg";
 
 interface UserProfile {
@@ -462,22 +463,41 @@ export default function FriendshipPage() {
                       Posts & Mentions
                     </h3>
                     {sharedData?.sharedPosts && sharedData.sharedPosts.length > 0 ? (
-                      <div className="space-y-3">
+                      <div className="space-y-4">
                         {sharedData.sharedPosts.map((post) => (
-                          <Link key={post.id} href={`/feed?post=${post.id}`}>
-                            <div className="flex items-start gap-4 p-4 border rounded-xl hover-elevate cursor-pointer" data-testid={`shared-post-${post.id}`}>
-                              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                                <MessageSquare className="w-5 h-5 text-primary" />
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <p className="font-semibold text-sm">{post.authorName}</p>
-                                <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{post.content || 'No content'}</p>
-                                <p className="text-xs text-muted-foreground mt-2">
-                                  {post.createdAt ? safeDateDistance(post.createdAt, { addSuffix: true }) : 'Recently'}
-                                </p>
-                              </div>
-                            </div>
-                          </Link>
+                          <Card key={post.id} className="hover-elevate cursor-pointer" data-testid={`shared-post-${post.id}`}>
+                            <Link href={`/feed?post=${post.id}`}>
+                              <CardContent className="p-4">
+                                <div className="flex items-start gap-3">
+                                  <Avatar className="w-10 h-10">
+                                    <AvatarFallback className="bg-primary/10 text-primary text-sm font-medium">
+                                      {post.authorName?.split(' ').map(n => n[0]).join('') || 'U'}
+                                    </AvatarFallback>
+                                  </Avatar>
+                                  <div className="flex-1 min-w-0">
+                                    <div className="flex items-center gap-2 mb-1">
+                                      <p className="font-semibold text-sm">{post.authorName}</p>
+                                      <span className="text-xs text-muted-foreground">
+                                        {post.createdAt ? safeDateDistance(post.createdAt, { addSuffix: true }) : 'Recently'}
+                                      </span>
+                                    </div>
+                                    <div className="text-sm whitespace-pre-wrap">
+                                      {renderMentionPills(post.content || '')}
+                                    </div>
+                                    {post.imageUrl && (
+                                      <div className="mt-3 rounded-lg overflow-hidden">
+                                        <img 
+                                          src={post.imageUrl} 
+                                          alt="Post image" 
+                                          className="w-full h-auto max-h-64 object-cover"
+                                        />
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              </CardContent>
+                            </Link>
+                          </Card>
                         ))}
                       </div>
                     ) : (
