@@ -184,5 +184,52 @@ export function createFriendsRoutes(storage: IStorage) {
     }
   });
 
+  router.get("/friends/friendship/:friendId/stats", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const userId = req.userId!;
+      const friendId = parseInt(req.params.friendId);
+      
+      const stats = await storage.getFriendshipStats(userId, friendId);
+      if (!stats) {
+        return res.json({
+          daysSinceFriendship: 0,
+          closenessScore: 0,
+          sharedEvents: 0,
+          sharedGroups: 0,
+          lastInteraction: new Date().toISOString()
+        });
+      }
+      // Ensure lastInteraction is always a string for frontend compatibility
+      res.json({
+        ...stats,
+        lastInteraction: stats.lastInteraction || new Date().toISOString()
+      });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  router.get("/friends/friendship/:friendId/shared-data", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const userId = req.userId!;
+      const friendId = parseInt(req.params.friendId);
+      
+      const sharedData = await storage.getFriendshipSharedData(userId, friendId);
+      if (!sharedData) {
+        return res.json({
+          sharedPosts: [],
+          sharedLikes: [],
+          sharedTravel: [],
+          sharedComments: [],
+          commonCities: [],
+          sharedEventsDetails: []
+        });
+      }
+      res.json(sharedData);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   return router;
 }
