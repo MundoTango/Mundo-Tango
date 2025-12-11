@@ -53,9 +53,9 @@ export class ScrapingOrchestrator {
         this.scrapeSourceBatch(instagramSources, 'agent-118'), // Social Scraper
         this.scrapeSourceBatch(websiteSources, 'agent-116'), // Static Scraper
         this.scrapeSourceBatch(eventPlatformSources, 'agent-117'), // JS Scraper
-        this.scrapeSourceBatch(rssSources, 'rss-service') // RSS Feed Service,
-        this.scrapeHoyMilongaSources(hoyMilongaSources) // Hoy Milonga Scraper,
-        this.invokePriorityScrapers() // Priority scrapers (HoyMilonga, TangoCat, TangoFestivals),
+        this.scrapeSourceBatch(rssSources, 'rss-service'), // RSS Feed Service
+        this.scrapeHoyMilongaSources(hoyMilongaSources), // Hoy Milonga Scraper
+        this.invokePriorityScrapers(), // Priority scrapers (HoyMilonga, TangoCat, TangoFestivals)
       ]);
 
       // Step 4: Collect statistics
