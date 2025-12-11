@@ -99,7 +99,7 @@ export class GamificationRewardsService {
   }
 
   /**
-   * Add XP to user's account
+   * Add XP to user's account and update level
    */
   private async addUserXP(userId: number, xp: number, source: string): Promise<number> {
     try {
@@ -111,21 +111,26 @@ export class GamificationRewardsService {
 
       if (existingPoints.length > 0) {
         const newTotal = (existingPoints[0].totalPoints || 0) + xp;
+        const newLevel = this.calculateLevelNumber(newTotal);
         await db
           .update(userPoints)
           .set({ 
             totalPoints: newTotal,
+            currentLevel: newLevel,
             lastActivityAt: new Date(),
           })
           .where(eq(userPoints.userId, userId));
+        console.log(`[GamificationRewards] User ${userId} gained ${xp} XP, new total: ${newTotal}, level: ${newLevel}`);
         return newTotal;
       } else {
+        const newLevel = this.calculateLevelNumber(xp);
         await db.insert(userPoints).values({
           userId,
           totalPoints: xp,
-          currentLevel: 1,
+          currentLevel: newLevel,
           lastActivityAt: new Date(),
         });
+        console.log(`[GamificationRewards] User ${userId} started with ${xp} XP, level: ${newLevel}`);
         return xp;
       }
     } catch (error) {
@@ -135,9 +140,23 @@ export class GamificationRewardsService {
   }
 
   /**
-   * Check and award badges based on volunteer testing activity
+   * Calculate numeric level based on XP for database storage
    */
-  private async checkAndAwardBadges(userId: number): Promise<string | undefined> {
+  private calculateLevelNumber(totalXP: number): number {
+    if (totalXP >= 10000) return 7; // Legendary
+    if (totalXP >= 5000) return 6;  // Master
+    if (totalXP >= 2500) return 5;  // Expert
+    if (totalXP >= 1000) return 4;  // Advanced
+    if (totalXP >= 500) return 3;   // Intermediate
+    if (totalXP >= 100) return 2;   // Beginner
+    return 1; // Novice
+  }
+
+  /**
+   * Check and award badges based on volunteer testing activity
+   * Now actually inserts earned badges into userBadges table
+   */
+  private async checkAndAwardBadges(userId: number, completedTestCount?: number): Promise<string | undefined> {
     try {
       const existingBadges = await db
         .select()
@@ -145,6 +164,18 @@ export class GamificationRewardsService {
         .where(eq(userBadges.userId, userId));
 
       const existingBadgeIds = new Set(existingBadges.map(b => b.badgeId));
+
+      // Get actual completed test count if not provided
+      let testCount = completedTestCount;
+      if (testCount === undefined) {
+        const userPointsData = await db
+          .select()
+          .from(userPoints)
+          .where(eq(userPoints.userId, userId))
+          .limit(1);
+        // Estimate test count from XP (roughly 25 XP per test on average)
+        testCount = Math.floor((userPointsData[0]?.totalPoints || 0) / 25) + 1;
+      }
 
       const volunteerBadges = [
         { id: 100, name: "First Test", threshold: this.BADGE_THRESHOLDS.firstTest },
@@ -155,8 +186,16 @@ export class GamificationRewardsService {
         { id: 105, name: "Master Tester", threshold: this.BADGE_THRESHOLDS.masterTester },
       ];
 
+      // Find first badge user qualifies for but doesn't have yet
       for (const badge of volunteerBadges) {
-        if (!existingBadgeIds.has(badge.id)) {
+        if (!existingBadgeIds.has(badge.id) && testCount >= badge.threshold) {
+          // Actually insert the badge into userBadges
+          await db.insert(userBadges).values({
+            userId,
+            badgeId: badge.id,
+            earnedAt: new Date(),
+          });
+          console.log(`[GamificationRewards] Awarded badge "${badge.name}" to user ${userId}`);
           return badge.name;
         }
       }
