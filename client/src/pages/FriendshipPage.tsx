@@ -61,8 +61,11 @@ interface FriendshipInfo {
   lastInteractionAt?: string;
   friendRequest?: {
     id: number;
+    senderId?: number;
     senderMessage?: string;
     receiverMessage?: string;
+    senderPrivateNote?: string;
+    receiverPrivateNote?: string;
     danceLocation?: string;
     danceStory?: string;
     didWeDance?: boolean;

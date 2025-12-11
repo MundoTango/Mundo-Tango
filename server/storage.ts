@@ -2449,8 +2449,11 @@ export class DbStorage implements IStorage {
     lastInteractionAt?: string;
     friendRequest?: {
       id: number;
+      senderId?: number;
       senderMessage?: string;
       receiverMessage?: string;
+      senderPrivateNote?: string;
+      receiverPrivateNote?: string;
       danceLocation?: string;
       danceStory?: string;
       didWeDance?: boolean;
@@ -2475,8 +2478,11 @@ export class DbStorage implements IStorage {
 
     const friendRequest = await db.select({
       id: friendRequests.id,
+      senderId: friendRequests.senderId,
       senderMessage: friendRequests.senderMessage,
       receiverMessage: friendRequests.receiverMessage,
+      senderPrivateNote: friendRequests.senderPrivateNote,
+      receiverPrivateNote: friendRequests.receiverPrivateNote,
       danceLocation: friendRequests.danceLocation,
       danceStory: friendRequests.danceStory,
       didWeDance: friendRequests.didWeDance,
@@ -2501,8 +2507,11 @@ export class DbStorage implements IStorage {
       lastInteractionAt: friendshipData.lastInteractionAt?.toISOString(),
       friendRequest: friendRequest[0] ? {
         id: friendRequest[0].id,
+        senderId: friendRequest[0].senderId,
         senderMessage: friendRequest[0].senderMessage || undefined,
         receiverMessage: friendRequest[0].receiverMessage || undefined,
+        senderPrivateNote: friendRequest[0].senderPrivateNote || undefined,
+        receiverPrivateNote: friendRequest[0].receiverPrivateNote || undefined,
         danceLocation: friendRequest[0].danceLocation || undefined,
         danceStory: friendRequest[0].danceStory || undefined,
         didWeDance: friendRequest[0].didWeDance || undefined,
