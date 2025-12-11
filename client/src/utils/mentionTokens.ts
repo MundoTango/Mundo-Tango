@@ -197,16 +197,22 @@ export function replaceTriggerWithMention(
   const newTokens: Token[] = [];
   let charCount = 0;
   
+  // The mention ends right after the query text, not at cursor position
+  // trigger.start = position of "@"
+  // trigger.start + 1 = position after "@"
+  // trigger.start + 1 + trigger.query.length = position after the complete mention
+  const mentionEndPos = trigger.start + 1 + trigger.query.length;
+  
   for (const token of tokens) {
     if (token.kind === 'text') {
       const tokenStart = charCount;
       const tokenEnd = charCount + token.text.length;
       
       // Check if trigger overlaps with this text token
-      if (tokenStart <= trigger.start && tokenEnd >= cursorPos) {
+      if (tokenStart <= trigger.start && tokenEnd >= mentionEndPos) {
         // Split text token around trigger
         const before = token.text.substring(0, trigger.start - tokenStart);
-        let after = token.text.substring(cursorPos - tokenStart);
+        let after = token.text.substring(mentionEndPos - tokenStart);
         
         if (before) {
           newTokens.push({ kind: 'text', text: before });
