@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import { 
   useConversations, 
@@ -22,7 +21,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Send, MessageCircle, Users, Heart, Search, PenSquare, Settings, Mail, Inbox, Check, CheckCheck } from "lucide-react";
+import { Send, MessageCircle, Users, Heart, Search, PenSquare, Settings, Mail, Inbox } from "lucide-react";
 import { SiFacebook, SiWhatsapp, SiGmail, SiInstagram } from "react-icons/si";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/AuthContext";
@@ -33,7 +32,6 @@ import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary"
 import { ChannelSettingsPanel } from "@/components/messages/ChannelSettingsPanel";
 
 export default function MessagesPage() {
-  const { t } = useTranslation('pages');
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeChannel, setActiveChannel] = useState<'all' | MessageChannel>('all');
@@ -84,15 +82,15 @@ export default function MessagesPage() {
                   data-testid="badge-hero-category"
                 >
                   <MessageCircle className="w-3 h-3 mr-1" />
-                  {t('messages.hero.badge')}
+                  Stay Connected
                 </Badge>
                 
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-white font-bold leading-tight">
-                  {t('messages.hero.headline')}
+                  Your Conversations
                 </h1>
                 
                 <p className="text-xl text-white/80 max-w-2xl mx-auto">
-                  {t('messages.hero.subtitle')}
+                  Build meaningful connections with dancers around the world
                 </p>
 
                 <div className="flex items-center justify-center gap-8 mt-8">
@@ -153,7 +151,7 @@ export default function MessagesPage() {
                   <div className="p-4 border-b space-y-3">
                     <div className="flex items-center justify-between gap-2">
                       <h2 className="text-xl font-serif font-bold" data-testid="heading-messages">
-                        {t('messages.title')}
+                        Messages
                       </h2>
                       <div className="flex items-center gap-1">
                         <Dialog open={showSettings} onOpenChange={setShowSettings}>
@@ -213,7 +211,7 @@ export default function MessagesPage() {
                     <div className="relative">
                       <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input
-                        placeholder={t('messages.searchConversations')}
+                        placeholder="Search conversations..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="pl-9"
@@ -314,9 +312,9 @@ export default function MessagesPage() {
                       >
                         <MessageCircle className="w-12 h-12 mx-auto text-muted-foreground opacity-50" />
                         <div>
-                          <p className="font-medium text-muted-foreground">{t('messages.noMessages')}</p>
+                          <p className="font-medium text-muted-foreground">No messages yet</p>
                           <p className="text-sm text-muted-foreground/70 mt-1">
-                            {t('messages.startConversation')}
+                            Start connecting with dancers
                           </p>
                         </div>
                       </motion.div>
@@ -338,10 +336,10 @@ export default function MessagesPage() {
                       <MessageCircle className="w-16 h-16 text-muted-foreground opacity-30" />
                       <div>
                         <h3 className="text-xl font-serif font-bold text-muted-foreground">
-                          {t('messages.selectConversation')}
+                          Select a conversation
                         </h3>
                         <p className="text-sm text-muted-foreground/70 mt-2">
-                          {t('messages.selectConversationDesc')}
+                          Choose a conversation from the list to start messaging
                         </p>
                       </div>
                     </motion.div>
@@ -482,22 +480,14 @@ function ConversationView({ conversationId }: { conversationId: string }) {
                     >
                       <p className="text-sm leading-relaxed">{msg.content}</p>
                     </motion.div>
-                    <div 
-                      className="flex items-center gap-1 px-2" 
+                    <p 
+                      className="text-xs text-muted-foreground px-2" 
                       data-testid={`timestamp-${msg.id}`}
                     >
-                      <p className="text-xs text-muted-foreground">
-                        {safeDateDistance(msg.created_at, {
-                          addSuffix: true,
-                        })}
-                      </p>
-                      {isOwn && (
-                        <MessageDeliveryStatus 
-                          isRead={(msg as any).is_read || false}
-                          isDelivered={true}
-                        />
-                      )}
-                    </div>
+                      {safeDateDistance(msg.created_at, {
+                        addSuffix: true,
+                      })}
+                    </p>
                   </div>
                 </motion.div>
               );
@@ -583,35 +573,5 @@ function ConversationView({ conversationId }: { conversationId: string }) {
         </p>
       </form>
     </motion.div>
-  );
-}
-
-function MessageDeliveryStatus({ isRead, isDelivered }: { isRead: boolean; isDelivered: boolean }) {
-  if (isRead) {
-    return (
-      <CheckCheck 
-        className="w-3.5 h-3.5 text-primary" 
-        data-testid="status-read"
-        aria-label="Read"
-      />
-    );
-  }
-  
-  if (isDelivered) {
-    return (
-      <CheckCheck 
-        className="w-3.5 h-3.5 text-muted-foreground" 
-        data-testid="status-delivered"
-        aria-label="Delivered"
-      />
-    );
-  }
-  
-  return (
-    <Check 
-      className="w-3.5 h-3.5 text-muted-foreground" 
-      data-testid="status-sent"
-      aria-label="Sent"
-    />
   );
 }

@@ -488,21 +488,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Public stats endpoint for landing page (no auth required)
-  // Displays real data - lower threshold for early stage platform
-  const DISPLAY_THRESHOLD = 1;
+  // Displays real data only - no fake numbers. Stats hidden if below threshold.
+  const DISPLAY_THRESHOLD = 10;
   
   app.get("/api/stats/public", async (req: Request, res: Response) => {
     try {
       const { db } = await import("./db");
       const { users, events } = await import("@shared/schema");
-      const { count, sql, eq, gte } = await import("drizzle-orm");
+      const { count, sql, eq, and, gte } = await import("drizzle-orm");
       
-      // Get active users count with role breakdowns (case-insensitive role matching)
+      // Get active users count with role breakdowns
       const usersResult = await db.select({ 
         total: count(),
-        teachers: sql<number>`CAST(COUNT(CASE WHEN 'Teacher' = ANY(tango_roles) OR 'teacher' = ANY(tango_roles) THEN 1 END) AS INTEGER)`,
-        organizers: sql<number>`CAST(COUNT(CASE WHEN 'Organizer' = ANY(tango_roles) OR 'organizer' = ANY(tango_roles) THEN 1 END) AS INTEGER)`,
-      }).from(users).where(eq(users.isActive, true));
+        teachers: sql<number>`COUNT(CASE WHEN 'teacher' = ANY(tango_roles) THEN 1 END)`,
+        organizers: sql<number>`COUNT(CASE WHEN 'organizer' = ANY(tango_roles) THEN 1 END)`,
+      }).from(users).where(and(eq(users.isActive, true), eq(users.suspended, false)));
       
       const totalUsers = usersResult[0]?.total || 0;
       const teacherCount = usersResult[0]?.teachers || 0;
@@ -514,19 +514,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
         .where(gte(events.startDate, new Date()));
       const totalEvents = eventsResult[0]?.count || 0;
       
-      // Get unique cities count (cast to integer)
+      // Get unique cities count
       const citiesResult = await db
-        .select({ count: sql<number>`CAST(COUNT(DISTINCT city) AS INTEGER)` })
+        .select({ count: sql<number>`COUNT(DISTINCT city)` })
         .from(users)
         .where(sql`city IS NOT NULL AND city != '' AND is_active = true`);
-      const totalCities = Number(citiesResult[0]?.count) || 0;
+      const totalCities = citiesResult[0]?.count || 0;
       
-      // Get unique countries count (cast to integer)
+      // Get unique countries count
       const countriesResult = await db
-        .select({ count: sql<number>`CAST(COUNT(DISTINCT country) AS INTEGER)` })
+        .select({ count: sql<number>`COUNT(DISTINCT country)` })
         .from(users)
         .where(sql`country IS NOT NULL AND country != '' AND is_active = true`);
-      const totalCountries = Number(countriesResult[0]?.count) || 0;
+      const totalCountries = countriesResult[0]?.count || 0;
       
       // Platform stats (always shown - these are founder facts)
       const platformStats = {
@@ -2852,22 +2852,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const currentUserId = req.user?.id;
       
-      // Get active stories using raw SQL to avoid schema mismatch with Supabase
-      // Supabase posts table has different columns than Drizzle schema
-      const { db } = await import("./storage");
-      const { sql } = await import("drizzle-orm");
+      // Get active stories using Drizzle directly
+      const { and, eq, gt } = await import("drizzle-orm");
+      const { posts: postsTable } = await import("@shared/schema");
+      const { db } = await import("./db");
       
-      const result = await db.execute(sql`
-        SELECT id, user_id as "userId", content, image_url as "imageUrl", 
-               visibility, type, expires_at as "expiresAt", 
-               created_at as "createdAt", updated_at as "updatedAt"
-        FROM posts 
-        WHERE type = 'story' AND expires_at > NOW()
-        ORDER BY created_at DESC
-        LIMIT 20
-      `);
-      
-      const stories = result.rows || [];
+      const stories = await db.select()
+        .from(postsTable)
+        .where(
+          and(
+            eq(postsTable.type, 'story'),
+            gt(postsTable.expiresAt, new Date())
+          )
+        )
+        .orderBy(postsTable.createdAt)
+        .limit(20);
       
       // Enrich with user data
       const { enrichPostContentWithGroupTypes } = await import("./utils/enrich-mentions");
@@ -2876,7 +2875,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           const user = await storage.getUserById(story.userId);
           return {
             ...story,
-            content: await enrichPostContentWithGroupTypes(story.content || ''),
+            content: await enrichPostContentWithGroupTypes(story.content),
             user: user ? {
               id: user.id,
               name: user.name,
