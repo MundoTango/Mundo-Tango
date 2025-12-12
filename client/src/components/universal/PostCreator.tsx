@@ -909,30 +909,15 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
               Hidden Gems - Share your favorite places
             </h3>
 
-            {/* Business Name Input with Live Autocomplete (Nominatim/OSM) */}
+            {/* Business Name Input - Simple text input */}
             <div>
               <Label className="text-xs mb-1.5 block">Business / Place Name</Label>
-              <UnifiedLocationPicker
+              <Input
                 value={businessName}
-                coordinates={coordinates}
-                onChange={(selectedName, coords, parsed) => {
-                  // Set business name (full address from Nominatim)
-                  setBusinessName(selectedName);
-                  // Set coordinates for map pin
-                  setCoordinates(coords);
-                  // Auto-populate location field from the parsed city/country
-                  if (parsed?.city) {
-                    const cityLocation = `${parsed.city}${parsed.country ? ', ' + parsed.country : ''}`;
-                    setLocation(cityLocation);
-                  }
-                }}
-                placeholder="Search for a place (e.g. Emperador Meiji Buenos Aires)"
-                mode="address"
+                onChange={(e) => setBusinessName(e.target.value)}
+                placeholder="Enter business name (e.g. La Viruta Tango)"
                 data-testid="input-business-name"
               />
-              <p className="text-xs text-muted-foreground mt-1">
-                Search for a business, restaurant, café, hotel, or tango venue
-              </p>
             </div>
 
             {/* Category Selector */}
