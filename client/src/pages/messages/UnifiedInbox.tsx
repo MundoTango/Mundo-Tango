@@ -185,14 +185,11 @@ export default function UnifiedInbox() {
     if ((!messageInput.trim() && attachedImages.length === 0) || !selectedConversation) return;
     
     try {
-      await apiRequest('/api/messages/send', {
-        method: 'POST',
-        body: JSON.stringify({
-          to: selectedConversation.from,
-          channel: selectedConversation.channel || 'mt',
-          body: messageInput.trim(),
-          attachments: attachedImages.map(img => img.url)
-        })
+      await apiRequest('POST', '/api/messages/send', {
+        to: selectedConversation.from,
+        channel: selectedConversation.channel || 'mt',
+        body: messageInput.trim(),
+        attachments: attachedImages.map(img => img.url)
       });
       
       setMessageInput("");
