@@ -8,6 +8,10 @@
 import { Router } from 'express';
 import { agentKnowledgeLoader, LearningReport } from '../services/intelligence/AgentKnowledgeLoader';
 import { recursiveContextService } from '../services/intelligence/RecursiveContextService';
+import { AgentLearningService } from '../services/learning/AgentLearningService';
+import { db } from '../db';
+import { agentExecutions, agents } from '@shared/schema';
+import { desc, count } from 'drizzle-orm';
 
 const router = Router();
 
@@ -287,6 +291,112 @@ router.post('/context', async (req, res) => {
     res.status(500).json({
       success: false,
       error: 'Failed to get recursive context'
+    });
+  }
+});
+
+/**
+ * POST /api/agents/learning/record-execution
+ * Record an agent execution for learning purposes
+ */
+router.post('/record-execution', async (req, res) => {
+  try {
+    const { agentId, task, outcome, result, errorMessage, durationMs, quality, efficiency, confidence, metadata } = req.body;
+    
+    if (!agentId || !task || !outcome) {
+      return res.status(400).json({
+        success: false,
+        error: 'agentId, task, and outcome are required'
+      });
+    }
+    
+    const now = new Date();
+    const startedAt = new Date(now.getTime() - (durationMs || 1000));
+    
+    const executionId = await AgentLearningService.recordExecution({
+      agentId,
+      task,
+      outcome,
+      result,
+      errorMessage,
+      startedAt,
+      completedAt: now,
+      durationMs: durationMs || 1000,
+      quality: quality || 0.8,
+      efficiency: efficiency || 0.8,
+      confidence: confidence || 0.85,
+      metadata: metadata || {}
+    });
+    
+    res.json({
+      success: true,
+      executionId,
+      message: `Recorded execution for agent ${agentId}`
+    });
+  } catch (error) {
+    console.error('[AgentLearning API] Error recording execution:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to record execution'
+    });
+  }
+});
+
+/**
+ * GET /api/agents/learning/executions
+ * Get recent agent executions
+ */
+router.get('/executions', async (_req, res) => {
+  try {
+    const recentExecutions = await db
+      .select()
+      .from(agentExecutions)
+      .orderBy(desc(agentExecutions.createdAt))
+      .limit(20);
+    
+    res.json({
+      success: true,
+      count: recentExecutions.length,
+      executions: recentExecutions.map(e => ({
+        id: e.id,
+        agentId: e.agentId,
+        task: e.task,
+        outcome: e.outcome,
+        durationMs: e.durationMs,
+        quality: e.quality,
+        createdAt: e.createdAt
+      }))
+    });
+  } catch (error) {
+    console.error('[AgentLearning API] Error getting executions:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to get executions'
+    });
+  }
+});
+
+/**
+ * GET /api/agents/learning/database-stats
+ * Get database statistics for all agent tables
+ */
+router.get('/database-stats', async (_req, res) => {
+  try {
+    const [executionCount] = await db.select({ count: count() }).from(agentExecutions);
+    const [agentCount] = await db.select({ count: count() }).from(agents);
+    
+    res.json({
+      success: true,
+      stats: {
+        agentExecutions: executionCount?.count || 0,
+        agents: agentCount?.count || 0
+      }
+    });
+  } catch (error) {
+    console.error('[AgentLearning API] Error getting database stats:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to get database stats'
     });
   }
 });
