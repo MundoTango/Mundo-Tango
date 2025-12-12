@@ -28,6 +28,10 @@ import {
   List,
   Map,
   Star,
+  Search,
+  User,
+  Handshake,
+  BookOpen,
 } from "lucide-react";
 import { useLocation, Link } from "wouter";
 import { cn } from "@/lib/utils";
@@ -193,6 +197,34 @@ const proDiscoveryItems = [
     tooltip: "Community leaders",
   },
   {
+    title: "Dancers",
+    url: "/pro/dancers",
+    icon: Users,
+    color: "#1E90FF",
+    tooltip: "Find dance partners",
+  },
+  {
+    title: "Researchers",
+    url: "/pro/researchers",
+    icon: Search,
+    color: "#F97316",
+    tooltip: "Tango researchers",
+  },
+  {
+    title: "Historians",
+    url: "/pro/historians",
+    icon: BookOpen,
+    color: "#8B5CF6",
+    tooltip: "Tango history experts",
+  },
+  {
+    title: "Taxi Dancers",
+    url: "/pro/taxi-dancers",
+    icon: Handshake,
+    color: "#F97316",
+    tooltip: "Professional taxi dancers",
+  },
+  {
     title: "Talent Match",
     url: "/talent-match",
     icon: Sparkles,
@@ -241,6 +273,12 @@ const roleToProDiscoveryMap: Record<string, string> = {
   business: "/pro/vendors",
   "community-leader": "/pro/community",
   "community-builder": "/pro/community",
+  "dancer-leader": "/pro/dancers",
+  "dancer-follower": "/pro/dancers",
+  researcher: "/pro/researchers",
+  historian: "/pro/historians",
+  "taxi-dancer": "/pro/taxi-dancers",
+  fan: "/pro/community",
 };
 
 function AppSidebarComponent() {
@@ -281,7 +319,7 @@ function AppSidebarComponent() {
       const normalizedValue = normalizeRole(roleValue);
       const proUrl = roleToProDiscoveryMap[normalizedValue];
 
-      if (role && proUrl && role.category !== "dance" && !addedUrls.has(proUrl)) {
+      if (role && proUrl && !addedUrls.has(proUrl)) {
         addedUrls.add(proUrl);
         items.push({
           title: role.label,
