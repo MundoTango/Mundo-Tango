@@ -340,7 +340,7 @@ router.get("/analytics/activity", async (req: Request, res: Response) => {
   }
 });
 
-// GET /api/groups/:id - Get group details
+// GET /api/groups/:id - Get group details with dynamic counts
 router.get("/:id", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
@@ -365,15 +365,73 @@ router.get("/:id", async (req: Request, res: Response) => {
       return res.status(404).json({ message: "Group not found" });
     }
 
-    // Get member count
-    const memberCount = await db
+    const group = result[0].group;
+    const groupId = parseInt(id);
+
+    // Compute all counts dynamically
+    const [memberCountResult] = await db
       .select({ count: count() })
       .from(groupMembers)
-      .where(eq(groupMembers.groupId, parseInt(id)));
+      .where(and(
+        eq(groupMembers.groupId, groupId),
+        eq(groupMembers.status, "active")
+      ));
+
+    // For city groups, compute eventCount based on city match OR group_id match
+    // For non-city groups, compute based on group_id only
+    const isCity = group.type === 'city' && group.city;
+    
+    let eventCountResult: { count: number }[];
+    if (isCity) {
+      // City groups: count events where city matches (case-insensitive) OR group_id matches
+      [eventCountResult] = await db
+        .select({ count: sql<number>`count(*)::int` })
+        .from(events)
+        .where(or(
+          eq(events.groupId, groupId),
+          sql`LOWER(${events.city}) = LOWER(${group.city})`
+        ));
+    } else {
+      // Non-city groups: count events linked to group
+      [eventCountResult] = await db
+        .select({ count: count() })
+        .from(events)
+        .where(eq(events.groupId, groupId));
+    }
+
+    // Count posts for this group
+    const [postCountResult] = await db
+      .select({ count: count() })
+      .from(groupPosts)
+      .where(eq(groupPosts.groupId, groupId));
+
+    // For city groups, compute housingCount based on city match
+    let housingCount = 0;
+    if (isCity) {
+      const [housingResult] = await db
+        .select({ count: sql<number>`count(*)::int` })
+        .from(housingListings)
+        .where(sql`LOWER(${housingListings.city}) = LOWER(${group.city})`);
+      housingCount = housingResult?.count || 0;
+    }
+
+    // For city groups, compute recommendationCount based on city match
+    let recommendationCount = 0;
+    if (isCity) {
+      const [recResult] = await db
+        .select({ count: sql<number>`count(*)::int` })
+        .from(placeRecommendations)
+        .where(sql`LOWER(${placeRecommendations.city}) = LOWER(${group.city})`);
+      recommendationCount = recResult?.count || 0;
+    }
 
     res.json({
       ...result[0],
-      memberCount: memberCount[0]?.count || 0
+      memberCount: memberCountResult?.count || 0,
+      eventCount: eventCountResult?.count || 0,
+      postCount: postCountResult?.count || 0,
+      housingCount: housingCount,
+      recommendationCount: recommendationCount
     });
   } catch (error) {
     console.error("[Groups] Error fetching group:", error);
