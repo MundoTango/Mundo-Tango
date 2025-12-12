@@ -16,10 +16,35 @@ import { eq, and, inArray } from 'drizzle-orm';
  */
 export class RBACService {
   /**
+   * Legacy role to tier level mapping
+   * Maps users.role column values to tier levels
+   */
+  static readonly LEGACY_ROLE_LEVELS: Record<string, number> = {
+    'god': 8,
+    'owner': 8,
+    'super_admin': 7,
+    'superadmin': 7,
+    'platform_volunteer': 6,
+    'volunteer': 6,
+    'platform_contributor': 5,
+    'contributor': 5,
+    'admin': 4,
+    'community_leader': 3,
+    'leader': 3,
+    'premium': 2,
+    'pro': 2,
+    'user': 1,
+    'free': 1,
+    'guest': 0,
+  };
+
+  /**
    * Get user's highest role level (for numeric comparisons)
    * Returns highest level if user has multiple roles
+   * Falls back to legacy users.role column if no platform roles assigned
    */
   static async getUserRoleLevel(userId: number): Promise<number> {
+    // First check platform_user_roles table (new RBAC system)
     const userRolesData = await db
       .select({
         roleLevel: platformRoles.roleLevel,
@@ -28,12 +53,27 @@ export class RBACService {
       .innerJoin(platformRoles, eq(platformUserRoles.roleId, platformRoles.id))
       .where(eq(platformUserRoles.userId, userId));
 
-    if (userRolesData.length === 0) {
-      return 1; // Default: Free User (Tier 1)
+    if (userRolesData.length > 0) {
+      // Return highest role level from platform roles
+      return Math.max(...userRolesData.map((r: any) => r.roleLevel));
     }
 
-    // Return highest role level (God = 8, Free = 1)
-    return Math.max(...userRolesData.map((r: any) => r.roleLevel));
+    // Fallback: Check legacy users.role column
+    const userData = await db
+      .select({ role: users.role })
+      .from(users)
+      .where(eq(users.id, userId))
+      .limit(1);
+
+    if (userData.length > 0 && userData[0].role) {
+      const legacyRole = userData[0].role.toLowerCase();
+      const level = this.LEGACY_ROLE_LEVELS[legacyRole];
+      if (level !== undefined) {
+        return level;
+      }
+    }
+
+    return 1; // Default: Free User (Tier 1)
   }
 
   /**

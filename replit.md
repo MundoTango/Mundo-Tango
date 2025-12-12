@@ -21,7 +21,9 @@ Mundo Tango is a production-ready social platform designed to connect the global
 The platform employs an "MT Ocean Theme" with dark mode, built using Tailwind CSS, shadcn/ui, and Radix UI. Iconography is provided by Lucide React and React Icons. It supports 68 languages via `i18next` and uses Wouter for routing, with distinct `AppLayout`, `DashboardLayout`, and `AdminLayout` components. Key UI elements include a Visual Editor for inline editing, a Unified Sidebar for navigation, and standardized components like `PublicProfileView` and `PerRoleExperience` to ensure consistency.
 
 ### Backend
-The backend is developed with Express and TypeScript, utilizing PostgreSQL (Neon) and Drizzle ORM. It features a modular route structure, JWT authentication with Google/Facebook OAuth, and an 8-tier Role-Based Access Control (RBAC) system. Database migrations are automated, and server-side FFmpeg is used for video transcoding. API endpoints support PRO functionalities, place recommendations, and an enhanced Talent Match AI.
+The backend is developed with Express and TypeScript, utilizing PostgreSQL (Neon) and Drizzle ORM. It features a modular route structure, JWT authentication with Google/Facebook OAuth, and an 8-tier Role-Based Access Control (RBAC) system with legacy role fallback. Database migrations are automated, and server-side FFmpeg is used for video transcoding. API endpoints support PRO functionalities, place recommendations, and an enhanced Talent Match AI.
+
+**RBAC Legacy Fallback (Dec 12, 2025):** The `RBACService.getUserRoleLevel()` now checks the legacy `users.role` column when `platform_user_roles` table is empty, mapping roles to tier levels: god/owner=8, super_admin=7, admin=4, user=1, guest=0.
 
 ### AI Systems
 An extensive AI ecosystem comprises **48 operational agents** (audited Dec 7, 2025):
