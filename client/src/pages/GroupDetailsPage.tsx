@@ -35,6 +35,7 @@ import { format, parse, startOfWeek, getDay } from 'date-fns';
 import { enUS } from 'date-fns/locale';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { HousingSearchFilters } from "@/components/housing/HousingSearchFilters";
 
 const locales = { 'en-US': enUS };
 const localizer = dateFnsLocalizer({
@@ -727,14 +728,24 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
 
 function GroupHousingTab({ groupCity }: { groupCity?: string | null }) {
   const [showMap, setShowMap] = useState(false);
+  const [propertyType, setPropertyType] = useState("");
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 500]);
+  const [checkInDate, setCheckInDate] = useState<Date | undefined>();
+  const [checkOutDate, setCheckOutDate] = useState<Date | undefined>();
   
   const { data: listings, isLoading } = useQuery<HousingListing[]>({
-    queryKey: ['/api/housing/listings', groupCity],
+    queryKey: ['/api/housing/listings', groupCity, propertyType, priceRange, checkInDate, checkOutDate],
     queryFn: async () => {
-      const url = groupCity 
-        ? `/api/housing/listings?city=${encodeURIComponent(groupCity)}&status=active`
-        : '/api/housing/listings?status=active&limit=20';
-      const res = await fetch(url, { credentials: 'include' });
+      const params = new URLSearchParams();
+      if (groupCity) params.append('city', groupCity);
+      params.append('status', 'active');
+      if (propertyType && propertyType !== 'all') params.append('propertyType', propertyType);
+      if (priceRange[0] > 0) params.append('minPrice', priceRange[0].toString());
+      if (priceRange[1] < 500) params.append('maxPrice', priceRange[1].toString());
+      if (checkInDate) params.append('checkIn', checkInDate.toISOString());
+      if (checkOutDate) params.append('checkOut', checkOutDate.toISOString());
+      
+      const res = await fetch(`/api/housing/listings?${params.toString()}`, { credentials: 'include' });
       if (!res.ok) return [];
       const data = await res.json();
       return data.listings || data || [];
@@ -774,6 +785,22 @@ function GroupHousingTab({ groupCity }: { groupCity?: string | null }) {
 
   return (
     <div className="space-y-6">
+      <HousingSearchFilters
+        city={groupCity || ""}
+        onCityChange={() => {}}
+        propertyType={propertyType}
+        onPropertyTypeChange={setPropertyType}
+        priceRange={priceRange}
+        onPriceRangeChange={setPriceRange}
+        checkInDate={checkInDate}
+        onCheckInDateChange={setCheckInDate}
+        checkOutDate={checkOutDate}
+        onCheckOutDateChange={setCheckOutDate}
+        maxPrice={500}
+        showCityFilter={false}
+        compact={true}
+      />
+
       <Card className="overflow-hidden">
         <CardHeader className="border-b">
           <div className="flex items-center justify-between">

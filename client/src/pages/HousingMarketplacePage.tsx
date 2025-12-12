@@ -2,26 +2,32 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, MapPin, DollarSign, Users, Heart, Home, Plus } from "lucide-react";
-import { UnifiedLocationPicker } from "@/components/input/UnifiedLocationPicker";
+import { MapPin, DollarSign, Users, Heart, Home, Plus } from "lucide-react";
+import { HousingSearchFilters } from "@/components/housing/HousingSearchFilters";
 
 export default function HousingMarketplacePage() {
   const [city, setCity] = useState("");
   const [propertyType, setPropertyType] = useState("");
-  const [minPrice, setMinPrice] = useState("");
-  const [maxPrice, setMaxPrice] = useState("");
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 500]);
+  const [checkInDate, setCheckInDate] = useState<Date | undefined>();
+  const [checkOutDate, setCheckOutDate] = useState<Date | undefined>();
 
   const { data: listings, isLoading } = useQuery<any[]>({
-    queryKey: ["/api/housing/listings", { city, propertyType: propertyType === 'all' ? '' : propertyType, minPrice, maxPrice }],
+    queryKey: ["/api/housing/listings", { 
+      city, 
+      propertyType: propertyType === 'all' ? '' : propertyType, 
+      minPrice: priceRange[0].toString(), 
+      maxPrice: priceRange[1].toString(),
+      checkIn: checkInDate?.toISOString(),
+      checkOut: checkOutDate?.toISOString()
+    }],
   });
 
   return (
     <div className="bg-background">
-      <div className="container mx-auto p-4 space-y-6 mt-[69px] mb-[69px]">
+      <div className="container mx-auto p-4 space-y-6">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
             <h1 className="text-3xl font-bold" data-testid="heading-housing-marketplace">Housing Marketplace</h1>
@@ -36,53 +42,20 @@ export default function HousingMarketplacePage() {
           </Button>
         </div>
 
-        <Card>
-          <CardContent className="pt-6">
-            <div className="grid md:grid-cols-4 gap-4">
-              <UnifiedLocationPicker
-                mode="city"
-                value={city}
-                placeholder="Search city..."
-                onChange={(location, coordinates, parsed) => {
-                  if (parsed) {
-                    setCity(parsed.city || location);
-                  } else {
-                    setCity(location);
-                  }
-                }}
-              />
-              
-              <Select value={propertyType} onValueChange={setPropertyType}>
-                <SelectTrigger data-testid="select-property-type">
-                  <SelectValue placeholder="Property Type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Types</SelectItem>
-                  <SelectItem value="apartment">Apartment</SelectItem>
-                  <SelectItem value="room">Private Room</SelectItem>
-                  <SelectItem value="house">House</SelectItem>
-                  <SelectItem value="studio">Studio</SelectItem>
-                </SelectContent>
-              </Select>
-
-              <Input
-                type="number"
-                placeholder="Min Price"
-                value={minPrice}
-                onChange={(e) => setMinPrice(e.target.value)}
-                data-testid="input-min-price"
-              />
-
-              <Input
-                type="number"
-                placeholder="Max Price"
-                value={maxPrice}
-                onChange={(e) => setMaxPrice(e.target.value)}
-                data-testid="input-max-price"
-              />
-            </div>
-          </CardContent>
-        </Card>
+        <HousingSearchFilters
+          city={city}
+          onCityChange={setCity}
+          propertyType={propertyType}
+          onPropertyTypeChange={setPropertyType}
+          priceRange={priceRange}
+          onPriceRangeChange={setPriceRange}
+          checkInDate={checkInDate}
+          onCheckInDateChange={setCheckInDate}
+          checkOutDate={checkOutDate}
+          onCheckOutDateChange={setCheckOutDate}
+          maxPrice={500}
+          showCityFilter={true}
+        />
 
         {isLoading ? (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
