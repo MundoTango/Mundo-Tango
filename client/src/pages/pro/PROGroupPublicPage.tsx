@@ -160,7 +160,17 @@ export function PROGroupPublicPage({ roleSlug, title, description, icon: Icon, c
               Upcoming Events
             </TabsTrigger>
             {isMember && (
-              <TabsTrigger value="discussion" data-testid="tab-discussion">
+              <TabsTrigger 
+                value="discussion" 
+                data-testid="tab-discussion"
+                className="relative"
+                style={{
+                  background: `${color}15`,
+                  borderColor: color,
+                  color: color,
+                }}
+              >
+                <MessageSquare className="w-4 h-4 mr-2" />
                 Discussion
               </TabsTrigger>
             )}
