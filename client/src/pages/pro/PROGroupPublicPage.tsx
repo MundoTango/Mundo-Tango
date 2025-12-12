@@ -47,8 +47,6 @@ export function PROGroupPublicPage({ roleSlug, title, description, icon: Icon, c
   const [cityFilter, setCityFilter] = useState("all");
   const [sortBy, setSortBy] = useState("rating");
 
-  const isMember = profile?.tangoRoles?.includes(roleSlug);
-
   const { data: professionals, isLoading } = useQuery<Professional[]>({
     queryKey: ['/api/users/professionals', roleSlug],
   });
@@ -56,6 +54,8 @@ export function PROGroupPublicPage({ roleSlug, title, description, icon: Icon, c
   const { data: groupInfo } = useQuery({
     queryKey: ['/api/users/pro-groups', roleSlug],
   });
+
+  const isMember = profile?.tangoRoles?.includes(roleSlug) || professionals?.some(p => p.id === user?.id);
 
   const filteredProfessionals = professionals?.filter(p => {
     const matchesSearch = !searchQuery || 
