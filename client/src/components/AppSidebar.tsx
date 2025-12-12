@@ -293,7 +293,7 @@ function AppSidebarComponent() {
     });
 
     return items;
-  }, [userCity, userTangoRoles, profile, user]);
+  }, [userCity, userTangoRoles]);
 
   const isActive = (url: string) =>
     location === url || location.startsWith(url + "/");
@@ -512,4 +512,4 @@ function AppSidebarComponent() {
   );
 }
 
-export const AppSidebar = memo(AppSidebarComponent);
+export const AppSidebar = AppSidebarComponent;
