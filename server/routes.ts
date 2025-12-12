@@ -5356,6 +5356,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         profileImage: f.profileImage,
         bio: f.bio,
         city: f.city,
+        tangoRoles: f.tangoRoles,
         closenessScore: f.closenessScore,
       }));
       res.json(publicFriends);

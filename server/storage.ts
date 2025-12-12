@@ -2112,6 +2112,7 @@ export class DbStorage implements IStorage {
         profileImage: users.profileImage,
         bio: users.bio,
         city: users.city,
+        tangoRoles: users.tangoRoles,
         closenessScore: friendships.closenessScore,
         connectionDegree: friendships.connectionDegree,
         lastInteractionAt: friendships.lastInteractionAt,
