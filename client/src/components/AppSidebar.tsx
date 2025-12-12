@@ -424,17 +424,23 @@ function AppSidebarComponent() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {myStuffItems.length > 0 && (
-          <SidebarGroup className="border-b border-white/10 pb-4">
-            <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60 flex items-center gap-1">
-              <Star className="h-3 w-3" style={{ color: "#FFD700" }} />
-              My Stuff
-            </SidebarGroupLabel>
-            <SidebarGroupContent>
-              {renderIconGrid(myStuffItems)}
-            </SidebarGroupContent>
-          </SidebarGroup>
-        )}
+        <SidebarGroup className="border-b border-white/10 pb-4">
+          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60 flex items-center gap-1">
+            <Star className="h-3 w-3" style={{ color: "#FFD700" }} />
+            My Stuff
+          </SidebarGroupLabel>
+          <SidebarGroupContent>
+            {myStuffItems.length > 0 ? (
+              renderIconGrid(myStuffItems)
+            ) : (
+              <div className="px-3 py-2 text-xs text-white/50">
+                <Link to="/profile" className="hover:text-[#40E0D0] transition-colors">
+                  Set your city in your profile
+                </Link>
+              </div>
+            )}
+          </SidebarGroupContent>
+        </SidebarGroup>
 
         <SidebarGroup className="border-b border-white/10 pb-4">
           <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">
