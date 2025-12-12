@@ -433,14 +433,23 @@ router.get("/me", authenticateToken, async (req: AuthRequest, res: Response) => 
       return res.status(401).json({ message: "Not authenticated" });
     }
 
-    const { password, tango_roles, ...userWithoutPassword } = req.user as any;
+    const { password, tango_roles, tangoRoles: existingTangoRoles, ...userWithoutPassword } = req.user as any;
+
+    // Normalize tangoRoles to a proper array (PostgreSQL returns "{item1,item2}" format)
+    const rawRoles = tango_roles || existingTangoRoles || [];
+    let normalizedRoles: string[] = [];
+    
+    if (Array.isArray(rawRoles)) {
+      normalizedRoles = rawRoles;
+    } else if (typeof rawRoles === 'string' && rawRoles.length > 0) {
+      // Parse PostgreSQL array literal: "{Leader,Organizer,Teacher}" -> ["Leader", "Organizer", "Teacher"]
+      normalizedRoles = rawRoles.replace(/^\{|\}$/g, '').split(',').map((r: string) => r.trim()).filter(Boolean);
+    }
 
     // Map snake_case database fields to camelCase for frontend
     const userResponse = {
       ...userWithoutPassword,
-      // Ensure tangoRoles is available (map from tango_roles if needed)
-      tangoRoles: tango_roles || (userWithoutPassword as any).tangoRoles || [],
-      // Ensure city and country are included
+      tangoRoles: normalizedRoles,
       city: (req.user as any).city,
       country: (req.user as any).country,
     };
