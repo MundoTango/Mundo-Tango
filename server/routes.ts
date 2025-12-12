@@ -7094,7 +7094,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // 2. GET /api/community/stats - Get global community statistics (PUBLIC)
   app.get("/api/community/stats", async (req: Request, res: Response) => {
     try {
-      // MB.MD v9.8: Calculate stats from actual city groups (not users)
+      // MB.MD v9.8.1: Calculate stats from all location sources (city groups + user profiles + location history)
+      
+      // Get stats from city groups (primary source)
       const cityGroupStats = await db.select({
         totalCities: sql<number>`count(*)::int`,
         countries: sql<number>`count(distinct ${groups.country})::int`,
@@ -7104,23 +7106,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
       .from(groups)
       .where(eq(groups.type, 'city'));
 
-      // Get venue recommendations count
+      // Get user profile cities (users with non-null city)
+      const userCitiesStats = await db.select({
+        uniqueCities: sql<number>`count(distinct ${users.city})::int`,
+        uniqueCountries: sql<number>`count(distinct ${users.country})::int`,
+        totalUsers: sql<number>`count(distinct ${users.id})::int`,
+      })
+      .from(users)
+      .where(and(eq(users.isActive, true), isNotNull(users.city)));
+
+      // Get location history cities
+      const locationHistoryStats = await db.select({
+        uniqueCities: sql<number>`count(distinct ${userLocationHistory.city})::int`,
+        uniqueCountries: sql<number>`count(distinct ${userLocationHistory.country})::int`,
+      })
+      .from(userLocationHistory);
+
+      // Get venue recommendations
       const venueStats = await db.select({
         totalVenues: sql<number>`count(*)::int`,
       })
       .from(venues);
 
-      // Get housing count
+      // Get housing listings
       const housingStats = await db.select({
         totalHousing: sql<number>`count(*)::int`,
       })
       .from(housingListings)
       .where(eq(housingListings.status, 'active'));
 
+      // Combine stats from all sources
+      const totalCities = (cityGroupStats[0]?.totalCities || 0) + 
+                          (userCitiesStats[0]?.uniqueCities || 0) + 
+                          (locationHistoryStats[0]?.uniqueCities || 0);
+      const totalCountries = (cityGroupStats[0]?.countries || 0) + 
+                             (userCitiesStats[0]?.uniqueCountries || 0) + 
+                             (locationHistoryStats[0]?.uniqueCountries || 0);
+      const totalMembers = (cityGroupStats[0]?.totalMembers || 0) + (userCitiesStats[0]?.totalUsers || 0);
+
       res.json({
-        totalCities: cityGroupStats[0]?.totalCities || 0,
-        countries: cityGroupStats[0]?.countries || 0,
-        totalMembers: cityGroupStats[0]?.totalMembers || 0,
+        totalCities,
+        countries: totalCountries,
+        totalMembers,
         activeEvents: cityGroupStats[0]?.totalEvents || 0,
         totalVenues: venueStats[0]?.totalVenues || 0,
         totalRecommendations: venueStats[0]?.totalVenues || 0,
