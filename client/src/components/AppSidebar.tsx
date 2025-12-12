@@ -255,6 +255,16 @@ function AppSidebarComponent() {
   const userTangoRoles = (user as any)?.tangoRoles || (profile as any)?.tangoRoles || [];
 
   const myStuffItems = useMemo(() => {
+    // Debug logging to track data flow
+    console.log('[AppSidebar] Building myStuffItems:', { 
+      userCity, 
+      userTangoRoles,
+      hasUser: !!user,
+      hasProfile: !!profile,
+      userCityFromUser: (user as any)?.city,
+      userCityFromProfile: profile?.city
+    });
+    
     const items: Array<{
       title: string;
       url: string;
