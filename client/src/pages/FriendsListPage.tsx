@@ -46,6 +46,8 @@ export default function FriendsListPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [showRequestDialog, setShowRequestDialog] = useState(false);
   const [selectedUser, setSelectedUser] = useState<Friend | null>(null);
+  const [selectedReviewRequest, setSelectedReviewRequest] = useState<FriendRequest | null>(null);
+  const [showReviewDialog, setShowReviewDialog] = useState(false);
   const [requestData, setRequestData] = useState({
     message: "",
     didWeDance: false,
@@ -123,6 +125,11 @@ export default function FriendsListPage() {
   const handleSendRequest = (friend: Friend) => {
     setSelectedUser(friend);
     setShowRequestDialog(true);
+  };
+
+  const handleReviewRequest = (request: FriendRequest) => {
+    setSelectedReviewRequest(request);
+    setShowReviewDialog(true);
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -357,25 +364,113 @@ export default function FriendsListPage() {
         <div className="flex gap-2 ml-4">
           <Button
             size="sm"
-            onClick={() => acceptRequestMutation.mutate(request.id)}
-            disabled={acceptRequestMutation.isPending}
-            data-testid={`button-accept-${request.id}`}
-            className="bg-gradient-to-r from-green-500 to-emerald-600"
+            onClick={() => handleReviewRequest(request)}
+            disabled={false}
+            data-testid={`button-review-request-${request.id}`}
+            className="bg-gradient-to-r from-purple-500 to-pink-600"
           >
-            Accept
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => rejectRequestMutation.mutate(request.id)}
-            disabled={rejectRequestMutation.isPending}
-            data-testid={`button-reject-${request.id}`}
-          >
-            Decline
+            Review Request
           </Button>
         </div>
       </div>
     </Card>
+  );
+
+  const RequestReviewDialog = ({ request, open, onOpenChange }: { request: FriendRequest | null; open: boolean; onOpenChange: (open: boolean) => void }) => (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="backdrop-blur-xl bg-white/90 dark:bg-slate-900/90 max-w-lg">
+        <DialogHeader>
+          <DialogTitle className="text-xl bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+            Friend Request from {request?.sender?.name}
+          </DialogTitle>
+        </DialogHeader>
+        
+        {request && (
+          <div className="space-y-4">
+            {/* Sender Info */}
+            <div className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-800 rounded-lg">
+              <Avatar className="h-12 w-12">
+                <AvatarImage src={request.sender?.profileImage} />
+                <AvatarFallback className="bg-gradient-to-br from-purple-400 to-pink-500 text-white">
+                  {request.sender?.name.charAt(0)}
+                </AvatarFallback>
+              </Avatar>
+              <div>
+                <p className="font-semibold">{request.sender?.name}</p>
+                <p className="text-sm text-muted-foreground">@{request.sender?.username}</p>
+              </div>
+            </div>
+
+            {/* Personal Message */}
+            {request.senderMessage && (
+              <div>
+                <p className="text-sm font-medium text-muted-foreground mb-2">Message</p>
+                <p className="text-sm p-3 bg-slate-100 dark:bg-slate-800 rounded-md">
+                  "{request.senderMessage}"
+                </p>
+              </div>
+            )}
+
+            {/* Dance Story Section */}
+            {request.didWeDance && (
+              <div className="space-y-2 p-4 bg-gradient-to-br from-cyan-50 to-blue-50 dark:from-cyan-950/20 dark:to-blue-950/20 rounded-lg border border-cyan-200 dark:border-cyan-800">
+                <div className="flex items-center gap-2 text-sm font-medium text-cyan-700 dark:text-cyan-300 mb-2">
+                  <Heart className="h-4 w-4 fill-current" />
+                  We danced together!
+                </div>
+                
+                {request.danceLocation && (
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground mb-1">Location</p>
+                    <p className="text-sm">{request.danceLocation}</p>
+                  </div>
+                )}
+                
+                {request.danceStory && (
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground mb-1">Memory</p>
+                    <p className="text-sm italic">"{request.danceStory}"</p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Request Date */}
+            <div>
+              <p className="text-xs text-muted-foreground">
+                Sent {new Date(request.createdAt).toLocaleDateString()}
+              </p>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex justify-end gap-2 pt-2">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  rejectRequestMutation.mutate(request.id);
+                  onOpenChange(false);
+                }}
+                disabled={rejectRequestMutation.isPending}
+                data-testid={`button-decline-review-${request.id}`}
+              >
+                Decline
+              </Button>
+              <Button
+                onClick={() => {
+                  acceptRequestMutation.mutate(request.id);
+                  onOpenChange(false);
+                }}
+                disabled={acceptRequestMutation.isPending}
+                className="bg-gradient-to-r from-green-500 to-emerald-600"
+                data-testid={`button-accept-review-${request.id}`}
+              >
+                Accept
+              </Button>
+            </div>
+          </div>
+        )}
+      </DialogContent>
+    </Dialog>
   );
 
   return (
@@ -503,6 +598,13 @@ export default function FriendsListPage() {
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* Review Request Dialog */}
+      <RequestReviewDialog 
+        request={selectedReviewRequest} 
+        open={showReviewDialog} 
+        onOpenChange={setShowReviewDialog}
+      />
 
       {/* Send Request Dialog with Dance Story */}
       <Dialog open={showRequestDialog} onOpenChange={setShowRequestDialog}>
