@@ -19,9 +19,9 @@ export default function CityGroupRedirectPage() {
     );
   }
   
-  const group = groups?.[0];
-  if (group) {
-    return <Redirect to={`/groups/${group.id}`} />;
+  const result = groups?.[0];
+  if (result?.group) {
+    return <Redirect to={`/groups/${result.group.id}`} />;
   }
   
   return <Redirect to={`/city-groups?city=${encodeURIComponent(cityName)}`} />;
