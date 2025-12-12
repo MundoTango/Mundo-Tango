@@ -629,8 +629,9 @@ export function UnifiedLocationPicker({
         </label>
       )}
       <div className="relative" ref={inputContainerRef}>
-        <Icon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+        <Icon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground flex-shrink-0" />
         <Input
+          type="text"
           value={searchQuery}
           onChange={(e) => {
             // NUCLEAR LOCK CHECK - block ALL input changes during selection lock
@@ -648,6 +649,9 @@ export function UnifiedLocationPicker({
           onFocus={updateDropdownPosition}
           placeholder={placeholder || defaultPlaceholder}
           className="pl-10 pr-10"
+          maxLength={500}
+          spellCheck="false"
+          autoComplete="off"
           data-testid="input-location-search"
         />
         {isSearching && (
