@@ -269,8 +269,10 @@ function AppSidebarComponent() {
     }
 
     userTangoRoles.forEach((roleValue) => {
-      const role = TANGO_ROLES.find((r) => r.value === roleValue);
-      const proUrl = roleToProDiscoveryMap[roleValue];
+      // Normalize to lowercase for matching
+      const normalizedRole = roleValue.toLowerCase();
+      const role = TANGO_ROLES.find((r) => r.value === normalizedRole || r.value === roleValue);
+      const proUrl = roleToProDiscoveryMap[normalizedRole] || roleToProDiscoveryMap[roleValue];
 
       if (role && proUrl && role.category !== "dance") {
         items.push({
