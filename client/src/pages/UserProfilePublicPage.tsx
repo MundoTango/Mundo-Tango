@@ -59,6 +59,16 @@ interface UserProfile {
   };
 }
 
+const socialPlatforms: { key: keyof SocialLinks; icon: typeof SiInstagram }[] = [
+  { key: 'instagram', icon: SiInstagram },
+  { key: 'facebook', icon: SiFacebook },
+  { key: 'youtube', icon: SiYoutube },
+  { key: 'tiktok', icon: SiTiktok },
+  { key: 'twitter', icon: SiX },
+  { key: 'linkedin', icon: SiLinkedin },
+  { key: 'website', icon: Globe },
+];
+
 export default function UserProfilePublicPage() {
   const { userId } = useParams();
 
@@ -189,41 +199,16 @@ export default function UserProfilePublicPage() {
 
                       {profile.socialLinks && Object.keys(profile.socialLinks).length > 0 && (
                         <div className="flex gap-4 pt-2">
-                          {profile.socialLinks.instagram && (
-                            <a href={profile.socialLinks.instagram} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
-                              <SiInstagram className="h-5 w-5" data-testid="icon-instagram" />
-                            </a>
-                          )}
-                          {profile.socialLinks.facebook && (
-                            <a href={profile.socialLinks.facebook} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
-                              <SiFacebook className="h-5 w-5" data-testid="icon-facebook" />
-                            </a>
-                          )}
-                          {profile.socialLinks.youtube && (
-                            <a href={profile.socialLinks.youtube} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
-                              <SiYoutube className="h-5 w-5" data-testid="icon-youtube" />
-                            </a>
-                          )}
-                          {profile.socialLinks.tiktok && (
-                            <a href={profile.socialLinks.tiktok} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
-                              <SiTiktok className="h-5 w-5" data-testid="icon-tiktok" />
-                            </a>
-                          )}
-                          {profile.socialLinks.twitter && (
-                            <a href={profile.socialLinks.twitter} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
-                              <SiX className="h-5 w-5" data-testid="icon-twitter" />
-                            </a>
-                          )}
-                          {profile.socialLinks.linkedin && (
-                            <a href={profile.socialLinks.linkedin} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
-                              <SiLinkedin className="h-5 w-5" data-testid="icon-linkedin" />
-                            </a>
-                          )}
-                          {profile.socialLinks.website && (
-                            <a href={profile.socialLinks.website} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
-                              <Globe className="h-5 w-5" data-testid="icon-website" />
-                            </a>
-                          )}
+                          {socialPlatforms.map((platform) => {
+                            const url = profile.socialLinks?.[platform.key];
+                            if (!url) return null;
+                            const IconComponent = platform.icon;
+                            return (
+                              <a key={platform.key} href={url} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors" data-testid={`icon-${platform.key}`}>
+                                <IconComponent className="h-5 w-5" />
+                              </a>
+                            );
+                          })}
                         </div>
                       )}
 
@@ -386,41 +371,16 @@ export default function UserProfilePublicPage() {
                     <div>
                       <h4 className="font-semibold text-foreground mb-3">Social Media</h4>
                       <div className="flex gap-4">
-                        {profile.socialLinks.instagram && (
-                          <a href={profile.socialLinks.instagram} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
-                            <SiInstagram className="h-5 w-5" />
-                          </a>
-                        )}
-                        {profile.socialLinks.facebook && (
-                          <a href={profile.socialLinks.facebook} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
-                            <SiFacebook className="h-5 w-5" />
-                          </a>
-                        )}
-                        {profile.socialLinks.youtube && (
-                          <a href={profile.socialLinks.youtube} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
-                            <SiYoutube className="h-5 w-5" />
-                          </a>
-                        )}
-                        {profile.socialLinks.tiktok && (
-                          <a href={profile.socialLinks.tiktok} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
-                            <SiTiktok className="h-5 w-5" />
-                          </a>
-                        )}
-                        {profile.socialLinks.twitter && (
-                          <a href={profile.socialLinks.twitter} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
-                            <SiX className="h-5 w-5" />
-                          </a>
-                        )}
-                        {profile.socialLinks.linkedin && (
-                          <a href={profile.socialLinks.linkedin} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
-                            <SiLinkedin className="h-5 w-5" />
-                          </a>
-                        )}
-                        {profile.socialLinks.website && (
-                          <a href={profile.socialLinks.website} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
-                            <Globe className="h-5 w-5" />
-                          </a>
-                        )}
+                        {socialPlatforms.map((platform) => {
+                          const url = profile.socialLinks?.[platform.key];
+                          if (!url) return null;
+                          const IconComponent = platform.icon;
+                          return (
+                            <a key={platform.key} href={url} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
+                              <IconComponent className="h-5 w-5" />
+                            </a>
+                          );
+                        })}
                       </div>
                     </div>
                   )}
