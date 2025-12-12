@@ -262,6 +262,9 @@ function AppSidebarComponent() {
       tooltip: string;
     }> = [];
 
+    // Track added URLs to prevent duplicates
+    const addedUrls = new Set<string>();
+
     if (userCity) {
       items.push({
         title: userCity,
@@ -277,7 +280,8 @@ function AppSidebarComponent() {
       const normalizedValue = normalizeRole(roleValue);
       const proUrl = roleToProDiscoveryMap[normalizedValue];
 
-      if (role && proUrl && role.category !== "dance") {
+      if (role && proUrl && role.category !== "dance" && !addedUrls.has(proUrl)) {
+        addedUrls.add(proUrl);
         items.push({
           title: role.label,
           url: proUrl,
