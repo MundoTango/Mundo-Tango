@@ -809,20 +809,25 @@ router.post("/sync", authenticateToken, async (req: AuthRequest, res: Response) 
 
 /**
  * GET /api/messages/unread-count
- * Get count of unread messages for the authenticated user
+ * Get count of unread conversations (conversations with unread messages) for the authenticated user
  */
 router.get("/unread-count", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.userId!;
     const userIdStr = String(userId);
     
-    // Count messages where user is NOT in the readBy array
+    // Count distinct conversations (chat rooms) that have unread messages for this user
+    // Only count messages from chat rooms the user is a participant in
     const result = await db.select({
-      count: sql<number>`count(*)::int`
+      count: sql<number>`count(distinct ${chatMessages.chatRoomId})::int`
     })
     .from(chatMessages)
+    .innerJoin(chatRoomUsers, eq(chatMessages.chatRoomId, chatRoomUsers.chatRoomId))
     .where(
-      sql`(${chatMessages.readBy} IS NULL OR NOT (${userIdStr} = ANY(${chatMessages.readBy})))`
+      and(
+        eq(chatRoomUsers.userId, userId),
+        sql`(${chatMessages.readBy} IS NULL OR NOT (${userIdStr} = ANY(${chatMessages.readBy})))`
+      )
     );
     
     res.json({ count: result[0]?.count || 0 });
