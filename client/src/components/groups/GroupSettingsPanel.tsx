@@ -41,7 +41,9 @@ import { Settings, Trash2, Shield } from "lucide-react";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import type { SelectGroup } from "@shared/schema";
+import { closenessVisibilitySchema, type ClosenessVisibility } from "@shared/schema";
 import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/UnifiedLocationPicker";
+import { FriendshipClosenessFilter } from "@/components/filters/FriendshipClosenessFilter";
 
 const settingsFormSchema = z.object({
   name: z.string().min(3, "Name must be at least 3 characters"),
@@ -56,6 +58,7 @@ const settingsFormSchema = z.object({
   city: z.string().optional(),
   region: z.string().optional(),
   country: z.string().optional(),
+  membershipCloseness: closenessVisibilitySchema.default("all"),
 });
 
 type SettingsFormData = z.infer<typeof settingsFormSchema>;
@@ -84,6 +87,7 @@ export function GroupSettingsPanel({ group, canManage = false }: GroupSettingsPa
       city: group.city || "",
       region: group.region || "",
       country: group.country || "",
+      membershipCloseness: (group as any).membershipCloseness || "all",
     },
   });
 
@@ -254,6 +258,23 @@ export function GroupSettingsPanel({ group, canManage = false }: GroupSettingsPa
                             data-testid="switch-settings-join-approval"
                           />
                         </FormControl>
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="membershipCloseness"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FriendshipClosenessFilter
+                          value={field.value}
+                          onChange={field.onChange}
+                          label="Who Can Join"
+                          description="Control who can discover and join this group based on network proximity"
+                          testIdPrefix="group-membership-closeness"
+                        />
+                        <FormMessage />
                       </FormItem>
                     )}
                   />

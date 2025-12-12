@@ -12,6 +12,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { SimpleMentionsInput, type MentionEntity } from "@/components/input/SimpleMentionsInput";
 import { UnifiedLocationPicker } from "@/components/input/UnifiedLocationPicker";
+import { FriendshipClosenessFilter } from "@/components/filters/FriendshipClosenessFilter";
+import type { ClosenessVisibility } from "@shared/schema";
 import { 
   MapPin, Hash, Camera, Sparkles, Globe, Users, Lock, 
   Send, Loader2, X, DollarSign, Star, MapPinned,
@@ -105,6 +107,7 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
   // Feature state
   const [selectedTags, setSelectedTags] = useState<string[]>(existingPost?.tags || []);
   const [visibility, setVisibility] = useState<'public' | 'friends' | 'private'>(existingPost?.visibility || 'public');
+  const [audienceCloseness, setAudienceCloseness] = useState<ClosenessVisibility>(existingPost?.audienceCloseness || 'all');
   const [isRecommendation, setIsRecommendation] = useState(existingPost?.isRecommendation || false);
   const [recommendationType, setRecommendationType] = useState(existingPost?.recommendationType || "");
   const [priceRange, setPriceRange] = useState(existingPost?.priceRange || "");
@@ -478,6 +481,7 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
       const postData: any = {
         content: finalContent,
         visibility,
+        audienceCloseness,
         tags: selectedTags,
         mentions: mentionIds,
       };
@@ -1054,6 +1058,19 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
                 <span className="text-xs">Private</span>
               </Button>
             </div>
+            
+            {/* Friendship Closeness Filter */}
+            {visibility === 'friends' && (
+              <div className="mt-4 pt-4 border-t border-green-500/20">
+                <FriendshipClosenessFilter
+                  value={audienceCloseness}
+                  onChange={setAudienceCloseness}
+                  label="Which friends can see this?"
+                  description="Fine-tune your audience based on friendship closeness"
+                  testIdPrefix="post-audience-closeness"
+                />
+              </div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
