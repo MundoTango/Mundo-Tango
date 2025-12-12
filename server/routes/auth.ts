@@ -13,6 +13,7 @@ import {
   type AuthRequest,
 } from "../middleware/auth";
 import { insertUserSchema } from "@shared/schema";
+import { ensureCityGroupExists } from "../utils/cityGroupAutomation";
 
 const router = Router();
 
@@ -92,6 +93,22 @@ router.post("/register", async (req: Request, res: Response) => {
       isOnboardingComplete: false,
       formStatus: 0,
     });
+
+    // Auto-create city group if user registered with a city
+    if (validatedData.city) {
+      try {
+        const result = await ensureCityGroupExists(
+          validatedData.city,
+          validatedData.country || null,
+          user.id
+        );
+        if (result?.wasCreated) {
+          console.log(`[Auth] Auto-created city group for ${validatedData.city}: ${result.groupName}`);
+        }
+      } catch (cityGroupError) {
+        console.error("[Auth] Failed to create city group during registration:", cityGroupError);
+      }
+    }
 
     const verificationToken = crypto.randomBytes(32).toString("hex");
     const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
