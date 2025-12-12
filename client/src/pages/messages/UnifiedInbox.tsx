@@ -584,7 +584,7 @@ export default function UnifiedInbox() {
 
             {/* Message Input - Messenger style */}
             <div className="border-t bg-card">
-              <div className="p-3 max-w-3xl mx-auto">
+              <div className="p-3 pl-[calc(1rem+16rem)]">
                 {/* Image Gallery Uploader */}
                 {showImageUploader && (
                   <div className="mb-3">
