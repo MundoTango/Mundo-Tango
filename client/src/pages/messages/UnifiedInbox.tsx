@@ -24,6 +24,7 @@ import { cn } from "@/lib/utils";
 import { ReactionSelector } from "@/components/ui/ReactionSelector";
 import { ImageGalleryUploader } from "@/components/feed/ImageGalleryUploader";
 import { apiRequest, queryClient } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 
 const channelIcons = {
   mt: MessageCircle,
@@ -104,6 +105,7 @@ interface ImageItem {
 }
 
 export default function UnifiedInbox() {
+  const { toast } = useToast();
   const [selectedChannel, setSelectedChannel] = useState<Channel>("all");
   const [selectedConversation, setSelectedConversation] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -202,8 +204,18 @@ export default function UnifiedInbox() {
       setShowImageUploader(false);
       
       queryClient.invalidateQueries({ queryKey: ['/api/messages/unified'] });
+      
+      toast({
+        title: "Message sent",
+        description: `Your message to ${selectedConversation.from} was sent successfully.`,
+      });
     } catch (error) {
       console.error('Failed to send message:', error);
+      toast({
+        title: "Failed to send",
+        description: "There was a problem sending your message. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -584,7 +596,7 @@ export default function UnifiedInbox() {
 
             {/* Message Input - Messenger style */}
             <div className="border-t bg-card">
-              <div className="p-3 pl-[calc(1rem+16rem)]">
+              <div className="p-3">
                 {/* Image Gallery Uploader */}
                 {showImageUploader && (
                   <div className="mb-3">
