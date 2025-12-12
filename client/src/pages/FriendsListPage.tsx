@@ -41,6 +41,7 @@ interface FriendRequest {
   danceLocation?: string;
   didWeDance?: boolean;
   mediaUrls?: string[];
+  meetingDate?: string;
 }
 
 export default function FriendsListPage() {
@@ -54,6 +55,7 @@ export default function FriendsListPage() {
     didWeDance: false,
     danceLocation: "",
     danceStory: "",
+    meetingDate: "",
   });
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [filePreviews, setFilePreviews] = useState<string[]>([]);
@@ -79,7 +81,7 @@ export default function FriendsListPage() {
     onSuccess: () => {
       toast({ title: "✨ Friend request sent!" });
       setShowRequestDialog(false);
-      setRequestData({ message: "", didWeDance: false, danceLocation: "", danceStory: "" });
+      setRequestData({ message: "", didWeDance: false, danceLocation: "", danceStory: "", meetingDate: "" });
       setUploadedFiles([]);
       setFilePreviews([]);
       queryClient.invalidateQueries({ queryKey: ["/api/friends/suggestions"] });
@@ -211,6 +213,7 @@ export default function FriendsListPage() {
         didWeDance: requestData.didWeDance,
         danceLocation: requestData.didWeDance ? requestData.danceLocation : null,
         danceStory: requestData.didWeDance ? requestData.danceStory : null,
+        meetingDate: requestData.didWeDance ? requestData.meetingDate : null,
         mediaUrls: mediaUrls,
       });
     } catch (error) {
@@ -352,6 +355,11 @@ export default function FriendsListPage() {
                     📍 {request.danceLocation}
                   </p>
                 )}
+                {request.meetingDate && (
+                  <p className="text-xs text-muted-foreground mb-1">
+                    📅 {new Date(request.meetingDate).toLocaleDateString()}
+                  </p>
+                )}
                 {request.danceStory && (
                   <p className="text-sm mt-2 italic">
                     "{request.danceStory}"
@@ -424,6 +432,13 @@ export default function FriendsListPage() {
                   <div>
                     <p className="text-xs font-medium text-muted-foreground mb-1">Location</p>
                     <p className="text-sm">{request.danceLocation}</p>
+                  </div>
+                )}
+                
+                {request.meetingDate && (
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground mb-1">When we met</p>
+                    <p className="text-sm">{new Date(request.meetingDate).toLocaleDateString()}</p>
                   </div>
                 )}
                 
@@ -683,6 +698,19 @@ export default function FriendsListPage() {
                     }
                     className="mt-1"
                     data-testid="input-dance-location"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="meetingDate">When did we meet?</Label>
+                  <Input
+                    id="meetingDate"
+                    type="date"
+                    value={requestData.meetingDate}
+                    onChange={(e) =>
+                      setRequestData({ ...requestData, meetingDate: e.target.value })
+                    }
+                    className="mt-1"
+                    data-testid="input-meeting-date"
                   />
                 </div>
                 <div>

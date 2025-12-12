@@ -2656,6 +2656,7 @@ export const friendRequests = pgTable(
     danceLocation: text("dance_location"),
     danceEventId: integer("dance_event_id").references(() => events.id),
     danceStory: text("dance_story"),
+    meetingDate: timestamp("meeting_date"),
 
     // Messages
     senderMessage: text("sender_message"),
