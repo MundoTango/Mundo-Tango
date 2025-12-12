@@ -329,62 +329,62 @@ export default function UserProfilePublicPage() {
             <TabsContent value="about">
               <Card>
                 <CardHeader>
-                  <CardTitle>About {profile.name}</CardTitle>
+                  <CardTitle>About {normalizedProfile.name}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  {profile.bio && (
+                  {normalizedProfile.bio && (
                     <div>
                       <h4 className="font-semibold text-foreground mb-2">Bio</h4>
-                      <p className="text-muted-foreground">{profile.bio}</p>
+                      <p className="text-muted-foreground">{normalizedProfile.bio}</p>
                     </div>
                   )}
-                  {profile.yearsOfDancing && (
+                  {normalizedProfile.yearsOfDancing && (
                     <div>
                       <h4 className="font-semibold text-foreground mb-2">Experience</h4>
-                      <p className="text-muted-foreground">{profile.yearsOfDancing} years of tango</p>
+                      <p className="text-muted-foreground">{normalizedProfile.yearsOfDancing} years of tango</p>
                     </div>
                   )}
-                  {(profile.leaderLevel || profile.followerLevel) && (
+                  {(normalizedProfile.leaderLevel || normalizedProfile.followerLevel) && (
                     <div>
                       <h4 className="font-semibold text-foreground mb-3">Dance Levels</h4>
                       <div className="grid grid-cols-2 gap-3">
-                        {profile.leaderLevel && (
+                        {normalizedProfile.leaderLevel && (
                           <div className="p-3 rounded-lg bg-muted">
                             <div className="text-sm font-semibold text-foreground">Leader</div>
-                            <div className="text-sm text-muted-foreground">Level {profile.leaderLevel}</div>
+                            <div className="text-sm text-muted-foreground">Level {normalizedProfile.leaderLevel}</div>
                           </div>
                         )}
-                        {profile.followerLevel && (
+                        {normalizedProfile.followerLevel && (
                           <div className="p-3 rounded-lg bg-muted">
                             <div className="text-sm font-semibold text-foreground">Follower</div>
-                            <div className="text-sm text-muted-foreground">Level {profile.followerLevel}</div>
+                            <div className="text-sm text-muted-foreground">Level {normalizedProfile.followerLevel}</div>
                           </div>
                         )}
                       </div>
                     </div>
                   )}
-                  {profile.danceLevel && (
+                  {normalizedProfile.danceLevel && (
                     <div>
                       <h4 className="font-semibold text-foreground mb-2">Dance Level</h4>
-                      <Badge>{profile.danceLevel}</Badge>
+                      <Badge>{normalizedProfile.danceLevel}</Badge>
                     </div>
                   )}
-                  {profile.city && profile.country && (
+                  {normalizedProfile.city && normalizedProfile.country && (
                     <div>
                       <h4 className="font-semibold text-foreground mb-2">Location</h4>
-                      <p className="text-muted-foreground">{profile.city}, {profile.country}</p>
+                      <p className="text-muted-foreground">{normalizedProfile.city}, {normalizedProfile.country}</p>
                     </div>
                   )}
-                  {profile.socialLinks && Object.keys(profile.socialLinks).length > 0 && (
+                  {normalizedProfile.socialLinks && Object.keys(normalizedProfile.socialLinks).length > 0 && (
                     <div>
                       <h4 className="font-semibold text-foreground mb-3">Social Media</h4>
                       <div className="flex gap-4">
                         {socialPlatforms.map((platform) => {
-                          const url = profile.socialLinks?.[platform.key];
+                          const url = normalizedProfile.socialLinks?.[platform.key];
                           if (!url) return null;
                           const IconComponent = platform.icon;
                           return (
-                            <a key={platform.key} href={url} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
+                            <a key={platform.key} href={url} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors" data-testid={`icon-${platform.key}-about`}>
                               <IconComponent className="h-5 w-5" />
                             </a>
                           );
@@ -394,7 +394,7 @@ export default function UserProfilePublicPage() {
                   )}
                   <div>
                     <h4 className="font-semibold text-foreground mb-2">Member Since</h4>
-                    <p className="text-muted-foreground">{safeDateFormat(profile.joinedAt, 'MMMM d, yyyy', 'recently')}</p>
+                    <p className="text-muted-foreground">{safeDateFormat(normalizedProfile.joinedAt, 'MMMM d, yyyy', 'recently')}</p>
                   </div>
                 </CardContent>
               </Card>
