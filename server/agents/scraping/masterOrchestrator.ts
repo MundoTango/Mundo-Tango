@@ -229,6 +229,7 @@ export class ScrapingOrchestrator {
     return cityCodeMap[cityName] || null;
   }
 
+  /**
    * These are high-value sources that run every orchestration cycle
    */
   private async invokePriorityScrapers(): Promise<number> {
