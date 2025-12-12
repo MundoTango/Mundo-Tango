@@ -348,16 +348,17 @@ export default function UnifiedInbox() {
                   <TooltipContent>New message</TooltipContent>
                 </Tooltip>
               </DialogTrigger>
-              <DialogContent className="max-w-2xl">
+              <DialogContent className="max-w-md p-0">
                 <ComposeMessage 
                   onClose={() => setShowCompose(false)} 
                   onSendSuccess={(data) => {
-                    // Create optimistic conversation and select it
+                    // Create optimistic conversation with real user data
                     const newConversation = {
-                      id: `new-${Date.now()}`,
-                      from: data.to,
+                      id: `conv-${data.recipientId}`,
+                      recipientId: data.recipientId,
+                      from: data.recipientName,
                       channel: data.channel,
-                      avatar: null,
+                      avatar: data.recipientAvatar,
                       isOnline: false,
                       isPinned: false,
                       lastMessage: data.body,
@@ -373,7 +374,7 @@ export default function UnifiedInbox() {
                       id: `local-${Date.now()}`,
                       body: data.body,
                       from: 'me',
-                      to: data.to,
+                      to: data.recipientName,
                       channel: data.channel,
                       receivedAt: new Date().toISOString(),
                       isOwn: true,

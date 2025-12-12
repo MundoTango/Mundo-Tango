@@ -1,110 +1,105 @@
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Card } from "@/components/ui/card";
-import { MessageCircle, Mail, Send, Clock, X } from "lucide-react";
-import { SiFacebook, SiInstagram, SiWhatsapp } from "react-icons/si";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Send, X, Search, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 
-const composeSchema = z.object({
-  channel: z.enum(["mt", "gmail", "facebook", "instagram", "whatsapp"]),
-  to: z.string().min(1, "Recipient is required"),
-  subject: z.string().optional(),
-  body: z.string().min(1, "Message body is required"),
-  templateId: z.number().optional(),
-  scheduledFor: z.date().optional(),
-});
+interface UserResult {
+  id: string;
+  type: string;
+  display: string;
+  name: string;
+  username: string;
+  avatar: string | null;
+  subtitle: string;
+}
 
-type ComposeFormData = z.infer<typeof composeSchema>;
-
-const channelIcons = {
-  mt: MessageCircle,
-  gmail: Mail,
-  facebook: SiFacebook,
-  instagram: SiInstagram,
-  whatsapp: SiWhatsapp,
-};
-
-const channelLabels = {
-  mt: "MT Messages",
-  gmail: "Gmail",
-  facebook: "Facebook",
-  instagram: "Instagram",
-  whatsapp: "WhatsApp",
-};
+interface SelectedUser {
+  id: number;
+  name: string;
+  username: string;
+  avatar: string | null;
+}
 
 interface ComposeMessageProps {
   onClose?: () => void;
-  onSendSuccess?: (data: { to: string; channel: string; body: string }) => void;
-  defaultChannel?: "mt" | "gmail" | "facebook" | "instagram" | "whatsapp";
+  onSendSuccess?: (data: { 
+    to: string; 
+    recipientId: number;
+    recipientName: string;
+    recipientAvatar: string | null;
+    channel: string; 
+    body: string 
+  }) => void;
 }
 
-export function ComposeMessage({ onClose, onSendSuccess, defaultChannel = "mt" }: ComposeMessageProps) {
+export function ComposeMessage({ onClose, onSendSuccess }: ComposeMessageProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [scheduleDate, setScheduleDate] = useState<Date>();
-  const [showScheduler, setShowScheduler] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
+  const [selectedUser, setSelectedUser] = useState<SelectedUser | null>(null);
+  const [messageBody, setMessageBody] = useState("");
+  const [showResults, setShowResults] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const resultsRef = useRef<HTMLDivElement>(null);
 
-  const form = useForm<ComposeFormData>({
-    resolver: zodResolver(composeSchema),
-    defaultValues: {
-      channel: defaultChannel,
-      to: "",
-      subject: "",
-      body: "",
-    },
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedQuery(searchQuery);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  const { data: searchResults, isLoading: isSearching } = useQuery({
+    queryKey: ["/api/mentions/users/search", { q: debouncedQuery }],
+    enabled: debouncedQuery.length >= 2 && !selectedUser,
+    select: (data: any) => data?.data || [],
   });
 
-  const { data: templates } = useQuery({
-    queryKey: ["/api/messages/templates"],
-  });
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (resultsRef.current && !resultsRef.current.contains(e.target as Node) &&
+          inputRef.current && !inputRef.current.contains(e.target as Node)) {
+        setShowResults(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const sendMutation = useMutation({
-    mutationFn: async (data: ComposeFormData) => {
-      if (data.scheduledFor) {
-        return apiRequest("POST", "/api/messages/schedule", data);
-      }
+    mutationFn: async (data: { recipientId: number; content: string }) => {
       return apiRequest("POST", "/api/messages/send", data);
     },
-    onSuccess: (_, variables) => {
+    onSuccess: (response) => {
       toast({
-        title: scheduleDate ? "Message scheduled" : "Message sent",
-        description: scheduleDate 
-          ? `Your message will be sent on ${format(scheduleDate, "PPP 'at' p")}`
-          : "Your message has been sent successfully.",
+        title: "Message sent",
+        description: `Your message to ${selectedUser?.name} was sent successfully.`,
       });
       queryClient.invalidateQueries({ queryKey: ["/api/messages/unified"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/messages/conversations"] });
       
-      // Call the success callback with message data
-      if (!scheduleDate) {
-        onSendSuccess?.({ to: variables.to, channel: variables.channel, body: variables.body });
+      if (selectedUser) {
+        onSendSuccess?.({ 
+          to: selectedUser.username, 
+          recipientId: selectedUser.id,
+          recipientName: selectedUser.name,
+          recipientAvatar: selectedUser.avatar,
+          channel: "mt", 
+          body: messageBody 
+        });
       }
       
-      form.reset();
+      setSelectedUser(null);
+      setMessageBody("");
+      setSearchQuery("");
       onClose?.();
     },
     onError: (error: Error) => {
@@ -116,31 +111,45 @@ export function ComposeMessage({ onClose, onSendSuccess, defaultChannel = "mt" }
     },
   });
 
-  const onSubmit = (data: ComposeFormData) => {
-    if (scheduleDate) {
-      data.scheduledFor = scheduleDate;
-    }
-    sendMutation.mutate(data);
+  const handleSelectUser = (user: UserResult) => {
+    const userId = parseInt(user.id.replace("user_", ""));
+    setSelectedUser({
+      id: userId,
+      name: user.name,
+      username: user.username,
+      avatar: user.avatar,
+    });
+    setSearchQuery("");
+    setShowResults(false);
   };
 
-  const insertTemplate = (templateId: number) => {
-    const template = templates?.find((t: any) => t.id === templateId);
-    if (template) {
-      form.setValue("subject", template.subject || "");
-      form.setValue("body", template.body);
-      toast({
-        title: "Template inserted",
-        description: `Template "${template.name}" has been inserted.`,
-      });
-    }
+  const handleClearUser = () => {
+    setSelectedUser(null);
+    setSearchQuery("");
+    inputRef.current?.focus();
   };
 
-  const ChannelIcon = channelIcons[form.watch("channel")];
+  const handleSend = () => {
+    if (!selectedUser || !messageBody.trim()) return;
+    sendMutation.mutate({
+      recipientId: selectedUser.id,
+      content: messageBody.trim(),
+    });
+  };
+
+  const getInitials = (name: string) => {
+    if (!name) return "?";
+    const parts = name.trim().split(/\s+/);
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    }
+    return name.slice(0, 2).toUpperCase();
+  };
 
   return (
-    <Card className="p-6" data-testid="compose-message-card">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-semibold">Compose Message</h2>
+    <div className="p-4 space-y-4" data-testid="compose-message-card">
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-semibold">New Message</h2>
         {onClose && (
           <Button
             variant="ghost"
@@ -153,177 +162,132 @@ export function ComposeMessage({ onClose, onSendSuccess, defaultChannel = "mt" }
         )}
       </div>
 
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <FormField
-            control={form.control}
-            name="channel"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Channel</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  data-testid="select-channel"
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <label className="text-sm font-medium">To:</label>
+          {selectedUser ? (
+            <div className="flex items-center gap-2 p-2 bg-muted rounded-lg">
+              <Avatar className="h-8 w-8">
+                <AvatarImage src={selectedUser.avatar || undefined} />
+                <AvatarFallback className="bg-primary text-primary-foreground text-xs">
+                  {getInitials(selectedUser.name)}
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex-1 min-w-0">
+                <p className="font-medium text-sm truncate">{selectedUser.name}</p>
+                <p className="text-xs text-muted-foreground truncate">@{selectedUser.username}</p>
+              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-6 w-6 flex-shrink-0"
+                onClick={handleClearUser}
+                data-testid="button-clear-recipient"
+              >
+                <X className="h-3 w-3" />
+              </Button>
+            </div>
+          ) : (
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                ref={inputRef}
+                placeholder="Search for a user..."
+                className="pl-9"
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setShowResults(true);
+                }}
+                onFocus={() => setShowResults(true)}
+                data-testid="input-recipient-search"
+              />
+              
+              {showResults && debouncedQuery.length >= 2 && (
+                <div 
+                  ref={resultsRef}
+                  className="absolute top-full left-0 right-0 z-50 mt-1 bg-popover border rounded-lg shadow-lg overflow-hidden"
                 >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select channel" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {Object.entries(channelLabels).map(([value, label]) => {
-                      const Icon = channelIcons[value as keyof typeof channelIcons];
-                      return (
-                        <SelectItem key={value} value={value} data-testid={`option-channel-${value}`}>
-                          <div className="flex items-center gap-2">
-                            <Icon className="h-4 w-4" />
-                            <span>{label}</span>
+                  {isSearching ? (
+                    <div className="p-4 flex items-center justify-center gap-2 text-muted-foreground">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <span className="text-sm">Searching...</span>
+                    </div>
+                  ) : searchResults && searchResults.length > 0 ? (
+                    <ScrollArea className="max-h-64">
+                      {searchResults.map((user: UserResult) => (
+                        <div
+                          key={user.id}
+                          className="flex items-center gap-3 p-3 cursor-pointer hover-elevate"
+                          onClick={() => handleSelectUser(user)}
+                          data-testid={`user-result-${user.id}`}
+                        >
+                          <Avatar className="h-10 w-10">
+                            <AvatarImage src={user.avatar || undefined} />
+                            <AvatarFallback className="bg-primary/10 text-primary text-sm">
+                              {getInitials(user.name)}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium text-sm truncate">{user.name}</p>
+                            <p className="text-xs text-muted-foreground truncate">@{user.username}</p>
                           </div>
-                        </SelectItem>
-                      );
-                    })}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {templates && templates.length > 0 && (
-            <div>
-              <FormLabel>Insert Template</FormLabel>
-              <Select onValueChange={(value) => insertTemplate(Number(value))} data-testid="select-template">
-                <SelectTrigger>
-                  <SelectValue placeholder="Choose a template (optional)" />
-                </SelectTrigger>
-                <SelectContent>
-                  {templates.map((template: any) => (
-                    <SelectItem key={template.id} value={String(template.id)} data-testid={`option-template-${template.id}`}>
-                      {template.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                        </div>
+                      ))}
+                    </ScrollArea>
+                  ) : (
+                    <div className="p-4 text-center text-sm text-muted-foreground">
+                      No users found
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           )}
+        </div>
 
-          <FormField
-            control={form.control}
-            name="to"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>To</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Recipient email or username"
-                    {...field}
-                    data-testid="input-to"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Message:</label>
+          <Textarea
+            placeholder="Write your message..."
+            className="min-h-[120px] resize-none"
+            value={messageBody}
+            onChange={(e) => setMessageBody(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && e.metaKey) {
+                handleSend();
+              }
+            }}
+            data-testid="textarea-message"
           />
+          <p className="text-xs text-muted-foreground">Press Cmd+Enter to send</p>
+        </div>
 
-          {["gmail", "mt"].includes(form.watch("channel")) && (
-            <FormField
-              control={form.control}
-              name="subject"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Subject</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Message subject"
-                      {...field}
-                      data-testid="input-subject"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+        <div className="flex justify-end gap-2">
+          {onClose && (
+            <Button variant="outline" onClick={onClose} data-testid="button-cancel">
+              Cancel
+            </Button>
           )}
-
-          <FormField
-            control={form.control}
-            name="body"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Message</FormLabel>
-                <FormControl>
-                  <Textarea
-                    placeholder="Write your message..."
-                    className="min-h-[200px]"
-                    {...field}
-                    data-testid="textarea-body"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
+          <Button
+            onClick={handleSend}
+            disabled={!selectedUser || !messageBody.trim() || sendMutation.isPending}
+            data-testid="button-send"
+          >
+            {sendMutation.isPending ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Sending...
+              </>
+            ) : (
+              <>
+                <Send className="mr-2 h-4 w-4" />
+                Send Message
+              </>
             )}
-          />
-
-          <div className="flex gap-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setShowScheduler(!showScheduler)}
-              data-testid="button-schedule"
-            >
-              <Clock className="mr-2 h-4 w-4" />
-              {scheduleDate ? format(scheduleDate, "PPP") : "Schedule for later"}
-            </Button>
-
-            {showScheduler && (
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="outline" data-testid="button-open-calendar">
-                    Select date & time
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
-                  <Calendar
-                    mode="single"
-                    selected={scheduleDate}
-                    onSelect={setScheduleDate}
-                    initialFocus
-                    data-testid="calendar-schedule"
-                  />
-                </PopoverContent>
-              </Popover>
-            )}
-          </div>
-
-          <div className="flex gap-4 justify-end">
-            {onClose && (
-              <Button
-                type="button"
-                variant="outline"
-                onClick={onClose}
-                data-testid="button-cancel"
-              >
-                Cancel
-              </Button>
-            )}
-            <Button
-              type="submit"
-              disabled={sendMutation.isPending}
-              data-testid="button-send"
-            >
-              {sendMutation.isPending ? (
-                "Sending..."
-              ) : (
-                <>
-                  <Send className="mr-2 h-4 w-4" />
-                  {scheduleDate ? "Schedule" : "Send"}
-                </>
-              )}
-            </Button>
-          </div>
-        </form>
-      </Form>
-    </Card>
+          </Button>
+        </div>
+      </div>
+    </div>
   );
 }
