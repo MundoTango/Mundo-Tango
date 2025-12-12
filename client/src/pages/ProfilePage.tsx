@@ -27,7 +27,7 @@ import DashboardCustomerToggle from "@/components/profile/DashboardCustomerToggl
 import { PhotoUploadDialog } from "@/components/PhotoUploadDialog";
 import { FriendshipQuestionnaire } from "@/components/friendship/FriendshipQuestionnaire";
 import { FriendRequestReviewModal } from "@/components/friendship/FriendRequestReviewModal";
-import { normalizeRole, getRoleByValue, getRoleLabel, getRoleIcon } from "@/lib/tangoRoles";
+import { normalizeRole, getRoleByValue, getRoleLabel, getRoleIcon, getRoleColor } from "@/lib/tangoRoles";
 
 interface User {
   id: number;
@@ -588,12 +588,17 @@ export default function ProfilePage() {
                       .map((role) => {
                       const Icon = getRoleIcon(role);
                       const label = getRoleLabel(role);
+                      const color = getRoleColor(role);
                       
                       return (
                         <Tooltip key={role}>
                           <TooltipTrigger asChild>
-                            <div className="p-1 rounded-lg bg-muted border border-border cursor-help hover-elevate" data-testid={`icon-role-${role}`}>
-                              <Icon className="w-3 h-3" />
+                            <div 
+                              className="p-1 rounded-lg border cursor-help hover-elevate" 
+                              style={{ backgroundColor: `${color}15`, borderColor: `${color}40` }}
+                              data-testid={`icon-role-${role}`}
+                            >
+                              <Icon className="w-3 h-3" style={{ color }} />
                             </div>
                           </TooltipTrigger>
                           <TooltipContent>{label}</TooltipContent>
