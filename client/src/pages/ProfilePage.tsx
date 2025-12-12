@@ -27,6 +27,7 @@ import DashboardCustomerToggle from "@/components/profile/DashboardCustomerToggl
 import { PhotoUploadDialog } from "@/components/PhotoUploadDialog";
 import { FriendshipQuestionnaire } from "@/components/friendship/FriendshipQuestionnaire";
 import { FriendRequestReviewModal } from "@/components/friendship/FriendRequestReviewModal";
+import { normalizeRole, getRoleByValue, getRoleLabel, getRoleIcon } from "@/lib/tangoRoles";
 
 interface User {
   id: number;
@@ -581,37 +582,21 @@ export default function ProfilePage() {
               {user.tangoRoles && user.tangoRoles.length > 0 && (
                 <div className="flex flex-wrap gap-1">
                   <TooltipProvider>
-                    {user.tangoRoles.map((role, index) => {
-                      const roleIconMap: Record<string, any> = {
-                        'teacher': { icon: BookOpen, label: 'Teacher' },
-                        'dancer': { icon: Users, label: 'Dancer' },
-                        'dj': { icon: Music, label: 'DJ' },
-                        'photographer': { icon: Camera, label: 'Photographer' },
-                        'organizer': { icon: Home, label: 'Organizer' },
-                        'performer': { icon: Mic2, label: 'Performer' },
-                        'vendor': { icon: Briefcase, label: 'Vendor' },
-                        'musician': { icon: Music, label: 'Musician' },
-                        'choreographer': { icon: Heart, label: 'Choreographer' },
-                        'school': { icon: BookOpen, label: 'School' },
-                        'hotel': { icon: Home, label: 'Hotel' },
-                        'wellness': { icon: Heart, label: 'Wellness' },
-                        'tour_operator': { icon: Plane, label: 'Tour Operator' },
-                        'guide': { icon: MapPin, label: 'Guide' },
-                        'content_creator': { icon: Camera, label: 'Content Creator' },
-                      };
-                      
-                      const roleKey = role.toLowerCase();
-                      const roleInfo = roleIconMap[roleKey];
-                      const Icon = roleInfo?.icon || Briefcase;
+                    {user.tangoRoles
+                      .map((role) => normalizeRole(role))
+                      .filter((role, idx, arr) => arr.indexOf(role) === idx)
+                      .map((role) => {
+                      const Icon = getRoleIcon(role);
+                      const label = getRoleLabel(role);
                       
                       return (
-                        <Tooltip key={index}>
+                        <Tooltip key={role}>
                           <TooltipTrigger asChild>
                             <div className="p-1 rounded-lg bg-muted border border-border cursor-help hover-elevate" data-testid={`icon-role-${role}`}>
                               <Icon className="w-3 h-3" />
                             </div>
                           </TooltipTrigger>
-                          <TooltipContent>{roleInfo?.label || role.replace(/_/g, ' ')}</TooltipContent>
+                          <TooltipContent>{label}</TooltipContent>
                         </Tooltip>
                       );
                     })}
