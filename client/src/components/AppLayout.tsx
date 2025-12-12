@@ -31,7 +31,7 @@ function AppLayoutContent({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      <main className="flex-1 overflow-y-auto">
+      <main className="flex-1 overflow-y-auto pt-2">
         {children}
       </main>
       
