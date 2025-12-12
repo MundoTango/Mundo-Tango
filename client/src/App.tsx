@@ -715,6 +715,16 @@ const PROTaxiDancersPage = lazy(() =>
     default: m.TaxiDancersPage,
   })),
 );
+const PRODancersPage = lazy(() =>
+  import("@/pages/pro/PROGroupPublicPage").then((m) => ({
+    default: m.DancersPage,
+  })),
+);
+const PROResearchersPage = lazy(() =>
+  import("@/pages/pro/PROGroupPublicPage").then((m) => ({
+    default: m.ResearchersPage,
+  })),
+);
 
 function Router() {
   return (
@@ -1605,6 +1615,26 @@ function Router() {
           <AppLayout>
             <Suspense fallback={<LoadingFallback />}>
               <PROTaxiDancersPage />
+            </Suspense>
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/pro/dancers">
+        <ProtectedRoute>
+          <AppLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <PRODancersPage />
+            </Suspense>
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/pro/researchers">
+        <ProtectedRoute>
+          <AppLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <PROResearchersPage />
             </Suspense>
           </AppLayout>
         </ProtectedRoute>
