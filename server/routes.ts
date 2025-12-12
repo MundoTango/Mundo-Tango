@@ -4255,6 +4255,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         country: user.country,
         role: user.role,
         danceLevel: user.yearsOfDancing,
+        yearsOfDancing: user.yearsOfDancing,
+        leaderLevel: user.leaderLevel,
+        followerLevel: user.followerLevel,
+        socialLinks: user.socialLinks,
+        tangoRoles: user.tangoRoles,
         joinedAt: user.createdAt,
         stats: {
           posts: postsCount,
