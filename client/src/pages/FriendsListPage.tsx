@@ -40,6 +40,7 @@ interface FriendRequest {
   danceStory?: string;
   danceLocation?: string;
   didWeDance?: boolean;
+  mediaUrls?: string[];
 }
 
 export default function FriendsListPage() {
@@ -432,6 +433,36 @@ export default function FriendsListPage() {
                     <p className="text-sm italic">"{request.danceStory}"</p>
                   </div>
                 )}
+              </div>
+            )}
+
+            {/* Media Section */}
+            {request.mediaUrls && request.mediaUrls.length > 0 && (
+              <div>
+                <p className="text-sm font-medium text-muted-foreground mb-2">Attached Photos & Videos</p>
+                <div className="grid grid-cols-3 gap-2">
+                  {request.mediaUrls.map((url, index) => (
+                    <div
+                      key={index}
+                      className="relative aspect-square rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800"
+                    >
+                      {url.includes('video') || url.match(/\.(mp4|webm|mov)$/i) ? (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <div className="text-center">
+                            <ImageIcon className="h-8 w-8 text-slate-400 mx-auto mb-1" />
+                            <p className="text-xs text-slate-500">Video</p>
+                          </div>
+                        </div>
+                      ) : (
+                        <img
+                          src={url}
+                          alt={`Attached media ${index + 1}`}
+                          className="w-full h-full object-cover"
+                        />
+                      )}
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
 
