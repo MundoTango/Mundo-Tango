@@ -33,6 +33,7 @@ interface Profile {
   bio?: string | null;
   city?: string | null;
   country?: string | null;
+  tangoRoles?: string[];
 }
 
 interface ProfilePreferences {
@@ -166,6 +167,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         bio: userData.bio,
         city: userData.city,
         country: userData.country,
+        tangoRoles: userData.tangoRoles,
       });
 
       // Sync site language with user's primary language preference
