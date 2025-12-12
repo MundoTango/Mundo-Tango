@@ -2780,18 +2780,22 @@ export class DbStorage implements IStorage {
             }
 
             // Get reaction counts
-            const reactionCounts = await db.select({ 
-              reactionType: postLikes.reactionType, 
-              count: sql<number>`count(*)::int` 
-            })
-              .from(postLikes)
-              .where(eq(postLikes.postId, post.id))
-              .groupBy(postLikes.reactionType);
-
             const reactions: Record<string, number> = {};
-            reactionCounts.forEach(r => {
-              if (r.reactionType) reactions[r.reactionType] = r.count;
-            });
+            try {
+              const reactionCounts = await db.select({ 
+                reactionType: postLikes.reactionType, 
+                count: sql<number>`count(*)::int` 
+              })
+                .from(postLikes)
+                .where(eq(postLikes.postId, post.id))
+                .groupBy(postLikes.reactionType);
+
+              reactionCounts.forEach(r => {
+                if (r.reactionType) reactions[r.reactionType] = r.count;
+              });
+            } catch (reactionCountErr) {
+              console.log(`[getFriendshipSharedData] Could not get reaction counts for post ${post.id}`);
+            }
 
             sharedPosts.push({
               id: post.id,
