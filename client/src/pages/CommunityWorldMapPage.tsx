@@ -258,7 +258,7 @@ export default function CommunityWorldMapPage() {
                   <div className="text-2xl font-bold" data-testid="text-total-members">
                     {(stats?.totalMembers || allLocations.reduce((sum, loc) => sum + loc.memberCount, 0)).toLocaleString()}
                   </div>
-                  <p className="text-xs text-muted-foreground">Worldwide dancers</p>
+                  <p className="text-xs text-muted-foreground">Worldwide People</p>
                 </CardContent>
               </Card>
 
