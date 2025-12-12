@@ -1310,7 +1310,7 @@ export default function ProfileTabAbout({ user, isOwnProfile, isPublicView = fal
             
             {user.tangoRoles && user.tangoRoles.length > 0 ? (
               <div className="flex flex-wrap gap-2">
-                {user.tangoRoles
+                {[...new Set(user.tangoRoles)]
                   .map((roleValue) => {
                     const role = getRoleByValue(roleValue);
                     const startYear = getRoleStartYear(user, roleValue);
