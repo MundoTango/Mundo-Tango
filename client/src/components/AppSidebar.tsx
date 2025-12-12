@@ -293,7 +293,7 @@ function AppSidebarComponent() {
     });
 
     return items;
-  }, [userCity, userTangoRoles]);
+  }, [userCity, userTangoRoles, profile, user]);
 
   const isActive = (url: string) =>
     location === url || location.startsWith(url + "/");
