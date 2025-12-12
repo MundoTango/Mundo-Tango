@@ -268,6 +268,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         bio: data.user.bio,
         city: data.user.city,
         country: data.user.country,
+        tangoRoles: data.user.tangoRoles,
       });
 
       // Sync site language with user's primary language preference
@@ -322,6 +323,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         bio: data.user.bio,
         city: data.user.city,
         country: data.user.country,
+        tangoRoles: data.user.tangoRoles,
       });
 
       if (!data.user.isOnboardingComplete) {

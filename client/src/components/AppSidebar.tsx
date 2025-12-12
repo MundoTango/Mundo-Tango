@@ -248,6 +248,11 @@ function AppSidebarComponent() {
   const avatarUrl = profile?.profileImage;
   const userCity = profile?.city || (user as any)?.city;
   const userTangoRoles = (profile as any)?.tangoRoles || (user as any)?.tangoRoles || [];
+  
+  console.log("[AppSidebar] profile:", profile);
+  console.log("[AppSidebar] user:", user);
+  console.log("[AppSidebar] userCity:", userCity);
+  console.log("[AppSidebar] userTangoRoles:", userTangoRoles);
 
   const myStuffItems = useMemo(() => {
     const items: Array<{
