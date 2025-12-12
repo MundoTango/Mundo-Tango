@@ -7,6 +7,8 @@ import { z } from "zod";
 import { apiRequest } from "@/lib/queryClient";
 import { PhotoUpload } from "@/components/housing/PhotoUpload";
 import { UnifiedLocationPicker } from "@/components/input/UnifiedLocationPicker";
+import { FriendshipClosenessFilter } from "@/components/filters/FriendshipClosenessFilter";
+import { closenessVisibilitySchema, type ClosenessVisibility } from "@shared/schema";
 import {
   Form,
   FormControl,
@@ -124,6 +126,7 @@ const createListingSchema = z.object({
   weeklyDiscount: z.coerce.number().min(0).max(100).default(0),
   monthlyDiscount: z.coerce.number().min(0).max(100).default(0),
   cleaningFee: z.coerce.number().min(0).default(0),
+  guestVisibility: closenessVisibilitySchema.default("all"),
 });
 
 type CreateListingFormData = z.infer<typeof createListingSchema>;
@@ -165,6 +168,7 @@ export default function CreateListingPage() {
       weeklyDiscount: 0,
       monthlyDiscount: 0,
       cleaningFee: 0,
+      guestVisibility: "all" as ClosenessVisibility,
     },
   });
 
@@ -969,6 +973,29 @@ export default function CreateListingPage() {
                         </FormItem>
                       )}
                     />
+
+                    {/* Guest Visibility - Who can see this listing */}
+                    <div className="pt-4 border-t">
+                      <h3 className="font-semibold mb-4 flex items-center gap-2">
+                        <Users className="h-4 w-4" />
+                        Guest Visibility
+                      </h3>
+                      <FormField
+                        control={form.control}
+                        name="guestVisibility"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FriendshipClosenessFilter
+                              value={field.value}
+                              onChange={field.onChange}
+                              label="Who can view and book this listing?"
+                              description="Choose who in your tango network can discover and book your place"
+                              testIdPrefix="housing-guest-visibility"
+                            />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
                   </CardContent>
                 </Card>
               )}
