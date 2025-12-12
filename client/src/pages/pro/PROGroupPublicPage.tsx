@@ -129,19 +129,6 @@ export function PROGroupPublicPage({ roleSlug, title, description, icon: Icon, c
                 View Your PRO Tab
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
-              {groupInfo?.id && (
-                <Button 
-                  variant="outline"
-                  size="sm"
-                  onClick={() => navigate(`/messages/group/${groupInfo.id}`)}
-                  data-testid="button-pro-group-discussion"
-                  style={{ borderColor: color, color }}
-                >
-                  <MessageSquare className="w-4 h-4 mr-2" />
-                  {title} Discussion
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
-              )}
             </div>
           ) : (
             <div className="mt-6">
@@ -172,6 +159,11 @@ export function PROGroupPublicPage({ roleSlug, title, description, icon: Icon, c
             <TabsTrigger value="upcoming" data-testid="tab-upcoming">
               Upcoming Events
             </TabsTrigger>
+            {isMember && (
+              <TabsTrigger value="discussion" data-testid="tab-discussion">
+                Discussion
+              </TabsTrigger>
+            )}
           </TabsList>
 
           <TabsContent value="discover" className="space-y-6">
@@ -345,6 +337,29 @@ export function PROGroupPublicPage({ roleSlug, title, description, icon: Icon, c
               </CardContent>
             </Card>
           </TabsContent>
+
+          {isMember && groupInfo?.id && (
+            <TabsContent value="discussion" className="space-y-6">
+              <Card className="bg-background/50 border-white/10">
+                <CardContent className="p-12 text-center">
+                  <MessageSquare className="w-12 h-12 mx-auto mb-4 opacity-50" style={{ color }} />
+                  <h3 className="text-lg font-semibold mb-2">{title} Discussion</h3>
+                  <p className="text-muted-foreground mb-4">
+                    Share experiences, ask questions, and connect with fellow {title.toLowerCase()}s
+                  </p>
+                  <Button 
+                    onClick={() => navigate(`/memories?proGroup=${groupInfo.id}`)}
+                    style={{ background: color }}
+                    className="text-white"
+                    data-testid="button-view-discussions"
+                  >
+                    View Discussions
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          )}
         </Tabs>
       </div>
     </div>
