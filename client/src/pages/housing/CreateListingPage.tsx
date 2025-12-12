@@ -66,6 +66,7 @@ type CreateListingFormData = z.infer<typeof createListingSchema>;
 export default function CreateListingPage() {
   const [, navigate] = useLocation();
   const [createdListingId, setCreatedListingId] = useState<number | null>(null);
+  const [isComplete, setIsComplete] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -117,11 +118,15 @@ export default function CreateListingPage() {
   });
 
   const handlePhotosComplete = () => {
+    setIsComplete(true);
     toast({
       title: "Listing complete",
       description: "Your listing is now live!",
     });
-    navigate("/housing/my-listings");
+    // Show completion screen for 2 seconds before navigating
+    setTimeout(() => {
+      navigate("/housing/my-listings");
+    }, 2000);
   };
 
   const steps = [
@@ -129,7 +134,7 @@ export default function CreateListingPage() {
     { id: 2, label: "Photos", icon: Camera },
     { id: 3, label: "Complete", icon: Check },
   ];
-  const currentStep = !createdListingId ? 1 : 2;
+  const currentStep = isComplete ? 3 : (!createdListingId ? 1 : 2);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/30">
@@ -605,7 +610,7 @@ export default function CreateListingPage() {
                 </div>
               </form>
             </Form>
-          ) : (
+          ) : !isComplete ? (
             <Card className="border-2 border-primary/20 overflow-visible">
               <CardHeader className="text-center pb-4">
                 <div className="mx-auto mb-4 p-4 bg-primary/10 rounded-full w-fit">
@@ -641,6 +646,28 @@ export default function CreateListingPage() {
                   <Check className="mr-2 h-5 w-5" />
                   Complete Listing
                 </Button>
+              </CardContent>
+            </Card>
+          ) : null}
+
+          {/* Step 3: Completion Screen */}
+          {isComplete && (
+            <Card className="border-2 border-green-500/30 overflow-visible">
+              <CardContent className="py-12">
+                <div className="flex flex-col items-center text-center space-y-4">
+                  <div className="p-6 bg-green-500/10 rounded-full">
+                    <Check className="h-16 w-16 text-green-600 dark:text-green-400" />
+                  </div>
+                  <h2 className="text-2xl font-bold">Listing Created Successfully!</h2>
+                  <p className="text-muted-foreground max-w-md">
+                    Your listing is now live and visible to the tango community. 
+                    Redirecting you to your listings...
+                  </p>
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span>Redirecting...</span>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           )}

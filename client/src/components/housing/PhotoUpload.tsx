@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useDropzone } from "react-dropzone";
 import { DragDropContext, Droppable, Draggable, DropResult } from "react-beautiful-dnd";
 import { Button } from "@/components/ui/button";
@@ -36,6 +36,14 @@ export function PhotoUpload({ listingId, initialPhotos = [], onPhotosChange }: P
   const [pendingPhotos, setPendingPhotos] = useState<PendingPhoto[]>([]);
   const [uploading, setUploading] = useState(false);
   const { toast } = useToast();
+  
+  // Ref to track pending photos for proper cleanup on unmount
+  const pendingPhotosRef = useRef<PendingPhoto[]>([]);
+  
+  // Keep ref in sync with state
+  useEffect(() => {
+    pendingPhotosRef.current = pendingPhotos;
+  }, [pendingPhotos]);
 
   const updatePhotos = (newPhotos: Photo[]) => {
     setPhotos(newPhotos);
@@ -45,7 +53,7 @@ export function PhotoUpload({ listingId, initialPhotos = [], onPhotosChange }: P
   // Cleanup blob URLs on unmount to prevent memory leaks
   useEffect(() => {
     return () => {
-      pendingPhotos.forEach(p => {
+      pendingPhotosRef.current.forEach(p => {
         if (p.previewUrl.startsWith('blob:')) {
           URL.revokeObjectURL(p.previewUrl);
         }
