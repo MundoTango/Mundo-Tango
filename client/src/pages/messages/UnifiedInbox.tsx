@@ -1,18 +1,32 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
-import { MessageCircle, Mail, Search, Plus, Star, Archive } from "lucide-react";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { 
+  MessageCircle, 
+  Mail, 
+  Search, 
+  Plus, 
+  MoreHorizontal,
+  Phone,
+  Video,
+  Info,
+  Send,
+  Image,
+  Smile,
+  ThumbsUp,
+  CheckCheck,
+  Pin,
+  Edit3
+} from "lucide-react";
 import { SiFacebook, SiInstagram, SiWhatsapp } from "react-icons/si";
-import { format } from "date-fns";
+import { formatDistanceToNow } from "date-fns";
 import { ComposeMessage } from "@/components/messages/ComposeMessage";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import DOMPurify from 'dompurify';
 
 const channelIcons = {
   mt: MessageCircle,
@@ -23,7 +37,7 @@ const channelIcons = {
 };
 
 const channelLabels = {
-  mt: "MT Messages",
+  mt: "Mundo Tango",
   gmail: "Gmail",
   facebook: "Facebook",
   instagram: "Instagram",
@@ -32,19 +46,67 @@ const channelLabels = {
 
 const channelColors = {
   mt: "hsl(var(--primary))",
-  gmail: "hsl(0, 72%, 51%)",
-  facebook: "hsl(221, 44%, 41%)",
-  instagram: "hsl(329, 70%, 58%)",
-  whatsapp: "hsl(142, 70%, 49%)",
+  gmail: "#EA4335",
+  facebook: "#1877F2",
+  instagram: "#E4405F",
+  whatsapp: "#25D366",
 };
 
 type Channel = "all" | "mt" | "gmail" | "facebook" | "instagram" | "whatsapp";
 
+// Helper to get initials from name
+function getInitials(name: string): string {
+  if (!name) return "?";
+  const parts = name.trim().split(/\s+/);
+  if (parts.length >= 2) {
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  }
+  return name.slice(0, 2).toUpperCase();
+}
+
+// Helper for relative time (Messenger style: "2h", "1d", "1w")
+function getRelativeTime(date: Date | string): string {
+  const d = new Date(date);
+  const now = new Date();
+  const diffMs = now.getTime() - d.getTime();
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMins / 60);
+  const diffDays = Math.floor(diffHours / 24);
+  const diffWeeks = Math.floor(diffDays / 7);
+
+  if (diffMins < 1) return "now";
+  if (diffMins < 60) return `${diffMins}m`;
+  if (diffHours < 24) return `${diffHours}h`;
+  if (diffDays < 7) return `${diffDays}d`;
+  if (diffWeeks < 4) return `${diffWeeks}w`;
+  return formatDistanceToNow(d, { addSuffix: false });
+}
+
+// Conversation bubble colors (Messenger gradient style)
+const bubbleGradients = [
+  "from-blue-500 to-blue-600",
+  "from-purple-500 to-pink-500",
+  "from-orange-400 to-pink-500",
+  "from-green-400 to-cyan-500",
+  "from-indigo-500 to-purple-500",
+];
+
+function getBubbleGradient(id: string | number): string {
+  // Convert string IDs to a stable numeric hash
+  const numericId = typeof id === 'string' 
+    ? id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)
+    : id;
+  return bubbleGradients[Math.abs(numericId) % bubbleGradients.length];
+}
+
 export default function UnifiedInbox() {
   const [selectedChannel, setSelectedChannel] = useState<Channel>("all");
-  const [selectedMessage, setSelectedMessage] = useState<any>(null);
+  const [selectedConversation, setSelectedConversation] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [showCompose, setShowCompose] = useState(false);
+  const [messageInput, setMessageInput] = useState("");
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const { data: messages, isLoading } = useQuery({
     queryKey: ["/api/messages/unified", { channel: selectedChannel === "all" ? undefined : selectedChannel, search: searchQuery || undefined }],
@@ -56,266 +118,546 @@ export default function UnifiedInbox() {
     queryKey: ["/api/messages/channels"],
   });
 
-  const filteredMessages = messages?.filter((msg: any) => {
-    const matchesChannel = selectedChannel === "all" || msg.channel === selectedChannel;
+  // Group messages by conversation/sender for Messenger-style view
+  const conversations = messages?.reduce((acc: any[], msg: any) => {
+    const existingConv = acc.find(c => c.from === msg.from && c.channel === msg.channel);
+    if (existingConv) {
+      existingConv.messages.push(msg);
+      if (new Date(msg.receivedAt) > new Date(existingConv.lastMessageAt)) {
+        existingConv.lastMessage = msg.body;
+        existingConv.lastMessageAt = msg.receivedAt;
+        existingConv.isRead = msg.isRead;
+      }
+      if (!msg.isRead) existingConv.unreadCount++;
+    } else {
+      acc.push({
+        id: msg.id,
+        from: msg.from,
+        channel: msg.channel,
+        avatar: msg.senderAvatar,
+        isOnline: Math.random() > 0.5, // Simulated - would come from presence API
+        isPinned: msg.isStarred,
+        lastMessage: msg.body,
+        lastMessageAt: msg.receivedAt,
+        isRead: msg.isRead,
+        unreadCount: msg.isRead ? 0 : 1,
+        messages: [msg],
+      });
+    }
+    return acc;
+  }, []) || [];
+
+  // Sort: pinned first, then by most recent
+  const sortedConversations = [...conversations].sort((a, b) => {
+    if (a.isPinned && !b.isPinned) return -1;
+    if (!a.isPinned && b.isPinned) return 1;
+    return new Date(b.lastMessageAt).getTime() - new Date(a.lastMessageAt).getTime();
+  });
+
+  const filteredConversations = sortedConversations.filter((conv: any) => {
+    const matchesChannel = selectedChannel === "all" || conv.channel === selectedChannel;
     const matchesSearch = searchQuery === "" || 
-      msg.subject?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      msg.body?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      msg.from?.toLowerCase().includes(searchQuery.toLowerCase());
+      conv.from?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      conv.lastMessage?.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesChannel && matchesSearch;
-  }) || [];
+  });
+
+  const pinnedConversations = filteredConversations.filter(c => c.isPinned);
+  const regularConversations = filteredConversations.filter(c => !c.isPinned);
+
+  // Scroll to bottom when conversation changes
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [selectedConversation]);
 
   const getChannelCount = (channel: Channel) => {
-    if (channel === "all") return messages?.length || 0;
-    return messages?.filter((m: any) => m.channel === channel).length || 0;
+    if (channel === "all") return conversations.length;
+    return conversations.filter((c: any) => c.channel === channel).length;
   };
 
-  const ChannelIcon = ({ channel }: { channel: string }) => {
-    const Icon = channelIcons[channel as keyof typeof channelIcons];
-    return <Icon className="h-4 w-4" />;
+  const handleSendMessage = () => {
+    if (!messageInput.trim() || !selectedConversation) return;
+    // Would send via API
+    setMessageInput("");
+  };
+
+  const ConversationItem = ({ conv, isSelected }: { conv: any; isSelected: boolean }) => {
+    const Icon = channelIcons[conv.channel as keyof typeof channelIcons];
+    
+    return (
+      <div
+        className={cn(
+          "flex items-center gap-3 p-3 cursor-pointer rounded-lg mx-2 transition-all",
+          isSelected 
+            ? "bg-accent" 
+            : "hover-elevate"
+        )}
+        onClick={() => setSelectedConversation(conv)}
+        data-testid={`conversation-${conv.id}`}
+      >
+        {/* Avatar with online indicator */}
+        <div className="relative flex-shrink-0">
+          <Avatar className="h-14 w-14">
+            <AvatarImage src={conv.avatar} alt={conv.from} />
+            <AvatarFallback className={cn(
+              "bg-gradient-to-br text-white font-medium",
+              getBubbleGradient(conv.id)
+            )}>
+              {getInitials(conv.from)}
+            </AvatarFallback>
+          </Avatar>
+          {conv.isOnline && (
+            <div className="absolute bottom-0 right-0 w-4 h-4 bg-green-500 rounded-full border-2 border-background" />
+          )}
+          {/* Channel indicator */}
+          <div 
+            className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center border-2 border-background"
+            style={{ backgroundColor: channelColors[conv.channel as keyof typeof channelColors] }}
+          >
+            <Icon className="h-3 w-3 text-white" />
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center justify-between gap-2">
+            <span className={cn(
+              "font-medium truncate",
+              !conv.isRead && "font-bold"
+            )}>
+              {conv.from}
+            </span>
+            <span className={cn(
+              "text-xs flex-shrink-0",
+              conv.isRead ? "text-muted-foreground" : "text-primary font-medium"
+            )}>
+              {getRelativeTime(conv.lastMessageAt)}
+            </span>
+          </div>
+          
+          <div className="flex items-center gap-2 mt-0.5">
+            {/* Read receipt icon */}
+            {conv.isRead && conv.channel === 'mt' && (
+              <CheckCheck className="h-3.5 w-3.5 text-primary flex-shrink-0" />
+            )}
+            <p className={cn(
+              "text-sm truncate",
+              conv.isRead ? "text-muted-foreground" : "text-foreground font-medium"
+            )}>
+              {conv.lastMessage?.substring(0, 50)}
+            </p>
+          </div>
+        </div>
+
+        {/* Unread badge */}
+        {conv.unreadCount > 0 && (
+          <div className="flex-shrink-0 w-5 h-5 bg-primary rounded-full flex items-center justify-center">
+            <span className="text-xs font-bold text-primary-foreground">
+              {conv.unreadCount > 9 ? "9+" : conv.unreadCount}
+            </span>
+          </div>
+        )}
+      </div>
+    );
   };
 
   return (
-    <div className="flex h-screen bg-background">
-      {/* Sidebar */}
-      <div className="w-64 border-r bg-sidebar flex flex-col">
-        <div className="p-4 border-b">
-          <Dialog open={showCompose} onOpenChange={setShowCompose}>
-            <DialogTrigger asChild>
-              <Button className="w-full" data-testid="button-compose">
-                <Plus className="mr-2 h-4 w-4" />
-                Compose
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-2xl">
-              <ComposeMessage onClose={() => setShowCompose(false)} />
-            </DialogContent>
-          </Dialog>
-        </div>
-
-        <ScrollArea className="flex-1">
-          <div className="p-4 space-y-2">
-            <h3 className="text-sm font-medium text-sidebar-foreground mb-4">
-              Channels
-            </h3>
-            
-            {(["all", "mt", "gmail", "facebook", "instagram", "whatsapp"] as Channel[]).map((channel) => {
-              const Icon = channel === "all" ? MessageCircle : channelIcons[channel as keyof typeof channelIcons];
-              const count = getChannelCount(channel);
-              const isConnected = channel === "all" || channels?.find((c: any) => c.channel === channel && c.isActive);
-              
-              return (
-                <Button
-                  key={channel}
-                  variant={selectedChannel === channel ? "default" : "ghost"}
-                  className="w-full justify-start"
-                  onClick={() => setSelectedChannel(channel)}
-                  disabled={channel !== "all" && !isConnected}
-                  data-testid={`button-filter-${channel}`}
-                >
-                  <Icon className="mr-2 h-4 w-4" />
-                  <span className="flex-1 text-left">
-                    {channel === "all" ? "All Messages" : channelLabels[channel]}
-                  </span>
-                  {count > 0 && (
-                    <Badge variant="secondary" className="ml-auto" data-testid={`badge-count-${channel}`}>
-                      {count}
-                    </Badge>
-                  )}
+    <div className="flex h-screen bg-background overflow-hidden">
+      {/* Left Sidebar - Conversations List */}
+      <div className="w-80 border-r flex flex-col bg-card">
+        {/* Header */}
+        <div className="p-4 flex items-center justify-between border-b">
+          <h1 className="text-2xl font-bold">Chats</h1>
+          <div className="flex items-center gap-1">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="ghost" size="icon" data-testid="button-options">
+                  <MoreHorizontal className="h-5 w-5" />
                 </Button>
-              );
-            })}
-          </div>
-        </ScrollArea>
-
-        <div className="p-4 border-t">
-          <div className="text-xs text-muted-foreground">
-            {channels?.filter((c: any) => c.isActive).length || 0} of 5 channels connected
+              </TooltipTrigger>
+              <TooltipContent>Options</TooltipContent>
+            </Tooltip>
+            <Dialog open={showCompose} onOpenChange={setShowCompose}>
+              <DialogTrigger asChild>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="ghost" size="icon" data-testid="button-new-message">
+                      <Edit3 className="h-5 w-5" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>New message</TooltipContent>
+                </Tooltip>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl">
+                <ComposeMessage onClose={() => setShowCompose(false)} />
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
-      </div>
 
-      {/* Message List */}
-      <div className="w-96 border-r flex flex-col">
-        <div className="p-4 border-b">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        {/* Search */}
+        <div className="p-3">
+          <div className={cn(
+            "relative rounded-full transition-all",
+            isSearchFocused ? "ring-2 ring-primary" : ""
+          )}>
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search messages..."
-              className="pl-10"
+              placeholder="Search Messenger"
+              className="pl-10 pr-4 h-10 rounded-full bg-muted border-0"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              onFocus={() => setIsSearchFocused(true)}
+              onBlur={() => setIsSearchFocused(false)}
               data-testid="input-search"
             />
           </div>
         </div>
 
+        {/* Channel Filter Tabs */}
+        <div className="px-3 pb-2 flex gap-1 overflow-x-auto">
+          {(["all", "mt", "gmail", "facebook", "instagram", "whatsapp"] as Channel[]).map((channel) => {
+            const Icon = channel === "all" ? MessageCircle : channelIcons[channel as keyof typeof channelIcons];
+            const count = getChannelCount(channel);
+            const isActive = selectedChannel === channel;
+            const isConnected = channel === "all" || channel === "mt" || channels?.find((c: any) => c.channel === channel && c.isActive);
+            
+            return (
+              <Button
+                key={channel}
+                variant={isActive ? "default" : "secondary"}
+                size="sm"
+                className={cn(
+                  "rounded-full flex-shrink-0 gap-1.5",
+                  !isActive && "bg-muted hover:bg-muted/80"
+                )}
+                onClick={() => setSelectedChannel(channel)}
+                disabled={channel !== "all" && channel !== "mt" && !isConnected}
+                data-testid={`button-filter-${channel}`}
+              >
+                <Icon className="h-4 w-4" />
+                {channel === "all" ? "All" : channelLabels[channel].split(" ")[0]}
+                {count > 0 && (
+                  <span className={cn(
+                    "text-xs",
+                    isActive ? "text-primary-foreground/80" : "text-muted-foreground"
+                  )}>
+                    {count}
+                  </span>
+                )}
+              </Button>
+            );
+          })}
+        </div>
+
+        {/* Conversations List */}
         <ScrollArea className="flex-1">
           {isLoading ? (
-            <div className="p-8 text-center text-muted-foreground">
-              Loading messages...
-            </div>
-          ) : filteredMessages.length === 0 ? (
             <div className="p-8 text-center">
-              <MessageCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="font-semibold mb-2">No messages found</h3>
-              <p className="text-sm text-muted-foreground mb-4">
-                {selectedChannel === "all" 
-                  ? "Connect your channels to start receiving messages"
-                  : `No messages in ${channelLabels[selectedChannel]}`
-                }
-              </p>
-              {selectedChannel === "all" && (
-                <Button variant="outline" data-testid="button-connect-channels">
-                  Connect Channels
-                </Button>
-              )}
-            </div>
-          ) : (
-            <div className="divide-y">
-              {filteredMessages.map((message: any) => {
-                const Icon = channelIcons[message.channel as keyof typeof channelIcons];
-                const isSelected = selectedMessage?.id === message.id;
-                
-                return (
-                  <div
-                    key={message.id}
-                    className={cn(
-                      "p-4 cursor-pointer transition-colors hover-elevate",
-                      isSelected && "bg-accent",
-                      !message.isRead && "bg-muted/30"
-                    )}
-                    onClick={() => setSelectedMessage(message)}
-                    data-testid={`message-item-${message.id}`}
-                  >
-                    <div className="flex items-start gap-3">
-                      <div
-                        className="p-2 rounded-md"
-                        style={{ backgroundColor: `${channelColors[message.channel as keyof typeof channelColors]}15` }}
-                      >
-                        <Icon className="h-4 w-4" style={{ color: channelColors[message.channel as keyof typeof channelColors] }} />
-                      </div>
-                      
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className={cn("font-medium truncate", !message.isRead && "font-semibold")}>
-                            {message.from}
-                          </span>
-                          {!message.isRead && (
-                            <div className="w-2 h-2 bg-primary rounded-full" data-testid={`unread-indicator-${message.id}`} />
-                          )}
-                        </div>
-                        
-                        {message.subject && (
-                          <div className={cn("text-sm truncate mb-1", !message.isRead && "font-medium")}>
-                            {message.subject}
-                          </div>
-                        )}
-                        
-                        <div className="text-sm text-muted-foreground truncate">
-                          {message.body?.substring(0, 100)}...
-                        </div>
-                        
-                        <div className="flex items-center gap-2 mt-2">
-                          <span className="text-xs text-muted-foreground">
-                            {format(new Date(message.receivedAt), "MMM d, h:mm a")}
-                          </span>
-                          {message.isStarred && (
-                            <Star className="h-3 w-3 text-yellow-500 fill-yellow-500" />
-                          )}
-                        </div>
-                      </div>
+              <div className="animate-pulse space-y-4">
+                {[1, 2, 3, 4].map(i => (
+                  <div key={i} className="flex items-center gap-3 mx-2">
+                    <div className="w-14 h-14 rounded-full bg-muted" />
+                    <div className="flex-1 space-y-2">
+                      <div className="h-4 bg-muted rounded w-3/4" />
+                      <div className="h-3 bg-muted rounded w-1/2" />
                     </div>
                   </div>
-                );
-              })}
+                ))}
+              </div>
+            </div>
+          ) : filteredConversations.length === 0 ? (
+            <div className="p-8 text-center">
+              <div className="w-16 h-16 rounded-full bg-muted mx-auto mb-4 flex items-center justify-center">
+                <MessageCircle className="h-8 w-8 text-muted-foreground" />
+              </div>
+              <h3 className="font-semibold mb-2">No conversations</h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                {searchQuery ? "No results found" : "Start a conversation to get chatting"}
+              </p>
+              <Button onClick={() => setShowCompose(true)} data-testid="button-start-chat">
+                <Plus className="mr-2 h-4 w-4" />
+                New Message
+              </Button>
+            </div>
+          ) : (
+            <div className="py-2">
+              {/* Pinned conversations */}
+              {pinnedConversations.length > 0 && (
+                <>
+                  <div className="px-4 py-2 flex items-center gap-2 text-xs font-medium text-muted-foreground">
+                    <Pin className="h-3 w-3" />
+                    PINNED
+                  </div>
+                  {pinnedConversations.map((conv: any) => (
+                    <ConversationItem 
+                      key={conv.id} 
+                      conv={conv} 
+                      isSelected={selectedConversation?.id === conv.id}
+                    />
+                  ))}
+                  <div className="my-2 mx-4 border-t" />
+                </>
+              )}
+              
+              {/* All conversations */}
+              {regularConversations.map((conv: any) => (
+                <ConversationItem 
+                  key={conv.id} 
+                  conv={conv} 
+                  isSelected={selectedConversation?.id === conv.id}
+                />
+              ))}
             </div>
           )}
         </ScrollArea>
       </div>
 
-      {/* Message Preview */}
+      {/* Chat Area */}
       <div className="flex-1 flex flex-col">
-        {selectedMessage ? (
+        {selectedConversation ? (
           <>
-            <div className="p-6 border-b">
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <div
-                    className="p-3 rounded-md"
-                    style={{ backgroundColor: `${channelColors[selectedMessage.channel as keyof typeof channelColors]}15` }}
-                  >
-                    <ChannelIcon channel={selectedMessage.channel} />
-                  </div>
-                  <div>
-                    <h2 className="text-xl font-semibold" data-testid="preview-subject">
-                      {selectedMessage.subject || "No Subject"}
-                    </h2>
-                    <p className="text-sm text-muted-foreground">
-                      from <span className="font-medium">{selectedMessage.from}</span>
-                    </p>
-                  </div>
+            {/* Chat Header */}
+            <div className="h-16 px-4 flex items-center justify-between border-b bg-card">
+              <div className="flex items-center gap-3">
+                <div className="relative">
+                  <Avatar className="h-10 w-10">
+                    <AvatarImage src={selectedConversation.avatar} alt={selectedConversation.from} />
+                    <AvatarFallback className={cn(
+                      "bg-gradient-to-br text-white text-sm font-medium",
+                      getBubbleGradient(selectedConversation.id)
+                    )}>
+                      {getInitials(selectedConversation.from)}
+                    </AvatarFallback>
+                  </Avatar>
+                  {selectedConversation.isOnline && (
+                    <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-card" />
+                  )}
                 </div>
-                
-                <div className="flex items-center gap-2">
-                  <Button variant="ghost" size="icon" data-testid="button-star-message">
-                    <Star className={cn("h-4 w-4", selectedMessage.isStarred && "fill-yellow-500 text-yellow-500")} />
-                  </Button>
-                  <Button variant="ghost" size="icon" data-testid="button-archive-message">
-                    <Archive className="h-4 w-4" />
-                  </Button>
+                <div>
+                  <h2 className="font-semibold" data-testid="chat-header-name">
+                    {selectedConversation.from}
+                  </h2>
+                  <p className="text-xs text-muted-foreground">
+                    {selectedConversation.isOnline ? "Active now" : `Active ${getRelativeTime(selectedConversation.lastMessageAt)} ago`}
+                  </p>
                 </div>
               </div>
               
-              <div className="text-sm text-muted-foreground">
-                {format(new Date(selectedMessage.receivedAt), "MMMM d, yyyy 'at' h:mm a")}
+              <div className="flex items-center gap-1">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="ghost" size="icon" className="text-primary" data-testid="button-call">
+                      <Phone className="h-5 w-5" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Start a voice call</TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="ghost" size="icon" className="text-primary" data-testid="button-video">
+                      <Video className="h-5 w-5" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Start a video call</TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="ghost" size="icon" data-testid="button-info">
+                      <Info className="h-5 w-5" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Conversation info</TooltipContent>
+                </Tooltip>
               </div>
             </div>
 
-            <ScrollArea className="flex-1 p-6">
-              <div className="prose max-w-none" data-testid="preview-body">
-                {selectedMessage.htmlBody ? (
-                  <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(selectedMessage.htmlBody) }} />
-                ) : (
-                  <p className="whitespace-pre-wrap">{selectedMessage.body}</p>
-                )}
-              </div>
-
-              {selectedMessage.attachments && selectedMessage.attachments.length > 0 && (
-                <div className="mt-6">
-                  <h3 className="font-semibold mb-4">Attachments</h3>
-                  <div className="space-y-2">
-                    {selectedMessage.attachments.map((attachment: any, index: number) => (
-                      <Card key={index} className="p-3">
-                        <div className="flex items-center gap-3">
-                          <div className="text-sm font-medium">{attachment.filename}</div>
-                          <Badge variant="secondary">{attachment.size}</Badge>
-                        </div>
-                      </Card>
-                    ))}
-                  </div>
+            {/* Messages */}
+            <ScrollArea className="flex-1 p-4">
+              <div className="max-w-3xl mx-auto space-y-4">
+                {/* Profile intro card */}
+                <div className="flex flex-col items-center py-8 text-center">
+                  <Avatar className="h-20 w-20 mb-3">
+                    <AvatarImage src={selectedConversation.avatar} alt={selectedConversation.from} />
+                    <AvatarFallback className={cn(
+                      "bg-gradient-to-br text-white text-2xl font-medium",
+                      getBubbleGradient(selectedConversation.id)
+                    )}>
+                      {getInitials(selectedConversation.from)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <h3 className="text-xl font-bold">{selectedConversation.from}</h3>
+                  <p className="text-sm text-muted-foreground">Mundo Tango</p>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    You're connected on Mundo Tango
+                  </p>
                 </div>
-              )}
+
+                {/* Message bubbles */}
+                {selectedConversation.messages?.map((msg: any, idx: number) => {
+                  const isOwn = false; // Would check against current user
+                  const showAvatar = idx === 0 || 
+                    selectedConversation.messages[idx - 1]?.from !== msg.from;
+                  
+                  return (
+                    <div
+                      key={msg.id}
+                      className={cn(
+                        "flex items-end gap-2",
+                        isOwn ? "justify-end" : "justify-start"
+                      )}
+                      data-testid={`message-bubble-${msg.id}`}
+                    >
+                      {!isOwn && (
+                        <div className="w-7 flex-shrink-0">
+                          {showAvatar && (
+                            <Avatar className="h-7 w-7">
+                              <AvatarImage src={selectedConversation.avatar} />
+                              <AvatarFallback className={cn(
+                                "bg-gradient-to-br text-white text-xs",
+                                getBubbleGradient(selectedConversation.id)
+                              )}>
+                                {getInitials(selectedConversation.from)}
+                              </AvatarFallback>
+                            </Avatar>
+                          )}
+                        </div>
+                      )}
+                      
+                      <div className={cn(
+                        "group relative max-w-[70%]"
+                      )}>
+                        <div className={cn(
+                          "px-4 py-2.5 rounded-2xl",
+                          isOwn 
+                            ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-br-sm"
+                            : "bg-muted rounded-bl-sm"
+                        )}>
+                          <p className="text-sm whitespace-pre-wrap break-words">
+                            {msg.body}
+                          </p>
+                        </div>
+                        
+                        {/* Timestamp on hover */}
+                        <div className={cn(
+                          "absolute bottom-0 opacity-0 group-hover:opacity-100 transition-opacity text-xs text-muted-foreground whitespace-nowrap",
+                          isOwn ? "right-full mr-2" : "left-full ml-2"
+                        )}>
+                          {getRelativeTime(msg.receivedAt)}
+                        </div>
+                        
+                        {/* Reactions bar (Messenger style) */}
+                        <div className={cn(
+                          "absolute -bottom-2 flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity",
+                          isOwn ? "left-0" : "right-0"
+                        )}>
+                          <button className="p-1 rounded-full bg-card shadow-sm hover-elevate" data-testid={`button-reaction-${msg.id}`}>
+                            <Smile className="h-4 w-4 text-muted-foreground" />
+                          </button>
+                        </div>
+                      </div>
+                      
+                      {isOwn && showAvatar && (
+                        <Avatar className="h-7 w-7 flex-shrink-0">
+                          <AvatarFallback className="bg-gradient-to-br from-blue-500 to-blue-600 text-white text-xs">
+                            Me
+                          </AvatarFallback>
+                        </Avatar>
+                      )}
+                    </div>
+                  );
+                })}
+                <div ref={messagesEndRef} />
+              </div>
             </ScrollArea>
 
-            <div className="p-6 border-t">
-              <div className="flex gap-4">
-                <Button data-testid="button-reply">
-                  <Mail className="mr-2 h-4 w-4" />
-                  Reply
-                </Button>
-                <Button variant="outline" data-testid="button-forward">
-                  Forward
-                </Button>
+            {/* Message Input - Messenger style */}
+            <div className="p-3 border-t bg-card">
+              <div className="flex items-end gap-2 max-w-3xl mx-auto">
+                <div className="flex gap-1">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="ghost" size="icon" className="text-primary rounded-full" data-testid="button-add-media">
+                        <Plus className="h-5 w-5" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Add</TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="ghost" size="icon" className="text-primary rounded-full" data-testid="button-attach-image">
+                        <Image className="h-5 w-5" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Attach image</TooltipContent>
+                  </Tooltip>
+                </div>
+                
+                <div className="flex-1 relative">
+                  <Input
+                    placeholder="Aa"
+                    className="pr-12 rounded-full bg-muted border-0 h-10"
+                    value={messageInput}
+                    onChange={(e) => setMessageInput(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleSendMessage()}
+                    data-testid="input-message"
+                  />
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 text-primary rounded-full"
+                    data-testid="button-emoji"
+                  >
+                    <Smile className="h-5 w-5" />
+                  </Button>
+                </div>
+                
+                {messageInput.trim() ? (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button 
+                        size="icon" 
+                        className="rounded-full bg-primary"
+                        onClick={handleSendMessage}
+                        data-testid="button-send"
+                      >
+                        <Send className="h-5 w-5" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Send</TooltipContent>
+                  </Tooltip>
+                ) : (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="ghost" size="icon" className="text-primary rounded-full" data-testid="button-like">
+                        <ThumbsUp className="h-6 w-6" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Send a like</TooltipContent>
+                  </Tooltip>
+                )}
               </div>
             </div>
           </>
         ) : (
-          <div className="flex-1 flex items-center justify-center text-muted-foreground">
-            <div className="text-center">
-              <MessageCircle className="h-16 w-16 mx-auto mb-4 text-muted-foreground/50" />
-              <h3 className="text-lg font-medium">Select a message</h3>
-              <p className="text-sm mt-2">Choose a message from the list to view its content</p>
+          /* Empty State */
+          <div className="flex-1 flex items-center justify-center bg-muted/30">
+            <div className="text-center max-w-sm">
+              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 mx-auto mb-6 flex items-center justify-center">
+                <MessageCircle className="h-12 w-12 text-white" />
+              </div>
+              <h2 className="text-2xl font-bold mb-2">Your Messages</h2>
+              <p className="text-muted-foreground mb-6">
+                Send private messages to a friend or group
+              </p>
+              <Button 
+                size="lg" 
+                className="rounded-full"
+                onClick={() => setShowCompose(true)}
+                data-testid="button-send-message-cta"
+              >
+                Send message
+              </Button>
             </div>
           </div>
         )}
