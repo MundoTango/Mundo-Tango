@@ -893,6 +893,15 @@ function Router() {
         </ProtectedRoute>
       </Route>
 
+      {/* Alias for world-map URL */}
+      <Route path="/world-map">
+        <ProtectedRoute>
+          <AppLayout>
+            <CommunityWorldMapPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
       <Route path="/invitations">
         <ProtectedRoute>
           <AppLayout>
