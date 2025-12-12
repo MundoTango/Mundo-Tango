@@ -357,21 +357,12 @@ export default function FriendsListPage() {
         <div className="flex gap-2 ml-4">
           <Button
             size="sm"
-            onClick={() => acceptRequestMutation.mutate(request.id)}
-            disabled={acceptRequestMutation.isPending}
-            data-testid={`button-accept-${request.id}`}
-            className="bg-gradient-to-r from-green-500 to-emerald-600"
+            onClick={() => navigate(`/requests/${request.id}`)}
+            data-testid={`button-see-request-${request.id}`}
+            className="bg-gradient-to-r from-cyan-500 to-blue-600"
           >
-            Accept
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => rejectRequestMutation.mutate(request.id)}
-            disabled={rejectRequestMutation.isPending}
-            data-testid={`button-reject-${request.id}`}
-          >
-            Decline
+            See Request
+            <ArrowRight className="h-4 w-4 ml-1" />
           </Button>
         </div>
       </div>
