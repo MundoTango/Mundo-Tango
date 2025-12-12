@@ -1233,6 +1233,10 @@ function Router() {
         </ProtectedRoute>
       </Route>
 
+      <Route path="/housing/create">
+        <Redirect to="/housing/new" />
+      </Route>
+
       <Route path="/housing/my-listings">
         <ProtectedRoute>
           <AppLayout>
