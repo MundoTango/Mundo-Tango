@@ -10,13 +10,7 @@ import {
   Search, 
   Plus, 
   MoreHorizontal,
-  Phone,
-  Video,
-  Info,
   Send,
-  Image,
-  Smile,
-  ThumbsUp,
   CheckCheck,
   Pin,
   Edit3
@@ -27,6 +21,9 @@ import { ComposeMessage } from "@/components/messages/ComposeMessage";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
+import { PageLayout } from "@/components/PageLayout";
+import { ReactionSelector } from "@/components/ui/ReactionSelector";
+import { ImageGalleryUploader } from "@/components/feed/ImageGalleryUploader";
 
 const channelIcons = {
   mt: MessageCircle,
@@ -99,6 +96,13 @@ function getBubbleGradient(id: string | number): string {
   return bubbleGradients[Math.abs(numericId) % bubbleGradients.length];
 }
 
+interface ImageItem {
+  id: string;
+  url: string;
+  file?: File;
+  order: number;
+}
+
 export default function UnifiedInbox() {
   const [selectedChannel, setSelectedChannel] = useState<Channel>("all");
   const [selectedConversation, setSelectedConversation] = useState<any>(null);
@@ -106,6 +110,8 @@ export default function UnifiedInbox() {
   const [showCompose, setShowCompose] = useState(false);
   const [messageInput, setMessageInput] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [attachedImages, setAttachedImages] = useState<ImageItem[]>([]);
+  const [showImageUploader, setShowImageUploader] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const { data: messages, isLoading } = useQuery({
@@ -176,9 +182,16 @@ export default function UnifiedInbox() {
   };
 
   const handleSendMessage = () => {
-    if (!messageInput.trim() || !selectedConversation) return;
+    if ((!messageInput.trim() && attachedImages.length === 0) || !selectedConversation) return;
     // Would send via API
     setMessageInput("");
+    setAttachedImages([]);
+    setShowImageUploader(false);
+  };
+
+  const handleMessageReaction = async (msgId: number, reactionId: string) => {
+    // Would call API to save reaction
+    console.log('Reacting to message', msgId, 'with', reactionId);
   };
 
   const ConversationItem = ({ conv, isSelected }: { conv: any; isSelected: boolean }) => {
@@ -262,9 +275,10 @@ export default function UnifiedInbox() {
   };
 
   return (
-    <div className="flex h-screen bg-background overflow-hidden">
-      {/* Left Sidebar - Conversations List */}
-      <div className="w-80 border-r flex flex-col bg-card">
+    <PageLayout showBreadcrumbs={true}>
+      <div className="flex h-full bg-background overflow-hidden">
+        {/* Left Sidebar - Conversations List */}
+        <div className="w-80 border-r flex flex-col bg-card">
         {/* Header */}
         <div className="p-4 flex items-center justify-between border-b">
           <h1 className="text-2xl font-bold">Chats</h1>
@@ -444,32 +458,6 @@ export default function UnifiedInbox() {
                 </div>
               </div>
               
-              <div className="flex items-center gap-1">
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon" className="text-primary" data-testid="button-call">
-                      <Phone className="h-5 w-5" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>Start a voice call</TooltipContent>
-                </Tooltip>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon" className="text-primary" data-testid="button-video">
-                      <Video className="h-5 w-5" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>Start a video call</TooltipContent>
-                </Tooltip>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon" data-testid="button-info">
-                      <Info className="h-5 w-5" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>Conversation info</TooltipContent>
-                </Tooltip>
-              </div>
             </div>
 
             {/* Messages */}
@@ -546,14 +534,20 @@ export default function UnifiedInbox() {
                           {getRelativeTime(msg.receivedAt)}
                         </div>
                         
-                        {/* Reactions bar (Messenger style) */}
+                        {/* Reactions bar */}
                         <div className={cn(
-                          "absolute -bottom-2 flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity",
+                          "absolute -bottom-2 opacity-0 group-hover:opacity-100 transition-opacity",
                           isOwn ? "left-0" : "right-0"
                         )}>
-                          <button className="p-1 rounded-full bg-card shadow-sm hover-elevate" data-testid={`button-reaction-${msg.id}`}>
-                            <Smile className="h-4 w-4 text-muted-foreground" />
-                          </button>
+                          <ReactionSelector
+                            targetId={typeof msg.id === 'string' ? parseInt(msg.id) || idx : msg.id}
+                            targetType="post"
+                            currentReaction={msg.currentReaction}
+                            reactions={msg.reactions || {}}
+                            totalCount={msg.likes || 0}
+                            onReact={(reactionId) => handleMessageReaction(msg.id, reactionId)}
+                            className="scale-75 origin-bottom-left"
+                          />
                         </div>
                       </div>
                       
@@ -573,52 +567,50 @@ export default function UnifiedInbox() {
 
             {/* Message Input - Messenger style */}
             <div className="p-3 border-t bg-card">
-              <div className="flex items-end gap-2 max-w-3xl mx-auto">
-                <div className="flex gap-1">
+              <div className="max-w-3xl mx-auto space-y-3">
+                {/* Image Gallery Uploader */}
+                {showImageUploader && (
+                  <ImageGalleryUploader
+                    images={attachedImages}
+                    onImagesChange={setAttachedImages}
+                    maxImages={10}
+                  />
+                )}
+                
+                <div className="flex items-end gap-2">
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <Button variant="ghost" size="icon" className="text-primary rounded-full" data-testid="button-add-media">
+                      <Button 
+                        variant={showImageUploader ? "default" : "ghost"} 
+                        size="icon" 
+                        className="text-primary rounded-full" 
+                        onClick={() => setShowImageUploader(!showImageUploader)}
+                        data-testid="button-attach-image"
+                      >
                         <Plus className="h-5 w-5" />
                       </Button>
                     </TooltipTrigger>
-                    <TooltipContent>Add</TooltipContent>
+                    <TooltipContent>Add media</TooltipContent>
                   </Tooltip>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button variant="ghost" size="icon" className="text-primary rounded-full" data-testid="button-attach-image">
-                        <Image className="h-5 w-5" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>Attach image</TooltipContent>
-                  </Tooltip>
-                </div>
-                
-                <div className="flex-1 relative">
-                  <Input
-                    placeholder="Aa"
-                    className="pr-12 rounded-full bg-muted border-0 h-10"
-                    value={messageInput}
-                    onChange={(e) => setMessageInput(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleSendMessage()}
-                    data-testid="input-message"
-                  />
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 text-primary rounded-full"
-                    data-testid="button-emoji"
-                  >
-                    <Smile className="h-5 w-5" />
-                  </Button>
-                </div>
-                
-                {messageInput.trim() ? (
+                  
+                  <div className="flex-1">
+                    <Input
+                      placeholder="Type a message..."
+                      className="rounded-full bg-muted border-0 h-10"
+                      value={messageInput}
+                      onChange={(e) => setMessageInput(e.target.value)}
+                      onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleSendMessage()}
+                      data-testid="input-message"
+                    />
+                  </div>
+                  
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Button 
                         size="icon" 
-                        className="rounded-full bg-primary"
+                        className="rounded-full"
                         onClick={handleSendMessage}
+                        disabled={!messageInput.trim() && attachedImages.length === 0}
                         data-testid="button-send"
                       >
                         <Send className="h-5 w-5" />
@@ -626,16 +618,7 @@ export default function UnifiedInbox() {
                     </TooltipTrigger>
                     <TooltipContent>Send</TooltipContent>
                   </Tooltip>
-                ) : (
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button variant="ghost" size="icon" className="text-primary rounded-full" data-testid="button-like">
-                        <ThumbsUp className="h-6 w-6" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>Send a like</TooltipContent>
-                  </Tooltip>
-                )}
+                </div>
               </div>
             </div>
           </>
@@ -663,5 +646,6 @@ export default function UnifiedInbox() {
         )}
       </div>
     </div>
+    </PageLayout>
   );
 }
