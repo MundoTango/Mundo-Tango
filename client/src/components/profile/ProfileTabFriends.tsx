@@ -6,8 +6,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Users, Search, Star, MapPin, MessageCircle, UserMinus } from "lucide-react";
 import { Link } from "wouter";
+import { getRoleIcon, getRoleLabel, TANGO_ROLES } from "@/lib/tangoRoles";
 
 interface Friend {
   id: number;
@@ -17,6 +19,7 @@ interface Friend {
   bio?: string;
   city?: string;
   closenessScore?: number;
+  tangoRoles?: string[];
 }
 
 interface ProfileTabFriendsProps {
@@ -31,6 +34,7 @@ export default function ProfileTabFriends({
   isPublicView = false 
 }: ProfileTabFriendsProps) {
   const [searchQuery, setSearchQuery] = useState("");
+  const [roleFilter, setRoleFilter] = useState("all");
   const canEdit = isOwnProfile && !isPublicView;
 
   const { data: friends = [], isLoading, error } = useQuery<Friend[]>({
@@ -53,7 +57,12 @@ export default function ProfileTabFriends({
     const name = (friend.name || "").toLowerCase();
     const username = (friend.username || "").toLowerCase();
     const city = (friend.city || "").toLowerCase();
-    return name.includes(query) || username.includes(query) || city.includes(query);
+    const matchesSearch = name.includes(query) || username.includes(query) || city.includes(query);
+    
+    const matchesRole = roleFilter === "all" || 
+      (friend.tangoRoles && friend.tangoRoles.some(role => role.includes(roleFilter)));
+    
+    return matchesSearch && matchesRole;
   });
 
   const getClosenessColor = (score?: number) => {
@@ -109,26 +118,43 @@ export default function ProfileTabFriends({
   return (
     <Card>
       <CardHeader>
-        <div className="flex items-center justify-between gap-4 flex-wrap">
-          <CardTitle className="flex items-center gap-2">
-            <Users className="w-5 h-5" />
-            Friends
-            {friends.length > 0 && (
-              <Badge variant="secondary" className="ml-2">
-                {friends.length}
-              </Badge>
-            )}
-          </CardTitle>
+        <div className="space-y-4">
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            <CardTitle className="flex items-center gap-2">
+              <Users className="w-5 h-5" />
+              Friends
+              {friends.length > 0 && (
+                <Badge variant="secondary" className="ml-2">
+                  {friends.length}
+                </Badge>
+              )}
+            </CardTitle>
+          </div>
           {friends.length > 3 && (
-            <div className="relative flex-1 max-w-xs">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search friends..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9 h-9"
-                data-testid="input-search-friends"
-              />
+            <div className="flex gap-3 flex-wrap">
+              <div className="relative flex-1 min-w-xs max-w-xs">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search friends..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-9 h-9"
+                  data-testid="input-search-friends"
+                />
+              </div>
+              <Select value={roleFilter} onValueChange={setRoleFilter}>
+                <SelectTrigger className="w-40 h-9" data-testid="select-role-filter">
+                  <SelectValue placeholder="All Roles" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Roles</SelectItem>
+                  {TANGO_ROLES.map((role) => (
+                    <SelectItem key={role.value} value={role.value}>
+                      {role.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           )}
         </div>
@@ -188,7 +214,30 @@ export default function ProfileTabFriends({
                         </Badge>
                       )}
                     </div>
-                    <p className="text-sm text-muted-foreground truncate">
+                    <div className="flex items-center gap-1.5 flex-wrap mt-1">
+                      {friend.tangoRoles && friend.tangoRoles.length > 0 && 
+                        friend.tangoRoles.slice(0, 3).map((role) => {
+                          const RoleIcon = getRoleIcon(role);
+                          return (
+                            <Badge 
+                              key={role}
+                              variant="secondary" 
+                              className="text-xs gap-1 py-0.5"
+                              data-testid={`badge-role-${role}`}
+                            >
+                              <RoleIcon className="w-3 h-3" />
+                              {getRoleLabel(role).split(" ").slice(0, 1).join("")}
+                            </Badge>
+                          );
+                        })
+                      }
+                      {friend.tangoRoles && friend.tangoRoles.length > 3 && (
+                        <Badge variant="secondary" className="text-xs py-0.5">
+                          +{friend.tangoRoles.length - 3}
+                        </Badge>
+                      )}
+                    </div>
+                    <p className="text-sm text-muted-foreground truncate mt-1">
                       @{friend.username}
                     </p>
                     {friend.city && (
