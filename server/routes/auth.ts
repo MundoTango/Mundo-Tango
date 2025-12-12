@@ -446,11 +446,6 @@ router.get("/me", authenticateToken, async (req: AuthRequest, res: Response) => 
       normalizedRoles = rawRoles.replace(/^\{|\}$/g, '').split(',').map((r: string) => r.trim()).filter(Boolean);
     }
 
-    console.log("[/me] User city:", (req.user as any).city);
-    console.log("[/me] User tango_roles:", (req.user as any).tango_roles);
-    console.log("[/me] User tangoRoles:", (req.user as any).tangoRoles);
-    console.log("[/me] User tangoRoles normalized:", normalizedRoles);
-
     // Map snake_case database fields to camelCase for frontend
     const userResponse = {
       ...userWithoutPassword,
