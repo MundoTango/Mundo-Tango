@@ -27,7 +27,7 @@ export default function HousingMarketplacePage() {
 
   return (
     <div className="bg-background">
-      <div className="container mx-auto p-4 space-y-6">
+      <div className="container mx-auto p-4 space-y-6 mt-[61px] mb-[61px]">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
             <h1 className="text-3xl font-bold" data-testid="heading-housing-marketplace">Housing Marketplace</h1>
