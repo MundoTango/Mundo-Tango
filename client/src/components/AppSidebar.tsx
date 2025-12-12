@@ -50,7 +50,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { TANGO_ROLES, type TangoRole } from "@/lib/tangoRoles";
+import { TANGO_ROLES, type TangoRole, getRoleByValue, normalizeRole } from "@/lib/tangoRoles";
 
 const socialItems = [
   {
@@ -273,8 +273,9 @@ function AppSidebarComponent() {
     }
 
     userTangoRoles.forEach((roleValue) => {
-      const role = TANGO_ROLES.find((r) => r.value === roleValue);
-      const proUrl = roleToProDiscoveryMap[roleValue];
+      const role = getRoleByValue(roleValue);
+      const normalizedValue = normalizeRole(roleValue);
+      const proUrl = roleToProDiscoveryMap[normalizedValue];
 
       if (role && proUrl && role.category !== "dance") {
         items.push({
