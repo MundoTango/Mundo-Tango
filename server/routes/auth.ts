@@ -435,8 +435,8 @@ router.get("/me", authenticateToken, async (req: AuthRequest, res: Response) => 
 
     const { password, ...userWithoutPassword } = req.user as any;
 
-    // Get tangoRoles from user object - Drizzle returns it as 'tangoRoles' (camelCase)
-    const rawRoles = (req.user as any).tangoRoles || [];
+    // Get tangoRoles - check both snake_case (from raw SQL) and camelCase (from Drizzle)
+    const rawRoles = (req.user as any).tango_roles || (req.user as any).tangoRoles || [];
     let normalizedRoles: string[] = [];
     
     if (Array.isArray(rawRoles)) {
@@ -447,7 +447,8 @@ router.get("/me", authenticateToken, async (req: AuthRequest, res: Response) => 
     }
 
     console.log("[/me] User city:", (req.user as any).city);
-    console.log("[/me] User tangoRoles raw:", rawRoles);
+    console.log("[/me] User tango_roles:", (req.user as any).tango_roles);
+    console.log("[/me] User tangoRoles:", (req.user as any).tangoRoles);
     console.log("[/me] User tangoRoles normalized:", normalizedRoles);
 
     // Map snake_case database fields to camelCase for frontend
