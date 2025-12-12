@@ -405,7 +405,7 @@ export function UnifiedLocationPicker({
         return;
       }
 
-      // Address mode - use standard Nominatim API
+      // Address mode - use POST to avoid URL length limits
       const cached = clientCacheRef.current.get(queryKey);
       if (cached) {
         setResults(cached);
@@ -415,9 +415,14 @@ export function UnifiedLocationPicker({
 
       setIsSearching(true);
       try {
-        const response = await fetch(
-          `/api/locations/search?q=${encodeURIComponent(searchQuery)}&addressdetails=1`
-        );
+        const response = await fetch('/api/locations/search', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            q: searchQuery,
+            addressdetails: 1
+          })
+        });
 
         if (response.ok) {
           const data = await response.json();
