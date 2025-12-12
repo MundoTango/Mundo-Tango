@@ -25,6 +25,7 @@ import { ReactionSelector } from "@/components/ui/ReactionSelector";
 import { ImageGalleryUploader } from "@/components/feed/ImageGalleryUploader";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/use-auth";
 
 const channelIcons = {
   mt: MessageCircle,
@@ -106,6 +107,8 @@ interface ImageItem {
 
 export default function UnifiedInbox() {
   const { toast } = useToast();
+  const { user } = useAuth();
+  const currentUserId = user?.id;
   const [selectedChannel, setSelectedChannel] = useState<Channel>("all");
   const [selectedConversation, setSelectedConversation] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -115,6 +118,7 @@ export default function UnifiedInbox() {
   const [attachedImages, setAttachedImages] = useState<ImageItem[]>([]);
   const [showImageUploader, setShowImageUploader] = useState(false);
   const [localSentMessages, setLocalSentMessages] = useState<any[]>([]);
+  const [optimisticConversations, setOptimisticConversations] = useState<any[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const { data: messages, isLoading } = useQuery({
@@ -127,35 +131,81 @@ export default function UnifiedInbox() {
     queryKey: ["/api/messages/channels"],
   });
 
-  // Group messages by conversation/sender for Messenger-style view
-  const conversations = messages?.reduce((acc: any[], msg: any) => {
-    const existingConv = acc.find(c => c.from === msg.from && c.channel === msg.channel);
+  // Group messages by counterparty (the other person in the conversation) for Messenger-style view
+  const serverConversations = messages?.reduce((acc: any[], msg: any) => {
+    // For MT messages, use counterpartyId/counterpartyName from the API
+    // For external messages, fallback to sender info
+    const conversationKey = msg.counterpartyId 
+      ? `${msg.counterpartyId}-${msg.channel}` 
+      : `${msg.from}-${msg.channel}`;
+    
+    const existingConv = acc.find(c => c.conversationKey === conversationKey);
     if (existingConv) {
       existingConv.messages.push(msg);
       if (new Date(msg.receivedAt) > new Date(existingConv.lastMessageAt)) {
         existingConv.lastMessage = msg.body;
         existingConv.lastMessageAt = msg.receivedAt;
-        existingConv.isRead = msg.isRead;
+        // For incoming messages, update read status
+        if (!msg.isOutgoing) {
+          existingConv.isRead = msg.isRead;
+        }
       }
-      if (!msg.isRead) existingConv.unreadCount++;
+      // Only count unread for incoming messages
+      if (!msg.isRead && !msg.isOutgoing) existingConv.unreadCount++;
     } else {
+      // Use counterparty info for display name and avatar
+      const displayName = msg.counterpartyName || msg.from;
+      const displayAvatar = msg.counterpartyAvatar || msg.senderAvatar;
+      const counterpartyId = msg.counterpartyId || msg.senderId;
+      
       acc.push({
         id: msg.id,
-        from: msg.from,
-        senderId: msg.senderId, // Include senderId for mark-as-read
+        conversationKey,
+        from: displayName,
+        counterpartyId,
+        senderId: msg.senderId,
         channel: msg.channel,
-        avatar: msg.senderAvatar,
+        avatar: displayAvatar,
         isOnline: Math.random() > 0.5, // Simulated - would come from presence API
         isPinned: msg.isStarred,
         lastMessage: msg.body,
         lastMessageAt: msg.receivedAt,
-        isRead: msg.isRead,
-        unreadCount: msg.isRead ? 0 : 1,
+        isRead: msg.isOutgoing ? true : msg.isRead, // Outgoing messages are always "read"
+        unreadCount: (!msg.isRead && !msg.isOutgoing) ? 1 : 0,
         messages: [msg],
       });
     }
     return acc;
   }, []) || [];
+  
+  // Merge optimistic conversations with server conversations
+  const conversations = [...optimisticConversations, ...serverConversations].reduce((acc: any[], conv: any) => {
+    // Use conversationKey as the primary dedup key (works for both MT and external messages)
+    // Fall back to counterpartyId+channel only for MT messages
+    const exists = acc.find(c => {
+      // If both have conversationKey, compare those
+      if (c.conversationKey && conv.conversationKey) {
+        return c.conversationKey === conv.conversationKey;
+      }
+      // For MT messages with counterpartyId, compare those
+      if (c.counterpartyId && conv.counterpartyId) {
+        return c.counterpartyId === conv.counterpartyId && c.channel === conv.channel;
+      }
+      // For external messages without counterpartyId, never merge
+      return false;
+    });
+    
+    if (!exists) {
+      acc.push(conv);
+    } else if (conv.isOptimistic) {
+      // Update the existing conversation with optimistic message if newer
+      if (new Date(conv.lastMessageAt) > new Date(exists.lastMessageAt)) {
+        exists.lastMessage = conv.lastMessage;
+        exists.lastMessageAt = conv.lastMessageAt;
+      }
+    }
+    return acc;
+  }, []);
 
   // Sort: pinned first, then by most recent
   const sortedConversations = [...conversations].sort((a, b) => {
@@ -181,11 +231,12 @@ export default function UnifiedInbox() {
     
     // Mark messages as read when viewing a conversation
     // Only mark as read if this is an MT internal message (channel === 'mt')
-    if (selectedConversation?.from && selectedConversation?.channel === 'mt') {
+    // Use counterpartyId instead of senderId to correctly identify the other person
+    if (selectedConversation?.counterpartyId && selectedConversation?.channel === 'mt') {
       const markAsRead = async () => {
         try {
           await apiRequest('POST', '/api/messages/mark-read', {
-            senderId: selectedConversation.senderId,
+            senderId: selectedConversation.counterpartyId,
             senderName: selectedConversation.from,
           });
           // Invalidate unread count to update the badge
@@ -377,7 +428,8 @@ export default function UnifiedInbox() {
                     // Create optimistic conversation with real user data
                     const newConversation = {
                       id: `conv-${data.recipientId}`,
-                      recipientId: data.recipientId,
+                      conversationKey: `${data.recipientId}-${data.channel}`,
+                      counterpartyId: data.recipientId,
                       from: data.recipientName,
                       channel: data.channel,
                       avatar: data.recipientAvatar,
@@ -388,7 +440,17 @@ export default function UnifiedInbox() {
                       isRead: true,
                       unreadCount: 0,
                       messages: [],
+                      isOptimistic: true,
                     };
+                    
+                    // Add to optimistic conversations to show in list immediately
+                    setOptimisticConversations(prev => {
+                      // Don't add duplicate
+                      const exists = prev.find(c => c.counterpartyId === data.recipientId);
+                      if (exists) return prev;
+                      return [...prev, newConversation];
+                    });
+                    
                     setSelectedConversation(newConversation);
                     
                     // Add the sent message to local state

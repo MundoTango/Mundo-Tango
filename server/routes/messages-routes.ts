@@ -927,32 +927,53 @@ router.get("/unified", authenticateToken, async (req: AuthRequest, res: Response
             dm.media_type,
             dm.is_read,
             dm.created_at,
-            u.name as sender_name,
-            u.username as sender_username,
-            u.profile_image as sender_avatar
+            sender.name as sender_name,
+            sender.username as sender_username,
+            sender.profile_image as sender_avatar,
+            recipient.name as recipient_name,
+            recipient.username as recipient_username,
+            recipient.profile_image as recipient_avatar
           FROM direct_messages dm
-          LEFT JOIN users u ON dm.sender_id = u.id
+          LEFT JOIN users sender ON dm.sender_id = sender.id
+          LEFT JOIN users recipient ON dm.recipient_id = recipient.id
           WHERE dm.recipient_id = ${userId} OR dm.sender_id = ${userId}
           ORDER BY dm.created_at DESC
           LIMIT ${limitNum} OFFSET ${offsetNum}
         `);
-        internalMsgs = (mtMessages.rows || []).map((msg: any) => ({
-          id: `mt-${msg.id}`,
-          channel: 'mt',
-          from: msg.sender_name || msg.sender_username || `User ${msg.sender_id}`,
-          to: msg.recipient_id === userId ? 'You' : `User ${msg.recipient_id}`,
-          subject: null,
-          body: msg.content,
-          isRead: msg.is_read,
-          receivedAt: msg.created_at,
-          createdAt: msg.created_at,
-          senderId: msg.sender_id,
-          senderName: msg.sender_name,
-          senderUsername: msg.sender_username,
-          senderAvatar: msg.sender_avatar,
-          mediaUrl: msg.media_url,
-          mediaType: msg.media_type,
-        }));
+        internalMsgs = (mtMessages.rows || []).map((msg: any) => {
+          const isOutgoing = msg.sender_id === userId;
+          const counterpartyId = isOutgoing ? msg.recipient_id : msg.sender_id;
+          const counterpartyName = isOutgoing 
+            ? (msg.recipient_name || msg.recipient_username || `User ${msg.recipient_id}`)
+            : (msg.sender_name || msg.sender_username || `User ${msg.sender_id}`);
+          const counterpartyAvatar = isOutgoing ? msg.recipient_avatar : msg.sender_avatar;
+          
+          return {
+            id: `mt-${msg.id}`,
+            channel: 'mt',
+            from: msg.sender_name || msg.sender_username || `User ${msg.sender_id}`,
+            to: msg.recipient_name || msg.recipient_username || `User ${msg.recipient_id}`,
+            subject: null,
+            body: msg.content,
+            isRead: msg.is_read,
+            receivedAt: msg.created_at,
+            createdAt: msg.created_at,
+            senderId: msg.sender_id,
+            senderName: msg.sender_name,
+            senderUsername: msg.sender_username,
+            senderAvatar: msg.sender_avatar,
+            recipientId: msg.recipient_id,
+            recipientName: msg.recipient_name,
+            recipientUsername: msg.recipient_username,
+            recipientAvatar: msg.recipient_avatar,
+            counterpartyId,
+            counterpartyName,
+            counterpartyAvatar,
+            isOutgoing,
+            mediaUrl: msg.media_url,
+            mediaType: msg.media_type,
+          };
+        });
       } catch (mtError) {
         console.warn('[Messages] MT messages query failed:', mtError);
       }
