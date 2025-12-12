@@ -1310,12 +1310,13 @@ export default function ProfileTabAbout({ user, isOwnProfile, isPublicView = fal
             
             {user.tangoRoles && user.tangoRoles.length > 0 ? (
               <div className="flex flex-wrap gap-2">
-                {[...new Set(user.tangoRoles)]
+                {user.tangoRoles
                   .map((roleValue) => {
                     const role = getRoleByValue(roleValue);
                     const startYear = getRoleStartYear(user, roleValue);
                     return { roleValue, role, startYear };
                   })
+                  .filter((item, index, array) => array.findIndex(a => a.roleValue === item.roleValue) === index)
                   .sort((a, b) => (b.startYear || 0) - (a.startYear || 0))
                   .map(({ roleValue, role, startYear }) => {
                     const IconComponent = role?.icon;
