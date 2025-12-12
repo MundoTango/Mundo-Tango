@@ -231,12 +231,16 @@ const roleToProDiscoveryMap: Record<string, string> = {
   "venue-owner": "/pro/venues",
   organizer: "/pro/organizers",
   blogger: "/pro/stories",
+  journalist: "/pro/stories",
   artist: "/pro/artists",
   musician: "/pro/musicians",
   "fashion-designer": "/pro/fashion",
+  "clothing-designer": "/pro/fashion",
   coach: "/pro/coaches",
   vendor: "/pro/vendors",
+  business: "/pro/vendors",
   "community-leader": "/pro/community",
+  "community-builder": "/pro/community",
 };
 
 function AppSidebarComponent() {
