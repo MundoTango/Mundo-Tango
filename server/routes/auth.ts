@@ -433,16 +433,16 @@ router.get("/me", authenticateToken, async (req: AuthRequest, res: Response) => 
       return res.status(401).json({ message: "Not authenticated" });
     }
 
-    const { password, ...userWithoutPassword } = req.user;
+    const { password, tango_roles, ...userWithoutPassword } = req.user as any;
 
     // Map snake_case database fields to camelCase for frontend
     const userResponse = {
       ...userWithoutPassword,
       // Ensure tangoRoles is available (map from tango_roles if needed)
-      tangoRoles: (userWithoutPassword as any).tango_roles || (userWithoutPassword as any).tangoRoles || [],
+      tangoRoles: tango_roles || (userWithoutPassword as any).tangoRoles || [],
       // Ensure city and country are included
-      city: userWithoutPassword.city,
-      country: userWithoutPassword.country,
+      city: (req.user as any).city,
+      country: (req.user as any).country,
     };
 
     res.json({ user: userResponse });
