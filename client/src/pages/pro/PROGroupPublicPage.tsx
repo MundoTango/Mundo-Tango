@@ -13,7 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   Search, Users, Star, MapPin, Calendar, Briefcase, ArrowRight,
   GraduationCap, Music, Camera, Drama, Building2, PenLine, Palette,
-  Piano, Shirt, BookOpen, Target, Mic, Globe, Heart, Eye, User
+  Piano, Shirt, BookOpen, Target, Mic, Globe, Heart, Eye, User, MessageSquare
 } from "lucide-react";
 import { TANGO_ROLES, getRoleByValue, type TangoRole } from "@/lib/tangoRoles";
 
@@ -112,7 +112,7 @@ export function PROGroupPublicPage({ roleSlug, title, description, icon: Icon, c
           </div>
 
           {isMember ? (
-            <div className="mt-6 flex gap-3">
+            <div className="mt-6 flex flex-wrap gap-3">
               <Badge 
                 className="px-3 py-1"
                 style={{ background: `${color}30`, color }}
@@ -129,6 +129,19 @@ export function PROGroupPublicPage({ roleSlug, title, description, icon: Icon, c
                 View Your PRO Tab
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
+              {groupInfo?.id && (
+                <Button 
+                  variant="outline"
+                  size="sm"
+                  onClick={() => navigate(`/messages/group/${groupInfo.id}`)}
+                  data-testid="button-pro-group-discussion"
+                  style={{ borderColor: color, color }}
+                >
+                  <MessageSquare className="w-4 h-4 mr-2" />
+                  {title} Discussion
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              )}
             </div>
           ) : (
             <div className="mt-6">
