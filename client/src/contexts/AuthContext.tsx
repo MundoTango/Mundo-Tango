@@ -33,7 +33,6 @@ interface Profile {
   bio?: string | null;
   city?: string | null;
   country?: string | null;
-  tangoRoles?: string[];
 }
 
 interface ProfilePreferences {
@@ -167,7 +166,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         bio: userData.bio,
         city: userData.city,
         country: userData.country,
-        tangoRoles: userData.tangoRoles,
       });
 
       // Sync site language with user's primary language preference
@@ -268,7 +266,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         bio: data.user.bio,
         city: data.user.city,
         country: data.user.country,
-        tangoRoles: data.user.tangoRoles,
       });
 
       // Sync site language with user's primary language preference
@@ -323,7 +320,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         bio: data.user.bio,
         city: data.user.city,
         country: data.user.country,
-        tangoRoles: data.user.tangoRoles,
       });
 
       if (!data.user.isOnboardingComplete) {

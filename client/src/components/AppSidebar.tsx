@@ -248,11 +248,6 @@ function AppSidebarComponent() {
   const avatarUrl = profile?.profileImage;
   const userCity = profile?.city || (user as any)?.city;
   const userTangoRoles = (profile as any)?.tangoRoles || (user as any)?.tangoRoles || [];
-  
-  console.log("[AppSidebar] profile:", profile);
-  console.log("[AppSidebar] user:", user);
-  console.log("[AppSidebar] userCity:", userCity);
-  console.log("[AppSidebar] userTangoRoles:", userTangoRoles);
 
   const myStuffItems = useMemo(() => {
     const items: Array<{
@@ -274,10 +269,8 @@ function AppSidebarComponent() {
     }
 
     userTangoRoles.forEach((roleValue) => {
-      // Normalize to lowercase for matching
-      const normalizedRole = roleValue.toLowerCase();
-      const role = TANGO_ROLES.find((r) => r.value === normalizedRole || r.value === roleValue);
-      const proUrl = roleToProDiscoveryMap[normalizedRole] || roleToProDiscoveryMap[roleValue];
+      const role = TANGO_ROLES.find((r) => r.value === roleValue);
+      const proUrl = roleToProDiscoveryMap[roleValue];
 
       if (role && proUrl && role.category !== "dance") {
         items.push({

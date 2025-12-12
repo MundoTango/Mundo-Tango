@@ -433,25 +433,16 @@ router.get("/me", authenticateToken, async (req: AuthRequest, res: Response) => 
       return res.status(401).json({ message: "Not authenticated" });
     }
 
-    const { password, ...userWithoutPassword } = req.user as any;
-
-    // Get tangoRoles - check both snake_case (from raw SQL) and camelCase (from Drizzle)
-    const rawRoles = (req.user as any).tango_roles || (req.user as any).tangoRoles || [];
-    let normalizedRoles: string[] = [];
-    
-    if (Array.isArray(rawRoles)) {
-      normalizedRoles = rawRoles;
-    } else if (typeof rawRoles === 'string' && rawRoles.length > 0) {
-      // Parse PostgreSQL array literal: "{Leader,Organizer,Teacher}" -> ["Leader", "Organizer", "Teacher"]
-      normalizedRoles = rawRoles.replace(/^\{|\}$/g, '').split(',').map((r: string) => r.trim()).filter(Boolean);
-    }
+    const { password, ...userWithoutPassword } = req.user;
 
     // Map snake_case database fields to camelCase for frontend
     const userResponse = {
       ...userWithoutPassword,
-      tangoRoles: normalizedRoles,
-      city: (req.user as any).city,
-      country: (req.user as any).country,
+      // Ensure tangoRoles is available (map from tango_roles if needed)
+      tangoRoles: (userWithoutPassword as any).tango_roles || (userWithoutPassword as any).tangoRoles || [],
+      // Ensure city and country are included
+      city: userWithoutPassword.city,
+      country: userWithoutPassword.country,
     };
 
     res.json({ user: userResponse });

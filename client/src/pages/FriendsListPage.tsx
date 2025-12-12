@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { Users, UserPlus, Clock, Search, Heart, Star, TrendingUp, Upload, X, Image as ImageIcon, Loader2, ArrowRight } from "lucide-react";
+import { Users, UserPlus, Clock, Search, Heart, Star, TrendingUp, Upload, X, Image as ImageIcon, Loader2 } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { PageLayout } from "@/components/PageLayout";
@@ -357,12 +357,21 @@ export default function FriendsListPage() {
         <div className="flex gap-2 ml-4">
           <Button
             size="sm"
-            onClick={() => navigate(`/requests/${request.id}`)}
-            data-testid={`button-see-request-${request.id}`}
-            className="bg-gradient-to-r from-cyan-500 to-blue-600"
+            onClick={() => acceptRequestMutation.mutate(request.id)}
+            disabled={acceptRequestMutation.isPending}
+            data-testid={`button-accept-${request.id}`}
+            className="bg-gradient-to-r from-green-500 to-emerald-600"
           >
-            See Request
-            <ArrowRight className="h-4 w-4 ml-1" />
+            Accept
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => rejectRequestMutation.mutate(request.id)}
+            disabled={rejectRequestMutation.isPending}
+            data-testid={`button-reject-${request.id}`}
+          >
+            Decline
           </Button>
         </div>
       </div>
