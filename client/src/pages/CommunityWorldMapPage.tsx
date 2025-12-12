@@ -394,6 +394,72 @@ export default function CommunityWorldMapPage() {
                 </CardContent>
               </Card>
             )}
+
+            {/* Cities List */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Globe className="h-5 w-5 text-primary" />
+                  All Cities
+                </CardTitle>
+                <CardDescription>
+                  {sortedLocations.length} tango communities worldwide
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {sortedLocations.length === 0 ? (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <MapPin className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                    <p>No cities found. Be the first to start a community!</p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {sortedLocations.map((location) => (
+                      <Card 
+                        key={location.id} 
+                        className={`hover-elevate cursor-pointer transition-all ${
+                          selectedCity?.id === location.id ? 'ring-2 ring-primary' : ''
+                        }`}
+                        onClick={() => handleCityClick(location)}
+                        data-testid={`card-city-${location.id}`}
+                      >
+                        <CardContent className="p-4">
+                          <div className="flex items-start justify-between gap-2 mb-3">
+                            <div>
+                              <h3 className="font-semibold text-lg" data-testid={`text-city-name-${location.id}`}>
+                                {location.city}
+                              </h3>
+                              <p className="text-sm text-muted-foreground">{location.country}</p>
+                            </div>
+                            {location.id === 1 && (
+                              <Badge variant="default" className="shrink-0">Flagship</Badge>
+                            )}
+                          </div>
+                          <div className="grid grid-cols-2 gap-2 text-sm">
+                            <div className="flex items-center gap-1.5 text-muted-foreground">
+                              <Users className="h-3.5 w-3.5" />
+                              <span>{location.memberCount.toLocaleString()} members</span>
+                            </div>
+                            <div className="flex items-center gap-1.5 text-muted-foreground">
+                              <Calendar className="h-3.5 w-3.5" />
+                              <span>{location.activeEvents} events</span>
+                            </div>
+                            <div className="flex items-center gap-1.5 text-muted-foreground">
+                              <Building2 className="h-3.5 w-3.5" />
+                              <span>{location.recommendations} venues</span>
+                            </div>
+                            <div className="flex items-center gap-1.5 text-muted-foreground">
+                              <Home className="h-3.5 w-3.5" />
+                              <span>{location.housing} housing</span>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
           </div>
         </div>
     </SelfHealingErrorBoundary>
