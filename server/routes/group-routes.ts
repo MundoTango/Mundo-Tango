@@ -381,22 +381,24 @@ router.get("/:id", async (req: Request, res: Response) => {
     // For non-city groups, compute based on group_id only
     const isCity = group.type === 'city' && group.city;
     
-    let eventCountResult: { count: number }[];
+    let eventCount = 0;
     if (isCity) {
       // City groups: count events where city matches (case-insensitive) OR group_id matches
-      [eventCountResult] = await db
+      const [eventResult] = await db
         .select({ count: sql<number>`count(*)::int` })
         .from(events)
         .where(or(
           eq(events.groupId, groupId),
           sql`LOWER(${events.city}) = LOWER(${group.city})`
         ));
+      eventCount = eventResult?.count || 0;
     } else {
       // Non-city groups: count events linked to group
-      [eventCountResult] = await db
+      const [eventResult] = await db
         .select({ count: count() })
         .from(events)
         .where(eq(events.groupId, groupId));
+      eventCount = eventResult?.count || 0;
     }
 
     // Count posts for this group
@@ -415,20 +417,21 @@ router.get("/:id", async (req: Request, res: Response) => {
       housingCount = housingResult?.count || 0;
     }
 
-    // For city groups, compute recommendationCount based on city match
+    // For city groups, compute recommendationCount based on address containing city name
+    // Note: placeRecommendations doesn't have a city column, so we match on address
     let recommendationCount = 0;
-    if (isCity) {
+    if (isCity && group.city) {
       const [recResult] = await db
         .select({ count: sql<number>`count(*)::int` })
         .from(placeRecommendations)
-        .where(sql`LOWER(${placeRecommendations.city}) = LOWER(${group.city})`);
+        .where(sql`LOWER(${placeRecommendations.address}) LIKE LOWER(${'%' + group.city + '%'})`);
       recommendationCount = recResult?.count || 0;
     }
 
     res.json({
       ...result[0],
       memberCount: memberCountResult?.count || 0,
-      eventCount: eventCountResult?.count || 0,
+      eventCount: eventCount,
       postCount: postCountResult?.count || 0,
       housingCount: housingCount,
       recommendationCount: recommendationCount

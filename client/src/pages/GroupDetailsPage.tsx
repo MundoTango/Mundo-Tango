@@ -1570,7 +1570,15 @@ export default function GroupDetailsPage() {
       const res = await fetch(`/api/groups/${groupIdOrSlug}`, { credentials: "include" });
       if (!res.ok) throw new Error("Failed to fetch group");
       const data = await res.json();
-      return data.group;
+      // Merge dynamic counts from API response into group object
+      return {
+        ...data.group,
+        memberCount: data.memberCount ?? data.group.memberCount ?? 0,
+        eventCount: data.eventCount ?? data.group.eventCount ?? 0,
+        postCount: data.postCount ?? data.group.postCount ?? 0,
+        housingCount: data.housingCount ?? data.group.housingCount ?? 0,
+        recommendationCount: data.recommendationCount ?? data.group.recommendationCount ?? 0,
+      };
     },
   });
 
