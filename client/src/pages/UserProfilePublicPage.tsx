@@ -15,11 +15,23 @@ import {
   UserPlus,
   MoreHorizontal,
   Award,
-  Music
+  Music,
+  Globe
 } from "lucide-react";
+import { SiInstagram, SiFacebook, SiYoutube, SiTiktok, SiX, SiLinkedin } from "react-icons/si";
 import { safeDateFormat } from "@/lib/safeDateFormat";
 import { motion } from "framer-motion";
 import { SEO } from "@/components/SEO";
+
+interface SocialLinks {
+  instagram?: string;
+  facebook?: string;
+  youtube?: string;
+  tiktok?: string;
+  twitter?: string;
+  linkedin?: string;
+  website?: string;
+}
 
 interface UserProfile {
   id: number;
@@ -27,11 +39,17 @@ interface UserProfile {
   username: string;
   email: string;
   avatarUrl?: string;
+  profileImage?: string;
   bio?: string;
   city?: string;
   country?: string;
   role: string;
   danceLevel?: string;
+  yearsOfDancing?: number;
+  leaderLevel?: number;
+  followerLevel?: number;
+  socialLinks?: SocialLinks | null;
+  tangoRoles?: string[] | null;
   joinedAt: string;
   stats: {
     posts: number;
@@ -129,6 +147,27 @@ export default function UserProfilePublicPage() {
                         <p className="text-foreground leading-relaxed text-lg">{profile.bio}</p>
                       )}
 
+                      {profile.yearsOfDancing && (
+                        <p className="text-primary font-semibold text-lg">{profile.yearsOfDancing} years of tango experience</p>
+                      )}
+
+                      {(profile.leaderLevel || profile.followerLevel) && (
+                        <div className="grid grid-cols-2 gap-4 py-4">
+                          {profile.leaderLevel && (
+                            <div className="text-center p-3 rounded-lg bg-muted">
+                              <div className="text-lg font-semibold text-foreground">Leader</div>
+                              <div className="text-sm text-muted-foreground">Level {profile.leaderLevel}</div>
+                            </div>
+                          )}
+                          {profile.followerLevel && (
+                            <div className="text-center p-3 rounded-lg bg-muted">
+                              <div className="text-lg font-semibold text-foreground">Follower</div>
+                              <div className="text-sm text-muted-foreground">Level {profile.followerLevel}</div>
+                            </div>
+                          )}
+                        </div>
+                      )}
+
                       <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
                         {profile.city && profile.country && (
                           <div className="flex items-center gap-1.5">
@@ -147,6 +186,46 @@ export default function UserProfilePublicPage() {
                           </div>
                         )}
                       </div>
+
+                      {profile.socialLinks && Object.keys(profile.socialLinks).length > 0 && (
+                        <div className="flex gap-4 pt-2">
+                          {profile.socialLinks.instagram && (
+                            <a href={profile.socialLinks.instagram} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
+                              <SiInstagram className="h-5 w-5" data-testid="icon-instagram" />
+                            </a>
+                          )}
+                          {profile.socialLinks.facebook && (
+                            <a href={profile.socialLinks.facebook} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
+                              <SiFacebook className="h-5 w-5" data-testid="icon-facebook" />
+                            </a>
+                          )}
+                          {profile.socialLinks.youtube && (
+                            <a href={profile.socialLinks.youtube} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
+                              <SiYoutube className="h-5 w-5" data-testid="icon-youtube" />
+                            </a>
+                          )}
+                          {profile.socialLinks.tiktok && (
+                            <a href={profile.socialLinks.tiktok} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
+                              <SiTiktok className="h-5 w-5" data-testid="icon-tiktok" />
+                            </a>
+                          )}
+                          {profile.socialLinks.twitter && (
+                            <a href={profile.socialLinks.twitter} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
+                              <SiX className="h-5 w-5" data-testid="icon-twitter" />
+                            </a>
+                          )}
+                          {profile.socialLinks.linkedin && (
+                            <a href={profile.socialLinks.linkedin} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
+                              <SiLinkedin className="h-5 w-5" data-testid="icon-linkedin" />
+                            </a>
+                          )}
+                          {profile.socialLinks.website && (
+                            <a href={profile.socialLinks.website} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
+                              <Globe className="h-5 w-5" data-testid="icon-website" />
+                            </a>
+                          )}
+                        </div>
+                      )}
 
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 py-4">
                         <div className="text-center p-4 rounded-lg border">
@@ -259,11 +338,36 @@ export default function UserProfilePublicPage() {
                 <CardHeader>
                   <CardTitle>About {profile.name}</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-6">
                   {profile.bio && (
                     <div>
                       <h4 className="font-semibold text-foreground mb-2">Bio</h4>
                       <p className="text-muted-foreground">{profile.bio}</p>
+                    </div>
+                  )}
+                  {profile.yearsOfDancing && (
+                    <div>
+                      <h4 className="font-semibold text-foreground mb-2">Experience</h4>
+                      <p className="text-muted-foreground">{profile.yearsOfDancing} years of tango</p>
+                    </div>
+                  )}
+                  {(profile.leaderLevel || profile.followerLevel) && (
+                    <div>
+                      <h4 className="font-semibold text-foreground mb-3">Dance Levels</h4>
+                      <div className="grid grid-cols-2 gap-3">
+                        {profile.leaderLevel && (
+                          <div className="p-3 rounded-lg bg-muted">
+                            <div className="text-sm font-semibold text-foreground">Leader</div>
+                            <div className="text-sm text-muted-foreground">Level {profile.leaderLevel}</div>
+                          </div>
+                        )}
+                        {profile.followerLevel && (
+                          <div className="p-3 rounded-lg bg-muted">
+                            <div className="text-sm font-semibold text-foreground">Follower</div>
+                            <div className="text-sm text-muted-foreground">Level {profile.followerLevel}</div>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   )}
                   {profile.danceLevel && (
@@ -276,6 +380,48 @@ export default function UserProfilePublicPage() {
                     <div>
                       <h4 className="font-semibold text-foreground mb-2">Location</h4>
                       <p className="text-muted-foreground">{profile.city}, {profile.country}</p>
+                    </div>
+                  )}
+                  {profile.socialLinks && Object.keys(profile.socialLinks).length > 0 && (
+                    <div>
+                      <h4 className="font-semibold text-foreground mb-3">Social Media</h4>
+                      <div className="flex gap-4">
+                        {profile.socialLinks.instagram && (
+                          <a href={profile.socialLinks.instagram} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
+                            <SiInstagram className="h-5 w-5" />
+                          </a>
+                        )}
+                        {profile.socialLinks.facebook && (
+                          <a href={profile.socialLinks.facebook} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
+                            <SiFacebook className="h-5 w-5" />
+                          </a>
+                        )}
+                        {profile.socialLinks.youtube && (
+                          <a href={profile.socialLinks.youtube} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
+                            <SiYoutube className="h-5 w-5" />
+                          </a>
+                        )}
+                        {profile.socialLinks.tiktok && (
+                          <a href={profile.socialLinks.tiktok} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
+                            <SiTiktok className="h-5 w-5" />
+                          </a>
+                        )}
+                        {profile.socialLinks.twitter && (
+                          <a href={profile.socialLinks.twitter} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
+                            <SiX className="h-5 w-5" />
+                          </a>
+                        )}
+                        {profile.socialLinks.linkedin && (
+                          <a href={profile.socialLinks.linkedin} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
+                            <SiLinkedin className="h-5 w-5" />
+                          </a>
+                        )}
+                        {profile.socialLinks.website && (
+                          <a href={profile.socialLinks.website} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
+                            <Globe className="h-5 w-5" />
+                          </a>
+                        )}
+                      </div>
                     </div>
                   )}
                   <div>
