@@ -250,18 +250,18 @@ export default function CreateListingPage() {
   const toggleAmenity = (amenityId: string) => {
     const current = form.getValues("amenities") || [];
     if (current.includes(amenityId)) {
-      form.setValue("amenities", current.filter(a => a !== amenityId));
+      form.setValue("amenities", current.filter(a => a !== amenityId), { shouldDirty: true, shouldValidate: true });
     } else {
-      form.setValue("amenities", [...current, amenityId]);
+      form.setValue("amenities", [...current, amenityId], { shouldDirty: true, shouldValidate: true });
     }
   };
 
   const toggleSafetyAmenity = (amenityId: string) => {
     const current = form.getValues("safetyAmenities") || [];
     if (current.includes(amenityId)) {
-      form.setValue("safetyAmenities", current.filter(a => a !== amenityId));
+      form.setValue("safetyAmenities", current.filter(a => a !== amenityId), { shouldDirty: true, shouldValidate: true });
     } else {
-      form.setValue("safetyAmenities", [...current, amenityId]);
+      form.setValue("safetyAmenities", [...current, amenityId], { shouldDirty: true, shouldValidate: true });
     }
   };
 
