@@ -142,6 +142,7 @@ export default function UnifiedInbox() {
       acc.push({
         id: msg.id,
         from: msg.from,
+        senderId: msg.senderId, // Include senderId for mark-as-read
         channel: msg.channel,
         avatar: msg.senderAvatar,
         isOnline: Math.random() > 0.5, // Simulated - would come from presence API
@@ -174,9 +175,29 @@ export default function UnifiedInbox() {
   const pinnedConversations = filteredConversations.filter(c => c.isPinned);
   const regularConversations = filteredConversations.filter(c => !c.isPinned);
 
-  // Scroll to bottom when conversation changes
+  // Scroll to bottom when conversation changes and mark messages as read
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    
+    // Mark messages as read when viewing a conversation
+    // Only mark as read if this is an MT internal message (channel === 'mt')
+    if (selectedConversation?.from && selectedConversation?.channel === 'mt') {
+      const markAsRead = async () => {
+        try {
+          await apiRequest('POST', '/api/messages/mark-read', {
+            senderId: selectedConversation.senderId,
+            senderName: selectedConversation.from,
+          });
+          // Invalidate unread count to update the badge
+          queryClient.invalidateQueries({ queryKey: ['/api/messages/unread-count'] });
+          // Also refresh the messages list to update read status
+          queryClient.invalidateQueries({ queryKey: ['/api/messages/unified'] });
+        } catch (error) {
+          console.error('Failed to mark messages as read:', error);
+        }
+      };
+      markAsRead();
+    }
   }, [selectedConversation]);
 
   const getChannelCount = (channel: Channel) => {

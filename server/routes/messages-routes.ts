@@ -809,32 +809,74 @@ router.post("/sync", authenticateToken, async (req: AuthRequest, res: Response) 
 
 /**
  * GET /api/messages/unread-count
- * Get count of unread conversations (conversations with unread messages) for the authenticated user
+ * Get count of unread conversations (direct messages) for the authenticated user
+ * Uses direct_messages table which is what the unified inbox displays
  */
 router.get("/unread-count", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.userId!;
-    const userIdStr = String(userId);
     
-    // Count distinct conversations (chat rooms) that have unread messages for this user
-    // Only count messages from chat rooms the user is a participant in
-    const result = await db.select({
-      count: sql<number>`count(distinct ${chatMessages.chatRoomId})::int`
-    })
-    .from(chatMessages)
-    .innerJoin(chatRoomUsers, eq(chatMessages.chatRoomId, chatRoomUsers.chatRoomId))
-    .where(
-      and(
-        eq(chatRoomUsers.userId, userId),
-        sql`(${chatMessages.readBy} IS NULL OR NOT (${userIdStr} = ANY(${chatMessages.readBy})))`
-      )
-    );
+    // Count distinct senders who have sent unread messages to this user
+    // This matches the unified inbox which groups by sender
+    const result = await db.execute(sql`
+      SELECT COUNT(DISTINCT sender_id)::int as count
+      FROM direct_messages 
+      WHERE recipient_id = ${userId} 
+      AND is_read = false
+    `);
     
-    res.json({ count: result[0]?.count || 0 });
+    const count = (result.rows?.[0] as any)?.count || 0;
+    res.json({ count });
   } catch (error) {
     console.error("Get unread message count error:", error);
     // Return 0 instead of error to prevent UI spam
     res.json({ count: 0 });
+  }
+});
+
+/**
+ * POST /api/messages/mark-read
+ * Mark all messages from a sender as read for the authenticated user
+ * Works with direct_messages table to match the unified inbox
+ */
+router.post("/mark-read", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.userId!;
+    const { senderId, senderName } = req.body;
+    
+    // We need either senderId (numeric) or senderName (string to lookup)
+    if (!senderId && !senderName) {
+      return res.status(400).json({ error: "senderId or senderName is required" });
+    }
+    
+    let actualSenderId = senderId;
+    
+    // If we have senderName but no senderId, look up the sender
+    if (!actualSenderId && senderName) {
+      const senderResult = await db.execute(sql`
+        SELECT id FROM users WHERE name = ${senderName} OR username = ${senderName} LIMIT 1
+      `);
+      actualSenderId = (senderResult.rows?.[0] as any)?.id;
+    }
+    
+    if (!actualSenderId) {
+      // No sender found, but that's OK - just return success
+      return res.json({ success: true, message: "No messages to mark as read" });
+    }
+    
+    // Mark all unread messages from this sender to the current user as read
+    await db.execute(sql`
+      UPDATE direct_messages 
+      SET is_read = true
+      WHERE recipient_id = ${userId}
+      AND sender_id = ${actualSenderId}
+      AND is_read = false
+    `);
+    
+    res.json({ success: true, message: "Messages marked as read" });
+  } catch (error) {
+    console.error("Mark messages as read error:", error);
+    res.status(500).json({ error: "Failed to mark messages as read" });
   }
 });
 
