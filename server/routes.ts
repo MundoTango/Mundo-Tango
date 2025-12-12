@@ -5340,6 +5340,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get friends for a specific user (public endpoint for viewing profiles)
+  app.get("/api/users/:userId/friends", async (req: Request, res: Response) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      if (isNaN(userId)) {
+        return res.status(400).json({ message: "Invalid user ID" });
+      }
+      const friends = await storage.getUserFriends(userId);
+      // Return public-safe friend data
+      const publicFriends = friends.map(f => ({
+        id: f.id,
+        name: f.name,
+        username: f.username,
+        profileImage: f.profileImage,
+        bio: f.bio,
+        city: f.city,
+        closenessScore: f.closenessScore,
+      }));
+      res.json(publicFriends);
+    } catch (error) {
+      console.error("[GET /api/users/:userId/friends] Error:", error);
+      res.status(500).json({ message: "Failed to fetch user friends" });
+    }
+  });
+
   app.get("/api/friends/requests", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const requests = await storage.getFriendRequests(req.user!.id);
