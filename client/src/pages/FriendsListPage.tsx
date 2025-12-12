@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { Users, UserPlus, Clock, Search, Heart, Star, TrendingUp, Upload, X, Image as ImageIcon, Loader2 } from "lucide-react";
+import { Users, UserPlus, Clock, Search, Heart, Star, TrendingUp, Upload, X, Image as ImageIcon, Loader2, ArrowRight } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { PageLayout } from "@/components/PageLayout";
