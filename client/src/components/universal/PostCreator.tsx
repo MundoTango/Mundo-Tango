@@ -916,12 +916,14 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
                 value={businessName}
                 coordinates={coordinates}
                 onChange={(selectedName, coords, parsed) => {
-                  // Use the full address from Nominatim as business name
+                  // Set business name (full address from Nominatim)
                   setBusinessName(selectedName);
+                  // Set coordinates for map pin
                   setCoordinates(coords);
-                  // Also update location if not already set
-                  if (!location && parsed?.city) {
-                    setLocation(`${parsed.city}, ${parsed.country || ''}`);
+                  // Auto-populate location field from the parsed city/country
+                  if (parsed?.city) {
+                    const cityLocation = `${parsed.city}${parsed.country ? ', ' + parsed.country : ''}`;
+                    setLocation(cityLocation);
                   }
                 }}
                 placeholder="Search for a place (e.g. Emperador Meiji Buenos Aires)"
@@ -929,7 +931,7 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
                 data-testid="input-business-name"
               />
               <p className="text-xs text-muted-foreground mt-1">
-                Search for a business, restaurant, café, hotel, or tango venue with address
+                Search for a business, restaurant, café, hotel, or tango venue
               </p>
             </div>
 
