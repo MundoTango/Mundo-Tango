@@ -479,64 +479,36 @@ export default function CreateListingPage() {
                       />
                     </div>
 
-                    <div className="pt-4 border-t">
-                      <FormItem>
-                        <FormLabel className="flex items-center gap-2">
-                          <MapPin className="h-4 w-4" />
-                          Property Address
-                        </FormLabel>
-                        <FormControl>
-                          <UnifiedLocationPicker
-                            mode="address"
-                            value={form.watch("address")}
-                            placeholder="Search for property address..."
-                            onChange={(location, coordinates, parsed) => {
-                              if (parsed) {
-                                form.setValue("address", parsed.street || location);
-                                form.setValue("city", parsed.city || "");
-                                form.setValue("country", parsed.country || "");
-                              } else {
-                                form.setValue("address", location);
-                              }
-                            }}
-                          />
-                        </FormControl>
-                        {(form.formState.errors.address || form.formState.errors.city || form.formState.errors.country) && (
-                          <p className="text-sm font-medium text-destructive">
-                            {form.formState.errors.address?.message || 
-                             form.formState.errors.city?.message || 
-                             form.formState.errors.country?.message}
-                          </p>
-                        )}
-                      </FormItem>
-
-                      <div className="grid grid-cols-2 gap-4 mt-4">
-                        <FormField
-                          control={form.control}
-                          name="city"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>City</FormLabel>
-                              <FormControl>
-                                <Input data-testid="input-city" {...field} readOnly className="bg-muted" />
-                              </FormControl>
-                            </FormItem>
-                          )}
+                    <FormItem className="pt-4 border-t">
+                      <FormLabel className="flex items-center gap-2">
+                        <MapPin className="h-4 w-4" />
+                        Property Address
+                      </FormLabel>
+                      <FormControl>
+                        <UnifiedLocationPicker
+                          mode="address"
+                          value={form.watch("address")}
+                          placeholder="Search for property address..."
+                          onChange={(location, coordinates, parsed) => {
+                            if (parsed) {
+                              form.setValue("address", parsed.street || location);
+                              form.setValue("city", parsed.city || "");
+                              form.setValue("country", parsed.country || "");
+                            } else {
+                              form.setValue("address", location);
+                            }
+                          }}
                         />
-                        <FormField
-                          control={form.control}
-                          name="country"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Country</FormLabel>
-                              <FormControl>
-                                <Input data-testid="input-country" {...field} readOnly className="bg-muted" />
-                              </FormControl>
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-                    </div>
+                      </FormControl>
+                      <FormDescription>City and country will be auto-filled from your address selection</FormDescription>
+                      {(form.formState.errors.address || form.formState.errors.city || form.formState.errors.country) && (
+                        <p className="text-sm font-medium text-destructive">
+                          {form.formState.errors.address?.message || 
+                           form.formState.errors.city?.message || 
+                           form.formState.errors.country?.message}
+                        </p>
+                      )}
+                    </FormItem>
                   </CardContent>
                 </Card>
               )}
