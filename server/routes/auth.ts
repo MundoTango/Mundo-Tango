@@ -433,10 +433,10 @@ router.get("/me", authenticateToken, async (req: AuthRequest, res: Response) => 
       return res.status(401).json({ message: "Not authenticated" });
     }
 
-    const { password, tango_roles, tangoRoles: existingTangoRoles, ...userWithoutPassword } = req.user as any;
+    const { password, ...userWithoutPassword } = req.user as any;
 
-    // Normalize tangoRoles to a proper array (PostgreSQL returns "{item1,item2}" format)
-    const rawRoles = tango_roles || existingTangoRoles || [];
+    // Get tangoRoles from user object - Drizzle returns it as 'tangoRoles' (camelCase)
+    const rawRoles = (req.user as any).tangoRoles || [];
     let normalizedRoles: string[] = [];
     
     if (Array.isArray(rawRoles)) {
@@ -445,6 +445,10 @@ router.get("/me", authenticateToken, async (req: AuthRequest, res: Response) => 
       // Parse PostgreSQL array literal: "{Leader,Organizer,Teacher}" -> ["Leader", "Organizer", "Teacher"]
       normalizedRoles = rawRoles.replace(/^\{|\}$/g, '').split(',').map((r: string) => r.trim()).filter(Boolean);
     }
+
+    console.log("[/me] User city:", (req.user as any).city);
+    console.log("[/me] User tangoRoles raw:", rawRoles);
+    console.log("[/me] User tangoRoles normalized:", normalizedRoles);
 
     // Map snake_case database fields to camelCase for frontend
     const userResponse = {
