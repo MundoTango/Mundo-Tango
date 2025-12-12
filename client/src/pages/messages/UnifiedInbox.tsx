@@ -114,6 +114,7 @@ export default function UnifiedInbox() {
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [attachedImages, setAttachedImages] = useState<ImageItem[]>([]);
   const [showImageUploader, setShowImageUploader] = useState(false);
+  const [localSentMessages, setLocalSentMessages] = useState<any[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const { data: messages, isLoading } = useQuery({
@@ -189,19 +190,33 @@ export default function UnifiedInbox() {
       return;
     }
     
+    const messageBody = messageInput.trim();
+    const newLocalMessage = {
+      id: `local-${Date.now()}`,
+      body: messageBody,
+      from: 'me',
+      to: selectedConversation.from,
+      channel: selectedConversation.channel || 'mt',
+      receivedAt: new Date().toISOString(),
+      isOwn: true,
+      conversationId: selectedConversation.id,
+    };
+    
+    // Optimistically add message to UI
+    setLocalSentMessages(prev => [...prev, newLocalMessage]);
+    setMessageInput("");
+    setAttachedImages([]);
+    setShowImageUploader(false);
+    
     try {
-      console.log('Sending message:', { to: selectedConversation.from, body: messageInput.trim() });
+      console.log('Sending message:', { to: selectedConversation.from, body: messageBody });
       const response = await apiRequest('POST', '/api/messages/send', {
         to: selectedConversation.from,
         channel: selectedConversation.channel || 'mt',
-        body: messageInput.trim(),
+        body: messageBody,
         attachments: attachedImages.map(img => img.url)
       });
       console.log('Message sent successfully:', response);
-      
-      setMessageInput("");
-      setAttachedImages([]);
-      setShowImageUploader(false);
       
       queryClient.invalidateQueries({ queryKey: ['/api/messages/unified'] });
       
@@ -211,6 +226,8 @@ export default function UnifiedInbox() {
       });
     } catch (error) {
       console.error('Failed to send message:', error);
+      // Remove the optimistic message on failure
+      setLocalSentMessages(prev => prev.filter(m => m.id !== newLocalMessage.id));
       toast({
         title: "Failed to send",
         description: "There was a problem sending your message. Please try again.",
@@ -510,86 +527,100 @@ export default function UnifiedInbox() {
                   </p>
                 </div>
 
-                {/* Message bubbles */}
-                {selectedConversation.messages?.map((msg: any, idx: number) => {
-                  const isOwn = false; // Would check against current user
-                  const showAvatar = idx === 0 || 
-                    selectedConversation.messages[idx - 1]?.from !== msg.from;
+                {/* Message bubbles - combine server messages with local sent messages */}
+                {(() => {
+                  const conversationLocalMessages = localSentMessages.filter(
+                    m => m.conversationId === selectedConversation.id
+                  );
+                  const allMessages = [
+                    ...(selectedConversation.messages || []),
+                    ...conversationLocalMessages
+                  ].sort((a, b) => new Date(a.receivedAt).getTime() - new Date(b.receivedAt).getTime());
                   
-                  return (
-                    <div
-                      key={msg.id}
-                      className={cn(
-                        "flex items-end gap-2",
-                        isOwn ? "justify-end" : "justify-start"
-                      )}
-                      data-testid={`message-bubble-${msg.id}`}
-                    >
-                      {!isOwn && (
-                        <div className="w-7 flex-shrink-0">
-                          {showAvatar && (
-                            <Avatar className="h-7 w-7">
-                              <AvatarImage src={selectedConversation.avatar} />
-                              <AvatarFallback className={cn(
-                                "bg-gradient-to-br text-white text-xs",
-                                getBubbleGradient(selectedConversation.id)
-                              )}>
-                                {getInitials(selectedConversation.from)}
-                              </AvatarFallback>
-                            </Avatar>
+                  return allMessages.map((msg: any, idx: number) => {
+                    // Only local optimistic messages (with isOwn flag) are outgoing - server messages are incoming
+                    const isOwn = msg.isOwn === true;
+                    const prevMsg = allMessages[idx - 1];
+                    const prevIsOwn = prevMsg?.isOwn === true;
+                    const showAvatar = idx === 0 || (prevIsOwn !== isOwn);
+                    
+                    return (
+                      <div
+                        key={msg.id}
+                        className={cn(
+                          "flex items-end gap-2",
+                          isOwn ? "justify-end" : "justify-start"
+                        )}
+                        data-testid={`message-bubble-${msg.id}`}
+                      >
+                        {!isOwn && (
+                          <div className="w-7 flex-shrink-0">
+                            {showAvatar && (
+                              <Avatar className="h-7 w-7">
+                                <AvatarImage src={selectedConversation.avatar} />
+                                <AvatarFallback className={cn(
+                                  "bg-gradient-to-br text-white text-xs",
+                                  getBubbleGradient(selectedConversation.id)
+                                )}>
+                                  {getInitials(selectedConversation.from)}
+                                </AvatarFallback>
+                              </Avatar>
+                            )}
+                          </div>
+                        )}
+                        
+                        <div className={cn(
+                          "group relative max-w-[70%]"
+                        )}>
+                          <div className={cn(
+                            "px-4 py-2.5 rounded-2xl",
+                            isOwn 
+                              ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-br-sm"
+                              : "bg-muted rounded-bl-sm"
+                          )}>
+                            <p className="text-sm whitespace-pre-wrap break-words">
+                              {msg.body}
+                            </p>
+                          </div>
+                          
+                          {/* Timestamp on hover */}
+                          <div className={cn(
+                            "absolute bottom-0 opacity-0 group-hover:opacity-100 transition-opacity text-xs text-muted-foreground whitespace-nowrap",
+                            isOwn ? "right-full mr-2" : "left-full ml-2"
+                          )}>
+                            {getRelativeTime(msg.receivedAt)}
+                          </div>
+                          
+                          {/* Reactions bar - only for received messages */}
+                          {!isOwn && (
+                            <div className={cn(
+                              "absolute -bottom-2 opacity-0 group-hover:opacity-100 transition-opacity",
+                              "right-0"
+                            )}>
+                              <ReactionSelector
+                                targetId={typeof msg.id === 'string' ? parseInt(msg.id) || idx : msg.id}
+                                targetType="post"
+                                currentReaction={msg.currentReaction}
+                                reactions={msg.reactions || {}}
+                                totalCount={msg.likes || 0}
+                                onReact={(reactionId) => handleMessageReaction(msg.id, reactionId)}
+                                className="scale-75 origin-bottom-left"
+                              />
+                            </div>
                           )}
                         </div>
-                      )}
-                      
-                      <div className={cn(
-                        "group relative max-w-[70%]"
-                      )}>
-                        <div className={cn(
-                          "px-4 py-2.5 rounded-2xl",
-                          isOwn 
-                            ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-br-sm"
-                            : "bg-muted rounded-bl-sm"
-                        )}>
-                          <p className="text-sm whitespace-pre-wrap break-words">
-                            {msg.body}
-                          </p>
-                        </div>
                         
-                        {/* Timestamp on hover */}
-                        <div className={cn(
-                          "absolute bottom-0 opacity-0 group-hover:opacity-100 transition-opacity text-xs text-muted-foreground whitespace-nowrap",
-                          isOwn ? "right-full mr-2" : "left-full ml-2"
-                        )}>
-                          {getRelativeTime(msg.receivedAt)}
-                        </div>
-                        
-                        {/* Reactions bar */}
-                        <div className={cn(
-                          "absolute -bottom-2 opacity-0 group-hover:opacity-100 transition-opacity",
-                          isOwn ? "left-0" : "right-0"
-                        )}>
-                          <ReactionSelector
-                            targetId={typeof msg.id === 'string' ? parseInt(msg.id) || idx : msg.id}
-                            targetType="post"
-                            currentReaction={msg.currentReaction}
-                            reactions={msg.reactions || {}}
-                            totalCount={msg.likes || 0}
-                            onReact={(reactionId) => handleMessageReaction(msg.id, reactionId)}
-                            className="scale-75 origin-bottom-left"
-                          />
-                        </div>
+                        {isOwn && showAvatar && (
+                          <Avatar className="h-7 w-7 flex-shrink-0">
+                            <AvatarFallback className="bg-gradient-to-br from-blue-500 to-blue-600 text-white text-xs">
+                              Me
+                            </AvatarFallback>
+                          </Avatar>
+                        )}
                       </div>
-                      
-                      {isOwn && showAvatar && (
-                        <Avatar className="h-7 w-7 flex-shrink-0">
-                          <AvatarFallback className="bg-gradient-to-br from-blue-500 to-blue-600 text-white text-xs">
-                            Me
-                          </AvatarFallback>
-                        </Avatar>
-                      )}
-                    </div>
-                  );
-                })}
+                    );
+                  });
+                })()}
                 <div ref={messagesEndRef} />
               </div>
             </ScrollArea>

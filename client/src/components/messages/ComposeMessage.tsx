@@ -64,6 +64,7 @@ interface ComposeMessageProps {
 
 export function ComposeMessage({ onClose, defaultChannel = "mt" }: ComposeMessageProps) {
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [scheduleDate, setScheduleDate] = useState<Date>();
   const [showScheduler, setShowScheduler] = useState(false);
 
