@@ -285,6 +285,7 @@ import {
   insertUserPrivacySettingsSchema,
   venues,
   housingListings,
+  userLocationHistory,
 } from "@shared/schema";
 import { 
   esaAgents,
@@ -6837,7 +6838,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // ============================================================================
 
   // 1. GET /api/community/locations - Get all community locations with stats (PUBLIC)
-  // MB.MD v9.8: City groups as primary data source (not users table)
+  // MB.MD v9.8: City groups as primary data source + user profile cities
   app.get("/api/community/locations", async (req: Request, res: Response) => {
     try {
       // PRIMARY SOURCE: Get all city groups from groups table
@@ -6857,6 +6858,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
         eq(groups.type, 'city'),
         isNotNull(groups.city)
       ));
+
+      // SECONDARY SOURCE: Get unique cities from user profiles (current city)
+      const userCities = await db.select({
+        city: users.city,
+        country: users.country,
+        memberCount: sql<number>`count(*)::int`,
+      })
+      .from(users)
+      .where(and(
+        isNotNull(users.city),
+        eq(users.isActive, true),
+        eq(users.suspended, false)
+      ))
+      .groupBy(users.city, users.country);
+
+      // SECONDARY SOURCE: Get unique cities from location history (previous tango cities)
+      const locationHistoryCities = await db.select({
+        city: userLocationHistory.city,
+        country: userLocationHistory.country,
+        latitude: userLocationHistory.latitude,
+        longitude: userLocationHistory.longitude,
+        memberCount: sql<number>`count(distinct ${userLocationHistory.userId})::int`,
+      })
+      .from(userLocationHistory)
+      .where(isNotNull(userLocationHistory.city))
+      .groupBy(
+        userLocationHistory.city, 
+        userLocationHistory.country,
+        userLocationHistory.latitude,
+        userLocationHistory.longitude
+      );
 
       // ENRICHMENT: Get event counts by city
       const eventsByCity = await db.select({
@@ -6926,34 +6958,131 @@ export async function registerRoutes(app: Express): Promise<Server> {
         'Athens': { lat: 37.9838, lng: 23.7275 },
       };
 
-      // Build enrichment lookup maps
-      const eventsMap = new Map(eventsByCity.map(e => [`${e.city}`, e.eventCount]));
-      const venuesMap = new Map(venuesByCity.map(v => [`${v.city}`, v.venueCount]));
-      const housingMap = new Map(housingByCity.map(h => [`${h.city}`, h.housingCount]));
+      // Normalize city key for consistent lookups (case-insensitive, trimmed)
+      const normalizeKey = (city: string) => city.toLowerCase().trim();
+
+      // Build enrichment lookup maps with normalized keys
+      const eventsMap = new Map<string, number>();
+      for (const e of eventsByCity) {
+        const key = normalizeKey(e.city || '');
+        eventsMap.set(key, (eventsMap.get(key) || 0) + (e.eventCount || 0));
+      }
+      const venuesMap = new Map<string, number>();
+      for (const v of venuesByCity) {
+        const key = normalizeKey(v.city || '');
+        venuesMap.set(key, (venuesMap.get(key) || 0) + (v.venueCount || 0));
+      }
+      const housingMap = new Map<string, number>();
+      for (const h of housingByCity) {
+        const key = normalizeKey(h.city || '');
+        housingMap.set(key, (housingMap.get(key) || 0) + (h.housingCount || 0));
+      }
+
+      // Track cities we've already added (by normalized city key)
+      const addedCities = new Set<string>();
 
       // Build locations from city groups (PRIMARY SOURCE)
-      const locations = cityGroups.map((group) => {
+      const locations: any[] = [];
+      
+      for (const group of cityGroups) {
         const city = group.city || '';
+        const cityKey = normalizeKey(city);
+        if (!cityKey) continue;
+        
+        addedCities.add(cityKey);
+        
         const coords = cityCoords[city] || {
           lat: parseFloat(group.latitude as string) || 0,
           lng: parseFloat(group.longitude as string) || 0
         };
         
-        return {
+        locations.push({
           id: group.id,
           groupId: group.id,
           city: city,
           country: group.country || '',
           coordinates: coords,
           memberCount: group.memberCount || 0,
-          activeEvents: eventsMap.get(city) || group.eventCount || 0,
-          venues: venuesMap.get(city) || 0,
-          housing: housingMap.get(city) || 0,
-          recommendations: venuesMap.get(city) || 0,
+          activeEvents: eventsMap.get(cityKey) || group.eventCount || 0,
+          venues: venuesMap.get(cityKey) || 0,
+          housing: housingMap.get(cityKey) || 0,
+          recommendations: venuesMap.get(cityKey) || 0,
           coverImage: group.coverImage,
           isActive: true
-        };
-      });
+        });
+      }
+
+      // Build coordinates map from location history for cities without known coords
+      const locationHistoryCoords = new Map<string, { lat: number; lng: number }>();
+      for (const h of locationHistoryCities) {
+        if (h.latitude && h.longitude) {
+          const key = normalizeKey(h.city || '');
+          locationHistoryCoords.set(key, {
+            lat: parseFloat(h.latitude as string),
+            lng: parseFloat(h.longitude as string)
+          });
+        }
+      }
+
+      // Add cities from user profiles that don't have city groups yet
+      let tempId = -1;
+      for (const userCity of userCities) {
+        const city = userCity.city || '';
+        const cityKey = normalizeKey(city);
+        if (!cityKey || addedCities.has(cityKey)) continue;
+        
+        addedCities.add(cityKey);
+        
+        // Try coords from: known lookup, location history, or default
+        const coords = cityCoords[city] || locationHistoryCoords.get(cityKey) || { lat: 0, lng: 0 };
+        
+        locations.push({
+          id: tempId--,
+          groupId: null, // No city group yet
+          city: city,
+          country: userCity.country || '',
+          coordinates: coords,
+          memberCount: userCity.memberCount || 0,
+          activeEvents: eventsMap.get(cityKey) || 0,
+          venues: venuesMap.get(cityKey) || 0,
+          housing: housingMap.get(cityKey) || 0,
+          recommendations: venuesMap.get(cityKey) || 0,
+          coverImage: null,
+          isActive: true
+        });
+      }
+
+      // Add cities from location history (previous tango cities) that aren't in groups or user cities
+      for (const historyCity of locationHistoryCities) {
+        const city = historyCity.city || '';
+        const cityKey = normalizeKey(city);
+        if (!cityKey || addedCities.has(cityKey)) continue;
+        
+        addedCities.add(cityKey);
+        
+        // Use stored coordinates from location history if available
+        const storedCoords = historyCity.latitude && historyCity.longitude ? {
+          lat: parseFloat(historyCity.latitude as string),
+          lng: parseFloat(historyCity.longitude as string)
+        } : null;
+        
+        const coords = storedCoords || cityCoords[city] || { lat: 0, lng: 0 };
+        
+        locations.push({
+          id: tempId--,
+          groupId: null, // No city group yet
+          city: city,
+          country: historyCity.country || '',
+          coordinates: coords,
+          memberCount: historyCity.memberCount || 0,
+          activeEvents: eventsMap.get(cityKey) || 0,
+          venues: venuesMap.get(cityKey) || 0,
+          housing: housingMap.get(cityKey) || 0,
+          recommendations: venuesMap.get(cityKey) || 0,
+          coverImage: null,
+          isActive: true
+        });
+      }
 
       res.json(locations);
     } catch (error) {
