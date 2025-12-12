@@ -602,8 +602,8 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
       console.log('[PostCreator] videoUrl included:', !!postData.videoUrl);
       
       if (isRecommendation) {
-        if (businessName) postData.businessName = businessName;
-        if (location) postData.location = location;
+        postData.isRecommendation = true;
+        if (businessName) postData.location = businessName;
         if (recommendationType) postData.postType = recommendationType;
         if (priceRange) postData.richContent = { priceRange };
         if (coordinates) postData.coordinates = coordinates;
