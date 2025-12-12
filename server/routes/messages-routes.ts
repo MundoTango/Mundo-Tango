@@ -1906,6 +1906,7 @@ router.post("/react", authenticateToken, async (req: AuthRequest, res: Response)
 /**
  * POST /api/messages/send-direct
  * Send a direct message to another user (internal MT messaging)
+ * Uses direct_messages table to ensure messages persist in unified inbox
  */
 router.post("/send-direct", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
@@ -1921,66 +1922,24 @@ router.post("/send-direct", authenticateToken, async (req: AuthRequest, res: Res
       return res.status(400).json({ error: "Invalid recipient ID" });
     }
 
-    // Find or create a direct chat room between the two users
-    const currentUserRooms = await db.select({ chatRoomId: chatRoomUsers.chatRoomId })
-      .from(chatRoomUsers)
-      .where(eq(chatRoomUsers.userId, senderId));
+    // Check if recipient exists
+    const [recipient] = await db.select({ id: users.id })
+      .from(users)
+      .where(eq(users.id, otherUserId));
 
-    const otherUserRooms = await db.select({ chatRoomId: chatRoomUsers.chatRoomId })
-      .from(chatRoomUsers)
-      .where(eq(chatRoomUsers.userId, otherUserId));
-
-    const currentUserRoomIds = currentUserRooms.map(r => r.chatRoomId);
-    const otherUserRoomIds = otherUserRooms.map(r => r.chatRoomId);
-    const commonRoomIds = currentUserRoomIds.filter(id => otherUserRoomIds.includes(id));
-
-    let chatRoomId: number | null = null;
-    
-    for (const roomId of commonRoomIds) {
-      const [room] = await db.select()
-        .from(chatRooms)
-        .where(and(eq(chatRooms.id, roomId), eq(chatRooms.type, 'direct')));
-      
-      if (room) {
-        const participants = await db.select()
-          .from(chatRoomUsers)
-          .where(eq(chatRoomUsers.chatRoomId, roomId));
-        
-        if (participants.length === 2) {
-          chatRoomId = roomId;
-          break;
-        }
-      }
+    if (!recipient) {
+      return res.status(404).json({ error: "Recipient not found" });
     }
 
-    // Create new chat room if none exists
-    if (!chatRoomId) {
-      const [newRoom] = await db.insert(chatRooms)
-        .values({ type: 'direct' })
-        .returning();
-      
-      chatRoomId = newRoom.id;
+    // Insert directly into direct_messages table (unified inbox uses this table)
+    const newMessage = await db.execute(sql`
+      INSERT INTO direct_messages (sender_id, recipient_id, content, is_read, created_at)
+      VALUES (${senderId}, ${otherUserId}, ${content}, false, NOW())
+      RETURNING id, sender_id, recipient_id, content, created_at
+    `);
 
-      // Add both users to the room
-      await db.insert(chatRoomUsers).values([
-        { chatRoomId, userId: senderId },
-        { chatRoomId, userId: otherUserId },
-      ]);
-    }
-
-    // Insert the message
-    const [newMessage] = await db.insert(chatMessages)
-      .values({
-        chatRoomId,
-        userId: senderId,
-        message: content,
-      })
-      .returning();
-
-    // Update chat room last message time
-    await db.update(chatRooms)
-      .set({ lastMessageAt: new Date() })
-      .where(eq(chatRooms.id, chatRoomId));
+    const messageId = (newMessage.rows?.[0] as any)?.id;
+    const createdAt = (newMessage.rows?.[0] as any)?.created_at;
 
     // Get sender info
     const [sender] = await db.select({
@@ -1993,11 +1952,11 @@ router.post("/send-direct", authenticateToken, async (req: AuthRequest, res: Res
     res.json({
       success: true,
       message: {
-        id: newMessage.id,
+        id: messageId,
         senderId,
         recipientId: otherUserId,
-        content: newMessage.message,
-        createdAt: newMessage.createdAt,
+        content,
+        createdAt,
         senderName: sender?.name,
         senderImage: sender?.profileImage,
       },
