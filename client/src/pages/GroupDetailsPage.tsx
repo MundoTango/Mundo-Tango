@@ -59,7 +59,7 @@ interface HousingListing {
   description: string;
   propertyType: string;
   roomType: string;
-  price: number;
+  pricePerNight: number;
   currency: string;
   city: string;
   country: string;
@@ -821,7 +821,7 @@ function GroupHousingTab({ groupCity }: { groupCity?: string | null }) {
                       <div className="p-2">
                         <h4 className="font-semibold">{listing.title}</h4>
                         <p className="text-sm text-muted-foreground">{listing.roomType}</p>
-                        <p className="font-medium">{listing.currency} {listing.price}/night</p>
+                        <p className="font-medium">{listing.currency} {listing.pricePerNight}/night</p>
                       </div>
                     </Popup>
                   </Marker>
@@ -870,7 +870,7 @@ function GroupHousingTab({ groupCity }: { groupCity?: string | null }) {
                       )}
                       <div className="font-medium text-foreground text-lg flex items-center gap-1">
                         <DollarSign className="h-4 w-4" />
-                        {listing.currency} {listing.price}/night
+                        {listing.currency} {listing.pricePerNight}/night
                       </div>
                       <div className="flex items-center gap-1">
                         <MapPin className="h-3 w-3" />
