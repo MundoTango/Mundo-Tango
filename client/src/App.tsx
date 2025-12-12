@@ -1274,7 +1274,9 @@ function Router() {
       {/* Messages Platform - P0 #12-16 */}
       <Route path="/messages">
         <ProtectedRoute>
-          <UnifiedInboxPage />
+          <AppLayout>
+            <UnifiedInboxPage />
+          </AppLayout>
         </ProtectedRoute>
       </Route>
 

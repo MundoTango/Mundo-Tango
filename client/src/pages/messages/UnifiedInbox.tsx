@@ -21,9 +21,9 @@ import { ComposeMessage } from "@/components/messages/ComposeMessage";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { PageLayout } from "@/components/PageLayout";
 import { ReactionSelector } from "@/components/ui/ReactionSelector";
 import { ImageGalleryUploader } from "@/components/feed/ImageGalleryUploader";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 
 const channelIcons = {
   mt: MessageCircle,
@@ -181,12 +181,28 @@ export default function UnifiedInbox() {
     return conversations.filter((c: any) => c.channel === channel).length;
   };
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if ((!messageInput.trim() && attachedImages.length === 0) || !selectedConversation) return;
-    // Would send via API
-    setMessageInput("");
-    setAttachedImages([]);
-    setShowImageUploader(false);
+    
+    try {
+      await apiRequest('/api/messages/send', {
+        method: 'POST',
+        body: JSON.stringify({
+          to: selectedConversation.from,
+          channel: selectedConversation.channel || 'mt',
+          body: messageInput.trim(),
+          attachments: attachedImages.map(img => img.url)
+        })
+      });
+      
+      setMessageInput("");
+      setAttachedImages([]);
+      setShowImageUploader(false);
+      
+      queryClient.invalidateQueries({ queryKey: ['/api/messages/unified'] });
+    } catch (error) {
+      console.error('Failed to send message:', error);
+    }
   };
 
   const handleMessageReaction = async (msgId: number, reactionId: string) => {
@@ -275,8 +291,7 @@ export default function UnifiedInbox() {
   };
 
   return (
-    <PageLayout showBreadcrumbs={true}>
-      <div className="flex h-full bg-background overflow-hidden">
+    <div className="flex h-full bg-background overflow-hidden">
         {/* Left Sidebar - Conversations List */}
         <div className="w-80 border-r flex flex-col bg-card">
         {/* Header */}
@@ -646,6 +661,5 @@ export default function UnifiedInbox() {
         )}
       </div>
     </div>
-    </PageLayout>
   );
 }
