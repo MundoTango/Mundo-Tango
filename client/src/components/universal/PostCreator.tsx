@@ -111,6 +111,7 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
   const [isRecommendation, setIsRecommendation] = useState(existingPost?.isRecommendation || false);
   const [recommendationType, setRecommendationType] = useState(existingPost?.recommendationType || "");
   const [priceRange, setPriceRange] = useState(existingPost?.priceRange || "");
+  const [businessName, setBusinessName] = useState(existingPost?.businessName || "");
   const [location, setLocation] = useState(existingPost?.location || "");
   const [coordinates, setCoordinates] = useState<{lat: number; lng: number} | undefined>(existingPost?.coordinates || undefined);
   
@@ -600,8 +601,9 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
       console.log('[PostCreator] imageUrl included:', !!postData.imageUrl);
       console.log('[PostCreator] videoUrl included:', !!postData.videoUrl);
       
-      if (isRecommendation && location) {
-        postData.location = location;
+      if (isRecommendation) {
+        if (businessName) postData.businessName = businessName;
+        if (location) postData.location = location;
         if (recommendationType) postData.postType = recommendationType;
         if (priceRange) postData.richContent = { priceRange };
         if (coordinates) postData.coordinates = coordinates;
@@ -678,6 +680,7 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
       setMediaPreviews([]);
       setSelectedTags([]);
       setIsRecommendation(false);
+      setBusinessName("");
       setLocation("");
       setCoordinates(undefined);
       setRecommendationType("");
@@ -905,6 +908,30 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
               <MapPin className="w-4 h-4 text-orange-500" />
               Hidden Gems - Share your favorite places
             </h3>
+
+            {/* Business Name Input with Live Autocomplete (Nominatim/OSM) */}
+            <div>
+              <Label className="text-xs mb-1.5 block">Business / Place Name</Label>
+              <UnifiedLocationPicker
+                value={businessName}
+                coordinates={coordinates}
+                onChange={(selectedName, coords, parsed) => {
+                  // Use the full address from Nominatim as business name
+                  setBusinessName(selectedName);
+                  setCoordinates(coords);
+                  // Also update location if not already set
+                  if (!location && parsed?.city) {
+                    setLocation(`${parsed.city}, ${parsed.country || ''}`);
+                  }
+                }}
+                placeholder="Search for a place (e.g. Emperador Meiji Buenos Aires)"
+                mode="address"
+                data-testid="input-business-name"
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                Search for a business, restaurant, café, hotel, or tango venue with address
+              </p>
+            </div>
 
             {/* Category Selector */}
             <div>
