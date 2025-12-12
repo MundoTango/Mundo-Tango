@@ -182,15 +182,20 @@ export default function UnifiedInbox() {
   };
 
   const handleSendMessage = async () => {
-    if ((!messageInput.trim() && attachedImages.length === 0) || !selectedConversation) return;
+    if ((!messageInput.trim() && attachedImages.length === 0) || !selectedConversation) {
+      console.log('Send blocked - no content or no conversation selected');
+      return;
+    }
     
     try {
-      await apiRequest('POST', '/api/messages/send', {
+      console.log('Sending message:', { to: selectedConversation.from, body: messageInput.trim() });
+      const response = await apiRequest('POST', '/api/messages/send', {
         to: selectedConversation.from,
         channel: selectedConversation.channel || 'mt',
         body: messageInput.trim(),
         attachments: attachedImages.map(img => img.url)
       });
+      console.log('Message sent successfully:', response);
       
       setMessageInput("");
       setAttachedImages([]);
@@ -578,15 +583,17 @@ export default function UnifiedInbox() {
             </ScrollArea>
 
             {/* Message Input - Messenger style */}
-            <div className="p-3 border-t bg-card">
-              <div className="max-w-3xl mx-auto space-y-3">
+            <div className="border-t bg-card">
+              <div className="p-3 max-w-3xl mx-auto">
                 {/* Image Gallery Uploader */}
                 {showImageUploader && (
-                  <ImageGalleryUploader
-                    images={attachedImages}
-                    onImagesChange={setAttachedImages}
-                    maxImages={10}
-                  />
+                  <div className="mb-3">
+                    <ImageGalleryUploader
+                      images={attachedImages}
+                      onImagesChange={setAttachedImages}
+                      maxImages={10}
+                    />
+                  </div>
                 )}
                 
                 <div className="flex items-end gap-2">
@@ -595,7 +602,7 @@ export default function UnifiedInbox() {
                       <Button 
                         variant={showImageUploader ? "default" : "ghost"} 
                         size="icon" 
-                        className="text-primary rounded-full" 
+                        className="text-primary rounded-full flex-shrink-0" 
                         onClick={() => setShowImageUploader(!showImageUploader)}
                         data-testid="button-attach-image"
                       >
@@ -620,7 +627,7 @@ export default function UnifiedInbox() {
                     <TooltipTrigger asChild>
                       <Button 
                         size="icon" 
-                        className="rounded-full"
+                        className="rounded-full flex-shrink-0"
                         onClick={handleSendMessage}
                         disabled={!messageInput.trim() && attachedImages.length === 0}
                         data-testid="button-send"
