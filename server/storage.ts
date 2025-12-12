@@ -2654,8 +2654,11 @@ export class DbStorage implements IStorage {
     sharedEventsDetails: Array<{ id: number; title: string; date: string; location: string }>;
   } | null> {
     try {
+      console.log(`[getFriendshipSharedData] Called with userId=${userId}, friendId=${friendId}`);
       const isFriends = await this.checkFriendship(userId, friendId);
+      console.log(`[getFriendshipSharedData] isFriends=${isFriends}`);
       if (!isFriends) {
+        console.log(`[getFriendshipSharedData] Not friends, returning null`);
         return null;
       }
 
@@ -2697,10 +2700,12 @@ export class DbStorage implements IStorage {
         const friendData = await db.select({ username: users.username, name: users.name }).from(users).where(eq(users.id, friendId)).limit(1);
         const userUsername = userData[0]?.username || '';
         const friendUsername = friendData[0]?.username || '';
+        console.log(`[getFriendshipSharedData] userUsername=${userUsername}, friendUsername=${friendUsername}`);
         
         // Get posts authored by either user
         const userPosts = await db.select().from(posts).where(eq(posts.userId, userId)).limit(20);
         const friendPosts = await db.select().from(posts).where(eq(posts.userId, friendId)).limit(20);
+        console.log(`[getFriendshipSharedData] userPosts=${userPosts.length}, friendPosts=${friendPosts.length}`);
         
         // Get posts mentioning either user (search for @username in content)
         const mentionPosts = await db.select().from(posts).where(
@@ -2709,10 +2714,12 @@ export class DbStorage implements IStorage {
             sql`${posts.content} ILIKE ${'%@' + friendUsername + '%'}`
           )
         ).limit(30);
+        console.log(`[getFriendshipSharedData] mentionPosts=${mentionPosts.length}`);
         
         // Combine and dedupe posts
         const postMap = new Map<number, typeof userPosts[0]>();
         [...userPosts, ...friendPosts, ...mentionPosts].forEach(p => postMap.set(p.id, p));
+        console.log(`[getFriendshipSharedData] postMap size=${postMap.size}`);
         
         // Filter to ONLY posts mentioning BOTH users together
         const allPosts = Array.from(postMap.values())
@@ -2720,10 +2727,12 @@ export class DbStorage implements IStorage {
             const content = (p.content || '').toLowerCase();
             const hasBothMentions = content.includes('@' + userUsername.toLowerCase()) && 
                                    content.includes('@' + friendUsername.toLowerCase());
+            console.log(`[getFriendshipSharedData] Post ${p.id}: content="${content.substring(0,50)}", hasBoth=${hasBothMentions}`);
             return hasBothMentions;
           })
           .sort((a, b) => (b.createdAt?.getTime() || 0) - (a.createdAt?.getTime() || 0))
           .slice(0, 15);
+        console.log(`[getFriendshipSharedData] allPosts after filter=${allPosts.length}`);
 
         for (const post of allPosts) {
           try {
@@ -2747,16 +2756,28 @@ export class DbStorage implements IStorage {
               .where(eq(postComments.postId, post.id));
 
             // Check if current user saved this post
-            const savedCheck = await db.select()
-              .from(savedPosts)
-              .where(and(eq(savedPosts.postId, post.id), eq(savedPosts.userId, userId)))
-              .limit(1);
+            let isSaved = false;
+            try {
+              const savedCheck = await db.select({ id: savedPosts.id })
+                .from(savedPosts)
+                .where(and(eq(savedPosts.postId, post.id), eq(savedPosts.userId, userId)))
+                .limit(1);
+              isSaved = savedCheck.length > 0;
+            } catch (savedErr) {
+              console.log(`[getFriendshipSharedData] Could not check saved status for post ${post.id}`);
+            }
 
             // Get current user's reaction
-            const userReaction = await db.select({ reactionType: postLikes.reactionType })
-              .from(postLikes)
-              .where(and(eq(postLikes.postId, post.id), eq(postLikes.userId, userId)))
-              .limit(1);
+            let currentReaction: string | null = null;
+            try {
+              const userReaction = await db.select({ reactionType: postLikes.reactionType })
+                .from(postLikes)
+                .where(and(eq(postLikes.postId, post.id), eq(postLikes.userId, userId)))
+                .limit(1);
+              currentReaction = userReaction[0]?.reactionType || null;
+            } catch (reactionErr) {
+              console.log(`[getFriendshipSharedData] Could not get reaction for post ${post.id}`);
+            }
 
             // Get reaction counts
             const reactionCounts = await db.select({ 
@@ -2783,8 +2804,8 @@ export class DbStorage implements IStorage {
               likes: likeCount[0]?.count || 0,
               comments: commentCount[0]?.count || 0,
               createdAt: post.createdAt?.toISOString() || new Date().toISOString(),
-              isSaved: savedCheck.length > 0,
-              currentReaction: userReaction[0]?.reactionType || null,
+              isSaved,
+              currentReaction,
               reactions,
               tags: post.tags || null,
               user: author[0] ? {
@@ -2796,6 +2817,7 @@ export class DbStorage implements IStorage {
                 tangoRoles: author[0].tangoRoles || null
               } : undefined
             });
+            console.log(`[getFriendshipSharedData] Successfully processed post ${post.id}`);
           } catch (e) {
             console.error(`Error processing post ${post.id}:`, e);
           }
