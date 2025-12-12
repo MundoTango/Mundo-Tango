@@ -142,6 +142,7 @@ const EventSeriesPage = lazy(() => import("@/pages/EventSeriesPage"));
 // Community & Events Pages (Pages 11-20)
 const CommunityMapPage = lazy(() => import("@/pages/CommunityMapPage"));
 const CityGroupsPage = lazy(() => import("@/pages/CityGroupsPage"));
+const CityGroupRedirectPage = lazy(() => import("@/pages/CityGroupRedirectPage"));
 const CityHubPage = lazy(() => import("@/pages/CityHubPage"));
 const ProfessionalGroupsPage = lazy(
   () => import("@/pages/ProfessionalGroupsPage"),
@@ -1142,6 +1143,14 @@ function Router() {
         </ProtectedRoute>
       </Route>
 
+      <Route path="/groups/city/:cityName">
+        <ProtectedRoute>
+          <AppLayout>
+            <CityGroupRedirectPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
       <Route path="/groups/:id">
         <AppLayout>
           <GroupDetailsPage />
@@ -1173,7 +1182,6 @@ function Router() {
         </ProtectedRoute>
       </Route>
 
-      {/* City Hub removed - functionality covered by Community Map + City Groups */}
       <Route path="/city-groups">
         <ProtectedRoute>
           <AppLayout>
