@@ -60,10 +60,11 @@ const TIME_FILTERS = [
 ];
 
 const FRIENDSHIP_LEVEL_FILTERS = [
-  { value: "all", label: "All Connections" },
-  { value: "close", label: "Close Friends" },
-  { value: "friend", label: "Friends" },
-  { value: "acquaintance", label: "Acquaintances" },
+  { value: "all", label: "Everyone" },
+  { value: "close_friend", label: "Close Friends" },
+  { value: "friends_1st", label: "Friends" },
+  { value: "friends_2nd", label: "Friends of Friends" },
+  { value: "friends_3rd", label: "Extended Network" },
 ];
 
 function SmartPostFeedComponent({ posts, onFilterChange, children }: SmartPostFeedProps) {
@@ -169,7 +170,7 @@ function SmartPostFeedComponent({ posts, onFilterChange, children }: SmartPostFe
     // Friendship level filter
     if (friendshipFilter !== "all") {
       filtered = filtered.filter(post => {
-        const level = (post as any).friendshipLevel || "acquaintance";
+        const level = (post as any).closenessLevel || "friends_3rd";
         return level === friendshipFilter;
       });
     }
