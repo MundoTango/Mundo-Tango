@@ -253,6 +253,13 @@ function AppSidebarComponent() {
   const userCity = profile?.city || (user as any)?.city;
   const userTangoRoles = (profile as any)?.tangoRoles || (user as any)?.tangoRoles || [];
 
+  console.log('[AppSidebar DEBUG] profile:', profile);
+  console.log('[AppSidebar DEBUG] profile.tangoRoles:', (profile as any)?.tangoRoles);
+  console.log('[AppSidebar DEBUG] user:', user);
+  console.log('[AppSidebar DEBUG] user.tangoRoles:', (user as any)?.tangoRoles);
+  console.log('[AppSidebar DEBUG] userTangoRoles:', userTangoRoles);
+  console.log('[AppSidebar DEBUG] userCity:', userCity);
+
   const myStuffItems = useMemo(() => {
     const items: Array<{
       title: string;
