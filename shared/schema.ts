@@ -4610,6 +4610,21 @@ export const housingListings = pgTable(
     coverPhotoUrl: text("cover_photo_url"),
     status: varchar("status").default("active").notNull(),
 
+    // Airbnb-style listing details
+    listingType: varchar("listing_type").default("entire_place"), // entire_place, private_room, shared_room
+    beds: integer("beds"),
+    checkInTime: varchar("check_in_time").default("15:00"), // 24h format
+    checkoutTime: varchar("checkout_time").default("11:00"),
+    minNights: integer("min_nights").default(1),
+    maxNights: integer("max_nights").default(365),
+    instantBook: boolean("instant_book").default(true),
+    cancellationPolicy: varchar("cancellation_policy").default("flexible"), // flexible, moderate, strict
+    selfCheckIn: varchar("self_check_in"), // lockbox, keypad, doorman, smart_lock
+    weeklyDiscount: integer("weekly_discount").default(0), // percentage
+    monthlyDiscount: integer("monthly_discount").default(0), // percentage
+    cleaningFee: integer("cleaning_fee").default(0),
+    safetyAmenities: text("safety_amenities").array(), // smoke_detector, carbon_monoxide, fire_extinguisher, first_aid_kit
+
     // Safety Verification (admin reviews for trust & safety)
     verificationStatus: varchar("verification_status")
       .default("pending")
