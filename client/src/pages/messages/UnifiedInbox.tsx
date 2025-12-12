@@ -18,7 +18,7 @@ import {
 import { SiFacebook, SiInstagram, SiWhatsapp } from "react-icons/si";
 import { formatDistanceToNow } from "date-fns";
 import { ComposeMessage } from "@/components/messages/ComposeMessage";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTrigger, DialogTitle } from "@/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { ReactionSelector } from "@/components/ui/ReactionSelector";
@@ -349,6 +349,7 @@ export default function UnifiedInbox() {
                 </Tooltip>
               </DialogTrigger>
               <DialogContent className="max-w-md p-0">
+                <DialogTitle className="sr-only">New Message</DialogTitle>
                 <ComposeMessage 
                   onClose={() => setShowCompose(false)} 
                   onSendSuccess={(data) => {

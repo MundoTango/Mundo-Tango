@@ -8,7 +8,6 @@ import { Send, X, Search, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
-import { cn } from "@/lib/utils";
 
 interface UserResult {
   id: string;
@@ -76,7 +75,7 @@ export function ComposeMessage({ onClose, onSendSuccess }: ComposeMessageProps) 
 
   const sendMutation = useMutation({
     mutationFn: async (data: { recipientId: number; content: string }) => {
-      return apiRequest("POST", "/api/messages/send", data);
+      return apiRequest("POST", "/api/messages/send-direct", data);
     },
     onSuccess: (response) => {
       toast({
