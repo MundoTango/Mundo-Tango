@@ -521,7 +521,7 @@ export default function FriendshipPage() {
                         isLoading={false}
                         context={{ type: 'memory', name: friend?.name }}
                         showPostCreator={false}
-                        showFilters={false}
+                        showFilters={true}
                         emptyMessage="No shared posts yet. Create memories together!"
                       />
                     </div>
