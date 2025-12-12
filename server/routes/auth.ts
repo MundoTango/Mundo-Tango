@@ -435,14 +435,12 @@ router.get("/me", authenticateToken, async (req: AuthRequest, res: Response) => 
 
     const { password, ...userWithoutPassword } = req.user;
 
-    // Map snake_case database fields to camelCase for frontend
+    // Ensure tangoRoles is always an array and city/country are included
     const userResponse = {
       ...userWithoutPassword,
-      // Ensure tangoRoles is available (map from tango_roles if needed)
-      tangoRoles: (userWithoutPassword as any).tango_roles || (userWithoutPassword as any).tangoRoles || [],
-      // Ensure city and country are included
-      city: userWithoutPassword.city,
-      country: userWithoutPassword.country,
+      tangoRoles: userWithoutPassword.tangoRoles ?? [],
+      city: userWithoutPassword.city ?? null,
+      country: userWithoutPassword.country ?? null,
     };
 
     res.json({ user: userResponse });
