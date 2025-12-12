@@ -311,7 +311,7 @@ export class StaticScraper {
   /**
    * Extract community metadata from About/Info pages
    * NEW: Community data extraction for city group enrichment
-   */
+        */
   async extractCommunityMetadata(source: any): Promise<ScrapedCommunityMetadata | null> {
     console.log(`[Agent #116] 📋 Extracting community metadata from: ${source.name}`);
 
