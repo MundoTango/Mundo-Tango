@@ -349,7 +349,38 @@ export default function UnifiedInbox() {
                 </Tooltip>
               </DialogTrigger>
               <DialogContent className="max-w-2xl">
-                <ComposeMessage onClose={() => setShowCompose(false)} />
+                <ComposeMessage 
+                  onClose={() => setShowCompose(false)} 
+                  onSendSuccess={(data) => {
+                    // Create optimistic conversation and select it
+                    const newConversation = {
+                      id: `new-${Date.now()}`,
+                      from: data.to,
+                      channel: data.channel,
+                      avatar: null,
+                      isOnline: false,
+                      isPinned: false,
+                      lastMessage: data.body,
+                      lastMessageAt: new Date().toISOString(),
+                      isRead: true,
+                      unreadCount: 0,
+                      messages: [],
+                    };
+                    setSelectedConversation(newConversation);
+                    
+                    // Add the sent message to local state
+                    setLocalSentMessages(prev => [...prev, {
+                      id: `local-${Date.now()}`,
+                      body: data.body,
+                      from: 'me',
+                      to: data.to,
+                      channel: data.channel,
+                      receivedAt: new Date().toISOString(),
+                      isOwn: true,
+                      conversationId: newConversation.id,
+                    }]);
+                  }}
+                />
               </DialogContent>
             </Dialog>
           </div>

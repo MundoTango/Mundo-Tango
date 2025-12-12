@@ -59,10 +59,11 @@ const channelLabels = {
 
 interface ComposeMessageProps {
   onClose?: () => void;
+  onSendSuccess?: (data: { to: string; channel: string; body: string }) => void;
   defaultChannel?: "mt" | "gmail" | "facebook" | "instagram" | "whatsapp";
 }
 
-export function ComposeMessage({ onClose, defaultChannel = "mt" }: ComposeMessageProps) {
+export function ComposeMessage({ onClose, onSendSuccess, defaultChannel = "mt" }: ComposeMessageProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [scheduleDate, setScheduleDate] = useState<Date>();
@@ -89,7 +90,7 @@ export function ComposeMessage({ onClose, defaultChannel = "mt" }: ComposeMessag
       }
       return apiRequest("POST", "/api/messages/send", data);
     },
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       toast({
         title: scheduleDate ? "Message scheduled" : "Message sent",
         description: scheduleDate 
@@ -97,6 +98,12 @@ export function ComposeMessage({ onClose, defaultChannel = "mt" }: ComposeMessag
           : "Your message has been sent successfully.",
       });
       queryClient.invalidateQueries({ queryKey: ["/api/messages/unified"] });
+      
+      // Call the success callback with message data
+      if (!scheduleDate) {
+        onSendSuccess?.({ to: variables.to, channel: variables.channel, body: variables.body });
+      }
+      
       form.reset();
       onClose?.();
     },
