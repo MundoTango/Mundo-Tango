@@ -27,7 +27,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import { 
   Loader2, 
   Home, 
@@ -41,15 +43,67 @@ import {
   Camera,
   Check,
   Lightbulb,
-  ArrowRight
+  ArrowRight,
+  ArrowLeft,
+  Clock,
+  Calendar,
+  Shield,
+  Zap,
+  Percent,
+  Bed,
+  Bath,
+  Key
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+
+const AMENITIES = {
+  essentials: [
+    { id: "wifi", label: "WiFi" },
+    { id: "kitchen", label: "Kitchen" },
+    { id: "washer", label: "Washer" },
+    { id: "dryer", label: "Dryer" },
+    { id: "air_conditioning", label: "Air conditioning" },
+    { id: "heating", label: "Heating" },
+    { id: "tv", label: "TV" },
+    { id: "iron", label: "Iron" },
+    { id: "hair_dryer", label: "Hair dryer" },
+    { id: "dedicated_workspace", label: "Dedicated workspace" },
+  ],
+  safety: [
+    { id: "smoke_detector", label: "Smoke detector" },
+    { id: "carbon_monoxide", label: "Carbon monoxide detector" },
+    { id: "fire_extinguisher", label: "Fire extinguisher" },
+    { id: "first_aid_kit", label: "First aid kit" },
+    { id: "security_camera", label: "Security cameras" },
+  ],
+  parking: [
+    { id: "free_parking", label: "Free parking" },
+    { id: "paid_parking", label: "Paid parking nearby" },
+    { id: "street_parking", label: "Street parking" },
+    { id: "ev_charger", label: "EV charger" },
+  ],
+  outdoor: [
+    { id: "pool", label: "Pool" },
+    { id: "hot_tub", label: "Hot tub" },
+    { id: "patio", label: "Patio or balcony" },
+    { id: "bbq_grill", label: "BBQ grill" },
+    { id: "garden", label: "Garden" },
+  ],
+  tango: [
+    { id: "practice_floor", label: "Practice floor" },
+    { id: "tango_music", label: "Tango music collection" },
+    { id: "near_milongas", label: "Near milongas" },
+    { id: "dance_shoes_storage", label: "Dance shoes storage" },
+  ],
+};
 
 const createListingSchema = z.object({
   title: z.string().min(10, "Title must be at least 10 characters"),
   description: z.string().min(50, "Description must be at least 50 characters"),
   propertyType: z.string().min(1, "Property type is required"),
+  listingType: z.string().default("entire_place"),
   bedrooms: z.coerce.number().min(0).optional(),
+  beds: z.coerce.number().min(1, "At least 1 bed required").optional(),
   bathrooms: z.coerce.number().min(0).optional(),
   maxGuests: z.coerce.number().min(1, "Must accommodate at least 1 guest"),
   pricePerNight: z.coerce.number().min(1, "Price must be greater than 0"),
@@ -57,14 +111,35 @@ const createListingSchema = z.object({
   address: z.string().min(5, "Address is required"),
   city: z.string().min(2, "City is required"),
   country: z.string().min(2, "Country is required"),
-  amenities: z.string().optional(),
+  amenities: z.array(z.string()).default([]),
+  safetyAmenities: z.array(z.string()).default([]),
   houseRules: z.string().optional(),
+  checkInTime: z.string().default("15:00"),
+  checkoutTime: z.string().default("11:00"),
+  minNights: z.coerce.number().min(1).default(1),
+  maxNights: z.coerce.number().min(1).default(365),
+  instantBook: z.boolean().default(true),
+  cancellationPolicy: z.string().default("flexible"),
+  selfCheckIn: z.string().optional(),
+  weeklyDiscount: z.coerce.number().min(0).max(100).default(0),
+  monthlyDiscount: z.coerce.number().min(0).max(100).default(0),
+  cleaningFee: z.coerce.number().min(0).default(0),
 });
 
 type CreateListingFormData = z.infer<typeof createListingSchema>;
 
+const STEPS = [
+  { id: 1, label: "Basics", icon: Home, description: "Property type & location" },
+  { id: 2, label: "Space", icon: Bed, description: "Rooms & capacity" },
+  { id: 3, label: "Amenities", icon: Sparkles, description: "What you offer" },
+  { id: 4, label: "Rules", icon: ScrollText, description: "Check-in & policies" },
+  { id: 5, label: "Pricing", icon: DollarSign, description: "Rates & discounts" },
+  { id: 6, label: "Photos", icon: Camera, description: "Show your space" },
+];
+
 export default function CreateListingPage() {
   const [, navigate] = useLocation();
+  const [currentStep, setCurrentStep] = useState(1);
   const [createdListingId, setCreatedListingId] = useState<number | null>(null);
   const [isComplete, setIsComplete] = useState(false);
   const { toast } = useToast();
@@ -76,21 +151,29 @@ export default function CreateListingPage() {
       title: "",
       description: "",
       propertyType: "",
+      listingType: "entire_place",
       currency: "USD",
-      amenities: "",
+      amenities: [],
+      safetyAmenities: [],
       houseRules: "",
+      checkInTime: "15:00",
+      checkoutTime: "11:00",
+      minNights: 1,
+      maxNights: 365,
+      instantBook: true,
+      cancellationPolicy: "flexible",
+      weeklyDiscount: 0,
+      monthlyDiscount: 0,
+      cleaningFee: 0,
     },
   });
 
   const createListingMutation = useMutation({
     mutationFn: async (data: CreateListingFormData) => {
-      const amenitiesArray = data.amenities
-        ? data.amenities.split(",").map((a) => a.trim()).filter(Boolean)
-        : [];
-
       const payload = {
         ...data,
-        amenities: amenitiesArray,
+        amenities: data.amenities,
+        safetyAmenities: data.safetyAmenities,
       };
 
       const response = await apiRequest("POST", "/api/housing/listings", payload);
@@ -113,9 +196,45 @@ export default function CreateListingPage() {
     },
   });
 
-  const handleSubmit = form.handleSubmit((data) => {
-    createListingMutation.mutate(data);
-  });
+  const validateStep = async (step: number): Promise<boolean> => {
+    let fieldsToValidate: (keyof CreateListingFormData)[] = [];
+    
+    switch (step) {
+      case 1:
+        fieldsToValidate = ["title", "description", "propertyType", "listingType", "address", "city", "country"];
+        break;
+      case 2:
+        fieldsToValidate = ["bedrooms", "beds", "bathrooms", "maxGuests"];
+        break;
+      case 3:
+        fieldsToValidate = ["amenities"];
+        break;
+      case 4:
+        fieldsToValidate = ["checkInTime", "checkoutTime", "minNights", "maxNights", "cancellationPolicy"];
+        break;
+      case 5:
+        fieldsToValidate = ["pricePerNight", "currency", "weeklyDiscount", "monthlyDiscount", "cleaningFee"];
+        break;
+    }
+
+    const result = await form.trigger(fieldsToValidate);
+    return result;
+  };
+
+  const handleNext = async () => {
+    const isValid = await validateStep(currentStep);
+    if (isValid) {
+      if (currentStep === 5) {
+        createListingMutation.mutate(form.getValues());
+      } else {
+        setCurrentStep(prev => Math.min(prev + 1, 6));
+      }
+    }
+  };
+
+  const handleBack = () => {
+    setCurrentStep(prev => Math.max(prev - 1, 1));
+  };
 
   const handlePhotosComplete = () => {
     setIsComplete(true);
@@ -123,23 +242,35 @@ export default function CreateListingPage() {
       title: "Listing complete",
       description: "Your listing is now live!",
     });
-    // Show completion screen for 2 seconds before navigating
     setTimeout(() => {
       navigate("/housing/my-listings");
     }, 2000);
   };
 
-  const steps = [
-    { id: 1, label: "Details", icon: FileText },
-    { id: 2, label: "Photos", icon: Camera },
-    { id: 3, label: "Complete", icon: Check },
-  ];
-  const currentStep = isComplete ? 3 : (!createdListingId ? 1 : 2);
+  const toggleAmenity = (amenityId: string) => {
+    const current = form.getValues("amenities") || [];
+    if (current.includes(amenityId)) {
+      form.setValue("amenities", current.filter(a => a !== amenityId));
+    } else {
+      form.setValue("amenities", [...current, amenityId]);
+    }
+  };
+
+  const toggleSafetyAmenity = (amenityId: string) => {
+    const current = form.getValues("safetyAmenities") || [];
+    if (current.includes(amenityId)) {
+      form.setValue("safetyAmenities", current.filter(a => a !== amenityId));
+    } else {
+      form.setValue("safetyAmenities", [...current, amenityId]);
+    }
+  };
+
+  const displayStep = createdListingId ? 6 : currentStep;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/30">
       <div className="container max-w-4xl mx-auto py-8 px-4">
-        {/* Header with decorative elements */}
+        {/* Header */}
         <div className="relative mb-8">
           <div className="absolute -top-4 -left-4 w-24 h-24 bg-primary/10 rounded-full blur-2xl" />
           <div className="absolute -top-2 right-8 w-16 h-16 bg-accent/20 rounded-full blur-xl" />
@@ -162,47 +293,90 @@ export default function CreateListingPage() {
         </div>
 
         {/* Step Progress Indicator */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between">
-            {steps.map((step, index) => (
+        <div className="mb-8 overflow-x-auto pb-2">
+          <div className="flex items-center justify-between min-w-[600px]">
+            {STEPS.map((step, index) => (
               <div key={step.id} className="flex items-center flex-1">
                 <div className="flex flex-col items-center">
                   <div
                     className={`
-                      w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300
-                      ${currentStep >= step.id 
+                      w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300
+                      ${displayStep >= step.id 
                         ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25" 
                         : "bg-muted text-muted-foreground"}
+                      ${displayStep === step.id ? "ring-2 ring-primary ring-offset-2 ring-offset-background" : ""}
                     `}
                   >
-                    <step.icon className="h-5 w-5" />
+                    {displayStep > step.id ? (
+                      <Check className="h-4 w-4" />
+                    ) : (
+                      <step.icon className="h-4 w-4" />
+                    )}
                   </div>
-                  <span className={`mt-2 text-sm font-medium ${currentStep >= step.id ? "text-foreground" : "text-muted-foreground"}`}>
+                  <span className={`mt-1 text-xs font-medium ${displayStep >= step.id ? "text-foreground" : "text-muted-foreground"}`}>
                     {step.label}
                   </span>
                 </div>
-                {index < steps.length - 1 && (
-                  <div className={`flex-1 h-1 mx-4 rounded-full transition-all duration-300 ${currentStep > step.id ? "bg-primary" : "bg-muted"}`} />
+                {index < STEPS.length - 1 && (
+                  <div className={`flex-1 h-0.5 mx-2 rounded-full transition-all duration-300 ${displayStep > step.id ? "bg-primary" : "bg-muted"}`} />
                 )}
               </div>
             ))}
           </div>
         </div>
 
-        <div className="space-y-6">
-          {!createdListingId ? (
-            <Form {...form}>
-              <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Basic Info Section */}
-                <Card className="border-l-4 border-l-primary overflow-visible">
+        {/* Completion Screen */}
+        {isComplete && (
+          <Card className="text-center py-12">
+            <CardContent>
+              <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Check className="h-10 w-10 text-green-500" />
+              </div>
+              <h2 className="text-2xl font-bold mb-2">Your listing is live!</h2>
+              <p className="text-muted-foreground">Redirecting to your listings...</p>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Photo Upload Step */}
+        {createdListingId && !isComplete && (
+          <Card>
+            <CardHeader>
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-primary/10 rounded-lg">
+                  <Camera className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <CardTitle className="text-lg">Add Photos</CardTitle>
+                  <CardDescription>Show guests what makes your space special</CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <PhotoUpload
+                listingId={createdListingId}
+                onComplete={handlePhotosComplete}
+              />
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Form Steps */}
+        {!createdListingId && !isComplete && (
+          <Form {...form}>
+            <form onSubmit={(e) => e.preventDefault()} className="space-y-6">
+              
+              {/* Step 1: Basics */}
+              {currentStep === 1 && (
+                <Card className="overflow-visible">
                   <CardHeader className="pb-4">
                     <div className="flex items-center gap-3">
                       <div className="p-2 bg-primary/10 rounded-lg">
-                        <FileText className="h-5 w-5 text-primary" />
+                        <Home className="h-5 w-5 text-primary" />
                       </div>
                       <div>
-                        <CardTitle className="text-lg">Basic Information</CardTitle>
-                        <CardDescription>Tell guests about your space</CardDescription>
+                        <CardTitle className="text-lg">Property Basics</CardTitle>
+                        <CardDescription>Tell us about your property</CardDescription>
                       </div>
                     </div>
                   </CardHeader>
@@ -253,29 +427,13 @@ export default function CreateListingPage() {
                         </FormItem>
                       )}
                     />
-                  </CardContent>
-                </Card>
 
-                {/* Property Details Section */}
-                <Card className="border-l-4 border-l-accent overflow-visible">
-                  <CardHeader className="pb-4">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-accent/10 rounded-lg">
-                        <Building2 className="h-5 w-5 text-accent-foreground" />
-                      </div>
-                      <div>
-                        <CardTitle className="text-lg">Property Details</CardTitle>
-                        <CardDescription>Help guests know what to expect</CardDescription>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <FormField
                         control={form.control}
                         name="propertyType"
                         render={({ field }) => (
-                          <FormItem className="col-span-2">
+                          <FormItem>
                             <FormLabel>Property Type</FormLabel>
                             <Select onValueChange={field.onChange} defaultValue={field.value}>
                               <FormControl>
@@ -286,8 +444,9 @@ export default function CreateListingPage() {
                               <SelectContent>
                                 <SelectItem value="apartment">Apartment</SelectItem>
                                 <SelectItem value="house">House</SelectItem>
-                                <SelectItem value="room">Private Room</SelectItem>
-                                <SelectItem value="shared">Shared Room</SelectItem>
+                                <SelectItem value="condo">Condo</SelectItem>
+                                <SelectItem value="townhouse">Townhouse</SelectItem>
+                                <SelectItem value="loft">Loft</SelectItem>
                                 <SelectItem value="studio">Studio</SelectItem>
                               </SelectContent>
                             </Select>
@@ -298,11 +457,113 @@ export default function CreateListingPage() {
 
                       <FormField
                         control={form.control}
+                        name="listingType"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>What guests will have</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                              <FormControl>
+                                <SelectTrigger data-testid="select-listing-type">
+                                  <SelectValue />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="entire_place">Entire place</SelectItem>
+                                <SelectItem value="private_room">Private room</SelectItem>
+                                <SelectItem value="shared_room">Shared room</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
+                    <div className="pt-4 border-t">
+                      <FormItem>
+                        <FormLabel className="flex items-center gap-2">
+                          <MapPin className="h-4 w-4" />
+                          Property Address
+                        </FormLabel>
+                        <FormControl>
+                          <UnifiedLocationPicker
+                            mode="address"
+                            value={form.watch("address")}
+                            placeholder="Search for property address..."
+                            onChange={(location, coordinates, parsed) => {
+                              if (parsed) {
+                                form.setValue("address", parsed.street || location);
+                                form.setValue("city", parsed.city || "");
+                                form.setValue("country", parsed.country || "");
+                              } else {
+                                form.setValue("address", location);
+                              }
+                            }}
+                          />
+                        </FormControl>
+                        {(form.formState.errors.address || form.formState.errors.city || form.formState.errors.country) && (
+                          <p className="text-sm font-medium text-destructive">
+                            {form.formState.errors.address?.message || 
+                             form.formState.errors.city?.message || 
+                             form.formState.errors.country?.message}
+                          </p>
+                        )}
+                      </FormItem>
+
+                      <div className="grid grid-cols-2 gap-4 mt-4">
+                        <FormField
+                          control={form.control}
+                          name="city"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>City</FormLabel>
+                              <FormControl>
+                                <Input data-testid="input-city" {...field} readOnly className="bg-muted" />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="country"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Country</FormLabel>
+                              <FormControl>
+                                <Input data-testid="input-country" {...field} readOnly className="bg-muted" />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Step 2: Space Details */}
+              {currentStep === 2 && (
+                <Card className="overflow-visible">
+                  <CardHeader className="pb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-primary/10 rounded-lg">
+                        <Bed className="h-5 w-5 text-primary" />
+                      </div>
+                      <div>
+                        <CardTitle className="text-lg">Space Details</CardTitle>
+                        <CardDescription>Help guests know what to expect</CardDescription>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                      <FormField
+                        control={form.control}
                         name="maxGuests"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="flex items-center gap-1">
-                              <Users className="h-3 w-3" /> Guests
+                            <FormLabel className="flex items-center gap-2">
+                              <Users className="h-4 w-4" /> Guests
                             </FormLabel>
                             <FormControl>
                               <Input
@@ -323,7 +584,9 @@ export default function CreateListingPage() {
                         name="bedrooms"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Bedrooms</FormLabel>
+                            <FormLabel className="flex items-center gap-2">
+                              <Building2 className="h-4 w-4" /> Bedrooms
+                            </FormLabel>
                             <FormControl>
                               <Input
                                 type="number"
@@ -340,10 +603,34 @@ export default function CreateListingPage() {
 
                       <FormField
                         control={form.control}
+                        name="beds"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="flex items-center gap-2">
+                              <Bed className="h-4 w-4" /> Beds
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                type="number"
+                                min="1"
+                                placeholder="2"
+                                data-testid="input-beds"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
                         name="bathrooms"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Bathrooms</FormLabel>
+                            <FormLabel className="flex items-center gap-2">
+                              <Bath className="h-4 w-4" /> Bathrooms
+                            </FormLabel>
                             <FormControl>
                               <Input
                                 type="number"
@@ -359,319 +646,567 @@ export default function CreateListingPage() {
                         )}
                       />
                     </div>
-                  </CardContent>
-                </Card>
 
-                {/* Pricing Section */}
-                <Card className="border-l-4 border-l-green-500 dark:border-l-green-400 overflow-visible">
-                  <CardHeader className="pb-4">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-green-500/10 rounded-lg">
-                        <DollarSign className="h-5 w-5 text-green-600 dark:text-green-400" />
-                      </div>
-                      <div>
-                        <CardTitle className="text-lg">Pricing</CardTitle>
-                        <CardDescription>Set your nightly rate</CardDescription>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <FormField
-                        control={form.control}
-                        name="pricePerNight"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Price per Night</FormLabel>
-                            <FormControl>
-                              <div className="relative">
-                                <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                                <Input
-                                  type="number"
-                                  min="1"
-                                  placeholder="50"
-                                  className="pl-9"
-                                  data-testid="input-price"
-                                  {...field}
-                                />
-                              </div>
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={form.control}
-                        name="currency"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Currency</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
-                              <FormControl>
-                                <SelectTrigger data-testid="select-currency">
-                                  <SelectValue />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                <SelectItem value="USD">USD - US Dollar</SelectItem>
-                                <SelectItem value="EUR">EUR - Euro</SelectItem>
-                                <SelectItem value="GBP">GBP - British Pound</SelectItem>
-                                <SelectItem value="ARS">ARS - Argentine Peso</SelectItem>
-                              </SelectContent>
-                            </Select>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-
-                    <div className="mt-4 p-3 bg-green-500/5 rounded-lg border border-green-500/20">
+                    <div className="mt-6 p-4 bg-muted/50 rounded-lg">
                       <p className="text-sm text-muted-foreground flex items-center gap-2">
-                        <Lightbulb className="h-4 w-4 text-green-600 dark:text-green-400" />
-                        Tip: Check similar listings in your area to set a competitive price
+                        <Lightbulb className="h-4 w-4" />
+                        Studios count as 0 bedrooms. Count all beds including sofa beds.
                       </p>
                     </div>
                   </CardContent>
                 </Card>
+              )}
 
-                {/* Location Section */}
-                <Card className="border-l-4 border-l-blue-500 dark:border-l-blue-400 overflow-visible">
+              {/* Step 3: Amenities */}
+              {currentStep === 3 && (
+                <Card className="overflow-visible">
                   <CardHeader className="pb-4">
                     <div className="flex items-center gap-3">
-                      <div className="p-2 bg-blue-500/10 rounded-lg">
-                        <MapPin className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                      <div className="p-2 bg-primary/10 rounded-lg">
+                        <Sparkles className="h-5 w-5 text-primary" />
                       </div>
                       <div>
-                        <CardTitle className="text-lg">Location</CardTitle>
-                        <CardDescription>Where is your property?</CardDescription>
+                        <CardTitle className="text-lg">Amenities</CardTitle>
+                        <CardDescription>What does your place offer?</CardDescription>
                       </div>
                     </div>
                   </CardHeader>
-                  <CardContent className="space-y-4">
-                    <FormItem>
-                      <FormLabel>Property Address</FormLabel>
-                      <FormControl>
-                        <UnifiedLocationPicker
-                          mode="address"
-                          value={form.watch("address")}
-                          placeholder="Search for property address..."
-                          onChange={(location, coordinates, parsed) => {
-                            if (parsed) {
-                              form.setValue("address", parsed.street || location);
-                              form.setValue("city", parsed.city || "");
-                              form.setValue("country", parsed.country || "");
-                            } else {
-                              form.setValue("address", location);
-                            }
-                          }}
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        Search for your property address to auto-fill location details
-                      </FormDescription>
-                      {(form.formState.errors.address || form.formState.errors.city || form.formState.errors.country) && (
-                        <p className="text-sm font-medium text-destructive">
-                          {form.formState.errors.address?.message || 
-                           form.formState.errors.city?.message || 
-                           form.formState.errors.country?.message}
-                        </p>
-                      )}
-                    </FormItem>
+                  <CardContent className="space-y-8">
+                    {/* Essentials */}
+                    <div>
+                      <h3 className="font-semibold mb-3 flex items-center gap-2">
+                        <Check className="h-4 w-4 text-primary" />
+                        Essentials
+                      </h3>
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                        {AMENITIES.essentials.map((amenity) => (
+                          <div
+                            key={amenity.id}
+                            className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors hover-elevate ${
+                              (form.watch("amenities") || []).includes(amenity.id)
+                                ? "border-primary bg-primary/5"
+                                : "border-border"
+                            }`}
+                            onClick={() => toggleAmenity(amenity.id)}
+                            data-testid={`amenity-${amenity.id}`}
+                          >
+                            <Checkbox
+                              checked={(form.watch("amenities") || []).includes(amenity.id)}
+                              onCheckedChange={() => toggleAmenity(amenity.id)}
+                            />
+                            <Label className="cursor-pointer">{amenity.label}</Label>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <FormField
-                        control={form.control}
-                        name="city"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>City</FormLabel>
-                            <FormControl>
-                              <Input data-testid="input-city" {...field} readOnly className="bg-muted" />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
+                    {/* Safety */}
+                    <div>
+                      <h3 className="font-semibold mb-3 flex items-center gap-2">
+                        <Shield className="h-4 w-4 text-green-600" />
+                        Safety Features
+                      </h3>
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                        {AMENITIES.safety.map((amenity) => (
+                          <div
+                            key={amenity.id}
+                            className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors hover-elevate ${
+                              (form.watch("safetyAmenities") || []).includes(amenity.id)
+                                ? "border-green-500 bg-green-500/5"
+                                : "border-border"
+                            }`}
+                            onClick={() => toggleSafetyAmenity(amenity.id)}
+                            data-testid={`safety-${amenity.id}`}
+                          >
+                            <Checkbox
+                              checked={(form.watch("safetyAmenities") || []).includes(amenity.id)}
+                              onCheckedChange={() => toggleSafetyAmenity(amenity.id)}
+                            />
+                            <Label className="cursor-pointer">{amenity.label}</Label>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
 
-                      <FormField
-                        control={form.control}
-                        name="country"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Country</FormLabel>
-                            <FormControl>
-                              <Input data-testid="input-country" {...field} readOnly className="bg-muted" />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
+                    {/* Parking */}
+                    <div>
+                      <h3 className="font-semibold mb-3">Parking</h3>
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                        {AMENITIES.parking.map((amenity) => (
+                          <div
+                            key={amenity.id}
+                            className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors hover-elevate ${
+                              (form.watch("amenities") || []).includes(amenity.id)
+                                ? "border-primary bg-primary/5"
+                                : "border-border"
+                            }`}
+                            onClick={() => toggleAmenity(amenity.id)}
+                            data-testid={`amenity-${amenity.id}`}
+                          >
+                            <Checkbox
+                              checked={(form.watch("amenities") || []).includes(amenity.id)}
+                              onCheckedChange={() => toggleAmenity(amenity.id)}
+                            />
+                            <Label className="cursor-pointer">{amenity.label}</Label>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Tango-specific */}
+                    <div>
+                      <h3 className="font-semibold mb-3 flex items-center gap-2">
+                        <Sparkles className="h-4 w-4 text-purple-600" />
+                        Tango Dancer Features
+                      </h3>
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                        {AMENITIES.tango.map((amenity) => (
+                          <div
+                            key={amenity.id}
+                            className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors hover-elevate ${
+                              (form.watch("amenities") || []).includes(amenity.id)
+                                ? "border-purple-500 bg-purple-500/5"
+                                : "border-border"
+                            }`}
+                            onClick={() => toggleAmenity(amenity.id)}
+                            data-testid={`amenity-${amenity.id}`}
+                          >
+                            <Checkbox
+                              checked={(form.watch("amenities") || []).includes(amenity.id)}
+                              onCheckedChange={() => toggleAmenity(amenity.id)}
+                            />
+                            <Label className="cursor-pointer">{amenity.label}</Label>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
+              )}
 
-                {/* Amenities & Rules Section */}
-                <Card className="border-l-4 border-l-purple-500 dark:border-l-purple-400 overflow-visible">
+              {/* Step 4: House Rules */}
+              {currentStep === 4 && (
+                <Card className="overflow-visible">
                   <CardHeader className="pb-4">
                     <div className="flex items-center gap-3">
-                      <div className="p-2 bg-purple-500/10 rounded-lg">
-                        <Sparkles className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+                      <div className="p-2 bg-primary/10 rounded-lg">
+                        <ScrollText className="h-5 w-5 text-primary" />
                       </div>
                       <div>
-                        <CardTitle className="text-lg">Amenities & Rules</CardTitle>
-                        <CardDescription>What do you offer? What should guests know?</CardDescription>
+                        <CardTitle className="text-lg">House Rules & Booking Settings</CardTitle>
+                        <CardDescription>Set expectations for your guests</CardDescription>
                       </div>
                     </div>
                   </CardHeader>
-                  <CardContent className="space-y-6">
-                    <FormField
-                      control={form.control}
-                      name="amenities"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Amenities</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="WiFi, Kitchen, Parking, Air Conditioning, Washing Machine..."
-                              data-testid="input-amenities"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormDescription className="flex flex-wrap gap-2 mt-2">
-                            <span className="text-xs">Popular:</span>
-                            {["WiFi", "Kitchen", "Parking", "A/C", "Washer"].map((amenity) => (
-                              <Badge 
-                                key={amenity} 
-                                variant="secondary" 
-                                className="cursor-pointer text-xs"
-                                onClick={() => {
-                                  const current = field.value || "";
-                                  if (!current.includes(amenity)) {
-                                    field.onChange(current ? `${current}, ${amenity}` : amenity);
-                                  }
-                                }}
-                              >
-                                + {amenity}
-                              </Badge>
-                            ))}
-                          </FormDescription>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                  <CardContent className="space-y-8">
+                    {/* Check-in/out times */}
+                    <div>
+                      <h3 className="font-semibold mb-4 flex items-center gap-2">
+                        <Clock className="h-4 w-4" />
+                        Check-in & Checkout
+                      </h3>
+                      <div className="grid grid-cols-2 gap-4">
+                        <FormField
+                          control={form.control}
+                          name="checkInTime"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Check-in Time</FormLabel>
+                              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <FormControl>
+                                  <SelectTrigger data-testid="select-checkin-time">
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  {["08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00"].map(time => (
+                                    <SelectItem key={time} value={time}>{time}</SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </FormItem>
+                          )}
+                        />
 
+                        <FormField
+                          control={form.control}
+                          name="checkoutTime"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Checkout Time</FormLabel>
+                              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <FormControl>
+                                  <SelectTrigger data-testid="select-checkout-time">
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  {["08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00"].map(time => (
+                                    <SelectItem key={time} value={time}>{time}</SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Stay Duration */}
+                    <div>
+                      <h3 className="font-semibold mb-4 flex items-center gap-2">
+                        <Calendar className="h-4 w-4" />
+                        Stay Duration
+                      </h3>
+                      <div className="grid grid-cols-2 gap-4">
+                        <FormField
+                          control={form.control}
+                          name="minNights"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Minimum Nights</FormLabel>
+                              <FormControl>
+                                <Input
+                                  type="number"
+                                  min="1"
+                                  data-testid="input-min-nights"
+                                  {...field}
+                                />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={form.control}
+                          name="maxNights"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Maximum Nights</FormLabel>
+                              <FormControl>
+                                <Input
+                                  type="number"
+                                  min="1"
+                                  data-testid="input-max-nights"
+                                  {...field}
+                                />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Booking Options */}
+                    <div>
+                      <h3 className="font-semibold mb-4 flex items-center gap-2">
+                        <Zap className="h-4 w-4" />
+                        Booking Options
+                      </h3>
+                      
+                      <div className="space-y-4">
+                        <FormField
+                          control={form.control}
+                          name="instantBook"
+                          render={({ field }) => (
+                            <div className="flex items-center justify-between p-4 rounded-lg border">
+                              <div className="flex items-center gap-3">
+                                <div className="p-2 bg-yellow-500/10 rounded-lg">
+                                  <Zap className="h-5 w-5 text-yellow-600" />
+                                </div>
+                                <div>
+                                  <Label className="font-medium">Instant Book</Label>
+                                  <p className="text-sm text-muted-foreground">Guests can book without your approval</p>
+                                </div>
+                              </div>
+                              <Switch
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                                data-testid="switch-instant-book"
+                              />
+                            </div>
+                          )}
+                        />
+
+                        <FormField
+                          control={form.control}
+                          name="selfCheckIn"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="flex items-center gap-2">
+                                <Key className="h-4 w-4" />
+                                Self Check-in Method
+                              </FormLabel>
+                              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <FormControl>
+                                  <SelectTrigger data-testid="select-self-checkin">
+                                    <SelectValue placeholder="Select method (optional)" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  <SelectItem value="lockbox">Lockbox</SelectItem>
+                                  <SelectItem value="keypad">Keypad</SelectItem>
+                                  <SelectItem value="doorman">Doorman/Building staff</SelectItem>
+                                  <SelectItem value="smart_lock">Smart lock</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={form.control}
+                          name="cancellationPolicy"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Cancellation Policy</FormLabel>
+                              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <FormControl>
+                                  <SelectTrigger data-testid="select-cancellation">
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  <SelectItem value="flexible">Flexible - Full refund up to 24h before</SelectItem>
+                                  <SelectItem value="moderate">Moderate - Full refund up to 5 days before</SelectItem>
+                                  <SelectItem value="strict">Strict - 50% refund up to 7 days before</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    </div>
+
+                    {/* House Rules */}
                     <FormField
                       control={form.control}
                       name="houseRules"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="flex items-center gap-2">
-                            <ScrollText className="h-4 w-4" />
-                            House Rules (Optional)
-                          </FormLabel>
+                          <FormLabel>Additional House Rules</FormLabel>
                           <FormControl>
                             <Textarea
-                              placeholder="No smoking, quiet hours after 10pm, pets welcome, etc."
-                              rows={3}
+                              placeholder="Any other rules guests should know about..."
+                              rows={4}
                               data-testid="input-house-rules"
                               className="resize-none"
                               {...field}
                             />
                           </FormControl>
-                          <FormMessage />
                         </FormItem>
                       )}
                     />
                   </CardContent>
                 </Card>
+              )}
 
-                {/* Submit Button */}
-                <div className="pt-4">
+              {/* Step 5: Pricing */}
+              {currentStep === 5 && (
+                <Card className="overflow-visible">
+                  <CardHeader className="pb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-green-500/10 rounded-lg">
+                        <DollarSign className="h-5 w-5 text-green-600" />
+                      </div>
+                      <div>
+                        <CardTitle className="text-lg">Pricing</CardTitle>
+                        <CardDescription>Set your rates and discounts</CardDescription>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-8">
+                    {/* Base Price */}
+                    <div>
+                      <h3 className="font-semibold mb-4">Nightly Rate</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <FormField
+                          control={form.control}
+                          name="pricePerNight"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Price per Night</FormLabel>
+                              <FormControl>
+                                <div className="relative">
+                                  <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                  <Input
+                                    type="number"
+                                    min="1"
+                                    placeholder="50"
+                                    className="pl-9"
+                                    data-testid="input-price"
+                                    {...field}
+                                  />
+                                </div>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={form.control}
+                          name="currency"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Currency</FormLabel>
+                              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <FormControl>
+                                  <SelectTrigger data-testid="select-currency">
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  <SelectItem value="USD">USD - US Dollar</SelectItem>
+                                  <SelectItem value="EUR">EUR - Euro</SelectItem>
+                                  <SelectItem value="GBP">GBP - British Pound</SelectItem>
+                                  <SelectItem value="ARS">ARS - Argentine Peso</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Discounts */}
+                    <div>
+                      <h3 className="font-semibold mb-4 flex items-center gap-2">
+                        <Percent className="h-4 w-4" />
+                        Long Stay Discounts
+                      </h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <FormField
+                          control={form.control}
+                          name="weeklyDiscount"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Weekly Discount (%)</FormLabel>
+                              <FormControl>
+                                <div className="relative">
+                                  <Input
+                                    type="number"
+                                    min="0"
+                                    max="100"
+                                    placeholder="10"
+                                    data-testid="input-weekly-discount"
+                                    {...field}
+                                  />
+                                  <Percent className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                </div>
+                              </FormControl>
+                              <FormDescription>For stays of 7+ nights</FormDescription>
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={form.control}
+                          name="monthlyDiscount"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Monthly Discount (%)</FormLabel>
+                              <FormControl>
+                                <div className="relative">
+                                  <Input
+                                    type="number"
+                                    min="0"
+                                    max="100"
+                                    placeholder="20"
+                                    data-testid="input-monthly-discount"
+                                    {...field}
+                                  />
+                                  <Percent className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                </div>
+                              </FormControl>
+                              <FormDescription>For stays of 28+ nights</FormDescription>
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Cleaning Fee */}
+                    <div>
+                      <h3 className="font-semibold mb-4">Additional Fees</h3>
+                      <FormField
+                        control={form.control}
+                        name="cleaningFee"
+                        render={({ field }) => (
+                          <FormItem className="max-w-xs">
+                            <FormLabel>Cleaning Fee</FormLabel>
+                            <FormControl>
+                              <div className="relative">
+                                <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                <Input
+                                  type="number"
+                                  min="0"
+                                  placeholder="0"
+                                  className="pl-9"
+                                  data-testid="input-cleaning-fee"
+                                  {...field}
+                                />
+                              </div>
+                            </FormControl>
+                            <FormDescription>One-time fee per booking (optional)</FormDescription>
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
+                    <div className="p-4 bg-green-500/5 rounded-lg border border-green-500/20">
+                      <p className="text-sm text-muted-foreground flex items-center gap-2">
+                        <Lightbulb className="h-4 w-4 text-green-600" />
+                        Tip: Competitive pricing and discounts for longer stays attract more bookings from tango travelers.
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Navigation Buttons */}
+              <div className="flex items-center justify-between pt-4">
+                {currentStep > 1 ? (
                   <Button
-                    type="submit"
-                    size="lg"
-                    className="w-full h-14 text-lg font-semibold group"
-                    disabled={createListingMutation.isPending}
-                    data-testid="button-create-listing"
+                    type="button"
+                    variant="outline"
+                    onClick={handleBack}
+                    data-testid="button-back"
                   >
-                    {createListingMutation.isPending ? (
-                      <>
-                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                        Creating your listing...
-                      </>
-                    ) : (
-                      <>
-                        Continue to Photos
-                        <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-                      </>
-                    )}
+                    <ArrowLeft className="h-4 w-4 mr-2" />
+                    Back
                   </Button>
-                </div>
-              </form>
-            </Form>
-          ) : !isComplete ? (
-            <Card className="border-2 border-primary/20 overflow-visible">
-              <CardHeader className="text-center pb-4">
-                <div className="mx-auto mb-4 p-4 bg-primary/10 rounded-full w-fit">
-                  <Camera className="h-8 w-8 text-primary" />
-                </div>
-                <CardTitle className="text-2xl">Add Photos</CardTitle>
-                <CardDescription className="text-base">
-                  Great listings have great photos! Upload up to 20 images of your property.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="p-4 bg-muted/50 rounded-lg border border-border">
-                  <h4 className="font-medium mb-2 flex items-center gap-2">
-                    <Lightbulb className="h-4 w-4 text-primary" />
-                    Photo Tips
-                  </h4>
-                  <ul className="text-sm text-muted-foreground space-y-1">
-                    <li>Use natural lighting when possible</li>
-                    <li>Show the bedroom, bathroom, and common areas</li>
-                    <li>Include a photo of the building entrance</li>
-                    <li>Show any special features like a balcony or view</li>
-                  </ul>
-                </div>
+                ) : (
+                  <div />
+                )}
 
-                <PhotoUpload listingId={createdListingId} />
-                
                 <Button
-                  size="lg"
-                  className="w-full h-14 text-lg font-semibold"
-                  onClick={handlePhotosComplete}
-                  data-testid="button-complete-listing"
+                  type="button"
+                  onClick={handleNext}
+                  disabled={createListingMutation.isPending}
+                  data-testid="button-next"
                 >
-                  <Check className="mr-2 h-5 w-5" />
-                  Complete Listing
+                  {createListingMutation.isPending ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Creating...
+                    </>
+                  ) : currentStep === 5 ? (
+                    <>
+                      Create Listing
+                      <Check className="h-4 w-4 ml-2" />
+                    </>
+                  ) : (
+                    <>
+                      Continue
+                      <ArrowRight className="h-4 w-4 ml-2" />
+                    </>
+                  )}
                 </Button>
-              </CardContent>
-            </Card>
-          ) : null}
-
-          {/* Step 3: Completion Screen */}
-          {isComplete && (
-            <Card className="border-2 border-green-500/30 overflow-visible">
-              <CardContent className="py-12">
-                <div className="flex flex-col items-center text-center space-y-4">
-                  <div className="p-6 bg-green-500/10 rounded-full">
-                    <Check className="h-16 w-16 text-green-600 dark:text-green-400" />
-                  </div>
-                  <h2 className="text-2xl font-bold">Listing Created Successfully!</h2>
-                  <p className="text-muted-foreground max-w-md">
-                    Your listing is now live and visible to the tango community. 
-                    Redirecting you to your listings...
-                  </p>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    <span>Redirecting...</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-        </div>
+              </div>
+            </form>
+          </Form>
+        )}
       </div>
     </div>
   );
