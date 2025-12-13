@@ -128,6 +128,81 @@ export default function RegisterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Validate all required fields
+    if (!name.trim()) {
+      toast({
+        title: "Name required",
+        description: "Please enter your full name",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!email.trim()) {
+      toast({
+        title: "Email required",
+        description: "Please enter your email address",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      toast({
+        title: "Invalid email",
+        description: "Please enter a valid email address (e.g., name@example.com)",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (emailAvailable === false) {
+      toast({
+        title: "Email already registered",
+        description: "This email is already in use. Please try another.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!username.trim()) {
+      toast({
+        title: "Username required",
+        description: "Please enter a username",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (usernameAvailable === false) {
+      toast({
+        title: "Username taken",
+        description: "Please choose a different username",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!password) {
+      toast({
+        title: "Password required",
+        description: "Please enter a password",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!confirmPassword) {
+      toast({
+        title: "Confirm password",
+        description: "Please confirm your password",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (!termsAccepted) {
       toast({
         title: "Terms required",
