@@ -4,7 +4,9 @@
  * Used by Talent Match AI for signal detection
  */
 
-import * as pdfParse from "pdf-parse";
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
+const pdfParse = require("pdf-parse");
 import mammoth from "mammoth";
 
 export interface ParsedResume {
@@ -48,7 +50,7 @@ export class ResumeParser {
    */
   private async parsePDF(buffer: Buffer): Promise<string> {
     try {
-      const data = await (pdfParse as any).default(buffer);
+      const data = await pdfParse(buffer);
       return data.text;
     } catch (error) {
       console.error("[Resume Parser] PDF parsing error:", error);
