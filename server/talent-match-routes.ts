@@ -94,7 +94,7 @@ export function createTalentMatchRoutes(storage: IStorage) {
   // RESUME MANAGEMENT
   // ============================================================================
 
-  // Upload resume with AI parsing
+  // Upload resume with AI parsing (upsert - updates if exists)
   router.post("/volunteers/:volunteerId/resume", async (req, res) => {
     try {
       const { filename, fileBuffer, fileUrl } = req.body;
@@ -122,16 +122,28 @@ export function createTalentMatchRoutes(storage: IStorage) {
       const skillSignals = detectSkillSignals(parsedText, skills);
       signals = skillSignals.map(s => s.signal);
 
-      const resume = await storage.createResume({
-        volunteerId,
-        filename,
-        fileUrl,
-        parsedText,
-        links
-      });
-
-      // Update volunteer skills would go here if method exists
-      // TODO: Add updateVolunteer method to IStorage interface
+      // Check if resume already exists for this volunteer
+      const existingResume = await storage.getResumeByVolunteerId(volunteerId);
+      
+      let resume;
+      if (existingResume) {
+        // Update existing resume
+        resume = await storage.updateResume(existingResume.id, {
+          filename,
+          fileUrl,
+          parsedText,
+          links
+        });
+      } else {
+        // Create new resume
+        resume = await storage.createResume({
+          volunteerId,
+          filename,
+          fileUrl,
+          parsedText,
+          links
+        });
+      }
 
       res.json({
         ...resume,

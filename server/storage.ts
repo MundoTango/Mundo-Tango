@@ -462,6 +462,7 @@ export interface IStorage {
   
   createResume(resume: any): Promise<any>;
   getResumeByVolunteerId(volunteerId: number): Promise<any | undefined>;
+  updateResume(id: number, data: any): Promise<any | undefined>;
   
   createClarifierSession(session: any): Promise<any>;
   getClarifierSessionById(id: number): Promise<any | undefined>;
@@ -3439,6 +3440,11 @@ export class DbStorage implements IStorage {
 
   async getResumeByVolunteerId(volunteerId: number): Promise<any | undefined> {
     const result = await db.select().from(resumes).where(eq(resumes.volunteerId, volunteerId)).limit(1);
+    return result[0];
+  }
+
+  async updateResume(id: number, data: any): Promise<any | undefined> {
+    const result = await db.update(resumes).set(data).where(eq(resumes.id, id)).returning();
     return result[0];
   }
 
