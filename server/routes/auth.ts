@@ -52,6 +52,8 @@ const verify2FASchema = z.object({
 const waitlistSchema = z.object({
   email: z.string().email(),
   name: z.string().optional(),
+  username: z.string().min(3).max(30).optional(),
+  password: z.string().min(8).max(100).optional(),
 });
 
 router.get("/check-username/:username", async (req: Request, res: Response) => {
@@ -316,14 +318,27 @@ router.post("/waitlist", async (req: Request, res: Response) => {
       return res.status(409).json({ message: "This email is already registered. Please sign in instead." });
     }
 
-    const tempUsername = `waitlist_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
-    const tempPassword = await bcrypt.hash(crypto.randomBytes(32).toString("hex"), BCRYPT_ROUNDS);
+    // Use provided username or generate temp one
+    let finalUsername = validatedData.username;
+    if (finalUsername) {
+      const existingUsername = await storage.getUserByUsername(finalUsername);
+      if (existingUsername) {
+        return res.status(409).json({ message: "Username already taken. Please choose another." });
+      }
+    } else {
+      finalUsername = `waitlist_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+    }
+    
+    // Use provided password or generate random one
+    const finalPassword = validatedData.password 
+      ? await bcrypt.hash(validatedData.password, BCRYPT_ROUNDS)
+      : await bcrypt.hash(crypto.randomBytes(32).toString("hex"), BCRYPT_ROUNDS);
 
     await storage.createUser({
       email: validatedData.email,
       name: validatedData.name || "Waitlist User",
-      username: tempUsername,
-      password: tempPassword,
+      username: finalUsername,
+      password: finalPassword,
       waitlist: true,
       waitlistDate: new Date(),
       isActive: false,

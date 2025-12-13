@@ -8,7 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { SEO } from "@/components/SEO";
-import { Eye, EyeOff, Check, X, Loader2, Sparkles, Heart, Users, Globe, Lock, Mail, HandHeart, CreditCard, ArrowRight, KeyRound } from "lucide-react";
+import { Eye, EyeOff, Check, X, Loader2, Sparkles, Heart, Users, Globe, Lock, HandHeart, CreditCard, ArrowRight, KeyRound, PartyPopper } from "lucide-react";
 import { PublicLayout } from "@/components/PublicLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { motion } from "framer-motion";
@@ -18,9 +18,6 @@ import tangoHeroImage from "@assets/stock_images/elegant_professional_e4da136e.j
 export default function RegisterPage() {
   const [inviteCode, setInviteCode] = useState("");
   const [isCodeValid, setIsCodeValid] = useState(false);
-  const [waitlistEmail, setWaitlistEmail] = useState("");
-  const [waitlistName, setWaitlistName] = useState("");
-  const [isWaitlistLoading, setIsWaitlistLoading] = useState(false);
   const [waitlistSuccess, setWaitlistSuccess] = useState(false);
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
@@ -43,39 +40,6 @@ export default function RegisterPage() {
     setIsCodeValid(code.toLowerCase().trim() === "nomad");
   };
 
-  const handleWaitlistSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsWaitlistLoading(true);
-    
-    try {
-      const response = await fetch("/api/auth/waitlist", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: waitlistEmail, name: waitlistName || undefined }),
-      });
-      
-      const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.message || "Failed to join waitlist");
-      }
-      
-      setWaitlistSuccess(true);
-      toast({
-        title: "Welcome to the waitlist!",
-        description: "We'll notify you when registration opens.",
-      });
-    } catch (error: any) {
-      toast({
-        title: "Couldn't join waitlist",
-        description: error.message || "Please try again",
-        variant: "destructive",
-      });
-    } finally {
-      setIsWaitlistLoading(false);
-    }
-  };
-  
   const { data: stats } = useQuery<{
     dancers: number | null;
     events: number | null;
@@ -194,10 +158,35 @@ export default function RegisterPage() {
     setIsLoading(true);
 
     try {
-      await register({ name, username, email, password });
+      if (isCodeValid) {
+        await register({ name, username, email, password });
+      } else {
+        const response = await fetch("/api/auth/waitlist", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ 
+            email, 
+            name: name || undefined,
+            username: username || undefined,
+            password: password || undefined,
+          }),
+        });
+        
+        const data = await response.json();
+        
+        if (!response.ok) {
+          throw new Error(data.message || "Failed to join waitlist");
+        }
+        
+        setWaitlistSuccess(true);
+        toast({
+          title: "You're on the list!",
+          description: "We'll notify you when your account is ready.",
+        });
+      }
     } catch (error: any) {
       toast({
-        title: "Registration failed",
+        title: isCodeValid ? "Registration failed" : "Couldn't complete signup",
         description: error.message || "Please try again",
         variant: "destructive",
       });
@@ -214,7 +203,6 @@ export default function RegisterPage() {
           description="Create your Mundo Tango account and join the global Argentine tango community. Connect with dancers, discover events, and share your passion for tango."
         />
 
-        {/* Editorial Hero Section - Full Screen */}
         <div className="relative min-h-screen w-full overflow-hidden" data-testid="hero-register">
           <div className="absolute inset-0 bg-cover bg-center" style={{backgroundImage: `url(${tangoHeroImage})`}}>
             <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/70 to-black/90" />
@@ -227,25 +215,23 @@ export default function RegisterPage() {
               transition={{ duration: 1, ease: "easeOut" }}
               className="w-full max-w-lg"
             >
-              {/* Editorial Header */}
               <div className="text-center mb-8">
                 <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-welcome">
                   <Sparkles className="w-3 h-3 mr-1" />
-                  {isCodeValid ? "Begin Your Journey" : "Invite Only"}
+                  {waitlistSuccess ? "Welcome to the Family" : isCodeValid ? "Begin Your Journey" : "Join the Community"}
                 </Badge>
                 
                 <h1 className="text-5xl md:text-6xl font-serif font-bold text-white mb-4 tracking-tight leading-tight" data-testid="heading-hero">
-                  {isCodeValid ? "Join Mundo Tango" : "Welcome to Mundo Tango"}
+                  {waitlistSuccess ? "You're In!" : "Join Mundo Tango"}
                 </h1>
                 
                 <p className="text-lg text-white/80 max-w-md mx-auto mb-8">
-                  {isCodeValid 
-                    ? "Connect with dancers worldwide, discover milongas, and immerse yourself in the passionate world of Argentine tango"
-                    : "Registration is currently invite-only. Enter your invite code or join the waitlist to be notified when we open."}
+                  {waitlistSuccess 
+                    ? "Welcome to the Mundo Tango community. We're preparing your account and will notify you soon!"
+                    : "Connect with dancers worldwide, discover milongas, and immerse yourself in the passionate world of Argentine tango"}
                 </p>
 
-                {/* Community Stats - Real data from /api/stats/public */}
-                {(stats?.dancers || stats?.events || stats?.cities) && (
+                {!waitlistSuccess && (stats?.dancers || stats?.events || stats?.cities) && (
                   <div className="flex gap-6 justify-center mb-8 text-white/70 text-sm flex-wrap">
                     {stats?.dancers && (
                       <div className="flex items-center gap-2">
@@ -269,401 +255,312 @@ export default function RegisterPage() {
                 )}
               </div>
 
-              {/* Invite Code Input - Always Visible */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.1 }}
-                className="backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl p-4 md:p-6 shadow-2xl mb-4"
-                data-testid="section-invite-code"
-              >
-                <div className="space-y-3">
-                  <Label htmlFor="inviteCode" className="text-sm font-medium text-white flex items-center gap-2">
-                    <KeyRound className="w-4 h-4" />
-                    Have an invite code?
-                  </Label>
-                  <div className="relative">
-                    <Input
-                      id="inviteCode"
-                      type="text"
-                      placeholder="Enter your invite code"
-                      value={inviteCode}
-                      onChange={(e) => handleCodeChange(e.target.value)}
-                      data-testid="input-invite-code"
-                      className="bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-white/50 focus:border-white/40 pr-10"
-                    />
-                    {inviteCode && (
-                      isCodeValid ? (
-                        <Check className="absolute right-3 top-3 h-4 w-4 text-green-400" data-testid="icon-code-valid" />
-                      ) : (
-                        <X className="absolute right-3 top-3 h-4 w-4 text-red-400" data-testid="icon-code-invalid" />
-                      )
-                    )}
-                  </div>
-                  {inviteCode && !isCodeValid && (
-                    <p className="text-sm text-red-400">Invalid invite code</p>
-                  )}
-                  {isCodeValid && (
-                    <p className="text-sm text-green-400 flex items-center gap-1">
-                      <Check className="h-3 w-3" /> Code accepted! You can now register.
-                    </p>
-                  )}
-                </div>
-              </motion.div>
-
-              {/* Conditional: Show Registration Form if code valid, else Waitlist */}
-              {isCodeValid ? (
-                <motion.form
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-                onSubmit={handleSubmit}
-                className="backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl p-6 md:p-8 shadow-2xl"
-                data-testid="form-register"
-              >
-                <div className="space-y-4">
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="name" className="text-sm font-medium text-white">Full Name</Label>
-                      <Input
-                        id="name"
-                        type="text"
-                        placeholder="Maria Rodriguez"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        required
-                        disabled={isLoading}
-                        data-testid="input-name"
-                        className="bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-white/50 focus:border-white/40"
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="email" className="text-sm font-medium text-white">Email</Label>
-                      <div className="relative">
-                        <Input
-                          id="email"
-                          type="email"
-                          placeholder="maria@example.com"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          required
-                          disabled={isLoading}
-                          data-testid="input-email"
-                          className="bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-white/50 focus:border-white/40 pr-10"
-                        />
-                        {isCheckingEmail && (
-                          <Loader2 className="absolute right-3 top-3 h-4 w-4 animate-spin text-white/70" />
-                        )}
-                        {!isCheckingEmail && emailAvailable === true && (
-                          <Check className="absolute right-3 top-3 h-4 w-4 text-green-400" data-testid="icon-email-available" />
-                        )}
-                        {!isCheckingEmail && emailAvailable === false && (
-                          <X className="absolute right-3 top-3 h-4 w-4 text-red-400" data-testid="icon-email-taken" />
-                        )}
-                      </div>
-                      {emailAvailable === false && (
-                        <p className="text-sm text-red-400">This email is already registered</p>
-                      )}
-                      {emailAvailable === true && (
-                        <p className="text-sm text-green-400">Email available!</p>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="username" className="text-sm font-medium text-white">Username</Label>
-                    <div className="relative">
-                      <Input
-                        id="username"
-                        type="text"
-                        placeholder="maria_tango"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, ''))}
-                        required
-                        minLength={3}
-                        maxLength={20}
-                        disabled={isLoading}
-                        data-testid="input-username"
-                        className="bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-white/50 focus:border-white/40 pr-10"
-                      />
-                      {isCheckingUsername && (
-                        <Loader2 className="absolute right-3 top-3 h-4 w-4 animate-spin text-white/70" />
-                      )}
-                      {!isCheckingUsername && usernameAvailable === true && (
-                        <Check className="absolute right-3 top-3 h-4 w-4 text-green-400" data-testid="icon-username-available" />
-                      )}
-                      {!isCheckingUsername && usernameAvailable === false && (
-                        <X className="absolute right-3 top-3 h-4 w-4 text-red-400" data-testid="icon-username-taken" />
-                      )}
-                    </div>
-                    {usernameAvailable === false && (
-                      <p className="text-sm text-red-400">Username taken. Try {username}_2025</p>
-                    )}
-                    {usernameAvailable === true && (
-                      <p className="text-sm text-green-400">Username available!</p>
-                    )}
-                  </div>
-
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="password" className="text-sm font-medium text-white">Password</Label>
-                      <div className="relative">
-                        <Input
-                          id="password"
-                          type={showPassword ? "text" : "password"}
-                          placeholder="••••••••"
-                          value={password}
-                          onChange={(e) => setPassword(e.target.value)}
-                          required
-                          minLength={8}
-                          disabled={isLoading}
-                          data-testid="input-password"
-                          className="bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-white/50 focus:border-white/40 pr-10"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowPassword(!showPassword)}
-                          className="absolute right-3 top-3 text-white/70 hover:text-white"
-                          data-testid="button-toggle-password"
-                        >
-                          {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                        </button>
-                      </div>
-                      {passwordStrength && (
-                        <div className="space-y-1">
-                          <div className="flex items-center gap-2">
-                            <div className="flex-1 h-1.5 bg-white/20 rounded-full overflow-hidden">
-                              <div
-                                className={`h-full transition-all ${passwordStrength.color}`}
-                                style={{ width: `${passwordStrength.score}%` }}
-                              />
-                            </div>
-                            <span className="text-xs font-medium text-white/80">{passwordStrength.label}</span>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="confirmPassword" className="text-sm font-medium text-white">Confirm Password</Label>
-                      <div className="relative">
-                        <Input
-                          id="confirmPassword"
-                          type={showConfirmPassword ? "text" : "password"}
-                          placeholder="••••••••"
-                          value={confirmPassword}
-                          onChange={(e) => setConfirmPassword(e.target.value)}
-                          required
-                          disabled={isLoading}
-                          data-testid="input-confirm-password"
-                          className="bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-white/50 focus:border-white/40 pr-10"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                          className="absolute right-3 top-3 text-white/70 hover:text-white"
-                          data-testid="button-toggle-confirm-password"
-                        >
-                          {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                        </button>
-                      </div>
-                      {passwordsMatch && (
-                        <p className="text-sm text-green-400 flex items-center gap-1">
-                          <Check className="h-3 w-3" /> Passwords match
-                        </p>
-                      )}
-                      {passwordsDontMatch && (
-                        <p className="text-sm text-red-400 flex items-center gap-1">
-                          <X className="h-3 w-3" /> Passwords don't match
-                        </p>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-2 pt-2">
-                    <Checkbox
-                      id="terms"
-                      checked={termsAccepted}
-                      onCheckedChange={(checked) => setTermsAccepted(checked as boolean)}
-                      disabled={isLoading}
-                      data-testid="checkbox-terms"
-                      className="border-white/30 data-[state=checked]:bg-white data-[state=checked]:text-black"
-                    />
-                    <label htmlFor="terms" className="text-sm leading-tight cursor-pointer text-white/90">
-                      I accept the{" "}
-                      <Link href="/terms">
-                        <a className="text-white hover:underline font-medium" target="_blank">
-                          Terms & Conditions
-                        </a>
-                      </Link>
-                    </label>
-                  </div>
-
-                  <Button
-                    type="submit"
-                    className="w-full mt-6 bg-white text-black hover:bg-white/90"
-                    size="lg"
-                    disabled={isLoading || !termsAccepted || usernameAvailable === false || emailAvailable === false}
-                    data-testid="button-register"
-                  >
-                    {isLoading ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Creating your account...
-                      </>
-                    ) : (
-                      <>
-                        <Heart className="mr-2 h-4 w-4" />
-                        Create Account
-                      </>
-                    )}
-                  </Button>
-                </div>
-              </motion.form>
-              ) : (
-                /* Waitlist Form - Shown when no valid code */
+              {waitlistSuccess ? (
                 <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: 0.2 }}
-                  className="backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl p-6 md:p-8 shadow-2xl"
-                  data-testid="section-waitlist"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.5 }}
+                  className="backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl p-8 shadow-2xl"
+                  data-testid="section-waitlist-success"
                 >
-                  {waitlistSuccess ? (
-                    <div className="text-center py-6">
-                      <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <Check className="w-8 h-8 text-green-400" />
-                      </div>
-                      <h3 className="text-xl font-semibold text-white mb-2">You're on the list!</h3>
-                      <p className="text-white/70 mb-6">We'll email you when registration opens.</p>
-                      
-                      <div className="space-y-3">
-                        <p className="text-sm text-white/60">While you wait, you can:</p>
-                        <div className="flex flex-col gap-3">
-                          <Link href="/talent-match">
-                            <Button 
-                              variant="outline" 
-                              className="w-full border-white/30 text-white hover:bg-white/10"
-                              data-testid="button-volunteer-cta"
-                            >
-                              <HandHeart className="mr-2 h-4 w-4" />
-                              Volunteer with us
-                              <ArrowRight className="ml-2 h-4 w-4" />
-                            </Button>
-                          </Link>
-                          <Link href="/crowdfunding">
-                            <Button 
-                              variant="outline" 
-                              className="w-full border-white/30 text-white hover:bg-white/10"
-                              data-testid="button-support-cta"
-                            >
-                              <CreditCard className="mr-2 h-4 w-4" />
-                              Support Mundo Tango
-                              <ArrowRight className="ml-2 h-4 w-4" />
-                            </Button>
-                          </Link>
-                        </div>
-                      </div>
+                  <div className="text-center">
+                    <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                      <PartyPopper className="w-10 h-10 text-green-400" />
                     </div>
-                  ) : (
-                    <form onSubmit={handleWaitlistSubmit} className="space-y-4" data-testid="form-waitlist">
-                      <div className="text-center mb-4">
-                        <Lock className="w-10 h-10 text-white/50 mx-auto mb-3" />
-                        <h3 className="text-lg font-semibold text-white">Join the Waitlist</h3>
-                        <p className="text-sm text-white/70">Be first to know when we open registration</p>
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <Label htmlFor="waitlistName" className="text-sm font-medium text-white">Name (optional)</Label>
-                        <Input
-                          id="waitlistName"
-                          type="text"
-                          placeholder="Your name"
-                          value={waitlistName}
-                          onChange={(e) => setWaitlistName(e.target.value)}
-                          disabled={isWaitlistLoading}
-                          data-testid="input-waitlist-name"
-                          className="bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-white/50 focus:border-white/40"
-                        />
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <Label htmlFor="waitlistEmail" className="text-sm font-medium text-white">Email</Label>
-                        <div className="relative">
-                          <Mail className="absolute left-3 top-3 h-4 w-4 text-white/50" />
-                          <Input
-                            id="waitlistEmail"
-                            type="email"
-                            placeholder="your@email.com"
-                            value={waitlistEmail}
-                            onChange={(e) => setWaitlistEmail(e.target.value)}
-                            required
-                            disabled={isWaitlistLoading}
-                            data-testid="input-waitlist-email"
-                            className="bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-white/50 focus:border-white/40 pl-10"
-                          />
-                        </div>
-                      </div>
-                      
-                      <Button
-                        type="submit"
-                        className="w-full bg-white text-black hover:bg-white/90"
-                        size="lg"
-                        disabled={isWaitlistLoading || !waitlistEmail}
-                        data-testid="button-join-waitlist"
-                      >
-                        {isWaitlistLoading ? (
-                          <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Joining...
-                          </>
-                        ) : (
-                          <>
-                            <Mail className="mr-2 h-4 w-4" />
-                            Join Waitlist
-                          </>
-                        )}
-                      </Button>
-                      
-                      <div className="relative py-4">
-                        <div className="absolute inset-0 flex items-center">
-                          <div className="w-full border-t border-white/20" />
-                        </div>
-                        <div className="relative flex justify-center text-xs uppercase">
-                          <span className="bg-transparent px-2 text-white/50">Or help us now</span>
-                        </div>
-                      </div>
-                      
+                    <h3 className="text-2xl font-semibold text-white mb-2">Welcome, {name || "Dancer"}!</h3>
+                    <p className="text-white/70 mb-8">You're on the list. We'll email you at <span className="text-white font-medium">{email}</span> when your account is ready.</p>
+                    
+                    <div className="space-y-4">
+                      <p className="text-sm text-white/60 font-medium uppercase tracking-wide">While you wait, help us grow</p>
                       <div className="flex flex-col gap-3">
                         <Link href="/talent-match">
                           <Button 
-                            type="button"
-                            variant="outline" 
-                            className="w-full border-white/30 text-white hover:bg-white/10"
-                            data-testid="button-volunteer-waitlist"
+                            className="w-full bg-white text-black hover:bg-white/90"
+                            size="lg"
+                            data-testid="button-volunteer-cta"
                           >
-                            <HandHeart className="mr-2 h-4 w-4" />
+                            <HandHeart className="mr-2 h-5 w-5" />
                             Volunteer with us
-                            <ArrowRight className="ml-2 h-4 w-4" />
+                            <ArrowRight className="ml-2 h-5 w-5" />
                           </Button>
                         </Link>
                         <Link href="/crowdfunding">
                           <Button 
-                            type="button"
                             variant="outline" 
                             className="w-full border-white/30 text-white hover:bg-white/10"
-                            data-testid="button-support-waitlist"
+                            size="lg"
+                            data-testid="button-support-cta"
                           >
-                            <CreditCard className="mr-2 h-4 w-4" />
+                            <CreditCard className="mr-2 h-5 w-5" />
                             Support Mundo Tango
-                            <ArrowRight className="ml-2 h-4 w-4" />
+                            <ArrowRight className="ml-2 h-5 w-5" />
                           </Button>
                         </Link>
                       </div>
-                    </form>
-                  )}
+                    </div>
+                  </div>
                 </motion.div>
+              ) : (
+                <>
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.1 }}
+                    className="backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl p-4 md:p-6 shadow-2xl mb-4"
+                    data-testid="section-invite-code"
+                  >
+                    <div className="space-y-3">
+                      <Label htmlFor="inviteCode" className="text-sm font-medium text-white flex items-center gap-2">
+                        <KeyRound className="w-4 h-4" />
+                        Have an invite code? (Optional)
+                      </Label>
+                      <div className="relative">
+                        <Input
+                          id="inviteCode"
+                          type="text"
+                          placeholder="Enter your invite code for immediate access"
+                          value={inviteCode}
+                          onChange={(e) => handleCodeChange(e.target.value)}
+                          data-testid="input-invite-code"
+                          className="bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-white/50 focus:border-white/40 pr-10"
+                        />
+                        {inviteCode && (
+                          isCodeValid ? (
+                            <Check className="absolute right-3 top-3 h-4 w-4 text-green-400" data-testid="icon-code-valid" />
+                          ) : (
+                            <X className="absolute right-3 top-3 h-4 w-4 text-amber-400" data-testid="icon-code-invalid" />
+                          )
+                        )}
+                      </div>
+                      {isCodeValid && (
+                        <p className="text-sm text-green-400 flex items-center gap-1">
+                          <Check className="h-3 w-3" /> Code accepted! Your account will be activated immediately.
+                        </p>
+                      )}
+                      {inviteCode && !isCodeValid && (
+                        <p className="text-sm text-amber-400/80">No worries! Complete the form below to join our waitlist.</p>
+                      )}
+                    </div>
+                  </motion.div>
+
+                  <motion.form
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.2 }}
+                    onSubmit={handleSubmit}
+                    className="backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl p-6 md:p-8 shadow-2xl"
+                    data-testid="form-register"
+                  >
+                    {!isCodeValid && (
+                      <div className="flex items-center gap-3 p-3 rounded-lg bg-white/5 border border-white/10 mb-6">
+                        <Lock className="w-5 h-5 text-white/60 flex-shrink-0" />
+                        <p className="text-sm text-white/70">
+                          Registration is currently invite-only. Complete this form to join our waitlist and we'll notify you when your account is ready.
+                        </p>
+                      </div>
+                    )}
+                    
+                    <div className="space-y-4">
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="name" className="text-sm font-medium text-white">Full Name</Label>
+                          <Input
+                            id="name"
+                            type="text"
+                            placeholder="Maria Rodriguez"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            required
+                            disabled={isLoading}
+                            data-testid="input-name"
+                            className="bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-white/50 focus:border-white/40"
+                          />
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label htmlFor="email" className="text-sm font-medium text-white">Email</Label>
+                          <div className="relative">
+                            <Input
+                              id="email"
+                              type="email"
+                              placeholder="maria@example.com"
+                              value={email}
+                              onChange={(e) => setEmail(e.target.value)}
+                              required
+                              disabled={isLoading}
+                              data-testid="input-email"
+                              className="bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-white/50 focus:border-white/40 pr-10"
+                            />
+                            {isCheckingEmail && (
+                              <Loader2 className="absolute right-3 top-3 h-4 w-4 animate-spin text-white/70" />
+                            )}
+                            {!isCheckingEmail && emailAvailable === true && (
+                              <Check className="absolute right-3 top-3 h-4 w-4 text-green-400" data-testid="icon-email-available" />
+                            )}
+                            {!isCheckingEmail && emailAvailable === false && (
+                              <X className="absolute right-3 top-3 h-4 w-4 text-red-400" data-testid="icon-email-taken" />
+                            )}
+                          </div>
+                          {emailAvailable === false && (
+                            <p className="text-sm text-red-400">This email is already registered</p>
+                          )}
+                          {emailAvailable === true && (
+                            <p className="text-sm text-green-400">Email available!</p>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="username" className="text-sm font-medium text-white">Username</Label>
+                        <div className="relative">
+                          <Input
+                            id="username"
+                            type="text"
+                            placeholder="maria_tango"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, ''))}
+                            required
+                            minLength={3}
+                            maxLength={20}
+                            disabled={isLoading}
+                            data-testid="input-username"
+                            className="bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-white/50 focus:border-white/40 pr-10"
+                          />
+                          {isCheckingUsername && (
+                            <Loader2 className="absolute right-3 top-3 h-4 w-4 animate-spin text-white/70" />
+                          )}
+                          {!isCheckingUsername && usernameAvailable === true && (
+                            <Check className="absolute right-3 top-3 h-4 w-4 text-green-400" data-testid="icon-username-available" />
+                          )}
+                          {!isCheckingUsername && usernameAvailable === false && (
+                            <X className="absolute right-3 top-3 h-4 w-4 text-red-400" data-testid="icon-username-taken" />
+                          )}
+                        </div>
+                        {usernameAvailable === false && (
+                          <p className="text-sm text-red-400">Username taken. Try {username}_2025</p>
+                        )}
+                        {usernameAvailable === true && (
+                          <p className="text-sm text-green-400">Username available!</p>
+                        )}
+                      </div>
+
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="password" className="text-sm font-medium text-white">Password</Label>
+                          <div className="relative">
+                            <Input
+                              id="password"
+                              type={showPassword ? "text" : "password"}
+                              placeholder="••••••••"
+                              value={password}
+                              onChange={(e) => setPassword(e.target.value)}
+                              required
+                              minLength={8}
+                              disabled={isLoading}
+                              data-testid="input-password"
+                              className="bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-white/50 focus:border-white/40 pr-10"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => setShowPassword(!showPassword)}
+                              className="absolute right-3 top-3 text-white/70 hover:text-white"
+                              data-testid="button-toggle-password"
+                            >
+                              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                            </button>
+                          </div>
+                          {passwordStrength && (
+                            <div className="space-y-1">
+                              <div className="flex items-center gap-2">
+                                <div className="flex-1 h-1.5 bg-white/20 rounded-full overflow-hidden">
+                                  <div
+                                    className={`h-full transition-all ${passwordStrength.color}`}
+                                    style={{ width: `${passwordStrength.score}%` }}
+                                  />
+                                </div>
+                                <span className="text-xs font-medium text-white/80">{passwordStrength.label}</span>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label htmlFor="confirmPassword" className="text-sm font-medium text-white">Confirm Password</Label>
+                          <div className="relative">
+                            <Input
+                              id="confirmPassword"
+                              type={showConfirmPassword ? "text" : "password"}
+                              placeholder="••••••••"
+                              value={confirmPassword}
+                              onChange={(e) => setConfirmPassword(e.target.value)}
+                              required
+                              disabled={isLoading}
+                              data-testid="input-confirm-password"
+                              className="bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-white/50 focus:border-white/40 pr-10"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                              className="absolute right-3 top-3 text-white/70 hover:text-white"
+                              data-testid="button-toggle-confirm-password"
+                            >
+                              {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                            </button>
+                          </div>
+                          {passwordsMatch && (
+                            <p className="text-sm text-green-400 flex items-center gap-1">
+                              <Check className="h-3 w-3" /> Passwords match
+                            </p>
+                          )}
+                          {passwordsDontMatch && (
+                            <p className="text-sm text-red-400 flex items-center gap-1">
+                              <X className="h-3 w-3" /> Passwords don't match
+                            </p>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="flex items-start gap-2 pt-2">
+                        <Checkbox
+                          id="terms"
+                          checked={termsAccepted}
+                          onCheckedChange={(checked) => setTermsAccepted(checked as boolean)}
+                          disabled={isLoading}
+                          data-testid="checkbox-terms"
+                          className="border-white/30 data-[state=checked]:bg-white data-[state=checked]:text-black"
+                        />
+                        <label htmlFor="terms" className="text-sm leading-tight cursor-pointer text-white/90">
+                          I accept the{" "}
+                          <Link href="/terms">
+                            <a className="text-white hover:underline font-medium" target="_blank">
+                              Terms & Conditions
+                            </a>
+                          </Link>
+                        </label>
+                      </div>
+
+                      <Button
+                        type="submit"
+                        className="w-full mt-6 bg-white text-black hover:bg-white/90"
+                        size="lg"
+                        disabled={isLoading || !termsAccepted || usernameAvailable === false || emailAvailable === false}
+                        data-testid="button-register"
+                      >
+                        {isLoading ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            {isCodeValid ? "Creating your account..." : "Joining..."}
+                          </>
+                        ) : (
+                          <>
+                            <Heart className="mr-2 h-4 w-4" />
+                            {isCodeValid ? "Create Account" : "Join Mundo Tango"}
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </motion.form>
+                </>
               )}
 
               <motion.p
