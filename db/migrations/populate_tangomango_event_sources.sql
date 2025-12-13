@@ -74,5 +74,4 @@ VALUES
 ('TangoMango Paris', 'https://www.tangomango.org/index.php', 'tangomango', 'FR', 'Paris', true),
 -- International - Spain
 ('TangoMango Barcelona', 'https://www.tangomango.org/index.php', 'tangomango', 'ES', 'Barcelona', true),
-('TangoMango Madrid', 'https://www.tangomango.org/index.php', 'tangomango', 'ES', 'Madrid', true)
-ON CONFLICT (url, city) DO NOTHING;
+('TangoMango Madrid', 'https://www.tangomango.org/index.php', 'tangomango', 'ES', 'Madrid', true);
