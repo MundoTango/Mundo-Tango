@@ -8,7 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { SEO } from "@/components/SEO";
-import { Eye, EyeOff, Check, X, Loader2, Sparkles, Heart, Users, Globe, Lock, HandHeart, CreditCard, ArrowRight, KeyRound, PartyPopper } from "lucide-react";
+import { Eye, EyeOff, Check, X, Loader2, Sparkles, Heart, Users, Globe, Lock, HandHeart, CreditCard, ArrowRight, KeyRound, PartyPopper, Star, Headphones } from "lucide-react";
 import { PublicLayout } from "@/components/PublicLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { motion } from "framer-motion";
@@ -246,8 +246,7 @@ export default function RegisterPage() {
         // Full registration with invite code - proceed to onboarding
         await register({ name, username, email, password, inviteCode });
       } else {
-        // No invite code - still create account and proceed to onboarding
-        // This creates a "waitlist" user who can still complete onboarding
+        // No invite code - add to waitlist only (no onboarding access)
         const response = await fetch("/api/auth/waitlist", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -256,7 +255,7 @@ export default function RegisterPage() {
             name: name || undefined,
             username: username || undefined,
             password: password || undefined,
-            proceedToOnboarding: true, // Signal to create full account
+            proceedToOnboarding: false, // Waitlist only - no onboarding access
           }),
         });
         
@@ -266,28 +265,19 @@ export default function RegisterPage() {
           throw new Error(data.message || "Failed to complete signup");
         }
         
-        // If the API returns tokens, store them and proceed to onboarding
+        // Store tokens if returned (for future use when approved)
         if (data.accessToken) {
           localStorage.setItem("accessToken", data.accessToken);
           if (data.refreshToken) {
             localStorage.setItem("refreshToken", data.refreshToken);
           }
-          
-          toast({
-            title: "Account created!",
-            description: "Let's complete your profile.",
-          });
-          
-          // Redirect to onboarding flow
-          window.location.href = "/onboarding/step-1";
-          return;
         }
         
-        // Fallback to old behavior if API doesn't support new flow yet
+        // Always show waitlist confirmation page for users without invite code
         setWaitlistSuccess(true);
         toast({
-          title: "You're on the list!",
-          description: "We'll notify you when your account is ready.",
+          title: "You're on the waitlist!",
+          description: "We'll notify you when your account is ready. In the meantime, check out how you can get involved!",
         });
       }
     } catch (error: any) {
@@ -377,7 +367,7 @@ export default function RegisterPage() {
                     <p className="text-white/70 mb-8">You're on the list. We'll email you at <span className="text-white font-medium">{email}</span> when your account is ready.</p>
                     
                     <div className="space-y-4">
-                      <p className="text-sm text-white/60 font-medium uppercase tracking-wide">While you wait, help us grow</p>
+                      <p className="text-sm text-white/60 font-medium uppercase tracking-wide">While you wait, get involved</p>
                       <div className="flex flex-col gap-3">
                         <Link href="/talent-match">
                           <Button 
@@ -390,15 +380,27 @@ export default function RegisterPage() {
                             <ArrowRight className="ml-2 h-5 w-5" />
                           </Button>
                         </Link>
-                        <Link href="/crowdfunding">
+                        <Link href="/ambassadors">
+                          <Button 
+                            variant="outline" 
+                            className="w-full border-white/30 text-white hover:bg-white/10"
+                            size="lg"
+                            data-testid="button-ambassador-cta"
+                          >
+                            <Star className="mr-2 h-5 w-5" />
+                            Become an Ambassador
+                            <ArrowRight className="ml-2 h-5 w-5" />
+                          </Button>
+                        </Link>
+                        <Link href="/support">
                           <Button 
                             variant="outline" 
                             className="w-full border-white/30 text-white hover:bg-white/10"
                             size="lg"
                             data-testid="button-support-cta"
                           >
-                            <CreditCard className="mr-2 h-5 w-5" />
-                            Support Mundo Tango
+                            <Headphones className="mr-2 h-5 w-5" />
+                            Support & Help
                             <ArrowRight className="ml-2 h-5 w-5" />
                           </Button>
                         </Link>
