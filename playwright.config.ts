@@ -70,6 +70,10 @@ export default defineConfig({
 
   projects: [
     {
+      name: 'setup',
+      testMatch: /auth\.setup\.ts/,
+    },
+    {
       name: 'chromium',
       use: { 
         ...devices['Desktop Chrome'],
@@ -83,6 +87,22 @@ export default defineConfig({
           },
         }),
       },
+    },
+    {
+      name: 'authenticated',
+      use: { 
+        ...devices['Desktop Chrome'],
+        viewport: { width: 1920, height: 1080 },
+        storageState: '.auth/user.json',
+        
+        ...(CHROMIUM_PATH && {
+          launchOptions: {
+            executablePath: CHROMIUM_PATH,
+            args: HEADLESS_ARGS,
+          },
+        }),
+      },
+      dependencies: ['setup'],
     },
   ],
 

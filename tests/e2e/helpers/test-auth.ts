@@ -14,10 +14,12 @@ export interface TestUser {
 export const testUsers: TestUser[] = [
   { email: 'testuser1@mundotango.com', password: 'TestPassword123!', role: 'user' },
   { email: 'testuser2@mundotango.com', password: 'TestPassword123!', role: 'user' },
-  { email: 'admin@mundotango.com', password: 'AdminPassword123!', role: 'admin' },
+  { email: 'admin@mundotango.life', password: 'admin123', role: 'admin' },
   { email: 'organizer@mundotango.com', password: 'OrganizerPassword123!', role: 'organizer' },
   { email: 'professional@mundotango.com', password: 'ProfessionalPassword123!', role: 'professional' },
 ];
+
+export const AUTH_STATE_PATH = '.auth/user.json';
 
 /**
  * Login as a test user

@@ -117,6 +117,44 @@ A comprehensive multi-gateway payment orchestration system supporting global pay
 ### Testing
 The platform utilizes E2E tests, automated unit test coverage via CI/CD, and visual regression testing with Playwright and Claude Computer Use. The `run_test` tool is essential for E2E testing, managing environment setup and Stripe testing key injection.
 
+### MB.MD Pattern 50: Pre-Authenticated Playwright Testing (Dec 13, 2025)
+Fast, reusable Playwright testing methodology that skips login on every test run.
+
+**Concept:**
+- Login once → Save session to `.auth/user.json` → Reuse across all tests
+- Tests can jump directly to target pages without re-authenticating
+- Dramatically faster test iterations
+
+**Files:**
+- `tests/auth.setup.ts` - Authenticates and saves session state
+- `tests/e2e/helpers/test-auth.ts` - Test users and AUTH_STATE_PATH constant
+- `playwright.config.ts` - Defines `setup` and `authenticated` projects
+
+**Commands:**
+```bash
+# Run auth setup first (creates .auth/user.json)
+npx playwright test --project=setup
+
+# Run authenticated tests (uses saved session, skips login)
+npx playwright test tests/talent-match-interview.spec.ts --project=authenticated
+
+# Run specific test with pre-auth
+npx playwright test -g "complete interview" --project=authenticated
+```
+
+**Test Credentials:**
+- Admin: admin@mundotango.life / admin123
+
+**Usage in Tests:**
+```typescript
+import { AUTH_STATE_PATH } from './e2e/helpers/test-auth';
+test.use({ storageState: AUTH_STATE_PATH });
+
+test('my authenticated test', async ({ page }) => {
+  await page.goto('/protected-page'); // No login needed!
+});
+```
+
 ### Production
 Production deployments are managed through GitHub Actions for CI/CD. Monitoring is handled by Prometheus/Grafana with Sentry, and deployment is facilitated by Replit Publishing. Redis is used for caching, and PostgreSQL (Neon) with Drizzle ORM serves as the database.
 
