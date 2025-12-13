@@ -335,32 +335,6 @@ export default function TalentMatchPage() {
                       <span className="w-full border-t border-border" />
                     </div>
                     <div className="relative flex justify-center">
-                      <span className="bg-background px-4 text-sm text-muted-foreground font-medium">Or paste your resume</span>
-                    </div>
-                  </div>
-
-                  {/* Resume Textarea */}
-                  <div className="space-y-3">
-                    <Label htmlFor="resume-text" className="text-base font-medium">Resume Text</Label>
-                    <Textarea
-                      id="resume-text"
-                      placeholder="Paste your resume content here... Include your experience, skills, education, and anything else that showcases your background."
-                      value={resumeText}
-                      onChange={(e) => setResumeText(e.target.value)}
-                      rows={10}
-                      data-testid="textarea-resume"
-                      className="resize-none"
-                    />
-                    <p className="text-xs text-muted-foreground">
-                      {resumeText.length} characters
-                    </p>
-                  </div>
-
-                  <div className="relative py-4">
-                    <div className="absolute inset-0 flex items-center">
-                      <span className="w-full border-t border-border" />
-                    </div>
-                    <div className="relative flex justify-center">
                       <span className="bg-background px-4 text-sm text-muted-foreground font-medium">Or share your professional profiles</span>
                     </div>
                   </div>
@@ -410,7 +384,7 @@ export default function TalentMatchPage() {
                   <div className="pt-6">
                     <Button
                       onClick={handleStartClarifier}
-                      disabled={isSubmitting || authLoading || (!resumeText && !linkedinUrl && !githubUrl)}
+                      disabled={isSubmitting || authLoading || (!uploadedFile && !linkedinUrl && !githubUrl)}
                       size="lg"
                       className="w-full gap-2 text-base"
                       data-testid="button-start-clarifier"
