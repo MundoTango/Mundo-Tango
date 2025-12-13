@@ -215,54 +215,6 @@ export default function LoginPage() {
                     {isLoading ? "Signing in..." : "Sign In"}
                   </Button>
 
-                  <div className="relative my-6">
-                    <div className="absolute inset-0 flex items-center">
-                      <div className="w-full border-t border-white/20" />
-                    </div>
-                    <div className="relative flex justify-center text-sm">
-                      <span className="bg-transparent px-4 text-white/60">or continue with</span>
-                    </div>
-                  </div>
-
-                  <div className="flex gap-3">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      className="flex-1 bg-white/10 border-white/20 text-white hover:bg-white/20"
-                      onClick={handleGoogleLogin}
-                      disabled={isGoogleLoading || isLoading}
-                      data-testid="button-google-login"
-                      size="lg"
-                    >
-                      {isGoogleLoading ? (
-                        <Loader2 className="h-5 w-5 animate-spin" />
-                      ) : (
-                        <>
-                          <SiGoogle className="h-5 w-5 mr-2" />
-                          Google
-                        </>
-                      )}
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      className="flex-1 bg-white/10 border-white/20 text-white hover:bg-white/20"
-                      onClick={handleFacebookLogin}
-                      disabled={isFacebookLoading || isLoading}
-                      data-testid="button-facebook-login"
-                      size="lg"
-                    >
-                      {isFacebookLoading ? (
-                        <Loader2 className="h-5 w-5 animate-spin" />
-                      ) : (
-                        <>
-                          <SiFacebook className="h-5 w-5 mr-2" />
-                          Facebook
-                        </>
-                      )}
-                    </Button>
-                  </div>
-
                   <Link 
                     href="/password-reset" 
                     className="block text-center text-sm text-white/80 hover:text-white mt-4 transition-colors" 
