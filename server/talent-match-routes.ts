@@ -50,6 +50,24 @@ export function createTalentMatchRoutes(storage: IStorage) {
     }
   });
 
+  // Get current user's volunteer profile
+  router.get("/volunteers/me", async (req, res) => {
+    try {
+      // @ts-expect-error - user is set by session middleware
+      const userId = req.user?.id || req.session?.userId;
+      if (!userId) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+      const volunteer = await storage.getVolunteerByUserId(userId);
+      if (!volunteer) {
+        return res.status(404).json({ error: "Volunteer profile not found" });
+      }
+      res.json(volunteer);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   // Get volunteer by user ID
   router.get("/volunteers/user/:userId", async (req, res) => {
     try {
