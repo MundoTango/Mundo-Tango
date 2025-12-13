@@ -689,6 +689,16 @@ export const eventTicketTypeEnum = pgEnum("event_ticket_type", [
   "single",
 ]);
 
+// Event Role enum for team member types
+export const eventRoleEnum = pgEnum("event_role", [
+  "organizer",
+  "dj",
+  "teacher",
+  "performer",
+  "host",
+  "volunteer",
+]);
+
 export const events = pgTable(
   "events",
   {
@@ -812,6 +822,7 @@ export const events = pgTable(
     createdAt: timestamp("created_at").defaultNow(),
     updatedAt: timestamp("updated_at").defaultNow(),
     publishedAt: timestamp("published_at"),
+        scrapedAt: timestamp("scraped_at").defaultNow(),
   },
   (table) => ({
     userIdx: index("events_user_idx").on(table.userId),
@@ -914,6 +925,30 @@ export const eventRsvps = pgTable(
       table.status,
     ),
     rsvpedAtIdx: index("event_rsvps_rsvped_at_idx").on(table.rsvpedAt),
+  }),
+);
+
+// Event Team Members - Links events to team members (organizers, DJs, teachers, etc)
+export const eventTeamMembers = pgTable(
+  "event_team_members",
+  {
+    id: serial("id").primaryKey(),
+    eventId: integer("event_id")
+      .notNull()
+      .references(() => events.id, { onDelete: "cascade" }),
+    userId: integer("user_id").references(() => users.id, { onDelete: "set null" }),
+    role: eventRoleEnum("role").notNull(),
+    displayName: text("display_name").notNull(),
+    rawText: text("raw_text"),
+    confidence: real("confidence").default(0.8),
+    source: text("source"),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => ({
+    eventIdIdx: index("event_team_members_event_id").on(table.eventId),
+    userIdIdx: index("event_team_members_user_id").on(table.userId),
+    roleIdx: index("event_team_members_role").on(table.role),
   }),
 );
 
@@ -2391,9 +2426,18 @@ export const insertEventSchema = createInsertSchema(events, {
   createdAt: true,
   updatedAt: true,
 });
+
+export const insertEventTeamMemberSchema = createInsertSchema(eventTeamMembers).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
 export const selectEventSchema = createSelectSchema(events);
 export type InsertEvent = z.infer<typeof insertEventSchema>;
 export type SelectEvent = typeof events.$inferSelect;
+export type InsertEventTeamMember = z.infer<typeof insertEventTeamMemberSchema>;
+export type SelectEventTeamMember = typeof eventTeamMembers.$inferSelect;
+export type EventTeamMember = SelectEventTeamMember;
 
 // Event RSVPs
 export const insertEventRsvpSchema = createInsertSchema(eventRsvps).omit({
@@ -19539,3 +19583,4 @@ export type SelectPlanTask = typeof planTasks.$inferSelect;
 
 // Export all platform tables from platform-schema.ts so Drizzle can see them
 export * from "./platform-schema";
+      
