@@ -309,7 +309,7 @@ export default function RegisterPage() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, ease: "easeOut" }}
-              className="w-full max-w-lg"
+              className={`w-full ${waitlistSuccess ? 'max-w-4xl' : 'max-w-lg'}`}
             >
               <div className="text-center mb-8">
                 <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-welcome">
@@ -356,54 +356,69 @@ export default function RegisterPage() {
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.5 }}
-                  className="backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl p-8 shadow-2xl"
+                  className="backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl p-8 shadow-2xl max-w-4xl"
                   data-testid="section-waitlist-success"
                 >
-                  <div className="text-center">
+                  <div className="text-center mb-8">
                     <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
                       <PartyPopper className="w-10 h-10 text-green-400" />
                     </div>
                     <h3 className="text-2xl font-semibold text-white mb-2">Welcome, {name || "Dancer"}!</h3>
-                    <p className="text-white/70 mb-8">You're on the list. We'll email you at <span className="text-white font-medium">{email}</span> when your account is ready.</p>
+                    <p className="text-white/70">You're on the waitlist. We'll email you at <span className="text-white font-medium">{email}</span> when your account is ready.</p>
+                  </div>
+                  
+                  <div className="border-t border-white/10 pt-8">
+                    <p className="text-sm text-white/60 font-medium uppercase tracking-wide text-center mb-6">While you wait, get involved</p>
                     
-                    <div className="space-y-4">
-                      <p className="text-sm text-white/60 font-medium uppercase tracking-wide">While you wait, get involved</p>
-                      <div className="flex flex-col gap-3">
-                        <Link href="/talent-match">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      <div className="flex flex-col items-center text-center">
+                        <Link href="/talent-match" className="w-full">
                           <Button 
-                            className="w-full bg-white text-black hover:bg-white/90"
+                            className="w-full bg-white text-black hover:bg-white/90 mb-4"
                             size="lg"
                             data-testid="button-volunteer-cta"
                           >
                             <HandHeart className="mr-2 h-5 w-5" />
-                            Volunteer with us
-                            <ArrowRight className="ml-2 h-5 w-5" />
+                            Volunteer
                           </Button>
                         </Link>
-                        <Link href="/ambassadors">
+                        <p className="text-white/70 text-sm">
+                          Join our volunteer team and help build the global tango community. Contribute your skills in translation, event coordination, content creation, and more.
+                        </p>
+                      </div>
+                      
+                      <div className="flex flex-col items-center text-center">
+                        <Link href="/ambassadors" className="w-full">
                           <Button 
                             variant="outline" 
-                            className="w-full border-white/30 text-white hover:bg-white/10"
+                            className="w-full border-white/30 text-white hover:bg-white/10 mb-4"
                             size="lg"
                             data-testid="button-ambassador-cta"
                           >
                             <Star className="mr-2 h-5 w-5" />
-                            Become an Ambassador
-                            <ArrowRight className="ml-2 h-5 w-5" />
+                            Ambassador
                           </Button>
                         </Link>
-                        <Link href="/support">
+                        <p className="text-white/70 text-sm">
+                          Represent Mundo Tango in your city. Ambassadors help grow the local tango scene, connect dancers, and bring our global community together.
+                        </p>
+                      </div>
+                      
+                      <div className="flex flex-col items-center text-center">
+                        <Link href="/support" className="w-full">
                           <Button 
                             variant="outline" 
-                            className="w-full border-white/30 text-white hover:bg-white/10"
+                            className="w-full border-white/30 text-white hover:bg-white/10 mb-4"
                             size="lg"
                             data-testid="button-support-cta"
                           >
                             <Headphones className="mr-2 h-5 w-5" />
-                            Support & Help
-                            <ArrowRight className="ml-2 h-5 w-5" />
+                            Support
                           </Button>
                         </Link>
+                        <p className="text-white/70 text-sm">
+                          Need help or have questions? Our support team is here to assist you with any inquiries about your waitlist status or the platform.
+                        </p>
                       </div>
                     </div>
                   </div>
