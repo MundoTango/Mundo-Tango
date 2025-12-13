@@ -167,9 +167,7 @@ export default function DanceExperiencePage() {
                   Step 5 of 5 - Final Step!
                 </Badge>
                 
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-white font-bold leading-tight mb-6">
-                  Your Dance Experience
-                </h1>
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-white font-bold leading-tight mb-6">Your Tango Experience</h1>
                 
                 <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto">
                   Help us match you with compatible dancers
