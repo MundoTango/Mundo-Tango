@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
@@ -56,11 +56,13 @@ export default function TangoRolesPage() {
   const [tangoStartYear, setTangoStartYear] = useState<number>(currentYear);
   const [leaderLevel, setLeaderLevel] = useState<number>(0);
   const [followerLevel, setFollowerLevel] = useState<number>(0);
+  const isCompletingRef = useRef(false);
 
   const yearOptions = useMemo(() => generateYearOptions(), []);
   const yearsOfDancing = currentYear - tangoStartYear;
 
   useEffect(() => {
+    if (isCompletingRef.current) return;
     if (!user) {
       navigate("/login");
     } else if (user.isOnboardingComplete) {
@@ -115,11 +117,14 @@ export default function TangoRolesPage() {
         throw new Error(errorMessage);
       }
 
-      if (refreshUser) await refreshUser();
+      // Set flag to prevent useEffect from redirecting to /feed
+      // This must happen before refreshUser updates user.isOnboardingComplete
+      isCompletingRef.current = true;
       
-      // Check if user registered without invite code (waitlist user)
-      // Waitlist users go to support page, invited users go to feed
+      // Check waitlist status BEFORE refreshing user state
       const isWaitlistUser = user?.waitlist === true;
+      
+      if (refreshUser) await refreshUser();
       
       if (isWaitlistUser) {
         toast({
