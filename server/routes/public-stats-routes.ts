@@ -5,8 +5,9 @@ import {
   ambassadors,
   users,
   eventScrapingSources,
+  notifications,
 } from "@shared/schema";
-import { sql, eq, and, sum, count, ilike } from "drizzle-orm";
+import { sql, eq, and, sum, count, ilike, or } from "drizzle-orm";
 
 const router = Router();
 
@@ -359,14 +360,40 @@ router.post("/event-sources/suggest", async (req, res) => {
       return res.status(400).json({ error: "This website has already been submitted" });
     }
 
-    await db.insert(eventScrapingSources).values({
+    const [newSource] = await db.insert(eventScrapingSources).values({
       name: name || `User suggested: ${url}`,
       url,
       platform: "user_suggested",
       city,
       country: country || null,
       isActive: false,
-    });
+    }).returning({ id: eventScrapingSources.id });
+
+    // Notify admins about new source suggestion
+    try {
+      const admins = await db.select({ id: users.id })
+        .from(users)
+        .where(or(
+          eq(users.role, 'super_admin'),
+          eq(users.role, 'admin')
+        ))
+        .limit(10);
+
+      for (const admin of admins) {
+        await db.insert(notifications).values({
+          userId: admin.id,
+          type: 'system_announcement',
+          title: 'New Event Source Suggested',
+          message: `A user suggested a new event source for ${city}: ${url}`,
+          actionUrl: '/admin/scraping',
+          isRead: false,
+          priority: 'normal',
+        });
+      }
+    } catch (notifyError) {
+      console.error("Failed to notify admins:", notifyError);
+      // Don't fail the request if notification fails
+    }
 
     res.json({ success: true, message: "Thank you! We'll review this source." });
   } catch (error) {
