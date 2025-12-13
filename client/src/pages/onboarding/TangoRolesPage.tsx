@@ -115,13 +115,25 @@ export default function TangoRolesPage() {
         throw new Error(errorMessage);
       }
 
-      toast({
-        title: "Welcome to Mundo Tango!",
-        description: "Your profile is complete. Let's explore!",
-      });
-
       if (refreshUser) await refreshUser();
-      navigate("/feed");
+      
+      // Check if user registered without invite code (waitlist user)
+      // Waitlist users go to support page, invited users go to feed
+      const isWaitlistUser = user?.waitlist === true;
+      
+      if (isWaitlistUser) {
+        toast({
+          title: "Profile Complete!",
+          description: "Thank you for joining! Explore ways to support and volunteer.",
+        });
+        navigate("/support");
+      } else {
+        toast({
+          title: "Welcome to Mundo Tango!",
+          description: "Your profile is complete. Let's explore!",
+        });
+        navigate("/feed");
+      }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Failed to save profile";
       toast({

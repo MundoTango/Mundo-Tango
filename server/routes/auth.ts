@@ -344,13 +344,15 @@ router.post("/waitlist", async (req: Request, res: Response) => {
       : await bcrypt.hash(crypto.randomBytes(32).toString("hex"), BCRYPT_ROUNDS);
 
     // If proceedToOnboarding is true and we have full credentials, create active account
+    // User is still marked as waitlist=true since they registered without invite code
     if (validatedData.proceedToOnboarding && validatedData.username && validatedData.password && validatedData.name) {
       const user = await storage.createUser({
         email: validatedData.email,
         name: validatedData.name,
         username: finalUsername,
         password: finalPassword,
-        waitlist: false,
+        waitlist: true, // Mark as waitlist user since no invite code
+        waitlistDate: new Date(),
         isActive: true,
         isOnboardingComplete: false,
         formStatus: 0,
