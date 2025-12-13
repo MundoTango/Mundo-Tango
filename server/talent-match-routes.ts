@@ -37,6 +37,26 @@ export function createTalentMatchRoutes(storage: IStorage) {
     }
   });
 
+  // Get current user's volunteer profile
+  router.get("/volunteers/me", async (req, res) => {
+    try {
+      if (!req.isAuthenticated || !req.isAuthenticated()) {
+        return res.status(401).json({ error: "Authentication required" });
+      }
+      const userId = (req.user as any)?.id;
+      if (!userId) {
+        return res.status(401).json({ error: "User ID not found" });
+      }
+      const volunteer = await storage.getVolunteerByUserId(userId);
+      if (!volunteer) {
+        return res.status(404).json({ error: "Volunteer profile not found" });
+      }
+      res.json(volunteer);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   // Get volunteer by ID
   router.get("/volunteers/:id", async (req, res) => {
     try {

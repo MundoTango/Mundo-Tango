@@ -146,13 +146,13 @@ export default function H2ACDashboardPage() {
                     <MessageSquare className="h-6 w-6 text-blue-500" />
                   </div>
                   <div>
-                    <h1 className="text-2xl font-bold">H2AC Dashboard</h1>
-                    <p className="text-muted-foreground">Human-to-Agent Communication Hub</p>
+                    <h2 className="text-xl font-bold">Human-to-Agent Communication Hub</h2>
+                    <p className="text-muted-foreground">Manage your AI agent team and volunteer opportunities</p>
                   </div>
                 </div>
                 
                 {!volunteerProfile && (
-                  <Link href="/talent">
+                  <Link href="/talent-match">
                     <Button className="gap-2" data-testid="button-start-talent-match">
                       <Brain className="h-4 w-4" />
                       Start Talent Match
@@ -185,7 +185,7 @@ export default function H2ACDashboardPage() {
                           </p>
                         </div>
                       </div>
-                      <Link href="/talent">
+                      <Link href="/talent-match">
                         <Button size="lg" className="gap-2" data-testid="button-activate-agents">
                           <Brain className="h-5 w-5" />
                           Begin Talent Match
@@ -385,7 +385,7 @@ export default function H2ACDashboardPage() {
                     
                     {!volunteerProfile && (
                       <div className="mt-6 text-center">
-                        <Link href="/talent">
+                        <Link href="/talent-match">
                           <Button className="gap-2" data-testid="button-activate-talent-agents">
                             <Zap className="h-4 w-4" />
                             Activate Talent Agents
@@ -457,7 +457,7 @@ export default function H2ACDashboardPage() {
                         <p className="text-muted-foreground mb-4">
                           Complete Talent Match to discover opportunities that fit your skills
                         </p>
-                        <Link href="/talent">
+                        <Link href="/talent-match">
                           <Button className="gap-2" data-testid="button-start-matching">
                             <Brain className="h-4 w-4" />
                             Start Talent Match
