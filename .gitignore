@@ -90,3 +90,4 @@ out/
 # System/IDE
 .local/
 .DS_Store.env.test
+.auth/
