@@ -16,74 +16,53 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
 const router = Router();
 
 // Subscription plan definitions - MB.MD v9.9.3 Stripe Integration
+// Simplified to Trial + Basic only (Dec 2025)
 const SUBSCRIPTION_PLANS = {
-  free: {
-    id: 'free',
-    name: 'Free',
+  trial: {
+    id: 'trial',
+    name: 'Free Trial',
     price: 0,
-    interval: 'month',
-    stripePriceId: process.env.STRIPE_PRICE_FREE_MONTHLY || 'price_1SbWX06k8N6PKChVniBnzes2',
+    interval: 'week',
+    trialDays: 7,
+    stripePriceId: process.env.STRIPE_PRICE_TRIAL || 'price_1SbWX06k8N6PKChVniBnzes2',
     features: [
-      'Community features',
-      'Basic event browsing',
-      'Profile creation',
-      'Up to 5 event RSVPs per month',
+      'Full access for 7 days',
+      'No credit card required',
+      'Event discovery',
+      'Community access',
+      'AI assistant access',
+      'Messaging',
     ],
   },
-  pro: {
-    id: 'pro',
-    name: 'Pro',
-    price: 29,
+  basic: {
+    id: 'basic',
+    name: 'Basic',
+    price: 4.99,
     interval: 'month',
-    stripePriceId: process.env.STRIPE_PRICE_PRO_MONTHLY || 'price_1SbWX06k8N6PKChVPNazDMLa',
-    stripePriceIdYearly: process.env.STRIPE_PRICE_PRO_YEARLY || 'price_1SbWX16k8N6PKChVAGQBraV2',
+    stripePriceId: process.env.STRIPE_PRICE_BASIC_MONTHLY || 'price_1SbWX06k8N6PKChVPNazDMLa',
+    stripePriceIdYearly: process.env.STRIPE_PRICE_BASIC_YEARLY || 'price_1SbWX16k8N6PKChVAGQBraV2',
     features: [
-      'Unlimited event RSVPs',
-      'Advanced matching algorithm',
-      'Unlimited event creation',
-      'Group participation',
-      'Direct messaging',
-      'Analytics dashboard',
-      'Priority support',
+      'Profile & messaging',
+      'Browse & RSVP to events',
+      'Join groups',
+      'Community access',
+      'Basic AI queries',
+      'Partner matching',
     ],
-  },
-  business: {
-    id: 'business',
-    name: 'Business',
-    price: 79,
-    interval: 'month',
-    stripePriceId: process.env.STRIPE_PRICE_BUSINESS_MONTHLY || 'price_1SbWX16k8N6PKChV3WXuYZ5s',
-    stripePriceIdYearly: process.env.STRIPE_PRICE_BUSINESS_YEARLY || 'price_1SbWX26k8N6PKChV0fdsCKXN',
-    features: [
-      'Everything in Pro',
-      'Mr. Blue AI Assistant',
-      'Custom profile badges',
-      'Early access to features',
-      'Advanced analytics',
-      'Promotional tools',
-      'Featured listings',
-      'Priority event placement',
-    ],
-  },
-  enterprise: {
-    id: 'enterprise',
-    name: 'Enterprise',
-    price: 299,
-    interval: 'month',
-    stripePriceId: process.env.STRIPE_PRICE_ENTERPRISE_MONTHLY || 'price_1SbWX26k8N6PKChVLYQ600aD',
-    features: [
-      'Everything in Business',
-      'Dedicated account manager',
-      'Custom branding options',
-      'API access',
-      'White-label options',
-      'Custom integrations',
-      'SLA guarantee',
-      'Unlimited everything',
-    ],
-    contactRequired: true,
   },
 };
+
+// Coming soon features (for roadmap display)
+const COMING_SOON_FEATURES = [
+  'Unlimited AI assistant',
+  'Advanced partner matching',
+  'Housing marketplace access',
+  'Travel planning tools',
+  'Event creation & management',
+  'Analytics dashboard',
+  'Teacher & organizer tools',
+  'Verified badges',
+];
 
 // Add-on definitions
 const ADDONS = {
