@@ -235,12 +235,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (email: string, password: string) => {
     try {
+      console.log("[Auth] Starting login for:", email);
       const csrfToken = getCsrfToken();
+      console.log("[Auth] CSRF token present:", !!csrfToken);
       const headers: Record<string, string> = { "Content-Type": "application/json" };
       if (csrfToken) {
         headers["x-xsrf-token"] = csrfToken;
       }
       
+      console.log("[Auth] Sending login request...");
       const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
         method: "POST",
         headers,
@@ -248,23 +251,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         body: JSON.stringify({ email, password }),
       });
 
+      console.log("[Auth] Login response status:", response.status);
       if (!response.ok) {
         const data = await response.json();
+        console.error("[Auth] Login failed:", data.message);
         throw new Error(data.message || "Login failed");
       }
 
       const data = await response.json();
+      console.log("[Auth] Login successful, got accessToken:", !!data.accessToken);
 
       localStorage.setItem("accessToken", data.accessToken);
+      console.log("[Auth] Stored accessToken in localStorage");
       setSession({ accessToken: data.accessToken });
 
       // Fetch full user data (including city, tangoRoles) from /api/auth/me
       // The login response doesn't include all profile fields
+      console.log("[Auth] Loading current user...");
       await loadCurrentUser();
+      console.log("[Auth] Login complete!");
 
       // Note: Redirect is handled by the caller (LoginPage) to support redirect query params
     } catch (error) {
-      console.error("Login error:", error);
+      console.error("[Auth] Login error:", error);
       throw error;
     }
   };

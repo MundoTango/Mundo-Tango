@@ -105,14 +105,16 @@ export default function LoginPage() {
         description: "You've successfully logged in.",
       });
       // Redirect to the specified URL or default to /feed
-      setLocation(redirectTo);
+      // Use setTimeout to ensure navigation happens after React state updates
+      setTimeout(() => {
+        window.location.href = redirectTo;
+      }, 100);
     } catch (error: any) {
       toast({
         title: "Login failed",
         description: error.message || "Invalid credentials",
         variant: "destructive",
       });
-    } finally {
       setIsLoading(false);
     }
   };
