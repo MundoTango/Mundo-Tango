@@ -17,6 +17,7 @@ import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary"
 interface UploadedDocument {
   file: File;
   text: string;
+  base64Buffer: string;
   status: "pending" | "parsed" | "error";
 }
 
@@ -46,7 +47,7 @@ export default function TalentMatchPage() {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
-    const validTypes = ["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "text/plain"];
+    const validTypes = ["application/pdf", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "text/plain"];
     const newDocuments: UploadedDocument[] = [];
     
     for (let i = 0; i < files.length; i++) {
@@ -55,7 +56,7 @@ export default function TalentMatchPage() {
       if (!validTypes.includes(file.type)) {
         toast({
           title: "Invalid file type",
-          description: `${file.name} is not a valid format. Please upload PDF, DOC, DOCX, or TXT files.`,
+          description: `${file.name} is not a valid format. Please upload PDF, DOCX, or TXT files.`,
           variant: "destructive"
         });
         continue;
@@ -79,7 +80,7 @@ export default function TalentMatchPage() {
         continue;
       }
 
-      newDocuments.push({ file, text: "", status: "pending" });
+      newDocuments.push({ file, text: "", base64Buffer: "", status: "pending" });
     }
 
     if (newDocuments.length > 0) {
@@ -89,18 +90,43 @@ export default function TalentMatchPage() {
         const reader = new FileReader();
         const docName = doc.file.name;
         const docSize = doc.file.size;
+        const extension = docName.toLowerCase().split('.').pop();
+        const isBinaryFile = extension === 'pdf' || extension === 'docx';
+        
         reader.onload = (event) => {
-          const text = event.target?.result as string;
-          setUploadedDocuments(prev => 
-            prev.map(d => (d.file.name === docName && d.file.size === docSize) ? { ...d, text, status: "parsed" } : d)
-          );
+          if (isBinaryFile) {
+            const arrayBuffer = event.target?.result as ArrayBuffer;
+            const uint8Array = new Uint8Array(arrayBuffer);
+            let binaryString = '';
+            for (let i = 0; i < uint8Array.length; i++) {
+              binaryString += String.fromCharCode(uint8Array[i]);
+            }
+            const base64Buffer = btoa(binaryString);
+            setUploadedDocuments(prev => 
+              prev.map(d => (d.file.name === docName && d.file.size === docSize) 
+                ? { ...d, base64Buffer, text: `[Binary file - ${extension?.toUpperCase()}]`, status: "parsed" } 
+                : d)
+            );
+          } else {
+            const text = event.target?.result as string;
+            setUploadedDocuments(prev => 
+              prev.map(d => (d.file.name === docName && d.file.size === docSize) 
+                ? { ...d, text, base64Buffer: "", status: "parsed" } 
+                : d)
+            );
+          }
         };
         reader.onerror = () => {
           setUploadedDocuments(prev => 
             prev.map(d => (d.file.name === docName && d.file.size === docSize) ? { ...d, status: "error" } : d)
           );
         };
-        reader.readAsText(doc.file);
+        
+        if (isBinaryFile) {
+          reader.readAsArrayBuffer(doc.file);
+        } else {
+          reader.readAsText(doc.file);
+        }
       }
 
       toast({
@@ -121,8 +147,8 @@ export default function TalentMatchPage() {
   };
 
   const handleStartClarifier = async () => {
-    const resumeText = getAllResumeText();
-    if (!resumeText && !linkedinUrl && !githubUrl) {
+    const hasDocuments = uploadedDocuments.length > 0 && uploadedDocuments.some(d => d.status === "parsed");
+    if (!hasDocuments && !linkedinUrl && !githubUrl) {
       toast({
         title: "Information required",
         description: "Please upload at least one resume, or provide your LinkedIn or GitHub URL",
@@ -173,7 +199,7 @@ export default function TalentMatchPage() {
       const volunteerResponse = await apiRequest("POST", "/api/v1/volunteers", {
         userId: user.id,
         profile: {
-          resumeText,
+          hasDocuments: uploadedDocuments.length > 0,
           linkedinUrl,
           githubUrl,
           uploadedFileNames: uploadedDocuments.map(d => d.file.name)
@@ -184,13 +210,19 @@ export default function TalentMatchPage() {
       });
       const volunteer = await volunteerResponse.json();
 
-      if (resumeText) {
-        await apiRequest("POST", `/api/v1/volunteers/${volunteer.id}/resume`, {
-          filename: uploadedDocuments.length > 0 ? uploadedDocuments.map(d => d.file.name).join(", ") : "pasted-resume.txt",
-          fileUrl: linkedinUrl || githubUrl || "",
-          parsedText: resumeText,
-          links: [linkedinUrl, githubUrl].filter(Boolean)
-        });
+      if (uploadedDocuments.length > 0) {
+        for (const doc of uploadedDocuments) {
+          const extension = doc.file.name.toLowerCase().split('.').pop();
+          const isBinaryFile = extension === 'pdf' || extension === 'docx';
+          
+          await apiRequest("POST", `/api/v1/volunteers/${volunteer.id}/resume`, {
+            filename: doc.file.name,
+            fileUrl: linkedinUrl || githubUrl || "",
+            fileBuffer: isBinaryFile ? doc.base64Buffer : undefined,
+            parsedText: isBinaryFile ? undefined : doc.text,
+            links: [linkedinUrl, githubUrl].filter(Boolean)
+          });
+        }
       }
 
       const sessionResponse = await apiRequest("POST", `/api/v1/volunteers/${volunteer.id}/clarifier`);
@@ -376,7 +408,7 @@ export default function TalentMatchPage() {
                     <Input
                       id="resume-upload"
                       type="file"
-                      accept=".pdf,.doc,.docx,.txt"
+                      accept=".pdf,.docx,.txt"
                       multiple
                       onChange={handleResumeUpload}
                       data-testid="input-resume-upload"
