@@ -1,6 +1,6 @@
 /**
  * TANGO ROLES CONFIGURATION - UNIFIED SYSTEM
- * Complete 19-role system matching onboarding IDs
+ * Complete 21-role system matching onboarding IDs
  * Used throughout app for consistent role display
  */
 
@@ -25,6 +25,7 @@ import {
   Sparkles,
   Heart,
   Handshake,
+  HandHeart,
   type LucideIcon
 } from 'lucide-react';
 
@@ -205,6 +206,15 @@ export const TANGO_ROLES: readonly TangoRole[] = [
     icon: Sparkles,
     color: '#F59E0B',
     description: "I'm a tango enthusiast",
+    bookable: false,
+    category: 'community'
+  },
+  {
+    value: 'volunteer',
+    label: 'Volunteer',
+    icon: HandHeart,
+    color: '#22C55E',
+    description: 'I volunteer at tango events',
     bookable: false,
     category: 'community'
   },
