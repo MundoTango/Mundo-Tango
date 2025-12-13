@@ -210,6 +210,82 @@ const sampleEvents = [
 ];
 
 // ============================================================================
+// PRO TEAM SEARCH - Search professionals by role for event staffing
+// ============================================================================
+
+// GET /api/events/search-pros-by-role - Search for DJs, photographers, etc.
+router.get("/search-pros-by-role", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const { role, city, q } = req.query;
+    
+    if (!role || typeof role !== 'string') {
+      return res.status(400).json({ error: "Role parameter is required" });
+    }
+
+    // Map role names to tangoRoles values
+    const roleMapping: Record<string, string> = {
+      'dj': 'dj',
+      'photographer': 'photographer', 
+      'videographer': 'videographer',
+      'live_musician': 'musician',
+      'sound_engineer': 'sound_engineer',
+      'decorator': 'decorator',
+      'host': 'host',
+      'instructor': 'teacher',
+      'event_coordinator': 'organizer'
+    };
+
+    const mappedRole = roleMapping[role.toLowerCase()] || role.toLowerCase();
+
+    // Build search query
+    let query = db
+      .select({
+        id: users.id,
+        name: users.name,
+        username: users.username,
+        profileImage: users.profileImage,
+        city: users.city,
+        tangoRoles: users.tangoRoles,
+        bio: users.bio
+      })
+      .from(users)
+      .$dynamic();
+
+    const conditions: any[] = [];
+    
+    // Search by role in tangoRoles array
+    conditions.push(sql`${mappedRole} = ANY(${users.tangoRoles})`);
+    
+    // Filter by city if provided
+    if (city && typeof city === 'string') {
+      conditions.push(sql`${users.city} ILIKE ${'%' + city + '%'}`);
+    }
+    
+    // Search by name/username if query provided
+    if (q && typeof q === 'string' && q.trim()) {
+      const searchTerm = `%${q.trim()}%`;
+      conditions.push(
+        or(
+          sql`${users.name} ILIKE ${searchTerm}`,
+          sql`${users.username} ILIKE ${searchTerm}`
+        )!
+      );
+    }
+
+    if (conditions.length > 0) {
+      query = query.where(and(...conditions));
+    }
+
+    const results = await query.limit(20);
+
+    res.json(results);
+  } catch (error) {
+    console.error("Error searching pros by role:", error);
+    res.status(500).json({ error: "Failed to search professionals" });
+  }
+});
+
+// ============================================================================
 // EVENT ROUTES
 // ============================================================================
 

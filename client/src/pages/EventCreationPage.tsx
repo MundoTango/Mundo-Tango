@@ -11,7 +11,10 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
-import { Calendar as CalendarIcon, MapPin, DollarSign, Users, Image as ImageIcon, ChevronLeft, Music, Clock, Sparkles, X, Upload } from "lucide-react";
+import { Calendar as CalendarIcon, MapPin, DollarSign, Users, Image as ImageIcon, ChevronLeft, Music, Clock, Sparkles, X, Upload, UserPlus, Search } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
@@ -78,6 +81,62 @@ export default function EventCreationPage() {
     level: "all",
     attendeeCloseness: "all" as ClosenessVisibility,
   });
+
+  // Pro Team state
+  const [proTeam, setProTeam] = useState<Array<{ id: number; name: string; username: string; role: string; profileImage?: string }>>([]);
+  const [proDialogOpen, setProDialogOpen] = useState(false);
+  const [selectedProRole, setSelectedProRole] = useState("");
+  const [proSearchQuery, setProSearchQuery] = useState("");
+  const [proSearchResults, setProSearchResults] = useState<any[]>([]);
+  const [searchingPros, setSearchingPros] = useState(false);
+
+  // Search for professionals by role
+  const searchPros = async () => {
+    if (!selectedProRole) return;
+    setSearchingPros(true);
+    try {
+      const params = new URLSearchParams({ role: selectedProRole });
+      if (formData.city) params.append('city', formData.city);
+      if (proSearchQuery) params.append('q', proSearchQuery);
+      
+      const response = await apiRequest("GET", `/api/events/search-pros-by-role?${params.toString()}`);
+      setProSearchResults(response || []);
+    } catch (error) {
+      toast({ title: "Failed to search. Please try again.", variant: "destructive" });
+      setProSearchResults([]);
+    } finally {
+      setSearchingPros(false);
+    }
+  };
+
+  // Effect to search when role changes
+  useEffect(() => {
+    if (selectedProRole) {
+      searchPros();
+    }
+  }, [selectedProRole]);
+
+  const addProToTeam = (user: any) => {
+    if (proTeam.find(p => p.id === user.id && p.role === selectedProRole)) {
+      toast({ title: "This person is already added for this role", variant: "destructive" });
+      return;
+    }
+    setProTeam([...proTeam, { 
+      id: user.id, 
+      name: user.name, 
+      username: user.username, 
+      role: selectedProRole,
+      profileImage: user.profileImage 
+    }]);
+    setProDialogOpen(false);
+    setSelectedProRole("");
+    setProSearchQuery("");
+    setProSearchResults([]);
+  };
+
+  const removeProFromTeam = (id: number, role: string) => {
+    setProTeam(proTeam.filter(p => !(p.id === id && p.role === role)));
+  };
 
   const createMutation = useMutation({
     mutationFn: async (data: any) => {
@@ -624,6 +683,129 @@ export default function EventCreationPage() {
                   </label>
                 )}
               </div>
+            </div>
+
+            <Separator />
+
+            {/* Pro Team */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold">Pro Team</h3>
+              <p className="text-sm text-muted-foreground">Add DJ, photographer, or other professionals to your event</p>
+              
+              {/* Display selected pro team members */}
+              {proTeam.length > 0 && (
+                <div className="space-y-2">
+                  {proTeam.map((pro) => (
+                    <div key={`${pro.id}-${pro.role}`} className="flex items-center justify-between p-3 rounded-lg border">
+                      <div className="flex items-center gap-3">
+                        <Avatar className="h-10 w-10">
+                          <AvatarImage src={pro.profileImage} />
+                          <AvatarFallback>{pro.name?.charAt(0) || 'U'}</AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <p className="font-medium">{pro.name}</p>
+                          <p className="text-sm text-muted-foreground">@{pro.username}</p>
+                        </div>
+                        <Badge variant="secondary">{pro.role}</Badge>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => removeProFromTeam(pro.id, pro.role)}
+                        data-testid={`button-remove-pro-${pro.id}`}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <Dialog open={proDialogOpen} onOpenChange={setProDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button variant="outline" className="gap-2" data-testid="button-add-pro-team">
+                    <UserPlus className="h-4 w-4" />
+                    Add Team Member
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-md">
+                  <DialogHeader>
+                    <DialogTitle>Add Pro Team Member</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4 pt-4">
+                    <div className="space-y-2">
+                      <Label>Role</Label>
+                      <Select value={selectedProRole} onValueChange={setSelectedProRole}>
+                        <SelectTrigger data-testid="select-pro-role">
+                          <SelectValue placeholder="Select a role" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="dj">DJ</SelectItem>
+                          <SelectItem value="photographer">Photographer</SelectItem>
+                          <SelectItem value="videographer">Videographer</SelectItem>
+                          <SelectItem value="live_musician">Live Musician</SelectItem>
+                          <SelectItem value="sound_engineer">Sound Engineer</SelectItem>
+                          <SelectItem value="decorator">Decorator</SelectItem>
+                          <SelectItem value="host">Host</SelectItem>
+                          <SelectItem value="instructor">Instructor</SelectItem>
+                          <SelectItem value="event_coordinator">Event Coordinator</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {selectedProRole && (
+                      <>
+                        <div className="space-y-2">
+                          <Label>Search</Label>
+                          <div className="flex gap-2">
+                            <Input
+                              placeholder="Search by name..."
+                              value={proSearchQuery}
+                              onChange={(e) => setProSearchQuery(e.target.value)}
+                              onKeyDown={(e) => e.key === 'Enter' && searchPros()}
+                              data-testid="input-search-pro"
+                            />
+                            <Button variant="outline" size="icon" onClick={searchPros} disabled={searchingPros}>
+                              <Search className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+
+                        <div className="max-h-60 overflow-y-auto space-y-2">
+                          {searchingPros ? (
+                            <p className="text-sm text-muted-foreground text-center py-4">Searching...</p>
+                          ) : proSearchResults.length > 0 ? (
+                            proSearchResults.map((user) => (
+                              <div
+                                key={user.id}
+                                className="flex items-center justify-between p-3 rounded-lg border hover-elevate cursor-pointer"
+                                onClick={() => addProToTeam(user)}
+                                data-testid={`pro-result-${user.id}`}
+                              >
+                                <div className="flex items-center gap-3">
+                                  <Avatar className="h-8 w-8">
+                                    <AvatarImage src={user.profileImage} />
+                                    <AvatarFallback>{user.name?.charAt(0) || 'U'}</AvatarFallback>
+                                  </Avatar>
+                                  <div>
+                                    <p className="font-medium text-sm">{user.name}</p>
+                                    <p className="text-xs text-muted-foreground">@{user.username}</p>
+                                  </div>
+                                </div>
+                                <Button variant="ghost" size="sm">Add</Button>
+                              </div>
+                            ))
+                          ) : (
+                            <p className="text-sm text-muted-foreground text-center py-4">
+                              {selectedProRole ? "No professionals found. Try a different search." : "Select a role to search"}
+                            </p>
+                          )}
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </DialogContent>
+              </Dialog>
             </div>
 
             <Separator />
