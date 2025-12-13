@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,6 +24,11 @@ export default function LoginPage() {
   const [isFacebookLoading, setIsFacebookLoading] = useState(false);
   const { login } = useAuth();
   const { toast } = useToast();
+  const [, setLocation] = useLocation();
+  
+  // Get redirect parameter from URL
+  const searchParams = new URLSearchParams(window.location.search);
+  const redirectTo = searchParams.get("redirect") || "/feed";
   
   const { data: stats } = useQuery<{
     dancers: number | null;
@@ -99,6 +104,8 @@ export default function LoginPage() {
         title: "Welcome back!",
         description: "You've successfully logged in.",
       });
+      // Redirect to the specified URL or default to /feed
+      setLocation(redirectTo);
     } catch (error: any) {
       toast({
         title: "Login failed",
