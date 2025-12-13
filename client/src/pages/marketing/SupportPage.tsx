@@ -10,7 +10,7 @@ import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary"
 import { useQuery } from "@tanstack/react-query";
 import { 
   Heart, Star, Award, Crown, Check, ArrowRight,
-  Clock, DollarSign, Users, Globe, Code
+  Clock, DollarSign, Users, Globe, Code, Wallet
 } from "lucide-react";
 
 interface TangoLegend {
@@ -160,7 +160,7 @@ function SupportPageContent() {
               </motion.p>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
               <motion.div variants={fadeInUp}>
                 <Card className="h-full hover-elevate">
                   <CardHeader>
@@ -197,6 +197,28 @@ function SupportPageContent() {
                     <Link href="/talent-match" className="w-full">
                       <Button variant="outline" className="w-full" data-testid="button-volunteer">
                         Apply to Volunteer
+                      </Button>
+                    </Link>
+                  </CardFooter>
+                </Card>
+              </motion.div>
+
+              <motion.div variants={fadeInUp}>
+                <Card className="h-full hover-elevate border-primary/20 bg-primary/5">
+                  <CardHeader>
+                    <Wallet className="h-8 w-8 text-primary mb-2" />
+                    <CardTitle>Financial Support</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground text-sm">
+                      Help cover server costs, AI services, and development. Every contribution helps build tango's future.
+                    </p>
+                  </CardContent>
+                  <CardFooter>
+                    <Link href="/donate" className="w-full">
+                      <Button className="w-full" data-testid="button-donate">
+                        <Heart className="h-4 w-4 mr-2" />
+                        Donate Now
                       </Button>
                     </Link>
                   </CardFooter>

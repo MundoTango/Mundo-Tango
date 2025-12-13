@@ -4,8 +4,9 @@ import {
   platformDonations, 
   ambassadors,
   users,
+  eventScrapingSources,
 } from "@shared/schema";
-import { sql, eq, and, sum, count } from "drizzle-orm";
+import { sql, eq, and, sum, count, ilike } from "drizzle-orm";
 
 const router = Router();
 
@@ -304,6 +305,64 @@ router.get("/volunteer-divisions", async (req, res) => {
   ];
 
   res.json(divisions);
+});
+
+router.get("/event-sources", async (req, res) => {
+  try {
+    const { city } = req.query;
+    
+    if (!city || typeof city !== 'string') {
+      return res.status(400).json({ error: "City parameter is required" });
+    }
+
+    const sources = await db.select({
+      id: eventScrapingSources.id,
+      name: eventScrapingSources.name,
+      url: eventScrapingSources.url,
+      platform: eventScrapingSources.platform,
+      city: eventScrapingSources.city,
+      country: eventScrapingSources.country,
+    })
+      .from(eventScrapingSources)
+      .where(and(
+        eq(eventScrapingSources.isActive, true),
+        ilike(eventScrapingSources.city, `%${city}%`)
+      ))
+      .limit(10);
+
+    res.json({
+      city,
+      sources,
+      count: sources.length,
+    });
+  } catch (error) {
+    console.error("Error fetching event sources:", error);
+    res.json({ city: req.query.city, sources: [], count: 0 });
+  }
+});
+
+router.post("/event-sources/suggest", async (req, res) => {
+  try {
+    const { city, country, url, name } = req.body;
+    
+    if (!city || !url) {
+      return res.status(400).json({ error: "City and URL are required" });
+    }
+
+    await db.insert(eventScrapingSources).values({
+      name: name || `User suggested: ${url}`,
+      url,
+      platform: "user_suggested",
+      city,
+      country: country || null,
+      isActive: false,
+    });
+
+    res.json({ success: true, message: "Thank you! We'll review this source." });
+  } catch (error) {
+    console.error("Error adding suggested source:", error);
+    res.status(500).json({ error: "Failed to add suggestion" });
+  }
 });
 
 export default router;

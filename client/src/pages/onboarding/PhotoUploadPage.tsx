@@ -11,6 +11,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { motion } from "framer-motion";
+import { uploadMediaFile } from "@/lib/mediaUpload";
 import heroImage from "@assets/stock_images/elegant_professional_0956f754.jpg";
 
 export default function PhotoUploadPage() {
@@ -32,6 +33,14 @@ export default function PhotoUploadPage() {
     }
   }, [user, authLoading, navigate]);
 
+  useEffect(() => {
+    return () => {
+      if (preview && preview.startsWith('blob:')) {
+        URL.revokeObjectURL(preview);
+      }
+    };
+  }, [preview]);
+
   const handleFileSelect = (selectedFile: File) => {
     if (!selectedFile.type.startsWith("image/")) {
       toast({
@@ -42,21 +51,18 @@ export default function PhotoUploadPage() {
       return;
     }
 
-    if (selectedFile.size > 5 * 1024 * 1024) {
-      toast({
-        title: "File too large",
-        description: "Please select an image under 5MB",
-        variant: "destructive",
-      });
-      return;
+    if (preview && preview.startsWith('blob:')) {
+      URL.revokeObjectURL(preview);
     }
 
     setFile(selectedFile);
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setPreview(reader.result as string);
-    };
-    reader.readAsDataURL(selectedFile);
+    const blobUrl = URL.createObjectURL(selectedFile);
+    setPreview(blobUrl);
+    
+    toast({
+      title: "Photo selected",
+      description: "Looking good! Click Continue to upload.",
+    });
   };
 
   const handleDrop = (e: React.DragEvent) => {
@@ -85,22 +91,9 @@ export default function PhotoUploadPage() {
 
     setIsLoading(true);
     try {
-      const formData = new FormData();
-      formData.append("photo", file);
-
-      const accessToken = localStorage.getItem("accessToken");
-      const response = await fetch("/api/users/me/photo", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-        body: formData,
-      });
-
-      if (!response.ok) throw new Error("Failed to upload photo");
-
-      const data = await response.json();
+      const result = await uploadMediaFile(file);
       
+      const accessToken = localStorage.getItem("accessToken");
       await fetch("/api/users/me", {
         method: "PATCH",
         headers: {
@@ -108,9 +101,14 @@ export default function PhotoUploadPage() {
           Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify({
-          profileImage: data.imageUrl,
+          profileImage: result.url,
           formStatus: 2,
         }),
+      });
+
+      toast({
+        title: "Photo uploaded!",
+        description: "Your profile photo has been saved.",
       });
 
       navigate("/onboarding/step-3");
@@ -254,7 +252,7 @@ export default function PhotoUploadPage() {
                               Browse Files
                             </Button>
                           </div>
-                          <p className="text-sm text-muted-foreground">PNG, JPG up to 5MB</p>
+                          <p className="text-sm text-muted-foreground">PNG, JPG - any size (auto-compressed)</p>
                         </div>
                       ) : (
                         <div className="space-y-4">
@@ -265,6 +263,9 @@ export default function PhotoUploadPage() {
                           <Button
                             variant="outline"
                             onClick={() => {
+                              if (preview && preview.startsWith('blob:')) {
+                                URL.revokeObjectURL(preview);
+                              }
                               setPreview(null);
                               setFile(null);
                             }}
