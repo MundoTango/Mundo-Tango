@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { Camera, Upload, Loader2, X, Image as ImageIcon, ChevronRight } from "lucide-react";
+import { Camera, Loader2, X, ChevronRight } from "lucide-react";
 import { SEO } from "@/components/SEO";
 import { useAuth } from "@/contexts/AuthContext";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -203,79 +203,76 @@ export default function PhotoUploadPage() {
                     </p>
                   </CardHeader>
 
-                  <CardContent className="p-8 space-y-6">
-                    <div className="flex justify-center">
-                      <Avatar className="h-40 w-40 border-4 border-primary/10">
-                        <AvatarImage src={preview || undefined} />
-                        <AvatarFallback className="text-5xl bg-primary/5">
-                          {user?.name?.charAt(0) || "?"}
-                        </AvatarFallback>
-                      </Avatar>
-                    </div>
-
+                  <CardContent className="p-8">
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => {
+                        const selectedFile = e.target.files?.[0];
+                        if (selectedFile) handleFileSelect(selectedFile);
+                      }}
+                      data-testid="input-photo"
+                    />
+                    
                     <div
-                      className={`border-2 border-dashed rounded-xl p-12 text-center transition-all ${
-                        isDragging ? "border-primary bg-primary/5 scale-[1.02]" : "border-muted-foreground/25"
+                      className={`flex items-center gap-4 p-4 rounded-xl transition-all ${
+                        isDragging ? "bg-primary/5 ring-2 ring-primary ring-offset-2" : ""
                       }`}
                       onDrop={handleDrop}
                       onDragOver={handleDragOver}
                       onDragLeave={handleDragLeave}
                     >
-                      <input
-                        ref={fileInputRef}
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        onChange={(e) => {
-                          const selectedFile = e.target.files?.[0];
-                          if (selectedFile) handleFileSelect(selectedFile);
-                        }}
-                        data-testid="input-photo"
-                      />
+                      <Avatar className="h-24 w-24 border-2 border-primary/20">
+                        <AvatarImage src={preview || undefined} />
+                        <AvatarFallback className="text-2xl">
+                          {user?.name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'}
+                        </AvatarFallback>
+                      </Avatar>
                       
-                      {!preview ? (
-                        <div className="space-y-6">
-                          <div className="flex justify-center">
-                            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
-                              <Upload className="h-10 w-10 text-primary" />
-                            </div>
-                          </div>
-                          <div>
-                            <p className="text-lg font-medium mb-2">Drop your photo here</p>
-                            <p className="text-muted-foreground mb-4">or</p>
-                            <Button
-                              variant="outline"
+                      <div className="flex flex-col gap-2">
+                        {!preview ? (
+                          <Button 
+                            variant="outline" 
+                            className="gap-2" 
+                            onClick={() => fileInputRef.current?.click()}
+                            data-testid="button-browse"
+                          >
+                            <Camera className="h-4 w-4" />
+                            Choose Photo
+                          </Button>
+                        ) : (
+                          <div className="flex gap-2">
+                            <Button 
+                              variant="outline" 
+                              className="gap-2" 
                               onClick={() => fileInputRef.current?.click()}
-                              data-testid="button-browse"
+                              data-testid="button-change-photo"
                             >
-                              <ImageIcon className="mr-2 h-4 w-4" />
-                              Browse Files
+                              <Camera className="h-4 w-4" />
+                              Change Photo
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => {
+                                if (preview && preview.startsWith('blob:')) {
+                                  URL.revokeObjectURL(preview);
+                                }
+                                setPreview(null);
+                                setFile(null);
+                              }}
+                              data-testid="button-remove-photo"
+                            >
+                              <X className="h-4 w-4" />
                             </Button>
                           </div>
-                          <p className="text-sm text-muted-foreground">PNG, JPG - any size (auto-compressed)</p>
-                        </div>
-                      ) : (
-                        <div className="space-y-4">
-                          <div className="flex items-center justify-center gap-2 text-primary">
-                            <Camera className="h-5 w-5" />
-                            <p className="font-medium">Photo selected!</p>
-                          </div>
-                          <Button
-                            variant="outline"
-                            onClick={() => {
-                              if (preview && preview.startsWith('blob:')) {
-                                URL.revokeObjectURL(preview);
-                              }
-                              setPreview(null);
-                              setFile(null);
-                            }}
-                            data-testid="button-remove-photo"
-                          >
-                            <X className="h-4 w-4 mr-2" />
-                            Remove
-                          </Button>
-                        </div>
-                      )}
+                        )}
+                        <p className="text-sm text-muted-foreground">
+                          {isDragging ? "Drop your photo here" : "PNG, JPG - auto-compressed"}
+                        </p>
+                      </div>
                     </div>
                   </CardContent>
 
