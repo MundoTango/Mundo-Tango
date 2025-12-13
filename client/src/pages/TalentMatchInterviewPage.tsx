@@ -1,0 +1,564 @@
+import { useState, useRef, useEffect, useCallback } from "react";
+import { useLocation } from "wouter";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { SEO } from "@/components/SEO";
+import { useToast } from "@/hooks/use-toast";
+import { Send, Bot, User, Sparkles, CheckCircle, ArrowRight, Home, FileText, Briefcase } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { apiRequest } from "@/lib/queryClient";
+import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
+import { useQuery } from "@tanstack/react-query";
+
+interface Message {
+  id: string;
+  role: "user" | "assistant";
+  content: string;
+  timestamp: Date;
+  phase?: "resume" | "work" | "complete";
+}
+
+interface InterviewState {
+  phase: "resume" | "work" | "complete";
+  resumeQuestionsAsked: number;
+  workQuestionsAsked: number;
+  resumeAnswers: string[];
+  workAnswers: string[];
+}
+
+const TOTAL_RESUME_QUESTIONS = 10;
+const TOTAL_WORK_QUESTIONS = 10;
+
+export default function TalentMatchInterviewPage() {
+  const [, setLocation] = useLocation();
+  const { toast } = useToast();
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [input, setInput] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  // Use window.location.search directly since wouter's useLocation doesn't include query params
+  const params = new URLSearchParams(window.location.search);
+  const sessionId = params.get('session');
+  const volunteerId = params.get('volunteer');
+  const returnTo = params.get('returnTo') || '/h2ac-dashboard';
+
+  const [interviewState, setInterviewState] = useState<InterviewState>({
+    phase: "resume",
+    resumeQuestionsAsked: 0,
+    workQuestionsAsked: 0,
+    resumeAnswers: [],
+    workAnswers: []
+  });
+
+  const [messages, setMessages] = useState<Message[]>([]);
+
+  const { data: volunteer } = useQuery({
+    queryKey: ['/api/v1/volunteers', volunteerId],
+    queryFn: async () => {
+      const response = await fetch(`/api/v1/volunteers/${volunteerId}`, { credentials: 'include' });
+      if (!response.ok) throw new Error('Failed to fetch volunteer');
+      return response.json();
+    },
+    enabled: !!volunteerId
+  });
+
+  const { data: resume } = useQuery({
+    queryKey: [`/api/v1/volunteers/${volunteerId}/resume`],
+    enabled: !!volunteerId
+  });
+
+  const { data: user } = useQuery({
+    queryKey: ['/api/auth/me']
+  });
+
+  const totalProgress = () => {
+    const resumeProgress = Math.min(interviewState.resumeQuestionsAsked, TOTAL_RESUME_QUESTIONS);
+    const workProgress = Math.min(interviewState.workQuestionsAsked, TOTAL_WORK_QUESTIONS);
+    return ((resumeProgress + workProgress) / (TOTAL_RESUME_QUESTIONS + TOTAL_WORK_QUESTIONS)) * 100;
+  };
+
+  const generateResumeQuestion = useCallback(async (questionNumber: number, previousAnswers: string[]) => {
+    const resumeText = resume?.parsedText || "No resume uploaded";
+    const systemPrompt = `You are Mr Blue, the AI interviewer for Mundo Tango's volunteer program. You're conducting Phase 1: Resume Deep-Dive.
+
+The volunteer has uploaded this resume/profile:
+${resumeText.slice(0, 3000)}
+
+Previous answers in this interview: ${previousAnswers.slice(-3).join(" | ")}
+
+Question ${questionNumber} of ${TOTAL_RESUME_QUESTIONS}.
+
+Your goal: Ask ONE specific, insightful question about their resume to understand:
+- Their actual experience level and expertise areas
+- Projects they're most proud of
+- Technologies/skills they want to use more
+- Any gaps or areas they want to develop
+
+Be conversational and warm. Reference specific details from their resume when possible.
+Keep questions concise (1-2 sentences).
+If this is question 1, start with a warm greeting acknowledging their resume.
+If this is question ${TOTAL_RESUME_QUESTIONS}, make it a summary/transition question.`;
+
+    try {
+      const response = await fetch("/api/mrblue/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          message: `Generate resume question ${questionNumber}`,
+          systemPrompt,
+          context: { sessionId, volunteerId, phase: "resume", questionNumber }
+        })
+      });
+
+      if (!response.ok) throw new Error("Failed to generate question");
+      const data = await response.json();
+      return data.response;
+    } catch {
+      const fallbackQuestions = [
+        "Hi there! I've reviewed your background. What would you say is the technical skill you're most confident in?",
+        "I noticed some interesting experience. What project from your background are you most proud of?",
+        "What technologies or tools do you enjoy working with the most?",
+        "Are there any skills on your resume you'd like to use more in volunteer work?",
+        "What areas of software development interest you the most right now?",
+        "Have you worked on any open source projects or community initiatives before?",
+        "What's your preferred working style - do you like independent work or collaboration?",
+        "How do you typically approach learning new technologies?",
+        "What kind of impact do you hope to make through volunteer work?",
+        "Great! Before we move to discussing specific opportunities, is there anything else about your background you'd like to highlight?"
+      ];
+      return fallbackQuestions[Math.min(questionNumber - 1, fallbackQuestions.length - 1)];
+    }
+  }, [resume, sessionId, volunteerId]);
+
+  const generateWorkQuestion = useCallback(async (questionNumber: number, previousAnswers: string[], resumeAnswers: string[]) => {
+    const resumeContext = resumeAnswers.join(" | ");
+    const systemPrompt = `You are Mr Blue, the AI interviewer for Mundo Tango's volunteer program. You're conducting Phase 2: Work Assignment Matching.
+
+Based on the resume interview, here's what we learned about the volunteer:
+${resumeContext}
+
+Previous Phase 2 answers: ${previousAnswers.slice(-3).join(" | ")}
+
+Question ${questionNumber} of ${TOTAL_WORK_QUESTIONS}.
+
+Mundo Tango needs help with:
+- Frontend development (React, TypeScript, Tailwind)
+- Backend development (Node.js, Express, PostgreSQL)
+- AI/ML integration (OpenAI, Anthropic, Groq)
+- Event scraping and data collection
+- Community management and moderation
+- Documentation and technical writing
+- UX/UI design and user research
+- Testing and QA automation
+- DevOps and infrastructure
+
+Your goal: Ask ONE question to understand:
+- What type of work excites them most
+- How much time they can commit
+- Their preferred team dynamics
+- Specific Mundo Tango features they'd like to work on
+
+Be specific about Mundo Tango's needs. Keep questions concise.
+If question ${TOTAL_WORK_QUESTIONS}, ask about their availability and preferred communication.`;
+
+    try {
+      const response = await fetch("/api/mrblue/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          message: `Generate work assignment question ${questionNumber}`,
+          systemPrompt,
+          context: { sessionId, volunteerId, phase: "work", questionNumber }
+        })
+      });
+
+      if (!response.ok) throw new Error("Failed to generate question");
+      const data = await response.json();
+      return data.response;
+    } catch {
+      const fallbackQuestions = [
+        "Now let's talk about how you can contribute to Mundo Tango! Which area interests you most: frontend, backend, AI/ML, or something else?",
+        "Mundo Tango connects the global tango community. What features would you be excited to help build?",
+        "We have both technical and non-technical volunteer opportunities. What type of work energizes you most?",
+        "How much time per week could you realistically commit to volunteer work?",
+        "Do you prefer working independently or as part of a team?",
+        "Are you comfortable with pair programming or code reviews?",
+        "What's your experience with agile/sprint-based development?",
+        "We use GitHub for collaboration. Are you comfortable with Git workflows?",
+        "Would you prefer to work on new features, bug fixes, or documentation?",
+        "Finally, what's the best way to communicate with you - Slack, email, or our platform messaging?"
+      ];
+      return fallbackQuestions[Math.min(questionNumber - 1, fallbackQuestions.length - 1)];
+    }
+  }, [sessionId, volunteerId]);
+
+  useEffect(() => {
+    if (!sessionId || !volunteerId) {
+      toast({
+        title: "Missing session",
+        description: "Please start from the Talent Match page",
+        variant: "destructive"
+      });
+      setLocation("/talent-match");
+      return;
+    }
+
+    if (!isInitialized && messages.length === 0) {
+      setIsInitialized(true);
+      (async () => {
+        setIsLoading(true);
+        const firstQuestion = await generateResumeQuestion(1, []);
+        setMessages([{
+          id: "1",
+          role: "assistant",
+          content: firstQuestion,
+          timestamp: new Date(),
+          phase: "resume"
+        }]);
+        setInterviewState(prev => ({ ...prev, resumeQuestionsAsked: 1 }));
+        setIsLoading(false);
+      })();
+    }
+  }, [sessionId, volunteerId, isInitialized, messages.length, generateResumeQuestion, setLocation, toast]);
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
+
+  const handleSend = async () => {
+    if (!input.trim() || isLoading) return;
+
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      role: "user",
+      content: input,
+      timestamp: new Date(),
+      phase: interviewState.phase
+    };
+
+    setMessages(prev => [...prev, userMessage]);
+    setInput("");
+    setIsLoading(true);
+
+    try {
+      await apiRequest("POST", `/api/v1/clarifier/${sessionId}/message`, {
+        role: "user",
+        message: input
+      });
+
+      if (interviewState.phase === "resume") {
+        const newAnswers = [...interviewState.resumeAnswers, input];
+        const newQuestionCount = interviewState.resumeQuestionsAsked + 1;
+
+        if (newQuestionCount > TOTAL_RESUME_QUESTIONS) {
+          const transitionMessage: Message = {
+            id: (Date.now() + 1).toString(),
+            role: "assistant",
+            content: "Excellent! I now have a great understanding of your background and experience. Let's move to Phase 2 where we'll discuss specific ways you can contribute to Mundo Tango.",
+            timestamp: new Date(),
+            phase: "work"
+          };
+          setMessages(prev => [...prev, transitionMessage]);
+
+          setInterviewState(prev => ({
+            ...prev,
+            phase: "work",
+            resumeAnswers: newAnswers
+          }));
+
+          const workQuestion = await generateWorkQuestion(1, [], newAnswers);
+          const workMessage: Message = {
+            id: (Date.now() + 2).toString(),
+            role: "assistant",
+            content: workQuestion,
+            timestamp: new Date(),
+            phase: "work"
+          };
+          setMessages(prev => [...prev, workMessage]);
+          setInterviewState(prev => ({ ...prev, workQuestionsAsked: 1 }));
+        } else {
+          setInterviewState(prev => ({
+            ...prev,
+            resumeAnswers: newAnswers,
+            resumeQuestionsAsked: newQuestionCount
+          }));
+
+          const nextQuestion = await generateResumeQuestion(newQuestionCount, newAnswers);
+          const aiMessage: Message = {
+            id: (Date.now() + 1).toString(),
+            role: "assistant",
+            content: nextQuestion,
+            timestamp: new Date(),
+            phase: "resume"
+          };
+          setMessages(prev => [...prev, aiMessage]);
+        }
+      } else if (interviewState.phase === "work") {
+        const newAnswers = [...interviewState.workAnswers, input];
+        const newQuestionCount = interviewState.workQuestionsAsked + 1;
+
+        if (newQuestionCount > TOTAL_WORK_QUESTIONS) {
+          await apiRequest("POST", `/api/v1/clarifier/${sessionId}/complete`);
+
+          setInterviewState(prev => ({
+            ...prev,
+            phase: "complete",
+            workAnswers: newAnswers
+          }));
+
+          const userName = user?.name || user?.username || "there";
+          const completionMessage: Message = {
+            id: (Date.now() + 1).toString(),
+            role: "assistant",
+            content: `Thank you so much, ${userName}! 
+
+Your interview is complete! Here's what happens next:
+
+- Your profile has been submitted to our admin team for review
+- AI has matched your skills with open volunteer opportunities
+- You'll receive a notification when your assignments are approved
+
+Based on our conversation, I've identified several great opportunities that match your background and interests. You can view your matched assignments in the H2AC Dashboard.
+
+Welcome to the Mundo Tango volunteer community! We're excited to have you contribute to connecting the global tango community.`,
+            timestamp: new Date(),
+            phase: "complete"
+          };
+          setMessages(prev => [...prev, completionMessage]);
+        } else {
+          setInterviewState(prev => ({
+            ...prev,
+            workAnswers: newAnswers,
+            workQuestionsAsked: newQuestionCount
+          }));
+
+          const nextQuestion = await generateWorkQuestion(newQuestionCount, newAnswers, interviewState.resumeAnswers);
+          const aiMessage: Message = {
+            id: (Date.now() + 1).toString(),
+            role: "assistant",
+            content: nextQuestion,
+            timestamp: new Date(),
+            phase: "work"
+          };
+          setMessages(prev => [...prev, aiMessage]);
+        }
+      }
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to process your response",
+        variant: "destructive"
+      });
+
+      const fallbackMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: "assistant",
+        content: "I apologize, but I had trouble processing that. Could you please try again?",
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, fallbackMessage]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const getPhaseLabel = () => {
+    switch (interviewState.phase) {
+      case "resume": return "Phase 1: Resume Deep-Dive";
+      case "work": return "Phase 2: Work Assignment Matching";
+      case "complete": return "Interview Complete!";
+    }
+  };
+
+  const getPhaseDescription = () => {
+    switch (interviewState.phase) {
+      case "resume": return `Question ${Math.min(interviewState.resumeQuestionsAsked, TOTAL_RESUME_QUESTIONS)} of ${TOTAL_RESUME_QUESTIONS}`;
+      case "work": return `Question ${Math.min(interviewState.workQuestionsAsked, TOTAL_WORK_QUESTIONS)} of ${TOTAL_WORK_QUESTIONS}`;
+      case "complete": return "All questions answered";
+    }
+  };
+
+  return (
+    <SelfHealingErrorBoundary pageName="Talent Match Interview" fallbackRoute="/talent-match">
+      <PageLayout title="AI Interview" showBreadcrumbs>
+        <SEO
+          title="AI Interview - Mundo Tango Talent Match"
+          description="Complete your volunteer interview with Mr Blue AI to get matched with the perfect opportunities."
+        />
+
+        <div className="h-full flex flex-col" data-testid="page-talent-match-interview">
+          <div className="border-b glass-topbar p-4">
+            <div className="container mx-auto max-w-4xl">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Bot className="h-6 w-6 text-primary" />
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2">
+                    <h1 className="text-lg font-semibold" data-testid="heading-interview-title">Mr. Blue AI Interview</h1>
+                    <Badge 
+                      variant={interviewState.phase === "complete" ? "default" : "secondary"}
+                      data-testid="badge-phase"
+                    >
+                      {interviewState.phase === "resume" && <FileText className="w-3 h-3 mr-1" />}
+                      {interviewState.phase === "work" && <Briefcase className="w-3 h-3 mr-1" />}
+                      {interviewState.phase === "complete" && <CheckCircle className="w-3 h-3 mr-1" />}
+                      {getPhaseLabel()}
+                    </Badge>
+                  </div>
+                  <p className="text-sm text-muted-foreground" data-testid="text-phase-description">
+                    {getPhaseDescription()}
+                  </p>
+                </div>
+                {interviewState.phase !== "complete" && (
+                  <Sparkles className="h-5 w-5 text-primary animate-pulse" />
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex justify-between text-xs text-muted-foreground">
+                  <span>Interview Progress</span>
+                  <span>{Math.round(totalProgress())}%</span>
+                </div>
+                <Progress value={totalProgress()} className="h-2" data-testid="progress-interview" />
+                <div className="flex gap-4 text-xs">
+                  <div className="flex items-center gap-1">
+                    <div className={`w-2 h-2 rounded-full ${interviewState.phase === "resume" ? "bg-primary" : interviewState.resumeQuestionsAsked >= TOTAL_RESUME_QUESTIONS ? "bg-green-500" : "bg-muted"}`} />
+                    <span className={interviewState.phase === "resume" ? "text-primary" : ""}>Resume ({Math.min(interviewState.resumeQuestionsAsked, TOTAL_RESUME_QUESTIONS)}/{TOTAL_RESUME_QUESTIONS})</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <div className={`w-2 h-2 rounded-full ${interviewState.phase === "work" ? "bg-primary" : interviewState.workQuestionsAsked >= TOTAL_WORK_QUESTIONS ? "bg-green-500" : "bg-muted"}`} />
+                    <span className={interviewState.phase === "work" ? "text-primary" : ""}>Work Assignment ({Math.min(interviewState.workQuestionsAsked, TOTAL_WORK_QUESTIONS)}/{TOTAL_WORK_QUESTIONS})</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <ScrollArea className="flex-1 p-4">
+            <div className="container mx-auto max-w-4xl space-y-4">
+              <AnimatePresence>
+                {messages.map((message, idx) => (
+                  <motion.div
+                    key={message.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: idx * 0.02 }}
+                    className={`flex gap-3 ${message.role === "user" ? "justify-end" : "justify-start"}`}
+                  >
+                    {message.role === "assistant" && (
+                      <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                        <Bot className="h-5 w-5 text-primary" />
+                      </div>
+                    )}
+
+                    <div className={`max-w-[75%] ${message.role === "user" ? "order-first" : ""}`}>
+                      <Card className={message.role === "user" ? "bg-primary text-primary-foreground" : "glass-card"}>
+                        <CardContent className="pt-4 pb-3">
+                          <p className="text-sm whitespace-pre-wrap" data-testid={`message-${message.role}-${idx}`}>{message.content}</p>
+                          <p className="text-xs opacity-60 mt-2">
+                            {message.timestamp.toLocaleTimeString()}
+                          </p>
+                        </CardContent>
+                      </Card>
+                    </div>
+
+                    {message.role === "user" && (
+                      <div className="h-8 w-8 rounded-full bg-accent/10 flex items-center justify-center flex-shrink-0">
+                        <User className="h-5 w-5 text-accent" />
+                      </div>
+                    )}
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+
+              {isLoading && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="flex gap-3"
+                >
+                  <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
+                    <Bot className="h-5 w-5 text-primary animate-pulse" />
+                  </div>
+                  <Card className="glass-card">
+                    <CardContent className="pt-4 pb-3">
+                      <div className="flex gap-1">
+                        <div className="h-2 w-2 rounded-full bg-primary/40 animate-bounce" style={{ animationDelay: "0ms" }} />
+                        <div className="h-2 w-2 rounded-full bg-primary/40 animate-bounce" style={{ animationDelay: "150ms" }} />
+                        <div className="h-2 w-2 rounded-full bg-primary/40 animate-bounce" style={{ animationDelay: "300ms" }} />
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              )}
+
+              <div ref={scrollRef} />
+            </div>
+          </ScrollArea>
+
+          <div className="border-t glass-card p-4">
+            <div className="container mx-auto max-w-4xl">
+              {interviewState.phase !== "complete" ? (
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    handleSend();
+                  }}
+                  className="flex gap-2"
+                >
+                  <Input
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    placeholder="Type your answer..."
+                    disabled={isLoading}
+                    className="flex-1"
+                    data-testid="input-interview-answer"
+                  />
+                  <Button
+                    type="submit"
+                    disabled={!input.trim() || isLoading}
+                    size="icon"
+                    data-testid="button-send-answer"
+                  >
+                    <Send className="h-4 w-4" />
+                  </Button>
+                </form>
+              ) : (
+                <div className="flex gap-3 justify-center">
+                  <Button
+                    onClick={() => setLocation(returnTo)}
+                    className="gap-2"
+                    data-testid="button-view-dashboard"
+                  >
+                    View H2AC Dashboard
+                    <ArrowRight className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => setLocation("/")}
+                    className="gap-2"
+                    data-testid="button-go-home"
+                  >
+                    <Home className="h-4 w-4" />
+                    Go Home
+                  </Button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </PageLayout>
+    </SelfHealingErrorBoundary>
+  );
+}

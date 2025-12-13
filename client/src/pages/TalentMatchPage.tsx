@@ -233,7 +233,7 @@ export default function TalentMatchPage() {
         description: "Starting AI interview. After completion, visit H2AC Dashboard for your agent assignments.",
       });
 
-      setLocation(`/mr-blue-chat?session=${session.id}&volunteer=${volunteer.id}&returnTo=/h2ac-dashboard`);
+      setLocation(`/talent-match-interview?session=${session.id}&volunteer=${volunteer.id}&returnTo=/h2ac-dashboard`);
 
     } catch (error: any) {
       toast({
