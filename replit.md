@@ -58,6 +58,33 @@ Core functionalities encompass social features such as events, groups, posts, no
 
 **FriendshipPage Enhancement (Dec 11, 2025):** The FriendshipPage Posts tab now uses `UnifiedMemoriesFeed` component instead of a manual PostItem loop, providing consistent animations and styling with the main feed. This ensures shared posts between friends display with the same visual experience as the main social feed.
 
+### Talent Match AI System (Dec 13, 2025)
+The Talent Match AI is a volunteer onboarding and skill-matching system integrated with the H2AC (Human-to-Agent Communication) Dashboard.
+
+**Key Components:**
+- `/talent-match` - Main volunteer onboarding flow with resume upload and AI interview
+- `/h2ac-dashboard` - Dashboard showing agent status, matched opportunities, and communications
+- `server/talent-match-routes.ts` - API routes for volunteers, tasks, assignments, and AI clarifier sessions
+
+**API Endpoints:**
+- `GET /api/v1/volunteers/me` - Get current authenticated user's volunteer profile
+- `POST /api/v1/volunteers` - Create volunteer profile
+- `POST /api/v1/volunteers/:id/resume` - Upload and parse resume with AI skill extraction
+- `POST /api/v1/volunteers/:id/clarifier` - Start AI interview session
+- `POST /api/v1/clarifier/:id/message` - Send message in AI interview (uses Groq/Bifrost)
+- `POST /api/v1/clarifier/:id/complete` - Complete interview and match to tasks
+
+**Talent Match Agents:**
+- Resume Analyzer - Extracts skills from uploaded resumes
+- Role Matcher - Matches volunteer profiles to open opportunities
+- Interview Clarifier - Conducts AI-powered skill clarification interviews
+- Assignment Coordinator - Coordinates task assignments based on matches
+
+**Profile Enrichment:**
+- GitHub profile fetching via `/api/v1/enrich-github/:username`
+- LinkedIn URL validation via `/api/v1/validate-linkedin`
+- Multi-URL enrichment via `/api/v1/enrich-profile`
+
 ### International Payment System (MB.MD Pattern 49)
 A comprehensive multi-gateway payment orchestration system supporting global payments:
 
