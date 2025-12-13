@@ -18,10 +18,17 @@ export function createTalentMatchRoutes(storage: IStorage) {
   // VOLUNTEER MANAGEMENT
   // ============================================================================
 
-  // Create volunteer profile
+  // Create volunteer profile (or return existing)
   router.post("/volunteers", async (req, res) => {
     try {
       const { userId, profile, skills, availability, hoursPerWeek } = req.body;
+      
+      // Check if volunteer already exists for this user
+      const existing = await storage.getVolunteerByUserId(userId);
+      if (existing) {
+        // Return existing profile instead of creating duplicate
+        return res.json(existing);
+      }
       
       const volunteer = await storage.createVolunteer({
         userId,
