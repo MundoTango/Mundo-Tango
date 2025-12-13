@@ -69,7 +69,12 @@ export default function TalentMatchInterviewPage() {
   });
 
   const { data: resume } = useQuery({
-    queryKey: [`/api/v1/volunteers/${volunteerId}/resume`],
+    queryKey: ['/api/v1/volunteers', volunteerId, 'resume'],
+    queryFn: async () => {
+      const response = await fetch(`/api/v1/volunteers/${volunteerId}/resume`, { credentials: 'include' });
+      if (!response.ok) return null;
+      return response.json();
+    },
     enabled: !!volunteerId
   });
 
@@ -211,7 +216,10 @@ If question ${TOTAL_WORK_QUESTIONS}, ask about their availability and preferred 
       return;
     }
 
-    if (!isInitialized && messages.length === 0) {
+    // Wait for resume data to load before starting interview
+    // resume can be null (no resume uploaded) or object (resume data)
+    // We check resume !== undefined to ensure the query has completed
+    if (!isInitialized && messages.length === 0 && resume !== undefined) {
       setIsInitialized(true);
       (async () => {
         setIsLoading(true);
@@ -227,7 +235,7 @@ If question ${TOTAL_WORK_QUESTIONS}, ask about their availability and preferred 
         setIsLoading(false);
       })();
     }
-  }, [sessionId, volunteerId, isInitialized, messages.length, generateResumeQuestion, setLocation, toast]);
+  }, [sessionId, volunteerId, isInitialized, messages.length, resume, generateResumeQuestion, setLocation, toast]);
 
   useEffect(() => {
     if (scrollRef.current) {

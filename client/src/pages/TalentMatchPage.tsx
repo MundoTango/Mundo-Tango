@@ -27,7 +27,6 @@ export default function TalentMatchPage() {
   const [step, setStep] = useState<"upload" | "clarifier" | "results">("upload");
   const [uploadedDocuments, setUploadedDocuments] = useState<UploadedDocument[]>([]);
   const [linkedinUrl, setLinkedinUrl] = useState("");
-  const [githubUrl, setGithubUrl] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
@@ -148,10 +147,10 @@ export default function TalentMatchPage() {
 
   const handleStartClarifier = async () => {
     const hasDocuments = uploadedDocuments.length > 0 && uploadedDocuments.some(d => d.status === "parsed");
-    if (!hasDocuments && !linkedinUrl && !githubUrl) {
+    if (!hasDocuments && !linkedinUrl) {
       toast({
         title: "Information required",
-        description: "Please upload at least one resume, or provide your LinkedIn or GitHub URL",
+        description: "Please upload at least one resume, or provide your LinkedIn URL",
         variant: "destructive"
       });
       return;
@@ -161,15 +160,6 @@ export default function TalentMatchPage() {
       toast({
         title: "Invalid LinkedIn URL",
         description: "Please enter a valid LinkedIn profile URL (e.g., linkedin.com/in/yourname)",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    if (githubUrl && !validateUrl(githubUrl, "github")) {
-      toast({
-        title: "Invalid GitHub URL",
-        description: "Please enter a valid GitHub profile URL (e.g., github.com/yourname)",
         variant: "destructive"
       });
       return;
@@ -201,7 +191,6 @@ export default function TalentMatchPage() {
         profile: {
           hasDocuments: uploadedDocuments.length > 0,
           linkedinUrl,
-          githubUrl,
           uploadedFileNames: uploadedDocuments.map(d => d.file.name)
         },
         skills: [],
@@ -217,10 +206,10 @@ export default function TalentMatchPage() {
           
           await apiRequest("POST", `/api/v1/volunteers/${volunteer.id}/resume`, {
             filename: doc.file.name,
-            fileUrl: linkedinUrl || githubUrl || "",
+            fileUrl: linkedinUrl || "",
             fileBuffer: isBinaryFile ? doc.base64Buffer : undefined,
             parsedText: isBinaryFile ? undefined : doc.text,
-            links: [linkedinUrl, githubUrl].filter(Boolean)
+            links: [linkedinUrl].filter(Boolean)
           });
         }
       }
@@ -461,51 +450,30 @@ export default function TalentMatchPage() {
                   </div>
 
                   {/* Profile Links */}
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <div className="space-y-3">
-                      <Label htmlFor="linkedin-url" className="text-base font-medium flex items-center gap-2">
-                        <LinkIcon className="h-4 w-4" />
-                        LinkedIn Profile
-                      </Label>
-                      <Input
-                        id="linkedin-url"
-                        type="url"
-                        placeholder="https://linkedin.com/in/yourname"
-                        value={linkedinUrl}
-                        onChange={(e) => setLinkedinUrl(e.target.value)}
-                        data-testid="input-linkedin"
-                        className={linkedinUrl && !validateUrl(linkedinUrl, "linkedin") ? "border-destructive" : ""}
-                      />
-                      {linkedinUrl && !validateUrl(linkedinUrl, "linkedin") && (
-                        <p className="text-sm text-destructive">Please enter a valid LinkedIn profile URL</p>
-                      )}
-                    </div>
-
-                    <div className="space-y-3">
-                      <Label htmlFor="github-url" className="text-base font-medium flex items-center gap-2">
-                        <LinkIcon className="h-4 w-4" />
-                        GitHub Profile
-                      </Label>
-                      <Input
-                        id="github-url"
-                        type="url"
-                        placeholder="https://github.com/yourname"
-                        value={githubUrl}
-                        onChange={(e) => setGithubUrl(e.target.value)}
-                        data-testid="input-github"
-                        className={githubUrl && !validateUrl(githubUrl, "github") ? "border-destructive" : ""}
-                      />
-                      {githubUrl && !validateUrl(githubUrl, "github") && (
-                        <p className="text-sm text-destructive">Please enter a valid GitHub profile URL</p>
-                      )}
-                    </div>
+                  <div className="space-y-3">
+                    <Label htmlFor="linkedin-url" className="text-base font-medium flex items-center gap-2">
+                      <LinkIcon className="h-4 w-4" />
+                      LinkedIn Profile
+                    </Label>
+                    <Input
+                      id="linkedin-url"
+                      type="url"
+                      placeholder="https://linkedin.com/in/yourname"
+                      value={linkedinUrl}
+                      onChange={(e) => setLinkedinUrl(e.target.value)}
+                      data-testid="input-linkedin"
+                      className={linkedinUrl && !validateUrl(linkedinUrl, "linkedin") ? "border-destructive" : ""}
+                    />
+                    {linkedinUrl && !validateUrl(linkedinUrl, "linkedin") && (
+                      <p className="text-sm text-destructive">Please enter a valid LinkedIn profile URL</p>
+                    )}
                   </div>
 
                   {/* Submit Button */}
                   <div className="pt-6">
                     <Button
                       onClick={handleStartClarifier}
-                      disabled={isSubmitting || authLoading || (uploadedDocuments.length === 0 && !linkedinUrl && !githubUrl)}
+                      disabled={isSubmitting || authLoading || (uploadedDocuments.length === 0 && !linkedinUrl)}
                       size="lg"
                       className="w-full gap-2 text-base"
                       data-testid="button-start-clarifier"
