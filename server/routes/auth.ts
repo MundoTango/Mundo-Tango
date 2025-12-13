@@ -19,11 +19,14 @@ const router = Router();
 
 const BCRYPT_ROUNDS = parseInt(process.env.BCRYPT_ROUNDS || "10", 10);
 
+const VALID_INVITE_CODES = ["nomad"];
+
 const registerSchema = insertUserSchema.extend({
   password: z.string().min(8).max(100),
   email: z.string().email(),
   username: z.string().min(3).max(30),
   name: z.string().min(1).max(100),
+  inviteCode: z.string().min(1),
 });
 
 const loginSchema = z.object({
@@ -51,9 +54,9 @@ const verify2FASchema = z.object({
 
 const waitlistSchema = z.object({
   email: z.string().email(),
-  name: z.string().optional(),
-  username: z.string().min(3).max(30).optional(),
-  password: z.string().min(8).max(100).optional(),
+  name: z.string().optional().transform(v => v === "" ? undefined : v),
+  username: z.string().optional().transform(v => v === "" ? undefined : v),
+  password: z.string().optional().transform(v => v === "" ? undefined : v),
 });
 
 router.get("/check-username/:username", async (req: Request, res: Response) => {
@@ -81,6 +84,11 @@ router.get("/check-email/:email", async (req: Request, res: Response) => {
 router.post("/register", async (req: Request, res: Response) => {
   try {
     const validatedData = registerSchema.parse(req.body);
+
+    // Validate invite code - server-side enforcement
+    if (!VALID_INVITE_CODES.includes(validatedData.inviteCode.toLowerCase().trim())) {
+      return res.status(403).json({ message: "Invalid invite code. Registration requires a valid invite code." });
+    }
 
     const existingEmail = await storage.getUserByEmail(validatedData.email);
     if (existingEmail) {

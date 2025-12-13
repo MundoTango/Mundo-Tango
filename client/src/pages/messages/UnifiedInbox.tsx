@@ -396,8 +396,6 @@ export default function UnifiedInbox() {
       </div>
     );
   };
-  messages: Message[];
-}
 
 function formatMessageTime(dateStr: string) {
   const date = new Date(dateStr);

@@ -159,7 +159,7 @@ export default function RegisterPage() {
 
     try {
       if (isCodeValid) {
-        await register({ name, username, email, password });
+        await register({ name, username, email, password, inviteCode });
       } else {
         const response = await fetch("/api/auth/waitlist", {
           method: "POST",
