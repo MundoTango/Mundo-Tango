@@ -90,7 +90,8 @@ export function verifyCsrfToken(req: Request, res: Response, next: NextFunction)
   
   // Skip CSRF for public event source suggestion (community contribution, rate-limited)
   const publicEventEndpoints = [
-    "/api/public/event-sources"  // Event source suggestions from onboarding
+    "/api/public/event-sources",  // Event source suggestions from onboarding
+    "/api/public-stats/event-sources/suggest"  // User-suggested event sources
   ];
   if (publicEventEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
     return next();
@@ -273,7 +274,8 @@ export function verifyDoubleSubmitCookie(req: Request, res: Response, next: Next
   
   // Skip CSRF for public event source suggestion (community contribution, rate-limited)
   const publicEventEndpoints = [
-    "/api/public/event-sources"  // Event source suggestions from onboarding
+    "/api/public/event-sources",  // Event source suggestions from onboarding
+    "/api/public-stats/event-sources/suggest"  // User-suggested event sources
   ];
   if (publicEventEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
     return next();
