@@ -8,7 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { SEO } from "@/components/SEO";
-import { Eye, EyeOff, Check, X, Loader2, Sparkles, Heart, Users, Globe } from "lucide-react";
+import { Eye, EyeOff, Check, X, Loader2, Sparkles, Heart, Users, Globe, Lock, Mail, HandHeart, CreditCard, ArrowRight, KeyRound } from "lucide-react";
 import { PublicLayout } from "@/components/PublicLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { motion } from "framer-motion";
@@ -16,6 +16,12 @@ import { useQuery } from "@tanstack/react-query";
 import tangoHeroImage from "@assets/stock_images/elegant_professional_e4da136e.jpg";
 
 export default function RegisterPage() {
+  const [inviteCode, setInviteCode] = useState("");
+  const [isCodeValid, setIsCodeValid] = useState(false);
+  const [waitlistEmail, setWaitlistEmail] = useState("");
+  const [waitlistName, setWaitlistName] = useState("");
+  const [isWaitlistLoading, setIsWaitlistLoading] = useState(false);
+  const [waitlistSuccess, setWaitlistSuccess] = useState(false);
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -31,6 +37,44 @@ export default function RegisterPage() {
   const [isCheckingEmail, setIsCheckingEmail] = useState(false);
   const { register } = useAuth();
   const { toast } = useToast();
+
+  const handleCodeChange = (code: string) => {
+    setInviteCode(code);
+    setIsCodeValid(code.toLowerCase().trim() === "nomad");
+  };
+
+  const handleWaitlistSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsWaitlistLoading(true);
+    
+    try {
+      const response = await fetch("/api/auth/waitlist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: waitlistEmail, name: waitlistName || undefined }),
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to join waitlist");
+      }
+      
+      setWaitlistSuccess(true);
+      toast({
+        title: "Welcome to the waitlist!",
+        description: "We'll notify you when registration opens.",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Couldn't join waitlist",
+        description: error.message || "Please try again",
+        variant: "destructive",
+      });
+    } finally {
+      setIsWaitlistLoading(false);
+    }
+  };
   
   const { data: stats } = useQuery<{
     dancers: number | null;
@@ -187,15 +231,17 @@ export default function RegisterPage() {
               <div className="text-center mb-8">
                 <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-welcome">
                   <Sparkles className="w-3 h-3 mr-1" />
-                  Begin Your Journey
+                  {isCodeValid ? "Begin Your Journey" : "Invite Only"}
                 </Badge>
                 
                 <h1 className="text-5xl md:text-6xl font-serif font-bold text-white mb-4 tracking-tight leading-tight" data-testid="heading-hero">
-                  Join Mundo Tango
+                  {isCodeValid ? "Join Mundo Tango" : "Welcome to Mundo Tango"}
                 </h1>
                 
                 <p className="text-lg text-white/80 max-w-md mx-auto mb-8">
-                  Connect with dancers worldwide, discover milongas, and immerse yourself in the passionate world of Argentine tango
+                  {isCodeValid 
+                    ? "Connect with dancers worldwide, discover milongas, and immerse yourself in the passionate world of Argentine tango"
+                    : "Registration is currently invite-only. Enter your invite code or join the waitlist to be notified when we open."}
                 </p>
 
                 {/* Community Stats - Real data from /api/stats/public */}
@@ -223,8 +269,51 @@ export default function RegisterPage() {
                 )}
               </div>
 
-              {/* Glassmorphic Registration Form */}
-              <motion.form
+              {/* Invite Code Input - Always Visible */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.1 }}
+                className="backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl p-4 md:p-6 shadow-2xl mb-4"
+                data-testid="section-invite-code"
+              >
+                <div className="space-y-3">
+                  <Label htmlFor="inviteCode" className="text-sm font-medium text-white flex items-center gap-2">
+                    <KeyRound className="w-4 h-4" />
+                    Have an invite code?
+                  </Label>
+                  <div className="relative">
+                    <Input
+                      id="inviteCode"
+                      type="text"
+                      placeholder="Enter your invite code"
+                      value={inviteCode}
+                      onChange={(e) => handleCodeChange(e.target.value)}
+                      data-testid="input-invite-code"
+                      className="bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-white/50 focus:border-white/40 pr-10"
+                    />
+                    {inviteCode && (
+                      isCodeValid ? (
+                        <Check className="absolute right-3 top-3 h-4 w-4 text-green-400" data-testid="icon-code-valid" />
+                      ) : (
+                        <X className="absolute right-3 top-3 h-4 w-4 text-red-400" data-testid="icon-code-invalid" />
+                      )
+                    )}
+                  </div>
+                  {inviteCode && !isCodeValid && (
+                    <p className="text-sm text-red-400">Invalid invite code</p>
+                  )}
+                  {isCodeValid && (
+                    <p className="text-sm text-green-400 flex items-center gap-1">
+                      <Check className="h-3 w-3" /> Code accepted! You can now register.
+                    </p>
+                  )}
+                </div>
+              </motion.div>
+
+              {/* Conditional: Show Registration Form if code valid, else Waitlist */}
+              {isCodeValid ? (
+                <motion.form
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
@@ -432,6 +521,150 @@ export default function RegisterPage() {
                   </Button>
                 </div>
               </motion.form>
+              ) : (
+                /* Waitlist Form - Shown when no valid code */
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, delay: 0.2 }}
+                  className="backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl p-6 md:p-8 shadow-2xl"
+                  data-testid="section-waitlist"
+                >
+                  {waitlistSuccess ? (
+                    <div className="text-center py-6">
+                      <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <Check className="w-8 h-8 text-green-400" />
+                      </div>
+                      <h3 className="text-xl font-semibold text-white mb-2">You're on the list!</h3>
+                      <p className="text-white/70 mb-6">We'll email you when registration opens.</p>
+                      
+                      <div className="space-y-3">
+                        <p className="text-sm text-white/60">While you wait, you can:</p>
+                        <div className="flex flex-col gap-3">
+                          <Link href="/talent-match">
+                            <Button 
+                              variant="outline" 
+                              className="w-full border-white/30 text-white hover:bg-white/10"
+                              data-testid="button-volunteer-cta"
+                            >
+                              <HandHeart className="mr-2 h-4 w-4" />
+                              Volunteer with us
+                              <ArrowRight className="ml-2 h-4 w-4" />
+                            </Button>
+                          </Link>
+                          <Link href="/crowdfunding">
+                            <Button 
+                              variant="outline" 
+                              className="w-full border-white/30 text-white hover:bg-white/10"
+                              data-testid="button-support-cta"
+                            >
+                              <CreditCard className="mr-2 h-4 w-4" />
+                              Support Mundo Tango
+                              <ArrowRight className="ml-2 h-4 w-4" />
+                            </Button>
+                          </Link>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <form onSubmit={handleWaitlistSubmit} className="space-y-4" data-testid="form-waitlist">
+                      <div className="text-center mb-4">
+                        <Lock className="w-10 h-10 text-white/50 mx-auto mb-3" />
+                        <h3 className="text-lg font-semibold text-white">Join the Waitlist</h3>
+                        <p className="text-sm text-white/70">Be first to know when we open registration</p>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="waitlistName" className="text-sm font-medium text-white">Name (optional)</Label>
+                        <Input
+                          id="waitlistName"
+                          type="text"
+                          placeholder="Your name"
+                          value={waitlistName}
+                          onChange={(e) => setWaitlistName(e.target.value)}
+                          disabled={isWaitlistLoading}
+                          data-testid="input-waitlist-name"
+                          className="bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-white/50 focus:border-white/40"
+                        />
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="waitlistEmail" className="text-sm font-medium text-white">Email</Label>
+                        <div className="relative">
+                          <Mail className="absolute left-3 top-3 h-4 w-4 text-white/50" />
+                          <Input
+                            id="waitlistEmail"
+                            type="email"
+                            placeholder="your@email.com"
+                            value={waitlistEmail}
+                            onChange={(e) => setWaitlistEmail(e.target.value)}
+                            required
+                            disabled={isWaitlistLoading}
+                            data-testid="input-waitlist-email"
+                            className="bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-white/50 focus:border-white/40 pl-10"
+                          />
+                        </div>
+                      </div>
+                      
+                      <Button
+                        type="submit"
+                        className="w-full bg-white text-black hover:bg-white/90"
+                        size="lg"
+                        disabled={isWaitlistLoading || !waitlistEmail}
+                        data-testid="button-join-waitlist"
+                      >
+                        {isWaitlistLoading ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Joining...
+                          </>
+                        ) : (
+                          <>
+                            <Mail className="mr-2 h-4 w-4" />
+                            Join Waitlist
+                          </>
+                        )}
+                      </Button>
+                      
+                      <div className="relative py-4">
+                        <div className="absolute inset-0 flex items-center">
+                          <div className="w-full border-t border-white/20" />
+                        </div>
+                        <div className="relative flex justify-center text-xs uppercase">
+                          <span className="bg-transparent px-2 text-white/50">Or help us now</span>
+                        </div>
+                      </div>
+                      
+                      <div className="flex flex-col gap-3">
+                        <Link href="/talent-match">
+                          <Button 
+                            type="button"
+                            variant="outline" 
+                            className="w-full border-white/30 text-white hover:bg-white/10"
+                            data-testid="button-volunteer-waitlist"
+                          >
+                            <HandHeart className="mr-2 h-4 w-4" />
+                            Volunteer with us
+                            <ArrowRight className="ml-2 h-4 w-4" />
+                          </Button>
+                        </Link>
+                        <Link href="/crowdfunding">
+                          <Button 
+                            type="button"
+                            variant="outline" 
+                            className="w-full border-white/30 text-white hover:bg-white/10"
+                            data-testid="button-support-waitlist"
+                          >
+                            <CreditCard className="mr-2 h-4 w-4" />
+                            Support Mundo Tango
+                            <ArrowRight className="ml-2 h-4 w-4" />
+                          </Button>
+                        </Link>
+                      </div>
+                    </form>
+                  )}
+                </motion.div>
+              )}
 
               <motion.p
                 initial={{ opacity: 0 }}

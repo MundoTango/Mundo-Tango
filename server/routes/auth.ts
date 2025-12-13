@@ -49,6 +49,11 @@ const verify2FASchema = z.object({
   code: z.string().length(6),
 });
 
+const waitlistSchema = z.object({
+  email: z.string().email(),
+  name: z.string().optional(),
+});
+
 router.get("/check-username/:username", async (req: Request, res: Response) => {
   try {
     const { username } = req.params;
@@ -295,6 +300,47 @@ router.post("/logout", async (req: Request, res: Response) => {
     res.json({ message: "Logout successful" });
   } catch (error) {
     console.error("Logout error:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+router.post("/waitlist", async (req: Request, res: Response) => {
+  try {
+    const validatedData = waitlistSchema.parse(req.body);
+
+    const existingUser = await storage.getUserByEmail(validatedData.email);
+    if (existingUser) {
+      if (existingUser.waitlist) {
+        return res.status(409).json({ message: "You're already on the waitlist!" });
+      }
+      return res.status(409).json({ message: "This email is already registered. Please sign in instead." });
+    }
+
+    const tempUsername = `waitlist_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+    const tempPassword = await bcrypt.hash(crypto.randomBytes(32).toString("hex"), BCRYPT_ROUNDS);
+
+    await storage.createUser({
+      email: validatedData.email,
+      name: validatedData.name || "Waitlist User",
+      username: tempUsername,
+      password: tempPassword,
+      waitlist: true,
+      waitlistDate: new Date(),
+      isActive: false,
+    });
+
+    res.status(201).json({
+      message: "You've been added to the waitlist! We'll notify you when registration opens.",
+      success: true,
+    });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ 
+        message: "Validation error", 
+        errors: error.errors 
+      });
+    }
+    console.error("Waitlist signup error:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 });

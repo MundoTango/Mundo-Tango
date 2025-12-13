@@ -136,7 +136,7 @@ export function verifyCsrfToken(req: Request, res: Response, next: NextFunction)
   // Skip CSRF for auth endpoints in development/testing (Playwright E2E tests)
   // Production uses additional security: rate limiting, bot detection, CAPTCHA
   if (process.env.NODE_ENV === 'development') {
-    const authEndpoints = ["/api/auth/login", "/api/auth/register", "/api/auth/refresh"];
+    const authEndpoints = ["/api/auth/login", "/api/auth/register", "/api/auth/refresh", "/api/auth/waitlist"];
     if (authEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
       return next();
     }
@@ -296,7 +296,7 @@ export function verifyDoubleSubmitCookie(req: Request, res: Response, next: Next
   // Skip CSRF for auth endpoints in development/testing (Playwright E2E tests)
   // Production uses additional security: rate limiting, bot detection, CAPTCHA
   const isDev = process.env.NODE_ENV === 'development';
-  const authEndpoints = ["/api/auth/login", "/api/auth/register", "/api/auth/refresh"];
+  const authEndpoints = ["/api/auth/login", "/api/auth/register", "/api/auth/refresh", "/api/auth/waitlist"];
   const journeyEndpoints = ["/api/journey"]; // Internal API for recording development progress
   const travelScrapingEndpoints = ["/api/travel/scrape-accommodation", "/api/travel/scrape-transport"];
   const eventSeriesEndpoints = ["/api/event-series"]; // Event series management (TRACK A)
