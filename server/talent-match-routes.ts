@@ -229,11 +229,23 @@ export function createTalentMatchRoutes(storage: IStorage) {
       });
 
       if (role === "user") {
-        const systemPrompt = `You are an AI interviewer for Mundo Tango's volunteer program. Your goal is to:
-1. Ask follow-up questions about their technical skills
-2. Understand what they're passionate about building
-3. Detect their expertise level
-4. Be friendly and conversational
+        // MB.MD Fix: Fetch volunteer's resume for personalized AI context
+        const resume = await storage.getResumeByVolunteerId(session.volunteerId);
+        const resumeContext = resume?.parsedText 
+          ? `\n\nVolunteer's Resume/Background:\n${resume.parsedText.slice(0, 4000)}`
+          : '';
+        
+        const systemPrompt = `You are Mr Blue, the AI interviewer for Mundo Tango's volunteer program.
+${resumeContext}
+
+Your goal is to:
+1. Ask specific follow-up questions about their resume, projects, and technical skills
+2. Reference specific technologies, experiences, or projects from their background when asking questions
+3. Understand what they're passionate about building
+4. Detect their expertise level and preferred work style
+5. Be friendly, warm, and conversational
+
+Important: If you have resume context above, ask questions that directly reference their specific experience. Do NOT ask generic questions.
 Keep responses concise (2-3 sentences max).`;
 
         const messages = chatLog.map((msg: any) => ({

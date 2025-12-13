@@ -138,10 +138,50 @@ function detectComputerUseIntent(message: string): {
  */
 router.post('/api/mrblue/chat', authenticateToken, async (req, res) => {
   try {
-    const { message, context, voiceEnabled, selectedVoiceId } = req.body;
+    const { message, context, voiceEnabled, selectedVoiceId, systemPrompt: customSystemPrompt } = req.body;
     
     if (!message || typeof message !== 'string') {
       return res.status(400).json({ error: 'Message is required' });
+    }
+    
+    // MB.MD Fix: If custom systemPrompt provided (e.g., from Talent Match interview), use Groq AI
+    if (customSystemPrompt && typeof customSystemPrompt === 'string') {
+      console.log('[Mr. Blue] Using custom system prompt for AI response');
+      
+      try {
+        const Groq = require('groq-sdk');
+        const groq = new Groq({ apiKey: process.env.GROQ_API_KEY || '' });
+        
+        const aiResponse = await groq.chat.completions.create({
+          model: 'llama-3.3-70b-versatile',
+          messages: [
+            { role: 'system', content: customSystemPrompt },
+            { role: 'user', content: message }
+          ],
+          max_tokens: 300,
+          temperature: 0.7
+        });
+        
+        const responseContent = aiResponse.choices[0]?.message?.content || 'I apologize, I could not generate a response. Please try again.';
+        
+        return res.json({
+          response: responseContent,
+          role: 'assistant',
+          content: responseContent,
+          timestamp: new Date().toISOString(),
+          contextUsed: true,
+          aiGenerated: true
+        });
+      } catch (aiError: any) {
+        console.error('[Mr. Blue] AI generation error:', aiError);
+        return res.json({
+          response: 'I encountered an issue generating a response. Let me try a different approach - could you tell me more about your background?',
+          role: 'assistant',
+          content: 'I encountered an issue generating a response. Let me try a different approach - could you tell me more about your background?',
+          timestamp: new Date().toISOString(),
+          error: aiError.message
+        });
+      }
     }
     
     const userId = (req as any).user?.id;
