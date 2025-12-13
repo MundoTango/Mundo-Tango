@@ -26,6 +26,7 @@ import { CurrencyPicker } from "@/components/input/CurrencyPicker";
 import { getTimezoneFromCity } from "@/lib/timezoneUtils";
 import { FriendshipClosenessFilter } from "@/components/filters/FriendshipClosenessFilter";
 import type { ClosenessVisibility } from "@shared/schema";
+import { TANGO_ROLES, getBookableRoles } from "@/lib/tangoRoles";
 
 export default function EventCreationPage() {
   const [, navigate] = useLocation();
@@ -740,15 +741,11 @@ export default function EventCreationPage() {
                           <SelectValue placeholder="Select a role" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="dj">DJ</SelectItem>
-                          <SelectItem value="photographer">Photographer</SelectItem>
-                          <SelectItem value="videographer">Videographer</SelectItem>
-                          <SelectItem value="live_musician">Live Musician</SelectItem>
-                          <SelectItem value="sound_engineer">Sound Engineer</SelectItem>
-                          <SelectItem value="decorator">Decorator</SelectItem>
-                          <SelectItem value="host">Host</SelectItem>
-                          <SelectItem value="instructor">Instructor</SelectItem>
-                          <SelectItem value="event_coordinator">Event Coordinator</SelectItem>
+                          {getBookableRoles().map((role) => (
+                            <SelectItem key={role.value} value={role.value}>
+                              {role.label}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </div>

@@ -222,20 +222,8 @@ router.get("/search-pros-by-role", authenticateToken, async (req: AuthRequest, r
       return res.status(400).json({ error: "Role parameter is required" });
     }
 
-    // Map role names to tangoRoles values
-    const roleMapping: Record<string, string> = {
-      'dj': 'dj',
-      'photographer': 'photographer', 
-      'videographer': 'videographer',
-      'live_musician': 'musician',
-      'sound_engineer': 'sound_engineer',
-      'decorator': 'decorator',
-      'host': 'host',
-      'instructor': 'teacher',
-      'event_coordinator': 'organizer'
-    };
-
-    const mappedRole = roleMapping[role.toLowerCase()] || role.toLowerCase();
+    // Use role value directly - matches TANGO_ROLES from client/src/lib/tangoRoles.ts
+    const mappedRole = role.toLowerCase();
 
     // Build search query
     let query = db
