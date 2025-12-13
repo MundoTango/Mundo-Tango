@@ -262,9 +262,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // The login response doesn't include all profile fields
       await loadCurrentUser();
 
-      // Redirect to feed after successful login
-      // Use setTimeout to ensure state updates complete before navigation (fixes race condition)
-      setTimeout(() => navigate("/feed"), 0);
+      // Note: Redirect is handled by the caller (LoginPage) to support redirect query params
     } catch (error) {
       console.error("Login error:", error);
       throw error;
