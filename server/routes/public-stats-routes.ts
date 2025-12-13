@@ -349,6 +349,16 @@ router.post("/event-sources/suggest", async (req, res) => {
       return res.status(400).json({ error: "City and URL are required" });
     }
 
+    // Check for duplicate URL
+    const existing = await db.select({ id: eventScrapingSources.id })
+      .from(eventScrapingSources)
+      .where(eq(eventScrapingSources.url, url))
+      .limit(1);
+    
+    if (existing.length > 0) {
+      return res.status(400).json({ error: "This website has already been submitted" });
+    }
+
     await db.insert(eventScrapingSources).values({
       name: name || `User suggested: ${url}`,
       url,

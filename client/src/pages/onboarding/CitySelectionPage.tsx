@@ -66,6 +66,18 @@ export default function CitySelectionPage() {
   const handleAddSource = async () => {
     if (!newSourceUrl || !selectedCity) return;
     
+    // Basic URL validation
+    try {
+      new URL(newSourceUrl);
+    } catch {
+      toast({
+        title: "Invalid URL",
+        description: "Please enter a valid website URL (e.g., https://example.com)",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     setIsAddingSource(true);
     try {
       const response = await fetch("/api/public/event-sources/suggest", {
@@ -78,6 +90,8 @@ export default function CitySelectionPage() {
         }),
       });
       
+      const data = await response.json();
+      
       if (response.ok) {
         toast({
           title: "Thank you!",
@@ -85,11 +99,17 @@ export default function CitySelectionPage() {
         });
         setNewSourceUrl("");
         setShowAddSource(false);
+      } else {
+        toast({
+          title: "Submission failed",
+          description: data.error || "Please try again later.",
+          variant: "destructive",
+        });
       }
     } catch (error) {
       toast({
         title: "Failed to submit",
-        description: "Please try again later.",
+        description: "Please check your connection and try again.",
         variant: "destructive",
       });
     } finally {
