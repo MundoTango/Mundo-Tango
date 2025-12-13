@@ -35,6 +35,15 @@ export default function RegisterPage() {
   const { register } = useAuth();
   const { toast } = useToast();
 
+  // Store registration role from URL params for post-onboarding routing
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const role = urlParams.get('role');
+    if (role) {
+      localStorage.setItem('registrationRole', role);
+    }
+  }, []);
+
   const handleCodeChange = (code: string) => {
     setInviteCode(code);
     setIsCodeValid(code.toLowerCase().trim() === "nomad");

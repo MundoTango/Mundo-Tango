@@ -328,7 +328,7 @@ function VolunteerPageContent() {
                   <ArrowRight className="h-4 w-4 ml-2" />
                 </Button>
               </Link>
-              <Link href="/ambassadors">
+              <Link href="/register?role=ambassador">
                 <Button 
                   size="lg" 
                   variant="outline" 

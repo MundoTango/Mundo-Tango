@@ -121,12 +121,31 @@ export default function TangoRolesPage() {
       // This must happen before refreshUser updates user.isOnboardingComplete
       isCompletingRef.current = true;
       
-      // Check waitlist status BEFORE refreshing user state
+      // Check registration role and waitlist status BEFORE refreshing user state
+      const registrationRole = localStorage.getItem('registrationRole');
       const isWaitlistUser = user?.waitlist === true;
+      
+      // Clean up registration role from localStorage
+      if (registrationRole) {
+        localStorage.removeItem('registrationRole');
+      }
       
       if (refreshUser) await refreshUser();
       
-      if (isWaitlistUser) {
+      // Route based on registration role or waitlist status
+      if (registrationRole === 'volunteer') {
+        toast({
+          title: "Profile Complete!",
+          description: "Let's find the perfect volunteer opportunity for you.",
+        });
+        navigate("/talent-match");
+      } else if (registrationRole === 'ambassador') {
+        toast({
+          title: "Profile Complete!",
+          description: "Learn about becoming an ambassador for your city.",
+        });
+        navigate("/ambassadors");
+      } else if (isWaitlistUser) {
         toast({
           title: "Profile Complete!",
           description: "Thank you for joining! Explore ways to support and volunteer.",
