@@ -141,6 +141,107 @@ function SupportPageContent() {
         </div>
       </section>
 
+      {/* Other Ways to Help - Moved to top for waitlist users */}
+      <section className="py-16" data-testid="section-other-ways">
+        <div className="container mx-auto px-4">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={staggerContainer}
+            className="space-y-12"
+          >
+            <div className="text-center max-w-3xl mx-auto space-y-4">
+              <motion.h2 variants={fadeInUp} className="text-3xl font-bold">
+                Ways to Get Involved
+              </motion.h2>
+              <motion.p variants={fadeInUp} className="text-muted-foreground">
+                Money isn't the only way to contribute. Join our community of volunteers.
+              </motion.p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+              <motion.div variants={fadeInUp}>
+                <Card className="h-full hover-elevate">
+                  <CardHeader>
+                    <Users className="h-8 w-8 text-primary mb-2" />
+                    <CardTitle>Become an Ambassador</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground text-sm">
+                      Represent Mundo Tango in your city. Attend 2+ milongas per week and help connect local dancers.
+                    </p>
+                  </CardContent>
+                  <CardFooter>
+                    <Link href="/ambassadors" className="w-full">
+                      <Button variant="outline" className="w-full" data-testid="button-become-ambassador">
+                        Learn More
+                      </Button>
+                    </Link>
+                  </CardFooter>
+                </Card>
+              </motion.div>
+
+              <motion.div variants={fadeInUp}>
+                <Card className="h-full hover-elevate">
+                  <CardHeader>
+                    <Code className="h-8 w-8 text-primary mb-2" />
+                    <CardTitle>Volunteer Your Skills</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground text-sm">
+                      Join our H2AC (Human to Agent Collaboration) program. Contribute code, design, translation, or content.
+                    </p>
+                  </CardContent>
+                  <CardFooter>
+                    <Link href="/volunteer" className="w-full">
+                      <Button variant="outline" className="w-full" data-testid="button-volunteer">
+                        Apply to Volunteer
+                      </Button>
+                    </Link>
+                  </CardFooter>
+                </Card>
+              </motion.div>
+
+              <motion.div variants={fadeInUp}>
+                <Card className="h-full hover-elevate">
+                  <CardHeader>
+                    <Sparkles className="h-8 w-8 text-primary mb-2" />
+                    <CardTitle>Spread the Word</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground text-sm">
+                      Tell other dancers about Mundo Tango. Share on social media, recommend to your tango friends.
+                    </p>
+                  </CardContent>
+                  <CardFooter>
+                    <Button 
+                      variant="outline" 
+                      className="w-full" 
+                      data-testid="button-share"
+                      onClick={() => {
+                        if (navigator.share) {
+                          navigator.share({
+                            title: 'Mundo Tango',
+                            text: 'Join the global tango community!',
+                            url: window.location.origin,
+                          });
+                        } else {
+                          navigator.clipboard.writeText(window.location.origin);
+                          alert('Link copied to clipboard!');
+                        }
+                      }}
+                    >
+                      Share Mundo Tango
+                    </Button>
+                  </CardFooter>
+                </Card>
+              </motion.div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* Scott's Story Section */}
       <section className="py-16" data-testid="section-story">
         <div className="container mx-auto px-4">
@@ -275,107 +376,6 @@ function SupportPageContent() {
                   </motion.div>
                 );
               })}
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Other Ways to Help */}
-      <section className="py-16" data-testid="section-other-ways">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={staggerContainer}
-            className="space-y-12"
-          >
-            <div className="text-center max-w-3xl mx-auto space-y-4">
-              <motion.h2 variants={fadeInUp} className="text-3xl font-bold">
-                Other Ways to Support
-              </motion.h2>
-              <motion.p variants={fadeInUp} className="text-muted-foreground">
-                Money isn't the only way to contribute. Join our community of volunteers.
-              </motion.p>
-            </div>
-
-            <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-              <motion.div variants={fadeInUp}>
-                <Card className="h-full hover-elevate">
-                  <CardHeader>
-                    <Users className="h-8 w-8 text-primary mb-2" />
-                    <CardTitle>Become an Ambassador</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground text-sm">
-                      Represent Mundo Tango in your city. Attend 2+ milongas per week and help connect local dancers.
-                    </p>
-                  </CardContent>
-                  <CardFooter>
-                    <Link href="/ambassadors" className="w-full">
-                      <Button variant="outline" className="w-full" data-testid="button-become-ambassador">
-                        Learn More
-                      </Button>
-                    </Link>
-                  </CardFooter>
-                </Card>
-              </motion.div>
-
-              <motion.div variants={fadeInUp}>
-                <Card className="h-full hover-elevate">
-                  <CardHeader>
-                    <Code className="h-8 w-8 text-primary mb-2" />
-                    <CardTitle>Volunteer Your Skills</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground text-sm">
-                      Join our H2AC (Human to Agent Collaboration) program. Contribute code, design, translation, or content.
-                    </p>
-                  </CardContent>
-                  <CardFooter>
-                    <Link href="/volunteer" className="w-full">
-                      <Button variant="outline" className="w-full" data-testid="button-volunteer">
-                        Apply to Volunteer
-                      </Button>
-                    </Link>
-                  </CardFooter>
-                </Card>
-              </motion.div>
-
-              <motion.div variants={fadeInUp}>
-                <Card className="h-full hover-elevate">
-                  <CardHeader>
-                    <Sparkles className="h-8 w-8 text-primary mb-2" />
-                    <CardTitle>Spread the Word</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground text-sm">
-                      Tell other dancers about Mundo Tango. Share on social media, recommend to your tango friends.
-                    </p>
-                  </CardContent>
-                  <CardFooter>
-                    <Button 
-                      variant="outline" 
-                      className="w-full" 
-                      data-testid="button-share"
-                      onClick={() => {
-                        if (navigator.share) {
-                          navigator.share({
-                            title: 'Mundo Tango',
-                            text: 'Join the global tango community!',
-                            url: window.location.origin,
-                          });
-                        } else {
-                          navigator.clipboard.writeText(window.location.origin);
-                          alert('Link copied to clipboard!');
-                        }
-                      }}
-                    >
-                      Share Mundo Tango
-                    </Button>
-                  </CardFooter>
-                </Card>
-              </motion.div>
             </div>
           </motion.div>
         </div>
