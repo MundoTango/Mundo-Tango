@@ -66,6 +66,18 @@ export function verifyCsrfToken(req: Request, res: Response, next: NextFunction)
     return next();
   }
   
+  // Skip CSRF for public auth endpoints (unauthenticated user registration/waitlist)
+  // These have their own rate limiting and validation in production
+  const publicAuthEndpoints = [
+    "/api/auth/register",
+    "/api/auth/login", 
+    "/api/auth/waitlist",
+    "/api/auth/refresh"
+  ];
+  if (publicAuthEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
+    return next();
+  }
+  
   // Skip CSRF for location search endpoints (read-only search, no state changes)
   const searchEndpoints = [
     "/api/locations/search",  // Address/city search via Nominatim
@@ -226,6 +238,18 @@ export function verifyDoubleSubmitCookie(req: Request, res: Response, next: Next
     "/api/mrblue/save-backend"  // ✅ MB.MD v9.3: Backend agent system (Save button)
   ];
   if (publicMrBlueEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
+    return next();
+  }
+  
+  // Skip CSRF for public auth endpoints (unauthenticated user registration/waitlist)
+  // These have their own rate limiting and validation in production
+  const publicAuthEndpoints = [
+    "/api/auth/register",
+    "/api/auth/login", 
+    "/api/auth/waitlist",
+    "/api/auth/refresh"
+  ];
+  if (publicAuthEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
     return next();
   }
   
