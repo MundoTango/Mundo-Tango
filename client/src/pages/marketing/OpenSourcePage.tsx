@@ -102,16 +102,14 @@ function OpenSourcePageContent() {
                 and a commitment to the tango community's ownership of their platform.
               </motion.p>
 
-              <motion.div variants={fadeInUp} className="flex justify-center gap-4">
-                <a href="https://github.com/mundotango/mundo-tango" target="_blank" rel="noopener noreferrer">
-                  <Button size="lg" className="bg-white text-primary hover:bg-white/90" data-testid="button-github">
-                    <Github className="h-5 w-5 mr-2" />
-                    View on GitHub
-                  </Button>
-                </a>
+              <motion.div variants={fadeInUp} className="flex flex-col items-center gap-4">
+                <div className="text-center">
+                  <p className="text-white/90 mb-2">Mundo Tango is currently in community validation.</p>
+                  <p className="text-white/70 text-sm">Our code repository will be publicly available after stakeholder review and community feedback.</p>
+                </div>
                 <Link href="/volunteer">
                   <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10" data-testid="button-contribute">
-                    Contribute
+                    Join the Validation Community
                   </Button>
                 </Link>
               </motion.div>
@@ -273,13 +271,11 @@ function OpenSourcePageContent() {
             <motion.p variants={fadeInUp} className="text-white/90 text-lg">
               Help build the platform the tango community deserves. Every contribution matters.
             </motion.p>
-            <motion.div variants={fadeInUp} className="flex justify-center gap-4">
-              <a href="https://github.com/mundotango/mundo-tango" target="_blank" rel="noopener noreferrer">
-                <Button size="lg" className="bg-white text-primary hover:bg-white/90" data-testid="button-github-final">
-                  <Github className="h-5 w-5 mr-2" />
-                  Star on GitHub
-                </Button>
-              </a>
+            <motion.div variants={fadeInUp} className="flex flex-col items-center gap-4">
+              <div className="text-center">
+                <p className="text-white/90">Currently in community validation.</p>
+                <p className="text-white/70 text-sm">Code will be public after stakeholder approval.</p>
+              </div>
               <Link href="/volunteer">
                 <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10" data-testid="button-volunteer">
                   Become a Contributor
