@@ -169,20 +169,6 @@ export default function CitySelectionPage() {
                     }}
                     placeholder="Search for your city..."
                   />
-
-                  {selectedCity && selectedCity.name && (
-                    <motion.div 
-                      className="flex items-center gap-2 p-4 rounded-xl bg-primary/10 border border-primary/20"
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                    >
-                      <MapPin className="h-5 w-5 text-primary" />
-                      <div>
-                        <p className="font-medium">{selectedCity.name}</p>
-                        <p className="text-sm text-muted-foreground">{selectedCity.country}</p>
-                      </div>
-                    </motion.div>
-                  )}
                 </div>
               </CardContent>
 
