@@ -51,6 +51,7 @@ import ForDancersPage from "@/pages/marketing/ForDancersPage";
 import ForTeachersPage from "@/pages/marketing/ForTeachersPage";
 import ForOrganizersPage from "@/pages/marketing/ForOrganizersPage";
 import SupportPage from "@/pages/marketing/SupportPage";
+import DonatePage from "@/pages/DonatePage";
 import SupportersPage from "@/pages/marketing/SupportersPage";
 import VolunteerPage from "@/pages/marketing/VolunteerPage";
 import MrBluePage from "@/pages/marketing/MrBluePage";
@@ -765,6 +766,7 @@ function Router() {
       <Route path="/for-teachers" component={ForTeachersPage} />
       <Route path="/for-organizers" component={ForOrganizersPage} />
       <Route path="/support" component={SupportPage} />
+      <Route path="/donate" component={DonatePage} />
       <Route path="/supporters" component={SupportersPage} />
       <Route path="/volunteer" component={VolunteerPage} />
       <Route path="/mr-blue" component={MrBluePage} />
