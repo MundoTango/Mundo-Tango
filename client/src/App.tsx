@@ -43,6 +43,7 @@ import LandingPage from "@/pages/LandingPage";
 import DemosPage from "@/pages/DemosPage";
 import LoginPage from "@/pages/LoginPage";
 import RegisterPage from "@/pages/RegisterPage";
+import WaitlistPage from "@/pages/WaitlistPage";
 import FacebookCallbackPage from "@/pages/auth/FacebookCallbackPage";
 import MarketingPrototype from "@/pages/MarketingPrototype";
 import MarketingPrototypeEnhanced from "@/pages/MarketingPrototypeEnhanced";
@@ -870,6 +871,7 @@ function Router() {
       </Route>
       <Route path="/login" component={LoginPage} />
       <Route path="/register" component={RegisterPage} />
+      <Route path="/waitlist" component={WaitlistPage} />
       <Route path="/auth/callback" component={FacebookCallbackPage} />
 
       <Route path="/feed">

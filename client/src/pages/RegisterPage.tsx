@@ -246,7 +246,7 @@ export default function RegisterPage() {
         // Full registration with invite code - proceed to onboarding
         await register({ name, username, email, password, inviteCode });
       } else {
-        // No invite code - add to waitlist only (no onboarding access)
+        // No invite code - create waitlist account and proceed to onboarding
         const response = await fetch("/api/auth/waitlist", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -255,7 +255,7 @@ export default function RegisterPage() {
             name: name || undefined,
             username: username || undefined,
             password: password || undefined,
-            proceedToOnboarding: false, // Waitlist only - no onboarding access
+            proceedToOnboarding: true, // Enable onboarding for waitlist users
           }),
         });
         
@@ -265,19 +265,30 @@ export default function RegisterPage() {
           throw new Error(data.message || "Failed to complete signup");
         }
         
-        // Store tokens if returned (for future use when approved)
+        // Store tokens and mark as waitlist user
         if (data.accessToken) {
           localStorage.setItem("accessToken", data.accessToken);
           if (data.refreshToken) {
             localStorage.setItem("refreshToken", data.refreshToken);
           }
+          // Flag to redirect to waitlist page after onboarding
+          localStorage.setItem("isWaitlistUser", "true");
+          
+          toast({
+            title: "Account created!",
+            description: "Let's set up your profile.",
+          });
+          
+          // Redirect to onboarding
+          window.location.href = "/onboarding/step-1";
+          return;
         }
         
-        // Always show waitlist confirmation page for users without invite code
+        // Fallback if no tokens returned
         setWaitlistSuccess(true);
         toast({
           title: "You're on the waitlist!",
-          description: "We'll notify you when your account is ready. In the meantime, check out how you can get involved!",
+          description: "We'll notify you when your account is ready.",
         });
       }
     } catch (error: any) {

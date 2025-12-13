@@ -69,10 +69,23 @@ export default function GuidedTourPage() {
             formStatus: 4,
           }),
         });
-        navigate("/feed");
+        
+        // Check if user is a waitlist user - redirect to waitlist page
+        const isWaitlistUser = localStorage.getItem("isWaitlistUser");
+        if (isWaitlistUser === "true") {
+          navigate("/waitlist");
+        } else {
+          navigate("/feed");
+        }
       } catch (error) {
         console.error("Error completing onboarding:", error);
-        navigate("/feed");
+        // Still check waitlist flag on error
+        const isWaitlistUser = localStorage.getItem("isWaitlistUser");
+        if (isWaitlistUser === "true") {
+          navigate("/waitlist");
+        } else {
+          navigate("/feed");
+        }
       }
     }
   };
