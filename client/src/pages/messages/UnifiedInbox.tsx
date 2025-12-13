@@ -257,8 +257,6 @@ export default function UnifiedInbox() {
     if (channel === "all") return conversations.length;
     return conversations.filter((c: any) => c.channel === channel).length;
   };
-  unreadCount: number;
-}
 
   const handleSendMessage = async () => {
     if ((!messageInput.trim() && attachedImages.length === 0) || !selectedConversation) {
@@ -396,8 +394,6 @@ export default function UnifiedInbox() {
       </div>
     );
   };
-  messages: Message[];
-}
 
 function formatMessageTime(dateStr: string) {
   const date = new Date(dateStr);

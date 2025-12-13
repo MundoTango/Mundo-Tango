@@ -138,7 +138,7 @@ function detectComputerUseIntent(message: string): {
  */
 router.post('/api/mrblue/chat', authenticateToken, async (req, res) => {
   try {
-    const { message, context, voiceEnabled, selectedVoiceId, systemPrompt: customSystemPrompt } = req.body;
+    const { message, context, voiceEnabled, selectedVoiceId, systemPrompt: customSystemPrompt, conversationHistory } = req.body;
     
     if (!message || typeof message !== 'string') {
       return res.status(400).json({ error: 'Message is required' });
@@ -150,14 +150,34 @@ router.post('/api/mrblue/chat', authenticateToken, async (req, res) => {
       
       try {
         const Groq = require('groq-sdk');
-        const groq = new Groq({ apiKey: process.env.GROQ_API_KEY || '' });
+        const groq = new Groq({ 
+          apiKey: process.env.GROQ_API_KEY || '',
+          baseURL: process.env.GROQ_BASE_URL || undefined
+        });
+        
+        // Build messages array with conversation history for continuity
+        const messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }> = [
+          { role: 'system', content: customSystemPrompt }
+        ];
+        
+        // Include prior conversation turns if provided
+        if (Array.isArray(conversationHistory)) {
+          for (const msg of conversationHistory) {
+            if (msg.role && msg.content) {
+              messages.push({
+                role: msg.role === 'assistant' ? 'assistant' : 'user',
+                content: msg.content || msg.message || ''
+              });
+            }
+          }
+        }
+        
+        // Add current user message
+        messages.push({ role: 'user', content: message });
         
         const aiResponse = await groq.chat.completions.create({
           model: 'llama-3.3-70b-versatile',
-          messages: [
-            { role: 'system', content: customSystemPrompt },
-            { role: 'user', content: message }
-          ],
+          messages,
           max_tokens: 300,
           temperature: 0.7
         });
