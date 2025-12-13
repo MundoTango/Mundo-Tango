@@ -27,54 +27,105 @@ export interface MentionToken {
 /**
  * Parse canonical format string into token array
  * 
- * Supports two formats:
+ * Supports three formats:
  * 1. Standard: @type:id:name
  * 2. Group with type: @group:groupType:id:name
+ * 3. Plain mention: @username (treated as user mention with placeholder ID)
  * 
  * Example:
- * Input: "Dancing with @user:user_123:maria rodriguez at @group:professional:group_1:Buenos Aires Tango Community"
+ * Input: "Dancing with @user:user_123:maria_rodriguez at @group:professional:group_1:Buenos_Aires_Tango"
  * Output: [
  *   { kind: 'text', text: 'Dancing with ' },
- *   { kind: 'mention', type: 'user', id: 'user_123', name: 'maria rodriguez' },
+ *   { kind: 'mention', type: 'user', id: 'user_123', name: 'maria_rodriguez' },
  *   { kind: 'text', text: ' at ' },
- *   { kind: 'mention', type: 'group', id: 'group_1', name: 'Buenos Aires Tango Community', groupType: 'professional' }
+ *   { kind: 'mention', type: 'group', id: 'group_1', name: 'Buenos_Aires_Tango', groupType: 'professional' }
+ * ]
+ * 
+ * Plain mention example:
+ * Input: "@scott_the_tango_nomad @elena_tango "
+ * Output: [
+ *   { kind: 'mention', type: 'user', id: 'user_scott_the_tango_nomad', name: 'scott_the_tango_nomad' },
+ *   { kind: 'text', text: ' ' },
+ *   { kind: 'mention', type: 'user', id: 'user_elena_tango', name: 'elena_tango' },
+ *   { kind: 'text', text: ' ' }
  * ]
  */
 export function parseCanonicalToTokens(canonical: string): Token[] {
   if (!canonical) return [];
   
   const tokens: Token[] = [];
-  // Match both formats:
-  // 1. @group:professional:group_1:name (new format with groupType)
-  // 2. @type:id:name (standard format)
-  const regex = /@(user|event|group|city):(?:(professional|city):)?([^:]+):([^@]*?)(?=\s*(?:@|$))/g;
-  let lastIndex = 0;
+  
+  // Combined regex that matches:
+  // 1. Full canonical format: @type:id:name or @group:groupType:id:name
+  // 2. Plain mention format: @username (must be preceded by whitespace or start of string, not part of email)
+  const canonicalRegex = /@(user|event|group|city):(?:(professional|city):)?([^:\s]+):([^\s]+)/g;
+  
+  // First pass: find all canonical mentions
+  const canonicalMatches: Array<{ index: number; length: number; token: MentionToken }> = [];
   let match: RegExpExecArray | null;
   
-  while ((match = regex.exec(canonical)) !== null) {
-    // Add text before mention
-    if (match.index > lastIndex) {
-      const text = canonical.substring(lastIndex, match.index);
-      tokens.push({ kind: 'text', text });
-    }
-    
-    // Add mention token with trimmed name
-    const [, type, groupType, id, name] = match;
+  while ((match = canonicalRegex.exec(canonical)) !== null) {
+    const [fullMatch, type, groupType, id, name] = match;
     const token: MentionToken = {
       kind: 'mention',
       type: type as EntityType,
       id,
-      name: name.trim(), // Remove any trailing whitespace
+      name: name,
     };
-    
-    // Add groupType if present (for groups)
     if (type === 'group' && groupType) {
       token.groupType = groupType;
     }
+    canonicalMatches.push({ index: match.index, length: fullMatch.length, token });
+  }
+  
+  // Second pass: find plain mentions that aren't part of canonical mentions
+  // Plain mentions must be preceded by whitespace or start of string (to avoid matching emails)
+  const plainMatches: Array<{ index: number; length: number; token: MentionToken }> = [];
+  const plainMentionRegex = /(?:^|[\s\n])@([a-zA-Z][a-zA-Z0-9_]*)/g;
+  
+  while ((match = plainMentionRegex.exec(canonical)) !== null) {
+    const [fullMatch, username] = match;
+    // Calculate actual @ position (may have leading whitespace)
+    const atIndex = canonical.indexOf('@', match.index);
+    const mentionLength = username.length + 1; // +1 for @
+    const matchEnd = atIndex + mentionLength;
     
-    tokens.push(token);
+    // Check if this plain mention overlaps with any canonical mention
+    const overlapsWithCanonical = canonicalMatches.some(cm => {
+      const cmEnd = cm.index + cm.length;
+      return (atIndex >= cm.index && atIndex < cmEnd) || 
+             (matchEnd > cm.index && matchEnd <= cmEnd) ||
+             (atIndex <= cm.index && matchEnd >= cmEnd);
+    });
     
-    lastIndex = regex.lastIndex;
+    if (!overlapsWithCanonical) {
+      plainMatches.push({
+        index: atIndex,
+        length: mentionLength,
+        token: {
+          kind: 'mention',
+          type: 'user',
+          id: `user_${username}`, // Placeholder ID based on username
+          name: username,
+        }
+      });
+    }
+  }
+  
+  // Combine and sort all matches by index
+  const allMatches = [...canonicalMatches, ...plainMatches].sort((a, b) => a.index - b.index);
+  
+  // Build tokens array
+  let lastIndex = 0;
+  for (const m of allMatches) {
+    // Add text before this mention
+    if (m.index > lastIndex) {
+      const text = canonical.substring(lastIndex, m.index);
+      tokens.push({ kind: 'text', text });
+    }
+    
+    tokens.push(m.token);
+    lastIndex = m.index + m.length;
   }
   
   // Add remaining text
@@ -197,16 +248,22 @@ export function replaceTriggerWithMention(
   const newTokens: Token[] = [];
   let charCount = 0;
   
+  // The mention ends right after the query text, not at cursor position
+  // trigger.start = position of "@"
+  // trigger.start + 1 = position after "@"
+  // trigger.start + 1 + trigger.query.length = position after the complete mention
+  const mentionEndPos = trigger.start + 1 + trigger.query.length;
+  
   for (const token of tokens) {
     if (token.kind === 'text') {
       const tokenStart = charCount;
       const tokenEnd = charCount + token.text.length;
       
       // Check if trigger overlaps with this text token
-      if (tokenStart <= trigger.start && tokenEnd >= cursorPos) {
+      if (tokenStart <= trigger.start && tokenEnd >= mentionEndPos) {
         // Split text token around trigger
         const before = token.text.substring(0, trigger.start - tokenStart);
-        let after = token.text.substring(cursorPos - tokenStart);
+        let after = token.text.substring(mentionEndPos - tokenStart);
         
         if (before) {
           newTokens.push({ kind: 'text', text: before });

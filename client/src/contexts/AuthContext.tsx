@@ -33,6 +33,7 @@ interface Profile {
   bio?: string | null;
   city?: string | null;
   country?: string | null;
+  tangoRoles?: string[];
 }
 
 interface ProfilePreferences {
@@ -166,6 +167,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         bio: userData.bio,
         city: userData.city,
         country: userData.country,
+        tangoRoles: userData.tangoRoles || [],
       });
 
       // Sync site language with user's primary language preference
@@ -254,25 +256,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const data = await response.json();
 
       localStorage.setItem("accessToken", data.accessToken);
-
       setSession({ accessToken: data.accessToken });
-      setUser(data.user);
-      setProfile({
-        id: data.user.id,
-        username: data.user.username,
-        name: data.user.name,
-        email: data.user.email,
-        profileImage: data.user.profileImage,
-        bio: data.user.bio,
-        city: data.user.city,
-        country: data.user.country,
-      });
 
-      // Sync site language with user's primary language preference
-      if (data.user.primaryLanguage) {
-        i18n.changeLanguage(data.user.primaryLanguage);
-        localStorage.setItem('i18nextLng', data.user.primaryLanguage);
-      }
+      // Fetch full user data (including city, tangoRoles) from /api/auth/me
+      // The login response doesn't include all profile fields
+      await loadCurrentUser();
 
       // Redirect to feed after successful login
       // Use setTimeout to ensure state updates complete before navigation (fixes race condition)
@@ -320,6 +308,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         bio: data.user.bio,
         city: data.user.city,
         country: data.user.country,
+        tangoRoles: data.user.tangoRoles || [],
       });
 
       if (!data.user.isOnboardingComplete) {

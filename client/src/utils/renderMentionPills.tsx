@@ -27,73 +27,22 @@ const getMentionPath = (type: EntityType, id: string): string => {
   }
 };
 
-// MT Ocean theme pill styles
-const getMentionPillStyle = (type: EntityType, isHovered: boolean = false, groupType?: string): React.CSSProperties => {
-  const baseStyle: React.CSSProperties = {
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: '4px',
-    padding: '2px 8px',
-    borderRadius: '9999px',
-    border: '1px solid',
-    fontSize: '12px',
-    fontWeight: 500,
-    marginLeft: '2px',
-    marginRight: '2px',
-    transition: 'all 0.2s ease',
-    cursor: 'pointer',
-    textDecoration: 'none',
-    transform: isHovered ? 'scale(1.05)' : 'scale(1)',
-  };
-
+// Get Tailwind classes for mention pills - styled pill with background and border
+const getMentionPillClasses = (type: EntityType, groupType?: string): string => {
+  const baseClasses = "inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium cursor-pointer transition-all border";
+  
   switch (type) {
     case 'group':
-      // Professional groups get orange/amber gradient, regular groups get purple
       if (groupType === 'professional') {
-        return {
-          ...baseStyle,
-          background: isHovered 
-            ? 'linear-gradient(135deg, rgba(251, 146, 60, 0.3), rgba(251, 191, 36, 0.3))'
-            : 'linear-gradient(135deg, rgba(251, 146, 60, 0.2), rgba(251, 191, 36, 0.2))',
-          borderColor: isHovered ? 'rgba(251, 146, 60, 0.7)' : 'rgba(251, 146, 60, 0.5)',
-          color: 'rgb(251, 146, 60)',
-        };
+        return `${baseClasses} bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 border-amber-300 dark:border-amber-700 hover:bg-amber-200 dark:hover:bg-amber-800/40`;
       }
-      return {
-        ...baseStyle,
-        background: isHovered 
-          ? 'linear-gradient(135deg, rgba(147, 51, 234, 0.3), rgba(168, 85, 247, 0.3))'
-          : 'linear-gradient(135deg, rgba(147, 51, 234, 0.2), rgba(168, 85, 247, 0.2))',
-        borderColor: isHovered ? 'rgba(147, 51, 234, 0.7)' : 'rgba(147, 51, 234, 0.5)',
-        color: 'rgb(147, 51, 234)',
-      };
+      return `${baseClasses} bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 border-purple-300 dark:border-purple-700 hover:bg-purple-200 dark:hover:bg-purple-800/40`;
     case 'city':
-      return {
-        ...baseStyle,
-        background: isHovered 
-          ? 'linear-gradient(135deg, rgba(34, 197, 94, 0.3), rgba(74, 222, 128, 0.3))'
-          : 'linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(74, 222, 128, 0.2))',
-        borderColor: isHovered ? 'rgba(34, 197, 94, 0.7)' : 'rgba(34, 197, 94, 0.5)',
-        color: 'rgb(34, 197, 94)',
-      };
+      return `${baseClasses} bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 border-green-300 dark:border-green-700 hover:bg-green-200 dark:hover:bg-green-800/40`;
     case 'event':
-      return {
-        ...baseStyle,
-        background: isHovered 
-          ? 'linear-gradient(135deg, rgba(30, 144, 255, 0.3), rgba(59, 130, 246, 0.3))'
-          : 'linear-gradient(135deg, rgba(30, 144, 255, 0.2), rgba(59, 130, 246, 0.2))',
-        borderColor: isHovered ? 'rgba(30, 144, 255, 0.7)' : 'rgba(30, 144, 255, 0.5)',
-        color: 'rgb(30, 144, 255)',
-      };
-    default: // user
-      return {
-        ...baseStyle,
-        background: isHovered 
-          ? 'linear-gradient(135deg, rgba(64, 224, 208, 0.3), rgba(34, 211, 238, 0.3))'
-          : 'linear-gradient(135deg, rgba(64, 224, 208, 0.2), rgba(34, 211, 238, 0.2))',
-        borderColor: isHovered ? 'rgba(64, 224, 208, 0.7)' : 'rgba(64, 224, 208, 0.5)',
-        color: 'rgb(64, 224, 208)',
-      };
+      return `${baseClasses} bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-300 dark:border-blue-700 hover:bg-blue-200 dark:hover:bg-blue-800/40`;
+    default: // user - teal/cyan theme
+      return `${baseClasses} bg-cyan-100 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-300 border-cyan-300 dark:border-cyan-700 hover:bg-cyan-200 dark:hover:bg-cyan-800/40`;
   }
 };
 
@@ -110,6 +59,7 @@ const getMentionIcon = (type: EntityType) => {
 /**
  * Clickable Mention Pill Component (like Facebook)
  * Navigates to the mentioned entity when clicked
+ * Uses simple Tailwind classes for clean, Facebook-style mentions
  */
 function ClickableMentionPill({ 
   type, 
@@ -122,7 +72,6 @@ function ClickableMentionPill({
   name: string;
   groupType?: string;
 }) {
-  const [isHovered, setIsHovered] = React.useState(false);
   const path = getMentionPath(type, id);
   
   const handleClick = (e: React.MouseEvent) => {
@@ -133,10 +82,7 @@ function ClickableMentionPill({
   return (
     <span
       onClick={handleClick}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      style={getMentionPillStyle(type, isHovered, groupType)}
-      className="mention-pill"
+      className={getMentionPillClasses(type, groupType)}
       data-mention-id={id}
       data-mention-type={type}
       data-testid={`mention-pill-${type}-${id}`}
@@ -151,7 +97,7 @@ function ClickableMentionPill({
       }}
     >
       {getMentionIcon(type)}
-      <span>@{name.replace(/_/g, ' ')}</span>
+      <span>{name.replace(/_/g, ' ')}</span>
     </span>
   );
 }

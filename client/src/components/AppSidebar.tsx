@@ -28,6 +28,10 @@ import {
   List,
   Map,
   Star,
+  Search,
+  User,
+  Handshake,
+  BookOpen,
 } from "lucide-react";
 import { useLocation, Link } from "wouter";
 import { cn } from "@/lib/utils";
@@ -50,7 +54,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { TANGO_ROLES, type TangoRole } from "@/lib/tangoRoles";
+import { TANGO_ROLES, type TangoRole, getRoleByValue, normalizeRole } from "@/lib/tangoRoles";
 
 const socialItems = [
   {
@@ -81,22 +85,10 @@ const communityItems = [
     tooltip: "Browse events - list, calendar, or map view",
   },
   {
-    title: "Groups",
-    url: "/groups",
-    icon: Users,
-    tooltip: "Browse and join groups",
-  },
-  {
     title: "Friends",
     url: "/friends",
     icon: UserPlus,
     tooltip: "Manage your friends",
-  },
-  {
-    title: "Recommendations",
-    url: "/recommendations",
-    icon: Sparkles,
-    tooltip: "Personalized recommendations",
   },
   {
     title: "Messages",
@@ -205,6 +197,34 @@ const proDiscoveryItems = [
     tooltip: "Community leaders",
   },
   {
+    title: "Dancers",
+    url: "/pro/dancers",
+    icon: Users,
+    color: "#1E90FF",
+    tooltip: "Find dance partners",
+  },
+  {
+    title: "Researchers",
+    url: "/pro/researchers",
+    icon: Search,
+    color: "#F97316",
+    tooltip: "Tango researchers",
+  },
+  {
+    title: "Historians",
+    url: "/pro/historians",
+    icon: BookOpen,
+    color: "#8B5CF6",
+    tooltip: "Tango history experts",
+  },
+  {
+    title: "Taxi Dancers",
+    url: "/pro/taxi-dancers",
+    icon: Handshake,
+    color: "#F97316",
+    tooltip: "Professional taxi dancers",
+  },
+  {
     title: "Talent Match",
     url: "/talent-match",
     icon: Sparkles,
@@ -245,12 +265,22 @@ const roleToProDiscoveryMap: Record<string, string> = {
   "venue-owner": "/pro/venues",
   organizer: "/pro/organizers",
   blogger: "/pro/stories",
+  journalist: "/pro/stories",
   artist: "/pro/artists",
   musician: "/pro/musicians",
   "fashion-designer": "/pro/fashion",
+  "clothing-designer": "/pro/fashion",
   coach: "/pro/coaches",
   vendor: "/pro/vendors",
+  business: "/pro/vendors",
   "community-leader": "/pro/community",
+  "community-builder": "/pro/community",
+  "dancer-leader": "/pro/dancers",
+  "dancer-follower": "/pro/dancers",
+  researcher: "/pro/researchers",
+  historian: "/pro/historians",
+  "taxi-dancer": "/pro/taxi-dancers",
+  fan: "/pro/community",
 };
 
 function AppSidebarComponent() {
@@ -260,8 +290,9 @@ function AppSidebarComponent() {
   const displayName = profile?.name || user?.email?.split("@")[0] || "User";
   const username = profile?.username || user?.email?.split("@")[0] || "user";
   const avatarUrl = profile?.profileImage;
-  const userCity = profile?.city || user?.city;
-  const userTangoRoles = user?.tangoRoles || [];
+  // Read from user first (has authoritative data from API), fallback to profile
+  const userCity = (user as any)?.city || profile?.city;
+  const userTangoRoles = (user as any)?.tangoRoles || (profile as any)?.tangoRoles || [];
 
   const myStuffItems = useMemo(() => {
     const items: Array<{
@@ -272,10 +303,13 @@ function AppSidebarComponent() {
       tooltip: string;
     }> = [];
 
+    // Track added URLs to prevent duplicates
+    const addedUrls = new Set<string>();
+
     if (userCity) {
       items.push({
         title: userCity,
-        url: `/city-groups?city=${encodeURIComponent(userCity)}`,
+        url: `/groups/city/${encodeURIComponent(userCity)}`,
         icon: MapPin,
         color: "#40E0D0",
         tooltip: `Your city: ${userCity}`,
@@ -283,10 +317,12 @@ function AppSidebarComponent() {
     }
 
     userTangoRoles.forEach((roleValue) => {
-      const role = TANGO_ROLES.find((r) => r.value === roleValue);
-      const proUrl = roleToProDiscoveryMap[roleValue];
+      const role = getRoleByValue(roleValue);
+      const normalizedValue = normalizeRole(roleValue);
+      const proUrl = roleToProDiscoveryMap[normalizedValue];
 
-      if (role && proUrl && role.category !== "dance") {
+      if (role && proUrl && !addedUrls.has(proUrl)) {
+        addedUrls.add(proUrl);
         items.push({
           title: role.label,
           url: proUrl,
@@ -438,8 +474,10 @@ function AppSidebarComponent() {
             {myStuffItems.length > 0 ? (
               renderIconGrid(myStuffItems)
             ) : (
-              <div className="px-2 py-3 text-xs text-muted-foreground/60 text-center">
-                Set your city in profile settings
+              <div className="px-3 py-2 text-xs text-white/50">
+                <Link to="/profile" className="hover:text-[#40E0D0] transition-colors">
+                  Set your city in your profile
+                </Link>
               </div>
             )}
           </SidebarGroupContent>
@@ -521,4 +559,4 @@ function AppSidebarComponent() {
   );
 }
 
-export const AppSidebar = memo(AppSidebarComponent);
+export const AppSidebar = AppSidebarComponent;

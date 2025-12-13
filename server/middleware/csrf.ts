@@ -66,6 +66,28 @@ export function verifyCsrfToken(req: Request, res: Response, next: NextFunction)
     return next();
   }
   
+  // Skip CSRF for public auth endpoints (unauthenticated user registration/waitlist)
+  // These have their own rate limiting and validation in production
+  const publicAuthEndpoints = [
+    "/api/auth/register",
+    "/api/auth/login", 
+    "/api/auth/waitlist",
+    "/api/auth/refresh"
+  ];
+  if (publicAuthEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
+    return next();
+  }
+  
+  // Skip CSRF for location search endpoints (read-only search, no state changes)
+  const searchEndpoints = [
+    "/api/locations/search",  // Address/city search via Nominatim
+    "/api/cities/search",     // City group search
+    "/api/venues/search"      // Venue search
+  ];
+  if (searchEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
+    return next();
+  }
+  
   // Skip CSRF for file upload endpoints (use JWT auth, multipart is CSRF-resistant)
   const uploadEndpoints = [
     "/api/upload/video",  // Video compression uploads
@@ -126,7 +148,7 @@ export function verifyCsrfToken(req: Request, res: Response, next: NextFunction)
   // Skip CSRF for auth endpoints in development/testing (Playwright E2E tests)
   // Production uses additional security: rate limiting, bot detection, CAPTCHA
   if (process.env.NODE_ENV === 'development') {
-    const authEndpoints = ["/api/auth/login", "/api/auth/register", "/api/auth/refresh"];
+    const authEndpoints = ["/api/auth/login", "/api/auth/register", "/api/auth/refresh", "/api/auth/waitlist"];
     if (authEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
       return next();
     }
@@ -219,6 +241,28 @@ export function verifyDoubleSubmitCookie(req: Request, res: Response, next: Next
     return next();
   }
   
+  // Skip CSRF for public auth endpoints (unauthenticated user registration/waitlist)
+  // These have their own rate limiting and validation in production
+  const publicAuthEndpoints = [
+    "/api/auth/register",
+    "/api/auth/login", 
+    "/api/auth/waitlist",
+    "/api/auth/refresh"
+  ];
+  if (publicAuthEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
+    return next();
+  }
+  
+  // Skip CSRF for location search endpoints (read-only search via Nominatim, no state changes)
+  const searchEndpoints = [
+    "/api/locations/search",  // Address/city search via Nominatim
+    "/api/cities/search",     // City group search
+    "/api/venues/search"      // Venue search
+  ];
+  if (searchEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
+    return next();
+  }
+  
   // Skip CSRF for file upload endpoints (use JWT auth, multipart is CSRF-resistant)
   const uploadEndpoints = [
     "/api/upload/video",  // Video compression uploads
@@ -276,7 +320,7 @@ export function verifyDoubleSubmitCookie(req: Request, res: Response, next: Next
   // Skip CSRF for auth endpoints in development/testing (Playwright E2E tests)
   // Production uses additional security: rate limiting, bot detection, CAPTCHA
   const isDev = process.env.NODE_ENV === 'development';
-  const authEndpoints = ["/api/auth/login", "/api/auth/register", "/api/auth/refresh"];
+  const authEndpoints = ["/api/auth/login", "/api/auth/register", "/api/auth/refresh", "/api/auth/waitlist"];
   const journeyEndpoints = ["/api/journey"]; // Internal API for recording development progress
   const travelScrapingEndpoints = ["/api/travel/scrape-accommodation", "/api/travel/scrape-transport"];
   const eventSeriesEndpoints = ["/api/event-series"]; // Event series management (TRACK A)

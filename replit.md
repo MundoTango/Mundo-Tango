@@ -41,7 +41,9 @@ The marketing site integrates a Donation Tier System, a Human to Agent Collabora
 The platform employs an "MT Ocean Theme" with dark mode, built using Tailwind CSS, shadcn/ui, and Radix UI. Iconography is provided by Lucide React and React Icons. It supports 68 languages via `i18next` and uses Wouter for routing, with distinct `AppLayout`, `DashboardLayout`, and `AdminLayout` components. Key UI elements include a Visual Editor for inline editing, a Unified Sidebar for navigation, and standardized components like `PublicProfileView` and `PerRoleExperience` to ensure consistency.
 
 ### Backend
-The backend is developed with Express and TypeScript, utilizing PostgreSQL (Neon) and Drizzle ORM. It features a modular route structure, JWT authentication with Google/Facebook OAuth, and an 8-tier Role-Based Access Control (RBAC) system. Database migrations are automated, and server-side FFmpeg is used for video transcoding. API endpoints support PRO functionalities, place recommendations, and an enhanced Talent Match AI.
+The backend is developed with Express and TypeScript, utilizing PostgreSQL (Neon) and Drizzle ORM. It features a modular route structure, JWT authentication with Google/Facebook OAuth, and an 8-tier Role-Based Access Control (RBAC) system with legacy role fallback. Database migrations are automated, and server-side FFmpeg is used for video transcoding. API endpoints support PRO functionalities, place recommendations, and an enhanced Talent Match AI.
+
+**RBAC Legacy Fallback (Dec 12, 2025):** The `RBACService.getUserRoleLevel()` now checks the legacy `users.role` column when `platform_user_roles` table is empty, mapping roles to tier levels: god/owner=8, super_admin=7, admin=4, user=1, guest=0.
 
 ### AI Systems
 An extensive AI ecosystem comprises **48 operational agents** (audited Dec 7, 2025):
@@ -53,6 +55,8 @@ The hierarchy provides strategic oversight and atomic execution. This includes a
 
 ### Platform Features
 Core functionalities encompass social features such as events, groups, posts, notifications, media management, live streaming, marketplaces, and reviews. Business-oriented features include Talent Match AI, LIFE CEO AI, Multi-AI Orchestration, automated scraping, an Admin Dashboard, Stripe Payments integration, and BullMQ Workers. Recent enhancements include an Event Series System, redesigned City Groups Events Tab, RSS Feed Scraping, Profile Enrichment Service, OpenStreetMap Geocoding, Housing Friendship Closeness Integration, a Unified Messaging Inbox, and a Faceless Content System with social media adapters.
+
+**FriendshipPage Enhancement (Dec 11, 2025):** The FriendshipPage Posts tab now uses `UnifiedMemoriesFeed` component instead of a manual PostItem loop, providing consistent animations and styling with the main feed. This ensures shared posts between friends display with the same visual experience as the main social feed.
 
 ### International Payment System (MB.MD Pattern 49)
 A comprehensive multi-gateway payment orchestration system supporting global payments:

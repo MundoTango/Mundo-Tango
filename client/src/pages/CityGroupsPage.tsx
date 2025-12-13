@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { Link } from "wouter";
+import { Link, useSearch } from "wouter";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -13,7 +13,19 @@ import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/Un
 import { getCityImageUrl } from "@/lib/cityImageMap";
 
 export default function CityGroupsPage() {
-  const [searchQuery, setSearchQuery] = useState("");
+  // Read city from URL query parameter
+  const searchString = useSearch();
+  const urlParams = new URLSearchParams(searchString);
+  const cityFromUrl = urlParams.get("city") || "";
+  
+  const [searchQuery, setSearchQuery] = useState(cityFromUrl);
+  
+  // Update search when URL changes
+  useEffect(() => {
+    if (cityFromUrl) {
+      setSearchQuery(cityFromUrl);
+    }
+  }, [cityFromUrl]);
   const [selectedCountry, setSelectedCountry] = useState("");
   const { toast } = useToast();
 

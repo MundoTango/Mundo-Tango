@@ -15,15 +15,15 @@ import {
   Calendar, 
   Home,
   Building2,
-  X
+  X,
+  ChevronRight
 } from "lucide-react";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { CommunityMapWithLayers } from "@/components/map/CommunityMapWithLayers";
 import { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
-import { Link } from "wouter";
-import { Skeleton } from "@/components/ui/skeleton";
 import { getCityImageUrl } from "@/lib/cityImageMap";
+import { Link } from "wouter";
 
 // Fix Leaflet default marker icon
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -263,7 +263,7 @@ export default function CommunityWorldMapPage() {
                   <div className="text-2xl font-bold" data-testid="text-total-members">
                     {(stats?.totalMembers || allLocations.reduce((sum, loc) => sum + loc.memberCount, 0)).toLocaleString()}
                   </div>
-                  <p className="text-xs text-muted-foreground">Worldwide dancers</p>
+                  <p className="text-xs text-muted-foreground">Worldwide People</p>
                 </CardContent>
               </Card>
 
@@ -403,103 +403,106 @@ export default function CommunityWorldMapPage() {
               </Card>
             )}
 
-            {/* City Groups Section */}
-            <div className="space-y-6">
+            {/* Cities List - Entry into City Groups */}
+            <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="text-2xl font-bold" data-testid="heading-city-groups">City Groups</h2>
-                  <p className="text-muted-foreground">Connect with tango communities around the world</p>
+                  <h2 className="text-2xl font-serif font-bold flex items-center gap-2">
+                    <Globe className="h-6 w-6 text-primary" />
+                    Explore Cities
+                  </h2>
+                  <p className="text-muted-foreground">
+                    {sortedLocations.length} tango communities worldwide
+                  </p>
                 </div>
-                <Button variant="outline" asChild data-testid="button-view-all-groups">
-                  <Link href="/city-groups">
-                    View All
-                  </Link>
-                </Button>
               </div>
 
-              {isLoading ? (
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                  {[1, 2, 3, 4, 5, 6].map((i) => (
-                    <Card key={i}>
-                      <Skeleton className="h-32 w-full rounded-t-lg" />
-                      <CardHeader className="space-y-2">
-                        <Skeleton className="h-6 w-3/4" />
-                        <Skeleton className="h-4 w-1/2" />
-                      </CardHeader>
-                      <CardContent>
-                        <Skeleton className="h-16 w-full" />
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              ) : cityLocations.length > 0 ? (
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3" data-testid="city-groups-grid">
-                  {cityLocations.map((loc) => (
-                    <Card key={loc.id} className="hover-elevate overflow-hidden" data-testid={`card-city-group-${loc.id}`}>
-                      <div className="h-32 overflow-hidden">
-                        <img
-                          src={getCityImageUrl(loc.city)}
-                          alt={`${loc.city} tango community`}
-                          className="w-full h-full object-cover transition-transform hover:scale-105"
-                        />
-                      </div>
-                      <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                          <MapPin className="h-4 w-4 text-primary" />
-                          {loc.city}
-                        </CardTitle>
-                        <CardDescription>{loc.country}</CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="grid grid-cols-2 gap-2 text-sm mb-4">
-                          <div className="flex items-center gap-1 text-muted-foreground">
-                            <Users className="h-3 w-3" />
-                            <span>{loc.memberCount.toLocaleString()} members</span>
-                          </div>
-                          <div className="flex items-center gap-1 text-muted-foreground">
-                            <Calendar className="h-3 w-3" />
-                            <span>{loc.activeEvents} events</span>
-                          </div>
-                          <div className="flex items-center gap-1 text-muted-foreground">
-                            <Building2 className="h-3 w-3" />
-                            <span>{loc.recommendations} venues</span>
-                          </div>
-                          <div className="flex items-center gap-1 text-muted-foreground">
-                            <Home className="h-3 w-3" />
-                            <span>{loc.housing} housing</span>
-                          </div>
-                        </div>
-                        <Button 
-                          className="w-full" 
-                          variant="outline"
-                          onClick={() => {
-                            if (loc.groupId) {
-                              window.location.href = `/groups/${loc.groupId}`;
-                            }
-                          }}
-                          data-testid={`button-explore-${loc.id}`}
-                        >
-                          Explore Community
-                        </Button>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              ) : (
+              {sortedLocations.length === 0 ? (
                 <Card>
-                  <CardContent className="py-12 text-center">
-                    <Globe className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                    <h3 className="text-lg font-semibold mb-2">No city communities yet</h3>
-                    <p className="text-muted-foreground mb-4">
-                      Be the first to start a tango community in your city
-                    </p>
-                    <Button asChild>
-                      <Link href="/groups/create">
-                        Create City Group
-                      </Link>
-                    </Button>
+                  <CardContent className="py-12 text-center text-muted-foreground">
+                    <MapPin className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                    <p>No cities found. Be the first to start a community!</p>
                   </CardContent>
                 </Card>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {sortedLocations.map((location) => (
+                    <motion.div
+                      key={location.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <Card 
+                        className={`overflow-hidden hover-elevate cursor-pointer transition-all group ${
+                          selectedCity?.id === location.id ? 'ring-2 ring-primary' : ''
+                        }`}
+                        onClick={() => handleCityClick(location)}
+                        data-testid={`card-city-${location.id}`}
+                      >
+                        {/* Cityscape Image */}
+                        <div className="relative aspect-[16/9] overflow-hidden">
+                          <img
+                            src={getCityImageUrl(location.city)}
+                            alt={`${location.city}, ${location.country}`}
+                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                          
+                          {/* City Name Overlay */}
+                          <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+                            <div className="flex items-start justify-between gap-2">
+                              <div>
+                                <h3 className="text-xl font-serif font-bold leading-tight" data-testid={`text-city-name-${location.id}`}>
+                                  {location.city}
+                                </h3>
+                                <p className="text-sm text-white/80">{location.country}</p>
+                              </div>
+                              {location.id === 1 && (
+                                <Badge className="bg-primary/90 text-primary-foreground shrink-0">Flagship</Badge>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Stats and Action */}
+                        <CardContent className="p-4 space-y-4">
+                          <div className="grid grid-cols-4 gap-2 text-sm">
+                            <div className="flex flex-col items-center gap-1 p-2 bg-muted/50 rounded-lg">
+                              <Users className="w-4 h-4 text-cyan-500" />
+                              <div className="font-bold text-sm">{location.memberCount.toLocaleString()}</div>
+                              <div className="text-xs text-muted-foreground">Members</div>
+                            </div>
+                            <div className="flex flex-col items-center gap-1 p-2 bg-muted/50 rounded-lg">
+                              <Calendar className="w-4 h-4 text-blue-500" />
+                              <div className="font-bold text-sm">{location.activeEvents}</div>
+                              <div className="text-xs text-muted-foreground">Events</div>
+                            </div>
+                            <div className="flex flex-col items-center gap-1 p-2 bg-muted/50 rounded-lg">
+                              <Building2 className="w-4 h-4 text-purple-500" />
+                              <div className="font-bold text-sm">{location.recommendations}</div>
+                              <div className="text-xs text-muted-foreground">Venues</div>
+                            </div>
+                            <div className="flex flex-col items-center gap-1 p-2 bg-muted/50 rounded-lg">
+                              <Home className="w-4 h-4 text-amber-500" />
+                              <div className="font-bold text-sm">{location.housing}</div>
+                              <div className="text-xs text-muted-foreground">Housing</div>
+                            </div>
+                          </div>
+
+                          {location.groupId && (
+                            <Link href={`/groups/${location.groupId}`} className="block">
+                              <Button className="w-full gap-2" data-testid={`button-view-group-${location.groupId}`}>
+                                <ChevronRight className="w-4 h-4" />
+                                View City Group
+                              </Button>
+                            </Link>
+                          )}
+                        </CardContent>
+                      </Card>
+                    </motion.div>
+                  ))}
+                </div>
               )}
             </div>
           </div>

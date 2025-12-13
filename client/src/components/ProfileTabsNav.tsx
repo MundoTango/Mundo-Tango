@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { 
@@ -9,7 +10,11 @@ import {
   Users, 
   Image, 
   Info,
-  Briefcase
+  Briefcase,
+  MessageSquare,
+  UserPlus,
+  UserCheck,
+  HeartHandshake
 } from "lucide-react";
 
 interface User {
@@ -18,13 +23,22 @@ interface User {
   [key: string]: any;
 }
 
+interface FriendshipState {
+  isFriend: boolean;
+  hasPendingRequest: boolean;
+  hasIncomingRequest: boolean;
+}
+
 interface ProfileTabsNavProps {
   user: User;
   activeTab: string;
   onTabChange: (tab: string) => void;
   isOwnProfile: boolean;
   isPublicView?: boolean;
-  actionButtons?: React.ReactNode;
+  friendshipState?: FriendshipState;
+  onAddFriend?: () => void;
+  onReviewRequest?: () => void;
+  isAddingFriend?: boolean;
 }
 
 const PROFESSIONAL_ROLES = [
@@ -62,7 +76,17 @@ export const getVisibleTabs = (user: User): Array<{ id: string; label: string; i
   return allTabs;
 };
 
-export default function ProfileTabsNav({ user, activeTab, onTabChange, isOwnProfile, isPublicView, actionButtons }: ProfileTabsNavProps) {
+export default function ProfileTabsNav({ 
+  user, 
+  activeTab, 
+  onTabChange, 
+  isOwnProfile, 
+  isPublicView,
+  friendshipState,
+  onAddFriend,
+  onReviewRequest,
+  isAddingFriend
+}: ProfileTabsNavProps) {
   const visibleTabs = getVisibleTabs(user);
   const [hoveredTab, setHoveredTab] = useState<string | null>(null);
   
@@ -70,6 +94,7 @@ export default function ProfileTabsNav({ user, activeTab, onTabChange, isOwnProf
     <div className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-40">
       <div className="max-w-5xl mx-auto px-6">
         <div className="flex items-center justify-between gap-2 py-2">
+          {/* Left: Tab buttons */}
           <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide">
           {visibleTabs.map((tab, index) => {
             const Icon = tab.icon;
@@ -128,9 +153,68 @@ export default function ProfileTabsNav({ user, activeTab, onTabChange, isOwnProf
             );
           })}
           </div>
-          {actionButtons && (
+          
+          {/* Right: Friend/Message Buttons (only on other profiles) */}
+          {!isOwnProfile && friendshipState && (
             <div className="flex items-center gap-2 flex-shrink-0">
-              {actionButtons}
+              {/* Message Button */}
+              <Link href={`/messages/direct/${user.id}`}>
+                <Button 
+                  variant="outline"
+                  size="sm"
+                  className="gap-2"
+                  data-testid={`button-message-${user.id}`}
+                >
+                  <MessageSquare className="h-4 w-4" />
+                  Message
+                </Button>
+              </Link>
+              
+              {/* Friend Status Button */}
+              {friendshipState.isFriend ? (
+                <Link href={`/friendship/${user.id}`}>
+                  <Button 
+                    size="sm"
+                    className="gap-2"
+                    data-testid={`button-see-friendship-${user.id}`}
+                  >
+                    <HeartHandshake className="h-4 w-4" />
+                    See Friendship
+                  </Button>
+                </Link>
+              ) : friendshipState.hasIncomingRequest ? (
+                <Button 
+                  size="sm"
+                  className="gap-2"
+                  onClick={onReviewRequest}
+                  data-testid={`button-review-request-${user.id}`}
+                >
+                  <UserCheck className="h-4 w-4" />
+                  Review Request
+                </Button>
+              ) : friendshipState.hasPendingRequest ? (
+                <Button 
+                  variant="outline"
+                  size="sm"
+                  className="gap-2"
+                  disabled
+                  data-testid="button-request-pending"
+                >
+                  <UserCheck className="h-4 w-4" />
+                  Request Sent
+                </Button>
+              ) : (
+                <Button 
+                  size="sm"
+                  className="gap-2"
+                  onClick={onAddFriend}
+                  disabled={isAddingFriend}
+                  data-testid={`button-add-friend-${user.id}`}
+                >
+                  <UserPlus className="h-4 w-4" />
+                  Add Friend
+                </Button>
+              )}
             </div>
           )}
         </div>

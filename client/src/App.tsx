@@ -51,6 +51,7 @@ import ForDancersPage from "@/pages/marketing/ForDancersPage";
 import ForTeachersPage from "@/pages/marketing/ForTeachersPage";
 import ForOrganizersPage from "@/pages/marketing/ForOrganizersPage";
 import SupportPage from "@/pages/marketing/SupportPage";
+import DonatePage from "@/pages/DonatePage";
 import SupportersPage from "@/pages/marketing/SupportersPage";
 import VolunteerPage from "@/pages/marketing/VolunteerPage";
 import MrBluePage from "@/pages/marketing/MrBluePage";
@@ -142,6 +143,7 @@ const EventSeriesPage = lazy(() => import("@/pages/EventSeriesPage"));
 // Community & Events Pages (Pages 11-20)
 const CommunityMapPage = lazy(() => import("@/pages/CommunityMapPage"));
 const CityGroupsPage = lazy(() => import("@/pages/CityGroupsPage"));
+const CityGroupRedirectPage = lazy(() => import("@/pages/CityGroupRedirectPage"));
 const CityHubPage = lazy(() => import("@/pages/CityHubPage"));
 const ProfessionalGroupsPage = lazy(
   () => import("@/pages/ProfessionalGroupsPage"),
@@ -711,6 +713,16 @@ const PROTaxiDancersPage = lazy(() =>
     default: m.TaxiDancersPage,
   })),
 );
+const PRODancersPage = lazy(() =>
+  import("@/pages/pro/PROGroupPublicPage").then((m) => ({
+    default: m.DancersPage,
+  })),
+);
+const PROResearchersPage = lazy(() =>
+  import("@/pages/pro/PROGroupPublicPage").then((m) => ({
+    default: m.ResearchersPage,
+  })),
+);
 
 function Router() {
   return (
@@ -751,6 +763,7 @@ function Router() {
       <Route path="/for-teachers" component={ForTeachersPage} />
       <Route path="/for-organizers" component={ForOrganizersPage} />
       <Route path="/support" component={SupportPage} />
+      <Route path="/donate" component={DonatePage} />
       <Route path="/supporters" component={SupportersPage} />
       <Route path="/volunteer" component={VolunteerPage} />
       <Route path="/mr-blue" component={MrBluePage} />
@@ -883,6 +896,15 @@ function Router() {
 
       {/* Alias for shorter URL */}
       <Route path="/community-map">
+        <ProtectedRoute>
+          <AppLayout>
+            <CommunityWorldMapPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      {/* Alias for world-map URL */}
+      <Route path="/world-map">
         <ProtectedRoute>
           <AppLayout>
             <CommunityWorldMapPage />
@@ -1132,6 +1154,14 @@ function Router() {
         </ProtectedRoute>
       </Route>
 
+      <Route path="/groups/city/:cityName">
+        <ProtectedRoute>
+          <AppLayout>
+            <CityGroupRedirectPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
       <Route path="/groups/:id">
         <AppLayout>
           <GroupDetailsPage />
@@ -1163,7 +1193,6 @@ function Router() {
         </ProtectedRoute>
       </Route>
 
-      {/* City Hub removed - functionality covered by Community Map + City Groups */}
       <Route path="/city-groups">
         <ProtectedRoute>
           <AppLayout>
@@ -1213,6 +1242,10 @@ function Router() {
             <CreateListingPage />
           </AppLayout>
         </ProtectedRoute>
+      </Route>
+
+      <Route path="/housing/create">
+        <Redirect to="/housing/new" />
       </Route>
 
       <Route path="/housing/my-listings">
@@ -1585,6 +1618,26 @@ function Router() {
           <AppLayout>
             <Suspense fallback={<LoadingFallback />}>
               <PROTaxiDancersPage />
+            </Suspense>
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/pro/dancers">
+        <ProtectedRoute>
+          <AppLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <PRODancersPage />
+            </Suspense>
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/pro/researchers">
+        <ProtectedRoute>
+          <AppLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <PROResearchersPage />
             </Suspense>
           </AppLayout>
         </ProtectedRoute>

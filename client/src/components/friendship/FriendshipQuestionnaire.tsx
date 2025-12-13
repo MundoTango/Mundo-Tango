@@ -47,6 +47,7 @@ interface FriendshipQuestionnaireProps {
   friendName: string;
   onSubmit: (data: QuestionnaireFormData & { mediaUrls?: string[] }) => void;
   isLoading?: boolean;
+  mode?: 'send' | 'accept'; // 'send' for sending request, 'accept' for accepting request
 }
 
 export function FriendshipQuestionnaire({
@@ -55,7 +56,11 @@ export function FriendshipQuestionnaire({
   friendName,
   onSubmit,
   isLoading = false,
+  mode = 'send',
 }: FriendshipQuestionnaireProps) {
+  const buttonText = mode === 'send' 
+    ? (isLoading ? "Sending..." : "Send Friend Request")
+    : (isLoading ? "Accepting..." : "Accept & Confirm");
   const [showPreview, setShowPreview] = useState(false);
   const [mediaFiles, setMediaFiles] = useState<File[]>([]);
   const [mediaPreviews, setMediaPreviews] = useState<string[]>([]);
@@ -404,17 +409,7 @@ export function FriendshipQuestionnaire({
                   disabled={isSubmitting}
                   data-testid="button-submit"
                 >
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      {isUploading ? "Uploading..." : "Sending..."}
-                    </>
-                  ) : (
-                    <>
-                      <Send className="h-4 w-4 mr-2" />
-                      Send Request
-                    </>
-                  )}
+                  {buttonText}
                 </Button>
               </DialogFooter>
             </form>
@@ -527,17 +522,7 @@ export function FriendshipQuestionnaire({
                 disabled={isSubmitting}
                 data-testid="button-submit-preview"
               >
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    {isUploading ? "Uploading..." : "Sending..."}
-                  </>
-                ) : (
-                  <>
-                    <Send className="h-4 w-4 mr-2" />
-                    Send Request
-                  </>
-                )}
+                {buttonText}
               </Button>
             </DialogFooter>
           </div>

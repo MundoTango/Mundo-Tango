@@ -13,6 +13,7 @@ import {
   type AuthRequest,
 } from "../middleware/auth";
 import { insertUserSchema } from "@shared/schema";
+import { ensureCityGroupExists } from "../utils/cityGroupAutomation";
 
 const router = Router();
 
@@ -46,6 +47,13 @@ const resetPasswordSchema = z.object({
 
 const verify2FASchema = z.object({
   code: z.string().length(6),
+});
+
+const waitlistSchema = z.object({
+  email: z.string().email(),
+  name: z.string().optional(),
+  username: z.string().min(3).max(30).optional(),
+  password: z.string().min(8).max(100).optional(),
 });
 
 router.get("/check-username/:username", async (req: Request, res: Response) => {
@@ -92,6 +100,22 @@ router.post("/register", async (req: Request, res: Response) => {
       isOnboardingComplete: false,
       formStatus: 0,
     });
+
+    // Auto-create city group if user registered with a city
+    if (validatedData.city) {
+      try {
+        const result = await ensureCityGroupExists(
+          validatedData.city,
+          validatedData.country || null,
+          user.id
+        );
+        if (result?.wasCreated) {
+          console.log(`[Auth] Auto-created city group for ${validatedData.city}: ${result.groupName}`);
+        }
+      } catch (cityGroupError) {
+        console.error("[Auth] Failed to create city group during registration:", cityGroupError);
+      }
+    }
 
     const verificationToken = crypto.randomBytes(32).toString("hex");
     const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
@@ -282,6 +306,60 @@ router.post("/logout", async (req: Request, res: Response) => {
   }
 });
 
+router.post("/waitlist", async (req: Request, res: Response) => {
+  try {
+    const validatedData = waitlistSchema.parse(req.body);
+
+    const existingUser = await storage.getUserByEmail(validatedData.email);
+    if (existingUser) {
+      if (existingUser.waitlist) {
+        return res.status(409).json({ message: "You're already on the waitlist!" });
+      }
+      return res.status(409).json({ message: "This email is already registered. Please sign in instead." });
+    }
+
+    // Use provided username or generate temp one
+    let finalUsername = validatedData.username;
+    if (finalUsername) {
+      const existingUsername = await storage.getUserByUsername(finalUsername);
+      if (existingUsername) {
+        return res.status(409).json({ message: "Username already taken. Please choose another." });
+      }
+    } else {
+      finalUsername = `waitlist_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+    }
+    
+    // Use provided password or generate random one
+    const finalPassword = validatedData.password 
+      ? await bcrypt.hash(validatedData.password, BCRYPT_ROUNDS)
+      : await bcrypt.hash(crypto.randomBytes(32).toString("hex"), BCRYPT_ROUNDS);
+
+    await storage.createUser({
+      email: validatedData.email,
+      name: validatedData.name || "Waitlist User",
+      username: finalUsername,
+      password: finalPassword,
+      waitlist: true,
+      waitlistDate: new Date(),
+      isActive: false,
+    });
+
+    res.status(201).json({
+      message: "You've been added to the waitlist! We'll notify you when registration opens.",
+      success: true,
+    });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ 
+        message: "Validation error", 
+        errors: error.errors 
+      });
+    }
+    console.error("Waitlist signup error:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 router.post("/refresh", async (req: Request, res: Response) => {
   try {
     const refreshToken = req.cookies.refreshToken;
@@ -435,14 +513,12 @@ router.get("/me", authenticateToken, async (req: AuthRequest, res: Response) => 
 
     const { password, ...userWithoutPassword } = req.user;
 
-    // Map snake_case database fields to camelCase for frontend
+    // Ensure tangoRoles is always an array and city/country are included
     const userResponse = {
       ...userWithoutPassword,
-      // Ensure tangoRoles is available (map from tango_roles if needed)
-      tangoRoles: (userWithoutPassword as any).tango_roles || (userWithoutPassword as any).tangoRoles || [],
-      // Ensure city and country are included
-      city: userWithoutPassword.city,
-      country: userWithoutPassword.country,
+      tangoRoles: userWithoutPassword.tangoRoles ?? [],
+      city: userWithoutPassword.city ?? null,
+      country: userWithoutPassword.country ?? null,
     };
 
     res.json({ user: userResponse });
