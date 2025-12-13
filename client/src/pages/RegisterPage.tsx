@@ -234,8 +234,11 @@ export default function RegisterPage() {
 
     try {
       if (isCodeValid) {
+        // Full registration with invite code - proceed to onboarding
         await register({ name, username, email, password, inviteCode });
       } else {
+        // No invite code - still create account and proceed to onboarding
+        // This creates a "waitlist" user who can still complete onboarding
         const response = await fetch("/api/auth/waitlist", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -244,15 +247,34 @@ export default function RegisterPage() {
             name: name || undefined,
             username: username || undefined,
             password: password || undefined,
+            proceedToOnboarding: true, // Signal to create full account
           }),
         });
         
         const data = await response.json();
         
         if (!response.ok) {
-          throw new Error(data.message || "Failed to join waitlist");
+          throw new Error(data.message || "Failed to complete signup");
         }
         
+        // If the API returns tokens, store them and proceed to onboarding
+        if (data.accessToken) {
+          localStorage.setItem("accessToken", data.accessToken);
+          if (data.refreshToken) {
+            localStorage.setItem("refreshToken", data.refreshToken);
+          }
+          
+          toast({
+            title: "Account created!",
+            description: "Let's complete your profile.",
+          });
+          
+          // Redirect to onboarding flow
+          window.location.href = "/onboarding/step-1";
+          return;
+        }
+        
+        // Fallback to old behavior if API doesn't support new flow yet
         setWaitlistSuccess(true);
         toast({
           title: "You're on the list!",

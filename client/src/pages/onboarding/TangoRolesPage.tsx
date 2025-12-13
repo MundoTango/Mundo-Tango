@@ -1,10 +1,19 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Check, Heart, ChevronRight } from "lucide-react";
+import { Loader2, Check, Heart, ChevronRight, Calendar, Sparkles } from "lucide-react";
 import { SEO } from "@/components/SEO";
 import { useAuth } from "@/contexts/AuthContext";
 import { extractApiError } from "@/lib/apiErrorHandler";
@@ -14,12 +23,42 @@ import { motion } from "framer-motion";
 import heroImage from "@assets/stock_images/elegant_professional_29e89c1e.jpg";
 import { TANGO_ROLES } from "@/lib/tangoRoles";
 
+const EXPERIENCE_LEVELS = [
+  { value: 0, label: "Not applicable" },
+  { value: 1, label: "Beginner" },
+  { value: 2, label: "Elementary" },
+  { value: 3, label: "Pre-Intermediate" },
+  { value: 4, label: "Intermediate" },
+  { value: 5, label: "Upper-Intermediate" },
+  { value: 6, label: "Pre-Advanced" },
+  { value: 7, label: "Advanced" },
+  { value: 8, label: "Expert" },
+  { value: 9, label: "Master" },
+  { value: 10, label: "World-Class" },
+];
+
+const currentYear = new Date().getFullYear();
+
+function generateYearOptions(): number[] {
+  const years: number[] = [];
+  for (let year = currentYear; year >= 1950; year--) {
+    years.push(year);
+  }
+  return years;
+}
+
 export default function TangoRolesPage() {
   const [, navigate] = useLocation();
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
   const { toast } = useToast();
   const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [tangoStartYear, setTangoStartYear] = useState<number>(currentYear);
+  const [leaderLevel, setLeaderLevel] = useState<number>(0);
+  const [followerLevel, setFollowerLevel] = useState<number>(0);
+
+  const yearOptions = useMemo(() => generateYearOptions(), []);
+  const yearsOfDancing = currentYear - tangoStartYear;
 
   useEffect(() => {
     if (!user) {
@@ -37,7 +76,11 @@ export default function TangoRolesPage() {
     }
   };
 
-  const handleContinue = async () => {
+  const getLevelLabel = (level: number) => {
+    return EXPERIENCE_LEVELS.find(l => l.value === level)?.label || "Not set";
+  };
+
+  const handleComplete = async () => {
     if (selectedRoles.length === 0) {
       toast({
         title: "Select at least one role",
@@ -58,20 +101,31 @@ export default function TangoRolesPage() {
         },
         body: JSON.stringify({
           tangoRoles: selectedRoles,
-          formStatus: 3,
+          tangoStartYear,
+          yearsOfDancing,
+          leaderLevel,
+          followerLevel,
+          formStatus: 4,
+          isOnboardingComplete: true,
         }),
       });
 
       if (!response.ok) {
-        const errorMessage = await extractApiError(response, { context: "Tango roles" });
+        const errorMessage = await extractApiError(response, { context: "Profile completion" });
         throw new Error(errorMessage);
       }
 
-      navigate("/onboarding/step-4");
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Failed to save roles";
       toast({
-        title: "Roles Save Failed",
+        title: "Welcome to Mundo Tango!",
+        description: "Your profile is complete. Let's explore!",
+      });
+
+      if (refreshUser) await refreshUser();
+      navigate("/feed");
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Failed to save profile";
+      toast({
+        title: "Profile Save Failed",
         description: errorMessage,
         variant: "destructive",
       });
@@ -86,7 +140,6 @@ export default function TangoRolesPage() {
 <>
       <SEO title="Your Tango Roles - Mundo Tango" description="Tell us what you do in the tango community" />
       
-      {/* Hero Section */}
       <div className="relative h-[50vh] w-full overflow-hidden">
         <div 
           className="absolute inset-0 bg-cover bg-center"
@@ -102,21 +155,20 @@ export default function TangoRolesPage() {
             transition={{ duration: 1, ease: "easeOut" }}
           >
             <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-step-3">
-              Step 3 of 5
+              Step 3 of 3 - Final Step!
             </Badge>
             
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-white font-bold leading-tight mb-6">
-              What Do You Do in Tango?
+              Your Tango Profile
             </h1>
             
             <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto">
-              Select all that apply - express your passion
+              Tell us about your tango journey
             </p>
           </motion.div>
         </div>
       </div>
 
-      {/* Content Section */}
       <div className="bg-background">
         <div className="container mx-auto max-w-5xl px-6 py-12">
           <motion.div
@@ -197,6 +249,107 @@ export default function TangoRolesPage() {
                     </div>
                   </motion.div>
                 )}
+
+                <div className="border-t pt-8 space-y-6">
+                  <div className="space-y-4">
+                    <Label htmlFor="tango-start-year" className="text-lg font-medium flex items-center gap-2">
+                      <Calendar className="h-5 w-5 text-primary" />
+                      When did you start tango?
+                    </Label>
+                    <div className="flex items-center gap-4 flex-wrap">
+                      <Select
+                        value={tangoStartYear.toString()}
+                        onValueChange={(value) => setTangoStartYear(parseInt(value, 10))}
+                      >
+                        <SelectTrigger 
+                          className="w-32" 
+                          data-testid="select-tango-start-year"
+                        >
+                          <SelectValue placeholder="Select year" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {yearOptions.map(year => (
+                            <SelectItem 
+                              key={year} 
+                              value={year.toString()}
+                              data-testid={`option-year-${year}`}
+                            >
+                              {year}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <span className="text-muted-foreground">
+                        ({yearsOfDancing} {yearsOfDancing === 1 ? 'year' : 'years'} ago)
+                      </span>
+                      {yearsOfDancing === 0 && (
+                        <Badge variant="outline">New to tango? Welcome!</Badge>
+                      )}
+                      {yearsOfDancing >= 10 && (
+                        <Badge variant="default" className="bg-yellow-500">
+                          <Sparkles className="h-3 w-3 mr-1" />
+                          Veteran
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="space-y-6">
+                    <div>
+                      <div className="flex items-center justify-between mb-4">
+                        <Label className="text-lg font-medium">Leader Level</Label>
+                        <Badge variant="secondary" data-testid="badge-leader-level">
+                          {getLevelLabel(leaderLevel)}
+                        </Badge>
+                      </div>
+                      <Slider
+                        value={[leaderLevel]}
+                        onValueChange={([value]) => setLeaderLevel(value)}
+                        max={10}
+                        step={1}
+                        className="w-full"
+                        data-testid="slider-leader-level"
+                      />
+                      <div className="flex justify-between text-xs text-muted-foreground mt-2">
+                        <span>N/A</span>
+                        <span>Beginner</span>
+                        <span>Intermediate</span>
+                        <span>Advanced</span>
+                        <span>Master</span>
+                      </div>
+                    </div>
+
+                    <div>
+                      <div className="flex items-center justify-between mb-4">
+                        <Label className="text-lg font-medium">Follower Level</Label>
+                        <Badge variant="secondary" data-testid="badge-follower-level">
+                          {getLevelLabel(followerLevel)}
+                        </Badge>
+                      </div>
+                      <Slider
+                        value={[followerLevel]}
+                        onValueChange={([value]) => setFollowerLevel(value)}
+                        max={10}
+                        step={1}
+                        className="w-full"
+                        data-testid="slider-follower-level"
+                      />
+                      <div className="flex justify-between text-xs text-muted-foreground mt-2">
+                        <span>N/A</span>
+                        <span>Beginner</span>
+                        <span>Intermediate</span>
+                        <span>Advanced</span>
+                        <span>Master</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-muted/50 rounded-lg p-4">
+                    <p className="text-sm text-muted-foreground">
+                      You can update these anytime from your profile. It's okay to estimate - many dancers enjoy both leading and following!
+                    </p>
+                  </div>
+                </div>
               </CardContent>
 
               <CardFooter className="p-8 bg-muted/20 flex justify-between">
@@ -209,19 +362,21 @@ export default function TangoRolesPage() {
                   Back
                 </Button>
                 <Button
-                  onClick={handleContinue}
+                  onClick={handleComplete}
                   disabled={isLoading || selectedRoles.length === 0}
                   className="gap-2"
-                  data-testid="button-continue"
+                  size="lg"
+                  data-testid="button-complete"
                 >
                   {isLoading ? (
                     <>
                       <Loader2 className="h-4 w-4 animate-spin" />
-                      Saving...
+                      Finishing...
                     </>
                   ) : (
                     <>
-                      Continue
+                      <Sparkles className="h-4 w-4" />
+                      Complete Setup
                       <ChevronRight className="h-4 w-4" />
                     </>
                   )}
@@ -229,12 +384,10 @@ export default function TangoRolesPage() {
               </CardFooter>
             </Card>
 
-            {/* Progress Indicator */}
             <div className="flex justify-center gap-2 mt-8">
               <div className="h-2 w-16 rounded-full bg-primary"></div>
               <div className="h-2 w-16 rounded-full bg-primary"></div>
               <div className="h-2 w-16 rounded-full bg-primary"></div>
-              <div className="h-2 w-16 rounded-full bg-muted"></div>
             </div>
           </motion.div>
         </div>
