@@ -25,11 +25,27 @@ export default function H2ACDashboardPage() {
     enabled: !!user
   });
 
+  const { data: volunteerMatches } = useQuery<any[]>({
+    queryKey: ["/api/v1/volunteers", volunteerProfile?.id, "matches"],
+    queryFn: async () => {
+      const response = await fetch(`/api/v1/volunteers/${volunteerProfile?.id}/matches`, {
+        credentials: 'include'
+      });
+      if (!response.ok) return [];
+      return response.json();
+    },
+    enabled: !!volunteerProfile?.id
+  });
+
+  const matchCount = volunteerMatches?.length || 0;
+  const tasksCompleted = volunteerProfile?.tasksCompleted || 0;
+  const skillScore = volunteerProfile?.skillScore || 0;
+
   const metrics = [
     { label: "Active Agents", value: "134", change: "All online", icon: Bot, color: "text-blue-500" },
-    { label: "Your Matches", value: volunteerProfile ? "5" : "0", change: volunteerProfile ? "New" : "Start matching", icon: UserCheck, color: "text-green-500" },
-    { label: "Tasks Completed", value: "12", change: "+3 today", icon: CheckCircle, color: "text-purple-500" },
-    { label: "Skill Score", value: volunteerProfile ? "85%" : "-", change: volunteerProfile ? "+5%" : "Upload resume", icon: Target, color: "text-orange-500" }
+    { label: "Your Matches", value: matchCount.toString(), change: matchCount > 0 ? "Ready to review" : "Start matching", icon: UserCheck, color: "text-green-500" },
+    { label: "Tasks Completed", value: tasksCompleted.toString(), change: tasksCompleted > 0 ? "Active contributor" : "-", icon: CheckCircle, color: "text-purple-500" },
+    { label: "Skill Score", value: skillScore > 0 ? `${skillScore}%` : "-", change: skillScore > 0 ? "Analyzed" : "Upload resume", icon: Target, color: "text-orange-500" }
   ];
 
   const talentMatchAgents = [
@@ -97,39 +113,14 @@ export default function H2ACDashboardPage() {
     { category: "Mr Blue AI Agents", count: 8, active: 8, healthScore: 100 }
   ];
 
-  const matchedOpportunities = [
-    {
-      id: 1,
-      title: "Frontend Developer",
-      team: "Visual Editor Team",
-      matchScore: 95,
-      skills: ["React", "TypeScript", "UI/UX"],
-      status: "Open"
-    },
-    {
-      id: 2,
-      title: "AI Integration Specialist",
-      team: "Mr Blue AI Team",
-      matchScore: 88,
-      skills: ["OpenAI", "LangChain", "Prompt Engineering"],
-      status: "Open"
-    },
-    {
-      id: 3,
-      title: "Community Manager",
-      team: "Events Team",
-      matchScore: 82,
-      skills: ["Communication", "Event Planning", "Social Media"],
-      status: "Open"
-    }
-  ];
+  const matchedOpportunities = volunteerMatches || [];
 
   return (
-    <SelfHealingErrorBoundary pageName="H2AC Dashboard" fallbackRoute="/feed">
-      <PageLayout title="H2AC Dashboard" showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName="Volunteer Dashboard" fallbackRoute="/feed">
+      <PageLayout title="Volunteer Dashboard" showBreadcrumbs>
         <SEO
-          title="H2AC Dashboard - Agent Communication Hub"
-          description="Human-to-Agent Communication central dashboard for talent matching and managing AI agents."
+          title="Volunteer Dashboard - Mundo Tango"
+          description="Your volunteer dashboard for talent matching, task assignments, and AI agent collaboration."
         />
 
         <div className="min-h-screen bg-gradient-to-br from-primary/10 via-accent/5 to-background py-12 px-4">
@@ -146,8 +137,8 @@ export default function H2ACDashboardPage() {
                     <MessageSquare className="h-6 w-6 text-blue-500" />
                   </div>
                   <div>
-                    <h2 className="text-xl font-bold">Human-to-Agent Communication Hub</h2>
-                    <p className="text-muted-foreground">Manage your AI agent team and volunteer opportunities</p>
+                    <h2 className="text-xl font-bold">Volunteer Dashboard</h2>
+                    <p className="text-muted-foreground">Track your volunteer opportunities and AI-matched assignments</p>
                   </div>
                 </div>
                 

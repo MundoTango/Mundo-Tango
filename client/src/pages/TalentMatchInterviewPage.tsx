@@ -325,10 +325,41 @@ If question ${TOTAL_WORK_QUESTIONS}, ask about their availability and preferred 
           }));
 
           const userName = user?.name || user?.username || "there";
-          const completionMessage: Message = {
-            id: (Date.now() + 1).toString(),
-            role: "assistant",
-            content: `Thank you so much, ${userName}! 
+          
+          const generateCompletionMessage = async (): Promise<string> => {
+            const summaryContext = `
+Resume interview highlights: ${interviewState.resumeAnswers.slice(-5).join(" | ")}
+Work preferences discussed: ${newAnswers.slice(-5).join(" | ")}
+Volunteer name: ${userName}
+`;
+            const systemPrompt = `You are Mr Blue, the AI interviewer for Mundo Tango's volunteer program. Generate a warm, personalized completion message.
+
+Based on the interview:
+${summaryContext}
+
+Write a personalized completion message that:
+1. Thanks them warmly by name
+2. Mentions 2-3 specific skills or interests they shared during the interview
+3. Briefly explains next steps (profile review, matching, notification)
+4. Welcomes them to the Mundo Tango volunteer community
+
+Keep it concise (3-4 short paragraphs). Be warm and specific - reference actual things they mentioned.`;
+
+            try {
+              const response = await fetch("/api/mrblue/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify({
+                  message: "Generate personalized interview completion summary",
+                  systemPrompt
+                })
+              });
+              if (!response.ok) throw new Error("Failed to generate completion");
+              const data = await response.json();
+              return data.response || data.content;
+            } catch {
+              return `Thank you so much, ${userName}! 
 
 Your interview is complete! Here's what happens next:
 
@@ -336,9 +367,17 @@ Your interview is complete! Here's what happens next:
 - AI has matched your skills with open volunteer opportunities
 - You'll receive a notification when your assignments are approved
 
-Based on our conversation, I've identified several great opportunities that match your background and interests. You can view your matched assignments in the H2AC Dashboard.
+Based on our conversation, I've identified several great opportunities that match your background and interests. You can view your matched assignments in the Volunteer Dashboard.
 
-Welcome to the Mundo Tango volunteer community! We're excited to have you contribute to connecting the global tango community.`,
+Welcome to the Mundo Tango volunteer community! We're excited to have you contribute to connecting the global tango community.`;
+            }
+          };
+
+          const completionContent = await generateCompletionMessage();
+          const completionMessage: Message = {
+            id: (Date.now() + 1).toString(),
+            role: "assistant",
+            content: completionContent,
             timestamp: new Date(),
             phase: "complete"
           };
