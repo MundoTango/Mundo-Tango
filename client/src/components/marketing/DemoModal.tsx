@@ -202,37 +202,46 @@ const demoSlides = [
   },
   {
     id: 5,
-    icon: Sparkles,
-    title: "3D Avatar Experience",
-    subtitle: "Meet Mr. Blue in 3D",
-    description: "Interact with Mr. Blue's stunning 3D avatar. Watch him react with 10 different expressions - from thinking to celebrating your milonga plans!",
+    icon: Users,
+    title: "Tango Friendships",
+    subtitle: "Build Meaningful Connections",
+    description: "Connect with dancers who share your passion. Track your dance friendships, share memories, and strengthen bonds across the global tango community.",
     features: [
-      "Real-time 3D rendering",
-      "10 emotional expressions",
-      "Interactive gestures",
-      "Voice integration ready"
+      "Friendship closeness tracking",
+      "Shared dance memories",
+      "Private messages & posts",
+      "Dance history together"
     ],
-    color: "from-cyan-500 to-blue-500",
+    color: "from-pink-500 to-rose-500",
     preview: (
-      <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-lg p-4 h-48 flex flex-col items-center justify-center relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-blue-500/10" />
-        <div className="relative z-10 flex flex-col items-center">
-          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center mb-3 animate-pulse">
-            <Bot className="h-10 w-10 text-white" />
+      <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-lg p-4 h-48 flex flex-col relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-pink-500/10 to-rose-500/10" />
+        <div className="relative z-10 flex flex-col h-full">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-white text-sm font-medium">Your Tango Friends</span>
+            <Badge className="text-xs bg-pink-500/20 text-pink-400 border-0">24 connections</Badge>
           </div>
-          <div className="flex gap-2 mb-2">
-            {['Happy', 'Thinking', 'Excited'].map((mood) => (
-              <Badge key={mood} className="text-[10px] bg-cyan-500/20 text-cyan-400 border-0">{mood}</Badge>
+          <div className="flex-1 space-y-2">
+            {[
+              { name: "Maria S.", closeness: "Close Friend", dances: 47, color: "from-pink-400 to-rose-400" },
+              { name: "Carlos R.", closeness: "Dance Partner", dances: 32, color: "from-amber-400 to-orange-400" },
+              { name: "Sofia L.", closeness: "Friend", dances: 15, color: "from-blue-400 to-cyan-400" }
+            ].map((friend, i) => (
+              <div key={i} className="flex items-center gap-2 bg-slate-700/30 rounded-lg p-2">
+                <div className={`w-8 h-8 rounded-full bg-gradient-to-br ${friend.color} flex items-center justify-center text-white text-xs font-bold flex-shrink-0`}>
+                  {friend.name.charAt(0)}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-white text-xs font-medium truncate">{friend.name}</p>
+                  <p className="text-pink-400 text-[10px]">{friend.closeness}</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-white text-xs font-medium">{friend.dances}</p>
+                  <p className="text-slate-400 text-[10px]">dances</p>
+                </div>
+              </div>
             ))}
           </div>
-          <p className="text-xs text-slate-400 text-center">
-            Click expressions to see Mr. Blue react!
-          </p>
-        </div>
-        <div className="absolute bottom-2 left-2 right-2 flex justify-center gap-1">
-          {[...Array(5)].map((_, i) => (
-            <div key={i} className="w-1.5 h-1.5 rounded-full bg-cyan-400/40" style={{ animationDelay: `${i * 0.1}s` }} />
-          ))}
         </div>
       </div>
     )
