@@ -133,7 +133,7 @@ export default function ForTeachersPage() {
               transition={{ duration: 0.6, delay: 0.5 }}
               className="flex flex-wrap gap-4 justify-center"
             >
-              <Link href="/register?role=teacher">
+              <Link href="/login?redirect=/talent-match&role=teacher">
                 <Button size="lg" className="text-lg px-8" data-testid="button-join-teachers">
                   Start Teaching
                   <GraduationCap className="ml-2 h-5 w-5" />
@@ -237,7 +237,7 @@ export default function ForTeachersPage() {
                           </li>
                         ))}
                       </ul>
-                      <Link href={`/register?role=teacher&plan=${tier.name.toLowerCase()}`}>
+                      <Link href={`/login?redirect=/talent-match&role=teacher&plan=${tier.name.toLowerCase()}`}>
                         <Button 
                           className="w-full mt-6" 
                           variant={tier.highlighted ? "default" : "outline"}
@@ -275,7 +275,7 @@ export default function ForTeachersPage() {
                   </Badge>
                 ))}
               </div>
-              <Link href="/register?role=teacher">
+              <Link href="/login?redirect=/talent-match&role=teacher">
                 <Button size="lg" className="text-lg px-12" data-testid="button-cta-teachers">
                   Start Your Free Trial
                   <Sparkles className="ml-2 h-5 w-5" />

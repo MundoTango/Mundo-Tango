@@ -107,7 +107,7 @@ export default function ForOrganizersPage() {
               transition={{ duration: 0.6, delay: 0.5 }}
               className="flex flex-wrap gap-4 justify-center"
             >
-              <Link href="/register?role=organizer">
+              <Link href="/login?redirect=/talent-match&role=organizer">
                 <Button size="lg" className="text-lg px-8" data-testid="button-join-organizers">
                   Create Your Event
                   <CalendarCheck className="ml-2 h-5 w-5" />
@@ -193,7 +193,7 @@ export default function ForOrganizersPage() {
                   24/7 support
                 </Badge>
               </div>
-              <Link href="/register?role=organizer">
+              <Link href="/login?redirect=/talent-match&role=organizer">
                 <Button size="lg" className="text-lg px-12" data-testid="button-cta-organizers">
                   List Your Event
                   <Sparkles className="ml-2 h-5 w-5" />
