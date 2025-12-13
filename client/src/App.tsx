@@ -53,6 +53,7 @@ import ForTeachersPage from "@/pages/marketing/ForTeachersPage";
 import ForOrganizersPage from "@/pages/marketing/ForOrganizersPage";
 import SupportPage from "@/pages/marketing/SupportPage";
 import DonatePage from "@/pages/DonatePage";
+import PricingPage from "@/pages/PricingPage";
 import SupportersPage from "@/pages/marketing/SupportersPage";
 import VolunteerPage from "@/pages/marketing/VolunteerPage";
 import MrBluePage from "@/pages/marketing/MrBluePage";
@@ -871,6 +872,7 @@ function Router() {
       </Route>
       <Route path="/login" component={LoginPage} />
       <Route path="/register" component={RegisterPage} />
+      <Route path="/pricing" component={PricingPage} />
       <Route path="/waitlist" component={WaitlistPage} />
       <Route path="/auth/callback" component={FacebookCallbackPage} />
 
