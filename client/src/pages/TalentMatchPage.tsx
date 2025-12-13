@@ -4,27 +4,33 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { SEO } from "@/components/SEO";
-import { Upload, Link as LinkIcon, Sparkles, ArrowRight, CheckCircle, FileText, Brain, Zap, Target } from "lucide-react";
-import { motion } from "framer-motion";
+import { Upload, Link as LinkIcon, Sparkles, ArrowRight, CheckCircle, FileText, Brain, Zap, Target, X, Files } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { apiRequest } from "@/lib/queryClient";
 import { useAuth } from "@/contexts/AuthContext";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
+interface UploadedDocument {
+  file: File;
+  text: string;
+  status: "pending" | "parsed" | "error";
+}
+
 export default function TalentMatchPage() {
   const [, setLocation] = useLocation();
   const { user, isLoading: authLoading } = useAuth();
   const [step, setStep] = useState<"upload" | "clarifier" | "results">("upload");
-  const [resumeText, setResumeText] = useState("");
+  const [uploadedDocuments, setUploadedDocuments] = useState<UploadedDocument[]>([]);
   const [linkedinUrl, setLinkedinUrl] = useState("");
   const [githubUrl, setGithubUrl] = useState("");
-  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
+
+  const getAllResumeText = () => uploadedDocuments.map(d => d.text).join("\n\n---\n\n");
 
   const validateUrl = (url: string, type: "linkedin" | "github"): boolean => {
     if (!url) return true;
@@ -37,48 +43,89 @@ export default function TalentMatchPage() {
   };
 
   const handleResumeUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
 
     const validTypes = ["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "text/plain"];
-    if (!validTypes.includes(file.type)) {
-      toast({
-        title: "Invalid file type",
-        description: "Please upload a PDF, DOC, DOCX, or TXT file",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    if (file.size > 5 * 1024 * 1024) {
-      toast({
-        title: "File too large",
-        description: "Please upload a file smaller than 5MB",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    setUploadedFile(file);
+    const newDocuments: UploadedDocument[] = [];
     
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const text = e.target?.result as string;
-      setResumeText(text);
-    };
-    reader.readAsText(file);
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      
+      if (!validTypes.includes(file.type)) {
+        toast({
+          title: "Invalid file type",
+          description: `${file.name} is not a valid format. Please upload PDF, DOC, DOCX, or TXT files.`,
+          variant: "destructive"
+        });
+        continue;
+      }
 
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: "File too large",
+          description: `${file.name} is larger than 5MB`,
+          variant: "destructive"
+        });
+        continue;
+      }
+
+      const isDuplicate = uploadedDocuments.some(d => d.file.name === file.name && d.file.size === file.size);
+      if (isDuplicate) {
+        toast({
+          title: "Duplicate file",
+          description: `${file.name} has already been uploaded`,
+        });
+        continue;
+      }
+
+      newDocuments.push({ file, text: "", status: "pending" });
+    }
+
+    if (newDocuments.length > 0) {
+      setUploadedDocuments(prev => [...prev, ...newDocuments]);
+      
+      for (const doc of newDocuments) {
+        const reader = new FileReader();
+        const docName = doc.file.name;
+        const docSize = doc.file.size;
+        reader.onload = (event) => {
+          const text = event.target?.result as string;
+          setUploadedDocuments(prev => 
+            prev.map(d => (d.file.name === docName && d.file.size === docSize) ? { ...d, text, status: "parsed" } : d)
+          );
+        };
+        reader.onerror = () => {
+          setUploadedDocuments(prev => 
+            prev.map(d => (d.file.name === docName && d.file.size === docSize) ? { ...d, status: "error" } : d)
+          );
+        };
+        reader.readAsText(doc.file);
+      }
+
+      toast({
+        title: `${newDocuments.length} document${newDocuments.length > 1 ? 's' : ''} added`,
+        description: "Your career history is being processed"
+      });
+    }
+
+    e.target.value = "";
+  };
+
+  const removeDocument = (fileName: string, fileSize: number) => {
+    setUploadedDocuments(prev => prev.filter(d => !(d.file.name === fileName && d.file.size === fileSize)));
     toast({
-      title: "Resume uploaded",
-      description: `${file.name} loaded successfully`
+      title: "Document removed",
+      description: fileName
     });
   };
 
   const handleStartClarifier = async () => {
+    const resumeText = getAllResumeText();
     if (!resumeText && !linkedinUrl && !githubUrl) {
       toast({
         title: "Information required",
-        description: "Please provide at least one: resume text, LinkedIn, or GitHub URL",
+        description: "Please upload at least one resume, or provide your LinkedIn or GitHub URL",
         variant: "destructive"
       });
       return;
@@ -129,7 +176,7 @@ export default function TalentMatchPage() {
           resumeText,
           linkedinUrl,
           githubUrl,
-          uploadedFileName: uploadedFile?.name
+          uploadedFileNames: uploadedDocuments.map(d => d.file.name)
         },
         skills: [],
         availability: "flexible",
@@ -139,7 +186,7 @@ export default function TalentMatchPage() {
 
       if (resumeText) {
         await apiRequest("POST", `/api/v1/volunteers/${volunteer.id}/resume`, {
-          filename: uploadedFile?.name || "pasted-resume.txt",
+          filename: uploadedDocuments.length > 0 ? uploadedDocuments.map(d => d.file.name).join(", ") : "pasted-resume.txt",
           fileUrl: linkedinUrl || githubUrl || "",
           parsedText: resumeText,
           links: [linkedinUrl, githubUrl].filter(Boolean)
@@ -305,28 +352,70 @@ export default function TalentMatchPage() {
 
               <Card className="overflow-hidden border-2">
                 <CardContent className="p-8 md:p-12 space-y-6">
-                  {/* File Upload */}
-                  <div className="space-y-3">
-                    <Label htmlFor="resume-upload" className="text-base font-medium">Upload Resume</Label>
-                    <p className="text-sm text-muted-foreground">PDF, DOCX, or TXT • Maximum 5MB</p>
+                  {/* File Upload - Multiple Documents */}
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-2">
+                      <Files className="h-5 w-5 text-primary" />
+                      <Label htmlFor="resume-upload" className="text-base font-medium">Upload Your Resumes</Label>
+                    </div>
+                    
+                    {/* Compelling Messaging */}
+                    <div className="p-4 bg-primary/5 border border-primary/20 rounded-lg space-y-3">
+                      <p className="text-sm leading-relaxed">
+                        <strong>We want ALL of your resumes</strong> so we can truly understand who you are, what you have worked on, and what you want to do.
+                      </p>
+                      <p className="text-sm text-muted-foreground leading-relaxed">
+                        The paper resume should die. Your current job gets 12-15 bullets, your 2nd job 9-11, your 3rd 3-6. With each new resume you short-change yourself and forget what you've accomplished.
+                      </p>
+                      <p className="text-sm text-muted-foreground leading-relaxed">
+                        In this AI age where both talent and companies use AI to match, why limit yourself to one page? We want you to be excited to partner with us and work on the things you really want to help the Tango community.
+                      </p>
+                    </div>
+
+                    <p className="text-sm text-muted-foreground">PDF, DOCX, or TXT • Maximum 5MB each • Select multiple files</p>
                     <Input
                       id="resume-upload"
                       type="file"
                       accept=".pdf,.doc,.docx,.txt"
+                      multiple
                       onChange={handleResumeUpload}
                       data-testid="input-resume-upload"
                       className="cursor-pointer"
                     />
-                    {uploadedFile && (
-                      <motion.div
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        className="flex items-center gap-3 p-4 bg-green-500/5 border border-green-500/20 rounded-lg"
-                      >
-                        <FileText className="h-5 w-5 text-green-500" />
-                        <span className="text-sm font-medium flex-1">{uploadedFile.name}</span>
-                        <CheckCircle className="h-5 w-5 text-green-500" />
-                      </motion.div>
+                    
+                    {/* Uploaded Documents List */}
+                    <AnimatePresence mode="popLayout">
+                      {uploadedDocuments.map((doc) => (
+                        <motion.div
+                          key={`${doc.file.name}-${doc.file.size}`}
+                          initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                          animate={{ opacity: 1, scale: 1, y: 0 }}
+                          exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                          className="flex items-center gap-3 p-4 bg-green-500/5 border border-green-500/20 rounded-lg"
+                          data-testid={`document-${doc.file.name}-${doc.file.size}`}
+                        >
+                          <FileText className="h-5 w-5 text-green-500 flex-shrink-0" />
+                          <span className="text-sm font-medium flex-1 truncate">{doc.file.name}</span>
+                          {doc.status === "parsed" && <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />}
+                          {doc.status === "pending" && <div className="h-4 w-4 border-2 border-primary border-t-transparent rounded-full animate-spin flex-shrink-0" />}
+                          {doc.status === "error" && <span className="text-xs text-destructive">Error</span>}
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            onClick={() => removeDocument(doc.file.name, doc.file.size)}
+                            data-testid={`button-remove-${doc.file.name}-${doc.file.size}`}
+                            className="h-8 w-8 flex-shrink-0"
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </motion.div>
+                      ))}
+                    </AnimatePresence>
+                    
+                    {uploadedDocuments.length > 0 && (
+                      <p className="text-sm text-muted-foreground">
+                        {uploadedDocuments.length} document{uploadedDocuments.length > 1 ? 's' : ''} uploaded • Click "+" to add more
+                      </p>
                     )}
                   </div>
 
@@ -384,7 +473,7 @@ export default function TalentMatchPage() {
                   <div className="pt-6">
                     <Button
                       onClick={handleStartClarifier}
-                      disabled={isSubmitting || authLoading || (!uploadedFile && !linkedinUrl && !githubUrl)}
+                      disabled={isSubmitting || authLoading || (uploadedDocuments.length === 0 && !linkedinUrl && !githubUrl)}
                       size="lg"
                       className="w-full gap-2 text-base"
                       data-testid="button-start-clarifier"
