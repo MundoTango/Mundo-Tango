@@ -15,7 +15,7 @@ import heroImage from "@assets/stock_images/elegant_professional_0956f754.jpg";
 
 export default function PhotoUploadPage() {
   const [, navigate] = useLocation();
-  const { user } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
@@ -24,12 +24,13 @@ export default function PhotoUploadPage() {
   const [isDragging, setIsDragging] = useState(false);
 
   useEffect(() => {
+    if (authLoading) return;
     if (!user) {
       navigate("/login");
     } else if (user.isOnboardingComplete) {
       navigate("/feed");
     }
-  }, [user, navigate]);
+  }, [user, authLoading, navigate]);
 
   const handleFileSelect = (selectedFile: File) => {
     if (!selectedFile.type.startsWith("image/")) {

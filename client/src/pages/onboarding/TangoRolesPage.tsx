@@ -49,7 +49,7 @@ function generateYearOptions(): number[] {
 
 export default function TangoRolesPage() {
   const [, navigate] = useLocation();
-  const { user, refreshUser } = useAuth();
+  const { user, refreshUser, isLoading: authLoading } = useAuth();
   const { toast } = useToast();
   const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -63,12 +63,13 @@ export default function TangoRolesPage() {
 
   useEffect(() => {
     if (isCompletingRef.current) return;
+    if (authLoading) return;
     if (!user) {
       navigate("/login");
     } else if (user.isOnboardingComplete) {
       navigate("/feed");
     }
-  }, [user, navigate]);
+  }, [user, authLoading, navigate]);
 
   const toggleRole = (roleId: string) => {
     if (selectedRoles.includes(roleId)) {

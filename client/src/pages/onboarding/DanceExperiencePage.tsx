@@ -52,7 +52,7 @@ function generateYearOptions(): number[] {
 
 export default function DanceExperiencePage() {
   const [, navigate] = useLocation();
-  const { user, refreshUser } = useAuth();
+  const { user, refreshUser, isLoading: authLoading } = useAuth();
   const { toast } = useToast();
   
   const [tangoStartYear, setTangoStartYear] = useState<number>(currentYear);
@@ -68,12 +68,13 @@ export default function DanceExperiencePage() {
   }, [user?.tangoRoles]);
 
   useEffect(() => {
+    if (authLoading) return;
     if (!user) {
       navigate("/login");
     } else if (user.isOnboardingComplete) {
       navigate("/feed");
     }
-  }, [user, navigate]);
+  }, [user, authLoading, navigate]);
 
   useEffect(() => {
     if (userRoles.length > 0 && roleExperiences.length === 0) {

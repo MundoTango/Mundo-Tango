@@ -42,14 +42,15 @@ const TOUR_STEPS: Step[] = [
 
 export default function GuidedTourPage() {
   const [, navigate] = useLocation();
-  const { user } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
   const [runTour, setRunTour] = useState(true);
 
   useEffect(() => {
+    if (authLoading) return;
     if (!user) {
       navigate("/login");
     }
-  }, [user, navigate]);
+  }, [user, authLoading, navigate]);
 
   const handleJoyrideCallback = async (data: CallBackProps) => {
     const { status } = data;

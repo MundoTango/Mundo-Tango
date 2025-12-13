@@ -22,19 +22,22 @@ interface SelectedCity {
 
 export default function CitySelectionPage() {
   const [, navigate] = useLocation();
-  const { user } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
   const { toast } = useToast();
   const [citySearch, setCitySearch] = useState("");
   const [selectedCity, setSelectedCity] = useState<SelectedCity | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    // Wait for auth to finish loading before checking user state
+    if (authLoading) return;
+    
     if (!user) {
       navigate("/login");
     } else if (user.isOnboardingComplete) {
       navigate("/feed");
     }
-  }, [user, navigate]);
+  }, [user, authLoading, navigate]);
 
   const handleContinue = async () => {
     if (!selectedCity) {
