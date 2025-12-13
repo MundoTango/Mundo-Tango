@@ -11,7 +11,11 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
-import { Calendar as CalendarIcon, MapPin, DollarSign, Users, Image as ImageIcon, ChevronLeft, Music, Clock, Sparkles, X, Upload } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from "@/components/ui/dialog";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Badge } from "@/components/ui/badge";
+import { Calendar as CalendarIcon, MapPin, DollarSign, Users, Image as ImageIcon, ChevronLeft, Music, Clock, Sparkles, X, Upload, UserPlus, Crown, Mic, Camera, UserCheck, Search, Check, Loader2 } from "lucide-react";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
@@ -24,6 +28,49 @@ import { getTimezoneFromCity } from "@/lib/timezoneUtils";
 import { FriendshipClosenessFilter } from "@/components/filters/FriendshipClosenessFilter";
 import type { ClosenessVisibility } from "@shared/schema";
 
+interface TeamMember {
+  id: number;
+  userId: number;
+  role: string;
+  name: string;
+  username: string;
+  profileImage?: string;
+}
+
+interface SearchedUser {
+  id: number;
+  name: string;
+  username: string;
+  email?: string;
+  profileImage?: string;
+  city?: string;
+}
+
+const PARTICIPANT_ROLES = [
+  { value: "co_organizer", label: "Co-Organizer", icon: Crown, color: "text-amber-500" },
+  { value: "dj", label: "DJ", icon: Music, color: "text-blue-500" },
+  { value: "teacher", label: "Teacher", icon: Users, color: "text-green-500" },
+  { value: "performer", label: "Performer", icon: Mic, color: "text-purple-500" },
+  { value: "photographer", label: "Photographer", icon: Camera, color: "text-pink-500" },
+  { value: "host", label: "Host", icon: UserCheck, color: "text-teal-500" },
+];
+
+const getRoleIcon = (role: string) => {
+  const roleConfig = PARTICIPANT_ROLES.find(r => r.value === role);
+  return roleConfig?.icon || Users;
+};
+
+const getRoleColor = (role: string) => {
+  const roleConfig = PARTICIPANT_ROLES.find(r => r.value === role);
+  return roleConfig?.color || "text-muted-foreground";
+};
+
+const formatRoleName = (role: string) => {
+  return role.split("_").map(word => 
+    word.charAt(0).toUpperCase() + word.slice(1)
+  ).join(" ");
+};
+
 export default function EventCreationPage() {
   const [, navigate] = useLocation();
   const { toast } = useToast();
@@ -34,14 +81,9 @@ export default function EventCreationPage() {
   const [timezone, setTimezone] = useState("UTC");
   const [userPrimaryLocation, setUserPrimaryLocation] = useState("");
 
-  // Fetch current user profile
+  // Fetch current user profile using default queryFn (already configured for auth)
   const { data: currentUser } = useQuery({
     queryKey: ['/api/auth/me'],
-    queryFn: async () => {
-      const res = await fetch('/api/auth/me');
-      if (!res.ok) return null;
-      return res.json();
-    },
     retry: 3,
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
   });
@@ -60,6 +102,62 @@ export default function EventCreationPage() {
   const [additionalPhotos, setAdditionalPhotos] = useState<File[]>([]);
   const [additionalPhotoPreviews, setAdditionalPhotoPreviews] = useState<string[]>([]);
   const [uploadingPhotos, setUploadingPhotos] = useState(false);
+  
+  // Pro Team state
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+  const [isTeamDialogOpen, setIsTeamDialogOpen] = useState(false);
+  const [selectedRole, setSelectedRole] = useState<string>("dj");
+  const [teamSearchQuery, setTeamSearchQuery] = useState("");
+  const [debouncedTeamSearch, setDebouncedTeamSearch] = useState("");
+  const [selectedUser, setSelectedUser] = useState<SearchedUser | null>(null);
+  const debounceTimer = useRef<ReturnType<typeof setTimeout>>();
+
+  // Debounce search query
+  useEffect(() => {
+    debounceTimer.current = setTimeout(() => {
+      setDebouncedTeamSearch(teamSearchQuery);
+    }, 300);
+    return () => clearTimeout(debounceTimer.current);
+  }, [teamSearchQuery]);
+
+  // Search for team members query
+  const { data: teamSearchResults = [], isLoading: isSearchingTeam, isError: teamSearchError } = useQuery<SearchedUser[]>({
+    queryKey: ["/api/events/search-pros-by-role", selectedRole, debouncedTeamSearch, formData.city],
+    queryFn: async () => {
+      if (!debouncedTeamSearch || debouncedTeamSearch.length < 2) return [];
+      const cityParam = formData.city ? `&city=${encodeURIComponent(formData.city)}` : '';
+      const res = await apiRequest("GET", `/api/events/search-pros-by-role?role=${encodeURIComponent(selectedRole)}&q=${encodeURIComponent(debouncedTeamSearch)}${cityParam}&limit=15`);
+      return res;
+    },
+    enabled: debouncedTeamSearch.length >= 2,
+    staleTime: 2 * 60 * 1000,
+  });
+
+  const handleAddTeamMember = () => {
+    if (!selectedUser) return;
+    const exists = teamMembers.some(m => m.userId === selectedUser.id && m.role === selectedRole);
+    if (exists) {
+      toast({ title: "Already added", description: `${selectedUser.name} is already added as ${formatRoleName(selectedRole)}`, variant: "destructive" });
+      return;
+    }
+    setTeamMembers([...teamMembers, {
+      id: Date.now(),
+      userId: selectedUser.id,
+      role: selectedRole,
+      name: selectedUser.name,
+      username: selectedUser.username,
+      profileImage: selectedUser.profileImage,
+    }]);
+    setSelectedUser(null);
+    setTeamSearchQuery("");
+    setIsTeamDialogOpen(false);
+    toast({ title: "Team member added", description: `${selectedUser.name} will be added as ${formatRoleName(selectedRole)}` });
+  };
+
+  const removeTeamMember = (id: number) => {
+    setTeamMembers(teamMembers.filter(m => m.id !== id));
+  };
+
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -106,7 +204,31 @@ export default function EventCreationPage() {
         setUploadingPhotos(false);
       }
     },
-    onSuccess: (event) => {
+    onSuccess: async (event) => {
+      // Add team members as participants using apiRequest for proper auth
+      if (teamMembers.length > 0) {
+        const failedMembers: string[] = [];
+        for (const member of teamMembers) {
+          try {
+            await apiRequest("POST", `/api/events/${event.id}/participants`, {
+              userId: member.userId,
+              role: member.role,
+              status: 'confirmed',
+              isPubliclyListed: true,
+            });
+          } catch (err) {
+            console.error(`Failed to add team member ${member.name}:`, err);
+            failedMembers.push(member.name);
+          }
+        }
+        if (failedMembers.length > 0) {
+          toast({ 
+            title: "Some team members couldn't be added", 
+            description: failedMembers.join(", "),
+            variant: "destructive" 
+          });
+        }
+      }
       toast({ title: "Event created successfully!" });
       navigate(`/events/${event.id}`);
     },
@@ -624,6 +746,193 @@ export default function EventCreationPage() {
                   </label>
                 )}
               </div>
+            </div>
+
+            <Separator />
+
+            {/* Pro Team */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-semibold">Pro Team</h3>
+                  <p className="text-sm text-muted-foreground">Add DJs, teachers, performers and other professionals</p>
+                </div>
+                <Dialog open={isTeamDialogOpen} onOpenChange={setIsTeamDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button variant="outline" size="sm" className="gap-2" data-testid="button-add-pro-team">
+                      <UserPlus className="h-4 w-4" />
+                      Add Member
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                      <DialogTitle>Add Team Member</DialogTitle>
+                      <DialogDescription>
+                        Search for a professional to add to your event team.
+                      </DialogDescription>
+                    </DialogHeader>
+                    
+                    <div className="space-y-4 py-4">
+                      <div className="space-y-2">
+                        <Label className="text-sm font-medium">Role</Label>
+                        <Select value={selectedRole} onValueChange={setSelectedRole}>
+                          <SelectTrigger data-testid="select-pro-role">
+                            <SelectValue placeholder="Select role" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {PARTICIPANT_ROLES.map(role => {
+                              const Icon = role.icon;
+                              return (
+                                <SelectItem key={role.value} value={role.value}>
+                                  <div className="flex items-center gap-2">
+                                    <Icon className={`h-4 w-4 ${role.color}`} />
+                                    {role.label}
+                                  </div>
+                                </SelectItem>
+                              );
+                            })}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label className="text-sm font-medium">Search User</Label>
+                        <div className="relative">
+                          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                          <Input
+                            placeholder="Search by name or username..."
+                            value={teamSearchQuery}
+                            onChange={(e) => setTeamSearchQuery(e.target.value)}
+                            className="pl-9"
+                            data-testid="input-search-pro"
+                          />
+                        </div>
+                        
+                        {debouncedTeamSearch.length >= 2 && (
+                          <ScrollArea className="h-48 rounded-md border" data-testid="pro-search-results">
+                            {isSearchingTeam ? (
+                              <div className="flex items-center justify-center py-6">
+                                <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+                              </div>
+                            ) : teamSearchError ? (
+                              <div className="py-6 text-center text-destructive text-sm">
+                                Failed to search. Please try again.
+                              </div>
+                            ) : teamSearchResults.length === 0 ? (
+                              <div className="py-6 text-center text-muted-foreground text-sm">
+                                No users found
+                              </div>
+                            ) : (
+                              <div className="p-2 space-y-1">
+                                {teamSearchResults.map(user => (
+                                  <div
+                                    key={user.id}
+                                    onClick={() => setSelectedUser(user)}
+                                    className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-colors ${
+                                      selectedUser?.id === user.id 
+                                        ? "bg-primary/10 border border-primary/30" 
+                                        : "hover:bg-muted"
+                                    }`}
+                                    data-testid={`pro-option-${user.id}`}
+                                  >
+                                    <Avatar className="h-8 w-8">
+                                      <AvatarImage src={user.profileImage || undefined} />
+                                      <AvatarFallback>{user.name?.charAt(0) || "U"}</AvatarFallback>
+                                    </Avatar>
+                                    <div className="flex-1 min-w-0">
+                                      <p className="text-sm font-medium truncate">{user.name}</p>
+                                      <p className="text-xs text-muted-foreground">@{user.username}</p>
+                                    </div>
+                                    {selectedUser?.id === user.id && (
+                                      <Check className="h-4 w-4 text-primary" />
+                                    )}
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </ScrollArea>
+                        )}
+                      </div>
+
+                      {selectedUser && (
+                        <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 border">
+                          <Avatar className="h-10 w-10">
+                            <AvatarImage src={selectedUser.profileImage || undefined} />
+                            <AvatarFallback>{selectedUser.name?.charAt(0) || "U"}</AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1">
+                            <p className="font-medium">{selectedUser.name}</p>
+                            <p className="text-sm text-muted-foreground">
+                              Will be added as {formatRoleName(selectedRole)}
+                            </p>
+                          </div>
+                          <Button 
+                            variant="ghost" 
+                            size="icon"
+                            onClick={() => setSelectedUser(null)}
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+
+                    <DialogFooter>
+                      <DialogClose asChild>
+                        <Button variant="outline">Cancel</Button>
+                      </DialogClose>
+                      <Button 
+                        onClick={handleAddTeamMember}
+                        disabled={!selectedUser}
+                        data-testid="button-confirm-add-pro"
+                      >
+                        <UserPlus className="h-4 w-4 mr-2" />
+                        Add to Team
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+              </div>
+
+              {teamMembers.length === 0 ? (
+                <div className="text-center py-8 rounded-lg border-2 border-dashed">
+                  <Users className="h-10 w-10 mx-auto mb-3 text-muted-foreground" />
+                  <p className="text-muted-foreground mb-1">No team members added yet</p>
+                  <p className="text-sm text-muted-foreground">
+                    Add DJs, teachers, performers, and other professionals
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {teamMembers.map(member => {
+                    const Icon = getRoleIcon(member.role);
+                    const color = getRoleColor(member.role);
+                    return (
+                      <div key={member.id} className="flex items-center gap-3 p-3 rounded-lg border" data-testid={`team-member-${member.userId}`}>
+                        <Avatar className="h-10 w-10">
+                          <AvatarImage src={member.profileImage || undefined} />
+                          <AvatarFallback>{member.name?.charAt(0) || "U"}</AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium truncate">{member.name}</p>
+                          <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                            <Icon className={`h-3 w-3 ${color}`} />
+                            <span>{formatRoleName(member.role)}</span>
+                          </div>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => removeTeamMember(member.id)}
+                          data-testid={`button-remove-pro-${member.userId}`}
+                        >
+                          <X className="h-4 w-4 text-muted-foreground hover:text-destructive" />
+                        </Button>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
 
             <Separator />

@@ -2354,6 +2354,159 @@ router.get("/:id/search-team-members", authenticateToken, async (req: AuthReques
 });
 
 // ============================================================================
+// SEARCH PROS BY ROLE (for event creation - no eventId needed)
+// ============================================================================
+// This endpoint allows searching for professionals by role during event creation
+// when the event doesn't exist yet. Takes city as parameter instead of from event.
+router.get("/search-pros-by-role", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    const role = (req.query.role as string) || '';
+    const query = (req.query.q as string) || '';
+    const city = (req.query.city as string) || '';
+    const limit = Math.min(parseInt(req.query.limit as string) || 15, 50);
+
+    if (!query || query.length < 2) {
+      return res.json([]);
+    }
+
+    const searchLower = query.toLowerCase();
+    const searchCity = city;
+
+    // Map participant roles to tangoRoles array values
+    const tangoRoleMapping: Record<string, string> = {
+      'dj': 'dj',
+      'teacher': 'teacher',
+      'performer': 'performer',
+      'photographer': 'photographer',
+      'host': 'organizer',
+      'co_organizer': 'organizer'
+    };
+    const mappedRole = tangoRoleMapping[role] || role;
+
+    // TIER 1: Previous collaborators (users who have participated in organizer's past events)
+    const previousCollaborators = await db
+      .select({
+        id: users.id,
+        name: users.name,
+        username: users.username,
+        email: users.email,
+        profileImage: users.profileImage,
+        city: users.city,
+        tangoRoles: users.tangoRoles,
+        tier: sql<number>`1`.as('tier')
+      })
+      .from(users)
+      .innerJoin(eventRsvps, eq(users.id, eventRsvps.userId))
+      .innerJoin(events, eq(eventRsvps.eventId, events.id))
+      .where(and(
+        or(
+          eq(events.organizerId, userId),
+          eq(events.userId, userId)
+        ),
+        or(
+          sql`LOWER(${users.name}) LIKE ${'%' + searchLower + '%'}`,
+          sql`LOWER(${users.username}) LIKE ${'%' + searchLower + '%'}`
+        ),
+        mappedRole ? sql`${users.tangoRoles} @> ARRAY[${mappedRole}]::text[]` : sql`1=1`
+      ))
+      .groupBy(users.id)
+      .limit(limit);
+
+    // TIER 2: City-based professionals with matching role
+    const cityProfessionals = searchCity ? await db
+      .select({
+        id: users.id,
+        name: users.name,
+        username: users.username,
+        email: users.email,
+        profileImage: users.profileImage,
+        city: users.city,
+        tangoRoles: users.tangoRoles,
+        tier: sql<number>`2`.as('tier')
+      })
+      .from(users)
+      .where(and(
+        sql`LOWER(${users.city}) = ${searchCity.toLowerCase()}`,
+        or(
+          sql`LOWER(${users.name}) LIKE ${'%' + searchLower + '%'}`,
+          sql`LOWER(${users.username}) LIKE ${'%' + searchLower + '%'}`
+        ),
+        mappedRole ? sql`${users.tangoRoles} @> ARRAY[${mappedRole}]::text[]` : sql`1=1`,
+        sql`${users.id} NOT IN (${previousCollaborators.length > 0 
+          ? sql.join(previousCollaborators.map(u => sql`${u.id}`), sql`, `)
+          : sql`-1`})`
+      ))
+      .limit(limit) : [];
+
+    // TIER 3: All users with matching role (anywhere)
+    const allWithRole = await db
+      .select({
+        id: users.id,
+        name: users.name,
+        username: users.username,
+        email: users.email,
+        profileImage: users.profileImage,
+        city: users.city,
+        tangoRoles: users.tangoRoles,
+        tier: sql<number>`3`.as('tier')
+      })
+      .from(users)
+      .where(and(
+        or(
+          sql`LOWER(${users.name}) LIKE ${'%' + searchLower + '%'}`,
+          sql`LOWER(${users.username}) LIKE ${'%' + searchLower + '%'}`
+        ),
+        mappedRole ? sql`${users.tangoRoles} @> ARRAY[${mappedRole}]::text[]` : sql`1=1`,
+        sql`${users.id} NOT IN (${[...previousCollaborators, ...cityProfessionals].length > 0
+          ? sql.join([...previousCollaborators, ...cityProfessionals].map(u => sql`${u.id}`), sql`, `)
+          : sql`-1`})`
+      ))
+      .limit(limit);
+
+    // TIER 4: General search fallback (all users matching query)
+    const generalSearch = await db
+      .select({
+        id: users.id,
+        name: users.name,
+        username: users.username,
+        email: users.email,
+        profileImage: users.profileImage,
+        city: users.city,
+        tangoRoles: users.tangoRoles,
+        tier: sql<number>`4`.as('tier')
+      })
+      .from(users)
+      .where(and(
+        or(
+          sql`LOWER(${users.name}) LIKE ${'%' + searchLower + '%'}`,
+          sql`LOWER(${users.username}) LIKE ${'%' + searchLower + '%'}`,
+          sql`LOWER(${users.email}) LIKE ${'%' + searchLower + '%'}`
+        ),
+        sql`${users.id} NOT IN (${[...previousCollaborators, ...cityProfessionals, ...allWithRole].length > 0
+          ? sql.join([...previousCollaborators, ...cityProfessionals, ...allWithRole].map(u => sql`${u.id}`), sql`, `)
+          : sql`-1`})`
+      ))
+      .limit(Math.max(0, limit - previousCollaborators.length - cityProfessionals.length - allWithRole.length));
+
+    // Combine and sort by tier
+    const results = [
+      ...previousCollaborators.map(u => ({ ...u, matchType: 'previous_collaborator' })),
+      ...cityProfessionals.map(u => ({ ...u, matchType: 'city_professional' })),
+      ...allWithRole.map(u => ({ ...u, matchType: 'role_match' })),
+      ...generalSearch.map(u => ({ ...u, matchType: 'general' }))
+    ].slice(0, limit);
+
+    console.log(`[SearchPros] Role: ${role}, City: "${city}", Query: "${query}" → ${results.length} results`);
+
+    res.json(results);
+  } catch (error) {
+    console.error("[Events] Search pros by role error:", error);
+    res.status(500).json({ message: "Search failed" });
+  }
+});
+
+// ============================================================================
 // MULTER ERROR HANDLER MIDDLEWARE
 // ============================================================================
 router.use((err: any, req: Request, res: Response, next: any) => {
