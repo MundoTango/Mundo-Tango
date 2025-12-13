@@ -37,20 +37,7 @@ export function createTalentMatchRoutes(storage: IStorage) {
     }
   });
 
-  // Get volunteer by ID
-  router.get("/volunteers/:id", async (req, res) => {
-    try {
-      const volunteer = await storage.getVolunteerById(parseInt(req.params.id));
-      if (!volunteer) {
-        return res.status(404).json({ error: "Volunteer not found" });
-      }
-      res.json(volunteer);
-    } catch (error: any) {
-      res.status(500).json({ error: error.message });
-    }
-  });
-
-  // Get current user's volunteer profile
+  // Get current user's volunteer profile (must be before :id route)
   router.get("/volunteers/me", async (req, res) => {
     try {
       // @ts-expect-error - user is set by session middleware
@@ -58,9 +45,22 @@ export function createTalentMatchRoutes(storage: IStorage) {
       if (!userId) {
         return res.status(401).json({ error: "Not authenticated" });
       }
-      const volunteer = await storage.getVolunteerByUserId(userId);
+      const volunteer = await storage.getVolunteerByUserId(Number(userId));
       if (!volunteer) {
         return res.status(404).json({ error: "Volunteer profile not found" });
+      }
+      res.json(volunteer);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Get volunteer by ID
+  router.get("/volunteers/:id", async (req, res) => {
+    try {
+      const volunteer = await storage.getVolunteerById(parseInt(req.params.id));
+      if (!volunteer) {
+        return res.status(404).json({ error: "Volunteer not found" });
       }
       res.json(volunteer);
     } catch (error: any) {
