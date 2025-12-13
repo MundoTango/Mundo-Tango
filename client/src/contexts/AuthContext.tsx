@@ -351,6 +351,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     try {
       setProfile((prev) => (prev ? { ...prev, ...updates } : null));
+      // Refresh user data to sync tangoRoles and other fields that appear in user object
+      await loadCurrentUser();
       return { error: null };
     } catch (error) {
       return { error: error as Error };

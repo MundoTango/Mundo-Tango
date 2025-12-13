@@ -15,6 +15,8 @@ export function createFriendsRoutes(storage: IStorage) {
     }
   });
 
+  // IMPORTANT: Specific routes must come BEFORE parameterized routes
+  // /friends/requests must be before /friends/:friendId to avoid matching "requests" as friendId
   router.get("/friends/requests", authenticateToken, async (req: AuthRequest, res) => {
     try {
       const userId = req.userId!;
@@ -92,6 +94,18 @@ export function createFriendsRoutes(storage: IStorage) {
       
       const degree = await storage.getConnectionDegree(currentUserId, targetUserId);
       res.json({ degree });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Parameterized route MUST come AFTER all specific routes
+  router.get("/friends/:friendId", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const userId = req.userId!;
+      const friendId = parseInt(req.params.friendId);
+      const friendship = await storage.getFriendshipById(userId, friendId);
+      res.json(friendship);
     } catch (error: any) {
       res.status(500).json({ error: error.message });
     }

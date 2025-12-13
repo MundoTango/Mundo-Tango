@@ -1193,15 +1193,34 @@ router.post("/send", authenticateToken, async (req: AuthRequest, res: Response) 
     }
 
     if (channel === 'mt') {
-      // MT internal messaging - placeholder for future implementation
-      sentMessage = {
-        id: `mt-${Date.now()}`,
-        channel: 'mt',
-        to,
-        body,
-        sentAt: new Date(),
-      };
-      console.log('[Messages] MT internal message (placeholder):', sentMessage.id);
+      // MT internal messaging - insert into directMessages table
+      try {
+        // Parse recipientId (could be numeric ID or string)
+        const recipientId = parseInt(to);
+        if (isNaN(recipientId)) {
+          return res.status(400).json({ error: 'Invalid recipient ID for MT messages' });
+        }
+        
+        const [insertedMsg] = await db.insert(directMessages).values({
+          senderId: userId,
+          recipientId,
+          content: body,
+        }).returning();
+        
+        sentMessage = {
+          id: insertedMsg.id,
+          channel: 'mt',
+          to,
+          recipientId: insertedMsg.recipientId,
+          senderId: insertedMsg.senderId,
+          body: insertedMsg.content,
+          sentAt: insertedMsg.createdAt,
+        };
+        console.log('[Messages] MT internal message sent:', insertedMsg.id);
+      } catch (mtError: any) {
+        sendError = mtError.message || 'Failed to send MT message';
+        console.error('[Messages] MT send error:', mtError);
+      }
     }
 
     if (sendError) {

@@ -188,6 +188,11 @@ export default function CommunityWorldMapPage() {
     return sorted;
   }, [filteredLocations, filters.sortBy]);
 
+  // Filter to only locations with groups (city communities)
+  const cityLocations = useMemo(() => {
+    return sortedLocations.filter(loc => loc.groupId);
+  }, [sortedLocations]);
+
   const toggleLayer = (id: string) => {
     setLayers(prev => prev.map(layer => 
       layer.id === id ? { ...layer, enabled: !layer.enabled } : layer

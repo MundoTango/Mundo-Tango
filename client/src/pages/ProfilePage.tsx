@@ -69,7 +69,10 @@ interface Post {
 }
 
 export default function ProfilePage() {
-  const [, params] = useRoute("/profile/:id");
+  // Support multiple route patterns: /profile/:id and /users/:userId
+  const [, profileParams] = useRoute("/profile/:id");
+  const [, userParams] = useRoute("/users/:userId");
+  const params = profileParams || (userParams ? { id: userParams.userId } : null);
   const searchString = useSearch();
   const { user: currentUser } = useAuth();
   const { toast } = useToast();

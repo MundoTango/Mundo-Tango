@@ -27,13 +27,15 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 
-const channelIcons = {
-  mt: MessageCircle,
-  gmail: Mail,
-  facebook: SiFacebook,
-  instagram: SiInstagram,
-  whatsapp: SiWhatsapp,
-};
+// Tango-themed reaction types matching MT design system
+const REACTION_TYPES = [
+  { id: 'love', icon: Heart, label: 'Love', color: '#EF4444' },
+  { id: 'passion', icon: Flame, label: 'Passion', color: '#F97316' },
+  { id: 'joy', icon: Smile, label: 'Joy', color: '#FBBF24' },
+  { id: 'wow', icon: Eye, label: 'Wow', color: '#3B82F6' },
+  { id: 'music', icon: Music, label: 'Music', color: '#A855F7' },
+  { id: 'inspiration', icon: Lightbulb, label: 'Inspiration', color: '#10B981' },
+];
 
 const channelLabels = {
   mt: "Mundo Tango",
@@ -255,6 +257,8 @@ export default function UnifiedInbox() {
     if (channel === "all") return conversations.length;
     return conversations.filter((c: any) => c.channel === channel).length;
   };
+  unreadCount: number;
+}
 
   const handleSendMessage = async () => {
     if ((!messageInput.trim() && attachedImages.length === 0) || !selectedConversation) {
@@ -392,6 +396,47 @@ export default function UnifiedInbox() {
       </div>
     );
   };
+  messages: Message[];
+}
+
+function formatMessageTime(dateStr: string) {
+  const date = new Date(dateStr);
+  if (isToday(date)) {
+    return format(date, "h:mm a");
+  } else if (isYesterday(date)) {
+    return "Yesterday";
+  } else {
+    return format(date, "MMM d");
+  }
+}
+
+function formatChatTime(dateStr: string) {
+  const date = new Date(dateStr);
+  return format(date, "h:mm a");
+}
+
+function getInitials(name: string) {
+  return name
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
+}
+
+// Message Reaction Component
+function MessageReactionBar({ 
+  messageId, 
+  reactions, 
+  userReaction, 
+  onReact 
+}: { 
+  messageId: number;
+  reactions: Record<string, number>;
+  userReaction: string | null;
+  onReact: (messageId: number, reactionType: string, currentUserReaction: string | null) => void;
+}) {
+  const [showPicker, setShowPicker] = useState(false);
 
   return (
     <div className="flex h-full bg-background overflow-hidden">
@@ -618,6 +663,21 @@ export default function UnifiedInbox() {
                     {selectedConversation.isOnline ? "Active now" : `Active ${getRelativeTime(selectedConversation.lastMessageAt)} ago`}
                   </p>
                 </div>
+              </Link>
+              
+              <div className="flex-1 min-w-0">
+                <Link href={`/profile/${thread.partner.id}`}>
+                  <h2 className="font-semibold truncate cursor-pointer hover:underline" data-testid="chat-partner-name">
+                    {thread.partner.name}
+                  </h2>
+                </Link>
+                <p className="text-xs text-muted-foreground">
+                  {thread.partner.id % 2 === 0 ? (
+                    <span className="text-green-600 dark:text-green-500">Active now</span>
+                  ) : (
+                    `Active ${formatDistanceToNow(new Date(Date.now() - Math.random() * 3600000))} ago`
+                  )}
+                </p>
               </div>
               
             </div>

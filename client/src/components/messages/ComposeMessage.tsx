@@ -100,6 +100,7 @@ export function ComposeMessage({ onClose, onSendSuccess }: ComposeMessageProps) 
       setMessageBody("");
       setSearchQuery("");
       onClose?.();
+      onSuccess?.();
     },
     onError: (error: Error) => {
       toast({

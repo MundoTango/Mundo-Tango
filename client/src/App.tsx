@@ -572,9 +572,6 @@ const LeaderboardPage = lazy(() => import("@/pages/LeaderboardPage"));
 const HelpPage = lazy(() => import("@/pages/HelpPage"));
 const HelpCenterPage = lazy(() => import("@/pages/HelpCenterPage"));
 const ContactPage = lazy(() => import("@/pages/ContactPage"));
-const UserProfilePublicPage = lazy(
-  () => import("@/pages/UserProfilePublicPage"),
-);
 const MessagesDetailPage = lazy(() => import("@/pages/MessagesDetailPage"));
 const CheckoutSuccessPage = lazy(() => import("@/pages/CheckoutSuccessPage"));
 const AboutTangoPage = lazy(() => import("@/pages/AboutTangoPage"));
@@ -984,9 +981,11 @@ function Router() {
       </Route>
 
       <Route path="/profile/:id">
-        <AppLayout>
-          <ProfilePage />
-        </AppLayout>
+        <ProtectedRoute>
+          <AppLayout>
+            <ProfilePage />
+          </AppLayout>
+        </ProtectedRoute>
       </Route>
       <Route path="/reputation/:userId">
         <AppLayout>
@@ -1338,7 +1337,7 @@ function Router() {
       <Route path="/users/:userId">
         <ProtectedRoute>
           <AppLayout>
-            <UserProfilePublicPage />
+            <ProfilePage />
           </AppLayout>
         </ProtectedRoute>
       </Route>
