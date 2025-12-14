@@ -13,7 +13,13 @@ import {
   Send,
   CheckCheck,
   Pin,
-  Edit3
+  Edit3,
+  Heart,
+  Flame,
+  Smile,
+  Eye,
+  Music,
+  Lightbulb
 } from "lucide-react";
 import { SiFacebook, SiInstagram, SiWhatsapp } from "react-icons/si";
 import { formatDistanceToNow } from "date-fns";
@@ -433,6 +439,50 @@ function MessageReactionBar({
   onReact: (messageId: number, reactionType: string, currentUserReaction: string | null) => void;
 }) {
   const [showPicker, setShowPicker] = useState(false);
+
+  return (
+    <div className="flex items-center gap-1">
+      {Object.entries(reactions).length > 0 && (
+        <div className="flex gap-0.5">
+          {Object.entries(reactions).map(([type, count]) => (
+            <button
+              key={type}
+              className={cn(
+                "text-xs px-1.5 py-0.5 rounded-full bg-muted hover:bg-muted/80",
+                userReaction === type && "ring-1 ring-primary"
+              )}
+              onClick={() => onReact(messageId, type, userReaction)}
+            >
+              {type} {count}
+            </button>
+          ))}
+        </div>
+      )}
+      <button
+        className="p-1 rounded-full hover:bg-muted"
+        onClick={() => setShowPicker(!showPicker)}
+      >
+        <span className="text-sm">😊</span>
+      </button>
+      {showPicker && (
+        <div className="absolute bottom-full left-0 mb-1 p-1 bg-popover rounded-lg shadow-lg border flex gap-1">
+          {REACTION_TYPES.map((reaction) => (
+            <button
+              key={reaction.id}
+              className="p-1.5 rounded hover:bg-muted"
+              onClick={() => {
+                onReact(messageId, reaction.id, userReaction);
+                setShowPicker(false);
+              }}
+            >
+              <reaction.icon className="h-4 w-4" style={{ color: reaction.color }} />
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
   return (
     <div className="flex h-full bg-background overflow-hidden">
