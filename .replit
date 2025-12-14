@@ -7,7 +7,7 @@ channel = "stable-24_05"
 packages = ["redis", "chromium", "glib", "nss", "nspr", "dbus", "atk", "at-spi2-atk", "at-spi2-core", "xorg.libX11", "xorg.libXcomposite", "xorg.libXdamage", "xorg.libXext", "xorg.libXfixes", "xorg.libXrandr", "mesa", "xorg.libxcb", "libxkbcommon", "alsa-lib", "pango", "cairo", "yt-dlp", "ffmpeg", "cups", "libdrm", "gtk3"]
 
 [deployment]
-deploymentTarget = "autoscale"
+deploymentTarget = "gce"
 build = ["npm", "run", "build"]
 run = ["npm", "run", "start"]
 
