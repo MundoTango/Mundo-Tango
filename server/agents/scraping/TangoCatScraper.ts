@@ -10,7 +10,7 @@ import axios from 'axios';
 import * as cheerio from 'cheerio';
 import { db } from '@shared/db';
 import { scrapedEvents } from '@shared/schema';
-import { cityMatcherService } from '@/services/CityMatcherService';
+import { cityMatcherService } from '../../services/CityMatcherService';
 
 interface TangoCatEvent {
   title: string;
