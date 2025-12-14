@@ -49,6 +49,7 @@ import MarketingPrototypeOcean from "@/pages/MarketingPrototypeOcean";
 import ForDancersPage from "@/pages/marketing/ForDancersPage";
 import ForTeachersPage from "@/pages/marketing/ForTeachersPage";
 import ForOrganizersPage from "@/pages/marketing/ForOrganizersPage";
+import MarketingTangoRolesPage from "@/pages/marketing/TangoRolesPage";
 import SupportPage from "@/pages/marketing/SupportPage";
 import DonatePage from "@/pages/DonatePage";
 import SupportersPage from "@/pages/marketing/SupportersPage";
@@ -766,6 +767,7 @@ function Router() {
       <Route path="/for-dancers" component={ForDancersPage} />
       <Route path="/for-teachers" component={ForTeachersPage} />
       <Route path="/for-organizers" component={ForOrganizersPage} />
+      <Route path="/tango-roles" component={MarketingTangoRolesPage} />
       <Route path="/support" component={SupportPage} />
       <Route path="/donate" component={DonatePage} />
       <Route path="/supporters" component={SupportersPage} />

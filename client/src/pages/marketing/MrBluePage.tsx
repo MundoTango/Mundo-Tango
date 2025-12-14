@@ -82,7 +82,7 @@ function MrBluePageContent() {
               </motion.p>
 
               <motion.div variants={fadeInUp} className="flex justify-center gap-4">
-                <Link href="/login?redirect=/talent-match">
+                <Link href="/register?redirect=/talent-match">
                   <Button size="lg" className="bg-white text-primary hover:bg-white/90" data-testid="button-try-mrblue">
                     <MessageCircle className="h-5 w-5 mr-2" />
                     Chat with Mr. Blue
@@ -260,7 +260,7 @@ function MrBluePageContent() {
               Mr. Blue is ready to help with your tango journey. Free for all members.
             </motion.p>
             <motion.div variants={fadeInUp}>
-              <Link href="/login?redirect=/talent-match">
+              <Link href="/register?redirect=/talent-match">
                 <Button size="lg" className="bg-white text-primary hover:bg-white/90" data-testid="button-get-started">
                   Get Started Free
                   <ArrowRight className="h-4 w-4 ml-2" />

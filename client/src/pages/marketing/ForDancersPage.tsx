@@ -107,15 +107,10 @@ export default function ForDancersPage() {
               transition={{ duration: 0.6, delay: 0.5 }}
               className="flex flex-wrap gap-4 justify-center"
             >
-              <Link href="/login?redirect=/talent-match">
+              <Link href="/register?redirect=/talent-match">
                 <Button size="lg" className="text-lg px-8" data-testid="button-join-dancers">
                   Join Free Today
                   <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-              </Link>
-              <Link href="/events">
-                <Button size="lg" variant="outline" className="text-lg px-8" data-testid="button-browse-events">
-                  Browse Events
                 </Button>
               </Link>
             </motion.div>
@@ -175,7 +170,7 @@ export default function ForDancersPage() {
               <p className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto">
                 Join Mundo Tango today and become part of the global tango family.
               </p>
-              <Link href="/login?redirect=/talent-match">
+              <Link href="/register?redirect=/talent-match">
                 <Button size="lg" className="text-lg px-12" data-testid="button-cta-dancers">
                   Start Dancing
                   <Sparkles className="ml-2 h-5 w-5" />

@@ -109,7 +109,7 @@ function AmbassadorsPageContent() {
               </motion.p>
 
               <motion.div variants={fadeInUp}>
-                <Link href="/login?redirect=/talent-match&role=ambassador">
+                <Link href="/register?redirect=/talent-match&role=ambassador">
                   <Button size="lg" className="bg-white text-primary hover:bg-white/90" data-testid="button-apply">
                     Apply to be Ambassador
                     <ArrowRight className="h-4 w-4 ml-2" />
@@ -195,7 +195,7 @@ function AmbassadorsPageContent() {
                 </ul>
               </CardContent>
               <CardFooter className="justify-center pt-6">
-                <Link href="/login?redirect=/talent-match&role=ambassador">
+                <Link href="/register?redirect=/talent-match&role=ambassador">
                   <Button size="lg" data-testid="button-apply-now">
                     Apply Now
                     <ArrowRight className="h-4 w-4 ml-2" />
@@ -310,7 +310,7 @@ function AmbassadorsPageContent() {
               Join the global network of ambassadors connecting dancers worldwide.
             </motion.p>
             <motion.div variants={fadeInUp} className="flex justify-center gap-4">
-              <Link href="/login?redirect=/talent-match&role=ambassador">
+              <Link href="/register?redirect=/talent-match&role=ambassador">
                 <Button size="lg" className="bg-white text-primary hover:bg-white/90" data-testid="button-apply-final">
                   Apply to be Ambassador
                   <ArrowRight className="h-4 w-4 ml-2" />

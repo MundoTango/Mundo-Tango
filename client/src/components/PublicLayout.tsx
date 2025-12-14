@@ -1,6 +1,6 @@
 import { PublicNavbar } from "./PublicNavbar";
 import { Link } from "wouter";
-import { Heart, Facebook, Twitter, Instagram, Youtube } from "lucide-react";
+import { Heart, Facebook, Instagram } from "lucide-react";
 
 export function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -30,8 +30,6 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
               <h3 className="font-semibold mb-4">Platform</h3>
               <ul className="space-y-2 text-sm">
                 <li><Link href="/about" className="text-muted-foreground hover:text-foreground">About</Link></li>
-                <li><Link href="/pricing" className="text-muted-foreground hover:text-foreground">Pricing</Link></li>
-                <li><Link href="/faq" className="text-muted-foreground hover:text-foreground">FAQ</Link></li>
                 <li><Link href="/contact" className="text-muted-foreground hover:text-foreground">Contact</Link></li>
               </ul>
             </div>
@@ -44,7 +42,6 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
                 <li><Link href="/supporters" className="text-muted-foreground hover:text-foreground">Our Supporters</Link></li>
                 <li><Link href="/ambassadors" className="text-muted-foreground hover:text-foreground">Ambassadors</Link></li>
                 <li><Link href="/volunteer" className="text-muted-foreground hover:text-foreground">Volunteer</Link></li>
-                <li><Link href="/mr-blue" className="text-muted-foreground hover:text-foreground">Mr. Blue AI</Link></li>
                 <li><Link href="/open-source" className="text-muted-foreground hover:text-foreground">Open Source</Link></li>
               </ul>
             </div>
@@ -53,8 +50,6 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
             <div>
               <h3 className="font-semibold mb-4">Resources</h3>
               <ul className="space-y-2 text-sm">
-                <li><Link href="/dance-styles" className="text-muted-foreground hover:text-foreground">Dance Styles</Link></li>
-                <li><Link href="/blog" className="text-muted-foreground hover:text-foreground">Blog</Link></li>
                 <li><Link href="/community-guidelines" className="text-muted-foreground hover:text-foreground">Community Guidelines</Link></li>
                 <li><Link href="/help" className="text-muted-foreground hover:text-foreground">Help Center</Link></li>
               </ul>
@@ -68,17 +63,11 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
                 <li><Link href="/terms" className="text-muted-foreground hover:text-foreground">Terms of Service</Link></li>
               </ul>
               <div className="flex gap-2">
-                <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground">
+                <a href="https://www.facebook.com/mundotangolife1" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground">
                   <Facebook className="h-5 w-5" />
                 </a>
-                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground">
-                  <Twitter className="h-5 w-5" />
-                </a>
-                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground">
+                <a href="https://www.instagram.com/mundotango.life/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground">
                   <Instagram className="h-5 w-5" />
-                </a>
-                <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground">
-                  <Youtube className="h-5 w-5" />
                 </a>
               </div>
             </div>

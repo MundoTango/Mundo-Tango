@@ -1,6 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Moon, Sun, Globe, ChevronDown, Users, GraduationCap, CalendarCheck, Heart, Bot, Flag, HandHeart, Code } from "lucide-react";
+import { Moon, Sun, Globe, ChevronDown, Users, GraduationCap, CalendarCheck, Heart, Bot, Flag, HandHeart, Code, Shuffle } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
@@ -20,7 +20,8 @@ export function PublicNavbar() {
   const audienceItems = [
     { label: "For Dancers", path: "/for-dancers", icon: Users },
     { label: "For Teachers", path: "/for-teachers", icon: GraduationCap },
-    { label: "For Organizers", path: "/for-organizers", icon: CalendarCheck }
+    { label: "For Organizers", path: "/for-organizers", icon: CalendarCheck },
+    { label: "Tango Roles", path: "/tango-roles", icon: Shuffle }
   ];
 
   const communityItems = [

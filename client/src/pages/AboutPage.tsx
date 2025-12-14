@@ -6,7 +6,8 @@ import { SEO } from "@/components/SEO";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { motion } from "framer-motion";
-import scottPhoto from "@assets/Skoot_(41)_1765684040276.jpg";
+import scottPhoto1 from "@assets/Skoot_(20)_1765691279790.jpg";
+import scottPhoto2 from "@assets/Skoot_(16)_1765691279812.jpg";
 
 export default function AboutPage() {
   return (
@@ -171,19 +172,27 @@ export default function AboutPage() {
             <CardContent className="space-y-6">
               <div className="flex flex-col md:flex-row gap-8 items-start">
                 <div className="flex-shrink-0">
-                  <img 
-                    src={scottPhoto} 
-                    alt="Scott, Founder of Mundo Tango" 
-                    className="w-48 h-48 md:w-64 md:h-64 rounded-lg object-cover shadow-lg"
-                    data-testid="img-founder"
-                  />
+                  <div className="flex flex-col gap-4">
+                    <img 
+                      src={scottPhoto1} 
+                      alt="Scott, Founder of Mundo Tango" 
+                      className="w-48 h-48 md:w-64 md:h-64 rounded-lg object-cover shadow-lg"
+                      data-testid="img-founder-1"
+                    />
+                    <img 
+                      src={scottPhoto2} 
+                      alt="Scott dancing tango" 
+                      className="w-48 h-48 md:w-64 md:h-64 rounded-lg object-cover shadow-lg"
+                      data-testid="img-founder-2"
+                    />
+                  </div>
                   <p className="text-xs text-muted-foreground mt-2 text-center">
-                    Photo: <a href="https://www.facebook.com/aparotidis" target="_blank" rel="noopener noreferrer" className="hover:underline">Alexandros Parotidis</a>
+                    Photos: <a href="https://www.facebook.com/aparotidis" target="_blank" rel="noopener noreferrer" className="hover:underline">Alexandros Parotidis</a>
                   </p>
                 </div>
                 <div className="space-y-4 text-muted-foreground">
                   <p>
-                    My name is Scott, and I've been dancing tango since 2007.
+                    My name is Scott, and I've been dancing tango since 2007. I've traveled to over 100 cities for tango.
                   </p>
                   <p>
                     Over the years, I haven't just been a dancer — I've lived nearly every role in the tango ecosystem. I've organized events, taught classes, DJed milongas, helped build communities, and danced both leading and following. I've done this not from one city, but as a nomad, moving through tango communities across the world and experiencing firsthand how deeply local — and yet globally connected — tango really is.

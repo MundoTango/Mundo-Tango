@@ -16,7 +16,7 @@ export function Footer() {
             </p>
             <div className="flex items-center gap-4">
               <a 
-                href="https://facebook.com/mundotango" 
+                href="https://www.facebook.com/mundotangolife1" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="text-muted-foreground hover:text-primary transition-colors"
@@ -26,7 +26,7 @@ export function Footer() {
                 <Facebook className="h-5 w-5" />
               </a>
               <a 
-                href="https://instagram.com/mundotango" 
+                href="https://www.instagram.com/mundotango.life/" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="text-muted-foreground hover:text-primary transition-colors"
@@ -77,20 +77,6 @@ export function Footer() {
           <div>
             <h3 className="text-lg font-semibold mb-4">Resources</h3>
             <ul className="space-y-2 text-sm">
-              <li>
-                <Link href="/blog">
-                  <a className="text-muted-foreground hover:text-primary transition-colors" data-testid="link-blog">
-                    Blog
-                  </a>
-                </Link>
-              </li>
-              <li>
-                <Link href="/faq">
-                  <a className="text-muted-foreground hover:text-primary transition-colors" data-testid="link-faq">
-                    FAQ
-                  </a>
-                </Link>
-              </li>
               <li>
                 <Link href="/community-guidelines">
                   <a className="text-muted-foreground hover:text-primary transition-colors" data-testid="link-guidelines">
