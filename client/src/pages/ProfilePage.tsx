@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, lazy, Suspense } from "react";
 import { useRoute, Link, useSearch, useLocation } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Settings, UserPlus, UserMinus, UserCheck, Plane, Calendar, CheckCircle, Instagram, Facebook, Twitter, Linkedin, Youtube, Globe, Award, Plus, Camera, Music, Users, ImageIcon, Mic2, Home, Briefcase, BookOpen, Heart, Eye, MessageSquare, HeartHandshake } from "lucide-react";
+import { MapPin, Settings, UserPlus, UserMinus, UserCheck, Plane, Calendar, CheckCircle, Instagram, Facebook, Twitter, Linkedin, Youtube, Globe, Award, Plus, Camera, Music, Users, ImageIcon, Mic2, Home, Briefcase, BookOpen, Heart, Eye, MessageSquare, HeartHandshake, Loader2 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useAuth } from "@/contexts/AuthContext";
 import { SEO } from "@/components/SEO";
@@ -16,18 +16,25 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { motion } from "framer-motion";
 import ProfileTabsNav from "@/components/ProfileTabsNav";
 import ProfileTabFeed from "@/components/profile/ProfileTabFeed";
-import ProfileTabTravel from "@/components/profile/ProfileTabTravel";
-import ProfileTabEvents from "@/components/profile/ProfileTabEvents";
-import ProfileTabFriends from "@/components/profile/ProfileTabFriends";
-import ProfileTabPhotos from "@/components/profile/ProfileTabPhotos";
-import ProfileTabAbout from "@/components/profile/ProfileTabAbout";
-import ProfileTabMemories from "@/components/profile/ProfileTabMemories";
-import ProfileTabPro from "@/components/profile/ProfileTabPro";
 import DashboardCustomerToggle from "@/components/profile/DashboardCustomerToggle";
 import { PhotoUploadDialog } from "@/components/PhotoUploadDialog";
 import { FriendshipQuestionnaire } from "@/components/friendship/FriendshipQuestionnaire";
 import { FriendRequestReviewModal } from "@/components/friendship/FriendRequestReviewModal";
 import { normalizeRole, getRoleByValue, getRoleLabel, getRoleIcon, getRoleColor } from "@/lib/tangoRoles";
+
+const ProfileTabTravel = lazy(() => import("@/components/profile/ProfileTabTravel"));
+const ProfileTabEvents = lazy(() => import("@/components/profile/ProfileTabEvents"));
+const ProfileTabFriends = lazy(() => import("@/components/profile/ProfileTabFriends"));
+const ProfileTabPhotos = lazy(() => import("@/components/profile/ProfileTabPhotos"));
+const ProfileTabAbout = lazy(() => import("@/components/profile/ProfileTabAbout"));
+const ProfileTabMemories = lazy(() => import("@/components/profile/ProfileTabMemories"));
+const ProfileTabPro = lazy(() => import("@/components/profile/ProfileTabPro"));
+
+const TabLoader = () => (
+  <div className="flex items-center justify-center py-12">
+    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+  </div>
+);
 
 interface User {
   id: number;
@@ -920,7 +927,9 @@ export default function ProfilePage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <ProfileTabMemories isOwnProfile={isOwnProfile} profileId={user.id} isPublicView={isPublicView} />
+            <Suspense fallback={<TabLoader />}>
+              <ProfileTabMemories isOwnProfile={isOwnProfile} profileId={user.id} isPublicView={isPublicView} />
+            </Suspense>
           </motion.div>
         )}
 
@@ -931,7 +940,9 @@ export default function ProfilePage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <ProfileTabTravel profileId={user.id} isOwnProfile={isOwnProfile} isPublicView={isPublicView} />
+            <Suspense fallback={<TabLoader />}>
+              <ProfileTabTravel profileId={user.id} isOwnProfile={isOwnProfile} isPublicView={isPublicView} />
+            </Suspense>
           </motion.div>
         )}
 
@@ -942,7 +953,9 @@ export default function ProfilePage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <ProfileTabEvents profileId={user.id} isOwnProfile={isOwnProfile} isPublicView={isPublicView} />
+            <Suspense fallback={<TabLoader />}>
+              <ProfileTabEvents profileId={user.id} isOwnProfile={isOwnProfile} isPublicView={isPublicView} />
+            </Suspense>
           </motion.div>
         )}
 
@@ -953,7 +966,9 @@ export default function ProfilePage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <ProfileTabFriends profileId={user.id} isOwnProfile={isOwnProfile} isPublicView={isPublicView} />
+            <Suspense fallback={<TabLoader />}>
+              <ProfileTabFriends profileId={user.id} isOwnProfile={isOwnProfile} isPublicView={isPublicView} />
+            </Suspense>
           </motion.div>
         )}
 
@@ -964,7 +979,9 @@ export default function ProfilePage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <ProfileTabPhotos />
+            <Suspense fallback={<TabLoader />}>
+              <ProfileTabPhotos />
+            </Suspense>
           </motion.div>
         )}
 
@@ -975,7 +992,9 @@ export default function ProfilePage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <ProfileTabAbout user={user} isOwnProfile={isOwnProfile} isPublicView={isPublicView} />
+            <Suspense fallback={<TabLoader />}>
+              <ProfileTabAbout user={user} isOwnProfile={isOwnProfile} isPublicView={isPublicView} />
+            </Suspense>
           </motion.div>
         )}
 
@@ -986,13 +1005,15 @@ export default function ProfilePage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <ProfileTabPro 
-              userId={user.id}
-              isOwner={isOwnProfile}
-              tangoRoles={user.tangoRoles || []}
-              tangoRoleExperience={null}
-              viewMode={isPublicView ? 'customer' : viewMode}
-            />
+            <Suspense fallback={<TabLoader />}>
+              <ProfileTabPro 
+                userId={user.id}
+                isOwner={isOwnProfile}
+                tangoRoles={user.tangoRoles || []}
+                tangoRoleExperience={null}
+                viewMode={isPublicView ? 'customer' : viewMode}
+              />
+            </Suspense>
           </motion.div>
         )}
       </div>
