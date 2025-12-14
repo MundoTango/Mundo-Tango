@@ -14,8 +14,21 @@ async function getPdfParse() {
     try {
       // Dynamic import for ESM compatibility
       const module = await import("pdf-parse");
-      pdfParse = module.default || module;
-      console.log("[Resume Parser] ✅ pdf-parse loaded successfully");
+      // pdf-parse exports differently in ESM vs CommonJS
+      // Try multiple ways to get the actual function
+      if (typeof module.default === 'function') {
+        pdfParse = module.default;
+      } else if (typeof module.default?.default === 'function') {
+        pdfParse = module.default.default;
+      } else if (typeof module === 'function') {
+        pdfParse = module;
+      } else {
+        // Use require as fallback for CommonJS modules
+        const { createRequire } = await import('module');
+        const require = createRequire(import.meta.url);
+        pdfParse = require('pdf-parse');
+      }
+      console.log("[Resume Parser] ✅ pdf-parse loaded successfully, type:", typeof pdfParse);
     } catch (err) {
       console.error("[Resume Parser] ❌ Failed to load pdf-parse:", err);
     }
