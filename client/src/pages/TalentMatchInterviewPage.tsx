@@ -305,6 +305,15 @@ If question ${TOTAL_WORK_QUESTIONS}, ask about their availability and preferred 
     }
   }, [messages]);
 
+  useEffect(() => {
+    if (interviewState.phase === "complete") {
+      const timer = setTimeout(() => {
+        setLocation("/volunteer/thank-you");
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [interviewState.phase, setLocation]);
+
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
 

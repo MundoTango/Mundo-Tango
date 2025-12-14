@@ -244,6 +244,12 @@ const PrivacyHub = lazy(() => import("@/pages/PrivacyHub"));
 const TalentPipelinePage = lazy(
   () => import("@/pages/admin/TalentPipelinePage"),
 );
+const VolunteerDetailsPage = lazy(
+  () => import("@/pages/admin/VolunteerDetailsPage"),
+);
+const VolunteerThankYouPage = lazy(
+  () => import("@/pages/VolunteerThankYouPage"),
+);
 const MyTasksPage = lazy(() => import("@/pages/MyTasksPage"));
 const TaskBoardPage = lazy(() => import("@/pages/admin/TaskBoardPage"));
 // DELETED: Pricing system rework per Payment & Billing Audit (Dec 2025)
@@ -865,6 +871,20 @@ function Router() {
             <TalentPipelinePage />
           </AdminLayout>
         </ProtectedRoute>
+      </Route>
+
+      <Route path="/admin/volunteer/:id">
+        <ProtectedRoute>
+          <AdminLayout>
+            <VolunteerDetailsPage />
+          </AdminLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/volunteer/thank-you">
+        <AppLayout>
+          <VolunteerThankYouPage />
+        </AppLayout>
       </Route>
 
       <Route path="/admin/task-board">

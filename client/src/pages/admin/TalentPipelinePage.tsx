@@ -1,3 +1,4 @@
+import { useLocation } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/SEO";
@@ -40,6 +41,7 @@ const stageConfig: Record<string, { icon: typeof FileText; color: string }> = {
 };
 
 export default function TalentPipelinePage() {
+  const [, setLocation] = useLocation();
   const { toast } = useToast();
 
   const { data: pipelineData, isLoading: statsLoading, refetch: refetchStats } = useQuery<{ stages: PipelineStage[] }>({
@@ -218,7 +220,13 @@ export default function TalentPipelinePage() {
                           <CheckCircle className="h-4 w-4 mr-1" />
                           Approve
                         </Button>
-                        <Button size="sm" variant="outline" className="flex-1" data-testid={`button-interview-${volunteer.id}`}>
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          className="flex-1" 
+                          onClick={() => setLocation(`/admin/volunteer/${volunteer.id}`)}
+                          data-testid={`button-interview-${volunteer.id}`}
+                        >
                           <MessageSquare className="h-4 w-4 mr-1" />
                           View Interview
                         </Button>

@@ -90,6 +90,31 @@ export function createTalentMatchRoutes(storage: IStorage) {
     }
   });
 
+  // Get volunteer details with resume and interview sessions
+  router.get("/volunteers/:id/details", async (req, res) => {
+    try {
+      const volunteerId = parseInt(req.params.id);
+      
+      const volunteer = await storage.getVolunteerById(volunteerId);
+      if (!volunteer) {
+        return res.status(404).json({ error: "Volunteer not found" });
+      }
+
+      const resume = await storage.getResumeByVolunteerId(volunteerId);
+      const interviewSessions = await storage.getClarifierSessionsByVolunteerId(volunteerId);
+      const assignments = await storage.getAssignmentsByVolunteerId(volunteerId);
+
+      res.json({
+        volunteer,
+        resume,
+        interviewSessions,
+        assignments
+      });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   // ============================================================================
   // RESUME MANAGEMENT
   // ============================================================================

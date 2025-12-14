@@ -466,6 +466,7 @@ export interface IStorage {
   
   createClarifierSession(session: any): Promise<any>;
   getClarifierSessionById(id: number): Promise<any | undefined>;
+  getClarifierSessionsByVolunteerId(volunteerId: number): Promise<any[]>;
   updateClarifierSession(id: number, data: any): Promise<any | undefined>;
   
   createTask(task: any): Promise<any>;
@@ -3457,6 +3458,10 @@ export class DbStorage implements IStorage {
   async getClarifierSessionById(id: number): Promise<any | undefined> {
     const result = await db.select().from(clarifierSessions).where(eq(clarifierSessions.id, id)).limit(1);
     return result[0];
+  }
+
+  async getClarifierSessionsByVolunteerId(volunteerId: number): Promise<any[]> {
+    return await db.select().from(clarifierSessions).where(eq(clarifierSessions.volunteerId, volunteerId)).orderBy(clarifierSessions.id);
   }
 
   async updateClarifierSession(id: number, data: any): Promise<any | undefined> {
