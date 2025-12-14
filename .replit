@@ -55,7 +55,7 @@ VITE_STRIPE_PUBLIC_KEY = "pk_test_51R6baSPWgXkvbq8nFPhziGyPhczSPida5cGqS3IISoXYC
 
 [userenv.production]
 SUPABASE_DATABASE_URL = "postgresql://postgres:Lij558X%tDy#fFN@db.iuvbqahpvpdojiwdpteo.supabase.co:5432/postgres"
-NODE_OPTIONS = "--max-old-space-size=8192"
+NODE_OPTIONS = "--max-old-space-size=4096"
 
 [objectStorage]
 defaultBucketID = "replit-objstore-0ea7904b-a034-4a1a-ad8d-b74222395807"
