@@ -479,43 +479,27 @@ export default function LandingPage() {
             </div>
 
             {/* Coming Soon Features Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
               {[
-                {
-                  icon: Video,
-                  title: "Live Streaming Milongas",
-                  description: "Join virtual milongas from anywhere in the world. Dance with partners across continents in real-time.",
-                  status: "In Development"
-                },
                 {
                   icon: Home,
                   title: "Housing Marketplace",
-                  description: "Find tango-friendly accommodations or host traveling dancers. Build connections through shared spaces.",
-                  status: "Coming Q2 2025"
+                  description: "Find tango-friendly accommodations or host traveling dancers. Build connections through shared spaces."
                 },
                 {
                   icon: Briefcase,
                   title: "Professional Tools",
-                  description: "Advanced features for teachers and organizers: student management, event analytics, and booking systems.",
-                  status: "Coming Q3 2025"
+                  description: "Advanced features for teachers and organizers: student management, event analytics, and booking systems."
                 },
                 {
                   icon: Bot,
                   title: "Enhanced AI Matching",
-                  description: "Mr. Blue AI will learn your preferences and suggest perfect dance partners based on style, level, and personality.",
-                  status: "In Development"
-                },
-                {
-                  icon: Globe,
-                  title: "Offline Mode",
-                  description: "Access your events, contacts, and venue info even without internet. Perfect for traveling dancers.",
-                  status: "Planned"
+                  description: "Mr. Blue AI will learn your preferences and suggest perfect dance partners based on style, level, and personality."
                 },
                 {
                   icon: Users,
                   title: "Group Travel Planning",
-                  description: "Coordinate festival trips with your tango friends. Shared itineraries, housing, and transportation.",
-                  status: "Planned"
+                  description: "Coordinate festival trips with your tango friends. Shared itineraries, housing, and transportation."
                 }
               ].map((feature, index) => (
                 <motion.div key={index} variants={fadeInUp}>
@@ -524,13 +508,8 @@ export default function LandingPage() {
                     data-testid={`card-coming-soon-${index}`}
                   >
                     <CardHeader>
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="w-12 h-12 rounded-lg ocean-gradient flex items-center justify-center">
-                          <feature.icon className="h-6 w-6 text-white" />
-                        </div>
-                        <Badge variant="secondary" className="text-xs">
-                          {feature.status}
-                        </Badge>
+                      <div className="w-12 h-12 rounded-lg ocean-gradient flex items-center justify-center mb-4">
+                        <feature.icon className="h-6 w-6 text-white" />
                       </div>
                       <CardTitle className="text-xl">{feature.title}</CardTitle>
                     </CardHeader>

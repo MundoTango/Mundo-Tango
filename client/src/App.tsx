@@ -14,7 +14,6 @@ import { AdminLayout } from "./components/AdminLayout";
 import { GlobalTopbar } from "./components/GlobalTopbar";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { MrBlueWidget } from "./components/MrBlueWidget";
-import { MrBlueFloatingButton } from "./components/mrBlue/MrBlueFloatingButton";
 import { LoadingFallback } from "./components/LoadingFallback";
 import {
   initErrorDetection,
@@ -54,7 +53,6 @@ import SupportPage from "@/pages/marketing/SupportPage";
 import DonatePage from "@/pages/DonatePage";
 import SupportersPage from "@/pages/marketing/SupportersPage";
 import VolunteerPage from "@/pages/marketing/VolunteerPage";
-import MrBluePage from "@/pages/marketing/MrBluePage";
 import AmbassadorsPage from "@/pages/marketing/AmbassadorsPage";
 import OpenSourcePage from "@/pages/marketing/OpenSourcePage";
 import FeedPrototypePage from "@/pages/FeedPrototypePage";
@@ -72,7 +70,6 @@ import EventsGalleryPrototypePage from "@/pages/EventsGalleryPrototypePage";
 const AboutPage = lazy(() => import("@/pages/AboutPage"));
 const FeaturesPage = lazy(() => import("@/pages/FeaturesPage"));
 const TestimonialsPage = lazy(() => import("@/pages/TestimonialsPage"));
-const FAQPage = lazy(() => import("@/pages/FAQPage"));
 const CalendarPage = lazy(() => import("@/pages/CalendarPage"));
 // Social & Community
 const DiscoverPage = lazy(() => import("@/pages/DiscoverPage"));
@@ -773,7 +770,6 @@ function Router() {
       <Route path="/donate" component={DonatePage} />
       <Route path="/supporters" component={SupportersPage} />
       <Route path="/volunteer" component={VolunteerPage} />
-      <Route path="/mr-blue" component={MrBluePage} />
       <Route path="/ambassadors" component={AmbassadorsPage} />
       <Route path="/open-source" component={OpenSourcePage} />
       <Route path="/feed-prototype" component={FeedPrototypePage} />
@@ -793,7 +789,6 @@ function Router() {
         component={EventsGalleryPrototypePage}
       />
       <Route path="/about" component={AboutPage} />
-      <Route path="/faq" component={FAQPage} />
       <Route path="/features" component={FeaturesPage} />
       <Route path="/testimonials" component={TestimonialsPage} />
       <Route path="/discover" component={DiscoverPage} />
@@ -812,11 +807,6 @@ function Router() {
         <AppLayout>
           <TalentMatchInterviewPage />
         </AppLayout>
-      </Route>
-      <Route path="/mr-blue">
-        <Suspense fallback={<LoadingFallback message="Loading Mr Blue..." />}>
-          <UnifiedMrBlue />
-        </Suspense>
       </Route>
       <Route path="/mr-blue-chat">
         <AppLayout>
@@ -2910,7 +2900,6 @@ function App() {
               <MrBlueProvider>
                 <TooltipProvider>
                   <AppContent />
-                  <MrBlueFloatingButton />
                 </TooltipProvider>
               </MrBlueProvider>
             </PredictiveContextProvider>

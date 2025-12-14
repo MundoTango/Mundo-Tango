@@ -11,8 +11,10 @@ export function PublicNavbar() {
   const navItems = [
     { label: "Home", path: "/" },
     { label: "About", path: "/about" },
-    { label: "FAQ", path: "/faq" },
-    { label: "Contact", path: "/contact" }
+    { label: "Contact", path: "/contact" },
+    { label: "Support Us", path: "/support" },
+    { label: "Volunteer", path: "/volunteer" },
+    { label: "Ambassadors", path: "/ambassadors" }
   ];
 
   const audienceItems = [
@@ -22,10 +24,6 @@ export function PublicNavbar() {
   ];
 
   const communityItems = [
-    { label: "Support Us", path: "/support", icon: Heart },
-    { label: "Mr. Blue AI", path: "/mr-blue", icon: Bot },
-    { label: "Ambassadors", path: "/ambassadors", icon: Flag },
-    { label: "Volunteer", path: "/volunteer", icon: HandHeart },
     { label: "Open Source", path: "/open-source", icon: Code }
   ];
 
@@ -115,21 +113,6 @@ export function PublicNavbar() {
 
         {/* Right Actions */}
         <div className="flex items-center gap-2">
-          {/* Language Switcher */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" data-testid="button-language">
-                <Globe className="h-5 w-5" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem data-testid="menu-item-english">🇺🇸 English</DropdownMenuItem>
-              <DropdownMenuItem data-testid="menu-item-spanish">🇪🇸 Español</DropdownMenuItem>
-              <DropdownMenuItem data-testid="menu-item-portuguese">🇧🇷 Português</DropdownMenuItem>
-              <DropdownMenuItem data-testid="menu-item-french">🇫🇷 Français</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
           {/* Theme Toggle */}
           <Button
             variant="ghost"
