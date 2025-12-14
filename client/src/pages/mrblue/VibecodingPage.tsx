@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, lazy, Suspense } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,8 +8,24 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Code, Sparkles, FileCode, Check, X, History, Folder } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
-import Prism from 'react-syntax-highlighter/dist/esm/prism';
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+
+// Lazy load syntax highlighter for bundle optimization (~638KB savings)
+const LazyCodeBlock = lazy(() => 
+  Promise.all([
+    import('react-syntax-highlighter/dist/esm/prism'),
+    import('react-syntax-highlighter/dist/esm/styles/prism')
+  ]).then(([prismMod, stylesMod]) => ({
+    default: ({ code, language }: { code: string; language: string }) => {
+      const Prism = prismMod.default;
+      const vscDarkPlus = stylesMod.vscDarkPlus;
+      return (
+        <Prism language={language} style={vscDarkPlus} showLineNumbers wrapLines>
+          {code}
+        </Prism>
+      );
+    }
+  }))
+);
 
 interface CodeGeneration {
   id: string;
@@ -191,14 +207,12 @@ export default function VibecodingPage() {
                   </TabsList>
                   <TabsContent value="code" className="mt-4">
                     <div className="rounded-lg overflow-hidden">
-                      <Prism
-                        language={currentGeneration.language}
-                        style={vscDarkPlus}
-                        showLineNumbers
-                        wrapLines
-                      >
-                        {currentGeneration.code}
-                      </Prism>
+                      <Suspense fallback={<div className="p-4 bg-muted rounded-lg animate-pulse h-32" />}>
+                        <LazyCodeBlock
+                          code={currentGeneration.code}
+                          language={currentGeneration.language}
+                        />
+                      </Suspense>
                     </div>
                   </TabsContent>
                   <TabsContent value="prompt" className="mt-4">

@@ -45,9 +45,6 @@ const HomePage = lazy(() => import("@/pages/HomePage"));
 const LandingPage = lazy(() => import("@/pages/LandingPage"));
 const DemosPage = lazy(() => import("@/pages/DemosPage"));
 const FacebookCallbackPage = lazy(() => import("@/pages/auth/FacebookCallbackPage"));
-const MarketingPrototype = lazy(() => import("@/pages/MarketingPrototype"));
-const MarketingPrototypeEnhanced = lazy(() => import("@/pages/MarketingPrototypeEnhanced"));
-const MarketingPrototypeOcean = lazy(() => import("@/pages/MarketingPrototypeOcean"));
 const ForDancersPage = lazy(() => import("@/pages/marketing/ForDancersPage"));
 const ForTeachersPage = lazy(() => import("@/pages/marketing/ForTeachersPage"));
 const ForOrganizersPage = lazy(() => import("@/pages/marketing/ForOrganizersPage"));
@@ -58,16 +55,6 @@ const SupportersPage = lazy(() => import("@/pages/marketing/SupportersPage"));
 const VolunteerPage = lazy(() => import("@/pages/marketing/VolunteerPage"));
 const AmbassadorsPage = lazy(() => import("@/pages/marketing/AmbassadorsPage"));
 const OpenSourcePage = lazy(() => import("@/pages/marketing/OpenSourcePage"));
-const FeedPrototypePage = lazy(() => import("@/pages/FeedPrototypePage"));
-const GroupsPrototypePage = lazy(() => import("@/pages/GroupsPrototypePage"));
-const CommunityPrototypePage = lazy(() => import("@/pages/CommunityPrototypePage"));
-const EventsPrototypePage = lazy(() => import("@/pages/EventsPrototypePage"));
-const ProfilePrototypePage = lazy(() => import("@/pages/ProfilePrototypePage"));
-const MessagesPrototypePage = lazy(() => import("@/pages/MessagesPrototypePage"));
-const FriendsPrototypePage = lazy(() => import("@/pages/FriendsPrototypePage"));
-const FavoritesPrototypePage = lazy(() => import("@/pages/FavoritesPrototypePage"));
-const NotificationsPrototypePage = lazy(() => import("@/pages/NotificationsPrototypePage"));
-const EventsGalleryPrototypePage = lazy(() => import("@/pages/EventsGalleryPrototypePage"));
 
 // Lazy-loaded pages for better performance
 const AboutPage = lazy(() => import("@/pages/AboutPage"));
@@ -757,15 +744,6 @@ function Router() {
           </AppLayout>
         </ProtectedRoute>
       </Route>
-      <Route path="/marketing-prototype" component={MarketingPrototype} />
-      <Route
-        path="/marketing-prototype-enhanced"
-        component={MarketingPrototypeEnhanced}
-      />
-      <Route
-        path="/marketing-prototype-ocean"
-        component={MarketingPrototypeOcean}
-      />
       <Route path="/for-dancers" component={ForDancersPage} />
       <Route path="/for-teachers" component={ForTeachersPage} />
       <Route path="/for-organizers" component={ForOrganizersPage} />
@@ -776,22 +754,6 @@ function Router() {
       <Route path="/volunteer" component={VolunteerPage} />
       <Route path="/ambassadors" component={AmbassadorsPage} />
       <Route path="/open-source" component={OpenSourcePage} />
-      <Route path="/feed-prototype" component={FeedPrototypePage} />
-      <Route path="/groups-prototype" component={GroupsPrototypePage} />
-      <Route path="/community-prototype" component={CommunityPrototypePage} />
-      <Route path="/events-prototype" component={EventsPrototypePage} />
-      <Route path="/profile-prototype" component={ProfilePrototypePage} />
-      <Route path="/messages-prototype" component={MessagesPrototypePage} />
-      <Route path="/friends-prototype" component={FriendsPrototypePage} />
-      <Route path="/favorites-prototype" component={FavoritesPrototypePage} />
-      <Route
-        path="/notifications-prototype"
-        component={NotificationsPrototypePage}
-      />
-      <Route
-        path="/events-gallery-prototype"
-        component={EventsGalleryPrototypePage}
-      />
       <Route path="/about" component={AboutPage} />
       <Route path="/features" component={FeaturesPage} />
       <Route path="/testimonials" component={TestimonialsPage} />

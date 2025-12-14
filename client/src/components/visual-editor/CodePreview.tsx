@@ -1,9 +1,32 @@
-import { useState } from 'react';
+import { useState, lazy, Suspense } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Copy, Check, Download } from 'lucide-react';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+
+// Lazy load syntax highlighter for bundle optimization (~638KB savings)
+const LazyCodeBlock = lazy(() => 
+  Promise.all([
+    import('react-syntax-highlighter'),
+    import('react-syntax-highlighter/dist/esm/styles/prism')
+  ]).then(([highlighterMod, stylesMod]) => ({
+    default: ({ code, language }: { code: string; language: string }) => {
+      const SyntaxHighlighter = highlighterMod.Prism;
+      const vscDarkPlus = stylesMod.vscDarkPlus;
+      return (
+        <SyntaxHighlighter
+          language={language}
+          style={vscDarkPlus}
+          customStyle={{
+            borderRadius: '0.5rem',
+            fontSize: '0.875rem',
+          }}
+        >
+          {code}
+        </SyntaxHighlighter>
+      );
+    }
+  }))
+);
 
 interface CodePreviewProps {
   code: string;
@@ -74,16 +97,9 @@ export function CodePreview({ code, language, explanation, files }: CodePreviewP
           </div>
         )}
         
-        <SyntaxHighlighter
-          language={language}
-          style={vscDarkPlus}
-          customStyle={{
-            borderRadius: '0.5rem',
-            fontSize: '0.875rem',
-          }}
-        >
-          {code}
-        </SyntaxHighlighter>
+        <Suspense fallback={<div className="p-4 bg-muted rounded-lg animate-pulse h-32" />}>
+          <LazyCodeBlock code={code} language={language} />
+        </Suspense>
       </CardContent>
     </Card>
   );
