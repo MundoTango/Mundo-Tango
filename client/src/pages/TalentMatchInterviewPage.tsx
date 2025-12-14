@@ -31,8 +31,8 @@ interface InterviewState {
   workAnswers: string[];
 }
 
-const TOTAL_RESUME_QUESTIONS = 10;
-const TOTAL_WORK_QUESTIONS = 10;
+const TOTAL_RESUME_QUESTIONS = 2;
+const TOTAL_WORK_QUESTIONS = 2;
 
 export default function TalentMatchInterviewPage() {
   const [, setLocation] = useLocation();
