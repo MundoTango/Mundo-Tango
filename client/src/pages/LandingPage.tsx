@@ -14,7 +14,6 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { PublicNavbar } from "@/components/PublicNavbar";
 import { DemoModal } from "@/components/marketing/DemoModal";
-import { VideoDemoModal } from "@/components/marketing/VideoDemoModal";
 import {
   MapPin,
   Users,
@@ -43,8 +42,6 @@ import { useQuery } from "@tanstack/react-query";
 
 export default function LandingPage() {
   const [demoModalOpen, setDemoModalOpen] = useState(false);
-  const [videoModalOpen, setVideoModalOpen] = useState(false);
-  const [selectedVideoDemo, setSelectedVideoDemo] = useState<number>(0);
 
   // Set page title
   useEffect(() => {
@@ -180,119 +177,6 @@ export default function LandingPage() {
       title: "Grow Your Tango Journey",
       description:
         "Track your progress, collect memories, build your network, and become part of the global tango family.",
-    },
-  ];
-
-  const pricingTiers = [
-    {
-      name: "Free Trial",
-      price: "$0",
-      period: "7 days",
-      description: "Try Pro features free",
-      features: [
-        "Full Pro features for 7 days",
-        "No credit card required",
-        "Event discovery",
-        "Community access",
-        "AI assistant access",
-      ],
-      cta: "Start Free Trial",
-      popular: false,
-    },
-    {
-      name: "Basic",
-      price: "$4.99",
-      period: "per month",
-      description: "Essential tango tools",
-      features: [
-        "Basic profile & messaging",
-        "Browse events",
-        "Join groups",
-        "Community access",
-        "Limited AI queries",
-      ],
-      cta: "Get Started",
-      popular: false,
-    },
-    {
-      name: "Dancer Pro",
-      price: "$9.99",
-      period: "per month",
-      description: "For dedicated dancers",
-      features: [
-        "Everything in Basic",
-        "Unlimited AI assistant",
-        "Advanced partner matching",
-        "Housing marketplace access",
-        "Priority event listings",
-        "Ad-free experience",
-        "Travel planning tools",
-      ],
-      cta: "Start Free Trial",
-      popular: true,
-    },
-    {
-      name: "Professional",
-      price: "$29.99",
-      period: "per month",
-      description: "For teachers & organizers",
-      features: [
-        "Everything in Dancer Pro",
-        "Event creation & management",
-        "Analytics dashboard",
-        "Student management tools",
-        "Verified badge",
-        "Priority support",
-      ],
-      cta: "Start Free Trial",
-      popular: false,
-    },
-  ];
-
-  const screenshots = [
-    {
-      id: "tango-map",
-      journeyId: "tango-map-promo",
-      title: "Global Tango Map",
-      description: "Find dancers worldwide",
-      gradient: "from-teal-500 to-cyan-600",
-      icon: MapPin,
-      image: "/demos/tango-map.png",
-      videoUrl: "/videos/marketing/tango-map-promo.mp4",
-      duration: "0:15",
-    },
-    {
-      id: "events",
-      journeyId: "event-discovery",
-      title: "Event Discovery",
-      description: "Never miss a milonga near you",
-      gradient: "from-purple-500 to-indigo-600",
-      icon: Calendar,
-      image: "/demos/events-discovery.png",
-      videoUrl: "/videos/customer/event-discovery.mp4",
-      duration: "0:30",
-    },
-    {
-      id: "mr-blue",
-      journeyId: "mr-blue-chat",
-      title: "Mr. Blue AI",
-      description: "Your personal tango guide",
-      gradient: "from-blue-500 to-cyan-500",
-      icon: Bot,
-      image: "/demos/mr-blue-chat.png",
-      videoUrl: "/videos/customer/mr-blue-chat.mp4",
-      duration: "0:25",
-    },
-    {
-      id: "profile",
-      journeyId: "profile-view",
-      title: "Your Profile",
-      description: "Showcase your tango journey",
-      gradient: "from-rose-500 to-pink-600",
-      icon: Users,
-      image: "/demos/profile-view.png",
-      videoUrl: "/videos/customer/profile-view.mp4",
-      duration: "0:20",
     },
   ];
 
@@ -564,10 +448,10 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Pricing Section */}
+      {/* Coming Soon Features Section */}
       <section
         className="py-20 md:py-24 gradient-hero"
-        data-testid="section-pricing"
+        data-testid="section-coming-soon"
       >
         <div className="container mx-auto px-4">
           <motion.div
@@ -582,181 +466,103 @@ export default function LandingPage() {
               <motion.h2
                 variants={fadeInUp}
                 className="text-3xl md:text-4xl font-bold ocean-gradient-text"
-                data-testid="text-pricing-heading"
+                data-testid="text-coming-soon-heading"
               >
-                Choose Your Plan
+                Coming Soon
               </motion.h2>
               <motion.p
                 variants={fadeInUp}
                 className="text-lg text-muted-foreground"
               >
-                Start free and upgrade as your tango journey grows. No credit
-                card required.
+                We're building incredible features to transform your tango experience. Here's what's on the horizon.
               </motion.p>
             </div>
 
-            {/* Pricing Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
-              {pricingTiers.map((tier, index) => (
+            {/* Coming Soon Features Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+              {[
+                {
+                  icon: Video,
+                  title: "Live Streaming Milongas",
+                  description: "Join virtual milongas from anywhere in the world. Dance with partners across continents in real-time.",
+                  status: "In Development"
+                },
+                {
+                  icon: Home,
+                  title: "Housing Marketplace",
+                  description: "Find tango-friendly accommodations or host traveling dancers. Build connections through shared spaces.",
+                  status: "Coming Q2 2025"
+                },
+                {
+                  icon: Briefcase,
+                  title: "Professional Tools",
+                  description: "Advanced features for teachers and organizers: student management, event analytics, and booking systems.",
+                  status: "Coming Q3 2025"
+                },
+                {
+                  icon: Bot,
+                  title: "Enhanced AI Matching",
+                  description: "Mr. Blue AI will learn your preferences and suggest perfect dance partners based on style, level, and personality.",
+                  status: "In Development"
+                },
+                {
+                  icon: Globe,
+                  title: "Offline Mode",
+                  description: "Access your events, contacts, and venue info even without internet. Perfect for traveling dancers.",
+                  status: "Planned"
+                },
+                {
+                  icon: Users,
+                  title: "Group Travel Planning",
+                  description: "Coordinate festival trips with your tango friends. Shared itineraries, housing, and transportation.",
+                  status: "Planned"
+                }
+              ].map((feature, index) => (
                 <motion.div key={index} variants={fadeInUp}>
                   <Card
-                    className={`h-full relative ${tier.popular ? "border-primary border-2" : ""}`}
-                    data-testid={`pricing-card-${tier.name.toLowerCase()}`}
+                    className="h-full hover-elevate"
+                    data-testid={`card-coming-soon-${index}`}
                   >
-                    {tier.popular && (
-                      <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground">
-                        Most Popular
-                      </Badge>
-                    )}
                     <CardHeader>
-                      <CardTitle className="text-2xl">{tier.name}</CardTitle>
-                      <CardDescription>{tier.description}</CardDescription>
-                      <div className="mt-4">
-                        <span className="text-4xl font-bold">{tier.price}</span>
-                        <span className="text-muted-foreground ml-2">
-                          / {tier.period}
-                        </span>
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="w-12 h-12 rounded-lg ocean-gradient flex items-center justify-center">
+                          <feature.icon className="h-6 w-6 text-white" />
+                        </div>
+                        <Badge variant="secondary" className="text-xs">
+                          {feature.status}
+                        </Badge>
                       </div>
+                      <CardTitle className="text-xl">{feature.title}</CardTitle>
                     </CardHeader>
-                    <CardContent className="space-y-4">
-                      <ul className="space-y-3">
-                        {tier.features.map((feature, fIndex) => (
-                          <li key={fIndex} className="flex items-start gap-2">
-                            <Check className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                            <span className="text-sm">{feature}</span>
-                          </li>
-                        ))}
-                      </ul>
+                    <CardContent>
+                      <p className="text-muted-foreground">
+                        {feature.description}
+                      </p>
                     </CardContent>
-                    <CardFooter>
-                      <Link href="/register" className="w-full">
-                        <Button
-                          className={`w-full ${tier.popular ? "ocean-gradient text-white" : ""}`}
-                          variant={tier.popular ? "default" : "outline"}
-                          data-testid={`button-pricing-${tier.name.toLowerCase()}`}
-                        >
-                          {tier.cta}
-                        </Button>
-                      </Link>
-                    </CardFooter>
                   </Card>
                 </motion.div>
               ))}
             </div>
-          </motion.div>
-        </div>
-      </section>
 
-      {/* Screenshots/Demo Section */}
-      <section className="py-20 md:py-24" data-testid="section-screenshots">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={staggerContainer}
-            className="space-y-12"
-          >
-            {/* Section Header */}
-            <div className="text-center max-w-3xl mx-auto space-y-4">
-              <motion.h2
-                variants={fadeInUp}
-                className="text-3xl md:text-4xl font-bold ocean-gradient-text"
-                data-testid="text-screenshots-heading"
-              >
-                See Mundo Tango in Action
-              </motion.h2>
-              <motion.p
-                variants={fadeInUp}
-                className="text-lg text-muted-foreground"
-              >
-                Explore our beautiful, intuitive interface designed for dancers
-                by dancers.
-              </motion.p>
-            </div>
-
-            {/* Video Demo Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {screenshots.map((screenshot, index) => {
-                const IconComponent = screenshot.icon;
-                return (
-                  <motion.div key={index} variants={fadeInUp}>
-                    <Card
-                      className="h-full overflow-hidden hover-elevate cursor-pointer group"
-                      data-testid={`video-demo-${index}`}
-                      onClick={() => {
-                        setSelectedVideoDemo(index);
-                        setVideoModalOpen(true);
-                      }}
-                    >
-                      <div
-                        className={`h-48 bg-gradient-to-br ${screenshot.gradient} relative overflow-hidden`}
-                      >
-                        {screenshot.image && (
-                          <img
-                            src={screenshot.image}
-                            alt={screenshot.title}
-                            className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-105"
-                            loading="lazy"
-                          />
-                        )}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-
-                        {/* Video Play Overlay */}
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <div className="w-16 h-16 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-lg transition-all duration-300 group-hover:scale-110 group-hover:bg-white">
-                            <Play
-                              className="h-7 w-7 text-primary ml-1"
-                              fill="currentColor"
-                            />
-                          </div>
-                        </div>
-
-                        {/* Video Duration Badge */}
-                        <div className="absolute top-3 right-3 flex gap-2">
-                          <Badge className="bg-black/70 text-white border-0 text-xs font-mono">
-                            {screenshot.duration}
-                          </Badge>
-                        </div>
-
-                        {/* Video Type Badge */}
-                        <div className="absolute top-3 left-3">
-                          <Badge className="bg-primary/90 text-white border-0 text-xs">
-                            <Video className="h-3 w-3 mr-1" />
-                            Video
-                          </Badge>
-                        </div>
-
-                        <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-                          <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 rounded-lg bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                              <IconComponent className="h-4 w-4" />
-                            </div>
-                            <span className="text-sm font-medium">
-                              {screenshot.title}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                      <CardContent className="pt-4">
-                        <h3
-                          className="font-semibold text-lg"
-                          data-testid={`text-demo-title-${screenshot.id}`}
-                        >
-                          {screenshot.title}
-                        </h3>
-                        <p className="text-sm text-muted-foreground mt-1">
-                          {screenshot.description}
-                        </p>
-                        <p className="text-xs text-primary mt-2 flex items-center gap-1 group-hover:underline">
-                          <Play className="h-3 w-3" /> Watch video demo
-                        </p>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                );
-              })}
-            </div>
+            {/* Support CTA */}
+            <motion.div
+              variants={fadeInUp}
+              className="text-center max-w-2xl mx-auto pt-8"
+            >
+              <p className="text-muted-foreground mb-4">
+                Help us build these features faster by supporting Mundo Tango
+              </p>
+              <Link href="/support">
+                <Button
+                  size="lg"
+                  className="ocean-gradient text-white"
+                  data-testid="button-support-coming-soon"
+                >
+                  Support Our Mission
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
+            </motion.div>
           </motion.div>
         </div>
       </section>
@@ -1077,12 +883,6 @@ export default function LandingPage() {
       </footer>
 
       <DemoModal open={demoModalOpen} onOpenChange={setDemoModalOpen} />
-      <VideoDemoModal
-        open={videoModalOpen}
-        onOpenChange={setVideoModalOpen}
-        initialSlide={selectedVideoDemo}
-        screenshots={screenshots}
-      />
     </div>
   );
 }

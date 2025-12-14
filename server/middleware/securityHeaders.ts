@@ -55,8 +55,8 @@ export function securityHeaders(req: Request, res: Response, next: NextFunction)
   res.setHeader('Surrogate-Control', 'no-store');
   
   // CSP Version header to force browser cache refresh (change this when CSP changes)
-  // Updated to force refresh after disabling Sentry CSP injection
-  res.setHeader('X-CSP-Version', '2024-11-15-v3-no-sentry-csp');
+  // Updated to allow GoFundMe embed script and iframe
+  res.setHeader('X-CSP-Version', '2024-12-14-v4-gofundme-csp');
   
   helmet({
     contentSecurityPolicy: {
@@ -74,14 +74,16 @@ export function securityHeaders(req: Request, res: Response, next: NextFunction)
               "'unsafe-eval'",
               "https://js.stripe.com",
               "https://cdn.jsdelivr.net",
-              "https://unpkg.com"
+              "https://unpkg.com",
+              "https://www.gofundme.com"
             ]
           : [
               "'self'",
               `'nonce-${nonce}'`,
               "https://js.stripe.com",
               "https://cdn.jsdelivr.net",
-              "https://unpkg.com"
+              "https://unpkg.com",
+              "https://www.gofundme.com"
             ],
         
         // Script element sources (for external scripts)
@@ -91,14 +93,16 @@ export function securityHeaders(req: Request, res: Response, next: NextFunction)
               "'unsafe-inline'",
               "https://js.stripe.com",
               "https://cdn.jsdelivr.net",
-              "https://unpkg.com"
+              "https://unpkg.com",
+              "https://www.gofundme.com"
             ]
           : [
               "'self'",
               `'nonce-${nonce}'`,
               "https://js.stripe.com",
               "https://cdn.jsdelivr.net",
-              "https://unpkg.com"
+              "https://unpkg.com",
+              "https://www.gofundme.com"
             ],
         
         // Style sources - unsafe-inline needed for dynamic styles (Tailwind, emotion, etc.)
@@ -146,8 +150,8 @@ export function securityHeaders(req: Request, res: Response, next: NextFunction)
               "wss:"
             ],
         
-        // Frame sources - allow Stripe for payment elements
-        frameSrc: ["'self'", "https://js.stripe.com", "https://hooks.stripe.com"],
+        // Frame sources - allow Stripe for payment elements and GoFundMe for embed
+        frameSrc: ["'self'", "https://js.stripe.com", "https://hooks.stripe.com", "https://www.gofundme.com"],
         
         // Object sources - block all plugins (Flash, Java, etc.)
         objectSrc: ["'none'"],

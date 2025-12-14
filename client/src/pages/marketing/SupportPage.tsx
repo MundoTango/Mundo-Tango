@@ -10,8 +10,9 @@ import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary"
 import { useQuery } from "@tanstack/react-query";
 import { 
   Heart, Star, Award, Crown, Check, ArrowRight,
-  Clock, DollarSign, Users, Globe, Code, Sparkles
+  Clock, DollarSign, Users, Globe, Code, Sparkles, ExternalLink
 } from "lucide-react";
+import { GoFundMeEmbed } from "@/components/marketing/GoFundMeEmbed";
 
 interface TangoLegend {
   id: string;
@@ -381,6 +382,43 @@ function SupportPageContent() {
         </div>
       </section>
 
+      {/* GoFundMe Section */}
+      <section className="py-16 bg-muted/30" data-testid="section-gofundme">
+        <div className="container mx-auto px-4">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={staggerContainer}
+            className="max-w-2xl mx-auto"
+          >
+            <div className="text-center mb-8">
+              <motion.h2 variants={fadeInUp} className="text-3xl font-bold mb-4">
+                Support Through GoFundMe
+              </motion.h2>
+              <motion.p variants={fadeInUp} className="text-muted-foreground">
+                Make a contribution through our GoFundMe campaign to help build the platform the tango community deserves.
+              </motion.p>
+            </div>
+            <motion.div variants={fadeInUp} className="flex justify-center mb-6">
+              <GoFundMeEmbed showCard={false} />
+            </motion.div>
+            <motion.div variants={fadeInUp} className="text-center">
+              <a 
+                href="https://www.gofundme.com/f/mundo-tango" 
+                target="_blank" 
+                rel="noopener noreferrer"
+              >
+                <Button variant="outline" data-testid="button-gofundme-external">
+                  <ExternalLink className="mr-2 h-4 w-4" />
+                  View Full Campaign
+                </Button>
+              </a>
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="py-16 ocean-gradient" data-testid="section-cta">
         <div className="container mx-auto px-4">
@@ -398,17 +436,21 @@ function SupportPageContent() {
               From $10 to $500, every supporter helps build the platform the tango community deserves.
               Join the movement. Become a Tango Legend.
             </motion.p>
-            <motion.div variants={fadeInUp} className="flex justify-center gap-4">
-              <Link href="/donate">
+            <motion.div variants={fadeInUp} className="flex flex-wrap justify-center gap-4">
+              <a 
+                href="https://www.gofundme.com/f/mundo-tango" 
+                target="_blank" 
+                rel="noopener noreferrer"
+              >
                 <Button 
                   size="lg" 
                   className="bg-white text-primary hover:bg-white/90"
                   data-testid="button-support-now"
                 >
-                  Support Now
+                  Support on GoFundMe
                   <Heart className="h-4 w-4 ml-2" />
                 </Button>
-              </Link>
+              </a>
               <Link href="/supporters">
                 <Button 
                   size="lg" 

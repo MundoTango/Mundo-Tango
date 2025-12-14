@@ -11,7 +11,6 @@ export function PublicNavbar() {
   const navItems = [
     { label: "Home", path: "/" },
     { label: "About", path: "/about" },
-    { label: "Pricing", path: "/pricing" },
     { label: "FAQ", path: "/faq" },
     { label: "Contact", path: "/contact" }
   ];
