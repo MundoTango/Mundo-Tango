@@ -49,11 +49,19 @@ export class ResumeParser {
    * Parse PDF resume
    */
   private async parsePDF(buffer: Buffer): Promise<string> {
+    console.log("[Resume Parser] 📄 Starting PDF parse, buffer size:", buffer.length, "bytes");
     try {
       const data = await pdfParse(buffer);
-      return data.text || "";
-    } catch (error) {
-      console.warn("[Resume Parser] PDF parsing failed, using empty text:", error);
+      const extractedText = data.text || "";
+      console.log("[Resume Parser] ✅ PDF parsed successfully, text length:", extractedText.length, "chars");
+      if (extractedText.length > 0) {
+        console.log("[Resume Parser] First 200 chars:", extractedText.slice(0, 200));
+      } else {
+        console.warn("[Resume Parser] ⚠️ PDF parsed but no text extracted - may be image-based or encrypted");
+      }
+      return extractedText;
+    } catch (error: any) {
+      console.error("[Resume Parser] ❌ PDF parsing error:", error?.message || error);
       // Return empty string instead of throwing - allows flow to continue
       // This handles minimal/test PDFs that may not have valid structure
       return "";
