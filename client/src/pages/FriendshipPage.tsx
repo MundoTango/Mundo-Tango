@@ -22,7 +22,7 @@ import { PostCreator } from "@/components/universal/PostCreator";
 import { useToast } from "@/hooks/use-toast";
 import { type PostItemData } from "@/components/feed/PostItem";
 import { UnifiedMemoriesFeed } from "@/components/feed/UnifiedMemoriesFeed";
-import tangoHeroImage from "@assets/IMG_9144-Mejorado-NR_1762013255726.jpg";
+import tangoHeroImage from "@assets/optimized/IMG_9144-optimized.jpg";
 
 interface UserProfile {
   id: number;

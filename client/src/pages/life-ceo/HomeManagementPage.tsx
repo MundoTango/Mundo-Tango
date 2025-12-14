@@ -6,7 +6,7 @@ import { Home, Wrench, ShoppingCart, Calendar, CheckCircle2, AlertCircle } from 
 import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
-import heroImage from "@assets/IMG_9171-Mejorado-NR_1762013255727.jpg";
+import heroImage from "@assets/optimized/IMG_9171-optimized.jpg";
 
 export default function HomeManagementPage() {
   const maintenance = [

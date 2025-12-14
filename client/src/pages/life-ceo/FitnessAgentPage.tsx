@@ -6,7 +6,7 @@ import { Dumbbell, Activity, Trophy, Flame, TrendingUp, Target, Check } from "lu
 import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
-import heroImage from "@assets/IMG_9474-Mejorado-NR_1762013337546.jpg";
+import heroImage from "@assets/optimized/IMG_9474-optimized.jpg";
 
 export default function FitnessAgentPage() {
   const stats = [

@@ -6,8 +6,8 @@ import { SEO } from "@/components/SEO";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { motion } from "framer-motion";
-import scottPhoto1 from "@assets/Skoot_(20)_1765691279790.jpg";
-import scottPhoto2 from "@assets/Skoot_(16)_1765691279812.jpg";
+import scottPhoto1 from "@assets/optimized/Skoot_20-optimized.jpg";
+import scottPhoto2 from "@assets/optimized/Skoot_16-optimized.jpg";
 
 export default function AboutPage() {
   return (

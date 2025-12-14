@@ -6,7 +6,7 @@ import { Heart, TrendingUp, Activity, Apple, Dumbbell, Moon, Droplets, Check } f
 import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
-import heroImage from "@assets/IMG_9441-Mejorado-NR_1762013328912.jpg";
+import heroImage from "@assets/optimized/IMG_9441-optimized.jpg";
 
 export default function HealthAgentPage() {
   const stats = [

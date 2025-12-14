@@ -13,9 +13,9 @@ import { PublicLayout } from "@/components/PublicLayout";
 import { SEO } from "@/components/SEO";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
-import heroImage from "@assets/IMG_9414-Mejorado-NR_1762013316897.jpg";
+import heroImage from "@assets/optimized/IMG_9414-optimized.jpg";
 import featureImage1 from "@assets/stock_images/global_world_map_con_0c38d510.jpg";
-import featureImage2 from "@assets/IMG_9422-Mejorado-NR_1762013316898.jpg";
+import featureImage2 from "@assets/optimized/IMG_9422-optimized.jpg";
 
 export default function HomePage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);

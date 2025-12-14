@@ -15,7 +15,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { motion } from "framer-motion";
-import tangoHeroImage from "@assets/IMG_9144-Mejorado-NR_1762013255726.jpg";
+import tangoHeroImage from "@assets/optimized/IMG_9144-optimized.jpg";
 
 export default function FriendsPage() {
   const [activeTab, setActiveTab] = useState("all");
