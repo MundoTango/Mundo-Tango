@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, lazy, Suspense } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -13,12 +13,15 @@ import {
   Film,
   Sparkles,
   Target,
-  Paintbrush
+  Paintbrush,
+  Loader2
 } from 'lucide-react';
 import { useMrBlue } from '@/contexts/MrBlueContext';
 import { FocusMode } from './FocusMode';
-import { AvatarCanvas } from './AvatarCanvas';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
+
+// Lazy load Three.js component to reduce initial bundle size
+const AvatarCanvas = lazy(() => import('./AvatarCanvas').then(m => ({ default: m.AvatarCanvas })));
 
 /**
  * COMMAND CENTER - 9-card grid view
@@ -197,11 +200,17 @@ export function CommandCenter({ onNavigateToSystem, onSwitchMode }: CommandCente
               </div>
             }
           >
-            <AvatarCanvas
-              size={200}
-              state={avatarState}
-              audioLevel={0}
-            />
+            <Suspense fallback={
+              <div className="w-[200px] h-[200px] rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center">
+                <Loader2 className="h-12 w-12 text-white animate-spin" />
+              </div>
+            }>
+              <AvatarCanvas
+                size={200}
+                state={avatarState}
+                audioLevel={0}
+              />
+            </Suspense>
           </ErrorBoundary>
           <Badge variant="outline">
             {avatarState.charAt(0).toUpperCase() + avatarState.slice(1)}

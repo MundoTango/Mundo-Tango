@@ -19,10 +19,12 @@ import { visualEditorTracker, type VisualEdit } from "@/lib/visualEditorTracker"
 import { useVoiceInput } from "@/hooks/useVoiceInput";
 import { useTextToSpeech } from "@/hooks/useTextToSpeech";
 import { useStreamingChat, type FileUpdateData } from "@/hooks/useStreamingChat";
-import { MrBlueAvatar } from "./MrBlueAvatar";
 import { AutonomousWorkflowPanel } from "@/components/autonomous/AutonomousWorkflowPanel";
 import { apiRequest } from "@/lib/queryClient";
 import { intentDetector, sentimentAnalyzer, type UserIntent, type Sentiment } from "@/lib/transformers";
+
+// Lazy load avatar component to reduce initial bundle size
+const MrBlueAvatar = lazy(() => import("./MrBlueAvatar").then(m => ({ default: m.MrBlueAvatar })));
 
 // Lazy load 3D avatar component (heavy Three.js dependency)
 const MrBlueAvatar3D = lazy(() => import("@/components/mrblue/MrBlueAvatar3D"));
@@ -779,7 +781,9 @@ I use on-device AI models to understand your intent instantly - no backend neede
                 />
               </Suspense>
             ) : (
-              <MrBlueAvatar isSpeaking={isSpeaking} isListening={isListening} />
+              <Suspense fallback={<div className="w-14 h-14 animate-pulse bg-muted rounded-full" />}>
+                <MrBlueAvatar isSpeaking={isSpeaking} isListening={isListening} />
+              </Suspense>
             )}
             <div>
               <h3 className="font-semibold">Mr. Blue - Visual Editor</h3>
@@ -926,7 +930,9 @@ I use on-device AI models to understand your intent instantly - no backend neede
                       <MrBlueAvatar3D size={56} expression="friendly" />
                     </Suspense>
                   ) : (
-                    <MrBlueAvatar isSpeaking={false} isListening={false} />
+                    <Suspense fallback={<div className="w-14 h-14 animate-pulse bg-muted rounded-full" />}>
+                      <MrBlueAvatar isSpeaking={false} isListening={false} />
+                    </Suspense>
                   )}
                 </div>
               )}
@@ -955,7 +961,9 @@ I use on-device AI models to understand your intent instantly - no backend neede
                     <MrBlueAvatar3D size={56} expression="thinking" />
                   </Suspense>
                 ) : (
-                  <MrBlueAvatar isSpeaking={false} isListening={false} />
+                  <Suspense fallback={<div className="w-14 h-14 animate-pulse bg-muted rounded-full" />}>
+                    <MrBlueAvatar isSpeaking={false} isListening={false} />
+                  </Suspense>
                 )}
               </div>
               <div className="bg-muted rounded-lg p-3 max-w-[80%]">

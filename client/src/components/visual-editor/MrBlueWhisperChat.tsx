@@ -3,14 +3,16 @@
  * Full audio conversation like ChatGPT voice using OpenAI Whisper
  */
 
-import { useState, useEffect, useRef } from "react";
-import { Send, Mic, MicOff, Volume2, VolumeX } from "lucide-react";
+import { useState, useEffect, useRef, lazy, Suspense } from "react";
+import { Send, Mic, MicOff, Volume2, VolumeX, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { visualEditorTracker, type VisualEdit } from "@/lib/visualEditorTracker";
 import { useWhisperVoice } from "@/hooks/useWhisperVoice";
-import { MrBlueAvatar } from "./MrBlueAvatar";
+
+// Lazy load avatar component to reduce initial bundle size
+const MrBlueAvatar = lazy(() => import("./MrBlueAvatar").then(m => ({ default: m.MrBlueAvatar })));
 
 interface Message {
   id: string;
@@ -258,7 +260,9 @@ Type or use voice - I'm ready to chat!`;
       <div className="p-4 border-b border-ocean-divider">
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
-            <MrBlueAvatar isSpeaking={isSpeaking} isListening={isRecording} />
+            <Suspense fallback={<div className="w-8 h-8 rounded-full bg-blue-500 animate-pulse" />}>
+              <MrBlueAvatar isSpeaking={isSpeaking} isListening={isRecording} />
+            </Suspense>
             <div>
               <h3 className="font-semibold">Mr. Blue - Whisper Voice</h3>
               <p className="text-xs text-muted-foreground">
@@ -300,7 +304,9 @@ Type or use voice - I'm ready to chat!`;
             >
               {message.role === 'assistant' && (
                 <div className="flex-shrink-0">
-                  <MrBlueAvatar isSpeaking={false} isListening={false} />
+                  <Suspense fallback={<div className="w-8 h-8 rounded-full bg-blue-500 animate-pulse" />}>
+                    <MrBlueAvatar isSpeaking={false} isListening={false} />
+                  </Suspense>
                 </div>
               )}
               
@@ -322,7 +328,9 @@ Type or use voice - I'm ready to chat!`;
           {(isLoading || isProcessing) && (
             <div className="flex gap-3 justify-start">
               <div className="flex-shrink-0">
-                <MrBlueAvatar isSpeaking={false} isListening={false} />
+                <Suspense fallback={<div className="w-8 h-8 rounded-full bg-blue-500 animate-pulse" />}>
+                  <MrBlueAvatar isSpeaking={false} isListening={false} />
+                </Suspense>
               </div>
               <div className="bg-muted rounded-lg p-3">
                 <div className="flex gap-1">

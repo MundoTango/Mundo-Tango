@@ -1,18 +1,25 @@
-import { useState } from 'react';
+import { useState, lazy, Suspense } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Video, Code, Mic, MessageSquare, Sparkles, Facebook, Brain, Box, Film } from 'lucide-react';
+import { Video, Code, Mic, MessageSquare, Sparkles, Facebook, Brain, Box, Film, Loader2 } from 'lucide-react';
 import { VideoConference } from './VideoConference';
-import { AvatarCanvas } from './AvatarCanvas';
 import { VibeCodingInterface } from './VibeCodingInterface';
 import { VoiceCloning } from './VoiceCloning';
 import { MessengerIntegration } from './MessengerIntegration';
 import { MemoryDashboard } from './MemoryDashboard';
-import { ThreeDCreatorTab } from './ThreeDCreatorTab';
 import { AIVideoStudioTab } from './AIVideoStudioTab';
 import type { AvatarState } from './PixarAvatar';
+
+const AvatarCanvas = lazy(() => import('./AvatarCanvas').then(m => ({ default: m.AvatarCanvas })));
+const ThreeDCreatorTab = lazy(() => import('./ThreeDCreatorTab').then(m => ({ default: m.ThreeDCreatorTab })));
+
+const ThreeJSLoadingFallback = () => (
+  <div className="flex items-center justify-center h-full min-h-[200px] bg-muted/30 rounded-lg">
+    <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+  </div>
+);
 
 /**
  * MR BLUE STUDIO - Unified Interface for All 8 Systems
