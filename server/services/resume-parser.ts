@@ -1,81 +1,52 @@
 /**
  * RESUME PARSER SERVICE
- * MB.MD Enhanced Version - Dec 14, 2025
+ * MB.MD v2 Enhanced - Dec 14, 2025
  * 
  * Extracts text from PDF and DOCX resumes
  * Used by Talent Match AI for signal detection
  * 
- * Features:
- * - Enhanced buffer diagnostics
- * - Multiple PDF parsing fallback strategies
- * - Detailed error logging for debugging
+ * FIXED: Updated to use pdf-parse v2 API
+ * - v2 uses: new PDFParse({ data: buffer })
+ * - Must call .getText() and access result.text
+ * - Must call .destroy() to clean up
  */
 
 import mammoth from "mammoth";
 import { createRequire } from "module";
 
-// pdf-parse with multiple import strategies
-let pdfParse: any = null;
+// pdf-parse v2 class (PDFParse)
+let PDFParseClass: any = null;
 let pdfParseLoadAttempted = false;
 
-async function getPdfParse() {
-  if (pdfParseLoadAttempted) return pdfParse;
+async function getPDFParseClass() {
+  if (pdfParseLoadAttempted) return PDFParseClass;
   pdfParseLoadAttempted = true;
   
-  console.log("[Resume Parser] 🔧 Attempting to load pdf-parse...");
+  console.log("[Resume Parser] 🔧 Loading pdf-parse v2...");
   
-  // Strategy 1: Use createRequire (most reliable for CommonJS in ESM)
   try {
     const require = createRequire(import.meta.url);
-    const parser = require('pdf-parse');
-    if (typeof parser === 'function') {
-      pdfParse = parser;
-      console.log("[Resume Parser] ✅ pdf-parse loaded via createRequire (function)");
-      return pdfParse;
-    }
-    if (typeof parser.default === 'function') {
-      pdfParse = parser.default;
-      console.log("[Resume Parser] ✅ pdf-parse loaded via createRequire (default)");
-      return pdfParse;
-    }
-  } catch (err: any) {
-    console.log("[Resume Parser] ⚠️ createRequire strategy failed:", err?.message);
-  }
-  
-  // Strategy 2: Dynamic import with various export patterns
-  try {
-    const module = await import("pdf-parse");
-    console.log("[Resume Parser] 🔍 Dynamic import result keys:", Object.keys(module));
+    const pdfModule = require('pdf-parse');
     
-    if (typeof module.default === 'function') {
-      pdfParse = module.default;
-      console.log("[Resume Parser] ✅ pdf-parse loaded via dynamic import (default)");
-      return pdfParse;
-    }
-    if (typeof module.default?.default === 'function') {
-      pdfParse = module.default.default;
-      console.log("[Resume Parser] ✅ pdf-parse loaded via dynamic import (nested default)");
-      return pdfParse;
-    }
-    if (typeof module === 'function') {
-      pdfParse = module;
-      console.log("[Resume Parser] ✅ pdf-parse loaded via dynamic import (module itself)");
-      return pdfParse;
+    // v2 API exports PDFParse class
+    if (pdfModule.PDFParse) {
+      PDFParseClass = pdfModule.PDFParse;
+      console.log("[Resume Parser] ✅ pdf-parse v2 PDFParse class loaded");
+      return PDFParseClass;
     }
     
-    // Check for any callable export
-    for (const key of Object.keys(module)) {
-      if (typeof (module as any)[key] === 'function') {
-        pdfParse = (module as any)[key];
-        console.log(`[Resume Parser] ✅ pdf-parse loaded via dynamic import (key: ${key})`);
-        return pdfParse;
-      }
+    // Fallback: check for default export
+    if (typeof pdfModule.default?.PDFParse === 'function') {
+      PDFParseClass = pdfModule.default.PDFParse;
+      console.log("[Resume Parser] ✅ pdf-parse v2 PDFParse loaded from default");
+      return PDFParseClass;
     }
+    
+    console.log("[Resume Parser] 📊 pdf-parse exports:", Object.keys(pdfModule));
   } catch (err: any) {
-    console.log("[Resume Parser] ⚠️ Dynamic import strategy failed:", err?.message);
+    console.error("[Resume Parser] ❌ Failed to load pdf-parse:", err?.message);
   }
   
-  console.error("[Resume Parser] ❌ All pdf-parse loading strategies failed");
   return null;
 }
 
@@ -155,43 +126,54 @@ export class ResumeParser {
   }
   
   /**
-   * Parse PDF resume with multiple fallback strategies
+   * Parse PDF resume using pdf-parse v2 API
+   * v2 uses: new PDFParse({ data: buffer }) + getText() + destroy()
    */
   private async parsePDF(buffer: Buffer): Promise<string> {
-    console.log("[Resume Parser] 🔄 Starting PDF parse pipeline...");
+    console.log("[Resume Parser] 🔄 Starting PDF parse (v2 API)...");
     console.log("[Resume Parser] 📊 PDF buffer size:", buffer.length, "bytes");
     
-    // Strategy 1: Try pdf-parse library
+    // Strategy 1: Try pdf-parse v2 library
+    let parser: any = null;
     try {
-      const parser = await getPdfParse();
-      if (parser) {
-        console.log("[Resume Parser] 🔧 Calling pdf-parse with buffer...");
+      const PDFParse = await getPDFParseClass();
+      if (PDFParse) {
+        console.log("[Resume Parser] 🔧 Creating PDFParse instance...");
         
-        const data = await parser(buffer, {
-          // Options to improve text extraction
-          max: 0, // No page limit
-        });
+        // v2 API: pass buffer as { data: buffer }
+        parser = new PDFParse({ data: buffer });
         
-        console.log("[Resume Parser] 📊 pdf-parse returned:");
-        console.log("[Resume Parser] 📊 - numpages:", data?.numpages);
-        console.log("[Resume Parser] 📊 - numrender:", data?.numrender);
-        console.log("[Resume Parser] 📊 - text length:", data?.text?.length || 0);
-        console.log("[Resume Parser] 📊 - info:", JSON.stringify(data?.info || {}).slice(0, 200));
+        console.log("[Resume Parser] 🔧 Calling getText()...");
+        const result = await parser.getText();
         
-        const extractedText = data?.text || "";
+        console.log("[Resume Parser] 📊 pdf-parse v2 result:");
+        console.log("[Resume Parser] 📊 - total pages:", result?.total);
+        console.log("[Resume Parser] 📊 - text length:", result?.text?.length || 0);
+        
+        const extractedText = result?.text || "";
         
         if (extractedText.length > 0) {
-          console.log("[Resume Parser] ✅ pdf-parse SUCCESS!");
+          console.log("[Resume Parser] ✅ pdf-parse v2 SUCCESS!");
           console.log("[Resume Parser] 📄 First 300 chars:", extractedText.slice(0, 300));
           return extractedText;
         } else {
-          console.warn("[Resume Parser] ⚠️ pdf-parse returned empty text");
+          console.warn("[Resume Parser] ⚠️ pdf-parse v2 returned empty text");
           console.log("[Resume Parser] 📊 This PDF may be image-based or have unusual encoding");
         }
       }
     } catch (error: any) {
-      console.error("[Resume Parser] ❌ pdf-parse error:", error?.message);
+      console.error("[Resume Parser] ❌ pdf-parse v2 error:", error?.message);
       console.error("[Resume Parser] 📊 Error stack:", error?.stack?.split('\n').slice(0, 3).join('\n'));
+    } finally {
+      // v2 requires cleanup
+      if (parser && typeof parser.destroy === 'function') {
+        try {
+          await parser.destroy();
+          console.log("[Resume Parser] 🧹 Parser destroyed (memory cleanup)");
+        } catch (e) {
+          // Ignore cleanup errors
+        }
+      }
     }
     
     // Strategy 2: Try to extract any readable ASCII text from PDF
