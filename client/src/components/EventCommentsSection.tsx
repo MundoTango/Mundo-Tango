@@ -10,7 +10,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { SelectEventComment } from "@shared/schema";
+import { SelectEventComment } from "@shared/client-types";
 import { safeDateDistance } from "@/lib/safeDateFormat";
 import { useToast } from "@/hooks/use-toast";
 

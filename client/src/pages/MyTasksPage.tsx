@@ -19,7 +19,7 @@ import { SEO } from "@/components/SEO";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import type { SelectPlanItem, SelectWorkLog } from "@shared/schema";
+import type { SelectPlanItem, SelectWorkLog } from "@shared/client-types";
 import { format, formatDistanceToNow } from "date-fns";
 
 type TaskStatus = "pending" | "in_progress" | "completed" | "blocked";

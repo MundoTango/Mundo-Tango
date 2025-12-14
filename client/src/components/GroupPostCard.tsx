@@ -9,7 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { SelectGroupPost } from "@shared/schema";
+import { SelectGroupPost } from "@shared/client-types";
 import { safeDateDistance } from "@/lib/safeDateFormat";
 import { renderMentionPills } from "@/utils/renderMentionPills";
 import { UserRoleBadges } from "@/components/UserRoleBadges";

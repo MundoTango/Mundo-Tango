@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AlertTriangle, TrendingUp, Activity, Shield } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
-import type { SelectFinancialRiskMetrics } from "@shared/schema";
+import type { SelectFinancialRiskMetrics } from "@shared/client-types";
 
 interface RiskMetricsPanelProps {
   metrics: SelectFinancialRiskMetrics | null;

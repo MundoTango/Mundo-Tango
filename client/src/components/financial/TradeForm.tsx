@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { TrendingUp, TrendingDown, AlertCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import type { SelectFinancialPortfolio } from "@shared/schema";
+import type { SelectFinancialPortfolio } from "@shared/client-types";
 
 const tradeFormSchema = z.object({
   symbol: z.string().min(1, "Symbol is required").max(50),

@@ -18,7 +18,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { apiRequest, queryClient } from "@/lib/queryClient";
-import { SelectReview } from "@shared/schema";
+import { SelectReview } from "@shared/client-types";
 
 const reviewFormSchema = z.object({
   targetType: z.string().min(1, "Target type is required"),

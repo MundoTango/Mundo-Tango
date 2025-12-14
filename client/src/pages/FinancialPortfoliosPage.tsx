@@ -27,7 +27,7 @@ import { Briefcase, Plus, Filter } from "lucide-react";
 import { PortfolioCard } from "@/components/financial/PortfolioCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useLocation } from "wouter";
-import type { SelectFinancialPortfolio } from "@shared/schema";
+import type { SelectFinancialPortfolio } from "@shared/client-types";
 
 const portfolioFormSchema = z.object({
   name: z.string().min(1, "Name is required").max(255),

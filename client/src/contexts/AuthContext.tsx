@@ -2,7 +2,7 @@ import { createContext, useContext, useState, useEffect, ReactNode } from "react
 import { useLocation } from "wouter";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";
-import type { SelectUser } from "@shared/schema";
+import type { SelectUser } from "@shared/client-types";
 import i18n from "@/lib/i18n";
 
 const API_BASE_URL = "";

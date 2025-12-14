@@ -1,7 +1,7 @@
 import { memo, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";
-import type { SelectGroupPost } from "@shared/schema";
+import type { SelectGroupPost } from "@shared/client-types";
 import { UnifiedMemoriesFeed } from "@/components/feed/UnifiedMemoriesFeed";
 import type { PostItemData } from "@/components/feed/PostItem";
 import { Badge } from "@/components/ui/badge";

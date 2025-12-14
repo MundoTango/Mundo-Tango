@@ -40,8 +40,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Settings, Trash2, Shield } from "lucide-react";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import type { SelectGroup } from "@shared/schema";
-import { closenessVisibilitySchema, type ClosenessVisibility } from "@shared/schema";
+import type { SelectGroup } from "@shared/client-types";
+import { closenessVisibilitySchema, type ClosenessVisibility } from "@shared/client-types";
 import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/UnifiedLocationPicker";
 import { FriendshipClosenessFilter } from "@/components/filters/FriendshipClosenessFilter";
 

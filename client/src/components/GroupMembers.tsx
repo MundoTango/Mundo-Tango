@@ -9,7 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { SelectGroupMember } from "@shared/schema";
+import { SelectGroupMember } from "@shared/client-types";
 import { safeDateDistance } from "@/lib/safeDateFormat";
 
 interface GroupMembersProps {

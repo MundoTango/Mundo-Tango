@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Users, Lock, Globe, Calendar } from "lucide-react";
 import { Link } from "wouter";
-import { SelectGroup } from "@shared/schema";
+import { SelectGroup } from "@shared/client-types";
 import { safeDateDistance } from "@/lib/safeDateFormat";
 import { getCityImageUrl } from "@/lib/cityImageMap";
 

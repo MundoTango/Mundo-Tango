@@ -24,7 +24,7 @@ import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { useAuth } from "@/contexts/AuthContext";
 import LiveStreamChat from "@/components/LiveStreamChat";
-import type { SelectLiveStream } from "@shared/schema";
+import type { SelectLiveStream } from "@shared/client-types";
 import { 
   Radio, Users, Eye, Heart, Share2, MessageCircle, Calendar,
   Clock, ArrowLeft, Sparkles, Play, Volume2, Maximize

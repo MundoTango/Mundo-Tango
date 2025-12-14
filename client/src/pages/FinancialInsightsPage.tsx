@@ -20,7 +20,7 @@ import type {
   SelectFinancialStrategy,
   SelectFinancialAgent,
   SelectFinancialMonitoring
-} from "@shared/schema";
+} from "@shared/client-types";
 
 export default function FinancialInsightsPage() {
   const [selectedPortfolio, setSelectedPortfolio] = useState<number | null>(null);

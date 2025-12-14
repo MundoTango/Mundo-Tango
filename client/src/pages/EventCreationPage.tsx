@@ -25,7 +25,7 @@ import { getCurrencySymbol } from "@/lib/currencyUtils";
 import { CurrencyPicker } from "@/components/input/CurrencyPicker";
 import { getTimezoneFromCity } from "@/lib/timezoneUtils";
 import { FriendshipClosenessFilter } from "@/components/filters/FriendshipClosenessFilter";
-import type { ClosenessVisibility } from "@shared/schema";
+import type { ClosenessVisibility } from "@shared/client-types";
 import { TANGO_ROLES, getBookableRoles } from "@/lib/tangoRoles";
 
 export default function EventCreationPage() {

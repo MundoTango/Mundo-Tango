@@ -20,7 +20,7 @@ import { PlatformCheckbox } from "@/components/social/PlatformCheckbox";
 import { ArrowLeft, Plus, Target, TrendingUp, Users, Calendar } from "lucide-react";
 import { useLocation } from "wouter";
 import { SiFacebook, SiInstagram, SiLinkedin, SiX } from "react-icons/si";
-import type { SelectSocialCampaign, InsertSocialCampaign } from "@shared/schema";
+import type { SelectSocialCampaign, InsertSocialCampaign } from "@shared/client-types";
 
 export default function SocialMediaCampaignsPage() {
   const [, navigate] = useLocation();

@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import type { SelectGroupCategory } from "@shared/schema";
+import type { SelectGroupCategory } from "@shared/client-types";
 
 interface GroupCategoryFilterProps {
   selectedCategory?: number | null;

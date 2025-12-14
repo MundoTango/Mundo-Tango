@@ -10,7 +10,7 @@
  */
 
 import { useQuery } from "@tanstack/react-query";
-import type { ClosenessVisibility } from "@shared/schema";
+import type { ClosenessVisibility } from "@shared/client-types";
 
 export interface ConnectionInfo {
   isConnected: boolean;

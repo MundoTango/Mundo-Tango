@@ -8,7 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import type { SelectFinancialPortfolio } from "@shared/schema";
+import type { SelectFinancialPortfolio } from "@shared/client-types";
 
 interface PortfolioCardProps {
   portfolio: SelectFinancialPortfolio;

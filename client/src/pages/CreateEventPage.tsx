@@ -24,7 +24,7 @@ import { getTimezoneFromCity, formatTimezoneAbbr } from "@/lib/timezoneUtils";
 import { getCurrencyFromCountry, getCurrencySymbol } from "@/lib/currencyUtils";
 import { CurrencyPicker } from "@/components/input/CurrencyPicker";
 import { FriendshipClosenessFilter } from "@/components/filters/FriendshipClosenessFilter";
-import { closenessVisibilitySchema, type ClosenessVisibility } from "@shared/schema";
+import { closenessVisibilitySchema, type ClosenessVisibility } from "@shared/client-types";
 
 const DAYS_OF_WEEK = [
   { value: "0", label: "Sunday" },

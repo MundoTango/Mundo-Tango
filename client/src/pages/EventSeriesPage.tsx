@@ -31,7 +31,7 @@ import {
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { safeDateFormat } from "@/lib/safeDateFormat";
-import type { EventSeries, SelectEvent } from "@shared/schema";
+import type { EventSeries, SelectEvent } from "@shared/client-types";
 import { SEO } from "@/components/SEO";
 import { useMyRSVPs } from "@/hooks/useEvents";
 import { useAuth } from "@/contexts/AuthContext";

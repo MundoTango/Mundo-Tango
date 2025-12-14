@@ -26,7 +26,7 @@ import { queryClient, apiRequest } from "@/lib/queryClient";
 import { motion } from "framer-motion";
 import { SEO } from "@/components/SEO";
 import { UnifiedLocationPicker } from "@/components/input/UnifiedLocationPicker";
-import type { SelectHousingListing } from "@shared/schema";
+import type { SelectHousingListing } from "@shared/client-types";
 import heroImage from "@assets/stock_images/professional_office__9e53fcce.jpg";
 
 // Standard amenities list from HOUSING_TABLES.md

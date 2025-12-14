@@ -1,6 +1,6 @@
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { SelectFinancialAsset } from "@shared/schema";
+import type { SelectFinancialAsset } from "@shared/client-types";
 
 interface AssetAllocationChartProps {
   assets: SelectFinancialAsset[];

@@ -8,7 +8,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { PhotoUpload } from "@/components/housing/PhotoUpload";
 import { UnifiedLocationPicker } from "@/components/input/UnifiedLocationPicker";
 import { FriendshipClosenessFilter } from "@/components/filters/FriendshipClosenessFilter";
-import { closenessVisibilitySchema, type ClosenessVisibility } from "@shared/schema";
+import { closenessVisibilitySchema, type ClosenessVisibility } from "@shared/client-types";
 import {
   Form,
   FormControl,

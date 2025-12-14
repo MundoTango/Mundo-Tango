@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowLeft, RefreshCw, Activity } from "lucide-react";
 import { useLocation } from "wouter";
-import type { SelectPlatformConnection } from "@shared/schema";
+import type { SelectPlatformConnection } from "@shared/client-types";
 
 export default function SocialMediaConnectionsPage() {
   const [, navigate] = useLocation();

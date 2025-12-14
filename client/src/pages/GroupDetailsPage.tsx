@@ -12,7 +12,7 @@ import { Users, MapPin, Settings as SettingsIcon, Calendar, Home, Building2, Hea
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { safeDateFormat } from "@/lib/safeDateFormat";
-import type { SelectGroup, SelectEvent } from "@shared/schema";
+import type { SelectGroup, SelectEvent } from "@shared/client-types";
 import { SEO } from "@/components/SEO";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { GroupPostFeed } from "@/components/groups/GroupPostFeed";

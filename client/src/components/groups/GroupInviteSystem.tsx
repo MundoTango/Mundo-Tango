@@ -12,7 +12,7 @@ import { UserPlus, Check, X } from "lucide-react";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { safeDateDistance } from "@/lib/safeDateFormat";
-import type { SelectGroupInvite } from "@shared/schema";
+import type { SelectGroupInvite } from "@shared/client-types";
 
 interface GroupInviteSystemProps {
   groupId: number;

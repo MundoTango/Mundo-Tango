@@ -2,7 +2,7 @@ import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Users, Bed, Bath, DollarSign } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import type { SelectHousingListing } from "@shared/schema";
+import type { SelectHousingListing } from "@shared/client-types";
 import { FriendClosenessIndicator, type FriendClosenessData } from "./FriendClosenessIndicator";
 
 interface ListingCardProps {

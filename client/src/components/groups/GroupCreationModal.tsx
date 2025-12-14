@@ -35,7 +35,7 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/UnifiedLocationPicker";
 import { FriendshipClosenessFilter } from "@/components/filters/FriendshipClosenessFilter";
-import { closenessVisibilitySchema, type ClosenessVisibility } from "@shared/schema";
+import { closenessVisibilitySchema, type ClosenessVisibility } from "@shared/client-types";
 
 const formSchema = z.object({
   name: z.string().min(3, "Name must be at least 3 characters"),

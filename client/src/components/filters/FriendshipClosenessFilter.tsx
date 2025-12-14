@@ -13,7 +13,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Label } from "@/components/ui/label";
-import type { ClosenessVisibility } from "@shared/schema";
+import type { ClosenessVisibility } from "@shared/client-types";
 
 interface ClosenessOption {
   value: ClosenessVisibility;

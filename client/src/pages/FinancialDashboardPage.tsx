@@ -14,7 +14,7 @@ import { PortfolioCard } from "@/components/financial/PortfolioCard";
 import { AssetAllocationChart } from "@/components/financial/AssetAllocationChart";
 import { MarketDataTicker } from "@/components/financial/MarketDataTicker";
 import { useLocation } from "wouter";
-import type { SelectFinancialPortfolio, SelectFinancialAsset, SelectFinancialTrade } from "@shared/schema";
+import type { SelectFinancialPortfolio, SelectFinancialAsset, SelectFinancialTrade } from "@shared/client-types";
 
 export default function FinancialDashboardPage() {
   const [, navigate] = useLocation();

@@ -15,7 +15,7 @@ import { TrendingUp, Filter, Brain } from "lucide-react";
 import { TradeForm } from "@/components/financial/TradeForm";
 import { MarketDataTicker } from "@/components/financial/MarketDataTicker";
 import { AIDecisionCard } from "@/components/financial/AIDecisionCard";
-import type { SelectFinancialPortfolio, SelectFinancialTrade, SelectFinancialAIDecision } from "@shared/schema";
+import type { SelectFinancialPortfolio, SelectFinancialTrade, SelectFinancialAIDecision } from "@shared/client-types";
 
 export default function FinancialTradingPage() {
   const [selectedPortfolio, setSelectedPortfolio] = useState<number | null>(null);

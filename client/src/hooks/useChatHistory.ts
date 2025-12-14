@@ -1,7 +1,7 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useInView } from 'react-intersection-observer';
 import { useEffect } from 'react';
-import type { SelectMrBlueMessage } from '@shared/schema';
+import type { SelectMrBlueMessage } from '@shared/client-types';
 
 export function useChatHistory(conversationId: number | null) {
   const { ref, inView } = useInView();

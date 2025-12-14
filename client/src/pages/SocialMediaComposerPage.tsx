@@ -9,7 +9,7 @@ import { AIContentSuggestor } from "@/components/social/AIContentSuggestor";
 import { SchedulePostCalendar } from "@/components/social/SchedulePostCalendar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft, Send, Calendar } from "lucide-react";
-import type { InsertSocialPost } from "@shared/schema";
+import type { InsertSocialPost } from "@shared/client-types";
 
 export default function SocialMediaComposerPage() {
   const [, navigate] = useLocation();

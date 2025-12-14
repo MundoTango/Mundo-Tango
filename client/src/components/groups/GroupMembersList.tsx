@@ -20,7 +20,7 @@ import { MoreVertical, Shield, UserCog, Users as UsersIcon, Ban } from "lucide-r
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { safeDateDistance } from "@/lib/safeDateFormat";
-import type { SelectGroupMember } from "@shared/schema";
+import type { SelectGroupMember } from "@shared/client-types";
 import { UserRoleBadges } from "@/components/UserRoleBadges";
 
 interface GroupMembersListProps {

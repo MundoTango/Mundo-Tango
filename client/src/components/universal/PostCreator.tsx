@@ -13,7 +13,7 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { SimpleMentionsInput, type MentionEntity } from "@/components/input/SimpleMentionsInput";
 import { UnifiedLocationPicker } from "@/components/input/UnifiedLocationPicker";
 import { FriendshipClosenessFilter } from "@/components/filters/FriendshipClosenessFilter";
-import type { ClosenessVisibility } from "@shared/schema";
+import type { ClosenessVisibility } from "@shared/client-types";
 import { 
   MapPin, Hash, Camera, Sparkles, Globe, Users, Lock, 
   Send, Loader2, X, DollarSign, Star, MapPinned,

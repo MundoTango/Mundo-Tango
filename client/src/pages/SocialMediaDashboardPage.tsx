@@ -6,7 +6,7 @@ import { EngagementMetricsCard } from "@/components/social/EngagementMetricsCard
 import { Link } from "wouter";
 import { PenSquare, Eye, Heart, Share2, MessageCircle, Calendar } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
-import type { SelectPlatformConnection, SelectSocialPost } from "@shared/schema";
+import type { SelectPlatformConnection, SelectSocialPost } from "@shared/client-types";
 
 export default function SocialMediaDashboardPage() {
   const { data: connections, isLoading: connectionsLoading } = useQuery<SelectPlatformConnection[]>({

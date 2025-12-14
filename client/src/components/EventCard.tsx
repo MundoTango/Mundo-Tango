@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Calendar, Clock, Users, Music } from "lucide-react";
 import { Link } from "wouter";
-import { SelectEvent } from "@shared/schema";
+import { SelectEvent } from "@shared/client-types";
 import { safeDateFormat } from "@/lib/safeDateFormat";
 import { getCityImageUrl } from "@/lib/cityImageMap";
 import { UnifiedRSVPButton, RSVPStatus } from "@/components/unified/UnifiedRSVPButton";

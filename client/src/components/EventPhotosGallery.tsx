@@ -17,7 +17,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { SelectEventPhoto } from "@shared/schema";
+import { SelectEventPhoto } from "@shared/client-types";
 import { safeDateDistance } from "@/lib/safeDateFormat";
 import { useToast } from "@/hooks/use-toast";
 

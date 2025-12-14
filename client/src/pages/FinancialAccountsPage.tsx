@@ -7,7 +7,7 @@ import { Building2, RefreshCw, CheckCircle, AlertCircle, Clock } from "lucide-re
 import { AccountConnectionModal } from "@/components/financial/AccountConnectionModal";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import type { SelectFinancialAccount } from "@shared/schema";
+import type { SelectFinancialAccount } from "@shared/client-types";
 
 const PROVIDER_LOGOS: Record<string, string> = {
   coinbase: '₿',

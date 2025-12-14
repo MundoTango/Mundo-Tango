@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Brain, TrendingUp, TrendingDown, RefreshCw, AlertTriangle } from "lucide-react";
-import type { SelectFinancialAIDecision } from "@shared/schema";
+import type { SelectFinancialAIDecision } from "@shared/client-types";
 
 interface AIDecisionCardProps {
   decision: SelectFinancialAIDecision;
