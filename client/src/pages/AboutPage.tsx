@@ -1,11 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Users, Globe, Heart, Target } from "lucide-react";
+import { Users, Globe, Heart, Target, User } from "lucide-react";
 import { PublicLayout } from "@/components/PublicLayout";
 import { SEO } from "@/components/SEO";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { motion } from "framer-motion";
+import scottPhoto from "@assets/Skoot_(41)_1765684040276.jpg";
 
 export default function AboutPage() {
   return (
@@ -153,12 +154,70 @@ export default function AboutPage() {
           </div>
         </div>
 
-        {/* Story */}
+        {/* Founder Section - Scott */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.6, delay: 0.5 }}
+        >
+          <Card className="hover-elevate" data-testid="card-founder">
+            <CardHeader>
+              <CardTitle className="text-3xl font-serif flex items-center gap-2">
+                <User className="h-6 w-6 text-primary" />
+                Meet the Founder
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="flex flex-col md:flex-row gap-8 items-start">
+                <div className="flex-shrink-0">
+                  <img 
+                    src={scottPhoto} 
+                    alt="Scott, Founder of Mundo Tango" 
+                    className="w-48 h-48 md:w-64 md:h-64 rounded-lg object-cover shadow-lg"
+                    data-testid="img-founder"
+                  />
+                  <p className="text-xs text-muted-foreground mt-2 text-center">
+                    Photo: <a href="https://www.facebook.com/aparotidis" target="_blank" rel="noopener noreferrer" className="hover:underline">Alexandros Parotidis</a>
+                  </p>
+                </div>
+                <div className="space-y-4 text-muted-foreground">
+                  <p>
+                    My name is Scott, and I've been dancing tango since 2007.
+                  </p>
+                  <p>
+                    Over the years, I haven't just been a dancer — I've lived nearly every role in the tango ecosystem. I've organized events, taught classes, DJed milongas, helped build communities, and danced both leading and following. I've done this not from one city, but as a nomad, moving through tango communities across the world and experiencing firsthand how deeply local — and yet globally connected — tango really is.
+                  </p>
+                  <p>
+                    That global perspective revealed a consistent problem: <strong className="text-foreground">tango lives everywhere, but its infrastructure lives nowhere.</strong>
+                  </p>
+                  <p>
+                    Events are scattered across platforms. Community knowledge is passed by word of mouth. Memories disappear into private phones. Organizers and teachers rely on tools that were never designed for the way tango actually works.
+                  </p>
+                  <p>
+                    At the same time, my professional background is in technology and systems design. I've spent years working in IT, identity and access management, security, and large-scale platform operations — designing systems that have to be reliable, ethical, and scalable. I understand how to build infrastructure that people can trust, and how small design decisions can shape entire communities.
+                  </p>
+                  <p>
+                    <strong className="text-foreground">Mundo Tango exists at the intersection of those two worlds.</strong>
+                  </p>
+                  <p>
+                    It's built by someone who understands tango from the inside — its roles, its rhythms, its relationships — and who also knows how to design modern, secure, human-centered technology. The goal isn't to replace the magic of tango, but to support it: helping people find events, travel with confidence, preserve shared memories, and strengthen the global community without losing its soul.
+                  </p>
+                  <p className="font-medium text-foreground">
+                    This is not a side project. It's the platform I wish had existed for the last 15 years of my tango life.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {/* Story */}
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6, delay: 0.6 }}
         >
           <Card className="hover-elevate" data-testid="card-story">
             <CardHeader>

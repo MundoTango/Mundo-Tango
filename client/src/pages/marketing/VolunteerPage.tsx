@@ -10,7 +10,7 @@ import { useQuery } from "@tanstack/react-query";
 import { 
   Code, Layout, TrendingUp, Brain, Shield, Globe,
   Users, Clock, Zap, Award, ArrowRight, CheckCircle,
-  Database, Palette, LineChart, Bot, Lock, Languages
+  Database, Palette, LineChart, Lock, Languages, Heart
 } from "lucide-react";
 
 interface VolunteerDivision {
@@ -72,8 +72,8 @@ function VolunteerPageContent() {
     <div className="min-h-screen bg-background">
       <PublicNavbar />
       <SEO
-        title="Volunteer with Mundo Tango - H2AC Program"
-        description="Join our Human to Agent Collaboration program. Contribute your skills to build the platform connecting the global tango community."
+        title="Volunteer with Mundo Tango"
+        description="Join our volunteer program. Contribute your skills to build the platform connecting the global tango community."
       />
 
       {/* Hero Section */}
@@ -92,7 +92,7 @@ function VolunteerPageContent() {
               <motion.div variants={fadeInUp}>
                 <Badge variant="secondary" className="mb-4">
                   <Users className="h-3 w-3 mr-1" />
-                  H2AC Program
+                  Volunteer Program
                 </Badge>
               </motion.div>
 
@@ -101,14 +101,14 @@ function VolunteerPageContent() {
                 className="text-4xl md:text-5xl font-bold text-white"
                 data-testid="text-hero-headline"
               >
-                Human to Agent Collaboration
+                Volunteer with Mundo Tango
               </motion.h1>
 
               <motion.p
                 variants={fadeInUp}
                 className="text-xl text-white/90 max-w-2xl mx-auto"
               >
-                Work alongside 927+ AI agents to build the platform the tango community deserves.
+                Work alongside our team to build the platform the tango community deserves.
                 Contribute your skills. Make a real impact.
               </motion.p>
 
@@ -117,16 +117,16 @@ function VolunteerPageContent() {
                 className="flex flex-wrap justify-center gap-4 pt-4"
               >
                 <div className="flex items-center gap-2 bg-white/10 rounded-full px-4 py-2">
-                  <Bot className="h-4 w-4" />
-                  <span>927+ AI Agents</span>
-                </div>
-                <div className="flex items-center gap-2 bg-white/10 rounded-full px-4 py-2">
-                  <Code className="h-4 w-4" />
-                  <span>6 Divisions</span>
+                  <Heart className="h-4 w-4" />
+                  <span>Community Driven</span>
                 </div>
                 <div className="flex items-center gap-2 bg-white/10 rounded-full px-4 py-2">
                   <Clock className="h-4 w-4" />
                   <span>Flexible Hours</span>
+                </div>
+                <div className="flex items-center gap-2 bg-white/10 rounded-full px-4 py-2">
+                  <Globe className="h-4 w-4" />
+                  <span>Remote Friendly</span>
                 </div>
               </motion.div>
             </div>
@@ -192,7 +192,7 @@ function VolunteerPageContent() {
                 6 Technology Divisions
               </motion.h2>
               <motion.p variants={fadeInUp} className="text-lg text-muted-foreground">
-                Each division covers specific layers of our 61-layer technology stack.
+                Each division covers specific layers of our technology stack.
               </motion.p>
             </div>
 
@@ -282,7 +282,7 @@ function VolunteerPageContent() {
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
               {[
                 { icon: Award, title: "Build Portfolio", desc: "Real-world experience on a production platform" },
-                { icon: Bot, title: "Work with AI", desc: "Collaborate with 927+ specialized AI agents" },
+                { icon: Users, title: "Join Community", desc: "Connect with passionate tango enthusiasts" },
                 { icon: Clock, title: "Flexible Hours", desc: "Contribute on your own schedule" },
                 { icon: Zap, title: "Real Impact", desc: "Your work helps dancers worldwide" },
               ].map((benefit, index) => (
@@ -317,7 +317,7 @@ function VolunteerPageContent() {
             <motion.p variants={fadeInUp} className="text-white/90 text-lg">
               Apply to join our volunteer program. We'll match you with tasks that fit your skills and interests.
             </motion.p>
-            <motion.div variants={fadeInUp} className="flex justify-center gap-4">
+            <motion.div variants={fadeInUp} className="flex justify-center gap-4 flex-wrap">
               <Link href="/login?redirect=/talent-match&role=volunteer">
                 <Button 
                   size="lg" 
