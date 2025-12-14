@@ -35,37 +35,39 @@ const VisualEditorSplitPane = lazy(
   () => import("./components/visual-editor/VisualEditorSplitPane"),
 );
 
-// Core Pages (loaded immediately for fast initial render)
+// Core Pages - Only critical auth pages loaded immediately
 import NotFound from "@/pages/not-found";
-import HomePage from "@/pages/HomePage";
-import LandingPage from "@/pages/LandingPage";
-import DemosPage from "@/pages/DemosPage";
 import LoginPage from "@/pages/LoginPage";
 import RegisterPage from "@/pages/RegisterPage";
-import FacebookCallbackPage from "@/pages/auth/FacebookCallbackPage";
-import MarketingPrototype from "@/pages/MarketingPrototype";
-import MarketingPrototypeEnhanced from "@/pages/MarketingPrototypeEnhanced";
-import MarketingPrototypeOcean from "@/pages/MarketingPrototypeOcean";
-import ForDancersPage from "@/pages/marketing/ForDancersPage";
-import ForTeachersPage from "@/pages/marketing/ForTeachersPage";
-import ForOrganizersPage from "@/pages/marketing/ForOrganizersPage";
-import MarketingTangoRolesPage from "@/pages/marketing/TangoRolesPage";
-import SupportPage from "@/pages/marketing/SupportPage";
-import DonatePage from "@/pages/DonatePage";
-import SupportersPage from "@/pages/marketing/SupportersPage";
-import VolunteerPage from "@/pages/marketing/VolunteerPage";
-import AmbassadorsPage from "@/pages/marketing/AmbassadorsPage";
-import OpenSourcePage from "@/pages/marketing/OpenSourcePage";
-import FeedPrototypePage from "@/pages/FeedPrototypePage";
-import GroupsPrototypePage from "@/pages/GroupsPrototypePage";
-import CommunityPrototypePage from "@/pages/CommunityPrototypePage";
-import EventsPrototypePage from "@/pages/EventsPrototypePage";
-import ProfilePrototypePage from "@/pages/ProfilePrototypePage";
-import MessagesPrototypePage from "@/pages/MessagesPrototypePage";
-import FriendsPrototypePage from "@/pages/FriendsPrototypePage";
-import FavoritesPrototypePage from "@/pages/FavoritesPrototypePage";
-import NotificationsPrototypePage from "@/pages/NotificationsPrototypePage";
-import EventsGalleryPrototypePage from "@/pages/EventsGalleryPrototypePage";
+
+// Lazy-loaded core pages for better bundle splitting
+const HomePage = lazy(() => import("@/pages/HomePage"));
+const LandingPage = lazy(() => import("@/pages/LandingPage"));
+const DemosPage = lazy(() => import("@/pages/DemosPage"));
+const FacebookCallbackPage = lazy(() => import("@/pages/auth/FacebookCallbackPage"));
+const MarketingPrototype = lazy(() => import("@/pages/MarketingPrototype"));
+const MarketingPrototypeEnhanced = lazy(() => import("@/pages/MarketingPrototypeEnhanced"));
+const MarketingPrototypeOcean = lazy(() => import("@/pages/MarketingPrototypeOcean"));
+const ForDancersPage = lazy(() => import("@/pages/marketing/ForDancersPage"));
+const ForTeachersPage = lazy(() => import("@/pages/marketing/ForTeachersPage"));
+const ForOrganizersPage = lazy(() => import("@/pages/marketing/ForOrganizersPage"));
+const MarketingTangoRolesPage = lazy(() => import("@/pages/marketing/TangoRolesPage"));
+const SupportPage = lazy(() => import("@/pages/marketing/SupportPage"));
+const DonatePage = lazy(() => import("@/pages/DonatePage"));
+const SupportersPage = lazy(() => import("@/pages/marketing/SupportersPage"));
+const VolunteerPage = lazy(() => import("@/pages/marketing/VolunteerPage"));
+const AmbassadorsPage = lazy(() => import("@/pages/marketing/AmbassadorsPage"));
+const OpenSourcePage = lazy(() => import("@/pages/marketing/OpenSourcePage"));
+const FeedPrototypePage = lazy(() => import("@/pages/FeedPrototypePage"));
+const GroupsPrototypePage = lazy(() => import("@/pages/GroupsPrototypePage"));
+const CommunityPrototypePage = lazy(() => import("@/pages/CommunityPrototypePage"));
+const EventsPrototypePage = lazy(() => import("@/pages/EventsPrototypePage"));
+const ProfilePrototypePage = lazy(() => import("@/pages/ProfilePrototypePage"));
+const MessagesPrototypePage = lazy(() => import("@/pages/MessagesPrototypePage"));
+const FriendsPrototypePage = lazy(() => import("@/pages/FriendsPrototypePage"));
+const FavoritesPrototypePage = lazy(() => import("@/pages/FavoritesPrototypePage"));
+const NotificationsPrototypePage = lazy(() => import("@/pages/NotificationsPrototypePage"));
+const EventsGalleryPrototypePage = lazy(() => import("@/pages/EventsGalleryPrototypePage"));
 
 // Lazy-loaded pages for better performance
 const AboutPage = lazy(() => import("@/pages/AboutPage"));
