@@ -39,6 +39,13 @@ The platform employs End-to-End (E2E) tests with Playwright, automated unit test
 ### Production
 Production deployments use GitHub Actions for CI/CD. Monitoring is via Prometheus/Grafana with Sentry, and deployment through Replit Publishing. Redis is used for caching, and PostgreSQL (Neon) with Drizzle ORM for the database.
 
+**Dec 14, 2025 - Bundle Optimization Sprint:**
+- All pages use React.lazy() for code splitting
+- Heavy libraries in separate lazy-loaded chunks: Three.js/OrbitControls (974KB), @xenova/transformers (828KB), prism syntax highlighter (668KB), recharts (329KB), VisualEditor (1MB), Leaflet (154KB), react-big-calendar (135KB), react-beautiful-dnd (127KB)
+- Server-only libs (LanceDB, OpenAI SDK, Anthropic, pdf-parse, mammoth) confirmed not in client bundle
+- i18next uses http-backend for lazy loading translations on demand
+- Production build completes in ~77 seconds with proper code splitting
+
 ### Marketing Site Architecture
 The marketing site integrates a Human to Agent Collaboration (H2AC) Volunteer Program and an Ambassador Program. Public statistics are backed by real database data. Donations are handled via GoFundMe integration with a reusable GoFundMeEmbed component.
 
