@@ -28,12 +28,18 @@ import {
   cleanupComponentHealthMonitor,
 } from "./lib/componentHealthMonitor";
 import { setupNavigationInterceptor } from "./lib/navigationInterceptor";
+import { HEAVY_FEATURES_ENABLED } from "./config/featureFlags";
 
-// Lazy load heavy components - Updated to use new unified interface
-const UnifiedMrBlue = lazy(() => import("./components/mr-blue/UnifiedMrBlue"));
-const VisualEditorSplitPane = lazy(
-  () => import("./components/visual-editor/VisualEditorSplitPane"),
-);
+// Feature-disabled placeholder for heavy features in production
+const FeatureDisabled = lazy(() => import("./components/FeatureDisabled"));
+
+// Lazy load heavy components - Conditionally loaded based on feature flag
+const UnifiedMrBlue = HEAVY_FEATURES_ENABLED
+  ? lazy(() => import("./components/mr-blue/UnifiedMrBlue"))
+  : FeatureDisabled;
+const VisualEditorSplitPane = HEAVY_FEATURES_ENABLED
+  ? lazy(() => import("./components/visual-editor/VisualEditorSplitPane"))
+  : FeatureDisabled;
 
 // Core Pages - Only critical auth pages loaded immediately
 import NotFound from "@/pages/not-found";
@@ -177,10 +183,16 @@ const TalentMatchInterviewPage = lazy(() => import("@/pages/TalentMatchInterview
 const MrBlueChatPage = lazy(() => import("@/pages/MrBlueChatPage"));
 const VideoStudio = lazy(() => import("@/pages/VideoStudio"));
 const MrBlueVideoDemo = lazy(() => import("@/pages/mr-blue-video-demo"));
-const MrBlueAvatarDemo = lazy(() => import("@/pages/mr-blue-avatar-demo"));
+const MrBlueAvatarDemo = HEAVY_FEATURES_ENABLED
+  ? lazy(() => import("@/pages/mr-blue-avatar-demo"))
+  : FeatureDisabled;
 const MrBlueStudioPage = lazy(() => import("@/pages/mr-blue-studio"));
-const MrBlueAvatar3DPage = lazy(() => import("@/pages/mr-blue-avatar-3d"));
-const AvatarDesignerPage = lazy(() => import("@/pages/AvatarDesignerPage"));
+const MrBlueAvatar3DPage = HEAVY_FEATURES_ENABLED
+  ? lazy(() => import("@/pages/mr-blue-avatar-3d"))
+  : FeatureDisabled;
+const AvatarDesignerPage = HEAVY_FEATURES_ENABLED
+  ? lazy(() => import("@/pages/AvatarDesignerPage"))
+  : FeatureDisabled;
 const PremiumFeaturesPage = lazy(() => import("@/pages/PremiumFeaturesPage"));
 
 // Life CEO Suite (16 agents)
@@ -278,16 +290,18 @@ const AdminModerationPage = lazy(() => import("@/pages/AdminModerationPage"));
 const ModerationDashboard = lazy(
   () => import("@/pages/admin/ModerationDashboard"),
 );
-const AnalyticsDashboard = lazy(
-  () => import("@/pages/admin/AnalyticsDashboard"),
-);
+const AnalyticsDashboard = HEAVY_FEATURES_ENABLED
+  ? lazy(() => import("@/pages/admin/AnalyticsDashboard"))
+  : FeatureDisabled;
 const AdminFacebookImport = lazy(
   () => import("@/pages/admin/AdminFacebookImport"),
 );
-const AnalyticsDashboardPage = lazy(
-  () => import("@/pages/AnalyticsDashboardPage"),
-);
-const UserAnalyticsPage = lazy(() => import("@/pages/UserAnalyticsPage"));
+const AnalyticsDashboardPage = HEAVY_FEATURES_ENABLED
+  ? lazy(() => import("@/pages/AnalyticsDashboardPage"))
+  : FeatureDisabled;
+const UserAnalyticsPage = HEAVY_FEATURES_ENABLED
+  ? lazy(() => import("@/pages/UserAnalyticsPage"))
+  : FeatureDisabled;
 const ContentModerationPage = lazy(
   () => import("@/pages/ContentModerationPage"),
 );
@@ -331,11 +345,13 @@ const MrBlueVoicePage = lazy(() => import("@/pages/mrblue/VoicePage"));
 const MrBlueVibecodingPage = lazy(
   () => import("@/pages/mrblue/VibecodingPage"),
 );
-const VisualEditorMode = lazy(() =>
-  import("@/components/mr-blue/VisualEditorMode").then((m) => ({
-    default: m.VisualEditorMode,
-  })),
-);
+const VisualEditorMode = HEAVY_FEATURES_ENABLED
+  ? lazy(() =>
+      import("@/components/mr-blue/VisualEditorMode").then((m) => ({
+        default: m.VisualEditorMode,
+      })),
+    )
+  : FeatureDisabled;
 const MrBlueSettingsPage = lazy(() => import("@/pages/mrblue/SettingsPage"));
 const MrBlueContextMemoryPage = lazy(
   () => import("@/pages/mrblue/ContextMemoryPage"),
@@ -348,7 +364,9 @@ const DashboardPage = lazy(() => import("@/pages/DashboardPage"));
 const PlatformPage = lazy(() => import("@/pages/Platform"));
 const SecretsPage = lazy(() => import("@/pages/SecretsPage"));
 const GitRepositoryPage = lazy(() => import("@/pages/GitRepositoryPage"));
-const MonitoringPage = lazy(() => import("@/pages/MonitoringPage"));
+const MonitoringPage = HEAVY_FEATURES_ENABLED
+  ? lazy(() => import("@/pages/MonitoringPage"))
+  : FeatureDisabled;
 const AnalyticsPage = lazy(() => import("@/pages/AnalyticsPage"));
 const ESADashboardPage = lazy(
   () => import("@/pages/platform/ESADashboardPage"),
