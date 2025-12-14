@@ -1,0 +1,108 @@
+2025-12-14T07:07:06Z info: Deployment: 0eebddc0-4a5a-430c-a2e4-6a76f474d872
+2025-12-14T07:07:06Z info: Connecting to builder
+2025-12-14T07:07:06Z info: Builder connected
+2025-12-14T07:07:08Z info: Installing packages
+--> npm install
+
+npm warn deprecated @types/dompurify@3.2.0: This is a stub types definition. dompurify provides its own type definitions, so you do not need this installed.
+
+npm warn deprecated @supabase/auth-helpers-react@0.15.0: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
+
+
+> rest-express@1.0.0 prepare
+> husky
+
+
+
+added 48 packages, removed 111 packages, changed 232 packages, and audited 2270 packages in 35s
+
+  run `npm fund` for details
+
+
+26 vulnerabilities (5 low, 11 moderate, 7 high, 3 critical)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+
+npm notice
+npm notice New major version of npm available! 10.8.2 -> 11.7.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.7.0
+npm notice To update run: npm install -g npm@11.7.0
+npm notice
+
+2025-12-14T07:07:43Z info: Starting Build
+
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+
+vite v5.4.21 building for production...
+
+transforming...
+
+[replit-cartographer] Error processing /home/runner/workspace/client/src/pages/messages/UnifiedInbox.tsx: SyntaxError: Expected corresponding JSX closing tag for <div>. (662:14)
+    at constructor (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:367:19)
+    at TypeScriptParserMixin.raise (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:6630:19)
+    at TypeScriptParserMixin.jsxParseElementAt (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:4760:16)
+    at TypeScriptParserMixin.jsxParseElementAt (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:4731:32)
+    at TypeScriptParserMixin.jsxParseElementAt (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:4731:32)
+    at TypeScriptParserMixin.jsxParseElement (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:4782:17)
+    at TypeScriptParserMixin.parseExprAtom (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:4792:19)
+    at TypeScriptParserMixin.parseExprSubscripts (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:11085:23)
+    at TypeScriptParserMixin.parseUpdate (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:11070:21)
+    at TypeScriptParserMixin.parseMaybeUnary (/home/runner/workspace/node_modules/@babel/parser/lib/index.js:11050:23) {
+  code: 'BABEL_PARSER_SYNTAX_ERROR',
+  reasonCode: 'MissingClosingTagElement',
+  loc: Position { line: 662, column: 14, index: 26052 },
+  pos: 26052,
+  syntaxPlugin: 'jsx'
+}
+
+warn - The class `duration-[var(--transition-speed)]` is ambiguous and matches multiple utilities.
+
+warn - If this is content and not a class, replace it with `duration-&lsqb;var(--transition-speed)&rsqb;` to silence this warning.
+
+
+A PostCSS plugin did not pass the `from` option to `postcss.parse`. This may cause imported assets to be incorrectly transformed. If you've recently added a PostCSS plugin that raised this warning, please contact the package author to fix the issue.
+
+✓ 3827 modules transformed.
+
+error during build:
+[vite:esbuild] Transform failed with 2 errors:
+/home/runner/workspace/client/src/pages/messages/UnifiedInbox.tsx:662:16: ERROR: Unexpected closing "Link" tag does not match opening "div" tag
+/home/runner/workspace/client/src/pages/messages/UnifiedInbox.tsx:885:0: ERROR: Unexpected end of file
+file: /home/runner/workspace/client/src/pages/messages/UnifiedInbox.tsx:662:16
+
+Unexpected closing "Link" tag does not match opening "div" tag
+660|                    </p>
+661|                  </div>
+662|                </Link>
+   |                  ^
+663|                
+664|                <div className="flex-1 min-w-0">
+
+Unexpected end of file
+883|    );
+884|  }
+885|  
+   |  ^
+
+    at failureErrorWithLog (/home/runner/workspace/node_modules/vite/node_modules/esbuild/lib/main.js:1472:15)
+    at /home/runner/workspace/node_modules/vite/node_modules/esbuild/lib/main.js:755:50
+    at responseCallbacks.<computed> (/home/runner/workspace/node_modules/vite/node_modules/esbuild/lib/main.js:622:9)
+    at handleIncomingPacket (/home/runner/workspace/node_modules/vite/node_modules/esbuild/lib/main.js:677:12)
+    at Socket.readFromStdout (/home/runner/workspace/node_modules/vite/node_modules/esbuild/lib/main.js:600:7)
+    at Socket.emit (node:events:524:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+    at Pipe.onStreamRead (node:internal/stream_base_commons:191:23)
+
