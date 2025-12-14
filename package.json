@@ -172,7 +172,7 @@
     "react-big-calendar": "^1.19.4",
     "react-day-picker": "^8.10.1",
     "react-diff-viewer-continued": "^3.4.0",
-    "react-dom": "^19.2.1",
+    "react-dom": "^19.2.3",
     "react-dropzone": "^14.3.8",
     "react-hook-form": "^7.68.0",
     "react-i18next": "^16.4.0",
