@@ -40,7 +40,13 @@ The platform employs End-to-End (E2E) tests with Playwright, automated unit test
 Production deployments use GitHub Actions for CI/CD. Monitoring is via Prometheus/Grafana with Sentry, and deployment through Replit Publishing. Redis is used for caching, and PostgreSQL (Neon) with Drizzle ORM for the database.
 
 ### Marketing Site Architecture
-The marketing site integrates a Donation Tier System, a Human to Agent Collaboration (H2AC) Volunteer Program, and an Ambassador Program. Public statistics are backed by real database data. A Video Demo System provides clickable demo cards and interactive modals, with automated video recording using Playwright's `recordVideo` to capture genuine customer journeys.
+The marketing site integrates a Human to Agent Collaboration (H2AC) Volunteer Program and an Ambassador Program. Public statistics are backed by real database data. Donations are handled via GoFundMe integration with a reusable GoFundMeEmbed component.
+
+**Dec 14, 2025 - Landing Page Overhaul:**
+- Removed pricing section and video demo section from landing page
+- Added "Coming Soon Features" section showcasing 6 upcoming platform features
+- Replaced Stripe donation buttons with GoFundMe embed on /donate and /support pages
+- Updated CSP to allow GoFundMe scripts and iframes
 
 ## External Dependencies
 - **Infrastructure:** PostgreSQL, Redis, Cloudinary, OpenStreetMap, Neon
