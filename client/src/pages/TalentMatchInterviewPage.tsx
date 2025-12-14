@@ -8,12 +8,12 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { SEO } from "@/components/SEO";
 import { useToast } from "@/hooks/use-toast";
-import { Send, Bot, User, Sparkles, CheckCircle, ArrowRight, Home, FileText, Briefcase } from "lucide-react";
+import { Send, Bot, User, Sparkles, CheckCircle, ArrowRight, Home, FileText, Briefcase, Upload, RefreshCw } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { apiRequest } from "@/lib/queryClient";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 interface Message {
   id: string;
@@ -37,10 +37,13 @@ const TOTAL_WORK_QUESTIONS = 10;
 export default function TalentMatchInterviewPage() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const scrollRef = useRef<HTMLDivElement>(null);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [isUploadingResume, setIsUploadingResume] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Use window.location.search directly since wouter's useLocation doesn't include query params
   const params = new URLSearchParams(window.location.search);
@@ -87,6 +90,54 @@ export default function TalentMatchInterviewPage() {
     const workProgress = Math.min(interviewState.workQuestionsAsked, TOTAL_WORK_QUESTIONS);
     return ((resumeProgress + workProgress) / (TOTAL_RESUME_QUESTIONS + TOTAL_WORK_QUESTIONS)) * 100;
   };
+
+  // MB.MD Fix: Handle resume re-upload for parsing
+  const handleResumeReupload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !volunteerId) return;
+    
+    const validTypes = ["application/pdf", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "text/plain"];
+    if (!validTypes.includes(file.type)) {
+      toast({ title: "Invalid file type", description: "Please upload PDF, DOCX, or TXT", variant: "destructive" });
+      return;
+    }
+    
+    setIsUploadingResume(true);
+    try {
+      const reader = new FileReader();
+      reader.onload = async (event) => {
+        const arrayBuffer = event.target?.result as ArrayBuffer;
+        const uint8Array = new Uint8Array(arrayBuffer);
+        let binaryString = '';
+        for (let i = 0; i < uint8Array.length; i++) {
+          binaryString += String.fromCharCode(uint8Array[i]);
+        }
+        const base64Buffer = btoa(binaryString);
+        
+        await apiRequest("POST", `/api/v1/volunteers/${volunteerId}/resume`, {
+          filename: file.name,
+          fileBuffer: base64Buffer,
+          fileUrl: "",
+          links: []
+        });
+        
+        await queryClient.invalidateQueries({ queryKey: ['/api/v1/volunteers', volunteerId, 'resume'] });
+        toast({ title: "Resume parsed!", description: "Mr. Blue can now read your resume content." });
+        setIsUploadingResume(false);
+      };
+      reader.onerror = () => {
+        toast({ title: "Upload failed", description: "Please try again", variant: "destructive" });
+        setIsUploadingResume(false);
+      };
+      reader.readAsArrayBuffer(file);
+    } catch (error) {
+      toast({ title: "Upload failed", description: "Please try again", variant: "destructive" });
+      setIsUploadingResume(false);
+    }
+  };
+
+  // Check if resume needs re-upload
+  const needsResumeReupload = resume?.filename && (!resume?.parsedText || resume.parsedText.trim().length === 0);
 
   const generateResumeQuestion = useCallback(async (questionNumber: number, previousAnswers: string[]) => {
     // MB.MD Fix: Handle empty parsedText - use filename as context if available
@@ -502,6 +553,36 @@ Welcome to the Mundo Tango volunteer community! We're excited to have you contri
               </div>
             </div>
           </div>
+
+          {/* MB.MD Fix: Resume re-upload prompt when content wasn't parsed */}
+          {needsResumeReupload && (
+            <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4 mx-4">
+              <div className="flex items-center gap-3">
+                <Upload className="h-5 w-5 text-amber-500" />
+                <div className="flex-1">
+                  <p className="text-sm font-medium">Resume content not available</p>
+                  <p className="text-xs text-muted-foreground">Re-upload your resume so Mr. Blue can read and reference your experience.</p>
+                </div>
+                <input 
+                  type="file" 
+                  ref={fileInputRef} 
+                  onChange={handleResumeReupload} 
+                  accept=".pdf,.docx,.txt" 
+                  className="hidden" 
+                  data-testid="input-resume-reupload"
+                />
+                <Button 
+                  size="sm" 
+                  onClick={() => fileInputRef.current?.click()} 
+                  disabled={isUploadingResume}
+                  data-testid="button-resume-reupload"
+                >
+                  {isUploadingResume ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4 mr-1" />}
+                  {isUploadingResume ? "Parsing..." : "Re-upload"}
+                </Button>
+              </div>
+            </div>
+          )}
 
           <ScrollArea className="flex-1 p-4">
             <div className="container mx-auto max-w-4xl space-y-4">
