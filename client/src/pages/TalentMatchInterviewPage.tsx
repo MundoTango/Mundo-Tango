@@ -89,11 +89,22 @@ export default function TalentMatchInterviewPage() {
   };
 
   const generateResumeQuestion = useCallback(async (questionNumber: number, previousAnswers: string[]) => {
-    const resumeText = resume?.parsedText || "No resume uploaded";
+    // MB.MD Fix: Handle empty parsedText - use filename as context if available
+    const hasResumeFile = resume?.filename && resume.filename.length > 0;
+    const hasParsedText = resume?.parsedText && resume.parsedText.trim().length > 0;
+    
+    let resumeContext = "";
+    if (hasParsedText) {
+      resumeContext = `The volunteer has uploaded this resume/profile:\n${resume.parsedText.slice(0, 3000)}`;
+    } else if (hasResumeFile) {
+      resumeContext = `The volunteer has uploaded a resume file: "${resume.filename}". The content couldn't be parsed, so please ask them to describe their background and experience directly.`;
+    } else {
+      resumeContext = `The volunteer hasn't uploaded a resume yet. Please ask them to describe their background, skills, and experience.`;
+    }
+    
     const systemPrompt = `You are Mr Blue, the AI interviewer for Mundo Tango's volunteer program. You're conducting Phase 1: Resume Deep-Dive.
 
-The volunteer has uploaded this resume/profile:
-${resumeText.slice(0, 3000)}
+${resumeContext}
 
 Previous answers in this interview: ${previousAnswers.slice(-3).join(" | ")}
 
