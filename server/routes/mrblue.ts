@@ -326,6 +326,30 @@ router.post("/chat", traceRoute("mr-blue-chat"), async (req: Request, res: Respo
       // Log received context for debugging
       console.log('[Mr. Blue] Received context:', JSON.stringify(parsedContext, null, 2));
 
+      // ================== MB.MD FIX: Handle custom systemPrompt for Talent Match interviews ==================
+      if (req.body.systemPrompt && typeof req.body.systemPrompt === 'string') {
+        console.log('[Mr. Blue] Using custom system prompt for Talent Match');
+        try {
+          const aiResponse = await groq.chat.completions.create({
+            model: 'llama-3.3-70b-versatile',
+            messages: [
+              { role: 'system', content: req.body.systemPrompt },
+              { role: 'user', content: message }
+            ],
+            max_tokens: 300,
+            temperature: 0.7
+          });
+          return res.json({
+            success: true,
+            mode: 'custom_prompt',
+            response: aiResponse.choices[0]?.message?.content || 'Error generating response'
+          });
+        } catch (error: any) {
+          console.error('[Mr. Blue] Custom prompt error:', error);
+          // Fall through to normal processing if custom prompt fails
+        }
+      }
+
       // ================== MB.MD v9.2: CONVERSATION ORCHESTRATOR INTEGRATION ==================
       // Step 1: Enrich message with RAG context
       console.log('[Mr. Blue] 📚 Enriching message with RAG context...');
