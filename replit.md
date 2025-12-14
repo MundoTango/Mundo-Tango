@@ -48,6 +48,14 @@ The marketing site integrates a Human to Agent Collaboration (H2AC) Volunteer Pr
 - Replaced Stripe donation buttons with GoFundMe embed on /donate and /support pages
 - Updated CSP to allow GoFundMe scripts and iframes
 
+**Dec 14, 2025 - Marketing Site Phase 2:**
+- Updated footer: Removed pricing, FAQ, dance styles, blog links; Updated social URLs to mundotangolife1 (Facebook) and mundotango.life (Instagram)
+- Changed /login links to /register across marketing pages (MrBluePage, VolunteerPage, AmbassadorsPage, ForOrganizersPage, ForDancersPage, ForTeachersPage)
+- Updated About page with 2 new Alexandros photos (Skoot_20, Skoot_16) and bio mentioning "100+ cities"
+- Removed pricing section from /for-teachers page
+- Removed 'browse events' button from /for-dancers page
+- Created new Tango Roles landing page at /tango-roles with role flexibility focus (lead/follow/both) - added to "Who it's for" menu
+
 ## External Dependencies
 - **Infrastructure:** PostgreSQL, Redis, Cloudinary, OpenStreetMap, Neon
 - **Authentication:** Google OAuth, Facebook OAuth, JWT
