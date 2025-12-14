@@ -147,6 +147,9 @@ router.post('/api/mrblue/chat', authenticateToken, async (req, res) => {
     // MB.MD Fix: If custom systemPrompt provided (e.g., from Talent Match interview), use Groq AI
     if (customSystemPrompt && typeof customSystemPrompt === 'string') {
       console.log('[Mr. Blue] Using custom system prompt for AI response');
+      console.log('[Mr. Blue] systemPrompt length:', customSystemPrompt.length, 'chars');
+      console.log('[Mr. Blue] systemPrompt preview:', customSystemPrompt.substring(0, 200));
+      console.log('[Mr. Blue] User message:', message);
       
       try {
         const Groq = require('groq-sdk');

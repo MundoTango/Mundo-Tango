@@ -13,6 +13,10 @@
 import { test, expect, Page, Request, Response } from '@playwright/test';
 import * as fs from 'fs';
 import * as path from 'path';
+import { AUTH_STATE_PATH, loginAsTestUser, testUsers } from '../helpers/test-auth';
+
+// Use pre-authenticated session
+test.use({ storageState: AUTH_STATE_PATH });
 
 interface MrBlueAnalysis {
   isPersonalized: boolean;
