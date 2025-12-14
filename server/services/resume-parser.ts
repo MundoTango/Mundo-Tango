@@ -4,10 +4,24 @@
  * Used by Talent Match AI for signal detection
  */
 
-import { createRequire } from "module";
-const require = createRequire(import.meta.url);
-const pdfParse = require("pdf-parse");
 import mammoth from "mammoth";
+
+// pdf-parse dynamic import for CommonJS compatibility
+let pdfParse: any = null;
+
+async function getPdfParse() {
+  if (!pdfParse) {
+    try {
+      // Dynamic import for ESM compatibility
+      const module = await import("pdf-parse");
+      pdfParse = module.default || module;
+      console.log("[Resume Parser] ✅ pdf-parse loaded successfully");
+    } catch (err) {
+      console.error("[Resume Parser] ❌ Failed to load pdf-parse:", err);
+    }
+  }
+  return pdfParse;
+}
 
 export interface ParsedResume {
   text: string;
@@ -51,7 +65,12 @@ export class ResumeParser {
   private async parsePDF(buffer: Buffer): Promise<string> {
     console.log("[Resume Parser] 📄 Starting PDF parse, buffer size:", buffer.length, "bytes");
     try {
-      const data = await pdfParse(buffer);
+      const parser = await getPdfParse();
+      if (!parser) {
+        console.error("[Resume Parser] ❌ pdf-parse module not available");
+        return "";
+      }
+      const data = await parser(buffer);
       const extractedText = data.text || "";
       console.log("[Resume Parser] ✅ PDF parsed successfully, text length:", extractedText.length, "chars");
       if (extractedText.length > 0) {
