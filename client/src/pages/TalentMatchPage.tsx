@@ -2,12 +2,11 @@ import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { SEO } from "@/components/SEO";
-import { Upload, Link as LinkIcon, Sparkles, ArrowRight, CheckCircle, FileText, Brain, Zap, Target, X, Files } from "lucide-react";
+import { Upload, Sparkles, ArrowRight, CheckCircle, FileText, Brain, Zap, Target, X, Files } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { apiRequest } from "@/lib/queryClient";
 import { useAuth } from "@/contexts/AuthContext";
@@ -26,21 +25,10 @@ export default function TalentMatchPage() {
   const { user, isLoading: authLoading } = useAuth();
   const [step, setStep] = useState<"upload" | "clarifier" | "results">("upload");
   const [uploadedDocuments, setUploadedDocuments] = useState<UploadedDocument[]>([]);
-  const [linkedinUrl, setLinkedinUrl] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
   const getAllResumeText = () => uploadedDocuments.map(d => d.text).join("\n\n---\n\n");
-
-  const validateUrl = (url: string, type: "linkedin" | "github"): boolean => {
-    if (!url) return true;
-    
-    if (type === "linkedin") {
-      return url.includes("linkedin.com/in/") || url.includes("linkedin.com/pub/");
-    } else {
-      return url.includes("github.com/");
-    }
-  };
 
   const handleResumeUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -147,19 +135,10 @@ export default function TalentMatchPage() {
 
   const handleStartClarifier = async () => {
     const hasDocuments = uploadedDocuments.length > 0 && uploadedDocuments.some(d => d.status === "parsed");
-    if (!hasDocuments && !linkedinUrl) {
+    if (!hasDocuments) {
       toast({
-        title: "Information required",
-        description: "Please upload at least one resume, or provide your LinkedIn URL",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    if (linkedinUrl && !validateUrl(linkedinUrl, "linkedin")) {
-      toast({
-        title: "Invalid LinkedIn URL",
-        description: "Please enter a valid LinkedIn profile URL (e.g., linkedin.com/in/yourname)",
+        title: "Resume required",
+        description: "Please upload at least one resume to continue",
         variant: "destructive"
       });
       return;
@@ -190,7 +169,6 @@ export default function TalentMatchPage() {
         userId: user.id,
         profile: {
           hasDocuments: uploadedDocuments.length > 0,
-          linkedinUrl,
           uploadedFileNames: uploadedDocuments.map(d => d.file.name)
         },
         skills: [],
@@ -199,19 +177,17 @@ export default function TalentMatchPage() {
       });
       const volunteer = await volunteerResponse.json();
 
-      if (uploadedDocuments.length > 0) {
-        for (const doc of uploadedDocuments) {
-          const extension = doc.file.name.toLowerCase().split('.').pop();
-          const isBinaryFile = extension === 'pdf' || extension === 'docx';
-          
-          await apiRequest("POST", `/api/v1/volunteers/${volunteer.id}/resume`, {
-            filename: doc.file.name,
-            fileUrl: linkedinUrl || "",
-            fileBuffer: isBinaryFile ? doc.base64Buffer : undefined,
-            parsedText: isBinaryFile ? undefined : doc.text,
-            links: [linkedinUrl].filter(Boolean)
-          });
-        }
+      for (const doc of uploadedDocuments) {
+        const extension = doc.file.name.toLowerCase().split('.').pop();
+        const isBinaryFile = extension === 'pdf' || extension === 'docx';
+        
+        await apiRequest("POST", `/api/v1/volunteers/${volunteer.id}/resume`, {
+          filename: doc.file.name,
+          fileUrl: "",
+          fileBuffer: isBinaryFile ? doc.base64Buffer : undefined,
+          parsedText: isBinaryFile ? undefined : doc.text,
+          links: []
+        });
       }
 
       const sessionResponse = await apiRequest("POST", `/api/v1/volunteers/${volunteer.id}/clarifier`);
@@ -319,7 +295,7 @@ export default function TalentMatchPage() {
                   {
                     step: "01",
                     title: "Share Your Experience",
-                    description: "Upload your resume or share your LinkedIn profile. Our AI will analyze your skills and background.",
+                    description: "Upload your resumes and career documents. Our AI will analyze your skills and background.",
                     icon: Upload
                   },
                   {
@@ -435,37 +411,8 @@ export default function TalentMatchPage() {
                     
                     {uploadedDocuments.length > 0 && (
                       <p className="text-sm text-muted-foreground">
-                        {uploadedDocuments.length} document{uploadedDocuments.length > 1 ? 's' : ''} uploaded • Click "+" to add more
+                        {uploadedDocuments.length} document{uploadedDocuments.length > 1 ? 's' : ''} uploaded • Click above to add more
                       </p>
-                    )}
-                  </div>
-
-                  <div className="relative py-4">
-                    <div className="absolute inset-0 flex items-center">
-                      <span className="w-full border-t border-border" />
-                    </div>
-                    <div className="relative flex justify-center">
-                      <span className="bg-background px-4 text-sm text-muted-foreground font-medium">Or share your professional profiles</span>
-                    </div>
-                  </div>
-
-                  {/* Profile Links */}
-                  <div className="space-y-3">
-                    <Label htmlFor="linkedin-url" className="text-base font-medium flex items-center gap-2">
-                      <LinkIcon className="h-4 w-4" />
-                      LinkedIn Profile
-                    </Label>
-                    <Input
-                      id="linkedin-url"
-                      type="url"
-                      placeholder="https://linkedin.com/in/yourname"
-                      value={linkedinUrl}
-                      onChange={(e) => setLinkedinUrl(e.target.value)}
-                      data-testid="input-linkedin"
-                      className={linkedinUrl && !validateUrl(linkedinUrl, "linkedin") ? "border-destructive" : ""}
-                    />
-                    {linkedinUrl && !validateUrl(linkedinUrl, "linkedin") && (
-                      <p className="text-sm text-destructive">Please enter a valid LinkedIn profile URL</p>
                     )}
                   </div>
 
@@ -473,7 +420,7 @@ export default function TalentMatchPage() {
                   <div className="pt-6">
                     <Button
                       onClick={handleStartClarifier}
-                      disabled={isSubmitting || authLoading || (uploadedDocuments.length === 0 && !linkedinUrl)}
+                      disabled={isSubmitting || authLoading || uploadedDocuments.length === 0}
                       size="lg"
                       className="w-full gap-2 text-base"
                       data-testid="button-start-clarifier"
