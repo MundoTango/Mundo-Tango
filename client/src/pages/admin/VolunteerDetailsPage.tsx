@@ -137,14 +137,36 @@ export default function VolunteerDetailsPage() {
                           Volunteer #{data.volunteer.id}
                         </CardTitle>
                         <p className="text-muted-foreground" data-testid="text-volunteer-profile">
-                          {data.volunteer.profile || "No profile summary"}
+                          {(() => {
+                            const profile = data.volunteer.profile;
+                            if (!profile) return "No profile summary";
+                            if (typeof profile === 'string') return profile;
+                            if (typeof profile === 'object') {
+                              const p = profile as { resumeText?: string; githubUrl?: string };
+                              return p.resumeText?.substring(0, 200) || p.githubUrl || "Profile data available";
+                            }
+                            return "No profile summary";
+                          })()}
                         </p>
                         <div className="flex flex-wrap gap-2 mt-2">
-                          {data.volunteer.skills?.map((skill, idx) => (
-                            <Badge key={idx} variant="secondary" data-testid={`badge-skill-${idx}`}>
-                              {skill}
-                            </Badge>
-                          ))}
+                          {(() => {
+                            const skills = data.volunteer.skills;
+                            if (Array.isArray(skills) && skills.length > 0) {
+                              return skills.map((skill, idx) => (
+                                <Badge key={idx} variant="secondary" data-testid={`badge-skill-${idx}`}>
+                                  {skill}
+                                </Badge>
+                              ));
+                            }
+                            if (skills && typeof skills === 'object' && Object.keys(skills).length > 0) {
+                              return Object.keys(skills).map((skill, idx) => (
+                                <Badge key={idx} variant="secondary" data-testid={`badge-skill-${idx}`}>
+                                  {skill}
+                                </Badge>
+                              ));
+                            }
+                            return null;
+                          })()}
                         </div>
                       </div>
                       <div className="text-right">
