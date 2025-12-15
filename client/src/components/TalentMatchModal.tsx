@@ -526,18 +526,30 @@ Be warm and specific - reference something from their answer if relevant.`,
               className="space-y-6"
             >
               <div className="text-center mb-4">
-                <h3 className="text-lg font-semibold">Upload Your Resume</h3>
+                <h3 className="text-lg font-semibold">Start Your Journey</h3>
                 <p className="text-sm text-muted-foreground">
-                  Share your experience so we can match you with the perfect volunteer role
+                  Share your professional background and let our AI find the perfect match for you
                 </p>
               </div>
 
               <Card>
-                <CardContent className="p-4">
-                  <Label className="flex items-center gap-2 mb-3">
-                    <FileText className="w-4 h-4" />
-                    Resume / CV
+                <CardContent className="p-4 space-y-4">
+                  <Label className="flex items-center gap-2">
+                    <FileText className="w-4 h-4 text-primary" />
+                    Upload Your Resumes
                   </Label>
+                  
+                  <div className="p-3 bg-primary/5 border border-primary/20 rounded-lg space-y-2">
+                    <p className="text-sm leading-relaxed">
+                      <strong>We want ALL of your resumes</strong> so we can truly understand who you are, what you have worked on, and what you want to do.
+                    </p>
+                    <p className="text-xs text-muted-foreground leading-relaxed">
+                      The paper resume should die. In this AI age, why limit yourself to one page? We want you to be excited to partner with us and work on the things you really want to help the Tango community.
+                    </p>
+                  </div>
+
+                  <p className="text-xs text-muted-foreground">PDF, DOCX, or TXT • Maximum 5MB each • Select multiple files</p>
+                  
                   <div className="border-2 border-dashed rounded-lg p-6 text-center hover-elevate cursor-pointer">
                     <input
                       type="file"
@@ -551,17 +563,17 @@ Be warm and specific - reference something from their answer if relevant.`,
                     <label htmlFor="resume-upload-modal" className="cursor-pointer">
                       <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
                       <p className="text-sm text-muted-foreground">
-                        Click to upload PDF, DOCX, or TXT
+                        Click to upload or drag and drop
                       </p>
                     </label>
                   </div>
 
                   {storedDocs.length > 0 && (
-                    <div className="mt-4 space-y-2">
+                    <div className="space-y-2">
                       {storedDocs.map((doc, idx) => (
-                        <div key={idx} className="flex items-center justify-between p-2 bg-muted rounded" data-testid={`doc-item-${idx}`}>
+                        <div key={idx} className="flex items-center justify-between p-3 bg-green-500/5 border border-green-500/20 rounded-lg" data-testid={`doc-item-${idx}`}>
                           <div className="flex items-center gap-2">
-                            <FileText className="w-4 h-4" />
+                            <FileText className="w-4 h-4 text-green-500" />
                             <span className="text-sm truncate max-w-[200px]">{doc.fileName}</span>
                             {doc.status === "parsed" && <CheckCircle className="w-4 h-4 text-green-500" />}
                             {doc.status === "pending" && <Loader2 className="w-4 h-4 animate-spin" />}
@@ -576,6 +588,9 @@ Be warm and specific - reference something from their answer if relevant.`,
                           </Button>
                         </div>
                       ))}
+                      <p className="text-xs text-muted-foreground">
+                        {storedDocs.length} document{storedDocs.length > 1 ? 's' : ''} uploaded • Click above to add more
+                      </p>
                     </div>
                   )}
                 </CardContent>
@@ -585,15 +600,19 @@ Be warm and specific - reference something from their answer if relevant.`,
                 <Button variant="outline" onClick={handleClose} data-testid="button-save-later">
                   Save & Continue Later
                 </Button>
-                <Button onClick={startInterview} disabled={isSubmitting} data-testid="button-start-interview">
+                <Button onClick={startInterview} disabled={isSubmitting || storedDocs.length === 0} data-testid="button-start-interview">
                   {isSubmitting ? (
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                   ) : (
-                    <ArrowRight className="w-4 h-4 mr-2" />
+                    <Sparkles className="w-4 h-4 mr-2" />
                   )}
-                  Start Interview
+                  Begin AI Interview
                 </Button>
               </div>
+              
+              <p className="text-xs text-center text-muted-foreground">
+                You'll chat with Mr Blue AI for a personalized interview
+              </p>
             </motion.div>
           )}
 
