@@ -10,7 +10,7 @@
 
 import { db } from '../shared/db';
 import { groups } from '../shared/schema';
-import { not, inArray } from 'drizzle-orm';
+import { not, inArray } from 'drizzle-orm, sql';
 
 const validCityNames = [
   'buenos-aires',
@@ -26,20 +26,9 @@ const validCityNames = [
 async function cleanupCities() {
   try {
     console.log('🧹 Starting city cleanup...');
-    
-    // Delete all groups (cities) that are NOT in the validCityNames list
-    const result = await db
-      .delete(groups)
-      .where(not(inArray(groups.groupSlug, validCityNames)));
-    
-    console.log(`✅ Cleanup complete! Removed venue-based cities.`);
-    console.log(`Valid cities remaining: ${validCityNames.join(', ')}`);
-    
-    process.exit(0);
-  } catch (error) {
-    console.error('❌ Error during cleanup:', error);
-    process.exit(1);
-  }
-}
 
-cleanupCities();
+    // Delete all groups (cities) that are NOT in the validCityNames list
+        const result = await db.execute(sql`
+      DELETE FROM groups 
+      WHERE group_slug NOT IN (${sql.join(validCityNames.map(name => sql`${name}`), sql`, `)})
+    `);
