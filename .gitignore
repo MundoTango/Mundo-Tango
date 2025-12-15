@@ -41,6 +41,19 @@ tmp/
 performance-audit.json
 dependency-report.json
 
+# === DEPLOYMENT SIZE OPTIMIZATION ===
+# Large data directories (exclude from deployment - saves 4.5+ GB)
+lancedb_data/
+attached_assets/
+test-videos/
+e2e/
+docs/
+qa_reports/
+reports/
+scripts/
+agent-memory/
+bifrost-config/
+
 # === PROJECT BLOAT PREVENTION ===
 # Cache directories (can grow to GB sizes)
 .cache/
