@@ -489,6 +489,159 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Talent Match Guest Sessions (in-memory storage for guest volunteer flows)
+  const talentMatchSessions = new Map<string, {
+    sessionId: string;
+    name: string;
+    email: string;
+    step: string;
+    linkedinUrl?: string;
+    uploadedDocuments?: Array<{ fileName: string; fileSize: number; parsedText?: string }>;
+    interviewMessages?: Array<{ role: string; content: string }>;
+    createdAt: number;
+    lastUpdatedAt: number;
+  }>();
+
+  // Clean up expired sessions every hour
+  setInterval(() => {
+    const now = Date.now();
+    const expiryMs = 24 * 60 * 60 * 1000; // 24 hours
+    for (const [sessionId, session] of talentMatchSessions) {
+      if (now - session.createdAt > expiryMs) {
+        talentMatchSessions.delete(sessionId);
+      }
+    }
+  }, 60 * 60 * 1000);
+
+  // Create session
+  app.post("/api/talent-match/session", async (req: Request, res: Response) => {
+    try {
+      const { name, email } = req.body;
+      if (!name || !email) {
+        return res.status(400).json({ error: "Name and email are required" });
+      }
+      
+      const sessionId = `tm_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
+      const now = Date.now();
+      
+      const session = {
+        sessionId,
+        name,
+        email,
+        step: "upload",
+        uploadedDocuments: [],
+        interviewMessages: [],
+        createdAt: now,
+        lastUpdatedAt: now,
+      };
+      
+      talentMatchSessions.set(sessionId, session);
+      
+      res.cookie("talentMatchSessionId", sessionId, {
+        maxAge: 24 * 60 * 60 * 1000,
+        httpOnly: false,
+        sameSite: "lax",
+        path: "/",
+      });
+      
+      res.json({ success: true, session });
+    } catch (error: any) {
+      console.error("[TalentMatch Session] Create error:", error);
+      res.status(500).json({ error: "Failed to create session" });
+    }
+  });
+
+  // Get session
+  app.get("/api/talent-match/session", async (req: Request, res: Response) => {
+    try {
+      const sessionId = req.cookies?.talentMatchSessionId || req.query.sessionId;
+      
+      if (!sessionId) {
+        return res.status(404).json({ error: "No session found" });
+      }
+      
+      const session = talentMatchSessions.get(sessionId as string);
+      
+      if (!session) {
+        return res.status(404).json({ error: "Session not found or expired" });
+      }
+      
+      const now = Date.now();
+      if (now - session.createdAt > 24 * 60 * 60 * 1000) {
+        talentMatchSessions.delete(sessionId as string);
+        return res.status(404).json({ error: "Session expired" });
+      }
+      
+      res.cookie("talentMatchSessionId", sessionId, {
+        maxAge: 24 * 60 * 60 * 1000,
+        httpOnly: false,
+        sameSite: "lax",
+        path: "/",
+      });
+      
+      res.json({ success: true, session });
+    } catch (error: any) {
+      console.error("[TalentMatch Session] Get error:", error);
+      res.status(500).json({ error: "Failed to get session" });
+    }
+  });
+
+  // Update session
+  app.patch("/api/talent-match/session", async (req: Request, res: Response) => {
+    try {
+      const sessionId = req.cookies?.talentMatchSessionId || req.body.sessionId;
+      
+      if (!sessionId) {
+        return res.status(404).json({ error: "No session found" });
+      }
+      
+      const session = talentMatchSessions.get(sessionId as string);
+      
+      if (!session) {
+        return res.status(404).json({ error: "Session not found or expired" });
+      }
+      
+      const { step, linkedinUrl, uploadedDocuments, interviewMessages } = req.body;
+      
+      if (step) session.step = step;
+      if (linkedinUrl !== undefined) session.linkedinUrl = linkedinUrl;
+      if (uploadedDocuments) session.uploadedDocuments = uploadedDocuments;
+      if (interviewMessages) session.interviewMessages = interviewMessages;
+      session.lastUpdatedAt = Date.now();
+      
+      talentMatchSessions.set(sessionId as string, session);
+      
+      res.cookie("talentMatchSessionId", sessionId, {
+        maxAge: 24 * 60 * 60 * 1000,
+        httpOnly: false,
+        sameSite: "lax",
+        path: "/",
+      });
+      
+      res.json({ success: true, session });
+    } catch (error: any) {
+      console.error("[TalentMatch Session] Update error:", error);
+      res.status(500).json({ error: "Failed to update session" });
+    }
+  });
+
+  // Delete session
+  app.delete("/api/talent-match/session", async (req: Request, res: Response) => {
+    try {
+      const sessionId = req.cookies?.talentMatchSessionId;
+      
+      if (sessionId) {
+        talentMatchSessions.delete(sessionId);
+      }
+      
+      res.clearCookie("talentMatchSessionId", { path: "/" });
+      res.json({ success: true });
+    } catch (error: any) {
+      console.error("[TalentMatch Session] Delete error:", error);
+      res.status(500).json({ error: "Failed to delete session" });
+    }
+  });
+
   // Public stats endpoint for landing page (no auth required)
   // Displays real data only - no fake numbers. Stats hidden if below threshold.
   const DISPLAY_THRESHOLD = 10;

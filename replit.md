@@ -33,6 +33,16 @@ Core functionalities include social features (events, groups, posts, notificatio
 
 **MB.MD Pattern 51 - Talent Pipeline Enhancement (Dec 2025):** The volunteer onboarding flow now features a complete interview-to-review pipeline. Key components: (1) VolunteerThankYouPage displays after interview completion with auto-redirect; (2) VolunteerDetailsPage provides admin view with tabbed interface for Interview Chat, Resume, and Assignments; (3) GET /api/v1/volunteers/:id/details aggregates volunteer data, resume, interview sessions, and assignments in a single API call; (4) TalentPipelinePage's "View Interview" button navigates to volunteer details for admin review.
 
+**MB.MD Pattern 53 - Talent Match Guest Sessions (Dec 15, 2025):**
+- Guest users on waitlist can access Talent Match volunteer flow without full authentication
+- TalentMatchModal component integrates directly on RegisterPage for seamless UX
+- Session persistence via hybrid approach: server-side in-memory Map + client-side localStorage + httpOnly cookies
+- API endpoints: POST/GET/PATCH/DELETE `/api/talent-match/session` with 24-hour expiry
+- TalentMatchSessionContext provides React context with createSession, updateSession, clearSession, resumeSession methods
+- Session data includes: name, email, step, linkedinUrl, uploadedDocuments (with base64), interviewMessages
+- Auto-restores session on mount from API (cookie) with localStorage fallback
+- AI interviews use Mr. Blue with custom systemPrompt for volunteer-specific conversations
+
 ### Testing
 The platform employs End-to-End (E2E) tests with Playwright, automated unit test coverage via CI/CD, and visual regression testing with Claude Computer Use. The `run_test` tool manages E2E environment setup and Stripe key injection. A Volunteer Testing System provides 148 scenarios across 39 domains, with automated issue routing and an auto-fix pipeline. MB.MD Pattern 50 introduces Pre-Authenticated Playwright Testing for faster, reusable test runs by saving and reusing session states.
 
