@@ -712,11 +712,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       
-      // Create pipeline entry for admin review
+      // Create pipeline entry for admin review (stage="offered" shows in Pending Approvals)
       await db.insert(candidatePipelines).values({
         userId: 1, // System/admin user
         candidateId: userId,
-        stage: "interviewed",
+        stage: "offered",
         source: "talent_match_guest",
         notes: `Completed 10-question AI interview. ${documents?.length || 0} document(s) uploaded.`,
       });
