@@ -244,7 +244,7 @@ class CityMatcherService {
 
       const distance = this.calculateDistance(
         lat, lng,
-        Number(group.latitude), Number(group.longitude)
+        group.latitude, group.longitude
       );
 
       if (distance < minDistance) {
