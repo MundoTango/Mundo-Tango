@@ -66,12 +66,27 @@ router.get("/pending", async (_req: Request, res: Response) => {
           .where(eq(volunteers.userId, p.candidateId))
           .limit(1);
 
+        // Handle skills - could be array, object, or null
+        let skillsStr = "Not specified";
+        if (volunteer?.skills) {
+          if (Array.isArray(volunteer.skills)) {
+            skillsStr = volunteer.skills.length > 0 ? volunteer.skills.join(", ") : "Not specified";
+          } else if (typeof volunteer.skills === 'object') {
+            const skillKeys = Object.keys(volunteer.skills);
+            skillsStr = skillKeys.length > 0 ? skillKeys.join(", ") : "Not specified";
+          }
+        }
+        
+        // Extract resume text from profile if available
+        const profile = volunteer?.profile as { resumeText?: string; githubUrl?: string } | null;
+        const resumeSummary = profile?.resumeText?.substring(0, 100) || "";
+
         return {
           id: p.id,
           candidateId: p.candidateId,
           name: p.userDisplayName || p.userName || "Unknown",
           email: p.userEmail,
-          skills: volunteer?.skills?.join(", ") || "Not specified",
+          skills: skillsStr + (resumeSummary ? ` (${resumeSummary}...)` : ""),
           availability: volunteer?.availability || "Not specified",
           hoursPerWeek: volunteer?.hoursPerWeek || 0,
           source: p.source,
