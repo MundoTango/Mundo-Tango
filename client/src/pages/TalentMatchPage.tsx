@@ -553,11 +553,9 @@ export default function TalentMatchPage() {
                   </div>
                   
                   <div className="mt-6 pt-6 border-t border-blue-500/20 text-center">
-                    <Link href="/h2ac-dashboard">
-                      <a className="text-blue-500 hover:text-blue-600 transition-colors inline-flex items-center gap-2 font-medium" data-testid="link-h2ac-preview">
-                        Preview H2AC Dashboard
-                        <ArrowRight className="h-4 w-4" />
-                      </a>
+                    <Link href="/h2ac-dashboard" className="text-blue-500 hover:text-blue-600 transition-colors inline-flex items-center gap-2 font-medium" data-testid="link-h2ac-preview">
+                      Preview H2AC Dashboard
+                      <ArrowRight className="h-4 w-4" />
                     </Link>
                   </div>
                 </CardContent>
@@ -566,10 +564,8 @@ export default function TalentMatchPage() {
 
             {/* Back Link */}
             <div className="text-center mt-12">
-              <Link href="/volunteer">
-                <a className="text-muted-foreground hover:text-foreground transition-colors inline-flex items-center gap-2" data-testid="link-back">
-                  ← Back to Volunteer Opportunities
-                </a>
+              <Link href="/volunteer" className="text-muted-foreground hover:text-foreground transition-colors inline-flex items-center gap-2" data-testid="link-back">
+                ← Back to Volunteer Opportunities
               </Link>
             </div>
           </div>
