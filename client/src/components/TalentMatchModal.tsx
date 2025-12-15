@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -37,6 +36,22 @@ const STEPS = [
   { id: "complete", label: "Complete", icon: CheckCircle },
 ] as const;
 
+const BACKGROUND_QUESTIONS = [
+  "Tell me about your professional background and current role.",
+  "What relevant skills do you have that could benefit a global tango community platform?",
+  "Describe a project or achievement you're particularly proud of.",
+  "How many hours per week could you realistically commit to volunteering?",
+  "What is your preferred communication style and timezone availability?",
+];
+
+const PLATFORM_QUESTIONS = [
+  "What aspects of Mundo Tango's mission resonate most with you?",
+  "How do you envision contributing to our global tango community?",
+  "What specific areas of the platform would you like to help improve or develop?",
+  "How would you handle working with a diverse, international team of volunteers?",
+  "What would success look like for you after 3 months of volunteering with us?",
+];
+
 export function TalentMatchModal({ open, onOpenChange, initialName, initialEmail }: TalentMatchModalProps) {
   const { session, createSession, updateSession, clearSession } = useTalentMatchSession();
   const { toast } = useToast();
@@ -44,12 +59,16 @@ export function TalentMatchModal({ open, onOpenChange, initialName, initialEmail
   
   const [step, setStep] = useState<"upload" | "interview" | "complete">("upload");
   const [storedDocs, setStoredDocs] = useState<StoredDocument[]>([]);
-  const [linkedinUrl, setLinkedinUrl] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [interviewMessages, setInterviewMessages] = useState<Array<{role: "ai" | "user", content: string}>>([]);
   const [currentMessage, setCurrentMessage] = useState("");
   const [isAiTyping, setIsAiTyping] = useState(false);
   const [hasRestoredSession, setHasRestoredSession] = useState(false);
+  const [questionIndex, setQuestionIndex] = useState(0);
+  const [isSubmittingApplication, setIsSubmittingApplication] = useState(false);
+
+  const allQuestions = [...BACKGROUND_QUESTIONS, ...PLATFORM_QUESTIONS];
+  const totalQuestions = allQuestions.length;
 
   useEffect(() => {
     if (open && !session && initialName && initialEmail) {
@@ -60,9 +79,6 @@ export function TalentMatchModal({ open, onOpenChange, initialName, initialEmail
   useEffect(() => {
     if (session && !hasRestoredSession) {
       setStep(session.step);
-      if (session.linkedinUrl) {
-        setLinkedinUrl(session.linkedinUrl);
-      }
       if (session.uploadedDocuments && session.uploadedDocuments.length > 0) {
         setStoredDocs(session.uploadedDocuments);
         if (session.step === "upload") {
@@ -74,10 +90,12 @@ export function TalentMatchModal({ open, onOpenChange, initialName, initialEmail
       }
       if (session.interviewMessages && session.interviewMessages.length > 0) {
         setInterviewMessages(session.interviewMessages);
+        const userMessageCount = session.interviewMessages.filter(m => m.role === "user").length;
+        setQuestionIndex(Math.min(userMessageCount, totalQuestions - 1));
       }
       setHasRestoredSession(true);
     }
-  }, [session, hasRestoredSession, toast]);
+  }, [session, hasRestoredSession, toast, totalQuestions]);
 
   useEffect(() => {
     if (chatContainerRef.current) {
@@ -87,6 +105,7 @@ export function TalentMatchModal({ open, onOpenChange, initialName, initialEmail
 
   const currentStepIndex = STEPS.findIndex(s => s.id === step);
   const progressPercent = ((currentStepIndex + 1) / STEPS.length) * 100;
+  const interviewProgress = ((questionIndex + 1) / totalQuestions) * 100;
 
   const handleResumeUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -204,17 +223,17 @@ export function TalentMatchModal({ open, onOpenChange, initialName, initialEmail
 
   const startInterview = async () => {
     const hasDocuments = storedDocs.length > 0 && storedDocs.some(d => d.status === "parsed");
-    if (!hasDocuments && !linkedinUrl) {
+    if (!hasDocuments) {
       toast({
-        title: "Information required",
-        description: "Please upload a resume or provide your LinkedIn URL",
+        title: "Resume required",
+        description: "Please upload your resume to continue",
         variant: "destructive"
       });
       return;
     }
 
     setIsSubmitting(true);
-    updateSession({ step: "interview", linkedinUrl });
+    updateSession({ step: "interview" });
     setStep("interview");
     
     if (interviewMessages.length === 0) {
@@ -222,11 +241,12 @@ export function TalentMatchModal({ open, onOpenChange, initialName, initialEmail
       setTimeout(() => {
         const welcomeMessage = {
           role: "ai" as const,
-          content: `Hello ${session?.name || "there"}! I'm Mr. Blue, your AI interviewer. I've reviewed your background and I'm excited to learn more about you. Let's start with a quick question: What aspects of the tango community would you most like to contribute to?`
+          content: `Hello ${session?.name || "there"}! I'm Mr. Blue, your AI interviewer for Mundo Tango's volunteer program. I'll be asking you 10 questions - 5 about your background and 5 about how you'd like to contribute to our platform.\n\nLet's begin!\n\n**Question 1 of 10 (Background):**\n${BACKGROUND_QUESTIONS[0]}`
         };
         setInterviewMessages([welcomeMessage]);
         updateSession({ interviewMessages: [welcomeMessage] });
         setIsAiTyping(false);
+        setQuestionIndex(0);
       }, 1500);
     }
     
@@ -243,54 +263,73 @@ export function TalentMatchModal({ open, onOpenChange, initialName, initialEmail
     updateSession({ interviewMessages: updatedMessages });
     setIsAiTyping(true);
     
-    try {
-      const response = await fetch("/api/mrblue/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          message: currentMessage,
-          systemPrompt: `You are Mr. Blue, an AI interviewer for Mundo Tango's volunteer program. The candidate's name is ${session?.name || "the candidate"} and email is ${session?.email || "unknown"}. 
-          
-You're conducting a brief volunteer interview. Keep responses concise (2-3 sentences). Ask about:
-1. Their relevant skills and experience
-2. Why they want to volunteer for a tango community platform
-3. How many hours per week they could commit
-
-After 3-4 exchanges, thank them warmly and tell them their information has been submitted for review. End with "Interview complete - thank you!"`
-        })
-      });
-      
-      let aiContent = "Thank you for sharing! Let me consider that...";
-      if (response.ok) {
-        const data = await response.json();
-        aiContent = data.message || data.response || aiContent;
-      }
-      
-      const aiMessage = { role: "ai" as const, content: aiContent };
-      const finalMessages = [...updatedMessages, aiMessage];
-      setInterviewMessages(finalMessages);
-      updateSession({ interviewMessages: finalMessages });
-      
-      if (aiContent.toLowerCase().includes("interview complete")) {
-        updateSession({ step: "complete" });
+    const nextIndex = questionIndex + 1;
+    
+    if (nextIndex >= totalQuestions) {
+      setTimeout(async () => {
+        const completionMessage = {
+          role: "ai" as const,
+          content: `Thank you for completing all 10 questions, ${session?.name}! Your responses have been recorded and your application is being submitted.\n\nOur team will review your profile and get back to you soon. We appreciate your interest in volunteering with Mundo Tango!`
+        };
+        const finalMessages = [...updatedMessages, completionMessage];
+        setInterviewMessages(finalMessages);
+        updateSession({ interviewMessages: finalMessages, step: "complete" });
+        setIsAiTyping(false);
+        
+        await submitApplication(finalMessages);
+        
         setTimeout(() => setStep("complete"), 2000);
-      }
-    } catch {
-      const fallbackMessage = { 
-        role: "ai" as const, 
-        content: "I appreciate your input. Let's continue - could you tell me about your availability for volunteering?" 
-      };
-      const finalMessages = [...updatedMessages, fallbackMessage];
-      setInterviewMessages(finalMessages);
-      updateSession({ interviewMessages: finalMessages });
-    } finally {
-      setIsAiTyping(false);
+      }, 1500);
+    } else {
+      setTimeout(() => {
+        const isBackground = nextIndex < BACKGROUND_QUESTIONS.length;
+        const questionNumber = nextIndex + 1;
+        const questionType = isBackground ? "Background" : "Platform";
+        const question = allQuestions[nextIndex];
+        
+        const aiMessage = {
+          role: "ai" as const,
+          content: `Great answer! Thank you for sharing.\n\n**Question ${questionNumber} of 10 (${questionType}):**\n${question}`
+        };
+        const finalMessages = [...updatedMessages, aiMessage];
+        setInterviewMessages(finalMessages);
+        updateSession({ interviewMessages: finalMessages });
+        setQuestionIndex(nextIndex);
+        setIsAiTyping(false);
+      }, 1000);
     }
   };
 
-  const completeInterview = () => {
-    updateSession({ step: "complete" });
-    setStep("complete");
+  const submitApplication = async (messages: Array<{role: "ai" | "user", content: string}>) => {
+    setIsSubmittingApplication(true);
+    try {
+      const response = await fetch("/api/talent-match/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          name: session?.name,
+          email: session?.email,
+          documents: storedDocs.map(d => ({
+            fileName: d.fileName,
+            fileSize: d.fileSize,
+            parsedText: d.parsedText?.substring(0, 50000),
+          })),
+          interviewMessages: messages,
+        }),
+      });
+      
+      if (response.ok) {
+        toast({
+          title: "Application submitted",
+          description: "Your volunteer application has been received!",
+        });
+      }
+    } catch (error) {
+      console.error("[TalentMatch] Submit error:", error);
+    } finally {
+      setIsSubmittingApplication(false);
+    }
   };
 
   const handleClose = () => {
@@ -301,8 +340,8 @@ After 3-4 exchanges, thank them warmly and tell them their information has been 
     clearSession();
     setStep("upload");
     setStoredDocs([]);
-    setLinkedinUrl("");
     setInterviewMessages([]);
+    setQuestionIndex(0);
     setHasRestoredSession(false);
     if (initialName && initialEmail) {
       createSession(initialName, initialEmail);
@@ -319,7 +358,6 @@ After 3-4 exchanges, thank them warmly and tell them their information has been 
           </DialogTitle>
         </DialogHeader>
 
-        {/* Progress Breadcrumbs */}
         <div className="mb-6">
           <div className="flex items-center justify-between mb-2">
             {STEPS.map((s, idx) => (
@@ -361,13 +399,12 @@ After 3-4 exchanges, thank them warmly and tell them their information has been 
               className="space-y-6"
             >
               <div className="text-center mb-4">
-                <h3 className="text-lg font-semibold">Share Your Experience</h3>
+                <h3 className="text-lg font-semibold">Upload Your Resume</h3>
                 <p className="text-sm text-muted-foreground">
-                  Upload your resume or share your LinkedIn so we can match you with the perfect role
+                  Share your experience so we can match you with the perfect volunteer role
                 </p>
               </div>
 
-              {/* Resume Upload */}
               <Card>
                 <CardContent className="p-4">
                   <Label className="flex items-center gap-2 mb-3">
@@ -417,18 +454,6 @@ After 3-4 exchanges, thank them warmly and tell them their information has been 
                 </CardContent>
               </Card>
 
-              {/* LinkedIn URL */}
-              <div className="space-y-2">
-                <Label htmlFor="linkedin-modal">LinkedIn Profile (optional)</Label>
-                <Input
-                  id="linkedin-modal"
-                  placeholder="https://linkedin.com/in/yourprofile"
-                  value={linkedinUrl}
-                  onChange={(e) => setLinkedinUrl(e.target.value)}
-                  data-testid="input-linkedin-url"
-                />
-              </div>
-
               <div className="flex justify-end gap-2">
                 <Button variant="outline" onClick={handleClose} data-testid="button-save-later">
                   Save & Continue Later
@@ -456,14 +481,14 @@ After 3-4 exchanges, thank them warmly and tell them their information has been 
               <div className="text-center mb-4">
                 <h3 className="text-lg font-semibold flex items-center justify-center gap-2">
                   <MessageSquare className="w-5 h-5" />
-                  Chat with Mr. Blue
+                  Interview with Mr. Blue
                 </h3>
                 <p className="text-sm text-muted-foreground">
-                  Answer a few questions to help us find your perfect role
+                  Question {Math.min(questionIndex + 1, totalQuestions)} of {totalQuestions}
                 </p>
+                <Progress value={interviewProgress} className="h-1 mt-2" />
               </div>
 
-              {/* Chat Messages */}
               <div 
                 ref={chatContainerRef}
                 className="h-[300px] overflow-y-auto border rounded-lg p-4 space-y-4" 
@@ -471,7 +496,7 @@ After 3-4 exchanges, thank them warmly and tell them their information has been 
               >
                 {interviewMessages.map((msg, idx) => (
                   <div key={idx} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
-                    <div className={`max-w-[80%] p-3 rounded-lg ${
+                    <div className={`max-w-[80%] p-3 rounded-lg whitespace-pre-wrap ${
                       msg.role === "user" 
                         ? "bg-primary text-primary-foreground" 
                         : "bg-muted"
@@ -489,17 +514,26 @@ After 3-4 exchanges, thank them warmly and tell them their information has been 
                 )}
               </div>
 
-              {/* Message Input */}
               <div className="flex gap-2">
-                <Input
+                <textarea
                   placeholder="Type your response..."
                   value={currentMessage}
                   onChange={(e) => setCurrentMessage(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && sendMessage()}
-                  disabled={isAiTyping}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      sendMessage();
+                    }
+                  }}
+                  disabled={isAiTyping || questionIndex >= totalQuestions}
+                  className="flex-1 min-h-[60px] p-3 border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-primary"
                   data-testid="input-chat-message"
                 />
-                <Button onClick={sendMessage} disabled={isAiTyping || !currentMessage.trim()} data-testid="button-send-message">
+                <Button 
+                  onClick={sendMessage} 
+                  disabled={isAiTyping || !currentMessage.trim() || questionIndex >= totalQuestions} 
+                  data-testid="button-send-message"
+                >
                   Send
                 </Button>
               </div>
@@ -508,9 +542,6 @@ After 3-4 exchanges, thank them warmly and tell them their information has been 
                 <Button variant="ghost" onClick={() => { setStep("upload"); updateSession({ step: "upload" }); }} data-testid="button-back-upload">
                   <ArrowLeft className="w-4 h-4 mr-2" />
                   Back
-                </Button>
-                <Button variant="outline" onClick={completeInterview} data-testid="button-skip-complete">
-                  Skip & Complete
                 </Button>
               </div>
             </motion.div>
@@ -524,11 +555,15 @@ After 3-4 exchanges, thank them warmly and tell them their information has been 
               className="text-center py-8"
             >
               <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                <CheckCircle className="w-8 h-8 text-green-500" />
+                {isSubmittingApplication ? (
+                  <Loader2 className="w-8 h-8 text-green-500 animate-spin" />
+                ) : (
+                  <CheckCircle className="w-8 h-8 text-green-500" />
+                )}
               </div>
               <h3 className="text-xl font-semibold mb-2" data-testid="text-thank-you">Thank You, {session?.name}!</h3>
               <p className="text-muted-foreground mb-6">
-                Your application has been submitted. We'll review your profile and get back to you at {session?.email}.
+                Your volunteer application has been submitted. We'll review your profile and get back to you at {session?.email}.
               </p>
               
               <Badge variant="outline" className="mb-6">

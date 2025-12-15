@@ -13,7 +13,6 @@ interface TalentMatchSessionData {
   name: string;
   email: string;
   step: "upload" | "interview" | "complete";
-  linkedinUrl?: string;
   uploadedDocuments?: StoredDocument[];
   interviewMessages?: Array<{role: "ai" | "user", content: string}>;
   volunteerId?: number;

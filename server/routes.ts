@@ -642,6 +642,103 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Submit volunteer application from guest session
+  app.post("/api/talent-match/submit", async (req: Request, res: Response) => {
+    try {
+      const { name, email, documents, interviewMessages } = req.body;
+      
+      if (!name || !email) {
+        return res.status(400).json({ error: "Name and email are required" });
+      }
+      
+      const { db } = await import("./db");
+      const { users, volunteers, resumes, clarifierSessions, candidatePipelines } = await import("@shared/schema");
+      const { eq } = await import("drizzle-orm");
+      
+      // Find or create user
+      let [existingUser] = await db
+        .select()
+        .from(users)
+        .where(eq(users.email, email.toLowerCase()))
+        .limit(1);
+      
+      let userId: number;
+      
+      if (existingUser) {
+        userId = existingUser.id;
+      } else {
+        const username = email.split("@")[0].toLowerCase().replace(/[^a-z0-9]/g, "") + "_" + Date.now();
+        const [newUser] = await db
+          .insert(users)
+          .values({
+            email: email.toLowerCase(),
+            username,
+            name,
+            password: "temp_volunteer_" + Math.random().toString(36).substring(2),
+            waitlist: true,
+            waitlistDate: new Date(),
+          })
+          .returning();
+        userId = newUser.id;
+      }
+      
+      // Create volunteer record
+      const [volunteer] = await db
+        .insert(volunteers)
+        .values({
+          userId,
+          profile: { name, email, source: "talent_match_modal" },
+          skills: [],
+          availability: "pending_review",
+        })
+        .returning();
+      
+      // Store resume if documents provided
+      if (documents && documents.length > 0) {
+        for (const doc of documents) {
+          await db.insert(resumes).values({
+            volunteerId: volunteer.id,
+            filename: doc.fileName,
+            parsedText: doc.parsedText || "",
+          });
+        }
+      }
+      
+      // Store interview session
+      if (interviewMessages && interviewMessages.length > 0) {
+        await db.insert(clarifierSessions).values({
+          volunteerId: volunteer.id,
+          chatLog: interviewMessages,
+          status: "completed",
+          completedAt: new Date(),
+        });
+      }
+      
+      // Create pipeline entry for admin review
+      await db.insert(candidatePipelines).values({
+        userId: 1, // System/admin user
+        candidateId: userId,
+        stage: "interviewed",
+        source: "talent_match_guest",
+        notes: `Completed 10-question AI interview. ${documents?.length || 0} document(s) uploaded.`,
+      });
+      
+      // Clear the guest session
+      const sessionId = req.cookies?.talentMatchSessionId;
+      if (sessionId) {
+        talentMatchSessions.delete(sessionId);
+      }
+      res.clearCookie("talentMatchSessionId", { path: "/" });
+      
+      console.log(`[TalentMatch] Volunteer application submitted: ${email}, volunteerId: ${volunteer.id}`);
+      
+      res.json({ success: true, volunteerId: volunteer.id });
+    } catch (error: any) {
+      console.error("[TalentMatch] Submit error:", error);
+      res.status(500).json({ error: "Failed to submit application" });
+    }
+  });
+
   // Public stats endpoint for landing page (no auth required)
   // Displays real data only - no fake numbers. Stats hidden if below threshold.
   const DISPLAY_THRESHOLD = 10;
