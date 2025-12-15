@@ -49,26 +49,42 @@ class LanceDBService {
   private embeddingCache: Map<string, number[]> = new Map();
   private tableCache: Map<string, Table> = new Map();
   
+  private initializationFailed = false;
+  
   /**
    * Initialize LanceDB connection
+   * Gracefully handles missing folder in production
    */
   async initialize(): Promise<void> {
+    if (this.initializationFailed) {
+      console.log('[LanceDB] Skipping initialization (previously failed)');
+      return;
+    }
+    
     try {
       console.log('[LanceDB] Initializing connection...');
       this.connection = await connect(LANCEDB_PATH);
       console.log(`[LanceDB] ✅ Connected to ${LANCEDB_PATH}`);
     } catch (error) {
-      console.error('[LanceDB] ❌ Failed to initialize:', error);
-      throw error;
+      console.error('[LanceDB] ❌ Failed to initialize (non-fatal):', error);
+      this.initializationFailed = true;
+      // Don't throw - allow server to continue without vector storage
+      console.log('[LanceDB] ⚠️ Vector storage disabled - app will continue without AI memory features');
     }
   }
 
   /**
    * Get or create a table
+   * Returns null if LanceDB is unavailable
    */
-  private async getTable(tableName: string): Promise<Table> {
+  private async getTable(tableName: string): Promise<Table | null> {
     if (!this.connection) {
       await this.initialize();
+    }
+    
+    // If initialization failed, return null
+    if (this.initializationFailed || !this.connection) {
+      return null;
     }
 
     // Check cache first
@@ -161,6 +177,12 @@ class LanceDBService {
   async addMemory(tableName: string, data: Omit<VectorMemory, 'embedding'>): Promise<void> {
     try {
       const table = await this.getTable(tableName);
+      
+      // If LanceDB is unavailable, skip silently
+      if (!table) {
+        console.log(`[LanceDB] ⚠️ Skipping addMemory - vector storage unavailable`);
+        return;
+      }
 
       // Validate content is a string
       const content = typeof data.content === 'string' ? data.content : String(data.content || '');
@@ -184,7 +206,7 @@ class LanceDBService {
       console.log(`[LanceDB] ✅ Memory added to ${tableName}: ${record.id}`);
     } catch (error) {
       console.error('[LanceDB] ❌ Error adding memory:', error);
-      throw error;
+      // Don't throw - allow app to continue
     }
   }
 
@@ -194,6 +216,12 @@ class LanceDBService {
   async addMemories(tableName: string, dataArray: Array<Omit<VectorMemory, 'embedding'>>): Promise<void> {
     try {
       const table = await this.getTable(tableName);
+      
+      // If LanceDB is unavailable, skip silently
+      if (!table) {
+        console.log(`[LanceDB] ⚠️ Skipping addMemories - vector storage unavailable`);
+        return;
+      }
 
       // Generate embeddings for all contents in parallel
       const embeddings = await Promise.all(
@@ -216,7 +244,7 @@ class LanceDBService {
       console.log(`[LanceDB] ✅ Batch added ${records.length} memories to ${tableName}`);
     } catch (error) {
       console.error('[LanceDB] ❌ Error adding batch memories:', error);
-      throw error;
+      // Don't throw - allow app to continue
     }
   }
 
@@ -232,6 +260,11 @@ class LanceDBService {
   ): Promise<SearchResult[]> {
     try {
       const table = await this.getTable(tableName);
+      
+      // If LanceDB is unavailable, return empty results
+      if (!table) {
+        return [];
+      }
 
       // Generate query embedding
       const queryEmbedding = await this.generateEmbedding(query);
@@ -286,6 +319,11 @@ class LanceDBService {
   ): Promise<VectorMemory[]> {
     try {
       const table = await this.getTable(tableName);
+      
+      // If LanceDB is unavailable, return empty results
+      if (!table) {
+        return [];
+      }
 
       let query = table.query();
 
@@ -324,6 +362,11 @@ class LanceDBService {
   async deleteMemories(tableName: string, filters: Record<string, any>): Promise<number> {
     try {
       const table = await this.getTable(tableName);
+      
+      // If LanceDB is unavailable, return 0
+      if (!table) {
+        return 0;
+      }
 
       const filterConditions = Object.entries(filters)
         .map(([key, value]) => {
