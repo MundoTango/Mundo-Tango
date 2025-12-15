@@ -238,16 +238,58 @@ export function TalentMatchModal({ open, onOpenChange, initialName, initialEmail
     
     if (interviewMessages.length === 0) {
       setIsAiTyping(true);
-      setTimeout(() => {
+      
+      // Extract resume content for personalized interview
+      const parsedDocs = storedDocs.filter(d => d.status === "parsed" && d.parsedText);
+      const resumeContent = parsedDocs.map(d => d.parsedText).join("\n\n").substring(0, 3000);
+      
+      // Call Mr. Blue API to generate personalized greeting based on resume
+      try {
+        const response = await fetch("/api/mrblue/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({
+            message: "Generate an interview greeting for this volunteer candidate",
+            systemPrompt: `You are Mr. Blue, a friendly AI interviewer for Mundo Tango's volunteer program. 
+
+The candidate just uploaded their resume. Here is what you learned about them:
+
+${resumeContent}
+
+Generate a warm, personalized greeting that:
+1. Addresses them by name (${session?.name || "the candidate"})
+2. Briefly acknowledges 2-3 specific things from their resume (skills, experience, or achievements)
+3. Explains you'll ask 10 questions (5 background, 5 platform-specific)
+4. Asks the first question: "${BACKGROUND_QUESTIONS[0]}"
+
+Keep the greeting concise (3-4 paragraphs max). Use a friendly, professional tone.`,
+          }),
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          const welcomeMessage = {
+            role: "ai" as const,
+            content: data.message || `Hello ${session?.name}! I've reviewed your resume and I'm impressed with your background. Let's begin the interview!\n\n**Question 1 of 10 (Background):**\n${BACKGROUND_QUESTIONS[0]}`
+          };
+          setInterviewMessages([welcomeMessage]);
+          updateSession({ interviewMessages: [welcomeMessage] });
+        } else {
+          throw new Error("API failed");
+        }
+      } catch (error) {
+        // Fallback to static greeting if API fails
         const welcomeMessage = {
           role: "ai" as const,
-          content: `Hello ${session?.name || "there"}! I'm Mr. Blue, your AI interviewer for Mundo Tango's volunteer program. I'll be asking you 10 questions - 5 about your background and 5 about how you'd like to contribute to our platform.\n\nLet's begin!\n\n**Question 1 of 10 (Background):**\n${BACKGROUND_QUESTIONS[0]}`
+          content: `Hello ${session?.name || "there"}! I'm Mr. Blue, and I've reviewed your resume. I'm excited to learn more about you!\n\nI'll be asking you 10 questions - 5 about your background and 5 about how you'd like to contribute to our platform.\n\nLet's begin!\n\n**Question 1 of 10 (Background):**\n${BACKGROUND_QUESTIONS[0]}`
         };
         setInterviewMessages([welcomeMessage]);
         updateSession({ interviewMessages: [welcomeMessage] });
-        setIsAiTyping(false);
-        setQuestionIndex(0);
-      }, 1500);
+      }
+      
+      setIsAiTyping(false);
+      setQuestionIndex(0);
     }
     
     setIsSubmitting(false);
@@ -265,11 +307,58 @@ export function TalentMatchModal({ open, onOpenChange, initialName, initialEmail
     
     const nextIndex = questionIndex + 1;
     
+    // Get resume content for context
+    const parsedDocs = storedDocs.filter(d => d.status === "parsed" && d.parsedText);
+    const resumeContent = parsedDocs.map(d => d.parsedText).join("\n\n").substring(0, 2000);
+    
     if (nextIndex >= totalQuestions) {
-      setTimeout(async () => {
+      // Final message - use AI to summarize
+      try {
+        const response = await fetch("/api/mrblue/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({
+            message: "Generate interview completion message",
+            systemPrompt: `You are Mr. Blue completing a volunteer interview for Mundo Tango.
+
+The candidate ${session?.name} just answered all 10 questions. Their resume shows:
+${resumeContent.substring(0, 1000)}
+
+Their interview answers were:
+${updatedMessages.filter(m => m.role === "user").map(m => m.content).join("\n---\n").substring(0, 1500)}
+
+Generate a warm completion message that:
+1. Thanks them by name
+2. Mentions 1-2 specific strengths you noticed from their answers or resume
+3. Explains next steps (team will review and get back to them)
+
+Keep it to 2-3 paragraphs.`,
+          }),
+        });
+        
+        let completionMessage: { role: "ai", content: string };
+        if (response.ok) {
+          const data = await response.json();
+          completionMessage = { role: "ai" as const, content: data.message };
+        } else {
+          completionMessage = {
+            role: "ai" as const,
+            content: `Thank you for completing all 10 questions, ${session?.name}! Your responses have been recorded and your application is being submitted.\n\nOur team will review your profile and get back to you soon. We appreciate your interest in volunteering with Mundo Tango!`
+          };
+        }
+        
+        const finalMessages = [...updatedMessages, completionMessage];
+        setInterviewMessages(finalMessages);
+        updateSession({ interviewMessages: finalMessages, step: "complete" });
+        setIsAiTyping(false);
+        
+        await submitApplication(finalMessages);
+        setTimeout(() => setStep("complete"), 2000);
+      } catch {
         const completionMessage = {
           role: "ai" as const,
-          content: `Thank you for completing all 10 questions, ${session?.name}! Your responses have been recorded and your application is being submitted.\n\nOur team will review your profile and get back to you soon. We appreciate your interest in volunteering with Mundo Tango!`
+          content: `Thank you for completing the interview, ${session?.name}! Your application is being submitted. We'll be in touch soon!`
         };
         const finalMessages = [...updatedMessages, completionMessage];
         setInterviewMessages(finalMessages);
@@ -277,26 +366,64 @@ export function TalentMatchModal({ open, onOpenChange, initialName, initialEmail
         setIsAiTyping(false);
         
         await submitApplication(finalMessages);
-        
         setTimeout(() => setStep("complete"), 2000);
-      }, 1500);
+      }
     } else {
-      setTimeout(() => {
-        const isBackground = nextIndex < BACKGROUND_QUESTIONS.length;
-        const questionNumber = nextIndex + 1;
-        const questionType = isBackground ? "Background" : "Platform";
-        const question = allQuestions[nextIndex];
+      // Generate contextual follow-up question
+      const isBackground = nextIndex < BACKGROUND_QUESTIONS.length;
+      const questionNumber = nextIndex + 1;
+      const questionType = isBackground ? "Background" : "Platform";
+      const nextQuestion = allQuestions[nextIndex];
+      
+      try {
+        const response = await fetch("/api/mrblue/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({
+            message: "Generate follow-up transition",
+            systemPrompt: `You are Mr. Blue conducting a volunteer interview for Mundo Tango.
+
+Candidate: ${session?.name}
+Their resume highlights: ${resumeContent.substring(0, 800)}
+
+They just answered: "${currentMessage}"
+
+Generate a brief (1-2 sentences) acknowledgment of their answer, then ask:
+**Question ${questionNumber} of 10 (${questionType}):**
+${nextQuestion}
+
+Be warm and specific - reference something from their answer if relevant.`,
+          }),
+        });
         
+        let aiMessage: { role: "ai", content: string };
+        if (response.ok) {
+          const data = await response.json();
+          aiMessage = { role: "ai" as const, content: data.message };
+        } else {
+          aiMessage = {
+            role: "ai" as const,
+            content: `Great answer! Thank you for sharing.\n\n**Question ${questionNumber} of 10 (${questionType}):**\n${nextQuestion}`
+          };
+        }
+        
+        const finalMessages = [...updatedMessages, aiMessage];
+        setInterviewMessages(finalMessages);
+        updateSession({ interviewMessages: finalMessages });
+        setQuestionIndex(nextIndex);
+        setIsAiTyping(false);
+      } catch {
         const aiMessage = {
           role: "ai" as const,
-          content: `Great answer! Thank you for sharing.\n\n**Question ${questionNumber} of 10 (${questionType}):**\n${question}`
+          content: `Thank you for that response!\n\n**Question ${questionNumber} of 10 (${questionType}):**\n${nextQuestion}`
         };
         const finalMessages = [...updatedMessages, aiMessage];
         setInterviewMessages(finalMessages);
         updateSession({ interviewMessages: finalMessages });
         setQuestionIndex(nextIndex);
         setIsAiTyping(false);
-      }, 1000);
+      }
     }
   };
 
