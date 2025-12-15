@@ -495,7 +495,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     name: string;
     email: string;
     step: string;
-    linkedinUrl?: string;
     uploadedDocuments?: Array<{ fileName: string; fileSize: number; parsedText?: string }>;
     interviewMessages?: Array<{ role: string; content: string }>;
     createdAt: number;
@@ -601,10 +600,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ error: "Session not found or expired" });
       }
       
-      const { step, linkedinUrl, uploadedDocuments, interviewMessages } = req.body;
+      const { step, uploadedDocuments, interviewMessages } = req.body;
       
       if (step) session.step = step;
-      if (linkedinUrl !== undefined) session.linkedinUrl = linkedinUrl;
       if (uploadedDocuments) session.uploadedDocuments = uploadedDocuments;
       if (interviewMessages) session.interviewMessages = interviewMessages;
       session.lastUpdatedAt = Date.now();

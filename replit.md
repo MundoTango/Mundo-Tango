@@ -37,11 +37,13 @@ Core functionalities include social features (events, groups, posts, notificatio
 - Guest users on waitlist can access Talent Match volunteer flow without full authentication
 - TalentMatchModal component integrates directly on RegisterPage for seamless UX
 - Session persistence via hybrid approach: server-side in-memory Map + client-side localStorage + httpOnly cookies
-- API endpoints: POST/GET/PATCH/DELETE `/api/talent-match/session` with 24-hour expiry
+- API endpoints: POST/GET/PATCH/DELETE `/api/talent-match/session` with 24-hour expiry + POST `/api/talent-match/submit` for application submission
 - TalentMatchSessionContext provides React context with createSession, updateSession, clearSession, resumeSession methods
-- Session data includes: name, email, step, linkedinUrl, uploadedDocuments (with base64), interviewMessages
+- Session data includes: name, email, step, uploadedDocuments (with base64), interviewMessages
 - Auto-restores session on mount from API (cookie) with localStorage fallback
-- AI interviews use Mr. Blue with custom systemPrompt for volunteer-specific conversations
+- **Structured 10-Question Interview:** 5 background questions + 5 platform-specific questions asked sequentially with progress tracking
+- On completion, creates volunteer record, resume entries, clarifierSession, and candidatePipeline entry (stage="interviewed") for admin review
+- LoginPage uses email/password authentication only (Google/Facebook OAuth removed for simplicity)
 
 ### Testing
 The platform employs End-to-End (E2E) tests with Playwright, automated unit test coverage via CI/CD, and visual regression testing with Claude Computer Use. The `run_test` tool manages E2E environment setup and Stripe key injection. A Volunteer Testing System provides 148 scenarios across 39 domains, with automated issue routing and an auto-fix pipeline. MB.MD Pattern 50 introduces Pre-Authenticated Playwright Testing for faster, reusable test runs by saving and reusing session states.

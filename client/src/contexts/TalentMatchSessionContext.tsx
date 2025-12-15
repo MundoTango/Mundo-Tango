@@ -165,7 +165,6 @@ export function TalentMatchSessionProvider({ children }: { children: ReactNode }
         body: JSON.stringify({
           sessionId: session.sessionId,
           step: updates.step,
-          linkedinUrl: updates.linkedinUrl,
           uploadedDocuments: updates.uploadedDocuments?.map(d => ({
             fileName: d.fileName,
             fileSize: d.fileSize,
