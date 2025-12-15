@@ -1,71 +1,133 @@
-# Dependencies
-node_modules/
-npm-debug.log
-yarn-error.log
-package-lock.json
-yarn.lock
+# ==========================================
+# MB.MD Pattern 52 - Deployment Size Optimization
+# Replit uses .dockerignore for deployment exclusions
+# ==========================================
 
-# Build outputs
-dist/
-build/
-.cache/
+# ==========================================
+# LARGE DATA DIRECTORIES (4.5+ GB savings)
+# ==========================================
+lancedb_data/
+attached_assets/
+test-videos/
 
-# Environment files
+# ==========================================
+# DOCUMENTATION & DEVELOPMENT
+# ==========================================
+docs/
+e2e/
+tests/
+scripts/
+qa_reports/
+reports/
+agent-memory/
+bifrost-config/
+
+# ==========================================
+# SOURCE CODE (bundled in dist/)
+# ==========================================
+client/
+server/
+shared/
+
+# ==========================================
+# TEST ARTIFACTS
+# ==========================================
+test-results/
+playwright-report/
+coverage/
+.nyc_output/
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+vitest.config.ts
+playwright.config.ts
+
+# ==========================================
+# VERSION CONTROL & CONFIG
+# ==========================================
+.git/
+.github/
+.gitignore
+.gitattributes
+.mcp/
+.config/
+.local/
+.upm/
+.husky/
+.gitlab-ci.yml
+.circleci/
+
+# ==========================================
+# ENVIRONMENT FILES
+# ==========================================
 .env
 .env.local
 .env.*.local
-.mcp/secrets.env
+.env.example
 
-# Git
-.git/
-.gitignore
-.gitattributes
+# ==========================================
+# BUILD/CONFIG FILES (not needed at runtime)
+# ==========================================
+drizzle.config.ts
+tailwind.config.ts
+postcss.config.js
+tsconfig.json
+eslint.config.js
+commitlint.config.js
 
+# ==========================================
 # IDE
+# ==========================================
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
 
+# ==========================================
 # OS
+# ==========================================
 .DS_Store
 Thumbs.db
 
-# Logs
+# ==========================================
+# LOGS
+# ==========================================
 logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Test coverage
-coverage/
-.nyc_output/
-
-# Replit specific
-.replit
-replit.nix
-
-# Documentation
-docs/
+# ==========================================
+# DOCUMENTATION
+# ==========================================
 *.md
 !README.md
 
-# CI/CD
-.github/
-.gitlab-ci.yml
-.circleci/
-
-# MCP (keep only necessary files)
-.mcp/logs/
-.mcp/secrets.env
-
-# Database
+# ==========================================
+# DATABASE LOCAL FILES
+# ==========================================
 *.sqlite
 *.db
+db/
 
-# Temporary files
+# ==========================================
+# TEMPORARY/CACHE
+# ==========================================
 tmp/
 temp/
 *.tmp
+*.temp
+.cache/
+node_modules/.cache/
+node_modules/.vite/
+
+# ==========================================
+# IMAGES/SCREENSHOTS AT ROOT
+# ==========================================
+*.png
+*.jpg
+*.jpeg
+patterns_for_import.json

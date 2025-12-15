@@ -1,16 +1,16 @@
 /**
  * HOY MILONGA SCRAPER
  * Priority 1 - CRITICAL for Buenos Aires and other major tango cities
- * 
+ *
  * Scrapes: Buenos Aires, São Paulo, Berlin, Athens, Istanbul, London, Miami, Montevideo
  * URL Pattern: hoy-milonga.com/{city}/en/milongas
  */
 
-import axios from 'axios';
-import * as cheerio from 'cheerio';
-import { db } from '@shared/db';
-import { scrapedEvents } from '@shared/schema';
-import { cityMatcherService } from '../../services/CityMatcherService';
+import axios from "axios";
+import * as cheerio from "cheerio";
+import { db } from "@shared/db";
+import { scrapedEvents } from "@shared/schema";
+import { cityMatcherService } from "../../services/CityMatcherService";
 
 interface HoyMilongaEvent {
   title: string;
@@ -40,27 +40,27 @@ interface ScrapedEventData {
 
 export class HoyMilongaScraper {
   private cityCodeMap: Record<string, string> = {
-    'Buenos Aires': 'buenos-aires',
-    'São Paulo': 'sao-paulo',
-    'Berlin': 'berlin',
-    'Athens': 'athens',
-    'Istanbul': 'istanbul',
-    'London': 'london',
-    'Miami': 'miami',
-    'Montevideo': 'montevideo'
+    "Buenos Aires": "buenos-aires",
+    "São Paulo": "sao-paulo",
+    Berlin: "berlin",
+    Athens: "athens",
+    Istanbul: "istanbul",
+    London: "london",
+    Miami: "miami",
+    Montevideo: "montevideo",
   };
 
   private userAgents = [
-    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
-    'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36'
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36",
   ];
 
   /**
    * Scrape all supported Hoy Milonga cities
    */
   async scrapeAllCities(sourceId: number): Promise<number> {
-    console.log('[HoyMilonga] 🌍 Starting scrape for all cities');
+    console.log("[HoyMilonga] 🌍 Starting scrape for all cities");
     let totalEvents = 0;
 
     for (const [cityName, cityCode] of Object.entries(this.cityCodeMap)) {
@@ -80,11 +80,15 @@ export class HoyMilongaScraper {
   /**
    * Scrape a specific city
    */
-  async scrapeCity(cityName: string, cityCode: string, sourceId: number): Promise<number> {
+  async scrapeCity(
+    cityName: string,
+    cityCode: string,
+    sourceId: number,
+  ): Promise<number> {
     console.log(`[HoyMilonga] 📍 Scraping ${cityName}...`);
 
     // Try both /es (Spanish) and /en (English) endpoints
-    const languages = ['es', 'en'];
+    const languages = ["es", "en"];
     let events: HoyMilongaEvent[] = [];
 
     for (const lang of languages) {
@@ -92,14 +96,18 @@ export class HoyMilongaScraper {
         const url = `https://hoy-milonga.com/${cityCode}/${lang}/milongas`;
         const html = await this.fetchHTML(url);
         const $ = cheerio.load(html);
-        
+
         events = this.extractEvents($, cityName);
         if (events.length > 0) {
-          console.log(`[HoyMilonga] Found ${events.length} events in ${lang} for ${cityName}`);
+          console.log(
+            `[HoyMilonga] Found ${events.length} events in ${lang} for ${cityName}`,
+          );
           break; // Use first successful language
         }
       } catch (error) {
-        console.log(`[HoyMilonga] Failed to fetch ${lang} for ${cityName}, trying next...`);
+        console.log(
+          `[HoyMilonga] Failed to fetch ${lang} for ${cityName}, trying next...`,
+        );
       }
     }
 
@@ -118,15 +126,16 @@ export class HoyMilongaScraper {
    * Fetch HTML with User-Agent rotation
    */
   private async fetchHTML(url: string): Promise<string> {
-    const userAgent = this.userAgents[Math.floor(Math.random() * this.userAgents.length)];
-    
+    const userAgent =
+      this.userAgents[Math.floor(Math.random() * this.userAgents.length)];
+
     const response = await axios.get(url, {
       headers: {
-        'User-Agent': userAgent,
-        'Accept': 'text/html,application/xhtml+xml',
-        'Accept-Language': 'en-US,en;q=0.9,es;q=0.8'
+        "User-Agent": userAgent,
+        Accept: "text/html,application/xhtml+xml",
+        "Accept-Language": "en-US,en;q=0.9,es;q=0.8",
       },
-      timeout: 30000
+      timeout: 30000,
     });
 
     return response.data;
@@ -135,61 +144,91 @@ export class HoyMilongaScraper {
   /**
    * Extract events from Hoy Milonga HTML
    */
-  private extractEvents($: cheerio.CheerioAPI, cityName: string): HoyMilongaEvent[] {
+  private extractEvents(
+    $: cheerio.CheerioAPI,
+    cityName: string,
+  ): HoyMilongaEvent[] {
     const events: HoyMilongaEvent[] = [];
-    const days = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado', 'domingo',
-                  'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+    const days = [
+      "lunes",
+      "martes",
+      "miércoles",
+      "jueves",
+      "viernes",
+      "sábado",
+      "domingo",
+      "monday",
+      "tuesday",
+      "wednesday",
+      "thursday",
+      "friday",
+      "saturday",
+      "sunday",
+    ];
 
     // Find all day tabs
     const dayTabs = $('.day-tab, [class*="day"], [data-day]');
-    
+
     // If no specific day tabs, look for event cards directly
-    const eventCards = $('[class*="event-card"], [class*="milonga-item"], [class*="event-item"], .event, .milonga');
-    
+    const eventCards = $(
+      '[class*="event-card"], [class*="milonga-item"], [class*="event-item"], .event, .milonga',
+    );
+
     eventCards.each((i, elem) => {
       try {
         const $card = $(elem);
-        
+
         // Extract title
-        const title = $card.find('h2, h3, .event-title, .milonga-name, [class*="title"]')
+        const title = $card
+          .find('h2, h3, .event-title, .milonga-name, [class*="title"]')
           .first()
           .text()
           .trim();
-        
+
         if (!title) return;
 
         // Extract time
-        const timeText = $card.find('[class*="time"], .hour, time, [class*="hora"]')
+        const timeText = $card
+          .find('[class*="time"], .hour, time, [class*="hora"]')
           .first()
           .text()
           .trim();
 
         // Extract venue
-        const venue = $card.find('[class*="venue"], [class*="location"], .place, [class*="lugar"]')
-          .first()
-          .text()
-          .trim() || 'Unknown Venue';
+        const venue =
+          $card
+            .find(
+              '[class*="venue"], [class*="location"], .place, [class*="lugar"]',
+            )
+            .first()
+            .text()
+            .trim() || "Unknown Venue";
 
         // Extract neighborhood
-        const neighborhood = $card.find('[class*="neighborhood"], [class*="barrio"], .area')
+        const neighborhood = $card
+          .find('[class*="neighborhood"], [class*="barrio"], .area')
           .first()
           .text()
           .trim();
 
         // Extract event type
-        const typeElement = $card.find('[class*="type"], .category, [class*="tipo"]').first();
-        const eventType = typeElement.text().trim() || 'MILONGA';
+        const typeElement = $card
+          .find('[class*="type"], .category, [class*="tipo"]')
+          .first();
+        const eventType = typeElement.text().trim() || "MILONGA";
 
         // Extract classes info if present
-        const classesText = $card.find('[class*="class"], [class*="clase"]')
+        const classesText = $card
+          .find('[class*="class"], [class*="clase"]')
           .text()
           .trim();
 
         // Try to determine day from parent or context
-        let day = 'unknown';
+        let day = "unknown";
         const dayContext = $card.closest('[data-day], [class*="day-"]');
         if (dayContext.length > 0) {
-          const dayAttr = dayContext.attr('data-day') || dayContext.attr('class') || '';
+          const dayAttr =
+            dayContext.attr("data-day") || dayContext.attr("class") || "";
           for (const d of days) {
             if (dayAttr.toLowerCase().includes(d)) {
               day = d;
@@ -200,16 +239,16 @@ export class HoyMilongaScraper {
 
         events.push({
           title,
-          timeRange: timeText || 'Time not specified',
+          timeRange: timeText || "Time not specified",
           venue,
           neighborhood,
           city: cityName,
           eventType,
           classes: classesText || undefined,
-          day
+          day,
         });
       } catch (err) {
-        console.error('[HoyMilonga] Error extracting event:', err);
+        console.error("[HoyMilonga] Error extracting event:", err);
       }
     });
 
@@ -219,13 +258,22 @@ export class HoyMilongaScraper {
   /**
    * Store events in database with city matching
    */
-  private async storeEvents(events: HoyMilongaEvent[], sourceId: number, cityName: string): Promise<void> {
-    console.log(`[HoyMilonga] 💾 Storing ${events.length} events for ${cityName}`);
+  private async storeEvents(
+    events: HoyMilongaEvent[],
+    sourceId: number,
+    cityName: string,
+  ): Promise<void> {
+    console.log(
+      `[HoyMilonga] 💾 Storing ${events.length} events for ${cityName}`,
+    );
 
     // Match city to group using CityMatcherService
-    const matchResult = await cityMatcherService.matchEventLocation(cityName);
+    const matchResult = await cityMatcherService.matchEventLocation(
+      event.venue || event.address,
+      cityName, // Pass the source city from cityCodeMap
+      event.address,
+    );
     const groupId = matchResult?.groupId || null;
-
     if (groupId) {
       console.log(`[HoyMilonga] 🎯 Matched ${cityName} to group ${groupId}`);
     } else {
@@ -235,25 +283,30 @@ export class HoyMilongaScraper {
     for (const event of events) {
       try {
         // Parse date from day and time
-        const startDate = this.parseDateFromDayAndTime(event.day, event.timeRange);
+        const startDate = this.parseDateFromDayAndTime(
+          event.day,
+          event.timeRange,
+        );
         const endDate = this.parseEndTime(event.timeRange, startDate);
 
         // Build description
         const description = [
           event.eventType,
           event.classes ? `Classes: ${event.classes}` : null,
-          event.neighborhood ? `Neighborhood: ${event.neighborhood}` : null
-        ].filter(Boolean).join(' | ');
+          event.neighborhood ? `Neighborhood: ${event.neighborhood}` : null,
+        ]
+          .filter(Boolean)
+          .join(" | ");
 
         // Build location string
-        const location = event.neighborhood 
+        const location = event.neighborhood
           ? `${event.venue}, ${event.neighborhood}, ${event.city}`
           : `${event.venue}, ${event.city}`;
 
         await db.insert(scrapedEvents).values({
           sourceId,
-          sourceUrl: 'hoy-milonga.com',
-          sourceName: 'Hoy Milonga',
+          sourceUrl: "hoy-milonga.com",
+          sourceName: "Hoy Milonga",
           title: event.title,
           description,
           startDate,
@@ -262,11 +315,16 @@ export class HoyMilongaScraper {
           address: location,
           organizer: event.venue,
           groupId,
-          status: 'pending_review',
-          externalId: `hoy-milonga-${event.city}-${event.title}`.toLowerCase().replace(/\s+/g, '-')
+          status: "pending_review",
+          externalId: `hoy-milonga-${event.city}-${event.title}`
+            .toLowerCase()
+            .replace(/\s+/g, "-"),
         });
       } catch (err) {
-        console.error(`[HoyMilonga] Failed to store event "${event.title}":`, err);
+        console.error(
+          `[HoyMilonga] Failed to store event "${event.title}":`,
+          err,
+        );
       }
     }
   }
@@ -276,16 +334,25 @@ export class HoyMilongaScraper {
    */
   private parseDateFromDayAndTime(day: string, timeRange: string): Date {
     const now = new Date();
-    
+
     // Map day names to day numbers (0 = Sunday)
     const dayMap: Record<string, number> = {
-      'sunday': 0, 'domingo': 0,
-      'monday': 1, 'lunes': 1,
-      'tuesday': 2, 'martes': 2,
-      'wednesday': 3, 'miércoles': 3, 'mierc': 3,
-      'thursday': 4, 'jueves': 4,
-      'friday': 5, 'viernes': 5,
-      'saturday': 6, 'sábado': 6, 'sabado': 6
+      sunday: 0,
+      domingo: 0,
+      monday: 1,
+      lunes: 1,
+      tuesday: 2,
+      martes: 2,
+      wednesday: 3,
+      miércoles: 3,
+      mierc: 3,
+      thursday: 4,
+      jueves: 4,
+      friday: 5,
+      viernes: 5,
+      saturday: 6,
+      sábado: 6,
+      sabado: 6,
     };
 
     const dayLower = day.toLowerCase();
@@ -300,7 +367,9 @@ export class HoyMilongaScraper {
     const currentDay = now.getDay();
     const daysUntilTarget = (targetDay - currentDay + 7) % 7;
     const targetDate = new Date(now);
-    targetDate.setDate(now.getDate() + (daysUntilTarget === 0 ? 7 : daysUntilTarget));
+    targetDate.setDate(
+      now.getDate() + (daysUntilTarget === 0 ? 7 : daysUntilTarget),
+    );
 
     // Parse time from timeRange (e.g., "18:00 - 01:00" or "20:00")
     const timeMatch = timeRange.match(/(\d{1,2}):(\d{2})/);
@@ -323,23 +392,23 @@ export class HoyMilongaScraper {
   private parseEndTime(timeRange: string, startDate: Date): Date | undefined {
     // Look for end time in format "18:00 - 01:00"
     const endTimeMatch = timeRange.match(/-(\d{1,2}):(\d{2})/);
-    
+
     if (endTimeMatch) {
       const endDate = new Date(startDate);
       const endHour = parseInt(endTimeMatch[1], 10);
       const endMinute = parseInt(endTimeMatch[2], 10);
-      
+
       endDate.setHours(endHour);
       endDate.setMinutes(endMinute);
-      
+
       // If end time is before start time, it's the next day
       if (endDate <= startDate) {
         endDate.setDate(endDate.getDate() + 1);
       }
-      
+
       return endDate;
     }
-    
+
     return undefined;
   }
 }

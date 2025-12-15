@@ -40,9 +40,10 @@ The platform employs End-to-End (E2E) tests with Playwright, automated unit test
 Production deployments use GitHub Actions for CI/CD. Monitoring is via Prometheus/Grafana with Sentry, and deployment through Replit Publishing. Redis is used for caching, and PostgreSQL (Neon) with Drizzle ORM for the database.
 
 **MB.MD Pattern 52 - Deployment Size Optimization (Dec 15, 2025):**
-- **Critical Discovery:** Replit uses `.gitignore` (NOT `.deployignore`) for deployment exclusions
-- Large directories must be added to `.gitignore` to exclude from deployment image
-- Added to `.gitignore`: lancedb_data/ (4.2GB), attached_assets/ (196MB), test-videos/ (88MB), docs/, e2e/, scripts/
+- **Critical Discovery:** Replit uses `.dockerignore` for deployment exclusions (NOT `.deployignore` or `.gitignore`)
+- Large directories must be added to `.dockerignore` to exclude from Docker container image
+- Added to `.dockerignore`: lancedb_data/ (4.2GB), attached_assets/ (196MB), test-videos/ (88MB), client/, server/, shared/, docs/, e2e/, scripts/
+- Also exclude source code directories (client/, server/, shared/) since they're bundled in dist/
 - Total savings: ~4.5GB from deployment image (was exceeding 8 GiB limit)
 - `.deployignore` files are NOT supported by Replit's deployment system
 
