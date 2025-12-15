@@ -539,10 +539,11 @@ export default function RegisterPage() {
                         />
                         <label htmlFor="terms" className="text-sm leading-tight cursor-pointer text-white/90">
                           I accept the{" "}
-                          <Link href="/terms">
-                            <a className="text-white hover:underline font-medium" target="_blank">
-                              Terms & Conditions
-                            </a>
+                          <Link 
+                            href="/terms"
+                            className="text-white hover:underline font-medium"
+                          >
+                            Terms & Conditions
                           </Link>
                         </label>
                       </div>
