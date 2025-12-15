@@ -618,7 +618,7 @@ Be warm and specific - reference something from their answer if relevant.`,
 
               <div 
                 ref={chatContainerRef}
-                className="h-[300px] overflow-y-auto border rounded-lg p-4 space-y-4" 
+                className="h-[300px] overflow-y-auto border rounded-lg p-4 space-y-4 bg-background" 
                 data-testid="chat-messages"
               >
                 {interviewMessages.map((msg, idx) => (
@@ -626,7 +626,7 @@ Be warm and specific - reference something from their answer if relevant.`,
                     <div className={`max-w-[80%] p-3 rounded-lg whitespace-pre-wrap ${
                       msg.role === "user" 
                         ? "bg-primary text-primary-foreground" 
-                        : "bg-muted"
+                        : "bg-muted text-foreground"
                     }`} data-testid={`chat-message-${idx}`}>
                       {msg.content}
                     </div>
@@ -653,7 +653,7 @@ Be warm and specific - reference something from their answer if relevant.`,
                     }
                   }}
                   disabled={isAiTyping || questionIndex >= totalQuestions}
-                  className="flex-1 min-h-[60px] p-3 border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="flex-1 min-h-[60px] p-3 border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-primary bg-background text-foreground"
                   data-testid="input-chat-message"
                 />
                 <Button 
