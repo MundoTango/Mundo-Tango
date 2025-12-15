@@ -40,12 +40,16 @@ The platform employs End-to-End (E2E) tests with Playwright, automated unit test
 Production deployments use GitHub Actions for CI/CD. Monitoring is via Prometheus/Grafana with Sentry, and deployment through Replit Publishing. Redis is used for caching, and PostgreSQL (Neon) with Drizzle ORM for the database.
 
 **MB.MD Pattern 52 - Deployment Size Optimization (Dec 15, 2025):**
-- **Critical Discovery:** Replit uses `.dockerignore` for deployment exclusions (NOT `.deployignore` or `.gitignore`)
-- Large directories must be added to `.dockerignore` to exclude from Docker container image
-- Added to `.dockerignore`: lancedb_data/ (4.2GB), attached_assets/ (196MB), test-videos/ (88MB), client/, server/, shared/, docs/, e2e/, scripts/
-- Also exclude source code directories (client/, server/, shared/) since they're bundled in dist/
-- Total savings: ~4.5GB from deployment image (was exceeding 8 GiB limit)
-- `.deployignore` files are NOT supported by Replit's deployment system
+- **Problem:** Workspace was 13GB, exceeding Replit's 8GB deployment limit
+- **Solution:** Pre-deployment cleanup removing non-production directories
+- **Directories Removed:**
+  - `lancedb_data/` (4.2GB) - Vector DB cache, auto-recreates on startup
+  - `.cache/ms-playwright/` (925MB) - Playwright browser binaries
+  - `test-videos/` (88MB) - Test artifacts
+  - `attached_assets/` cleaned: 197MB → 21MB (kept only stock_images/ and optimized/ needed for builds)
+- **Final Size:** 7.4GB (reduced from 13GB, 43% reduction)
+- **Key Insight:** `.dockerignore` configured but Replit may archive entire workspace; manual cleanup before deploy is essential
+- **attached_assets Note:** Stock images are bundled into `dist/public/assets/` by Vite during build; source images needed for rebuilds only
 
 **Dec 14, 2025 - Bundle Optimization Sprint:**
 - All pages use React.lazy() for code splitting
