@@ -1,6 +1,6 @@
 // Test scraper for 5 TangoMango sources
 import { db } from './server/db';
-import { eventScrapingSources, events } from './server/db/schema';
+import { eventScrapingSources, events } from ./shared/schema';
 import { eq, inArray } from 'drizzle-orm';
 
 async function testScrapeFiveSources() {

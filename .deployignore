@@ -1,0 +1,119 @@
+# Deployment Ignore File - Exclude non-runtime files from deployment image
+# This reduces the deployment image size to stay under Replit's 8 GiB limit
+
+# ==========================================
+# LARGE DATA DIRECTORIES (4.2 GB+)
+# ==========================================
+lancedb_data/
+
+# ==========================================
+# TEST ARTIFACTS
+# ==========================================
+test-videos/
+test-results/
+tests/
+e2e/
+playwright-report/
+playwright.config.ts
+*.spec.ts
+
+# ==========================================
+# DEVELOPMENT/BUILD ASSETS
+# ==========================================
+attached_assets/
+docs/
+reports/
+qa_reports/
+logs/
+
+# ==========================================
+# SOURCE CODE (already bundled in dist/)
+# ==========================================
+client/
+server/
+
+# ==========================================
+# DEVELOPMENT FILES
+# ==========================================
+*.md
+*.log
+*.png
+*.jpg
+*.jpeg
+!dist/**/*.png
+!dist/**/*.jpg
+!dist/**/*.jpeg
+
+# ==========================================
+# CONFIG/DEVELOPMENT FILES
+# ==========================================
+.husky/
+.git/
+.mcp/
+.config/
+.local/
+.upm/
+agent-memory/
+bifrost-config/
+
+# ==========================================
+# MISC DEVELOPMENT FILES
+# ==========================================
+drizzle.config.ts
+tailwind.config.ts
+postcss.config.js
+tsconfig.json
+eslint.config.js
+commitlint.config.js
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+vitest.config.ts
+
+# ==========================================
+# TEMPORARY/CACHE FILES
+# ==========================================
+*.tmp
+*.temp
+.cache/
+tmp/
+
+# ==========================================
+# SCRIPTS (not needed at runtime)
+# ==========================================
+scripts/
+
+# ==========================================
+# MIGRATIONS (handled at startup, not runtime)
+# ==========================================
+migrations/
+
+# ==========================================
+# PUBLIC FOLDER (bundled into dist/public)
+# ==========================================
+public/
+
+# ==========================================
+# SHARED (types already compiled)
+# ==========================================
+shared/
+
+# ==========================================
+# DATABASE LOCAL FILES
+# ==========================================
+db/
+*.db
+*.sqlite
+
+# ==========================================
+# SPECIAL FILES AT ROOT
+# ==========================================
+topbar-check.png
+after_toast_clear.png
+feed_page.png
+feed-3-column-layout.png
+homepage_after_login.png
+memories-3-column-layout.png
+3-column-spacing.png
+patterns_for_import.json
