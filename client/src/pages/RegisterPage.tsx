@@ -14,6 +14,7 @@ import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary"
 import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import tangoHeroImage from "@assets/stock_images/elegant_professional_e4da136e.jpg";
+import { TalentMatchModal } from "@/components/TalentMatchModal";
 
 export default function RegisterPage() {
   const [inviteCode, setInviteCode] = useState("");
@@ -32,6 +33,7 @@ export default function RegisterPage() {
   const [isCheckingUsername, setIsCheckingUsername] = useState(false);
   const [emailAvailable, setEmailAvailable] = useState<boolean | null>(null);
   const [isCheckingEmail, setIsCheckingEmail] = useState(false);
+  const [talentMatchOpen, setTalentMatchOpen] = useState(false);
   const { register } = useAuth();
   const { toast } = useToast();
 
@@ -273,17 +275,16 @@ export default function RegisterPage() {
                     <div className="space-y-4">
                       <p className="text-sm text-white/60 font-medium uppercase tracking-wide">While you wait, help us grow</p>
                       <div className="flex flex-col gap-3">
-                        <Link href="/talent-match">
-                          <Button 
-                            className="w-full bg-white text-black hover:bg-white/90"
-                            size="lg"
-                            data-testid="button-volunteer-cta"
-                          >
-                            <HandHeart className="mr-2 h-5 w-5" />
-                            Volunteer with us
-                            <ArrowRight className="ml-2 h-5 w-5" />
-                          </Button>
-                        </Link>
+                        <Button 
+                          className="w-full bg-white text-black hover:bg-white/90"
+                          size="lg"
+                          onClick={() => setTalentMatchOpen(true)}
+                          data-testid="button-volunteer-cta"
+                        >
+                          <HandHeart className="mr-2 h-5 w-5" />
+                          Volunteer with us
+                          <ArrowRight className="ml-2 h-5 w-5" />
+                        </Button>
                         <Link href="/crowdfunding">
                           <Button 
                             variant="outline" 
@@ -298,6 +299,13 @@ export default function RegisterPage() {
                         </Link>
                       </div>
                     </div>
+                    
+                    <TalentMatchModal 
+                      open={talentMatchOpen}
+                      onOpenChange={setTalentMatchOpen}
+                      initialName={name}
+                      initialEmail={email}
+                    />
                   </div>
                 </motion.div>
               ) : (

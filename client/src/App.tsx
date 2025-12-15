@@ -7,6 +7,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "./contexts/theme-context";
 import { AuthProvider } from "./contexts/AuthContext";
 import { MrBlueProvider } from "./contexts/MrBlueContext";
+import { TalentMatchSessionProvider } from "./contexts/TalentMatchSessionContext";
 import { PredictiveContextProvider } from "./providers/PredictiveContextProvider";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { AppLayout } from "./components/AppLayout";
@@ -2880,13 +2881,15 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <ThemeProvider>
           <AuthProvider>
-            <PredictiveContextProvider>
-              <MrBlueProvider>
-                <TooltipProvider>
-                  <AppContent />
-                </TooltipProvider>
-              </MrBlueProvider>
-            </PredictiveContextProvider>
+            <TalentMatchSessionProvider>
+              <PredictiveContextProvider>
+                <MrBlueProvider>
+                  <TooltipProvider>
+                    <AppContent />
+                  </TooltipProvider>
+                </MrBlueProvider>
+              </PredictiveContextProvider>
+            </TalentMatchSessionProvider>
           </AuthProvider>
         </ThemeProvider>
       </QueryClientProvider>
