@@ -531,7 +531,6 @@ router.get("/:id/data-sources", async (req: Request, res: Response) => {
       .from(events)
       .where(and(
         eq(events.groupId, parseInt(id)),
-        sql`${events.sourceName} IS NOT NULL`
       ));
     
     // Get scraping sources for this city
