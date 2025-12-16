@@ -47,7 +47,13 @@ interface UploadedDocument {
   status: "pending" | "parsed" | "error";
 }
 
-const BACKGROUND_QUESTIONS = [
+// Total questions per phase (5 background + 5 platform = 10 total)
+const TOTAL_BACKGROUND_QUESTIONS = 5;
+const TOTAL_PLATFORM_QUESTIONS = 5;
+const TOTAL_QUESTIONS = TOTAL_BACKGROUND_QUESTIONS + TOTAL_PLATFORM_QUESTIONS;
+
+// Fallback questions if AI generation fails
+const FALLBACK_BACKGROUND_QUESTIONS = [
   "Tell me about your professional background and current role.",
   "What relevant skills do you have that could benefit a global tango community platform?",
   "Describe a project or achievement you're particularly proud of.",
@@ -55,7 +61,7 @@ const BACKGROUND_QUESTIONS = [
   "What is your preferred communication style and timezone availability?",
 ];
 
-const PLATFORM_QUESTIONS = [
+const FALLBACK_PLATFORM_QUESTIONS = [
   "What aspects of Mundo Tango's mission resonate most with you?",
   "How do you envision contributing to our global tango community?",
   "What specific areas of the platform would you like to help improve or develop?",
@@ -91,8 +97,7 @@ export function TalentMatchExperience({
   const [isSubmittingApplication, setIsSubmittingApplication] = useState(false);
   const [hasRestoredSession, setHasRestoredSession] = useState(false);
 
-  const allQuestions = [...BACKGROUND_QUESTIONS, ...PLATFORM_QUESTIONS];
-  const totalQuestions = allQuestions.length;
+  const totalQuestions = TOTAL_QUESTIONS;
 
   // Guest mode: Initialize session
   useEffect(() => {
@@ -436,27 +441,33 @@ export function TalentMatchExperience({
       
       const parsedDocs = storedDocs.filter(d => d.status === "parsed" && d.parsedText);
       const resumeContent = parsedDocs.map(d => d.parsedText).join("\n\n").substring(0, 3000);
+      const candidateName = session?.name || initialName || "there";
       
       try {
+        // Generate AI-driven first question based on resume (same as authenticated flow)
         const response = await fetch("/api/mrblue/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
           body: JSON.stringify({
-            message: "Generate an interview greeting for this volunteer candidate",
-            systemPrompt: `You are Mr. Blue, a friendly AI interviewer for Mundo Tango's volunteer program. 
+            message: "Generate resume question 1",
+            systemPrompt: `You are Mr. Blue, the AI interviewer for Mundo Tango's volunteer program. You're conducting Phase 1: Background Deep-Dive.
 
-The candidate just uploaded their resume. Here is what you learned about them:
-
+The volunteer ${candidateName} has uploaded this resume/profile:
 ${resumeContent}
 
-Generate a warm, personalized greeting that:
-1. Addresses them by name (${session?.name || initialName || "the candidate"})
-2. Briefly acknowledges 2-3 specific things from their resume (skills, experience, or achievements)
-3. Explains you'll ask 10 questions (5 background, 5 platform-specific)
-4. Asks the first question: "${BACKGROUND_QUESTIONS[0]}"
+Question 1 of ${TOTAL_BACKGROUND_QUESTIONS}.
 
-Keep the greeting concise (3-4 paragraphs max). Use a friendly, professional tone.`,
+Your goal: Start with a warm greeting acknowledging their resume, then ask ONE specific, insightful question about their background to understand:
+- Their actual experience level and expertise areas
+- Projects they're most proud of
+- Technologies/skills they want to use more
+- Any gaps or areas they want to develop
+
+Be conversational and warm. Reference specific details from their resume when possible.
+Format: Start with a personalized greeting (mention their name and 1-2 specific things from their resume), then ask your question clearly marked as **Question 1 of 10 (Background):**
+
+Keep the entire response concise (2-3 paragraphs max).`,
           }),
         });
         
@@ -464,7 +475,7 @@ Keep the greeting concise (3-4 paragraphs max). Use a friendly, professional ton
           const data = await response.json();
           const welcomeMessage = {
             role: "ai" as const,
-            content: data.message || `Hello ${session?.name || initialName}! I've reviewed your resume and I'm impressed with your background. Let's begin the interview!\n\n**Question 1 of 10 (Background):**\n${BACKGROUND_QUESTIONS[0]}`
+            content: data.message || data.response || `Hello ${candidateName}! I've reviewed your resume and I'm impressed with your background. Let's begin the interview!\n\n**Question 1 of 10 (Background):**\n${FALLBACK_BACKGROUND_QUESTIONS[0]}`
           };
           setInterviewMessages([welcomeMessage]);
           updateSession({ interviewMessages: [welcomeMessage] });
@@ -474,7 +485,7 @@ Keep the greeting concise (3-4 paragraphs max). Use a friendly, professional ton
       } catch {
         const welcomeMessage = {
           role: "ai" as const,
-          content: `Hello ${session?.name || initialName || "there"}! I'm Mr. Blue, and I've reviewed your resume. I'm excited to learn more about you!\n\nI'll be asking you 10 questions - 5 about your background and 5 about how you'd like to contribute to our platform.\n\nLet's begin!\n\n**Question 1 of 10 (Background):**\n${BACKGROUND_QUESTIONS[0]}`
+          content: `Hello ${candidateName}! I'm Mr. Blue, and I've reviewed your resume. I'm excited to learn more about you!\n\nI'll be asking you 10 questions - 5 about your background and 5 about how you'd like to contribute to our platform.\n\n**Question 1 of 10 (Background):**\n${FALLBACK_BACKGROUND_QUESTIONS[0]}`
         };
         setInterviewMessages([welcomeMessage]);
         updateSession({ interviewMessages: [welcomeMessage] });
@@ -559,10 +570,72 @@ Keep it to 2-3 paragraphs.`,
         setTimeout(() => setStep("complete"), 2000);
       }
     } else {
-      const isBackground = nextIndex < BACKGROUND_QUESTIONS.length;
+      const isBackground = nextIndex < TOTAL_BACKGROUND_QUESTIONS;
       const questionNumber = nextIndex + 1;
       const questionType = isBackground ? "Background" : "Platform";
-      const nextQuestion = allQuestions[nextIndex];
+      const candidateName = session?.name || initialName || "there";
+      
+      // Gather previous answers for context
+      const previousAnswers = updatedMessages
+        .filter(m => m.role === "user")
+        .map(m => m.content)
+        .slice(-3);
+      
+      // Generate AI-driven question based on resume and previous answers (same as authenticated flow)
+      let systemPrompt: string;
+      
+      if (isBackground) {
+        systemPrompt = `You are Mr. Blue, the AI interviewer for Mundo Tango's volunteer program. You're conducting Phase 1: Background Deep-Dive.
+
+The volunteer ${candidateName} has uploaded this resume/profile:
+${resumeContent}
+
+Previous answers in this interview: ${previousAnswers.join(" | ")}
+
+They just answered: "${currentMessage}"
+
+Question ${questionNumber} of ${TOTAL_BACKGROUND_QUESTIONS} in Background phase.
+
+Your goal: First briefly acknowledge their answer (1 sentence), then ask ONE specific, insightful question about their background to understand:
+- Their actual experience level and expertise areas
+- Projects they're most proud of
+- Technologies/skills they want to use more
+- Any gaps or areas they want to develop
+
+Be conversational and warm. Reference specific details from their resume and previous answers.
+Format your question clearly as **Question ${questionNumber} of 10 (Background):**
+Keep the entire response concise (2-3 sentences max).`;
+      } else {
+        systemPrompt = `You are Mr. Blue, the AI interviewer for Mundo Tango's volunteer program. You're conducting Phase 2: Platform Contribution Matching.
+
+Based on the interview so far, here's what we learned about ${candidateName}:
+Resume highlights: ${resumeContent.substring(0, 1500)}
+Previous answers: ${previousAnswers.join(" | ")}
+
+They just answered: "${currentMessage}"
+
+Question ${questionNumber - TOTAL_BACKGROUND_QUESTIONS} of ${TOTAL_PLATFORM_QUESTIONS} in Platform phase.
+
+Mundo Tango needs help with:
+- Frontend development (React, TypeScript, Tailwind)
+- Backend development (Node.js, Express, PostgreSQL)
+- AI/ML integration (OpenAI, Anthropic, Groq)
+- Event scraping and data collection
+- Community management and moderation
+- Documentation and technical writing
+- UX/UI design and user research
+- Testing and QA automation
+- DevOps and infrastructure
+
+Your goal: First briefly acknowledge their answer (1 sentence), then ask ONE question to understand:
+- What type of work excites them most
+- How much time they can commit
+- Their preferred team dynamics
+- Specific Mundo Tango features they'd like to work on
+
+Be specific about Mundo Tango's needs. Format your question clearly as **Question ${questionNumber} of 10 (Platform):**
+Keep the entire response concise (2-3 sentences max).`;
+      }
       
       try {
         const response = await fetch("/api/mrblue/chat", {
@@ -570,30 +643,23 @@ Keep it to 2-3 paragraphs.`,
           headers: { "Content-Type": "application/json" },
           credentials: "include",
           body: JSON.stringify({
-            message: "Generate follow-up transition",
-            systemPrompt: `You are Mr. Blue conducting a volunteer interview for Mundo Tango.
-
-Candidate: ${session?.name || initialName}
-Their resume highlights: ${resumeContent.substring(0, 800)}
-
-They just answered: "${currentMessage}"
-
-Generate a brief (1-2 sentences) acknowledgment of their answer, then ask:
-**Question ${questionNumber} of 10 (${questionType}):**
-${nextQuestion}
-
-Be warm and specific - reference something from their answer if relevant.`,
+            message: `Generate ${isBackground ? "background" : "platform"} question ${questionNumber}`,
+            systemPrompt,
           }),
         });
         
         let aiMessage: { role: "ai", content: string };
         if (response.ok) {
           const data = await response.json();
-          aiMessage = { role: "ai" as const, content: data.message };
+          aiMessage = { role: "ai" as const, content: data.message || data.response };
         } else {
+          // Fallback to static questions if API fails
+          const fallbackQuestion = isBackground 
+            ? FALLBACK_BACKGROUND_QUESTIONS[Math.min(nextIndex, FALLBACK_BACKGROUND_QUESTIONS.length - 1)]
+            : FALLBACK_PLATFORM_QUESTIONS[Math.min(nextIndex - TOTAL_BACKGROUND_QUESTIONS, FALLBACK_PLATFORM_QUESTIONS.length - 1)];
           aiMessage = {
             role: "ai" as const,
-            content: `Great answer! Thank you for sharing.\n\n**Question ${questionNumber} of 10 (${questionType}):**\n${nextQuestion}`
+            content: `Great answer! Thank you for sharing.\n\n**Question ${questionNumber} of 10 (${questionType}):**\n${fallbackQuestion}`
           };
         }
         
@@ -603,9 +669,13 @@ Be warm and specific - reference something from their answer if relevant.`,
         setQuestionIndex(nextIndex);
         setIsAiTyping(false);
       } catch {
+        // Fallback to static questions if API fails
+        const fallbackQuestion = isBackground 
+          ? FALLBACK_BACKGROUND_QUESTIONS[Math.min(nextIndex, FALLBACK_BACKGROUND_QUESTIONS.length - 1)]
+          : FALLBACK_PLATFORM_QUESTIONS[Math.min(nextIndex - TOTAL_BACKGROUND_QUESTIONS, FALLBACK_PLATFORM_QUESTIONS.length - 1)];
         const aiMessage = {
           role: "ai" as const,
-          content: `Thank you for that response!\n\n**Question ${questionNumber} of 10 (${questionType}):**\n${nextQuestion}`
+          content: `Thank you for that response!\n\n**Question ${questionNumber} of 10 (${questionType}):**\n${fallbackQuestion}`
         };
         const finalMessages = [...updatedMessages, aiMessage];
         setInterviewMessages(finalMessages);
@@ -674,26 +744,26 @@ Be warm and specific - reference something from their answer if relevant.`,
 
   // Guest mode: Interview step
   if (mode === "guest" && step === "interview") {
-    const isBackgroundPhase = questionIndex < BACKGROUND_QUESTIONS.length;
-    const backgroundProgress = Math.min(questionIndex, BACKGROUND_QUESTIONS.length);
-    const platformProgress = Math.max(0, questionIndex - BACKGROUND_QUESTIONS.length);
+    const isBackgroundPhase = questionIndex < TOTAL_BACKGROUND_QUESTIONS;
+    const backgroundProgress = Math.min(questionIndex, TOTAL_BACKGROUND_QUESTIONS);
+    const platformProgress = Math.max(0, questionIndex - TOTAL_BACKGROUND_QUESTIONS);
     
     const guestPhases: PhaseConfig[] = [
       {
         name: "background",
         label: "Background",
         current: backgroundProgress,
-        total: BACKGROUND_QUESTIONS.length,
+        total: TOTAL_BACKGROUND_QUESTIONS,
         isActive: isBackgroundPhase,
-        isComplete: backgroundProgress >= BACKGROUND_QUESTIONS.length
+        isComplete: backgroundProgress >= TOTAL_BACKGROUND_QUESTIONS
       },
       {
         name: "platform",
         label: "Platform",
         current: platformProgress,
-        total: PLATFORM_QUESTIONS.length,
+        total: TOTAL_PLATFORM_QUESTIONS,
         isActive: !isBackgroundPhase && questionIndex < totalQuestions,
-        isComplete: platformProgress >= PLATFORM_QUESTIONS.length
+        isComplete: platformProgress >= TOTAL_PLATFORM_QUESTIONS
       }
     ];
 
