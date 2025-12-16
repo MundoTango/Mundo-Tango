@@ -17,7 +17,8 @@ export default function WelcomePage() {
 
   useEffect(() => {
     if (user && user.isOnboardingComplete) {
-      navigate("/feed");
+      // Already onboarded, redirect to volunteer/support page
+      navigate("/volunteer");
     }
   }, [user, navigate]);
 

@@ -27,7 +27,8 @@ export default function PhotoUploadPage() {
     if (!user) {
       navigate("/login");
     } else if (user.isOnboardingComplete) {
-      navigate("/feed");
+      // Already onboarded, redirect to volunteer/support page
+      navigate("/volunteer");
     }
   }, [user, navigate]);
 

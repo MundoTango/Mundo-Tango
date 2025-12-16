@@ -825,7 +825,8 @@ export default function SubscriptionOnboarding() {
         title: "Welcome to Mundo Tango!",
         description: "Your subscription is now active.",
       });
-      setLocation('/feed');
+      // After onboarding, redirect to volunteer/support page
+      setLocation('/volunteer');
     },
   });
 

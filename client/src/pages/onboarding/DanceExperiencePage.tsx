@@ -71,7 +71,8 @@ export default function DanceExperiencePage() {
     if (!user) {
       navigate("/login");
     } else if (user.isOnboardingComplete) {
-      navigate("/feed");
+      // Already onboarded, redirect to volunteer/support page
+      navigate("/volunteer");
     }
   }, [user, navigate]);
 
@@ -131,7 +132,8 @@ export default function DanceExperiencePage() {
       });
 
       if (refreshUser) await refreshUser();
-      navigate("/feed");
+      // After completing onboarding, redirect to volunteer/support page
+      navigate("/volunteer");
     } catch (error) {
       toast({
         title: "Error",

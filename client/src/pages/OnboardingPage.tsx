@@ -57,7 +57,8 @@ export default function OnboardingPage() {
     if (currentStep < totalSteps) {
       setCurrentStep(currentStep + 1);
     } else {
-      setLocation("/feed");
+      // After onboarding, redirect to volunteer/support page
+      setLocation("/volunteer");
     }
   };
 
