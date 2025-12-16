@@ -219,10 +219,11 @@ export default function CitySelectionPage() {
 
             {/* Progress Indicator */}
             <div className="flex justify-center gap-2 mt-8">
-              <div className="h-2 w-16 rounded-full bg-primary"></div>
-              <div className="h-2 w-16 rounded-full bg-muted"></div>
-              <div className="h-2 w-16 rounded-full bg-muted"></div>
-              <div className="h-2 w-16 rounded-full bg-muted"></div>
+              <div className="h-2 w-12 rounded-full bg-primary"></div>
+              <div className="h-2 w-12 rounded-full bg-muted"></div>
+              <div className="h-2 w-12 rounded-full bg-muted"></div>
+              <div className="h-2 w-12 rounded-full bg-muted"></div>
+              <div className="h-2 w-12 rounded-full bg-muted"></div>
             </div>
           </motion.div>
         </div>

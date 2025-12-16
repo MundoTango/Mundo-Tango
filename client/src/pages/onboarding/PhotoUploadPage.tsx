@@ -207,12 +207,21 @@ export default function PhotoUploadPage() {
 
                   <CardContent className="p-8 space-y-6">
                     <div className="flex justify-center">
-                      <Avatar className="h-40 w-40 border-4 border-primary/10">
-                        <AvatarImage src={preview || undefined} />
-                        <AvatarFallback className="text-5xl bg-primary/5">
-                          {user?.name?.charAt(0) || "?"}
-                        </AvatarFallback>
-                      </Avatar>
+                      {preview ? (
+                        <div className="h-40 w-40 rounded-full border-4 border-primary/10 overflow-hidden">
+                          <img 
+                            src={preview} 
+                            alt="Profile preview" 
+                            className="h-full w-full object-cover"
+                          />
+                        </div>
+                      ) : (
+                        <Avatar className="h-40 w-40 border-4 border-primary/10">
+                          <AvatarFallback className="text-5xl bg-primary/5">
+                            {user?.name?.charAt(0) || "?"}
+                          </AvatarFallback>
+                        </Avatar>
+                      )}
                     </div>
 
                     <div
@@ -320,10 +329,11 @@ export default function PhotoUploadPage() {
 
                 {/* Progress Indicator */}
                 <div className="flex justify-center gap-2 mt-8">
-                  <div className="h-2 w-16 rounded-full bg-primary"></div>
-                  <div className="h-2 w-16 rounded-full bg-primary"></div>
-                  <div className="h-2 w-16 rounded-full bg-muted"></div>
-                  <div className="h-2 w-16 rounded-full bg-muted"></div>
+                  <div className="h-2 w-12 rounded-full bg-primary"></div>
+                  <div className="h-2 w-12 rounded-full bg-primary"></div>
+                  <div className="h-2 w-12 rounded-full bg-muted"></div>
+                  <div className="h-2 w-12 rounded-full bg-muted"></div>
+                  <div className="h-2 w-12 rounded-full bg-muted"></div>
                 </div>
               </motion.div>
             </div>

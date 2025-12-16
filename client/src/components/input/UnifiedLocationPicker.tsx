@@ -441,7 +441,9 @@ export function UnifiedLocationPicker({
       }
     };
 
-    const debounce = setTimeout(searchLocations, mode === "venue" ? 150 : 50);
+    // Use longer debounce for city mode (300ms) to reduce API calls and improve perceived performance
+    const debounceMs = mode === "venue" ? 150 : mode === "city" ? 300 : 150;
+    const debounce = setTimeout(searchLocations, debounceMs);
     return () => clearTimeout(debounce);
   }, [searchQuery, mode, userId, userCity]);
 

@@ -66,6 +66,21 @@ Core functionalities include social features (events, groups, posts, notificatio
   - Without invite code or invalid code: `waitlist: true` → After onboarding → redirects to /volunteer
 - **Validated:** E2E tests confirm both registration paths work correctly
 
+**MB.MD Pattern 56 - Onboarding Flow Enhancement (Dec 16, 2025):**
+- **5-Step Onboarding Flow:**
+  1. CitySelectionPage (step-1): User selects home city with 300ms debounced 3-tier search
+  2. PhotoUploadPage (step-2): Optional profile photo with object-cover for proper aspect ratio
+  3. TangoRolesPage (step-3): Select roles + tango start year + individual role start dates
+  4. LanguagesPage (step-4): Primary language + additional languages
+  5. DanceExperiencePage (step-5): Now "Hobbies" page for non-tango interests
+- **Key Improvements:**
+  - City search debounce increased from 50ms to 300ms for better performance
+  - Photo preview uses object-cover to prevent distortion of non-square images
+  - Merged tango experience fields (year started, role dates) into TangoRolesPage (step-3)
+  - Converted DanceExperiencePage to "Other Hobbies" page with 17 hobby options
+  - Consistent 5-step progress bars across all onboarding pages (w-12 width)
+  - All pages have test IDs for E2E testing compatibility
+
 ### Testing
 The platform employs End-to-End (E2E) tests with Playwright, automated unit test coverage via CI/CD, and visual regression testing with Claude Computer Use. The `run_test` tool manages E2E environment setup and Stripe key injection. A Volunteer Testing System provides 148 scenarios across 39 domains, with automated issue routing and an auto-fix pipeline. MB.MD Pattern 50 introduces Pre-Authenticated Playwright Testing for faster, reusable test runs by saving and reusing session states.
 

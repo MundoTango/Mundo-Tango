@@ -1,34 +1,70 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Check, Heart, ChevronRight } from "lucide-react";
+import { Loader2, Check, Heart, ChevronRight, Calendar, Info, Sparkles } from "lucide-react";
 import { SEO } from "@/components/SEO";
 import { useAuth } from "@/contexts/AuthContext";
 import { extractApiError } from "@/lib/apiErrorHandler";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import heroImage from "@assets/stock_images/elegant_professional_29e89c1e.jpg";
-import { TANGO_ROLES } from "@/lib/tangoRoles";
+import { TANGO_ROLES, getRoleLabel, getRoleIcon, getRoleColor } from "@/lib/tangoRoles";
+import { 
+  buildTangoRoleExperience, 
+  updateRoleStartYear,
+  type TangoRoleExperience 
+} from "../../../../shared/utils/roleExperience";
+
+const currentYear = new Date().getFullYear();
+
+function generateYearOptions(): number[] {
+  const years: number[] = [];
+  for (let year = currentYear; year >= 1950; year--) {
+    years.push(year);
+  }
+  return years;
+}
 
 export default function TangoRolesPage() {
   const [, navigate] = useLocation();
   const { user } = useAuth();
   const { toast } = useToast();
   const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
+  const [tangoStartYear, setTangoStartYear] = useState<number>(currentYear);
+  const [roleExperiences, setRoleExperiences] = useState<TangoRoleExperience[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  
+  const yearOptions = useMemo(() => generateYearOptions(), []);
+  const yearsOfDancing = currentYear - tangoStartYear;
 
   useEffect(() => {
     if (!user) {
       navigate("/login");
     } else if (user.isOnboardingComplete) {
-      // Already onboarded, redirect to volunteer/support page
       navigate("/volunteer");
     }
   }, [user, navigate]);
+
+  useEffect(() => {
+    if (selectedRoles.length > 0) {
+      const initialExperiences = buildTangoRoleExperience(selectedRoles, tangoStartYear);
+      setRoleExperiences(initialExperiences);
+    } else {
+      setRoleExperiences([]);
+    }
+  }, [selectedRoles, tangoStartYear]);
 
   const toggleRole = (roleId: string) => {
     if (selectedRoles.includes(roleId)) {
@@ -36,6 +72,16 @@ export default function TangoRolesPage() {
     } else {
       setSelectedRoles([...selectedRoles, roleId]);
     }
+  };
+
+  const handleTangoStartYearChange = (year: string) => {
+    const newYear = parseInt(year, 10);
+    setTangoStartYear(newYear);
+  };
+
+  const handleRoleYearChange = (role: string, year: string) => {
+    const newYear = parseInt(year, 10);
+    setRoleExperiences(prev => updateRoleStartYear(prev, role, newYear));
   };
 
   const handleContinue = async () => {
@@ -59,6 +105,9 @@ export default function TangoRolesPage() {
         },
         body: JSON.stringify({
           tangoRoles: selectedRoles,
+          tangoStartYear,
+          tangoRoleExperience: roleExperiences,
+          yearsOfDancing,
           formStatus: 3,
         }),
       });
@@ -87,7 +136,6 @@ export default function TangoRolesPage() {
 <>
       <SEO title="Your Tango Roles - Mundo Tango" description="Tell us what you do in the tango community" />
       
-      {/* Hero Section */}
       <div className="relative h-[50vh] w-full overflow-hidden">
         <div 
           className="absolute inset-0 bg-cover bg-center"
@@ -117,7 +165,6 @@ export default function TangoRolesPage() {
         </div>
       </div>
 
-      {/* Content Section */}
       <div className="bg-background">
         <div className="container mx-auto max-w-5xl px-6 py-12">
           <motion.div
@@ -131,73 +178,166 @@ export default function TangoRolesPage() {
                   <div className="p-3 rounded-xl bg-primary/10">
                     <Heart className="h-6 w-6 text-primary" />
                   </div>
-                  <h2 className="text-2xl md:text-3xl font-serif font-bold">Your Tango Roles</h2>
+                  <h2 className="text-2xl md:text-3xl font-serif font-bold">Your Tango Journey</h2>
                 </div>
                 <p className="text-muted-foreground leading-relaxed">
                   Choose all the ways you participate in tango - minimum 1 required
                 </p>
               </CardHeader>
 
-              <CardContent className="p-8 space-y-8">
-                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                  {TANGO_ROLES.map((role, index) => {
-                    const IconComponent = role.icon;
-                    return (
-                      <motion.button
-                        key={role.value}
-                        onClick={() => toggleRole(role.value)}
-                        className={`relative flex flex-col items-center gap-3 p-6 rounded-xl border-2 transition-all hover-elevate active-elevate-2 ${
-                          selectedRoles.includes(role.value)
-                            ? "border-primary bg-primary/10"
-                            : "border-muted"
-                        }`}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.03 }}
-                        data-testid={`role-${role.value}`}
+              <CardContent className="p-8 space-y-10">
+                <div className="space-y-4">
+                  <Label htmlFor="tango-start-year" className="text-lg font-medium flex items-center gap-2">
+                    <Calendar className="h-5 w-5 text-primary" />
+                    When did you start tango?
+                  </Label>
+                  <div className="flex items-center gap-4 flex-wrap">
+                    <Select
+                      value={tangoStartYear.toString()}
+                      onValueChange={handleTangoStartYearChange}
+                    >
+                      <SelectTrigger 
+                        className="w-32" 
+                        data-testid="select-tango-start-year"
                       >
-                        {selectedRoles.includes(role.value) && (
-                          <motion.div 
-                            className="absolute top-3 right-3 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground"
-                            initial={{ scale: 0 }}
-                            animate={{ scale: 1 }}
-                            transition={{ type: "spring" }}
+                        <SelectValue placeholder="Select year" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {yearOptions.map(year => (
+                          <SelectItem 
+                            key={year} 
+                            value={year.toString()}
+                            data-testid={`option-year-${year}`}
                           >
-                            <Check className="h-3 w-3" />
-                          </motion.div>
-                        )}
-                        <div className="p-4 rounded-full" style={{ backgroundColor: `${role.color}20` }}>
-                          <IconComponent className="w-8 h-8" style={{ color: role.color }} />
-                        </div>
-                        <span className="text-sm font-medium text-center leading-tight">
-                          {role.label}
-                        </span>
-                      </motion.button>
-                    );
-                  })}
+                            {year}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <span className="text-muted-foreground">
+                      ({yearsOfDancing} {yearsOfDancing === 1 ? 'year' : 'years'} ago)
+                    </span>
+                    {yearsOfDancing === 0 && (
+                      <Badge variant="outline">New to tango? Welcome!</Badge>
+                    )}
+                    {yearsOfDancing >= 10 && (
+                      <Badge variant="default" className="bg-yellow-500">
+                        <Sparkles className="h-3 w-3 mr-1" />
+                        Veteran
+                      </Badge>
+                    )}
+                  </div>
                 </div>
 
-                {selectedRoles.length > 0 && (
-                  <motion.div 
-                    className="border-t pt-6 mt-6"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                  >
-                    <p className="text-sm font-medium mb-3">Selected roles ({selectedRoles.length}):</p>
-                    <div className="flex flex-wrap gap-2">
-                      {selectedRoles.map((roleValue) => {
-                        const role = TANGO_ROLES.find(r => r.value === roleValue);
-                        const IconComponent = role?.icon || Heart;
-                        return (
-                          <Badge key={roleValue} variant="secondary" className="gap-2 py-1.5 px-3">
-                            <IconComponent className="w-4 h-4" style={{ color: role?.color || '#EF4444' }} />
-                            <span>{role?.label}</span>
-                          </Badge>
-                        );
-                      })}
-                    </div>
-                  </motion.div>
-                )}
+                <div className="space-y-4">
+                  <Label className="text-lg font-medium">Your Tango Roles</Label>
+                  <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                    {TANGO_ROLES.map((role, index) => {
+                      const IconComponent = role.icon;
+                      return (
+                        <motion.button
+                          key={role.value}
+                          onClick={() => toggleRole(role.value)}
+                          className={`relative flex flex-col items-center gap-3 p-6 rounded-xl border-2 transition-all hover-elevate active-elevate-2 ${
+                            selectedRoles.includes(role.value)
+                              ? "border-primary bg-primary/10"
+                              : "border-muted"
+                          }`}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: index * 0.03 }}
+                          data-testid={`role-${role.value}`}
+                        >
+                          {selectedRoles.includes(role.value) && (
+                            <motion.div 
+                              className="absolute top-3 right-3 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground"
+                              initial={{ scale: 0 }}
+                              animate={{ scale: 1 }}
+                              transition={{ type: "spring" }}
+                            >
+                              <Check className="h-3 w-3" />
+                            </motion.div>
+                          )}
+                          <div className="p-4 rounded-full" style={{ backgroundColor: `${role.color}20` }}>
+                            <IconComponent className="w-8 h-8" style={{ color: role.color }} />
+                          </div>
+                          <span className="text-sm font-medium text-center leading-tight">
+                            {role.label}
+                          </span>
+                        </motion.button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <AnimatePresence>
+                  {selectedRoles.length > 0 && (
+                    <motion.div 
+                      className="space-y-4 border-t pt-6"
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                    >
+                      <Label className="text-lg font-medium">When did you start each role?</Label>
+                      <div className="border rounded-lg overflow-hidden">
+                        <div className="grid grid-cols-2 gap-0 bg-muted/50 p-3 border-b">
+                          <span className="text-sm font-medium text-muted-foreground">Role</span>
+                          <span className="text-sm font-medium text-muted-foreground">Started</span>
+                        </div>
+                        <div className="divide-y">
+                          {roleExperiences.map((exp) => {
+                            const RoleIcon = getRoleIcon(exp.role);
+                            const roleColor = getRoleColor(exp.role);
+                            return (
+                              <div 
+                                key={exp.role} 
+                                className="grid grid-cols-2 gap-4 p-3 items-center"
+                                data-testid={`row-role-${exp.role}`}
+                              >
+                                <div className="flex items-center gap-2">
+                                  <RoleIcon 
+                                    className="h-4 w-4" 
+                                    style={{ color: roleColor }}
+                                  />
+                                  <span className="font-medium text-sm">
+                                    {getRoleLabel(exp.role)}
+                                  </span>
+                                </div>
+                                <Select
+                                  value={exp.startYear.toString()}
+                                  onValueChange={(value) => handleRoleYearChange(exp.role, value)}
+                                >
+                                  <SelectTrigger 
+                                    className="w-28" 
+                                    data-testid={`select-role-year-${exp.role}`}
+                                  >
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {yearOptions.map(year => (
+                                      <SelectItem 
+                                        key={year} 
+                                        value={year.toString()}
+                                      >
+                                        {year}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-2 text-sm text-muted-foreground bg-muted/30 rounded-lg p-3">
+                        <Info className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                        <p>
+                          All roles default to your tango start year. Customize if you started different roles at different times.
+                        </p>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </CardContent>
 
               <CardFooter className="p-8 bg-muted/20 flex justify-between">
@@ -230,12 +370,12 @@ export default function TangoRolesPage() {
               </CardFooter>
             </Card>
 
-            {/* Progress Indicator */}
             <div className="flex justify-center gap-2 mt-8">
-              <div className="h-2 w-16 rounded-full bg-primary"></div>
-              <div className="h-2 w-16 rounded-full bg-primary"></div>
-              <div className="h-2 w-16 rounded-full bg-primary"></div>
-              <div className="h-2 w-16 rounded-full bg-muted"></div>
+              <div className="h-2 w-12 rounded-full bg-primary"></div>
+              <div className="h-2 w-12 rounded-full bg-primary"></div>
+              <div className="h-2 w-12 rounded-full bg-primary"></div>
+              <div className="h-2 w-12 rounded-full bg-muted"></div>
+              <div className="h-2 w-12 rounded-full bg-muted"></div>
             </div>
           </motion.div>
         </div>
