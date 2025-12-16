@@ -37,6 +37,7 @@ interface PipelineStage {
 interface PendingVolunteer {
   id: number;
   candidateId: number;
+  volunteerId: number | null;
   name: string;
   email: string;
   skills: string;
@@ -255,7 +256,8 @@ export default function TalentPipelinePage() {
                           size="sm" 
                           variant="outline" 
                           className="flex-1" 
-                          onClick={() => setLocation(`/admin/volunteer/${volunteer.id}`)}
+                          onClick={() => volunteer.volunteerId && setLocation(`/admin/volunteer/${volunteer.volunteerId}`)}
+                          disabled={!volunteer.volunteerId}
                           data-testid={`button-interview-${volunteer.id}`}
                         >
                           <MessageSquare className="h-4 w-4 mr-1" />

@@ -109,6 +109,7 @@ router.get("/pending", async (_req: Request, res: Response) => {
         return {
           id: p.id,
           candidateId: p.candidateId,
+          volunteerId: volunteer?.id || null,
           name: p.userDisplayName || p.userName || "Unknown",
           email: p.userEmail,
           skills: skillsStr + (resumeSummary ? ` (${resumeSummary}...)` : ""),
