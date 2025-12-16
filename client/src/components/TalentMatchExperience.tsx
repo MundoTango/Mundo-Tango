@@ -1,0 +1,1132 @@
+import { useState, useRef, useEffect } from "react";
+import { Link, useLocation } from "wouter";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { useToast } from "@/hooks/use-toast";
+import { 
+  Upload, 
+  Sparkles, 
+  ArrowRight, 
+  ArrowLeft,
+  CheckCircle, 
+  FileText, 
+  Brain, 
+  Zap, 
+  Target, 
+  X, 
+  Files,
+  MessageSquare,
+  Loader2,
+  Home,
+  RotateCcw,
+  Send
+} from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { apiRequest } from "@/lib/queryClient";
+import { useAuth } from "@/contexts/AuthContext";
+import { useTalentMatchSession, type StoredDocument } from "@/contexts/TalentMatchSessionContext";
+
+interface TalentMatchExperienceProps {
+  mode: "authenticated" | "guest";
+  initialName?: string;
+  initialEmail?: string;
+  onClose?: () => void;
+  showHero?: boolean;
+  showBackLink?: boolean;
+}
+
+interface UploadedDocument {
+  file: File;
+  text: string;
+  base64Buffer: string;
+  status: "pending" | "parsed" | "error";
+}
+
+const BACKGROUND_QUESTIONS = [
+  "Tell me about your professional background and current role.",
+  "What relevant skills do you have that could benefit a global tango community platform?",
+  "Describe a project or achievement you're particularly proud of.",
+  "How many hours per week could you realistically commit to volunteering?",
+  "What is your preferred communication style and timezone availability?",
+];
+
+const PLATFORM_QUESTIONS = [
+  "What aspects of Mundo Tango's mission resonate most with you?",
+  "How do you envision contributing to our global tango community?",
+  "What specific areas of the platform would you like to help improve or develop?",
+  "How would you handle working with a diverse, international team of volunteers?",
+  "What would success look like for you after 3 months of volunteering with us?",
+];
+
+export function TalentMatchExperience({ 
+  mode, 
+  initialName, 
+  initialEmail, 
+  onClose,
+  showHero = true,
+  showBackLink = true
+}: TalentMatchExperienceProps) {
+  const [, setLocation] = useLocation();
+  const { user, isLoading: authLoading } = useAuth();
+  const { session, createSession, updateSession, clearSession } = useTalentMatchSession();
+  const { toast } = useToast();
+  const chatContainerRef = useRef<HTMLDivElement>(null);
+
+  // State for authenticated mode
+  const [uploadedDocuments, setUploadedDocuments] = useState<UploadedDocument[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // State for guest mode interview
+  const [step, setStep] = useState<"upload" | "interview" | "complete">("upload");
+  const [storedDocs, setStoredDocs] = useState<StoredDocument[]>([]);
+  const [interviewMessages, setInterviewMessages] = useState<Array<{role: "ai" | "user", content: string}>>([]);
+  const [currentMessage, setCurrentMessage] = useState("");
+  const [isAiTyping, setIsAiTyping] = useState(false);
+  const [questionIndex, setQuestionIndex] = useState(0);
+  const [isSubmittingApplication, setIsSubmittingApplication] = useState(false);
+  const [hasRestoredSession, setHasRestoredSession] = useState(false);
+
+  const allQuestions = [...BACKGROUND_QUESTIONS, ...PLATFORM_QUESTIONS];
+  const totalQuestions = allQuestions.length;
+
+  // Guest mode: Initialize session
+  useEffect(() => {
+    if (mode === "guest" && !session && initialName && initialEmail) {
+      createSession(initialName, initialEmail);
+    }
+  }, [mode, session, initialName, initialEmail, createSession]);
+
+  // Guest mode: Restore session state
+  useEffect(() => {
+    if (mode === "guest" && session && !hasRestoredSession) {
+      setStep(session.step);
+      if (session.uploadedDocuments && session.uploadedDocuments.length > 0) {
+        setStoredDocs(session.uploadedDocuments);
+      }
+      if (session.interviewMessages && session.interviewMessages.length > 0) {
+        setInterviewMessages(session.interviewMessages);
+        const userMessageCount = session.interviewMessages.filter(m => m.role === "user").length;
+        setQuestionIndex(Math.min(userMessageCount, totalQuestions - 1));
+      }
+      setHasRestoredSession(true);
+    }
+  }, [mode, session, hasRestoredSession, totalQuestions]);
+
+  // Auto-scroll chat
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
+  }, [interviewMessages, isAiTyping]);
+
+  const interviewProgress = ((questionIndex + 1) / totalQuestions) * 100;
+
+  // Authenticated mode: handle resume upload
+  const handleAuthenticatedResumeUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    const validTypes = ["application/pdf", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "text/plain"];
+    const newDocuments: UploadedDocument[] = [];
+    
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      
+      if (!validTypes.includes(file.type)) {
+        toast({
+          title: "Invalid file type",
+          description: `${file.name} is not a valid format. Please upload PDF, DOCX, or TXT files.`,
+          variant: "destructive"
+        });
+        continue;
+      }
+
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: "File too large",
+          description: `${file.name} is larger than 5MB`,
+          variant: "destructive"
+        });
+        continue;
+      }
+
+      const isDuplicate = uploadedDocuments.some(d => d.file.name === file.name && d.file.size === file.size);
+      if (isDuplicate) {
+        toast({
+          title: "Duplicate file",
+          description: `${file.name} has already been uploaded`,
+        });
+        continue;
+      }
+
+      newDocuments.push({ file, text: "", base64Buffer: "", status: "pending" });
+    }
+
+    if (newDocuments.length > 0) {
+      setUploadedDocuments(prev => [...prev, ...newDocuments]);
+      
+      for (const doc of newDocuments) {
+        const reader = new FileReader();
+        const docName = doc.file.name;
+        const docSize = doc.file.size;
+        const extension = docName.toLowerCase().split('.').pop();
+        const isBinaryFile = extension === 'pdf' || extension === 'docx';
+        
+        reader.onload = (event) => {
+          if (isBinaryFile) {
+            const arrayBuffer = event.target?.result as ArrayBuffer;
+            const uint8Array = new Uint8Array(arrayBuffer);
+            let binaryString = '';
+            for (let i = 0; i < uint8Array.length; i++) {
+              binaryString += String.fromCharCode(uint8Array[i]);
+            }
+            const base64Buffer = btoa(binaryString);
+            setUploadedDocuments(prev => 
+              prev.map(d => (d.file.name === docName && d.file.size === docSize) 
+                ? { ...d, base64Buffer, text: `[Binary file - ${extension?.toUpperCase()}]`, status: "parsed" } 
+                : d)
+            );
+          } else {
+            const text = event.target?.result as string;
+            setUploadedDocuments(prev => 
+              prev.map(d => (d.file.name === docName && d.file.size === docSize) 
+                ? { ...d, text, base64Buffer: "", status: "parsed" } 
+                : d)
+            );
+          }
+        };
+        reader.onerror = () => {
+          setUploadedDocuments(prev => 
+            prev.map(d => (d.file.name === docName && d.file.size === docSize) ? { ...d, status: "error" } : d)
+          );
+        };
+        
+        if (isBinaryFile) {
+          reader.readAsArrayBuffer(doc.file);
+        } else {
+          reader.readAsText(doc.file);
+        }
+      }
+
+      toast({
+        title: `${newDocuments.length} document${newDocuments.length > 1 ? 's' : ''} added`,
+        description: "Your career history is being processed"
+      });
+    }
+
+    e.target.value = "";
+  };
+
+  // Guest mode: handle resume upload
+  const handleGuestResumeUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    const validTypes = ["application/pdf", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "text/plain"];
+    
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      
+      if (!validTypes.includes(file.type)) {
+        toast({
+          title: "Invalid file type",
+          description: `${file.name} is not supported. Please upload PDF, DOCX, or TXT.`,
+          variant: "destructive"
+        });
+        continue;
+      }
+
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: "File too large",
+          description: `${file.name} exceeds 5MB limit`,
+          variant: "destructive"
+        });
+        continue;
+      }
+
+      const isDuplicate = storedDocs.some(d => d.fileName === file.name && d.fileSize === file.size);
+      if (isDuplicate) {
+        toast({
+          title: "Duplicate file",
+          description: `${file.name} has already been uploaded`,
+        });
+        continue;
+      }
+
+      const newDoc: StoredDocument = {
+        fileName: file.name,
+        fileSize: file.size,
+        status: "pending"
+      };
+      
+      const updatedDocs = [...storedDocs, newDoc];
+      setStoredDocs(updatedDocs);
+      
+      const reader = new FileReader();
+      const extension = file.name.toLowerCase().split('.').pop();
+      const isBinaryFile = extension === 'pdf' || extension === 'docx';
+      
+      reader.onload = (event) => {
+        let parsedText = "";
+        let base64Buffer: string | undefined;
+        
+        if (isBinaryFile) {
+          const arrayBuffer = event.target?.result as ArrayBuffer;
+          const uint8Array = new Uint8Array(arrayBuffer);
+          let binaryString = '';
+          for (let j = 0; j < uint8Array.length; j++) {
+            binaryString += String.fromCharCode(uint8Array[j]);
+          }
+          base64Buffer = btoa(binaryString);
+          parsedText = `[Binary - ${extension?.toUpperCase()}]`;
+        } else {
+          parsedText = event.target?.result as string;
+        }
+        
+        setStoredDocs(prev => {
+          const updated = prev.map(d => 
+            (d.fileName === file.name && d.fileSize === file.size) 
+              ? { ...d, parsedText, base64Buffer, status: "parsed" as const }
+              : d
+          );
+          updateSession({ uploadedDocuments: updated });
+          return updated;
+        });
+      };
+      
+      reader.onerror = () => {
+        setStoredDocs(prev => {
+          const updated = prev.map(d => 
+            (d.fileName === file.name && d.fileSize === file.size) 
+              ? { ...d, status: "error" as const }
+              : d
+          );
+          updateSession({ uploadedDocuments: updated });
+          return updated;
+        });
+      };
+      
+      if (isBinaryFile) {
+        reader.readAsArrayBuffer(file);
+      } else {
+        reader.readAsText(file);
+      }
+    }
+
+    e.target.value = "";
+    
+    toast({
+      title: "Document(s) added",
+      description: "Your career info is being processed and saved"
+    });
+  };
+
+  const removeAuthenticatedDocument = (fileName: string, fileSize: number) => {
+    setUploadedDocuments(prev => prev.filter(d => !(d.file.name === fileName && d.file.size === fileSize)));
+    toast({ title: "Document removed", description: fileName });
+  };
+
+  const removeGuestDocument = (fileName: string, fileSize: number) => {
+    const updated = storedDocs.filter(d => !(d.fileName === fileName && d.fileSize === fileSize));
+    setStoredDocs(updated);
+    updateSession({ uploadedDocuments: updated });
+    toast({ title: "Document removed", description: fileName });
+  };
+
+  // Authenticated mode: start clarifier
+  const handleStartClarifier = async () => {
+    const hasDocuments = uploadedDocuments.length > 0 && uploadedDocuments.some(d => d.status === "parsed");
+    if (!hasDocuments) {
+      toast({
+        title: "Resume required",
+        description: "Please upload at least one resume to continue",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (authLoading) {
+      toast({ title: "Please wait", description: "Verifying authentication..." });
+      return;
+    }
+
+    if (!user) {
+      toast({
+        title: "Login required",
+        description: "Please login to continue with talent matching",
+        variant: "destructive"
+      });
+      setLocation("/login");
+      return;
+    }
+
+    setIsSubmitting(true);
+    
+    try {
+      const volunteerResponse = await apiRequest("POST", "/api/v1/volunteers", {
+        userId: user.id,
+        profile: {
+          hasDocuments: uploadedDocuments.length > 0,
+          uploadedFileNames: uploadedDocuments.map(d => d.file.name)
+        },
+        skills: [],
+        availability: "flexible",
+        hoursPerWeek: 10
+      });
+      const volunteer = await volunteerResponse.json();
+
+      for (const doc of uploadedDocuments) {
+        const extension = doc.file.name.toLowerCase().split('.').pop();
+        const isBinaryFile = extension === 'pdf' || extension === 'docx';
+        
+        await apiRequest("POST", `/api/v1/volunteers/${volunteer.id}/resume`, {
+          filename: doc.file.name,
+          fileUrl: "",
+          fileBuffer: isBinaryFile ? doc.base64Buffer : undefined,
+          parsedText: isBinaryFile ? undefined : doc.text,
+          links: []
+        });
+      }
+
+      const sessionResponse = await apiRequest("POST", `/api/v1/volunteers/${volunteer.id}/clarifier`);
+      const clarifierSession = await sessionResponse.json();
+
+      toast({
+        title: "Profile created!",
+        description: "Starting AI interview. After completion, visit H2AC Dashboard for your agent assignments.",
+      });
+
+      setLocation(`/talent-match-interview?session=${clarifierSession.id}&volunteer=${volunteer.id}&returnTo=/h2ac-dashboard`);
+
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to create volunteer profile",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Guest mode: start interview
+  const startGuestInterview = async () => {
+    const hasDocuments = storedDocs.length > 0 && storedDocs.some(d => d.status === "parsed");
+    if (!hasDocuments) {
+      toast({
+        title: "Resume required",
+        description: "Please upload your resume to continue",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+    updateSession({ step: "interview" });
+    setStep("interview");
+    
+    if (interviewMessages.length === 0) {
+      setIsAiTyping(true);
+      
+      const parsedDocs = storedDocs.filter(d => d.status === "parsed" && d.parsedText);
+      const resumeContent = parsedDocs.map(d => d.parsedText).join("\n\n").substring(0, 3000);
+      
+      try {
+        const response = await fetch("/api/mrblue/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({
+            message: "Generate an interview greeting for this volunteer candidate",
+            systemPrompt: `You are Mr. Blue, a friendly AI interviewer for Mundo Tango's volunteer program. 
+
+The candidate just uploaded their resume. Here is what you learned about them:
+
+${resumeContent}
+
+Generate a warm, personalized greeting that:
+1. Addresses them by name (${session?.name || initialName || "the candidate"})
+2. Briefly acknowledges 2-3 specific things from their resume (skills, experience, or achievements)
+3. Explains you'll ask 10 questions (5 background, 5 platform-specific)
+4. Asks the first question: "${BACKGROUND_QUESTIONS[0]}"
+
+Keep the greeting concise (3-4 paragraphs max). Use a friendly, professional tone.`,
+          }),
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          const welcomeMessage = {
+            role: "ai" as const,
+            content: data.message || `Hello ${session?.name || initialName}! I've reviewed your resume and I'm impressed with your background. Let's begin the interview!\n\n**Question 1 of 10 (Background):**\n${BACKGROUND_QUESTIONS[0]}`
+          };
+          setInterviewMessages([welcomeMessage]);
+          updateSession({ interviewMessages: [welcomeMessage] });
+        } else {
+          throw new Error("API failed");
+        }
+      } catch {
+        const welcomeMessage = {
+          role: "ai" as const,
+          content: `Hello ${session?.name || initialName || "there"}! I'm Mr. Blue, and I've reviewed your resume. I'm excited to learn more about you!\n\nI'll be asking you 10 questions - 5 about your background and 5 about how you'd like to contribute to our platform.\n\nLet's begin!\n\n**Question 1 of 10 (Background):**\n${BACKGROUND_QUESTIONS[0]}`
+        };
+        setInterviewMessages([welcomeMessage]);
+        updateSession({ interviewMessages: [welcomeMessage] });
+      }
+      
+      setIsAiTyping(false);
+      setQuestionIndex(0);
+    }
+    
+    setIsSubmitting(false);
+  };
+
+  // Guest mode: send message
+  const sendGuestMessage = async () => {
+    if (!currentMessage.trim()) return;
+    
+    const userMessage = { role: "user" as const, content: currentMessage };
+    const updatedMessages = [...interviewMessages, userMessage];
+    setCurrentMessage("");
+    setInterviewMessages(updatedMessages);
+    updateSession({ interviewMessages: updatedMessages });
+    setIsAiTyping(true);
+    
+    const nextIndex = questionIndex + 1;
+    const parsedDocs = storedDocs.filter(d => d.status === "parsed" && d.parsedText);
+    const resumeContent = parsedDocs.map(d => d.parsedText).join("\n\n").substring(0, 2000);
+    
+    if (nextIndex >= totalQuestions) {
+      try {
+        const response = await fetch("/api/mrblue/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({
+            message: "Generate interview completion message",
+            systemPrompt: `You are Mr. Blue completing a volunteer interview for Mundo Tango.
+
+The candidate ${session?.name || initialName} just answered all 10 questions. Their resume shows:
+${resumeContent.substring(0, 1000)}
+
+Their interview answers were:
+${updatedMessages.filter(m => m.role === "user").map(m => m.content).join("\n---\n").substring(0, 1500)}
+
+Generate a warm completion message that:
+1. Thanks them by name
+2. Mentions 1-2 specific strengths you noticed from their answers or resume
+3. Explains next steps (team will review and get back to them)
+
+Keep it to 2-3 paragraphs.`,
+          }),
+        });
+        
+        let completionMessage: { role: "ai", content: string };
+        if (response.ok) {
+          const data = await response.json();
+          completionMessage = { role: "ai" as const, content: data.message };
+        } else {
+          completionMessage = {
+            role: "ai" as const,
+            content: `Thank you for completing all 10 questions, ${session?.name || initialName}! Your responses have been recorded and your application is being submitted.\n\nOur team will review your profile and get back to you soon. We appreciate your interest in volunteering with Mundo Tango!`
+          };
+        }
+        
+        const finalMessages = [...updatedMessages, completionMessage];
+        setInterviewMessages(finalMessages);
+        updateSession({ interviewMessages: finalMessages, step: "complete" });
+        setIsAiTyping(false);
+        
+        await submitGuestApplication(finalMessages);
+        setTimeout(() => setStep("complete"), 2000);
+      } catch {
+        const completionMessage = {
+          role: "ai" as const,
+          content: `Thank you for completing the interview, ${session?.name || initialName}! Your application is being submitted. We'll be in touch soon!`
+        };
+        const finalMessages = [...updatedMessages, completionMessage];
+        setInterviewMessages(finalMessages);
+        updateSession({ interviewMessages: finalMessages, step: "complete" });
+        setIsAiTyping(false);
+        
+        await submitGuestApplication(finalMessages);
+        setTimeout(() => setStep("complete"), 2000);
+      }
+    } else {
+      const isBackground = nextIndex < BACKGROUND_QUESTIONS.length;
+      const questionNumber = nextIndex + 1;
+      const questionType = isBackground ? "Background" : "Platform";
+      const nextQuestion = allQuestions[nextIndex];
+      
+      try {
+        const response = await fetch("/api/mrblue/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({
+            message: "Generate follow-up transition",
+            systemPrompt: `You are Mr. Blue conducting a volunteer interview for Mundo Tango.
+
+Candidate: ${session?.name || initialName}
+Their resume highlights: ${resumeContent.substring(0, 800)}
+
+They just answered: "${currentMessage}"
+
+Generate a brief (1-2 sentences) acknowledgment of their answer, then ask:
+**Question ${questionNumber} of 10 (${questionType}):**
+${nextQuestion}
+
+Be warm and specific - reference something from their answer if relevant.`,
+          }),
+        });
+        
+        let aiMessage: { role: "ai", content: string };
+        if (response.ok) {
+          const data = await response.json();
+          aiMessage = { role: "ai" as const, content: data.message };
+        } else {
+          aiMessage = {
+            role: "ai" as const,
+            content: `Great answer! Thank you for sharing.\n\n**Question ${questionNumber} of 10 (${questionType}):**\n${nextQuestion}`
+          };
+        }
+        
+        const finalMessages = [...updatedMessages, aiMessage];
+        setInterviewMessages(finalMessages);
+        updateSession({ interviewMessages: finalMessages });
+        setQuestionIndex(nextIndex);
+        setIsAiTyping(false);
+      } catch {
+        const aiMessage = {
+          role: "ai" as const,
+          content: `Thank you for that response!\n\n**Question ${questionNumber} of 10 (${questionType}):**\n${nextQuestion}`
+        };
+        const finalMessages = [...updatedMessages, aiMessage];
+        setInterviewMessages(finalMessages);
+        updateSession({ interviewMessages: finalMessages });
+        setQuestionIndex(nextIndex);
+        setIsAiTyping(false);
+      }
+    }
+  };
+
+  const submitGuestApplication = async (messages: Array<{role: "ai" | "user", content: string}>) => {
+    setIsSubmittingApplication(true);
+    try {
+      const response = await fetch("/api/talent-match/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          name: session?.name || initialName,
+          email: session?.email || initialEmail,
+          documents: storedDocs.map(d => ({
+            fileName: d.fileName,
+            fileSize: d.fileSize,
+            parsedText: d.parsedText?.substring(0, 50000),
+          })),
+          interviewMessages: messages,
+        }),
+      });
+      
+      if (response.ok) {
+        toast({
+          title: "Application submitted",
+          description: "Your volunteer application has been received!",
+        });
+      }
+    } catch (error) {
+      console.error("[TalentMatch] Submit error:", error);
+    } finally {
+      setIsSubmittingApplication(false);
+    }
+  };
+
+  const startOver = () => {
+    clearSession();
+    setStep("upload");
+    setStoredDocs([]);
+    setInterviewMessages([]);
+    setQuestionIndex(0);
+    setHasRestoredSession(false);
+    if (initialName && initialEmail) {
+      createSession(initialName, initialEmail);
+    }
+  };
+
+  // Loading state for authenticated mode
+  if (mode === "authenticated" && authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary mb-4"></div>
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Guest mode: Interview step
+  if (mode === "guest" && step === "interview") {
+    return (
+      <div className="space-y-6">
+        {/* Interview Header */}
+        <div className="text-center">
+          <Badge variant="outline" className="mb-4">
+            <Brain className="w-3 h-3 mr-1" />
+            AI Interview
+          </Badge>
+          <h2 className="text-2xl font-serif font-bold mb-2">Interview with Mr. Blue</h2>
+          <p className="text-muted-foreground">
+            Question {Math.min(questionIndex + 1, totalQuestions)} of {totalQuestions}
+          </p>
+          <Progress value={interviewProgress} className="h-2 mt-4 max-w-md mx-auto" />
+        </div>
+
+        {/* Chat Container */}
+        <Card>
+          <CardContent className="p-4">
+            <div 
+              ref={chatContainerRef}
+              className="h-[350px] overflow-y-auto space-y-4 mb-4" 
+              data-testid="chat-messages"
+            >
+              {interviewMessages.map((msg, idx) => (
+                <div key={idx} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
+                  <div className={`max-w-[85%] p-3 rounded-lg whitespace-pre-wrap ${
+                    msg.role === "user" 
+                      ? "bg-primary text-primary-foreground" 
+                      : "bg-muted text-foreground"
+                  }`} data-testid={`chat-message-${idx}`}>
+                    {msg.content}
+                  </div>
+                </div>
+              ))}
+              {isAiTyping && (
+                <div className="flex justify-start">
+                  <div className="bg-muted p-3 rounded-lg">
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="flex gap-2">
+              <textarea
+                placeholder="Type your response..."
+                value={currentMessage}
+                onChange={(e) => setCurrentMessage(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    sendGuestMessage();
+                  }
+                }}
+                disabled={isAiTyping || questionIndex >= totalQuestions}
+                className="flex-1 min-h-[60px] p-3 border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-primary bg-background text-foreground"
+                data-testid="input-chat-message"
+              />
+              <Button 
+                onClick={sendGuestMessage} 
+                disabled={isAiTyping || !currentMessage.trim() || questionIndex >= totalQuestions} 
+                data-testid="button-send-message"
+              >
+                <Send className="w-4 h-4" />
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        <div className="flex justify-between">
+          <Button variant="ghost" onClick={() => { setStep("upload"); updateSession({ step: "upload" }); }} data-testid="button-back-upload">
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Upload
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Guest mode: Complete step
+  if (mode === "guest" && step === "complete") {
+    return (
+      <div className="text-center py-12">
+        <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+          {isSubmittingApplication ? (
+            <Loader2 className="w-10 h-10 text-green-500 animate-spin" />
+          ) : (
+            <CheckCircle className="w-10 h-10 text-green-500" />
+          )}
+        </div>
+        <h2 className="text-3xl font-serif font-bold mb-3" data-testid="text-thank-you">
+          Thank You, {session?.name || initialName}!
+        </h2>
+        <p className="text-muted-foreground mb-8 max-w-md mx-auto">
+          Your volunteer application has been submitted. We'll review your profile and get back to you at {session?.email || initialEmail}.
+        </p>
+        
+        <Badge variant="outline" className="mb-8">
+          <Sparkles className="w-3 h-3 mr-1" />
+          Application Submitted
+        </Badge>
+
+        <div className="flex justify-center gap-3">
+          {onClose && (
+            <Button variant="outline" onClick={onClose} data-testid="button-close-complete">
+              <Home className="w-4 h-4 mr-2" />
+              Close
+            </Button>
+          )}
+          <Button variant="ghost" onClick={startOver} data-testid="button-start-over">
+            <RotateCcw className="w-4 h-4 mr-2" />
+            Start New Application
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Main upload view (both modes)
+  const docs = mode === "authenticated" ? uploadedDocuments : storedDocs;
+  const handleUpload = mode === "authenticated" ? handleAuthenticatedResumeUpload : handleGuestResumeUpload;
+  const handleRemove = mode === "authenticated" 
+    ? (name: string, size: number) => removeAuthenticatedDocument(name, size)
+    : (name: string, size: number) => removeGuestDocument(name, size);
+  const handleSubmit = mode === "authenticated" ? handleStartClarifier : startGuestInterview;
+  const hasDocuments = docs.length > 0;
+  const hasParsedDocuments = mode === "authenticated" 
+    ? uploadedDocuments.some(d => d.status === "parsed")
+    : storedDocs.some(d => d.status === "parsed");
+
+  return (
+    <div className="space-y-8">
+      {/* Hero Section - only show if enabled */}
+      {showHero && (
+        <div className="relative w-full aspect-video overflow-hidden bg-gradient-to-br from-primary via-secondary to-accent rounded-lg">
+          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-background" />
+          
+          <div className="relative z-10 h-full flex items-center justify-center px-6">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1 }}
+              className="text-center max-w-4xl"
+            >
+              <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-ai-powered">
+                <Brain className="w-3 h-3 mr-1" />
+                AI-Powered Matching
+              </Badge>
+
+              <h1 className="text-4xl md:text-6xl font-serif font-bold text-white mb-6 tracking-tight leading-tight" data-testid="heading-hero">
+                Your Perfect Role Awaits
+              </h1>
+
+              <p className="text-lg md:text-xl text-white/90 mb-8 max-w-2xl mx-auto leading-relaxed">
+                Our AI analyzes your experience and matches you with volunteer opportunities where you'll make the greatest impact
+              </p>
+
+              <div className="flex flex-wrap gap-6 justify-center text-white/80 text-sm">
+                <div className="flex items-center gap-2">
+                  <Zap className="w-4 h-4" />
+                  <span>Instant Analysis</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Target className="w-4 h-4" />
+                  <span>Perfect Matches</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Sparkles className="w-4 h-4" />
+                  <span>Smart Recommendations</span>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      )}
+
+      {/* How It Works Section */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.2 }}
+      >
+        <h2 className="text-2xl md:text-3xl font-serif font-bold text-center mb-4">How It Works</h2>
+        <p className="text-center text-muted-foreground mb-8 max-w-2xl mx-auto">
+          Three simple steps to find your perfect volunteer role
+        </p>
+
+        <div className="grid md:grid-cols-3 gap-6">
+          {[
+            {
+              step: "01",
+              title: "Share Your Experience",
+              description: "Upload your resumes and career documents. Our AI will analyze your skills and background.",
+              icon: Upload
+            },
+            {
+              step: "02",
+              title: "AI Interview",
+              description: "Have a brief conversation with Mr Blue AI to clarify your interests and availability.",
+              icon: Brain
+            },
+            {
+              step: "03",
+              title: "Get Matched",
+              description: "Receive personalized recommendations for volunteer roles that align with your talents.",
+              icon: Target
+            }
+          ].map((item, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 + index * 0.1 }}
+            >
+              <Card className="h-full hover-elevate">
+                <CardContent className="p-5">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                      <item.icon className="h-5 w-5 text-primary" />
+                    </div>
+                    <span className="text-3xl font-serif font-bold text-muted-foreground/30">{item.step}</span>
+                  </div>
+                  <h3 className="text-lg font-serif font-bold mb-2">{item.title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{item.description}</p>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
+        </div>
+      </motion.div>
+
+      {/* Application Form Section */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.5 }}
+      >
+        <div className="text-center mb-6">
+          <h2 className="text-2xl md:text-3xl font-serif font-bold mb-3">Start Your Journey</h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            Share your professional background and let our AI find the perfect match for you
+          </p>
+        </div>
+
+        <Card className="overflow-hidden border-2">
+          <CardContent className="p-6 md:p-8 space-y-5">
+            {/* File Upload */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <Files className="h-5 w-5 text-primary" />
+                <Label htmlFor="resume-upload" className="text-base font-medium">Upload Your Resumes</Label>
+              </div>
+              
+              {/* Compelling Messaging */}
+              <div className="p-4 bg-primary/5 border border-primary/20 rounded-lg space-y-3">
+                <p className="text-sm leading-relaxed">
+                  <strong>We want ALL of your resumes</strong> so we can truly understand who you are, what you have worked on, and what you want to do.
+                </p>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  The paper resume should die. Your current job gets 12-15 bullets, your 2nd job 9-11, your 3rd 3-6. With each new resume you short-change yourself and forget what you've accomplished.
+                </p>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  In this AI age where both talent and companies use AI to match, why limit yourself to one page? We want you to be excited to partner with us and work on the things you really want to help the Tango community.
+                </p>
+              </div>
+
+              <p className="text-sm text-muted-foreground">PDF, DOCX, or TXT • Maximum 5MB each • Select multiple files</p>
+              <Input
+                id="resume-upload"
+                type="file"
+                accept=".pdf,.docx,.txt"
+                multiple
+                onChange={handleUpload}
+                data-testid="input-resume-upload"
+                className="cursor-pointer"
+              />
+              
+              {/* Uploaded Documents List */}
+              <AnimatePresence mode="popLayout">
+                {mode === "authenticated" ? (
+                  uploadedDocuments.map((doc) => (
+                    <motion.div
+                      key={`${doc.file.name}-${doc.file.size}`}
+                      initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                      className="flex items-center gap-3 p-4 bg-green-500/5 border border-green-500/20 rounded-lg"
+                      data-testid={`document-${doc.file.name}-${doc.file.size}`}
+                    >
+                      <FileText className="h-5 w-5 text-green-500 flex-shrink-0" />
+                      <span className="text-sm font-medium flex-1 truncate">{doc.file.name}</span>
+                      {doc.status === "parsed" && <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />}
+                      {doc.status === "pending" && <Loader2 className="h-4 w-4 animate-spin flex-shrink-0" />}
+                      {doc.status === "error" && <span className="text-xs text-destructive">Error</span>}
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={() => handleRemove(doc.file.name, doc.file.size)}
+                        data-testid={`button-remove-${doc.file.name}-${doc.file.size}`}
+                        className="h-8 w-8 flex-shrink-0"
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </motion.div>
+                  ))
+                ) : (
+                  storedDocs.map((doc, idx) => (
+                    <motion.div
+                      key={`${doc.fileName}-${doc.fileSize}`}
+                      initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                      className="flex items-center gap-3 p-4 bg-green-500/5 border border-green-500/20 rounded-lg"
+                      data-testid={`doc-item-${idx}`}
+                    >
+                      <FileText className="h-5 w-5 text-green-500 flex-shrink-0" />
+                      <span className="text-sm font-medium flex-1 truncate">{doc.fileName}</span>
+                      {doc.status === "parsed" && <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />}
+                      {doc.status === "pending" && <Loader2 className="h-4 w-4 animate-spin flex-shrink-0" />}
+                      {doc.status === "error" && <span className="text-xs text-destructive">Error</span>}
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={() => handleRemove(doc.fileName, doc.fileSize)}
+                        data-testid={`button-remove-doc-${idx}`}
+                        className="h-8 w-8 flex-shrink-0"
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </motion.div>
+                  ))
+                )}
+              </AnimatePresence>
+              
+              {hasDocuments && (
+                <p className="text-sm text-muted-foreground">
+                  {docs.length} document{docs.length > 1 ? 's' : ''} uploaded • Click above to add more
+                </p>
+              )}
+            </div>
+
+            {/* Submit Button */}
+            <div className="pt-4">
+              <Button
+                onClick={handleSubmit}
+                disabled={isSubmitting || (mode === "authenticated" && authLoading) || !hasDocuments || !hasParsedDocuments}
+                size="lg"
+                className="w-full gap-2 text-base"
+                data-testid="button-start-clarifier"
+              >
+                {isSubmitting ? (
+                  <>
+                    <Sparkles className="h-5 w-5 animate-pulse" />
+                    {mode === "authenticated" ? "Creating Your Profile..." : "Starting Interview..."}
+                  </>
+                ) : (mode === "authenticated" && authLoading) ? (
+                  "Verifying..."
+                ) : (
+                  <>
+                    Begin AI Interview
+                    <ArrowRight className="h-5 w-5" />
+                  </>
+                )}
+              </Button>
+
+              <p className="text-sm text-center text-muted-foreground mt-4">
+                {mode === "authenticated" 
+                  ? "You'll be redirected to chat with Mr Blue AI for a personalized interview"
+                  : "You'll chat with Mr Blue AI for a personalized interview"}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
+
+      {/* H2AC Integration Section - only for authenticated mode */}
+      {mode === "authenticated" && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.6 }}
+        >
+          <Card className="bg-gradient-to-r from-blue-500/10 via-accent/5 to-blue-500/10 border-blue-500/20">
+            <CardContent className="py-6 px-6">
+              <div className="flex items-center gap-4 mb-4">
+                <div className="h-12 w-12 rounded-full bg-blue-500/20 flex items-center justify-center">
+                  <Brain className="h-6 w-6 text-blue-500" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-serif font-bold">What Happens Next?</h3>
+                  <p className="text-muted-foreground">Your journey to H2AC Dashboard</p>
+                </div>
+              </div>
+              
+              <div className="grid md:grid-cols-3 gap-6 mt-6">
+                <div className="flex items-start gap-3">
+                  <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                    <span className="text-sm font-bold text-primary">1</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold mb-1">AI Interview</h4>
+                    <p className="text-sm text-muted-foreground">Mr Blue AI conducts a personalized interview to understand your skills</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start gap-3">
+                  <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                    <span className="text-sm font-bold text-primary">2</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold mb-1">Agent Assignment</h4>
+                    <p className="text-sm text-muted-foreground">Specialized AI agents are assigned to match you with opportunities</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start gap-3">
+                  <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                    <span className="text-sm font-bold text-primary">3</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold mb-1">H2AC Dashboard</h4>
+                    <p className="text-sm text-muted-foreground">View your agents, matched opportunities, and communicate with AI</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="mt-6 pt-6 border-t border-blue-500/20 text-center">
+                <Link href="/h2ac-dashboard" className="text-blue-500 hover:text-blue-600 transition-colors inline-flex items-center gap-2 font-medium" data-testid="link-h2ac-preview">
+                  Preview H2AC Dashboard
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+      )}
+
+      {/* Back Link */}
+      {showBackLink && mode === "authenticated" && (
+        <div className="text-center">
+          <Link href="/volunteer" className="text-muted-foreground hover:text-foreground transition-colors inline-flex items-center gap-2" data-testid="link-back">
+            ← Back to Volunteer Opportunities
+          </Link>
+        </div>
+      )}
+
+      {/* Close button for guest mode */}
+      {mode === "guest" && onClose && (
+        <div className="text-center">
+          <Button variant="ghost" onClick={onClose} data-testid="button-close-modal">
+            Save & Continue Later
+          </Button>
+        </div>
+      )}
+    </div>
+  );
+}
