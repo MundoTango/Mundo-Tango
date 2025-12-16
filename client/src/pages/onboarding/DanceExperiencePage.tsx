@@ -1,19 +1,23 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, ChevronRight, ChevronLeft, Sparkles, Check, Palette } from "lucide-react";
+import { Loader2, ChevronRight, ChevronLeft, Sparkles, Check, Palette, Search, ChevronDown, X } from "lucide-react";
 import { SEO } from "@/components/SEO";
 import { useAuth } from "@/contexts/AuthContext";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import heroImage from "@assets/stock_images/elegant_professional_e4da136e.jpg";
-import { 
-  SiYoga,
-} from "react-icons/si";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { 
   Dumbbell, 
   Music, 
@@ -31,27 +35,258 @@ import {
   Heart, 
   Film, 
   Mic2, 
-  Guitar 
+  Guitar,
+  Brush,
+  Globe,
+  Coffee,
+  Dog,
+  Cat,
+  Leaf,
+  Sun,
+  Moon,
+  Tent,
+  Sailboat,
+  type LucideIcon
 } from "lucide-react";
 
-const HOBBIES = [
-  { id: "fitness", label: "Fitness", icon: Dumbbell, color: "#EF4444" },
-  { id: "yoga", label: "Yoga", icon: Heart, color: "#8B5CF6" },
-  { id: "music", label: "Music", icon: Music, color: "#3B82F6" },
-  { id: "photography", label: "Photography", icon: Camera, color: "#F59E0B" },
-  { id: "art", label: "Art & Painting", icon: PaletteIcon, color: "#EC4899" },
-  { id: "reading", label: "Reading", icon: BookOpen, color: "#10B981" },
-  { id: "travel", label: "Travel", icon: Plane, color: "#06B6D4" },
-  { id: "cooking", label: "Cooking", icon: UtensilsCrossed, color: "#F97316" },
-  { id: "wine", label: "Wine Tasting", icon: Wine, color: "#7C3AED" },
-  { id: "gaming", label: "Gaming", icon: Gamepad2, color: "#6366F1" },
-  { id: "hiking", label: "Hiking", icon: Mountain, color: "#059669" },
-  { id: "cycling", label: "Cycling", icon: Bike, color: "#0EA5E9" },
-  { id: "swimming", label: "Swimming", icon: Waves, color: "#0284C7" },
-  { id: "nature", label: "Nature", icon: TreePine, color: "#16A34A" },
-  { id: "movies", label: "Movies", icon: Film, color: "#DC2626" },
-  { id: "singing", label: "Singing", icon: Mic2, color: "#A855F7" },
-  { id: "instruments", label: "Instruments", icon: Guitar, color: "#CA8A04" },
+interface SubHobby {
+  id: string;
+  label: string;
+}
+
+interface HobbyCategory {
+  id: string;
+  label: string;
+  icon: LucideIcon;
+  color: string;
+  subcategories: SubHobby[];
+}
+
+const HOBBIES_WITH_SUBCATEGORIES: HobbyCategory[] = [
+  { 
+    id: "fitness", 
+    label: "Fitness & Sports", 
+    icon: Dumbbell, 
+    color: "#EF4444",
+    subcategories: [
+      { id: "fitness_gym", label: "Gym & Weights" },
+      { id: "fitness_running", label: "Running" },
+      { id: "fitness_crossfit", label: "CrossFit" },
+      { id: "fitness_martial_arts", label: "Martial Arts" },
+      { id: "fitness_tennis", label: "Tennis" },
+      { id: "fitness_soccer", label: "Soccer/Football" },
+      { id: "fitness_basketball", label: "Basketball" },
+    ]
+  },
+  { 
+    id: "yoga", 
+    label: "Yoga & Wellness", 
+    icon: Heart, 
+    color: "#8B5CF6",
+    subcategories: [
+      { id: "yoga_hatha", label: "Hatha Yoga" },
+      { id: "yoga_vinyasa", label: "Vinyasa Flow" },
+      { id: "yoga_meditation", label: "Meditation" },
+      { id: "yoga_pilates", label: "Pilates" },
+      { id: "yoga_breathwork", label: "Breathwork" },
+    ]
+  },
+  { 
+    id: "music", 
+    label: "Music", 
+    icon: Music, 
+    color: "#3B82F6",
+    subcategories: [
+      { id: "music_listening", label: "Music Listening" },
+      { id: "music_concerts", label: "Live Concerts" },
+      { id: "music_piano", label: "Piano" },
+      { id: "music_guitar", label: "Guitar" },
+      { id: "music_singing", label: "Singing" },
+      { id: "music_dj", label: "DJing" },
+      { id: "music_production", label: "Music Production" },
+    ]
+  },
+  { 
+    id: "photography", 
+    label: "Photography & Video", 
+    icon: Camera, 
+    color: "#F59E0B",
+    subcategories: [
+      { id: "photo_portrait", label: "Portrait Photography" },
+      { id: "photo_landscape", label: "Landscape Photography" },
+      { id: "photo_street", label: "Street Photography" },
+      { id: "photo_video", label: "Videography" },
+      { id: "photo_editing", label: "Photo Editing" },
+    ]
+  },
+  { 
+    id: "art", 
+    label: "Art & Creativity", 
+    icon: PaletteIcon, 
+    color: "#EC4899",
+    subcategories: [
+      { id: "art_painting", label: "Painting" },
+      { id: "art_drawing", label: "Drawing" },
+      { id: "art_sculpture", label: "Sculpture" },
+      { id: "art_digital", label: "Digital Art" },
+      { id: "art_crafts", label: "Crafts & DIY" },
+      { id: "art_pottery", label: "Pottery" },
+    ]
+  },
+  { 
+    id: "reading", 
+    label: "Reading & Writing", 
+    icon: BookOpen, 
+    color: "#10B981",
+    subcategories: [
+      { id: "reading_fiction", label: "Fiction" },
+      { id: "reading_nonfiction", label: "Non-Fiction" },
+      { id: "reading_poetry", label: "Poetry" },
+      { id: "reading_writing", label: "Creative Writing" },
+      { id: "reading_journals", label: "Journaling" },
+    ]
+  },
+  { 
+    id: "travel", 
+    label: "Travel & Adventure", 
+    icon: Plane, 
+    color: "#06B6D4",
+    subcategories: [
+      { id: "travel_backpacking", label: "Backpacking" },
+      { id: "travel_luxury", label: "Luxury Travel" },
+      { id: "travel_cultural", label: "Cultural Tourism" },
+      { id: "travel_road_trips", label: "Road Trips" },
+      { id: "travel_solo", label: "Solo Travel" },
+    ]
+  },
+  { 
+    id: "cooking", 
+    label: "Cooking & Food", 
+    icon: UtensilsCrossed, 
+    color: "#F97316",
+    subcategories: [
+      { id: "cooking_home", label: "Home Cooking" },
+      { id: "cooking_baking", label: "Baking" },
+      { id: "cooking_gourmet", label: "Gourmet Cuisine" },
+      { id: "cooking_international", label: "International Cuisine" },
+      { id: "cooking_healthy", label: "Healthy Eating" },
+    ]
+  },
+  { 
+    id: "wine", 
+    label: "Wine & Beverages", 
+    icon: Wine, 
+    color: "#7C3AED",
+    subcategories: [
+      { id: "wine_tasting", label: "Wine Tasting" },
+      { id: "wine_cocktails", label: "Cocktails" },
+      { id: "wine_coffee", label: "Coffee Appreciation" },
+      { id: "wine_tea", label: "Tea Culture" },
+      { id: "wine_brewing", label: "Home Brewing" },
+    ]
+  },
+  { 
+    id: "gaming", 
+    label: "Gaming", 
+    icon: Gamepad2, 
+    color: "#6366F1",
+    subcategories: [
+      { id: "gaming_video", label: "Video Games" },
+      { id: "gaming_board", label: "Board Games" },
+      { id: "gaming_card", label: "Card Games" },
+      { id: "gaming_tabletop", label: "Tabletop RPGs" },
+      { id: "gaming_esports", label: "eSports" },
+    ]
+  },
+  { 
+    id: "outdoors", 
+    label: "Outdoor Activities", 
+    icon: Mountain, 
+    color: "#059669",
+    subcategories: [
+      { id: "outdoor_hiking", label: "Hiking" },
+      { id: "outdoor_camping", label: "Camping" },
+      { id: "outdoor_climbing", label: "Rock Climbing" },
+      { id: "outdoor_fishing", label: "Fishing" },
+      { id: "outdoor_kayaking", label: "Kayaking" },
+      { id: "outdoor_surfing", label: "Surfing" },
+    ]
+  },
+  { 
+    id: "cycling", 
+    label: "Cycling", 
+    icon: Bike, 
+    color: "#0EA5E9",
+    subcategories: [
+      { id: "cycling_road", label: "Road Cycling" },
+      { id: "cycling_mountain", label: "Mountain Biking" },
+      { id: "cycling_urban", label: "Urban Cycling" },
+      { id: "cycling_touring", label: "Bike Touring" },
+    ]
+  },
+  { 
+    id: "water", 
+    label: "Water Sports", 
+    icon: Waves, 
+    color: "#0284C7",
+    subcategories: [
+      { id: "water_swimming", label: "Swimming" },
+      { id: "water_scuba", label: "Scuba Diving" },
+      { id: "water_snorkel", label: "Snorkeling" },
+      { id: "water_sailing", label: "Sailing" },
+      { id: "water_paddleboard", label: "Paddleboarding" },
+    ]
+  },
+  { 
+    id: "nature", 
+    label: "Nature & Gardening", 
+    icon: TreePine, 
+    color: "#16A34A",
+    subcategories: [
+      { id: "nature_gardening", label: "Gardening" },
+      { id: "nature_birdwatching", label: "Bird Watching" },
+      { id: "nature_botany", label: "Plant Collecting" },
+      { id: "nature_wildlife", label: "Wildlife Photography" },
+    ]
+  },
+  { 
+    id: "movies", 
+    label: "Movies & Entertainment", 
+    icon: Film, 
+    color: "#DC2626",
+    subcategories: [
+      { id: "movies_cinema", label: "Cinema" },
+      { id: "movies_tv", label: "TV Series" },
+      { id: "movies_documentary", label: "Documentaries" },
+      { id: "movies_theater", label: "Theater" },
+      { id: "movies_standup", label: "Stand-up Comedy" },
+    ]
+  },
+  { 
+    id: "pets", 
+    label: "Pets & Animals", 
+    icon: Dog, 
+    color: "#A855F7",
+    subcategories: [
+      { id: "pets_dogs", label: "Dogs" },
+      { id: "pets_cats", label: "Cats" },
+      { id: "pets_exotic", label: "Exotic Pets" },
+      { id: "pets_horses", label: "Horse Riding" },
+      { id: "pets_rescue", label: "Animal Rescue" },
+    ]
+  },
+  { 
+    id: "social", 
+    label: "Social & Community", 
+    icon: Globe, 
+    color: "#CA8A04",
+    subcategories: [
+      { id: "social_volunteering", label: "Volunteering" },
+      { id: "social_meetups", label: "Meetups" },
+      { id: "social_networking", label: "Networking" },
+      { id: "social_languages", label: "Language Exchange" },
+    ]
+  },
 ];
 
 export default function DanceExperiencePage() {
@@ -61,21 +296,95 @@ export default function DanceExperiencePage() {
   
   const [selectedHobbies, setSelectedHobbies] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
 
   useEffect(() => {
     if (!user) {
       navigate("/login");
     } else if (user.isOnboardingComplete) {
-      navigate("/volunteer");
+      navigate(user.waitlist ? "/waitlist-confirmation" : "/feed");
     }
   }, [user, navigate]);
 
-  const toggleHobby = (hobbyId: string) => {
-    if (selectedHobbies.includes(hobbyId)) {
-      setSelectedHobbies(selectedHobbies.filter(h => h !== hobbyId));
-    } else {
-      setSelectedHobbies([...selectedHobbies, hobbyId]);
+  // Filter hobbies based on search query
+  const filteredCategories = useMemo(() => {
+    if (!searchQuery.trim()) return HOBBIES_WITH_SUBCATEGORIES;
+    
+    const query = searchQuery.toLowerCase();
+    return HOBBIES_WITH_SUBCATEGORIES.map(category => {
+      const matchingSubcategories = category.subcategories.filter(
+        sub => sub.label.toLowerCase().includes(query)
+      );
+      const categoryMatches = category.label.toLowerCase().includes(query);
+      
+      if (categoryMatches) {
+        return category;
+      }
+      if (matchingSubcategories.length > 0) {
+        return { ...category, subcategories: matchingSubcategories };
+      }
+      return null;
+    }).filter(Boolean) as HobbyCategory[];
+  }, [searchQuery]);
+
+  // Auto-expand categories that match search
+  useEffect(() => {
+    if (searchQuery.trim()) {
+      const matchingCategoryIds = filteredCategories.map(c => c.id);
+      setExpandedCategories(matchingCategoryIds);
     }
+  }, [searchQuery, filteredCategories]);
+
+  const toggleSubHobby = (subHobbyId: string) => {
+    if (selectedHobbies.includes(subHobbyId)) {
+      setSelectedHobbies(selectedHobbies.filter(h => h !== subHobbyId));
+    } else {
+      setSelectedHobbies([...selectedHobbies, subHobbyId]);
+    }
+  };
+
+  const toggleCategory = (categoryId: string) => {
+    const category = HOBBIES_WITH_SUBCATEGORIES.find(c => c.id === categoryId);
+    if (!category) return;
+    
+    const allSubIds = category.subcategories.map(s => s.id);
+    const allSelected = allSubIds.every(id => selectedHobbies.includes(id));
+    
+    if (allSelected) {
+      setSelectedHobbies(selectedHobbies.filter(h => !allSubIds.includes(h)));
+    } else {
+      const newSelected = [...selectedHobbies];
+      allSubIds.forEach(id => {
+        if (!newSelected.includes(id)) {
+          newSelected.push(id);
+        }
+      });
+      setSelectedHobbies(newSelected);
+    }
+  };
+
+  const getCategorySelectionCount = (categoryId: string): number => {
+    const category = HOBBIES_WITH_SUBCATEGORIES.find(c => c.id === categoryId);
+    if (!category) return 0;
+    return category.subcategories.filter(s => selectedHobbies.includes(s.id)).length;
+  };
+
+  const getSelectedLabels = (): { category: string; label: string; id: string; color: string }[] => {
+    const result: { category: string; label: string; id: string; color: string }[] = [];
+    HOBBIES_WITH_SUBCATEGORIES.forEach(category => {
+      category.subcategories.forEach(sub => {
+        if (selectedHobbies.includes(sub.id)) {
+          result.push({
+            category: category.label,
+            label: sub.label,
+            id: sub.id,
+            color: category.color
+          });
+        }
+      });
+    });
+    return result;
   };
 
   const handleComplete = async () => {
@@ -102,10 +411,10 @@ export default function DanceExperiencePage() {
       if (isWaitlist) {
         toast({
           title: "You're on the list!",
-          description: "We'll notify you when your account is ready. In the meantime, explore volunteer opportunities!",
+          description: "We'll notify you when your account is ready.",
         });
         setTimeout(() => {
-          navigate("/volunteer");
+          navigate("/waitlist-confirmation");
         }, 1500);
       } else {
         toast({
@@ -180,68 +489,145 @@ export default function DanceExperiencePage() {
                     </p>
                   </CardHeader>
 
-                  <CardContent className="p-8 space-y-8">
-                    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                      {HOBBIES.map((hobby, index) => {
-                        const IconComponent = hobby.icon;
-                        const isSelected = selectedHobbies.includes(hobby.id);
-                        return (
-                          <motion.button
-                            key={hobby.id}
-                            onClick={() => toggleHobby(hobby.id)}
-                            className={`relative flex flex-col items-center gap-3 p-5 rounded-xl border-2 transition-all hover-elevate active-elevate-2 ${
-                              isSelected
-                                ? "border-primary bg-primary/10"
-                                : "border-muted"
-                            }`}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: index * 0.02 }}
-                            data-testid={`hobby-${hobby.id}`}
-                          >
-                            {isSelected && (
-                              <motion.div 
-                                className="absolute top-2 right-2 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-primary-foreground"
-                                initial={{ scale: 0 }}
-                                animate={{ scale: 1 }}
-                                transition={{ type: "spring" }}
-                              >
-                                <Check className="h-3 w-3" />
-                              </motion.div>
-                            )}
-                            <div className="p-3 rounded-full" style={{ backgroundColor: `${hobby.color}20` }}>
-                              <IconComponent className="w-6 h-6" style={{ color: hobby.color }} />
-                            </div>
-                            <span className="text-xs font-medium text-center leading-tight">
-                              {hobby.label}
-                            </span>
-                          </motion.button>
-                        );
-                      })}
+                  <CardContent className="p-8 space-y-6">
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        placeholder="Search hobbies..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="pl-10"
+                        data-testid="input-hobby-search"
+                      />
+                      {searchQuery && (
+                        <button
+                          onClick={() => setSearchQuery("")}
+                          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                      )}
                     </div>
 
-                    {selectedHobbies.length > 0 && (
-                      <motion.div 
-                        className="border-t pt-6 mt-6"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
+                    {filteredCategories.length === 0 ? (
+                      <div className="text-center py-8 text-muted-foreground">
+                        No hobbies found matching "{searchQuery}"
+                      </div>
+                    ) : (
+                      <Accordion
+                        type="multiple"
+                        value={expandedCategories}
+                        onValueChange={setExpandedCategories}
+                        className="space-y-2"
                       >
-                        <p className="text-sm font-medium mb-3">Selected hobbies ({selectedHobbies.length}):</p>
-                        <div className="flex flex-wrap gap-2">
-                          {selectedHobbies.map((hobbyId) => {
-                            const hobby = HOBBIES.find(h => h.id === hobbyId);
-                            if (!hobby) return null;
-                            const IconComponent = hobby.icon;
-                            return (
-                              <Badge key={hobbyId} variant="secondary" className="gap-2 py-1.5 px-3">
-                                <IconComponent className="w-4 h-4" style={{ color: hobby.color }} />
-                                <span>{hobby.label}</span>
-                              </Badge>
-                            );
-                          })}
-                        </div>
-                      </motion.div>
+                        {filteredCategories.map((category) => {
+                          const IconComponent = category.icon;
+                          const selectionCount = getCategorySelectionCount(category.id);
+                          const totalCount = category.subcategories.length;
+                          
+                          return (
+                            <AccordionItem
+                              key={category.id}
+                              value={category.id}
+                              className="border rounded-lg overflow-hidden"
+                              data-testid={`accordion-${category.id}`}
+                            >
+                              <AccordionTrigger className="px-4 py-3 hover:no-underline hover-elevate">
+                                <div className="flex items-center gap-3 flex-1">
+                                  <div 
+                                    className="p-2 rounded-lg" 
+                                    style={{ backgroundColor: `${category.color}20` }}
+                                  >
+                                    <IconComponent 
+                                      className="h-5 w-5" 
+                                      style={{ color: category.color }} 
+                                    />
+                                  </div>
+                                  <span className="font-medium text-left">{category.label}</span>
+                                  {selectionCount > 0 && (
+                                    <Badge 
+                                      variant="default" 
+                                      className="ml-auto mr-2 text-xs"
+                                      style={{ backgroundColor: category.color }}
+                                    >
+                                      {selectionCount}/{totalCount}
+                                    </Badge>
+                                  )}
+                                </div>
+                              </AccordionTrigger>
+                              <AccordionContent className="px-4 pb-4">
+                                <div className="grid grid-cols-2 md:grid-cols-3 gap-2 pt-2">
+                                  {category.subcategories.map((sub) => {
+                                    const isSelected = selectedHobbies.includes(sub.id);
+                                    return (
+                                      <button
+                                        key={sub.id}
+                                        onClick={() => toggleSubHobby(sub.id)}
+                                        className={`flex items-center gap-2 p-3 rounded-lg border text-left text-sm transition-all hover-elevate active-elevate-2 ${
+                                          isSelected
+                                            ? "border-primary bg-primary/10"
+                                            : "border-muted"
+                                        }`}
+                                        data-testid={`hobby-${sub.id}`}
+                                      >
+                                        {isSelected ? (
+                                          <div 
+                                            className="h-4 w-4 rounded-full flex items-center justify-center"
+                                            style={{ backgroundColor: category.color }}
+                                          >
+                                            <Check className="h-3 w-3 text-white" />
+                                          </div>
+                                        ) : (
+                                          <div className="h-4 w-4 rounded-full border-2 border-muted-foreground/30" />
+                                        )}
+                                        <span className={isSelected ? "font-medium" : ""}>
+                                          {sub.label}
+                                        </span>
+                                      </button>
+                                    );
+                                  })}
+                                </div>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="mt-3 w-full text-xs"
+                                  onClick={() => toggleCategory(category.id)}
+                                  data-testid={`toggle-all-${category.id}`}
+                                >
+                                  {selectionCount === totalCount ? "Deselect All" : "Select All"}
+                                </Button>
+                              </AccordionContent>
+                            </AccordionItem>
+                          );
+                        })}
+                      </Accordion>
                     )}
+
+                    <AnimatePresence>
+                      {selectedHobbies.length > 0 && (
+                        <motion.div 
+                          className="border-t pt-6"
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          exit={{ opacity: 0, height: 0 }}
+                        >
+                          <p className="text-sm font-medium mb-3">Selected hobbies ({selectedHobbies.length}):</p>
+                          <div className="flex flex-wrap gap-2">
+                            {getSelectedLabels().map((item) => (
+                              <Badge 
+                                key={item.id} 
+                                variant="secondary" 
+                                className="gap-1.5 py-1.5 px-3 cursor-pointer hover-elevate"
+                                onClick={() => toggleSubHobby(item.id)}
+                              >
+                                <span>{item.label}</span>
+                                <X className="h-3 w-3 text-muted-foreground" />
+                              </Badge>
+                            ))}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
 
                     <div className="bg-muted/50 rounded-lg p-4">
                       <p className="text-sm text-muted-foreground">

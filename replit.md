@@ -63,7 +63,8 @@ Core functionalities include social features (events, groups, posts, notificatio
 - **Registration Flow:**
   - Both paths create full accounts and go through 5-step onboarding
   - With invite code "nomad" (case-insensitive): `waitlist: false` → After onboarding → redirects to /feed
-  - Without invite code or invalid code: `waitlist: true` → After onboarding → redirects to /volunteer
+  - Without invite code or invalid code: `waitlist: true` → After onboarding → redirects to /waitlist-confirmation
+- **WaitlistConfirmationPage** (`/waitlist-confirmation`): Post-onboarding page for waitlist users with "Volunteer with us" (opens TalentMatchModal) and "Support Mundo Tango" buttons
 - **Validated:** E2E tests confirm both registration paths work correctly
 
 **MB.MD Pattern 56 - Onboarding Flow Enhancement (Dec 16, 2025):**

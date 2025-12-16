@@ -5,6 +5,30 @@ import { eq, ilike, sql, or, and } from "drizzle-orm";
 
 const router = Router();
 
+// In-memory cache for city search results (TTL: 5 minutes)
+const citySearchCache = new Map<string, { data: any; timestamp: number }>();
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+function getCachedResult(key: string): any | null {
+  const cached = citySearchCache.get(key);
+  if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+    return cached.data;
+  }
+  if (cached) {
+    citySearchCache.delete(key);
+  }
+  return null;
+}
+
+function setCachedResult(key: string, data: any): void {
+  // Limit cache size to 100 entries
+  if (citySearchCache.size > 100) {
+    const oldestKey = citySearchCache.keys().next().value;
+    if (oldestKey) citySearchCache.delete(oldestKey);
+  }
+  citySearchCache.set(key, { data, timestamp: Date.now() });
+}
+
 // Popular cities list for Tier 2 instant match (subset - full list in location-search.ts)
 const POPULAR_CITIES = [
   { name: "Buenos Aires", country: "Argentina", lat: -34.6037, lng: -58.3816 },
@@ -45,6 +69,14 @@ router.get("/search", async (req: Request, res: Response) => {
   
   if (!query || query.length < 2) {
     return res.json({ cityGroups: [], popularCities: [], nominatimResults: [] });
+  }
+
+  // Check cache first
+  const cacheKey = `city_search:${query}`;
+  const cached = getCachedResult(cacheKey);
+  if (cached) {
+    console.log(`[CitySearch] Cache HIT for: "${query}"`);
+    return res.json(cached);
   }
 
   try {
@@ -141,11 +173,16 @@ router.get("/search", async (req: Request, res: Response) => {
       }
     }
 
-    res.json({
+    const result = {
       cityGroups,
       popularCities: filteredPopularCities,
       nominatimResults,
-    });
+    };
+    
+    // Cache the result
+    setCachedResult(cacheKey, result);
+    
+    res.json(result);
   } catch (error) {
     console.error("[CitySearch] Error:", error);
     res.status(500).json({ error: "Failed to search cities" });

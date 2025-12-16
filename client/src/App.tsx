@@ -635,6 +635,9 @@ const LegalAcceptance = lazy(
 const SubscriptionOnboarding = lazy(
   () => import("@/pages/onboarding/SubscriptionOnboarding"),
 );
+const WaitlistConfirmationPage = lazy(
+  () => import("@/pages/onboarding/WaitlistConfirmationPage"),
+);
 
 // Legal / Settings
 const LegalStatus = lazy(() => import("@/pages/settings/LegalStatus"));
@@ -2081,6 +2084,7 @@ function Router() {
         component={SubscriptionOnboarding}
       />
       <Route path="/welcome" component={WelcomeTourPage} />
+      <Route path="/waitlist-confirmation" component={WaitlistConfirmationPage} />
 
       <Route path="/live-streams">
         <ProtectedRoute>

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
 import {
   Select,
   SelectContent,
@@ -12,7 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Check, Heart, ChevronRight, Calendar, Info, Sparkles } from "lucide-react";
+import { Loader2, Check, Heart, ChevronRight, Calendar, Info, Sparkles, TrendingUp } from "lucide-react";
 import { SEO } from "@/components/SEO";
 import { useAuth } from "@/contexts/AuthContext";
 import { extractApiError } from "@/lib/apiErrorHandler";
@@ -44,7 +45,12 @@ export default function TangoRolesPage() {
   const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
   const [tangoStartYear, setTangoStartYear] = useState<number>(currentYear);
   const [roleExperiences, setRoleExperiences] = useState<TangoRoleExperience[]>([]);
+  const [leaderLevel, setLeaderLevel] = useState<number>(5);
+  const [followerLevel, setFollowerLevel] = useState<number>(5);
   const [isLoading, setIsLoading] = useState(false);
+  
+  const hasLeaderRole = selectedRoles.includes('dancer_leader');
+  const hasFollowerRole = selectedRoles.includes('dancer_follower');
   
   const yearOptions = useMemo(() => generateYearOptions(), []);
   const yearsOfDancing = currentYear - tangoStartYear;
@@ -108,6 +114,8 @@ export default function TangoRolesPage() {
           tangoStartYear,
           tangoRoleExperience: roleExperiences,
           yearsOfDancing,
+          leaderLevel: hasLeaderRole ? leaderLevel : null,
+          followerLevel: hasFollowerRole ? followerLevel : null,
           formStatus: 3,
         }),
       });
@@ -269,6 +277,76 @@ export default function TangoRolesPage() {
                     })}
                   </div>
                 </div>
+
+                <AnimatePresence>
+                  {(hasLeaderRole || hasFollowerRole) && (
+                    <motion.div 
+                      className="space-y-6 border-t pt-6"
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                    >
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="p-2 rounded-lg bg-primary/10">
+                          <TrendingUp className="h-5 w-5 text-primary" />
+                        </div>
+                        <Label className="text-lg font-medium">Your Skill Levels</Label>
+                      </div>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {hasLeaderRole && (
+                          <div className="p-4 rounded-lg bg-muted/50 space-y-3">
+                            <div className="flex items-center justify-between">
+                              <Label className="text-sm font-medium">Leader Level</Label>
+                              <Badge variant="secondary" className="text-xs">
+                                {leaderLevel}/10
+                              </Badge>
+                            </div>
+                            <Slider
+                              min={1}
+                              max={10}
+                              step={1}
+                              value={[leaderLevel]}
+                              onValueChange={(value) => setLeaderLevel(value[0])}
+                              data-testid="slider-leader-level"
+                              className="w-full"
+                            />
+                            <div className="flex justify-between text-xs text-muted-foreground">
+                              <span>Beginner</span>
+                              <span>Intermediate</span>
+                              <span>Advanced</span>
+                            </div>
+                          </div>
+                        )}
+                        
+                        {hasFollowerRole && (
+                          <div className="p-4 rounded-lg bg-muted/50 space-y-3">
+                            <div className="flex items-center justify-between">
+                              <Label className="text-sm font-medium">Follower Level</Label>
+                              <Badge variant="secondary" className="text-xs">
+                                {followerLevel}/10
+                              </Badge>
+                            </div>
+                            <Slider
+                              min={1}
+                              max={10}
+                              step={1}
+                              value={[followerLevel]}
+                              onValueChange={(value) => setFollowerLevel(value[0])}
+                              data-testid="slider-follower-level"
+                              className="w-full"
+                            />
+                            <div className="flex justify-between text-xs text-muted-foreground">
+                              <span>Beginner</span>
+                              <span>Intermediate</span>
+                              <span>Advanced</span>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
 
                 <AnimatePresence>
                   {selectedRoles.length > 0 && (
