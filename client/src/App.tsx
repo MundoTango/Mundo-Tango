@@ -180,6 +180,7 @@ const AlbumDetailPage = lazy(() => import("@/pages/album-detail"));
 
 // Talent & AI
 const TalentMatchPage = lazy(() => import("@/pages/TalentMatchPage"));
+const TalentMatchEmbedPage = lazy(() => import("@/pages/TalentMatchEmbedPage"));
 const TalentMatchInterviewPage = lazy(() => import("@/pages/TalentMatchInterviewPage"));
 const MrBlueChatPage = lazy(() => import("@/pages/MrBlueChatPage"));
 const VideoStudio = lazy(() => import("@/pages/VideoStudio"));
@@ -787,6 +788,11 @@ function Router() {
         <AppLayout>
           <TalentMatchPage />
         </AppLayout>
+      </Route>
+      <Route path="/talent-match-embed">
+        <Suspense fallback={<LoadingFallback />}>
+          <TalentMatchEmbedPage />
+        </Suspense>
       </Route>
       <Route path="/talent-match-interview">
         <AppLayout>

@@ -25,7 +25,7 @@ export function TalentMatchModal({ open, onOpenChange }: TalentMatchModalProps) 
         <div className="w-full h-[calc(95vh-60px)]">
           {open && (
             <iframe
-              src="/talent-match"
+              src="/talent-match-embed"
               className="w-full h-full border-0"
               title="Talent Match Application"
               data-testid="iframe-talent-match"
