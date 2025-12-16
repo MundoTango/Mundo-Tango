@@ -32,8 +32,12 @@ export default function CitySelectionPage() {
     if (!user) {
       navigate("/login");
     } else if (user.isOnboardingComplete) {
-      // Already onboarded, redirect to volunteer/support page
-      navigate("/volunteer");
+      // Already onboarded - redirect based on waitlist status
+      if ((user as any).waitlist) {
+        navigate("/waitlist-success");
+      } else {
+        navigate("/feed");
+      }
     }
   }, [user, navigate]);
 
