@@ -56,6 +56,16 @@ Core functionalities include social features (events, groups, posts, notificatio
 - **Client Changes:** `TalentMatchExperience.tsx` now calls parse endpoint for PDF/DOCX files during guest upload
 - **Result:** Both guest and authenticated flows now generate AI interview questions from ACTUAL resume content, not placeholders
 
+**MB.MD Pattern 55 - Invite Code Registration Fix (Dec 16, 2025):**
+- **Bug Fixed:** Registration was failing with "Invalid element at key 'name': expected a Zod schema" error
+- **Root Cause:** Zod v4 has breaking changes with `.extend()` method on drizzle-zod generated schemas
+- **Solution:** Replaced `insertUserSchema.extend({...})` with direct `z.object({...})` definition in `server/routes/auth.ts`
+- **Registration Flow:**
+  - Both paths create full accounts and go through 5-step onboarding
+  - With invite code "nomad" (case-insensitive): `waitlist: false` → After onboarding → redirects to /feed
+  - Without invite code or invalid code: `waitlist: true` → After onboarding → redirects to /volunteer
+- **Validated:** E2E tests confirm both registration paths work correctly
+
 ### Testing
 The platform employs End-to-End (E2E) tests with Playwright, automated unit test coverage via CI/CD, and visual regression testing with Claude Computer Use. The `run_test` tool manages E2E environment setup and Stripe key injection. A Volunteer Testing System provides 148 scenarios across 39 domains, with automated issue routing and an auto-fix pipeline. MB.MD Pattern 50 introduces Pre-Authenticated Playwright Testing for faster, reusable test runs by saving and reusing session states.
 

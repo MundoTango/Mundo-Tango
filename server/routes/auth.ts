@@ -12,18 +12,19 @@ import {
   verifyRefreshToken,
   type AuthRequest,
 } from "../middleware/auth";
-import { insertUserSchema } from "@shared/schema";
+// Note: insertUserSchema not imported - using direct z.object() for registerSchema to avoid Zod v4 .extend() issues
 import { ensureCityGroupExists } from "../utils/cityGroupAutomation";
 
 const router = Router();
 
 const BCRYPT_ROUNDS = parseInt(process.env.BCRYPT_ROUNDS || "10", 10);
 
-const registerSchema = insertUserSchema.extend({
-  password: z.string().min(8).max(100),
+// Define registerSchema directly to avoid Zod v4 .extend() compatibility issues
+const registerSchema = z.object({
+  name: z.string().min(1).max(100),
   email: z.string().email(),
   username: z.string().min(3).max(30),
-  name: z.string().min(1).max(100),
+  password: z.string().min(8).max(100),
   inviteCode: z.string().optional(),
 });
 
@@ -84,27 +85,30 @@ router.get("/check-email/:email", async (req: Request, res: Response) => {
 
 router.post("/register", async (req: Request, res: Response) => {
   try {
+    // Extract inviteCode before validation (optional field)
+    const rawInviteCode = req.body.inviteCode as string | undefined;
+    
     const validatedData = registerSchema.parse(req.body);
 
-    const existingEmail = await storage.getUserByEmail(validatedData.email);
+    const existingEmail = await storage.getUserByEmail(validatedData.email as string);
     if (existingEmail) {
       return res.status(409).json({ message: "Email already registered" });
     }
 
-    const existingUsername = await storage.getUserByUsername(validatedData.username);
+    const existingUsername = await storage.getUserByUsername(validatedData.username as string);
     if (existingUsername) {
       return res.status(409).json({ message: "Username already taken" });
     }
 
-    const hashedPassword = await bcrypt.hash(validatedData.password, BCRYPT_ROUNDS);
+    const hashedPassword = await bcrypt.hash(validatedData.password as string, BCRYPT_ROUNDS);
 
     // Check if invite code is valid - determines waitlist status
-    const inviteCode = validatedData.inviteCode?.toLowerCase().trim();
+    const inviteCode = rawInviteCode?.toLowerCase().trim();
     const isValidInviteCode = inviteCode && VALID_INVITE_CODES.includes(inviteCode);
     const isWaitlist = !isValidInviteCode;
 
     // Remove inviteCode from user data before creating (it's not a user field)
-    const { inviteCode: _, ...userData } = validatedData;
+    const { inviteCode: _inviteCode, ...userData } = validatedData as any;
 
     const user = await storage.createUser({
       ...userData,
@@ -112,7 +116,7 @@ router.post("/register", async (req: Request, res: Response) => {
       isOnboardingComplete: false,
       formStatus: 0,
       waitlist: isWaitlist,
-      waitlistDate: isWaitlist ? new Date() : null,
+      waitlistDate: isWaitlist ? new Date() : undefined,
     });
 
     // Auto-create city group if user registered with a city
@@ -184,6 +188,7 @@ router.post("/register", async (req: Request, res: Response) => {
       });
     }
     console.error("Registration error:", error);
+    console.error("Registration error stack:", error instanceof Error ? error.stack : "No stack");
     res.status(500).json({ message: "Internal server error" });
   }
 });
