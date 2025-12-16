@@ -68,11 +68,11 @@ export default function GuidedTourPage() {
             formStatus: 4,
           }),
         });
-        // After completing onboarding, redirect to volunteer/support page
-        navigate("/volunteer");
+        // After completing onboarding, redirect to feed
+        navigate("/feed");
       } catch (error) {
         console.error("Error completing onboarding:", error);
-        navigate("/volunteer");
+        navigate("/feed");
       }
     }
   };
