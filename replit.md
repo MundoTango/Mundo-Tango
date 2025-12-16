@@ -45,6 +45,17 @@ Core functionalities include social features (events, groups, posts, notificatio
 - On completion, creates volunteer record, resume entries, clarifierSession, and candidatePipeline entry (stage="interviewed") for admin review
 - LoginPage uses email/password authentication only (Google/Facebook OAuth removed for simplicity)
 
+**MB.MD Pattern 54 - Guest Resume Parsing Fix (Dec 16, 2025):**
+- **Bug Fixed:** Guest flow was storing `[Binary - PDF]` placeholder instead of actual parsed text for PDF/DOCX files
+- **Root Cause:** Client-side cannot parse binary PDF/DOCX files; authenticated flow called server endpoint but guest flow skipped this step
+- **Solution:** Added guest-accessible `/api/talent-match/parse-resume` endpoint (no auth required)
+- **Security Measures:**
+  - File size limit: 5MB (validated both before and after base64 decode)
+  - Rate limiting: 10 parse requests per hour per session/IP
+  - Returns 413 for oversized files, 429 for rate limit exceeded
+- **Client Changes:** `TalentMatchExperience.tsx` now calls parse endpoint for PDF/DOCX files during guest upload
+- **Result:** Both guest and authenticated flows now generate AI interview questions from ACTUAL resume content, not placeholders
+
 ### Testing
 The platform employs End-to-End (E2E) tests with Playwright, automated unit test coverage via CI/CD, and visual regression testing with Claude Computer Use. The `run_test` tool manages E2E environment setup and Stripe key injection. A Volunteer Testing System provides 148 scenarios across 39 domains, with automated issue routing and an auto-fix pipeline. MB.MD Pattern 50 introduces Pre-Authenticated Playwright Testing for faster, reusable test runs by saving and reusing session states.
 

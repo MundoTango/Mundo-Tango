@@ -277,7 +277,7 @@ export function TalentMatchExperience({
       const extension = file.name.toLowerCase().split('.').pop();
       const isBinaryFile = extension === 'pdf' || extension === 'docx';
       
-      reader.onload = (event) => {
+      reader.onload = async (event) => {
         let parsedText = "";
         let base64Buffer: string | undefined;
         
@@ -289,7 +289,30 @@ export function TalentMatchExperience({
             binaryString += String.fromCharCode(uint8Array[j]);
           }
           base64Buffer = btoa(binaryString);
-          parsedText = `[Binary - ${extension?.toUpperCase()}]`;
+          
+          // Call server to parse PDF/DOCX (same as authenticated flow)
+          try {
+            const parseResponse = await fetch("/api/talent-match/parse-resume", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                filename: file.name,
+                fileBuffer: base64Buffer,
+              }),
+            });
+            
+            if (parseResponse.ok) {
+              const parseResult = await parseResponse.json();
+              parsedText = parseResult.parsedText || "";
+              console.log(`[TalentMatch] Parsed ${file.name}: ${parsedText.length} chars`);
+            } else {
+              console.error("[TalentMatch] Server parse failed, using placeholder");
+              parsedText = `[Binary - ${extension?.toUpperCase()}]`;
+            }
+          } catch (parseError) {
+            console.error("[TalentMatch] Parse request failed:", parseError);
+            parsedText = `[Binary - ${extension?.toUpperCase()}]`;
+          }
         } else {
           parsedText = event.target?.result as string;
         }

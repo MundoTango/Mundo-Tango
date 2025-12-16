@@ -640,6 +640,74 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Parse resume for guest users (no auth required)
+  // This allows guest flow to get actual parsed text from PDF/DOCX files
+  // Security: Size limited to 5MB, rate limited by session cookie
+  const guestParseRateLimiter = new Map<string, { count: number; resetAt: number }>();
+  const MAX_GUEST_PARSES_PER_HOUR = 10;
+  const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024; // 5MB
+  
+  app.post("/api/talent-match/parse-resume", async (req: Request, res: Response) => {
+    try {
+      const { filename, fileBuffer } = req.body;
+      
+      if (!filename || !fileBuffer) {
+        return res.status(400).json({ error: "filename and fileBuffer (base64) are required" });
+      }
+      
+      // Security: Validate base64 size before decoding (base64 is ~33% larger than binary)
+      const estimatedBinarySize = Math.ceil(fileBuffer.length * 0.75);
+      if (estimatedBinarySize > MAX_FILE_SIZE_BYTES) {
+        console.warn(`[TalentMatch] Rejected oversized file: ${filename}, estimated ${estimatedBinarySize} bytes`);
+        return res.status(413).json({ error: "File exceeds 5MB limit" });
+      }
+      
+      // Security: Rate limiting by session or IP
+      const sessionId = req.cookies?.talentMatchSessionId || req.ip || "anonymous";
+      const now = Date.now();
+      const limiterEntry = guestParseRateLimiter.get(sessionId);
+      
+      if (limiterEntry) {
+        if (now < limiterEntry.resetAt) {
+          if (limiterEntry.count >= MAX_GUEST_PARSES_PER_HOUR) {
+            console.warn(`[TalentMatch] Rate limit exceeded for session: ${sessionId}`);
+            return res.status(429).json({ error: "Too many parse requests. Please try again later." });
+          }
+          limiterEntry.count++;
+        } else {
+          // Reset the counter
+          guestParseRateLimiter.set(sessionId, { count: 1, resetAt: now + 60 * 60 * 1000 });
+        }
+      } else {
+        guestParseRateLimiter.set(sessionId, { count: 1, resetAt: now + 60 * 60 * 1000 });
+      }
+      
+      const { resumeParser } = await import("./services/resume-parser");
+      
+      const buffer = Buffer.from(fileBuffer, "base64");
+      
+      // Validate actual buffer size
+      if (buffer.length > MAX_FILE_SIZE_BYTES) {
+        console.warn(`[TalentMatch] Rejected oversized file: ${filename}, ${buffer.length} bytes`);
+        return res.status(413).json({ error: "File exceeds 5MB limit" });
+      }
+      
+      const parsed = await resumeParser.parseResume(buffer, filename);
+      
+      console.log(`[TalentMatch] Parsed resume for guest: ${filename}, ${parsed.text.length} chars`);
+      
+      res.json({
+        parsedText: parsed.text,
+        skills: parsed.skills,
+        links: parsed.links,
+        signals: parsed.signals,
+      });
+    } catch (error: any) {
+      console.error("[TalentMatch] Parse resume error:", error);
+      res.status(500).json({ error: "Failed to parse resume" });
+    }
+  });
+
   // Submit volunteer application from guest session
   app.post("/api/talent-match/submit", async (req: Request, res: Response) => {
     try {
