@@ -587,9 +587,47 @@ export default function RegisterPage() {
                   Sign in
                 </Link>
               </motion.p>
+
+              {/* Volunteer CTA Section */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.8, delay: 0.5 }}
+                className="mt-8 p-4 bg-white/10 backdrop-blur-sm rounded-lg border border-white/20"
+              >
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center">
+                    <HandHeart className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-white">Want to volunteer?</h3>
+                    <p className="text-sm text-white/70">Help build the tango community</p>
+                  </div>
+                </div>
+                <p className="text-sm text-white/80 mb-4">
+                  Join our volunteer team and use your skills to make an impact. Our AI will match you with the perfect role.
+                </p>
+                <Button
+                  variant="outline"
+                  className="w-full bg-transparent border-white/30 text-white hover:bg-white/10"
+                  onClick={() => setTalentMatchOpen(true)}
+                  data-testid="button-start-talent-match"
+                >
+                  <Sparkles className="h-4 w-4 mr-2" />
+                  Start Talent Match
+                </Button>
+              </motion.div>
             </motion.div>
           </div>
         </div>
+
+        {/* Talent Match Modal */}
+        <TalentMatchModal
+          open={talentMatchOpen}
+          onOpenChange={setTalentMatchOpen}
+          initialName={name}
+          initialEmail={email}
+        />
       </PublicLayout>
     </SelfHealingErrorBoundary>
   );
