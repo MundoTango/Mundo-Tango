@@ -148,12 +148,10 @@ export default function TalentMatchEmbedPage() {
         }),
       }));
 
-      const volunteerResult = await apiRequest("/api/v1/volunteers", {
-        method: "POST",
-        body: JSON.stringify({
-          status: "profile_submitted",
-        }),
-      }) as { id: number } | { message: string };
+      const volunteerResponse = await apiRequest("POST", "/api/v1/volunteers", {
+        status: "profile_submitted",
+      });
+      const volunteerResult = await volunteerResponse.json() as { id: number } | { message: string };
 
       if (!volunteerResult || typeof volunteerResult !== 'object' || !('id' in volunteerResult)) {
         throw new Error("Failed to create volunteer profile");
@@ -162,12 +160,9 @@ export default function TalentMatchEmbedPage() {
       const volunteerId = volunteerResult.id;
 
       for (const entry of resumeEntries) {
-        await apiRequest("/api/resume-entries", {
-          method: "POST",
-          body: JSON.stringify({
-            ...entry,
-            volunteerId,
-          }),
+        await apiRequest("POST", "/api/resume-entries", {
+          ...entry,
+          volunteerId,
         });
       }
 
