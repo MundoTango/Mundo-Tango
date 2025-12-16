@@ -23,15 +23,13 @@ import {
   Loader2,
   Home,
   RotateCcw,
-  Send,
-  Bot,
-  Briefcase,
-  User
+  Send
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { apiRequest } from "@/lib/queryClient";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTalentMatchSession, type StoredDocument } from "@/contexts/TalentMatchSessionContext";
+import { TalentMatchInterviewChat, type PhaseConfig } from "@/components/mr-blue/TalentMatchInterviewChat";
 
 interface TalentMatchExperienceProps {
   mode: "authenticated" | "guest";
@@ -680,141 +678,55 @@ Be warm and specific - reference something from their answer if relevant.`,
     const backgroundProgress = Math.min(questionIndex, BACKGROUND_QUESTIONS.length);
     const platformProgress = Math.max(0, questionIndex - BACKGROUND_QUESTIONS.length);
     
+    const guestPhases: PhaseConfig[] = [
+      {
+        name: "background",
+        label: "Background",
+        current: backgroundProgress,
+        total: BACKGROUND_QUESTIONS.length,
+        isActive: isBackgroundPhase,
+        isComplete: backgroundProgress >= BACKGROUND_QUESTIONS.length
+      },
+      {
+        name: "platform",
+        label: "Platform",
+        current: platformProgress,
+        total: PLATFORM_QUESTIONS.length,
+        isActive: !isBackgroundPhase && questionIndex < totalQuestions,
+        isComplete: platformProgress >= PLATFORM_QUESTIONS.length
+      }
+    ];
+
+    const backButton = (
+      <Button variant="ghost" size="sm" onClick={() => { setStep("upload"); updateSession({ step: "upload" }); }} data-testid="button-back-upload">
+        <ArrowLeft className="w-4 h-4 mr-2" />
+        Back to Upload
+      </Button>
+    );
+
     return (
-      <div className="flex flex-col h-[600px]">
-        {/* Interview Header - matches TalentMatchInterviewPage */}
-        <div className="border-b bg-card/50 p-4">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-              <Bot className="h-6 w-6 text-primary" />
-            </div>
-            <div className="flex-1">
-              <div className="flex items-center gap-2">
-                <h1 className="text-lg font-semibold" data-testid="heading-interview-title">Mr. Blue AI Interview</h1>
-                <Badge variant={questionIndex >= totalQuestions ? "default" : "secondary"}>
-                  {isBackgroundPhase ? <FileText className="w-3 h-3 mr-1" /> : <Briefcase className="w-3 h-3 mr-1" />}
-                  {isBackgroundPhase ? "Phase 1: Background" : "Phase 2: Platform Skills"}
-                </Badge>
-              </div>
-              <p className="text-sm text-muted-foreground">
-                Question {Math.min(questionIndex + 1, totalQuestions)} of {totalQuestions}
-              </p>
-            </div>
-            {questionIndex < totalQuestions && (
-              <Sparkles className="h-5 w-5 text-primary animate-pulse" />
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <div className="flex justify-between text-xs text-muted-foreground">
-              <span>Interview Progress</span>
-              <span>{Math.round(interviewProgress)}%</span>
-            </div>
-            <Progress value={interviewProgress} className="h-2" data-testid="progress-interview" />
-            <div className="flex gap-4 text-xs">
-              <div className="flex items-center gap-1">
-                <div className={`w-2 h-2 rounded-full ${isBackgroundPhase ? "bg-primary" : backgroundProgress >= BACKGROUND_QUESTIONS.length ? "bg-green-500" : "bg-muted"}`} />
-                <span className={isBackgroundPhase ? "text-primary" : ""}>Background ({backgroundProgress}/{BACKGROUND_QUESTIONS.length})</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <div className={`w-2 h-2 rounded-full ${!isBackgroundPhase ? "bg-primary" : "bg-muted"}`} />
-                <span className={!isBackgroundPhase ? "text-primary" : ""}>Platform ({platformProgress}/{PLATFORM_QUESTIONS.length})</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Chat Messages - matches TalentMatchInterviewPage styling */}
-        <div 
-          ref={chatContainerRef}
-          className="flex-1 overflow-y-auto p-4 space-y-4" 
-          data-testid="chat-messages"
-        >
-          {interviewMessages.map((msg, idx) => (
-            <motion.div
-              key={idx}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.02 }}
-              className={`flex gap-3 ${msg.role === "user" ? "justify-end" : "justify-start"}`}
-            >
-              {msg.role === "ai" && (
-                <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                  <Bot className="h-5 w-5 text-primary" />
-                </div>
-              )}
-
-              <div className={`max-w-[75%] ${msg.role === "user" ? "order-first" : ""}`}>
-                <Card className={msg.role === "user" ? "bg-primary text-primary-foreground" : ""}>
-                  <CardContent className="pt-4 pb-3">
-                    <p className="text-sm whitespace-pre-wrap" data-testid={`chat-message-${idx}`}>{msg.content}</p>
-                  </CardContent>
-                </Card>
-              </div>
-
-              {msg.role === "user" && (
-                <div className="h-8 w-8 rounded-full bg-accent/10 flex items-center justify-center flex-shrink-0">
-                  <User className="h-5 w-5 text-accent" />
-                </div>
-              )}
-            </motion.div>
-          ))}
-          
-          {isAiTyping && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="flex gap-3"
-            >
-              <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
-                <Bot className="h-5 w-5 text-primary animate-pulse" />
-              </div>
-              <Card>
-                <CardContent className="pt-4 pb-3">
-                  <div className="flex gap-1">
-                    <div className="h-2 w-2 rounded-full bg-primary/40 animate-bounce" style={{ animationDelay: "0ms" }} />
-                    <div className="h-2 w-2 rounded-full bg-primary/40 animate-bounce" style={{ animationDelay: "150ms" }} />
-                    <div className="h-2 w-2 rounded-full bg-primary/40 animate-bounce" style={{ animationDelay: "300ms" }} />
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          )}
-        </div>
-
-        {/* Input Area - matches TalentMatchInterviewPage */}
-        <div className="border-t bg-card/50 p-4">
-          <div className="flex gap-2">
-            <textarea
-              placeholder="Type your response..."
-              value={currentMessage}
-              onChange={(e) => setCurrentMessage(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  sendGuestMessage();
-                }
-              }}
-              disabled={isAiTyping || questionIndex >= totalQuestions}
-              className="flex-1 min-h-[50px] p-3 border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-primary bg-background text-foreground"
-              data-testid="input-chat-message"
-            />
-            <Button 
-              onClick={sendGuestMessage} 
-              disabled={isAiTyping || !currentMessage.trim() || questionIndex >= totalQuestions}
-              size="icon"
-              data-testid="button-send-message"
-            >
-              <Send className="w-4 h-4" />
-            </Button>
-          </div>
-          <div className="flex justify-start mt-2">
-            <Button variant="ghost" size="sm" onClick={() => { setStep("upload"); updateSession({ step: "upload" }); }} data-testid="button-back-upload">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Upload
-            </Button>
-          </div>
-        </div>
+      <div className="h-[600px]">
+        <TalentMatchInterviewChat
+          messages={interviewMessages.map((msg, idx) => ({
+            id: String(idx),
+            role: msg.role === "ai" ? "assistant" : "user",
+            content: msg.content
+          }))}
+          isLoading={isAiTyping}
+          isComplete={questionIndex >= totalQuestions}
+          input={currentMessage}
+          onInputChange={setCurrentMessage}
+          onSend={sendGuestMessage}
+          progress={interviewProgress}
+          phases={guestPhases}
+          currentPhaseLabel={isBackgroundPhase ? "Phase 1: Background" : "Phase 2: Platform Skills"}
+          questionDescription={`Question ${Math.min(questionIndex + 1, totalQuestions)} of ${totalQuestions}`}
+          showTimestamps={false}
+          backButton={backButton}
+          useScrollArea={false}
+          useTextarea={true}
+          inputPlaceholder="Type your response..."
+        />
       </div>
     );
   }

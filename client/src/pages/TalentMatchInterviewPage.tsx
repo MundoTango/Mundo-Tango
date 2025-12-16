@@ -1,15 +1,10 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
 import { SEO } from "@/components/SEO";
 import { useToast } from "@/hooks/use-toast";
-import { Send, Bot, User, Sparkles, CheckCircle, ArrowRight, Home, FileText, Briefcase, Upload, RefreshCw } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { ArrowRight, Home, Upload, RefreshCw } from "lucide-react";
+import { TalentMatchInterviewChat, type PhaseConfig } from "@/components/mr-blue/TalentMatchInterviewChat";
 import { apiRequest } from "@/lib/queryClient";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
@@ -506,6 +501,76 @@ Welcome to the Mundo Tango volunteer community! We're excited to have you contri
     }
   };
 
+  const phases: PhaseConfig[] = [
+    {
+      name: "resume",
+      label: "Resume",
+      current: Math.min(interviewState.resumeQuestionsAsked, TOTAL_RESUME_QUESTIONS),
+      total: TOTAL_RESUME_QUESTIONS,
+      isActive: interviewState.phase === "resume",
+      isComplete: interviewState.resumeQuestionsAsked >= TOTAL_RESUME_QUESTIONS
+    },
+    {
+      name: "work",
+      label: "Work Assignment",
+      current: Math.min(interviewState.workQuestionsAsked, TOTAL_WORK_QUESTIONS),
+      total: TOTAL_WORK_QUESTIONS,
+      isActive: interviewState.phase === "work",
+      isComplete: interviewState.workQuestionsAsked >= TOTAL_WORK_QUESTIONS
+    }
+  ];
+
+  const resumeReuploadBanner = needsResumeReupload ? (
+    <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4 mx-4 mt-2">
+      <div className="flex items-center gap-3">
+        <Upload className="h-5 w-5 text-amber-500" />
+        <div className="flex-1">
+          <p className="text-sm font-medium">Resume content not available</p>
+          <p className="text-xs text-muted-foreground">Re-upload your resume so Mr. Blue can read and reference your experience.</p>
+        </div>
+        <input 
+          type="file" 
+          ref={fileInputRef} 
+          onChange={handleResumeReupload} 
+          accept=".pdf,.docx,.txt" 
+          className="hidden" 
+          data-testid="input-resume-reupload"
+        />
+        <Button 
+          size="sm" 
+          onClick={() => fileInputRef.current?.click()} 
+          disabled={isUploadingResume}
+          data-testid="button-resume-reupload"
+        >
+          {isUploadingResume ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4 mr-1" />}
+          {isUploadingResume ? "Parsing..." : "Re-upload"}
+        </Button>
+      </div>
+    </div>
+  ) : null;
+
+  const completeCTA = (
+    <div className="flex gap-3 justify-center">
+      <Button
+        onClick={() => setLocation(returnTo)}
+        className="gap-2"
+        data-testid="button-view-dashboard"
+      >
+        View H2AC Dashboard
+        <ArrowRight className="h-4 w-4" />
+      </Button>
+      <Button
+        variant="outline"
+        onClick={() => setLocation("/")}
+        className="gap-2"
+        data-testid="button-go-home"
+      >
+        <Home className="h-4 w-4" />
+        Go Home
+      </Button>
+    </div>
+  );
+
   return (
     <SelfHealingErrorBoundary pageName="Talent Match Interview" fallbackRoute="/talent-match">
       <PageLayout title="AI Interview" showBreadcrumbs>
@@ -515,196 +580,22 @@ Welcome to the Mundo Tango volunteer community! We're excited to have you contri
         />
 
         <div className="h-full flex flex-col" data-testid="page-talent-match-interview">
-          <div className="border-b glass-topbar p-4">
-            <div className="container mx-auto max-w-4xl">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                  <Bot className="h-6 w-6 text-primary" />
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
-                    <h1 className="text-lg font-semibold" data-testid="heading-interview-title">Mr. Blue AI Interview</h1>
-                    <Badge 
-                      variant={interviewState.phase === "complete" ? "default" : "secondary"}
-                      data-testid="badge-phase"
-                    >
-                      {interviewState.phase === "resume" && <FileText className="w-3 h-3 mr-1" />}
-                      {interviewState.phase === "work" && <Briefcase className="w-3 h-3 mr-1" />}
-                      {interviewState.phase === "complete" && <CheckCircle className="w-3 h-3 mr-1" />}
-                      {getPhaseLabel()}
-                    </Badge>
-                  </div>
-                  <p className="text-sm text-muted-foreground" data-testid="text-phase-description">
-                    {getPhaseDescription()}
-                  </p>
-                </div>
-                {interviewState.phase !== "complete" && (
-                  <Sparkles className="h-5 w-5 text-primary animate-pulse" />
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <div className="flex justify-between text-xs text-muted-foreground">
-                  <span>Interview Progress</span>
-                  <span>{Math.round(totalProgress())}%</span>
-                </div>
-                <Progress value={totalProgress()} className="h-2" data-testid="progress-interview" />
-                <div className="flex gap-4 text-xs">
-                  <div className="flex items-center gap-1">
-                    <div className={`w-2 h-2 rounded-full ${interviewState.phase === "resume" ? "bg-primary" : interviewState.resumeQuestionsAsked >= TOTAL_RESUME_QUESTIONS ? "bg-green-500" : "bg-muted"}`} />
-                    <span className={interviewState.phase === "resume" ? "text-primary" : ""}>Resume ({Math.min(interviewState.resumeQuestionsAsked, TOTAL_RESUME_QUESTIONS)}/{TOTAL_RESUME_QUESTIONS})</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <div className={`w-2 h-2 rounded-full ${interviewState.phase === "work" ? "bg-primary" : interviewState.workQuestionsAsked >= TOTAL_WORK_QUESTIONS ? "bg-green-500" : "bg-muted"}`} />
-                    <span className={interviewState.phase === "work" ? "text-primary" : ""}>Work Assignment ({Math.min(interviewState.workQuestionsAsked, TOTAL_WORK_QUESTIONS)}/{TOTAL_WORK_QUESTIONS})</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* MB.MD Fix: Resume re-upload prompt when content wasn't parsed */}
-          {needsResumeReupload && (
-            <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4 mx-4">
-              <div className="flex items-center gap-3">
-                <Upload className="h-5 w-5 text-amber-500" />
-                <div className="flex-1">
-                  <p className="text-sm font-medium">Resume content not available</p>
-                  <p className="text-xs text-muted-foreground">Re-upload your resume so Mr. Blue can read and reference your experience.</p>
-                </div>
-                <input 
-                  type="file" 
-                  ref={fileInputRef} 
-                  onChange={handleResumeReupload} 
-                  accept=".pdf,.docx,.txt" 
-                  className="hidden" 
-                  data-testid="input-resume-reupload"
-                />
-                <Button 
-                  size="sm" 
-                  onClick={() => fileInputRef.current?.click()} 
-                  disabled={isUploadingResume}
-                  data-testid="button-resume-reupload"
-                >
-                  {isUploadingResume ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4 mr-1" />}
-                  {isUploadingResume ? "Parsing..." : "Re-upload"}
-                </Button>
-              </div>
-            </div>
-          )}
-
-          <ScrollArea className="flex-1 p-4">
-            <div className="container mx-auto max-w-4xl space-y-4">
-              <AnimatePresence>
-                {messages.map((message, idx) => (
-                  <motion.div
-                    key={message.id}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: idx * 0.02 }}
-                    className={`flex gap-3 ${message.role === "user" ? "justify-end" : "justify-start"}`}
-                  >
-                    {message.role === "assistant" && (
-                      <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                        <Bot className="h-5 w-5 text-primary" />
-                      </div>
-                    )}
-
-                    <div className={`max-w-[75%] ${message.role === "user" ? "order-first" : ""}`}>
-                      <Card className={message.role === "user" ? "bg-primary text-primary-foreground" : "glass-card"}>
-                        <CardContent className="pt-4 pb-3">
-                          <p className="text-sm whitespace-pre-wrap" data-testid={`message-${message.role}-${idx}`}>{message.content}</p>
-                          <p className="text-xs opacity-60 mt-2">
-                            {message.timestamp.toLocaleTimeString()}
-                          </p>
-                        </CardContent>
-                      </Card>
-                    </div>
-
-                    {message.role === "user" && (
-                      <div className="h-8 w-8 rounded-full bg-accent/10 flex items-center justify-center flex-shrink-0">
-                        <User className="h-5 w-5 text-accent" />
-                      </div>
-                    )}
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-
-              {isLoading && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="flex gap-3"
-                >
-                  <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
-                    <Bot className="h-5 w-5 text-primary animate-pulse" />
-                  </div>
-                  <Card className="glass-card">
-                    <CardContent className="pt-4 pb-3">
-                      <div className="flex gap-1">
-                        <div className="h-2 w-2 rounded-full bg-primary/40 animate-bounce" style={{ animationDelay: "0ms" }} />
-                        <div className="h-2 w-2 rounded-full bg-primary/40 animate-bounce" style={{ animationDelay: "150ms" }} />
-                        <div className="h-2 w-2 rounded-full bg-primary/40 animate-bounce" style={{ animationDelay: "300ms" }} />
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              )}
-
-              <div ref={scrollRef} />
-            </div>
-          </ScrollArea>
-
-          <div className="border-t glass-card p-4">
-            <div className="container mx-auto max-w-4xl">
-              {interviewState.phase !== "complete" ? (
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    handleSend();
-                  }}
-                  className="flex gap-2"
-                >
-                  <Input
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    placeholder="Type your answer..."
-                    disabled={isLoading}
-                    className="flex-1"
-                    data-testid="input-interview-answer"
-                  />
-                  <Button
-                    type="submit"
-                    disabled={!input.trim() || isLoading}
-                    size="icon"
-                    data-testid="button-send-answer"
-                  >
-                    <Send className="h-4 w-4" />
-                  </Button>
-                </form>
-              ) : (
-                <div className="flex gap-3 justify-center">
-                  <Button
-                    onClick={() => setLocation(returnTo)}
-                    className="gap-2"
-                    data-testid="button-view-dashboard"
-                  >
-                    View H2AC Dashboard
-                    <ArrowRight className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    onClick={() => setLocation("/")}
-                    className="gap-2"
-                    data-testid="button-go-home"
-                  >
-                    <Home className="h-4 w-4" />
-                    Go Home
-                  </Button>
-                </div>
-              )}
-            </div>
-          </div>
+          <TalentMatchInterviewChat
+            messages={messages}
+            isLoading={isLoading}
+            isComplete={interviewState.phase === "complete"}
+            input={input}
+            onInputChange={setInput}
+            onSend={handleSend}
+            progress={totalProgress()}
+            phases={phases}
+            currentPhaseLabel={getPhaseLabel()}
+            questionDescription={getPhaseDescription()}
+            showTimestamps={true}
+            headerBanner={resumeReuploadBanner}
+            completeCTA={completeCTA}
+            useScrollArea={true}
+          />
         </div>
       </PageLayout>
     </SelfHealingErrorBoundary>
