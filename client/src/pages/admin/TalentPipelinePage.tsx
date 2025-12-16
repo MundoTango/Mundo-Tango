@@ -1,6 +1,7 @@
 import { useLocation } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { SEO } from "@/components/SEO";
 import { Users, FileText, MessageSquare, CheckCircle, XCircle, Clock, RefreshCw } from "lucide-react";
 import { motion } from "framer-motion";
@@ -10,6 +11,22 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
+
+const roleTagColors: Record<string, string> = {
+  "UX": "bg-purple-500/20 text-purple-400 border-purple-500/30",
+  "UI": "bg-pink-500/20 text-pink-400 border-pink-500/30",
+  "Backend": "bg-blue-500/20 text-blue-400 border-blue-500/30",
+  "Frontend": "bg-cyan-500/20 text-cyan-400 border-cyan-500/30",
+  "DevOps": "bg-orange-500/20 text-orange-400 border-orange-500/30",
+  "Mobile": "bg-green-500/20 text-green-400 border-green-500/30",
+  "Data": "bg-yellow-500/20 text-yellow-400 border-yellow-500/30",
+  "Content": "bg-rose-500/20 text-rose-400 border-rose-500/30",
+  "Marketing": "bg-amber-500/20 text-amber-400 border-amber-500/30",
+  "PM": "bg-indigo-500/20 text-indigo-400 border-indigo-500/30",
+  "QA": "bg-teal-500/20 text-teal-400 border-teal-500/30",
+  "Security": "bg-red-500/20 text-red-400 border-red-500/30",
+  "General": "bg-gray-500/20 text-gray-400 border-gray-500/30",
+};
 
 interface PipelineStage {
   stage: string;
@@ -23,6 +40,8 @@ interface PendingVolunteer {
   name: string;
   email: string;
   skills: string;
+  skillsArray: string[];
+  roleTags: string[];
   availability: string;
   hoursPerWeek: number;
   source: string | null;
@@ -193,6 +212,18 @@ export default function TalentPipelinePage() {
                       <div className="flex items-start justify-between mb-3">
                         <div>
                           <h3 className="font-semibold text-lg">{volunteer.name}</h3>
+                          <div className="flex flex-wrap gap-1 mt-1 mb-2">
+                            {volunteer.roleTags?.map((tag, idx) => (
+                              <Badge 
+                                key={idx} 
+                                variant="outline" 
+                                className={`text-xs ${roleTagColors[tag] || roleTagColors["General"]}`}
+                                data-testid={`badge-role-${tag.toLowerCase()}-${volunteer.id}`}
+                              >
+                                {tag}
+                              </Badge>
+                            ))}
+                          </div>
                           <p className="text-sm text-muted-foreground">{volunteer.skills}</p>
                           {volunteer.availability && (
                             <p className="text-xs text-muted-foreground mt-1">

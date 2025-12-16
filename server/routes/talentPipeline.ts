@@ -81,12 +81,38 @@ router.get("/pending", async (_req: Request, res: Response) => {
         const profile = volunteer?.profile as { resumeText?: string; githubUrl?: string } | null;
         const resumeSummary = profile?.resumeText?.substring(0, 100) || "";
 
+        // Extract role tags from resume/notes or derive from skills
+        let roleTags: string[] = [];
+        const notesLower = (p.notes || "").toLowerCase();
+        const skillsLower = skillsStr.toLowerCase();
+        const resumeLower = resumeSummary.toLowerCase();
+        const combinedText = notesLower + " " + skillsLower + " " + resumeLower;
+        
+        // Common role detection
+        if (combinedText.includes("ux") || combinedText.includes("user experience")) roleTags.push("UX");
+        if (combinedText.includes("ui") || combinedText.includes("user interface") || combinedText.includes("design")) roleTags.push("UI");
+        if (combinedText.includes("backend") || combinedText.includes("node") || combinedText.includes("python") || combinedText.includes("server")) roleTags.push("Backend");
+        if (combinedText.includes("frontend") || combinedText.includes("react") || combinedText.includes("vue") || combinedText.includes("angular")) roleTags.push("Frontend");
+        if (combinedText.includes("devops") || combinedText.includes("aws") || combinedText.includes("docker") || combinedText.includes("kubernetes")) roleTags.push("DevOps");
+        if (combinedText.includes("mobile") || combinedText.includes("ios") || combinedText.includes("android") || combinedText.includes("flutter")) roleTags.push("Mobile");
+        if (combinedText.includes("data") || combinedText.includes("analytics") || combinedText.includes("machine learning") || combinedText.includes("ml")) roleTags.push("Data");
+        if (combinedText.includes("content") || combinedText.includes("writing") || combinedText.includes("copywriting")) roleTags.push("Content");
+        if (combinedText.includes("marketing") || combinedText.includes("seo") || combinedText.includes("social media")) roleTags.push("Marketing");
+        if (combinedText.includes("project") || combinedText.includes("management") || combinedText.includes("scrum") || combinedText.includes("agile")) roleTags.push("PM");
+        if (combinedText.includes("qa") || combinedText.includes("testing") || combinedText.includes("quality")) roleTags.push("QA");
+        if (combinedText.includes("security") || combinedText.includes("infosec") || combinedText.includes("cyber")) roleTags.push("Security");
+        
+        // Default to General if no specific roles detected
+        if (roleTags.length === 0) roleTags.push("General");
+
         return {
           id: p.id,
           candidateId: p.candidateId,
           name: p.userDisplayName || p.userName || "Unknown",
           email: p.userEmail,
           skills: skillsStr + (resumeSummary ? ` (${resumeSummary}...)` : ""),
+          skillsArray: Array.isArray(volunteer?.skills) ? volunteer.skills : [],
+          roleTags,
           availability: volunteer?.availability || "Not specified",
           hoursPerWeek: volunteer?.hoursPerWeek || 0,
           source: p.source,
