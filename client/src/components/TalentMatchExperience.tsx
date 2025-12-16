@@ -87,8 +87,16 @@ export function TalentMatchExperience({
   const [uploadedDocuments, setUploadedDocuments] = useState<UploadedDocument[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // State for guest mode interview
-  const [step, setStep] = useState<"upload" | "interview" | "complete">("upload");
+  // State for guest mode intake form (name/email collection)
+  const [intakeName, setIntakeName] = useState(initialName || "");
+  const [intakeEmail, setIntakeEmail] = useState(initialEmail || "");
+  const [isCreatingSession, setIsCreatingSession] = useState(false);
+
+  // State for guest mode interview - add "intake" as first step for anonymous users
+  const [step, setStep] = useState<"intake" | "upload" | "interview" | "complete">(
+    // Start at intake if guest mode with no session and no initial credentials
+    mode === "guest" && !session && !initialName && !initialEmail ? "intake" : "upload"
+  );
   const [storedDocs, setStoredDocs] = useState<StoredDocument[]>([]);
   const [interviewMessages, setInterviewMessages] = useState<Array<{role: "ai" | "user", content: string}>>([]);
   const [currentMessage, setCurrentMessage] = useState("");
@@ -99,17 +107,21 @@ export function TalentMatchExperience({
 
   const totalQuestions = TOTAL_QUESTIONS;
 
-  // Guest mode: Initialize session
+  // Guest mode: Initialize session when initial credentials provided
   useEffect(() => {
     if (mode === "guest" && !session && initialName && initialEmail) {
       createSession(initialName, initialEmail);
     }
   }, [mode, session, initialName, initialEmail, createSession]);
 
-  // Guest mode: Restore session state
+  // Guest mode: Restore session state (skip intake if session exists)
   useEffect(() => {
     if (mode === "guest" && session && !hasRestoredSession) {
-      setStep(session.step);
+      // If we have a session, skip intake and go to the stored step
+      const restoredStep = session.step || "upload";
+      setStep(restoredStep);
+      setIntakeName(session.name || "");
+      setIntakeEmail(session.email || "");
       if (session.uploadedDocuments && session.uploadedDocuments.length > 0) {
         setStoredDocs(session.uploadedDocuments);
       }
@@ -121,6 +133,48 @@ export function TalentMatchExperience({
       setHasRestoredSession(true);
     }
   }, [mode, session, hasRestoredSession, totalQuestions]);
+
+  // Guest mode: Handle intake form submission (collect name/email)
+  const handleIntakeSubmit = async () => {
+    const trimmedName = intakeName.trim();
+    const trimmedEmail = intakeEmail.trim().toLowerCase();
+    
+    if (!trimmedName) {
+      toast({
+        title: "Name required",
+        description: "Please enter your name to continue",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    if (!trimmedEmail || !trimmedEmail.includes("@")) {
+      toast({
+        title: "Valid email required",
+        description: "Please enter a valid email address",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    setIsCreatingSession(true);
+    try {
+      await createSession(trimmedName, trimmedEmail);
+      setStep("upload");
+      toast({
+        title: "Welcome!",
+        description: "Now let's upload your resume to get started"
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to create session. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsCreatingSession(false);
+    }
+  };
 
   // Auto-scroll chat
   useEffect(() => {
@@ -743,13 +797,18 @@ Keep the entire response concise (2-3 sentences max).`;
 
   const startOver = () => {
     clearSession();
-    setStep("upload");
     setStoredDocs([]);
     setInterviewMessages([]);
     setQuestionIndex(0);
     setHasRestoredSession(false);
+    setIntakeName("");
+    setIntakeEmail("");
+    // If no initial credentials provided, go back to intake; otherwise upload
     if (initialName && initialEmail) {
+      setStep("upload");
       createSession(initialName, initialEmail);
+    } else {
+      setStep("intake");
     }
   };
 
@@ -761,6 +820,123 @@ Keep the entire response concise (2-3 sentences max).`;
           <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary mb-4"></div>
           <p className="text-muted-foreground">Loading...</p>
         </div>
+      </div>
+    );
+  }
+
+  // Guest mode: Intake step (collect name/email for anonymous visitors)
+  if (mode === "guest" && step === "intake") {
+    return (
+      <div className="space-y-8">
+        {showHero && (
+          <div className="relative w-full aspect-video overflow-hidden bg-gradient-to-br from-primary via-secondary to-accent rounded-lg">
+            <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-background" />
+            
+            <div className="relative z-10 h-full flex items-center justify-center px-6">
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1 }}
+                className="text-center max-w-4xl"
+              >
+                <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm">
+                  <Brain className="w-3 h-3 mr-1" />
+                  AI-Powered Volunteer Matching
+                </Badge>
+
+                <h1 className="text-4xl md:text-5xl font-serif font-bold text-white mb-6 tracking-tight leading-tight">
+                  Join Our Team
+                </h1>
+
+                <p className="text-lg md:text-xl text-white/90 mb-4 max-w-2xl mx-auto leading-relaxed">
+                  Help build the platform connecting the global tango community
+                </p>
+              </motion.div>
+            </div>
+          </div>
+        )}
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+        >
+          <Card className="max-w-md mx-auto">
+            <CardContent className="p-6 space-y-6">
+              <div className="text-center">
+                <div className="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Sparkles className="w-7 h-7 text-primary" />
+                </div>
+                <h2 className="text-2xl font-serif font-bold mb-2" data-testid="heading-intake">
+                  Let's Get Started
+                </h2>
+                <p className="text-muted-foreground text-sm">
+                  Tell us a bit about yourself to begin the volunteer application
+                </p>
+              </div>
+
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="intake-name">Your Name</Label>
+                  <Input
+                    id="intake-name"
+                    type="text"
+                    placeholder="Enter your full name"
+                    value={intakeName}
+                    onChange={(e) => setIntakeName(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && handleIntakeSubmit()}
+                    disabled={isCreatingSession}
+                    data-testid="input-intake-name"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="intake-email">Email Address</Label>
+                  <Input
+                    id="intake-email"
+                    type="email"
+                    placeholder="your.email@example.com"
+                    value={intakeEmail}
+                    onChange={(e) => setIntakeEmail(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && handleIntakeSubmit()}
+                    disabled={isCreatingSession}
+                    data-testid="input-intake-email"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    We'll use this to send you updates about your application
+                  </p>
+                </div>
+              </div>
+
+              <Button
+                className="w-full"
+                onClick={handleIntakeSubmit}
+                disabled={isCreatingSession || !intakeName.trim() || !intakeEmail.trim()}
+                data-testid="button-continue-intake"
+              >
+                {isCreatingSession ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Starting...
+                  </>
+                ) : (
+                  <>
+                    Continue
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </>
+                )}
+              </Button>
+
+              {showBackLink && (
+                <div className="text-center">
+                  <Link href="/volunteer" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                    Learn more about volunteering
+                  </Link>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </motion.div>
       </div>
     );
   }

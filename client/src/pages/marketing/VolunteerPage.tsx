@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
@@ -6,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { PublicNavbar } from "@/components/PublicNavbar";
 import { SEO } from "@/components/SEO";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
+import { TalentMatchModal } from "@/components/TalentMatchModal";
 import { useQuery } from "@tanstack/react-query";
 import { 
   Code, Layout, TrendingUp, Brain, Shield, Globe,
