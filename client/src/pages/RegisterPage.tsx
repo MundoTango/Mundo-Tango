@@ -164,9 +164,11 @@ export default function RegisterPage() {
       if (isCodeValid) {
         await register({ name, username, email, password });
       } else {
+        // Waitlist signup - creates account and returns tokens for onboarding
         const response = await fetch("/api/auth/waitlist", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
+          credentials: "include",
           body: JSON.stringify({ 
             email, 
             name: name || undefined,
@@ -181,11 +183,22 @@ export default function RegisterPage() {
           throw new Error(data.message || "Failed to join waitlist");
         }
         
-        setWaitlistSuccess(true);
-        toast({
-          title: "You're on the list!",
-          description: "We'll notify you when your account is ready.",
-        });
+        // Store access token and navigate to onboarding (like regular registration)
+        if (data.accessToken) {
+          localStorage.setItem("accessToken", data.accessToken);
+          toast({
+            title: "Welcome to Mundo Tango!",
+            description: "Let's set up your profile.",
+          });
+          navigate("/onboarding/welcome");
+        } else {
+          // Fallback for older API response without tokens
+          setWaitlistSuccess(true);
+          toast({
+            title: "You're on the list!",
+            description: "We'll notify you when your account is ready.",
+          });
+        }
       }
     } catch (error: any) {
       toast({

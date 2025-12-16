@@ -71,8 +71,12 @@ export default function DanceExperiencePage() {
     if (!user) {
       navigate("/login");
     } else if (user.isOnboardingComplete) {
-      // Already onboarded, redirect to volunteer/support page
-      navigate("/volunteer");
+      // Already onboarded - redirect based on waitlist status
+      if ((user as any).waitlist) {
+        navigate("/waitlist-success");
+      } else {
+        navigate("/feed");
+      }
     }
   }, [user, navigate]);
 
@@ -132,8 +136,13 @@ export default function DanceExperiencePage() {
       });
 
       if (refreshUser) await refreshUser();
-      // After completing onboarding, redirect to volunteer/support page
-      navigate("/volunteer");
+      
+      // Redirect based on waitlist status
+      if ((user as any)?.waitlist) {
+        navigate("/waitlist-success");
+      } else {
+        navigate("/feed");
+      }
     } catch (error) {
       toast({
         title: "Error",

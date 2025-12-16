@@ -321,8 +321,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (!data.user.isOnboardingComplete) {
         navigate("/onboarding/welcome");
       } else {
-        // After registration and onboarding, redirect to volunteer/support page
-        navigate("/volunteer");
+        // After registration and onboarding complete, redirect to memories feed
+        navigate("/feed");
       }
     } catch (error) {
       console.error("Registration error:", error);

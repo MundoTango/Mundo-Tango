@@ -334,7 +334,7 @@ router.post("/waitlist", async (req: Request, res: Response) => {
       ? await bcrypt.hash(validatedData.password, BCRYPT_ROUNDS)
       : await bcrypt.hash(crypto.randomBytes(32).toString("hex"), BCRYPT_ROUNDS);
 
-    await storage.createUser({
+    const user = await storage.createUser({
       email: validatedData.email,
       name: validatedData.name || "Waitlist User",
       username: finalUsername,
@@ -344,9 +344,44 @@ router.post("/waitlist", async (req: Request, res: Response) => {
       isActive: false,
     });
 
+    // Generate tokens to allow waitlist users to complete onboarding
+    const accessToken = generateAccessToken(user);
+    const refreshToken = generateRefreshToken(user);
+
+    // Store refresh token
+    const refreshExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+    await storage.createRefreshToken({
+      userId: user.id,
+      token: refreshToken,
+      expiresAt: refreshExpiresAt,
+    });
+
+    // Set refresh token cookie
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
     res.status(201).json({
-      message: "You've been added to the waitlist! We'll notify you when registration opens.",
+      message: "You've been added to the waitlist! Complete your profile setup.",
       success: true,
+      accessToken,
+      user: {
+        id: user.id,
+        username: user.username,
+        name: user.name,
+        email: user.email,
+        profileImage: user.profileImage,
+        bio: user.bio,
+        city: user.city,
+        country: user.country,
+        tangoRoles: user.tangoRoles || [],
+        waitlist: user.waitlist,
+        isOnboardingComplete: user.isOnboardingComplete || false,
+      },
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
