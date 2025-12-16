@@ -46,7 +46,6 @@ const VisualEditorSplitPane = HEAVY_FEATURES_ENABLED
 import NotFound from "@/pages/not-found";
 import LoginPage from "@/pages/LoginPage";
 import RegisterPage from "@/pages/RegisterPage";
-import WaitlistSuccessPage from "@/pages/WaitlistSuccessPage";
 
 // Lazy-loaded core pages for better bundle splitting
 const HomePage = lazy(() => import("@/pages/HomePage"));
@@ -878,7 +877,6 @@ function Router() {
       </Route>
       <Route path="/login" component={LoginPage} />
       <Route path="/register" component={RegisterPage} />
-      <Route path="/waitlist-success" component={WaitlistSuccessPage} />
       <Route path="/auth/callback" component={FacebookCallbackPage} />
 
       <Route path="/feed">

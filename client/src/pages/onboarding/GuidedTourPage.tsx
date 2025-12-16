@@ -68,19 +68,11 @@ export default function GuidedTourPage() {
             formStatus: 4,
           }),
         });
-        // After completing onboarding, redirect based on waitlist status
-        if ((user as any)?.waitlist) {
-          navigate("/waitlist-success");
-        } else {
-          navigate("/feed");
-        }
+        // After completing onboarding, redirect to volunteer/support page
+        navigate("/volunteer");
       } catch (error) {
         console.error("Error completing onboarding:", error);
-        if ((user as any)?.waitlist) {
-          navigate("/waitlist-success");
-        } else {
-          navigate("/feed");
-        }
+        navigate("/volunteer");
       }
     }
   };

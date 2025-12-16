@@ -72,6 +72,17 @@ export default function RegisterPage() {
   const passwordsMatch = password && confirmPassword && password === confirmPassword;
   const passwordsDontMatch = confirmPassword && !passwordsMatch;
 
+  // Redirect to volunteer page when waitlist signup is successful
+  useEffect(() => {
+    if (waitlistSuccess) {
+      // Short delay to show success toast, then redirect to volunteer page
+      const timeout = setTimeout(() => {
+        navigate("/volunteer");
+      }, 1500);
+      return () => clearTimeout(timeout);
+    }
+  }, [waitlistSuccess, navigate]);
+
   useEffect(() => {
     if (username.length >= 3) {
       const checkUsername = async () => {
@@ -164,11 +175,9 @@ export default function RegisterPage() {
       if (isCodeValid) {
         await register({ name, username, email, password });
       } else {
-        // Waitlist signup - creates account and returns tokens for onboarding
         const response = await fetch("/api/auth/waitlist", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          credentials: "include",
           body: JSON.stringify({ 
             email, 
             name: name || undefined,
@@ -183,22 +192,11 @@ export default function RegisterPage() {
           throw new Error(data.message || "Failed to join waitlist");
         }
         
-        // Store access token and navigate to onboarding (like regular registration)
-        if (data.accessToken) {
-          localStorage.setItem("accessToken", data.accessToken);
-          toast({
-            title: "Welcome to Mundo Tango!",
-            description: "Let's set up your profile.",
-          });
-          navigate("/onboarding/welcome");
-        } else {
-          // Fallback for older API response without tokens
-          setWaitlistSuccess(true);
-          toast({
-            title: "You're on the list!",
-            description: "We'll notify you when your account is ready.",
-          });
-        }
+        setWaitlistSuccess(true);
+        toast({
+          title: "You're on the list!",
+          description: "We'll notify you when your account is ready.",
+        });
       }
     } catch (error: any) {
       toast({

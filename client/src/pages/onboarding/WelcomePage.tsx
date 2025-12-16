@@ -17,12 +17,8 @@ export default function WelcomePage() {
 
   useEffect(() => {
     if (user && user.isOnboardingComplete) {
-      // Already onboarded - redirect based on waitlist status
-      if ((user as any).waitlist) {
-        navigate("/waitlist-success");
-      } else {
-        navigate("/feed");
-      }
+      // Already onboarded, redirect to volunteer/support page
+      navigate("/volunteer");
     }
   }, [user, navigate]);
 
