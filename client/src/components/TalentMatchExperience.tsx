@@ -160,6 +160,8 @@ export function TalentMatchExperience({
     setIsCreatingSession(true);
     try {
       await createSession(trimmedName, trimmedEmail);
+      // Persist the step to the session so it survives page reloads
+      await updateSession({ step: "upload" });
       setStep("upload");
       toast({
         title: "Welcome!",

@@ -12,7 +12,7 @@ interface TalentMatchSessionData {
   sessionId: string;
   name: string;
   email: string;
-  step: "upload" | "interview" | "complete";
+  step: "intake" | "upload" | "interview" | "complete";
   uploadedDocuments?: StoredDocument[];
   interviewMessages?: Array<{role: "ai" | "user", content: string}>;
   volunteerId?: number;

@@ -67,6 +67,19 @@ Core functionalities include social features (events, groups, posts, notificatio
 - **WaitlistConfirmationPage** (`/waitlist-confirmation`): Post-onboarding page for waitlist users with "Volunteer with us" (opens TalentMatchModal) and "Support Mundo Tango" buttons
 - **Validated:** E2E tests confirm both registration paths work correctly
 
+**MB.MD Pattern 57 - Anonymous Volunteer Applications (Dec 16, 2025):**
+- **Feature:** Anyone can now apply to volunteer directly from the marketing site without registration
+- **Entry Points:**
+  - VolunteerPage (`/volunteer`): "Apply Now" button in hero section opens TalentMatchModal
+  - WaitlistConfirmationPage (`/waitlist-confirmation`): "Volunteer with us" button for post-registration waitlist users
+- **TalentMatchExperience 4-Step Guest Flow:**
+  1. **Intake** (NEW): Collects Name + Email for anonymous visitors (skipped if credentials already known)
+  2. **Upload**: Resume upload with PDF/DOCX parsing via `/api/talent-match/parse-resume`
+  3. **Interview**: 10-question AI interview (5 background + 5 platform questions)
+  4. **Complete**: Thank you message with submission confirmation
+- **Session Handling:** Creates server session on intake submit, persists across page reloads via cookie + localStorage
+- **Data Flow:** On completion, creates user (if new), volunteer record, resume entries, and candidatePipeline entry (stage="offered") for admin review in Talent Pipeline
+
 **MB.MD Pattern 56 - Onboarding Flow Enhancement (Dec 16, 2025):**
 - **5-Step Onboarding Flow:**
   1. CitySelectionPage (step-1): User selects home city with 300ms debounced 3-tier search

@@ -26,6 +26,8 @@ interface VolunteerDivision {
 }
 
 function VolunteerPageContent() {
+  const [showTalentMatch, setShowTalentMatch] = useState(false);
+
   const fadeInUp = {
     hidden: { opacity: 0, y: 30 },
     visible: { opacity: 1, y: 0 }
@@ -131,10 +133,28 @@ function VolunteerPageContent() {
                   <span>Remote Friendly</span>
                 </div>
               </motion.div>
+
+              <motion.div variants={fadeInUp} className="pt-6">
+                <Button 
+                  size="lg" 
+                  onClick={() => setShowTalentMatch(true)}
+                  className="bg-white text-primary hover:bg-white/90"
+                  data-testid="button-apply-volunteer"
+                >
+                  <Brain className="h-4 w-4 mr-2" />
+                  Apply Now
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </Button>
+              </motion.div>
             </div>
           </motion.div>
         </div>
       </section>
+
+      <TalentMatchModal 
+        open={showTalentMatch} 
+        onOpenChange={setShowTalentMatch} 
+      />
 
       {/* Role Hierarchy Section */}
       <section className="py-16" data-testid="section-hierarchy">
