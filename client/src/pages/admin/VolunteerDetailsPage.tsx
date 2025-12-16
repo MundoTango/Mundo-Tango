@@ -44,8 +44,9 @@ interface VolunteerDetails {
     id: number;
     chatLog: Array<{
       role: string;
-      message: string;
-      timestamp: string;
+      content?: string;
+      message?: string;
+      timestamp?: string;
     }>;
     status: string;
     completedAt: string | null;
@@ -233,27 +234,35 @@ export default function VolunteerDetailsPage() {
                                     )}
                                   </div>
                                   <div className="space-y-3">
-                                    {session.chatLog?.map((msg, idx) => (
-                                      <div
-                                        key={idx}
-                                        className={`flex gap-3 ${msg.role === "assistant" ? "" : "flex-row-reverse"}`}
-                                        data-testid={`message-${session.id}-${idx}`}
-                                      >
-                                        <div className={`h-8 w-8 rounded-full flex items-center justify-center flex-shrink-0 ${msg.role === "assistant" ? "bg-primary/20" : "bg-secondary"}`}>
-                                          {msg.role === "assistant" ? (
-                                            <Bot className="w-4 h-4 text-primary" />
-                                          ) : (
-                                            <User className="w-4 h-4" />
-                                          )}
+                                    {session.chatLog?.map((msg, idx) => {
+                                      const isAI = msg.role === "assistant" || msg.role === "ai";
+                                      const messageText = msg.content || msg.message || "";
+                                      if (!messageText) return null;
+                                      
+                                      return (
+                                        <div
+                                          key={idx}
+                                          className={`flex gap-3 ${isAI ? "" : "flex-row-reverse"}`}
+                                          data-testid={`message-${session.id}-${idx}`}
+                                        >
+                                          <div className={`h-8 w-8 rounded-full flex items-center justify-center flex-shrink-0 ${isAI ? "bg-primary/20" : "bg-secondary"}`}>
+                                            {isAI ? (
+                                              <Bot className="w-4 h-4 text-primary" />
+                                            ) : (
+                                              <User className="w-4 h-4" />
+                                            )}
+                                          </div>
+                                          <div className={`flex-1 p-3 rounded-lg ${isAI ? "bg-primary/10" : "bg-secondary"}`}>
+                                            <p className="text-sm whitespace-pre-wrap">{messageText}</p>
+                                            {msg.timestamp && (
+                                              <span className="text-xs text-muted-foreground">
+                                                {format(new Date(msg.timestamp), "p")}
+                                              </span>
+                                            )}
+                                          </div>
                                         </div>
-                                        <div className={`flex-1 p-3 rounded-lg ${msg.role === "assistant" ? "bg-primary/10" : "bg-secondary"}`}>
-                                          <p className="text-sm">{msg.message}</p>
-                                          <span className="text-xs text-muted-foreground">
-                                            {msg.timestamp ? format(new Date(msg.timestamp), "p") : ""}
-                                          </span>
-                                        </div>
-                                      </div>
-                                    ))}
+                                      );
+                                    })}
                                   </div>
                                   {session.detectedSignals?.length > 0 && (
                                     <div className="mt-4 pt-4 border-t">
