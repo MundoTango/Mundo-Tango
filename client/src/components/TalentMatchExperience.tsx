@@ -23,7 +23,10 @@ import {
   Loader2,
   Home,
   RotateCcw,
-  Send
+  Send,
+  Bot,
+  Briefcase,
+  User
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { apiRequest } from "@/lib/queryClient";
@@ -673,80 +676,144 @@ Be warm and specific - reference something from their answer if relevant.`,
 
   // Guest mode: Interview step
   if (mode === "guest" && step === "interview") {
+    const isBackgroundPhase = questionIndex < BACKGROUND_QUESTIONS.length;
+    const backgroundProgress = Math.min(questionIndex, BACKGROUND_QUESTIONS.length);
+    const platformProgress = Math.max(0, questionIndex - BACKGROUND_QUESTIONS.length);
+    
     return (
-      <div className="space-y-6">
-        {/* Interview Header */}
-        <div className="text-center">
-          <Badge variant="outline" className="mb-4">
-            <Brain className="w-3 h-3 mr-1" />
-            AI Interview
-          </Badge>
-          <h2 className="text-2xl font-serif font-bold mb-2">Interview with Mr. Blue</h2>
-          <p className="text-muted-foreground">
-            Question {Math.min(questionIndex + 1, totalQuestions)} of {totalQuestions}
-          </p>
-          <Progress value={interviewProgress} className="h-2 mt-4 max-w-md mx-auto" />
+      <div className="flex flex-col h-[600px]">
+        {/* Interview Header - matches TalentMatchInterviewPage */}
+        <div className="border-b bg-card/50 p-4">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+              <Bot className="h-6 w-6 text-primary" />
+            </div>
+            <div className="flex-1">
+              <div className="flex items-center gap-2">
+                <h1 className="text-lg font-semibold" data-testid="heading-interview-title">Mr. Blue AI Interview</h1>
+                <Badge variant={questionIndex >= totalQuestions ? "default" : "secondary"}>
+                  {isBackgroundPhase ? <FileText className="w-3 h-3 mr-1" /> : <Briefcase className="w-3 h-3 mr-1" />}
+                  {isBackgroundPhase ? "Phase 1: Background" : "Phase 2: Platform Skills"}
+                </Badge>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Question {Math.min(questionIndex + 1, totalQuestions)} of {totalQuestions}
+              </p>
+            </div>
+            {questionIndex < totalQuestions && (
+              <Sparkles className="h-5 w-5 text-primary animate-pulse" />
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <div className="flex justify-between text-xs text-muted-foreground">
+              <span>Interview Progress</span>
+              <span>{Math.round(interviewProgress)}%</span>
+            </div>
+            <Progress value={interviewProgress} className="h-2" data-testid="progress-interview" />
+            <div className="flex gap-4 text-xs">
+              <div className="flex items-center gap-1">
+                <div className={`w-2 h-2 rounded-full ${isBackgroundPhase ? "bg-primary" : backgroundProgress >= BACKGROUND_QUESTIONS.length ? "bg-green-500" : "bg-muted"}`} />
+                <span className={isBackgroundPhase ? "text-primary" : ""}>Background ({backgroundProgress}/{BACKGROUND_QUESTIONS.length})</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <div className={`w-2 h-2 rounded-full ${!isBackgroundPhase ? "bg-primary" : "bg-muted"}`} />
+                <span className={!isBackgroundPhase ? "text-primary" : ""}>Platform ({platformProgress}/{PLATFORM_QUESTIONS.length})</span>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Chat Container */}
-        <Card>
-          <CardContent className="p-4">
-            <div 
-              ref={chatContainerRef}
-              className="h-[350px] overflow-y-auto space-y-4 mb-4" 
-              data-testid="chat-messages"
+        {/* Chat Messages - matches TalentMatchInterviewPage styling */}
+        <div 
+          ref={chatContainerRef}
+          className="flex-1 overflow-y-auto p-4 space-y-4" 
+          data-testid="chat-messages"
+        >
+          {interviewMessages.map((msg, idx) => (
+            <motion.div
+              key={idx}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: idx * 0.02 }}
+              className={`flex gap-3 ${msg.role === "user" ? "justify-end" : "justify-start"}`}
             >
-              {interviewMessages.map((msg, idx) => (
-                <div key={idx} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
-                  <div className={`max-w-[85%] p-3 rounded-lg whitespace-pre-wrap ${
-                    msg.role === "user" 
-                      ? "bg-primary text-primary-foreground" 
-                      : "bg-muted text-foreground"
-                  }`} data-testid={`chat-message-${idx}`}>
-                    {msg.content}
-                  </div>
-                </div>
-              ))}
-              {isAiTyping && (
-                <div className="flex justify-start">
-                  <div className="bg-muted p-3 rounded-lg">
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  </div>
+              {msg.role === "ai" && (
+                <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <Bot className="h-5 w-5 text-primary" />
                 </div>
               )}
-            </div>
 
-            <div className="flex gap-2">
-              <textarea
-                placeholder="Type your response..."
-                value={currentMessage}
-                onChange={(e) => setCurrentMessage(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) {
-                    e.preventDefault();
-                    sendGuestMessage();
-                  }
-                }}
-                disabled={isAiTyping || questionIndex >= totalQuestions}
-                className="flex-1 min-h-[60px] p-3 border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-primary bg-background text-foreground"
-                data-testid="input-chat-message"
-              />
-              <Button 
-                onClick={sendGuestMessage} 
-                disabled={isAiTyping || !currentMessage.trim() || questionIndex >= totalQuestions} 
-                data-testid="button-send-message"
-              >
-                <Send className="w-4 h-4" />
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+              <div className={`max-w-[75%] ${msg.role === "user" ? "order-first" : ""}`}>
+                <Card className={msg.role === "user" ? "bg-primary text-primary-foreground" : ""}>
+                  <CardContent className="pt-4 pb-3">
+                    <p className="text-sm whitespace-pre-wrap" data-testid={`chat-message-${idx}`}>{msg.content}</p>
+                  </CardContent>
+                </Card>
+              </div>
 
-        <div className="flex justify-between">
-          <Button variant="ghost" onClick={() => { setStep("upload"); updateSession({ step: "upload" }); }} data-testid="button-back-upload">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Upload
-          </Button>
+              {msg.role === "user" && (
+                <div className="h-8 w-8 rounded-full bg-accent/10 flex items-center justify-center flex-shrink-0">
+                  <User className="h-5 w-5 text-accent" />
+                </div>
+              )}
+            </motion.div>
+          ))}
+          
+          {isAiTyping && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="flex gap-3"
+            >
+              <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
+                <Bot className="h-5 w-5 text-primary animate-pulse" />
+              </div>
+              <Card>
+                <CardContent className="pt-4 pb-3">
+                  <div className="flex gap-1">
+                    <div className="h-2 w-2 rounded-full bg-primary/40 animate-bounce" style={{ animationDelay: "0ms" }} />
+                    <div className="h-2 w-2 rounded-full bg-primary/40 animate-bounce" style={{ animationDelay: "150ms" }} />
+                    <div className="h-2 w-2 rounded-full bg-primary/40 animate-bounce" style={{ animationDelay: "300ms" }} />
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          )}
+        </div>
+
+        {/* Input Area - matches TalentMatchInterviewPage */}
+        <div className="border-t bg-card/50 p-4">
+          <div className="flex gap-2">
+            <textarea
+              placeholder="Type your response..."
+              value={currentMessage}
+              onChange={(e) => setCurrentMessage(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  sendGuestMessage();
+                }
+              }}
+              disabled={isAiTyping || questionIndex >= totalQuestions}
+              className="flex-1 min-h-[50px] p-3 border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-primary bg-background text-foreground"
+              data-testid="input-chat-message"
+            />
+            <Button 
+              onClick={sendGuestMessage} 
+              disabled={isAiTyping || !currentMessage.trim() || questionIndex >= totalQuestions}
+              size="icon"
+              data-testid="button-send-message"
+            >
+              <Send className="w-4 h-4" />
+            </Button>
+          </div>
+          <div className="flex justify-start mt-2">
+            <Button variant="ghost" size="sm" onClick={() => { setStep("upload"); updateSession({ step: "upload" }); }} data-testid="button-back-upload">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Upload
+            </Button>
+          </div>
         </div>
       </div>
     );
