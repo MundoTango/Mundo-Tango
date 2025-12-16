@@ -72,16 +72,6 @@ export default function RegisterPage() {
   const passwordsMatch = password && confirmPassword && password === confirmPassword;
   const passwordsDontMatch = confirmPassword && !passwordsMatch;
 
-  // Redirect to volunteer page when waitlist signup is successful
-  useEffect(() => {
-    if (waitlistSuccess) {
-      // Short delay to show success toast, then redirect to volunteer page
-      const timeout = setTimeout(() => {
-        navigate("/volunteer");
-      }, 1500);
-      return () => clearTimeout(timeout);
-    }
-  }, [waitlistSuccess, navigate]);
 
   useEffect(() => {
     if (username.length >= 3) {
@@ -172,32 +162,15 @@ export default function RegisterPage() {
     setIsLoading(true);
 
     try {
-      if (isCodeValid) {
-        await register({ name, username, email, password });
-      } else {
-        const response = await fetch("/api/auth/waitlist", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ 
-            email, 
-            name: name || undefined,
-            username: username || undefined,
-            password: password || undefined,
-          }),
-        });
-        
-        const data = await response.json();
-        
-        if (!response.ok) {
-          throw new Error(data.message || "Failed to join waitlist");
-        }
-        
-        setWaitlistSuccess(true);
-        toast({
-          title: "You're on the list!",
-          description: "We'll notify you when your account is ready.",
-        });
-      }
+      // Always register with inviteCode - backend will set waitlist flag based on code validity
+      await register({ 
+        name, 
+        username, 
+        email, 
+        password, 
+        inviteCode: inviteCode.trim() || undefined 
+      });
+      // Registration successful - AuthContext handles redirect to onboarding
     } catch (error: any) {
       toast({
         title: isCodeValid ? "Registration failed" : "Couldn't complete signup",

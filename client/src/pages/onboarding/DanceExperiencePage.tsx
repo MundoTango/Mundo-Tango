@@ -52,7 +52,7 @@ function generateYearOptions(): number[] {
 
 export default function DanceExperiencePage() {
   const [, navigate] = useLocation();
-  const { user, refreshUser } = useAuth();
+  const { user, refreshCurrentUser } = useAuth();
   const { toast } = useToast();
   
   const [tangoStartYear, setTangoStartYear] = useState<number>(currentYear);
@@ -126,14 +126,30 @@ export default function DanceExperiencePage() {
         }),
       });
 
-      toast({
-        title: "Welcome to Mundo Tango!",
-        description: "Your profile is complete. Let's explore!",
-      });
-
-      if (refreshUser) await refreshUser();
-      // After completing onboarding, redirect to volunteer/support page
-      navigate("/volunteer");
+      // Refresh user data to get latest waitlist status
+      await refreshCurrentUser();
+      
+      // Check if user is on waitlist (no valid invite code) vs full access
+      const isWaitlist = user?.waitlist === true;
+      
+      if (isWaitlist) {
+        // Waitlist user: show confirmation toast, then redirect to volunteer page
+        toast({
+          title: "You're on the list!",
+          description: "We'll notify you when your account is ready. In the meantime, explore volunteer opportunities!",
+        });
+        // Short delay to show toast, then redirect
+        setTimeout(() => {
+          navigate("/volunteer");
+        }, 1500);
+      } else {
+        // Full access user: welcome and go to feed
+        toast({
+          title: "Welcome to Mundo Tango!",
+          description: "Your profile is complete. Let's explore!",
+        });
+        navigate("/feed");
+      }
     } catch (error) {
       toast({
         title: "Error",

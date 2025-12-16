@@ -24,7 +24,11 @@ const registerSchema = insertUserSchema.extend({
   email: z.string().email(),
   username: z.string().min(3).max(30),
   name: z.string().min(1).max(100),
+  inviteCode: z.string().optional(),
 });
+
+// Valid invite codes that grant immediate access (not waitlist)
+const VALID_INVITE_CODES = ["nomad"];
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -94,11 +98,21 @@ router.post("/register", async (req: Request, res: Response) => {
 
     const hashedPassword = await bcrypt.hash(validatedData.password, BCRYPT_ROUNDS);
 
+    // Check if invite code is valid - determines waitlist status
+    const inviteCode = validatedData.inviteCode?.toLowerCase().trim();
+    const isValidInviteCode = inviteCode && VALID_INVITE_CODES.includes(inviteCode);
+    const isWaitlist = !isValidInviteCode;
+
+    // Remove inviteCode from user data before creating (it's not a user field)
+    const { inviteCode: _, ...userData } = validatedData;
+
     const user = await storage.createUser({
-      ...validatedData,
+      ...userData,
       password: hashedPassword,
       isOnboardingComplete: false,
       formStatus: 0,
+      waitlist: isWaitlist,
+      waitlistDate: isWaitlist ? new Date() : null,
     });
 
     // Auto-create city group if user registered with a city
@@ -153,6 +167,7 @@ router.post("/register", async (req: Request, res: Response) => {
       role: user.role,
       isOnboardingComplete: user.isOnboardingComplete,
       formStatus: user.formStatus,
+      waitlist: user.waitlist,
     };
 
     res.status(201).json({
