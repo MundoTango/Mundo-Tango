@@ -3,6 +3,15 @@ import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary"
 import { TalentMatchExperience } from "@/components/TalentMatchExperience";
 
 export default function TalentMatchEmbedPage() {
+  const handleClose = () => {
+    // Navigate parent window to marketing home page
+    if (window.parent !== window) {
+      window.parent.location.href = "/";
+    } else {
+      window.location.href = "/";
+    }
+  };
+
   return (
     <SelfHealingErrorBoundary pageName="Talent Match Embed" fallbackRoute="/register">
       <SEO
@@ -13,9 +22,10 @@ export default function TalentMatchEmbedPage() {
       <div className="min-h-screen bg-background py-8 px-6">
         <div className="container mx-auto max-w-4xl">
           <TalentMatchExperience 
-            mode="authenticated" 
+            mode="guest" 
             showHero={true}
             showBackLink={false}
+            onClose={handleClose}
           />
         </div>
       </div>
