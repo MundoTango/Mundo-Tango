@@ -9,6 +9,7 @@ import cookieParser from "cookie-parser";
 import morgan from "morgan";
 console.log("🔍 [DEBUG] About to import ./routes...");
 import { registerRoutes } from "./routes";
+import testScraperRoutes from './routes/test-scraper-routes';
 console.log("✅ [DEBUG] ./routes imported");
 import { setupVite, serveStatic, log } from "./vite";
 import { startPreviewExpirationChecker } from "./lib/preview-expiration";
@@ -161,6 +162,8 @@ app.use((req, res, next) => {
   // CSRF Protection - Double-submit cookie pattern (stateless, no Redis needed)
   app.use(setCsrfToken); // Set token cookie on all GET requests
   app.use('/api', verifyDoubleSubmitCookie); // Verify token on mutations
+  
+  app.use('/api/test', testScraperRoutes);
   
   const server = await registerRoutes(app);
 
