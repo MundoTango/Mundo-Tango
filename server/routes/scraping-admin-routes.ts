@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { authenticateToken, AuthRequest } from '../middleware/auth';
 import { db } from '@shared/db';
-import { users, eventScrapingSources, scrapedEvents, scrapedCommunityData } from '@shared/schema';
+import { users, eventScrapingSources, scrapedEvents, scrapedCommunityData, events } from '@shared/schema';
 import { eq, sql, desc, and, gte } from 'drizzle-orm';
 import { scrapingOrchestrator } from '../agents/scraping/masterOrchestrator';
 import { cityGroupEnrichmentService } from '../services/scraping/CityGroupEnrichmentService';
@@ -572,6 +572,129 @@ router.get('/admin/scraping/hoymilonga/cities', authenticateToken, async (req: A
     });
   } catch (error) {
     res.status(500).json({ error: 'Failed to get cities' });
+  }
+});
+
+router.post('/admin/scraping/promote-events', authenticateToken, async (req: AuthRequest, res) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, userId)
+    });
+
+    if (!user || user.role !== 'super_admin') {
+      return res.status(403).json({ error: 'Forbidden: Super Admin access required' });
+    }
+
+    const { limit = 1000, status = 'pending_review' } = req.body;
+
+    const scrapedList = await db.query.scrapedEvents.findMany({
+      where: eq(scrapedEvents.status, status),
+      limit: Number(limit)
+    });
+
+    if (scrapedList.length === 0) {
+      return res.json({
+        success: true,
+        message: 'No scraped events to promote',
+        promoted: 0
+      });
+    }
+
+    let promoted = 0;
+    let errors = 0;
+
+    for (const scraped of scrapedList) {
+      try {
+        await db.insert(events).values({
+          title: scraped.title,
+          description: scraped.description,
+          startDate: scraped.startDate,
+          endDate: scraped.endDate,
+          venue: scraped.location,
+          address: scraped.address,
+          city: scraped.city,
+          country: scraped.country,
+          imageUrl: scraped.imageUrl,
+          price: scraped.price ? String(scraped.price) : null,
+          groupId: scraped.groupId,
+          sourceName: scraped.sourceName,
+          sourceUrl: scraped.sourceUrl,
+          externalSourceId: scraped.externalId,
+          organizerText: scraped.organizer,
+          status: 'published',
+          visibility: 'public',
+          scrapedEventId: scraped.id,
+          scrapedAt: scraped.scrapedAt,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        }).onConflictDoNothing();
+
+        await db.update(scrapedEvents)
+          .set({ status: 'promoted' })
+          .where(eq(scrapedEvents.id, scraped.id));
+
+        promoted++;
+      } catch (error) {
+        console.error(`[Promote] Failed to promote event ${scraped.id}:`, error);
+        errors++;
+      }
+    }
+
+    res.json({
+      success: true,
+      message: `Promoted ${promoted} scraped events to main events table`,
+      promoted,
+      errors,
+      totalProcessed: scrapedList.length,
+      timestamp: new Date().toISOString()
+    });
+
+  } catch (error) {
+    console.error('Promote events error:', error);
+    res.status(500).json({ error: 'Failed to promote scraped events' });
+  }
+});
+
+router.get('/admin/scraping/scraped-events-count', authenticateToken, async (req: AuthRequest, res) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, userId)
+    });
+
+    if (!user || user.role !== 'super_admin') {
+      return res.status(403).json({ error: 'Forbidden: Super Admin access required' });
+    }
+
+    const counts = await db.execute(sql`
+      SELECT status, COUNT(*) as count 
+      FROM scraped_events 
+      GROUP BY status
+    `);
+
+    const mainEventsCount = await db.execute(sql`
+      SELECT COUNT(*) as count FROM events WHERE status = 'published'
+    `);
+
+    res.json({
+      success: true,
+      scrapedEventsByStatus: counts.rows,
+      mainEventsCount: mainEventsCount.rows[0]?.count || 0,
+      timestamp: new Date().toISOString()
+    });
+
+  } catch (error) {
+    console.error('Scraped events count error:', error);
+    res.status(500).json({ error: 'Failed to get scraped events count' });
   }
 });
 
