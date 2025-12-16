@@ -72,17 +72,6 @@ export default function RegisterPage() {
   const passwordsMatch = password && confirmPassword && password === confirmPassword;
   const passwordsDontMatch = confirmPassword && !passwordsMatch;
 
-  // Redirect to volunteer page when waitlist signup is successful
-  useEffect(() => {
-    if (waitlistSuccess) {
-      // Short delay to show success toast, then redirect to volunteer page
-      const timeout = setTimeout(() => {
-        navigate("/volunteer");
-      }, 1500);
-      return () => clearTimeout(timeout);
-    }
-  }, [waitlistSuccess, navigate]);
-
   useEffect(() => {
     if (username.length >= 3) {
       const checkUsername = async () => {
