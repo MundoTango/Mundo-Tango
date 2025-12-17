@@ -649,7 +649,14 @@ export default function EventDetailsPage() {
                     <div className="flex-1">
                       <p className="text-lg font-semibold mb-2">Date & Time</p>
                       <p className="text-base text-muted-foreground leading-relaxed">
-                        {(event.startDate || event.date) && safeDateFormat(event.startDate || event.date, "PPPP", "TBD", eventTimezone)}
+                        {(event.startDate || event.date) && (
+                          <>
+                            {safeDateFormat(event.startDate || event.date, "PPPP", "TBD", eventTimezone)}
+                            {event.endDate && event.endDate !== event.startDate && (
+                              <> - {safeDateFormat(event.endDate, "PPPP", "", eventTimezone)}</>
+                            )}
+                          </>
+                        )}
                         {event.startTime && <> at {event.startTime}</>}
                         {event.endTime && <> - {event.endTime}</>}
                       </p>
