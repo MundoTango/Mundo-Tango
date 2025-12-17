@@ -63,6 +63,11 @@ Multi-stage scraping architecture coordinated by Master Orchestrator (`server/ag
 
 **Database Schema**: `scraped_events` table includes `event_type`, `source_url`, `source_name`, `city`, `country` columns
 **Admin Endpoints**: POST `/api/admin/unified-scrape`, GET `/api/admin/unified-scraper-status`
+**Event Ingestion**: 
+- `ScrapedEventIngestionService` promotes approved scraped_events to the main events table
+- Events are assigned to a "scraper_bot" system user
+- sourceUrl/sourceName preserved for "View on {sourceName}" attribution
+
 **Test Scripts**: 
 - `server/scripts/test-production-scraper.ts` - MB.MD v9.9.3 production pipeline test
 - `server/scripts/test-scraper-single-event.ts` - Tests HoyMilonga + TangoCat with link-following
