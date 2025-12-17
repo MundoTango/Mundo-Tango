@@ -157,15 +157,56 @@ class ScrapedEventIngestionService {
   }
 
   /**
-   * Extract country from scraped event
+   * Extract and normalize country from scraped event
    */
   private extractCountry(scraped: any): string {
-    if (scraped.country && scraped.country !== 'Various') return scraped.country;
-    if (scraped.address) {
+    let country = 'Unknown';
+    if (scraped.country && scraped.country !== 'Various') {
+      country = scraped.country;
+    } else if (scraped.address) {
       const parts = scraped.address.split(',');
-      if (parts.length > 1) return parts[parts.length - 1].trim();
+      if (parts.length > 1) country = parts[parts.length - 1].trim();
     }
-    return 'Unknown';
+    return this.normalizeCountryName(country);
+  }
+
+  /**
+   * Normalize country names to canonical English spelling
+   */
+  private normalizeCountryName(country: string): string {
+    const normalized = country.trim();
+    const countryMap: Record<string, string> = {
+      // French/Spanish variants
+      'argentine': 'Argentina',
+      'brésil': 'Brazil',
+      'brasil': 'Brazil',
+      'allemagne': 'Germany',
+      'alemania': 'Germany',
+      'espagne': 'Spain',
+      'españa': 'Spain',
+      'états-unis': 'United States',
+      'estados unidos': 'United States',
+      'royaume-uni': 'United Kingdom',
+      'reino unido': 'United Kingdom',
+      'pays-bas': 'Netherlands',
+      'países bajos': 'Netherlands',
+      'grèce': 'Greece',
+      'grecia': 'Greece',
+      'turquie': 'Turkey',
+      'turquía': 'Turkey',
+      'italie': 'Italy',
+      'italia': 'Italy',
+      'pologne': 'Poland',
+      'polonia': 'Poland',
+      'russie': 'Russia',
+      'rusia': 'Russia',
+      'japon': 'Japan',
+      'japón': 'Japan',
+      'chine': 'China',
+      'corée du sud': 'South Korea',
+      'corea del sur': 'South Korea',
+    };
+    return countryMap[normalized.toLowerCase()] || normalized;
   }
 
   /**
