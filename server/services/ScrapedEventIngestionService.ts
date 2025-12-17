@@ -81,6 +81,8 @@ class ScrapedEventIngestionService {
       address: scraped.address || scraped.location || '',
       city: this.extractCity(scraped),
       country: this.extractCountry(scraped),
+      latitude: scraped.latitude ? String(scraped.latitude) : null,
+      longitude: scraped.longitude ? String(scraped.longitude) : null,
       status: 'published' as const,
       groupId: scraped.groupId,
       imageUrl: scraped.imageUrl || null,

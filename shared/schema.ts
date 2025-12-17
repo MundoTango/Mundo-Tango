@@ -13399,6 +13399,8 @@ export const scrapedEvents = pgTable(
     city: varchar("city", { length: 100 }),
     state: varchar("state", { length: 100 }),
     country: varchar("country", { length: 100 }),
+    latitude: numeric("latitude", { precision: 10, scale: 7 }),
+    longitude: numeric("longitude", { precision: 10, scale: 7 }),
     groupId: integer("group_id").references(() => groups.id),
     createdAt: timestamp("created_at").defaultNow(),
     updatedAt: timestamp("updated_at").defaultNow(),
@@ -13410,6 +13412,7 @@ export const scrapedEvents = pgTable(
     claimedIdx: index("scraped_events_claimed_idx").on(table.claimedByUserId),
     cityCountryIdx: index("scraped_events_city_country_idx").on(table.city, table.country),
     groupIdx: index("scraped_events_group_idx").on(table.groupId),
+    coordsIdx: index("scraped_events_coords_idx").on(table.latitude, table.longitude),
   }),
 );
 

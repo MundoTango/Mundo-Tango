@@ -4,6 +4,16 @@
  * 
  * URLs: tangocat.net/2025/ and tangocat.net/2026/
  * Data: Festivals, marathons, encuentros worldwide
+ * 
+ * TangoCat JSON structure:
+ * {
+ *   "id": 10006,
+ *   "title": "Event Name",
+ *   "note": "Maestros: ..., DJs: ...",
+ *   "url": "https://actualwebsite.com",
+ *   "l": "Country, City",
+ *   "p": [latitude, longitude]
+ * }
  */
 
 import axios from 'axios';
@@ -11,16 +21,37 @@ import * as cheerio from 'cheerio';
 import { db } from '@shared/db';
 import { scrapedEvents } from '@shared/schema';
 import { cityMatcherService } from '../../services/CityMatcherService';
+import { eq } from 'drizzle-orm';
+
+interface TangoCatJSONEvent {
+  id: number;
+  title?: string;
+  note?: string;
+  url?: string;
+  l?: string;       // location: "Country, City"
+  p?: number[];     // coordinates: [lat, lng]
+  ds?: string;      // date start: "12/19/2025"
+  de?: string;      // date end: "12/21/2025"
+  isf?: boolean;    // is free?
+  coords?: { lat: number; lng: number };
+}
 
 interface TangoCatEvent {
+  id: number;
   title: string;
   dates: string;
+  startDate?: string;  // MM/DD/YYYY from JSON ds field
+  endDate?: string;    // MM/DD/YYYY from JSON de field
   location: string;
   country: string;
   city: string;
   eventType: string;
   website?: string;
   description?: string;
+  latitude?: number;
+  longitude?: number;
+  maestros?: string;
+  djs?: string;
 }
 
 export class TangoCatScraper {
@@ -34,7 +65,7 @@ export class TangoCatScraper {
   ];
 
   async scrapeAllYears(sourceId: number): Promise<number> {
-    console.log('[TangoCat] 🐱 Starting scrape for all years');
+    console.log('[TangoCat] 🐱 Starting enhanced scrape for all years');
     let totalEvents = 0;
 
     for (const year of this.years) {
@@ -84,26 +115,179 @@ export class TangoCatScraper {
     return response.data;
   }
 
-  private extractEvents($: cheerio.CheerioAPI, year: string): TangoCatEvent[] {
-    const events: TangoCatEvent[] = [];
-    const seenTitles = new Set<string>();
-
-    // TangoCat stores event data in embedded JSON within script tags
-    const scripts = $('script').text();
+  /**
+   * Parse the embedded JSON array from TangoCat scripts
+   * TangoCat embeds event data as JSON in script tags
+   * 
+   * Format: [{"id":10006,"title":"...","note":"...","url":"...","l":"Country, City","p":[lat,lng],"ds":"MM/DD/YYYY","de":"MM/DD/YYYY",...}]
+   */
+  private parseEmbeddedJSON(scripts: string): TangoCatJSONEvent[] {
+    const events: TangoCatJSONEvent[] = [];
     
-    // Build a map of event ID -> URL from JSON data
-    const urlMap = new Map<string, string>();
-    const urlMatches = scripts.matchAll(/"id":(\d+)[^}]*?"url":"([^"]+)"/g);
-    for (const match of urlMatches) {
-      const id = match[1];
-      const url = match[2];
-      if (url.startsWith('http') && !url.includes('facebook.com') && !url.includes('google.com')) {
-        urlMap.set(id, url);
+    // Build a map of event ID -> event data by extracting individual fields
+    // This is more reliable than trying to parse the full JSON which may have special chars
+    
+    // Extract all IDs first
+    const idMatches = scripts.matchAll(/"id":(\d+)/g);
+    const ids = new Set<number>();
+    for (const m of idMatches) {
+      ids.add(parseInt(m[1], 10));
+    }
+    
+    // For each ID, extract all associated fields by finding the JSON object context
+    for (const id of ids) {
+      try {
+        // Find the object containing this ID
+        // Look for the JSON context around the ID
+        const idPattern = new RegExp(`\\{"id":${id}[^\\[\\]]*?(?:\\[[^\\]]*\\])?[^\\[\\]]*?\\}`, 'g');
+        
+        // Alternative: build data by extracting individual fields near the ID
+        const event: TangoCatJSONEvent = { id };
+        
+        // Search for fields associated with this ID
+        // We look for patterns after "id":ID
+        const idIndex = scripts.indexOf(`"id":${id}`);
+        if (idIndex === -1) continue;
+        
+        // Look in a window around the ID (up to 2000 chars should cover most events)
+        const windowStart = Math.max(0, idIndex - 50);
+        const windowEnd = Math.min(scripts.length, idIndex + 2000);
+        const context = scripts.substring(windowStart, windowEnd);
+        
+        // Extract title
+        const titleMatch = context.match(/"title":"([^"]+)"/);
+        if (titleMatch) event.title = titleMatch[1];
+        
+        // Extract location
+        const locMatch = context.match(/"l":"([^"]+)"/);
+        if (locMatch) event.l = locMatch[1];
+        
+        // Extract coordinates
+        const coordMatch = context.match(/"p":\[([\d.-]+),([\d.-]+)\]/);
+        if (coordMatch) {
+          event.p = [parseFloat(coordMatch[1]), parseFloat(coordMatch[2])];
+        }
+        
+        // Extract URL
+        const urlMatch = context.match(/"url":"([^"]+)"/);
+        if (urlMatch) event.url = urlMatch[1];
+        
+        // Extract dates
+        const dsMatch = context.match(/"ds":"([^"]+)"/);
+        if (dsMatch) event.ds = dsMatch[1];
+        
+        const deMatch = context.match(/"de":"([^"]+)"/);
+        if (deMatch) event.de = deMatch[1];
+        
+        // Extract note (maestros/DJs)
+        const noteMatch = context.match(/"note":"([^"]+)"/);
+        if (noteMatch) {
+          // Unescape the note
+          event.note = noteMatch[1].replace(/\\r\\n/g, '\n').replace(/\\n/g, '\n');
+        }
+        
+        events.push(event);
+      } catch (e) {
+        // Skip problematic IDs
       }
     }
-    console.log(`[TangoCat] Found ${urlMap.size} URLs in JSON data`);
     
-    // Extract events from /go/ links and match with URLs from JSON
+    console.log(`[TangoCat] Parsed ${events.length} JSON event objects from ${ids.size} IDs`);
+    console.log(`[TangoCat]   - With location: ${events.filter(e => e.l).length}`);
+    console.log(`[TangoCat]   - With coordinates: ${events.filter(e => e.p).length}`);
+    console.log(`[TangoCat]   - With dates: ${events.filter(e => e.ds).length}`);
+    return events;
+  }
+
+  /**
+   * Classify event type from title
+   */
+  private classifyEventType(title: string): string {
+    const titleLower = title.toLowerCase();
+    
+    if (titleLower.includes('marathon')) return 'marathon';
+    if (titleLower.includes('encuentro')) return 'encuentro';
+    if (titleLower.includes('festival')) return 'festival';
+    if (titleLower.includes('camp') || titleLower.includes('retreat')) return 'workshop';
+    if (titleLower.includes('milonga')) return 'milonga';
+    if (titleLower.includes('practica')) return 'practica';
+    if (titleLower.includes('workshop') || titleLower.includes('class')) return 'workshop';
+    if (titleLower.includes('show') || titleLower.includes('performance')) return 'show';
+    if (titleLower.includes('competition') || titleLower.includes('championship')) return 'competition';
+    if (titleLower.includes('concert')) return 'concert';
+    
+    // Default to festival for TangoCat events (they're mostly festivals/marathons)
+    return 'festival';
+  }
+
+  /**
+   * Parse location string "Country, City" into components
+   */
+  private parseLocation(locationStr: string | undefined): { country: string; city: string } {
+    if (!locationStr) {
+      return { country: 'Various', city: 'Various' };
+    }
+    
+    // TangoCat format is typically "Country, City" or "Country, Region/City"
+    const parts = locationStr.split(',').map(s => s.trim());
+    
+    if (parts.length >= 2) {
+      return {
+        country: parts[0],
+        city: parts.slice(1).join(', ')
+      };
+    } else if (parts.length === 1) {
+      return {
+        country: parts[0],
+        city: parts[0]
+      };
+    }
+    
+    return { country: 'Various', city: 'Various' };
+  }
+
+  /**
+   * Parse maestros and DJs from note field
+   */
+  private parseNote(note: string | undefined): { maestros?: string; djs?: string } {
+    if (!note) return {};
+    
+    const result: { maestros?: string; djs?: string } = {};
+    
+    // Extract Maestros
+    const maestrosMatch = note.match(/Maestros?:?\s*([^,\n]+(?:,\s*[^,\n]+)*?)(?:\s*(?:DJ|$))/i);
+    if (maestrosMatch) {
+      result.maestros = maestrosMatch[1].trim();
+    }
+    
+    // Extract DJs
+    const djsMatch = note.match(/DJs?:?\s*(.+)/i);
+    if (djsMatch) {
+      result.djs = djsMatch[1].trim();
+    }
+    
+    return result;
+  }
+
+  private extractEvents($: cheerio.CheerioAPI, year: string): TangoCatEvent[] {
+    const events: TangoCatEvent[] = [];
+    const seenIds = new Set<number>();
+    const seenTitles = new Set<string>();
+
+    // Get all script content
+    const scripts = $('script').text();
+    
+    // Parse embedded JSON to get all event data
+    const jsonEvents = this.parseEmbeddedJSON(scripts);
+    
+    // Build a map of ID -> full event data from JSON
+    const eventDataMap = new Map<number, TangoCatJSONEvent>();
+    for (const jsonEvent of jsonEvents) {
+      eventDataMap.set(jsonEvent.id, jsonEvent);
+    }
+    console.log(`[TangoCat] Built event data map with ${eventDataMap.size} entries`);
+
+    // Now extract events from /go/ links and enrich with JSON data
     $('a[href^="/go/"]').each((i, elem) => {
       const $link = $(elem);
       const href = $link.attr('href') || '';
@@ -112,37 +296,59 @@ export class TangoCatScraper {
       const nameMatch = href.match(/\/go\/([^/]+)\/(\d+)/);
       if (nameMatch) {
         const name = decodeURIComponent(nameMatch[1].replace(/\+/g, ' '));
-        const eventId = nameMatch[2];
+        const eventId = parseInt(nameMatch[2], 10);
         const titleLower = name.toLowerCase();
         
-        if (!seenTitles.has(titleLower) && name.length > 3) {
+        if (!seenIds.has(eventId) && !seenTitles.has(titleLower) && name.length > 3) {
+          seenIds.add(eventId);
           seenTitles.add(titleLower);
           
-          let eventType = 'festival';
-          if (titleLower.includes('marathon')) eventType = 'marathon';
-          else if (titleLower.includes('encuentro')) eventType = 'encuentro';
-          else if (titleLower.includes('festival')) eventType = 'festival';
-          else if (titleLower.includes('camp')) eventType = 'festival';
+          // Get rich data from JSON
+          const jsonData = eventDataMap.get(eventId);
+          const eventType = this.classifyEventType(jsonData?.title || name);
+          const { country, city } = this.parseLocation(jsonData?.l);
+          const { maestros, djs } = this.parseNote(jsonData?.note);
           
-          // Look up actual URL from JSON, fallback to redirect link
-          const actualUrl = urlMap.get(eventId);
+          // Build URL - prefer actual website over TangoCat redirect
+          let website = `https://tangocat.net${href}`;
+          if (jsonData?.url && jsonData.url.startsWith('http') && 
+              !jsonData.url.includes('facebook.com') && 
+              !jsonData.url.includes('google.com')) {
+            website = jsonData.url;
+          }
+          
+          // Build description
+          let description = `${eventType.charAt(0).toUpperCase() + eventType.slice(1)} in ${city}, ${country}`;
+          if (maestros) description += `\n\nMaestros: ${maestros}`;
+          if (djs) description += `\nDJs: ${djs}`;
           
           events.push({
-            title: name,
+            id: eventId,
+            title: jsonData?.title || name,
             dates: year,
-            location: 'Various',
-            country: 'Various', 
-            city: 'Various',
+            startDate: jsonData?.ds,  // "MM/DD/YYYY" from JSON
+            endDate: jsonData?.de,    // "MM/DD/YYYY" from JSON
+            location: jsonData?.l || `${city}, ${country}`,
+            country,
+            city,
             eventType,
-            website: actualUrl || `https://tangocat.net${href}`,
-            description: `${eventType}`
+            website,
+            description,
+            latitude: jsonData?.p?.[0],
+            longitude: jsonData?.p?.[1],
+            maestros,
+            djs
           });
         }
       }
     });
 
-    console.log(`[TangoCat] Found ${events.length} events (${events.filter(e => !e.website?.includes('tangocat.net')).length} with external URLs)`);
-    return events.slice(0, 50);
+    console.log(`[TangoCat] Extracted ${events.length} events:`);
+    console.log(`  - With coordinates: ${events.filter(e => e.latitude && e.longitude).length}`);
+    console.log(`  - With external URLs: ${events.filter(e => !e.website?.includes('tangocat.net')).length}`);
+    console.log(`  - Event types: ${[...new Set(events.map(e => e.eventType))].join(', ')}`);
+    
+    return events.slice(0, 100); // Increase limit
   }
 
   private async storeEvents(events: TangoCatEvent[], sourceId: number, year: string): Promise<void> {
@@ -150,26 +356,48 @@ export class TangoCatScraper {
 
     for (const event of events) {
       try {
+        // Check for duplicates by external ID
+        const externalId = `tangocat-${event.id}`;
+        const existing = await db.select({ id: scrapedEvents.id })
+          .from(scrapedEvents)
+          .where(eq(scrapedEvents.externalId, externalId))
+          .limit(1);
+        
+        if (existing.length > 0) {
+          console.log(`[TangoCat] ⏭️ Skipping duplicate: ${event.title}`);
+          continue;
+        }
+        
         // Match city to group
         const matchResult = await cityMatcherService.matchEventLocation(event.city);
         const groupId = matchResult || null;
 
-        // Parse date from dates string
-        const startDate = this.parseDateFromString(event.dates, year);
-        const endDate = this.parseEndDate(event.dates, startDate);
+        // Parse dates - prefer JSON dates (ds/de) over year fallback
+        let startDate: Date;
+        let endDate: Date | undefined;
+        
+        if (event.startDate) {
+          // JSON dates are in MM/DD/YYYY format
+          startDate = this.parseDateMMDDYYYY(event.startDate);
+          endDate = event.endDate ? this.parseDateMMDDYYYY(event.endDate) : undefined;
+        } else {
+          // Fallback to year-based parsing
+          startDate = this.parseDateFromString(event.dates, year);
+          endDate = this.parseEndDate(event.dates, startDate);
+        }
 
         // MULTI-STAGE: Follow the event website link and use that as the source
         let sourceUrl = `https://tangocat.net/${year}/`;
-        let sourceName = 'TangoCat';
+        let sourceName = 'tangocat.net';
         let enrichedDescription = event.description || `${event.eventType} - ${event.location}`;
 
-        if (event.website && !event.website.includes('facebook.com') && !event.website.includes('google.com')) {
+        if (event.website && !event.website.includes('tangocat.net')) {
           try {
             const parsedUrl = new URL(event.website);
             // Use the actual event website as the source
             sourceUrl = event.website;
             sourceName = parsedUrl.hostname.replace('www.', '');
-            console.log(`[TangoCat] 📎 Following link: ${event.title} → ${sourceName}`);
+            console.log(`[TangoCat] 📎 Source: ${event.title} → ${sourceName} (${event.eventType})`);
             
             // Try to fetch additional details from the actual event site
             try {
@@ -177,9 +405,6 @@ export class TangoCatScraper {
               const enrichedData = this.extractEventDetails(eventHtml, event);
               if (enrichedData.description && enrichedData.description.length > enrichedDescription.length) {
                 enrichedDescription = enrichedData.description;
-              }
-              if (enrichedData.location && enrichedData.location !== 'See website') {
-                event.location = enrichedData.location;
               }
             } catch (fetchErr) {
               console.log(`[TangoCat] Could not fetch details from ${sourceName}, using aggregator data`);
@@ -190,6 +415,7 @@ export class TangoCatScraper {
           }
         }
 
+        // Store with all the rich data
         await db.insert(scrapedEvents).values({
           sourceUrl,
           sourceName,
@@ -199,11 +425,18 @@ export class TangoCatScraper {
           endDate,
           location: event.location,
           address: `${event.city}, ${event.country}`,
-          organizer: sourceName !== 'TangoCat' ? sourceName : undefined,
+          city: event.city,
+          country: event.country,
+          latitude: event.latitude ? String(event.latitude) : null,
+          longitude: event.longitude ? String(event.longitude) : null,
+          eventType: event.eventType,
+          organizer: sourceName !== 'tangocat.net' ? sourceName : undefined,
           groupId,
           status: 'pending_review',
-          externalId: `tangocat-${year}-${event.title}`.toLowerCase().replace(/\s+/g, '-').slice(0, 100)
+          externalId
         });
+        
+        console.log(`[TangoCat] ✅ Stored: ${event.title} (${event.eventType}) @ ${event.city}, ${event.country}`);
       } catch (err) {
         console.error(`[TangoCat] Failed to store event "${event.title}":`, err);
       }
@@ -295,6 +528,21 @@ export class TangoCatScraper {
     const endDate = new Date(startDate);
     endDate.setDate(startDate.getDate() + 3);
     return endDate;
+  }
+
+  /**
+   * Parse date from TangoCat JSON format: "MM/DD/YYYY"
+   */
+  private parseDateMMDDYYYY(dateStr: string): Date {
+    const parts = dateStr.split('/');
+    if (parts.length === 3) {
+      const month = parseInt(parts[0], 10) - 1; // 0-indexed months
+      const day = parseInt(parts[1], 10);
+      const year = parseInt(parts[2], 10);
+      return new Date(year, month, day, 20, 0, 0);
+    }
+    // Fallback to current date
+    return new Date();
   }
 }
 
