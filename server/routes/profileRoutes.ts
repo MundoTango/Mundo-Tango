@@ -1212,4 +1212,144 @@ router.get("/scraped/:id", async (req: Request, res: Response) => {
   }
 });
 
+// GET /api/profile/scraped/:id/events - Get all events where this scraped profile is mentioned (deduped)
+router.get("/scraped/:id/events", async (req: Request, res: Response) => {
+  try {
+    const profileId = parseInt(req.params.id);
+    
+    if (isNaN(profileId)) {
+      return res.status(400).json({ message: "Invalid profile ID" });
+    }
+
+    const { scrapedEvents, events } = await import("@shared/schema");
+    const { db } = await import("../db");
+    const { sql, desc, or, eq } = await import("drizzle-orm");
+    
+    // Query scraped_events where participantProfiles contains this profileId
+    // Using JSONB contains operator to find events where profile is mentioned
+    const scrapedEventResults = await db
+      .select({
+        id: scrapedEvents.id,
+        title: scrapedEvents.title,
+        startDate: scrapedEvents.startDate,
+        endDate: scrapedEvents.endDate,
+        city: scrapedEvents.city,
+        country: scrapedEvents.country,
+        location: scrapedEvents.location,
+        imageUrl: scrapedEvents.imageUrl,
+        eventType: scrapedEvents.eventType,
+        sourceUrl: scrapedEvents.sourceUrl,
+        sourceName: scrapedEvents.sourceName,
+        participantProfiles: scrapedEvents.participantProfiles,
+        status: scrapedEvents.status,
+      })
+      .from(scrapedEvents)
+      .where(
+        sql`${scrapedEvents.participantProfiles}::jsonb @> ${JSON.stringify([{ profileId }])}::jsonb`
+      )
+      .orderBy(desc(scrapedEvents.startDate))
+      .limit(50);
+
+    // Also check main events table for ingested events
+    const mainEventResults = await db
+      .select({
+        id: events.id,
+        title: events.title,
+        startDate: events.startDate,
+        endDate: events.endDate,
+        city: events.city,
+        country: events.country,
+        location: events.location,
+        imageUrl: events.imageUrl,
+        eventType: events.eventType,
+        sourceUrl: events.sourceUrl,
+        sourceName: events.sourceName,
+        participantProfiles: events.participantProfiles,
+      })
+      .from(events)
+      .where(
+        sql`${events.participantProfiles}::jsonb @> ${JSON.stringify([{ profileId }])}::jsonb`
+      )
+      .orderBy(desc(events.startDate))
+      .limit(50);
+
+    // Dedupe events and extract roles for this profile
+    const eventMap = new Map<string, {
+      id: number;
+      title: string;
+      startDate: Date;
+      endDate?: Date | null;
+      city?: string | null;
+      country?: string | null;
+      location?: string | null;
+      imageUrl?: string | null;
+      eventType?: string | null;
+      sourceUrl?: string | null;
+      sourceName?: string | null;
+      roles: string[];
+      isIngested: boolean;
+    }>();
+
+    // Process scraped events
+    for (const event of scrapedEventResults) {
+      const key = `scraped-${event.id}`;
+      const profiles = event.participantProfiles || [];
+      const roles = profiles
+        .filter((p: any) => p.profileId === profileId)
+        .map((p: any) => p.role);
+      
+      eventMap.set(key, {
+        id: event.id,
+        title: event.title,
+        startDate: event.startDate,
+        endDate: event.endDate,
+        city: event.city,
+        country: event.country,
+        location: event.location,
+        imageUrl: event.imageUrl,
+        eventType: event.eventType,
+        sourceUrl: event.sourceUrl,
+        sourceName: event.sourceName,
+        roles: [...new Set(roles)],
+        isIngested: false,
+      });
+    }
+
+    // Process main events (ingested)
+    for (const event of mainEventResults) {
+      const key = `event-${event.id}`;
+      const profiles = event.participantProfiles || [];
+      const roles = profiles
+        .filter((p: any) => p.profileId === profileId)
+        .map((p: any) => p.role);
+      
+      eventMap.set(key, {
+        id: event.id,
+        title: event.title,
+        startDate: event.startDate,
+        endDate: event.endDate,
+        city: event.city,
+        country: event.country,
+        location: event.location,
+        imageUrl: event.imageUrl,
+        eventType: event.eventType,
+        sourceUrl: event.sourceUrl,
+        sourceName: event.sourceName,
+        roles: [...new Set(roles)],
+        isIngested: true,
+      });
+    }
+
+    // Convert to array and sort by start date (most recent first)
+    const allEvents = Array.from(eventMap.values()).sort(
+      (a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
+    );
+
+    res.json(allEvents);
+  } catch (error) {
+    console.error("[Profile] Error fetching scraped profile events:", error);
+    res.status(500).json({ message: "Failed to fetch profile events" });
+  }
+});
+
 export default router;

@@ -1,4 +1,4 @@
-import { useParams, useLocation } from "wouter";
+import { useParams, useLocation, Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, MapPin, Music, Users, Mic, GraduationCap, Calendar, ExternalLink, Facebook, Instagram, Globe, Mail, Phone } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { format } from "date-fns";
 
 interface ScrapedProfile {
   id: number;
@@ -26,6 +27,22 @@ interface ScrapedProfile {
   metadata?: Record<string, any> | null;
 }
 
+interface ProfileEvent {
+  id: number;
+  title: string;
+  startDate: string;
+  endDate?: string | null;
+  city?: string | null;
+  country?: string | null;
+  location?: string | null;
+  imageUrl?: string | null;
+  eventType?: string | null;
+  sourceUrl?: string | null;
+  sourceName?: string | null;
+  roles: string[];
+  isIngested: boolean;
+}
+
 function getRoleIcon(role: string) {
   const lowerRole = role.toLowerCase();
   if (lowerRole.includes("dj")) return <Music className="h-3 w-3" />;
@@ -33,6 +50,14 @@ function getRoleIcon(role: string) {
   if (lowerRole.includes("organiz") || lowerRole.includes("organi")) return <Users className="h-3 w-3" />;
   if (lowerRole.includes("perform") || lowerRole.includes("dance")) return <Mic className="h-3 w-3" />;
   return null;
+}
+
+function getRoleBadgeVariant(role: string): "default" | "secondary" | "outline" {
+  const lowerRole = role.toLowerCase();
+  if (lowerRole.includes("dj")) return "default";
+  if (lowerRole.includes("teacher")) return "secondary";
+  if (lowerRole.includes("organiz")) return "outline";
+  return "secondary";
 }
 
 function getInitials(name: string): string {
@@ -44,6 +69,18 @@ function getInitials(name: string): string {
     .slice(0, 2);
 }
 
+function formatEventDate(startDate: string, endDate?: string | null): string {
+  const start = new Date(startDate);
+  if (endDate) {
+    const end = new Date(endDate);
+    if (start.toDateString() === end.toDateString()) {
+      return format(start, "MMM d, yyyy");
+    }
+    return `${format(start, "MMM d")} - ${format(end, "MMM d, yyyy")}`;
+  }
+  return format(start, "MMM d, yyyy");
+}
+
 export default function ScrapedProfilePage() {
   const params = useParams<{ id: string }>();
   const [, setLocation] = useLocation();
@@ -51,6 +88,11 @@ export default function ScrapedProfilePage() {
 
   const { data: profile, isLoading, error } = useQuery<ScrapedProfile>({
     queryKey: ["/api/profile/scraped", profileId],
+  });
+
+  const { data: events, isLoading: eventsLoading } = useQuery<ProfileEvent[]>({
+    queryKey: ["/api/profile/scraped", profileId, "events"],
+    enabled: !!profileId,
   });
 
   if (isLoading) {
@@ -209,6 +251,99 @@ export default function ScrapedProfilePage() {
           )}
         </CardContent>
       </Card>
+
+      {/* Events Section */}
+      <div className="mt-8">
+        <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+          <Calendar className="h-5 w-5" />
+          Events
+        </h2>
+        
+        {eventsLoading ? (
+          <div className="space-y-3">
+            {[1, 2, 3].map((i) => (
+              <Skeleton key={i} className="h-24 w-full rounded-lg" />
+            ))}
+          </div>
+        ) : events && events.length > 0 ? (
+          <div className="space-y-3" data-testid="events-list">
+            {events.map((event) => (
+              <Card 
+                key={`${event.isIngested ? 'event' : 'scraped'}-${event.id}`} 
+                className="hover-elevate cursor-pointer"
+                data-testid={`card-event-${event.id}`}
+              >
+                <CardContent className="p-4">
+                  <div className="flex gap-4">
+                    {event.imageUrl && (
+                      <img 
+                        src={event.imageUrl} 
+                        alt={event.title}
+                        className="w-20 h-20 object-cover rounded-md flex-shrink-0"
+                      />
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="min-w-0">
+                          <h3 className="font-medium truncate" data-testid={`text-event-title-${event.id}`}>
+                            {event.title}
+                          </h3>
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
+                            <Calendar className="h-3 w-3 flex-shrink-0" />
+                            <span>{formatEventDate(event.startDate, event.endDate)}</span>
+                          </div>
+                          {(event.city || event.country) && (
+                            <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
+                              <MapPin className="h-3 w-3 flex-shrink-0" />
+                              <span className="truncate">
+                                {[event.city, event.country].filter(Boolean).join(", ")}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex flex-col items-end gap-1 flex-shrink-0">
+                          {event.roles.map((role, idx) => (
+                            <Badge 
+                              key={idx} 
+                              variant={getRoleBadgeVariant(role)}
+                              className="flex items-center gap-1 text-xs"
+                              data-testid={`badge-event-role-${event.id}-${idx}`}
+                            >
+                              {getRoleIcon(role)}
+                              {role}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                      {event.sourceUrl && (
+                        <div className="mt-2">
+                          <a 
+                            href={event.sourceUrl} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-xs text-muted-foreground hover:text-primary flex items-center gap-1"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <ExternalLink className="h-3 w-3" />
+                            View on {event.sourceName || 'Source'}
+                          </a>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        ) : (
+          <Card>
+            <CardContent className="py-8 text-center">
+              <Calendar className="h-12 w-12 mx-auto text-muted-foreground/30 mb-3" />
+              <p className="text-muted-foreground">No events found for this profile</p>
+            </CardContent>
+          </Card>
+        )}
+      </div>
     </div>
   );
 }
