@@ -94,20 +94,22 @@ export function EventTeamCards({
             <div className="space-y-3 ml-4">
               {participant.names.map((name, idx) => (
                 <Link key={idx} href={`/discover?search=${encodeURIComponent(name)}`}>
-                  <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-muted transition-colors cursor-pointer" data-testid={`card-${participant.type}-${idx}`}>
-                    <Avatar className="h-10 w-10 flex-shrink-0">
-                      <AvatarImage src="" />
-                      <AvatarFallback className="bg-primary/10 text-primary font-semibold">
-                        {getInitials(name)}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1">
-                      <p className="font-medium text-foreground">{name}</p>
-                      <p className="text-xs text-muted-foreground">
-                        Found from event listing
-                      </p>
+                  <a className="block">
+                    <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-muted transition-colors cursor-pointer" data-testid={`card-${participant.type}-${idx}`}>
+                      <Avatar className="h-10 w-10 flex-shrink-0">
+                        <AvatarImage src="" />
+                        <AvatarFallback className="bg-primary/10 text-primary font-semibold">
+                          {getInitials(name)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1">
+                        <p className="font-medium text-foreground">{name}</p>
+                        <p className="text-xs text-muted-foreground">
+                          Found from event listing
+                        </p>
+                      </div>
                     </div>
-                  </div>
+                  </a>
                 </Link>
               ))}
             </div>
