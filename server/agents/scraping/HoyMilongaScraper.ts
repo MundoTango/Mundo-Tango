@@ -500,6 +500,8 @@ export class HoyMilongaScraper {
           endDate: eventEndDate,
           location: event.venue !== 'Unknown Venue' ? event.venue : undefined,
           address,
+          city: cityName,
+          country: 'Argentina',
           organizer,
           groupId,
           imageUrl: event.coverImage || undefined,
