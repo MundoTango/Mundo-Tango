@@ -24,7 +24,7 @@ interface LanguageMappings {
 const LANGUAGE_MAPPINGS: LanguageMappings = {
   es: [
     { patterns: [/organizador(es)?/i, /organiza(n|do)?/i, /presenta(n)?/i, /produce(n)?/i], canonical: 'organizer' },
-    { patterns: [/dj/i, /musicalizador(a|es)?/i, /musicaliza(n)?/i], canonical: 'dj' },
+    { patterns: [/\btdj\b/i, /\bdj\b/i, /musicalizador(a|es)?/i, /musicaliza(n)?/i], canonical: 'dj' },
     { patterns: [/maestro(s)?/i, /profesor(es|a|as)?/i, /clase(s)? (de|con)/i, /enseña(n)?/i, /docente(s)?/i], canonical: 'teacher' },
     { patterns: [/orquesta/i, /música en vivo/i, /en vivo/i, /banda/i, /quinteto/i, /cuarteto/i, /trío/i], canonical: 'orchestra' },
     { patterns: [/show (de)?/i, /exhibición/i, /artista(s)?/i, /baila(n)?/i, /performer(s)?/i], canonical: 'performer' },
@@ -39,7 +39,7 @@ const LANGUAGE_MAPPINGS: LanguageMappings = {
   ],
   pt: [
     { patterns: [/organizador(es)?/i, /organiza(m)?/i, /apresenta(m)?/i, /produz(em)?/i], canonical: 'organizer' },
-    { patterns: [/dj/i, /musicalizador(a)?/i], canonical: 'dj' },
+    { patterns: [/\btdj\b/i, /\bdj\b/i, /musicalizador(a)?/i], canonical: 'dj' },
     { patterns: [/mestre(s)?/i, /professor(es|a)?/i, /aula(s)? (de|com)/i], canonical: 'teacher' },
     { patterns: [/orquestra/i, /música ao vivo/i, /ao vivo/i, /banda/i, /quinteto/i], canonical: 'orchestra' },
     { patterns: [/show (de)?/i, /exibição/i, /artista(s)?/i, /dança(m)?/i], canonical: 'performer' },
@@ -117,7 +117,7 @@ const LANGUAGE_MAPPINGS: LanguageMappings = {
 const ROLE_KEYWORDS: { [lang: string]: { [role: string]: string[] } } = {
   es: {
     organizer: ['organiza', 'organizador', 'organizadores', 'presenta', 'produce', 'producción'],
-    dj: ['dj', 'musicalizador', 'musicalizadora', 'musicaliza', 'musicalizan', 'musicalización'],
+    dj: ['tdj', 'dj', 'musicalizador', 'musicalizadora', 'musicaliza', 'musicalizan', 'musicalización'],
     teacher: ['maestro', 'maestros', 'maestra', 'maestras', 'profesor', 'profesora', 'profesores', 'clase', 'clases', 'enseña'],
     orchestra: ['orquesta', 'música en vivo', 'en vivo', 'live', 'banda', 'quinteto', 'cuarteto', 'trío'],
     performer: ['show', 'exhibición', 'bailan', 'bailarines', 'artista', 'artistas', 'performer'],
@@ -125,7 +125,7 @@ const ROLE_KEYWORDS: { [lang: string]: { [role: string]: string[] } } = {
   },
   pt: {
     organizer: ['organiza', 'organizador', 'organizadores', 'apresenta', 'produz', 'produção'],
-    dj: ['dj', 'musicalizador', 'musicalizadora'],
+    dj: ['tdj', 'dj', 'musicalizador', 'musicalizadora'],
     teacher: ['mestre', 'mestres', 'professor', 'professora', 'professores', 'aula', 'aulas'],
     orchestra: ['orquestra', 'música ao vivo', 'ao vivo', 'live', 'banda', 'quinteto'],
     performer: ['show', 'exibição', 'dançam', 'dançarinos', 'artista', 'artistas'],
