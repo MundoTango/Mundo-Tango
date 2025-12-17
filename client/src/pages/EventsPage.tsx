@@ -558,45 +558,48 @@ export default function EventsPage() {
               setActiveTab(val as EventTab);
               setPage(1);
             }}>
-              <TabsList className="w-full grid grid-cols-4 h-12">
-                <TabsTrigger 
-                  value="my-events" 
-                  className="gap-2"
-                  disabled={!user}
-                  data-testid="tab-my-events"
-                >
-                  <Check className="h-4 w-4" />
-                  <span className="hidden sm:inline">My Events</span>
-                  <span className="sm:hidden">Mine</span>
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="upcoming" 
-                  className="gap-2"
-                  disabled={!user}
-                  data-testid="tab-upcoming"
-                >
-                  <CalendarIcon className="h-4 w-4" />
-                  <span className="hidden sm:inline">Upcoming</span>
-                  <span className="sm:hidden">Soon</span>
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="past" 
-                  className="gap-2"
-                  data-testid="tab-past"
-                >
-                  <Clock className="h-4 w-4" />
-                  <span className="hidden sm:inline">Past</span>
-                  <span className="sm:hidden">Past</span>
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="discover" 
-                  className="gap-2"
-                  data-testid="tab-discover"
-                >
-                  <Search className="h-4 w-4" />
-                  Discover
-                </TabsTrigger>
-              </TabsList>
+              <div className="overflow-x-auto">
+                <TabsList className="grid grid-cols-4 h-12 min-w-max">
+                  <TabsTrigger 
+                    value="my-events" 
+                    className="gap-1 md:gap-2 text-xs md:text-sm"
+                    disabled={!user}
+                    data-testid="tab-my-events"
+                  >
+                    <Check className="h-4 w-4" />
+                    <span className="hidden sm:inline">My Events</span>
+                    <span className="sm:hidden">Mine</span>
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="upcoming" 
+                    className="gap-1 md:gap-2 text-xs md:text-sm"
+                    disabled={!user}
+                    data-testid="tab-upcoming"
+                  >
+                    <CalendarIcon className="h-4 w-4" />
+                    <span className="hidden sm:inline">Upcoming</span>
+                    <span className="sm:hidden">Soon</span>
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="past" 
+                    className="gap-1 md:gap-2 text-xs md:text-sm"
+                    data-testid="tab-past"
+                  >
+                    <Clock className="h-4 w-4" />
+                    <span className="hidden sm:inline">Past</span>
+                    <span className="sm:hidden">Past</span>
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="discover" 
+                    className="gap-1 md:gap-2 text-xs md:text-sm"
+                    data-testid="tab-discover"
+                  >
+                    <Search className="h-4 w-4" />
+                    <span className="hidden sm:inline">Discover</span>
+                    <span className="sm:hidden">Find</span>
+                  </TabsTrigger>
+                </TabsList>
+              </div>
             </Tabs>
 
             {/* Tab Descriptions */}
