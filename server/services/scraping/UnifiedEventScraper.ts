@@ -411,6 +411,18 @@ Extract all tango events from this page as JSON array:`
             organizer: event.organizer
           });
 
+          // Parse price to extract numeric value (e.g., "$100" -> 100)
+          const parsePrice = (priceStr?: string): string | null => {
+            if (!priceStr) return null;
+            const match = priceStr.match(/[\d,.]+/);
+            if (match) {
+              const numStr = match[0].replace(/,/g, '');
+              const num = parseFloat(numStr);
+              return isNaN(num) ? null : num.toString();
+            }
+            return null;
+          };
+
           await db.insert(scrapedEvents).values({
             sourceUrl: event.sourceUrl,
             sourceName: event.sourceName,
@@ -424,10 +436,10 @@ Extract all tango events from this page as JSON array:`
             city: event.city || source.city || '',
             country: event.country || source.country || '',
             organizer: event.organizer || '',
-            price: event.price || '',
+            price: parsePrice(event.price),
             imageUrl: event.imageUrl || '',
             externalId: event.externalId || `${source.id}-${Date.now()}-${savedCount}`,
-            status: 'pending',
+            status: 'approved',
             scrapedAt: new Date(),
             organizerText: participantData.organizerText,
             djText: participantData.djText,

@@ -123,12 +123,20 @@ export class ScrapingOrchestrator {
   }
 
   /**
-   * Invoke Agent #116: Static Scraper
+   * Invoke Agent #116: AI-Powered Unified Scraper
+   * Uses Groq LLM for intelligent event extraction from any website
    */
   private async invokeStaticScraper(source: any): Promise<number> {
-    const { staticScraper } = await import('./staticScraper');
-    console.log(`[Agent #115 → #116] Scraping static site: ${source.name}`);
-    return await staticScraper.scrape(source);
+    const { unifiedEventScraper } = await import('../../services/scraping/UnifiedEventScraper');
+    console.log(`[Agent #115 → AI] Scraping with AI: ${source.name}`);
+    
+    return await unifiedEventScraper.scrapeSource({
+      id: source.id,
+      url: source.url,
+      name: source.name,
+      city: source.city,
+      country: source.country,
+    });
   }
 
   /**
