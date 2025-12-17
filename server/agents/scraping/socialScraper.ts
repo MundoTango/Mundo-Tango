@@ -179,7 +179,7 @@ export class SocialScraper {
           imageUrl: event.imageUrl,
           externalId: event.externalId,
           scrapedAt: new Date(),
-          status: 'pending_review'
+          status: 'approved'
         });
       } catch (err) {
         console.error('[Agent #118] Failed to store event:', err);

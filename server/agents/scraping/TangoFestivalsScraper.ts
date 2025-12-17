@@ -343,7 +343,7 @@ export class TangoFestivalsScraper {
           organizer: sourceName !== 'TangoFestivals.net' ? sourceName : undefined,
           imageUrl,
           groupId,
-          status: 'pending_review',
+          status: 'approved',
           externalId: `tangofestivals-${event.title}`.toLowerCase().replace(/\s+/g, '-').slice(0, 100),
           organizerText: participantData.organizerText,
           djText: participantData.djText,

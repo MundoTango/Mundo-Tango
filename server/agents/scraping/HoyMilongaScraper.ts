@@ -516,7 +516,7 @@ export class HoyMilongaScraper {
           organizer,
           groupId,
           imageUrl: event.coverImage || undefined,
-          status: event.status === 'cancelled' ? 'rejected' : 'pending_review',
+          status: event.status === 'cancelled' ? 'rejected' : 'approved',
           externalId: `hoymilonga-${cityName}-${event.title}`.toLowerCase().replace(/\s+/g, '-').slice(0, 100),
           organizerText: participantData.organizerText,
           djText: participantData.djText,

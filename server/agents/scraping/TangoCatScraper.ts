@@ -567,7 +567,7 @@ export class TangoCatScraper {
           eventType: event.eventType,
           organizer: sourceName !== 'tangocat.net' ? sourceName : undefined,
           groupId,
-          status: 'pending_review',
+          status: 'approved',
           externalId,
           price,
           imageUrl,

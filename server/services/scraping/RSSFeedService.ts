@@ -392,7 +392,7 @@ export class RSSFeedService {
           price: event.price ? event.price.toString() : null,
           imageUrl: event.imageUrl,
           externalId: event.externalId,
-          status: 'pending_review'
+          status: 'approved'
         }).onConflictDoNothing();
         
         storedCount++;

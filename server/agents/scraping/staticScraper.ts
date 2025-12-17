@@ -303,7 +303,7 @@ export class StaticScraper {
           imageUrl: event.imageUrl,
           externalId: event.externalId,
           groupId,
-          status: 'pending_review'
+          status: 'approved'
         });
       } catch (err) {
         console.error('[Agent #116] Failed to store event:', err);

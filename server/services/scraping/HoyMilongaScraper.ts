@@ -304,7 +304,7 @@ export class HoyMilongaScraper {
             organizer: event.organizer,
             imageUrl: event.imageUrl,
             externalId: this.generateEventId(event.title, event.date),
-            status: 'pending_review',
+            status: 'approved',
             city: cityConfig.city,
             country: cityConfig.country,
             groupId: cityGroup?.id

@@ -193,7 +193,7 @@ export class JSScraper {
           price: event.price,
           imageUrl: event.imageUrl,
           scrapedAt: new Date(),
-          status: 'pending_review'
+          status: 'approved'
         });
       } catch (err) {
         console.error('[Agent #117] Failed to store event:', err);
