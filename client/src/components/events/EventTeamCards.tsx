@@ -3,8 +3,15 @@ import { Music, Users, User } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 
+interface ProfileLink {
+  name: string;
+  profileId?: number;
+  userId?: number;
+}
+
 interface ParticipantType {
   names: string[];
+  profiles: ProfileLink[];
   type: 'dj' | 'teacher' | 'performer' | 'organizer';
   icon: React.ReactNode;
   label: string;
@@ -24,11 +31,19 @@ export function EventTeamCards({
   teacherText,
   performerText,
   organizerText,
+  djProfiles,
+  teacherProfiles,
+  performerProfiles,
+  organizerProfiles,
 }: {
   djText?: string;
   teacherText?: string;
   performerText?: string;
   organizerText?: string;
+  djProfiles?: ProfileLink[];
+  teacherProfiles?: ProfileLink[];
+  performerProfiles?: ProfileLink[];
+  organizerProfiles?: ProfileLink[];
 }) {
   const parseNames = (text: string | undefined): string[] => {
     if (!text) return [];
@@ -38,27 +53,50 @@ export function EventTeamCards({
       .filter(n => n.length > 0);
   };
 
+  // Get profile link for a name - checks profiles array first, falls back to discover search
+  const getProfileHref = (name: string, profiles?: ProfileLink[]): string => {
+    if (profiles && profiles.length > 0) {
+      const profile = profiles.find(p => p.name.toLowerCase() === name.toLowerCase());
+      if (profile) {
+        // If user has claimed the profile, link to their user profile
+        if (profile.userId) {
+          return `/profile/${profile.userId}`;
+        }
+        // Otherwise link to scraped profile page
+        if (profile.profileId) {
+          return `/profile/scraped/${profile.profileId}`;
+        }
+      }
+    }
+    // Fallback to discover search
+    return `/discover?search=${encodeURIComponent(name)}`;
+  };
+
   const participants: ParticipantType[] = [
     {
       names: parseNames(organizerText),
+      profiles: organizerProfiles || [],
       type: 'organizer',
       icon: <User className="h-5 w-5" />,
       label: 'Organizers',
     },
     {
       names: parseNames(djText),
+      profiles: djProfiles || [],
       type: 'dj',
       icon: <Music className="h-5 w-5" />,
       label: 'DJs',
     },
     {
       names: parseNames(teacherText),
+      profiles: teacherProfiles || [],
       type: 'teacher',
       icon: <Users className="h-5 w-5" />,
       label: 'Teachers',
     },
     {
       names: parseNames(performerText),
+      profiles: performerProfiles || [],
       type: 'performer',
       icon: <User className="h-5 w-5" />,
       label: 'Performers',
@@ -89,7 +127,7 @@ export function EventTeamCards({
 
             <div className="flex flex-wrap gap-3 ml-4">
               {participant.names.map((name, idx) => (
-                <Link key={idx} href={`/discover?search=${encodeURIComponent(name)}`}>
+                <Link key={idx} href={getProfileHref(name, participant.profiles)}>
                   <div 
                     className="flex items-center gap-3 p-3 rounded-lg border hover-elevate cursor-pointer" 
                     data-testid={`card-${participant.type}-${idx}`}

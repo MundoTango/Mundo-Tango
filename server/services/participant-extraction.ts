@@ -252,7 +252,11 @@ function extractMetadata(text: string): { musicStyle?: string; dressCode?: strin
   return metadata;
 }
 
-async function matchUserProfile(name: string): Promise<{ userId?: number; profileId?: number; confidence: number }> {
+async function matchOrCreateProfile(
+  name: string, 
+  role: string,
+  sourceId: number | null = null
+): Promise<{ userId?: number; profileId?: number; confidence: number }> {
   const nameLower = name.toLowerCase().trim();
   
   // Skip very short or invalid names
@@ -305,12 +309,45 @@ async function matchUserProfile(name: string): Promise<{ userId?: number; profil
         };
       }
     }
+    
+    // No match found - CREATE a new scraped profile
+    console.log(`[MB.MD] Creating new scraped profile for: "${name}" (${role})`);
+    const newProfileId = await createScrapedProfileInternal(name, role, sourceId);
+    return { profileId: newProfileId, confidence: 0.5 };
+    
   } catch (error) {
     // Skip on query errors (malformed names, etc.)
     console.error(`[MB.MD] Error matching user profile for "${name}":`, error);
   }
   
   return { confidence: 0 };
+}
+
+// Internal helper to create profile (called by matchOrCreateProfile)
+async function createScrapedProfileInternal(
+  name: string,
+  role: string,
+  sourceId: number | null,
+  socialLinks?: { facebook?: string; instagram?: string; website?: string }
+): Promise<number> {
+  const existing = await db.query.scrapedProfiles.findFirst({
+    where: ilike(scrapedProfiles.name, name)
+  });
+  
+  if (existing) {
+    return existing.id;
+  }
+  
+  const [profile] = await db.insert(scrapedProfiles).values({
+    name,
+    profileType: role,
+    sourceId: sourceId,
+    socialLinks: socialLinks || {},
+    claimed: false
+  }).returning();
+  
+  console.log(`[MB.MD] Created scraped profile ID ${profile.id} for "${name}" (${role})`);
+  return profile.id;
 }
 
 export async function extractParticipants(
@@ -332,7 +369,7 @@ export async function extractParticipants(
   const hostNames = extractNames(fullText, HOST_PATTERNS);
   
   for (const name of Array.from(new Set(organizerNames))) {
-    const match = await matchUserProfile(name);
+    const match = await matchOrCreateProfile(name, 'organizer');
     participants.push({
       name,
       role: 'organizer',
@@ -345,7 +382,7 @@ export async function extractParticipants(
   
   for (const name of Array.from(new Set(coOrganizerNames))) {
     if (!organizerNames.includes(name)) {
-      const match = await matchUserProfile(name);
+      const match = await matchOrCreateProfile(name, 'co_organizer');
       participants.push({
         name,
         role: 'co_organizer',
@@ -358,7 +395,7 @@ export async function extractParticipants(
   }
   
   for (const name of Array.from(new Set(djNames))) {
-    const match = await matchUserProfile(name);
+    const match = await matchOrCreateProfile(name, 'dj');
     participants.push({
       name,
       role: 'dj',
@@ -370,7 +407,7 @@ export async function extractParticipants(
   }
   
   for (const name of Array.from(new Set(teacherNames))) {
-    const match = await matchUserProfile(name);
+    const match = await matchOrCreateProfile(name, 'teacher');
     participants.push({
       name,
       role: 'teacher',
@@ -382,7 +419,7 @@ export async function extractParticipants(
   }
   
   for (const name of Array.from(new Set(performerNames))) {
-    const match = await matchUserProfile(name);
+    const match = await matchOrCreateProfile(name, 'performer');
     participants.push({
       name,
       role: 'performer',
@@ -396,7 +433,7 @@ export async function extractParticipants(
   for (const name of Array.from(new Set(hostNames))) {
     // Skip if already added as organizer
     if (!organizerNames.includes(name) && !coOrganizerNames.includes(name)) {
-      const match = await matchUserProfile(name);
+      const match = await matchOrCreateProfile(name, 'host');
       participants.push({
         name,
         role: 'host',
@@ -441,27 +478,5 @@ export function extractSocialLinks(text: string): { facebook?: string; instagram
   return links;
 }
 
-export async function createScrapedProfile(
-  name: string,
-  role: string,
-  sourceId: number | null,
-  socialLinks?: { facebook?: string; instagram?: string; website?: string }
-): Promise<number> {
-  const existing = await db.query.scrapedProfiles.findFirst({
-    where: ilike(scrapedProfiles.name, name)
-  });
-  
-  if (existing) {
-    return existing.id;
-  }
-  
-  const [profile] = await db.insert(scrapedProfiles).values({
-    name,
-    profileType: role,
-    sourceId: sourceId,
-    socialLinks: socialLinks || {},
-    claimed: false
-  }).returning();
-  
-  return profile.id;
-}
+// Re-export internal function for external use
+export const createScrapedProfile = createScrapedProfileInternal;

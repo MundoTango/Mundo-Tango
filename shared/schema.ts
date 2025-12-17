@@ -815,6 +815,13 @@ export const events = pgTable(
     djText: text("dj_text"),
     teacherText: text("teacher_text"),
     performerText: text("performer_text"),
+    
+    // Participant Profile Links (profile IDs for each role type)
+    // Format: [{name: string, profileId: number, userId?: number}]
+    organizerProfiles: jsonb("organizer_profiles"),
+    djProfiles: jsonb("dj_profiles"),
+    teacherProfiles: jsonb("teacher_profiles"),
+    performerProfiles: jsonb("performer_profiles"),
 
     // Event Series (for grouping recurring events)
     seriesId: integer("series_id").references(() => eventSeries.id),

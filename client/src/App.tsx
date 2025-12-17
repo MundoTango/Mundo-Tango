@@ -75,6 +75,7 @@ const GamificationDashboard = lazy(
 );
 const FeedPage = lazy(() => import("@/pages/FeedPage"));
 const ProfilePage = lazy(() => import("@/pages/ProfilePage"));
+const ScrapedProfilePage = lazy(() => import("@/pages/ScrapedProfilePage"));
 const FriendsListPage = lazy(() => import("@/pages/FriendsListPage"));
 const FriendshipPage = lazy(() => import("@/pages/FriendshipPage"));
 const FriendRequestsPage = lazy(() => import("@/pages/FriendRequestsPage"));
@@ -988,6 +989,14 @@ function Router() {
             <ProfileEditPage />
           </AppLayout>
         </ProtectedRoute>
+      </Route>
+
+      <Route path="/profile/scraped/:id">
+        <AppLayout>
+          <Suspense fallback={<LoadingFallback />}>
+            <ScrapedProfilePage />
+          </Suspense>
+        </AppLayout>
       </Route>
 
       <Route path="/profile/:id">

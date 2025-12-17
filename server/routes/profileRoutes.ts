@@ -1182,4 +1182,34 @@ router.delete("/:userId/musician", authenticateToken, requireOwnerOrAdmin(req =>
   }
 });
 
+// ============================================================================
+// SCRAPED PROFILE ROUTES (PUBLIC)
+// ============================================================================
+
+// GET /api/profile/scraped/:id - Get scraped profile by ID (public)
+router.get("/scraped/:id", async (req: Request, res: Response) => {
+  try {
+    const profileId = parseInt(req.params.id);
+    
+    if (isNaN(profileId)) {
+      return res.status(400).json({ message: "Invalid profile ID" });
+    }
+
+    const { scrapedProfiles } = await import("@shared/schema");
+    const { db } = await import("../db");
+    const { eq } = await import("drizzle-orm");
+    
+    const [profile] = await db.select().from(scrapedProfiles).where(eq(scrapedProfiles.id, profileId));
+    
+    if (!profile) {
+      return res.status(404).json({ message: "Profile not found" });
+    }
+
+    res.json(profile);
+  } catch (error) {
+    console.error("[Profile] Error fetching scraped profile:", error);
+    res.status(500).json({ message: "Failed to fetch scraped profile" });
+  }
+});
+
 export default router;

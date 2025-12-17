@@ -96,6 +96,10 @@ const eventSummaryFields = {
   djText: events.djText,
   teacherText: events.teacherText,
   performerText: events.performerText,
+  organizerProfiles: events.organizerProfiles,
+  djProfiles: events.djProfiles,
+  teacherProfiles: events.teacherProfiles,
+  performerProfiles: events.performerProfiles,
 };
 
 // ============================================================================

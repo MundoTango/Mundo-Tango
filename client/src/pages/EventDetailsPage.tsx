@@ -891,6 +891,10 @@ export default function EventDetailsPage() {
                       teacherText={event.teacherText}
                       performerText={event.performerText}
                       organizerText={event.organizerText && !event.organizer ? event.organizerText : undefined}
+                      djProfiles={event.djProfiles}
+                      teacherProfiles={event.teacherProfiles}
+                      performerProfiles={event.performerProfiles}
+                      organizerProfiles={event.organizerProfiles}
                     />
                   </motion.div>
                 )}
