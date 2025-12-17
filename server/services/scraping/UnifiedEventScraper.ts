@@ -15,6 +15,7 @@ import { db } from '@shared/db';
 import { scrapedEvents, eventScrapingSources } from '@shared/schema';
 import { eq } from 'drizzle-orm';
 import Groq from 'groq-sdk';
+import { discoverTeamFromSubpages, formatTeamForDescription, hasTeamData } from '../../agents/scraping/subpageDiscovery';
 
 export interface ScrapedEventData {
   title: string;
@@ -332,6 +333,18 @@ Extract all tango events from this page as JSON array:`
       const events = await this.extractEventsWithAI(html, source.url, source.name);
 
       console.log(`[UnifiedScraper] Found ${events.length} events from ${source.name}`);
+      
+      // MULTI-PAGE: Discover team members from subpages (DJs, Teachers, etc.)
+      let teamDescription = '';
+      try {
+        const teamData = await discoverTeamFromSubpages(source.url, html);
+        if (hasTeamData(teamData)) {
+          teamDescription = formatTeamForDescription(teamData);
+          console.log(`[UnifiedScraper] 👥 Found team data from subpages`);
+        }
+      } catch {
+        // Team extraction is optional
+      }
 
       let savedCount = 0;
       for (const event of events) {
@@ -352,11 +365,21 @@ Extract all tango events from this page as JSON array:`
             if (geoData.country) event.country = geoData.country;
           }
 
+          // Append team data to description if found and not already present
+          let fullDescription = event.description || '';
+          if (teamDescription) {
+            // Only append if description doesn't already contain team info
+            const hasTeamInfo = /(?:maestros?|djs?|teachers?|performers?):/i.test(fullDescription);
+            if (!hasTeamInfo) {
+              fullDescription = fullDescription ? `${fullDescription}\n\n${teamDescription}` : teamDescription;
+            }
+          }
+
           await db.insert(scrapedEvents).values({
             sourceUrl: event.sourceUrl,
             sourceName: event.sourceName,
             title: event.title,
-            description: event.description || '',
+            description: fullDescription,
             eventType: event.eventType,
             startDate: event.startDate,
             endDate: event.endDate,
