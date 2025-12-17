@@ -99,6 +99,17 @@ const SKILL_LEVEL_PATTERNS = [
   { pattern: /open\s*level/gi, level: 'all_levels' },
 ];
 
+/**
+ * Split comma/and-separated list of names into individual names
+ */
+function splitNameList(text: string): string[] {
+  return text
+    .split(/[,&]|\band\b/gi)
+    .map(name => name.trim())
+    .filter(name => name.length > 2 && name.length < 60)
+    .filter(name => !name.match(/^\d+$/) && !name.includes('http'));
+}
+
 function extractNames(text: string, patterns: RegExp[]): string[] {
   const names: string[] = [];
   
@@ -107,14 +118,20 @@ function extractNames(text: string, patterns: RegExp[]): string[] {
     let match;
     while ((match = regex.exec(text)) !== null) {
       const extracted = match[1]?.trim();
-      if (extracted && extracted.length > 2 && extracted.length < 100) {
+      if (extracted && extracted.length > 2 && extracted.length < 200) {
         const cleaned = extracted
           .replace(/[!.,:;]+$/, '')
           .replace(/\s+/g, ' ')
           .trim();
         
-        if (cleaned && !names.includes(cleaned)) {
-          names.push(cleaned);
+        if (cleaned) {
+          // Split comma-separated names and add each individually
+          const individualNames = splitNameList(cleaned);
+          for (const name of individualNames) {
+            if (!names.includes(name)) {
+              names.push(name);
+            }
+          }
         }
       }
     }
@@ -228,7 +245,7 @@ export async function extractParticipants(
   const teacherNames = extractNames(fullText, TEACHER_PATTERNS);
   const performerNames = extractNames(fullText, PERFORMER_PATTERNS);
   
-  for (const name of [...new Set(organizerNames)]) {
+  for (const name of Array.from(new Set(organizerNames))) {
     const match = await matchUserProfile(name);
     participants.push({
       name,
@@ -240,7 +257,7 @@ export async function extractParticipants(
     });
   }
   
-  for (const name of [...new Set(coOrganizerNames)]) {
+  for (const name of Array.from(new Set(coOrganizerNames))) {
     if (!organizerNames.includes(name)) {
       const match = await matchUserProfile(name);
       participants.push({
@@ -254,7 +271,7 @@ export async function extractParticipants(
     }
   }
   
-  for (const name of [...new Set(djNames)]) {
+  for (const name of Array.from(new Set(djNames))) {
     const match = await matchUserProfile(name);
     participants.push({
       name,
@@ -266,7 +283,7 @@ export async function extractParticipants(
     });
   }
   
-  for (const name of [...new Set(teacherNames)]) {
+  for (const name of Array.from(new Set(teacherNames))) {
     const match = await matchUserProfile(name);
     participants.push({
       name,
@@ -278,7 +295,7 @@ export async function extractParticipants(
     });
   }
   
-  for (const name of [...new Set(performerNames)]) {
+  for (const name of Array.from(new Set(performerNames))) {
     const match = await matchUserProfile(name);
     participants.push({
       name,

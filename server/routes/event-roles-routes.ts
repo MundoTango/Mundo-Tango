@@ -9,6 +9,7 @@ import {
   eventParticipants, 
   eventRoleInvitations, 
   eventUpdates,
+  eventTeamMembers,
   insertEventParticipantSchema,
   insertEventRoleInvitationSchema,
   insertEventUpdateSchema,
@@ -33,11 +34,13 @@ const router = Router();
 /**
  * GET /api/events/:id/participants
  * Get all participants for an event (with role grouping)
+ * Includes both manually added participants AND scraped team members
  */
 router.get("/events/:id/participants", async (req, res) => {
   try {
     const eventId = parseInt(req.params.id);
 
+    // Get manually added participants
     const participants = await db
       .select({
         participant: eventParticipants,
@@ -63,18 +66,63 @@ router.get("/events/:id/participants", async (req, res) => {
         desc(eventParticipants.createdAt)
       );
 
-    // Group by role
-    const groupedByRole = participants.reduce((acc: Record<string, any[]>, p: any) => {
+    // Get scraped team members
+    const teamMembers = await db
+      .select({
+        teamMember: eventTeamMembers,
+        user: {
+          id: users.id,
+          username: users.username,
+          email: users.email,
+          city: users.city,
+          name: users.name,
+          profileImage: users.profileImage,
+        }
+      })
+      .from(eventTeamMembers)
+      .leftJoin(users, eq(eventTeamMembers.userId, users.id))
+      .where(eq(eventTeamMembers.eventId, eventId))
+      .orderBy(desc(eventTeamMembers.createdAt));
+
+    // Group manually added participants by role
+    const groupedByRole: Record<string, any[]> = participants.reduce((acc: Record<string, any[]>, p: any) => {
       const role = p.participant.role;
       if (!acc[role]) acc[role] = [];
       acc[role].push({
         ...p.participant,
-        user: p.user
+        user: p.user,
+        source: 'manual'
       });
       return acc;
     }, {} as Record<string, any[]>);
 
-    res.json({ participants: groupedByRole, total: participants.length });
+    // Add scraped team members to the grouping
+    for (const tm of teamMembers) {
+      const role = tm.teamMember.role;
+      if (!groupedByRole[role]) groupedByRole[role] = [];
+      
+      // Avoid duplicates by checking if user is already in the list
+      const existingUser = groupedByRole[role].find(
+        (p: any) => p.user?.id && tm.user?.id && p.user.id === tm.user.id
+      );
+      
+      if (!existingUser) {
+        groupedByRole[role].push({
+          id: tm.teamMember.id,
+          eventId: tm.teamMember.eventId,
+          userId: tm.teamMember.userId,
+          role: tm.teamMember.role,
+          displayName: tm.teamMember.displayName,
+          confidence: tm.teamMember.confidence,
+          source: tm.teamMember.source || 'scraped',
+          user: tm.user,
+          isScrapedTeamMember: true
+        });
+      }
+    }
+
+    const total = participants.length + teamMembers.length;
+    res.json({ participants: groupedByRole, total });
   } catch (error: any) {
     console.error("Error fetching event participants:", error);
     res.status(500).json({ error: "Failed to fetch participants" });

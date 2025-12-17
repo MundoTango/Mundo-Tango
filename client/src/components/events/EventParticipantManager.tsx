@@ -398,54 +398,74 @@ export function EventParticipantManager({ eventId, isOrganizer }: EventParticipa
                 
                 <div className="grid gap-2 pl-6">
                   <AnimatePresence>
-                    {roleParticipants.map((participant, index) => (
-                      <motion.div
-                        key={participant.id}
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: 10 }}
-                        transition={{ delay: index * 0.05 }}
-                      >
-                        <Link href={`/profile/${participant.user?.username || participant.userId}`}>
-                          <div 
-                            className="flex items-center gap-3 p-2 rounded-lg hover-elevate cursor-pointer group"
-                            data-testid={`participant-${participant.userId}`}
-                          >
-                            <Avatar className="h-10 w-10 border">
-                              <AvatarImage src={participant.user?.profileImage || undefined} />
-                              <AvatarFallback className="bg-primary/10 text-primary">
-                                {(participant.user?.name || "U").charAt(0).toUpperCase()}
-                              </AvatarFallback>
-                            </Avatar>
-                            <div className="flex-1 min-w-0">
-                              <p className="text-sm font-medium truncate">
-                                {participant.user?.name || "Unknown"}
+                    {roleParticipants.map((participant: any, index: number) => {
+                      // For scraped team members, use displayName; for manual participants, use user.name
+                      const displayName = participant.displayName || participant.user?.name || "Unknown";
+                      const hasProfile = participant.user?.username;
+                      const isScraped = participant.isScrapedTeamMember || participant.source === 'scraped';
+                      
+                      const content = (
+                        <div 
+                          className={`flex items-center gap-3 p-2 rounded-lg ${hasProfile ? 'hover-elevate cursor-pointer' : ''} group`}
+                          data-testid={`participant-${participant.userId || participant.id}`}
+                        >
+                          <Avatar className="h-10 w-10 border">
+                            <AvatarImage src={participant.user?.profileImage || undefined} />
+                            <AvatarFallback className="bg-primary/10 text-primary">
+                              {displayName.charAt(0).toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium truncate">
+                              {displayName}
+                            </p>
+                            {participant.customTitle && (
+                              <p className="text-xs text-muted-foreground">
+                                {participant.customTitle}
                               </p>
-                              {participant.customTitle && (
-                                <p className="text-xs text-muted-foreground">
-                                  {participant.customTitle}
-                                </p>
-                              )}
-                            </div>
-                            {isOrganizer && participant.role !== "organizer" && (
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="opacity-0 group-hover:opacity-100 transition-opacity"
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  e.stopPropagation();
-                                  removeParticipant.mutate(participant.userId);
-                                }}
-                                data-testid={`button-remove-${participant.userId}`}
-                              >
-                                <X className="h-4 w-4 text-muted-foreground hover:text-destructive" />
-                              </Button>
+                            )}
+                            {isScraped && !hasProfile && (
+                              <p className="text-xs text-muted-foreground/60">
+                                Found from event listing
+                              </p>
                             )}
                           </div>
-                        </Link>
-                      </motion.div>
-                    ))}
+                          {isOrganizer && participant.role !== "organizer" && participant.userId && (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="opacity-0 group-hover:opacity-100 transition-opacity"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                removeParticipant.mutate(participant.userId);
+                              }}
+                              data-testid={`button-remove-${participant.userId}`}
+                            >
+                              <X className="h-4 w-4 text-muted-foreground hover:text-destructive" />
+                            </Button>
+                          )}
+                        </div>
+                      );
+                      
+                      return (
+                        <motion.div
+                          key={participant.id}
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          exit={{ opacity: 0, x: 10 }}
+                          transition={{ delay: index * 0.05 }}
+                        >
+                          {hasProfile ? (
+                            <Link href={`/profile/${participant.user.username}`}>
+                              {content}
+                            </Link>
+                          ) : (
+                            content
+                          )}
+                        </motion.div>
+                      );
+                    })}
                   </AnimatePresence>
                 </div>
               </div>

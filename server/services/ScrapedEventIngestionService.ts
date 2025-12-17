@@ -5,8 +5,9 @@
  */
 
 import { db } from '@shared/db';
-import { events, scrapedEvents, users } from '@shared/schema';
+import { events, scrapedEvents, users, eventTeamMembers } from '@shared/schema';
 import { eq, and, isNull } from 'drizzle-orm';
+import { extractParticipants } from './participant-extraction';
 
 const SCRAPER_BOT_USERNAME = 'scraper_bot';
 const SCRAPER_BOT_EMAIL = 'scraper@mundotango.app';
@@ -146,6 +147,64 @@ class ScrapedEventIngestionService {
   }
 
   /**
+   * Extract participants from event description and create team members
+   */
+  private async extractAndCreateTeamMembers(eventId: number, title: string, description: string | null): Promise<void> {
+    try {
+      const extraction = await extractParticipants(title, description, null);
+      
+      if (extraction.participants.length === 0) {
+        return;
+      }
+
+      console.log(`[Ingestion] 👥 Found ${extraction.participants.length} team members for event ${eventId}`);
+
+      for (const participant of extraction.participants) {
+        // Map extraction role to event_role enum
+        const roleMap: Record<string, 'organizer' | 'dj' | 'teacher' | 'performer' | 'host'> = {
+          'organizer': 'organizer',
+          'co_organizer': 'organizer',
+          'dj': 'dj',
+          'teacher': 'teacher',
+          'performer': 'performer',
+          'photographer': 'performer',
+          'host': 'host'
+        };
+        
+        const role = roleMap[participant.role] || 'performer';
+
+        try {
+          // Only include userId if it's a valid number
+          const teamMemberData: any = {
+            eventId,
+            role,
+            displayName: participant.name,
+            rawText: participant.sourceText,
+            confidence: participant.confidence,
+            source: 'scraped'
+          };
+          
+          // Only set userId if there's an actual match
+          if (typeof participant.matchedUserId === 'number' && participant.matchedUserId > 0) {
+            teamMemberData.userId = participant.matchedUserId;
+          }
+          
+          await db.insert(eventTeamMembers).values(teamMemberData);
+
+          console.log(`[Ingestion]   + ${participant.name} (${role})${participant.matchedUserId ? ` → user ${participant.matchedUserId}` : ''}`);
+        } catch (err: any) {
+          // Skip duplicates
+          if (err.code !== '23505') {
+            console.error(`[Ingestion] Failed to add team member ${participant.name}:`, err.message);
+          }
+        }
+      }
+    } catch (error) {
+      console.error(`[Ingestion] Error extracting team members for event ${eventId}:`, error);
+    }
+  }
+
+  /**
    * Ingest a single approved scraped event into events table
    */
   async ingestEvent(scrapedEventId: number): Promise<number | null> {
@@ -173,6 +232,9 @@ class ScrapedEventIngestionService {
         .insert(events)
         .values(eventData)
         .returning({ id: events.id });
+
+      // Extract participants from description and create team members
+      await this.extractAndCreateTeamMembers(inserted.id, scraped.title, scraped.description);
 
       // Mark as ingested
       await db
