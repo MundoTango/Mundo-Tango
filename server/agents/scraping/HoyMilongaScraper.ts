@@ -15,6 +15,7 @@ import { scrapedEvents } from '@shared/schema';
 import { cityMatcherService } from '../../services/CityMatcherService';
 import { detailDiscoveryService } from '../../services/scraping/DetailDiscoveryService';
 import { languageAwareFieldMapper } from '../../services/scraping/LanguageAwareFieldMapper';
+import { attachParticipantProfiles } from '../../services/scraping/ParticipantProfileHelper';
 
 interface HoyMilongaTeamData {
   djs: string[];
@@ -495,6 +496,12 @@ export class HoyMilongaScraper {
           }
         }
 
+        const participantData = await attachParticipantProfiles({
+          title: event.title,
+          description,
+          organizer
+        });
+
         await db.insert(scrapedEvents).values({
           sourceUrl: eventSourceUrl,
           sourceName,
@@ -510,7 +517,12 @@ export class HoyMilongaScraper {
           groupId,
           imageUrl: event.coverImage || undefined,
           status: event.status === 'cancelled' ? 'rejected' : 'pending_review',
-          externalId: `hoymilonga-${cityName}-${event.title}`.toLowerCase().replace(/\s+/g, '-').slice(0, 100)
+          externalId: `hoymilonga-${cityName}-${event.title}`.toLowerCase().replace(/\s+/g, '-').slice(0, 100),
+          organizerText: participantData.organizerText,
+          djText: participantData.djText,
+          teacherText: participantData.teacherText,
+          performerText: participantData.performerText,
+          participantProfiles: participantData.participantProfiles
         });
 
         console.log(`[HoyMilonga] 📎 Stored: ${event.title} → ${sourceName}`);

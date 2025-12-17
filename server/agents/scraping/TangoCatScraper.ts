@@ -25,6 +25,7 @@ import { eq } from 'drizzle-orm';
 import { discoverTeamFromSubpages, formatTeamForDescription, hasTeamData } from './subpageDiscovery';
 import { languageAwareFieldMapper, SupportedLanguage } from '../../services/scraping/LanguageAwareFieldMapper';
 import { detailDiscoveryService } from '../../services/scraping/DetailDiscoveryService';
+import { attachParticipantProfiles } from '../../services/scraping/ParticipantProfileHelper';
 
 interface TangoCatJSONEvent {
   id: number;
@@ -542,6 +543,13 @@ export class TangoCatScraper {
           }
         }
 
+        // Extract participants and create profiles
+        const participantData = await attachParticipantProfiles({
+          title: event.title,
+          description: enrichedDescription,
+          organizer: sourceName !== 'tangocat.net' ? sourceName : undefined
+        });
+
         // Store with all the rich data including price, image, and full address
         await db.insert(scrapedEvents).values({
           sourceUrl,
@@ -562,7 +570,12 @@ export class TangoCatScraper {
           status: 'pending_review',
           externalId,
           price,
-          imageUrl
+          imageUrl,
+          organizerText: participantData.organizerText,
+          djText: participantData.djText,
+          teacherText: participantData.teacherText,
+          performerText: participantData.performerText,
+          participantProfiles: participantData.participantProfiles
         });
         
         console.log(`[TangoCat] ✅ Stored: ${event.title} (${event.eventType}) @ ${event.city}, ${event.country}`);

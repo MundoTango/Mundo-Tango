@@ -18,6 +18,7 @@ import Groq from 'groq-sdk';
 import { discoverTeamFromSubpages, formatTeamForDescription, hasTeamData } from '../../agents/scraping/subpageDiscovery';
 import { languageAwareFieldMapper, SupportedLanguage } from './LanguageAwareFieldMapper';
 import { detailDiscoveryService } from './DetailDiscoveryService';
+import { attachParticipantProfiles } from './ParticipantProfileHelper';
 
 export interface ScrapedEventData {
   title: string;
@@ -403,6 +404,13 @@ Extract all tango events from this page as JSON array:`
             }
           }
 
+          // Extract participants and create profiles
+          const participantData = await attachParticipantProfiles({
+            title: event.title,
+            description: fullDescription,
+            organizer: event.organizer
+          });
+
           await db.insert(scrapedEvents).values({
             sourceUrl: event.sourceUrl,
             sourceName: event.sourceName,
@@ -421,6 +429,11 @@ Extract all tango events from this page as JSON array:`
             externalId: event.externalId || `${source.id}-${Date.now()}-${savedCount}`,
             status: 'pending',
             scrapedAt: new Date(),
+            organizerText: participantData.organizerText,
+            djText: participantData.djText,
+            teacherText: participantData.teacherText,
+            performerText: participantData.performerText,
+            participantProfiles: participantData.participantProfiles
           }).onConflictDoNothing();
 
           savedCount++;

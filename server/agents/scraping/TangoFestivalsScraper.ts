@@ -14,6 +14,7 @@ import { cityMatcherService } from '../../services/CityMatcherService';
 import { discoverTeamFromSubpages, formatTeamForDescription, hasTeamData } from './subpageDiscovery';
 import { languageAwareFieldMapper, SupportedLanguage } from '../../services/scraping/LanguageAwareFieldMapper';
 import { detailDiscoveryService } from '../../services/scraping/DetailDiscoveryService';
+import { attachParticipantProfiles } from '../../services/scraping/ParticipantProfileHelper';
 
 interface TangoFestivalEvent {
   title: string;
@@ -321,8 +322,14 @@ export class TangoFestivalsScraper {
           }
         }
 
+        // Extract participants and create profiles
+        const participantData = await attachParticipantProfiles({
+          title: event.title,
+          description: enrichedDescription,
+          organizer: sourceName !== 'TangoFestivals.net' ? sourceName : undefined
+        });
+
         await db.insert(scrapedEvents).values({
-          sourceId,
           sourceUrl,
           sourceName,
           title: event.title,
@@ -331,11 +338,18 @@ export class TangoFestivalsScraper {
           endDate,
           location: event.location,
           address: `${event.city}, ${event.country}`,
+          city: event.city,
+          country: event.country,
           organizer: sourceName !== 'TangoFestivals.net' ? sourceName : undefined,
           imageUrl,
           groupId,
           status: 'pending_review',
-          externalId: `tangofestivals-${event.title}`.toLowerCase().replace(/\s+/g, '-').slice(0, 100)
+          externalId: `tangofestivals-${event.title}`.toLowerCase().replace(/\s+/g, '-').slice(0, 100),
+          organizerText: participantData.organizerText,
+          djText: participantData.djText,
+          teacherText: participantData.teacherText,
+          performerText: participantData.performerText,
+          participantProfiles: participantData.participantProfiles
         });
       } catch (err) {
         console.error(`[TangoFestivals] Failed to store event "${event.title}":`, err);
