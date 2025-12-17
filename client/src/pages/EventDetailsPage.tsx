@@ -24,6 +24,7 @@ import { getCityImageUrl } from "@/lib/cityImageMap";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { EventPostFeed } from "@/components/events/EventPostFeed";
 import { EventParticipantManager } from "@/components/events/EventParticipantManager";
+import { EventTeamCards } from "@/components/events/EventTeamCards";
 import { useAuth } from "@/contexts/AuthContext";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { queryClient } from "@/lib/queryClient";
@@ -878,61 +879,19 @@ export default function EventDetailsPage() {
                   </motion.div>
                 )}
 
-                {/* Participants Section - DJs, Teachers, Performers */}
+                {/* Event Team - Organizers, DJs, Teachers, Performers */}
                 {(event.organizerText || event.djText || event.teacherText || event.performerText) && (
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.69 }}
-                    className="pt-6 border-t"
                   >
-                    <h3 className="text-xl font-semibold mb-4" data-testid="text-participants-header">Featured Artists & Staff</h3>
-                    <div className="grid gap-4 md:grid-cols-2">
-                      {event.djText && (
-                        <div className="flex items-start gap-3" data-testid="section-djs">
-                          <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                            <Music className="h-5 w-5 text-primary" />
-                          </div>
-                          <div>
-                            <p className="text-sm text-muted-foreground mb-1">DJ / Music</p>
-                            <p className="font-medium" data-testid="text-dj-names">{event.djText}</p>
-                          </div>
-                        </div>
-                      )}
-                      {event.teacherText && (
-                        <div className="flex items-start gap-3" data-testid="section-teachers">
-                          <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                            <Users className="h-5 w-5 text-primary" />
-                          </div>
-                          <div>
-                            <p className="text-sm text-muted-foreground mb-1">Teachers</p>
-                            <p className="font-medium" data-testid="text-teacher-names">{event.teacherText}</p>
-                          </div>
-                        </div>
-                      )}
-                      {event.performerText && (
-                        <div className="flex items-start gap-3" data-testid="section-performers">
-                          <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                            <User className="h-5 w-5 text-primary" />
-                          </div>
-                          <div>
-                            <p className="text-sm text-muted-foreground mb-1">Performers</p>
-                            <p className="font-medium" data-testid="text-performer-names">{event.performerText}</p>
-                          </div>
-                        </div>
-                      )}
-                      {event.organizerText && !event.organizer && (
-                        <div className="flex items-start gap-3" data-testid="section-organizer-text">
-                          <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                            <User className="h-5 w-5 text-primary" />
-                          </div>
-                          <div>
-                            <p className="text-sm text-muted-foreground mb-1">Organized by</p>
-                            <p className="font-medium" data-testid="text-organizer-text">{event.organizerText}</p>
-                          </div>
-                        </div>
-                      )}
-                    </div>
+                    <EventTeamCards
+                      djText={event.djText}
+                      teacherText={event.teacherText}
+                      performerText={event.performerText}
+                      organizerText={event.organizerText && !event.organizer ? event.organizerText : undefined}
+                    />
                   </motion.div>
                 )}
 
