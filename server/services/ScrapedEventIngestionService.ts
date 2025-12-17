@@ -87,11 +87,13 @@ class ScrapedEventIngestionService {
       status: 'published' as const,
       groupId: scraped.groupId,
       imageUrl: scraped.imageUrl || null,
+      coverImage: scraped.imageUrl || null,
       sourceUrl: scraped.sourceUrl,
       sourceName: scraped.sourceName,
+      price: scraped.price || null,
       isOnline: false,
-      isFree: true,
-      isPaid: false
+      isFree: scraped.price === 'Free' || scraped.price === '0' || !scraped.price,
+      isPaid: scraped.price && scraped.price !== 'Free' && scraped.price !== '0'
     };
   }
 

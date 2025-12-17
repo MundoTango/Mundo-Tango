@@ -39,9 +39,39 @@ export interface ExtractionResult {
 }
 
 const ORGANIZER_PATTERNS = [
-  /(?:organised|organized|hosted|presented|brought to you) by[:\s]+([^.|\n]+)/gi,
-  /(?:organiser|organizer|host)[s]?[:\s]+([^.|\n]+)/gi,
+  // English
+  /(?:organised|organized|presented|brought to you) by[:\s]+([^.|\n]+)/gi,
+  /(?:organiser|organizer)[s]?[:\s]+([^.|\n]+)/gi,
   /(?:run by|created by)[:\s]+([^.|\n]+)/gi,
+  // Spanish
+  /(?:organizado por|organizadores?)[:\s]+([^.|\n]+)/gi,
+  /(?:presentado por)[:\s]+([^.|\n]+)/gi,
+  // Italian
+  /(?:organizzato da|organizzatori?)[:\s]+([^.|\n]+)/gi,
+  // French
+  /(?:organisé par|organisateurs?)[:\s]+([^.|\n]+)/gi,
+  // German
+  /(?:organisiert von|veranstaltet von)[:\s]+([^.|\n]+)/gi,
+];
+
+const HOST_PATTERNS = [
+  // English
+  /(?:hosted by|host)[s]?[:\s]+([^.|\n]+)/gi,
+  /(?:mc|m\.c\.|emcee)[:\s]+([^.|\n]+)/gi,
+  /(?:master of ceremonies|presenter)[:\s]+([^.|\n]+)/gi,
+  /(?:your host|tonight's host)[:\s]+([^.|\n]+)/gi,
+  // Spanish
+  /(?:animación|animador|animadora)[:\s]+([^.|\n]+)/gi,
+  /(?:presentador|presentadora)[:\s]+([^.|\n]+)/gi,
+  /(?:conducción|conduce)[:\s]+([^.|\n]+)/gi,
+  // Italian
+  /(?:condotto da|presentato da)[:\s]+([^.|\n]+)/gi,
+  /(?:animazione|animatore)[:\s]+([^.|\n]+)/gi,
+  // French
+  /(?:animé par|animateur|animatrice)[:\s]+([^.|\n]+)/gi,
+  /(?:présenté par)[:\s]+([^.|\n]+)/gi,
+  // German
+  /(?:moderiert von|moderation)[:\s]+([^.|\n]+)/gi,
 ];
 
 const CO_ORGANIZER_PATTERNS = [
@@ -51,26 +81,81 @@ const CO_ORGANIZER_PATTERNS = [
 ];
 
 const DJ_PATTERNS = [
-  /(?:dj|d\.j\.)[:\s]+([^.|\n]+)/gi,
+  // English
+  /(?:dj|d\.j\.)[s]?[:\s]+([^.|\n]+)/gi,
   /(?:music by|tunes by|tandas by|played by)[:\s]+([^.|\n]+)/gi,
   /(?:spinning|playing)[:\s]+([^.|\n]+)/gi,
   /(?:dj set by|set by)[:\s]+([^.|\n]+)/gi,
   /([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)\s+(?:on the decks|spinning)/gi,
+  // Spanish
+  /(?:musicalizador|musicalizadora|musicalizadores)[:\s]+([^.|\n]+)/gi,
+  /(?:musicaliza(?:do|ción)?)[:\s]+([^.|\n]+)/gi,
+  /(?:música a cargo de|musica por)[:\s]+([^.|\n]+)/gi,
+  /(?:tandas seleccionadas por)[:\s]+([^.|\n]+)/gi,
+  // Italian
+  /(?:musica di|musica da)[:\s]+([^.|\n]+)/gi,
+  /(?:musicalizatore|musicalizatrice)[:\s]+([^.|\n]+)/gi,
+  // French
+  /(?:musique par|musique de)[:\s]+([^.|\n]+)/gi,
+  /(?:sélection musicale)[:\s]+([^.|\n]+)/gi,
+  // German
+  /(?:musik von|dj-set von)[:\s]+([^.|\n]+)/gi,
+  // Portuguese
+  /(?:música por|musicalizador)[:\s]+([^.|\n]+)/gi,
 ];
 
 const TEACHER_PATTERNS = [
+  // English
   /(?:taught by|instruction by|class(?:es)? (?:with|by))[:\s]+([^.|\n]+)/gi,
   /(?:teacher|instructor|maestro|maestra)[s]?[:\s]+([^.|\n]+)/gi,
   /(?:lesson|workshop|class) with[:\s]+([^.|\n]+)/gi,
   /(?:teaching)[:\s]+([^.|\n]+)/gi,
   /([A-Z][a-z]+(?:\s+(?:&|and)\s+[A-Z][a-z]+)?)\s+(?:teach(?:es|ing)?|instruct)/gi,
+  // Spanish
+  /(?:maestros?|maestras?)[:\s]+([^.|\n]+)/gi,
+  /(?:profesores?|profesoras?)[:\s]+([^.|\n]+)/gi,
+  /(?:clase(?:s)? con|taller(?:es)? con)[:\s]+([^.|\n]+)/gi,
+  /(?:enseña(?:n)?|dicta(?:n)?)[:\s]+([^.|\n]+)/gi,
+  // Italian
+  /(?:insegnant[ei]|docent[ei])[:\s]+([^.|\n]+)/gi,
+  /(?:lezione con|workshop con)[:\s]+([^.|\n]+)/gi,
+  // French
+  /(?:professeur[s]?|enseignant[s]?)[:\s]+([^.|\n]+)/gi,
+  /(?:cours avec|stage avec)[:\s]+([^.|\n]+)/gi,
+  // German
+  /(?:lehrer|lehrerin|unterricht von)[:\s]+([^.|\n]+)/gi,
+  // Portuguese
+  /(?:professor(?:es|a|as)?|mestre(?:s)?)[:\s]+([^.|\n]+)/gi,
 ];
 
 const PERFORMER_PATTERNS = [
+  // English
   /(?:performance by|performing|exhibition by|show by)[:\s]+([^.|\n]+)/gi,
   /(?:performer|artist|guest artist)[s]?[:\s]+([^.|\n]+)/gi,
   /(?:special guest|featuring|feat\.?)[:\s]+([^.|\n]+)/gi,
   /(?:live performance|demo) by[:\s]+([^.|\n]+)/gi,
+  /(?:live music|live band|orchestra)[:\s]+([^.|\n]+)/gi,
+  /(?:orquesta|orquesta típica)[:\s]+([^.|\n]+)/gi,
+  // Spanish
+  /(?:show de tango|show de|exhibición de|presentación de)[:\s]+([^.|\n]+)/gi,
+  /(?:actuación de|actuaciones de)[:\s]+([^.|\n]+)/gi,
+  /(?:orquesta típica|orquesta)[:\s]+([^.|\n]+)/gi,
+  /(?:música en vivo|banda en vivo)[:\s]+([^.|\n]+)/gi,
+  /(?:artista invitado|artistas invitados)[:\s]+([^.|\n]+)/gi,
+  // Italian
+  /(?:esibizione di|spettacolo di)[:\s]+([^.|\n]+)/gi,
+  /(?:orchestra|orchestra tipica)[:\s]+([^.|\n]+)/gi,
+  /(?:musica dal vivo)[:\s]+([^.|\n]+)/gi,
+  // French
+  /(?:spectacle de|représentation de)[:\s]+([^.|\n]+)/gi,
+  /(?:orchestre|orchestre typique)[:\s]+([^.|\n]+)/gi,
+  /(?:musique live|groupe live)[:\s]+([^.|\n]+)/gi,
+  // German
+  /(?:auftritt von|show von|vorführung von)[:\s]+([^.|\n]+)/gi,
+  /(?:orchester|livemusik von)[:\s]+([^.|\n]+)/gi,
+  // Portuguese
+  /(?:show de|apresentação de|espetáculo de)[:\s]+([^.|\n]+)/gi,
+  /(?:orquestra|música ao vivo)[:\s]+([^.|\n]+)/gi,
 ];
 
 const MUSIC_STYLE_PATTERNS = [
@@ -244,6 +329,7 @@ export async function extractParticipants(
   const djNames = extractNames(fullText, DJ_PATTERNS);
   const teacherNames = extractNames(fullText, TEACHER_PATTERNS);
   const performerNames = extractNames(fullText, PERFORMER_PATTERNS);
+  const hostNames = extractNames(fullText, HOST_PATTERNS);
   
   for (const name of Array.from(new Set(organizerNames))) {
     const match = await matchUserProfile(name);
@@ -305,6 +391,21 @@ export async function extractParticipants(
       matchedProfileId: match.profileId,
       confidence: match.confidence
     });
+  }
+  
+  for (const name of Array.from(new Set(hostNames))) {
+    // Skip if already added as organizer
+    if (!organizerNames.includes(name) && !coOrganizerNames.includes(name)) {
+      const match = await matchUserProfile(name);
+      participants.push({
+        name,
+        role: 'host',
+        sourceText: 'Extracted from description',
+        matchedUserId: match.userId,
+        matchedProfileId: match.profileId,
+        confidence: match.confidence
+      });
+    }
   }
   
   const extractedMetadata = extractMetadata(fullText);

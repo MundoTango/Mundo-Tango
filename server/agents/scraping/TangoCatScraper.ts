@@ -52,6 +52,12 @@ interface TangoCatEvent {
   longitude?: number;
   maestros?: string;
   djs?: string;
+  performers?: string;
+  orchestras?: string;
+  hosts?: string;
+  price?: string;
+  imageUrl?: string;
+  isFree?: boolean;
 }
 
 export class TangoCatScraper {
@@ -247,23 +253,77 @@ export class TangoCatScraper {
   }
 
   /**
-   * Parse maestros and DJs from note field
+   * Parse all roles from note field with multilingual support
+   * Extracts: maestros/teachers, DJs/musicalizadores, orchestras, performers, hosts
    */
-  private parseNote(note: string | undefined): { maestros?: string; djs?: string } {
+  private parseNote(note: string | undefined): { 
+    maestros?: string; 
+    djs?: string; 
+    performers?: string;
+    orchestras?: string;
+    hosts?: string;
+  } {
     if (!note) return {};
     
-    const result: { maestros?: string; djs?: string } = {};
+    const result: { 
+      maestros?: string; 
+      djs?: string; 
+      performers?: string;
+      orchestras?: string;
+      hosts?: string;
+    } = {};
     
-    // Extract Maestros
-    const maestrosMatch = note.match(/Maestros?:?\s*([^,\n]+(?:,\s*[^,\n]+)*?)(?:\s*(?:DJ|$))/i);
-    if (maestrosMatch) {
-      result.maestros = maestrosMatch[1].trim();
-    }
-    
-    // Extract DJs
-    const djsMatch = note.match(/DJs?:?\s*(.+)/i);
-    if (djsMatch) {
-      result.djs = djsMatch[1].trim();
+    // Role header patterns (multilingual)
+    const rolePatterns: { key: keyof typeof result; patterns: RegExp[] }[] = [
+      {
+        key: 'maestros',
+        patterns: [
+          /(?:maestros?|teachers?|instructors?|profesores?|professeurs?)[\s:]+([^\n]+?)(?=\s*(?:DJs?|Music|Orq|Band|Host|Anim|Show|Perform|$))/gi,
+          /(?:classes?|workshops?|lessons?|cours|talleres?)[\s:]+(?:with|con|avec|by)[\s:]+([^\n]+?)(?=\s*(?:DJs?|Music|Orq|$))/gi,
+        ]
+      },
+      {
+        key: 'djs',
+        patterns: [
+          /(?:DJs?|musicalizador(?:es|as?)?|musique|musik)[\s:]+([^\n]+?)(?=\s*(?:Maestro|Orq|Show|Perform|Host|$))/gi,
+          /(?:music by|tandas by|música por)[\s:]+([^\n]+)/gi,
+        ]
+      },
+      {
+        key: 'orchestras',
+        patterns: [
+          /(?:orquesta|orchestra|orquestra|orchestre|live music|banda?|live band)[\s:]+([^\n]+)/gi,
+          /(?:música en vivo|musica dal vivo|musique live)[\s:]+([^\n]+)/gi,
+        ]
+      },
+      {
+        key: 'performers',
+        patterns: [
+          /(?:show|performers?|exhibición|exhibition|espectáculo|spettacolo)[\s:]+([^\n]+)/gi,
+          /(?:special guests?|artista invitado|featuring)[\s:]+([^\n]+)/gi,
+        ]
+      },
+      {
+        key: 'hosts',
+        patterns: [
+          /(?:hosts?|animación|animador(?:es)?|mc|emcee|presentador)[\s:]+([^\n]+)/gi,
+          /(?:hosted by|animé par|condotto da)[\s:]+([^\n]+)/gi,
+        ]
+      }
+    ];
+
+    // Extract each role
+    for (const { key, patterns } of rolePatterns) {
+      for (const pattern of patterns) {
+        const matches = [...note.matchAll(pattern)];
+        if (matches.length > 0) {
+          const names = matches.map(m => m[1].trim()).filter(n => n.length > 2);
+          if (names.length > 0) {
+            result[key] = names.join(', ');
+            break; // Use first matching pattern for this role
+          }
+        }
+      }
     }
     
     return result;
@@ -307,7 +367,7 @@ export class TangoCatScraper {
           const jsonData = eventDataMap.get(eventId);
           const eventType = this.classifyEventType(jsonData?.title || name);
           const { country, city } = this.parseLocation(jsonData?.l);
-          const { maestros, djs } = this.parseNote(jsonData?.note);
+          const { maestros, djs, performers, orchestras, hosts } = this.parseNote(jsonData?.note);
           
           // Build URL - prefer actual website over TangoCat redirect
           let website = `https://tangocat.net${href}`;
@@ -317,10 +377,16 @@ export class TangoCatScraper {
             website = jsonData.url;
           }
           
-          // Build description
+          // Build description with all roles
           let description = `${eventType.charAt(0).toUpperCase() + eventType.slice(1)} in ${city}, ${country}`;
           if (maestros) description += `\n\nMaestros: ${maestros}`;
           if (djs) description += `\nDJs: ${djs}`;
+          if (orchestras) description += `\nOrchestra: ${orchestras}`;
+          if (performers) description += `\nPerformers: ${performers}`;
+          if (hosts) description += `\nHosts: ${hosts}`;
+          
+          // Check if event is free (from JSON isf field)
+          const isFree = jsonData?.isf === true;
           
           events.push({
             id: eventId,
@@ -337,7 +403,12 @@ export class TangoCatScraper {
             latitude: jsonData?.p?.[0],
             longitude: jsonData?.p?.[1],
             maestros,
-            djs
+            djs,
+            performers,
+            orchestras,
+            hosts,
+            isFree,
+            price: isFree ? 'Free' : undefined
           });
         }
       }
@@ -415,6 +486,9 @@ export class TangoCatScraper {
         let sourceUrl = `https://tangocat.net/${year}/`;
         let sourceName = 'tangocat.net';
         let enrichedDescription = event.description || `${event.eventType} - ${event.location}`;
+        let price = event.price || (event.isFree ? 'Free' : undefined);
+        let imageUrl = event.imageUrl;
+        let fullAddress = `${event.city}, ${event.country}`;
 
         if (event.website && !event.website.includes('tangocat.net')) {
           try {
@@ -428,8 +502,20 @@ export class TangoCatScraper {
             try {
               const eventHtml = await this.fetchHTML(event.website);
               const enrichedData = this.extractEventDetails(eventHtml, event);
+              
+              // Use enriched data if available
               if (enrichedData.description && enrichedData.description.length > enrichedDescription.length) {
                 enrichedDescription = enrichedData.description;
+              }
+              if (enrichedData.price && !price) {
+                price = enrichedData.price;
+              }
+              if (enrichedData.imageUrl && !imageUrl) {
+                imageUrl = enrichedData.imageUrl;
+                console.log(`[TangoCat] 🖼️ Found image: ${imageUrl.substring(0, 60)}...`);
+              }
+              if (enrichedData.location && enrichedData.location.length > fullAddress.length) {
+                fullAddress = enrichedData.location;
               }
             } catch (fetchErr) {
               console.log(`[TangoCat] Could not fetch details from ${sourceName}, using aggregator data`);
@@ -440,7 +526,7 @@ export class TangoCatScraper {
           }
         }
 
-        // Store with all the rich data
+        // Store with all the rich data including price, image, and full address
         await db.insert(scrapedEvents).values({
           sourceUrl,
           sourceName,
@@ -449,7 +535,7 @@ export class TangoCatScraper {
           startDate,
           endDate,
           location: event.location,
-          address: `${event.city}, ${event.country}`,
+          address: fullAddress,
           city: event.city,
           country: event.country,
           latitude: event.latitude ? String(event.latitude) : null,
@@ -458,7 +544,9 @@ export class TangoCatScraper {
           organizer: sourceName !== 'tangocat.net' ? sourceName : undefined,
           groupId,
           status: 'pending_review',
-          externalId
+          externalId,
+          price,
+          imageUrl
         });
         
         console.log(`[TangoCat] ✅ Stored: ${event.title} (${event.eventType}) @ ${event.city}, ${event.country}`);
@@ -470,11 +558,78 @@ export class TangoCatScraper {
 
   /**
    * Extract additional event details from the actual event website
+   * Extracts: description, full venue address, price, and cover image
    */
-  private extractEventDetails(html: string, event: TangoCatEvent): { description?: string; location?: string } {
+  private extractEventDetails(html: string, event: TangoCatEvent): { 
+    description?: string; 
+    location?: string;
+    price?: string;
+    imageUrl?: string;
+  } {
     const $ = cheerio.load(html);
     
-    // Remove noise
+    // Try to extract cover image first (before removing elements)
+    let imageUrl = '';
+    const imageSelectors = [
+      'meta[property="og:image"]',
+      'meta[name="twitter:image"]',
+      '.hero img',
+      '.banner img',
+      '[class*="cover"] img',
+      '[class*="header"] img:not([class*="logo"])',
+      'article img:first-of-type',
+      'main img:first-of-type',
+      '.event-image img',
+      '[class*="event"] img:first-of-type'
+    ];
+    
+    for (const selector of imageSelectors) {
+      if (selector.includes('meta[')) {
+        const content = $(selector).attr('content');
+        if (content && content.startsWith('http') && !content.includes('logo') && !content.includes('icon')) {
+          imageUrl = content;
+          break;
+        }
+      } else {
+        const src = $(selector).first().attr('src');
+        if (src && (src.startsWith('http') || src.startsWith('/'))) {
+          // Skip small icons/logos
+          const width = $(selector).first().attr('width');
+          const height = $(selector).first().attr('height');
+          if (width && parseInt(width) < 100) continue;
+          if (height && parseInt(height) < 100) continue;
+          
+          imageUrl = src.startsWith('http') ? src : `${event.website?.split('/').slice(0, 3).join('/')}${src}`;
+          break;
+        }
+      }
+    }
+    
+    // Try to extract price
+    let price = '';
+    const pricePatterns = [
+      /(?:price|precio|prix|prezzo|preis)[\s:]+([€$£]\s*\d+[\d,.]*|\d+[\d,.]*\s*[€$£])/gi,
+      /(?:cost|costo|coût)[\s:]+([€$£]\s*\d+[\d,.]*|\d+[\d,.]*\s*[€$£])/gi,
+      /(?:full pass|pass completo|passe complet)[\s:]+([€$£]\s*\d+[\d,.]*)/gi,
+      /([€$£]\s*\d+[\d,.]*)\s*(?:per person|por persona|par personne)/gi,
+      /(?:registration|inscripción|inscription)[\s:]*([€$£]\s*\d+[\d,.]*)/gi,
+    ];
+    
+    const pageText = $('body').text();
+    for (const pattern of pricePatterns) {
+      const match = pageText.match(pattern);
+      if (match && match[1]) {
+        price = match[1].trim();
+        break;
+      }
+    }
+    
+    // Check if explicitly free
+    if (!price && pageText.match(/(?:free|gratis|gratuit|gratuito|kostenlos)/gi)) {
+      price = 'Free';
+    }
+    
+    // Remove noise for text extraction
     $('script, style, nav, footer, header').remove();
     
     // Try to extract description
@@ -488,18 +643,25 @@ export class TangoCatScraper {
       }
     }
     
-    // Try to extract location/venue
+    // Try to extract full venue/address
     let location = '';
-    const locationSelectors = ['[class*="venue"]', '[class*="location"]', 'address', '[itemProp="location"]'];
+    const locationSelectors = [
+      '[itemProp="address"]',
+      '[class*="venue"] [class*="address"]',
+      '[class*="location"] address',
+      'address',
+      '[class*="venue"]',
+      '[class*="location"]:not([class*="geo"])',
+    ];
     for (const selector of locationSelectors) {
-      const text = $(selector).first().text().trim();
-      if (text && text.length > 5 && text.length < 200) {
+      const text = $(selector).first().text().trim().replace(/\s+/g, ' ');
+      if (text && text.length > 10 && text.length < 300) {
         location = text;
         break;
       }
     }
     
-    return { description, location };
+    return { description, location, price, imageUrl };
   }
 
   private parseDateFromString(dateStr: string, year: string): Date {
