@@ -468,7 +468,7 @@ export class HoyMilongaScraper {
         const organizer = event.teamData?.organizers?.[0] || 
           (event.venue !== 'Unknown Venue' ? event.venue : undefined);
 
-        // Parse time range for proper start/end dates (local time)
+        // Parse time range and convert from local (GMT-3) to UTC
         let eventStartDate = startDate;
         let eventEndDate = startDate;
         if (event.timeRange) {
@@ -488,6 +488,10 @@ export class HoyMilongaScraper {
             if (endHour < startHour) {
               eventEndDate.setDate(eventEndDate.getDate() + 1);
             }
+            
+            // Convert from GMT-3 (Buenos Aires) to UTC by adding 3 hours
+            eventStartDate.setHours(eventStartDate.getHours() + 3);
+            eventEndDate.setHours(eventEndDate.getHours() + 3);
           }
         }
 
