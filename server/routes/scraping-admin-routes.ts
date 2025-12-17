@@ -72,6 +72,14 @@ router.post('/admin/test-scrape-url', authenticateToken, async (req: AuthRequest
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, userId)
+    });
+
+    if (!user || user.role !== 'super_admin') {
+      return res.status(403).json({ error: 'Forbidden: Super Admin access required' });
+    }
+
     const { url } = req.body;
     if (!url) {
       return res.status(400).json({ error: 'URL is required' });
