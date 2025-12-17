@@ -468,17 +468,41 @@ export class HoyMilongaScraper {
         const organizer = event.teamData?.organizers?.[0] || 
           (event.venue !== 'Unknown Venue' ? event.venue : undefined);
 
+        // Parse time range for proper start/end dates (local time)
+        let eventStartDate = startDate;
+        let eventEndDate = startDate;
+        if (event.timeRange) {
+          const timeMatch = event.timeRange.match(/(\d{1,2}):(\d{2})\s*[-–]\s*(\d{1,2}):(\d{2})/);
+          if (timeMatch) {
+            const startHour = parseInt(timeMatch[1], 10);
+            const startMin = parseInt(timeMatch[2], 10);
+            const endHour = parseInt(timeMatch[3], 10);
+            const endMin = parseInt(timeMatch[4], 10);
+            
+            eventStartDate = new Date(startDate);
+            eventStartDate.setHours(startHour, startMin, 0, 0);
+            
+            eventEndDate = new Date(startDate);
+            eventEndDate.setHours(endHour, endMin, 0, 0);
+            // If end time is before start time, it's next day
+            if (endHour < startHour) {
+              eventEndDate.setDate(eventEndDate.getDate() + 1);
+            }
+          }
+        }
+
         await db.insert(scrapedEvents).values({
           sourceUrl: eventSourceUrl,
           sourceName,
           title: event.title,
           description,
-          startDate,
-          endDate: startDate,
+          startDate: eventStartDate,
+          endDate: eventEndDate,
           location: event.venue !== 'Unknown Venue' ? event.venue : undefined,
           address,
           organizer,
           groupId,
+          imageUrl: event.coverImage || undefined,
           status: event.status === 'cancelled' ? 'rejected' : 'pending_review',
           externalId: `hoymilonga-${cityName}-${event.title}`.toLowerCase().replace(/\s+/g, '-').slice(0, 100)
         });

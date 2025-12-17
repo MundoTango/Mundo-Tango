@@ -82,7 +82,7 @@ const CO_ORGANIZER_PATTERNS = [
 
 const DJ_PATTERNS = [
   // English
-  /(?:dj|d\.j\.)[s]?[:\s]+([^.|\n]+)/gi,
+  /(?:dj|d\.j\.|tdj|t\.d\.j\.)[s]?[:\s]+([^.|\n]+)/gi,
   /(?:music by|tunes by|tandas by|played by)[:\s]+([^.|\n]+)/gi,
   /(?:spinning|playing)[:\s]+([^.|\n]+)/gi,
   /(?:dj set by|set by)[:\s]+([^.|\n]+)/gi,
