@@ -806,6 +806,7 @@ export const events = pgTable(
     // Source Tracking (for scraped events)
     sourceName: varchar("source_name", { length: 255 }),
     sourceUrl: text("source_url"),
+    sourceUpdatedAt: timestamp("source_updated_at"), // When source site last updated this event
     externalSourceId: varchar("external_source_id", { length: 255 }),
     scrapedEventId: integer("scraped_event_id"),
 
@@ -13392,6 +13393,7 @@ export const scrapedEvents = pgTable(
     imageUrl: varchar("image_url", { length: 500 }),
     externalId: varchar("external_id", { length: 255 }),
     scrapedAt: timestamp("scraped_at").defaultNow().notNull(),
+    sourceUpdatedAt: timestamp("source_updated_at"), // When source site last updated this listing
     status: varchar("status", { length: 20 })
       .default("pending_review")
       .notNull(),

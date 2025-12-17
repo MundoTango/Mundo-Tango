@@ -683,7 +683,7 @@ export default function EventDetailsPage() {
                           {event.city && (
                             <>
                               <br />
-                              <Link href={`/groups?city=${encodeURIComponent(event.city)}`} className="text-primary hover:underline font-medium">
+                              <Link href={`/groups/city/${encodeURIComponent(event.city)}`} className="text-primary hover:underline font-medium">
                                 {event.city}
                               </Link>
                               {event.country && `, ${event.country}`}
@@ -986,12 +986,14 @@ export default function EventDetailsPage() {
                           </div>
                         </div>
                       )}
-                      {event.updatedAt && (
+                      {(event.sourceUpdatedAt || event.updatedAt) && (
                         <div className="text-right">
-                          <h4 className="text-sm font-medium text-muted-foreground mb-1">Event Last Updated</h4>
+                          <h4 className="text-sm font-medium text-muted-foreground mb-1">
+                            {event.sourceUpdatedAt ? 'Source Last Updated' : 'Event Last Updated'}
+                          </h4>
                           <p className="text-xs text-muted-foreground flex items-center gap-1 justify-end" data-testid="text-last-updated">
                             <Clock className="h-3 w-3" />
-                            {safeDateFormat(event.updatedAt, "MMM d, yyyy 'at' h:mm a")}
+                            {safeDateFormat(event.sourceUpdatedAt || event.updatedAt, "MMM d, yyyy 'at' h:mm a")}
                           </p>
                         </div>
                       )}
@@ -1075,8 +1077,8 @@ export default function EventDetailsPage() {
                   </motion.div>
                 )}
 
-                {/* Event Team / Participants Manager */}
-                <EventParticipantManager eventId={eventId} isOrganizer={isOrganizer} />
+                {/* Event Team / Participants Manager - hidden until profiles are clickable */}
+                {/* <EventParticipantManager eventId={eventId} isOrganizer={isOrganizer} /> */}
                   </div>
                 </TabsContent>
               </Tabs>
