@@ -550,7 +550,7 @@ export default function EventDetailsPage() {
                 {(event.startDate || event.date) && (
                   <div className="flex items-center gap-2">
                     <Calendar className="h-5 w-5" />
-                    <span>{safeDateFormat(event.startDate || event.date, "EEEE, MMMM d, yyyy", "TBD", eventTimezone)}</span>
+                    <span>{safeDateFormat(event.startDate || event.date, "EEEE, MMMM d, yyyy", "TBD")}</span>
                   </div>
                 )}
                 {(event.location || event.venue || event.city) && (
@@ -680,7 +680,15 @@ export default function EventDetailsPage() {
                           {event.venue && <span className="font-medium">{event.venue}</span>}
                           {event.address && <><br />{event.address}</>}
                           {!event.address && event.location && event.location !== event.venue && <><br />{event.location}</>}
-                          {event.city && <><br />{event.city}{event.country && `, ${event.country}`}</>}
+                          {event.city && (
+                            <>
+                              <br />
+                              <Link href={`/groups?city=${encodeURIComponent(event.city)}`} className="text-primary hover:underline font-medium">
+                                {event.city}
+                              </Link>
+                              {event.country && `, ${event.country}`}
+                            </>
+                          )}
                         </p>
                         {getDirectionsUrl() && (
                           <a 
@@ -980,7 +988,7 @@ export default function EventDetailsPage() {
                       )}
                       {event.updatedAt && (
                         <div className="text-right">
-                          <h4 className="text-sm font-medium text-muted-foreground mb-1">Last Updated</h4>
+                          <h4 className="text-sm font-medium text-muted-foreground mb-1">Event Last Updated</h4>
                           <p className="text-xs text-muted-foreground flex items-center gap-1 justify-end" data-testid="text-last-updated">
                             <Clock className="h-3 w-3" />
                             {safeDateFormat(event.updatedAt, "MMM d, yyyy 'at' h:mm a")}
