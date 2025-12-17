@@ -491,7 +491,7 @@ const ActivityLogPage = lazy(() => import("@/pages/ActivityLogPage"));
 const BlockedUsersPage = lazy(() => import("@/pages/BlockedUsersPage"));
 const BlockedContentPage = lazy(() => import("@/pages/BlockedContentPage"));
 
-// Billing & Subscription
+// Billing & Subscriptions
 const BillingDashboard = lazy(
   () => import("@/pages/settings/BillingDashboard"),
 );
