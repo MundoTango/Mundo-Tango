@@ -1,6 +1,7 @@
 import { db } from "../db";
 import { groups, groupMembers, notifications, users } from "@shared/schema";
 import { eq, and, ilike, or, isNull } from "drizzle-orm";
+import { geocodingService } from "../services/GeocodingService";
 
 export interface CityGroupResult {
   groupId: number;
@@ -8,6 +9,8 @@ export interface CityGroupResult {
   wasCreated: boolean;
   city: string;
   country: string;
+  latitude?: number;
+  longitude?: number;
 }
 
 export async function ensureCityGroupExists(
@@ -80,6 +83,24 @@ export async function ensureCityGroupExists(
   
   console.log(`[CityGroupAutomation] Creating new city group: ${groupName}`);
 
+  // Geocode the city to get coordinates for the community map
+  let latitude: number | null = null;
+  let longitude: number | null = null;
+  
+  try {
+    console.log(`[CityGroupAutomation] Geocoding ${locationStr}...`);
+    const geoResult = await geocodingService.geocodeAddress(null, normalizedCity, normalizedCountry || null);
+    if (geoResult) {
+      latitude = geoResult.lat;
+      longitude = geoResult.lng;
+      console.log(`[CityGroupAutomation] Geocoded: ${latitude}, ${longitude}`);
+    } else {
+      console.log(`[CityGroupAutomation] Could not geocode ${locationStr}`);
+    }
+  } catch (err: any) {
+    console.error(`[CityGroupAutomation] Geocoding error: ${err.message}`);
+  }
+
   const [newGroup] = await db
     .insert(groups)
     .values({
@@ -91,6 +112,8 @@ export async function ensureCityGroupExists(
       visibility: "public",
       city: normalizedCity,
       country: normalizedCountry || null,
+      latitude: latitude ? String(latitude) : null,
+      longitude: longitude ? String(longitude) : null,
       memberCount: 1,
       createdBy: creatorUserId,
       ownerId: creatorUserId,
@@ -128,7 +151,9 @@ export async function ensureCityGroupExists(
     groupName: newGroup.name,
     wasCreated: true,
     city: normalizedCity,
-    country: normalizedCountry
+    country: normalizedCountry,
+    latitude: latitude || undefined,
+    longitude: longitude || undefined
   };
 }
 
