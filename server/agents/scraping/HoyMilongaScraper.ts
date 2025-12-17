@@ -277,9 +277,16 @@ export class HoyMilongaScraper {
             }
           }
 
-          // Look for detail page link
-          const detailLink = card.querySelector('a[href*="/milonga/"]');
-          const detailUrl = detailLink?.getAttribute('href') || undefined;
+          // Look for detail page link - card itself may be the link
+          let detailUrl: string | undefined;
+          if (card.tagName === 'A' && card.getAttribute('href')?.includes('/milonga/')) {
+            detailUrl = `https://hoy-milonga.com${card.getAttribute('href')}`;
+          } else {
+            const detailLink = card.querySelector('a[href*="/milonga/"]');
+            if (detailLink?.getAttribute('href')) {
+              detailUrl = `https://hoy-milonga.com${detailLink.getAttribute('href')}`;
+            }
+          }
 
           events.push({
             title,
@@ -290,7 +297,7 @@ export class HoyMilongaScraper {
             eventType,
             day,
             sourceUrl,
-            detailUrl: detailUrl ? `https://hoy-milonga.com${detailUrl}` : undefined,
+            detailUrl,
             teamData
           });
         } catch (e) {
@@ -355,15 +362,19 @@ export class HoyMilongaScraper {
           console.log(`[HoyMilonga] 👥 Team found for: ${event.title}`);
         }
 
+        // MB.MD v9.9.3: Use detail URL for direct link to event page
+        // Falls back to general page URL if no detail URL available
+        const eventSourceUrl = event.detailUrl || event.sourceUrl;
+        
         // Extract domain for sourceName
         let sourceName = 'HoyMilonga';
         try {
-          const url = new URL(event.sourceUrl);
+          const url = new URL(eventSourceUrl);
           sourceName = url.hostname.replace('www.', '');
         } catch {}
 
         await db.insert(scrapedEvents).values({
-          sourceUrl: event.sourceUrl,
+          sourceUrl: eventSourceUrl,
           sourceName,
           title: event.title,
           description,
