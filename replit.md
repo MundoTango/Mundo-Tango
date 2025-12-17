@@ -54,6 +54,7 @@ Multi-stage scraping architecture coordinated by Master Orchestrator (`server/ag
 - **Source Transparency**: Events display "View on {sourceName}" links with original URLs
 - **City Matching**: CityMatcherService associates events with city groups
 - **Auto-City Creation**: New cities auto-created when events detected
+- **Multi-Page Team Discovery**: Scrapers follow subpages (/djs, /teachers, /maestros, /performers, /artists, /schedule) to extract team member names in 6 languages, appending to event descriptions for ingestion
 
 **TangoCat URL Extraction**: 
 - TangoCat uses internal `/go/EventName/ID` redirect links (not direct hrefs)
