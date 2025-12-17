@@ -1,13 +1,13 @@
 /**
- * HOY MILONGA SCRAPER
+ * HOY MILONGA SCRAPER (Playwright-based)
  * Priority 1 - CRITICAL for Buenos Aires and other major tango cities
  * 
+ * Uses Playwright for browser automation since HoyMilonga is a JavaScript SPA
  * Scrapes: Buenos Aires, São Paulo, Berlin, Athens, Istanbul, London, Miami, Montevideo
  * URL Pattern: hoy-milonga.com/{city}/en/milongas
  */
 
-import axios from 'axios';
-import * as cheerio from 'cheerio';
+import { chromium, Browser, Page } from 'playwright';
 import { db } from '@shared/db';
 import { scrapedEvents } from '@shared/schema';
 import { cityMatcherService } from '../../services/CityMatcherService';
@@ -18,27 +18,16 @@ interface HoyMilongaEvent {
   venue: string;
   neighborhood?: string;
   city: string;
-  eventType: string; // MILONGA, Clases, Artística, etc.
+  eventType: string;
   classes?: string;
   description?: string;
-  day: string; // e.g., "miércoles", "jueves"
-}
-
-interface ScrapedEventData {
-  title: string;
-  description?: string;
-  startDate: Date;
-  endDate?: Date;
-  location?: string;
-  address?: string;
-  organizer?: string;
-  price?: number;
-  imageUrl?: string;
-  externalId?: string;
-  groupId?: number | null;
+  day: string;
+  sourceUrl: string;
 }
 
 export class HoyMilongaScraper {
+  private browser: Browser | null = null;
+  
   private cityCodeMap: Record<string, string> = {
     'Buenos Aires': 'buenos-aires',
     'São Paulo': 'sao-paulo',
@@ -50,26 +39,34 @@ export class HoyMilongaScraper {
     'Montevideo': 'montevideo'
   };
 
-  private userAgents = [
-    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
-    'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36'
-  ];
-
   /**
    * Scrape all supported Hoy Milonga cities
    */
   async scrapeAllCities(sourceId: number): Promise<number> {
-    console.log('[HoyMilonga] 🌍 Starting scrape for all cities');
+    console.log('[HoyMilonga] 🌍 Starting Playwright-based scrape for all cities');
     let totalEvents = 0;
 
-    for (const [cityName, cityCode] of Object.entries(this.cityCodeMap)) {
-      try {
-        const events = await this.scrapeCity(cityName, cityCode, sourceId);
-        totalEvents += events;
-        console.log(`[HoyMilonga] ✅ ${cityName}: ${events} events`);
-      } catch (error) {
-        console.error(`[HoyMilonga] ❌ Failed to scrape ${cityName}:`, error);
+    try {
+      // Launch browser once for all cities - use system chromium
+      this.browser = await chromium.launch({ 
+        headless: true,
+        executablePath: process.env.CHROMIUM_PATH || '/nix/store/zi4f80l169xlmivz8vja8wlphq74qqk0-chromium-125.0.6422.141/bin/chromium',
+        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-gpu', '--disable-dev-shm-usage']
+      });
+
+      for (const [cityName, cityCode] of Object.entries(this.cityCodeMap)) {
+        try {
+          const events = await this.scrapeCity(cityName, cityCode, sourceId);
+          totalEvents += events;
+          console.log(`[HoyMilonga] ✅ ${cityName}: ${events} events`);
+        } catch (error: any) {
+          console.error(`[HoyMilonga] ❌ Failed to scrape ${cityName}:`, error.message);
+        }
+      }
+    } finally {
+      if (this.browser) {
+        await this.browser.close();
+        this.browser = null;
       }
     }
 
@@ -78,29 +75,67 @@ export class HoyMilongaScraper {
   }
 
   /**
+   * Scrape a single city using browser automation
+   */
+  async scrapeSingleCity(cityName: string, sourceId: number): Promise<number> {
+    const cityCode = this.cityCodeMap[cityName];
+    if (!cityCode) {
+      console.log(`[HoyMilonga] Unknown city: ${cityName}`);
+      return 0;
+    }
+
+    try {
+      this.browser = await chromium.launch({ 
+        headless: true,
+        executablePath: process.env.CHROMIUM_PATH || '/nix/store/zi4f80l169xlmivz8vja8wlphq74qqk0-chromium-125.0.6422.141/bin/chromium',
+        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-gpu', '--disable-dev-shm-usage']
+      });
+      return await this.scrapeCity(cityName, cityCode, sourceId);
+    } finally {
+      if (this.browser) {
+        await this.browser.close();
+        this.browser = null;
+      }
+    }
+  }
+
+  /**
    * Scrape a specific city
    */
-  async scrapeCity(cityName: string, cityCode: string, sourceId: number): Promise<number> {
-    console.log(`[HoyMilonga] 📍 Scraping ${cityName}...`);
+  private async scrapeCity(cityName: string, cityCode: string, sourceId: number): Promise<number> {
+    console.log(`[HoyMilonga] 📍 Scraping ${cityName} with Playwright...`);
 
-    // Try both /es (Spanish) and /en (English) endpoints
-    const languages = ['es', 'en'];
+    if (!this.browser) {
+      throw new Error('Browser not initialized');
+    }
+
+    const page = await this.browser.newPage();
     let events: HoyMilongaEvent[] = [];
 
-    for (const lang of languages) {
-      try {
+    try {
+      // Try Spanish first, then English
+      for (const lang of ['es', 'en']) {
         const url = `https://hoy-milonga.com/${cityCode}/${lang}/milongas`;
-        const html = await this.fetchHTML(url);
-        const $ = cheerio.load(html);
         
-        events = this.extractEvents($, cityName);
-        if (events.length > 0) {
-          console.log(`[HoyMilonga] Found ${events.length} events in ${lang} for ${cityName}`);
-          break; // Use first successful language
+        try {
+          await page.goto(url, { waitUntil: 'networkidle', timeout: 30000 });
+          
+          // Wait for content to load
+          await page.waitForTimeout(2000);
+          
+          // Extract events from the rendered page
+          events = await this.extractEventsFromPage(page, cityName, url);
+          
+          if (events.length > 0) {
+            console.log(`[HoyMilonga] Found ${events.length} events in ${lang} for ${cityName}`);
+            break;
+          }
+        } catch (error: any) {
+          console.log(`[HoyMilonga] Failed ${lang} for ${cityName}: ${error.message}`);
         }
-      } catch (error) {
-        console.log(`[HoyMilonga] Failed to fetch ${lang} for ${cityName}, trying next...`);
       }
+    } finally {
+      await page.close();
     }
 
     if (events.length === 0) {
@@ -108,242 +143,177 @@ export class HoyMilongaScraper {
       return 0;
     }
 
-    // Convert to ScrapedEventData and store
     await this.storeEvents(events, sourceId, cityName);
-
     return events.length;
   }
 
   /**
-   * Fetch HTML with User-Agent rotation
+   * Extract events from rendered page using Playwright
    */
-  private async fetchHTML(url: string): Promise<string> {
-    const userAgent = this.userAgents[Math.floor(Math.random() * this.userAgents.length)];
-    
-    const response = await axios.get(url, {
-      headers: {
-        'User-Agent': userAgent,
-        'Accept': 'text/html,application/xhtml+xml',
-        'Accept-Language': 'en-US,en;q=0.9,es;q=0.8'
-      },
-      timeout: 30000
-    });
+  private async extractEventsFromPage(page: Page, cityName: string, sourceUrl: string): Promise<HoyMilongaEvent[]> {
+    return await page.evaluate(({ cityName, sourceUrl }) => {
+      const events: any[] = [];
+      const seenTitles = new Set<string>();
 
-    return response.data;
-  }
+      // HoyMilonga typically uses cards or list items for events
+      // Try multiple selectors since structure may vary
+      const selectors = [
+        '[class*="event"]',
+        '[class*="milonga"]',
+        '[class*="card"]',
+        'article',
+        '.item',
+        'li[class]'
+      ];
 
-  /**
-   * Extract events from Hoy Milonga HTML
-   */
-  private extractEvents($: cheerio.CheerioAPI, cityName: string): HoyMilongaEvent[] {
-    const events: HoyMilongaEvent[] = [];
-    const days = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado', 'domingo',
-                  'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-
-    // Find all day tabs
-    const dayTabs = $('.day-tab, [class*="day"], [data-day]');
-    
-    // If no specific day tabs, look for event cards directly
-    const eventCards = $('[class*="event-card"], [class*="milonga-item"], [class*="event-item"], .event, .milonga');
-    
-    eventCards.each((i, elem) => {
-      try {
-        const $card = $(elem);
-        
-        // Extract title
-        const title = $card.find('h2, h3, .event-title, .milonga-name, [class*="title"]')
-          .first()
-          .text()
-          .trim();
-        
-        if (!title) return;
-
-        // Extract time
-        const timeText = $card.find('[class*="time"], .hour, time, [class*="hora"]')
-          .first()
-          .text()
-          .trim();
-
-        // Extract venue
-        const venue = $card.find('[class*="venue"], [class*="location"], .place, [class*="lugar"]')
-          .first()
-          .text()
-          .trim() || 'Unknown Venue';
-
-        // Extract neighborhood
-        const neighborhood = $card.find('[class*="neighborhood"], [class*="barrio"], .area')
-          .first()
-          .text()
-          .trim();
-
-        // Extract event type
-        const typeElement = $card.find('[class*="type"], .category, [class*="tipo"]').first();
-        const eventType = typeElement.text().trim() || 'MILONGA';
-
-        // Extract classes info if present
-        const classesText = $card.find('[class*="class"], [class*="clase"]')
-          .text()
-          .trim();
-
-        // Try to determine day from parent or context
-        let day = 'unknown';
-        const dayContext = $card.closest('[data-day], [class*="day-"]');
-        if (dayContext.length > 0) {
-          const dayAttr = dayContext.attr('data-day') || dayContext.attr('class') || '';
-          for (const d of days) {
-            if (dayAttr.toLowerCase().includes(d)) {
-              day = d;
-              break;
-            }
-          }
+      let cards: Element[] = [];
+      for (const selector of selectors) {
+        const found = Array.from(document.querySelectorAll(selector));
+        if (found.length > cards.length) {
+          cards = found;
         }
-
-        events.push({
-          title,
-          timeRange: timeText || 'Time not specified',
-          venue,
-          neighborhood,
-          city: cityName,
-          eventType,
-          classes: classesText || undefined,
-          day
-        });
-      } catch (err) {
-        console.error('[HoyMilonga] Error extracting event:', err);
       }
-    });
 
-    return events;
+      cards.forEach((card) => {
+        try {
+          // Extract title - look for headings or prominent text
+          const titleEl = card.querySelector('h1, h2, h3, h4, [class*="title"], [class*="name"], strong, b');
+          const title = titleEl?.textContent?.trim();
+          
+          if (!title || title.length < 3 || title.length > 200 || seenTitles.has(title.toLowerCase())) {
+            return;
+          }
+          seenTitles.add(title.toLowerCase());
+
+          // Extract time
+          const timeEl = card.querySelector('[class*="time"], [class*="hora"], time, [class*="hour"]');
+          const timeRange = timeEl?.textContent?.trim() || '';
+
+          // Extract venue/location
+          const venueEl = card.querySelector('[class*="venue"], [class*="location"], [class*="lugar"], address');
+          const venue = venueEl?.textContent?.trim() || 'Unknown Venue';
+
+          // Extract neighborhood
+          const neighborhoodEl = card.querySelector('[class*="barrio"], [class*="neighborhood"], [class*="area"]');
+          const neighborhood = neighborhoodEl?.textContent?.trim();
+
+          // Determine event type
+          const cardText = card.textContent?.toLowerCase() || '';
+          let eventType = 'milonga';
+          if (cardText.includes('clase') || cardText.includes('class')) eventType = 'class';
+          else if (cardText.includes('práctica') || cardText.includes('practica')) eventType = 'practica';
+          else if (cardText.includes('show') || cardText.includes('espectáculo')) eventType = 'show';
+
+          // Extract day if available
+          const dayEl = card.closest('[data-day]') || card.querySelector('[class*="day"]');
+          const day = dayEl?.getAttribute('data-day') || 
+                     dayEl?.textContent?.trim().split(' ')[0] || 
+                     'various';
+
+          events.push({
+            title,
+            timeRange,
+            venue,
+            neighborhood,
+            city: cityName,
+            eventType,
+            day,
+            sourceUrl
+          });
+        } catch (e) {
+          // Skip this card
+        }
+      });
+
+      return events;
+    }, { cityName, sourceUrl });
   }
 
   /**
-   * Store events in database with city matching
+   * Store scraped events in database
    */
   private async storeEvents(events: HoyMilongaEvent[], sourceId: number, cityName: string): Promise<void> {
     console.log(`[HoyMilonga] 💾 Storing ${events.length} events for ${cityName}`);
 
-    // Match city to group using CityMatcherService (do once per city)
-    const matchResult = await cityMatcherService.matchEventLocation(
-      cityName,  // Use city name for initial match
-      cityName,
-      undefined
-    );
-    const groupId = matchResult || null;
-
-    if (groupId) {
-      console.log(`[HoyMilonga] 🎯 Matched ${cityName} to group ${groupId}`);
-    } else {
-      console.warn(`[HoyMilonga] ⚠️ Could not match ${cityName} to any group`);
-    }
-
     for (const event of events) {
       try {
-        // Parse date from day and time
-        const startDate = this.parseDateFromDayAndTime(event.day, event.timeRange);
-        const endDate = this.parseEndTime(event.timeRange, startDate);
+        // Match city to group
+        const matchResult = await cityMatcherService.matchEventLocation(cityName);
+        const groupId = matchResult || null;
 
+        // Create date for next occurrence of this day
+        const startDate = this.getNextDayDate(event.day);
+        
         // Build description
-        const description = [
-          event.eventType,
+        const descParts = [
+          event.eventType.toUpperCase(),
+          event.timeRange ? `Time: ${event.timeRange}` : null,
+          event.venue ? `Venue: ${event.venue}` : null,
+          event.neighborhood ? `Neighborhood: ${event.neighborhood}` : null,
           event.classes ? `Classes: ${event.classes}` : null,
-          event.neighborhood ? `Neighborhood: ${event.neighborhood}` : null
-        ].filter(Boolean).join(' | ');
+        ].filter(Boolean);
 
-        // Build location string
-        const location = event.neighborhood 
-          ? `${event.venue}, ${event.neighborhood}, ${event.city}`
-          : `${event.venue}, ${event.city}`;
+        const description = descParts.join(' | ');
+
+        // Extract domain for sourceName
+        let sourceName = 'HoyMilonga';
+        try {
+          const url = new URL(event.sourceUrl);
+          sourceName = url.hostname.replace('www.', '');
+        } catch {}
 
         await db.insert(scrapedEvents).values({
-          sourceUrl: 'https://hoy-milonga.com',
-          sourceName: 'Hoy Milonga',
+          sourceUrl: event.sourceUrl,
+          sourceName,
           title: event.title,
           description,
           startDate,
-          endDate,
-          location,
-          address: location,
-          organizer: event.venue,
+          endDate: startDate,
+          location: event.venue,
+          address: event.neighborhood ? `${event.neighborhood}, ${cityName}` : cityName,
+          organizer: event.venue !== 'Unknown Venue' ? event.venue : undefined,
           groupId,
           status: 'pending_review',
-          externalId: `hoy-milonga-${event.city}-${event.title}`.toLowerCase().replace(/\s+/g, '-')
+          externalId: `hoymilonga-${cityName}-${event.title}`.toLowerCase().replace(/\s+/g, '-').slice(0, 100)
         });
-      } catch (err) {
-        console.error(`[HoyMilonga] Failed to store event "${event.title}":`, err);
+
+        console.log(`[HoyMilonga] 📎 Stored: ${event.title} → ${sourceName}`);
+      } catch (err: any) {
+        if (err.code === '23505') {
+          // Duplicate - skip silently
+        } else {
+          console.error(`[HoyMilonga] Failed to store "${event.title}":`, err.message);
+        }
       }
     }
   }
 
   /**
-   * Parse start date from day and time string
+   * Get the next occurrence of a given day
    */
-  private parseDateFromDayAndTime(day: string, timeRange: string): Date {
-    const now = new Date();
-    
-    // Map day names to day numbers (0 = Sunday)
+  private getNextDayDate(dayName: string): Date {
     const dayMap: Record<string, number> = {
-      'sunday': 0, 'domingo': 0,
-      'monday': 1, 'lunes': 1,
-      'tuesday': 2, 'martes': 2,
-      'wednesday': 3, 'miércoles': 3, 'mierc': 3,
-      'thursday': 4, 'jueves': 4,
-      'friday': 5, 'viernes': 5,
-      'saturday': 6, 'sábado': 6, 'sabado': 6
+      'domingo': 0, 'sunday': 0,
+      'lunes': 1, 'monday': 1,
+      'martes': 2, 'tuesday': 2,
+      'miércoles': 3, 'wednesday': 3,
+      'jueves': 4, 'thursday': 4,
+      'viernes': 5, 'friday': 5,
+      'sábado': 6, 'saturday': 6
     };
 
-    const dayLower = day.toLowerCase();
-    let targetDay = dayMap[dayLower];
-
-    // If day not found, default to today
-    if (targetDay === undefined) {
-      targetDay = now.getDay();
-    }
-
-    // Calculate next occurrence of this day
-    const currentDay = now.getDay();
-    const daysUntilTarget = (targetDay - currentDay + 7) % 7;
-    const targetDate = new Date(now);
-    targetDate.setDate(now.getDate() + (daysUntilTarget === 0 ? 7 : daysUntilTarget));
-
-    // Parse time from timeRange (e.g., "18:00 - 01:00" or "20:00")
-    const timeMatch = timeRange.match(/(\d{1,2}):(\d{2})/);
-    if (timeMatch) {
-      targetDate.setHours(parseInt(timeMatch[1], 10));
-      targetDate.setMinutes(parseInt(timeMatch[2], 10));
-      targetDate.setSeconds(0);
-      targetDate.setMilliseconds(0);
-    } else {
-      // Default to 20:00 if no time found
-      targetDate.setHours(20, 0, 0, 0);
-    }
-
-    return targetDate;
-  }
-
-  /**
-   * Parse end time from time range string
-   */
-  private parseEndTime(timeRange: string, startDate: Date): Date | undefined {
-    // Look for end time in format "18:00 - 01:00"
-    const endTimeMatch = timeRange.match(/-(\d{1,2}):(\d{2})/);
+    const today = new Date();
+    const targetDay = dayMap[dayName.toLowerCase()] ?? today.getDay();
+    const currentDay = today.getDay();
     
-    if (endTimeMatch) {
-      const endDate = new Date(startDate);
-      const endHour = parseInt(endTimeMatch[1], 10);
-      const endMinute = parseInt(endTimeMatch[2], 10);
-      
-      endDate.setHours(endHour);
-      endDate.setMinutes(endMinute);
-      
-      // If end time is before start time, it's the next day
-      if (endDate <= startDate) {
-        endDate.setDate(endDate.getDate() + 1);
-      }
-      
-      return endDate;
-    }
+    let daysUntil = targetDay - currentDay;
+    if (daysUntil <= 0) daysUntil += 7;
     
-    return undefined;
+    const nextDate = new Date(today);
+    nextDate.setDate(today.getDate() + daysUntil);
+    nextDate.setHours(20, 0, 0, 0); // Default to 8 PM
+    
+    return nextDate;
   }
 }
 

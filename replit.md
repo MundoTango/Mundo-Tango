@@ -42,6 +42,8 @@ Multi-stage scraping architecture coordinated by Master Orchestrator (`server/ag
 
 **Scrapers by Source Type:**
 - **HoyMilonga** (~8 cities): Buenos Aires, São Paulo, Berlin, Athens, Istanbul, London, Miami, Montevideo
+  - Uses Playwright browser automation (SPA requires JavaScript rendering)
+  - Scrapes weekly milonga/practica schedules with venue and neighborhood data
 - **TangoCat**: International festivals/marathons/encuentros with link-following to event sites
 - **TangoFestivals**: Festival calendar aggregator
 - **UnifiedEventScraper**: Generic AI extraction for ~50+ direct calendar sites
