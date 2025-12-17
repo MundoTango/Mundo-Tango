@@ -670,8 +670,8 @@ export default function EventDetailsPage() {
                         <p className="text-lg font-semibold mb-2">Location</p>
                         <p className="text-base text-muted-foreground leading-relaxed mb-3" data-testid="text-event-address">
                           {event.venue && <span className="font-medium">{event.venue}</span>}
-                          {event.venue && (event.address || event.location) && <br />}
-                          {event.address || event.location}
+                          {event.address && <><br />{event.address}</>}
+                          {!event.address && event.location && event.location !== event.venue && <><br />{event.location}</>}
                           {event.city && <><br />{event.city}{event.country && `, ${event.country}`}</>}
                         </p>
                         {getDirectionsUrl() && (
