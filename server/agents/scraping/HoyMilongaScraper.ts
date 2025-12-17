@@ -222,11 +222,13 @@ export class HoyMilongaScraper {
                      'various';
 
           // MB.MD v9.9.3: Extract team data from card text
+          // Patterns include accents, apostrophes, ampersands, digits for names like "D'Arienzo", "Los Reyes & Co."
+          const nameChars = "[A-Za-zÀ-ÿ\\s\\-\\.''`&\\/0-9]+?";
           const teamPatterns = {
-            dj: /(?:dj|musicalizador|musicaliza|music by|música por)[:\s]*([A-Za-zÀ-ÿ\s\-\.]+?)(?:\s*[,|\n<]|$)/gi,
-            teacher: /(?:clase con|class with|teacher|maestro|profesor|enseña)[:\s]*([A-Za-zÀ-ÿ\s\-\.&]+?)(?:\s*[,|\n<]|$)/gi,
-            orchestra: /(?:orquesta|orchestra|en vivo|live)[:\s]*([A-Za-zÀ-ÿ\s\-\.]+?)(?:\s*[,|\n<]|$)/gi,
-            performer: /(?:show|exhibición|performance|bailan)[:\s]*([A-Za-zÀ-ÿ\s\-\.&]+?)(?:\s*[,|\n<]|$)/gi
+            dj: new RegExp(`(?:dj|musicalizador|musicaliza|music by|música por)[:\\s]*(${nameChars})(?:\\s*[,|\\n<]|$)`, 'gi'),
+            teacher: new RegExp(`(?:clase con|class with|teacher|maestro|profesor|enseña)[:\\s]*(${nameChars})(?:\\s*[,|\\n<]|$)`, 'gi'),
+            orchestra: new RegExp(`(?:orquesta|orchestra|en vivo|live)[:\\s]*(${nameChars})(?:\\s*[,|\\n<]|$)`, 'gi'),
+            performer: new RegExp(`(?:show|exhibición|performance|bailan)[:\\s]*(${nameChars})(?:\\s*[,|\\n<]|$)`, 'gi')
           };
 
           const teamData: any = { djs: [], teachers: [], orchestras: [], performers: [] };
@@ -267,16 +269,21 @@ export class HoyMilongaScraper {
   }
 
   /**
-   * MB.MD v9.9.3: Format team data for description
+   * MB.MD v9.9.3: Format team data for description with title case normalization
    */
   private formatTeamDescription(teamData?: HoyMilongaTeamData): string {
     if (!teamData) return '';
     
+    // Title case helper for proper name formatting
+    const titleCase = (s: string) => s.split(' ').map(word => 
+      word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+    ).join(' ');
+    
     const parts: string[] = [];
-    if (teamData.djs.length > 0) parts.push(`DJs: ${teamData.djs.join(', ')}`);
-    if (teamData.teachers.length > 0) parts.push(`Teachers: ${teamData.teachers.join(', ')}`);
-    if (teamData.orchestras.length > 0) parts.push(`Live Music: ${teamData.orchestras.join(', ')}`);
-    if (teamData.performers.length > 0) parts.push(`Performers: ${teamData.performers.join(', ')}`);
+    if (teamData.djs.length > 0) parts.push(`DJs: ${teamData.djs.map(titleCase).join(', ')}`);
+    if (teamData.teachers.length > 0) parts.push(`Teachers: ${teamData.teachers.map(titleCase).join(', ')}`);
+    if (teamData.orchestras.length > 0) parts.push(`Live Music: ${teamData.orchestras.map(titleCase).join(', ')}`);
+    if (teamData.performers.length > 0) parts.push(`Performers: ${teamData.performers.map(titleCase).join(', ')}`);
     
     return parts.length > 0 ? `\n\nEvent Team:\n${parts.join('\n')}` : '';
   }
