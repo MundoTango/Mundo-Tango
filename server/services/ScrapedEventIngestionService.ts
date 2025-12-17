@@ -92,9 +92,29 @@ class ScrapedEventIngestionService {
       sourceName: scraped.sourceName,
       price: scraped.price || null,
       isOnline: false,
-      isFree: scraped.price === 'Free' || scraped.price === '0' || !scraped.price,
-      isPaid: scraped.price && scraped.price !== 'Free' && scraped.price !== '0'
+      isFree: this.isPriceFree(scraped.price),
+      isPaid: !this.isPriceFree(scraped.price)
     };
+  }
+
+  /**
+   * Determine if a price string indicates a free event
+   * Handles multilingual variations and numeric zero values
+   */
+  private isPriceFree(price: string | null | undefined): boolean {
+    if (!price || price.trim() === '') return true;
+    
+    const normalized = price.trim().toLowerCase();
+    
+    // Check for free indicators in multiple languages
+    const freeIndicators = ['free', 'gratis', 'gratuit', 'gratuito', 'kostenlos', 'libre', 'frei'];
+    if (freeIndicators.some(indicator => normalized.includes(indicator))) return true;
+    
+    // Check for zero values (0, 0.00, €0, $0.00, etc.)
+    const numericValue = normalized.replace(/[^0-9.,]/g, '').replace(',', '.');
+    if (numericValue && parseFloat(numericValue) === 0) return true;
+    
+    return false;
   }
 
   /**
