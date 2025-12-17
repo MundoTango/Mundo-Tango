@@ -27,12 +27,35 @@ The backend is developed with Express and TypeScript, leveraging PostgreSQL (Neo
 Mundo Tango features an extensive AI ecosystem comprising 48 specialized agents (10 Page, 33 Feature, 5 Scraping agents) for strategic oversight and atomic execution. It includes self-healing infrastructure, a production-ready validation loop, a Visual Validation Framework, contextual agent activation, a Backend Agent System, Mr. Blue AI Assistant, and a Bifrost AI Gateway for multi-provider AI interactions. A RecursiveContextService handles hierarchical code summarization, and a TRM Learning Protocol is integrated. Scraping agents gather event data and automatically create city groups. The `/api/mrblue/chat` endpoint supports a `systemPrompt` parameter for custom AI interactions, bypassing the ConversationOrchestrator for direct prompt usage with Groq's llama-3.3-70b-versatile model.
 
 ### Event Scraping System
-The UnifiedEventScraper (`server/services/scraping/UnifiedEventScraper.ts`) uses Groq LLM for intelligent HTML parsing with Cheerio fallback. Key features:
-- **AI-Powered Extraction**: Groq llama-3.3-70b-versatile extracts event data including title, description, eventType, dates, venue, address, city, country
-- **EventType Classification**: 14 supported types (milonga, practica, workshop, festival, marathon, encuentro, class, social, performance, show, competition, online, concert, private) with AI extraction + keyword-based fallback via `classifyEventType()` function
-- **Source Transparency**: Events display "View on {sourceName}" links on event cards, allowing users to click through to original event sources
-- **Database Schema**: `scraped_events` table includes `event_type`, `source_url`, `source_name`, `city`, `country` columns
-- **Admin Endpoints**: POST `/api/admin/unified-scrape`, GET `/api/admin/unified-scraper-status`
+Multi-stage scraping architecture coordinated by Master Orchestrator (`server/agents/scraping/masterOrchestrator.ts`):
+
+**Architecture:**
+- **Master Orchestrator** - Coordinates all scrapers, schedules jobs (4 AM UTC), manages parallel execution
+- **Priority Scrapers** - HoyMilongaScraper, TangoCatScraper, TangoFestivalsScraper (run every cycle)
+- **UnifiedEventScraper** - AI-powered generic scraper for any website using Groq LLM
+- **Static/JS/Social Scrapers** - Specialized scrapers for different site types
+
+**Multi-Stage Scraping (Aggregator → Source):**
+1. Stage 1: Scrape aggregator sites (TangoCat, TangoFestivals) to get event listing links
+2. Stage 2: Follow links to actual event websites and scrape full details
+3. Store sourceUrl and sourceName for attribution ("View on {sourceName}")
+
+**Scrapers by Source Type:**
+- **HoyMilonga** (~8 cities): Buenos Aires, São Paulo, Berlin, Athens, Istanbul, London, Miami, Montevideo
+- **TangoCat**: International festivals/marathons/encuentros with link-following to event sites
+- **TangoFestivals**: Festival calendar aggregator
+- **UnifiedEventScraper**: Generic AI extraction for ~50+ direct calendar sites
+
+**Key Features:**
+- **AI-Powered Extraction**: Groq llama-3.3-70b-versatile extracts event data
+- **EventType Classification**: 14 types (milonga, practica, workshop, festival, marathon, encuentro, class, social, performance, show, competition, online, concert, private)
+- **Source Transparency**: Events display "View on {sourceName}" links with original URLs
+- **City Matching**: CityMatcherService associates events with city groups
+- **Auto-City Creation**: New cities auto-created when events detected
+
+**Database Schema**: `scraped_events` table includes `event_type`, `source_url`, `source_name`, `city`, `country` columns
+**Admin Endpoints**: POST `/api/admin/unified-scrape`, GET `/api/admin/unified-scraper-status`
+**Test Script**: `server/scripts/test-scraper-single-event.ts` - Tests HoyMilonga + TangoCat with link-following
 
 ### Platform Features
 Core functionalities encompass social features (events, groups, posts, notifications, media management, live streaming, marketplaces, reviews) and business features (Talent Match AI, LIFE CEO AI, Multi-AI Orchestration, Automated Scraping, Admin Dashboard, Stripe Payments, BullMQ Workers). Recent enhancements include an Event Series System, redesigned City Groups Events Tab, RSS Feed Scraping, Profile Enrichment Service, OpenStreetMap Geocoding, Unified Messaging Inbox, and a Faceless Content System. The Talent Match AI system includes volunteer onboarding, resume analysis, AI interviews, and task assignment, with an International Payment System orchestrating multi-gateway payments across 30 currencies and 6 regions. The platform supports anonymous volunteer applications via a 4-step guest flow (Intake, Upload, Interview, Complete) and has an enhanced 5-step onboarding flow. Event cards now display "View Original" links for transparency.
