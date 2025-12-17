@@ -22,6 +22,10 @@ interface DetailPageData {
   status?: string;
   coverImage?: string;
   time?: string;
+  startTime?: string;  // Local time from source (e.g., "20:00")
+  endTime?: string;    // Local time from source (e.g., "01:00")
+  startDate?: string;  // ISO date string in local time
+  endDate?: string;    // ISO date string in local time
   description?: string;
   coordinates?: { lat: number; lng: number };
 }
@@ -161,6 +165,8 @@ export class DetailDiscoveryService {
       orchestras: [],
       performers: [],
       hosts: [],
+      startTime: undefined,
+      endTime: undefined,
     };
 
     // First try to extract from JSON-LD structured data
@@ -221,6 +227,23 @@ export class DetailDiscoveryService {
                 const offer = Array.isArray(item.offers) ? item.offers[0] : item.offers;
                 if (offer.price !== undefined) {
                   data.price = `${offer.priceCurrency || ''} ${offer.price}`.trim();
+                }
+              }
+
+              // Extract start/end times from ISO date strings (already in local time)
+              if (item.startDate && !data.startDate) {
+                data.startDate = item.startDate;
+                // Extract time portion (e.g., "2025-12-17T20:00:00" -> "20:00")
+                const timeMatch = item.startDate.match(/T(\d{2}:\d{2})/);
+                if (timeMatch) {
+                  data.startTime = timeMatch[1];
+                }
+              }
+              if (item.endDate && !data.endDate) {
+                data.endDate = item.endDate;
+                const timeMatch = item.endDate.match(/T(\d{2}:\d{2})/);
+                if (timeMatch) {
+                  data.endTime = timeMatch[1];
                 }
               }
             }
