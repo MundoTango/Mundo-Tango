@@ -222,13 +222,13 @@ export class HoyMilongaScraper {
   private async storeEvents(events: HoyMilongaEvent[], sourceId: number, cityName: string): Promise<void> {
     console.log(`[HoyMilonga] 💾 Storing ${events.length} events for ${cityName}`);
 
-    // Match city to group using CityMatcherService
-        const matchResult = await cityMatcherService.matchEventLocation(
-                event.venue || event.address,
-                cityName,  // Pass the source city from cityCodeMap
-                event.address
-              );
-    const groupId = matchResult?.groupId || null;
+    // Match city to group using CityMatcherService (do once per city)
+    const matchResult = await cityMatcherService.matchEventLocation(
+      cityName,  // Use city name for initial match
+      cityName,
+      undefined
+    );
+    const groupId = matchResult || null;
 
     if (groupId) {
       console.log(`[HoyMilonga] 🎯 Matched ${cityName} to group ${groupId}`);

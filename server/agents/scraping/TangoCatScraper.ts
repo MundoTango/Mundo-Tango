@@ -202,7 +202,7 @@ export class TangoCatScraper {
       try {
         // Match city to group
         const matchResult = await cityMatcherService.matchEventLocation(event.city);
-        const groupId = matchResult?.groupId || null;
+        const groupId = matchResult || null;
 
         // Parse date from dates string
         const startDate = this.parseDateFromString(event.dates, year);
