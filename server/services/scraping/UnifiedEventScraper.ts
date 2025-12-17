@@ -16,6 +16,8 @@ import { scrapedEvents, eventScrapingSources } from '@shared/schema';
 import { eq } from 'drizzle-orm';
 import Groq from 'groq-sdk';
 import { discoverTeamFromSubpages, formatTeamForDescription, hasTeamData } from '../../agents/scraping/subpageDiscovery';
+import { languageAwareFieldMapper, SupportedLanguage } from './LanguageAwareFieldMapper';
+import { detailDiscoveryService } from './DetailDiscoveryService';
 
 export interface ScrapedEventData {
   title: string;
@@ -23,6 +25,8 @@ export interface ScrapedEventData {
   eventType: string; // milonga, practica, workshop, festival, marathon, encuentro, class, social
   startDate: Date;
   endDate?: Date;
+  startTime?: string;  // Local time (e.g., "20:00")
+  endTime?: string;    // Local time (e.g., "01:00")
   venue?: string;
   address?: string;
   city?: string;
@@ -31,6 +35,12 @@ export interface ScrapedEventData {
   price?: string;
   imageUrl?: string;
   organizer?: string;
+  // Team members
+  djs?: string[];
+  teachers?: string[];
+  orchestras?: string[];
+  performers?: string[];
+  hosts?: string[];
   sourceUrl: string;
   sourceName: string;
   externalId?: string;
@@ -154,20 +164,25 @@ For each event, extract:
   - encuentro = small intimate festival
   - social = casual gathering
 - description: Event description
-- startDate: ISO date string (YYYY-MM-DDTHH:mm:ss)
-- endDate: ISO date string if available
+- startDate: ISO date string (YYYY-MM-DDTHH:mm:ss) - Use LOCAL TIME of the event location
+- endDate: ISO date string if available - Use LOCAL TIME
 - venue: Venue/location name
-- address: Street address
+- address: Full street address
 - city: City name
 - state: State/province/region
 - country: Country name
 - price: Price info as string
-- organizer: Organizer name
+- organizer: Organizer name(s)
+- djs: Array of DJ names (also look for "TDJ", "musicalizador", "musicaliza")
+- teachers: Array of teacher/maestro names
+- orchestras: Array of live music/orchestra names
+- performers: Array of performer/show artist names
 - imageUrl: Image URL if found
 
 Return a JSON array of events. If no events found, return [].
 Be thorough - extract ALL events visible on the page.
-IMPORTANT: Always classify the eventType based on keywords in the title, description, or context.`
+IMPORTANT: Times should be in the LOCAL timezone of the event location.
+IMPORTANT: Look for team members in multiple languages (Spanish: organizador, DJ, maestro; Portuguese: professor; German: veranstalter).`
           },
           {
             role: 'user',
@@ -198,12 +213,21 @@ Extract all tango events from this page as JSON array:`
           eventType = classifyEventType(title, description);
         }
         
+        // Extract local time from ISO date strings
+        const extractTime = (isoDate?: string): string | undefined => {
+          if (!isoDate) return undefined;
+          const match = isoDate.match(/T(\d{2}:\d{2})/);
+          return match ? match[1] : undefined;
+        };
+        
         return {
           title,
           description,
           eventType,
           startDate: event.startDate ? new Date(event.startDate) : new Date(),
           endDate: event.endDate ? new Date(event.endDate) : undefined,
+          startTime: extractTime(event.startDate),
+          endTime: extractTime(event.endDate),
           venue: event.venue,
           address: event.address,
           city: event.city,
@@ -212,6 +236,10 @@ Extract all tango events from this page as JSON array:`
           price: event.price,
           imageUrl: event.imageUrl,
           organizer: event.organizer,
+          djs: event.djs || [],
+          teachers: event.teachers || [],
+          orchestras: event.orchestras || [],
+          performers: event.performers || [],
           sourceUrl: sourceUrl,
           sourceName: sourceName,
         };

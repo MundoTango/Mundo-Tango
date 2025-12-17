@@ -23,6 +23,8 @@ import { scrapedEvents } from '@shared/schema';
 import { cityMatcherService } from '../../services/CityMatcherService';
 import { eq } from 'drizzle-orm';
 import { discoverTeamFromSubpages, formatTeamForDescription, hasTeamData } from './subpageDiscovery';
+import { languageAwareFieldMapper, SupportedLanguage } from '../../services/scraping/LanguageAwareFieldMapper';
+import { detailDiscoveryService } from '../../services/scraping/DetailDiscoveryService';
 
 interface TangoCatJSONEvent {
   id: number;
