@@ -1,0 +1,448 @@
+{
+  "name": "Mr Blue - Content Generation Pipeline",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "mr-blue-content-gen",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 400],
+      "webhookId": "mr-blue-content-gen"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract content request\nconst contentType = $input.item.json.body.contentType;\nconst topic = $input.item.json.body.topic;\nconst style = $input.item.json.body.style || 'professional';\nconst duration = $input.item.json.body.duration || 60;\nconst userId = $input.item.json.body.userId;\nconst conversationId = $input.item.json.body.conversationId;\n\n// Validate HMAC signature\nconst crypto = require('crypto');\nconst receivedSignature = $input.item.json.headers['x-webhook-secret'];\nconst webhookSecret = $env.N8N_WEBHOOK_SECRET;\nconst payload = JSON.stringify($input.item.json.body);\nconst expectedSignature = crypto.createHmac('sha256', webhookSecret).update(payload).digest('hex');\n\nif (receivedSignature !== expectedSignature) {\n  throw new Error('Invalid webhook signature');\n}\n\nreturn {\n  contentType,\n  topic,\n  style,\n  duration,\n  userId,\n  conversationId,\n  timestamp: new Date().toISOString()\n};"
+      },
+      "id": "validate-request",
+      "name": "Validate Request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [450, 400]
+    },
+    {
+      "parameters": {
+        "url": "https://api.groq.com/openai/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"llama-3.3-70b-versatile\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are a professional script writer for {{ $json.contentType }} content. Write engaging, clear, and well-structured scripts in a {{ $json.style }} style.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"Write a {{ $json.duration }}-second script about: {{ $json.topic }}\\n\\nInclude:\\n1. Hook (first 5 seconds)\\n2. Main content\\n3. Call to action\\n\\nFormat as a script with timing markers.\"\n    }\n  ],\n  \"temperature\": 0.7,\n  \"max_tokens\": 1500\n}",
+        "options": {}
+      },
+      "id": "generate-script",
+      "name": "Generate Script (Groq)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [650, 400],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "groq-api",
+          "name": "Groq API Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract script from AI response\nconst script = $input.item.json.choices[0].message.content;\nconst topic = $input.item.json.topic;\nconst contentType = $input.item.json.contentType;\nconst duration = $input.item.json.duration;\n\n// Parse script sections\nconst sections = {\n  hook: script.match(/hook[:\\s]*([\\s\\S]*?)(?=main|$)/i)?.[1]?.trim() || '',\n  main: script.match(/main[:\\s]*([\\s\\S]*?)(?=call to action|$)/i)?.[1]?.trim() || '',\n  cta: script.match(/call to action[:\\s]*([\\s\\S]*?)$/i)?.[1]?.trim() || ''\n};\n\nreturn {\n  script,\n  sections,\n  topic,\n  contentType,\n  duration,\n  userId: $input.item.json.userId,\n  conversationId: $input.item.json.conversationId,\n  timestamp: new Date().toISOString()\n};"
+      },
+      "id": "parse-script",
+      "name": "Parse Script",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [850, 400]
+    },
+    {
+      "parameters": {
+        "url": "https://api.elevenlabs.io/v1/text-to-speech/{{ $env.MR_BLUE_VOICE_ID }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"text\": \"{{ $json.script }}\",\n  \"model_id\": \"eleven_multilingual_v2\",\n  \"voice_settings\": {\n    \"stability\": 0.5,\n    \"similarity_boost\": 0.75,\n    \"style\": 0.5,\n    \"use_speaker_boost\": true\n  }\n}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "generate-voice",
+      "name": "Generate Voice (ElevenLabs)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1050, 300],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "elevenlabs-api",
+          "name": "ElevenLabs API Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://api.lumalabs.ai/dream-machine/v1/generations",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"prompt\": \"{{ $json.topic }} - {{ $json.sections.main.substring(0, 200) }}\",\n  \"aspect_ratio\": \"16:9\",\n  \"loop\": false\n}",
+        "options": {}
+      },
+      "id": "generate-video",
+      "name": "Generate Video (Luma)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1050, 500],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "luma-api",
+          "name": "Luma API Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Wait for Luma video generation to complete\nconst generationId = $input.item.json.id;\nconst maxWaitTime = 300000; // 5 minutes\nconst pollInterval = 10000; // 10 seconds\n\nlet elapsed = 0;\nlet status = 'pending';\nlet videoUrl = null;\n\nwhile (elapsed < maxWaitTime && status !== 'completed') {\n  // Poll Luma API for status\n  const response = await fetch(`https://api.lumalabs.ai/dream-machine/v1/generations/${generationId}`, {\n    headers: {\n      'Authorization': `Bearer ${process.env.LUMA_API_KEY}`\n    }\n  });\n  \n  const data = await response.json();\n  status = data.state;\n  \n  if (status === 'completed') {\n    videoUrl = data.assets.video;\n    break;\n  } else if (status === 'failed') {\n    throw new Error('Video generation failed');\n  }\n  \n  // Wait before next poll\n  await new Promise(resolve => setTimeout(resolve, pollInterval));\n  elapsed += pollInterval;\n}\n\nif (!videoUrl) {\n  throw new Error('Video generation timed out');\n}\n\nreturn {\n  generationId,\n  videoUrl,\n  status,\n  elapsed\n};"
+      },
+      "id": "poll-video-status",
+      "name": "Poll Video Status",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1250, 500]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.videoUrl }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "download-video",
+      "name": "Download Video",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1450, 500]
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.SUPABASE_URL }}/storage/v1/object/content-assets/{{ $json.userId }}/{{ $json.conversationId }}_audio.mp3",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "binaryData",
+        "options": {
+          "bodyContentType": "audio/mpeg"
+        }
+      },
+      "id": "upload-audio",
+      "name": "Upload Audio to Supabase",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1250, 300],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "supabase-api",
+          "name": "Supabase API Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.SUPABASE_URL }}/storage/v1/object/content-assets/{{ $json.userId }}/{{ $json.conversationId }}_video.mp4",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "binaryData",
+        "options": {
+          "bodyContentType": "video/mp4"
+        }
+      },
+      "id": "upload-video",
+      "name": "Upload Video to Supabase",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1650, 500],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "supabase-api",
+          "name": "Supabase API Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Aggregate all assets\nconst script = $input.item.json.script;\nconst audioUrl = `${process.env.SUPABASE_URL}/storage/v1/object/public/content-assets/${$input.item.json.userId}/${$input.item.json.conversationId}_audio.mp3`;\nconst videoUrl = `${process.env.SUPABASE_URL}/storage/v1/object/public/content-assets/${$input.item.json.userId}/${$input.item.json.conversationId}_video.mp4`;\n\nreturn {\n  script,\n  assets: {\n    audio: audioUrl,\n    video: videoUrl\n  },\n  topic: $input.item.json.topic,\n  contentType: $input.item.json.contentType,\n  duration: $input.item.json.duration,\n  userId: $input.item.json.userId,\n  conversationId: $input.item.json.conversationId,\n  timestamp: new Date().toISOString()\n};"
+      },
+      "id": "aggregate-assets",
+      "name": "Aggregate Assets",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1850, 400]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/generated_content",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"user_id\": \"{{ $json.userId }}\",\n  \"conversation_id\": \"{{ $json.conversationId }}\",\n  \"content_type\": \"{{ $json.contentType }}\",\n  \"topic\": \"{{ $json.topic }}\",\n  \"script\": \"{{ $json.script }}\",\n  \"audio_url\": \"{{ $json.assets.audio }}\",\n  \"video_url\": \"{{ $json.assets.video }}\",\n  \"duration\": {{ $json.duration }},\n  \"created_at\": \"{{ $json.timestamp }}\"\n}",
+        "options": {}
+      },
+      "id": "save-to-database",
+      "name": "Save to Database",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [2050, 400],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "supabase-api",
+          "name": "Supabase API Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.MUNDO_TANGO_URL }}/api/mrblue/n8n-callback",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "action",
+              "value": "content_generation_complete"
+            },
+            {
+              "name": "userId",
+              "value": "={{ $json.userId }}"
+            },
+            {
+              "name": "conversationId",
+              "value": "={{ $json.conversationId }}"
+            },
+            {
+              "name": "assets",
+              "value": "={{ $json.assets }}"
+            },
+            {
+              "name": "script",
+              "value": "={{ $json.script }}"
+            },
+            {
+              "name": "timestamp",
+              "value": "={{ $json.timestamp }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "callback-mr-blue",
+      "name": "Callback to Mr Blue",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [2250, 400],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "mundo-tango-api",
+          "name": "Mundo Tango API Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ {\n  \"success\": true,\n  \"message\": \"Content generation complete\",\n  \"assets\": $json.assets,\n  \"topic\": $json.topic,\n  \"timestamp\": $json.timestamp\n} }}",
+        "options": {}
+      },
+      "id": "webhook-response",
+      "name": "Webhook Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [2450, 400]
+    }
+  ],
+  "connections": {
+    "webhook-trigger": {
+      "main": [
+        [
+          {
+            "node": "validate-request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "validate-request": {
+      "main": [
+        [
+          {
+            "node": "generate-script",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "generate-script": {
+      "main": [
+        [
+          {
+            "node": "parse-script",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "parse-script": {
+      "main": [
+        [
+          {
+            "node": "generate-voice",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "generate-video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "generate-voice": {
+      "main": [
+        [
+          {
+            "node": "upload-audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "generate-video": {
+      "main": [
+        [
+          {
+            "node": "poll-video-status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "poll-video-status": {
+      "main": [
+        [
+          {
+            "node": "download-video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "download-video": {
+      "main": [
+        [
+          {
+            "node": "upload-video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "upload-audio": {
+      "main": [
+        [
+          {
+            "node": "aggregate-assets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "upload-video": {
+      "main": [
+        [
+          {
+            "node": "aggregate-assets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "aggregate-assets": {
+      "main": [
+        [
+          {
+            "node": "save-to-database",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "save-to-database": {
+      "main": [
+        [
+          {
+            "node": "callback-mr-blue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "callback-mr-blue": {
+      "main": [
+        [
+          {
+            "node": "webhook-response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "name": "mr-blue",
+      "id": "1"
+    },
+    {
+      "name": "content-generation",
+      "id": "2"
+    },
+    {
+      "name": "ai-pipeline",
+      "id": "3"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2025-12-17T00:00:00.000Z",
+  "versionId": "1"
+}

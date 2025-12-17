@@ -1,0 +1,667 @@
+{
+  "name": "Mr Blue - External Integrations Sync",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "mr-blue-external-sync",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "mr-blue-external-sync"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract sync request\nconst action = $input.item.json.body.action;\nconst source = $input.item.json.body.source;\nconst target = $input.item.json.body.target;\nconst data = $input.item.json.body.data;\nconst syncType = $input.item.json.body.syncType || 'bidirectional';\n\n// Validate HMAC signature\nconst crypto = require('crypto');\nconst receivedSignature = $input.item.json.headers['x-webhook-secret'];\nconst webhookSecret = $env.N8N_WEBHOOK_SECRET;\nconst payload = JSON.stringify($input.item.json.body);\nconst expectedSignature = crypto.createHmac('sha256', webhookSecret).update(payload).digest('hex');\n\nif (receivedSignature !== expectedSignature) {\n  throw new Error('Invalid webhook signature');\n}\n\nreturn {\n  action,\n  source,\n  target,\n  data,\n  syncType,\n  timestamp: new Date().toISOString()\n};"
+      },
+      "id": "validate-request",
+      "name": "Validate Request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "productboard",
+              "leftValue": "={{ $json.source }}",
+              "rightValue": "productboard",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "airtable",
+              "leftValue": "={{ $json.source }}",
+              "rightValue": "airtable",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "github",
+              "leftValue": "={{ $json.source }}",
+              "rightValue": "github",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "supabase",
+              "leftValue": "={{ $json.source }}",
+              "rightValue": "supabase",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "route-by-source",
+      "name": "Route by Source",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://api.productboard.com/features",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "id",
+              "value": "={{ $json.data.featureId }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "fetch-productboard",
+      "name": "Fetch from Productboard",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [850, 200],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "productboard-api",
+          "name": "Productboard API Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "list",
+        "base": {
+          "__rl": true,
+          "value": "={{ $env.AIRTABLE_BASE_ID }}",
+          "mode": "id"
+        },
+        "table": {
+          "__rl": true,
+          "value": "={{ $json.data.tableName }}",
+          "mode": "name"
+        },
+        "options": {
+          "filterByFormula": "={{ $json.data.filter }}"
+        }
+      },
+      "id": "fetch-airtable",
+      "name": "Fetch from Airtable",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2,
+      "position": [850, 300],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "airtable-api",
+          "name": "Airtable API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "issue",
+        "operation": "get",
+        "owner": {
+          "__rl": true,
+          "value": "MundoTango",
+          "mode": "name"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "Mundo-Tango",
+          "mode": "name"
+        },
+        "issueNumber": "={{ $json.data.issueNumber }}"
+      },
+      "id": "fetch-github",
+      "name": "Fetch from GitHub",
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1,
+      "position": [850, 400],
+      "credentials": {
+        "githubApi": {
+          "id": "github-api",
+          "name": "GitHub API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/{{ $json.data.table }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "id",
+              "value": "eq.={{ $json.data.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "fetch-supabase",
+      "name": "Fetch from Supabase",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [850, 500],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "supabase-api",
+          "name": "Supabase API Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Transform data based on target\nconst sourceData = $input.item.json;\nconst target = $input.item.json.target;\nconst source = $input.item.json.source;\n\nlet transformedData = {};\n\n// Productboard → Airtable\nif (source === 'productboard' && target === 'airtable') {\n  transformedData = {\n    Name: sourceData.name,\n    Description: sourceData.description,\n    Status: sourceData.status,\n    Priority: sourceData.priority,\n    ProductboardId: sourceData.id,\n    LastSync: new Date().toISOString()\n  };\n}\n\n// Airtable → GitHub\nelse if (source === 'airtable' && target === 'github') {\n  transformedData = {\n    title: sourceData.fields.Name,\n    body: sourceData.fields.Description,\n    labels: [sourceData.fields.Status, sourceData.fields.Priority],\n    assignees: sourceData.fields.Assignees || []\n  };\n}\n\n// GitHub → Supabase\nelse if (source === 'github' && target === 'supabase') {\n  transformedData = {\n    title: sourceData.title,\n    description: sourceData.body,\n    status: sourceData.state,\n    github_issue_number: sourceData.number,\n    github_url: sourceData.html_url,\n    created_at: sourceData.created_at,\n    updated_at: sourceData.updated_at\n  };\n}\n\n// Supabase → Productboard\nelse if (source === 'supabase' && target === 'productboard') {\n  transformedData = {\n    name: sourceData.title,\n    description: sourceData.description,\n    status: sourceData.status,\n    customFields: {\n      supabase_id: sourceData.id\n    }\n  };\n}\n\nreturn {\n  source,\n  target,\n  originalData: sourceData,\n  transformedData,\n  timestamp: new Date().toISOString()\n};"
+      },
+      "id": "transform-data",
+      "name": "Transform Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1050, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "productboard",
+              "leftValue": "={{ $json.target }}",
+              "rightValue": "productboard",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "airtable",
+              "leftValue": "={{ $json.target }}",
+              "rightValue": "airtable",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "github",
+              "leftValue": "={{ $json.target }}",
+              "rightValue": "github",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "supabase",
+              "leftValue": "={{ $json.target }}",
+              "rightValue": "supabase",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "route-by-target",
+      "name": "Route by Target",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [1250, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://api.productboard.com/features",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "name",
+              "value": "={{ $json.transformedData.name }}"
+            },
+            {
+              "name": "description",
+              "value": "={{ $json.transformedData.description }}"
+            },
+            {
+              "name": "status",
+              "value": "={{ $json.transformedData.status }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "sync-to-productboard",
+      "name": "Sync to Productboard",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1450, 200],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "productboard-api",
+          "name": "Productboard API Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "={{ $env.AIRTABLE_BASE_ID }}",
+          "mode": "id"
+        },
+        "table": {
+          "__rl": true,
+          "value": "Features",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $json.transformedData.Name }}",
+            "Description": "={{ $json.transformedData.Description }}",
+            "Status": "={{ $json.transformedData.Status }}",
+            "Priority": "={{ $json.transformedData.Priority }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "sync-to-airtable",
+      "name": "Sync to Airtable",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2,
+      "position": [1450, 300],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "airtable-api",
+          "name": "Airtable API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "issue",
+        "operation": "create",
+        "owner": {
+          "__rl": true,
+          "value": "MundoTango",
+          "mode": "name"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "Mundo-Tango",
+          "mode": "name"
+        },
+        "title": "={{ $json.transformedData.title }}",
+        "body": "={{ $json.transformedData.body }}",
+        "labels": {
+          "labels": "={{ $json.transformedData.labels }}"
+        },
+        "assignees": {
+          "assignees": "={{ $json.transformedData.assignees }}"
+        }
+      },
+      "id": "sync-to-github",
+      "name": "Sync to GitHub",
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1,
+      "position": [1450, 400],
+      "credentials": {
+        "githubApi": {
+          "id": "github-api",
+          "name": "GitHub API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/features",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.transformedData) }}",
+        "options": {}
+      },
+      "id": "sync-to-supabase",
+      "name": "Sync to Supabase",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1450, 500],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "supabase-api",
+          "name": "Supabase API Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.MUNDO_TANGO_URL }}/api/mrblue/n8n-callback",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "action",
+              "value": "external_sync_complete"
+            },
+            {
+              "name": "source",
+              "value": "={{ $json.source }}"
+            },
+            {
+              "name": "target",
+              "value": "={{ $json.target }}"
+            },
+            {
+              "name": "result",
+              "value": "={{ $json }}"
+            },
+            {
+              "name": "timestamp",
+              "value": "={{ $json.timestamp }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "callback-mr-blue",
+      "name": "Callback to Mr Blue",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1650, 300],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "mundo-tango-api",
+          "name": "Mundo Tango API Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ {\n  \"success\": true,\n  \"message\": \"External integration sync complete\",\n  \"source\": $json.source,\n  \"target\": $json.target,\n  \"timestamp\": $json.timestamp\n} }}",
+        "options": {}
+      },
+      "id": "webhook-response",
+      "name": "Webhook Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1850, 300]
+    }
+  ],
+  "connections": {
+    "webhook-trigger": {
+      "main": [
+        [
+          {
+            "node": "validate-request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "validate-request": {
+      "main": [
+        [
+          {
+            "node": "route-by-source",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "route-by-source": {
+      "main": [
+        [
+          {
+            "node": "fetch-productboard",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "fetch-airtable",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "fetch-github",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "fetch-supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "fetch-productboard": {
+      "main": [
+        [
+          {
+            "node": "transform-data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "fetch-airtable": {
+      "main": [
+        [
+          {
+            "node": "transform-data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "fetch-github": {
+      "main": [
+        [
+          {
+            "node": "transform-data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "fetch-supabase": {
+      "main": [
+        [
+          {
+            "node": "transform-data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "transform-data": {
+      "main": [
+        [
+          {
+            "node": "route-by-target",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "route-by-target": {
+      "main": [
+        [
+          {
+            "node": "sync-to-productboard",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "sync-to-airtable",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "sync-to-github",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "sync-to-supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "sync-to-productboard": {
+      "main": [
+        [
+          {
+            "node": "callback-mr-blue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "sync-to-airtable": {
+      "main": [
+        [
+          {
+            "node": "callback-mr-blue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "sync-to-github": {
+      "main": [
+        [
+          {
+            "node": "callback-mr-blue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "sync-to-supabase": {
+      "main": [
+        [
+          {
+            "node": "callback-mr-blue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "callback-mr-blue": {
+      "main": [
+        [
+          {
+            "node": "webhook-response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "name": "mr-blue",
+      "id": "1"
+    },
+    {
+      "name": "external-integrations",
+      "id": "2"
+    },
+    {
+      "name": "sync",
+      "id": "3"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2025-12-17T00:00:00.000Z",
+  "versionId": "1"
+}

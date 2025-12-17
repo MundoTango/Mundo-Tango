@@ -1,0 +1,17 @@
+{
+  "home": {
+    "title": "Mundo Tango - Connectez, Dansez, Prospérez",
+    "hero": {
+      "headline": "Où Vit le Tango",
+      "subtitle": "Connectez-vous avec des danseurs du monde entier et découvrez la magie du tango."
+    }
+  },
+  "feed": {
+    "title": "Fil",
+    "createPost": "À quoi pensez-vous?"
+  },
+  "events": {
+    "title": "Événements",
+    "upcoming": "Événements à Venir"
+  }
+}

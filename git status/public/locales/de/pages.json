@@ -1,0 +1,17 @@
+{
+  "home": {
+    "title": "Mundo Tango - Verbinden, Tanzen, Gedeihen",
+    "hero": {
+      "headline": "Wo Tango Lebt",
+      "subtitle": "Verbinden Sie sich mit Tänzern weltweit und erleben Sie die Magie des Tangos."
+    }
+  },
+  "feed": {
+    "title": "Feed",
+    "createPost": "Was denkst du?"
+  },
+  "events": {
+    "title": "Veranstaltungen",
+    "upcoming": "Kommende Veranstaltungen"
+  }
+}

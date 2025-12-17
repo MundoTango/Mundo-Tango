@@ -1,0 +1,8 @@
+import { createRoot } from "react-dom/client";
+import App from "./App";
+import "./index.css";
+import "./styles/visual-editor.css";
+import "./lib/i18n";
+
+createRoot(document.getElementById("root")!).render(<App />);
+// Build 1762146413

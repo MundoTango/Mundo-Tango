@@ -1,0 +1,616 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Global overflow fix to prevent horizontal scrolling */
+html,
+body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* LIGHT MODE */
+:root {
+  --button-outline: rgba(0,0,0, .10);
+  --badge-outline: rgba(0,0,0, .05);
+
+  /* Automatic computation of border around primary / danger buttons */
+  --opaque-button-border-intensity: -8; /* In terms of percentages */
+
+  /* Backgrounds applied on top of other backgrounds when hovered/active */
+  --elevate-1: rgba(0,0,0, .03);
+  --elevate-2: rgba(0,0,0, .08);
+
+  /* ========== MT OCEAN THEME - Primary Colors ========== */
+  /* Turquoise → Dodger Blue → Cobalt Blue Gradient */
+  
+  --background: 0 0% 98%;
+  --foreground: 218 20% 12%;
+
+  --border: 195 20% 88%;
+  --input: 195 20% 75%;
+  --ring: 177 72% 45%;
+
+  --card: 0 0% 96%;
+  --card-foreground: 218 20% 15%;
+  --card-border: 218 15% 90%;
+
+  --sidebar: 195 40% 94%;
+  --sidebar-foreground: 218 20% 18%;
+  --sidebar-border: 195 25% 87%;
+  --sidebar-primary: 177 72% 45%;
+  --sidebar-primary-foreground: 177 72% 98%;
+  --sidebar-accent: 195 30% 88%;
+  --sidebar-accent-foreground: 218 20% 20%;
+  --sidebar-ring: 177 72% 45%;
+
+  --popover: 0 0% 92%;
+  --popover-foreground: 218 20% 18%;
+  --popover-border: 195 20% 85%;
+
+  --primary: 177 72% 56%;
+  --primary-foreground: 0 0% 100%;
+
+  --secondary: 210 100% 56%;
+  --secondary-foreground: 0 0% 100%;
+
+  --muted: 195 20% 90%;
+  --muted-foreground: 218 15% 35%;
+
+  --accent: 218 100% 34%;
+  --accent-foreground: 0 0% 100%;
+
+  --destructive: 0 72% 42%;
+  --destructive-foreground: 0 72% 98%;
+
+  --chart-1: 177 72% 40%;
+  --chart-2: 210 100% 50%;
+  --chart-3: 218 100% 35%;
+  --chart-4: 195 70% 45%;
+  --chart-5: 230 80% 50%;
+
+  --font-sans: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-serif: "Playfair Display", Georgia, serif;
+  --font-mono: Menlo, Monaco, "Courier New", monospace;
+  --font-accent: Cinzel, serif;
+  --radius: .5rem; /* 8px */
+  --shadow-2xs: 0px 1px 2px 0px hsl(240 8% 12% / 0.05);
+  --shadow-xs: 0px 1px 3px 0px hsl(240 8% 12% / 0.08);
+  --shadow-sm: 0px 2px 4px -1px hsl(240 8% 12% / 0.06), 0px 1px 2px -1px hsl(240 8% 12% / 0.04);
+  --shadow: 0px 4px 6px -1px hsl(240 8% 12% / 0.08), 0px 2px 4px -2px hsl(240 8% 12% / 0.05);
+  --shadow-md: 0px 6px 8px -2px hsl(240 8% 12% / 0.10), 0px 4px 6px -2px hsl(240 8% 12% / 0.06);
+  --shadow-lg: 0px 10px 15px -3px hsl(240 8% 12% / 0.12), 0px 4px 6px -4px hsl(240 8% 12% / 0.08);
+  --shadow-xl: 0px 20px 25px -5px hsl(240 8% 12% / 0.14), 0px 8px 10px -6px hsl(240 8% 12% / 0.10);
+  --shadow-2xl: 0px 25px 50px -12px hsl(240 8% 12% / 0.18);
+  --tracking-normal: 0em;
+  --spacing: 0.25rem;
+
+  /* ========== VIBRANT TAG COLORS (Tango-Inspired) ========== */
+  --tag-milonga: 0 85% 60%;        /* Red */
+  --tag-practica: 25 95% 58%;      /* Orange */
+  --tag-performance: 45 95% 55%;   /* Yellow/Gold */
+  --tag-workshop: 142 70% 45%;     /* Green */
+  --tag-festival: 270 70% 60%;     /* Purple */
+  --tag-travel: 210 100% 56%;      /* Blue */
+  --tag-music: 330 80% 55%;        /* Pink */
+  --tag-fashion: 177 72% 50%;      /* Teal/Turquoise */
+
+  /* Gradient Backgrounds */
+  --gradient-memories-start: 177 40% 96%;
+  --gradient-memories-end: 195 35% 93%;
+  --gradient-hero-start: 177 50% 92%;
+  --gradient-hero-end: 210 45% 88%;
+
+  /* Automatically computed borders - intensity can be controlled by the user by the --opaque-button-border-intensity setting */
+
+  /* Fallback for older browsers */
+  --sidebar-primary-border: hsl(var(--sidebar-primary));
+  --sidebar-primary-border: hsl(from hsl(var(--sidebar-primary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+
+  /* Fallback for older browsers */
+  --sidebar-accent-border: hsl(var(--sidebar-accent));
+  --sidebar-accent-border: hsl(from hsl(var(--sidebar-accent)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+
+  /* Fallback for older browsers */
+  --primary-border: hsl(var(--primary));
+  --primary-border: hsl(from hsl(var(--primary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+
+  /* Fallback for older browsers */
+  --secondary-border: hsl(var(--secondary));
+  --secondary-border: hsl(from hsl(var(--secondary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+
+  /* Fallback for older browsers */
+  --muted-border: hsl(var(--muted));
+  --muted-border: hsl(from hsl(var(--muted)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+
+  /* Fallback for older browsers */
+  --accent-border: hsl(var(--accent));
+  --accent-border: hsl(from hsl(var(--accent)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+
+  /* Fallback for older browsers */
+  --destructive-border: hsl(var(--destructive));
+  --destructive-border: hsl(from hsl(var(--destructive)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+}
+
+.dark {
+  --button-outline: rgba(255,255,255, .10);
+  --badge-outline: rgba(255,255,255, .05);
+
+  --opaque-button-border-intensity: 9;  /* In terms of percentages */
+
+  /* Backgrounds applied on top of other backgrounds when hovered/active */
+  --elevate-1: rgba(255,255,255, .04);
+  --elevate-2: rgba(255,255,255, .09);
+
+  /* MT OCEAN THEME - Dark Mode */
+  --background: 218 30% 8%;
+  --foreground: 0 0% 95%;
+
+  --border: 218 20% 18%;
+  --input: 218 20% 25%;
+  --ring: 177 72% 50%;
+
+  --card: 218 25% 12%;
+  --card-foreground: 0 0% 95%;
+  --card-border: 218 20% 18%;
+
+  --sidebar: 218 28% 10%;
+  --sidebar-foreground: 0 0% 92%;
+  --sidebar-border: 218 22% 16%;
+  --sidebar-primary: 177 72% 50%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 218 24% 14%;
+  --sidebar-accent-foreground: 0 0% 90%;
+  --sidebar-ring: 177 72% 50%;
+
+  --popover: 218 25% 12%;
+  --popover-foreground: 0 0% 95%;
+  --popover-border: 218 20% 18%;
+
+  --primary: 177 72% 56%;
+  --primary-foreground: 0 0% 100%;
+
+  --secondary: 210 100% 56%;
+  --secondary-foreground: 0 0% 100%;
+
+  --muted: 218 22% 15%;
+  --muted-foreground: 0 0% 60%;
+
+  --accent: 218 100% 45%;
+  --accent-foreground: 0 0% 100%;
+
+  --destructive: 0 72% 42%;
+  --destructive-foreground: 0 72% 98%;
+
+  --chart-1: 177 72% 60%;
+  --chart-2: 210 100% 65%;
+  --chart-3: 218 100% 50%;
+  --chart-4: 195 70% 55%;
+  --chart-5: 230 80% 60%;
+
+  --shadow-2xs: 0px 1px 2px 0px hsl(0 0% 0% / 0.15);
+  --shadow-xs: 0px 1px 3px 0px hsl(0 0% 0% / 0.20);
+  --shadow-sm: 0px 2px 4px -1px hsl(0 0% 0% / 0.18), 0px 1px 2px -1px hsl(0 0% 0% / 0.12);
+  --shadow: 0px 4px 6px -1px hsl(0 0% 0% / 0.22), 0px 2px 4px -2px hsl(0 0% 0% / 0.15);
+  --shadow-md: 0px 6px 8px -2px hsl(0 0% 0% / 0.25), 0px 4px 6px -2px hsl(0 0% 0% / 0.18);
+  --shadow-lg: 0px 10px 15px -3px hsl(0 0% 0% / 0.30), 0px 4px 6px -4px hsl(0 0% 0% / 0.20);
+  --shadow-xl: 0px 20px 25px -5px hsl(0 0% 0% / 0.35), 0px 8px 10px -6px hsl(0 0% 0% / 0.25);
+  --shadow-2xl: 0px 25px 50px -12px hsl(0 0% 0% / 0.40);
+
+  /* Dark Mode Vibrant Tags */
+  --tag-milonga: 0 75% 65%;
+  --tag-practica: 25 85% 62%;
+  --tag-performance: 45 90% 62%;
+  --tag-workshop: 142 60% 55%;
+  --tag-festival: 270 65% 65%;
+  --tag-travel: 210 90% 62%;
+  --tag-music: 330 70% 62%;
+  --tag-fashion: 177 72% 60%;
+
+  /* Dark Mode Gradients */
+  --gradient-memories-start: 218 32% 10%;
+  --gradient-memories-end: 218 28% 14%;
+  --gradient-hero-start: 218 35% 12%;
+  --gradient-hero-end: 210 30% 16%;
+
+  /* Fallback for older browsers */
+  --sidebar-primary-border: hsl(var(--sidebar-primary));
+  --sidebar-primary-border: hsl(from hsl(var(--sidebar-primary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+
+  /* Fallback for older browsers */
+  --sidebar-accent-border: hsl(var(--sidebar-accent));
+  --sidebar-accent-border: hsl(from hsl(var(--sidebar-accent)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+
+  /* Fallback for older browsers */
+  --primary-border: hsl(var(--primary));
+  --primary-border: hsl(from hsl(var(--primary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+
+  /* Fallback for older browsers */
+  --secondary-border: hsl(var(--secondary));
+  --secondary-border: hsl(from hsl(var(--secondary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+
+  /* Fallback for older browsers */
+  --muted-border: hsl(var(--muted));
+  --muted-border: hsl(from hsl(var(--muted)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+
+  /* Fallback for older browsers */
+  --accent-border: hsl(var(--accent));
+  --accent-border: hsl(from hsl(var(--accent)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+
+  /* Fallback for older browsers */
+  --destructive-border: hsl(var(--destructive));
+  --destructive-border: hsl(from hsl(var(--destructive)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+  }
+}
+
+/**
+ * Using the elevate system.
+ * Automatic contrast adjustment.
+ *
+ * <element className="hover-elevate" />
+ * <element className="active-elevate-2" />
+ *
+ * // Using the tailwind utility when a data attribute is "on"
+ * <element className="toggle-elevate data-[state=on]:toggle-elevated" />
+ * // Or manually controlling the toggle state
+ * <element className="toggle-elevate toggle-elevated" />
+ *
+ * Elevation systems have to handle many states.
+ * - not-hovered, vs. hovered vs. active  (three mutually exclusive states)
+ * - toggled or not
+ * - focused or not (this is not handled with these utilities)
+ *
+ * Even without handling focused or not, this is six possible combinations that
+ * need to be distinguished from eachother visually.
+ */
+@layer utilities {
+
+  /* Hide ugly search cancel button in Chrome until we can style it properly */
+  input[type="search"]::-webkit-search-cancel-button {
+    @apply hidden;
+  }
+
+  /* Placeholder styling for contentEditable div */
+  [contenteditable][data-placeholder]:empty::before {
+    content: attr(data-placeholder);
+    color: hsl(var(--muted-foreground));
+    pointer-events: none;
+  }
+
+  /* .no-default-hover-elevate/no-default-active-elevate is an escape hatch so consumers of
+   * buttons/badges can remove the automatic brightness adjustment on interactions
+   * and program their own. */
+  .no-default-hover-elevate {}
+
+  .no-default-active-elevate {}
+
+
+  /**
+   * Toggleable backgrounds go behind the content. Hoverable/active goes on top.
+   * This way they can stack/compound. Both will overlap the parent's borders!
+   * So borders will be automatically adjusted both on toggle, and hover/active,
+   * and they will be compounded.
+   */
+  .toggle-elevate::before,
+  .toggle-elevate-2::before {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    inset: 0px;
+    /*border-radius: inherit;   match rounded corners */
+    border-radius: inherit;
+    z-index: -1;
+    /* sits behind content but above backdrop */
+  }
+
+  .toggle-elevate.toggle-elevated::before {
+    background-color: var(--elevate-2);
+  }
+
+  /* If there's a 1px border, adjust the inset so that it covers that parent's border */
+  .border.toggle-elevate::before {
+    inset: -1px;
+  }
+
+  /* Does not work on elements with overflow:hidden! */
+  .hover-elevate:not(.no-default-hover-elevate),
+  .active-elevate:not(.no-default-active-elevate),
+  .hover-elevate-2:not(.no-default-hover-elevate),
+  .active-elevate-2:not(.no-default-active-elevate) {
+    position: relative;
+    z-index: 0;
+  }
+
+  .hover-elevate:not(.no-default-hover-elevate)::after,
+  .active-elevate:not(.no-default-active-elevate)::after,
+  .hover-elevate-2:not(.no-default-hover-elevate)::after,
+  .active-elevate-2:not(.no-default-active-elevate)::after {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    inset: 0px;
+    /*border-radius: inherit;   match rounded corners */
+    border-radius: inherit;
+    z-index: 999;
+    /* sits in front of content */
+  }
+
+  .hover-elevate:hover:not(.no-default-hover-elevate)::after,
+  .active-elevate:active:not(.no-default-active-elevate)::after {
+    background-color: var(--elevate-1);
+  }
+
+  .hover-elevate-2:hover:not(.no-default-hover-elevate)::after,
+  .active-elevate-2:active:not(.no-default-active-elevate)::after {
+    background-color: var(--elevate-2);
+  }
+
+  /* If there's a 1px border, adjust the inset so that it covers that parent's border */
+  .border.hover-elevate:not(.no-hover-interaction-elevate)::after,
+  .border.active-elevate:not(.no-active-interaction-elevate)::after,
+  .border.hover-elevate-2:not(.no-hover-interaction-elevate)::after,
+  .border.active-elevate-2:not(.no-active-interaction-elevate)::after,
+  .border.hover-elevate:not(.no-hover-interaction-elevate)::after {
+    inset: -1px;
+  }
+
+  /* MT Ocean Theme - Glassmorphism Effects */
+  .glass {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+  }
+
+  .dark .glass {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .glass-card {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+
+  .dark .glass-card {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+
+  .glass-topbar {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-bottom: 1px solid rgba(64, 224, 208, 0.2);
+  }
+
+  .dark .glass-topbar {
+    background: rgba(0, 0, 0, 0.6);
+    border-bottom: 1px solid rgba(64, 224, 208, 0.3);
+  }
+
+  .ocean-gradient {
+    background: linear-gradient(135deg, #40E0D0 0%, #1E90FF 50%, #0047AB 100%);
+  }
+
+  .ocean-gradient-text {
+    background: linear-gradient(135deg, #40E0D0 0%, #1E90FF 50%, #0047AB 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Vibrant Gradient Backgrounds */
+  .gradient-memories {
+    background: linear-gradient(135deg, hsl(var(--gradient-memories-start)) 0%, hsl(var(--gradient-memories-end)) 100%);
+  }
+
+  .gradient-hero {
+    background: linear-gradient(135deg, hsl(var(--gradient-hero-start)) 0%, hsl(var(--gradient-hero-end)) 100%);
+  }
+
+  /* Enhanced Card Shadows */
+  .card-elevated {
+    box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.1), 0 5px 15px -5px rgba(0, 0, 0, 0.05);
+  }
+
+  .dark .card-elevated {
+    box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.3), 0 5px 15px -5px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Decorative Stars */
+  .decorative-stars::before,
+  .decorative-stars::after {
+    content: "✨";
+    display: inline-block;
+    margin: 0 0.5rem;
+    opacity: 0.6;
+    font-size: 0.875em;
+  }
+
+  /* ========== NAVIGATION DESIGN TOKENS ========== */
+  :root {
+    /* Sidebar-specific colors */
+    --ocean: #40E0D0;
+    --ocean-muted: rgba(64, 224, 208, 0.6);
+    --ocean-secondary: rgba(64, 224, 208, 0.8);
+    --ocean-seafoam-400: #40E0D0;
+    --seafoam: #40E0D0;
+    --ocean-deep: #0047AB;
+    
+    /* Background colors */
+    --bg-primary: hsl(0 0% 98%);
+    --bg-ocean-gradient: linear-gradient(135deg, #40E0D0 0%, #1E90FF 50%, #0047AB 100%);
+    
+    /* Profile card */
+    --profile-card-bg: rgba(255, 255, 255, 0.5);
+    --profile-border: rgba(64, 224, 208, 0.2);
+    
+    /* Stats cards */
+    --stat-card-bg: rgba(255, 255, 255, 0.3);
+    --stat-border: rgba(64, 224, 208, 0.15);
+    --stat-icon-bg: rgba(64, 224, 208, 0.1);
+    
+    /* Footer branding */
+    --footer-brand-bg: rgba(64, 224, 208, 0.1);
+    --footer-border: rgba(64, 224, 208, 0.2);
+    
+    /* Brand icon */
+    --brand-icon-bg: linear-gradient(135deg, #40E0D0 0%, #1E90FF 100%);
+    
+    /* Avatar backgrounds */
+    --avatar-light-bg: linear-gradient(135deg, #40E0D0 0%, #1E90FF 100%);
+    
+    /* Hover states */
+    --hover-ocean-light: rgba(64, 224, 208, 0.1);
+    --ocean-hover: rgba(64, 224, 208, 0.15);
+    
+    /* Active states */
+    --active-ocean-bg: rgba(64, 224, 208, 0.15);
+    
+    /* Overlay */
+    --overlay-ocean: rgba(64, 224, 208, 0.05);
+  }
+  
+  /* ========== DESIGN TOKEN SYSTEM ========== */
+  /* These CSS variables are populated by ThemeProvider based on route */
+  /* Bold Minimaximalist on marketing routes, MT Ocean on platform routes */
+  
+  /* Design token CSS variables will be set by ThemeProvider */
+  /* See client/src/contexts/theme-context.tsx for implementation */
+  
+  /* Transition speeds for Tailwind integration */
+  .duration-150 {
+    transition-duration: 150ms;
+  }
+  
+  .duration-300 {
+    transition-duration: 300ms;
+  }
+  
+  /* Theme-aware utility classes */
+  @layer utilities {
+    .theme-transition {
+      transition-duration: var(--transition-speed);
+      transition-timing-function: var(--animation-curve);
+    }
+    
+    .theme-shadow {
+      box-shadow: var(--shadow-medium);
+    }
+    
+    .theme-shadow-large {
+      box-shadow: var(--shadow-large);
+    }
+
+    /* Navigation-specific utilities */
+    .active-ocean {
+      background-color: var(--active-ocean-bg);
+      color: var(--seafoam);
+      font-weight: 600;
+    }
+    
+    .hover-ocean-light:hover {
+      background-color: var(--hover-ocean-light);
+    }
+    
+    .text-ocean {
+      color: var(--ocean);
+    }
+    
+    .text-ocean-muted {
+      color: var(--ocean-muted);
+    }
+    
+    .text-ocean-secondary {
+      color: var(--ocean-secondary);
+    }
+    
+    .text-seafoam {
+      color: var(--seafoam);
+    }
+    
+    .bg-ocean-gradient {
+      background: var(--bg-ocean-gradient);
+    }
+    
+    .bg-profile-card {
+      background: var(--profile-card-bg);
+    }
+    
+    .border-profile-border {
+      border-color: var(--profile-border);
+    }
+    
+    .bg-stat-card {
+      background: var(--stat-card-bg);
+    }
+    
+    .border-stat-border {
+      border-color: var(--stat-border);
+    }
+    
+    .bg-stat-icon {
+      background: var(--stat-icon-bg);
+    }
+    
+    .bg-footer-brand {
+      background: var(--footer-brand-bg);
+    }
+    
+    .border-footer-border {
+      border-color: var(--footer-border);
+    }
+    
+    .bg-brand-icon {
+      background: var(--brand-icon-bg);
+    }
+    
+    .text-brand-gradient {
+      background: linear-gradient(135deg, #40E0D0 0%, #1E90FF 50%, #0047AB 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .bg-avatar-light {
+      background: var(--avatar-light-bg);
+    }
+    
+    .bg-avatar-dark {
+      background: linear-gradient(135deg, #003A8F 0%, #002052 100%);
+    }
+    
+    .overlay-ocean {
+      background: var(--overlay-ocean);
+    }
+    
+    .border-seafoam {
+      border-color: var(--seafoam);
+    }
+    
+    /* Screen reader only utility class for accessibility */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border-width: 0;
+    }
+  }
+}

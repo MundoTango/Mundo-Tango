@@ -1,0 +1,39 @@
+{
+  "buttons": {
+    "login": "Anmelden",
+    "logout": "Abmelden",
+    "register": "Registrieren",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "submit": "Senden",
+    "back": "Zurück",
+    "next": "Weiter",
+    "close": "Schließen",
+    "confirm": "Bestätigen",
+    "search": "Suchen",
+    "getStarted": "Jetzt Starten",
+    "joinNow": "Jetzt Beitreten"
+  },
+  "labels": {
+    "email": "E-Mail",
+    "password": "Passwort",
+    "username": "Benutzername",
+    "name": "Name",
+    "location": "Standort",
+    "language": "Sprache",
+    "settings": "Einstellungen"
+  },
+  "messages": {
+    "loading": "Lädt...",
+    "success": "Erfolg!",
+    "welcome": "Willkommen bei Mundo Tango",
+    "noResults": "Keine Ergebnisse gefunden"
+  },
+  "common": {
+    "yes": "Ja",
+    "no": "Nein",
+    "all": "Alle"
+  }
+}

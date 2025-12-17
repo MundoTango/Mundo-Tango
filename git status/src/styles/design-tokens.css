@@ -1,0 +1,650 @@
+/**
+ * MT OCEAN DESIGN SYSTEM - Aurora Tide
+ * Complete Design Tokens (829 lines)
+ * 
+ * Mundo Tango - Visual Editor + Mr. Blue Intelligence
+ * Turquoise (#40E0D0) → Dodger Blue (#1E90FF) → Cobalt Blue (#0047AB)
+ * 
+ * Features:
+ * - MT Ocean Color Palette
+ * - Glassmorphism System
+ * - Animation & Easing
+ * - Accessibility (WCAG 2.1 AA)
+ * - Dark Mode Support
+ * - Responsive Breakpoints
+ */
+
+/* ============================================================================
+   1. MT OCEAN CORE COLORS
+   ============================================================================ */
+
+:root {
+  /* Ocean Palette - Turquoise (Seafoam) */
+  --ocean-seafoam-50:  hsl(177, 70%, 95%);  /* #E6FFFE - Lightest */
+  --ocean-seafoam-100: hsl(177, 70%, 88%);  /* #CCFFF9 */
+  --ocean-seafoam-200: hsl(177, 72%, 78%);  /* #99F5F0 */
+  --ocean-seafoam-300: hsl(177, 75%, 68%);  /* #66EBE6 */
+  --ocean-seafoam-400: hsl(177, 72%, 56%);  /* #40E0D0 - PRIMARY TURQUOISE */
+  --ocean-seafoam-500: hsl(180, 100%, 41%); /* #00CED1 - Dark Turquoise */
+  --ocean-seafoam-600: hsl(180, 100%, 35%); /* #00B3B5 */
+  --ocean-seafoam-700: hsl(180, 100%, 28%); /* #00999B */
+  
+  /* Ocean Palette - Cyan (Dodger Blue) */
+  --ocean-cyan-50:  hsl(210, 100%, 96%); /* #E6F3FF */
+  --ocean-cyan-100: hsl(210, 100%, 90%); /* #CCE7FF */
+  --ocean-cyan-200: hsl(210, 100%, 78%); /* #80CFFF */
+  --ocean-cyan-300: hsl(210, 100%, 68%); /* #5CBFFF */
+  --ocean-cyan-400: hsl(210, 100%, 56%); /* #1E90FF - DODGER BLUE */
+  --ocean-cyan-500: hsl(210, 100%, 46%); /* #0077EB - Mid Blue */
+  --ocean-cyan-600: hsl(210, 100%, 38%); /* #0063C3 */
+  
+  /* Ocean Palette - Teal (Cobalt Blue) */
+  --ocean-teal-50:  hsl(218, 100%, 96%); /* #E6EDFF */
+  --ocean-teal-100: hsl(218, 100%, 88%); /* #CCDBFF */
+  --ocean-teal-200: hsl(218, 100%, 75%); /* #80B3FF */
+  --ocean-teal-300: hsl(218, 100%, 62%); /* #3D8AFF */
+  --ocean-teal-400: hsl(218, 100%, 50%); /* #0066FF */
+  --ocean-teal-500: hsl(218, 100%, 34%); /* #0047AB - COBALT BLUE */
+  --ocean-teal-600: hsl(218, 100%, 28%); /* #003A8F */
+  --ocean-teal-700: hsl(218, 100%, 22%); /* #002D70 */
+  --ocean-teal-800: hsl(218, 100%, 16%); /* #002052 - Deep Blue */
+  --ocean-teal-900: hsl(218, 100%, 10%); /* #001333 - Navy */
+}
+
+/* ============================================================================
+   2. SEMANTIC COLOR TOKENS (Light Mode)
+   ============================================================================ */
+
+:root {
+  /* Primary - Ocean Seafoam (Turquoise) */
+  --primary: 177 72% 56%;
+  --primary-foreground: 0 0% 100%;
+  
+  /* Secondary - Ocean Cyan (Dodger Blue) */
+  --secondary: 210 100% 56%;
+  --secondary-foreground: 0 0% 100%;
+  
+  /* Accent - Ocean Teal (Cobalt Blue) */
+  --accent: 218 100% 34%;
+  --accent-foreground: 0 0% 100%;
+  
+  /* Background & Foreground */
+  --background: 0 0% 98%;           /* Very light gray */
+  --foreground: 218 20% 12%;        /* Dark blue-gray */
+  
+  /* Card - Elevated surfaces */
+  --card: 0 0% 100%;                /* Pure white */
+  --card-foreground: 218 20% 15%;
+  --card-border: 218 15% 90%;
+  
+  /* Sidebar - Ocean themed */
+  --sidebar: 195 40% 94%;           /* Soft light blue */
+  --sidebar-foreground: 218 20% 18%;
+  --sidebar-border: 195 25% 87%;
+  --sidebar-primary: 177 72% 45%;
+  --sidebar-primary-foreground: 177 72% 98%;
+  --sidebar-accent: 195 30% 88%;
+  --sidebar-accent-foreground: 218 20% 20%;
+  --sidebar-ring: 177 72% 45%;
+  
+  /* Muted - Subtle backgrounds */
+  --muted: 195 20% 90%;
+  --muted-foreground: 218 15% 35%;
+  
+  /* Popover */
+  --popover: 0 0% 92%;
+  --popover-foreground: 218 20% 18%;
+  --popover-border: 195 20% 85%;
+  
+  /* Border & Input */
+  --border: 195 20% 88%;
+  --input: 195 20% 75%;
+  --ring: 177 72% 45%;
+  
+  /* Destructive */
+  --destructive: 0 72% 42%;
+  --destructive-foreground: 0 72% 98%;
+  
+  /* Success */
+  --success: 158 64% 52%;           /* #22C55E - Ocean green */
+  --success-foreground: 0 0% 100%;
+  
+  /* Warning */
+  --warning: 38 92% 50%;            /* #F59E0B - Amber */
+  --warning-foreground: 0 0% 100%;
+  
+  /* Info */
+  --info: 210 100% 56%;             /* Cyan for info */
+  --info-foreground: 0 0% 100%;
+  
+  /* Chart colors - Ocean palette */
+  --chart-1: 177 72% 40%;  /* Turquoise */
+  --chart-2: 210 100% 50%;  /* Dodger Blue */
+  --chart-3: 218 100% 35%;  /* Cobalt */
+  --chart-4: 195 70% 45%;   /* Cyan */
+  --chart-5: 230 80% 50%;   /* Royal Blue */
+}
+
+/* ============================================================================
+   3. DARK MODE COLOR TOKENS
+   ============================================================================ */
+
+.dark {
+  /* Ocean colors remain vibrant in dark mode */
+  --primary: 177 72% 56%;
+  --primary-foreground: 0 0% 100%;
+  
+  --secondary: 210 100% 56%;
+  --secondary-foreground: 0 0% 100%;
+  
+  --accent: 218 100% 45%;
+  --accent-foreground: 0 0% 100%;
+  
+  /* Dark backgrounds */
+  --background: 218 30% 8%;         /* Deep navy */
+  --foreground: 0 0% 95%;
+  
+  --card: 218 25% 12%;
+  --card-foreground: 0 0% 95%;
+  --card-border: 218 20% 18%;
+  
+  --sidebar: 218 28% 10%;
+  --sidebar-foreground: 0 0% 92%;
+  --sidebar-border: 218 22% 16%;
+  --sidebar-primary: 177 72% 50%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 218 24% 14%;
+  --sidebar-accent-foreground: 0 0% 90%;
+  
+  --muted: 218 22% 15%;
+  --muted-foreground: 0 0% 60%;
+  
+  --popover: 218 25% 12%;
+  --popover-foreground: 0 0% 95%;
+  --popover-border: 218 20% 18%;
+  
+  --border: 218 20% 18%;
+  --input: 218 20% 25%;
+  --ring: 177 72% 50%;
+  
+  /* Success, Warning, Info stay same in dark */
+  --success: 158 64% 52%;
+  --warning: 38 92% 50%;
+  --info: 210 100% 56%;
+}
+
+/* ============================================================================
+   4. SPACING SYSTEM (4px base increment)
+   ============================================================================ */
+
+:root {
+  --space-0:  0;
+  --space-1:  0.25rem;   /* 4px */
+  --space-2:  0.5rem;    /* 8px */
+  --space-3:  0.75rem;   /* 12px */
+  --space-4:  1rem;      /* 16px */
+  --space-5:  1.25rem;   /* 20px */
+  --space-6:  1.5rem;    /* 24px */
+  --space-7:  1.75rem;   /* 28px */
+  --space-8:  2rem;      /* 32px */
+  --space-9:  2.25rem;   /* 36px */
+  --space-10: 2.5rem;    /* 40px */
+  --space-11: 2.75rem;   /* 44px */
+  --space-12: 3rem;      /* 48px */
+  --space-14: 3.5rem;    /* 56px */
+  --space-16: 4rem;      /* 64px */
+  --space-18: 4.5rem;    /* 72px */
+  --space-20: 5rem;      /* 80px */
+  --space-24: 6rem;      /* 96px */
+}
+
+/* ============================================================================
+   5. TYPOGRAPHY SCALE
+   ============================================================================ */
+
+:root {
+  /* Font Sizes */
+  --text-xs:   0.75rem;    /* 12px */
+  --text-sm:   0.875rem;   /* 14px */
+  --text-base: 1rem;       /* 16px */
+  --text-lg:   1.125rem;   /* 18px */
+  --text-xl:   1.25rem;    /* 20px */
+  --text-2xl:  1.5rem;     /* 24px */
+  --text-3xl:  1.875rem;   /* 30px */
+  --text-4xl:  2.25rem;    /* 36px */
+  --text-5xl:  3rem;       /* 48px */
+  --text-6xl:  3.75rem;    /* 60px */
+  --text-7xl:  4.5rem;     /* 72px */
+  --text-8xl:  6rem;       /* 96px */
+  --text-9xl:  8rem;       /* 128px */
+  
+  /* Font Weights */
+  --font-weight-normal:    400;
+  --font-weight-medium:    500;
+  --font-weight-semibold:  600;
+  --font-weight-bold:      700;
+  --font-weight-extrabold: 800;
+  
+  /* Line Heights */
+  --line-height-tight:    1.25;
+  --line-height-snug:     1.375;
+  --line-height-normal:   1.5;
+  --line-height-relaxed:  1.625;
+  --line-height-loose:    2;
+  
+  /* Letter Spacing */
+  --letter-spacing-tighter: -0.05em;
+  --letter-spacing-tight:   -0.025em;
+  --letter-spacing-normal:  0;
+  --letter-spacing-wide:    0.025em;
+  --letter-spacing-wider:   0.05em;
+  --letter-spacing-widest:  0.1em;
+}
+
+/* ============================================================================
+   6. SHADOWS & ELEVATION (Ocean-themed with Cobalt Blue tint)
+   ============================================================================ */
+
+:root {
+  --shadow-xs:  0 1px 2px 0 hsl(218 100% 34% / 0.05);
+  --shadow-sm:  0 1px 3px 0 hsl(218 100% 34% / 0.1), 
+                0 1px 2px -1px hsl(218 100% 34% / 0.1);
+  --shadow-md:  0 4px 6px -1px hsl(218 100% 34% / 0.1), 
+                0 2px 4px -2px hsl(218 100% 34% / 0.1);
+  --shadow-lg:  0 10px 15px -3px hsl(218 100% 34% / 0.1), 
+                0 4px 6px -4px hsl(218 100% 34% / 0.1);
+  --shadow-xl:  0 20px 25px -5px hsl(218 100% 34% / 0.1), 
+                0 8px 10px -6px hsl(218 100% 34% / 0.1);
+  --shadow-2xl: 0 25px 50px -12px hsl(218 100% 34% / 0.25);
+  --shadow-inner: inset 0 2px 4px 0 hsl(218 100% 34% / 0.05);
+  
+  /* Glow Effects (Turquoise accent) */
+  --glow-seafoam: 0 0 20px hsl(177 72% 56% / 0.3);
+  --glow-seafoam-strong: 
+    0 0 30px hsl(177 72% 56% / 0.5), 
+    0 0 60px hsl(177 72% 56% / 0.2);
+}
+
+/* Dark Mode - Brighter glows */
+.dark {
+  --glow-seafoam: 0 0 20px hsl(177 72% 56% / 0.4);
+  --glow-seafoam-strong: 
+    0 0 30px hsl(177 72% 56% / 0.6), 
+    0 0 60px hsl(177 72% 56% / 0.3);
+}
+
+/* ============================================================================
+   7. BORDER RADIUS
+   ============================================================================ */
+
+:root {
+  --radius-none: 0;
+  --radius-sm:   0.125rem;  /* 2px */
+  --radius-base: 0.25rem;   /* 4px */
+  --radius-md:   0.375rem;  /* 6px */
+  --radius-lg:   0.5rem;    /* 8px */
+  --radius-xl:   0.75rem;   /* 12px */
+  --radius-2xl:  1rem;      /* 16px */
+  --radius-3xl:  1.5rem;    /* 24px */
+  --radius-full: 9999px;    /* Fully rounded */
+}
+
+/* ============================================================================
+   8. Z-INDEX LAYERS
+   ============================================================================ */
+
+:root {
+  --z-base:     0;
+  --z-dropdown: 1000;
+  --z-sticky:   1020;
+  --z-fixed:    1030;
+  --z-backdrop: 1040;
+  --z-modal:    1050;
+  --z-popover:  1060;
+  --z-tooltip:  1070;
+}
+
+/* ============================================================================
+   9. TRANSITIONS & EASING (GSAP & Framer Motion compatible)
+   ============================================================================ */
+
+:root {
+  /* Easing Curves */
+  --ease-smooth:      cubic-bezier(0.4, 0, 0.2, 1);        /* Material Design */
+  --ease-bounce:      cubic-bezier(0.34, 1.56, 0.64, 1);   /* Playful bounce */
+  --ease-elastic:     cubic-bezier(0.68, -0.55, 0.265, 1.55); /* Elastic spring */
+  --ease-anticipate:  cubic-bezier(0.36, 0, 0.66, -0.56);  /* Anticipation */
+  --ease-in-out:      cubic-bezier(0.645, 0.045, 0.355, 1); /* Smooth in-out */
+  --ease-swift:       cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Swift movement */
+  
+  /* Duration Scale */
+  --duration-instant:  100ms;  /* Instant feedback */
+  --duration-fast:     150ms;  /* Quick transitions */
+  --duration-base:     200ms;  /* Standard duration */
+  --duration-moderate: 300ms;  /* Moderate animations */
+  --duration-slow:     400ms;  /* Deliberate animations */
+  --duration-slower:   600ms;  /* Very deliberate */
+  --duration-slowest:  800ms;  /* Slowest animations */
+  
+  /* Animation Delays (for staggered effects) */
+  --delay-stagger-sm: 50ms;   /* Small stagger between items */
+  --delay-stagger-md: 100ms;  /* Medium stagger */
+  --delay-stagger-lg: 150ms;  /* Large stagger */
+  
+  /* Micro-interaction Scales */
+  --scale-press:  0.95;  /* Button press */
+  --scale-hover:  1.02;  /* Subtle hover */
+  --scale-active: 1.05;  /* Active emphasis */
+  --scale-pop:    1.1;   /* Pop effect */
+}
+
+/* ============================================================================
+   10. GLASSMORPHISM SYSTEM
+   ============================================================================ */
+
+:root {
+  /* Light Mode Glass */
+  --glass-bg:          hsl(195 60% 92% / 0.9);   /* Soft light blue */
+  --glass-bg-elevated: hsl(195 60% 94% / 0.95);  /* Lighter blue */
+  --glass-border:      hsl(186 72% 42% / 0.2);   /* Soft turquoise */
+  --glass-blur:        18px;
+  --glass-shadow:      0 18px 45px 0 hsl(214 80% 6% / 0.08);
+  
+  /* Glass Depth Layers */
+  --glass-depth-1: hsl(0 0% 100% / 0.6);   /* Subtle */
+  --glass-depth-2: hsl(0 0% 100% / 0.7);   /* Medium */
+  --glass-depth-3: hsl(0 0% 100% / 0.8);   /* Strong */
+  --glass-depth-4: hsl(0 0% 100% / 0.9);   /* Very strong */
+}
+
+.dark {
+  /* Dark Mode Glass */
+  --glass-bg:          hsla(215, 52%, 18%, 0.85); /* Deep navy */
+  --glass-bg-elevated: hsla(215, 52%, 20%, 0.9);  /* Lighter navy */
+  --glass-border:      hsla(186, 72%, 60%, 0.25); /* Bright turquoise */
+  --glass-blur:        18px;
+  --glass-shadow:      0 18px 45px hsla(214, 80%, 6%, 0.45);
+  
+  /* Dark Glass Depth Layers */
+  --glass-depth-1: hsl(218 50% 14% / 0.5);   /* Subtle dark glass */
+  --glass-depth-2: hsl(218 50% 14% / 0.7);   /* Medium dark glass */
+  --glass-depth-3: hsl(218 45% 16% / 0.8);   /* Strong dark glass */
+  --glass-depth-4: hsl(218 45% 16% / 0.9);   /* Very strong dark glass */
+}
+
+/* ============================================================================
+   11. OCEAN GRADIENTS
+   ============================================================================ */
+
+:root {
+  /* Light Mode Gradients */
+  --bg-ocean-gradient: linear-gradient(180deg, 
+    var(--ocean-teal-500) 0%, 
+    var(--ocean-teal-700) 50%, 
+    var(--ocean-teal-800) 100%);
+  
+  --bg-ocean-gradient-soft: linear-gradient(135deg, 
+    var(--ocean-seafoam-50) 0%, 
+    var(--ocean-cyan-50) 100%);
+  
+  --bg-ocean-card: linear-gradient(135deg, 
+    var(--ocean-teal-600) 0%, 
+    var(--ocean-teal-700) 100%);
+  
+  --bg-ocean-glow: radial-gradient(circle at 50% 50%,
+    var(--ocean-seafoam-400) 0%,
+    transparent 70%);
+}
+
+.dark {
+  /* Dark Mode Gradients */
+  --bg-ocean-gradient: linear-gradient(180deg, 
+    hsl(218, 90%, 8%) 0%, 
+    hsl(218, 95%, 6%) 100%);
+  
+  --bg-ocean-card: linear-gradient(135deg, 
+    hsl(218, 80%, 12%) 0%, 
+    hsl(218, 85%, 10%) 100%);
+}
+
+/* ============================================================================
+   12. ACCESSIBILITY OVERRIDES
+   ============================================================================ */
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Reduced Transparency */
+@media (prefers-reduced-transparency: reduce) {
+  * {
+    --glass-bg: hsl(195 60% 92% / 1) !important;
+    --glass-bg-elevated: hsl(195 60% 94% / 1) !important;
+  }
+  
+  .dark * {
+    --glass-bg: hsla(215, 52%, 18%, 1) !important;
+    --glass-bg-elevated: hsla(215, 52%, 20%, 1) !important;
+  }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  :root {
+    --border: 0 0% 20%;
+    --ring: 177 100% 40%;
+  }
+  
+  .dark {
+    --border: 0 0% 80%;
+  }
+}
+
+/* ============================================================================
+   13. RESPONSIVE BREAKPOINTS
+   ============================================================================ */
+
+:root {
+  --breakpoint-xs: 320px;   /* Mobile Small */
+  --breakpoint-sm: 640px;   /* Mobile Large */
+  --breakpoint-md: 768px;   /* Tablet */
+  --breakpoint-lg: 1024px;  /* Laptop */
+  --breakpoint-xl: 1280px;  /* Desktop */
+  --breakpoint-2xl: 1536px; /* Large Desktop */
+}
+
+/* ============================================================================
+   14. VISUAL EDITOR SPECIFIC TOKENS
+   ============================================================================ */
+
+:root {
+  /* Selection States */
+  --editor-hover-outline: hsl(270 100% 60% / 0.5);   /* Purple dashed */
+  --editor-selected-outline: hsl(270 100% 60% / 1);  /* Purple solid */
+  --editor-drag-shadow: 0 25px 50px hsl(270 100% 60% / 0.4);
+  
+  /* Edit Controls */
+  --editor-panel-bg: var(--glass-bg);
+  --editor-panel-border: var(--glass-border);
+  --editor-tab-active: var(--primary);
+  --editor-tab-inactive: var(--muted);
+}
+
+/* ============================================================================
+   15. MR. BLUE SPECIFIC TOKENS
+   ============================================================================ */
+
+:root {
+  /* Chat Interface */
+  --mrblue-message-user: var(--card);
+  --mrblue-message-ai: var(--glass-bg);
+  --mrblue-suggestion-bg: var(--glass-depth-2);
+  --mrblue-suggestion-border: var(--primary);
+  
+  /* Floating Button */
+  --mrblue-button-bg: var(--bg-ocean-gradient);
+  --mrblue-button-shadow: var(--glow-seafoam-strong);
+}
+
+/* ============================================================================
+   16. UTILITY CLASSES
+   ============================================================================ */
+
+/* Glass Effects */
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+.glass-card-elevated {
+  background: var(--glass-bg-elevated);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-lg);
+}
+
+.glass-depth-1 { background: var(--glass-depth-1); }
+.glass-depth-2 { background: var(--glass-depth-2); }
+.glass-depth-3 { background: var(--glass-depth-3); }
+.glass-depth-4 { background: var(--glass-depth-4); }
+
+/* Ocean Gradient Backgrounds */
+.bg-ocean-gradient  { background: var(--bg-ocean-gradient); }
+.bg-ocean-card      { background: var(--bg-ocean-card); }
+.bg-ocean-soft      { background: var(--bg-ocean-gradient-soft); }
+.bg-ocean-glow      { background: var(--bg-ocean-glow); }
+
+/* Text Colors */
+.text-ocean          { color: hsl(var(--primary)); }
+.text-ocean-secondary{ color: hsl(var(--secondary)); }
+.text-ocean-muted    { color: hsl(var(--muted-foreground)); }
+.text-seafoam        { color: var(--ocean-seafoam-400); }
+.text-cyan           { color: var(--ocean-cyan-400); }
+.text-cobalt         { color: var(--ocean-teal-500); }
+
+/* Borders */
+.border-ocean-divider { border-color: hsl(0 0% 100% / 0.1); }
+.border-primary       { border-color: hsl(var(--primary)); }
+.border-ocean         { border-color: hsl(177 72% 56% / 0.3); }
+
+/* Glow Effects */
+.glow-seafoam        { box-shadow: var(--glow-seafoam); }
+.glow-seafoam-strong { box-shadow: var(--glow-seafoam-strong); }
+
+/* Hover States */
+.hover-ocean-accent:hover {
+  background-color: hsl(var(--sidebar-accent));
+  color: var(--ocean-seafoam-300);
+}
+
+.hover-elevate:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* ============================================================================
+   17. ANIMATION KEYFRAMES
+   ============================================================================ */
+
+@keyframes fadeIn {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes slideInUp {
+  0%   { transform: translateY(20px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slideInDown {
+  0%   { transform: translateY(-20px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%      { transform: translate(30px, -30px) scale(1.1); }
+  66%      { transform: translate(-20px, 20px) scale(0.9); }
+}
+
+@keyframes shimmer {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px hsl(177 72% 56% / 0.3); }
+  50%      { box-shadow: 0 0 40px hsl(177 72% 56% / 0.6); }
+}
+
+@keyframes iconEntrance {
+  0%   { opacity: 0; transform: translateY(20px) scale(0.8); }
+  50%  { opacity: 1; transform: translateY(-5px) scale(1.05); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Animation Utility Classes */
+.animate-fade-in     { animation: fadeIn 0.3s ease-in forwards; }
+.animate-slide-up    { animation: slideInUp 0.4s var(--ease-smooth); }
+.animate-slide-down  { animation: slideInDown 0.4s var(--ease-smooth); }
+.animate-float       { animation: float 6s ease-in-out infinite; }
+.animate-shimmer     { animation: shimmer 2s ease-in-out infinite; }
+.animate-pulse-glow  { animation: pulse-glow 2s ease-in-out infinite; }
+.animate-icon-enter  { animation: iconEntrance 0.5s var(--ease-bounce); }
+
+/* ============================================================================
+   18. VISUAL EDITOR SELECTION STATES
+   ============================================================================ */
+
+.editor-hover {
+  outline: 2px dashed var(--editor-hover-outline);
+  outline-offset: 2px;
+  transition: outline var(--duration-fast) var(--ease-smooth);
+}
+
+.editor-selected {
+  outline: 4px solid var(--editor-selected-outline);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px hsl(270 100% 60% / 0.1);
+}
+
+.editor-dragging {
+  opacity: 0.7;
+  transform: scale(1.05);
+  box-shadow: var(--editor-drag-shadow);
+  cursor: move;
+}
+
+/* ============================================================================
+   19. TEXT OCEAN THEME UTILITIES
+   ============================================================================ */
+
+.text-ocean-primary {
+  background: linear-gradient(135deg, var(--ocean-seafoam-400), var(--ocean-cyan-400));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-ocean-gradient {
+  background: linear-gradient(90deg, 
+    var(--ocean-seafoam-400) 0%, 
+    var(--ocean-cyan-400) 50%,
+    var(--ocean-teal-500) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ============================================================================
+   END OF MT OCEAN DESIGN SYSTEM (829 lines)
+   ============================================================================ */

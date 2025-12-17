@@ -1,0 +1,591 @@
+{
+  "name": "Mr Blue - Self-Healing Monitor",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "mr-blue-self-healing",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "mr-blue-self-healing"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract error details\nconst error = $input.item.json.body.error;\nconst context = $input.item.json.body.context || {};\nconst stackTrace = $input.item.json.body.stackTrace;\nconst userId = $input.item.json.body.userId;\nconst conversationId = $input.item.json.body.conversationId;\n\n// Validate HMAC signature\nconst crypto = require('crypto');\nconst receivedSignature = $input.item.json.headers['x-webhook-secret'];\nconst webhookSecret = $env.N8N_WEBHOOK_SECRET;\nconst payload = JSON.stringify($input.item.json.body);\nconst expectedSignature = crypto.createHmac('sha256', webhookSecret).update(payload).digest('hex');\n\nif (receivedSignature !== expectedSignature) {\n  throw new Error('Invalid webhook signature');\n}\n\n// Extract error metadata\nconst errorType = error.name || 'UnknownError';\nconst errorMessage = error.message || 'No error message';\nconst errorCode = error.code || null;\n\nreturn {\n  error: {\n    type: errorType,\n    message: errorMessage,\n    code: errorCode,\n    stackTrace\n  },\n  context,\n  userId,\n  conversationId,\n  timestamp: new Date().toISOString()\n};"
+      },
+      "id": "extract-error",
+      "name": "Extract Error Details",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://api.groq.com/openai/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"llama-3.3-70b-versatile\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are an expert error analyst for Mr. Blue. Analyze errors and provide: 1) Root cause, 2) Severity (critical/high/medium/low), 3) Confidence score (0-100), 4) Recommended fix approach. Be concise and actionable.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"Analyze this error:\\n\\nType: {{ $json.error.type }}\\nMessage: {{ $json.error.message }}\\nCode: {{ $json.error.code }}\\nStack Trace:\\n{{ $json.error.stackTrace }}\\n\\nContext:\\n{{ JSON.stringify($json.context) }}\"\n    }\n  ],\n  \"temperature\": 0.2,\n  \"max_tokens\": 800\n}",
+        "options": {}
+      },
+      "id": "analyze-error",
+      "name": "AI Error Analysis",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [650, 300],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "groq-api",
+          "name": "Groq API Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse AI analysis response\nconst aiResponse = $input.item.json.choices[0].message.content;\nconst error = $input.item.json.error;\nconst context = $input.item.json.context;\n\n// Extract confidence score from AI response\nconst confidenceMatch = aiResponse.match(/confidence[:\\s]+(\\d+)/i);\nconst confidence = confidenceMatch ? parseInt(confidenceMatch[1]) : 50;\n\n// Extract severity\nconst severityMatch = aiResponse.match(/severity[:\\s]+(critical|high|medium|low)/i);\nconst severity = severityMatch ? severityMatch[1].toLowerCase() : 'medium';\n\n// Determine action based on confidence\nlet action = 'alert'; // default\nif (confidence >= 95) {\n  action = 'auto_fix';\n} else if (confidence >= 80) {\n  action = 'stage_fix';\n} else {\n  action = 'alert';\n}\n\nreturn {\n  error,\n  context,\n  analysis: {\n    aiResponse,\n    confidence,\n    severity,\n    action\n  },\n  userId: $input.item.json.userId,\n  conversationId: $input.item.json.conversationId,\n  timestamp: new Date().toISOString()\n};"
+      },
+      "id": "parse-analysis",
+      "name": "Parse Analysis",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "auto_fix",
+              "leftValue": "={{ $json.analysis.action }}",
+              "rightValue": "auto_fix",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "stage_fix",
+              "leftValue": "={{ $json.analysis.action }}",
+              "rightValue": "stage_fix",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "alert",
+              "leftValue": "={{ $json.analysis.action }}",
+              "rightValue": "alert",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "route-by-action",
+      "name": "Route by Action",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [1050, 300]
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.MUNDO_TANGO_URL }}/api/mrblue/vibe-coding",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "task",
+              "value": "Fix this error: {{ $json.error.message }}"
+            },
+            {
+              "name": "context",
+              "value": "={{ $json.context }}"
+            },
+            {
+              "name": "errorDetails",
+              "value": "={{ $json.error }}"
+            },
+            {
+              "name": "analysis",
+              "value": "={{ $json.analysis.aiResponse }}"
+            },
+            {
+              "name": "autoApply",
+              "value": true
+            }
+          ]
+        },
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "id": "generate-fix",
+      "name": "Generate Fix (VibeCoding)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1250, 200],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "mundo-tango-api",
+          "name": "Mundo Tango API Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Validate the generated fix\nconst fix = $input.item.json.fix;\nconst error = $input.item.json.error;\n\n// Run basic validation checks\nconst validationResults = {\n  syntaxValid: fix.syntaxValid !== false,\n  testsPass: fix.testsPass !== false,\n  noNewErrors: fix.newErrors === undefined || fix.newErrors.length === 0\n};\n\nconst allValid = Object.values(validationResults).every(v => v === true);\n\nreturn {\n  error,\n  fix,\n  validation: validationResults,\n  isValid: allValid,\n  confidence: $input.item.json.analysis.confidence,\n  timestamp: new Date().toISOString()\n};"
+      },
+      "id": "validate-fix",
+      "name": "Validate Fix",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1450, 200]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "valid",
+              "leftValue": "={{ $json.isValid }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            },
+            {
+              "id": "invalid",
+              "leftValue": "={{ $json.isValid }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "false"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "check-validation",
+      "name": "Check Validation",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [1650, 200]
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.MUNDO_TANGO_URL }}/api/mrblue/apply-fix",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "fix",
+              "value": "={{ $json.fix }}"
+            },
+            {
+              "name": "error",
+              "value": "={{ $json.error }}"
+            },
+            {
+              "name": "commitMessage",
+              "value": "Auto-fix: {{ $json.error.message }} (confidence: {{ $json.confidence }}%)"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "apply-fix",
+      "name": "Apply Fix & Commit",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1850, 150],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "mundo-tango-api",
+          "name": "Mundo Tango API Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.MUNDO_TANGO_URL }}/api/mrblue/stage-fix",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "fix",
+              "value": "={{ $json.fix }}"
+            },
+            {
+              "name": "error",
+              "value": "={{ $json.error }}"
+            },
+            {
+              "name": "reason",
+              "value": "Validation failed - requires manual review"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "stage-for-review",
+      "name": "Stage for Review",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1850, 250],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "mundo-tango-api",
+          "name": "Mundo Tango API Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.MUNDO_TANGO_URL }}/api/mrblue/stage-fix",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "fix",
+              "value": "={{ $json.fix }}"
+            },
+            {
+              "name": "error",
+              "value": "={{ $json.error }}"
+            },
+            {
+              "name": "analysis",
+              "value": "={{ $json.analysis }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "stage-fix-medium",
+      "name": "Stage Fix (80-95% confidence)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1250, 300],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "mundo-tango-api",
+          "name": "Mundo Tango API Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.MUNDO_TANGO_URL }}/api/mrblue/alert",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "type",
+              "value": "error_alert"
+            },
+            {
+              "name": "error",
+              "value": "={{ $json.error }}"
+            },
+            {
+              "name": "analysis",
+              "value": "={{ $json.analysis }}"
+            },
+            {
+              "name": "severity",
+              "value": "={{ $json.analysis.severity }}"
+            },
+            {
+              "name": "userId",
+              "value": "={{ $json.userId }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "alert-user",
+      "name": "Alert User (<80% confidence)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1250, 400],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "mundo-tango-api",
+          "name": "Mundo Tango API Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.MUNDO_TANGO_URL }}/api/mrblue/n8n-callback",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "action",
+              "value": "self_healing_complete"
+            },
+            {
+              "name": "error",
+              "value": "={{ $json.error }}"
+            },
+            {
+              "name": "result",
+              "value": "={{ $json }}"
+            },
+            {
+              "name": "timestamp",
+              "value": "={{ $json.timestamp }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "callback-mr-blue",
+      "name": "Callback to Mr Blue",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [2050, 300],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "mundo-tango-api",
+          "name": "Mundo Tango API Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ {\n  \"success\": true,\n  \"message\": \"Self-healing process complete\",\n  \"action\": $json.analysis.action,\n  \"confidence\": $json.analysis.confidence,\n  \"timestamp\": $json.timestamp\n} }}",
+        "options": {}
+      },
+      "id": "webhook-response",
+      "name": "Webhook Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [2250, 300]
+    }
+  ],
+  "connections": {
+    "webhook-trigger": {
+      "main": [
+        [
+          {
+            "node": "extract-error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "extract-error": {
+      "main": [
+        [
+          {
+            "node": "analyze-error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "analyze-error": {
+      "main": [
+        [
+          {
+            "node": "parse-analysis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "parse-analysis": {
+      "main": [
+        [
+          {
+            "node": "route-by-action",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "route-by-action": {
+      "main": [
+        [
+          {
+            "node": "generate-fix",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "stage-fix-medium",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "alert-user",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "generate-fix": {
+      "main": [
+        [
+          {
+            "node": "validate-fix",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "validate-fix": {
+      "main": [
+        [
+          {
+            "node": "check-validation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "check-validation": {
+      "main": [
+        [
+          {
+            "node": "apply-fix",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "stage-for-review",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "apply-fix": {
+      "main": [
+        [
+          {
+            "node": "callback-mr-blue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "stage-for-review": {
+      "main": [
+        [
+          {
+            "node": "callback-mr-blue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "stage-fix-medium": {
+      "main": [
+        [
+          {
+            "node": "callback-mr-blue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "alert-user": {
+      "main": [
+        [
+          {
+            "node": "callback-mr-blue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "callback-mr-blue": {
+      "main": [
+        [
+          {
+            "node": "webhook-response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "name": "mr-blue",
+      "id": "1"
+    },
+    {
+      "name": "self-healing",
+      "id": "2"
+    },
+    {
+      "name": "autofix",
+      "id": "3"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2025-12-17T00:00:00.000Z",
+  "versionId": "1"
+}

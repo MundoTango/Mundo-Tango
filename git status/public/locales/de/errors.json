@@ -1,0 +1,9 @@
+{
+  "auth": {
+    "invalidCredentials": "Ungültige E-Mail oder Passwort",
+    "loginRequired": "Bitte melden Sie sich an, um fortzufahren"
+  },
+  "general": {
+    "somethingWrong": "Etwas ist schief gelaufen. Bitte versuchen Sie es erneut"
+  }
+}

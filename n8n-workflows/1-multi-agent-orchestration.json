@@ -1,0 +1,350 @@
+{
+  "name": "Mr Blue - Multi-Agent Orchestration",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "mr-blue-multi-agent",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "mr-blue-multi-agent"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract task from webhook payload\nconst task = $input.item.json.body.task;\nconst context = $input.item.json.body.context || {};\nconst userId = $input.item.json.body.userId;\nconst conversationId = $input.item.json.body.conversationId;\n\n// Validate HMAC signature\nconst crypto = require('crypto');\nconst receivedSignature = $input.item.json.headers['x-webhook-secret'];\nconst webhookSecret = $env.N8N_WEBHOOK_SECRET;\nconst payload = JSON.stringify($input.item.json.body);\nconst expectedSignature = crypto.createHmac('sha256', webhookSecret).update(payload).digest('hex');\n\nif (receivedSignature !== expectedSignature) {\n  throw new Error('Invalid webhook signature');\n}\n\n// Decompose task into subtasks using AI\nconst subtasks = [];\n\n// Pattern detection for task type\nif (task.match(/create|build|generate/i)) {\n  subtasks.push({\n    type: 'research',\n    description: `Research requirements for: ${task}`,\n    agent: 'research_agent',\n    priority: 1\n  });\n  subtasks.push({\n    type: 'plan',\n    description: `Create execution plan for: ${task}`,\n    agent: 'planning_agent',\n    priority: 2,\n    dependsOn: ['research']\n  });\n  subtasks.push({\n    type: 'build',\n    description: `Execute build for: ${task}`,\n    agent: 'build_agent',\n    priority: 3,\n    dependsOn: ['plan']\n  });\n  subtasks.push({\n    type: 'validate',\n    description: `Validate output for: ${task}`,\n    agent: 'validation_agent',\n    priority: 4,\n    dependsOn: ['build']\n  });\n} else if (task.match(/fix|debug|repair/i)) {\n  subtasks.push({\n    type: 'analyze',\n    description: `Analyze error: ${task}`,\n    agent: 'error_analysis_agent',\n    priority: 1\n  });\n  subtasks.push({\n    type: 'fix',\n    description: `Generate fix for: ${task}`,\n    agent: 'autofix_agent',\n    priority: 2,\n    dependsOn: ['analyze']\n  });\n  subtasks.push({\n    type: 'test',\n    description: `Test fix for: ${task}`,\n    agent: 'testing_agent',\n    priority: 3,\n    dependsOn: ['fix']\n  });\n} else if (task.match(/analyze|research|investigate/i)) {\n  subtasks.push({\n    type: 'gather',\n    description: `Gather data for: ${task}`,\n    agent: 'data_gathering_agent',\n    priority: 1\n  });\n  subtasks.push({\n    type: 'analyze',\n    description: `Analyze data for: ${task}`,\n    agent: 'analysis_agent',\n    priority: 2,\n    dependsOn: ['gather']\n  });\n  subtasks.push({\n    type: 'summarize',\n    description: `Summarize findings for: ${task}`,\n    agent: 'summary_agent',\n    priority: 3,\n    dependsOn: ['analyze']\n  });\n} else {\n  // Default decomposition\n  subtasks.push({\n    type: 'execute',\n    description: task,\n    agent: 'general_agent',\n    priority: 1\n  });\n}\n\nreturn {\n  task,\n  context,\n  userId,\n  conversationId,\n  subtasks,\n  totalSubtasks: subtasks.length,\n  timestamp: new Date().toISOString()\n};"
+      },
+      "id": "task-decomposer",
+      "name": "Task Decomposer",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "id": "split-subtasks",
+      "name": "Split Subtasks",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get current subtask\nconst subtask = $input.item.json.subtasks[$input.context.nodesExecuted.splitSubtasks - 1];\nconst allSubtasks = $input.item.json.subtasks;\nconst completedResults = $input.context.completedResults || [];\n\n// Check dependencies\nif (subtask.dependsOn && subtask.dependsOn.length > 0) {\n  const missingDeps = subtask.dependsOn.filter(dep => {\n    return !completedResults.some(r => r.type === dep);\n  });\n  \n  if (missingDeps.length > 0) {\n    throw new Error(`Missing dependencies: ${missingDeps.join(', ')}`);\n  }\n}\n\n// Route to appropriate agent based on type\nconst agentEndpoints = {\n  research_agent: process.env.MUNDO_TANGO_URL + '/api/mrblue/research',\n  planning_agent: process.env.MUNDO_TANGO_URL + '/api/mrblue/plan',\n  build_agent: process.env.MUNDO_TANGO_URL + '/api/mrblue/build',\n  validation_agent: process.env.MUNDO_TANGO_URL + '/api/mrblue/validate',\n  error_analysis_agent: process.env.MUNDO_TANGO_URL + '/api/mrblue/analyze-error',\n  autofix_agent: process.env.MUNDO_TANGO_URL + '/api/mrblue/autofix',\n  testing_agent: process.env.MUNDO_TANGO_URL + '/api/mrblue/test',\n  data_gathering_agent: process.env.MUNDO_TANGO_URL + '/api/mrblue/gather',\n  analysis_agent: process.env.MUNDO_TANGO_URL + '/api/mrblue/analyze',\n  summary_agent: process.env.MUNDO_TANGO_URL + '/api/mrblue/summarize',\n  general_agent: process.env.MUNDO_TANGO_URL + '/api/mrblue/chat'\n};\n\nreturn {\n  subtask,\n  endpoint: agentEndpoints[subtask.agent] || agentEndpoints.general_agent,\n  context: $input.item.json.context,\n  userId: $input.item.json.userId,\n  conversationId: $input.item.json.conversationId,\n  previousResults: completedResults\n};"
+      },
+      "id": "agent-router",
+      "name": "Agent Router",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.endpoint }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "task",
+              "value": "={{ $json.subtask.description }}"
+            },
+            {
+              "name": "context",
+              "value": "={{ $json.context }}"
+            },
+            {
+              "name": "userId",
+              "value": "={{ $json.userId }}"
+            },
+            {
+              "name": "conversationId",
+              "value": "={{ $json.conversationId }}"
+            },
+            {
+              "name": "previousResults",
+              "value": "={{ $json.previousResults }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "execute-agent",
+      "name": "Execute Agent",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1050, 300],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "mundo-tango-api",
+          "name": "Mundo Tango API Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Store result in context\nconst result = {\n  type: $input.item.json.subtask.type,\n  agent: $input.item.json.subtask.agent,\n  description: $input.item.json.subtask.description,\n  output: $input.item.json.response,\n  timestamp: new Date().toISOString(),\n  success: true\n};\n\n// Get existing results from context\nconst completedResults = $input.context.completedResults || [];\ncompletedResults.push(result);\n\n// Update context\n$input.context.completedResults = completedResults;\n\nreturn {\n  result,\n  completedCount: completedResults.length,\n  totalSubtasks: $input.item.json.totalSubtasks\n};"
+      },
+      "id": "store-result",
+      "name": "Store Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1250, 300]
+    },
+    {
+      "parameters": {},
+      "id": "loop-back",
+      "name": "Loop Back to Split",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [1450, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Aggregate all results\nconst completedResults = $input.context.completedResults || [];\nconst task = $input.item.json.task;\nconst userId = $input.item.json.userId;\nconst conversationId = $input.item.json.conversationId;\n\n// Calculate success rate\nconst successCount = completedResults.filter(r => r.success).length;\nconst successRate = (successCount / completedResults.length) * 100;\n\n// Generate summary using AI (call Groq)\nconst summaryPrompt = `Summarize the following multi-agent task execution:\n\nOriginal Task: ${task}\n\nSubtask Results:\n${completedResults.map((r, i) => `${i + 1}. ${r.description}\n   Agent: ${r.agent}\n   Output: ${JSON.stringify(r.output).substring(0, 200)}...`).join('\n\n')}\n\nProvide a concise summary of what was accomplished and any key findings.`;\n\nreturn {\n  task,\n  userId,\n  conversationId,\n  results: completedResults,\n  summary: {\n    totalSubtasks: completedResults.length,\n    successCount,\n    successRate: `${successRate.toFixed(1)}%`,\n    duration: new Date() - new Date(completedResults[0].timestamp),\n    summaryPrompt\n  },\n  timestamp: new Date().toISOString()\n};"
+      },
+      "id": "aggregate-results",
+      "name": "Aggregate Results",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [850, 500]
+    },
+    {
+      "parameters": {
+        "url": "https://api.groq.com/openai/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"llama-3.3-70b-versatile\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are Mr. Blue's result summarizer. Provide concise, actionable summaries.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"{{ $json.summary.summaryPrompt }}\"\n    }\n  ],\n  \"temperature\": 0.3,\n  \"max_tokens\": 500\n}",
+        "options": {}
+      },
+      "id": "generate-summary",
+      "name": "Generate AI Summary",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1050, 500],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "groq-api",
+          "name": "Groq API Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.MUNDO_TANGO_URL }}/api/mrblue/n8n-callback",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "action",
+              "value": "multi_agent_complete"
+            },
+            {
+              "name": "task",
+              "value": "={{ $json.task }}"
+            },
+            {
+              "name": "userId",
+              "value": "={{ $json.userId }}"
+            },
+            {
+              "name": "conversationId",
+              "value": "={{ $json.conversationId }}"
+            },
+            {
+              "name": "results",
+              "value": "={{ $json.results }}"
+            },
+            {
+              "name": "summary",
+              "value": "={{ $json.response.choices[0].message.content }}"
+            },
+            {
+              "name": "metadata",
+              "value": "={{ $json.summary }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "callback-mr-blue",
+      "name": "Callback to Mr Blue",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1250, 500],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "mundo-tango-api",
+          "name": "Mundo Tango API Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ {\n  \"success\": true,\n  \"message\": \"Multi-agent orchestration complete\",\n  \"task\": $json.task,\n  \"summary\": $json.response.choices[0].message.content,\n  \"metadata\": $json.summary\n} }}",
+        "options": {}
+      },
+      "id": "webhook-response",
+      "name": "Webhook Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1450, 500]
+    }
+  ],
+  "connections": {
+    "webhook-trigger": {
+      "main": [
+        [
+          {
+            "node": "task-decomposer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "task-decomposer": {
+      "main": [
+        [
+          {
+            "node": "split-subtasks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "split-subtasks": {
+      "main": [
+        [
+          {
+            "node": "agent-router",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "aggregate-results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "agent-router": {
+      "main": [
+        [
+          {
+            "node": "execute-agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "execute-agent": {
+      "main": [
+        [
+          {
+            "node": "store-result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "store-result": {
+      "main": [
+        [
+          {
+            "node": "loop-back",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "loop-back": {
+      "main": [
+        [
+          {
+            "node": "split-subtasks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "aggregate-results": {
+      "main": [
+        [
+          {
+            "node": "generate-summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "generate-summary": {
+      "main": [
+        [
+          {
+            "node": "callback-mr-blue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "callback-mr-blue": {
+      "main": [
+        [
+          {
+            "node": "webhook-response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "name": "mr-blue",
+      "id": "1"
+    },
+    {
+      "name": "multi-agent",
+      "id": "2"
+    },
+    {
+      "name": "orchestration",
+      "id": "3"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2025-12-17T00:00:00.000Z",
+  "versionId": "1"
+}
