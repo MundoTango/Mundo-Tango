@@ -87,7 +87,6 @@ const eventSummaryFields = {
   shareCount: events.shareCount,
   sourceName: events.sourceName,
   sourceUrl: events.sourceUrl,
-  sourceUrls: events.sourceUrls,
   sourceUpdatedAt: events.sourceUpdatedAt,
   seriesId: events.seriesId,
   createdAt: events.createdAt,
