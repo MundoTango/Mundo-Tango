@@ -111,14 +111,11 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
   const [viewMode, setViewMode] = useState<"list" | "calendar" | "map">("list");
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   
-  const isPast = mainTab === "past";
-  
   const { data: events, isLoading } = useQuery<SelectEvent[]>({
-    queryKey: ["/api/events", "group", groupId, groupCity, isPast ? "past" : "upcoming"],
+    queryKey: ["/api/events", "group", groupId, groupCity, "all"],
     queryFn: async () => {
-      const pastParam = isPast ? "&past=true" : "";
       // Use showAll=true to display all events including past scraped events
-      let res = await fetch(`/api/groups/${groupId}/events?limit=50${pastParam}&showAll=true`, { credentials: "include" });
+      let res = await fetch(`/api/groups/${groupId}/events?limit=50&showAll=true`, { credentials: "include" });
       if (res.ok) {
         const data = await res.json();
         let eventList = data.events || data || [];
@@ -128,9 +125,9 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
         if (eventList.length > 0) return eventList;
       }
       
+      // Fallback: fetch ALL events for this city (no date filter) and let frontend handle filtering
       if (groupCity) {
-        const dateParam = isPast ? "&past=true" : "&upcoming=true";
-        res = await fetch(`/api/events?city=${encodeURIComponent(groupCity)}&limit=50${dateParam}`, { credentials: "include" });
+        res = await fetch(`/api/events?city=${encodeURIComponent(groupCity)}&limit=100`, { credentials: "include" });
         if (res.ok) {
           const data = await res.json();
           let eventList = data.events || data || [];
