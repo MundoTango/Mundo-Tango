@@ -9,6 +9,7 @@ import { Calendar, MapPin, DollarSign, Globe, Users, Check, ChevronRight, User, 
 import { EventEditForm } from "@/components/events/EventEditForm";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link, useLocation } from "wouter";
+import { format } from "date-fns";
 import { safeDateFormat } from "@/lib/safeDateFormat";
 import { getTimezoneFromCity } from "@/lib/timezoneUtils";
 import { getCurrencySymbol } from "@/lib/currencyUtils";
