@@ -8,8 +8,96 @@ import { cityGroupEnrichmentService } from '../services/scraping/CityGroupEnrich
 import { deduplicator } from '../agents/scraping/deduplicator';
 import { rssFeedService } from '../services/scraping/RSSFeedService';
 import { hoyMilongaScraper } from '../services/scraping/HoyMilongaScraper';
+import { unifiedEventScraper } from '../services/scraping/UnifiedEventScraper';
 
 const router = Router();
+
+/**
+ * UNIFIED SCRAPER - One intelligent scraper for all event sites
+ * MB.MD Pattern 58: AI-powered extraction with complete location data
+ */
+router.post('/admin/unified-scrape', authenticateToken, async (req: AuthRequest, res) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, userId)
+    });
+
+    if (!user || user.role !== 'super_admin') {
+      return res.status(403).json({ error: 'Forbidden: Super Admin access required' });
+    }
+
+    // Option 1: Scrape a single URL
+    if (req.body.url) {
+      const events = await unifiedEventScraper.scrapeSingleUrl(req.body.url, req.body.name);
+      return res.json({
+        success: true,
+        message: `Scraped ${events.length} events from ${req.body.url}`,
+        events: events,
+        sourceUrl: req.body.url,
+      });
+    }
+
+    // Option 2: Scrape all active sources
+    const result = await unifiedEventScraper.scrapeAllSources();
+    return res.json({
+      success: true,
+      message: `Scraped ${result.total} events from ${result.sources} sources`,
+      total: result.total,
+      sources: result.sources,
+      features: [
+        'AI-powered event extraction',
+        'Complete location data (venue, address, city, state, country)',
+        'Source URL tracking for each event',
+        'Geocoding integration for address parsing',
+      ],
+    });
+  } catch (error) {
+    console.error('[UnifiedScraper] Error:', error);
+    res.status(500).json({ error: 'Unified scraping failed' });
+  }
+});
+
+/**
+ * Test unified scraper on a single URL
+ */
+router.post('/admin/test-scrape-url', authenticateToken, async (req: AuthRequest, res) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const { url } = req.body;
+    if (!url) {
+      return res.status(400).json({ error: 'URL is required' });
+    }
+
+    const events = await unifiedEventScraper.scrapeSingleUrl(url);
+    
+    return res.json({
+      success: true,
+      sourceUrl: url,
+      eventsFound: events.length,
+      events: events.slice(0, 20), // Return first 20 for preview
+      locationData: events.map(e => ({
+        title: e.title,
+        venue: e.venue,
+        address: e.address,
+        city: e.city,
+        state: e.state,
+        country: e.country,
+      })),
+    });
+  } catch (error: any) {
+    console.error('[TestScrape] Error:', error);
+    res.status(500).json({ error: error.message || 'Scraping failed' });
+  }
+});
 
 router.post('/admin/trigger-scraping', authenticateToken, async (req: AuthRequest, res) => {
   try {

@@ -13396,6 +13396,7 @@ export const scrapedEvents = pgTable(
       .notNull(),
     claimedByUserId: integer("claimed_by_user_id").references(() => users.id),
     city: varchar("city", { length: 100 }),
+    state: varchar("state", { length: 100 }),
     country: varchar("country", { length: 100 }),
     groupId: integer("group_id").references(() => groups.id),
     createdAt: timestamp("created_at").defaultNow(),
