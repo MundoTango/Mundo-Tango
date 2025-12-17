@@ -651,9 +651,9 @@ export default function EventDetailsPage() {
                       <p className="text-base text-muted-foreground leading-relaxed">
                         {(event.startDate || event.date) && (
                           <>
-                            {safeDateFormat(event.startDate || event.date, "PPPP", "TBD", eventTimezone)}
+                            {format(new Date(event.startDate || event.date), "EEEE, MMMM d, yyyy 'at' h:mm a")}
                             {event.endDate && event.endDate !== event.startDate && (
-                              <> - {safeDateFormat(event.endDate, "PPPP", "", eventTimezone)}</>
+                              <> - {format(new Date(event.endDate), "h:mm a")}</>
                             )}
                           </>
                         )}
