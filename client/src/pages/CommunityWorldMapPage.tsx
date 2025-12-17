@@ -328,81 +328,6 @@ export default function CommunityWorldMapPage() {
               </CardContent>
             </Card>
 
-            {/* Selected City Details */}
-            {selectedCity && (
-              <Card className="border-primary/50 bg-gradient-to-br from-primary/5 to-secondary/5">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <MapPin className="h-5 w-5 text-primary" />
-                    {selectedCity.city}, {selectedCity.country}
-                    {selectedCity.id === 1 && (
-                      <Badge variant="default" className="ml-2">Flagship City</Badge>
-                    )}
-                  </CardTitle>
-                  <CardDescription>
-                    Community hub with {selectedCity.memberCount.toLocaleString()} members
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                    <div className="p-4 bg-muted/50 rounded-lg">
-                      <div className="flex items-center gap-2 text-muted-foreground text-sm mb-1">
-                        <Users className="h-4 w-4" />
-                        People
-                      </div>
-                      <div className="text-2xl font-bold" data-testid={`text-city-members-${selectedCity.id}`}>
-                        {selectedCity.memberCount.toLocaleString()}
-                      </div>
-                    </div>
-                    <div className="p-4 bg-muted/50 rounded-lg">
-                      <div className="flex items-center gap-2 text-muted-foreground text-sm mb-1">
-                        <Calendar className="h-4 w-4" />
-                        Events
-                      </div>
-                      <div className="text-2xl font-bold" data-testid={`text-city-events-${selectedCity.id}`}>
-                        {selectedCity.activeEvents}
-                      </div>
-                    </div>
-                    <div className="p-4 bg-muted/50 rounded-lg">
-                      <div className="flex items-center gap-2 text-muted-foreground text-sm mb-1">
-                        <Home className="h-4 w-4" />
-                        Housing
-                      </div>
-                      <div className="text-2xl font-bold" data-testid={`text-city-housing-${selectedCity.id}`}>
-                        {selectedCity.housing}
-                      </div>
-                    </div>
-                    <div className="p-4 bg-muted/50 rounded-lg">
-                      <div className="flex items-center gap-2 text-muted-foreground text-sm mb-1">
-                        <Building2 className="h-4 w-4" />
-                        Recommendations
-                      </div>
-                      <div className="text-2xl font-bold" data-testid={`text-city-recommendations-${selectedCity.id}`}>
-                        {selectedCity.recommendations}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex gap-3">
-                    <Button 
-                      className="flex-1" 
-                      onClick={() => {
-                        if (selectedCity.groupId) {
-                          window.location.href = `/groups/${selectedCity.groupId}`;
-                        }
-                      }}
-                      data-testid="button-view-city-group"
-                    >
-                      <Users className="mr-2 h-4 w-4" />
-                      View City Group
-                    </Button>
-                    <Button variant="outline" className="flex-1" data-testid="button-join-community">
-                      Join Community
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
             {/* Cities List - Entry into City Groups */}
             <div className="space-y-4">
               <div className="flex items-center justify-between">
@@ -490,14 +415,30 @@ export default function CommunityWorldMapPage() {
                             </div>
                           </div>
 
-                          {location.groupId && (
-                            <Link href={`/groups/${location.groupId}`} className="block">
-                              <Button className="w-full gap-2" data-testid={`button-view-group-${location.groupId}`}>
-                                <ChevronRight className="w-4 h-4" />
-                                View City Group
-                              </Button>
-                            </Link>
-                          )}
+                          <div className="flex gap-2">
+                            {location.groupId && (
+                              <Link 
+                                href={`/groups/${location.groupId}`} 
+                                className="flex-1"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <Button className="w-full gap-2" data-testid={`button-view-group-${location.groupId}`}>
+                                  <Users className="w-4 h-4" />
+                                  View City Group
+                                </Button>
+                              </Link>
+                            )}
+                            <Button 
+                              variant="outline" 
+                              className="flex-1"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                              }}
+                              data-testid={`button-join-community-${location.id}`}
+                            >
+                              Join Community
+                            </Button>
+                          </div>
                         </CardContent>
                       </Card>
                     </motion.div>
