@@ -129,7 +129,7 @@ export default function AdminUsersPage() {
       return `/admin/users/${user.id}`;
     }
     if (user.type === "scraped") {
-      return `/admin/scraped-profiles/${user.id}`;
+      return `/profile/scraped/${user.id}`;
     }
     if (user.type === "invited") {
       return `/admin/invitations/${user.id}`;
