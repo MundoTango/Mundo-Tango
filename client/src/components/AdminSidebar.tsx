@@ -38,6 +38,7 @@ import {
   SidebarMenuItem,
   SidebarFooter,
   SidebarSeparator,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/contexts/AuthContext";
@@ -112,6 +113,14 @@ const settingsItems = [
 export function AdminSidebar() {
   const [location] = useLocation();
   const { user, profile, logout } = useAuth();
+  const { isMobile, setOpenMobile } = useSidebar();
+
+  // Close sidebar on mobile when navigating
+  const handleNavClick = () => {
+    if (isMobile) {
+      setOpenMobile(false);
+    }
+  };
 
   // Use profile data for display, fallback to user email
   const displayName = profile?.name || user?.email?.split('@')[0] || "Admin";
@@ -120,6 +129,24 @@ export function AdminSidebar() {
 
   // Check if user is God/Super Admin (only 'god' role for ESA access)
   const isGodAdmin = user?.role === 'god';
+
+  // Reusable menu item renderer
+  const renderMenuItem = (item: { title: string; url: string; icon: React.ComponentType<{ className?: string }> }) => (
+    <SidebarMenuItem key={item.title}>
+      <SidebarMenuButton 
+        asChild 
+        data-active={location === item.url} 
+        data-testid={`admin-sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
+      >
+        <Link to={item.url} onClick={handleNavClick}>
+          <>
+            <item.icon className="h-5 w-5" />
+            <span>{item.title}</span>
+          </>
+        </Link>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
+  );
 
   return (
     <Sidebar data-testid="admin-sidebar">
@@ -136,22 +163,7 @@ export function AdminSidebar() {
           <SidebarGroupLabel>Dashboard</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {dashboardItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton 
-                    asChild 
-                    data-active={location === item.url} 
-                    data-testid={`admin-sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
-                  >
-                    <Link to={item.url}>
-                      <>
-                        <item.icon className="h-5 w-5" />
-                        <span>{item.title}</span>
-                      </>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {dashboardItems.map(renderMenuItem)}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -161,22 +173,7 @@ export function AdminSidebar() {
           <SidebarGroupLabel>User Management</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {userManagementItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton 
-                    asChild 
-                    data-active={location === item.url}
-                    data-testid={`admin-sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
-                  >
-                    <Link to={item.url}>
-                      <>
-                        <item.icon className="h-5 w-5" />
-                        <span>{item.title}</span>
-                      </>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {userManagementItems.map(renderMenuItem)}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -186,22 +183,7 @@ export function AdminSidebar() {
           <SidebarGroupLabel>Content & System</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {contentItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton 
-                    asChild 
-                    data-active={location === item.url}
-                    data-testid={`admin-sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
-                  >
-                    <Link to={item.url}>
-                      <>
-                        <item.icon className="h-5 w-5" />
-                        <span>{item.title}</span>
-                      </>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {contentItems.map(renderMenuItem)}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -211,22 +193,7 @@ export function AdminSidebar() {
           <SidebarGroupLabel>Platform</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {platformItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton 
-                    asChild 
-                    data-active={location === item.url}
-                    data-testid={`admin-sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
-                  >
-                    <Link to={item.url}>
-                      <>
-                        <item.icon className="h-5 w-5" />
-                        <span>{item.title}</span>
-                      </>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {platformItems.map(renderMenuItem)}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -236,22 +203,7 @@ export function AdminSidebar() {
           <SidebarGroupLabel>Business</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {businessItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton 
-                    asChild 
-                    data-active={location === item.url}
-                    data-testid={`admin-sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
-                  >
-                    <Link to={item.url}>
-                      <>
-                        <item.icon className="h-5 w-5" />
-                        <span>{item.title}</span>
-                      </>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {businessItems.map(renderMenuItem)}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -261,22 +213,7 @@ export function AdminSidebar() {
           <SidebarGroupLabel>Development</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {devToolsItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton 
-                    asChild 
-                    data-active={location === item.url}
-                    data-testid={`admin-sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
-                  >
-                    <Link to={item.url}>
-                      <>
-                        <item.icon className="h-5 w-5" />
-                        <span>{item.title}</span>
-                      </>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {devToolsItems.map(renderMenuItem)}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -286,22 +223,7 @@ export function AdminSidebar() {
           <SidebarGroupLabel>Crowdfunding</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {crowdfundingItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton 
-                    asChild 
-                    data-active={location === item.url}
-                    data-testid={`admin-sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
-                  >
-                    <Link to={item.url}>
-                      <>
-                        <item.icon className="h-5 w-5" />
-                        <span>{item.title}</span>
-                      </>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {crowdfundingItems.map(renderMenuItem)}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -314,22 +236,7 @@ export function AdminSidebar() {
               <SidebarGroupLabel>ESA Framework</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
-                  {esaItems.map((item) => (
-                    <SidebarMenuItem key={item.title}>
-                      <SidebarMenuButton 
-                        asChild 
-                        data-active={location === item.url}
-                        data-testid={`admin-sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
-                      >
-                        <Link to={item.url}>
-                          <>
-                            <item.icon className="h-5 w-5" />
-                            <span>{item.title}</span>
-                          </>
-                        </Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  ))}
+                  {esaItems.map(renderMenuItem)}
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>
@@ -340,22 +247,7 @@ export function AdminSidebar() {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
-              {settingsItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton 
-                    asChild 
-                    data-active={location === item.url}
-                    data-testid={`admin-sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
-                  >
-                    <Link to={item.url}>
-                      <>
-                        <item.icon className="h-5 w-5" />
-                        <span>{item.title}</span>
-                      </>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {settingsItems.map(renderMenuItem)}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -387,6 +279,7 @@ export function AdminSidebar() {
           asChild
           className="w-full mb-2"
           data-testid="button-back-to-site"
+          onClick={handleNavClick}
         >
           <Link to="/memories">
             <LayoutDashboard className="h-4 w-4 mr-2" />
