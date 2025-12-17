@@ -19,6 +19,7 @@ import Groq from 'groq-sdk';
 export interface ScrapedEventData {
   title: string;
   description?: string;
+  eventType: string; // milonga, practica, workshop, festival, marathon, encuentro, class, social
   startDate: Date;
   endDate?: Date;
   venue?: string;
@@ -32,6 +33,32 @@ export interface ScrapedEventData {
   sourceUrl: string;
   sourceName: string;
   externalId?: string;
+}
+
+// Valid event types for tango events
+const VALID_EVENT_TYPES = ['milonga', 'practica', 'workshop', 'festival', 'marathon', 'encuentro', 'class', 'social', 'performance', 'show', 'competition'] as const;
+type EventType = typeof VALID_EVENT_TYPES[number];
+
+/**
+ * Classify event type from title and description using keyword detection
+ */
+function classifyEventType(title: string, description?: string): EventType {
+  const text = `${title} ${description || ''}`.toLowerCase();
+  
+  // Order matters - more specific types first
+  if (text.includes('marathon')) return 'marathon';
+  if (text.includes('festival')) return 'festival';
+  if (text.includes('encuentro')) return 'encuentro';
+  if (text.includes('competition') || text.includes('championship') || text.includes('concurso')) return 'competition';
+  if (text.includes('performance') || text.includes('show') || text.includes('espectáculo')) return 'performance';
+  if (text.includes('workshop') || text.includes('taller') || text.includes('intensivo')) return 'workshop';
+  if (text.includes('class') || text.includes('lesson') || text.includes('clase') || text.includes('curso')) return 'class';
+  if (text.includes('practica') || text.includes('práctica') || text.includes('practice')) return 'practica';
+  if (text.includes('milonga') || text.includes('baile') || text.includes('dance night')) return 'milonga';
+  if (text.includes('social')) return 'social';
+  
+  // Default: if we can't determine, it's likely a milonga (most common tango event)
+  return 'milonga';
 }
 
 export interface LocationData {
@@ -116,6 +143,15 @@ class UnifiedEventScraper {
             content: `You are an expert at extracting tango event data from websites. Extract ALL events you can find.
 For each event, extract:
 - title: Event name
+- eventType: One of: milonga, practica, workshop, festival, marathon, encuentro, class, social, performance, show, competition
+  - milonga = social dance evening
+  - practica = practice session
+  - workshop = teaching/learning event (1-4 hours)
+  - class = regular lessons
+  - festival = multi-day event with workshops and milongas
+  - marathon = extended dancing event (usually 12+ hours)
+  - encuentro = small intimate festival
+  - social = casual gathering
 - description: Event description
 - startDate: ISO date string (YYYY-MM-DDTHH:mm:ss)
 - endDate: ISO date string if available
@@ -129,7 +165,8 @@ For each event, extract:
 - imageUrl: Image URL if found
 
 Return a JSON array of events. If no events found, return [].
-Be thorough - extract ALL events visible on the page.`
+Be thorough - extract ALL events visible on the page.
+IMPORTANT: Always classify the eventType based on keywords in the title, description, or context.`
           },
           {
             role: 'user',
@@ -151,22 +188,33 @@ Extract all tango events from this page as JSON array:`
       const parsed = JSON.parse(responseText);
       const events = parsed.events || parsed.data || (Array.isArray(parsed) ? parsed : []);
 
-      return events.map((event: any) => ({
-        title: event.title || 'Untitled Event',
-        description: event.description,
-        startDate: event.startDate ? new Date(event.startDate) : new Date(),
-        endDate: event.endDate ? new Date(event.endDate) : undefined,
-        venue: event.venue,
-        address: event.address,
-        city: event.city,
-        state: event.state,
-        country: event.country,
-        price: event.price,
-        imageUrl: event.imageUrl,
-        organizer: event.organizer,
-        sourceUrl: sourceUrl,
-        sourceName: sourceName,
-      }));
+      return events.map((event: any) => {
+        const title = event.title || 'Untitled Event';
+        const description = event.description;
+        // Use AI-provided eventType if valid, otherwise classify from keywords
+        let eventType = event.eventType?.toLowerCase();
+        if (!eventType || !VALID_EVENT_TYPES.includes(eventType as any)) {
+          eventType = classifyEventType(title, description);
+        }
+        
+        return {
+          title,
+          description,
+          eventType,
+          startDate: event.startDate ? new Date(event.startDate) : new Date(),
+          endDate: event.endDate ? new Date(event.endDate) : undefined,
+          venue: event.venue,
+          address: event.address,
+          city: event.city,
+          state: event.state,
+          country: event.country,
+          price: event.price,
+          imageUrl: event.imageUrl,
+          organizer: event.organizer,
+          sourceUrl: sourceUrl,
+          sourceName: sourceName,
+        };
+      });
     } catch (error) {
       console.error('[UnifiedScraper] AI extraction failed:', error);
       return this.extractEventsWithCheerio(html, sourceUrl, sourceName);
@@ -216,6 +264,7 @@ Extract all tango events from this page as JSON array:`
             events.push({
               title,
               description: description || undefined,
+              eventType: classifyEventType(title, description),
               startDate: startDate || new Date(),
               venue: venue || undefined,
               address: address || undefined,
@@ -308,6 +357,7 @@ Extract all tango events from this page as JSON array:`
             sourceName: event.sourceName,
             title: event.title,
             description: event.description || '',
+            eventType: event.eventType,
             startDate: event.startDate,
             endDate: event.endDate,
             location: event.venue || event.address || source.city || 'Unknown',

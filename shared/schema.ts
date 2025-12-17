@@ -13382,6 +13382,7 @@ export const scrapedEvents = pgTable(
     sourceName: varchar("source_name", { length: 255 }).notNull(),
     title: varchar("title", { length: 500 }).notNull(),
     description: text("description"),
+    eventType: varchar("event_type", { length: 50 }).default("milonga"),
     startDate: timestamp("start_date").notNull(),
     endDate: timestamp("end_date"),
     location: varchar("location", { length: 255 }),
