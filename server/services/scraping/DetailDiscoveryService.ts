@@ -150,8 +150,8 @@ export class DetailDiscoveryService {
   parseHoyMilongaDetailPage(html: string): DetailPageData {
     const $ = cheerio.load(html);
     
-    languageAwareFieldMapper.detectLanguage(html);
-    const lang = languageAwareFieldMapper.getLanguage();
+    // Detect language in stateless manner
+    const lang = languageAwareFieldMapper.detectLanguage(html);
     console.log(`[DetailDiscovery] 🌐 Detected language: ${lang}`);
 
     const data: DetailPageData = {
@@ -168,21 +168,72 @@ export class DetailDiscoveryService {
       try {
         const jsonText = $(el).html();
         if (jsonText) {
-          const jsonData = JSON.parse(jsonText);
-          if (jsonData['@type'] === 'DanceEvent' || jsonData['@type'] === 'Event') {
-            // Extract venue/location
-            if (jsonData.location) {
-              if (typeof jsonData.location === 'string') {
-                data.venue = jsonData.location;
-              } else if (jsonData.location.name) {
-                data.venue = jsonData.location.name;
+          let jsonData = JSON.parse(jsonText);
+          
+          // Handle arrays and @graph entries
+          const items: any[] = [];
+          if (Array.isArray(jsonData)) {
+            items.push(...jsonData);
+          } else if (jsonData['@graph'] && Array.isArray(jsonData['@graph'])) {
+            items.push(...jsonData['@graph']);
+          } else {
+            items.push(jsonData);
+          }
+
+          for (const item of items) {
+            // Process DanceEvent or Event entries
+            if (item['@type'] === 'DanceEvent' || item['@type'] === 'Event') {
+              if (item.location) {
+                if (typeof item.location === 'string') {
+                  data.venue = data.venue || item.location;
+                } else if (item.location.name) {
+                  data.venue = data.venue || item.location.name;
+                }
+                if (item.location.address) {
+                  if (typeof item.location.address === 'string') {
+                    data.fullAddress = data.fullAddress || item.location.address;
+                  } else if (item.location.address.streetAddress) {
+                    const addr = item.location.address;
+                    data.fullAddress = data.fullAddress || [
+                      addr.streetAddress,
+                      addr.addressLocality,
+                      addr.addressRegion,
+                      addr.addressCountry
+                    ].filter(Boolean).join(', ');
+                  }
+                }
               }
-              if (jsonData.location.address) {
-                if (typeof jsonData.location.address === 'string') {
-                  data.fullAddress = jsonData.location.address;
-                } else if (jsonData.location.address.streetAddress) {
-                  const addr = jsonData.location.address;
-                  data.fullAddress = [
+
+              if (item.organizer) {
+                const orgName = typeof item.organizer === 'string' 
+                  ? item.organizer 
+                  : item.organizer.name;
+                if (orgName && !data.organizers.includes(orgName)) {
+                  data.organizers.push(orgName);
+                }
+              }
+
+              if (item.image && !data.coverImage) {
+                data.coverImage = Array.isArray(item.image) ? item.image[0] : item.image;
+              }
+
+              if (item.offers && !data.price) {
+                const offer = Array.isArray(item.offers) ? item.offers[0] : item.offers;
+                if (offer.price !== undefined) {
+                  data.price = `${offer.priceCurrency || ''} ${offer.price}`.trim();
+                }
+              }
+            }
+
+            // Process Place entries for venue/address
+            if (item['@type'] === 'Place') {
+              data.venue = data.venue || item.name;
+              if (item.address) {
+                if (typeof item.address === 'string') {
+                  data.fullAddress = data.fullAddress || item.address;
+                } else if (item.address.streetAddress) {
+                  const addr = item.address;
+                  data.fullAddress = data.fullAddress || [
                     addr.streetAddress,
                     addr.addressLocality,
                     addr.addressRegion,
@@ -192,29 +243,15 @@ export class DetailDiscoveryService {
               }
             }
 
-            // Extract organizer
-            if (jsonData.organizer) {
-              const orgName = typeof jsonData.organizer === 'string' 
-                ? jsonData.organizer 
-                : jsonData.organizer.name;
-              if (orgName) {
-                data.organizers.push(orgName);
+            // Process Organization entries for organizers
+            if (item['@type'] === 'Organization' || item['@type'] === 'Person') {
+              if (item.name && !data.organizers.includes(item.name)) {
+                data.organizers.push(item.name);
               }
             }
+          }
 
-            // Extract image
-            if (jsonData.image) {
-              data.coverImage = Array.isArray(jsonData.image) ? jsonData.image[0] : jsonData.image;
-            }
-
-            // Extract offers/price
-            if (jsonData.offers) {
-              const offer = Array.isArray(jsonData.offers) ? jsonData.offers[0] : jsonData.offers;
-              if (offer.price !== undefined) {
-                data.price = `${offer.priceCurrency || ''} ${offer.price}`.trim();
-              }
-            }
-
+          if (data.venue || data.fullAddress) {
             console.log(`[DetailDiscovery] 📊 Parsed JSON-LD: venue=${data.venue}, address=${data.fullAddress?.slice(0, 50)}`);
           }
         }

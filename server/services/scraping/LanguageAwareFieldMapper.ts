@@ -183,15 +183,15 @@ export interface ExtractedFields {
 }
 
 export class LanguageAwareFieldMapper {
-  private detectedLanguage: SupportedLanguage = 'en';
-
+  /**
+   * Detect language from HTML content (stateless - returns language, doesn't store)
+   */
   detectLanguage(html: string): SupportedLanguage {
     const langAttrMatch = html.match(/<html[^>]*\slang=["']?([a-z]{2})/i);
     if (langAttrMatch) {
       const lang = langAttrMatch[1].toLowerCase();
       if (lang in LANGUAGE_MAPPINGS) {
-        this.detectedLanguage = lang as SupportedLanguage;
-        return this.detectedLanguage;
+        return lang as SupportedLanguage;
       }
     }
 
@@ -199,8 +199,7 @@ export class LanguageAwareFieldMapper {
     if (metaLangMatch) {
       const lang = metaLangMatch[1].toLowerCase();
       if (lang in LANGUAGE_MAPPINGS) {
-        this.detectedLanguage = lang as SupportedLanguage;
-        return this.detectedLanguage;
+        return lang as SupportedLanguage;
       }
     }
 
@@ -208,8 +207,7 @@ export class LanguageAwareFieldMapper {
     if (urlMatch) {
       const lang = urlMatch[1].toLowerCase();
       if (lang in LANGUAGE_MAPPINGS) {
-        this.detectedLanguage = lang as SupportedLanguage;
-        return this.detectedLanguage;
+        return lang as SupportedLanguage;
       }
     }
 
@@ -242,16 +240,11 @@ export class LanguageAwareFieldMapper {
       }
     }
 
-    this.detectedLanguage = maxLang;
-    return this.detectedLanguage;
+    return maxLang;
   }
 
-  getLanguage(): SupportedLanguage {
-    return this.detectedLanguage;
-  }
-
-  mapFieldLabel(label: string): CanonicalField | null {
-    const mappings = LANGUAGE_MAPPINGS[this.detectedLanguage] || LANGUAGE_MAPPINGS.en;
+  mapFieldLabel(label: string, language: SupportedLanguage = 'en'): CanonicalField | null {
+    const mappings = LANGUAGE_MAPPINGS[language] || LANGUAGE_MAPPINGS.en;
     const normalizedLabel = label.toLowerCase().trim();
 
     for (const mapping of mappings) {
@@ -263,7 +256,7 @@ export class LanguageAwareFieldMapper {
     }
 
     for (const lang of Object.keys(LANGUAGE_MAPPINGS)) {
-      if (lang === this.detectedLanguage) continue;
+      if (lang === language) continue;
       const fallbackMappings = LANGUAGE_MAPPINGS[lang];
       for (const mapping of fallbackMappings) {
         for (const pattern of mapping.patterns) {
@@ -277,9 +270,9 @@ export class LanguageAwareFieldMapper {
     return null;
   }
 
-  extractNamesAfterKeyword(text: string, role: 'organizer' | 'dj' | 'teacher' | 'orchestra' | 'performer' | 'host'): string[] {
+  extractNamesAfterKeyword(text: string, role: 'organizer' | 'dj' | 'teacher' | 'orchestra' | 'performer' | 'host', language: SupportedLanguage = 'en'): string[] {
     const names: string[] = [];
-    const keywords = ROLE_KEYWORDS[this.detectedLanguage]?.[role] || ROLE_KEYWORDS.en[role] || [];
+    const keywords = ROLE_KEYWORDS[language]?.[role] || ROLE_KEYWORDS.en[role] || [];
 
     for (const keyword of keywords) {
       const pattern = new RegExp(
@@ -302,14 +295,14 @@ export class LanguageAwareFieldMapper {
     return names;
   }
 
-  extractAllRoles(text: string): ExtractedFields {
+  extractAllRoles(text: string, language: SupportedLanguage = 'en'): ExtractedFields {
     return {
-      organizers: this.extractNamesAfterKeyword(text, 'organizer'),
-      djs: this.extractNamesAfterKeyword(text, 'dj'),
-      teachers: this.extractNamesAfterKeyword(text, 'teacher'),
-      orchestras: this.extractNamesAfterKeyword(text, 'orchestra'),
-      performers: this.extractNamesAfterKeyword(text, 'performer'),
-      hosts: this.extractNamesAfterKeyword(text, 'host'),
+      organizers: this.extractNamesAfterKeyword(text, 'organizer', language),
+      djs: this.extractNamesAfterKeyword(text, 'dj', language),
+      teachers: this.extractNamesAfterKeyword(text, 'teacher', language),
+      orchestras: this.extractNamesAfterKeyword(text, 'orchestra', language),
+      performers: this.extractNamesAfterKeyword(text, 'performer', language),
+      hosts: this.extractNamesAfterKeyword(text, 'host', language),
     };
   }
 
