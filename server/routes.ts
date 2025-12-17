@@ -232,6 +232,7 @@ import {
   events,
   eventRsvps,
   groups,
+  scrapedEvents,
   chatMessages,
   notifications,
   friendships,
@@ -7241,7 +7242,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         userLocationHistory.longitude
       );
 
-      // ENRICHMENT: Get event counts by city
+      // ENRICHMENT: Get event counts by city (main events + approved scraped events)
       const eventsByCity = await db.select({
         city: events.city,
         country: events.country,
@@ -7253,6 +7254,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
         eq(events.status, 'published')
       ))
       .groupBy(events.city, events.country);
+
+      // Also count approved scraped events
+      const scrapedEventsByCity = await db.select({
+        city: scrapedEvents.city,
+        country: scrapedEvents.country,
+        eventCount: sql<number>`count(*)::int`,
+      })
+      .from(scrapedEvents)
+      .where(and(
+        isNotNull(scrapedEvents.city),
+        eq(scrapedEvents.status, 'approved')
+      ))
+      .groupBy(scrapedEvents.city, scrapedEvents.country);
 
       // ENRICHMENT: Get venue counts by city
       const venuesByCity = await db.select({
@@ -7315,6 +7329,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Build enrichment lookup maps with normalized keys
       const eventsMap = new Map<string, number>();
       for (const e of eventsByCity) {
+        const key = normalizeKey(e.city || '');
+        eventsMap.set(key, (eventsMap.get(key) || 0) + (e.eventCount || 0));
+      }
+      // Add scraped events to the count
+      for (const e of scrapedEventsByCity) {
         const key = normalizeKey(e.city || '');
         eventsMap.set(key, (eventsMap.get(key) || 0) + (e.eventCount || 0));
       }
