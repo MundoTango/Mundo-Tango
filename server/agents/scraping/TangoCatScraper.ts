@@ -351,8 +351,23 @@ export class TangoCatScraper {
     return events.slice(0, 100); // Increase limit
   }
 
+  /**
+   * Normalize title for comparison (removes typos, whitespace, common suffixes)
+   */
+  private normalizeTitle(title: string): string {
+    return title.toLowerCase()
+      .replace(/marathon[e]?/gi, 'marathon')  // Fix "marathone" typo
+      .replace(/\d+(st|nd|rd|th)\s*(edition|anniversary)/gi, '') // Remove "10th anniversary", "8th edition"
+      .replace(/[^\w\s]/g, '') // Remove punctuation
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
   private async storeEvents(events: TangoCatEvent[], sourceId: number, year: string): Promise<void> {
     console.log(`[TangoCat] 💾 Storing ${events.length} events for ${year}`);
+    
+    // Track normalized titles to detect in-batch duplicates
+    const processedTitles = new Map<string, string>();
 
     for (const event of events) {
       try {
@@ -364,9 +379,19 @@ export class TangoCatScraper {
           .limit(1);
         
         if (existing.length > 0) {
-          console.log(`[TangoCat] ⏭️ Skipping duplicate: ${event.title}`);
+          console.log(`[TangoCat] ⏭️ Skipping duplicate (external ID): ${event.title}`);
           continue;
         }
+        
+        // Check for fuzzy title duplicates in this batch
+        const normalizedTitle = this.normalizeTitle(event.title);
+        const cityKey = `${normalizedTitle}|${event.city?.toLowerCase() || ''}`;
+        
+        if (processedTitles.has(cityKey)) {
+          console.log(`[TangoCat] ⏭️ Skipping fuzzy duplicate: "${event.title}" ~ "${processedTitles.get(cityKey)}"`);
+          continue;
+        }
+        processedTitles.set(cityKey, event.title);
         
         // Match city to group
         const matchResult = await cityMatcherService.matchEventLocation(event.city);
