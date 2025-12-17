@@ -196,24 +196,58 @@ export class HoyMilongaScraper {
           }
           seenTitles.add(title.toLowerCase());
 
-          // Extract time
+          // Extract time - try CSS first, then parse from text
           const timeEl = card.querySelector('[class*="time"], [class*="hora"], time, [class*="hour"]');
-          const timeRange = timeEl?.textContent?.trim() || '';
+          let timeRange = timeEl?.textContent?.trim() || '';
+          
+          // If no time from CSS, try regex pattern
+          const cardText = card.textContent || '';
+          if (!timeRange) {
+            const timeMatch = cardText.match(/(\d{1,2}:\d{2})\s*[-–]\s*(\d{1,2}:\d{2})/);
+            if (timeMatch) {
+              timeRange = `${timeMatch[1]} - ${timeMatch[2]}`;
+            }
+          }
 
-          // Extract venue/location
+          // MB.MD v9.9.3: Extract venue from text pattern "Venue Name (Neighborhood)"
+          // HoyMilonga format: "22:30 - 01:00 Salón Canning (Palermo)"
+          let venue = 'Unknown Venue';
+          let neighborhood = '';
+          
+          // First try CSS selectors
           const venueEl = card.querySelector('[class*="venue"], [class*="location"], [class*="lugar"], address');
-          const venue = venueEl?.textContent?.trim() || 'Unknown Venue';
-
-          // Extract neighborhood
+          if (venueEl?.textContent?.trim()) {
+            venue = venueEl.textContent.trim();
+          }
+          
           const neighborhoodEl = card.querySelector('[class*="barrio"], [class*="neighborhood"], [class*="area"]');
-          const neighborhood = neighborhoodEl?.textContent?.trim();
+          if (neighborhoodEl?.textContent?.trim()) {
+            neighborhood = neighborhoodEl.textContent.trim();
+          }
+          
+          // If venue not found via CSS, parse from text content
+          // Pattern: looks for "Time Range VenueName (Neighborhood)"
+          if (venue === 'Unknown Venue') {
+            // Match venue name with neighborhood in parentheses
+            const venueMatch = cardText.match(/\d{1,2}:\d{2}\s+([A-Za-zÀ-ÿ\s\-''\.]+?)\s*\(([^)]+)\)/);
+            if (venueMatch) {
+              venue = venueMatch[1].trim();
+              neighborhood = venueMatch[2].trim();
+            } else {
+              // Try to find standalone location marker with text following
+              const locMatch = cardText.match(/location[:\s]+([A-Za-zÀ-ÿ\s\-''\.]+?)(?:\s*\(|$)/i);
+              if (locMatch) {
+                venue = locMatch[1].trim();
+              }
+            }
+          }
 
           // Determine event type
-          const cardText = card.textContent?.toLowerCase() || '';
+          const cardTextLower = cardText.toLowerCase();
           let eventType = 'milonga';
-          if (cardText.includes('clase') || cardText.includes('class')) eventType = 'class';
-          else if (cardText.includes('práctica') || cardText.includes('practica')) eventType = 'practica';
-          else if (cardText.includes('show') || cardText.includes('espectáculo')) eventType = 'show';
+          if (cardTextLower.includes('clase') || cardTextLower.includes('class')) eventType = 'class';
+          else if (cardTextLower.includes('práctica') || cardTextLower.includes('practica')) eventType = 'practica';
+          else if (cardTextLower.includes('show') || cardTextLower.includes('espectáculo')) eventType = 'show';
 
           // Extract day if available
           const dayEl = card.closest('[data-day]') || card.querySelector('[class*="day"]');
