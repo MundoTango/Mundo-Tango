@@ -23,7 +23,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { getCityImageUrl } from "@/lib/cityImageMap";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { EventPostFeed } from "@/components/events/EventPostFeed";
-import { EventParticipantDisplay } from "@/components/events/EventParticipantDisplay";
+import { EventTeamCards } from "@/components/events/EventTeamCards";
 import { useAuth } from "@/contexts/AuthContext";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { queryClient } from "@/lib/queryClient";
@@ -885,7 +885,7 @@ export default function EventDetailsPage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.69 }}
                   >
-                    <EventParticipantDisplay
+                    <EventTeamCards
                       djText={event.djText}
                       teacherText={event.teacherText}
                       performerText={event.performerText}
