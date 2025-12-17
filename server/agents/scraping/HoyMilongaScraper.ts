@@ -5,12 +5,21 @@
  * Uses Playwright for browser automation since HoyMilonga is a JavaScript SPA
  * Scrapes: Buenos Aires, São Paulo, Berlin, Athens, Istanbul, London, Miami, Montevideo
  * URL Pattern: hoy-milonga.com/{city}/en/milongas
+ * 
+ * MB.MD v9.9.3 Enhancement: Team extraction from event cards and detail pages
  */
 
 import { chromium, Browser, Page } from 'playwright';
 import { db } from '@shared/db';
 import { scrapedEvents } from '@shared/schema';
 import { cityMatcherService } from '../../services/CityMatcherService';
+
+interface HoyMilongaTeamData {
+  djs: string[];
+  teachers: string[];
+  orchestras: string[];
+  performers: string[];
+}
 
 interface HoyMilongaEvent {
   title: string;
@@ -23,6 +32,8 @@ interface HoyMilongaEvent {
   description?: string;
   day: string;
   sourceUrl: string;
+  detailUrl?: string;
+  teamData?: HoyMilongaTeamData;
 }
 
 export class HoyMilongaScraper {
@@ -210,6 +221,30 @@ export class HoyMilongaScraper {
                      dayEl?.textContent?.trim().split(' ')[0] || 
                      'various';
 
+          // MB.MD v9.9.3: Extract team data from card text
+          const teamPatterns = {
+            dj: /(?:dj|musicalizador|musicaliza|music by|música por)[:\s]*([A-Za-zÀ-ÿ\s\-\.]+?)(?:\s*[,|\n<]|$)/gi,
+            teacher: /(?:clase con|class with|teacher|maestro|profesor|enseña)[:\s]*([A-Za-zÀ-ÿ\s\-\.&]+?)(?:\s*[,|\n<]|$)/gi,
+            orchestra: /(?:orquesta|orchestra|en vivo|live)[:\s]*([A-Za-zÀ-ÿ\s\-\.]+?)(?:\s*[,|\n<]|$)/gi,
+            performer: /(?:show|exhibición|performance|bailan)[:\s]*([A-Za-zÀ-ÿ\s\-\.&]+?)(?:\s*[,|\n<]|$)/gi
+          };
+
+          const teamData: any = { djs: [], teachers: [], orchestras: [], performers: [] };
+          for (const [role, pattern] of Object.entries(teamPatterns)) {
+            const matches = cardText.matchAll(pattern as RegExp);
+            const key = role === 'dj' ? 'djs' : role === 'teacher' ? 'teachers' : role === 'orchestra' ? 'orchestras' : 'performers';
+            for (const match of matches) {
+              const name = match[1]?.trim();
+              if (name && name.length > 2 && name.length < 50 && !teamData[key].includes(name)) {
+                teamData[key].push(name);
+              }
+            }
+          }
+
+          // Look for detail page link
+          const detailLink = card.querySelector('a[href*="/milonga/"]');
+          const detailUrl = detailLink?.getAttribute('href') || undefined;
+
           events.push({
             title,
             timeRange,
@@ -218,7 +253,9 @@ export class HoyMilongaScraper {
             city: cityName,
             eventType,
             day,
-            sourceUrl
+            sourceUrl,
+            detailUrl: detailUrl ? `https://hoy-milonga.com${detailUrl}` : undefined,
+            teamData
           });
         } catch (e) {
           // Skip this card
@@ -227,6 +264,21 @@ export class HoyMilongaScraper {
 
       return events;
     }, { cityName, sourceUrl });
+  }
+
+  /**
+   * MB.MD v9.9.3: Format team data for description
+   */
+  private formatTeamDescription(teamData?: HoyMilongaTeamData): string {
+    if (!teamData) return '';
+    
+    const parts: string[] = [];
+    if (teamData.djs.length > 0) parts.push(`DJs: ${teamData.djs.join(', ')}`);
+    if (teamData.teachers.length > 0) parts.push(`Teachers: ${teamData.teachers.join(', ')}`);
+    if (teamData.orchestras.length > 0) parts.push(`Live Music: ${teamData.orchestras.join(', ')}`);
+    if (teamData.performers.length > 0) parts.push(`Performers: ${teamData.performers.join(', ')}`);
+    
+    return parts.length > 0 ? `\n\nEvent Team:\n${parts.join('\n')}` : '';
   }
 
   /**
@@ -253,7 +305,14 @@ export class HoyMilongaScraper {
           event.classes ? `Classes: ${event.classes}` : null,
         ].filter(Boolean);
 
-        const description = descParts.join(' | ');
+        // MB.MD v9.9.3: Append team data to description
+        const baseDescription = descParts.join(' | ');
+        const teamDescription = this.formatTeamDescription(event.teamData);
+        const description = baseDescription + teamDescription;
+        
+        if (teamDescription) {
+          console.log(`[HoyMilonga] 👥 Team found for: ${event.title}`);
+        }
 
         // Extract domain for sourceName
         let sourceName = 'HoyMilonga';
