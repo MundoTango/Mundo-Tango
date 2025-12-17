@@ -53,9 +53,17 @@ Multi-stage scraping architecture coordinated by Master Orchestrator (`server/ag
 - **City Matching**: CityMatcherService associates events with city groups
 - **Auto-City Creation**: New cities auto-created when events detected
 
+**TangoCat URL Extraction**: 
+- TangoCat uses internal `/go/EventName/ID` redirect links (not direct hrefs)
+- Actual event URLs are embedded in JSON within `<script>` tags
+- Scraper builds ID→URL map from JSON, matches with /go/ links to get real URLs
+- Events stored with actual website URLs (not tangocat.net) for source attribution
+
 **Database Schema**: `scraped_events` table includes `event_type`, `source_url`, `source_name`, `city`, `country` columns
 **Admin Endpoints**: POST `/api/admin/unified-scrape`, GET `/api/admin/unified-scraper-status`
-**Test Script**: `server/scripts/test-scraper-single-event.ts` - Tests HoyMilonga + TangoCat with link-following
+**Test Scripts**: 
+- `server/scripts/test-production-scraper.ts` - MB.MD v9.9.3 production pipeline test
+- `server/scripts/test-scraper-single-event.ts` - Tests HoyMilonga + TangoCat with link-following
 
 ### Platform Features
 Core functionalities encompass social features (events, groups, posts, notifications, media management, live streaming, marketplaces, reviews) and business features (Talent Match AI, LIFE CEO AI, Multi-AI Orchestration, Automated Scraping, Admin Dashboard, Stripe Payments, BullMQ Workers). Recent enhancements include an Event Series System, redesigned City Groups Events Tab, RSS Feed Scraping, Profile Enrichment Service, OpenStreetMap Geocoding, Unified Messaging Inbox, and a Faceless Content System. The Talent Match AI system includes volunteer onboarding, resume analysis, AI interviews, and task assignment, with an International Payment System orchestrating multi-gateway payments across 30 currencies and 6 regions. The platform supports anonymous volunteer applications via a 4-step guest flow (Intake, Upload, Interview, Complete) and has an enhanced 5-step onboarding flow. Event cards now display "View Original" links for transparency.

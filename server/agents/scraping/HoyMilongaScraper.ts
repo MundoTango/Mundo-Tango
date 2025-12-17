@@ -255,8 +255,7 @@ export class HoyMilongaScraper {
           : `${event.venue}, ${event.city}`;
 
         await db.insert(scrapedEvents).values({
-          sourceId,
-          sourceUrl: 'hoy-milonga.com',
+          sourceUrl: 'https://hoy-milonga.com',
           sourceName: 'Hoy Milonga',
           title: event.title,
           description,

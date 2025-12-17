@@ -86,113 +86,63 @@ export class TangoCatScraper {
 
   private extractEvents($: cheerio.CheerioAPI, year: string): TangoCatEvent[] {
     const events: TangoCatEvent[] = [];
+    const seenTitles = new Set<string>();
 
-    // TangoCat typically lists events in tables or list format by month
-    // Look for event entries
-    $('table tr, .event-row, [class*="festival"], [class*="marathon"], article').each((i, elem) => {
-      try {
-        const $row = $(elem);
-        
-        // Skip header rows
-        if ($row.find('th').length > 0) return;
-        
-        // Extract title
-        const title = $row.find('a, .title, .event-name, h3, h4')
-          .first()
-          .text()
-          .trim();
-        
-        if (!title || title.length < 3) return;
-
-        // Extract dates
-        const datesText = $row.find('[class*="date"], td:first-child, .dates, time')
-          .first()
-          .text()
-          .trim();
-
-        // Extract location/city
-        const locationText = $row.find('[class*="location"], [class*="city"], td:nth-child(3), .location')
-          .text()
-          .trim();
-
-        // Extract country
-        const countryText = $row.find('[class*="country"], td:nth-child(4), .country, img[alt]')
-          .attr('alt') || 
-          $row.find('[class*="country"], .country')
-            .text()
-            .trim();
-
-        // Extract website link
-        const website = $row.find('a[href*="http"]').attr('href');
-
-        // Determine event type from title
-        let eventType = 'Festival';
-        const titleLower = title.toLowerCase();
-        if (titleLower.includes('marathon')) eventType = 'Marathon';
-        else if (titleLower.includes('encuentro')) eventType = 'Encuentro';
-        else if (titleLower.includes('festival')) eventType = 'Festival';
-        else if (titleLower.includes('camp')) eventType = 'Tango Camp';
-        else if (titleLower.includes('congress')) eventType = 'Congress';
-
-        // Parse city from location
-        const city = locationText.split(',')[0]?.trim() || locationText;
-
-        events.push({
-          title,
-          dates: datesText || `${year}`,
-          location: locationText || city,
-          country: countryText || 'Unknown',
-          city,
-          eventType,
-          website,
-          description: `${eventType} in ${city}, ${countryText}`
-        });
-      } catch (err) {
-        console.error('[TangoCat] Error extracting event:', err);
+    // TangoCat stores event data in embedded JSON within script tags
+    const scripts = $('script').text();
+    
+    // Build a map of event ID -> URL from JSON data
+    const urlMap = new Map<string, string>();
+    const urlMatches = scripts.matchAll(/"id":(\d+)[^}]*?"url":"([^"]+)"/g);
+    for (const match of urlMatches) {
+      const id = match[1];
+      const url = match[2];
+      if (url.startsWith('http') && !url.includes('facebook.com') && !url.includes('google.com')) {
+        urlMap.set(id, url);
       }
-    });
-
-    // Also try to find events in list format
-    $('li, .event-item').each((i, elem) => {
-      try {
-        const $item = $(elem);
-        const text = $item.text();
+    }
+    console.log(`[TangoCat] Found ${urlMap.size} URLs in JSON data`);
+    
+    // Extract events from /go/ links and match with URLs from JSON
+    $('a[href^="/go/"]').each((i, elem) => {
+      const $link = $(elem);
+      const href = $link.attr('href') || '';
+      
+      // Extract event name and ID from URL: /go/Event+Name/12345 -> Event Name, 12345
+      const nameMatch = href.match(/\/go\/([^/]+)\/(\d+)/);
+      if (nameMatch) {
+        const name = decodeURIComponent(nameMatch[1].replace(/\+/g, ' '));
+        const eventId = nameMatch[2];
+        const titleLower = name.toLowerCase();
         
-        // Skip if already processed or too short
-        if (text.length < 10) return;
-        
-        // Look for date patterns (e.g., "Jan 15-18", "February 2025")
-        const dateMatch = text.match(/([A-Z][a-z]{2,8})\s*(\d{1,2})[-–]?(\d{1,2})?,?\s*(\d{4})?/);
-        
-        if (dateMatch) {
-          const title = $item.find('a, strong, b').first().text().trim() || 
-                       text.split(/[,\-–]/).map(s => s.trim()).filter(s => s.length > 3)[0];
+        if (!seenTitles.has(titleLower) && name.length > 3) {
+          seenTitles.add(titleLower);
           
-          if (title && title.length > 3) {
-            const website = $item.find('a[href*="http"]').attr('href');
-            
-            events.push({
-              title,
-              dates: dateMatch[0],
-              location: 'See website',
-              country: 'Various',
-              city: 'Various',
-              eventType: 'Festival',
-              website
-            });
-          }
+          let eventType = 'festival';
+          if (titleLower.includes('marathon')) eventType = 'marathon';
+          else if (titleLower.includes('encuentro')) eventType = 'encuentro';
+          else if (titleLower.includes('festival')) eventType = 'festival';
+          else if (titleLower.includes('camp')) eventType = 'festival';
+          
+          // Look up actual URL from JSON, fallback to redirect link
+          const actualUrl = urlMap.get(eventId);
+          
+          events.push({
+            title: name,
+            dates: year,
+            location: 'Various',
+            country: 'Various', 
+            city: 'Various',
+            eventType,
+            website: actualUrl || `https://tangocat.net${href}`,
+            description: `${eventType}`
+          });
         }
-      } catch (err) {
-        // Skip parsing errors
       }
     });
 
-    // Deduplicate by title
-    const uniqueEvents = events.filter((event, index, self) =>
-      index === self.findIndex(e => e.title.toLowerCase() === event.title.toLowerCase())
-    );
-
-    return uniqueEvents;
+    console.log(`[TangoCat] Found ${events.length} events (${events.filter(e => !e.website?.includes('tangocat.net')).length} with external URLs)`);
+    return events.slice(0, 50);
   }
 
   private async storeEvents(events: TangoCatEvent[], sourceId: number, year: string): Promise<void> {
@@ -208,17 +158,48 @@ export class TangoCatScraper {
         const startDate = this.parseDateFromString(event.dates, year);
         const endDate = this.parseEndDate(event.dates, startDate);
 
+        // MULTI-STAGE: Follow the event website link and use that as the source
+        let sourceUrl = `https://tangocat.net/${year}/`;
+        let sourceName = 'TangoCat';
+        let enrichedDescription = event.description || `${event.eventType} - ${event.location}`;
+
+        if (event.website && !event.website.includes('facebook.com') && !event.website.includes('google.com')) {
+          try {
+            const parsedUrl = new URL(event.website);
+            // Use the actual event website as the source
+            sourceUrl = event.website;
+            sourceName = parsedUrl.hostname.replace('www.', '');
+            console.log(`[TangoCat] 📎 Following link: ${event.title} → ${sourceName}`);
+            
+            // Try to fetch additional details from the actual event site
+            try {
+              const eventHtml = await this.fetchHTML(event.website);
+              const enrichedData = this.extractEventDetails(eventHtml, event);
+              if (enrichedData.description && enrichedData.description.length > enrichedDescription.length) {
+                enrichedDescription = enrichedData.description;
+              }
+              if (enrichedData.location && enrichedData.location !== 'See website') {
+                event.location = enrichedData.location;
+              }
+            } catch (fetchErr) {
+              console.log(`[TangoCat] Could not fetch details from ${sourceName}, using aggregator data`);
+            }
+          } catch (urlErr) {
+            // Invalid URL, keep TangoCat as source
+            console.log(`[TangoCat] Invalid URL for ${event.title}, using TangoCat as source`);
+          }
+        }
+
         await db.insert(scrapedEvents).values({
-          sourceId,
-          sourceUrl: `tangocat.net/${year}`,
-          sourceName: 'TangoCat',
+          sourceUrl,
+          sourceName,
           title: event.title,
-          description: event.description || `${event.eventType} - ${event.location}`,
+          description: enrichedDescription,
           startDate,
           endDate,
           location: event.location,
           address: `${event.city}, ${event.country}`,
-          organizer: event.website ? new URL(event.website).hostname : undefined,
+          organizer: sourceName !== 'TangoCat' ? sourceName : undefined,
           groupId,
           status: 'pending_review',
           externalId: `tangocat-${year}-${event.title}`.toLowerCase().replace(/\s+/g, '-').slice(0, 100)
@@ -227,6 +208,40 @@ export class TangoCatScraper {
         console.error(`[TangoCat] Failed to store event "${event.title}":`, err);
       }
     }
+  }
+
+  /**
+   * Extract additional event details from the actual event website
+   */
+  private extractEventDetails(html: string, event: TangoCatEvent): { description?: string; location?: string } {
+    const $ = cheerio.load(html);
+    
+    // Remove noise
+    $('script, style, nav, footer, header').remove();
+    
+    // Try to extract description
+    let description = '';
+    const descSelectors = ['[class*="description"]', '[class*="about"]', 'article p', 'main p', '.content p'];
+    for (const selector of descSelectors) {
+      const text = $(selector).first().text().trim();
+      if (text && text.length > 50 && text.length < 2000) {
+        description = text;
+        break;
+      }
+    }
+    
+    // Try to extract location/venue
+    let location = '';
+    const locationSelectors = ['[class*="venue"]', '[class*="location"]', 'address', '[itemProp="location"]'];
+    for (const selector of locationSelectors) {
+      const text = $(selector).first().text().trim();
+      if (text && text.length > 5 && text.length < 200) {
+        location = text;
+        break;
+      }
+    }
+    
+    return { description, location };
   }
 
   private parseDateFromString(dateStr: string, year: string): Date {
