@@ -969,7 +969,19 @@ export default function EventDetailsPage() {
                     <h3 className="text-2xl font-serif font-bold mb-6">About This Event</h3>
                     <div 
                       className="text-lg text-muted-foreground whitespace-pre-wrap leading-relaxed prose prose-lg dark:prose-invert max-w-none"
-                      dangerouslySetInnerHTML={{ __html: event.description.replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&#8211;/g, '–').replace(/&#038;/g, '&').replace(/&#8217;/g, "'") }}
+                      dangerouslySetInnerHTML={{ __html: event.description
+                        .replace(/&nbsp;/g, ' ')
+                        .replace(/&amp;/g, '&')
+                        .replace(/&#8211;/g, '–')
+                        .replace(/&#038;/g, '&')
+                        .replace(/&#8217;/g, "'")
+                        .replace(/Event Team:.*?(?=\n\n|\n$|$)/gs, '')
+                        .replace(/Organizers:.*?(?=\n|$)/g, '')
+                        .replace(/DJs?:.*?(?=\n|$)/g, '')
+                        .replace(/Teachers:.*?(?=\n|$)/g, '')
+                        .replace(/Performers:.*?(?=\n|$)/g, '')
+                        .trim()
+                      }}
                     />
                   </motion.div>
                 )}
