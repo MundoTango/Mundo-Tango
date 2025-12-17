@@ -1250,28 +1250,9 @@ router.get("/scraped/:id/events", async (req: Request, res: Response) => {
       .orderBy(desc(scrapedEvents.startDate))
       .limit(50);
 
-    // Also check main events table for ingested events
-    const mainEventResults = await db
-      .select({
-        id: events.id,
-        title: events.title,
-        startDate: events.startDate,
-        endDate: events.endDate,
-        city: events.city,
-        country: events.country,
-        location: events.location,
-        imageUrl: events.imageUrl,
-        eventType: events.eventType,
-        sourceUrl: events.sourceUrl,
-        sourceName: events.sourceName,
-        participantProfiles: events.participantProfiles,
-      })
-      .from(events)
-      .where(
-        sql`${events.participantProfiles}::jsonb @> ${JSON.stringify([{ profileId }])}::jsonb`
-      )
-      .orderBy(desc(events.startDate))
-      .limit(50);
+    // Note: Main events table uses separate profile columns (djProfiles, teacherProfiles, etc)
+    // For now, we only query scraped_events which has unified participantProfiles JSONB
+    const mainEventResults: any[] = [];
 
     // Dedupe events and extract roles for this profile
     const eventMap = new Map<string, {
