@@ -1,7 +1,7 @@
 # Mundo Tango
 
 ## Overview
-Mundo Tango is a production-ready social platform connecting the global tango community. It features a resilient, self-sovereign architecture with enterprise-grade security and integrates with various business systems and specialized AI agents. The platform aims for monetization through premium services, event hosting, and targeted advertising within the global dance market. Its core purpose is to facilitate community interaction, event management, and offer advanced functionalities for tango enthusiasts worldwide.
+Mundo Tango is a production-ready social platform designed to connect the global tango community. It features a resilient, self-sovereign architecture with enterprise-grade security and integrates with various business systems and specialized AI agents. The platform aims for monetization through premium services, event hosting, and targeted advertising within the global dance market. Its core purpose is to facilitate community interaction, event management, and offer advanced functionalities for tango enthusiasts worldwide, including an extensive AI ecosystem for strategic oversight and execution.
 
 ## User Preferences
 - Work Simultaneously - Run operations in parallel (use Promise.all, parallel tool calls)
@@ -18,119 +18,25 @@ Mundo Tango is a production-ready social platform connecting the global tango co
 ## System Architecture
 
 ### UI/UX
-The platform uses an "MT Ocean Theme" with dark mode, built with Tailwind CSS, shadcn/ui, and Radix UI. Iconography is from Lucide React and React Icons. It supports 68 languages via `i18next` and uses Wouter for routing (`AppLayout`, `DashboardLayout`, `AdminLayout`). Key UI components include a Visual Editor, Unified Sidebar, PublicProfileView, UnifiedSidebar, and PerRoleExperience. A strict z-index hierarchy (z-30 to z-60+) prevents overlay issues.
+The platform utilizes an "MT Ocean Theme" with dark mode, built using Tailwind CSS, shadcn/ui, and Radix UI. Icons are sourced from Lucide React and React Icons. It supports 68 languages via `i18next` and uses Wouter for routing (`AppLayout`, `DashboardLayout`, `AdminLayout`). Key UI components include a Visual Editor, Unified Sidebar, PublicProfileView, and PerRoleExperience, with a strict z-index hierarchy.
 
 ### Backend
-The backend uses Express and TypeScript with PostgreSQL (Neon) and Drizzle ORM. It features modular routes, JWT authentication with Google/Facebook OAuth, an 8-tier Role-Based Access Control (RBAC) system, and automated database migrations. Server-side FFmpeg handles video transcoding. The API supports PRO functionalities, place recommendations, and enhanced Talent Match AI features.
+The backend is developed with Express and TypeScript, leveraging PostgreSQL (Neon) and Drizzle ORM. It incorporates modular routes, JWT authentication with Google/Facebook OAuth, an 8-tier Role-Based Access Control (RBAC) system, and automated database migrations. Server-side FFmpeg is used for video transcoding. The API supports PRO functionalities, place recommendations, and enhanced Talent Match AI features.
 
 ### AI Systems
-Mundo Tango features an extensive AI ecosystem with 48 specialized agents (10 Page, 33 Feature, 5 Scraping agents) for strategic oversight and atomic execution. It includes self-healing infrastructure, a production-ready validation loop, a Visual Validation Framework, contextual agent activation, a Backend Agent System, Mr. Blue AI Assistant, and a Bifrost AI Gateway for multi-provider AI interactions. A RecursiveContextService handles hierarchical code summarization, and a TRM Learning Protocol is integrated. Scraping agents gather event data and automatically create city groups.
-
-**Mr. Blue Custom Prompt Support (Dec 2025):** The `/api/mrblue/chat` endpoint now supports a `systemPrompt` parameter for custom AI interactions (e.g., Talent Match interviews). When `systemPrompt` is provided in the request body, the API bypasses the ConversationOrchestrator and directly uses the custom prompt with Groq's llama-3.3-70b-versatile model, returning `mode: 'custom_prompt'` in the response.
+Mundo Tango features an extensive AI ecosystem comprising 48 specialized agents (10 Page, 33 Feature, 5 Scraping agents) for strategic oversight and atomic execution. It includes self-healing infrastructure, a production-ready validation loop, a Visual Validation Framework, contextual agent activation, a Backend Agent System, Mr. Blue AI Assistant, and a Bifrost AI Gateway for multi-provider AI interactions. A RecursiveContextService handles hierarchical code summarization, and a TRM Learning Protocol is integrated. Scraping agents gather event data and automatically create city groups. The `/api/mrblue/chat` endpoint supports a `systemPrompt` parameter for custom AI interactions, bypassing the ConversationOrchestrator for direct prompt usage with Groq's llama-3.3-70b-versatile model.
 
 ### Platform Features
-Core functionalities include social features (events, groups, posts, notifications, media management, live streaming, marketplaces, reviews) and business features (Talent Match AI, LIFE CEO AI, Multi-AI Orchestration, Automated Scraping, Admin Dashboard, Stripe Payments, BullMQ Workers). Recent enhancements include an Event Series System, redesigned City Groups Events Tab, RSS Feed Scraping, Profile Enrichment Service, OpenStreetMap Geocoding, Housing Friendship Closeness Integration, Unified Messaging Inbox, and a Faceless Content System. The Talent Match AI system includes volunteer onboarding, resume analysis, AI interviews, and task assignment. An International Payment System (MB.MD Pattern 49) orchestrates multi-gateway payments with compliance features (AML/KYC, tax calculation, sanctions screening) across 30 currencies and 6 regions.
-
-**MB.MD Pattern 51 - Talent Pipeline Enhancement (Dec 2025):** The volunteer onboarding flow now features a complete interview-to-review pipeline. Key components: (1) VolunteerThankYouPage displays after interview completion with auto-redirect; (2) VolunteerDetailsPage provides admin view with tabbed interface for Interview Chat, Resume, and Assignments; (3) GET /api/v1/volunteers/:id/details aggregates volunteer data, resume, interview sessions, and assignments in a single API call; (4) TalentPipelinePage's "View Interview" button navigates to volunteer details for admin review.
-
-**MB.MD Pattern 53 - Talent Match Guest Sessions (Dec 15, 2025):**
-- Guest users on waitlist can access Talent Match volunteer flow without full authentication
-- TalentMatchModal component integrates directly on RegisterPage for seamless UX
-- Session persistence via hybrid approach: server-side in-memory Map + client-side localStorage + httpOnly cookies
-- API endpoints: POST/GET/PATCH/DELETE `/api/talent-match/session` with 24-hour expiry + POST `/api/talent-match/submit` for application submission
-- TalentMatchSessionContext provides React context with createSession, updateSession, clearSession, resumeSession methods
-- Session data includes: name, email, step, uploadedDocuments (with base64), interviewMessages
-- Auto-restores session on mount from API (cookie) with localStorage fallback
-- **Structured 10-Question Interview:** 5 background questions + 5 platform-specific questions asked sequentially with progress tracking
-- On completion, creates volunteer record, resume entries, clarifierSession, and candidatePipeline entry (stage="interviewed") for admin review
-- LoginPage uses email/password authentication only (Google/Facebook OAuth removed for simplicity)
-
-**MB.MD Pattern 54 - Guest Resume Parsing Fix (Dec 16, 2025):**
-- **Bug Fixed:** Guest flow was storing `[Binary - PDF]` placeholder instead of actual parsed text for PDF/DOCX files
-- **Root Cause:** Client-side cannot parse binary PDF/DOCX files; authenticated flow called server endpoint but guest flow skipped this step
-- **Solution:** Added guest-accessible `/api/talent-match/parse-resume` endpoint (no auth required)
-- **Security Measures:**
-  - File size limit: 5MB (validated both before and after base64 decode)
-  - Rate limiting: 10 parse requests per hour per session/IP
-  - Returns 413 for oversized files, 429 for rate limit exceeded
-- **Client Changes:** `TalentMatchExperience.tsx` now calls parse endpoint for PDF/DOCX files during guest upload
-- **Result:** Both guest and authenticated flows now generate AI interview questions from ACTUAL resume content, not placeholders
-
-**MB.MD Pattern 55 - Invite Code Registration Fix (Dec 16, 2025):**
-- **Bug Fixed:** Registration was failing with "Invalid element at key 'name': expected a Zod schema" error
-- **Root Cause:** Zod v4 has breaking changes with `.extend()` method on drizzle-zod generated schemas
-- **Solution:** Replaced `insertUserSchema.extend({...})` with direct `z.object({...})` definition in `server/routes/auth.ts`
-- **Registration Flow:**
-  - Both paths create full accounts and go through 5-step onboarding
-  - With invite code "nomad" (case-insensitive): `waitlist: false` → After onboarding → redirects to /feed
-  - Without invite code or invalid code: `waitlist: true` → After onboarding → redirects to /waitlist-confirmation
-- **WaitlistConfirmationPage** (`/waitlist-confirmation`): Post-onboarding page for waitlist users with "Volunteer with us" (opens TalentMatchModal) and "Support Mundo Tango" buttons
-- **Validated:** E2E tests confirm both registration paths work correctly
-
-**MB.MD Pattern 57 - Anonymous Volunteer Applications (Dec 16, 2025):**
-- **Feature:** Anyone can now apply to volunteer directly from the marketing site without registration
-- **Entry Points:**
-  - VolunteerPage (`/volunteer`): "Apply Now" button in hero section opens TalentMatchModal
-  - WaitlistConfirmationPage (`/waitlist-confirmation`): "Volunteer with us" button for post-registration waitlist users
-- **TalentMatchExperience 4-Step Guest Flow:**
-  1. **Intake** (NEW): Collects Name + Email for anonymous visitors (skipped if credentials already known)
-  2. **Upload**: Resume upload with PDF/DOCX parsing via `/api/talent-match/parse-resume`
-  3. **Interview**: 10-question AI interview (5 background + 5 platform questions)
-  4. **Complete**: Thank you message with submission confirmation
-- **Session Handling:** Creates server session on intake submit, persists across page reloads via cookie + localStorage
-- **Data Flow:** On completion, creates user (if new), volunteer record, resume entries, and candidatePipeline entry (stage="offered") for admin review in Talent Pipeline
-
-**MB.MD Pattern 56 - Onboarding Flow Enhancement (Dec 16, 2025):**
-- **5-Step Onboarding Flow:**
-  1. CitySelectionPage (step-1): User selects home city with 300ms debounced 3-tier search
-  2. PhotoUploadPage (step-2): Optional profile photo with object-cover for proper aspect ratio
-  3. TangoRolesPage (step-3): Select roles + tango start year + individual role start dates
-  4. LanguagesPage (step-4): Primary language + additional languages
-  5. DanceExperiencePage (step-5): Now "Hobbies" page for non-tango interests
-- **Key Improvements:**
-  - City search debounce increased from 50ms to 300ms for better performance
-  - Photo preview uses object-cover to prevent distortion of non-square images
-  - Merged tango experience fields (year started, role dates) into TangoRolesPage (step-3)
-  - Converted DanceExperiencePage to "Other Hobbies" page with 17 hobby options
-  - Consistent 5-step progress bars across all onboarding pages (w-12 width)
-  - All pages have test IDs for E2E testing compatibility
+Core functionalities encompass social features (events, groups, posts, notifications, media management, live streaming, marketplaces, reviews) and business features (Talent Match AI, LIFE CEO AI, Multi-AI Orchestration, Automated Scraping, Admin Dashboard, Stripe Payments, BullMQ Workers). Recent enhancements include an Event Series System, redesigned City Groups Events Tab, RSS Feed Scraping, Profile Enrichment Service, OpenStreetMap Geocoding, Unified Messaging Inbox, and a Faceless Content System. The Talent Match AI system includes volunteer onboarding, resume analysis, AI interviews, and task assignment, with an International Payment System orchestrating multi-gateway payments across 30 currencies and 6 regions. The platform supports anonymous volunteer applications via a 4-step guest flow (Intake, Upload, Interview, Complete) and has an enhanced 5-step onboarding flow. Event cards now display "View Original" links for transparency.
 
 ### Testing
-The platform employs End-to-End (E2E) tests with Playwright, automated unit test coverage via CI/CD, and visual regression testing with Claude Computer Use. The `run_test` tool manages E2E environment setup and Stripe key injection. A Volunteer Testing System provides 148 scenarios across 39 domains, with automated issue routing and an auto-fix pipeline. MB.MD Pattern 50 introduces Pre-Authenticated Playwright Testing for faster, reusable test runs by saving and reusing session states.
+The platform utilizes End-to-End (E2E) tests with Playwright, automated unit test coverage via CI/CD, and visual regression testing. A Volunteer Testing System provides 148 scenarios, with automated issue routing and an auto-fix pipeline. Pre-Authenticated Playwright Testing is implemented for faster, reusable test runs.
 
 ### Production
-Production deployments use GitHub Actions for CI/CD. Monitoring is via Prometheus/Grafana with Sentry, and deployment through Replit Publishing. Redis is used for caching, and PostgreSQL (Neon) with Drizzle ORM for the database.
-
-**MB.MD Pattern 52 - Deployment Size Optimization (Dec 15, 2025):**
-- **Critical Discovery:** Replit uses `.gitignore` (NOT `.deployignore`) for deployment exclusions
-- Large directories must be added to `.gitignore` to exclude from deployment image
-- Added to `.gitignore`: lancedb_data/ (4.2GB), attached_assets/ (196MB), test-videos/ (88MB), docs/, e2e/, scripts/
-- Total savings: ~4.5GB from deployment image (was exceeding 8 GiB limit)
-- `.deployignore` files are NOT supported by Replit's deployment system
-
-**Dec 14, 2025 - Bundle Optimization Sprint:**
-- All pages use React.lazy() for code splitting
-- Heavy libraries in separate lazy-loaded chunks: Three.js/OrbitControls (974KB), @xenova/transformers (828KB), prism syntax highlighter (668KB), recharts (329KB), VisualEditor (1MB), Leaflet (154KB), react-big-calendar (135KB), react-beautiful-dnd (127KB)
-- Server-only libs (LanceDB, OpenAI SDK, Anthropic, pdf-parse, mammoth) confirmed not in client bundle
-- i18next uses http-backend for lazy loading translations on demand
-- Production build completes in ~77 seconds with proper code splitting
+Production deployments are managed via GitHub Actions for CI/CD. Monitoring is handled by Prometheus/Grafana with Sentry, and deployment through Replit Publishing. Redis is used for caching, and PostgreSQL (Neon) with Drizzle ORM for the database. Deployment size optimization is achieved by excluding large directories via `.gitignore`. The production build incorporates React.lazy() for code splitting and lazy loading of heavy libraries and i18next translations.
 
 ### Marketing Site Architecture
-The marketing site integrates a Human to Agent Collaboration (H2AC) Volunteer Program and an Ambassador Program. Public statistics are backed by real database data. Donations are handled via GoFundMe integration with a reusable GoFundMeEmbed component.
-
-**Dec 14, 2025 - Landing Page Overhaul:**
-- Removed pricing section and video demo section from landing page
-- Added "Coming Soon Features" section showcasing 6 upcoming platform features
-- Replaced Stripe donation buttons with GoFundMe embed on /donate and /support pages
-- Updated CSP to allow GoFundMe scripts and iframes
-
-**Dec 14, 2025 - Marketing Site Phase 2:**
-- Updated footer: Removed pricing, FAQ, dance styles, blog links; Updated social URLs to mundotangolife1 (Facebook) and mundotango.life (Instagram)
-- Changed /login links to /register across marketing pages (MrBluePage, VolunteerPage, AmbassadorsPage, ForOrganizersPage, ForDancersPage, ForTeachersPage)
-- Updated About page with 2 new Alexandros photos (Skoot_20, Skoot_16) and bio mentioning "100+ cities"
-- Removed pricing section from /for-teachers page
-- Removed 'browse events' button from /for-dancers page
-- Created new Tango Roles landing page at /tango-roles with role flexibility focus (lead/follow/both) - added to "Who it's for" menu
+The marketing site integrates a Human to Agent Collaboration (H2AC) Volunteer Program and an Ambassador Program. Public statistics are backed by real database data, and donations are handled via GoFundMe integration. The landing page has been updated to remove pricing and video sections, add "Coming Soon Features," and replace Stripe donation buttons with GoFundMe embeds. Marketing pages have updated footers, changed `/login` links to `/register`, and an updated About page. A new Tango Roles landing page is available at `/tango-roles`.
 
 ## External Dependencies
 - **Infrastructure:** PostgreSQL, Redis, Cloudinary, OpenStreetMap, Neon

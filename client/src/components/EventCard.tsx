@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Calendar, Clock, Users, Music } from "lucide-react";
+import { MapPin, Calendar, Clock, Users, Music, ExternalLink } from "lucide-react";
 import { Link } from "wouter";
 import { SelectEvent } from "@shared/client-types";
 import { safeDateFormat } from "@/lib/safeDateFormat";
@@ -131,6 +131,23 @@ export function EventCard({ event, userRSVPStatus }: EventCardProps) {
             <span className="text-sm text-muted-foreground ml-1">
               {event.currency || 'USD'}
             </span>
+          </div>
+        )}
+        
+        {event.sourceUrl && event.sourceUrl !== 'unknown' && (
+          <div className="pt-2 border-t">
+            <a 
+              href={event.sourceUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary"
+              data-testid={`link-event-source-${event.id}`}
+            >
+              <ExternalLink className="h-3 w-3" />
+              {event.sourceName && event.sourceName !== 'Static Scraper' 
+                ? `View on ${event.sourceName}` 
+                : 'View Original'}
+            </a>
           </div>
         )}
       </CardContent>
