@@ -145,6 +145,7 @@ export class DetailDiscoveryService {
 
   /**
    * Parse HoyMilonga detail page specifically
+   * HoyMilonga embeds event data as JSON-LD structured data
    */
   parseHoyMilongaDetailPage(html: string): DetailPageData {
     const $ = cheerio.load(html);
@@ -162,85 +163,106 @@ export class DetailDiscoveryService {
       hosts: [],
     };
 
+    // First try to extract from JSON-LD structured data
+    $('script[type="application/ld+json"]').each((_, el) => {
+      try {
+        const jsonText = $(el).html();
+        if (jsonText) {
+          const jsonData = JSON.parse(jsonText);
+          if (jsonData['@type'] === 'DanceEvent' || jsonData['@type'] === 'Event') {
+            // Extract venue/location
+            if (jsonData.location) {
+              if (typeof jsonData.location === 'string') {
+                data.venue = jsonData.location;
+              } else if (jsonData.location.name) {
+                data.venue = jsonData.location.name;
+              }
+              if (jsonData.location.address) {
+                if (typeof jsonData.location.address === 'string') {
+                  data.fullAddress = jsonData.location.address;
+                } else if (jsonData.location.address.streetAddress) {
+                  const addr = jsonData.location.address;
+                  data.fullAddress = [
+                    addr.streetAddress,
+                    addr.addressLocality,
+                    addr.addressRegion,
+                    addr.addressCountry
+                  ].filter(Boolean).join(', ');
+                }
+              }
+            }
+
+            // Extract organizer
+            if (jsonData.organizer) {
+              const orgName = typeof jsonData.organizer === 'string' 
+                ? jsonData.organizer 
+                : jsonData.organizer.name;
+              if (orgName) {
+                data.organizers.push(orgName);
+              }
+            }
+
+            // Extract image
+            if (jsonData.image) {
+              data.coverImage = Array.isArray(jsonData.image) ? jsonData.image[0] : jsonData.image;
+            }
+
+            // Extract offers/price
+            if (jsonData.offers) {
+              const offer = Array.isArray(jsonData.offers) ? jsonData.offers[0] : jsonData.offers;
+              if (offer.price !== undefined) {
+                data.price = `${offer.priceCurrency || ''} ${offer.price}`.trim();
+              }
+            }
+
+            console.log(`[DetailDiscovery] 📊 Parsed JSON-LD: venue=${data.venue}, address=${data.fullAddress?.slice(0, 50)}`);
+          }
+        }
+      } catch (e) {
+        // JSON parse error, continue with HTML extraction
+      }
+    });
+
+    // Fallback: Extract from HTML content
     const pageText = $('body').text();
 
-    const organizerPatterns = [
-      /organizador(?:es|as)?[/:]?\s*:?\s*([^<\n]+)/gi,
-      /organiza(?:n|do)?[:]?\s*([^<\n]+)/gi,
-    ];
-    
-    for (const pattern of organizerPatterns) {
-      const matches = pageText.matchAll(pattern);
+    // Extract organizers from text if not found in JSON-LD
+    if (data.organizers.length === 0) {
+      const organizerPattern = /(?:organizador(?:es)?|organiza(?:n)?)[/:]?\s*:?\s*([A-ZÀ-ÿ][A-Za-zÀ-ÿ\s]+(?:\s+(?:y|&)\s+[A-ZÀ-ÿ][A-Za-zÀ-ÿ\s]+)?)/gi;
+      const matches = pageText.matchAll(organizerPattern);
       for (const match of matches) {
-        const names = match[1].split(/\s*(?:,|y|e|&|and)\s*/i);
+        const names = match[1].split(/\s*(?:y|&)\s*/i);
         for (const name of names) {
-          const trimmed = name.trim().replace(/[<>]/g, '');
-          if (trimmed.length > 2 && trimmed.length < 60 && !data.organizers.includes(trimmed)) {
+          const trimmed = name.trim();
+          if (trimmed.length > 2 && trimmed.length < 40 && !data.organizers.includes(trimmed)) {
             data.organizers.push(trimmed);
           }
         }
       }
     }
 
-    const venueSelectors = [
-      '.venue-name', '.location-name', '[class*="venue"]', '[class*="location"]',
-      'a[href*="maps"]', '[data-venue]',
-    ];
-    
-    for (const selector of venueSelectors) {
-      const el = $(selector).first();
-      if (el.length && el.text().trim()) {
-        data.venue = el.text().trim();
-        break;
+    // Extract DJs - look for "DJ: Name" or "Musicalizador: Name" patterns
+    const djPattern = /(?:dj|musicalizador(?:a)?)[:\s]+([A-ZÀ-ÿ][A-Za-zÀ-ÿ\s]+(?:\s+(?:y|&)\s+[A-ZÀ-ÿ][A-Za-zÀ-ÿ\s]+)?)/gi;
+    const djMatches = pageText.matchAll(djPattern);
+    for (const match of djMatches) {
+      const names = match[1].split(/\s*(?:y|&)\s*/i);
+      for (const name of names) {
+        const trimmed = name.trim().replace(/\.+$/, '');
+        if (trimmed.length > 2 && trimmed.length < 40 && !data.djs.includes(trimmed)) {
+          data.djs.push(trimmed);
+        }
       }
     }
 
-    const venuePattern = /(?:📍|🏠|lugar|venue|local|salón|salle)[:\s]*([^|\n<]+)/i;
-    const venueMatch = pageText.match(venuePattern);
-    if (venueMatch && !data.venue) {
-      data.venue = venueMatch[1].trim();
-    }
-
-    const addressPatterns = [
-      /([A-ZÀ-ÿ][^|\n<]*\d{1,5}[^|\n<]*(?:Buenos Aires|São Paulo|Berlin|Athens|London|Miami|Montevideo|Istanbul)[^|\n<]*)/i,
-      /(?:dirección|address|endereço|adresse|indirizzo)[:\s]*([^<\n]+)/i,
-      /([A-Za-zÀ-ÿ\s]+\s+\d{1,5}[^<\n]*ciudad[^<\n]*)/i,
-    ];
-    
-    for (const pattern of addressPatterns) {
-      const match = pageText.match(pattern);
-      if (match) {
-        data.fullAddress = match[1].trim().substring(0, 200);
-        break;
-      }
-    }
-
-    const addressFromVenue = pageText.match(/📍[^|<\n]*\|([^<\n]+)/);
-    if (addressFromVenue) {
-      data.address = addressFromVenue[1].trim();
-    }
-
-    data.price = languageAwareFieldMapper.extractPrice(pageText);
+    // Extract status
     data.status = languageAwareFieldMapper.extractStatus(pageText);
 
-    const ogImage = $('meta[property="og:image"]').attr('content');
-    const twitterImage = $('meta[name="twitter:image"]').attr('content');
-    const mainImage = $('img[class*="event"], img[class*="cover"], img[class*="main"], .event-image img').first().attr('src');
-    
-    data.coverImage = ogImage || twitterImage || mainImage;
-
-    const timePattern = /(\d{1,2}:\d{2})\s*[-–]\s*(\d{1,2}:\d{2})/;
-    const timeMatch = pageText.match(timePattern);
-    if (timeMatch) {
-      data.time = `${timeMatch[1]} - ${timeMatch[2]}`;
+    // Extract cover image from meta tags if not in JSON-LD
+    if (!data.coverImage) {
+      const ogImage = $('meta[property="og:image"]').attr('content');
+      const twitterImage = $('meta[name="twitter:image"]').attr('content');
+      data.coverImage = ogImage || twitterImage;
     }
-
-    const extractedRoles = languageAwareFieldMapper.extractAllRoles(pageText);
-    if (extractedRoles.djs.length > 0) data.djs = extractedRoles.djs;
-    if (extractedRoles.teachers.length > 0) data.teachers = extractedRoles.teachers;
-    if (extractedRoles.orchestras.length > 0) data.orchestras = extractedRoles.orchestras;
-    if (extractedRoles.performers.length > 0) data.performers = extractedRoles.performers;
-    if (extractedRoles.hosts.length > 0) data.hosts = extractedRoles.hosts;
 
     return data;
   }

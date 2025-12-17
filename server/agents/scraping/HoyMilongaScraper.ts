@@ -13,12 +13,16 @@ import { chromium, Browser, Page } from 'playwright';
 import { db } from '@shared/db';
 import { scrapedEvents } from '@shared/schema';
 import { cityMatcherService } from '../../services/CityMatcherService';
+import { detailDiscoveryService } from '../../services/scraping/DetailDiscoveryService';
+import { languageAwareFieldMapper } from '../../services/scraping/LanguageAwareFieldMapper';
 
 interface HoyMilongaTeamData {
   djs: string[];
   teachers: string[];
   orchestras: string[];
   performers: string[];
+  organizers: string[];
+  hosts: string[];
 }
 
 interface HoyMilongaEvent {
@@ -34,6 +38,10 @@ interface HoyMilongaEvent {
   sourceUrl: string;
   detailUrl?: string;
   teamData?: HoyMilongaTeamData;
+  fullAddress?: string;
+  price?: string;
+  status?: string;
+  coverImage?: string;
 }
 
 export class HoyMilongaScraper {
@@ -154,8 +162,91 @@ export class HoyMilongaScraper {
       return 0;
     }
 
-    await this.storeEvents(events, sourceId, cityName);
-    return events.length;
+    // MB.MD v9.9.3: Enrich events by fetching detail pages
+    const enrichedEvents = await this.enrichEventsFromDetailPages(events);
+
+    await this.storeEvents(enrichedEvents, sourceId, cityName);
+    return enrichedEvents.length;
+  }
+
+  /**
+   * MB.MD v9.9.3: Enrich events by fetching detail pages
+   * Extracts: full address, organizers, price, cover image, status
+   */
+  private async enrichEventsFromDetailPages(events: HoyMilongaEvent[]): Promise<HoyMilongaEvent[]> {
+    const eventsWithDetailUrls = events.filter(e => e.detailUrl);
+    
+    if (eventsWithDetailUrls.length === 0) {
+      console.log(`[HoyMilonga] ⚠️ No detail URLs found, skipping enrichment`);
+      return events;
+    }
+
+    console.log(`[HoyMilonga] 🔍 Enriching ${eventsWithDetailUrls.length} events from detail pages...`);
+
+    let enrichedCount = 0;
+    
+    for (const event of events) {
+      if (!event.detailUrl) continue;
+
+      try {
+        const detailData = await detailDiscoveryService.fetchDetailPage(event.detailUrl);
+        
+        if (detailData) {
+          // Merge detail page data with existing event data
+          if (detailData.venue && event.venue === 'Unknown Venue') {
+            event.venue = detailData.venue;
+          }
+          
+          if (detailData.fullAddress || detailData.address) {
+            event.fullAddress = detailData.fullAddress || detailData.address;
+          }
+          
+          if (detailData.price) {
+            event.price = detailData.price;
+          }
+          
+          if (detailData.status) {
+            event.status = detailData.status;
+          }
+          
+          if (detailData.coverImage) {
+            event.coverImage = detailData.coverImage;
+          }
+
+          // Merge team data
+          if (!event.teamData) {
+            event.teamData = { djs: [], teachers: [], orchestras: [], performers: [], organizers: [], hosts: [] };
+          }
+          
+          if (detailData.organizers.length > 0) {
+            event.teamData.organizers = [...new Set([...(event.teamData.organizers || []), ...detailData.organizers])];
+          }
+          if (detailData.djs.length > 0) {
+            event.teamData.djs = [...new Set([...event.teamData.djs, ...detailData.djs])];
+          }
+          if (detailData.teachers.length > 0) {
+            event.teamData.teachers = [...new Set([...event.teamData.teachers, ...detailData.teachers])];
+          }
+          if (detailData.orchestras.length > 0) {
+            event.teamData.orchestras = [...new Set([...event.teamData.orchestras, ...detailData.orchestras])];
+          }
+          if (detailData.performers.length > 0) {
+            event.teamData.performers = [...new Set([...event.teamData.performers, ...detailData.performers])];
+          }
+          if (detailData.hosts.length > 0) {
+            event.teamData.hosts = [...new Set([...(event.teamData.hosts || []), ...detailData.hosts])];
+          }
+
+          enrichedCount++;
+          console.log(`[HoyMilonga] ✅ Enriched: ${event.title}`);
+        }
+      } catch (error: any) {
+        console.log(`[HoyMilonga] ⚠️ Failed to enrich ${event.title}: ${error.message}`);
+      }
+    }
+
+    console.log(`[HoyMilonga] 📊 Enriched ${enrichedCount}/${eventsWithDetailUrls.length} events`);
+    return events;
   }
 
   /**
@@ -315,12 +406,13 @@ export class HoyMilongaScraper {
   private formatTeamDescription(teamData?: HoyMilongaTeamData): string {
     if (!teamData) return '';
     
-    // Title case helper for proper name formatting
     const titleCase = (s: string) => s.split(' ').map(word => 
       word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
     ).join(' ');
     
     const parts: string[] = [];
+    if (teamData.organizers?.length > 0) parts.push(`Organizers: ${teamData.organizers.map(titleCase).join(', ')}`);
+    if (teamData.hosts?.length > 0) parts.push(`Hosts: ${teamData.hosts.map(titleCase).join(', ')}`);
     if (teamData.djs.length > 0) parts.push(`DJs: ${teamData.djs.map(titleCase).join(', ')}`);
     if (teamData.teachers.length > 0) parts.push(`Teachers: ${teamData.teachers.map(titleCase).join(', ')}`);
     if (teamData.orchestras.length > 0) parts.push(`Live Music: ${teamData.orchestras.map(titleCase).join(', ')}`);
@@ -337,23 +429,21 @@ export class HoyMilongaScraper {
 
     for (const event of events) {
       try {
-        // Match city to group
         const matchResult = await cityMatcherService.matchEventLocation(cityName);
         const groupId = matchResult || null;
 
-        // Create date for next occurrence of this day
         const startDate = this.getNextDayDate(event.day);
         
-        // Build description
+        // Build description with enriched data
         const descParts = [
           event.eventType.toUpperCase(),
           event.timeRange ? `Time: ${event.timeRange}` : null,
-          event.venue ? `Venue: ${event.venue}` : null,
+          event.venue && event.venue !== 'Unknown Venue' ? `Venue: ${event.venue}` : null,
           event.neighborhood ? `Neighborhood: ${event.neighborhood}` : null,
-          event.classes ? `Classes: ${event.classes}` : null,
+          event.price ? `Price: ${event.price}` : null,
+          event.status ? `Status: ${event.status}` : null,
         ].filter(Boolean);
 
-        // MB.MD v9.9.3: Append team data to description
         const baseDescription = descParts.join(' | ');
         const teamDescription = this.formatTeamDescription(event.teamData);
         const description = baseDescription + teamDescription;
@@ -362,16 +452,21 @@ export class HoyMilongaScraper {
           console.log(`[HoyMilonga] 👥 Team found for: ${event.title}`);
         }
 
-        // MB.MD v9.9.3: Use detail URL for direct link to event page
-        // Falls back to general page URL if no detail URL available
         const eventSourceUrl = event.detailUrl || event.sourceUrl;
         
-        // Extract domain for sourceName
         let sourceName = 'HoyMilonga';
         try {
           const url = new URL(eventSourceUrl);
           sourceName = url.hostname.replace('www.', '');
         } catch {}
+
+        // MB.MD v9.9.3: Use enriched address data
+        const address = event.fullAddress || 
+          (event.neighborhood ? `${event.neighborhood}, ${cityName}` : cityName);
+
+        // MB.MD v9.9.3: Use organizers from team data if available
+        const organizer = event.teamData?.organizers?.[0] || 
+          (event.venue !== 'Unknown Venue' ? event.venue : undefined);
 
         await db.insert(scrapedEvents).values({
           sourceUrl: eventSourceUrl,
@@ -380,11 +475,11 @@ export class HoyMilongaScraper {
           description,
           startDate,
           endDate: startDate,
-          location: event.venue,
-          address: event.neighborhood ? `${event.neighborhood}, ${cityName}` : cityName,
-          organizer: event.venue !== 'Unknown Venue' ? event.venue : undefined,
+          location: event.venue !== 'Unknown Venue' ? event.venue : undefined,
+          address,
+          organizer,
           groupId,
-          status: 'pending_review',
+          status: event.status === 'cancelled' ? 'rejected' : 'pending_review',
           externalId: `hoymilonga-${cityName}-${event.title}`.toLowerCase().replace(/\s+/g, '-').slice(0, 100)
         });
 
