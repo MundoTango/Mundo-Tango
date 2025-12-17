@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar as CalendarIcon, MapPin, Search, Users, Plus, Map as MapIconLucide, List, ChevronRight, ChevronDown, Database, Download, ChevronLeft, SlidersHorizontal, Check, Languages, Clock } from "lucide-react";
+import { Calendar as CalendarIcon, MapPin, Search, Users, Plus, Map as MapIconLucide, List, ChevronRight, ChevronDown, Database, Download, ChevronLeft, SlidersHorizontal, Check, Languages, Clock, ExternalLink } from "lucide-react";
 import { getLanguageByCode } from "@/components/input/UnifiedLanguagePicker";
 import { safeDateFormat } from "@/lib/safeDateFormat";
 import { getTimezoneFromCity } from "@/lib/timezoneUtils";
@@ -221,6 +221,23 @@ function EventCard({ event, index = 0 }: { event: any; index?: number }) {
                   </Badge>
                 )}
               </div>
+            </div>
+          )}
+          
+          {eventData.sourceUrl && eventData.sourceUrl !== 'unknown' && (
+            <div className="pt-2 border-t">
+              <a 
+                href={eventData.sourceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary"
+                data-testid={`link-event-source-${eventData.id}`}
+              >
+                <ExternalLink className="h-3 w-3" />
+                {eventData.sourceName && eventData.sourceName !== 'Static Scraper' 
+                  ? `View on ${eventData.sourceName}` 
+                  : 'View Original'}
+              </a>
             </div>
           )}
         </CardContent>
