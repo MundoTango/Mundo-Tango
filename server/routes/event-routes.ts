@@ -121,93 +121,8 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// Sample events data for when database is empty
-const sampleEvents = [
-  {
-    event: {
-      id: 1,
-      title: "Friday Night Milonga",
-      description: "Weekly social dancing with live orchestra. Experience authentic Buenos Aires milonga atmosphere.",
-      startDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(),
-      endDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000 + 4 * 60 * 60 * 1000).toISOString(),
-      venue: "La Catedral Club",
-      address: "Sarmiento 4006",
-      city: "Buenos Aires",
-      country: "Argentina",
-      eventType: "milonga",
-      price: "0",
-      currency: "USD",
-      capacity: 150,
-      status: "published",
-      imageUrl: "https://images.unsplash.com/photo-1545128485-c400e7702796?w=800"
-    },
-    organizer: { id: 1, name: "Tango Buenos Aires", username: "tangoba", profileImage: null },
-    _count: 85
-  },
-  {
-    event: {
-      id: 2,
-      title: "Tango Fusion Festival 2025",
-      description: "Three days of workshops, performances, and social dancing with world-renowned maestros.",
-      startDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(),
-      endDate: new Date(Date.now() + 16 * 24 * 60 * 60 * 1000).toISOString(),
-      venue: "Lincoln Center",
-      address: "10 Lincoln Center Plaza",
-      city: "New York",
-      country: "USA",
-      eventType: "festival",
-      price: "250",
-      currency: "USD",
-      capacity: 500,
-      status: "published",
-      imageUrl: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=800"
-    },
-    organizer: { id: 2, name: "NY Tango Festival", username: "nytango", profileImage: null },
-    _count: 320
-  },
-  {
-    event: {
-      id: 3,
-      title: "Embrace & Connection Workshop",
-      description: "Master the art of the tango embrace with focus on musicality and partner connection.",
-      startDate: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(),
-      endDate: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000 + 3 * 60 * 60 * 1000).toISOString(),
-      venue: "Berlin Tango Academy",
-      address: "Friedrichstraße 123",
-      city: "Berlin",
-      country: "Germany",
-      eventType: "workshop",
-      price: "45",
-      currency: "EUR",
-      capacity: 30,
-      status: "published",
-      imageUrl: "https://images.unsplash.com/photo-1504609813442-a8924e83f76e?w=800"
-    },
-    organizer: { id: 3, name: "Berlin Tango", username: "berlintango", profileImage: null },
-    _count: 24
-  },
-  {
-    event: {
-      id: 4,
-      title: "Practica Night",
-      description: "Informal practice session for all levels. Perfect for trying new moves in a relaxed environment.",
-      startDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
-      endDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000 + 2 * 60 * 60 * 1000).toISOString(),
-      venue: "Paris Tango Studio",
-      address: "45 Rue du Faubourg",
-      city: "Paris",
-      country: "France",
-      eventType: "practica",
-      price: "10",
-      currency: "EUR",
-      capacity: 50,
-      status: "published",
-      imageUrl: "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=800"
-    },
-    organizer: { id: 4, name: "Paris Milonga", username: "parismilonga", profileImage: null },
-    _count: 35
-  }
-];
+// NOTE: Sample data fallback removed - MB.MD Pattern 58
+// Real scraped events should always display from database
 
 // ============================================================================
 // PRO TEAM SEARCH - Search professionals by role for event staffing
@@ -361,11 +276,7 @@ router.get("/", optionalAuth, async (req: AuthRequest, res: Response) => {
       .limit(parseInt(limit as string))
       .offset(parseInt(offset as string));
 
-    // Return sample data if database is empty (for demo/beta)
-    if (results.length === 0 && !city && !country && !eventType && !search && !category) {
-      return res.json(sampleEvents);
-    }
-
+    // MB.MD Pattern 58: Always return real data, no sample fallback
     res.json(results);
   } catch (error) {
     console.error("[Events] Error fetching events:", error);
