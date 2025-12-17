@@ -26,6 +26,14 @@ The backend is developed with Express and TypeScript, leveraging PostgreSQL (Neo
 ### AI Systems
 Mundo Tango features an extensive AI ecosystem comprising 48 specialized agents (10 Page, 33 Feature, 5 Scraping agents) for strategic oversight and atomic execution. It includes self-healing infrastructure, a production-ready validation loop, a Visual Validation Framework, contextual agent activation, a Backend Agent System, Mr. Blue AI Assistant, and a Bifrost AI Gateway for multi-provider AI interactions. A RecursiveContextService handles hierarchical code summarization, and a TRM Learning Protocol is integrated. Scraping agents gather event data and automatically create city groups. The `/api/mrblue/chat` endpoint supports a `systemPrompt` parameter for custom AI interactions, bypassing the ConversationOrchestrator for direct prompt usage with Groq's llama-3.3-70b-versatile model.
 
+### Event Scraping System
+The UnifiedEventScraper (`server/services/scraping/UnifiedEventScraper.ts`) uses Groq LLM for intelligent HTML parsing with Cheerio fallback. Key features:
+- **AI-Powered Extraction**: Groq llama-3.3-70b-versatile extracts event data including title, description, eventType, dates, venue, address, city, country
+- **EventType Classification**: 14 supported types (milonga, practica, workshop, festival, marathon, encuentro, class, social, performance, show, competition, online, concert, private) with AI extraction + keyword-based fallback via `classifyEventType()` function
+- **Source Transparency**: Events display "View on {sourceName}" links on event cards, allowing users to click through to original event sources
+- **Database Schema**: `scraped_events` table includes `event_type`, `source_url`, `source_name`, `city`, `country` columns
+- **Admin Endpoints**: POST `/api/admin/unified-scrape`, GET `/api/admin/unified-scraper-status`
+
 ### Platform Features
 Core functionalities encompass social features (events, groups, posts, notifications, media management, live streaming, marketplaces, reviews) and business features (Talent Match AI, LIFE CEO AI, Multi-AI Orchestration, Automated Scraping, Admin Dashboard, Stripe Payments, BullMQ Workers). Recent enhancements include an Event Series System, redesigned City Groups Events Tab, RSS Feed Scraping, Profile Enrichment Service, OpenStreetMap Geocoding, Unified Messaging Inbox, and a Faceless Content System. The Talent Match AI system includes volunteer onboarding, resume analysis, AI interviews, and task assignment, with an International Payment System orchestrating multi-gateway payments across 30 currencies and 6 regions. The platform supports anonymous volunteer applications via a 4-step guest flow (Intake, Upload, Interview, Complete) and has an enhanced 5-step onboarding flow. Event cards now display "View Original" links for transparency.
 
