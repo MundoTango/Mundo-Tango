@@ -87,10 +87,16 @@ const eventSummaryFields = {
   shareCount: events.shareCount,
   sourceName: events.sourceName,
   sourceUrl: events.sourceUrl,
+  sourceUrls: events.sourceUrls,
+  sourceUpdatedAt: events.sourceUpdatedAt,
   seriesId: events.seriesId,
   createdAt: events.createdAt,
   updatedAt: events.updatedAt,
   publishedAt: events.publishedAt,
+  organizerText: events.organizerText,
+  djText: events.djText,
+  teacherText: events.teacherText,
+  performerText: events.performerText,
 };
 
 // ============================================================================
