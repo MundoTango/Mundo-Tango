@@ -22,6 +22,7 @@ import { db } from '@shared/db';
 import { scrapedEvents } from '@shared/schema';
 import { cityMatcherService } from '../../services/CityMatcherService';
 import { eq } from 'drizzle-orm';
+import { discoverTeamFromSubpages, formatTeamForDescription, hasTeamData } from './subpageDiscovery';
 
 interface TangoCatJSONEvent {
   id: number;
@@ -516,6 +517,19 @@ export class TangoCatScraper {
               }
               if (enrichedData.location && enrichedData.location.length > fullAddress.length) {
                 fullAddress = enrichedData.location;
+              }
+              
+              // MULTI-PAGE: Discover and scrape team member subpages
+              try {
+                const teamData = await discoverTeamFromSubpages(event.website, eventHtml);
+                
+                if (hasTeamData(teamData)) {
+                  const teamText = formatTeamForDescription(teamData);
+                  enrichedDescription = enrichedDescription + '\n\n' + teamText;
+                  console.log(`[TangoCat] 👥 Added team from subpages`);
+                }
+              } catch (teamErr) {
+                console.log(`[TangoCat] Could not extract team from subpages`);
               }
             } catch (fetchErr) {
               console.log(`[TangoCat] Could not fetch details from ${sourceName}, using aggregator data`);

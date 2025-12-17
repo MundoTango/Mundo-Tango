@@ -11,6 +11,7 @@ import * as cheerio from 'cheerio';
 import { db } from '@shared/db';
 import { scrapedEvents } from '@shared/schema';
 import { cityMatcherService } from '../../services/CityMatcherService';
+import { discoverTeamFromSubpages, formatTeamForDescription, hasTeamData } from './subpageDiscovery';
 
 interface TangoFestivalEvent {
   title: string;
@@ -275,19 +276,61 @@ export class TangoFestivalsScraper {
         // Parse date
         const startDate = this.parseDateFromString(event.dates);
         const endDate = this.parseEndDate(event.dates, startDate);
+        
+        // Default values
+        let sourceUrl = 'tangofestivals.net';
+        let sourceName = 'TangoFestivals.net';
+        let enrichedDescription = event.description || `${event.eventType} in ${event.city}, ${event.country}`;
+        let imageUrl = event.imageUrl;
+        
+        // MULTI-STAGE: Follow event website for additional data including team members
+        if (event.website && event.website.startsWith('http') && !event.website.includes('tangofestivals.net')) {
+          try {
+            const parsedUrl = new URL(event.website);
+            sourceUrl = event.website;
+            sourceName = parsedUrl.hostname.replace('www.', '');
+            console.log(`[TangoFestivals] 📎 Following: ${event.title} → ${sourceName}`);
+            
+            const eventHtml = await this.fetchHTML(event.website);
+            
+            // Try to extract cover image if not present
+            if (!imageUrl) {
+              const $ = cheerio.load(eventHtml);
+              const ogImage = $('meta[property="og:image"]').attr('content');
+              if (ogImage && ogImage.startsWith('http') && !ogImage.includes('logo')) {
+                imageUrl = ogImage;
+                console.log(`[TangoFestivals] 🖼️ Found image: ${imageUrl.substring(0, 50)}...`);
+              }
+            }
+            
+            // MULTI-PAGE: Discover team members from subpages
+            try {
+              const teamData = await discoverTeamFromSubpages(event.website, eventHtml);
+              if (hasTeamData(teamData)) {
+                const teamText = formatTeamForDescription(teamData);
+                enrichedDescription = enrichedDescription + '\n\n' + teamText;
+                console.log(`[TangoFestivals] 👥 Added team from subpages`);
+              }
+            } catch {
+              // Team extraction is optional
+            }
+          } catch (fetchErr) {
+            console.log(`[TangoFestivals] Could not fetch: ${event.website}`);
+          }
+        }
 
         await db.insert(scrapedEvents).values({
           sourceId,
-          sourceUrl: 'tangofestivals.net',
-          sourceName: 'TangoFestivals.net',
+          sourceUrl,
+          sourceName,
           title: event.title,
-          description: event.description || `${event.eventType} in ${event.city}, ${event.country}`,
+          description: enrichedDescription,
           startDate,
           endDate,
           location: event.location,
           address: `${event.city}, ${event.country}`,
-          organizer: event.website ? new URL(event.website).hostname : undefined,
-          imageUrl: event.imageUrl,
+          organizer: sourceName !== 'TangoFestivals.net' ? sourceName : undefined,
+          imageUrl,
           groupId,
           status: 'pending_review',
           externalId: `tangofestivals-${event.title}`.toLowerCase().replace(/\s+/g, '-').slice(0, 100)

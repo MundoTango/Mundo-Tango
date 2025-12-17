@@ -814,12 +814,12 @@ export default function EventDetailsPage() {
                 )}
 
                 {/* Additional Event Info Row */}
-                {(event.musicStyle || event.level || event.dressCode || event.djName) && (
+                {(event.musicStyle || event.level || event.dressCode) && (
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.65 }}
-                    className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 pt-6 border-t"
+                    className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 pt-6 border-t"
                   >
                     {event.musicStyle && (
                       <div className="flex items-center gap-3">
@@ -845,15 +845,6 @@ export default function EventDetailsPage() {
                         <div>
                           <p className="text-sm text-muted-foreground">Dress Code</p>
                           <p className="font-medium">{event.dressCode}</p>
-                        </div>
-                      </div>
-                    )}
-                    {event.djName && (
-                      <div className="flex items-center gap-3">
-                        <Music className="h-5 w-5 text-muted-foreground" />
-                        <div>
-                          <p className="text-sm text-muted-foreground">DJ / Music</p>
-                          <p className="font-medium">{event.djName}</p>
                         </div>
                       </div>
                     )}
