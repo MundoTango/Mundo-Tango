@@ -4879,7 +4879,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // List all events with filters (CRITICAL - Page 11 EventsPage depends on this!)
+  // Also includes approved scraped events for immediate visibility
   app.get("/api/events", async (req: Request, res: Response) => {
+    console.log('[EVENTS API] /api/events called with query:', req.query);
     try {
       const { 
         search, 
@@ -4887,10 +4889,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         city, 
         groupId,
         limit = "50", 
-        offset = "0" 
+        offset = "0",
+        includeScraped = "true"
       } = req.query;
 
-      const events = await storage.getEvents({
+      // Get main events from storage
+      const mainEvents = await storage.getEvents({
         search: search as string | undefined,
         eventType: eventType as string | undefined,
         city: city as string | undefined,
@@ -4899,7 +4903,82 @@ export async function registerRoutes(app: Express): Promise<Server> {
         offset: parseInt(offset as string),
       });
 
-      res.json({ events });
+      // Also fetch approved scraped events if requested
+      let allEvents = mainEvents;
+      
+      if (includeScraped === "true") {
+        const conditions = [eq(scrapedEvents.status, 'approved')];
+        
+        if (city) {
+          conditions.push(sql`LOWER(${scrapedEvents.city}) = LOWER(${city as string})`);
+        }
+        if (eventType) {
+          conditions.push(eq(scrapedEvents.eventType, eventType as string));
+        }
+        if (search) {
+          const searchLower = (search as string).toLowerCase();
+          conditions.push(sql`(
+            LOWER(${scrapedEvents.title}) LIKE ${'%' + searchLower + '%'} OR
+            LOWER(${scrapedEvents.description}) LIKE ${'%' + searchLower + '%'}
+          )`);
+        }
+        
+        const scrapedResults = await db.select()
+          .from(scrapedEvents)
+          .where(and(...conditions))
+          .limit(parseInt(limit as string));
+        
+        // Transform scraped events to match main event format
+        const transformedScraped = scrapedResults.map(se => ({
+          id: se.id,
+          title: se.title,
+          description: se.description,
+          date: se.eventDate,
+          startDate: se.eventDate,
+          endDate: se.endDate,
+          startTime: se.startTime,
+          endTime: se.endTime,
+          location: se.location,
+          address: se.location,
+          city: se.city,
+          country: se.country,
+          eventType: se.eventType || 'event',
+          imageUrl: se.imageUrl,
+          price: se.price ? String(se.price) : null,
+          status: 'published',
+          source: 'scraped',
+          sourceUrl: se.sourceUrl,
+          sourceName: se.sourceName,
+          organizers: se.organizers,
+          djs: se.djs,
+          teachers: se.teachers,
+          performers: se.performers,
+          latitude: se.latitude,
+          longitude: se.longitude,
+          userId: null,
+          createdAt: se.createdAt,
+        }));
+        
+        // Merge and dedupe by title + date (avoid duplicates)
+        const existingTitles = new Set(mainEvents.map((e: any) => 
+          `${(e.title || '').toLowerCase()}-${e.date || e.startDate}`
+        ));
+        
+        const uniqueScraped = transformedScraped.filter(se => 
+          !existingTitles.has(`${(se.title || '').toLowerCase()}-${se.date}`)
+        );
+        
+        allEvents = [...mainEvents, ...uniqueScraped];
+        
+        // Sort by date
+        allEvents.sort((a: any, b: any) => {
+          const dateA = new Date(a.date || a.startDate || 0);
+          const dateB = new Date(b.date || b.startDate || 0);
+          return dateA.getTime() - dateB.getTime();
+        });
+      }
+
+      res.json({ events: allEvents });
     } catch (error) {
       console.error("Get events error:", error);
       res.status(500).json({ message: "Failed to fetch events" });

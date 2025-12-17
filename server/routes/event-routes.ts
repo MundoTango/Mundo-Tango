@@ -8,6 +8,7 @@ import {
   eventInvitations,
   users,
   posts,
+  scrapedEvents,
   insertEventSchema,
   insertEventRsvpSchema,
   insertEventCommentSchema,
@@ -201,7 +202,7 @@ router.get("/search-pros-by-role", authenticateToken, async (req: AuthRequest, r
 // EVENT ROUTES
 // ============================================================================
 
-// GET /api/events - List events with filters
+// GET /api/events - List events with filters (includes approved scraped events)
 router.get("/", optionalAuth, async (req: AuthRequest, res: Response) => {
   try {
     const {
@@ -216,9 +217,11 @@ router.get("/", optionalAuth, async (req: AuthRequest, res: Response) => {
       category,
       upcoming,
       past,
-      search
+      search,
+      includeScraped = "true"
     } = req.query;
 
+    // 1. Query main events table
     let query = db
       .select({
         event: events,
@@ -241,13 +244,13 @@ router.get("/", optionalAuth, async (req: AuthRequest, res: Response) => {
 
     const conditions = [eq(events.status, status as string)];
 
-    if (city) conditions.push(eq(events.city, city as string));
+    if (city) conditions.push(sql`LOWER(${events.city}) = LOWER(${city as string})`);
     if (country) conditions.push(eq(events.country, country as string));
     if (eventType) conditions.push(eq(events.eventType, eventType as string));
     if (startDate) conditions.push(gte(events.startDate, new Date(startDate as string)));
     if (endDate) conditions.push(lte(events.startDate, new Date(endDate as string)));
 
-    // Handle search parameter - search in title, description, venue, address, city
+    // Handle search parameter
     if (search && typeof search === 'string' && search.trim()) {
       const searchTerm = `%${search.trim()}%`;
       conditions.push(
@@ -261,17 +264,17 @@ router.get("/", optionalAuth, async (req: AuthRequest, res: Response) => {
       );
     }
 
-    // Handle category=my-events: filter by userId if user is authenticated
+    // Handle category=my-events
     if (category === "my-events" && req.user) {
       conditions.push(eq(events.userId, req.user.id));
     }
 
-    // Handle upcoming=true: filter for events starting from now
+    // Handle upcoming=true
     if (upcoming === "true") {
       conditions.push(gte(events.startDate, new Date()));
     }
 
-    // Handle past=true: filter for events that have already ended
+    // Handle past=true
     if (past === "true") {
       conditions.push(lte(events.startDate, new Date()));
     }
@@ -280,13 +283,154 @@ router.get("/", optionalAuth, async (req: AuthRequest, res: Response) => {
       query = query.where(and(...conditions));
     }
 
-    const results = await query
+    const mainResults = await query
       .orderBy(asc(events.startDate))
       .limit(parseInt(limit as string))
       .offset(parseInt(offset as string));
 
+    // 2. Also fetch approved scraped events if requested (for immediate visibility)
+    let allResults = mainResults;
+    
+    if (includeScraped === "true" && category !== "my-events") {
+      const scrapedConditions = [eq(scrapedEvents.status, 'approved')];
+      
+      if (city) {
+        scrapedConditions.push(sql`LOWER(${scrapedEvents.city}) = LOWER(${city as string})`);
+      }
+      if (country) {
+        scrapedConditions.push(eq(scrapedEvents.country, country as string));
+      }
+      if (eventType) {
+        scrapedConditions.push(eq(scrapedEvents.eventType, eventType as string));
+      }
+      if (search && typeof search === 'string' && search.trim()) {
+        const searchTerm = `%${search.trim()}%`;
+        scrapedConditions.push(
+          or(
+            sql`${scrapedEvents.title} ILIKE ${searchTerm}`,
+            sql`${scrapedEvents.description} ILIKE ${searchTerm}`,
+            sql`${scrapedEvents.venue} ILIKE ${searchTerm}`,
+            sql`${scrapedEvents.city} ILIKE ${searchTerm}`
+          )!
+        );
+      }
+      if (upcoming === "true") {
+        scrapedConditions.push(gte(scrapedEvents.startDate, new Date()));
+      }
+      if (past === "true") {
+        scrapedConditions.push(lte(scrapedEvents.startDate, new Date()));
+      }
+
+      const scrapedResults = await db
+        .select()
+        .from(scrapedEvents)
+        .where(and(...scrapedConditions))
+        .orderBy(asc(scrapedEvents.startDate))
+        .limit(parseInt(limit as string));
+
+      // Convert scraped events to match main event format
+      const convertedScraped = scrapedResults.map(se => ({
+        event: {
+          id: se.id,
+          title: se.title,
+          slug: null,
+          description: se.description,
+          longDescription: null,
+          eventType: se.eventType || 'milonga',
+          category: null,
+          userId: null,
+          startDate: se.startDate,
+          endDate: se.endDate,
+          date: se.startDate,
+          timezone: null,
+          isRecurring: false,
+          location: se.venue,
+          venue: se.venue,
+          venueName: se.venue,
+          address: se.address,
+          city: se.city,
+          country: se.country,
+          latitude: null,
+          longitude: null,
+          isOnline: false,
+          onlineLink: null,
+          meetingUrl: null,
+          imageUrl: se.imageUrl,
+          coverImage: se.imageUrl,
+          mediaUrls: null,
+          organizerId: null,
+          coOrganizers: null,
+          groupId: null,
+          maxAttendees: null,
+          currentAttendees: 0,
+          waitlistEnabled: false,
+          waitlistCount: 0,
+          isPaid: se.price ? true : false,
+          isFree: !se.price,
+          price: se.price,
+          currency: se.currency,
+          ticketUrl: se.ticketUrl,
+          ticketLink: se.ticketUrl,
+          visibility: 'public',
+          requiresApproval: false,
+          allowGuestPlusOne: true,
+          allowPhotos: true,
+          allowComments: true,
+          musicStyle: null,
+          danceStyles: null,
+          djName: null,
+          tags: se.tags,
+          dressCode: null,
+          ageRestriction: null,
+          wheelchairAccessible: null,
+          parkingAvailable: null,
+          status: 'published',
+          viewCount: 0,
+          shareCount: 0,
+          sourceName: se.sourceName,
+          sourceUrl: se.sourceUrl,
+          sourceUpdatedAt: null,
+          seriesId: null,
+          createdAt: se.createdAt,
+          updatedAt: se.updatedAt,
+          publishedAt: se.createdAt,
+          organizerText: se.organizerText,
+          djText: se.djText,
+          teacherText: se.teacherText,
+          performerText: se.performerText,
+          organizerProfiles: null,
+          djProfiles: null,
+          teacherProfiles: null,
+          performerProfiles: null,
+          isScraped: true,
+          scrapedEventId: se.id
+        },
+        organizer: null,
+        _count: 0
+      }));
+
+      // Merge and deduplicate by title + date
+      const mainEventKeys = new Set(
+        mainResults.map(r => `${r.event.title?.toLowerCase()}-${r.event.startDate?.toISOString()?.split('T')[0]}`)
+      );
+      
+      const uniqueScraped = convertedScraped.filter(se => {
+        const key = `${se.event.title?.toLowerCase()}-${se.event.startDate?.toISOString()?.split('T')[0]}`;
+        return !mainEventKeys.has(key);
+      });
+
+      allResults = [...mainResults, ...uniqueScraped];
+      
+      // Sort combined results by startDate
+      allResults.sort((a, b) => {
+        const dateA = a.event.startDate ? new Date(a.event.startDate).getTime() : 0;
+        const dateB = b.event.startDate ? new Date(b.event.startDate).getTime() : 0;
+        return dateA - dateB;
+      });
+    }
+
     // MB.MD Pattern 58: Always return real data, no sample fallback
-    res.json(results);
+    res.json(allResults);
   } catch (error) {
     console.error("[Events] Error fetching events:", error);
     res.status(500).json({ message: "Failed to fetch events" });
