@@ -581,24 +581,24 @@ export function MiscRoutes() {
           </AppLayout>
         </ProtectedRoute>
       </Route>
-      <Route path="/pro/learning"><Suspense fallback={<LoadingFallback />}><PROLearningPage /></Suspense></Route>
-      <Route path="/pro/music"><Suspense fallback={<LoadingFallback />}><PROMusicPage /></Suspense></Route>
-      <Route path="/pro/media"><Suspense fallback={<LoadingFallback />}><PROMediaGalleryPage /></Suspense></Route>
-      <Route path="/pro/performances"><Suspense fallback={<LoadingFallback />}><PROPerformancesPage /></Suspense></Route>
-      <Route path="/pro/venues"><Suspense fallback={<LoadingFallback />}><PROVenuesPage /></Suspense></Route>
-      <Route path="/pro/organizers"><Suspense fallback={<LoadingFallback />}><PROOrganizersPage /></Suspense></Route>
-      <Route path="/pro/stories"><Suspense fallback={<LoadingFallback />}><PROStoriesBlogPage /></Suspense></Route>
-      <Route path="/pro/artists"><Suspense fallback={<LoadingFallback />}><PROArtistsPage /></Suspense></Route>
-      <Route path="/pro/musicians"><Suspense fallback={<LoadingFallback />}><PROMusiciansPage /></Suspense></Route>
-      <Route path="/pro/clothing"><Suspense fallback={<LoadingFallback />}><PROClothingDesignersPage /></Suspense></Route>
-      <Route path="/pro/historians"><Suspense fallback={<LoadingFallback />}><PROHistoriansPage /></Suspense></Route>
-      <Route path="/pro/coaches"><Suspense fallback={<LoadingFallback />}><PROCoachesPage /></Suspense></Route>
-      <Route path="/pro/hosts"><Suspense fallback={<LoadingFallback />}><PROHostsMCsPage /></Suspense></Route>
-      <Route path="/pro/vendors"><Suspense fallback={<LoadingFallback />}><PROVendorsPage /></Suspense></Route>
-      <Route path="/pro/community"><Suspense fallback={<LoadingFallback />}><PROCommunityBuildersPage /></Suspense></Route>
-      <Route path="/pro/taxi-dancers"><Suspense fallback={<LoadingFallback />}><PROTaxiDancersPage /></Suspense></Route>
-      <Route path="/pro/dancers"><Suspense fallback={<LoadingFallback />}><PRODancersPage /></Suspense></Route>
-      <Route path="/pro/researchers"><Suspense fallback={<LoadingFallback />}><PROResearchersPage /></Suspense></Route>
+      <Route path="/pro/learning"><AppLayout><Suspense fallback={<LoadingFallback />}><PROLearningPage /></Suspense></AppLayout></Route>
+      <Route path="/pro/music"><AppLayout><Suspense fallback={<LoadingFallback />}><PROMusicPage /></Suspense></AppLayout></Route>
+      <Route path="/pro/media"><AppLayout><Suspense fallback={<LoadingFallback />}><PROMediaGalleryPage /></Suspense></AppLayout></Route>
+      <Route path="/pro/performances"><AppLayout><Suspense fallback={<LoadingFallback />}><PROPerformancesPage /></Suspense></AppLayout></Route>
+      <Route path="/pro/venues"><AppLayout><Suspense fallback={<LoadingFallback />}><PROVenuesPage /></Suspense></AppLayout></Route>
+      <Route path="/pro/organizers"><AppLayout><Suspense fallback={<LoadingFallback />}><PROOrganizersPage /></Suspense></AppLayout></Route>
+      <Route path="/pro/stories"><AppLayout><Suspense fallback={<LoadingFallback />}><PROStoriesBlogPage /></Suspense></AppLayout></Route>
+      <Route path="/pro/artists"><AppLayout><Suspense fallback={<LoadingFallback />}><PROArtistsPage /></Suspense></AppLayout></Route>
+      <Route path="/pro/musicians"><AppLayout><Suspense fallback={<LoadingFallback />}><PROMusiciansPage /></Suspense></AppLayout></Route>
+      <Route path="/pro/clothing"><AppLayout><Suspense fallback={<LoadingFallback />}><PROClothingDesignersPage /></Suspense></AppLayout></Route>
+      <Route path="/pro/historians"><AppLayout><Suspense fallback={<LoadingFallback />}><PROHistoriansPage /></Suspense></AppLayout></Route>
+      <Route path="/pro/coaches"><AppLayout><Suspense fallback={<LoadingFallback />}><PROCoachesPage /></Suspense></AppLayout></Route>
+      <Route path="/pro/hosts"><AppLayout><Suspense fallback={<LoadingFallback />}><PROHostsMCsPage /></Suspense></AppLayout></Route>
+      <Route path="/pro/vendors"><AppLayout><Suspense fallback={<LoadingFallback />}><PROVendorsPage /></Suspense></AppLayout></Route>
+      <Route path="/pro/community"><AppLayout><Suspense fallback={<LoadingFallback />}><PROCommunityBuildersPage /></Suspense></AppLayout></Route>
+      <Route path="/pro/taxi-dancers"><AppLayout><Suspense fallback={<LoadingFallback />}><PROTaxiDancersPage /></Suspense></AppLayout></Route>
+      <Route path="/pro/dancers"><AppLayout><Suspense fallback={<LoadingFallback />}><PRODancersPage /></Suspense></AppLayout></Route>
+      <Route path="/pro/researchers"><AppLayout><Suspense fallback={<LoadingFallback />}><PROResearchersPage /></Suspense></AppLayout></Route>
       <Route component={NotFound} />
     </>
   );
