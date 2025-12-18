@@ -957,6 +957,7 @@ export const eventTeamMembers = pgTable(
     eventIdIdx: index("event_team_members_event_id").on(table.eventId),
     userIdIdx: index("event_team_members_user_id").on(table.userId),
     roleIdx: index("event_team_members_role").on(table.role),
+    eventRoleIdx: index("event_team_members_event_role").on(table.eventId, table.role),
   }),
 );
 
@@ -4809,6 +4810,7 @@ export const housingListings = pgTable(
     statusIdx: index("housing_status_idx").on(table.status),
     createdAtIdx: index("housing_created_at_idx").on(table.createdAt),
     guestVisibilityIdx: index("housing_guest_visibility_idx").on(table.guestVisibility),
+    cityStatusIdx: index("housing_city_status_idx").on(table.city, table.status),
   }),
 );
 
