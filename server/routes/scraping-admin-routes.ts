@@ -298,7 +298,7 @@ router.post('/admin/scraping/deduplicate', authenticateToken, async (req: AuthRe
     res.json({
       success: true,
       message: 'Deduplication complete',
-      ...result,
+      duplicatesRemoved: result?.duplicatesRemoved || 0,
       timestamp: new Date().toISOString()
     });
 
@@ -707,27 +707,20 @@ router.post('/admin/scraping/promote-events', authenticateToken, async (req: Aut
     for (const scraped of scrapedList) {
       try {
         await db.insert(events).values({
+          userId: userId,
+          location: scraped.title || 'TBD',
           title: scraped.title,
-          description: scraped.description,
+          description: scraped.description || '',
           startDate: scraped.startDate,
-          endDate: scraped.endDate,
-          venue: scraped.location,
+          endDate: scraped.endDate || undefined,
           address: scraped.address,
           city: scraped.city,
           country: scraped.country,
           imageUrl: scraped.imageUrl,
           price: scraped.price ? String(scraped.price) : null,
           groupId: scraped.groupId,
-          sourceName: scraped.sourceName,
-          sourceUrl: scraped.sourceUrl,
-          externalSourceId: scraped.externalId,
-          organizerText: scraped.organizer,
-          status: 'published',
           visibility: 'public',
-          scrapedEventId: scraped.id,
-          scrapedAt: scraped.scrapedAt,
-          createdAt: new Date(),
-          updatedAt: new Date()
+          eventType: 'social'
         }).onConflictDoNothing();
 
         await db.update(scrapedEvents)
