@@ -3,12 +3,12 @@ import { authenticateToken, AuthRequest } from '../middleware/auth';
 import { db } from '@shared/db';
 import { users, eventScrapingSources, scrapedEvents, scrapedCommunityData, events } from '@shared/schema';
 import { eq, sql, desc, and, gte } from 'drizzle-orm';
-import { scrapingOrchestrator } from '../agents/scraping/masterOrchestrator';
-import { cityGroupEnrichmentService } from '../services/scraping/CityGroupEnrichmentService';
-import { deduplicator } from '../agents/scraping/deduplicator';
-import { rssFeedService } from '../services/scraping/RSSFeedService';
-import { hoyMilongaScraper } from '../services/scraping/HoyMilongaScraper';
-import { unifiedEventScraper } from '../services/scraping/UnifiedEventScraper';
+import { scrapingOrchestrator } from '../agents/scraping/masterOrchestrator.ts';
+import { cityGroupEnrichmentService } from '../services/scraping/CityGroupEnrichmentService.ts';
+import { deduplicator } from '../agents/scraping/deduplicator.ts';
+import { rssFeedService } from '../services/scraping/RSSFeedService.ts';
+import { hoyMilongaScraper } from '../services/scraping/HoyMilongaScraper.ts';
+import { unifiedEventScraper } from '../services/scraping/UnifiedEventScraper.ts';
 
 const router = Router();
 
