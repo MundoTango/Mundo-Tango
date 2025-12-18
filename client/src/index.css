@@ -698,3 +698,17 @@ h2.text-4xl {
 .leaflet-popup-tip {
   background: inherit;
 }
+
+/* FIX: UI-001 - Replit banner z-index overlap [MB.MD Pattern 27] */
+/* Ensure navigation stays above Replit development banner */
+nav,
+header,
+[role="navigation"] {
+  position: relative;
+  z-index: 9999;
+}
+
+/* Add top padding to account for Replit banner when present */
+body.replit-env {
+  padding-top: 40px;
+}
