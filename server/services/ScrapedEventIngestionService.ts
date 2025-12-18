@@ -199,7 +199,11 @@ class ScrapedEventIngestionService {
       price: scraped.price || null,
       isOnline: false,
       isFree: this.isPriceFree(scraped.price),
-      isPaid: !this.isPriceFree(scraped.price)
+      isPaid: !this.isPriceFree(scraped.price),
+      djText: scraped.djText || null,
+      teacherText: scraped.teacherText || null,
+      performerText: scraped.performerText || null,
+      organizerText: scraped.organizerText || null
     };
   }
 
