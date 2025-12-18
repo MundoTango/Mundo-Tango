@@ -13,7 +13,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
-import { Users, Plus, Search, MapPin, TrendingUp, Award, Heart, Activity, Filter, X, Globe, Star, MessageCircle, UserPlus, Calendar, Home, Building2, ChevronRight } from "lucide-react";
+import { Users, Plus, Search, MapPin, TrendingUp, Award, Heart, Activity, Filter, X, Globe, Star, MessageCircle, UserPlus, Calendar as CalendarIcon, Home, Building2, ChevronRight, Sparkles } from "lucide-react";
 import type { SelectGroup } from "@shared/schema";
 import { SEO } from "@/components/SEO";
 import { PageLayout } from "@/components/PageLayout";
@@ -21,6 +21,7 @@ import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary"
 import { GroupCreationModal } from "@/components/groups/GroupCreationModal";
 import { GroupCategoryFilter } from "@/components/groups/GroupCategoryFilter";
 import { useAuth } from "@/contexts/AuthContext";
+import { getCityImageUrl } from "@/lib/cityImageMap";
 
 // Health score calculation (mock)
 const calculateHealthScore = (group: SelectGroup): number => {
@@ -56,8 +57,31 @@ export default function GroupsPage() {
     queryKey: ["/api/groups"],
   });
 
-  // Fetch user's actual group memberships
-  const { data: myGroupsData, isLoading: isLoadingMyGroups } = useQuery<any[]>({
+  // Fetch user's actual group memberships with location awareness
+  interface EnhancedGroupData {
+    groups: Array<{
+      group: SelectGroup;
+      membership: { role: string; status: string; joinedAt: string };
+      memberCount: number;
+      eventCount: number;
+      locationCategory: 'current' | 'previous' | 'professional' | 'other';
+      locationBadge: string | null;
+    }>;
+    userProfile: {
+      currentCity: string | null;
+      currentCountry: string | null;
+      tangoRoles: string[];
+    };
+    locationHistory: Array<{
+      id: number;
+      city: string;
+      startDate: string;
+      endDate: string | null;
+      isCurrent: boolean;
+    }>;
+  }
+
+  const { data: myGroupsData, isLoading: isLoadingMyGroups } = useQuery<EnhancedGroupData>({
     queryKey: ["/api/groups/my-groups"],
     enabled: !!user,
   });
@@ -107,21 +131,33 @@ export default function GroupsPage() {
   }, [filteredGroups]);
 
   const professionalGroups = useMemo(() => {
-    return filteredGroups.filter(g => g.type === "professional");
+    return filteredGroups.filter(g => g.type === "professional" || g.type === "role");
   }, [filteredGroups]);
 
-  // My Groups - actual groups user has joined from database
+  // My Groups - organized by location relevance (current city, previous cities, professional, other)
   const myGroups = useMemo(() => {
-    if (!user || !myGroupsData) return [];
-    return (myGroupsData || []).map(item => ({
+    if (!user || !myGroupsData?.groups) return [];
+    return myGroupsData.groups.map(item => ({
       ...item.group,
       healthScore: calculateHealthScore(item.group),
       distance: calculateDistance(item.group.city),
       isFeatured: (item.memberCount || 0) > 20,
       memberCount: item.memberCount,
-      membership: item.membership
+      eventCount: item.eventCount,
+      membership: item.membership,
+      locationCategory: item.locationCategory,
+      locationBadge: item.locationBadge,
     }));
   }, [myGroupsData, user]);
+
+  // Group myGroups by location category for organized display
+  const groupedMyGroups = useMemo(() => {
+    const current = myGroups.filter(g => g.locationCategory === 'current');
+    const previous = myGroups.filter(g => g.locationCategory === 'previous');
+    const professional = myGroups.filter(g => g.locationCategory === 'professional');
+    const other = myGroups.filter(g => g.locationCategory === 'other');
+    return { current, previous, professional, other };
+  }, [myGroups]);
 
   // Featured groups (algorithm-selected)
   const featuredGroups = useMemo(() => {
@@ -158,21 +194,96 @@ export default function GroupsPage() {
       .slice(0, 5);
   }, [enrichedGroups]);
 
+  // Check if user is a member of a group
+  const isMemberOfGroup = (groupId: number): boolean => {
+    return myGroups.some(g => g.id === groupId);
+  };
+
   // Render City Group Card with editorial design
-  const renderCityCard = (group: SelectGroup & { healthScore: number; distance: number }) => (
-    <motion.div
-      key={group.id}
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      whileHover={{ y: -4 }}
-      className="group cursor-pointer"
-    >
-      <Card className="overflow-hidden hover-elevate h-full">
-        {/* Cityscape Image - 16:9 */}
-        <div className="relative aspect-[16/9] overflow-hidden">
+  const renderCityCard = (group: SelectGroup & { healthScore: number; distance: number }) => {
+    const isMember = isMemberOfGroup(group.id);
+    
+    return (
+      <motion.div
+        key={group.id}
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        whileHover={{ y: -4 }}
+        className="group cursor-pointer"
+      >
+        <Card className="overflow-hidden hover-elevate h-full">
+          {/* Cityscape Image - 16:9 */}
+          <div className="relative aspect-[16/9] overflow-hidden">
+            <motion.img
+              src={group.coverImage || getCityImageUrl(group.city)}
+              alt={group.name}
+              className="w-full h-full object-cover"
+              whileHover={{ scale: 1.05 }}
+              transition={{ duration: 0.6 }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+            
+            <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+              <h3 className="text-2xl font-serif font-bold mb-1">{group.name}</h3>
+              <p className="text-sm text-white/80">{group.city}</p>
+            </div>
+          </div>
+
+          <div className="p-6 space-y-4">
+            <p className="text-sm text-muted-foreground line-clamp-2">{group.description}</p>
+            
+            <div className="grid grid-cols-4 gap-3 text-sm">
+              <div className="flex flex-col items-center gap-1 p-2 bg-muted/50 rounded-lg">
+                <Users className="w-4 h-4 text-cyan-500" />
+                <div className="font-semibold text-center">{(group.memberCount || 0).toLocaleString()}</div>
+                <div className="text-xs text-muted-foreground text-center">Members</div>
+              </div>
+              <div className="flex flex-col items-center gap-1 p-2 bg-muted/50 rounded-lg">
+                <CalendarIcon className="w-4 h-4 text-blue-500" />
+                <div className="font-semibold text-center">{group.eventCount || 0}</div>
+                <div className="text-xs text-muted-foreground text-center">Events</div>
+              </div>
+              <div className="flex flex-col items-center gap-1 p-2 bg-muted/50 rounded-lg">
+                <Sparkles className="w-4 h-4 text-purple-500" />
+                <div className="font-semibold text-center">{group.recommendationCount || 0}</div>
+                <div className="text-xs text-muted-foreground text-center">Recs</div>
+              </div>
+              <div className="flex flex-col items-center gap-1 p-2 bg-muted/50 rounded-lg">
+                <Home className="w-4 h-4 text-amber-500" />
+                <div className="font-semibold text-center">{group.housingCount || 0}</div>
+                <div className="text-xs text-muted-foreground text-center">Housing</div>
+              </div>
+            </div>
+
+            <Link href={`/groups/${group.id}`} className="w-full">
+              <Button className="w-full gap-2" data-testid={`button-view-group-${group.id}`}>
+                <ChevronRight className="w-4 h-4" />
+                {isMember ? "View Details" : "Join"}
+              </Button>
+            </Link>
+          </div>
+        </Card>
+      </motion.div>
+    );
+  };
+
+  // Render Professional Group Card with editorial design
+  const renderProCard = (group: SelectGroup & { healthScore: number; distance: number; isFeatured: boolean }) => {
+    const isMember = isMemberOfGroup(group.id);
+    
+    return (
+      <motion.article
+        key={group.id}
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.6 }}
+        className="group mb-12"
+      >
+        <div className="relative aspect-[16/9] overflow-hidden rounded-2xl mb-8">
           <motion.img
-            src={group.coverImage || `https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=1200&auto=format&fit=crop&q=80`}
+            src={group.coverImage || getCityImageUrl(group.city)}
             alt={group.name}
             className="w-full h-full object-cover"
             whileHover={{ scale: 1.05 }}
@@ -180,108 +291,52 @@ export default function GroupsPage() {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
           
-          <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-            <h3 className="text-2xl font-serif font-bold mb-1">{group.name}</h3>
-            <p className="text-sm text-white/80">{group.city}</p>
+          <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
+            <div className="flex items-center gap-3 mb-4">
+              <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-sm">
+                Professional
+              </Badge>
+              {group.isFeatured && (
+                <div className="flex items-center gap-1 text-sm bg-white/20 px-2 py-1 rounded-full backdrop-blur-sm">
+                  <Star className="w-3 h-3 fill-white" />
+                  <span>Featured</span>
+                </div>
+              )}
+            </div>
+            <h2 className="text-3xl font-serif font-bold">{group.name}</h2>
           </div>
         </div>
 
-        <div className="p-6 space-y-4">
-          <p className="text-sm text-muted-foreground line-clamp-2">{group.description}</p>
-          
-          <div className="grid grid-cols-2 gap-3 text-sm">
+        <div className="space-y-6 px-2">
+          <p className="text-lg leading-relaxed text-foreground/90">
+            {group.description}
+          </p>
+
+          <div className="flex flex-wrap items-center gap-6 text-sm">
             <div className="flex items-center gap-2">
-              <Users className="w-4 h-4 text-cyan-500" />
-              <div>
-                <div className="font-semibold">{(group.memberCount || 0).toLocaleString()}</div>
-                <div className="text-xs text-muted-foreground">Members</div>
-              </div>
+              <Users className="w-5 h-5 text-primary" />
+              <span className="font-semibold">{(group.memberCount || 0).toLocaleString()}</span>
+              <span className="text-muted-foreground">members</span>
             </div>
             <div className="flex items-center gap-2">
-              <Activity className="w-4 h-4 text-green-500" />
-              <div>
-                <div className="font-semibold">{group.healthScore}/100</div>
-                <div className="text-xs text-muted-foreground">Active</div>
-              </div>
+              <Globe className="w-5 h-5 text-cyan-500" />
+              <span className="font-semibold">{group.city || "Global"}</span>
             </div>
           </div>
 
-          <Link href={`/groups/${group.id}`} className="w-full">
-            <Button className="w-full gap-2" data-testid={`button-view-group-${group.id}`}>
-              <UserPlus className="w-4 h-4" />
-              Join {group.name}
+          <Link href={`/groups/${group.id}`}>
+            <Button size="lg" className="gap-2" data-testid={`button-view-group-${group.id}`}>
+              <ChevronRight className="w-5 h-5" />
+              {isMember ? "View Details" : "Join Community"}
+              <ChevronRight className="w-4 h-4" />
             </Button>
           </Link>
         </div>
-      </Card>
-    </motion.div>
-  );
 
-  // Render Professional Group Card with editorial design
-  const renderProCard = (group: SelectGroup & { healthScore: number; distance: number; isFeatured: boolean }) => (
-    <motion.article
-      key={group.id}
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-100px" }}
-      transition={{ duration: 0.6 }}
-      className="group mb-12"
-    >
-      <div className="relative aspect-[16/9] overflow-hidden rounded-2xl mb-8">
-        <motion.img
-          src={group.coverImage || `https://images.unsplash.com/photo-1540575861501-7cf05a4b125a?w=1200&auto=format&fit=crop&q=80`}
-          alt={group.name}
-          className="w-full h-full object-cover"
-          whileHover={{ scale: 1.05 }}
-          transition={{ duration: 0.6 }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
-        
-        <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
-          <div className="flex items-center gap-3 mb-4">
-            <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-sm">
-              Professional
-            </Badge>
-            {group.isFeatured && (
-              <div className="flex items-center gap-1 text-sm bg-white/20 px-2 py-1 rounded-full backdrop-blur-sm">
-                <Star className="w-3 h-3 fill-white" />
-                <span>Featured</span>
-              </div>
-            )}
-          </div>
-          <h2 className="text-3xl font-serif font-bold">{group.name}</h2>
-        </div>
-      </div>
-
-      <div className="space-y-6 px-2">
-        <p className="text-lg leading-relaxed text-foreground/90">
-          {group.description}
-        </p>
-
-        <div className="flex flex-wrap items-center gap-6 text-sm">
-          <div className="flex items-center gap-2">
-            <Users className="w-5 h-5 text-primary" />
-            <span className="font-semibold">{(group.memberCount || 0).toLocaleString()}</span>
-            <span className="text-muted-foreground">members</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Globe className="w-5 h-5 text-cyan-500" />
-            <span className="font-semibold">{group.city || "Global"}</span>
-          </div>
-        </div>
-
-        <Link href={`/groups/${group.id}`}>
-          <Button size="lg" className="gap-2" data-testid={`button-view-group-${group.id}`}>
-            <UserPlus className="w-5 h-5" />
-            Join Community
-            <ChevronRight className="w-4 h-4" />
-          </Button>
-        </Link>
-      </div>
-
-      <Separator className="mt-12" />
-    </motion.article>
-  );
+        <Separator className="mt-12" />
+      </motion.article>
+    );
+  };
 
   return (
     <SelfHealingErrorBoundary pageName="Groups" fallbackRoute="/feed">
@@ -360,26 +415,108 @@ export default function GroupsPage() {
                       </TabsTrigger>
                     </TabsList>
 
-                    {/* MY GROUPS Tab */}
+                    {/* MY GROUPS Tab - Organized by Location */}
                     <TabsContent value="my-groups" className="space-y-8">
                       <div className="flex items-center justify-between mb-6">
                         <div>
                           <h2 className="text-3xl font-serif font-bold">My Groups</h2>
                           <p className="text-muted-foreground mt-2">
-                            Automatically added based on your city and professional roles
+                            Organized by your current city, tango history, and professional roles
                           </p>
                         </div>
                       </div>
 
-                      {isLoading ? (
+                      {isLoadingMyGroups ? (
                         <div className="grid md:grid-cols-2 gap-6">
                           {[...Array(4)].map((_, i) => (
                             <Skeleton key={i} className="h-64 w-full" />
                           ))}
                         </div>
                       ) : myGroups.length > 0 ? (
-                        <div className="grid md:grid-cols-2 gap-6">
-                          {myGroups.map((group) => renderCityCard(group))}
+                        <div className="space-y-10">
+                          {/* Current City Groups */}
+                          {groupedMyGroups.current.length > 0 && (
+                            <section>
+                              <div className="flex items-center gap-2 mb-4">
+                                <Home className="w-5 h-5 text-primary" />
+                                <h3 className="text-xl font-semibold">Current City</h3>
+                                <Badge variant="default" className="ml-2">
+                                  {myGroupsData?.userProfile?.currentCity || 'Your City'}
+                                </Badge>
+                              </div>
+                              <div className="grid md:grid-cols-2 gap-6">
+                                {groupedMyGroups.current.map((group) => (
+                                  <div key={group.id} className="relative">
+                                    {renderCityCard(group)}
+                                  </div>
+                                ))}
+                              </div>
+                            </section>
+                          )}
+
+                          {/* Previous Cities Groups */}
+                          {groupedMyGroups.previous.length > 0 && (
+                            <section>
+                              <div className="flex items-center gap-2 mb-4">
+                                <MapPin className="w-5 h-5 text-cyan-500" />
+                                <h3 className="text-xl font-semibold">Previous Tango Cities</h3>
+                              </div>
+                              <div className="grid md:grid-cols-2 gap-6">
+                                {groupedMyGroups.previous.map((group) => (
+                                  <div key={group.id} className="relative">
+                                    {group.locationBadge && (
+                                      <Badge 
+                                        variant="secondary" 
+                                        className="absolute top-4 right-4 z-10 bg-background/90 backdrop-blur-sm"
+                                      >
+                                        <CalendarIcon className="w-3 h-3 mr-1" />
+                                        {group.locationBadge}
+                                      </Badge>
+                                    )}
+                                    {renderCityCard(group)}
+                                  </div>
+                                ))}
+                              </div>
+                            </section>
+                          )}
+
+                          {/* Professional Groups */}
+                          {groupedMyGroups.professional.length > 0 && (
+                            <section>
+                              <div className="flex items-center gap-2 mb-4">
+                                <Award className="w-5 h-5 text-purple-500" />
+                                <h3 className="text-xl font-semibold">Your Professional Networks</h3>
+                              </div>
+                              <div className="grid md:grid-cols-2 gap-6">
+                                {groupedMyGroups.professional.map((group) => (
+                                  <div key={group.id} className="relative">
+                                    {group.locationBadge && (
+                                      <Badge 
+                                        variant="outline" 
+                                        className="absolute top-4 right-4 z-10 bg-background/90 backdrop-blur-sm border-purple-500/50"
+                                      >
+                                        {group.locationBadge}
+                                      </Badge>
+                                    )}
+                                    {renderCityCard(group)}
+                                  </div>
+                                ))}
+                              </div>
+                            </section>
+                          )}
+
+                          {/* Other Groups */}
+                          {groupedMyGroups.other.length > 0 && (
+                            <section>
+                              <div className="flex items-center gap-2 mb-4">
+                                <Users className="w-5 h-5 text-muted-foreground" />
+                                <h3 className="text-xl font-semibold">Other Groups</h3>
+                              </div>
+                              <div className="grid md:grid-cols-2 gap-6">
+                                {groupedMyGroups.other.map((group) => renderCityCard(group))}
+                              </div>
+                            </section>
+                          )}
                         </div>
                       ) : (
                         <Card className="p-8 text-center border-dashed">

@@ -22,7 +22,7 @@ export default function CustomGroupsPage() {
     description: "",
     type: "custom",
     visibility: "public",
-    joinApproval: "open"
+    joinApproval: true
   });
   const { toast } = useToast();
 
@@ -36,7 +36,7 @@ export default function CustomGroupsPage() {
       queryClient.invalidateQueries({ queryKey: ["/api/groups"] });
       toast({ title: "Group created successfully!" });
       setIsCreateDialogOpen(false);
-      setNewGroup({ name: "", description: "", type: "custom", visibility: "public", joinApproval: "open" });
+      setNewGroup({ name: "", description: "", type: "custom", visibility: "public", joinApproval: true });
     },
     onError: () => {
       toast({ title: "Failed to create group", variant: "destructive" });

@@ -14,6 +14,7 @@ import platformAllRoutes from "./routes/platform-all";
 import webhooksRoutes from "./routes/webhooks";
 import { createTalentMatchRoutes } from "./talent-match-routes";
 import { createAIChatRoutes } from "./ai-chat-routes";
+import { profileEnrichmentService } from "./services/profile-enrichment";
 import queuesRoutes from "./routes/queues";
 import mentionRoutes from "./routes/mention-routes";
 import lifeCeoRoutes from "./routes/life-ceo-routes";
@@ -24,18 +25,21 @@ import { createBookmarkRoutes } from "./routes/bookmark-routes";
 import avatarRoutes from "./routes/avatarRoutes";
 import videoRoutes from "./routes/videoRoutes";
 import videoUploadRoutes from "./routes/video-upload-routes";
+import videoRecordingRoutes from "./routes/video-recording-routes";
 import { objectStorageService } from "./objectStorage";
 import mrblueVideoRoutes from "./routes/mrblue-video-routes";
-import mrBlueRoutes from "./routes/mrBlue";
+import mrBlueRoutes from "./routes/mrblue";
 import mrBlueStreamRoutes from "./routes/mrblue-stream";
 import mrBlueEnhancedRoutes from "./routes/mr-blue-enhanced";
 import mrBlueAgentsRoutes from "./routes/mrBlueAgents";
 import mrBlueActivateAgentsRoutes from "./routes/mrblue/activate-agents";
 import mrBlueSaveBackendRoutes from "./routes/mrblue/save-backend";
+import { registerLumaRoutes } from "./routes/mrblue/luma-routes";
 import mrBlueContextRoutes from "./routes/mrblue-context-routes";
 import mrBlueVideoConferenceRoutes from "./routes/mrblue-video-conference-routes";
 import mrBlueVibeCodingRoutes from "./routes/mrblue-vibecoding-routes";
 import mrBlueVoiceRoutes from "./routes/mrblue-voice-routes";
+import mrBlueTTSRoutes from "./routes/mrBlueTTS";
 import voiceFirstRoutes from "./routes/voice-first-routes";
 import mrBlueMessengerRoutes from "./routes/mrblue-messenger-routes";
 import mrBlueAutonomousRoutes from "./routes/mrblue-autonomous-routes";
@@ -57,6 +61,7 @@ import mrBlueRoleAdapterRoutes from "./routes/mrblue-role-adapter-routes";
 import mrBlueSubscriptionRoutes from "./routes/mrblue-subscription-routes";
 import mrBlueLearningRoutes from "./routes/mrblue-learning-routes";
 import mrBlueQAResearchRoutes from "./routes/mrblue-qa-research-routes";
+import aiCollaborationRoutes from "./routes/ai-collaboration-routes";
 import orchestrationRoutes from "./routes/orchestration";
 import gitRoutes from "./routes/git";
 import a2aRoutes from "./routes/a2a";
@@ -72,13 +77,17 @@ import { registerVoiceCloningRoutes } from "./routes/voiceCloning";
 import { initLivestreamWebSocket } from "./services/livestream-websocket";
 import rbacRoutes from "./routes/rbac-routes";
 import featureFlagsRoutes from "./routes/feature-flags-routes";
-import pricingRoutes from "./routes/pricing-routes";
+// DELETED: Pricing system rework per Payment & Billing Audit (Dec 2025)
+// import pricingRoutes from "./routes/pricing-routes";
 import planRoutes from "./routes/plan-routes";
 import thePlanRoutes from "./routes/thePlanRoutes";
 import syncRoutes from "./routes/sync-routes";
 import selfHealingRoutes from "./routes/self-healing-routes";
 import agentHealthRoutes from "./routes/agent-health-routes";
 import predictiveContextRoutes from "./routes/predictive-context-routes";
+import agentLearningRoutes from "./routes/agentLearning";
+import orchestrationPhasesRoutes from "./routes/orchestrationPhases";
+import openSourceIntegrationsRoutes from "./routes/openSourceIntegrations";
 import aiEnhanceRoutes from "./routes/ai-enhance";
 import { DataCompletenessValidator } from "./services/validation/DataCompletenessValidator";
 import { ComponentPRDRegistry } from "./services/validation/ComponentPRDRegistry";
@@ -86,6 +95,9 @@ import userSearchRoutes from "./routes/user-search";
 import locationRoutes from "./routes/locations";
 import locationsRoutes from "./routes/locations-routes";
 import locationChangeRoutes from "./routes/location-change-routes";
+import locationHistoryRoutes from "./routes/location-history-routes";
+import roleChangeRoutes from "./routes/role-change-routes";
+import cityRoutes from "./routes/city-routes";
 import { registerAIArbitrageRoutes } from "./routes/ai-arbitrage-routes";
 import { registerDPOTrainingRoutes } from "./routes/dpo-training-routes";
 import housingRoutes from "./routes/housing-routes";
@@ -116,6 +128,7 @@ import serviceProviderProfileRoutes from "./routes/serviceProviderProfileRoutes"
 import serviceProfileRoutes from "./routes/serviceProfileRoutes";
 import specialtyProfileRoutes from "./routes/specialtyProfileRoutes";
 import contentProfileRoutes from "./routes/contentProfileRoutes";
+import proRoutes from "./routes/pro";
 import healthRoutes from "./routes/health";
 import financialGoalsRoutes from "./routes/financial-goals-routes";
 import budgetRoutes from "./routes/budget-routes";
@@ -123,6 +136,7 @@ import healthDataRoutes from "./routes/health-routes";
 import nutritionRoutes from "./routes/nutrition-routes";
 import eventRoutes from "./routes/event-routes";
 import eventRolesRoutes from "./routes/event-roles-routes";
+import eventSeriesRoutes from "./routes/event-series";
 import groupRoutes from "./routes/group-routes";
 import { cityGroupDataIngestionService } from "./services/city-group-data-ingestion";
 import mapRoutes from "./routes/map-routes";
@@ -160,12 +174,17 @@ import computerUseRoutes from "./routes/computer-use-routes";
 import aiSelectorRoutes from "./routes/ai-selector-routes";
 import journeyRoutes from "./routes/journey-routes";
 import billingRoutes from "./routes/billing-routes";
+import paymentRoutes from "./routes/payment-routes";
 import onboardingRoutes from "./routes/onboarding-routes";
 import messagesRoutes from "./routes/messages-routes";
 import { registerMessagingRoutes } from "./routes/messaging-routes";
+import messagingWebhookRoutes from "./routes/messaging-webhook-routes";
 import adsRoutes from "./routes/ads-routes";
 import revenueRoutes from "./routes/revenue-routes";
 import volunteerTestingRoutes from "./routes/volunteerTesting";
+import volunteerTasksRoutes from "./routes/volunteerTasks";
+import scenarioGeneratorRoutes from "./routes/scenarioGeneratorRoutes";
+import talentPipelineRoutes from "./routes/talentPipeline";
 import gamificationRoutes from "./routes/gamification";
 import { registerLearningPathwaysRoutes } from "./routes/learningPathways-routes";
 import systemPromptsRoutes from "./routes/systemPrompts";
@@ -181,6 +200,12 @@ import autonomousLoopRoutes from "./routes/autonomous-loop";
 import invitationBatchingRoutes from "./routes/invitation-batching-routes";
 import tangoResumeRoutes from "./routes/tango-resume-routes";
 import roleConfirmationRoutes from "./routes/role-confirmation-routes";
+
+// Marketing Site Public Routes
+import publicStatsRoutes from "./routes/public-stats-routes";
+
+// MB.MD v9.9.3: Faceless Content Marketing
+import contentRoutes from "./routes/content-routes";
 
 import { authenticateToken, optionalAuth, AuthRequest, requireRoleLevel } from "./middleware/auth";
 import { setCsrfToken, verifyCsrfToken } from "./middleware/csrf";
@@ -261,6 +286,7 @@ import {
   insertUserPrivacySettingsSchema,
   venues,
   housingListings,
+  userLocationHistory,
 } from "@shared/schema";
 import { 
   esaAgents,
@@ -268,7 +294,7 @@ import {
   agentCommunications
 } from "@shared/platform-schema";
 import { db } from "@shared/db";
-import { eq, and, or, desc, sql, isNotNull, gte, count } from "drizzle-orm";
+import { eq, and, or, desc, sql, isNotNull, gte, count, inArray } from "drizzle-orm";
 import { z } from "zod";
 import { fromZodError } from "zod-validation-error";
 import { cityscapeService } from "./services/cityscape-service";
@@ -462,6 +488,101 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ error: 'Failed to join waitlist' });
     }
   });
+
+  // Public stats endpoint for landing page (no auth required)
+  // Displays real data only - no fake numbers. Stats hidden if below threshold.
+  const DISPLAY_THRESHOLD = 10;
+  
+  app.get("/api/stats/public", async (req: Request, res: Response) => {
+    try {
+      const { db } = await import("./db");
+      const { users, events } = await import("@shared/schema");
+      const { count, sql, eq, and, gte } = await import("drizzle-orm");
+      
+      // Get active users count with role breakdowns
+      const usersResult = await db.select({ 
+        total: count(),
+        teachers: sql<number>`COUNT(CASE WHEN 'teacher' = ANY(tango_roles) THEN 1 END)`,
+        organizers: sql<number>`COUNT(CASE WHEN 'organizer' = ANY(tango_roles) THEN 1 END)`,
+      }).from(users).where(and(eq(users.isActive, true), eq(users.suspended, false)));
+      
+      const totalUsers = usersResult[0]?.total || 0;
+      const teacherCount = usersResult[0]?.teachers || 0;
+      const organizerCount = usersResult[0]?.organizers || 0;
+      
+      // Get upcoming events count
+      const eventsResult = await db.select({ count: count() })
+        .from(events)
+        .where(gte(events.startDate, new Date()));
+      const totalEvents = eventsResult[0]?.count || 0;
+      
+      // Get unique cities count
+      const citiesResult = await db
+        .select({ count: sql<number>`COUNT(DISTINCT city)` })
+        .from(users)
+        .where(sql`city IS NOT NULL AND city != '' AND is_active = true`);
+      const totalCities = citiesResult[0]?.count || 0;
+      
+      // Get unique countries count
+      const countriesResult = await db
+        .select({ count: sql<number>`COUNT(DISTINCT country)` })
+        .from(users)
+        .where(sql`country IS NOT NULL AND country != '' AND is_active = true`);
+      const totalCountries = countriesResult[0]?.count || 0;
+      
+      // Platform stats (always shown - these are founder facts)
+      const platformStats = {
+        yearsBuilding: 1,
+        hoursInvested: 3000,
+        amountInvested: 30000,
+        foundedYear: 2024,
+        startedDancing: "September 2007",
+        yearsOfDancing: 18,
+        trips: 112,
+        cities: 79,
+        countries: 27,
+      };
+      
+      // Only return stats that meet the display threshold (no fake numbers!)
+      res.json({
+        dancers: totalUsers >= DISPLAY_THRESHOLD ? totalUsers : null,
+        teachers: teacherCount >= DISPLAY_THRESHOLD ? teacherCount : null,
+        organizers: organizerCount >= DISPLAY_THRESHOLD ? organizerCount : null,
+        events: totalEvents >= DISPLAY_THRESHOLD ? totalEvents : null,
+        cities: totalCities >= DISPLAY_THRESHOLD ? totalCities : null,
+        countries: totalCountries >= 3 ? totalCountries : null,
+        platformStats,
+      });
+    } catch (error: any) {
+      console.error('[PublicStats] Error:', error);
+      // On error, return null for dynamic stats but keep platform stats
+      res.json({
+        dancers: null,
+        teachers: null,
+        organizers: null,
+        events: null,
+        cities: null,
+        countries: null,
+        platformStats: {
+          yearsBuilding: 1,
+          hoursInvested: 3000,
+          amountInvested: 30000,
+          foundedYear: 2024,
+          startedDancing: "September 2007",
+          yearsOfDancing: 18,
+          trips: 112,
+          cities: 79,
+          countries: 27,
+        },
+      });
+    }
+  });
+  
+  // ============================================================================
+  // WEBHOOK ROUTES (BEFORE CSRF - external platforms cannot send CSRF tokens)
+  // n8n + OpenAI hybrid messaging webhooks for WhatsApp, Telegram, Slack, etc.
+  // ============================================================================
+  app.use("/api", messagingWebhookRoutes);
   
   // ============================================================================
   // CSRF PROTECTION: Verify CSRF tokens on all mutating requests (POST/PUT/DELETE/PATCH)
@@ -472,7 +593,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Phase 1 & 2 Deployment Blocker Routes
   app.use("/api/rbac", rbacRoutes);
   app.use("/api/feature-flags", featureFlagsRoutes);
-  app.use("/api/pricing", pricingRoutes);
+  // DELETED: Pricing system rework per Payment & Billing Audit (Dec 2025)
+  // app.use("/api/pricing", pricingRoutes);
   
   // Phase 3 Deployment Blocker Routes
   app.use("/api/plan", planRoutes);
@@ -489,6 +611,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Phase 4 Deployment Blocker Routes
   app.use("/api/agents", agentHealthRoutes);
+  app.use("/api/agents/learning", agentLearningRoutes);  // MB.MD v9.9.3 + Samsung TRM Agent Learning
+  app.use("/api/orchestration/phases", orchestrationPhasesRoutes);  // MB.MD v9.9.3 Patterns 66, 67, 68
+  app.use("/api/integrations", openSourceIntegrationsRoutes);  // GenAI Agents, Curriculum, ComfyUI
   app.use("/api/predictive", predictiveContextRoutes);
   
   // TRACK 3 BATCH 13-16: Agent Intelligence API Layer
@@ -545,8 +670,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // TRACK 6: Volunteer Testing System - Scenarios + Recruitment + UI
   app.use("/api/volunteer", volunteerTestingRoutes);
   
+  // MB.MD v9.9.4: Scenario Generator for comprehensive testing coverage
+  app.use("/api/scenarios", scenarioGeneratorRoutes);
+  
+  // Volunteer Task Management - Plan Items, Work Logs, Stats
+  app.use("/api/volunteer", volunteerTasksRoutes);
+  
+  // Talent Pipeline Management - Candidate tracking and approvals
+  app.use("/api/talent-pipeline", talentPipelineRoutes);
+  
+  // Marketing Site Public Routes (no auth required)
+  app.use("/api/public", publicStatsRoutes);
+  
   // TRACK 8: Gamification System - Points, Badges, Leaderboard, Progressive Autonomy
   app.use("/api/gamification", gamificationRoutes);
+  
+  // MB.MD v9.9.3: Faceless Content Marketing API
+  app.use("/api/content", contentRoutes);
   
   // Legal Document AI Agents Routes (2 AI Agents for Legal Documents - Agents #185-186)
   app.use("/api/legal/agents", legalAgentsRoutes);
@@ -589,9 +729,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/computer-use", computerUseRoutes);
   app.use("/api", aiSelectorRoutes);
   app.use("/api/billing", billingRoutes);
+  app.use("/api/payments", paymentRoutes); // MB.MD Pattern 49: International Payments
   app.use("/api/onboarding", onboardingRoutes);
   app.use("/api/messages", messagesRoutes);
   registerMessagingRoutes(app); // New messaging routes for direct messages, group chats, and threads
+  // Note: messaging webhooks moved before CSRF middleware
   app.use("/api/ads", adsRoutes);
   app.use("/api/admin/ads", adsRoutes);
   app.use("/api/revenue", revenueRoutes);
@@ -601,6 +743,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/avatar", avatarRoutes);
   app.use("/api/videos", videoRoutes);
   app.use("/api/upload/video", videoUploadRoutes);
+  app.use("/api/videos/recording", videoRecordingRoutes); // Video Recording System (MB.MD Pattern 41)
   
   // Object Storage: Serve public objects (videos, images)
   // Blueprint: javascript_object_storage
@@ -624,6 +767,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/mrblue/video", mrBlueVideoConferenceRoutes); // System 2: Daily.co Video Conference
   app.use("/api/mrblue/vibecode", mrBlueVibeCodingRoutes); // System 4: Vibe Coding Engine (Natural Language → Code)
   app.use("/api/mrblue/voice", mrBlueVoiceRoutes); // System 5: Voice Cloning with ElevenLabs (17 languages)
+  app.use("/api/mr-blue/tts", mrBlueTTSRoutes); // TTS Proxy for 3D Avatar (secure ElevenLabs key)
   app.use("/api/voice", voiceFirstRoutes); // Voice-First Features (Wispr Flow inspired): 4x faster than typing, 68 languages
   app.use("/api/mrblue/messenger", mrBlueMessengerRoutes); // System 6: Facebook Messenger Integration
   app.use("/api/mrblue/autonomous", mrBlueAutonomousRoutes); // System 7: Autonomous Coding Engine
@@ -650,6 +794,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/mrblue/subscription", mrBlueSubscriptionRoutes); // Agent #48: Quota management
   app.use("/api/mrblue/learning", mrBlueLearningRoutes); // Agent #49: 10-pathway learning coordinator
   app.use("/api/mrblue/qa", mrBlueQAResearchRoutes); // Agent #50: Q&A research and test orchestration
+  app.use("/api/ai-collaboration", aiCollaborationRoutes); // MB.MD v9.3: Replit AI ↔ Mr Blue hierarchical collaboration
   
   app.use("/api/orchestration", orchestrationRoutes); // Production-ready workflow orchestration (Sequential/Parallel/Intelligence Cycle)
   app.use("/api/git", gitRoutes); // Autonomous Git commit system with AI-generated messages
@@ -660,6 +805,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/realtime", authenticateToken, realtimeVoiceRoutes);
   app.use("/api/openai-realtime", authenticateToken, openaiRealtimeRoutes);
   registerVoiceCloningRoutes(app); // Voice cloning for Mr. Blue custom voices
+    registerLumaRoutes(app); // Luma Dream Machine video generation for Mr Blue
   app.use("/api/premium", premiumMediaRoutes);
   app.use("/api/god-level", authenticateToken, godLevelRoutes);
   app.use("/api/ai", aiEnhanceRoutes);
@@ -667,6 +813,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/locations", locationRoutes);
   app.use("/api/locations", locationsRoutes); // MB.MD Agent 1: Live city search with caching
   app.use("/api/location", locationChangeRoutes); // Location change effects endpoint
+  app.use("/api/location-history", locationHistoryRoutes); // User location history (cities lived 6+ months)
+  app.use("/api/roles", roleChangeRoutes); // Role change effects - auto-join PRO groups
+  app.use("/api/cities", cityRoutes); // City Group Priority Search (Tier 1: MT groups, Tier 2: Popular, Tier 3: Nominatim)
   
   // ============================================================================
   // GDPR COMPLIANCE & PRIVACY ROUTES
@@ -909,6 +1058,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // AGENT 10: Events & Groups Systems
   app.use("/api/events", eventRoutes);
+  app.use("/api/event-series", eventSeriesRoutes);
   app.use("/api", eventRolesRoutes); // Event participant roles
   app.use("/api/groups", groupRoutes);
   app.use("/api/map", mapRoutes); // Community map markers
@@ -2496,6 +2646,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // BATCH 08: Content/Organizer Profile Routes
   app.use("/api/profiles", contentProfileRoutes);
   
+  // WAVE 3A: PRO API Endpoints (pro-stats, event-history, booking-requests)
+  app.use("/api/users", proRoutes);
+  
   // Enhanced Health Check Routes (Production Monitoring)
   app.use(healthRoutes);
   
@@ -2811,16 +2964,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Feature 13: Discover Feed
-  app.get("/api/feed/discover", authenticateToken, async (req: AuthRequest, res: Response) => {
+  // Feature 13: Discover Feed (optionalAuth - allows public access with fallback to trending)
+  app.get("/api/feed/discover", optionalAuth, async (req: AuthRequest, res: Response) => {
     try {
       const { limit = "20", offset = "0" } = req.query;
-      const result = await feedAlgorithmService.getDiscoverFeed(
-        req.user!.id,
-        parseInt(limit as string),
-        parseInt(offset as string)
-      );
-      res.json(result);
+      
+      // If user is authenticated, get personalized discover feed
+      if (req.user) {
+        const result = await feedAlgorithmService.getDiscoverFeed(
+          req.user.id,
+          parseInt(limit as string),
+          parseInt(offset as string)
+        );
+        return res.json(result);
+      }
+      
+      // For unauthenticated users, return trending posts as discover feed
+      const posts = await feedAlgorithmService.getTrendingPosts(parseInt(limit as string));
+      res.json({
+        posts,
+        nextOffset: posts.length === parseInt(limit as string) ? parseInt(offset as string) + parseInt(limit as string) : null,
+        hasMore: posts.length === parseInt(limit as string),
+      });
     } catch (error) {
       console.error("[GET /api/feed/discover] Error:", error);
       res.status(500).json({ message: "Failed to fetch discover feed" });
@@ -2943,6 +3108,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ message: "Post deleted successfully", postId: id });
     } catch (error) {
       res.status(500).json({ message: "Failed to delete post" });
+    }
+  });
+
+  app.post("/api/posts/:id/restore", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      res.status(410).json({ 
+        message: "Post cannot be restored - already permanently deleted",
+        hint: "Undo is only available for a short time after deletion"
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to restore post" });
     }
   });
 
@@ -3420,6 +3597,64 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // COMMENT REACTIONS - Use commentLikes table as temporary storage
+  app.post("/api/comments/:id/react", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const commentId = parseInt(req.params.id);
+      const { reactionType } = req.body;
+      
+      if (reactionType === undefined || reactionType === null) {
+        return res.status(400).json({ message: "Reaction type is required" });
+      }
+
+      // For now, map reactions to simple like/unlike using commentLikes
+      // In production, would use dedicated commentReactions table
+      if (reactionType === '' || reactionType === 'love') {
+        // Remove like
+        await db.delete(commentLikes).where(
+          and(
+            eq(commentLikes.commentId, commentId),
+            eq(commentLikes.userId, req.user!.id)
+          )
+        );
+      } else {
+        // Remove any existing like first
+        await db.delete(commentLikes).where(
+          and(
+            eq(commentLikes.commentId, commentId),
+            eq(commentLikes.userId, req.user!.id)
+          )
+        );
+        
+        // Add new like
+        await db.insert(commentLikes).values({
+          commentId,
+          userId: req.user!.id,
+        });
+
+        // Send notification to comment author
+        const comment = await db.select().from(postComments)
+          .where(eq(postComments.id, commentId))
+          .limit(1);
+        
+        if (comment[0] && comment[0].userId !== req.user!.id) {
+          await storage.createNotification({
+            userId: comment[0].userId,
+            type: 'reaction',
+            title: 'New reaction',
+            message: `Someone reacted ${reactionType} to your comment`,
+            data: JSON.stringify({ commentId })
+          });
+        }
+      }
+
+      res.json({ success: true });
+    } catch (error) {
+      console.error('React to comment error:', error);
+      res.status(500).json({ message: "Failed to react to comment" });
+    }
+  });
+
   app.post("/api/posts/:id/save", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const postId = parseInt(req.params.id);
@@ -3523,6 +3758,87 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // PATCH /api/users/me - Update current user's profile (for onboarding and profile edits)
+  // IMPORTANT: This route MUST come BEFORE /api/users/:id to prevent :id matching "me"
+  app.patch("/api/users/me", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const userId = req.user!.id;
+
+      const {
+        name,
+        username,
+        bio,
+        city,
+        country,
+        yearsOfDancing,
+        tangoRoles,
+        tangoStartYear,
+        tangoRoleExperience,
+        socialLinks,
+        profileImage,
+        leaderLevel,
+        followerLevel,
+        primaryLanguage,
+        languages,
+        occupation,
+        portfolioUrls,
+        communityWebsiteUrl,
+        privacySettings,
+        formStatus,
+        isOnboardingComplete,
+      } = req.body;
+
+      // Build update data object - only include fields that are provided
+      const updateData: any = {
+        updatedAt: new Date(),
+      };
+
+      // Add profile fields if provided
+      if (name !== undefined) updateData.name = name;
+      if (username !== undefined) updateData.username = username;
+      if (bio !== undefined) updateData.bio = bio;
+      if (city !== undefined) updateData.city = city;
+      if (country !== undefined) updateData.country = country;
+      if (yearsOfDancing !== undefined) updateData.yearsOfDancing = yearsOfDancing;
+      if (tangoRoles !== undefined) updateData.tangoRoles = tangoRoles;
+      if (tangoStartYear !== undefined) updateData.tangoStartYear = tangoStartYear;
+      if (tangoRoleExperience !== undefined) updateData.tangoRoleExperience = tangoRoleExperience;
+      if (socialLinks !== undefined) updateData.socialLinks = socialLinks;
+      if (profileImage !== undefined) updateData.profileImage = profileImage;
+      if (leaderLevel !== undefined) updateData.leaderLevel = leaderLevel;
+      if (followerLevel !== undefined) updateData.followerLevel = followerLevel;
+      if (primaryLanguage !== undefined) updateData.primaryLanguage = primaryLanguage;
+      if (languages !== undefined) updateData.languages = languages;
+      if (occupation !== undefined) updateData.occupation = occupation;
+      if (portfolioUrls !== undefined) updateData.portfolioUrls = portfolioUrls;
+      if (communityWebsiteUrl !== undefined) updateData.communityWebsiteUrl = communityWebsiteUrl;
+      if (formStatus !== undefined) updateData.formStatus = formStatus;
+      if (isOnboardingComplete !== undefined) updateData.isOnboardingComplete = isOnboardingComplete;
+
+      // Handle privacySettings JSONB merge
+      if (privacySettings !== undefined) {
+        updateData.privacySettings = sql`COALESCE(${users.privacySettings}, '{}'::jsonb) || ${JSON.stringify(privacySettings)}::jsonb`;
+      }
+
+      // Update user in database
+      const [updatedUser] = await db
+        .update(users)
+        .set(updateData)
+        .where(eq(users.id, userId))
+        .returning();
+
+      if (!updatedUser) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      console.log(`[PATCH /api/users/me] Updated user ${userId} - city: ${city}, formStatus: ${formStatus}`);
+      res.json(updatedUser);
+    } catch (error) {
+      console.error('[PATCH /api/users/me] Failed to update user profile:', error);
+      res.status(500).json({ message: "Failed to update profile" });
+    }
+  });
+
   app.get("/api/users/:id", async (req: Request, res: Response) => {
     try {
       const param = req.params.id;
@@ -3560,6 +3876,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const {
         name,
+        username,
         bio,
         city,
         country,
@@ -3573,28 +3890,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
         followerLevel,
         primaryLanguage,
         languages,
+        occupation,
+        portfolioUrls,
+        communityWebsiteUrl,
+        privacySettings,
       } = req.body;
+
+      // Build update data object - only include fields that are provided
+      const updateData: any = {
+        updatedAt: new Date(),
+      };
+
+      // Add profile fields if provided
+      if (name !== undefined) updateData.name = name;
+      if (username !== undefined) updateData.username = username;
+      if (bio !== undefined) updateData.bio = bio;
+      if (city !== undefined) updateData.city = city;
+      if (country !== undefined) updateData.country = country;
+      if (yearsOfDancing !== undefined) updateData.yearsOfDancing = yearsOfDancing;
+      if (tangoRoles !== undefined) updateData.tangoRoles = tangoRoles;
+      if (tangoStartYear !== undefined) updateData.tangoStartYear = tangoStartYear;
+      if (tangoRoleExperience !== undefined) updateData.tangoRoleExperience = tangoRoleExperience;
+      if (socialLinks !== undefined) updateData.socialLinks = socialLinks;
+      if (profileImage !== undefined) updateData.profileImage = profileImage;
+      if (leaderLevel !== undefined) updateData.leaderLevel = leaderLevel;
+      if (followerLevel !== undefined) updateData.followerLevel = followerLevel;
+      if (primaryLanguage !== undefined) updateData.primaryLanguage = primaryLanguage;
+      if (languages !== undefined) updateData.languages = languages;
+      if (occupation !== undefined) updateData.occupation = occupation;
+      if (portfolioUrls !== undefined) updateData.portfolioUrls = portfolioUrls;
+      if (communityWebsiteUrl !== undefined) updateData.communityWebsiteUrl = communityWebsiteUrl;
+
+      // Handle privacySettings JSONB merge - critical for field-level privacy
+      if (privacySettings !== undefined) {
+        updateData.privacySettings = sql`COALESCE(${users.privacySettings}, '{}'::jsonb) || ${JSON.stringify(privacySettings)}::jsonb`;
+      }
 
       // Update user in database
       const [updatedUser] = await db
         .update(users)
-        .set({
-          name,
-          bio,
-          city,
-          country,
-          yearsOfDancing,
-          tangoRoles,
-          tangoStartYear,
-          tangoRoleExperience,
-          socialLinks,
-          profileImage,
-          leaderLevel,
-          followerLevel,
-          primaryLanguage,
-          languages,
-          updatedAt: new Date(),
-        })
+        .set(updateData)
         .where(eq(users.id, userId))
         .returning();
 
@@ -3924,6 +4259,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         country: user.country,
         role: user.role,
         danceLevel: user.yearsOfDancing,
+        yearsOfDancing: user.yearsOfDancing,
+        leaderLevel: user.leaderLevel,
+        followerLevel: user.followerLevel,
+        socialLinks: user.socialLinks,
+        tangoRoles: user.tangoRoles,
         joinedAt: user.createdAt,
         stats: {
           posts: postsCount,
@@ -3968,31 +4308,73 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // User's events - for UserProfilePublicPage
+  // User's events - for UserProfilePublicPage and ProfileTabEvents
   app.get("/api/users/:userId/events", async (req: Request, res: Response) => {
     try {
       const userId = parseInt(req.params.userId);
+      const { status = "going", past } = req.query;
+      
+      // Parse status parameter: can be comma-separated list like "going,maybe,interested"
+      const statusList = typeof status === 'string' 
+        ? status.split(',').map(s => s.trim()).filter(Boolean)
+        : ['going'];
+      
+      // Build conditions
+      const conditions = [eq(eventRsvps.userId, userId)];
+      
+      // Add status filter - match any of the provided statuses
+      if (statusList.length === 1) {
+        conditions.push(eq(eventRsvps.status, statusList[0]));
+      } else if (statusList.length > 1) {
+        conditions.push(inArray(eventRsvps.status, statusList));
+      }
+      
+      // Add date filter for past/upcoming events
+      if (past === 'true') {
+        conditions.push(sql`${events.startDate} < NOW()`);
+      }
       
       const userEvents = await db
         .select({
           id: events.id,
           title: events.title,
+          description: events.description,
           startDate: events.startDate,
+          endDate: events.endDate,
           location: events.location,
+          city: events.city,
+          venue: events.venue,
+          eventType: events.eventType,
           imageUrl: events.imageUrl,
+          maxAttendees: events.maxAttendees,
+          rsvpStatus: eventRsvps.status,
         })
         .from(events)
         .innerJoin(eventRsvps, eq(events.id, eventRsvps.eventId))
-        .where(
-          and(
-            eq(eventRsvps.userId, userId),
-            eq(eventRsvps.status, 'going')
-          )
-        )
+        .where(and(...conditions))
         .orderBy(desc(events.startDate))
-        .limit(6);
+        .limit(50);
       
-      res.json(userEvents);
+      // Format response to match expected structure
+      const formattedEvents = userEvents.map(event => ({
+        event: {
+          id: event.id,
+          title: event.title,
+          description: event.description,
+          startDate: event.startDate,
+          endDate: event.endDate,
+          location: event.location,
+          city: event.city,
+          venue: event.venue,
+          eventType: event.eventType,
+          imageUrl: event.imageUrl,
+          maxAttendees: event.maxAttendees,
+        },
+        rsvpStatus: event.rsvpStatus,
+        _count: 0,
+      }));
+      
+      res.json(formattedEvents);
     } catch (error) {
       console.error('Failed to fetch user events:', error);
       res.status(500).json({ message: "Failed to fetch user events" });
@@ -4962,6 +5344,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get friends for a specific user (public endpoint for viewing profiles)
+  app.get("/api/users/:userId/friends", async (req: Request, res: Response) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      if (isNaN(userId)) {
+        return res.status(400).json({ message: "Invalid user ID" });
+      }
+      const friends = await storage.getUserFriends(userId);
+      // Return public-safe friend data
+      const publicFriends = friends.map(f => ({
+        id: f.id,
+        name: f.name,
+        username: f.username,
+        profileImage: f.profileImage,
+        bio: f.bio,
+        city: f.city,
+        tangoRoles: f.tangoRoles,
+        closenessScore: f.closenessScore,
+      }));
+      res.json(publicFriends);
+    } catch (error) {
+      console.error("[GET /api/users/:userId/friends] Error:", error);
+      res.status(500).json({ message: "Failed to fetch user friends" });
+    }
+  });
+
   app.get("/api/friends/requests", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const requests = await storage.getFriendRequests(req.user!.id);
@@ -5120,6 +5528,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get friendship info (base route)
+  app.get("/api/friends/friendship/:friendId", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const friendId = parseInt(req.params.friendId);
+      const friendshipInfo = await storage.getFriendshipInfo(req.user!.id, friendId);
+      
+      if (!friendshipInfo) {
+        return res.status(404).json({ error: "Friendship not found" });
+      }
+      
+      res.json(friendshipInfo);
+    } catch (error) {
+      console.error("[GET /api/friends/friendship/:friendId] Error:", error);
+      res.status(500).json({ message: "Failed to fetch friendship info" });
+    }
+  });
+
   app.get("/api/friends/friendship/:friendId/stats", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const friendId = parseInt(req.params.friendId);
@@ -5133,6 +5558,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("[GET /api/friends/friendship/:friendId/stats] Error:", error);
       res.status(500).json({ message: "Failed to fetch friendship stats" });
+    }
+  });
+
+  app.get("/api/friends/friendship/:friendId/shared-data", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const friendId = parseInt(req.params.friendId);
+      const userId = req.user!.id;
+      
+      const sharedData = await storage.getFriendshipSharedData(userId, friendId);
+      
+      if (!sharedData) {
+        return res.status(404).json({ message: "Friendship not found" });
+      }
+      
+      res.json(sharedData);
+    } catch (error) {
+      console.error("[GET /api/friends/friendship/:friendId/shared-data] Error:", error);
+      res.status(500).json({ message: "Failed to fetch shared data" });
     }
   });
 
@@ -5197,11 +5640,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/users/me/photo", authenticateToken, async (req: any, res: Response) => {
+  app.post("/api/users/me/photo", authenticateToken, profileMediaUpload.single('photo'), async (req: AuthRequest, res: Response) => {
     try {
-      res.json({ imageUrl: "https://via.placeholder.com/400" });
-    } catch (error) {
-      res.status(500).json({ message: "Photo upload failed" });
+      const file = (req as any).file;
+      
+      if (!file) {
+        return res.status(400).json({ message: "No photo file provided" });
+      }
+
+      // Validate file type
+      if (!file.mimetype.startsWith('image/')) {
+        return res.status(400).json({ message: "File must be an image" });
+      }
+
+      // Generate unique filename
+      const timestamp = Date.now();
+      const userId = req.user!.id;
+      const ext = file.originalname.split('.').pop() || 'jpg';
+      const filename = `profile-${userId}-${timestamp}.${ext}`;
+
+      // Upload to Object Storage
+      const { objectStorageService } = await import('./objectStorage');
+      
+      const result = await objectStorageService.uploadBuffer(file.buffer, {
+        filename,
+        contentType: file.mimetype,
+        isPublic: true,
+        directory: 'profile-photos'
+      });
+
+      if (!result.success) {
+        console.error('[POST /api/users/me/photo] Upload failed:', result.error);
+        return res.status(500).json({ message: "Failed to upload photo to storage" });
+      }
+
+      console.log(`[POST /api/users/me/photo] Uploaded photo for user ${userId}: ${result.publicUrl}`);
+      
+      res.json({ 
+        imageUrl: result.publicUrl,
+        objectPath: result.objectPath 
+      });
+    } catch (error: any) {
+      console.error('[POST /api/users/me/photo] Error:', error);
+      res.status(500).json({ message: "Photo upload failed", error: error.message });
     }
   });
 
@@ -6392,25 +6873,59 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // ============================================================================
 
   // 1. GET /api/community/locations - Get all community locations with stats (PUBLIC)
+  // MB.MD v9.8: City groups as primary data source + user profile cities
   app.get("/api/community/locations", async (req: Request, res: Response) => {
     try {
-      // Get member counts by city
-      const membersByCity = await db.select({
+      // PRIMARY SOURCE: Get all city groups from groups table
+      const cityGroups = await db.select({
+        id: groups.id,
+        name: groups.name,
+        city: groups.city,
+        country: groups.country,
+        latitude: groups.latitude,
+        longitude: groups.longitude,
+        memberCount: groups.memberCount,
+        eventCount: groups.eventCount,
+        coverImage: groups.coverImage,
+      })
+      .from(groups)
+      .where(and(
+        eq(groups.type, 'city'),
+        isNotNull(groups.city)
+      ));
+
+      // SECONDARY SOURCE: Get unique cities from user profiles (current city)
+      const userCities = await db.select({
         city: users.city,
         country: users.country,
-        latitude: sql<string>`AVG(${users.latitude})`.as('latitude'),
-        longitude: sql<string>`AVG(${users.longitude})`.as('longitude'),
-        memberCount: sql<number>`count(distinct ${users.id})::int`,
+        memberCount: sql<number>`count(*)::int`,
       })
       .from(users)
       .where(and(
         isNotNull(users.city),
-        isNotNull(users.country),
-        eq(users.isActive, true)
+        eq(users.isActive, true),
+        eq(users.suspended, false)
       ))
       .groupBy(users.city, users.country);
 
-      // Get event counts by city
+      // SECONDARY SOURCE: Get unique cities from location history (previous tango cities)
+      const locationHistoryCities = await db.select({
+        city: userLocationHistory.city,
+        country: userLocationHistory.country,
+        latitude: userLocationHistory.latitude,
+        longitude: userLocationHistory.longitude,
+        memberCount: sql<number>`count(distinct ${userLocationHistory.userId})::int`,
+      })
+      .from(userLocationHistory)
+      .where(isNotNull(userLocationHistory.city))
+      .groupBy(
+        userLocationHistory.city, 
+        userLocationHistory.country,
+        userLocationHistory.latitude,
+        userLocationHistory.longitude
+      );
+
+      // ENRICHMENT: Get event counts by city
       const eventsByCity = await db.select({
         city: events.city,
         country: events.country,
@@ -6423,7 +6938,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       ))
       .groupBy(events.city, events.country);
 
-      // Get venue counts by city
+      // ENRICHMENT: Get venue counts by city
       const venuesByCity = await db.select({
         city: venues.city,
         country: venues.country,
@@ -6433,7 +6948,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       .where(isNotNull(venues.city))
       .groupBy(venues.city, venues.country);
 
-      // Get housing counts by city
+      // ENRICHMENT: Get housing counts by city
       const housingByCity = await db.select({
         city: housingListings.city,
         country: housingListings.country,
@@ -6448,84 +6963,162 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // City coordinates lookup for common cities
       const cityCoords: Record<string, { lat: number; lng: number }> = {
-        'Buenos Aires-Argentina': { lat: -34.6037, lng: -58.3816 },
-        'Paris-France': { lat: 48.8566, lng: 2.3522 },
-        'New York-United States': { lat: 40.7128, lng: -74.0060 },
-        'Tokyo-Japan': { lat: 35.6762, lng: 139.6503 },
-        'Berlin-Germany': { lat: 52.5200, lng: 13.4050 },
-        'London-United Kingdom': { lat: 51.5074, lng: -0.1278 },
-        'Rome-Italy': { lat: 41.9028, lng: 12.4964 },
-        'Shanghai-China': { lat: 31.2304, lng: 121.4737 },
-        'Dubai-United Arab Emirates': { lat: 25.2048, lng: 55.2708 },
-        'Dubai-UAE': { lat: 25.2048, lng: 55.2708 },
-        'São Paulo-Brazil': { lat: -23.5505, lng: -46.6333 },
-        'San Francisco-United States': { lat: 37.7749, lng: -122.4194 },
-        'Seoul-South Korea': { lat: 37.5665, lng: 126.9780 },
-        'Toronto-Canada': { lat: 43.6532, lng: -79.3832 },
-        'Melbourne-Australia': { lat: -37.8136, lng: 144.9631 },
-        'Rosario-Argentina': { lat: -32.9468, lng: -60.6393 },
-        'Istanbul-Turkey': { lat: 41.0082, lng: 28.9784 },
-        'Milan-Italy': { lat: 45.4642, lng: 9.1900 },
-        'Barcelona-Spain': { lat: 41.3874, lng: 2.1686 },
-        'Madrid-Spain': { lat: 40.4168, lng: -3.7038 },
-        'Montevideo-Uruguay': { lat: -34.9011, lng: -56.1645 },
-        'New York-USA': { lat: 40.7128, lng: -74.0060 },
-        'Los Angeles-United States': { lat: 34.0522, lng: -118.2437 },
-        'Chicago-United States': { lat: 41.8781, lng: -87.6298 },
-        'Sydney-Australia': { lat: -33.8688, lng: 151.2093 },
-        'Amsterdam-Netherlands': { lat: 52.3676, lng: 4.9041 },
-        'Vienna-Austria': { lat: 48.2082, lng: 16.3738 },
-        'Prague-Czech Republic': { lat: 50.0755, lng: 14.4378 },
-        'Lisbon-Portugal': { lat: 38.7223, lng: -9.1393 },
-        'Athens-Greece': { lat: 37.9838, lng: 23.7275 },
+        'Buenos Aires': { lat: -34.6037, lng: -58.3816 },
+        'Paris': { lat: 48.8566, lng: 2.3522 },
+        'New York': { lat: 40.7128, lng: -74.0060 },
+        'Tokyo': { lat: 35.6762, lng: 139.6503 },
+        'Berlin': { lat: 52.5200, lng: 13.4050 },
+        'London': { lat: 51.5074, lng: -0.1278 },
+        'Rome': { lat: 41.9028, lng: 12.4964 },
+        'Shanghai': { lat: 31.2304, lng: 121.4737 },
+        'Dubai': { lat: 25.2048, lng: 55.2708 },
+        'São Paulo': { lat: -23.5505, lng: -46.6333 },
+        'San Francisco': { lat: 37.7749, lng: -122.4194 },
+        'Seoul': { lat: 37.5665, lng: 126.9780 },
+        'Toronto': { lat: 43.6532, lng: -79.3832 },
+        'Melbourne': { lat: -37.8136, lng: 144.9631 },
+        'Rosario': { lat: -32.9468, lng: -60.6393 },
+        'Istanbul': { lat: 41.0082, lng: 28.9784 },
+        'Milan': { lat: 45.4642, lng: 9.1900 },
+        'Barcelona': { lat: 41.3874, lng: 2.1686 },
+        'Madrid': { lat: 40.4168, lng: -3.7038 },
+        'Montevideo': { lat: -34.9011, lng: -56.1645 },
+        'Los Angeles': { lat: 34.0522, lng: -118.2437 },
+        'Chicago': { lat: 41.8781, lng: -87.6298 },
+        'Sydney': { lat: -33.8688, lng: 151.2093 },
+        'Amsterdam': { lat: 52.3676, lng: 4.9041 },
+        'Vienna': { lat: 48.2082, lng: 16.3738 },
+        'Prague': { lat: 50.0755, lng: 14.4378 },
+        'Lisbon': { lat: 38.7223, lng: -9.1393 },
+        'Athens': { lat: 37.9838, lng: 23.7275 },
       };
 
-      // Merge all data into locations
-      const locationMap = new Map<string, any>();
+      // Normalize city key for consistent lookups (case-insensitive, trimmed)
+      const normalizeKey = (city: string) => city.toLowerCase().trim();
 
-      membersByCity.forEach((m) => {
-        const key = `${m.city}-${m.country}`;
-        const coords = cityCoords[key] || { 
-          lat: parseFloat(m.latitude as string) || 0, 
-          lng: parseFloat(m.longitude as string) || 0 
+      // Build enrichment lookup maps with normalized keys
+      const eventsMap = new Map<string, number>();
+      for (const e of eventsByCity) {
+        const key = normalizeKey(e.city || '');
+        eventsMap.set(key, (eventsMap.get(key) || 0) + (e.eventCount || 0));
+      }
+      const venuesMap = new Map<string, number>();
+      for (const v of venuesByCity) {
+        const key = normalizeKey(v.city || '');
+        venuesMap.set(key, (venuesMap.get(key) || 0) + (v.venueCount || 0));
+      }
+      const housingMap = new Map<string, number>();
+      for (const h of housingByCity) {
+        const key = normalizeKey(h.city || '');
+        housingMap.set(key, (housingMap.get(key) || 0) + (h.housingCount || 0));
+      }
+
+      // Track cities we've already added (by normalized city key)
+      const addedCities = new Set<string>();
+
+      // Build locations from city groups (PRIMARY SOURCE)
+      const locations: any[] = [];
+      
+      for (const group of cityGroups) {
+        const city = group.city || '';
+        const cityKey = normalizeKey(city);
+        if (!cityKey) continue;
+        
+        addedCities.add(cityKey);
+        
+        const coords = cityCoords[city] || {
+          lat: parseFloat(group.latitude as string) || 0,
+          lng: parseFloat(group.longitude as string) || 0
         };
-        locationMap.set(key, {
-          id: locationMap.size + 1,
-          city: m.city,
-          country: m.country,
+        
+        locations.push({
+          id: group.id,
+          groupId: group.id,
+          city: city,
+          country: group.country || '',
           coordinates: coords,
-          memberCount: m.memberCount || 0,
-          activeEvents: 0,
-          venues: 0,
-          housing: 0,
-          recommendations: 0,
+          memberCount: group.memberCount || 0,
+          activeEvents: eventsMap.get(cityKey) || group.eventCount || 0,
+          venues: venuesMap.get(cityKey) || 0,
+          housing: housingMap.get(cityKey) || 0,
+          recommendations: venuesMap.get(cityKey) || 0,
+          coverImage: group.coverImage,
           isActive: true
         });
-      });
+      }
 
-      eventsByCity.forEach((e) => {
-        const key = `${e.city}-${e.country}`;
-        if (locationMap.has(key)) {
-          locationMap.get(key).activeEvents = e.eventCount;
+      // Build coordinates map from location history for cities without known coords
+      const locationHistoryCoords = new Map<string, { lat: number; lng: number }>();
+      for (const h of locationHistoryCities) {
+        if (h.latitude && h.longitude) {
+          const key = normalizeKey(h.city || '');
+          locationHistoryCoords.set(key, {
+            lat: parseFloat(h.latitude as string),
+            lng: parseFloat(h.longitude as string)
+          });
         }
-      });
+      }
 
-      venuesByCity.forEach((v) => {
-        const key = `${v.city}-${v.country}`;
-        if (locationMap.has(key)) {
-          locationMap.get(key).venues = v.venueCount;
-          locationMap.get(key).recommendations = v.venueCount;
-        }
-      });
+      // Add cities from user profiles that don't have city groups yet
+      let tempId = -1;
+      for (const userCity of userCities) {
+        const city = userCity.city || '';
+        const cityKey = normalizeKey(city);
+        if (!cityKey || addedCities.has(cityKey)) continue;
+        
+        addedCities.add(cityKey);
+        
+        // Try coords from: known lookup, location history, or default
+        const coords = cityCoords[city] || locationHistoryCoords.get(cityKey) || { lat: 0, lng: 0 };
+        
+        locations.push({
+          id: tempId--,
+          groupId: null, // No city group yet
+          city: city,
+          country: userCity.country || '',
+          coordinates: coords,
+          memberCount: userCity.memberCount || 0,
+          activeEvents: eventsMap.get(cityKey) || 0,
+          venues: venuesMap.get(cityKey) || 0,
+          housing: housingMap.get(cityKey) || 0,
+          recommendations: venuesMap.get(cityKey) || 0,
+          coverImage: null,
+          isActive: true
+        });
+      }
 
-      housingByCity.forEach((h) => {
-        const key = `${h.city}-${h.country}`;
-        if (locationMap.has(key)) {
-          locationMap.get(key).housing = h.housingCount;
-        }
-      });
+      // Add cities from location history (previous tango cities) that aren't in groups or user cities
+      for (const historyCity of locationHistoryCities) {
+        const city = historyCity.city || '';
+        const cityKey = normalizeKey(city);
+        if (!cityKey || addedCities.has(cityKey)) continue;
+        
+        addedCities.add(cityKey);
+        
+        // Use stored coordinates from location history if available
+        const storedCoords = historyCity.latitude && historyCity.longitude ? {
+          lat: parseFloat(historyCity.latitude as string),
+          lng: parseFloat(historyCity.longitude as string)
+        } : null;
+        
+        const coords = storedCoords || cityCoords[city] || { lat: 0, lng: 0 };
+        
+        locations.push({
+          id: tempId--,
+          groupId: null, // No city group yet
+          city: city,
+          country: historyCity.country || '',
+          coordinates: coords,
+          memberCount: historyCity.memberCount || 0,
+          activeEvents: eventsMap.get(cityKey) || 0,
+          venues: venuesMap.get(cityKey) || 0,
+          housing: housingMap.get(cityKey) || 0,
+          recommendations: venuesMap.get(cityKey) || 0,
+          coverImage: null,
+          isActive: true
+        });
+      }
 
-      const locations = Array.from(locationMap.values());
       res.json(locations);
     } catch (error) {
       console.error("Get community locations error:", error);
@@ -6536,40 +7129,61 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // 2. GET /api/community/stats - Get global community statistics (PUBLIC)
   app.get("/api/community/stats", async (req: Request, res: Response) => {
     try {
-      // Get user stats
-      const userStats = await db.select({
-        totalMembers: sql<number>`count(distinct ${users.id})::int`,
-        countries: sql<number>`count(distinct ${users.country})::int`,
-        cities: sql<number>`count(distinct ${users.city})::int`,
+      // MB.MD v9.8.1: Calculate stats from all location sources (city groups + user profiles + location history)
+      
+      // Get stats from city groups (primary source)
+      const cityGroupStats = await db.select({
+        totalCities: sql<number>`count(*)::int`,
+        countries: sql<number>`count(distinct ${groups.country})::int`,
+        totalMembers: sql<number>`sum(${groups.memberCount})::int`,
+        totalEvents: sql<number>`sum(${groups.eventCount})::int`,
+      })
+      .from(groups)
+      .where(eq(groups.type, 'city'));
+
+      // Get user profile cities (users with non-null city)
+      const userCitiesStats = await db.select({
+        uniqueCities: sql<number>`count(distinct ${users.city})::int`,
+        uniqueCountries: sql<number>`count(distinct ${users.country})::int`,
+        totalUsers: sql<number>`count(distinct ${users.id})::int`,
       })
       .from(users)
-      .where(eq(users.isActive, true));
+      .where(and(eq(users.isActive, true), isNotNull(users.city)));
 
-      // Get event count
-      const eventStats = await db.select({
-        activeEvents: sql<number>`count(*)::int`,
+      // Get location history cities
+      const locationHistoryStats = await db.select({
+        uniqueCities: sql<number>`count(distinct ${userLocationHistory.city})::int`,
+        uniqueCountries: sql<number>`count(distinct ${userLocationHistory.country})::int`,
       })
-      .from(events)
-      .where(eq(events.status, 'published'));
+      .from(userLocationHistory);
 
-      // Get venue count
+      // Get venue recommendations
       const venueStats = await db.select({
         totalVenues: sql<number>`count(*)::int`,
       })
       .from(venues);
 
-      // Get housing count
+      // Get housing listings
       const housingStats = await db.select({
         totalHousing: sql<number>`count(*)::int`,
       })
       .from(housingListings)
       .where(eq(housingListings.status, 'active'));
 
+      // Combine stats from all sources
+      const totalCities = (cityGroupStats[0]?.totalCities || 0) + 
+                          (userCitiesStats[0]?.uniqueCities || 0) + 
+                          (locationHistoryStats[0]?.uniqueCities || 0);
+      const totalCountries = (cityGroupStats[0]?.countries || 0) + 
+                             (userCitiesStats[0]?.uniqueCountries || 0) + 
+                             (locationHistoryStats[0]?.uniqueCountries || 0);
+      const totalMembers = (cityGroupStats[0]?.totalMembers || 0) + (userCitiesStats[0]?.totalUsers || 0);
+
       res.json({
-        totalCities: userStats[0]?.cities || 0,
-        countries: userStats[0]?.countries || 0,
-        totalMembers: userStats[0]?.totalMembers || 0,
-        activeEvents: eventStats[0]?.activeEvents || 0,
+        totalCities,
+        countries: totalCountries,
+        totalMembers,
+        activeEvents: cityGroupStats[0]?.totalEvents || 0,
         totalVenues: venueStats[0]?.totalVenues || 0,
         totalRecommendations: venueStats[0]?.totalVenues || 0,
         totalHousing: housingStats[0]?.totalHousing || 0
@@ -9072,7 +9686,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.patch("/api/travel/plans/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const id = parseInt(req.params.id);
+      console.log(`[Travel] PATCH /api/travel/plans/${id}:`, JSON.stringify(req.body));
       const plan = await storage.updateTravelPlan(id, req.body);
+      console.log(`[Travel] Updated plan ${id} visibility:`, plan?.visibility);
       res.json(plan);
     } catch (error) {
       console.error('[Travel] Update plan error:', error);
@@ -9551,10 +10167,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/talent-match/search", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const searchService = new NaturalLanguageTalentSearch();
+      
+      let languages: string[] = [];
+      if (req.body.languages) {
+        if (typeof req.body.languages === 'string') {
+          languages = req.body.languages.split(',').map((l: string) => l.trim()).filter(Boolean);
+        } else if (Array.isArray(req.body.languages)) {
+          languages = req.body.languages;
+        }
+      }
+      
       const results = await searchService.search({
         query: req.body.query,
         userId: req.user!.id,
-        limit: req.body.limit || 20
+        limit: req.body.limit || 20,
+        languages: languages.length > 0 ? languages : undefined,
+        primaryLanguage: req.body.primaryLanguage || undefined,
+        languageMatchMode: req.body.languageMatchMode || 'any'
       });
       res.json(results);
     } catch (error) {
@@ -9622,6 +10251,70 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('[TalentMatch] Get pipeline error:', error);
       res.status(500).json({ message: 'Failed to fetch pipeline' });
+    }
+  });
+
+  // ============================================================================
+  // PROFILE ENRICHMENT API (GitHub/LinkedIn)
+  // Fetches public profile data from GitHub, validates LinkedIn URLs
+  // ============================================================================
+
+  app.post("/api/talent-match/enrich-profile", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const { urls } = req.body;
+      if (!urls || !Array.isArray(urls) || urls.length === 0) {
+        return res.status(400).json({ message: 'urls array is required' });
+      }
+      const result = await profileEnrichmentService.enrichFromUrls(urls);
+      res.json(result);
+    } catch (error: any) {
+      console.error('[ProfileEnrichment] Enrich profile error:', error);
+      res.status(500).json({ message: 'Failed to enrich profile', error: error.message });
+    }
+  });
+
+  app.get("/api/talent-match/enrich-github/:username", async (req: Request, res: Response) => {
+    try {
+      const { username } = req.params;
+      if (!username) {
+        return res.status(400).json({ message: 'GitHub username is required' });
+      }
+      const profile = await profileEnrichmentService.fetchGitHubProfile(username);
+      res.json(profile);
+    } catch (error: any) {
+      console.error('[ProfileEnrichment] GitHub fetch error:', error);
+      if (error.status === 404) {
+        return res.status(404).json({ message: 'GitHub user not found' });
+      }
+      res.status(500).json({ message: 'Failed to fetch GitHub profile', error: error.message });
+    }
+  });
+
+  app.post("/api/talent-match/validate-linkedin", async (req: Request, res: Response) => {
+    try {
+      const { url } = req.body;
+      if (!url) {
+        return res.status(400).json({ message: 'LinkedIn URL is required' });
+      }
+      const result = profileEnrichmentService.processLinkedInUrl(url);
+      res.json(result);
+    } catch (error: any) {
+      console.error('[ProfileEnrichment] LinkedIn validation error:', error);
+      res.status(500).json({ message: 'Failed to validate LinkedIn URL', error: error.message });
+    }
+  });
+
+  app.post("/api/talent-match/validate-urls", async (req: Request, res: Response) => {
+    try {
+      const { urls } = req.body;
+      if (!urls || !Array.isArray(urls)) {
+        return res.status(400).json({ message: 'urls array is required' });
+      }
+      const result = profileEnrichmentService.validateProfileUrls(urls);
+      res.json(result);
+    } catch (error: any) {
+      console.error('[ProfileEnrichment] URL validation error:', error);
+      res.status(500).json({ message: 'Failed to validate URLs', error: error.message });
     }
   });
 
@@ -9768,6 +10461,118 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('[Recommendations] Get by ID error:', error);
       res.status(500).json({ message: "Failed to fetch place recommendation" });
+    }
+  });
+
+  // ==================== PROFILE PHOTO UPLOAD ====================
+  
+  app.post("/api/profile/photo", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const { photoData } = req.body;
+      if (!photoData) {
+        return res.status(400).json({ message: "Photo data is required" });
+      }
+
+      const userId = req.user!.id;
+      await db.update(users).set({ profileImage: photoData }).where(eq(users.id, userId));
+      const updatedUsers = await db.select().from(users).where(eq(users.id, userId));
+      const updatedUser = updatedUsers[0];
+      
+      res.json(updatedUser || { message: "Photo updated" });
+    } catch (error) {
+      console.error('[Profile] Upload photo error:', error);
+      res.status(500).json({ message: "Failed to upload profile photo" });
+    }
+  });
+
+  // ==================== COVER PHOTO UPLOAD ====================
+
+  app.post("/api/profile/cover", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const { coverData } = req.body;
+      if (!coverData) {
+        return res.status(400).json({ message: "Cover data is required" });
+      }
+
+      const userId = req.user!.id;
+      await db.update(users).set({ backgroundImage: coverData }).where(eq(users.id, userId));
+      const updatedUsers = await db.select().from(users).where(eq(users.id, userId));
+      const updatedUser = updatedUsers[0];
+      
+      res.json(updatedUser || { message: "Cover updated" });
+    } catch (error) {
+      console.error('[Profile] Upload cover error:', error);
+      res.status(500).json({ message: "Failed to upload cover photo" });
+    }
+  });
+
+  // ==================== MAP MARKERS - INDIVIDUAL EVENTS ====================
+
+  app.get("/api/map/markers", async (req: Request, res: Response) => {
+    try {
+      // Get all upcoming events with valid coordinates
+      const eventMarkers = await db
+        .select({
+          id: events.id,
+          title: events.title,
+          city: events.city,
+          country: events.country,
+          latitude: events.latitude,
+          longitude: events.longitude,
+          eventType: events.eventType,
+          startDate: events.startDate,
+          address: events.address,
+          location: events.location,
+        })
+        .from(events)
+        .where(and(
+          ne(events.latitude, null),
+          ne(events.longitude, null),
+          gt(events.startDate, new Date()),
+          eq(events.status, 'published')
+        ))
+        .limit(500);
+
+      // Transform to map marker format with validated coordinates
+      const markers = eventMarkers
+        .map((event: any) => {
+          const lat = parseFloat(String(event.latitude || 0));
+          const lng = parseFloat(String(event.longitude || 0));
+          
+          console.log(`[Map] Event "${event.title}": lat=${lat}, lng=${lng}`);
+          
+          // Skip if coordinates are invalid
+          if (isNaN(lat) || isNaN(lng)) {
+            console.log(`[Map] Skipping event "${event.title}" - invalid coordinates`);
+            return null;
+          }
+          
+          return {
+            id: event.id,
+            title: event.title,
+            city: event.city || '',
+            country: event.country || '',
+            coordinates: {
+              lat: lat,
+              lng: lng,
+            },
+            eventType: event.eventType || 'social',
+            startDate: event.startDate,
+            address: event.address || event.location,
+            memberCount: 0,
+            activeEvents: 1,
+            recommendations: 0,
+            housing: 0,
+            isActive: true,
+          };
+        })
+        .filter((marker: any) => marker !== null);
+
+      console.log(`[Map] Returning ${markers.length} event markers`);
+      res.json(markers);
+    } catch (error) {
+      console.error('[Map] Fetch event markers error:', error);
+      res.status(500).json({ message: "Failed to fetch map markers" });
     }
   });
 

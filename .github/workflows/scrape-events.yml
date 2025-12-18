@@ -1,0 +1,126 @@
+name: Tango Event Scraping
+
+on:
+  schedule:
+    - cron: '0 4 * * *'  # Daily at 4 AM UTC
+  workflow_dispatch:      # Manual trigger
+    inputs:
+      source_type:
+        description: 'Source type to scrape (all, static, js, social)'
+        required: false
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - static
+          - js
+          - social
+
+jobs:
+  scrape-events:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    
+    steps:
+      - name: Trigger Mundo Tango Scraping
+        id: trigger
+        run: |
+          echo "🚀 Triggering scraping at $(date)"
+          
+          RESPONSE=$(curl -s -X POST "${{ secrets.MUNDO_TANGO_URL }}/api/admin/scraping/trigger" \
+            -H "Authorization: Bearer ${{ secrets.ADMIN_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '{"sourceType": "${{ github.event.inputs.source_type || 'all' }}"}' \
+            -w "\n%{http_code}")
+          
+          HTTP_CODE=$(echo "$RESPONSE" | tail -n 1)
+          BODY=$(echo "$RESPONSE" | head -n -1)
+          
+          echo "HTTP Status: $HTTP_CODE"
+          echo "Response: $BODY"
+          
+          if [ "$HTTP_CODE" -ge 400 ]; then
+            echo "❌ Scraping trigger failed"
+            exit 1
+          fi
+          
+          echo "✅ Scraping initiated successfully"
+          echo "job_id=$(echo $BODY | jq -r '.jobId // empty')" >> $GITHUB_OUTPUT
+
+      - name: Wait for Scraping Completion
+        run: |
+          echo "⏳ Waiting for scraping to complete..."
+          sleep 300  # 5 minute buffer for scraping
+          
+      - name: Check Scraping Status
+        run: |
+          echo "📊 Checking scraping status..."
+          
+          STATUS=$(curl -s "${{ secrets.MUNDO_TANGO_URL }}/api/admin/scraping/status" \
+            -H "Authorization: Bearer ${{ secrets.ADMIN_API_KEY }}")
+          
+          echo "Status: $STATUS"
+          
+          # Parse statistics
+          EVENTS_SCRAPED=$(echo $STATUS | jq -r '.eventsScraped // 0')
+          SOURCES_PROCESSED=$(echo $STATUS | jq -r '.sourcesProcessed // 0')
+          ERRORS=$(echo $STATUS | jq -r '.errors // 0')
+          
+          echo "📈 Results:"
+          echo "  - Events scraped: $EVENTS_SCRAPED"
+          echo "  - Sources processed: $SOURCES_PROCESSED"
+          echo "  - Errors: $ERRORS"
+          
+          if [ "$ERRORS" -gt 10 ]; then
+            echo "⚠️ High error count detected"
+          fi
+
+      - name: Trigger Deduplication
+        run: |
+          echo "🔄 Triggering event deduplication..."
+          
+          curl -s -X POST "${{ secrets.MUNDO_TANGO_URL }}/api/admin/scraping/deduplicate" \
+            -H "Authorization: Bearer ${{ secrets.ADMIN_API_KEY }}"
+          
+          echo "✅ Deduplication triggered"
+
+      - name: Trigger City Group Enrichment
+        run: |
+          echo "🏙️ Triggering city group enrichment..."
+          
+          ENRICH_RESULT=$(curl -s -X POST "${{ secrets.MUNDO_TANGO_URL }}/api/admin/scraping/enrich-groups" \
+            -H "Authorization: Bearer ${{ secrets.ADMIN_API_KEY }}")
+          
+          echo "Enrichment result: $ENRICH_RESULT"
+          echo "✅ City group enrichment complete"
+
+  notify-on-failure:
+    needs: scrape-events
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Failure Notification
+        run: |
+          echo "❌ Scraping workflow failed at $(date)"
+          
+          # Optional: Send Slack/Discord notification
+          # curl -X POST "${{ secrets.SLACK_WEBHOOK }}" \
+          #   -H "Content-Type: application/json" \
+          #   -d '{"text": "🚨 Tango event scraping failed! Check GitHub Actions logs."}'
+          
+          echo "Failure notification sent"
+
+  weekly-full-scrape:
+    if: github.event.schedule == '0 4 * * 0'  # Only on Sundays
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    
+    steps:
+      - name: Full Community Data Scrape
+        run: |
+          echo "🌍 Running weekly full community data scrape..."
+          
+          curl -s -X POST "${{ secrets.MUNDO_TANGO_URL }}/api/admin/scraping/full-community-scrape" \
+            -H "Authorization: Bearer ${{ secrets.ADMIN_API_KEY }}"
+          
+          echo "✅ Full community scrape initiated"

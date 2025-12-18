@@ -40,6 +40,9 @@ export function RecommendedPosts() {
       if (!response.ok) throw new Error('Failed to fetch recommended posts');
       return response.json();
     },
+    enabled: !!localStorage.getItem('accessToken'),
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
   });
 
   if (isLoading) {

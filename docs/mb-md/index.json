@@ -1,0 +1,96 @@
+{
+  "version": "9.9.3",
+  "name": "MB.MD - Machine-Brain Methodology & Design",
+  "description": "AI-to-AI collaboration framework for autonomous software development",
+  "lastUpdated": "2025-12-05",
+  "structure": {
+    "core": {
+      "path": "core.md",
+      "description": "Core concepts, principles, and quick reference"
+    },
+    "patterns": {
+      "path": "patterns/",
+      "files": {
+        "pattern-64-70": {
+          "path": "patterns/pattern-64-70.md",
+          "description": "AI-to-AI collaboration patterns (Context Sync, Dual-Lane, Swarm, etc.)"
+        }
+      }
+    },
+    "agents": {
+      "path": "agents/",
+      "files": {
+        "role-agents": {
+          "path": "agents/role-agents.md",
+          "description": "Role-based leadership agents (CTO, Frontend Lead, Backend Lead, etc.)"
+        }
+      }
+    },
+    "checklists": {
+      "path": "checklists/",
+      "description": "Pre-task and post-task validation checklists"
+    }
+  },
+  "services": {
+    "RecursiveContextService": {
+      "path": "server/services/intelligence/RecursiveContextService.ts",
+      "description": "Samsung TinyRecursiveModels for hierarchical code summarization"
+    },
+    "FacelessContentService": {
+      "path": "server/services/content/FacelessContentService.ts",
+      "description": "Automated content marketing pipeline"
+    },
+    "FreeAPIService": {
+      "path": "server/services/external/FreeAPIService.ts",
+      "description": "Open source data enrichment APIs"
+    },
+    "SocialMediaAdapters": {
+      "path": "server/services/social/SocialMediaAdapters.ts",
+      "description": "TikTok, YouTube Shorts, Instagram Reels adapters"
+    }
+  },
+  "routes": {
+    "content": "/api/content",
+    "templates": "/api/content/templates",
+    "generate": "/api/content/generate",
+    "batch": "/api/content/batch"
+  },
+  "esaAgentCount": 1255,
+  "roleAgentCount": 7,
+  "patterns": {
+    "64": "Context Sync Ritual",
+    "65": "Dual-Lane Planning",
+    "66": "Build Swarm Choreography",
+    "67": "Validation Relay",
+    "68": "3-Strike AutoFix Loop",
+    "69": "Knowledge Backprop",
+    "70": "Governance Guardrails"
+  },
+  "integrations": {
+    "samsung": {
+      "name": "TinyRecursiveModels",
+      "status": "implemented",
+      "service": "RecursiveContextService"
+    },
+    "genAI_agents": {
+      "name": "Multi-Agent Swarm",
+      "status": "implemented",
+      "service": "ESA Framework"
+    },
+    "public_apis": {
+      "name": "Free Data Enrichment",
+      "status": "implemented",
+      "service": "FreeAPIService"
+    },
+    "microsoft_rag": {
+      "name": "Session Snapshots",
+      "status": "planned",
+      "notes": "LanceDB semantic reconnect"
+    },
+    "comfyUI": {
+      "name": "Visual Workflow State",
+      "status": "planned",
+      "notes": "AgentEventBus visualization"
+    }
+  }
+}

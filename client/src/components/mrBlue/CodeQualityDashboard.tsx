@@ -58,10 +58,8 @@ export function CodeQualityDashboard() {
   // Mutation: Validate code quality
   const validateMutation = useMutation({
     mutationFn: async (path: string) => {
-      return await apiRequest('/api/mrblue/quality/validate', {
-        method: 'POST',
-        body: { filePath: path || undefined }
-      });
+      const response = await apiRequest('POST', '/api/mrblue/quality/validate', { filePath: path || undefined });
+      return response.json();
     },
     onSuccess: (data) => {
       setReport(data);
@@ -82,10 +80,8 @@ export function CodeQualityDashboard() {
   // Mutation: Security scan
   const securityScanMutation = useMutation({
     mutationFn: async () => {
-      return await apiRequest('/api/mrblue/quality/security', {
-        method: 'POST',
-        body: {}
-      });
+      const response = await apiRequest('POST', '/api/mrblue/quality/security', {});
+      return response.json();
     },
     onSuccess: (data) => {
       if (report) {
@@ -104,10 +100,8 @@ export function CodeQualityDashboard() {
   // Mutation: Performance analysis
   const performanceMutation = useMutation({
     mutationFn: async () => {
-      return await apiRequest('/api/mrblue/quality/performance', {
-        method: 'POST',
-        body: {}
-      });
+      const response = await apiRequest('POST', '/api/mrblue/quality/performance', {});
+      return response.json();
     },
     onSuccess: (data) => {
       if (report) {

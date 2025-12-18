@@ -13,7 +13,23 @@ export function FeedHeroWelcome() {
     upcomingEvents: number;
   }>({
     queryKey: ['/api/feed/stats'],
-    staleTime: 30000,
+    queryFn: async () => {
+      const token = localStorage.getItem('accessToken');
+      const headers: Record<string, string> = {};
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+      
+      const response = await fetch('/api/feed/stats', {
+        credentials: 'include',
+        headers,
+      });
+      if (!response.ok) throw new Error('Failed to fetch feed stats');
+      return response.json();
+    },
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+    enabled: !!localStorage.getItem('accessToken'),
   });
 
   const firstName = user?.name?.split(' ')[0] || user?.username || 'Dancer';

@@ -39,7 +39,7 @@ export class PredictiveContextService {
     try {
       // Check if pattern exists
       const [existing] = await executeRawQuery<any>(
-        `SELECT id, transition_count, avg_time_on_page_ms FROM user_patterns
+        `SELECT id, transition_count, avg_time_on_page FROM user_patterns
          WHERE user_id = $1 AND from_page = $2 AND to_page = $3`,
         [userId, fromPage, toPage]
       );
@@ -48,13 +48,13 @@ export class PredictiveContextService {
         // Update existing pattern
         const newCount = existing.transition_count + 1;
         const newAvgTime = Math.round(
-          (existing.avg_time_on_page_ms * existing.transition_count + timeOnPage) / newCount
+          (existing.avg_time_on_page * existing.transition_count + timeOnPage) / newCount
         );
 
         await executeRawQuery(
           `UPDATE user_patterns SET
             transition_count = $1,
-            avg_time_on_page_ms = $2,
+            avg_time_on_page = $2,
             last_transition_at = NOW()
           WHERE id = $3`,
           [newCount, newAvgTime, existing.id]
@@ -63,7 +63,7 @@ export class PredictiveContextService {
         // Create new pattern
         await executeRawQuery(
           `INSERT INTO user_patterns (
-            user_id, from_page, to_page, transition_count, avg_time_on_page_ms,
+            user_id, from_page, to_page, transition_count, avg_time_on_page,
             last_transition_at, created_at
           ) VALUES ($1, $2, $3, 1, $4, NOW(), NOW())`,
           [userId, fromPage, toPage, timeOnPage]
@@ -81,7 +81,7 @@ export class PredictiveContextService {
     try {
       // Get all transitions from current page for this user
       const patterns = await executeRawQuery<any>(
-        `SELECT to_page, transition_count, avg_time_on_page_ms
+        `SELECT to_page, transition_count, avg_time_on_page
          FROM user_patterns
          WHERE user_id = $1 AND from_page = $2
          ORDER BY transition_count DESC
@@ -170,21 +170,24 @@ export class PredictiveContextService {
         // Update existing cache
         await executeRawQuery(
           `UPDATE prediction_cache SET
-            predicted_pages = $1,
-            confidence_scores = $2,
-            cache_warmed_at = NOW(),
-            expires_at = NOW() + INTERVAL '24 hours'
-          WHERE id = $3`,
-          [JSON.stringify(prediction.predictedPages), JSON.stringify({ overall: prediction.confidence }), existing.id]
+            predicted_pages = $1::text[],
+            confidence = $2,
+            metadata = $3,
+            cache_warmed = true,
+            warmed_at = NOW(),
+            expires_at = NOW() + INTERVAL '24 hours',
+            updated_at = NOW()
+          WHERE id = $4`,
+          [prediction.predictedPages, prediction.confidence, JSON.stringify({ overall: prediction.confidence }), existing.id]
         );
       } else {
         // Create new cache entry
         await executeRawQuery(
           `INSERT INTO prediction_cache (
-            user_id, current_page, predicted_pages, confidence_scores,
-            cache_warmed_at, hit_count, created_at, expires_at
-          ) VALUES ($1, $2, $3, $4, NOW(), 0, NOW(), NOW() + INTERVAL '24 hours')`,
-          [userId, currentPage, JSON.stringify(prediction.predictedPages), JSON.stringify({ overall: prediction.confidence })]
+            user_id, current_page, predicted_pages, confidence, metadata,
+            cache_warmed, warmed_at, hit_count, created_at, expires_at
+          ) VALUES ($1, $2, $3::text[], $4, $5, true, NOW(), 0, NOW(), NOW() + INTERVAL '24 hours')`,
+          [userId, currentPage, prediction.predictedPages, prediction.confidence, JSON.stringify({ overall: prediction.confidence })]
         );
       }
 
@@ -214,10 +217,10 @@ export class PredictiveContextService {
   ): Promise<PredictionResult | null> {
     try {
       const [cache] = await executeRawQuery<any>(
-        `SELECT predicted_pages, confidence_scores FROM prediction_cache
+        `SELECT predicted_pages, confidence, metadata FROM prediction_cache
          WHERE user_id = $1 AND current_page = $2
          AND expires_at > NOW()
-         AND cache_warmed_at IS NOT NULL`,
+         AND cache_warmed = true`,
         [userId, currentPage]
       );
 
@@ -229,14 +232,11 @@ export class PredictiveContextService {
       const predictedPages = typeof cache.predicted_pages === 'string' 
         ? JSON.parse(cache.predicted_pages) 
         : cache.predicted_pages || [];
-      const confidenceScores = typeof cache.confidence_scores === 'string'
-        ? JSON.parse(cache.confidence_scores)
-        : cache.confidence_scores || {};
 
       return {
         currentPage,
         predictedPages,
-        confidence: confidenceScores.overall || 0,
+        confidence: cache.confidence || 0,
       };
     } catch (error) {
       return null;
@@ -334,7 +334,7 @@ export class PredictiveContextService {
   static async getUserPatternsSummary(userId: number): Promise<UserPattern[]> {
     try {
       const results = await executeRawQuery<any>(
-        `SELECT user_id, from_page, to_page, transition_count, avg_time_on_page_ms
+        `SELECT user_id, from_page, to_page, transition_count, avg_time_on_page
          FROM user_patterns
          WHERE user_id = $1
          ORDER BY transition_count DESC
@@ -347,7 +347,7 @@ export class PredictiveContextService {
         fromPage: r.from_page,
         toPage: r.to_page,
         transitionCount: r.transition_count,
-        avgTimeOnPage: r.avg_time_on_page_ms,
+        avgTimeOnPage: r.avg_time_on_page,
       }));
     } catch (error) {
       return [];

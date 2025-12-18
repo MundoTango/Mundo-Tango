@@ -247,7 +247,7 @@ export default function FeaturesPage() {
             </div>
           </div>
 
-          {/* Stats Section */}
+          {/* Community Section */}
           <div className="bg-gradient-to-b from-primary/5 to-background py-20 px-4">
             <div className="container mx-auto max-w-7xl">
               <motion.div
@@ -255,41 +255,15 @@ export default function FeaturesPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-100px" }}
                 transition={{ duration: 0.6 }}
-                className="text-center mb-16"
+                className="text-center"
               >
                 <h2 className="text-4xl md:text-5xl font-serif font-bold mb-4">
-                  Trusted by Dancers Worldwide
+                  Join the Global Tango Community
                 </h2>
                 <p className="text-xl text-muted-foreground">
-                  Join thousands of tango enthusiasts already using Mundo Tango
+                  Connect with dancers worldwide and discover the passion of Argentine tango
                 </p>
               </motion.div>
-
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
-                {[
-                  { value: "50,000+", label: "Active Dancers" },
-                  { value: "500+", label: "Cities" },
-                  { value: "10,000+", label: "Events Monthly" },
-                  { value: "1,000+", label: "Teachers" }
-                ].map((stat, index) => (
-                  <motion.div
-                    key={stat.label}
-                    initial={{ opacity: 0, y: 40 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: "-100px" }}
-                    transition={{ duration: 0.6, delay: index * 0.1 }}
-                    className="text-center"
-                    data-testid={`stat-${index}`}
-                  >
-                    <div className="text-5xl md:text-6xl font-bold text-primary mb-2">
-                      {stat.value}
-                    </div>
-                    <div className="text-lg text-muted-foreground">
-                      {stat.label}
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
             </div>
           </div>
 

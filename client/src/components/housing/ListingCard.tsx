@@ -1,7 +1,9 @@
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Users, Bed, Bath, DollarSign } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 import type { SelectHousingListing } from "@shared/schema";
+import { FriendClosenessIndicator, type FriendClosenessData } from "./FriendClosenessIndicator";
 
 interface ListingCardProps {
   listing: SelectHousingListing & {
@@ -12,10 +14,17 @@ interface ListingCardProps {
     };
   };
   onClick?: () => void;
+  showCloseness?: boolean;
 }
 
-export function ListingCard({ listing, onClick }: ListingCardProps) {
+export function ListingCard({ listing, onClick, showCloseness = true }: ListingCardProps) {
   const coverPhoto = listing.coverPhotoUrl || listing.images?.[0] || "/placeholder-house.jpg";
+  const hostId = listing.host?.id || listing.hostId;
+
+  const { data: closenessData } = useQuery<FriendClosenessData>({
+    queryKey: ["/api/housing/closeness", hostId],
+    enabled: showCloseness && !!hostId,
+  });
 
   return (
     <Card
@@ -30,14 +39,19 @@ export function ListingCard({ listing, onClick }: ListingCardProps) {
           className="w-full h-full object-cover"
           data-testid={`img-listing-cover-${listing.id}`}
         />
-        {listing.verificationStatus === "verified" && (
-          <Badge
-            className="absolute top-2 right-2 bg-primary/90 backdrop-blur-sm"
-            data-testid="badge-verified"
-          >
-            Verified
-          </Badge>
-        )}
+        <div className="absolute top-2 right-2 flex flex-col gap-1 items-end">
+          {listing.verificationStatus === "verified" && (
+            <Badge
+              className="bg-primary/90 backdrop-blur-sm"
+              data-testid="badge-verified"
+            >
+              Verified
+            </Badge>
+          )}
+          {closenessData && closenessData.isFriend && (
+            <FriendClosenessIndicator data={closenessData} compact />
+          )}
+        </div>
       </div>
 
       <CardHeader className="space-y-2">

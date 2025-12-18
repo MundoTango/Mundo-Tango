@@ -17,6 +17,8 @@ import { apiRateLimiter } from "./middleware/security";
 import { compressionMiddleware, performanceMonitoringMiddleware } from "./config/performance";
 import { healthCheckHandler, readinessCheckHandler, livenessCheckHandler } from "./health-check";
 import { PolicyMonitoringJobs } from "./jobs/policy-monitoring-jobs";
+import { recursiveContextService } from "./services/intelligence/RecursiveContextService";
+import { facelessContentService } from "./services/content/FacelessContentService";
 console.log("✅ [DEBUG] All imports complete in server/index.ts");
 // ============================================================================
 // SENTRY DISABLED: CSP VIOLATIONS FIX (MB.MD SUBAGENT 3)
@@ -202,6 +204,30 @@ app.use((req, res, next) => {
     
     startPreviewExpirationChecker();
     initStoryExpirationJob();
+    
+    // MB.MD v9.9.3: Initialize Self-Healing and Content Services
+    try {
+      log('🧠 Initializing MB.MD Intelligence Services...');
+      await recursiveContextService.initialize();
+      await facelessContentService.initialize();
+      log('✅ MB.MD Intelligence Services initialized');
+    } catch (error) {
+      logger.error('❌ MB.MD Intelligence initialization failed:', error);
+    }
+    
+    // MB.MD v9.9.3: Initialize BullMQ Workers (with Redis fallback)
+    try {
+      log('🔧 Initializing BullMQ Workers...');
+      const { initializeRedis } = await import('./workers/redis-fallback');
+      await initializeRedis();
+      
+      await import('./workers/eventWorker');
+      await import('./workers/housingWorker');
+      await import('./workers/lifeCeoWorker');
+      log('[BullMQ Workers] ✅ Initialized 3 core workers');
+    } catch (error) {
+      logger.error('❌ BullMQ Worker initialization failed:', error);
+    }
     
     // PHASE 0A: Initialize Policy Monitoring System (requires Redis)
     // SKIP in development if Redis is not available to avoid ECONNREFUSED spam

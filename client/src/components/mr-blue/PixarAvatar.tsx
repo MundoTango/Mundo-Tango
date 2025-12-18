@@ -3,7 +3,7 @@ import { useFrame } from '@react-three/fiber';
 import { Sphere, MeshDistortMaterial } from '@react-three/drei';
 import * as THREE from 'three';
 
-export type AvatarState = 'idle' | 'listening' | 'speaking' | 'thinking' | 'happy' | 'excited';
+export type AvatarState = 'idle' | 'listening' | 'speaking' | 'thinking' | 'happy' | 'excited' | 'error';
 
 interface PixarAvatarProps {
   state?: AvatarState;
@@ -73,6 +73,16 @@ export function PixarAvatar({ state = 'idle', audioLevel = 0, scale = 1 }: Pixar
           pulseSpeed: 5.0,
           rotationSpeed: 1.2,
         };
+      case 'error':
+        return {
+          distortSpeed: 0.5,
+          distortStrength: 0.1,
+          bobSpeed: 0.3,
+          bobAmplitude: 0.05,
+          glowIntensity: 0.5,
+          pulseSpeed: 0.5,
+          rotationSpeed: 0.1,
+        };
       default: // idle
         return {
           distortSpeed: 1.0,
@@ -129,6 +139,8 @@ export function PixarAvatar({ state = 'idle', audioLevel = 0, scale = 1 }: Pixar
         return { main: '#FFD700', secondary: '#FFA500', glow: '#FFFF00' };
       case 'excited':
         return { main: '#FF00FF', secondary: '#CC00CC', glow: '#FF66FF' };
+      case 'error':
+        return { main: '#FF4444', secondary: '#CC3333', glow: '#FF6666' };
       default: // idle
         return { main: '#00B8D4', secondary: '#008899', glow: '#00D4FF' };
     }

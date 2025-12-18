@@ -149,15 +149,13 @@ export default function FacebookTestWorkflow() {
   // Generate test message mutation
   const generateMessageMutation = useMutation({
     mutationFn: async () => {
-      return apiRequest('/api/facebook/generate-invite', {
-        method: 'POST',
-        body: JSON.stringify({
-          friendName: 'Scott Boddye',
-          friendEmail: 'sboddye@gmail.com',
-          relationship: 'friend',
-          sharedInterests: ['tango', 'community']
-        })
+      const response = await apiRequest('POST', '/api/facebook/generate-invite', {
+        friendName: 'Scott Boddye',
+        friendEmail: 'sboddye@gmail.com',
+        relationship: 'friend',
+        sharedInterests: ['tango', 'community']
       });
+      return response.json();
     },
     onSuccess: (data) => {
       setTestMessage(data.message);
@@ -178,17 +176,15 @@ export default function FacebookTestWorkflow() {
   // Record step completion mutation
   const recordStepMutation = useMutation({
     mutationFn: async (data: { stepId: number; recordingType: string; notes: string }) => {
-      return apiRequest('/api/facebook/record-manual-action', {
-        method: 'POST',
-        body: JSON.stringify({
-          recipientName: 'Scott Boddye',
-          recipientEmail: 'sboddye@gmail.com',
-          message: testMessage || 'Test workflow step',
-          actionType: data.recordingType,
-          completedAt: new Date().toISOString(),
-          notes: data.notes
-        })
+      const response = await apiRequest('POST', '/api/facebook/record-manual-action', {
+        recipientName: 'Scott Boddye',
+        recipientEmail: 'sboddye@gmail.com',
+        message: testMessage || 'Test workflow step',
+        actionType: data.recordingType,
+        completedAt: new Date().toISOString(),
+        notes: data.notes
       });
+      return response.json();
     },
     onSuccess: (_, variables) => {
       setCompletedSteps([...completedSteps, variables.stepId]);

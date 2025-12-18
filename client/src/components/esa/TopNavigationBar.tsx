@@ -8,6 +8,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/hooks/use-theme";
 import { SearchBar } from "../SearchBar";
 import { LanguageSelectorButton } from "../LanguageSelector";
+import { useQuery } from "@tanstack/react-query";
 
 /**
  * ESA TOP NAVIGATION BAR
@@ -18,12 +19,12 @@ import { LanguageSelectorButton } from "../LanguageSelector";
  * - Search Bar (center)
  * - Language Selector
  * - Theme Toggle
- * - Favorites ❤️ → /favorites
- * - Messages 💬 → /messages
- * - Notifications 🔔 → /notifications
+ * - Favorites → /favorites
+ * - Messages → /messages (with real unread count badge)
+ * - Notifications → /notifications
  * - Mr Blue AI → /mr-blue-chat
- * - Settings ⚙️ → /settings
- * - Help ❓ → /help
+ * - Settings → /settings
+ * - Help → /help
  * - User Menu
  */
 export function TopNavigationBar() {
@@ -31,8 +32,22 @@ export function TopNavigationBar() {
   const { theme, setTheme } = useTheme();
   const [, setLocation] = useLocation();
 
-  const unreadNotifications = 3; // TODO: Get from API
-  const unreadMessages = 5; // TODO: Get from API
+  // Fetch real unread message count from API
+  const { data: messageData } = useQuery<{ unreadCount: number }>({
+    queryKey: ["/api/messages/unread-count"],
+    refetchInterval: 30000, // Refresh every 30 seconds
+    enabled: !!user, // Only fetch when logged in
+  });
+
+  // Fetch real unread notification count from API
+  const { data: notificationData } = useQuery<{ unreadCount: number }>({
+    queryKey: ["/api/notifications/unread-count"],
+    refetchInterval: 30000,
+    enabled: !!user,
+  });
+
+  const unreadMessages = messageData?.unreadCount || 0;
+  const unreadNotifications = notificationData?.unreadCount || 0;
   
   // Hide Mr. Blue button if URL has hideControls=true (for iframe embedding)
   const urlParams = new URLSearchParams(window.location.search);
@@ -78,17 +93,17 @@ export function TopNavigationBar() {
             </Button>
           </Link>
 
-          {/* Messages */}
+          {/* Messages - with real unread count */}
           <Link href="/messages">
             <Button variant="ghost" size="icon" className="relative" data-testid="button-messages">
               <span className="relative flex items-center justify-center">
                 <MessageSquare className="h-5 w-5" />
                 {unreadMessages > 0 && (
                   <Badge 
-                    className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs"
+                    className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs bg-primary"
                     data-testid="badge-messages-count"
                   >
-                    {unreadMessages}
+                    {unreadMessages > 9 ? "9+" : unreadMessages}
                   </Badge>
                 )}
               </span>
@@ -105,7 +120,7 @@ export function TopNavigationBar() {
                     className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs"
                     data-testid="badge-notifications-count"
                   >
-                    {unreadNotifications}
+                    {unreadNotifications > 9 ? "9+" : unreadNotifications}
                   </Badge>
                 )}
               </span>

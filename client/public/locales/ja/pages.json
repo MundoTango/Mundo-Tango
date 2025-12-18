@@ -1,0 +1,141 @@
+{
+  "home": {
+    "title": "Mundo Tango - Connect, Dance, Thrive",
+    "description": "Join the global tango community. Discover events, connect with dancers, and immerse yourself in the passion of tango.",
+    "hero": {
+      "headline": "Where Tango Lives",
+      "subtitle": "Connect with dancers worldwide, discover events in your city, and experience the magic of tango.",
+      "cta": "Join the Community",
+      "stats": {
+        "dancers": "{{count}}+ Dancers",
+        "events": "{{count}}+ Events Monthly",
+        "cities": "{{count}}+ Cities",
+        "countries": "{{count}}+ Countries"
+      }
+    }
+  },
+  "feed": {
+    "title": "Feed",
+    "description": "Stay updated with the latest from the tango community",
+    "filters": {
+      "all": "All Posts",
+      "following": "Following",
+      "popular": "Popular",
+      "recent": "Recent"
+    },
+    "createPost": "What's on your mind?",
+    "noPost": "No posts to display"
+  },
+  "events": {
+    "title": "Events",
+    "description": "Discover tango events near you",
+    "upcoming": "Upcoming Events",
+    "past": "Past Events",
+    "filters": {
+      "all": "All Events",
+      "milongas": "Milongas",
+      "workshops": "Workshops",
+      "festivals": "Festivals",
+      "classes": "Classes"
+    },
+    "noEvents": "No events found"
+  },
+  "profile": {
+    "title": "Profile",
+    "description": "View and edit your profile",
+    "editProfile": "Edit Profile",
+    "tabs": {
+      "posts": "Posts",
+      "photos": "Photos",
+      "videos": "Videos",
+      "events": "Events",
+      "friends": "Friends"
+    },
+    "stats": {
+      "posts": "Posts",
+      "followers": "Followers",
+      "following": "Following",
+      "events": "Events Attended"
+    }
+  },
+  "messages": {
+    "title": "Messages",
+    "description": "Chat with your tango connections",
+    "newMessage": "New Message",
+    "searchConversations": "Search conversations",
+    "noMessages": "No messages yet",
+    "startConversation": "Start a conversation"
+  },
+  "teachers": {
+    "title": "Tango Teachers",
+    "description": "Find and connect with tango teachers",
+    "filters": {
+      "all": "All Teachers",
+      "featured": "Featured",
+      "nearby": "Nearby"
+    },
+    "viewProfile": "View Profile",
+    "bookLesson": "Book a Lesson"
+  },
+  "venues": {
+    "title": "Tango Venues",
+    "description": "Discover tango venues worldwide",
+    "filters": {
+      "all": "All Venues",
+      "milongas": "Milongas",
+      "schools": "Dance Schools",
+      "theaters": "Theaters"
+    },
+    "getDirections": "Get Directions"
+  },
+  "settings": {
+    "title": "Settings",
+    "description": "Manage your account settings",
+    "sections": {
+      "account": "Account Settings",
+      "profile": "Profile",
+      "privacy": "Privacy",
+      "notifications": "Notifications",
+      "security": "Security",
+      "billing": "Billing",
+      "preferences": "Preferences"
+    }
+  },
+  "lifeCEO": {
+    "title": "Life CEO Dashboard",
+    "description": "Your personal AI assistant for life management",
+    "agents": {
+      "health": "Health Agent",
+      "fitness": "Fitness Agent",
+      "nutrition": "Nutrition Agent",
+      "finance": "Finance Agent",
+      "career": "Career Agent",
+      "productivity": "Productivity Agent",
+      "relationships": "Relationship Agent",
+      "learning": "Learning Agent"
+    }
+  },
+  "marketplace": {
+    "title": "Marketplace",
+    "description": "Buy and sell tango-related items",
+    "categories": {
+      "shoes": "Dance Shoes",
+      "clothing": "Clothing",
+      "music": "Music",
+      "accessories": "Accessories",
+      "other": "Other"
+    }
+  },
+  "admin": {
+    "title": "Admin Dashboard",
+    "description": "Platform administration and management",
+    "sections": {
+      "overview": "Overview",
+      "users": "Users",
+      "content": "Content",
+      "reports": "Reports",
+      "analytics": "Analytics",
+      "settings": "Settings"
+    }
+  }
+}

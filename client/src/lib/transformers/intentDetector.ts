@@ -9,9 +9,17 @@
  * - command: Navigation, actions, system commands
  */
 
-import { pipeline, type PipelineType } from '@xenova/transformers';
-
 export type UserIntent = 'visual_change' | 'code_generation' | 'question' | 'command';
+
+// Dynamic import to avoid bundling the large transformers library
+let pipelineModule: any = null;
+const loadPipeline = async () => {
+  if (!pipelineModule) {
+    const module = await import('@xenova/transformers');
+    pipelineModule = module.pipeline;
+  }
+  return pipelineModule;
+};
 
 export interface IntentResult {
   intent: UserIntent;
@@ -49,8 +57,9 @@ class TransformersIntentDetector {
       
       // Use zero-shot classification for intent detection
       // This model can classify text into custom categories without training
+      const pipeline = await loadPipeline();
       this.classifier = await pipeline(
-        'zero-shot-classification' as PipelineType,
+        'zero-shot-classification',
         'Xenova/distilbert-base-uncased-mnli'
       );
       

@@ -32,10 +32,8 @@ export default function FeatureFlagsPage() {
 
   const toggleFlagMutation = useMutation({
     mutationFn: async ({ flagId, enabled }: { flagId: string; enabled: boolean }) => {
-      return apiRequest(`/api/admin/feature-flags/${flagId}`, {
-        method: 'PUT',
-        body: JSON.stringify({ enabled }),
-      });
+      const response = await apiRequest('PUT', `/api/admin/feature-flags/${flagId}`, { enabled });
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/feature-flags'] });
@@ -48,10 +46,8 @@ export default function FeatureFlagsPage() {
 
   const updateRolloutMutation = useMutation({
     mutationFn: async ({ flagId, percentage }: { flagId: string; percentage: number }) => {
-      return apiRequest(`/api/admin/feature-flags/${flagId}/rollout`, {
-        method: 'PUT',
-        body: JSON.stringify({ rolloutPercentage: percentage }),
-      });
+      const response = await apiRequest('PUT', `/api/admin/feature-flags/${flagId}/rollout`, { rolloutPercentage: percentage });
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/feature-flags'] });

@@ -1,14 +1,15 @@
 # PRD: Tango Roles Standardization System
 
-> **Version:** 1.0  
+> **Version:** 1.1  
 > **Created:** 2025-11-28  
+> **Updated:** 2025-11-29  
 > **Status:** Active  
 
 ---
 
 ## 1. Purpose
 
-The Tango Roles System provides a unified, standardized approach to defining and displaying the 19 tango community roles throughout the Mundo Tango platform. This centralized system ensures consistent role representation across onboarding, profiles, feeds, groups, comments, and all user-facing components.
+The Tango Roles System provides a unified, standardized approach to defining and displaying the 20 tango community roles throughout the Mundo Tango platform. This centralized system ensures consistent role representation across onboarding, profiles, feeds, groups, comments, and all user-facing components.
 
 ---
 
@@ -23,7 +24,7 @@ Before this standardization, tango roles were defined inconsistently across mult
 - **Maintenance burden**: Updating a role required changes in multiple places
 
 ### Solution Benefits
-- **Single source of truth**: All 19 roles defined once in `tangoRoles.ts`
+- **Single source of truth**: All 20 roles defined once in `tangoRoles.ts`
 - **Standardized properties**: Consistent `value` and `label` naming convention
 - **Rich metadata**: Each role includes icon, color, description, bookable status, and category
 - **Legacy mapping**: Automatic conversion of old role values to standardized format
@@ -37,7 +38,7 @@ Before this standardization, tango roles were defined inconsistently across mult
 
 | File | Purpose |
 |------|---------|
-| `client/src/lib/tangoRoles.ts` | Master role definitions (19 roles) with all metadata |
+| `client/src/lib/tangoRoles.ts` | Master role definitions (20 roles) with all metadata |
 | `client/src/components/UserRoleBadges.tsx` | Reusable badge display component |
 | `client/src/components/RoleIcon.tsx` | Single role icon display component |
 
@@ -55,7 +56,7 @@ export interface TangoRole {
 }
 ```
 
-### 3.3 Complete Role Definitions (19 Roles)
+### 3.3 Complete Role Definitions (20 Roles)
 
 #### Dance Roles (2)
 | Value | Label | Color | Bookable |
@@ -91,6 +92,11 @@ export interface TangoRole {
 | `community-builder` | Community Builder | #40E0D0 | No |
 | `fan` | Fan/Enthusiast | #F59E0B | No |
 | `other` | Other | #EF4444 | No |
+
+#### Specialized Roles (1)
+| Value | Label | Color | Bookable |
+|-------|-------|-------|----------|
+| `taxi-dancer` | Taxi Dancer | #F97316 | Yes |
 
 ### 3.4 Helper Functions
 
@@ -129,7 +135,7 @@ const LEGACY_ROLE_MAP = {
   'tango_guide': 'community-builder',
   'content_creator': 'photographer',
   'learning_resource': 'teacher',
-  'taxi_dancer': 'dancer-leader',
+  'taxi_dancer': 'taxi-dancer',
 };
 ```
 

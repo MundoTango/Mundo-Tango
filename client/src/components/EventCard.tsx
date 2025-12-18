@@ -1,19 +1,18 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MapPin, Calendar, Clock, Users, Music } from "lucide-react";
 import { Link } from "wouter";
 import { SelectEvent } from "@shared/schema";
 import { safeDateFormat } from "@/lib/safeDateFormat";
+import { getCityImageUrl } from "@/lib/cityImageMap";
+import { UnifiedRSVPButton, RSVPStatus } from "@/components/unified/UnifiedRSVPButton";
 
 interface EventCardProps {
   event: SelectEvent;
-  onRSVP?: (eventId: number) => void;
-  userRSVPStatus?: string;
+  userRSVPStatus?: RSVPStatus;
 }
 
-export function EventCard({ event, onRSVP, userRSVPStatus }: EventCardProps) {
+export function EventCard({ event, userRSVPStatus }: EventCardProps) {
   const getEventTypeBadge = (type: string) => {
     const badges: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
       milonga: { label: "Milonga", variant: "default" },
@@ -38,10 +37,9 @@ export function EventCard({ event, onRSVP, userRSVPStatus }: EventCardProps) {
   
   return (
     <Card className="hover-elevate" data-testid={`card-event-${event.id}`}>
-      {event.coverImage && (
-        <div className="relative h-48 overflow-hidden rounded-t-lg">
+      <div className="relative h-48 overflow-hidden rounded-t-lg">
           <img 
-            src={event.coverImage} 
+            src={event.coverImage || getCityImageUrl(event.city)} 
             alt={event.title}
             className="w-full h-full object-cover"
             data-testid={`img-event-cover-${event.id}`}
@@ -52,7 +50,6 @@ export function EventCard({ event, onRSVP, userRSVPStatus }: EventCardProps) {
             </Badge>
           </div>
         </div>
-      )}
       
       <CardHeader className="space-y-3">
         <Link href={`/events/${event.id}`}>
@@ -117,16 +114,13 @@ export function EventCard({ event, onRSVP, userRSVPStatus }: EventCardProps) {
             )}
           </div>
           
-          {onRSVP && (
-            <Button 
-              size="sm"
-              variant={userRSVPStatus === 'going' ? 'secondary' : 'default'}
-              onClick={() => onRSVP(event.id)}
-              data-testid={`button-rsvp-event-${event.id}`}
-            >
-              {userRSVPStatus === 'going' ? 'Going' : 'RSVP'}
-            </Button>
-          )}
+          <UnifiedRSVPButton 
+            eventId={event.id}
+            currentStatus={userRSVPStatus}
+            variant="compact"
+            attendeeCount={event.currentAttendees || 0}
+            maxAttendees={event.maxAttendees}
+          />
         </div>
         
         {event.price !== null && (typeof event.price === 'number') && event.price > 0 && (

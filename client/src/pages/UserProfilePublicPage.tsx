@@ -15,11 +15,23 @@ import {
   UserPlus,
   MoreHorizontal,
   Award,
-  Music
+  Music,
+  Globe
 } from "lucide-react";
+import { SiInstagram, SiFacebook, SiYoutube, SiTiktok, SiX, SiLinkedin } from "react-icons/si";
 import { safeDateFormat } from "@/lib/safeDateFormat";
 import { motion } from "framer-motion";
 import { SEO } from "@/components/SEO";
+
+interface SocialLinks {
+  instagram?: string;
+  facebook?: string;
+  youtube?: string;
+  tiktok?: string;
+  twitter?: string;
+  linkedin?: string;
+  website?: string;
+}
 
 interface UserProfile {
   id: number;
@@ -27,11 +39,17 @@ interface UserProfile {
   username: string;
   email: string;
   avatarUrl?: string;
+  profileImage?: string;
   bio?: string;
   city?: string;
   country?: string;
   role: string;
   danceLevel?: string;
+  yearsOfDancing?: number;
+  leaderLevel?: number;
+  followerLevel?: number;
+  socialLinks?: SocialLinks | null;
+  tangoRoles?: string[] | null;
   joinedAt: string;
   stats: {
     posts: number;
@@ -41,10 +59,20 @@ interface UserProfile {
   };
 }
 
+const socialPlatforms: { key: keyof SocialLinks; icon: typeof SiInstagram }[] = [
+  { key: 'instagram', icon: SiInstagram },
+  { key: 'facebook', icon: SiFacebook },
+  { key: 'youtube', icon: SiYoutube },
+  { key: 'tiktok', icon: SiTiktok },
+  { key: 'twitter', icon: SiX },
+  { key: 'linkedin', icon: SiLinkedin },
+  { key: 'website', icon: Globe },
+];
+
 export default function UserProfilePublicPage() {
   const { userId } = useParams();
 
-  const { data: profile, isLoading } = useQuery<UserProfile>({
+  const { data: profile, isLoading, refetch } = useQuery<UserProfile>({
     queryKey: ['/api/users', userId, 'profile'],
   });
 
@@ -56,7 +84,15 @@ export default function UserProfilePublicPage() {
     queryKey: ['/api/users', userId, 'events'],
   });
 
-  if (isLoading || !profile) {
+  // Normalize socialLinks - parse if it's a string
+  const normalizedProfile = profile ? {
+    ...profile,
+    socialLinks: typeof profile.socialLinks === 'string' 
+      ? JSON.parse(profile.socialLinks) 
+      : profile.socialLinks
+  } : null;
+
+  if (isLoading || !normalizedProfile) {
     return (
       <AppLayout>
         <div className="flex items-center justify-center min-h-screen">
@@ -73,8 +109,8 @@ export default function UserProfilePublicPage() {
     <AppLayout>
       <>
         <SEO
-          title={`${profile.name} (@${profile.username}) - Tango Profile`}
-          description={profile.bio || `View ${profile.name}'s tango profile, posts, and events.`}
+          title={`${normalizedProfile.name} (@${normalizedProfile.username}) - Tango Profile`}
+          description={normalizedProfile.bio || `View ${normalizedProfile.name}'s tango profile, posts, and events.`}
         />
 
         {/* Hero Cover Section */}
@@ -104,65 +140,101 @@ export default function UserProfilePublicPage() {
                 <CardContent className="p-8">
                   <div className="flex flex-col md:flex-row gap-6 items-start">
                     <Avatar className="h-32 w-32 border-4 border-background shadow-xl">
-                      <AvatarImage src={profile.avatarUrl} alt={profile.name} />
-                      <AvatarFallback className="text-3xl">{profile.name.charAt(0)}</AvatarFallback>
+                      <AvatarImage src={normalizedProfile.avatarUrl} alt={normalizedProfile.name} />
+                      <AvatarFallback className="text-3xl">{normalizedProfile.name.charAt(0)}</AvatarFallback>
                     </Avatar>
 
                     <div className="flex-1 space-y-4">
                       <div>
                         <h1 className="text-4xl font-serif font-bold text-foreground flex flex-wrap items-center gap-2" data-testid="text-profile-name">
-                          {profile.name}
-                          {profile.role === 'premium' && (
+                          {normalizedProfile.name}
+                          {normalizedProfile.role === 'premium' && (
                             <Badge variant="default" className="ml-2">Premium</Badge>
                           )}
-                          {profile.role === 'teacher' && (
+                          {normalizedProfile.role === 'teacher' && (
                             <Badge variant="outline" className="ml-2 border-primary text-primary">
                               <Award className="h-3 w-3 mr-1" />
                               Teacher
                             </Badge>
                           )}
                         </h1>
-                        <p className="text-muted-foreground text-lg mt-1">@{profile.username}</p>
+                        <p className="text-muted-foreground text-lg mt-1">@{normalizedProfile.username}</p>
                       </div>
 
-                      {profile.bio && (
-                        <p className="text-foreground leading-relaxed text-lg">{profile.bio}</p>
+                      {normalizedProfile.bio && (
+                        <p className="text-foreground leading-relaxed text-lg">{normalizedProfile.bio}</p>
+                      )}
+
+                      {normalizedProfile.yearsOfDancing && (
+                        <p className="text-primary font-semibold text-lg">{normalizedProfile.yearsOfDancing} years of tango experience</p>
+                      )}
+
+                      {(normalizedProfile.leaderLevel || normalizedProfile.followerLevel) && (
+                        <div className="grid grid-cols-2 gap-4 py-4">
+                          {normalizedProfile.leaderLevel && (
+                            <div className="text-center p-3 rounded-lg bg-muted">
+                              <div className="text-lg font-semibold text-foreground">Leader</div>
+                              <div className="text-sm text-muted-foreground">Level {normalizedProfile.leaderLevel}</div>
+                            </div>
+                          )}
+                          {normalizedProfile.followerLevel && (
+                            <div className="text-center p-3 rounded-lg bg-muted">
+                              <div className="text-lg font-semibold text-foreground">Follower</div>
+                              <div className="text-sm text-muted-foreground">Level {normalizedProfile.followerLevel}</div>
+                            </div>
+                          )}
+                        </div>
                       )}
 
                       <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-                        {profile.city && profile.country && (
+                        {normalizedProfile.city && normalizedProfile.country && (
                           <div className="flex items-center gap-1.5">
                             <MapPin className="h-4 w-4 text-primary" />
-                            {profile.city}, {profile.country}
+                            {normalizedProfile.city}, {normalizedProfile.country}
                           </div>
                         )}
                         <div className="flex items-center gap-1.5">
                           <Calendar className="h-4 w-4 text-primary" />
-                          Joined {safeDateFormat(profile.joinedAt, 'MMMM yyyy', 'recently')}
+                          Joined {safeDateFormat(normalizedProfile.joinedAt, 'MMMM yyyy', 'recently')}
                         </div>
-                        {profile.danceLevel && (
+                        {normalizedProfile.danceLevel && (
                           <div className="flex items-center gap-1.5">
                             <Music className="h-4 w-4 text-primary" />
-                            {profile.danceLevel}
+                            {normalizedProfile.danceLevel}
                           </div>
                         )}
                       </div>
 
+                      {normalizedProfile.socialLinks && Object.keys(normalizedProfile.socialLinks).length > 0 && (
+                        <div className="flex gap-4 pt-2">
+                          {socialPlatforms.map((platform) => {
+                            const url = normalizedProfile.socialLinks?.[platform.key];
+                            if (!url) return null;
+                            const IconComponent = platform.icon;
+                            return (
+                              <a key={platform.key} href={url} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors" data-testid={`icon-${platform.key}`}>
+                                <IconComponent className="h-5 w-5" />
+                              </a>
+                            );
+                          })}
+                        </div>
+                      )}
+
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 py-4">
                         <div className="text-center p-4 rounded-lg border">
-                          <div className="text-3xl font-serif font-bold text-foreground">{profile.stats.posts}</div>
+                          <div className="text-3xl font-serif font-bold text-foreground">{normalizedProfile.stats.posts}</div>
                           <div className="text-sm text-muted-foreground mt-1">Posts</div>
                         </div>
                         <div className="text-center p-4 rounded-lg border">
-                          <div className="text-3xl font-serif font-bold text-foreground">{profile.stats.friends}</div>
+                          <div className="text-3xl font-serif font-bold text-foreground">{normalizedProfile.stats.friends}</div>
                           <div className="text-sm text-muted-foreground mt-1">Friends</div>
                         </div>
                         <div className="text-center p-4 rounded-lg border">
-                          <div className="text-3xl font-serif font-bold text-foreground">{profile.stats.eventsAttended}</div>
+                          <div className="text-3xl font-serif font-bold text-foreground">{normalizedProfile.stats.eventsAttended}</div>
                           <div className="text-sm text-muted-foreground mt-1">Events</div>
                         </div>
                         <div className="text-center p-4 rounded-lg border">
-                          <div className="text-3xl font-serif font-bold text-primary">{profile.stats.points}</div>
+                          <div className="text-3xl font-serif font-bold text-primary">{normalizedProfile.stats.points}</div>
                           <div className="text-sm text-muted-foreground mt-1">Points</div>
                         </div>
                       </div>
@@ -257,30 +329,72 @@ export default function UserProfilePublicPage() {
             <TabsContent value="about">
               <Card>
                 <CardHeader>
-                  <CardTitle>About {profile.name}</CardTitle>
+                  <CardTitle>About {normalizedProfile.name}</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  {profile.bio && (
+                <CardContent className="space-y-6">
+                  {normalizedProfile.bio && (
                     <div>
                       <h4 className="font-semibold text-foreground mb-2">Bio</h4>
-                      <p className="text-muted-foreground">{profile.bio}</p>
+                      <p className="text-muted-foreground">{normalizedProfile.bio}</p>
                     </div>
                   )}
-                  {profile.danceLevel && (
+                  {normalizedProfile.yearsOfDancing && (
+                    <div>
+                      <h4 className="font-semibold text-foreground mb-2">Experience</h4>
+                      <p className="text-muted-foreground">{normalizedProfile.yearsOfDancing} years of tango</p>
+                    </div>
+                  )}
+                  {(normalizedProfile.leaderLevel || normalizedProfile.followerLevel) && (
+                    <div>
+                      <h4 className="font-semibold text-foreground mb-3">Dance Levels</h4>
+                      <div className="grid grid-cols-2 gap-3">
+                        {normalizedProfile.leaderLevel && (
+                          <div className="p-3 rounded-lg bg-muted">
+                            <div className="text-sm font-semibold text-foreground">Leader</div>
+                            <div className="text-sm text-muted-foreground">Level {normalizedProfile.leaderLevel}</div>
+                          </div>
+                        )}
+                        {normalizedProfile.followerLevel && (
+                          <div className="p-3 rounded-lg bg-muted">
+                            <div className="text-sm font-semibold text-foreground">Follower</div>
+                            <div className="text-sm text-muted-foreground">Level {normalizedProfile.followerLevel}</div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                  {normalizedProfile.danceLevel && (
                     <div>
                       <h4 className="font-semibold text-foreground mb-2">Dance Level</h4>
-                      <Badge>{profile.danceLevel}</Badge>
+                      <Badge>{normalizedProfile.danceLevel}</Badge>
                     </div>
                   )}
-                  {profile.city && profile.country && (
+                  {normalizedProfile.city && normalizedProfile.country && (
                     <div>
                       <h4 className="font-semibold text-foreground mb-2">Location</h4>
-                      <p className="text-muted-foreground">{profile.city}, {profile.country}</p>
+                      <p className="text-muted-foreground">{normalizedProfile.city}, {normalizedProfile.country}</p>
+                    </div>
+                  )}
+                  {normalizedProfile.socialLinks && Object.keys(normalizedProfile.socialLinks).length > 0 && (
+                    <div>
+                      <h4 className="font-semibold text-foreground mb-3">Social Media</h4>
+                      <div className="flex gap-4">
+                        {socialPlatforms.map((platform) => {
+                          const url = normalizedProfile.socialLinks?.[platform.key];
+                          if (!url) return null;
+                          const IconComponent = platform.icon;
+                          return (
+                            <a key={platform.key} href={url} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors" data-testid={`icon-${platform.key}-about`}>
+                              <IconComponent className="h-5 w-5" />
+                            </a>
+                          );
+                        })}
+                      </div>
                     </div>
                   )}
                   <div>
                     <h4 className="font-semibold text-foreground mb-2">Member Since</h4>
-                    <p className="text-muted-foreground">{safeDateFormat(profile.joinedAt, 'MMMM d, yyyy', 'recently')}</p>
+                    <p className="text-muted-foreground">{safeDateFormat(normalizedProfile.joinedAt, 'MMMM d, yyyy', 'recently')}</p>
                   </div>
                 </CardContent>
               </Card>

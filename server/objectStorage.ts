@@ -76,16 +76,20 @@ export class ObjectStorageService {
     filename?: string;
     contentType?: string;
     isPublic?: boolean;
+    directory?: string;  // Custom directory path (defaults to 'media')
   } = {}): Promise<{ uploadUrl: string; objectPath: string; publicUrl: string }> {
     const { 
       filename = `${randomUUID()}.mp4`,
       contentType = "video/mp4",
-      isPublic = true 
+      isPublic = true,
+      directory: customDir
     } = options;
 
     const bucketName = this.getBucketName();
-    const directory = isPublic ? "public/videos" : ".private/videos";
-    const objectName = `${directory}/${filename}`;
+    // Use custom directory or default to 'media'
+    const subDir = customDir || 'media';
+    const basePath = isPublic ? "public" : ".private";
+    const objectName = `${basePath}/${subDir}/${filename}`;
 
     const signedUrl = await this.signObjectURL({
       bucketName,
@@ -96,8 +100,8 @@ export class ObjectStorageService {
     });
 
     const publicUrl = isPublic 
-      ? `/public-objects/videos/${filename}`
-      : `/objects/${directory}/${filename}`;
+      ? `/public-objects/${subDir}/${filename}`
+      : `/objects/${objectName}`;
 
     return {
       uploadUrl: signedUrl,
@@ -169,19 +173,22 @@ export class ObjectStorageService {
       filename: string;
       contentType?: string;
       isPublic?: boolean;
+      directory?: string;  // Custom directory (e.g., 'images', 'videos')
     }
   ): Promise<UploadResult> {
     const {
       filename,
       contentType = "application/octet-stream",
-      isPublic = true
+      isPublic = true,
+      directory
     } = options;
 
     try {
       const { uploadUrl, objectPath, publicUrl } = await this.getUploadURL({
         filename,
         contentType,
-        isPublic
+        isPublic,
+        directory
       });
 
       const response = await fetch(uploadUrl, {

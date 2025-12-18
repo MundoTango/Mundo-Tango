@@ -187,40 +187,137 @@ export class SocialScraper {
 
   /**
    * Scrape community metadata from Facebook group
+   * Enhanced: Now extracts description, rules, admins, member count
    */
-  async scrapeCommunityData(source: any): Promise<void> {
-    if (source.platform !== 'facebook') return;
+  async scrapeCommunityData(source: any): Promise<{
+    communityName?: string;
+    description?: string;
+    rules?: string[];
+    admins?: Array<{ name: string; role: string }>;
+    memberCount?: number;
+    facebookUrl?: string;
+    coverPhotoUrl?: string;
+  } | null> {
+    console.log(`[Agent #118] 📋 Scraping community data from: ${source.name}`);
+
+    if (source.platform !== 'facebook') {
+      console.log('[Agent #118] Not a Facebook source, skipping community data');
+      return null;
+    }
 
     const facebookId = this.extractFacebookId(source.url);
-    if (!facebookId || !this.facebookAccessToken) return;
+    if (!facebookId) {
+      console.log('[Agent #118] Could not extract Facebook ID');
+      return null;
+    }
+
+    if (!this.facebookAccessToken) {
+      console.log('[Agent #118] ⚠️ No Facebook access token - skipping community data');
+      console.log('[Agent #118] Set FACEBOOK_ACCESS_TOKEN to enable community data extraction');
+      return null;
+    }
 
     try {
+      // Request extended fields for community data
       const response = await axios.get(`https://graph.facebook.com/v18.0/${facebookId}`, {
         params: {
           access_token: this.facebookAccessToken,
-          fields: 'name,description,member_count,cover'
+          fields: 'name,description,member_count,cover,privacy,icon,updated_time'
         }
       });
 
       const data = response.data;
 
+      // Try to get group rules (if available)
+      let rules: string[] = [];
+      try {
+        const rulesResponse = await axios.get(`https://graph.facebook.com/v18.0/${facebookId}/rules`, {
+          params: {
+            access_token: this.facebookAccessToken
+          }
+        });
+        rules = (rulesResponse.data.data || []).map((r: any) => r.description);
+      } catch {
+        // Rules endpoint may not be available for all groups
+      }
+
+      // Try to get admins
+      let admins: Array<{ name: string; role: string }> = [];
+      try {
+        const adminsResponse = await axios.get(`https://graph.facebook.com/v18.0/${facebookId}/admins`, {
+          params: {
+            access_token: this.facebookAccessToken
+          }
+        });
+        admins = (adminsResponse.data.data || []).map((a: any) => ({
+          name: a.name,
+          role: 'admin'
+        }));
+      } catch {
+        // Admins endpoint may require special permissions
+      }
+
+      const communityData = {
+        communityName: data.name,
+        description: data.description,
+        rules: rules.length > 0 ? rules : undefined,
+        admins: admins.length > 0 ? admins : undefined,
+        memberCount: data.member_count,
+        facebookUrl: source.url,
+        coverPhotoUrl: data.cover?.source
+      };
+
+      // Calculate data quality
+      let dataQuality = 0;
+      if (data.name) dataQuality += 10;
+      if (data.description && data.description.length > 50) dataQuality += 25;
+      if (rules.length > 0) dataQuality += 20;
+      if (admins.length > 0) dataQuality += 15;
+      if (data.member_count) dataQuality += 15;
+      if (data.cover?.source) dataQuality += 15;
+
+      // Store in database
       await db.insert(scrapedCommunityData).values({
         sourceId: source.id,
         communityName: data.name,
         description: data.description,
+        rules: rules.length > 0 ? rules : null,
+        organizers: admins.length > 0 ? admins : null,
         memberCount: data.member_count,
         facebookUrl: source.url,
         facebookGroupId: facebookId,
         coverPhotoUrl: data.cover?.source,
-        scrapedAt: new Date(),
-        dataQuality: 75, // Initial quality score
+        dataQuality: Math.min(dataQuality, 100),
         approved: false
       });
 
-      console.log(`[Agent #118] ✅ Scraped community data for ${data.name}`);
+      console.log(`[Agent #118] ✅ Scraped community data for ${data.name} (quality: ${dataQuality})`);
+      return communityData;
+
     } catch (error) {
       console.error('[Agent #118] Failed to scrape community data:', error);
+      return null;
     }
+  }
+
+  /**
+   * Scrape both events AND community data
+   */
+  async scrapeWithCommunityData(source: any): Promise<{ events: number; hasCommunityData: boolean }> {
+    const events = await this.scrape(source);
+    const communityData = await this.scrapeCommunityData(source);
+    
+    return {
+      events,
+      hasCommunityData: communityData !== null
+    };
+  }
+
+  /**
+   * Check if Facebook token is available
+   */
+  hasValidToken(): boolean {
+    return !!this.facebookAccessToken;
   }
 }
 

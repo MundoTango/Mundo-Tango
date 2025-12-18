@@ -2,13 +2,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { SEO } from "@/components/SEO";
-import { Search, TrendingUp, Link, FileText, BarChart3, Target, Sparkles } from "lucide-react";
+import { Search, TrendingUp, Link as LinkIcon, FileText, BarChart3, Target, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
-import seoHeroImg from "@assets/stock_images/professional_office__e56fc639.jpg";
-import seoImg1 from "@assets/stock_images/professional_office__ac13e3df.jpg";
-import seoImg2 from "@assets/stock_images/professional_office__6787b655.jpg";
+import { Link } from "wouter";
+import seoHeroImg from "@assets/stock_images/tango_dancers_in_ele_003ee0cf.jpg";
+import seoImg1 from "@assets/stock_images/buenos_aires_argenti_9805cd85.jpg";
+import seoImg2 from "@assets/stock_images/buenos_aires_argenti_4131c695.jpg";
 
 export default function SEOAgentPage() {
   const metrics = [
@@ -71,6 +72,13 @@ export default function SEOAgentPage() {
       </div>
 
       <div className="max-w-7xl mx-auto px-6 py-16">
+        {/* Preview Notice */}
+        <div className="flex justify-center mb-8">
+          <Badge variant="outline" className="text-muted-foreground border-muted-foreground/30">
+            Preview Data - Connect your search console to see real metrics
+          </Badge>
+        </div>
+
         {/* Metrics Grid */}
         <div className="grid gap-8 md:grid-cols-4 mb-16">
           {metrics.map((metric, idx) => (
@@ -142,10 +150,12 @@ export default function SEOAgentPage() {
                     </div>
                   </div>
                 ))}
-                <Button className="w-full gap-2" variant="outline" data-testid="button-view-all-keywords">
-                  <Search className="w-4 h-4" />
-                  View All Keywords
-                </Button>
+                <Link href="/admin/seo/keywords">
+                  <Button className="w-full gap-2" variant="outline" data-testid="button-view-all-keywords">
+                    <Search className="w-4 h-4" />
+                    View All Keywords
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
 
@@ -189,10 +199,12 @@ export default function SEOAgentPage() {
                     </div>
                   </div>
                 ))}
-                <Button className="w-full gap-2" data-testid="button-generate-seo-report">
-                  <Sparkles className="w-4 h-4" />
-                  Generate Full SEO Report
-                </Button>
+                <Link href="/admin/seo/report">
+                  <Button className="w-full gap-2" data-testid="button-generate-seo-report">
+                    <Sparkles className="w-4 h-4" />
+                    Generate Full SEO Report
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
           </div>

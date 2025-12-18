@@ -2,15 +2,22 @@ import { useState } from "react";
 import { Bot, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MrBlueChat } from "./MrBlueChat";
+import { useAuth } from "@/contexts/AuthContext";
 
 export function MrBlueFloatingButton() {
   const [isOpen, setIsOpen] = useState(false);
+  const { user } = useAuth();
 
   // Hide if URL has hideControls=true (for iframe embedding)
   const urlParams = new URLSearchParams(window.location.search);
   const hideControls = urlParams.get('hideControls') === 'true';
   
   if (hideControls) {
+    return null;
+  }
+  
+  // RBAC: Only show Mr Blue to authenticated users
+  if (!user) {
     return null;
   }
 

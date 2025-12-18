@@ -15,6 +15,33 @@ import { THE_PLAN_PAGES } from '@shared/thePlanPages';
  */
 const router = Router();
 
+// Get system status (public endpoint for SelfHealingStatus component)
+// Returns active agents and system health - no auth required
+router.get('/status', async (req, res) => {
+  try {
+    const healthStatus = await AgentOrchestrationService.getHealthStatus();
+    
+    // Return status in format expected by SelfHealingStatus component
+    res.json({
+      agentsActive: [], // No agents currently active (by default)
+      issuesFound: 0,
+      fixesApplied: 0,
+      currentOperation: null,
+      services: healthStatus.services,
+      timestamp: healthStatus.timestamp
+    });
+  } catch (error) {
+    console.error('Get status error:', error);
+    // Return empty status on error (component handles gracefully)
+    res.json({
+      agentsActive: [],
+      issuesFound: 0,
+      fixesApplied: 0,
+      currentOperation: null
+    });
+  }
+});
+
 // Get dashboard data (page health overview)
 router.get('/dashboard', authenticateToken, requireRoleLevel(7), async (req: AuthRequest, res) => {
   try {

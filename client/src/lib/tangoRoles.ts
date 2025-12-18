@@ -15,15 +15,16 @@ import {
   Camera,
   Palette,
   Briefcase,
-  Mic,
+  Search,
   PenLine,
   BookOpen,
   Target,
   Shirt,
   Globe,
   Piano,
-  Eye,
+  Sparkles,
   Heart,
+  Handshake,
   type LucideIcon
 } from 'lucide-react';
 
@@ -114,13 +115,13 @@ export const TANGO_ROLES: readonly TangoRole[] = [
     category: 'professional'
   },
   {
-    value: 'mc',
-    label: 'MC/Host',
-    icon: Mic,
+    value: 'researcher',
+    label: 'Researcher',
+    icon: Search,
     color: '#F97316',
-    description: 'I host/MC tango events',
-    bookable: true,
-    category: 'professional'
+    description: 'I research tango culture and traditions',
+    bookable: false,
+    category: 'creative'
   },
   {
     value: 'business',
@@ -201,7 +202,7 @@ export const TANGO_ROLES: readonly TangoRole[] = [
   {
     value: 'fan',
     label: 'Fan/Enthusiast',
-    icon: Eye,
+    icon: Sparkles,
     color: '#F59E0B',
     description: "I'm a tango enthusiast",
     bookable: false,
@@ -215,6 +216,17 @@ export const TANGO_ROLES: readonly TangoRole[] = [
     description: 'My tango role is unique',
     bookable: false,
     category: 'community'
+  },
+  
+  // ========== SPECIALIZED ROLES ==========
+  {
+    value: 'taxi-dancer',
+    label: 'Taxi Dancer',
+    icon: Handshake,
+    color: '#F97316',
+    description: 'I dance as a taxi dancer at milongas',
+    bookable: true,
+    category: 'professional'
   }
 ] as const;
 
@@ -267,7 +279,9 @@ const LEGACY_ROLE_MAP: Record<string, string> = {
   'tango_guide': 'community-builder',
   'content_creator': 'photographer',
   'learning_resource': 'teacher',
-  'taxi_dancer': 'dancer-leader',
+  'taxi_dancer': 'taxi-dancer',
+  'mc': 'researcher',
+  'mc-host': 'researcher',
 };
 
 export function normalizeRole(roleValue: string): string {

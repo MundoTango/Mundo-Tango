@@ -14,7 +14,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Plane, Calendar as CalendarIcon, MapPin, DollarSign, Sparkles, FileText, Briefcase, Home, Utensils, Heart, Plus, ChevronDown, ChevronUp, TrendingUp, X, Edit, Users, Trash2, Clock, Check, PieChart, Download, Train, Ship, Bus, Car, Music, Ticket, Building2, Link2, Search, ExternalLink, Loader2, Anchor, ArrowRight, Send } from "lucide-react";
+import { Plane, Calendar as CalendarIcon, MapPin, DollarSign, Sparkles, FileText, Briefcase, Home, Utensils, Heart, Plus, ChevronDown, ChevronUp, TrendingUp, X, Edit, Users, Trash2, Clock, Check, PieChart, Download, Train, Ship, Bus, Car, Music, Ticket, Building2, Link2, Search, ExternalLink, Loader2, Anchor, ArrowRight, Send, Globe, Lock, Eye, MessageCircle } from "lucide-react";
+import { RequestToBookModal } from "./RequestToBookModal";
+import { TravelCalendar } from "@/components/unified/TravelCalendar";
 
 import buenosAiresImg from "@assets/stock_images/buenos_aires_argenti_afa3bd1f.jpg";
 import milanImg from "@assets/stock_images/milan_italy_duomo_ca_513cf7b4.jpg";
@@ -39,6 +41,7 @@ interface TravelPlan {
   endDate: string;
   tripDuration: number;
   status: string;
+  visibility?: 'public' | 'friends' | 'private';
   notes?: string;
   items?: TravelPlanItem[];
 }
@@ -114,6 +117,7 @@ interface MTHostListing {
 interface ProfileTabTravelProps {
   profileId: number;
   isOwnProfile?: boolean;
+  isPublicView?: boolean;
 }
 
 const tripPlannerSchema = z.object({
@@ -196,7 +200,9 @@ const transportTypes = [
   { id: 'boat', label: 'Boat', icon: Anchor, color: 'bg-cyan-500/10 text-cyan-600 border-cyan-500/30' },
 ];
 
-export default function ProfileTabTravel({ profileId, isOwnProfile = false }: ProfileTabTravelProps) {
+export default function ProfileTabTravel({ profileId, isOwnProfile = false, isPublicView = false }: ProfileTabTravelProps) {
+  // Privacy check: Only show public trips in public view (filter applied in render)
+  const canEdit = isOwnProfile && !isPublicView;
   const [expandedTrips, setExpandedTrips] = useState<Set<number>>(new Set([0]));
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editingTripId, setEditingTripId] = useState<number | null>(null);
@@ -232,56 +238,148 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
   const [inviteFriendsDialog, setInviteFriendsDialog] = useState<{ tripId: number; city: string } | null>(null);
   const [groupChatDialog, setGroupChatDialog] = useState<{ tripId: number; city: string; companions: TravelCompanion[] } | null>(null);
   
+  // Request to Book modal state
+  const [requestToBookTrip, setRequestToBookTrip] = useState<TravelPlan | null>(null);
+  
   // Travel Companion types and state management
   type TravelCompanion = {
     id: string;
+    requesterId?: number; // Actual user ID of the requester
     name: string;
     avatar: string;
     initials: string;
     matchScore: number;
     details: string;
     status: 'pending_incoming' | 'pending_outgoing' | 'confirmed';
+    requestId?: number; // Links to database tripJoinRequests.id
+    message?: string;
   };
   
-  // Per-trip companion state (keyed by trip ID)
-  const [tripCompanions, setTripCompanions] = useState<Record<number, TravelCompanion[]>>(() => ({
-    // Default test data for trip ID 0 (first trip)
-    0: [
-      { id: 'sc1', name: 'Sofia Chen', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop', initials: 'SC', matchScore: 92, details: 'Loves milongas', status: 'pending_incoming' },
-      { id: 'mr1', name: 'Marco Rodriguez', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop', initials: 'MR', matchScore: 85, details: 'Intermediate dancer', status: 'pending_incoming' },
-      { id: 'al1', name: "Ana Lucia", avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop', initials: 'AL', matchScore: 88, details: 'Her trip to Buenos Aires', status: 'pending_outgoing' },
-      { id: 'jt1', name: 'James Thompson', avatar: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=100&h=100&fit=crop', initials: 'JT', matchScore: 90, details: 'Advanced dancer • Sharing accommodation', status: 'confirmed' },
-      { id: 'ek1', name: 'Elena Kowalski', avatar: 'https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=100&h=100&fit=crop', initials: 'EK', matchScore: 87, details: 'Beginner-friendly • Same milonga schedule', status: 'confirmed' },
-    ]
-  }));
+  // State for join requests from database
+  const [joinRequests, setJoinRequests] = useState<Record<number, any[]>>({});
   
-  // Get companions for a specific trip
-  const getCompanionsForTrip = (tripId: number) => tripCompanions[tripId] || [];
+  // Fetch travel plans FIRST (before allJoinRequests which depends on it)
+  const { data: travelPlans, isLoading } = useQuery({
+    queryKey: ['/api/travel/plans', profileId],
+    queryFn: async () => {
+      const response = await fetch(`/api/travel/plans?userId=${profileId}`);
+      if (!response.ok) throw new Error('Failed to fetch travel plans');
+      return response.json() as Promise<TravelPlan[]>;
+    }
+  });
   
-  // Accept a companion request - moves from pending_incoming to confirmed
-  const acceptCompanionRequest = (tripId: number, companionId: string) => {
-    setTripCompanions(prev => ({
-      ...prev,
-      [tripId]: (prev[tripId] || []).map(c => 
-        c.id === companionId ? { ...c, status: 'confirmed' as const } : c
-      )
+  // Fetch join requests for all trips the user owns
+  const { data: allJoinRequests, refetch: refetchJoinRequests } = useQuery({
+    queryKey: ['/api/travel/join-requests', profileId],
+    queryFn: async () => {
+      // Only fetch if viewing own profile
+      if (!isOwnProfile) return {};
+      
+      const tripRequestsMap: Record<number, any[]> = {};
+      const plans = travelPlans || [];
+      
+      await Promise.all(plans.map(async (trip) => {
+        try {
+          const response = await fetch(`/api/travel/trips/${trip.id}/requests`, {
+            credentials: 'include',
+          });
+          if (response.ok) {
+            const requests = await response.json();
+            tripRequestsMap[trip.id] = requests;
+          }
+        } catch (e) {
+          console.error(`Failed to fetch join requests for trip ${trip.id}:`, e);
+        }
+      }));
+      
+      return tripRequestsMap;
+    },
+    enabled: isOwnProfile && !isPublicView && !!travelPlans,
+  });
+  
+  // Get companions for a specific trip - combines real join requests with mock data
+  const getCompanionsForTrip = (tripId: number): TravelCompanion[] => {
+    const requests = allJoinRequests?.[tripId] || [];
+    
+    // Map real join requests to TravelCompanion format
+    const realCompanions: TravelCompanion[] = requests.map((req: any) => ({
+      id: `request-${req.id}`,
+      requestId: req.id,
+      requesterId: req.requesterId, // Actual user ID for DM/profile links
+      name: req.requesterName || 'Unknown User',
+      avatar: req.requesterProfileImage || '',
+      initials: (req.requesterName || 'U').split(' ').map((n: string) => n[0]).join('').toUpperCase(),
+      matchScore: 85, // Default score for now
+      details: req.message || 'Wants to join your trip',
+      status: req.status === 'pending' ? 'pending_incoming' as const : 
+              req.status === 'accepted' ? 'confirmed' as const : 
+              'pending_incoming' as const,
+      message: req.message,
     }));
-    const companion = getCompanionsForTrip(tripId).find(c => c.id === companionId);
-    toast({ title: "Request Accepted!", description: `${companion?.name || 'Companion'} has been added to your trip.` });
-  };
-  
-  // Decline a companion request - removes from list
-  const declineCompanionRequest = (tripId: number, companionId: string) => {
-    const companion = getCompanionsForTrip(tripId).find(c => c.id === companionId);
-    setTripCompanions(prev => ({
-      ...prev,
-      [tripId]: (prev[tripId] || []).filter(c => c.id !== companionId)
-    }));
-    toast({ title: "Request Declined", description: `${companion?.name || 'Request'} has been declined.` });
+    
+    return realCompanions;
   };
   
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  
+  // Accept a companion request - calls API
+  const acceptCompanionRequest = async (tripId: number, companionId: string) => {
+    const requestId = parseInt(companionId.replace('request-', ''));
+    if (isNaN(requestId)) {
+      toast({ title: "Error", description: "Invalid request ID", variant: "destructive" });
+      return;
+    }
+    
+    try {
+      const response = await fetch(`/api/travel/join-requests/${requestId}/respond`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ status: 'accepted' }),
+      });
+      
+      if (response.ok) {
+        toast({ title: "Request Accepted!", description: "Companion has been added to your trip." });
+        refetchJoinRequests();
+        queryClient.invalidateQueries({ queryKey: ['/api/travel/join-requests', profileId] });
+      } else {
+        const error = await response.json();
+        toast({ title: "Error", description: error.message || "Failed to accept request", variant: "destructive" });
+      }
+    } catch (e) {
+      toast({ title: "Error", description: "Failed to accept request", variant: "destructive" });
+    }
+  };
+  
+  // Decline a companion request - calls API
+  const declineCompanionRequest = async (tripId: number, companionId: string) => {
+    const requestId = parseInt(companionId.replace('request-', ''));
+    if (isNaN(requestId)) {
+      toast({ title: "Error", description: "Invalid request ID", variant: "destructive" });
+      return;
+    }
+    
+    try {
+      const response = await fetch(`/api/travel/join-requests/${requestId}/respond`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ status: 'rejected' }),
+      });
+      
+      if (response.ok) {
+        toast({ title: "Request Declined", description: "Request has been declined." });
+        refetchJoinRequests();
+        queryClient.invalidateQueries({ queryKey: ['/api/travel/join-requests', profileId] });
+      } else {
+        const error = await response.json();
+        toast({ title: "Error", description: error.message || "Failed to decline request", variant: "destructive" });
+      }
+    } catch (e) {
+      toast({ title: "Error", description: "Failed to decline request", variant: "destructive" });
+    }
+  };
 
   const [pickerKey, setPickerKey] = useState(0);
   
@@ -317,13 +415,15 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
     defaultValues: { title: "", type: "", description: "", location: "", cost: undefined, bookingUrl: "" },
   });
 
-  const { data: travelPlans, isLoading } = useQuery({
-    queryKey: ['/api/travel/plans', profileId],
+  // Fetch profile owner info for Request to Book modal (only for public view)
+  const { data: profileOwner } = useQuery({
+    queryKey: ['/api/users', profileId],
     queryFn: async () => {
-      const response = await fetch(`/api/travel/plans?userId=${profileId}`);
-      if (!response.ok) throw new Error('Failed to fetch travel plans');
-      return response.json() as Promise<TravelPlan[]>;
-    }
+      const response = await fetch(`/api/users/${profileId}`);
+      if (!response.ok) throw new Error('Failed to fetch profile');
+      return response.json();
+    },
+    enabled: isPublicView, // Only fetch when viewing someone else's profile
   });
 
   // Find first past trip that needs completion prompt (after travelPlans is defined)
@@ -429,6 +529,58 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
       setUpdatingTripId(null);
     },
   });
+
+  const updateTripMutation = useMutation({
+    mutationFn: async ({ tripId, data }: { tripId: number; data: { visibility?: string; startDate?: string; endDate?: string } }) => {
+      console.log('[TravelTab] Mutation function executing:', { tripId, data });
+      const res = await apiRequest("PATCH", `/api/travel/plans/${tripId}`, data);
+      const result = await res.json();
+      console.log('[TravelTab] Mutation response:', result);
+      return result;
+    },
+    onSuccess: async (result, variables) => {
+      console.log('[TravelTab] Mutation onSuccess called:', { result, variables, profileId });
+      // Invalidate and immediately refetch
+      await queryClient.invalidateQueries({ queryKey: ["/api/travel/plans", profileId] });
+      await new Promise(resolve => setTimeout(resolve, 100)); // Small delay to ensure cache is cleared
+      const newData = await queryClient.fetchQuery({ queryKey: ["/api/travel/plans", profileId] });
+      console.log('[TravelTab] Refetched data after mutation:', newData);
+      toast({ title: "Trip updated!" });
+    },
+    onError: (error) => {
+      console.error('[TravelTab] Mutation error:', error);
+      toast({ title: "Failed to update trip", description: "Please try again.", variant: "destructive" });
+    },
+  });
+
+  const [visibilityPopoverOpen, setVisibilityPopoverOpen] = useState<number | null>(null);
+
+  const handleVisibilityChange = (trip: TravelPlan, newVisibility: 'public' | 'friends' | 'private') => {
+    console.log('[TravelTab] 🔴 Visibility change handler called:', { 
+      tripId: trip.id, 
+      newVisibility, 
+      currentVisibility: trip.visibility,
+      mutationPending: updateTripMutation.isPending
+    });
+    console.log('[TravelTab] About to mutate with:', { tripId: trip.id, data: { visibility: newVisibility } });
+    updateTripMutation.mutate({ tripId: trip.id, data: { visibility: newVisibility } });
+    setVisibilityPopoverOpen(null);
+  };
+
+  const handleDateChange = (trip: TravelPlan, startDate: Date | undefined, endDate: Date | undefined) => {
+    const updates: { startDate?: string; endDate?: string } = {};
+    if (startDate) updates.startDate = startDate.toISOString();
+    if (endDate) updates.endDate = endDate.toISOString();
+    if (Object.keys(updates).length > 0) {
+      updateTripMutation.mutate({ tripId: trip.id, data: updates });
+    }
+  };
+
+  const visibilityOptions = [
+    { value: 'public' as const, label: 'Public', icon: Globe, color: 'bg-green-500/20 text-green-100 border-green-500/40' },
+    { value: 'friends' as const, label: 'Friends', icon: Users, color: 'bg-blue-500/20 text-blue-100 border-blue-500/40' },
+    { value: 'private' as const, label: 'Private', icon: Lock, color: 'bg-red-500/20 text-red-100 border-red-500/40' },
+  ];
 
   // Status change handler - shows notes dialog for completion
   const handleStatusChange = (trip: TravelPlan, newStatus: string) => {
@@ -673,13 +825,42 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
         ))}
       </div>
 
+      {/* Travel Calendar with Completion Status */}
+      {travelPlans && travelPlans.length > 0 && (
+        <TravelCalendar
+          travelPlans={travelPlans}
+          onDayClick={(date, events) => {
+            if (events.length > 0) {
+              const tripEvent = events.find(e => e.type === "trip");
+              if (tripEvent) {
+                const tripIndex = travelPlans.findIndex(t => t.id === tripEvent.tripId);
+                if (tripIndex !== -1) {
+                  setExpandedTrips(new Set([tripIndex]));
+                }
+              }
+            }
+          }}
+          onEventClick={(event) => {
+            const tripIndex = travelPlans.findIndex(t => t.id === event.tripId);
+            if (tripIndex !== -1) {
+              setExpandedTrips(new Set([tripIndex]));
+            }
+          }}
+        />
+      )}
+
       {/* Header with Action */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold">Your Travel Plans</h2>
+          <h2 className="text-2xl font-bold">
+            {isPublicView && profileOwner 
+              ? `${profileOwner.displayName || profileOwner.name || 'User'}'s Travel Plans`
+              : 'Your Travel Plans'
+            }
+          </h2>
           <p className="text-sm text-muted-foreground">{upcomingTrips.length} upcoming • {pastTrips.length} past</p>
         </div>
-        {isOwnProfile && !showCreateForm && (
+        {canEdit && !showCreateForm && (
           <Button onClick={() => setShowCreateForm(true)} data-testid="button-plan-new-trip">
             <Plus className="h-4 w-4 mr-2" />Plan New Trip
           </Button>
@@ -688,7 +869,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
 
       {/* Inline Trip Creation Form */}
       <AnimatePresence>
-        {showCreateForm && isOwnProfile && (
+        {showCreateForm && canEdit && (
           <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.3 }}>
             <Card className="border-primary/50" data-testid="card-create-trip-form">
               <CardHeader className="flex flex-row items-center justify-between">
@@ -787,13 +968,13 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
             <div className="p-6 rounded-full bg-primary/10 w-24 h-24 mx-auto flex items-center justify-center"><Plane className="h-12 w-12 text-primary" /></div>
             <h3 className="text-2xl font-serif font-bold">Start Your Tango Journey</h3>
             <p className="text-muted-foreground" data-testid="text-no-plans">Plan your first trip to a tango festival, workshop, or explore new cities with fellow dancers.</p>
-            {isOwnProfile && <Button onClick={() => setShowCreateForm(true)} size="lg" className="mt-4" data-testid="button-plan-first-trip"><Plus className="h-5 w-5 mr-2" />Plan Your First Trip</Button>}
+            {canEdit && <Button onClick={() => setShowCreateForm(true)} size="lg" className="mt-4" data-testid="button-plan-first-trip"><Plus className="h-5 w-5 mr-2" />Plan Your First Trip</Button>}
           </div>
         </Card>
       )}
 
       {/* Post-trip completion prompt - show only once per page */}
-      {isOwnProfile && tripNeedingCompletion && (
+      {canEdit && tripNeedingCompletion && (
         <Dialog open={true} onOpenChange={(open) => { if (!open) { setCompletionPrompts(new Set([...completionPrompts, tripNeedingCompletion.id])); setCompletionNotes(''); } }}>
           <DialogContent>
             <DialogHeader>
@@ -855,9 +1036,28 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
       )}
 
       {/* Trip Cards with Full Features - 2 Column Grid */}
-      {travelPlans && travelPlans.length > 0 && (
+      {travelPlans && travelPlans.length > 0 && (() => {
+        const visibleTrips = travelPlans.filter((trip) => {
+          if (!isPublicView) return true;
+          const visibility = trip.visibility || 'public';
+          return visibility === 'public';
+        });
+        
+        if (isPublicView && visibleTrips.length === 0) {
+          return (
+            <Card>
+              <CardContent className="py-8 text-center">
+                <Plane className="h-10 w-10 mx-auto mb-3 text-muted-foreground/50" />
+                <p className="text-muted-foreground">No public travel plans shared.</p>
+              </CardContent>
+            </Card>
+          );
+        }
+        
+        return (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {travelPlans.map((trip, index) => {
+          {visibleTrips
+            .map((trip, index) => {
             const budgetStats = calculateBudgetStats(trip);
             const activeTab = tripTabs[trip.id] || "overview";
             const isExpanded = expandedTrips.has(index);
@@ -876,9 +1076,49 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
                   <h3 className="text-xl font-serif font-bold text-white">{trip.city}{trip.country && <span className="text-white/80 text-base ml-2">• {trip.country}</span>}</h3>
                   <div className="flex items-center gap-2 text-white/80 text-sm mt-2 flex-wrap">
                     <CalendarIcon className="w-3 h-3 flex-shrink-0" />
-                    <span>{new Date(trip.startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - {new Date(trip.endDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                    {canEdit ? (
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="h-auto p-0 text-white/80 hover:text-white hover:bg-white/10"
+                            data-testid={`button-edit-dates-${index}`}
+                          >
+                            <span>{new Date(trip.startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - {new Date(trip.endDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                            <Edit className="w-3 h-3 ml-1.5 opacity-60" />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-3" align="start">
+                          <div className="space-y-3">
+                            <div>
+                              <label className="text-xs font-medium text-muted-foreground mb-1 block">Start Date</label>
+                              <Calendar
+                                mode="single"
+                                selected={trip.startDate ? new Date(trip.startDate) : undefined}
+                                onSelect={(date) => date && handleDateChange(trip, date, undefined)}
+                                className="rounded-md border"
+                                data-testid={`calendar-start-${index}`}
+                              />
+                            </div>
+                            <div>
+                              <label className="text-xs font-medium text-muted-foreground mb-1 block">End Date</label>
+                              <Calendar
+                                mode="single"
+                                selected={trip.endDate ? new Date(trip.endDate) : undefined}
+                                onSelect={(date) => date && handleDateChange(trip, undefined, date)}
+                                className="rounded-md border"
+                                data-testid={`calendar-end-${index}`}
+                              />
+                            </div>
+                          </div>
+                        </PopoverContent>
+                      </Popover>
+                    ) : (
+                      <span>{new Date(trip.startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - {new Date(trip.endDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                    )}
                     <span>({trip.tripDuration} {trip.tripDuration === 1 ? 'day' : 'days'})</span>
-                    {isOwnProfile && (
+                    {canEdit && (
                       <Popover open={statusDropdownOpen === trip.id} onOpenChange={(open) => setStatusDropdownOpen(open ? trip.id : null)}>
                         <PopoverTrigger asChild>
                           <Button 
@@ -920,8 +1160,73 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
                         </PopoverContent>
                       </Popover>
                     )}
+                    {canEdit && (
+                      <Popover open={visibilityPopoverOpen === trip.id} onOpenChange={(open) => setVisibilityPopoverOpen(open ? trip.id : null)}>
+                        <PopoverTrigger asChild>
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className={cn(
+                              "h-6 text-xs border px-2 py-0",
+                              visibilityOptions.find(v => v.value === (trip.visibility || 'public'))?.color || 'bg-white/20 text-white border-white/30'
+                            )}
+                            data-testid={`button-visibility-${index}`}
+                          >
+                            {(() => {
+                              const VisibilityIcon = visibilityOptions.find(v => v.value === (trip.visibility || 'public'))?.icon || Globe;
+                              return <VisibilityIcon className="h-3 w-3 mr-1" />;
+                            })()}
+                            {(trip.visibility || 'public').charAt(0).toUpperCase() + (trip.visibility || 'public').slice(1)}
+                            <ChevronDown className="h-3 w-3 ml-1" />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-1" align="start">
+                          <div className="flex flex-col gap-1">
+                            {visibilityOptions.map((option) => {
+                              const OptionIcon = option.icon;
+                              return (
+                                <Button
+                                  key={option.value}
+                                  variant="ghost"
+                                  size="sm"
+                                  className={cn(
+                                    "justify-start text-xs h-7 gap-2",
+                                    (trip.visibility || 'public') === option.value && "bg-accent"
+                                  )}
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    handleVisibilityChange(trip, option.value);
+                                  }}
+                                  data-testid={`button-visibility-option-${option.value}`}
+                                >
+                                  <OptionIcon className="h-3 w-3" />
+                                  {(trip.visibility || 'public') === option.value && <Check className="h-3 w-3" />}
+                                  {option.label}
+                                </Button>
+                              );
+                            })}
+                          </div>
+                        </PopoverContent>
+                      </Popover>
+                    )}
                     {!isOwnProfile && trip.status && (
                       <Badge variant="outline" className="text-xs bg-white/20 text-white border-white/30">{trip.status.charAt(0).toUpperCase() + trip.status.slice(1)}</Badge>
+                    )}
+                    {isPublicView && (
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="h-6 text-xs border px-2 py-0 bg-primary/20 text-white border-primary/40 hover:bg-primary/30"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setRequestToBookTrip(trip);
+                        }}
+                        data-testid={`button-request-book-${index}`}
+                      >
+                        <Send className="h-3 w-3 mr-1" />
+                        Request to Book
+                      </Button>
                     )}
                   </div>
                 </div>
@@ -955,181 +1260,185 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
 
                         return (
                           <>
-                            {/* Auto-calculated Budget Summary */}
-                            <Card className="border-primary/20 bg-primary/5">
-                              <CardContent className="py-4">
-                                <div className="flex items-center justify-between mb-3">
-                                  <h4 className="font-semibold flex items-center gap-2"><DollarSign className="h-5 w-5 text-primary" />Trip Budget Summary</h4>
-                                  <Badge variant="outline" className="text-lg font-bold">${grandTotal.toFixed(0)} Total</Badge>
-                                </div>
-                                <div className="grid grid-cols-3 gap-4 text-sm">
-                                  <div className="flex flex-col items-center p-3 rounded bg-purple-500/10">
-                                    <Building2 className="h-5 w-5 text-purple-600 mb-2" />
-                                    <span className="font-bold text-lg text-purple-600">${accommodationTotal.toFixed(0)}</span>
-                                  </div>
-                                  <div className="flex flex-col items-center p-3 rounded bg-blue-500/10">
-                                    <Plane className="h-5 w-5 text-blue-600 mb-2" />
-                                    <span className="font-bold text-lg text-blue-600">${transportTotal.toFixed(0)}</span>
-                                  </div>
-                                  <div className="flex flex-col items-center p-3 rounded bg-pink-500/10">
-                                    <Music className="h-5 w-5 text-pink-600 mb-2" />
-                                    <span className="font-bold text-lg text-pink-600">${eventsTotal.toFixed(0)}</span>
-                                  </div>
-                                </div>
-                              </CardContent>
-                            </Card>
-
-                            {/* Trip Notes - Show for completed trips with notes */}
-                            {trip.notes && (
-                              <Card className="border-green-500/20 bg-green-500/5">
-                                <CardContent className="py-4">
-                                  <div className="flex items-start gap-3">
-                                    <div className="p-2 rounded-full bg-green-500/10">
-                                      <FileText className="h-5 w-5 text-green-600" />
+                            {!isPublicView && (
+                              <>
+                                {/* Auto-calculated Budget Summary */}
+                                <Card className="border-primary/20 bg-primary/5">
+                                  <CardContent className="py-4">
+                                    <div className="flex items-center justify-between mb-3">
+                                      <h4 className="font-semibold flex items-center gap-2"><DollarSign className="h-5 w-5 text-primary" />Trip Budget Summary</h4>
+                                      <Badge variant="outline" className="text-lg font-bold">${grandTotal.toFixed(0)} Total</Badge>
                                     </div>
-                                    <div className="flex-1">
-                                      <div className="flex items-center gap-2 mb-2">
-                                        <h4 className="font-semibold text-green-700 dark:text-green-400">Trip Notes</h4>
-                                        {trip.status === 'completed' && (
-                                          <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/30 text-xs">
-                                            <Check className="h-3 w-3 mr-1" />Completed
-                                          </Badge>
-                                        )}
+                                    <div className="grid grid-cols-3 gap-4 text-sm">
+                                      <div className="flex flex-col items-center p-3 rounded bg-purple-500/10">
+                                        <Building2 className="h-5 w-5 text-purple-600 mb-2" />
+                                        <span className="font-bold text-lg text-purple-600">${accommodationTotal.toFixed(0)}</span>
                                       </div>
-                                      <p className="text-sm text-muted-foreground whitespace-pre-wrap" data-testid={`text-trip-notes-${index}`}>{trip.notes}</p>
+                                      <div className="flex flex-col items-center p-3 rounded bg-blue-500/10">
+                                        <Plane className="h-5 w-5 text-blue-600 mb-2" />
+                                        <span className="font-bold text-lg text-blue-600">${transportTotal.toFixed(0)}</span>
+                                      </div>
+                                      <div className="flex flex-col items-center p-3 rounded bg-pink-500/10">
+                                        <Music className="h-5 w-5 text-pink-600 mb-2" />
+                                        <span className="font-bold text-lg text-pink-600">${eventsTotal.toFixed(0)}</span>
+                                      </div>
                                     </div>
-                                  </div>
-                                </CardContent>
-                              </Card>
-                            )}
+                                  </CardContent>
+                                </Card>
 
-                            {/* Accommodation Section */}
-                            <Card>
-                              <CardHeader className="pb-3">
-                                <div className="flex items-center justify-between">
-                                  <CardTitle className="flex items-center gap-2 text-lg"><Building2 className="h-5 w-5 text-purple-600" />Accommodation</CardTitle>
-                                  <Badge variant="outline">${accommodationTotal.toFixed(0)}</Badge>
-                                </div>
-                              </CardHeader>
-                              <CardContent className="space-y-3">
-                                {accommodationItems.length > 0 ? accommodationItems.map((item, idx) => (
-                                  <div key={item.id || idx} className="p-3 rounded-lg border bg-card hover-elevate group" data-testid={`accommodation-item-${idx}`}>
-                                    <div className="flex items-start justify-between gap-3">
-                                      <div className="flex-1">
-                                        <h5 className="font-medium">{item.title}</h5>
-                                        {item.location && <p className="text-sm text-muted-foreground flex items-center gap-1"><MapPin className="h-3 w-3" />{item.location}</p>}
-                                        {item.description && <p className="text-sm text-muted-foreground mt-1">{item.description}</p>}
-                                        <div className="flex items-center gap-3 mt-2 text-sm">
-                                          {item.date && <span className="flex items-center gap-1"><CalendarIcon className="h-3 w-3" />{new Date(item.date).toLocaleDateString()}</span>}
-                                          {item.nights && <span>{item.nights} nights</span>}
+                                {/* Trip Notes - Show for completed trips with notes */}
+                                {trip.notes && (
+                                  <Card className="border-green-500/20 bg-green-500/5">
+                                    <CardContent className="py-4">
+                                      <div className="flex items-start gap-3">
+                                        <div className="p-2 rounded-full bg-green-500/10">
+                                          <FileText className="h-5 w-5 text-green-600" />
                                         </div>
-                                      </div>
-                                      <div className="text-right flex flex-col items-end gap-1">
-                                        {item.cost && <p className="font-bold text-primary">${Number(item.cost).toFixed(0)}</p>}
-                                        {item.costPerNight && <p className="text-xs text-muted-foreground">${item.costPerNight}/night</p>}
-                                        {item.isBooked && <Badge variant="outline" className="bg-green-500/10 text-green-600 text-xs"><Check className="h-3 w-3 mr-1" />Booked</Badge>}
-                                        {isOwnProfile && (
-                                          <div className="flex gap-1 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => openEditDialog(trip.id, item, 'accommodation')} data-testid={`button-edit-accommodation-${idx}`}>
-                                              <Edit className="h-3 w-3" />
-                                            </Button>
-                                            <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive" onClick={() => deleteItemMutation.mutate({ tripId: trip.id, itemId: item.id })} data-testid={`button-delete-accommodation-${idx}`}>
-                                              <Trash2 className="h-3 w-3" />
-                                            </Button>
-                                          </div>
-                                        )}
-                                      </div>
-                                    </div>
-                                  </div>
-                                )) : (
-                                  <div className="text-center py-4 text-muted-foreground">
-                                    <Building2 className="h-8 w-8 mx-auto mb-2 opacity-30" />
-                                    <p className="text-sm">No accommodation added yet</p>
-                                  </div>
-                                )}
-                                {isOwnProfile && (
-                                  <Button variant="outline" size="sm" className="w-full" onClick={() => { itemForm.setValue('type', 'hotel'); setAccommodationDialog({ tripId: trip.id, city: trip.city, startDate: trip.startDate, endDate: trip.endDate }); setAccommodationTab('mthost'); }} data-testid={`button-add-accommodation-${index}`}>
-                                    <Plus className="h-4 w-4 mr-2" />Add Accommodation
-                                  </Button>
-                                )}
-                              </CardContent>
-                            </Card>
-
-                            {/* Transport Section */}
-                            <Card>
-                              <CardHeader className="pb-3">
-                                <div className="flex items-center justify-between">
-                                  <CardTitle className="flex items-center gap-2 text-lg"><Plane className="h-5 w-5 text-blue-600" />Transport</CardTitle>
-                                  <Badge variant="outline">${transportTotal.toFixed(0)}</Badge>
-                                </div>
-                              </CardHeader>
-                              <CardContent className="space-y-3">
-                                {transportItems.length > 0 ? transportItems.map((item, idx) => {
-                                  const transportIcon = item.transportType === 'train' ? <Train className="h-4 w-4" /> :
-                                    item.transportType === 'boat' ? <Ship className="h-4 w-4" /> :
-                                    item.transportType === 'bus' ? <Bus className="h-4 w-4" /> :
-                                    item.transportType === 'car' ? <Car className="h-4 w-4" /> :
-                                    <Plane className="h-4 w-4" />;
-                                  return (
-                                    <div key={item.id || idx} className="p-3 rounded-lg border bg-card hover-elevate group" data-testid={`transport-item-${idx}`}>
-                                      <div className="flex items-start justify-between gap-3">
                                         <div className="flex-1">
-                                          <div className="flex items-center gap-2">
-                                            {transportIcon}
-                                            <h5 className="font-medium">{item.title}</h5>
-                                            <Badge variant="outline" className="text-xs capitalize">{item.transportType || item.type}</Badge>
-                                          </div>
-                                          <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
-                                            {item.departureLocation && (
-                                              <span className="flex items-center gap-1">
-                                                <span className="font-medium">{item.departureLocation}</span>
-                                                {item.departureTime && <span className="text-xs">({new Date(item.departureTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })})</span>}
-                                              </span>
-                                            )}
-                                            {item.arrivalLocation && (
-                                              <>
-                                                <span className="text-muted-foreground">→</span>
-                                                <span className="flex items-center gap-1">
-                                                  <span className="font-medium">{item.arrivalLocation}</span>
-                                                  {item.arrivalTime && <span className="text-xs">({new Date(item.arrivalTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })})</span>}
-                                                </span>
-                                              </>
+                                          <div className="flex items-center gap-2 mb-2">
+                                            <h4 className="font-semibold text-green-700 dark:text-green-400">Trip Notes</h4>
+                                            {trip.status === 'completed' && (
+                                              <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/30 text-xs">
+                                                <Check className="h-3 w-3 mr-1" />Completed
+                                              </Badge>
                                             )}
                                           </div>
-                                          {item.date && !item.departureTime && (
-                                            <p className="text-sm text-muted-foreground mt-1 flex items-center gap-1"><CalendarIcon className="h-3 w-3" />{new Date(item.date).toLocaleDateString()}</p>
-                                          )}
-                                        </div>
-                                        <div className="text-right flex flex-col items-end gap-1">
-                                          {item.cost && <p className="font-bold text-primary">${Number(item.cost).toFixed(0)}</p>}
-                                          {item.isBooked && <Badge variant="outline" className="bg-green-500/10 text-green-600 text-xs"><Check className="h-3 w-3 mr-1" />Booked</Badge>}
-                                          {isOwnProfile && (
-                                            <div className="flex gap-1 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                              <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => openEditDialog(trip.id, item, 'transport')} data-testid={`button-edit-transport-${idx}`}>
-                                                <Edit className="h-3 w-3" />
-                                              </Button>
-                                              <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive" onClick={() => deleteItemMutation.mutate({ tripId: trip.id, itemId: item.id })} data-testid={`button-delete-transport-${idx}`}>
-                                                <Trash2 className="h-3 w-3" />
-                                              </Button>
-                                            </div>
-                                          )}
+                                          <p className="text-sm text-muted-foreground whitespace-pre-wrap" data-testid={`text-trip-notes-${index}`}>{trip.notes}</p>
                                         </div>
                                       </div>
+                                    </CardContent>
+                                  </Card>
+                                )}
+
+                                {/* Accommodation Section */}
+                                <Card>
+                                  <CardHeader className="pb-3">
+                                    <div className="flex items-center justify-between">
+                                      <CardTitle className="flex items-center gap-2 text-lg"><Building2 className="h-5 w-5 text-purple-600" />Accommodation</CardTitle>
+                                      <Badge variant="outline">${accommodationTotal.toFixed(0)}</Badge>
                                     </div>
-                                  );
-                                }) : (
-                                  <div className="text-center py-4 text-muted-foreground">
-                                    <Plane className="h-8 w-8 mx-auto mb-2 opacity-30" />
-                                    <p className="text-sm">No transport added yet</p>
-                                  </div>
-                                )}
-                                {isOwnProfile && (
-                                  <Button variant="outline" size="sm" className="w-full" onClick={() => { itemForm.setValue('type', 'flight'); setTransportDialog({ tripId: trip.id, city: trip.city }); setSelectedTransportType('flight'); }} data-testid={`button-add-transport-${index}`}>
-                                    <Plus className="h-4 w-4 mr-2" />Add Transport
-                                  </Button>
-                                )}
-                              </CardContent>
-                            </Card>
+                                  </CardHeader>
+                                  <CardContent className="space-y-3">
+                                    {accommodationItems.length > 0 ? accommodationItems.map((item, idx) => (
+                                      <div key={item.id || idx} className="p-3 rounded-lg border bg-card hover-elevate group" data-testid={`accommodation-item-${idx}`}>
+                                        <div className="flex items-start justify-between gap-3">
+                                          <div className="flex-1">
+                                            <h5 className="font-medium">{item.title}</h5>
+                                            {item.location && <p className="text-sm text-muted-foreground flex items-center gap-1"><MapPin className="h-3 w-3" />{item.location}</p>}
+                                            {item.description && <p className="text-sm text-muted-foreground mt-1">{item.description}</p>}
+                                            <div className="flex items-center gap-3 mt-2 text-sm">
+                                              {item.date && <span className="flex items-center gap-1"><CalendarIcon className="h-3 w-3" />{new Date(item.date).toLocaleDateString()}</span>}
+                                              {item.nights && <span>{item.nights} nights</span>}
+                                            </div>
+                                          </div>
+                                          <div className="text-right flex flex-col items-end gap-1">
+                                            {item.cost && <p className="font-bold text-primary">${Number(item.cost).toFixed(0)}</p>}
+                                            {item.costPerNight && <p className="text-xs text-muted-foreground">${item.costPerNight}/night</p>}
+                                            {item.isBooked && <Badge variant="outline" className="bg-green-500/10 text-green-600 text-xs"><Check className="h-3 w-3 mr-1" />Booked</Badge>}
+                                            {canEdit && (
+                                              <div className="flex gap-1 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => openEditDialog(trip.id, item, 'accommodation')} data-testid={`button-edit-accommodation-${idx}`}>
+                                                  <Edit className="h-3 w-3" />
+                                                </Button>
+                                                <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive" onClick={() => deleteItemMutation.mutate({ tripId: trip.id, itemId: item.id })} data-testid={`button-delete-accommodation-${idx}`}>
+                                                  <Trash2 className="h-3 w-3" />
+                                                </Button>
+                                              </div>
+                                            )}
+                                          </div>
+                                        </div>
+                                      </div>
+                                    )) : (
+                                      <div className="text-center py-4 text-muted-foreground">
+                                        <Building2 className="h-8 w-8 mx-auto mb-2 opacity-30" />
+                                        <p className="text-sm">No accommodation added yet</p>
+                                      </div>
+                                    )}
+                                    {canEdit && (
+                                      <Button variant="outline" size="sm" className="w-full" onClick={() => { itemForm.setValue('type', 'hotel'); setAccommodationDialog({ tripId: trip.id, city: trip.city, startDate: trip.startDate, endDate: trip.endDate }); setAccommodationTab('mthost'); }} data-testid={`button-add-accommodation-${index}`}>
+                                        <Plus className="h-4 w-4 mr-2" />Add Accommodation
+                                      </Button>
+                                    )}
+                                  </CardContent>
+                                </Card>
+
+                                {/* Transport Section */}
+                                <Card>
+                                  <CardHeader className="pb-3">
+                                    <div className="flex items-center justify-between">
+                                      <CardTitle className="flex items-center gap-2 text-lg"><Plane className="h-5 w-5 text-blue-600" />Transport</CardTitle>
+                                      <Badge variant="outline">${transportTotal.toFixed(0)}</Badge>
+                                    </div>
+                                  </CardHeader>
+                                  <CardContent className="space-y-3">
+                                    {transportItems.length > 0 ? transportItems.map((item, idx) => {
+                                      const transportIcon = item.transportType === 'train' ? <Train className="h-4 w-4" /> :
+                                        item.transportType === 'boat' ? <Ship className="h-4 w-4" /> :
+                                        item.transportType === 'bus' ? <Bus className="h-4 w-4" /> :
+                                        item.transportType === 'car' ? <Car className="h-4 w-4" /> :
+                                        <Plane className="h-4 w-4" />;
+                                      return (
+                                        <div key={item.id || idx} className="p-3 rounded-lg border bg-card hover-elevate group" data-testid={`transport-item-${idx}`}>
+                                          <div className="flex items-start justify-between gap-3">
+                                            <div className="flex-1">
+                                              <div className="flex items-center gap-2">
+                                                {transportIcon}
+                                                <h5 className="font-medium">{item.title}</h5>
+                                                <Badge variant="outline" className="text-xs capitalize">{item.transportType || item.type}</Badge>
+                                              </div>
+                                              <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
+                                                {item.departureLocation && (
+                                                  <span className="flex items-center gap-1">
+                                                    <span className="font-medium">{item.departureLocation}</span>
+                                                    {item.departureTime && <span className="text-xs">({new Date(item.departureTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })})</span>}
+                                                  </span>
+                                                )}
+                                                {item.arrivalLocation && (
+                                                  <>
+                                                    <span className="text-muted-foreground">→</span>
+                                                    <span className="flex items-center gap-1">
+                                                      <span className="font-medium">{item.arrivalLocation}</span>
+                                                      {item.arrivalTime && <span className="text-xs">({new Date(item.arrivalTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })})</span>}
+                                                    </span>
+                                                  </>
+                                                )}
+                                              </div>
+                                              {item.date && !item.departureTime && (
+                                                <p className="text-sm text-muted-foreground mt-1 flex items-center gap-1"><CalendarIcon className="h-3 w-3" />{new Date(item.date).toLocaleDateString()}</p>
+                                              )}
+                                            </div>
+                                            <div className="text-right flex flex-col items-end gap-1">
+                                              {item.cost && <p className="font-bold text-primary">${Number(item.cost).toFixed(0)}</p>}
+                                              {item.isBooked && <Badge variant="outline" className="bg-green-500/10 text-green-600 text-xs"><Check className="h-3 w-3 mr-1" />Booked</Badge>}
+                                              {canEdit && (
+                                                <div className="flex gap-1 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                  <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => openEditDialog(trip.id, item, 'transport')} data-testid={`button-edit-transport-${idx}`}>
+                                                    <Edit className="h-3 w-3" />
+                                                  </Button>
+                                                  <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive" onClick={() => deleteItemMutation.mutate({ tripId: trip.id, itemId: item.id })} data-testid={`button-delete-transport-${idx}`}>
+                                                    <Trash2 className="h-3 w-3" />
+                                                  </Button>
+                                                </div>
+                                              )}
+                                            </div>
+                                          </div>
+                                        </div>
+                                      );
+                                    }) : (
+                                      <div className="text-center py-4 text-muted-foreground">
+                                        <Plane className="h-8 w-8 mx-auto mb-2 opacity-30" />
+                                        <p className="text-sm">No transport added yet</p>
+                                      </div>
+                                    )}
+                                    {canEdit && (
+                                      <Button variant="outline" size="sm" className="w-full" onClick={() => { itemForm.setValue('type', 'flight'); setTransportDialog({ tripId: trip.id, city: trip.city }); setSelectedTransportType('flight'); }} data-testid={`button-add-transport-${index}`}>
+                                        <Plus className="h-4 w-4 mr-2" />Add Transport
+                                      </Button>
+                                    )}
+                                  </CardContent>
+                                </Card>
+                              </>
+                            )}
 
                             {/* Events Section */}
                             <Card>
@@ -1154,7 +1463,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
                                       <div className="text-right flex flex-col items-end gap-1">
                                         {item.cost && <p className="font-bold text-primary">${Number(item.cost).toFixed(0)}</p>}
                                         {item.isBooked && <Badge variant="outline" className="bg-green-500/10 text-green-600 text-xs"><Check className="h-3 w-3 mr-1" />Attending</Badge>}
-                                        {isOwnProfile && (
+                                        {canEdit && (
                                           <div className="flex gap-1 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                             <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => openEditDialog(trip.id, item, 'event')} data-testid={`button-edit-event-${idx}`}>
                                               <Edit className="h-3 w-3" />
@@ -1174,7 +1483,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
                                     <p className="text-xs mt-1">Add milongas and events during your trip</p>
                                   </div>
                                 )}
-                                {isOwnProfile && (
+                                {canEdit && (
                                   <Button variant="outline" size="sm" className="w-full" onClick={() => { setEventsDialog({ tripId: trip.id, city: trip.city, startDate: trip.startDate, endDate: trip.endDate }); setEventSearchQuery(''); }} data-testid={`button-add-event-${index}`}>
                                     <Plus className="h-4 w-4 mr-2" />Add Event / Milonga
                                   </Button>
@@ -1182,157 +1491,176 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
                               </CardContent>
                             </Card>
 
-                            {/* Travel Companions Section */}
-                            <Card className="border-cyan-500/20">
-                              <CardHeader className="pb-3">
-                                <div className="flex items-center justify-between gap-2">
-                                  <CardTitle className="flex items-center gap-2 text-lg"><Users className="h-5 w-5 text-cyan-600" />Travel Companions</CardTitle>
-                                </div>
-                              </CardHeader>
-                              <CardContent className="space-y-4">
-                                {/* Pending Invitations Received - Dynamic */}
-                                {(() => {
-                                  const companions = getCompanionsForTrip(trip.id);
-                                  const pendingIncoming = companions.filter(c => c.status === 'pending_incoming');
-                                  const pendingOutgoing = companions.filter(c => c.status === 'pending_outgoing');
-                                  const confirmed = companions.filter(c => c.status === 'confirmed');
-                                  
-                                  return (
-                                    <>
-                                      <div className="space-y-2">
-                                        <h5 className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                                          <Heart className="h-4 w-4 text-pink-500" />
-                                          Requests to Join Your Trip
-                                          {pendingIncoming.length > 0 && <Badge variant="outline" className="bg-pink-500/10 text-pink-600 border-pink-500/30 text-xs">{pendingIncoming.length}</Badge>}
-                                        </h5>
-                                        {isOwnProfile && pendingIncoming.length > 0 ? (
+                            {!isPublicView && (
+                              <>
+                                {/* Travel Companions Section */}
+                                <Card className="border-cyan-500/20">
+                                  <CardHeader className="pb-3">
+                                    <div className="flex items-center justify-between gap-2">
+                                      <CardTitle className="flex items-center gap-2 text-lg"><Users className="h-5 w-5 text-cyan-600" />Travel Companions</CardTitle>
+                                    </div>
+                                  </CardHeader>
+                                  <CardContent className="space-y-4">
+                                    {/* Pending Invitations Received - Dynamic */}
+                                    {(() => {
+                                      const companions = getCompanionsForTrip(trip.id);
+                                      const pendingIncoming = companions.filter(c => c.status === 'pending_incoming');
+                                      const pendingOutgoing = companions.filter(c => c.status === 'pending_outgoing');
+                                      const confirmed = companions.filter(c => c.status === 'confirmed');
+                                      
+                                      return (
+                                        <>
                                           <div className="space-y-2">
-                                            {pendingIncoming.map((companion, idx) => (
-                                              <div key={companion.id} className="flex items-center justify-between p-3 bg-pink-500/5 border border-pink-500/20 rounded-lg">
-                                                <div className="flex items-center gap-3">
-                                                  <Avatar className="h-10 w-10 border-2 border-pink-500/30">
-                                                    <AvatarImage src={companion.avatar} />
-                                                    <AvatarFallback>{companion.initials}</AvatarFallback>
-                                                  </Avatar>
-                                                  <div>
-                                                    <p className="font-medium text-sm">{companion.name}</p>
-                                                    <p className="text-xs text-muted-foreground">{companion.matchScore}% match • {companion.details}</p>
+                                            <h5 className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                                              <Heart className="h-4 w-4 text-pink-500" />
+                                              Requests to Join Your Trip
+                                              {pendingIncoming.length > 0 && <Badge variant="outline" className="bg-pink-500/10 text-pink-600 border-pink-500/30 text-xs">{pendingIncoming.length}</Badge>}
+                                            </h5>
+                                            {canEdit && pendingIncoming.length > 0 ? (
+                                              <div className="space-y-3">
+                                                {pendingIncoming.map((companion, idx) => (
+                                                  <div key={companion.id} className="p-3 bg-pink-500/5 border border-pink-500/20 rounded-lg space-y-3">
+                                                    <div className="flex items-center justify-between">
+                                                      <div className="flex items-center gap-3">
+                                                        <Avatar className="h-10 w-10 border-2 border-pink-500/30">
+                                                          <AvatarImage src={companion.avatar} />
+                                                          <AvatarFallback>{companion.initials}</AvatarFallback>
+                                                        </Avatar>
+                                                        <div>
+                                                          <p className="font-medium text-sm">{companion.name}</p>
+                                                          <p className="text-xs text-muted-foreground">{companion.matchScore}% match</p>
+                                                        </div>
+                                                      </div>
+                                                      <div className="flex gap-1">
+                                                        <Button size="sm" variant="outline" className="h-8 text-green-600 border-green-500/30 hover:bg-green-500/10" data-testid={`button-accept-request-${idx}`} onClick={() => acceptCompanionRequest(trip.id, companion.id)}>
+                                                          <Check className="h-3 w-3 mr-1" />Accept
+                                                        </Button>
+                                                        <Button size="sm" variant="ghost" className="h-8 text-muted-foreground" data-testid={`button-decline-request-${idx}`} onClick={() => declineCompanionRequest(trip.id, companion.id)}>
+                                                          <X className="h-3 w-3" />
+                                                        </Button>
+                                                      </div>
+                                                    </div>
+                                                    {companion.message && (
+                                                      <div className="bg-muted/50 rounded p-2 text-sm text-muted-foreground italic">
+                                                        "{companion.message}"
+                                                      </div>
+                                                    )}
+                                                    <div className="flex gap-2">
+                                                      <Button size="sm" variant="ghost" className="h-7 text-xs text-cyan-600" data-testid={`button-dm-requester-${idx}`} onClick={() => window.location.href = `/messages?userId=${companion.requesterId}`}>
+                                                        <MessageCircle className="h-3 w-3 mr-1" />Direct Message
+                                                      </Button>
+                                                      <Button size="sm" variant="ghost" className="h-7 text-xs" data-testid={`button-view-profile-${idx}`} onClick={() => window.location.href = `/profile/${companion.requesterId}`}>
+                                                        <Eye className="h-3 w-3 mr-1" />View Profile
+                                                      </Button>
+                                                    </div>
                                                   </div>
-                                                </div>
-                                                <div className="flex gap-1">
-                                                  <Button size="sm" variant="outline" className="h-8 text-green-600 border-green-500/30 hover:bg-green-500/10" data-testid={`button-accept-request-${idx}`} onClick={() => acceptCompanionRequest(trip.id, companion.id)}>
-                                                    <Check className="h-3 w-3 mr-1" />Accept
-                                                  </Button>
-                                                  <Button size="sm" variant="ghost" className="h-8 text-muted-foreground" data-testid={`button-decline-request-${idx}`} onClick={() => declineCompanionRequest(trip.id, companion.id)}>
-                                                    <X className="h-3 w-3" />
-                                                  </Button>
-                                                </div>
+                                                ))}
                                               </div>
-                                            ))}
+                                            ) : (
+                                              <div className="text-center py-3 text-muted-foreground bg-muted/30 rounded-lg">
+                                                <Users className="h-6 w-6 mx-auto mb-1 opacity-30" />
+                                                <p className="text-xs">No pending requests</p>
+                                              </div>
+                                            )}
                                           </div>
-                                        ) : (
-                                          <div className="text-center py-3 text-muted-foreground bg-muted/30 rounded-lg">
-                                            <Users className="h-6 w-6 mx-auto mb-1 opacity-30" />
-                                            <p className="text-xs">No pending requests</p>
-                                          </div>
-                                        )}
-                                      </div>
 
-                                      {/* Your Pending Requests - Dynamic */}
-                                      <div className="space-y-2">
-                                        <h5 className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                                          <Sparkles className="h-4 w-4 text-amber-500" />
-                                          Your Requests to Join Others
-                                          {pendingOutgoing.length > 0 && <Badge variant="outline" className="bg-amber-500/10 text-amber-600 border-amber-500/30 text-xs">{pendingOutgoing.length}</Badge>}
-                                        </h5>
-                                        {isOwnProfile && pendingOutgoing.length > 0 ? (
+                                          {/* Your Pending Requests - Dynamic */}
                                           <div className="space-y-2">
-                                            {pendingOutgoing.map((companion) => (
-                                              <div key={companion.id} className="flex items-center justify-between p-3 bg-amber-500/5 border border-amber-500/20 rounded-lg">
-                                                <div className="flex items-center gap-3">
-                                                  <Avatar className="h-10 w-10 border-2 border-amber-500/30">
-                                                    <AvatarImage src={companion.avatar} />
-                                                    <AvatarFallback>{companion.initials}</AvatarFallback>
-                                                  </Avatar>
-                                                  <div>
-                                                    <p className="font-medium text-sm">{companion.name}'s Trip</p>
-                                                    <p className="text-xs text-muted-foreground">Waiting for response...</p>
+                                            <h5 className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                                              <Sparkles className="h-4 w-4 text-amber-500" />
+                                              Your Requests to Join Others
+                                              {pendingOutgoing.length > 0 && <Badge variant="outline" className="bg-amber-500/10 text-amber-600 border-amber-500/30 text-xs">{pendingOutgoing.length}</Badge>}
+                                            </h5>
+                                            {canEdit && pendingOutgoing.length > 0 ? (
+                                              <div className="space-y-2">
+                                                {pendingOutgoing.map((companion) => (
+                                                  <div key={companion.id} className="flex items-center justify-between p-3 bg-amber-500/5 border border-amber-500/20 rounded-lg">
+                                                    <div className="flex items-center gap-3">
+                                                      <Avatar className="h-10 w-10 border-2 border-amber-500/30">
+                                                        <AvatarImage src={companion.avatar} />
+                                                        <AvatarFallback>{companion.initials}</AvatarFallback>
+                                                      </Avatar>
+                                                      <div>
+                                                        <p className="font-medium text-sm">{companion.name}'s Trip</p>
+                                                        <p className="text-xs text-muted-foreground">Waiting for response...</p>
+                                                      </div>
+                                                    </div>
+                                                    <Badge variant="outline" className="bg-amber-500/10 text-amber-600 border-amber-500/30">Pending</Badge>
                                                   </div>
-                                                </div>
-                                                <Badge variant="outline" className="bg-amber-500/10 text-amber-600 border-amber-500/30">Pending</Badge>
+                                                ))}
                                               </div>
-                                            ))}
+                                            ) : (
+                                              <div className="text-center py-3 text-muted-foreground bg-muted/30 rounded-lg">
+                                                <Clock className="h-6 w-6 mx-auto mb-1 opacity-30" />
+                                                <p className="text-xs">No pending requests</p>
+                                              </div>
+                                            )}
                                           </div>
-                                        ) : (
-                                          <div className="text-center py-3 text-muted-foreground bg-muted/30 rounded-lg">
-                                            <Clock className="h-6 w-6 mx-auto mb-1 opacity-30" />
-                                            <p className="text-xs">No pending requests</p>
-                                          </div>
-                                        )}
-                                      </div>
 
-                                      {/* Confirmed Companions - Dynamic */}
-                                      <div className="space-y-2">
-                                        <h5 className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                                          <Check className="h-4 w-4 text-green-500" />
-                                          Confirmed Companions
-                                          {confirmed.length > 0 && <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/30 text-xs">{confirmed.length}</Badge>}
-                                        </h5>
-                                        {confirmed.length > 0 ? (
+                                          {/* Confirmed Companions - Dynamic */}
                                           <div className="space-y-2">
-                                            {confirmed.map((companion) => (
-                                              <div key={companion.id} className="flex items-center justify-between p-3 bg-green-500/5 border border-green-500/20 rounded-lg">
-                                                <div className="flex items-center gap-3">
-                                                  <Avatar className="h-10 w-10 border-2 border-green-500/30">
-                                                    <AvatarImage src={companion.avatar} />
-                                                    <AvatarFallback>{companion.initials}</AvatarFallback>
-                                                  </Avatar>
-                                                  <div>
-                                                    <p className="font-medium text-sm">{companion.name}</p>
-                                                    <p className="text-xs text-muted-foreground">{companion.details}</p>
+                                            <h5 className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                                              <Check className="h-4 w-4 text-green-500" />
+                                              Confirmed Companions
+                                              {confirmed.length > 0 && <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/30 text-xs">{confirmed.length}</Badge>}
+                                            </h5>
+                                            {confirmed.length > 0 ? (
+                                              <div className="space-y-2">
+                                                {confirmed.map((companion) => (
+                                                  <div key={companion.id} className="flex items-center justify-between p-3 bg-green-500/5 border border-green-500/20 rounded-lg">
+                                                    <div className="flex items-center gap-3">
+                                                      <Avatar className="h-10 w-10 border-2 border-green-500/30">
+                                                        <AvatarImage src={companion.avatar} />
+                                                        <AvatarFallback>{companion.initials}</AvatarFallback>
+                                                      </Avatar>
+                                                      <div>
+                                                        <p className="font-medium text-sm">{companion.name}</p>
+                                                        <p className="text-xs text-muted-foreground">{companion.details}</p>
+                                                      </div>
+                                                    </div>
+                                                    <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/30">
+                                                      <Check className="h-3 w-3 mr-1" />Confirmed
+                                                    </Badge>
                                                   </div>
-                                                </div>
-                                                <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/30">
-                                                  <Check className="h-3 w-3 mr-1" />Confirmed
-                                                </Badge>
+                                                ))}
                                               </div>
-                                            ))}
+                                            ) : (
+                                              <div className="text-center py-3 text-muted-foreground bg-muted/30 rounded-lg">
+                                                <Users className="h-6 w-6 mx-auto mb-1 opacity-30" />
+                                                <p className="text-xs">No companions yet</p>
+                                                <p className="text-xs mt-1">Find compatible travel buddies!</p>
+                                              </div>
+                                            )}
+                                            {/* Message Group Button - only show when there are confirmed companions */}
+                                            {confirmed.length > 0 && (
+                                              <Button variant="outline" size="sm" className="w-full mt-2 border-cyan-500/30 text-cyan-600 hover:bg-cyan-500/10" data-testid={`button-message-group-${index}`} onClick={() => setGroupChatDialog({ tripId: trip.id, city: trip.city, companions: confirmed })}>
+                                                <Users className="h-4 w-4 mr-2" />View Group Chat ({confirmed.length + 1} participants)
+                                              </Button>
+                                            )}
                                           </div>
-                                        ) : (
-                                          <div className="text-center py-3 text-muted-foreground bg-muted/30 rounded-lg">
-                                            <Users className="h-6 w-6 mx-auto mb-1 opacity-30" />
-                                            <p className="text-xs">No companions yet</p>
-                                            <p className="text-xs mt-1">Find compatible travel buddies!</p>
-                                          </div>
-                                        )}
-                                        {/* Message Group Button - only show when there are confirmed companions */}
-                                        {confirmed.length > 0 && (
-                                          <Button variant="outline" size="sm" className="w-full mt-2 border-cyan-500/30 text-cyan-600 hover:bg-cyan-500/10" data-testid={`button-message-group-${index}`} onClick={() => setGroupChatDialog({ tripId: trip.id, city: trip.city, companions: confirmed })}>
-                                            <Users className="h-4 w-4 mr-2" />View Group Chat ({confirmed.length + 1} participants)
-                                          </Button>
-                                        )}
+                                        </>
+                                      );
+                                    })()}
+
+                                    {/* Action Buttons */}
+                                    {canEdit && (
+                                      <div className="flex gap-2 pt-2">
+                                        <Button variant="outline" size="sm" className="flex-1" data-testid={`button-find-companions-${index}`} onClick={() => setFindCompanionsDialog({ tripId: trip.id, city: trip.city })}>
+                                          <Search className="h-4 w-4 mr-2" />Find Compatible Travelers
+                                        </Button>
+                                        <Button variant="outline" size="sm" className="flex-1" data-testid={`button-invite-friends-${index}`} onClick={() => setInviteFriendsDialog({ tripId: trip.id, city: trip.city })}>
+                                          <Plus className="h-4 w-4 mr-2" />Invite Friends
+                                        </Button>
                                       </div>
-                                    </>
-                                  );
-                                })()}
+                                    )}
 
-                                {/* Action Buttons */}
-                                {isOwnProfile && (
-                                  <div className="flex gap-2 pt-2">
-                                    <Button variant="outline" size="sm" className="flex-1" data-testid={`button-find-companions-${index}`} onClick={() => setFindCompanionsDialog({ tripId: trip.id, city: trip.city })}>
-                                      <Search className="h-4 w-4 mr-2" />Find Compatible Travelers
-                                    </Button>
-                                    <Button variant="outline" size="sm" className="flex-1" data-testid={`button-invite-friends-${index}`} onClick={() => setInviteFriendsDialog({ tripId: trip.id, city: trip.city })}>
-                                      <Plus className="h-4 w-4 mr-2" />Invite Friends
-                                    </Button>
-                                  </div>
-                                )}
-
-                                <p className="text-xs text-center text-muted-foreground pt-2">
-                                  AI-powered travel matching uses your preferences, schedule, and interests to find compatible companions
-                                </p>
-                              </CardContent>
-                            </Card>
+                                    <p className="text-xs text-center text-muted-foreground pt-2">
+                                      AI-powered travel matching uses your preferences, schedule, and interests to find compatible companions
+                                    </p>
+                                  </CardContent>
+                                </Card>
+                              </>
+                            )}
 
                             {/* Add Item Dialog */}
                             <Dialog open={addingItemToTrip === trip.id} onOpenChange={(open) => setAddingItemToTrip(open ? trip.id : null)}>
@@ -1357,7 +1685,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
                                       <FormField control={itemForm.control} name="date" render={({ field }) => (<FormItem><FormLabel>Date/Time</FormLabel><FormControl><Input type="datetime-local" {...field} /></FormControl><FormMessage /></FormItem>)} />
                                       <FormField control={itemForm.control} name="cost" render={({ field }) => (<FormItem><FormLabel>Total Cost (USD)</FormLabel><FormControl><Input type="number" placeholder="500" {...field} onChange={(e) => field.onChange(e.target.valueAsNumber)} /></FormControl><FormMessage /></FormItem>)} />
                                     </div>
-                                    <FormField control={itemForm.control} name="location" render={({ field }) => (<FormItem><FormLabel>Location/Venue</FormLabel><FormControl><Input placeholder="e.g., La Catedral, Buenos Aires" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                                    <FormField control={itemForm.control} name="location" render={({ field }) => (<FormItem><FormLabel>Location/Venue</FormLabel><FormControl><UnifiedLocationPicker mode="address" value={field.value || ""} onChange={(location) => field.onChange(location)} placeholder="Search for venue or address..." data-testid="input-item-location" /></FormControl><FormMessage /></FormItem>)} />
                                     <FormField control={itemForm.control} name="description" render={({ field }) => (<FormItem><FormLabel>Notes</FormLabel><FormControl><Textarea placeholder="Additional details..." {...field} rows={2} /></FormControl><FormMessage /></FormItem>)} />
                                     <FormField control={itemForm.control} name="bookingUrl" render={({ field }) => (<FormItem><FormLabel>Booking URL</FormLabel><FormControl><Input placeholder="https://..." {...field} /></FormControl><FormMessage /></FormItem>)} />
                                     <div className="flex gap-2 pt-2">
@@ -1373,7 +1701,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
                       })()}
 
                   {/* Edit Mode */}
-                  {editingTripId === trip.id && isOwnProfile && (
+                  {editingTripId === trip.id && canEdit && (
                     <Card className="border-amber-500/30 bg-amber-500/5 mt-4">
                       <CardHeader>
                         <CardTitle className="text-base flex items-center gap-2"><Edit className="h-4 w-4" />Edit Trip Details</CardTitle>
@@ -1410,7 +1738,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
                   )}
 
                   {/* Card Footer with Actions */}
-                  {isOwnProfile && (
+                  {canEdit && (
                     <div className="pt-4 mt-4 border-t border-border flex flex-wrap items-center gap-3">
                       <Button variant="outline" size="sm" onClick={() => setEditingTripId(editingTripId === trip.id ? null : trip.id)} data-testid={`button-edit-trip-${index}`}><Edit className="h-4 w-4 mr-2" />{editingTripId === trip.id ? "Close Edit" : "Edit Trip"}</Button>
                       <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive" onClick={() => deleteTripMutation.mutate(trip.id)} data-testid={`button-delete-trip-${index}`}><Trash2 className="h-4 w-4 mr-2" />Delete</Button>
@@ -1423,7 +1751,8 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
             );
           })}
         </div>
-      )}
+        );
+      })()}
 
       {/* Enhanced Accommodation Dialog with MT Host Integration */}
       <Dialog open={!!accommodationDialog} onOpenChange={(open) => { if (!open) { setAccommodationDialog(null); itemForm.reset(); setScrapingUrl(''); setAccommodationTab('mthost'); } }}>
@@ -1566,7 +1895,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
                   )} />
                   
                   <FormField control={itemForm.control} name="location" render={({ field }) => (
-                    <FormItem><FormLabel>Full Address *</FormLabel><FormControl><Input placeholder="e.g., Av. Santa Fe 1234, Palermo, Buenos Aires" {...field} data-testid="input-accommodation-address" /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>Full Address *</FormLabel><FormControl><UnifiedLocationPicker mode="address" value={field.value || ""} onChange={(location) => field.onChange(location)} placeholder="Search for address..." data-testid="input-accommodation-address" /></FormControl><FormMessage /></FormItem>
                   )} />
 
                   <div className="grid grid-cols-2 gap-4">
@@ -1822,7 +2151,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
                   </div>
 
                   <FormField control={itemForm.control} name="location" render={({ field }) => (
-                    <FormItem><FormLabel>Venue/Location</FormLabel><FormControl><Input placeholder="e.g., La Catedral, Sarmiento 4006" {...field} /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>Venue/Location</FormLabel><FormControl><UnifiedLocationPicker mode="address" value={field.value || ""} onChange={(location) => field.onChange(location)} placeholder="Search for venue or address..." data-testid="input-event-location" /></FormControl><FormMessage /></FormItem>
                   )} />
 
                   <FormField control={itemForm.control} name="description" render={({ field }) => (
@@ -2160,7 +2489,19 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
               <FormField control={itemForm.control} name="location" render={({ field }) => (
                 <FormItem>
                   <FormLabel>{editingItem?.itemType === 'accommodation' ? 'Full Address' : editingItem?.itemType === 'transport' ? 'Route (From → To)' : 'Venue/Location'}</FormLabel>
-                  <FormControl><Input {...field} data-testid="input-edit-location" /></FormControl>
+                  <FormControl>
+                    {editingItem?.itemType === 'transport' ? (
+                      <Input {...field} placeholder="e.g., Buenos Aires → Montevideo" data-testid="input-edit-location" />
+                    ) : (
+                      <UnifiedLocationPicker 
+                        mode="address" 
+                        value={field.value || ""} 
+                        onChange={(location) => field.onChange(location)} 
+                        placeholder={editingItem?.itemType === 'accommodation' ? "Search for address..." : "Search for venue..."} 
+                        data-testid="input-edit-location" 
+                      />
+                    )}
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )} />
@@ -2208,6 +2549,24 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
           </Form>
         </DialogContent>
       </Dialog>
+
+      {/* Request to Book Modal - for public profile visitors */}
+      {requestToBookTrip && profileOwner && (
+        <RequestToBookModal
+          open={!!requestToBookTrip}
+          onOpenChange={(open) => !open && setRequestToBookTrip(null)}
+          trip={{
+            id: requestToBookTrip.id,
+            city: requestToBookTrip.city,
+            country: requestToBookTrip.country,
+            startDate: requestToBookTrip.startDate,
+            endDate: requestToBookTrip.endDate,
+            ownerName: profileOwner.name || profileOwner.username || 'Unknown',
+            ownerUsername: profileOwner.username || '',
+            ownerProfileImage: profileOwner.profileImage,
+          }}
+        />
+      )}
     </div>
   );
 }

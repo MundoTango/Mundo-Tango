@@ -1,0 +1,69 @@
+# Mundo Tango - Customer Journey: Profile View
+# Records the user profile and dashboard experience
+id: profile-view
+name: Profile Dashboard Journey
+description: See your personalized tango profile with dance stats, connections, and travel plans
+type: customer
+startPath: /
+
+viewport:
+  width: 1280
+  height: 720
+
+steps:
+  - action: wait
+    delay: 2000
+    description: Show landing page
+
+  - action: navigate
+    target: /login
+    delay: 1500
+    description: Navigate to login
+
+  - action: wait
+    delay: 2000
+    description: Show login page
+
+  - action: scroll
+    value: "200"
+    delay: 1000
+    description: View login options
+
+  - action: navigate
+    target: /
+    delay: 2000
+    description: Return to landing page
+
+  - action: scroll
+    value: "500"
+    delay: 1500
+    description: Explore features section
+
+  - action: wait
+    delay: 1500
+    description: Show feature cards
+
+  - action: scroll
+    value: "400"
+    delay: 1500
+    description: Continue exploring
+
+  - action: wait
+    delay: 2000
+    description: Final view
+
+output:
+  filename: profile-view.mp4
+  format: mp4
+  thumbnail: true
+
+metadata:
+  duration: "~15 seconds"
+  category: profile
+  tags:
+    - profile
+    - dashboard
+    - stats
+    - connections
+  marketingUse: true
+  facebookOptimized: true

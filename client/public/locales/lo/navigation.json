@@ -1,0 +1,84 @@
+{
+  "social": {
+    "title": "Social",
+    "memories": "Memories",
+    "feed": "Feed",
+    "profile": "Profile",
+    "discover": "Discover"
+  },
+  "community": {
+    "title": "Community",
+    "friends": "Friends",
+    "recommendations": "Recommendations",
+    "invitations": "Invitations",
+    "notifications": "Notifications",
+    "groups": "Groups",
+    "messages": "Messages"
+  },
+  "events": {
+    "title": "Events",
+    "events": "Events",
+    "calendar": "Calendar",
+    "myEvents": "My Events",
+    "workshops": "Workshops"
+  },
+  "tango": {
+    "title": "Tango Resources",
+    "teachers": "Teachers",
+    "venues": "Venues",
+    "tutorials": "Tutorials",
+    "musicLibrary": "Music Library",
+    "danceStyles": "Dance Styles"
+  },
+  "resources": {
+    "title": "Resources",
+    "communityMap": "Community Map",
+    "blog": "Blog",
+    "newsletter": "Newsletter",
+    "faq": "FAQ",
+    "help": "Help"
+  },
+  "tools": {
+    "title": "AI & Tools",
+    "lifeCEO": "Life CEO",
+    "mrBlue": "Mr Blue AI",
+    "marketplace": "Marketplace",
+    "travelPlanner": "Travel Planner"
+  },
+  "personal": {
+    "title": "Personal",
+    "savedPosts": "Saved Posts",
+    "favorites": "Favorites",
+    "settings": "Settings",
+    "bookmarks": "Bookmarks",
+    "activity": "Activity Log"
+  },
+  "admin": {
+    "title": "Admin",
+    "dashboard": "Admin Dashboard",
+    "platform": "Platform",
+    "users": "User Management",
+    "content": "Content Moderation",
+    "reports": "User Reports",
+    "analytics": "Analytics"
+  },
+  "esa": {
+    "title": "ESA Framework",
+    "dashboard": "ESA Dashboard",
+    "tasks": "ESA Tasks",
+    "communications": "ESA Communications"
+  },
+  "footer": {
+    "company": "Company",
+    "about": "About Us",
+    "contact": "Contact",
+    "careers": "Careers",
+    "volunteer": "Volunteer",
+    "legal": "Legal",
+    "terms": "Terms of Service",
+    "privacy": "Privacy Policy",
+    "guidelines": "Community Guidelines",
+    "support": "Support",
+    "pricing": "Pricing"
+  }
+}

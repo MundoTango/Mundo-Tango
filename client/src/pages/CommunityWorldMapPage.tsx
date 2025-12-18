@@ -13,17 +13,17 @@ import {
   MapPin, 
   Users, 
   Calendar, 
-  Search,
   Home,
-  Radio,
   Building2,
-  Filter,
-  X
+  X,
+  ChevronRight
 } from "lucide-react";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { CommunityMapWithLayers } from "@/components/map/CommunityMapWithLayers";
 import { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
+import { getCityImageUrl } from "@/lib/cityImageMap";
+import { Link } from "wouter";
 
 // Fix Leaflet default marker icon
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -55,10 +55,9 @@ interface MapLayer {
 
 
 export default function CommunityWorldMapPage() {
-  const [searchQuery, setSearchQuery] = useState("");
   const [selectedCity, setSelectedCity] = useState<CommunityLocation | null>(null);
-  const [mapCenter, setMapCenter] = useState<[number, number]>([-34.6037, -58.3816]); // Buenos Aires default
-  const [mapZoom, setMapZoom] = useState(12);
+  const [mapCenter, setMapCenter] = useState<[number, number]>([20, 0]); // World view centered
+  const [mapZoom, setMapZoom] = useState(2); // Zoom out to see all cities
   
   // Layer toggles
   const [layers, setLayers] = useState<MapLayer[]>([
@@ -161,24 +160,21 @@ export default function CommunityWorldMapPage() {
   ];
 
   const allLocations = useMemo(() => {
-    return locations.length > 0 ? locations : mockLocations;
-  }, [locations]);
+    // Use real locations from API, only fallback to mock if loading
+    return locations && locations.length > 0 ? locations : (isLoading ? mockLocations : locations);
+  }, [locations, isLoading]);
 
   // Apply filters
   const filteredLocations = useMemo(() => {
     return allLocations.filter((loc) => {
-      const matchesSearch =
-        loc.city.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        loc.country.toLowerCase().includes(searchQuery.toLowerCase());
-      
       const matchesFilters =
         loc.memberCount >= filters.minMembers &&
         loc.activeEvents >= filters.minEvents &&
         (!filters.activeOnly || loc.isActive);
 
-      return matchesSearch && matchesFilters;
+      return matchesFilters;
     });
-  }, [allLocations, searchQuery, filters]);
+  }, [allLocations, filters]);
 
   // Sort locations
   const sortedLocations = useMemo(() => {
@@ -191,6 +187,11 @@ export default function CommunityWorldMapPage() {
     });
     return sorted;
   }, [filteredLocations, filters.sortBy]);
+
+  // Filter to only locations with groups (city communities)
+  const cityLocations = useMemo(() => {
+    return sortedLocations.filter(loc => loc.groupId);
+  }, [sortedLocations]);
 
   const toggleLayer = (id: string) => {
     setLayers(prev => prev.map(layer => 
@@ -238,18 +239,6 @@ export default function CommunityWorldMapPage() {
         </div>
 
         <div className="container mx-auto px-6 py-12 space-y-6">
-          {/* Filters Button */}
-          <div className="flex justify-end">
-            <Button
-              variant={showFilters ? "default" : "outline"}
-              onClick={() => setShowFilters(!showFilters)}
-              data-testid="button-toggle-filters"
-            >
-              <Filter className="mr-2 h-4 w-4" />
-              Filters
-            </Button>
-          </div>
-
             {/* Global Stats */}
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
               <Card className="hover-elevate">
@@ -274,7 +263,7 @@ export default function CommunityWorldMapPage() {
                   <div className="text-2xl font-bold" data-testid="text-total-members">
                     {(stats?.totalMembers || allLocations.reduce((sum, loc) => sum + loc.memberCount, 0)).toLocaleString()}
                   </div>
-                  <p className="text-xs text-muted-foreground">Worldwide dancers</p>
+                  <p className="text-xs text-muted-foreground">Worldwide People</p>
                 </CardContent>
               </Card>
 
@@ -318,190 +307,26 @@ export default function CommunityWorldMapPage() {
               </Card>
             </div>
 
-            {/* Advanced Filters */}
-            {showFilters && (
-              <Card className="border-primary/20">
-                <CardHeader>
-                  <div className="flex justify-between items-center">
-                    <CardTitle>Advanced Filters</CardTitle>
-                    <Button variant="ghost" size="icon" onClick={() => setShowFilters(false)}>
-                      <X className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="space-y-2">
-                      <Label>Minimum Members: {filters.minMembers}</Label>
-                      <Slider
-                        value={[filters.minMembers]}
-                        onValueChange={([value]) => setFilters({ ...filters, minMembers: value })}
-                        max={1000}
-                        step={50}
-                        data-testid="slider-min-members"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Minimum Events: {filters.minEvents}</Label>
-                      <Slider
-                        value={[filters.minEvents]}
-                        onValueChange={([value]) => setFilters({ ...filters, minEvents: value })}
-                        max={50}
-                        step={5}
-                        data-testid="slider-min-events"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Sort By</Label>
-                      <Select value={filters.sortBy} onValueChange={(value) => setFilters({ ...filters, sortBy: value })}>
-                        <SelectTrigger data-testid="select-sort-by">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="members">Most Members</SelectItem>
-                          <SelectItem value="events">Most Events</SelectItem>
-                          <SelectItem value="name">City Name</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="active-only"
-                      checked={filters.activeOnly}
-                      onCheckedChange={(checked) => setFilters({ ...filters, activeOnly: checked as boolean })}
-                      data-testid="checkbox-active-only"
-                    />
-                    <Label htmlFor="active-only" className="cursor-pointer">
-                      Show only active communities
-                    </Label>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
-            {/* Layer Controls */}
-            <Card>
+            {/* Interactive Map - Full Width */}
+            <Card className="overflow-hidden">
               <CardHeader>
-                <CardTitle>Map Layers</CardTitle>
-                <CardDescription>Toggle different data layers on the map</CardDescription>
+                <CardTitle>Interactive Map</CardTitle>
+                <CardDescription>
+                  Click on any marker to see city details. Toggle layers to filter by type.
+                </CardDescription>
               </CardHeader>
-              <CardContent className="flex flex-wrap gap-2">
-                {layers.map((layer) => (
-                  <Button
-                    key={layer.id}
-                    variant={layer.enabled ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => toggleLayer(layer.id)}
-                    data-testid={`button-layer-${layer.id}`}
-                  >
-                    <layer.icon className="mr-2 h-4 w-4" />
-                    {layer.label}
-                  </Button>
-                ))}
+              <CardContent className="p-0">
+                <div className="w-full h-[600px]" data-testid="map-container">
+                  <CommunityMapWithLayers
+                    locations={sortedLocations}
+                    layers={layers}
+                    center={mapCenter}
+                    zoom={mapZoom}
+                    onCityClick={handleCityClick}
+                  />
+                </div>
               </CardContent>
             </Card>
-
-            {/* Search */}
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder="Search cities or countries..."
-                className="pl-10"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                data-testid="input-search-cities"
-              />
-            </div>
-
-            {/* Map & City List */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Interactive Map */}
-              <Card className="lg:col-span-2 overflow-hidden">
-                <CardHeader>
-                  <CardTitle>Interactive Map</CardTitle>
-                  <CardDescription>
-                    Toggle layers to filter markers by type. Color-coded: 🔴 Events, 🔵 Housing, 🟡 Venues
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="p-0">
-                  <div className="w-full h-[600px]" data-testid="map-container">
-                    <CommunityMapWithLayers
-                      locations={sortedLocations}
-                      layers={layers}
-                      center={mapCenter}
-                      zoom={mapZoom}
-                      onCityClick={handleCityClick}
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* City List */}
-              <Card className="lg:col-span-1">
-                <CardHeader>
-                  <CardTitle>Communities</CardTitle>
-                  <CardDescription>
-                    {sortedLocations.length} {sortedLocations.length === 1 ? 'location' : 'locations'}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3 max-h-[600px] overflow-y-auto">
-                    {isLoading ? (
-                      <div className="text-center py-8 text-muted-foreground">
-                        Loading communities...
-                      </div>
-                    ) : sortedLocations.length > 0 ? (
-                      sortedLocations.map((location) => (
-                        <Button
-                          key={location.id}
-                          variant={selectedCity?.id === location.id ? "default" : "outline"}
-                          className="w-full justify-start text-left h-auto p-4 hover-elevate"
-                          onClick={() => handleCityClick(location)}
-                          data-testid={`button-city-${location.id}`}
-                        >
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-1">
-                              <MapPin className="h-4 w-4" />
-                              <span className="font-semibold">{location.city}</span>
-                              {location.isActive && (
-                                <Badge variant="default" className="text-xs">Active</Badge>
-                              )}
-                            </div>
-                            <div className="text-xs text-muted-foreground space-y-1">
-                              <div>{location.country}</div>
-                              <div className="flex flex-wrap items-center gap-2">
-                                <span className="flex items-center gap-1">
-                                  <Users className="h-3 w-3" />
-                                  {location.memberCount}
-                                </span>
-                                <span className="flex items-center gap-1">
-                                  <Calendar className="h-3 w-3" />
-                                  {location.activeEvents}
-                                </span>
-                                <span className="flex items-center gap-1">
-                                  <Home className="h-3 w-3" />
-                                  {location.housing}
-                                </span>
-                                <span className="flex items-center gap-1">
-                                  <Building2 className="h-3 w-3" />
-                                  {location.recommendations}
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                        </Button>
-                      ))
-                    ) : (
-                      <div className="text-center py-8 text-muted-foreground">
-                        No communities found
-                      </div>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
 
             {/* Selected City Details */}
             {selectedCity && (
@@ -577,6 +402,109 @@ export default function CommunityWorldMapPage() {
                 </CardContent>
               </Card>
             )}
+
+            {/* Cities List - Entry into City Groups */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-2xl font-serif font-bold flex items-center gap-2">
+                    <Globe className="h-6 w-6 text-primary" />
+                    Explore Cities
+                  </h2>
+                  <p className="text-muted-foreground">
+                    {sortedLocations.length} tango communities worldwide
+                  </p>
+                </div>
+              </div>
+
+              {sortedLocations.length === 0 ? (
+                <Card>
+                  <CardContent className="py-12 text-center text-muted-foreground">
+                    <MapPin className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                    <p>No cities found. Be the first to start a community!</p>
+                  </CardContent>
+                </Card>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {sortedLocations.map((location) => (
+                    <motion.div
+                      key={location.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <Card 
+                        className={`overflow-hidden hover-elevate cursor-pointer transition-all group ${
+                          selectedCity?.id === location.id ? 'ring-2 ring-primary' : ''
+                        }`}
+                        onClick={() => handleCityClick(location)}
+                        data-testid={`card-city-${location.id}`}
+                      >
+                        {/* Cityscape Image */}
+                        <div className="relative aspect-[16/9] overflow-hidden">
+                          <img
+                            src={getCityImageUrl(location.city)}
+                            alt={`${location.city}, ${location.country}`}
+                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                          
+                          {/* City Name Overlay */}
+                          <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+                            <div className="flex items-start justify-between gap-2">
+                              <div>
+                                <h3 className="text-xl font-serif font-bold leading-tight" data-testid={`text-city-name-${location.id}`}>
+                                  {location.city}
+                                </h3>
+                                <p className="text-sm text-white/80">{location.country}</p>
+                              </div>
+                              {location.id === 1 && (
+                                <Badge className="bg-primary/90 text-primary-foreground shrink-0">Flagship</Badge>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Stats and Action */}
+                        <CardContent className="p-4 space-y-4">
+                          <div className="grid grid-cols-4 gap-2 text-sm">
+                            <div className="flex flex-col items-center gap-1 p-2 bg-muted/50 rounded-lg">
+                              <Users className="w-4 h-4 text-cyan-500" />
+                              <div className="font-bold text-sm">{location.memberCount.toLocaleString()}</div>
+                              <div className="text-xs text-muted-foreground">Members</div>
+                            </div>
+                            <div className="flex flex-col items-center gap-1 p-2 bg-muted/50 rounded-lg">
+                              <Calendar className="w-4 h-4 text-blue-500" />
+                              <div className="font-bold text-sm">{location.activeEvents}</div>
+                              <div className="text-xs text-muted-foreground">Events</div>
+                            </div>
+                            <div className="flex flex-col items-center gap-1 p-2 bg-muted/50 rounded-lg">
+                              <Building2 className="w-4 h-4 text-purple-500" />
+                              <div className="font-bold text-sm">{location.recommendations}</div>
+                              <div className="text-xs text-muted-foreground">Venues</div>
+                            </div>
+                            <div className="flex flex-col items-center gap-1 p-2 bg-muted/50 rounded-lg">
+                              <Home className="w-4 h-4 text-amber-500" />
+                              <div className="font-bold text-sm">{location.housing}</div>
+                              <div className="text-xs text-muted-foreground">Housing</div>
+                            </div>
+                          </div>
+
+                          {location.groupId && (
+                            <Link href={`/groups/${location.groupId}`} className="block">
+                              <Button className="w-full gap-2" data-testid={`button-view-group-${location.groupId}`}>
+                                <ChevronRight className="w-4 h-4" />
+                                View City Group
+                              </Button>
+                            </Link>
+                          )}
+                        </CardContent>
+                      </Card>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
     </SelfHealingErrorBoundary>

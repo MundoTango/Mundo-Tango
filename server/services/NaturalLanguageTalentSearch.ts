@@ -7,6 +7,9 @@ interface TalentSearchParams {
   query: string;
   userId: number;
   limit?: number;
+  languages?: string[];
+  primaryLanguage?: string;
+  languageMatchMode?: 'any' | 'all';
 }
 
 interface TalentSearchResult {
@@ -18,8 +21,11 @@ interface TalentSearchResult {
   country: string | null;
   experienceYears: number;
   specialties: string[];
+  languages: string[];
+  primaryLanguage: string | null;
   semanticScore: number;
   compatibilityScore: number;
+  languageMatchScore: number;
   matchReasons: string[];
 }
 
@@ -30,11 +36,52 @@ interface ParsedQuery {
   skills?: string[];
   styles?: string[];
   availability?: string;
+  languages?: string[];
+  primaryLanguage?: string;
+  languageMatchMode?: 'any' | 'all';
 }
+
+const LANGUAGE_PATTERNS: Record<string, { code: string; name: string; nativeName: string }> = {
+  'english': { code: 'en', name: 'English', nativeName: 'English' },
+  'spanish': { code: 'es', name: 'Spanish', nativeName: 'Español' },
+  'argentine spanish': { code: 'es-AR', name: 'Argentine Spanish', nativeName: 'Español Rioplatense' },
+  'rioplatense': { code: 'es-AR', name: 'Argentine Spanish', nativeName: 'Español Rioplatense' },
+  'portuguese': { code: 'pt', name: 'Portuguese', nativeName: 'Português' },
+  'french': { code: 'fr', name: 'French', nativeName: 'Français' },
+  'german': { code: 'de', name: 'German', nativeName: 'Deutsch' },
+  'italian': { code: 'it', name: 'Italian', nativeName: 'Italiano' },
+  'chinese': { code: 'zh', name: 'Chinese', nativeName: '中文' },
+  'mandarin': { code: 'zh', name: 'Chinese', nativeName: '中文' },
+  'japanese': { code: 'ja', name: 'Japanese', nativeName: '日本語' },
+  'korean': { code: 'ko', name: 'Korean', nativeName: '한국어' },
+  'russian': { code: 'ru', name: 'Russian', nativeName: 'Русский' },
+  'arabic': { code: 'ar', name: 'Arabic', nativeName: 'العربية' },
+  'hindi': { code: 'hi', name: 'Hindi', nativeName: 'हिन्दी' },
+  'dutch': { code: 'nl', name: 'Dutch', nativeName: 'Nederlands' },
+  'polish': { code: 'pl', name: 'Polish', nativeName: 'Polski' },
+  'turkish': { code: 'tr', name: 'Turkish', nativeName: 'Türkçe' },
+  'greek': { code: 'el', name: 'Greek', nativeName: 'Ελληνικά' },
+  'hebrew': { code: 'he', name: 'Hebrew', nativeName: 'עברית' },
+  'swedish': { code: 'sv', name: 'Swedish', nativeName: 'Svenska' },
+  'norwegian': { code: 'no', name: 'Norwegian', nativeName: 'Norsk' },
+  'danish': { code: 'da', name: 'Danish', nativeName: 'Dansk' },
+  'finnish': { code: 'fi', name: 'Finnish', nativeName: 'Suomi' },
+  'ukrainian': { code: 'uk', name: 'Ukrainian', nativeName: 'Українська' },
+};
 
 export class NaturalLanguageTalentSearch {
   async search(params: TalentSearchParams): Promise<TalentSearchResult[]> {
     const parsedQuery = await this.parseQuery(params.query);
+    
+    if (params.languages?.length) {
+      parsedQuery.languages = params.languages;
+    }
+    if (params.primaryLanguage) {
+      parsedQuery.primaryLanguage = params.primaryLanguage;
+    }
+    if (params.languageMatchMode) {
+      parsedQuery.languageMatchMode = params.languageMatchMode;
+    }
     
     let whereConditions = [eq(users.isActive, true)];
 
@@ -80,6 +127,36 @@ export class NaturalLanguageTalentSearch {
       );
     }
 
+    if (parsedQuery.primaryLanguage) {
+      whereConditions.push(
+        or(
+          eq(users.primaryLanguage, parsedQuery.primaryLanguage),
+          sql`${parsedQuery.primaryLanguage} = ANY(${users.languages})`
+        )!
+      );
+    }
+
+    if (parsedQuery.languages && parsedQuery.languages.length > 0) {
+      if (parsedQuery.languageMatchMode === 'all') {
+        for (const lang of parsedQuery.languages) {
+          whereConditions.push(
+            or(
+              eq(users.primaryLanguage, lang),
+              sql`${lang} = ANY(${users.languages})`
+            )!
+          );
+        }
+      } else {
+        const langConditions = parsedQuery.languages.map(lang =>
+          or(
+            eq(users.primaryLanguage, lang),
+            sql`${lang} = ANY(${users.languages})`
+          )!
+        );
+        whereConditions.push(or(...langConditions)!);
+      }
+    }
+
     const candidates = await db.select({
       id: users.id,
       name: users.name,
@@ -91,7 +168,8 @@ export class NaturalLanguageTalentSearch {
       tangoRoles: users.tangoRoles,
       tangoRoleExperience: users.tangoRoleExperience,
       tangoStartYear: users.tangoStartYear,
-      languages: users.languages
+      languages: users.languages,
+      primaryLanguage: users.primaryLanguage
     })
     .from(users)
     .where(and(...whereConditions))
@@ -100,6 +178,12 @@ export class NaturalLanguageTalentSearch {
     const rankedResults = candidates.map(candidate => {
       const matchReasons = this.explainMatch(candidate, parsedQuery);
       const semanticScore = this.calculateSemanticScore(candidate, params.query, parsedQuery);
+      const languageMatchScore = this.calculateLanguageScore(
+        parsedQuery.languages || [],
+        parsedQuery.primaryLanguage,
+        candidate.languages || [],
+        candidate.primaryLanguage
+      );
       const compatibilityScore = Math.random() * 0.3 + 0.7;
 
       const experienceYears = parsedQuery.role
@@ -115,16 +199,60 @@ export class NaturalLanguageTalentSearch {
         country: candidate.country,
         experienceYears,
         specialties: candidate.tangoRoles || [],
+        languages: candidate.languages || [],
+        primaryLanguage: candidate.primaryLanguage,
         semanticScore,
         compatibilityScore,
+        languageMatchScore,
         matchReasons
       };
     });
 
-    return rankedResults.sort((a, b) => 
-      (b.semanticScore * 0.6 + b.compatibilityScore * 0.4) - 
-      (a.semanticScore * 0.6 + a.compatibilityScore * 0.4)
-    );
+    const hasLanguageFilter = parsedQuery.languages?.length || parsedQuery.primaryLanguage;
+    
+    return rankedResults.sort((a, b) => {
+      if (hasLanguageFilter) {
+        const aTotal = a.semanticScore * 0.4 + a.compatibilityScore * 0.3 + a.languageMatchScore * 0.3;
+        const bTotal = b.semanticScore * 0.4 + b.compatibilityScore * 0.3 + b.languageMatchScore * 0.3;
+        return bTotal - aTotal;
+      }
+      return (b.semanticScore * 0.6 + b.compatibilityScore * 0.4) - 
+             (a.semanticScore * 0.6 + a.compatibilityScore * 0.4);
+    });
+  }
+
+  private calculateLanguageScore(
+    userPreferredLanguages: string[],
+    userPrimaryLanguage: string | undefined,
+    talentLanguages: string[],
+    talentPrimaryLanguage: string | null
+  ): number {
+    if (!userPreferredLanguages.length && !userPrimaryLanguage) {
+      return 0.5;
+    }
+
+    let score = 0;
+    let maxPossibleScore = 0;
+
+    if (userPrimaryLanguage) {
+      maxPossibleScore += 1.0;
+      if (talentPrimaryLanguage === userPrimaryLanguage) {
+        score += 1.0;
+      } else if (talentLanguages.includes(userPrimaryLanguage)) {
+        score += 0.7;
+      }
+    }
+
+    for (const lang of userPreferredLanguages) {
+      maxPossibleScore += 0.5;
+      if (talentPrimaryLanguage === lang) {
+        score += 0.5;
+      } else if (talentLanguages.includes(lang)) {
+        score += 0.3;
+      }
+    }
+
+    return maxPossibleScore > 0 ? Math.min(score / maxPossibleScore, 1.0) : 0.5;
   }
 
   private async parseQuery(query: string): Promise<ParsedQuery> {
@@ -132,7 +260,7 @@ export class NaturalLanguageTalentSearch {
     
     const parsed: ParsedQuery = {};
 
-    const cities = ['buenos aires', 'san francisco', 'new york', 'paris', 'berlin', 'london'];
+    const cities = ['buenos aires', 'san francisco', 'new york', 'paris', 'berlin', 'london', 'tokyo', 'moscow', 'rome', 'madrid', 'lisbon', 'amsterdam', 'vienna', 'prague', 'barcelona'];
     for (const city of cities) {
       if (queryLower.includes(city)) {
         parsed.location = city;
@@ -180,7 +308,78 @@ export class NaturalLanguageTalentSearch {
       parsed.availability = 'flexible';
     }
 
+    parsed.languages = this.parseLanguagesFromQuery(queryLower);
+    
+    const primaryLangPatterns = [
+      /native\s+(\w+)\s+speaker/i,
+      /primary\s+language\s+(\w+)/i,
+      /fluent\s+in\s+(\w+)/i,
+      /(\w+)\s+native/i
+    ];
+    
+    for (const pattern of primaryLangPatterns) {
+      const match = queryLower.match(pattern);
+      if (match && match[1]) {
+        const langInfo = LANGUAGE_PATTERNS[match[1].toLowerCase()];
+        if (langInfo) {
+          parsed.primaryLanguage = langInfo.code;
+          break;
+        }
+      }
+    }
+
+    if (queryLower.includes(' and ') && parsed.languages && parsed.languages.length > 1) {
+      parsed.languageMatchMode = 'all';
+    } else {
+      parsed.languageMatchMode = 'any';
+    }
+
     return parsed;
+  }
+
+  private parseLanguagesFromQuery(queryLower: string): string[] {
+    const languages: string[] = [];
+    
+    const languageIndicators = [
+      /speaks?\s+(\w+)/gi,
+      /speaking\s+(\w+)/gi,
+      /fluent\s+in\s+(\w+)/gi,
+      /(\w+)[\s-]speaking/gi,
+      /who\s+knows?\s+(\w+)/gi,
+      /in\s+(\w+)\s+language/gi,
+      /understands?\s+(\w+)/gi,
+      /can\s+speak\s+(\w+)/gi,
+    ];
+
+    for (const pattern of languageIndicators) {
+      let match;
+      while ((match = pattern.exec(queryLower)) !== null) {
+        const langName = match[1].toLowerCase();
+        const langInfo = LANGUAGE_PATTERNS[langName];
+        if (langInfo && !languages.includes(langInfo.code)) {
+          languages.push(langInfo.code);
+        }
+      }
+    }
+
+    for (const [langName, langInfo] of Object.entries(LANGUAGE_PATTERNS)) {
+      if (queryLower.includes(langName) && !languages.includes(langInfo.code)) {
+        const beforeLang = queryLower.indexOf(langName);
+        const contextBefore = queryLower.substring(Math.max(0, beforeLang - 30), beforeLang);
+        
+        if (contextBefore.includes('speak') || 
+            contextBefore.includes('fluent') || 
+            contextBefore.includes('language') ||
+            contextBefore.includes('knows') ||
+            contextBefore.includes('understand') ||
+            queryLower.includes(`${langName}-speaking`) ||
+            queryLower.includes(`${langName} speaking`)) {
+          languages.push(langInfo.code);
+        }
+      }
+    }
+
+    return languages;
   }
 
   private explainMatch(candidate: any, query: ParsedQuery): string[] {
@@ -221,8 +420,41 @@ export class NaturalLanguageTalentSearch {
       }
     }
 
-    if (candidate.languages && candidate.languages.length > 1) {
-      reasons.push(`🌍 Speaks ${candidate.languages.join(', ')}`);
+    if (query.languages && query.languages.length > 0) {
+      const candidateLangs = candidate.languages || [];
+      const candidatePrimary = candidate.primaryLanguage;
+      
+      const matchingLanguages = query.languages.filter(lang => 
+        candidatePrimary === lang || candidateLangs.includes(lang)
+      );
+      
+      if (matchingLanguages.length > 0) {
+        const langNames = matchingLanguages.map(code => {
+          const entry = Object.entries(LANGUAGE_PATTERNS).find(([, info]) => info.code === code);
+          return entry ? entry[1].name : code;
+        });
+        
+        if (matchingLanguages.some(lang => candidatePrimary === lang)) {
+          reasons.push(`🗣️ Native ${langNames[0]} speaker`);
+        } else {
+          reasons.push(`🌍 Speaks ${langNames.join(', ')}`);
+        }
+      }
+    } else if (candidate.languages && candidate.languages.length > 0) {
+      const displayLangs = candidate.languages.slice(0, 3);
+      const langNames = displayLangs.map((code: string) => {
+        const entry = Object.entries(LANGUAGE_PATTERNS).find(([, info]) => info.code === code);
+        return entry ? entry[1].name : code;
+      });
+      reasons.push(`🌍 Speaks ${langNames.join(', ')}${candidate.languages.length > 3 ? '...' : ''}`);
+    }
+
+    if (query.primaryLanguage) {
+      if (candidate.primaryLanguage === query.primaryLanguage) {
+        const langEntry = Object.entries(LANGUAGE_PATTERNS).find(([, info]) => info.code === query.primaryLanguage);
+        const langName = langEntry ? langEntry[1].name : query.primaryLanguage;
+        reasons.push(`⭐ Primary language: ${langName}`);
+      }
     }
 
     return reasons;
@@ -254,6 +486,37 @@ export class NaturalLanguageTalentSearch {
       score += 0.15;
     }
 
+    if (parsedQuery.languages && parsedQuery.languages.length > 0) {
+      const candidateLangs = candidate.languages || [];
+      const candidatePrimary = candidate.primaryLanguage;
+      
+      const matchCount = parsedQuery.languages.filter(lang => 
+        candidatePrimary === lang || candidateLangs.includes(lang)
+      ).length;
+      
+      if (matchCount > 0) {
+        score += (matchCount / parsedQuery.languages.length) * 0.15;
+      }
+    }
+
+    if (parsedQuery.primaryLanguage) {
+      if (candidate.primaryLanguage === parsedQuery.primaryLanguage) {
+        score += 0.1;
+      } else if (candidate.languages?.includes(parsedQuery.primaryLanguage)) {
+        score += 0.05;
+      }
+    }
+
     return Math.min(score, 1.0);
+  }
+
+  static getLanguageCode(languageName: string): string | undefined {
+    const entry = LANGUAGE_PATTERNS[languageName.toLowerCase()];
+    return entry?.code;
+  }
+
+  static getLanguageName(code: string): string | undefined {
+    const entry = Object.entries(LANGUAGE_PATTERNS).find(([, info]) => info.code === code);
+    return entry?.[1].name;
   }
 }

@@ -297,10 +297,12 @@ export interface IStorage {
   getPostComments(postId: number): Promise<SelectPostComment[]>;
   
   getUserFriends(userId: number): Promise<any[]>;
+  getFriendshipById(userId: number, friendId: number): Promise<any | undefined>;
   getFriendRequests(userId: number): Promise<any[]>;
+  getOutgoingFriendRequest(senderId: number, receiverId: number): Promise<any | null>;
   getFriendSuggestions(userId: number): Promise<any[]>;
   sendFriendRequest(data: { senderId: number; receiverId: number; [key: string]: any }): Promise<any>;
-  acceptFriendRequest(requestId: number): Promise<void>;
+  acceptFriendRequest(requestId: number, receiverData?: { receiverMessage?: string; receiverPrivateNote?: string }): Promise<void>;
   declineFriendRequest(requestId: number): Promise<void>;
   getMutualFriends(userId1: number, userId2: number): Promise<SelectUser[]>;
   getConnectionDegree(userId1: number, userId2: number): Promise<number | null>;
@@ -313,7 +315,53 @@ export interface IStorage {
     sharedGroups: number;
     lastInteraction: string | null;
   } | null>;
+  getFriendshipSharedData(userId: number, friendId: number): Promise<{
+    sharedPosts: Array<{
+      id: number;
+      userId: number;
+      content: string;
+      imageUrl?: string | null;
+      videoUrl?: string | null;
+      videoThumbnail?: string | null;
+      visibility: string;
+      likes: number;
+      comments: number;
+      createdAt: string;
+      isSaved?: boolean;
+      currentReaction?: string | null;
+      reactions?: Record<string, number>;
+      tags?: string[] | null;
+      user?: {
+        id: number;
+        name: string;
+        username: string;
+        profileImage?: string | null;
+        friendshipStatus?: 'accepted' | 'pending' | 'none' | null;
+        tangoRoles?: string[] | null;
+      };
+    }>;
+    sharedLikes: Array<{ postId: number; postTitle: string; likedAt: string }>;
+    sharedTravel: Array<{ city: string; country: string; startDate: string; endDate: string | null }>;
+    sharedComments: Array<{ id: number; postId: number; content: string; createdAt: string }>;
+    commonCities: Array<{ city: string; country: string; userStartDate: string; friendStartDate: string }>;
+    sharedEventsDetails: Array<{ id: number; title: string; date: string; location: string }>;
+  } | null>;
   checkFriendship(userId1: number, userId2: number): Promise<boolean>;
+  getFriendshipInfo(userId: number, friendId: number): Promise<{
+    id: number;
+    closenessScore: number;
+    createdAt: string;
+    lastInteractionAt?: string;
+    friendRequest?: {
+      id: number;
+      senderMessage?: string;
+      receiverMessage?: string;
+      danceLocation?: string;
+      danceStory?: string;
+      didWeDance?: boolean;
+      createdAt: string;
+    };
+  } | null>;
   
   // Communities
   getCommunityByCity(cityName: string): Promise<any | undefined>;
@@ -1978,8 +2026,51 @@ export class DbStorage implements IStorage {
     return result[0];
   }
 
-  async getPostComments(postId: number): Promise<SelectPostComment[]> {
-    return await db.select().from(postComments).where(eq(postComments.postId, postId)).orderBy(asc(postComments.createdAt));
+  async getPostComments(postId: number): Promise<any[]> {
+    try {
+      // Use Drizzle ORM with flat column selection to avoid nested object issues
+      const result = await db
+        .select({
+          id: postComments.id,
+          postId: postComments.postId,
+          userId: postComments.userId,
+          content: postComments.content,
+          parentId: postComments.parentCommentId,
+          likes: postComments.likes,
+          createdAt: postComments.createdAt,
+          updatedAt: postComments.updatedAt,
+          userName: users.name,
+          userUsername: users.username,
+          userProfileImage: users.profileImage,
+          userTangoRoles: users.tangoRoles,
+        })
+        .from(postComments)
+        .leftJoin(users, eq(postComments.userId, users.id))
+        .where(eq(postComments.postId, postId))
+        .orderBy(asc(postComments.createdAt));
+      
+      // Map flat results to nested structure for frontend compatibility
+      return result.map(row => ({
+        id: row.id,
+        postId: row.postId,
+        userId: row.userId,
+        content: row.content,
+        parentId: row.parentId,
+        likes: row.likes,
+        createdAt: row.createdAt,
+        updatedAt: row.updatedAt,
+        user: row.userId ? {
+          id: row.userId,
+          name: row.userName,
+          username: row.userUsername,
+          profileImage: row.userProfileImage,
+          tangoRoles: row.userTangoRoles,
+        } : null,
+      }));
+    } catch (error) {
+      console.error('Error fetching comments:', error);
+      return [];
+    }
   }
 
   async followUser(followerId: number, followingId: number): Promise<SelectFollow | undefined> {
@@ -2022,6 +2113,7 @@ export class DbStorage implements IStorage {
         profileImage: users.profileImage,
         bio: users.bio,
         city: users.city,
+        tangoRoles: users.tangoRoles,
         closenessScore: friendships.closenessScore,
         connectionDegree: friendships.connectionDegree,
         lastInteractionAt: friendships.lastInteractionAt,
@@ -2031,6 +2123,60 @@ export class DbStorage implements IStorage {
       .where(eq(friendships.userId, userId));
     
     return friendshipsData;
+  }
+
+  async getFriendshipById(userId: number, friendId: number): Promise<any | undefined> {
+    const result = await db
+      .select({
+        id: friendships.id,
+        userId: friendships.userId,
+        friendId: friendships.friendId,
+        createdAt: friendships.createdAt,
+        closenessScore: friendships.closenessScore,
+        lastInteractionAt: friendships.lastInteractionAt,
+        status: friendships.status,
+        ourStory: friendships.ourStory,
+        whenWeMet: friendships.whenWeMet,
+        whereWeMet: friendships.whereWeMet,
+        friendName: users.name,
+        friendUsername: users.username,
+        friendEmail: users.email,
+        friendProfileImage: users.profileImage,
+        friendBio: users.bio,
+        friendCity: users.city,
+        friendCountry: users.country,
+        friendTangoRoles: users.tangoRoles,
+      })
+      .from(friendships)
+      .leftJoin(users, eq(friendships.friendId, users.id))
+      .where(and(eq(friendships.userId, userId), eq(friendships.friendId, friendId)))
+      .limit(1);
+    
+    if (!result[0]) return undefined;
+    
+    return {
+      id: result[0].id,
+      userId: result[0].userId,
+      friendId: result[0].friendId,
+      createdAt: result[0].createdAt,
+      closenessScore: result[0].closenessScore,
+      lastInteractionAt: result[0].lastInteractionAt,
+      status: result[0].status,
+      ourStory: result[0].ourStory,
+      whenWeMet: result[0].whenWeMet,
+      whereWeMet: result[0].whereWeMet,
+      friend: {
+        id: result[0].friendId,
+        name: result[0].friendName,
+        username: result[0].friendUsername,
+        email: result[0].friendEmail,
+        profileImage: result[0].friendProfileImage,
+        bio: result[0].friendBio,
+        city: result[0].friendCity,
+        country: result[0].friendCountry,
+        tangoRoles: result[0].friendTangoRoles,
+      },
+    };
   }
 
   async getFriendRequests(userId: number): Promise<any[]> {
@@ -2060,7 +2206,7 @@ export class DbStorage implements IStorage {
       .where(
         and(
           eq(friendRequests.receiverId, userId),
-          eq(friendRequests.status, 'pending')
+          inArray(friendRequests.status, ['pending', 'snoozed'])
         )
       );
     
@@ -2087,6 +2233,22 @@ export class DbStorage implements IStorage {
         city: row.senderCity,
       }
     }));
+  }
+
+  async getOutgoingFriendRequest(senderId: number, receiverId: number): Promise<any | null> {
+    const [request] = await db
+      .select()
+      .from(friendRequests)
+      .where(
+        and(
+          eq(friendRequests.senderId, senderId),
+          eq(friendRequests.receiverId, receiverId),
+          eq(friendRequests.status, 'pending')
+        )
+      )
+      .limit(1);
+    
+    return request || null;
   }
 
   async getFriendSuggestions(userId: number): Promise<any[]> {
@@ -2153,7 +2315,7 @@ export class DbStorage implements IStorage {
     }
   }
 
-  async acceptFriendRequest(requestId: number): Promise<void> {
+  async acceptFriendRequest(requestId: number, receiverData?: { receiverMessage?: string; receiverPrivateNote?: string }): Promise<void> {
     const request = await db.select({
       id: friendRequests.id,
       senderId: friendRequests.senderId,
@@ -2168,7 +2330,9 @@ export class DbStorage implements IStorage {
     await db.update(friendRequests)
       .set({ 
         status: 'accepted', 
-        respondedAt: new Date()
+        respondedAt: new Date(),
+        ...(receiverData?.receiverMessage && { receiverMessage: receiverData.receiverMessage }),
+        ...(receiverData?.receiverPrivateNote && { receiverPrivateNote: receiverData.receiverPrivateNote }),
       })
       .where(eq(friendRequests.id, requestId));
     
@@ -2357,6 +2521,84 @@ export class DbStorage implements IStorage {
     return friendship.length > 0;
   }
 
+  async getFriendshipInfo(userId: number, friendId: number): Promise<{
+    id: number;
+    closenessScore: number;
+    createdAt: string;
+    lastInteractionAt?: string;
+    friendRequest?: {
+      id: number;
+      senderId?: number;
+      senderMessage?: string;
+      receiverMessage?: string;
+      senderPrivateNote?: string;
+      receiverPrivateNote?: string;
+      danceLocation?: string;
+      danceStory?: string;
+      didWeDance?: boolean;
+      createdAt: string;
+    };
+  } | null> {
+    const friendship = await db.select()
+      .from(friendships)
+      .where(
+        or(
+          and(eq(friendships.userId, userId), eq(friendships.friendId, friendId)),
+          and(eq(friendships.userId, friendId), eq(friendships.friendId, userId))
+        )
+      )
+      .limit(1);
+
+    if (friendship.length === 0) {
+      return null;
+    }
+
+    const friendshipData = friendship[0];
+
+    const friendRequest = await db.select({
+      id: friendRequests.id,
+      senderId: friendRequests.senderId,
+      senderMessage: friendRequests.senderMessage,
+      receiverMessage: friendRequests.receiverMessage,
+      senderPrivateNote: friendRequests.senderPrivateNote,
+      receiverPrivateNote: friendRequests.receiverPrivateNote,
+      danceLocation: friendRequests.danceLocation,
+      danceStory: friendRequests.danceStory,
+      didWeDance: friendRequests.didWeDance,
+      createdAt: friendRequests.createdAt,
+    })
+      .from(friendRequests)
+      .where(
+        and(
+          or(
+            and(eq(friendRequests.senderId, userId), eq(friendRequests.receiverId, friendId)),
+            and(eq(friendRequests.senderId, friendId), eq(friendRequests.receiverId, userId))
+          ),
+          eq(friendRequests.status, 'accepted')
+        )
+      )
+      .limit(1);
+
+    return {
+      id: friendshipData.id,
+      closenessScore: friendshipData.closenessScore,
+      createdAt: friendshipData.createdAt.toISOString(),
+      lastInteractionAt: friendshipData.lastInteractionAt?.toISOString(),
+      friendRequest: friendRequest[0] ? {
+        id: friendRequest[0].id,
+        senderId: friendRequest[0].senderId,
+        senderMessage: friendRequest[0].senderMessage || undefined,
+        receiverMessage: friendRequest[0].receiverMessage || undefined,
+        senderPrivateNote: friendRequest[0].senderPrivateNote || undefined,
+        receiverPrivateNote: friendRequest[0].receiverPrivateNote || undefined,
+        danceLocation: friendRequest[0].danceLocation || undefined,
+        danceStory: friendRequest[0].danceStory || undefined,
+        didWeDance: friendRequest[0].didWeDance || undefined,
+        createdAt: friendRequest[0].createdAt?.toISOString() || new Date().toISOString(),
+      } : undefined,
+    };
+  }
+
   async removeFriend(userId: number, friendId: number): Promise<void> {
     await db.delete(friendships).where(
       or(
@@ -2434,6 +2676,352 @@ export class DbStorage implements IStorage {
       sharedGroups: sharedGroupIds.length,
       lastInteraction: friendshipData.lastInteractionAt ? friendshipData.lastInteractionAt.toISOString() : null,
     };
+  }
+
+  async getFriendshipSharedData(userId: number, friendId: number): Promise<{
+    sharedPosts: Array<{
+      id: number;
+      userId: number;
+      content: string;
+      imageUrl?: string | null;
+      videoUrl?: string | null;
+      videoThumbnail?: string | null;
+      visibility: string;
+      likes: number;
+      comments: number;
+      createdAt: string;
+      isSaved?: boolean;
+      currentReaction?: string | null;
+      reactions?: Record<string, number>;
+      tags?: string[] | null;
+      user?: {
+        id: number;
+        name: string;
+        username: string;
+        profileImage?: string | null;
+        friendshipStatus?: 'accepted' | 'pending' | 'none' | null;
+        tangoRoles?: string[] | null;
+      };
+    }>;
+    sharedLikes: Array<{ postId: number; postTitle: string; likedAt: string }>;
+    sharedTravel: Array<{ city: string; country: string; startDate: string; endDate: string | null }>;
+    sharedComments: Array<{ id: number; postId: number; content: string; createdAt: string }>;
+    commonCities: Array<{ city: string; country: string; userStartDate: string; friendStartDate: string }>;
+    sharedEventsDetails: Array<{ id: number; title: string; date: string; location: string }>;
+  } | null> {
+    try {
+      console.log(`[getFriendshipSharedData] Called with userId=${userId}, friendId=${friendId}`);
+      const isFriends = await this.checkFriendship(userId, friendId);
+      console.log(`[getFriendshipSharedData] isFriends=${isFriends}`);
+      if (!isFriends) {
+        console.log(`[getFriendshipSharedData] Not friends, returning null`);
+        return null;
+      }
+
+      // Initialize empty arrays for all data types
+      const sharedPosts: Array<{
+        id: number;
+        userId: number;
+        content: string;
+        imageUrl?: string | null;
+        videoUrl?: string | null;
+        videoThumbnail?: string | null;
+        visibility: string;
+        likes: number;
+        comments: number;
+        createdAt: string;
+        isSaved?: boolean;
+        currentReaction?: string | null;
+        reactions?: Record<string, number>;
+        tags?: string[] | null;
+        user?: {
+          id: number;
+          name: string;
+          username: string;
+          profileImage?: string | null;
+          friendshipStatus?: 'accepted' | 'pending' | 'none' | null;
+          tangoRoles?: string[] | null;
+        };
+      }> = [];
+      const sharedLikes: Array<{ postId: number; postTitle: string; likedAt: string }> = [];
+      const sharedTravel: Array<{ city: string; country: string; startDate: string; endDate: string | null }> = [];
+      const sharedComments: Array<{ id: number; postId: number; content: string; createdAt: string }> = [];
+      const commonCities: Array<{ city: string; country: string; userStartDate: string; friendStartDate: string }> = [];
+      const sharedEventsDetails: Array<{ id: number; title: string; date: string; location: string }> = [];
+
+      // Get posts by both users OR posts mentioning either user with full data for PostItem component
+      try {
+        // Get usernames to search for mentions
+        const userData = await db.select({ username: users.username, name: users.name }).from(users).where(eq(users.id, userId)).limit(1);
+        const friendData = await db.select({ username: users.username, name: users.name }).from(users).where(eq(users.id, friendId)).limit(1);
+        const userUsername = userData[0]?.username || '';
+        const friendUsername = friendData[0]?.username || '';
+        console.log(`[getFriendshipSharedData] userUsername=${userUsername}, friendUsername=${friendUsername}`);
+        
+        // Get posts authored by either user
+        const userPosts = await db.select().from(posts).where(eq(posts.userId, userId)).limit(20);
+        const friendPosts = await db.select().from(posts).where(eq(posts.userId, friendId)).limit(20);
+        console.log(`[getFriendshipSharedData] userPosts=${userPosts.length}, friendPosts=${friendPosts.length}`);
+        
+        // Get posts mentioning either user (search for @username in content)
+        const mentionPosts = await db.select().from(posts).where(
+          or(
+            sql`${posts.content} ILIKE ${'%@' + userUsername + '%'}`,
+            sql`${posts.content} ILIKE ${'%@' + friendUsername + '%'}`
+          )
+        ).limit(30);
+        console.log(`[getFriendshipSharedData] mentionPosts=${mentionPosts.length}`);
+        
+        // Combine and dedupe posts
+        const postMap = new Map<number, typeof userPosts[0]>();
+        [...userPosts, ...friendPosts, ...mentionPosts].forEach(p => postMap.set(p.id, p));
+        console.log(`[getFriendshipSharedData] postMap size=${postMap.size}`);
+        
+        // Filter to ONLY posts mentioning BOTH users together
+        const allPosts = Array.from(postMap.values())
+          .filter(p => {
+            const content = (p.content || '').toLowerCase();
+            const hasBothMentions = content.includes('@' + userUsername.toLowerCase()) && 
+                                   content.includes('@' + friendUsername.toLowerCase());
+            console.log(`[getFriendshipSharedData] Post ${p.id}: content="${content.substring(0,50)}", hasBoth=${hasBothMentions}`);
+            return hasBothMentions;
+          })
+          .sort((a, b) => (b.createdAt?.getTime() || 0) - (a.createdAt?.getTime() || 0))
+          .slice(0, 15);
+        console.log(`[getFriendshipSharedData] allPosts after filter=${allPosts.length}`);
+
+        for (const post of allPosts) {
+          try {
+            // Get author info
+            const author = await db.select({
+              id: users.id,
+              name: users.name,
+              username: users.username,
+              profileImage: users.profileImage,
+              tangoRoles: users.tangoRoles
+            }).from(users).where(eq(users.id, post.userId)).limit(1);
+
+            // Get like count
+            const likeCount = await db.select({ count: sql<number>`count(*)::int` })
+              .from(postLikes)
+              .where(eq(postLikes.postId, post.id));
+
+            // Get comment count
+            const commentCount = await db.select({ count: sql<number>`count(*)::int` })
+              .from(postComments)
+              .where(eq(postComments.postId, post.id));
+
+            // Check if current user saved this post
+            let isSaved = false;
+            try {
+              const savedCheck = await db.select({ id: savedPosts.id })
+                .from(savedPosts)
+                .where(and(eq(savedPosts.postId, post.id), eq(savedPosts.userId, userId)))
+                .limit(1);
+              isSaved = savedCheck.length > 0;
+            } catch (savedErr) {
+              console.log(`[getFriendshipSharedData] Could not check saved status for post ${post.id}`);
+            }
+
+            // Get current user's reaction
+            let currentReaction: string | null = null;
+            try {
+              const userReaction = await db.select({ reactionType: postLikes.reactionType })
+                .from(postLikes)
+                .where(and(eq(postLikes.postId, post.id), eq(postLikes.userId, userId)))
+                .limit(1);
+              currentReaction = userReaction[0]?.reactionType || null;
+            } catch (reactionErr) {
+              console.log(`[getFriendshipSharedData] Could not get reaction for post ${post.id}`);
+            }
+
+            // Get reaction counts
+            const reactions: Record<string, number> = {};
+            try {
+              const reactionCounts = await db.select({ 
+                reactionType: postLikes.reactionType, 
+                count: sql<number>`count(*)::int` 
+              })
+                .from(postLikes)
+                .where(eq(postLikes.postId, post.id))
+                .groupBy(postLikes.reactionType);
+
+              reactionCounts.forEach(r => {
+                if (r.reactionType) reactions[r.reactionType] = r.count;
+              });
+            } catch (reactionCountErr) {
+              console.log(`[getFriendshipSharedData] Could not get reaction counts for post ${post.id}`);
+            }
+
+            sharedPosts.push({
+              id: post.id,
+              userId: post.userId,
+              content: post.content || '',
+              imageUrl: post.imageUrl || null,
+              videoUrl: post.videoUrl || null,
+              videoThumbnail: post.videoThumbnail || null,
+              visibility: post.visibility || 'public',
+              likes: likeCount[0]?.count || 0,
+              comments: commentCount[0]?.count || 0,
+              createdAt: post.createdAt?.toISOString() || new Date().toISOString(),
+              isSaved,
+              currentReaction,
+              reactions,
+              tags: post.tags || null,
+              user: author[0] ? {
+                id: author[0].id,
+                name: author[0].name,
+                username: author[0].username,
+                profileImage: author[0].profileImage || null,
+                friendshipStatus: 'accepted' as const,
+                tangoRoles: author[0].tangoRoles || null
+              } : undefined
+            });
+            console.log(`[getFriendshipSharedData] Successfully processed post ${post.id}`);
+          } catch (e) {
+            console.error(`Error processing post ${post.id}:`, e);
+          }
+        }
+      } catch (e) {
+        console.error("Error fetching shared posts:", e);
+      }
+
+      // Get shared likes
+      try {
+        const userLikedPosts = await db.select({ postId: postLikes.postId }).from(postLikes).where(eq(postLikes.userId, userId));
+        const friendLikedPosts = await db.select({ postId: postLikes.postId }).from(postLikes).where(eq(postLikes.userId, friendId));
+        const userLikedIds = userLikedPosts.map(p => p.postId);
+        const friendLikedIds = friendLikedPosts.map(p => p.postId);
+        const sharedLikedPostIds = userLikedIds.filter(id => friendLikedIds.includes(id));
+
+        for (const postId of sharedLikedPostIds.slice(0, 10)) {
+          try {
+            const post = await db.select().from(posts).where(eq(posts.id, postId)).limit(1);
+            if (post[0]) {
+              sharedLikes.push({
+                postId,
+                postTitle: post[0].content?.substring(0, 100) || 'Untitled',
+                likedAt: new Date().toISOString()
+              });
+            }
+          } catch (e) {
+            console.error(`Error fetching liked post ${postId}:`, e);
+          }
+        }
+      } catch (e) {
+        console.error("Error fetching shared likes:", e);
+      }
+
+      // Get shared comments
+      try {
+        const userComments = await db.select({ postId: postComments.postId, id: postComments.id, content: postComments.content, createdAt: postComments.createdAt })
+          .from(postComments).where(eq(postComments.userId, userId)).limit(50);
+        const friendCommentedPostIds = await db.select({ postId: postComments.postId })
+          .from(postComments).where(eq(postComments.userId, friendId));
+        const friendCommentPostIds = friendCommentedPostIds.map(c => c.postId);
+        
+        userComments
+          .filter(c => friendCommentPostIds.includes(c.postId))
+          .slice(0, 10)
+          .forEach(c => {
+            sharedComments.push({
+              id: c.id,
+              postId: c.postId,
+              content: c.content,
+              createdAt: c.createdAt?.toISOString() || new Date().toISOString()
+            });
+          });
+      } catch (e) {
+        console.error("Error fetching shared comments:", e);
+      }
+
+      // Get location history for common cities and shared travel
+      try {
+        const userLocations = await db.select()
+          .from(userLocationHistory)
+          .where(eq(userLocationHistory.userId, userId));
+        const friendLocations = await db.select()
+          .from(userLocationHistory)
+          .where(eq(userLocationHistory.userId, friendId));
+
+        for (const userLoc of userLocations) {
+          const matchingFriendLoc = friendLocations.find(
+            fl => fl.city?.toLowerCase() === userLoc.city?.toLowerCase()
+          );
+          if (matchingFriendLoc) {
+            commonCities.push({
+              city: userLoc.city,
+              country: userLoc.country || '',
+              userStartDate: userLoc.startDate?.toString() || '',
+              friendStartDate: matchingFriendLoc.startDate?.toString() || ''
+            });
+
+            // Check for overlapping travel dates
+            const userStart = userLoc.startDate ? new Date(userLoc.startDate.toString()) : null;
+            const userEnd = userLoc.endDate ? new Date(userLoc.endDate.toString()) : new Date();
+            const friendStart = matchingFriendLoc.startDate ? new Date(matchingFriendLoc.startDate.toString()) : null;
+            const friendEnd = matchingFriendLoc.endDate ? new Date(matchingFriendLoc.endDate.toString()) : new Date();
+
+            if (userStart && friendStart && userStart <= friendEnd && friendStart <= userEnd) {
+              sharedTravel.push({
+                city: userLoc.city,
+                country: userLoc.country || '',
+                startDate: userLoc.startDate?.toString() || '',
+                endDate: userLoc.endDate?.toString() || null
+              });
+            }
+          }
+        }
+      } catch (e) {
+        console.error("Error fetching location history:", e);
+      }
+
+      // Get shared events
+      try {
+        const userEventRsvps = await db.select({ eventId: eventRsvps.eventId }).from(eventRsvps).where(eq(eventRsvps.userId, userId));
+        const friendEventRsvps = await db.select({ eventId: eventRsvps.eventId }).from(eventRsvps).where(eq(eventRsvps.userId, friendId));
+        const userEventIds = userEventRsvps.map(e => e.eventId);
+        const friendEventIds = friendEventRsvps.map(e => e.eventId);
+        const sharedEventIds = userEventIds.filter(id => friendEventIds.includes(id));
+
+        for (const eventId of sharedEventIds.slice(0, 10)) {
+          try {
+            const event = await db.select().from(events).where(eq(events.id, eventId)).limit(1);
+            if (event[0]) {
+              sharedEventsDetails.push({
+                id: event[0].id,
+                title: event[0].name || event[0].title || 'Untitled Event',
+                date: event[0].startDate?.toISOString() || new Date().toISOString(),
+                location: event[0].location || event[0].city || 'Unknown'
+              });
+            }
+          } catch (e) {
+            console.error(`Error fetching event ${eventId}:`, e);
+          }
+        }
+      } catch (e) {
+        console.error("Error fetching shared events:", e);
+      }
+
+      return {
+        sharedPosts,
+        sharedLikes,
+        sharedTravel,
+        sharedComments,
+        commonCities,
+        sharedEventsDetails
+      };
+    } catch (error) {
+      console.error("[getFriendshipSharedData] Fatal error:", error);
+      return {
+        sharedPosts: [],
+        sharedLikes: [],
+        sharedTravel: [],
+        sharedComments: [],
+        commonCities: [],
+        sharedEventsDetails: []
+      };
+    }
   }
 
   async deleteNotification(notificationId: number): Promise<void> {
@@ -3250,7 +3838,17 @@ export class DbStorage implements IStorage {
 
   async getUserNotifications(userId: number, limit?: number): Promise<SelectNotification[]> {
     let query = db
-      .select()
+      .select({
+        id: notifications.id,
+        userId: notifications.userId,
+        type: notifications.type,
+        title: notifications.title,
+        message: notifications.message,
+        data: notifications.data,
+        isRead: notifications.isRead,
+        actionUrl: notifications.actionUrl,
+        createdAt: notifications.createdAt,
+      })
       .from(notifications)
       .where(eq(notifications.userId, userId))
       .orderBy(desc(notifications.createdAt));
@@ -3263,11 +3861,11 @@ export class DbStorage implements IStorage {
   }
 
   async markNotificationAsRead(id: number): Promise<void> {
-    await db.update(notifications).set({ read: true }).where(eq(notifications.id, id));
+    await db.update(notifications).set({ isRead: true }).where(eq(notifications.id, id));
   }
 
   async markAllNotificationsAsRead(userId: number): Promise<void> {
-    await db.update(notifications).set({ read: true }).where(eq(notifications.userId, userId));
+    await db.update(notifications).set({ isRead: true }).where(eq(notifications.userId, userId));
   }
 
   // Platform Independence: Deployments

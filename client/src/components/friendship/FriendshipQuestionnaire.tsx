@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -25,9 +25,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Badge } from "@/components/ui/badge";
-import { CalendarIcon, MapPin, Users, Lock, Eye } from "lucide-react";
+import { CalendarIcon, MapPin, Users, Lock, Eye, ImageIcon, X, Loader2, Send } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import { uploadMediaFiles } from "@/lib/mediaUpload";
+import { useToast } from "@/hooks/use-toast";
 
 const questionnaireSchema = z.object({
   whenWeMet: z.date().optional(),
@@ -43,8 +45,9 @@ interface FriendshipQuestionnaireProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   friendName: string;
-  onSubmit: (data: QuestionnaireFormData) => void;
+  onSubmit: (data: QuestionnaireFormData & { mediaUrls?: string[] }) => void;
   isLoading?: boolean;
+  mode?: 'send' | 'accept'; // 'send' for sending request, 'accept' for accepting request
 }
 
 export function FriendshipQuestionnaire({
@@ -53,8 +56,17 @@ export function FriendshipQuestionnaire({
   friendName,
   onSubmit,
   isLoading = false,
+  mode = 'send',
 }: FriendshipQuestionnaireProps) {
+  const buttonText = mode === 'send' 
+    ? (isLoading ? "Sending..." : "Send Friend Request")
+    : (isLoading ? "Accepting..." : "Accept & Confirm");
   const [showPreview, setShowPreview] = useState(false);
+  const [mediaFiles, setMediaFiles] = useState<File[]>([]);
+  const [mediaPreviews, setMediaPreviews] = useState<string[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
 
   const form = useForm<QuestionnaireFormData>({
     resolver: zodResolver(questionnaireSchema),
@@ -65,9 +77,89 @@ export function FriendshipQuestionnaire({
     },
   });
 
-  const handleSubmit = (data: QuestionnaireFormData) => {
-    onSubmit(data);
-    form.reset();
+  // Handle file selection - deferred upload pattern like PostCreator
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+
+    // Limit to 4 photos
+    const remainingSlots = 4 - mediaFiles.length;
+    const filesToAdd = files.slice(0, remainingSlots);
+
+    if (filesToAdd.length < files.length) {
+      toast({
+        title: "Photo limit reached",
+        description: "You can add up to 4 photos",
+        variant: "destructive",
+      });
+    }
+
+    // Validate file types
+    const validFiles = filesToAdd.filter(file => 
+      file.type.startsWith('image/') || file.type.startsWith('video/')
+    );
+
+    if (validFiles.length < filesToAdd.length) {
+      toast({
+        title: "Invalid file type",
+        description: "Only images and videos are allowed",
+        variant: "destructive",
+      });
+    }
+
+    // Create previews using blob URLs
+    const newPreviews = validFiles.map(file => URL.createObjectURL(file));
+    
+    setMediaFiles(prev => [...prev, ...validFiles]);
+    setMediaPreviews(prev => [...prev, ...newPreviews]);
+
+    // Reset input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  // Remove media
+  const handleRemoveMedia = (index: number) => {
+    // Revoke blob URL to prevent memory leak
+    URL.revokeObjectURL(mediaPreviews[index]);
+    
+    setMediaFiles(prev => prev.filter((_, i) => i !== index));
+    setMediaPreviews(prev => prev.filter((_, i) => i !== index));
+  };
+
+  // Submit with deferred upload
+  const handleSubmit = async (data: QuestionnaireFormData) => {
+    try {
+      let uploadedUrls: string[] = [];
+
+      // Upload media files if any (deferred upload pattern)
+      if (mediaFiles.length > 0) {
+        setIsUploading(true);
+        const results = await uploadMediaFiles(mediaFiles);
+        uploadedUrls = results.map(r => r.url);
+        setIsUploading(false);
+      }
+
+      // Submit form data with uploaded media URLs
+      onSubmit({
+        ...data,
+        mediaUrls: uploadedUrls.length > 0 ? uploadedUrls : undefined,
+      });
+
+      // Cleanup
+      mediaPreviews.forEach(url => URL.revokeObjectURL(url));
+      setMediaFiles([]);
+      setMediaPreviews([]);
+      form.reset();
+    } catch (error) {
+      setIsUploading(false);
+      toast({
+        title: "Upload failed",
+        description: "Failed to upload media. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const watchOurStory = form.watch("ourStory");
@@ -75,12 +167,14 @@ export function FriendshipQuestionnaire({
   const watchWhenWeMet = form.watch("whenWeMet");
   const watchWhereWeMet = form.watch("whereWeMet");
 
+  const isSubmitting = isLoading || isUploading;
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl">
-            Tell us about your friendship with {friendName}
+            Connect with {friendName}
           </DialogTitle>
           <DialogDescription>
             Share your story and memories. Only "Our Story" will be visible to both of you.
@@ -196,6 +290,77 @@ export function FriendshipQuestionnaire({
                 )}
               />
 
+              {/* Media Upload Section - Like PostCreator/Memories Feed */}
+              <div className="space-y-3">
+                <FormLabel className="flex items-center gap-2">
+                  Photos & Videos
+                  <Badge variant="outline" className="gap-1">
+                    <Users className="h-3 w-3" />
+                    Public
+                  </Badge>
+                </FormLabel>
+                
+                {/* Media Previews */}
+                {mediaPreviews.length > 0 && (
+                  <div className="grid grid-cols-2 gap-2">
+                    {mediaPreviews.map((preview, index) => (
+                      <div key={index} className="relative group aspect-video rounded-lg overflow-hidden border">
+                        {mediaFiles[index]?.type.startsWith('video/') ? (
+                          <video 
+                            src={preview} 
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <img 
+                            src={preview} 
+                            alt={`Preview ${index + 1}`}
+                            className="w-full h-full object-cover"
+                          />
+                        )}
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          size="icon"
+                          className="absolute top-2 right-2 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                          onClick={() => handleRemoveMedia(index)}
+                          data-testid={`button-remove-media-${index}`}
+                        >
+                          <X className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Add Media Button */}
+                {mediaFiles.length < 4 && (
+                  <div>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*,video/*"
+                      multiple
+                      className="hidden"
+                      onChange={handleFileSelect}
+                      data-testid="input-media-upload"
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="gap-2"
+                      onClick={() => fileInputRef.current?.click()}
+                      data-testid="button-add-media"
+                    >
+                      <ImageIcon className="h-4 w-4" />
+                      Add Photos/Videos ({mediaFiles.length}/4)
+                    </Button>
+                  </div>
+                )}
+                <p className="text-xs text-muted-foreground">
+                  Share photos from when you met or danced together
+                </p>
+              </div>
+
               {/* Private Note */}
               <FormField
                 control={form.control}
@@ -241,10 +406,10 @@ export function FriendshipQuestionnaire({
                 </Button>
                 <Button 
                   type="submit" 
-                  disabled={isLoading}
+                  disabled={isSubmitting}
                   data-testid="button-submit"
                 >
-                  {isLoading ? "Accepting..." : "Accept & Confirm"}
+                  {buttonText}
                 </Button>
               </DialogFooter>
             </form>
@@ -295,7 +460,34 @@ export function FriendshipQuestionnaire({
                 </div>
               )}
 
-              {!watchOurStory && !watchWhereWeMet && !watchWhenWeMet && (
+              {/* Media Preview */}
+              {mediaPreviews.length > 0 && (
+                <div>
+                  <div className="text-sm font-medium text-muted-foreground mb-2">
+                    Photos & Videos
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    {mediaPreviews.map((preview, index) => (
+                      <div key={index} className="aspect-video rounded-lg overflow-hidden border">
+                        {mediaFiles[index]?.type.startsWith('video/') ? (
+                          <video 
+                            src={preview} 
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <img 
+                            src={preview} 
+                            alt={`Preview ${index + 1}`}
+                            className="w-full h-full object-cover"
+                          />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {!watchOurStory && !watchWhereWeMet && !watchWhenWeMet && mediaPreviews.length === 0 && (
                 <p className="text-sm text-muted-foreground text-center py-4">
                   Fill in the form to see a preview
                 </p>
@@ -327,10 +519,10 @@ export function FriendshipQuestionnaire({
               </Button>
               <Button
                 onClick={form.handleSubmit(handleSubmit)}
-                disabled={isLoading}
+                disabled={isSubmitting}
                 data-testid="button-submit-preview"
               >
-                {isLoading ? "Accepting..." : "Accept & Confirm"}
+                {buttonText}
               </Button>
             </DialogFooter>
           </div>

@@ -1,0 +1,68 @@
+# Mundo Tango - Mr. Blue Tour: Feature Highlights
+# Guided tour showcasing key platform features
+id: feature-highlights
+name: Feature Highlights Tour
+description: Mr. Blue highlights the most powerful features of Mundo Tango
+type: tour
+startPath: /
+
+viewport:
+  width: 1280
+  height: 720
+
+steps:
+  - action: wait
+    delay: 1500
+    description: Feature highlights begin
+
+  - action: scroll
+    value: "500"
+    delay: 2000
+    description: Discover events worldwide
+
+  - action: wait
+    delay: 2000
+    description: Global event calendar
+
+  - action: scroll
+    value: "400"
+    delay: 1500
+    description: Connect with dancers
+
+  - action: wait
+    delay: 2000
+    description: Partner matching
+
+  - action: scroll
+    value: "400"
+    delay: 1500
+    description: AI-powered assistance
+
+  - action: wait
+    delay: 2000
+    description: Mr. Blue at your service
+
+  - action: scroll
+    value: "300"
+    delay: 1500
+    description: Travel planning
+
+  - action: wait
+    delay: 2000
+    description: Tour complete
+
+output:
+  filename: feature-highlights.mp4
+  format: mp4
+  thumbnail: true
+
+metadata:
+  duration: "~18 seconds"
+  category: feature-tour
+  tags:
+    - tour
+    - features
+    - highlights
+    - mr-blue
+  marketingUse: false
+  facebookOptimized: false

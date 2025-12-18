@@ -1,0 +1,64 @@
+# Mundo Tango - Customer Journey: Event Discovery
+# Records the event browsing and discovery experience
+id: event-discovery
+name: Event Discovery Journey
+description: Explore how dancers discover tango events, milongas, and festivals worldwide
+type: customer
+startPath: /events
+
+viewport:
+  width: 1280
+  height: 720
+
+steps:
+  - action: wait
+    delay: 2500
+    description: Show events calendar overview
+
+  - action: scroll
+    value: "300"
+    delay: 1000
+    description: Browse event listings
+
+  - action: hover
+    target: '[data-testid*="event-card"]'
+    delay: 1000
+    description: Hover over an event card
+
+  - action: wait
+    delay: 1000
+    description: Show event preview
+
+  - action: scroll
+    value: "300"
+    delay: 1000
+    description: Continue browsing
+
+  - action: wait
+    delay: 1500
+    description: Show more events
+
+  - action: scroll
+    value: "-200"
+    delay: 1000
+    description: Scroll back up
+
+  - action: wait
+    delay: 2000
+    description: Final view of event listings
+
+output:
+  filename: event-discovery.mp4
+  format: mp4
+  thumbnail: true
+
+metadata:
+  duration: "~12 seconds"
+  category: discovery
+  tags:
+    - events
+    - milongas
+    - festivals
+    - discovery
+  marketingUse: true
+  facebookOptimized: true

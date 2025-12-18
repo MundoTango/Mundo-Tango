@@ -32,9 +32,10 @@ interface ProfileTabFeedProps {
   isLoading: boolean;
   isOwnProfile: boolean;
   userId: number;
+  isPublicView?: boolean;
 }
 
-export default function ProfileTabFeed({ posts, isLoading, isOwnProfile, userId }: ProfileTabFeedProps) {
+export default function ProfileTabFeed({ posts, isLoading, isOwnProfile, userId, isPublicView }: ProfileTabFeedProps) {
   const [editingPost, setEditingPost] = useState<number | null>(null);
 
   const handleEdit = (postId: number) => {
@@ -50,7 +51,7 @@ export default function ProfileTabFeed({ posts, isLoading, isOwnProfile, userId 
       posts={posts}
       isLoading={isLoading}
       context={{ type: 'profile', id: userId }}
-      showFilters={false}
+      showFilters={true}
       ownerId={userId}
       onPostCreated={() => queryClient.invalidateQueries({ queryKey: ['/api/posts/user', userId] })}
       onEdit={handleEdit}

@@ -30,9 +30,8 @@ export default function IntegrationsPage() {
 
   const testConnectionMutation = useMutation({
     mutationFn: async (integrationId: string) => {
-      return apiRequest(`/api/admin/integrations/${integrationId}/test`, {
-        method: 'POST',
-      });
+      const response = await apiRequest('POST', `/api/admin/integrations/${integrationId}/test`);
+      return response.json();
     },
     onSuccess: () => {
       toast({

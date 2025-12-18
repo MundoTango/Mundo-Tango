@@ -29,10 +29,13 @@ import {
   BadgeCheck,
   Tag,
   X,
-  Search
+  Search,
+  Languages
 } from "lucide-react";
 import { format } from "date-fns";
 import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/UnifiedLocationPicker";
+import { UnifiedLanguagePicker, getLanguageByCode, TOP_10_LANGUAGES } from "@/components/input/UnifiedLanguagePicker";
+import { EVENT_TYPES } from "@/lib/eventTypes";
 
 interface EventFiltersProps {
   onFilterChange: (filters: EventFilterValues) => void;
@@ -52,23 +55,9 @@ export interface EventFilterValues {
   online?: boolean | null;
   verified?: boolean;
   tags?: string[];
+  languages?: string[];
+  languageMatchOnly?: boolean;
 }
-
-const EVENT_TYPES = [
-  { value: "milonga", label: "Milonga" },
-  { value: "practica", label: "Practica" },
-  { value: "class", label: "Class" },
-  { value: "workshop", label: "Workshop" },
-  { value: "festival", label: "Festival" },
-  { value: "marathon", label: "Marathon" },
-  { value: "encuentro", label: "Encuentro" },
-  { value: "performance", label: "Performance" },
-  { value: "show", label: "Show" },
-  { value: "social", label: "Social" },
-  { value: "competition", label: "Competition" },
-  { value: "online", label: "Online" },
-  { value: "concert", label: "Concert" },
-];
 
 const DANCE_STYLES = [
   { value: "traditional", label: "Traditional" },
@@ -110,6 +99,8 @@ export function EventFilters({ onFilterChange, initialFilters = {} }: EventFilte
     online: initialFilters.online ?? null,
     verified: initialFilters.verified ?? false,
     tags: initialFilters.tags || [],
+    languages: initialFilters.languages || [],
+    languageMatchOnly: initialFilters.languageMatchOnly ?? false,
   });
 
   const updateFilters = (updates: Partial<EventFilterValues>) => {
@@ -125,6 +116,8 @@ export function EventFilters({ onFilterChange, initialFilters = {} }: EventFilte
       priceMin: 0,
       priceMax: 500,
       tags: [],
+      languages: [],
+      languageMatchOnly: false,
     };
     setFilters(emptyFilters);
     onFilterChange(emptyFilters);
@@ -149,6 +142,7 @@ export function EventFilters({ onFilterChange, initialFilters = {} }: EventFilte
     filters.online !== null,
     filters.verified,
     (filters.tags?.length || 0) > 0,
+    (filters.languages?.length || 0) > 0,
   ].filter(Boolean).length;
 
   return (
@@ -434,6 +428,82 @@ export function EventFilters({ onFilterChange, initialFilters = {} }: EventFilte
                 {tag}
               </Badge>
             ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-sm font-medium flex items-center gap-2">
+            <Languages className="w-4 h-4" />
+            Host/Teacher Languages
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <UnifiedLanguagePicker
+            mode="additional"
+            value={filters.languages || []}
+            onChange={(value) => updateFilters({ languages: value as string[] })}
+            placeholder="Filter by languages..."
+            data-testid="select-event-languages"
+          />
+          
+          {(filters.languages?.length || 0) > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {filters.languages?.map((code) => {
+                const lang = getLanguageByCode(code);
+                return (
+                  <Badge key={code} variant="secondary" className="gap-1" data-testid={`badge-language-${code}`}>
+                    {lang?.flag} {lang?.name || code}
+                    <button
+                      onClick={() => updateFilters({ 
+                        languages: filters.languages?.filter(l => l !== code) 
+                      })}
+                      className="ml-1 hover:text-destructive"
+                      data-testid={`button-remove-language-${code}`}
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </Badge>
+                );
+              })}
+            </div>
+          )}
+
+          <div className="space-y-2">
+            <Label className="text-xs text-muted-foreground">Quick select:</Label>
+            <div className="flex flex-wrap gap-1">
+              {TOP_10_LANGUAGES.slice(0, 6).map((lang) => (
+                <Button
+                  key={lang.code}
+                  variant={filters.languages?.includes(lang.code) ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => {
+                    const currentLangs = filters.languages || [];
+                    if (currentLangs.includes(lang.code)) {
+                      updateFilters({ languages: currentLangs.filter(l => l !== lang.code) });
+                    } else {
+                      updateFilters({ languages: [...currentLangs, lang.code] });
+                    }
+                  }}
+                  data-testid={`button-quick-language-${lang.code}`}
+                >
+                  {lang.flag}
+                </Button>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between pt-2 border-t">
+            <Label htmlFor="language-match-toggle" className="text-sm">
+              Show only matching events
+            </Label>
+            <Switch
+              id="language-match-toggle"
+              checked={filters.languageMatchOnly}
+              onCheckedChange={(checked) => updateFilters({ languageMatchOnly: checked })}
+              data-testid="switch-language-match-only"
+            />
           </div>
         </CardContent>
       </Card>

@@ -24,8 +24,7 @@ import {
   buildTangoRoleExperience, 
   updateRoleStartYear,
   type TangoRoleExperience 
-} from "../../../shared/utils/roleExperience";
-import { getRoleLabel, getRoleIcon, getRoleColor } from "@/lib/tangoRoles";
+} from "../../../../shared/utils/roleExperience";import { getRoleLabel, getRoleIcon, getRoleColor } from "@/lib/tangoRoles";
 
 const EXPERIENCE_LEVELS = [
   { value: 0, label: "Not applicable" },

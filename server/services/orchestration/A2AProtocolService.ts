@@ -178,8 +178,8 @@ export class A2AProtocolService {
           return new AutoFixEngine();
           
         case 'autonomous':
-          const { AutonomousAgent } = await import('../mrBlue/AutonomousAgent');
-          return new AutonomousAgent('');
+          const { autonomousAgent } = await import('../mrBlue/autonomousAgent');
+          return autonomousAgent;
           
         case 'error-analysis':
           const { ErrorAnalysisAgent } = await import('../mrBlue/errorAnalysisAgent');

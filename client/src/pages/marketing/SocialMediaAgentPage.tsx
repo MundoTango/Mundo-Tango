@@ -6,9 +6,10 @@ import { Share2, TrendingUp, Users, MessageCircle, Heart, Calendar, Sparkles } f
 import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
-import socialHeroImg from "@assets/stock_images/professional_office__d04fc77c.jpg";
-import socialImg1 from "@assets/stock_images/professional_office__a01e9a13.jpg";
-import socialImg2 from "@assets/stock_images/professional_office__9e53fcce.jpg";
+import { Link } from "wouter";
+import socialHeroImg from "@assets/stock_images/tango_dancers_in_ele_3f401f8b.jpg";
+import socialImg1 from "@assets/stock_images/milonga_dance_hall,__451269f1.jpg";
+import socialImg2 from "@assets/stock_images/buenos_aires_argenti_88a7659b.jpg";
 
 export default function SocialMediaAgentPage() {
   const metrics = [
@@ -69,6 +70,13 @@ export default function SocialMediaAgentPage() {
       </div>
 
       <div className="max-w-7xl mx-auto px-6 py-16">
+        {/* Preview Notice */}
+        <div className="flex justify-center mb-8">
+          <Badge variant="outline" className="text-muted-foreground border-muted-foreground/30">
+            Preview Data - Connect your social accounts to see real metrics
+          </Badge>
+        </div>
+
         {/* Metrics Grid */}
         <div className="grid gap-8 md:grid-cols-4 mb-16">
           {metrics.map((metric, idx) => (
@@ -141,10 +149,12 @@ export default function SocialMediaAgentPage() {
                     <p className="text-xs text-muted-foreground">{post.time}</p>
                   </div>
                 ))}
-                <Button className="w-full gap-2" variant="outline" data-testid="button-schedule-post">
-                  <Calendar className="w-4 h-4" />
-                  Schedule New Post
-                </Button>
+                <Link href="/admin/social/create">
+                  <Button className="w-full gap-2" variant="outline" data-testid="button-schedule-post">
+                    <Calendar className="w-4 h-4" />
+                    Schedule New Post
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
 
@@ -184,10 +194,12 @@ export default function SocialMediaAgentPage() {
                     </div>
                   </div>
                 ))}
-                <Button className="w-full gap-2" data-testid="button-social-analytics">
-                  <TrendingUp className="w-4 h-4" />
-                  View Full Analytics
-                </Button>
+                <Link href="/admin/social/analytics">
+                  <Button className="w-full gap-2" data-testid="button-social-analytics">
+                    <TrendingUp className="w-4 h-4" />
+                    View Full Analytics
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
           </div>

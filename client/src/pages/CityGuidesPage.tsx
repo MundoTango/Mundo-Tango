@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { MapPin, Compass, Building2, Info } from "lucide-react";
 import { PublicLayout } from "@/components/PublicLayout";
 import { SEO } from "@/components/SEO";
+import { getCityImageUrl } from "@/lib/cityImageMap";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { motion } from "framer-motion";
@@ -13,19 +14,16 @@ const cities = [
     name: "Buenos Aires",
     country: "Argentina",
     description: "The birthplace of tango. Experience authentic milongas every night, world-class teachers, and the passion that started it all.",
-    image: "https://images.unsplash.com/photo-1589909202802-8f4aadce1849?w=800&h=600&fit=crop"
   },
   {
     name: "Berlin",
     country: "Germany",
     description: "Europe's tango capital with a vibrant alternative scene. 20+ weekly milongas, marathons, and a unique fusion of tradition and innovation.",
-    image: "https://images.unsplash.com/photo-1560969184-10fe8719e047?w=800&h=600&fit=crop"
   },
   {
     name: "Istanbul",
     country: "Turkey",
     description: "Where East meets West in tango. A warm, welcoming community with stunning venues overlooking the Bosphorus.",
-    image: "https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?w=800&h=600&fit=crop"
   }
 ];
 
@@ -62,7 +60,7 @@ export default function CityGuidesPage() {
                 </h1>
                 
                 <p className="text-xl text-white/80 max-w-2xl mx-auto" data-testid="text-page-subtitle">
-                  Your guide to dancing tango in 500+ cities worldwide
+                  Your guide to dancing tango around the world
                 </p>
               </motion.div>
             </div>
@@ -100,7 +98,7 @@ export default function CityGuidesPage() {
                       <div className="grid md:grid-cols-2 gap-0">
                         <div className="aspect-video md:aspect-auto">
                           <img 
-                            src={city.image}
+                            src={getCityImageUrl(city.name)}
                             alt={city.name}
                             className="w-full h-full object-cover"
                           />

@@ -1,7 +1,11 @@
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { useEffect } from 'react';
-import { Users, Calendar, Home, Building2 } from 'lucide-react';
+import { CityPopupCard } from './CityPopupCard';
+import { Button } from '@/components/ui/button';
+import { Link } from 'wouter';
+import { safeDateFormat } from '@/lib/safeDateFormat';
+import { Calendar, MapPin } from 'lucide-react';
 
 interface CommunityLocation {
   id: number;
@@ -14,12 +18,16 @@ interface CommunityLocation {
   housing: number;
   isActive: boolean;
   groupId?: number;
+  title?: string;
+  eventType?: string;
+  startDate?: any;
+  address?: string;
 }
 
 interface MapLayer {
   id: string;
   label: string;
-  enabled: boolean;
+  enabled: any;
   icon: any;
 }
 
@@ -39,42 +47,57 @@ function MapUpdater({ center }: { center: [number, number] }) {
   return null;
 }
 
-// Create custom markers with different colors for each layer type
-const createLayerIcon = (count: number, layerType: string) => {
-  const colors = {
-    events: { primary: '#FF6B6B', secondary: '#FF8E8E' }, // Red gradient for events
-    housing: { primary: '#4ECDC4', secondary: '#45B7AF' }, // Teal gradient for housing
-    recommendations: { primary: '#FFD93D', secondary: '#FFC107' }, // Yellow gradient for venues/recommendations
-    default: { primary: '#40E0D0', secondary: '#1E90FF' }, // MT Ocean default
-  };
-
-  const colorPair = colors[layerType as keyof typeof colors] || colors.default;
-
+const createLayerIcon = () => {
   return L.divIcon({
     className: 'custom-marker',
     html: `
       <div style="
-        background: linear-gradient(135deg, ${colorPair.primary} 0%, ${colorPair.secondary} 100%);
+        background: #0066FF;
         border: 3px solid white;
         border-radius: 50%;
-        width: 40px;
-        height: 40px;
+        width: 24px;
+        height: 24px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-weight: bold;
-        color: white;
-        font-size: 12px;
-        box-shadow: 0 4px 12px rgba(64, 224, 208, 0.4);
+        box-shadow: 0 4px 12px rgba(0, 102, 255, 0.4);
         transition: transform 0.2s;
       ">
-        ${count}
       </div>
     `,
-    iconSize: [40, 40],
-    iconAnchor: [20, 40],
+    iconSize: [24, 24],
+    iconAnchor: [12, 24],
   });
 };
+
+// Event-specific popup card
+function EventPopupCard({ location }: { location: CommunityLocation }) {
+  return (
+    <div className="w-[280px] max-w-[280px] overflow-hidden rounded-lg bg-card flex flex-col p-4 space-y-3" data-testid={`popup-event-card-${location.id}`}>
+      <h3 className="text-lg font-semibold leading-tight">{location.title || 'Event'}</h3>
+      
+      <div className="space-y-2 text-sm text-muted-foreground">
+        <div className="flex items-start gap-2">
+          <Calendar className="h-4 w-4 flex-shrink-0 mt-0.5" />
+          <span>
+            {location.startDate ? safeDateFormat(new Date(location.startDate), "EEE, MMM d, yyyy h:mm a") : "Date TBD"}
+          </span>
+        </div>
+        
+        <div className="flex items-start gap-2">
+          <MapPin className="h-4 w-4 flex-shrink-0 mt-0.5" />
+          <span className="text-xs">{location.address || location.city}</span>
+        </div>
+      </div>
+
+      <Link href={`/events/${location.id}`} className="block">
+        <Button className="w-full text-xs" data-testid={`button-view-event-${location.id}`}>
+          View Details
+        </Button>
+      </Link>
+    </div>
+  );
+}
 
 export function CommunityMapWithLayers({
   locations,
@@ -83,21 +106,12 @@ export function CommunityMapWithLayers({
   zoom,
   onCityClick,
 }: CommunityMapWithLayersProps) {
-  // Find which layers are enabled
-  const eventsEnabled = layers.find(l => l.id === 'events')?.enabled || false;
-  const housingEnabled = layers.find(l => l.id === 'housing')?.enabled || false;
-  const recommendationsEnabled = layers.find(l => l.id === 'recommendations')?.enabled || false;
-
-  // If no layers are enabled, show default markers for all locations
-  const noLayersEnabled = !eventsEnabled && !housingEnabled && !recommendationsEnabled;
-
-  // Create marker sets for each enabled layer
-  const eventMarkers = eventsEnabled ? locations.filter(loc => loc.activeEvents > 0) : [];
-  const housingMarkers = housingEnabled ? locations.filter(loc => loc.housing > 0) : [];
-  const recommendationMarkers = recommendationsEnabled ? locations.filter(loc => loc.recommendations > 0) : [];
-
-  // For default display when no layers are enabled
-  const defaultMarkers = noLayersEnabled ? locations : [];
+  // Filter to only valid coordinates
+  const displayMarkers = locations.filter(loc => {
+    const lat = loc.coordinates?.lat;
+    const lng = loc.coordinates?.lng;
+    return typeof lat === 'number' && typeof lng === 'number' && !isNaN(lat) && !isNaN(lng);
+  });
 
   return (
     <MapContainer
@@ -112,122 +126,29 @@ export function CommunityMapWithLayers({
       />
       <MapUpdater center={center} />
 
-      {/* Default markers when no layers enabled */}
-      {defaultMarkers.map((location) => (
+      {displayMarkers.map((location) => (
         <Marker
-          key={`default-${location.id}`}
+          key={`marker-${location.id}`}
           position={[location.coordinates.lat, location.coordinates.lng]}
-          icon={createLayerIcon(location.memberCount, 'default')}
+          icon={createLayerIcon()}
           eventHandlers={{
             click: () => onCityClick(location)
           }}
         >
           <Popup>
-            <div className="p-2" data-testid={`popup-location-${location.id}`}>
-              <h3 className="font-bold text-lg mb-2">{location.city}, {location.country}</h3>
-              <div className="space-y-1 text-sm">
-                <div className="flex items-center gap-2">
-                  <Users className="h-4 w-4" />
-                  <span>{location.memberCount} members</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4" />
-                  <span>{location.activeEvents} events</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Home className="h-4 w-4" />
-                  <span>{location.housing} housing</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Building2 className="h-4 w-4" />
-                  <span>{location.recommendations} recommendations</span>
-                </div>
-              </div>
-            </div>
-          </Popup>
-        </Marker>
-      ))}
-
-      {/* Events layer markers (RED) */}
-      {eventMarkers.map((location) => (
-        <Marker
-          key={`events-${location.id}`}
-          position={[location.coordinates.lat, location.coordinates.lng]}
-          icon={createLayerIcon(location.activeEvents, 'events')}
-          eventHandlers={{
-            click: () => onCityClick(location)
-          }}
-        >
-          <Popup>
-            <div className="p-2" data-testid={`popup-events-${location.id}`}>
-              <h3 className="font-bold text-lg mb-2">{location.city}, {location.country}</h3>
-              <div className="space-y-1 text-sm">
-                <div className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4 text-red-500" />
-                  <span className="font-semibold">{location.activeEvents} active events</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Users className="h-4 w-4" />
-                  <span>{location.memberCount} members</span>
-                </div>
-              </div>
-            </div>
-          </Popup>
-        </Marker>
-      ))}
-
-      {/* Housing layer markers (TEAL) */}
-      {housingMarkers.map((location) => (
-        <Marker
-          key={`housing-${location.id}`}
-          position={[location.coordinates.lat, location.coordinates.lng]}
-          icon={createLayerIcon(location.housing, 'housing')}
-          eventHandlers={{
-            click: () => onCityClick(location)
-          }}
-        >
-          <Popup>
-            <div className="p-2" data-testid={`popup-housing-${location.id}`}>
-              <h3 className="font-bold text-lg mb-2">{location.city}, {location.country}</h3>
-              <div className="space-y-1 text-sm">
-                <div className="flex items-center gap-2">
-                  <Home className="h-4 w-4 text-teal-500" />
-                  <span className="font-semibold">{location.housing} housing listings</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Users className="h-4 w-4" />
-                  <span>{location.memberCount} members</span>
-                </div>
-              </div>
-            </div>
-          </Popup>
-        </Marker>
-      ))}
-
-      {/* Recommendations/Venues layer markers (YELLOW) */}
-      {recommendationMarkers.map((location) => (
-        <Marker
-          key={`recommendations-${location.id}`}
-          position={[location.coordinates.lat, location.coordinates.lng]}
-          icon={createLayerIcon(location.recommendations, 'recommendations')}
-          eventHandlers={{
-            click: () => onCityClick(location)
-          }}
-        >
-          <Popup>
-            <div className="p-2" data-testid={`popup-recommendations-${location.id}`}>
-              <h3 className="font-bold text-lg mb-2">{location.city}, {location.country}</h3>
-              <div className="space-y-1 text-sm">
-                <div className="flex items-center gap-2">
-                  <Building2 className="h-4 w-4 text-yellow-500" />
-                  <span className="font-semibold">{location.recommendations} venue recommendations</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Users className="h-4 w-4" />
-                  <span>{location.memberCount} members</span>
-                </div>
-              </div>
-            </div>
+            {location.title ? (
+              <EventPopupCard location={location} />
+            ) : (
+              <CityPopupCard
+                city={location.city}
+                country={location.country}
+                groupId={location.groupId}
+                memberCount={location.memberCount}
+                eventCount={location.activeEvents}
+                recommendationCount={location.recommendations}
+                housingCount={location.housing}
+              />
+            )}
           </Popup>
         </Marker>
       ))}

@@ -112,6 +112,12 @@ class LanceDBService {
    * With caching to reduce API calls
    */
   async generateEmbedding(text: string): Promise<number[]> {
+    // Validate input - ensure it's a string
+    if (typeof text !== 'string' || !text) {
+      console.warn('[LanceDB] Invalid text input for embedding, using fallback');
+      return new Array(EMBEDDING_DIMENSIONS).fill(0);
+    }
+    
     // Check cache
     const cacheKey = text.slice(0, 500); // Cache key based on first 500 chars
     if (this.embeddingCache.has(cacheKey)) {
@@ -156,8 +162,11 @@ class LanceDBService {
     try {
       const table = await this.getTable(tableName);
 
+      // Validate content is a string
+      const content = typeof data.content === 'string' ? data.content : String(data.content || '');
+      
       // Generate embedding for content
-      const embedding = await this.generateEmbedding(data.content);
+      const embedding = await this.generateEmbedding(content);
 
       // Prepare record
       const record: VectorMemory = {

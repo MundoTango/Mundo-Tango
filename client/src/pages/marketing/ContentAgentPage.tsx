@@ -6,9 +6,10 @@ import { FileText, Calendar, TrendingUp, Eye, Heart, Share2, Sparkles } from "lu
 import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
-import contentHeroImg from "@assets/stock_images/professional_office__0fd5582e.jpg";
-import contentImg1 from "@assets/stock_images/professional_office__c4038cdf.jpg";
-import contentImg2 from "@assets/stock_images/professional_office__7baceb73.jpg";
+import { Link } from "wouter";
+import contentHeroImg from "@assets/stock_images/tango_dancers_in_ele_8c2ddd84.jpg";
+import contentImg1 from "@assets/stock_images/milonga_dance_hall,__36c486f2.jpg";
+import contentImg2 from "@assets/stock_images/milonga_dance_hall,__46cae5f7.jpg";
 
 export default function ContentAgentPage() {
   const metrics = [
@@ -70,6 +71,13 @@ export default function ContentAgentPage() {
       </div>
 
       <div className="max-w-7xl mx-auto px-6 py-16">
+        {/* Preview Notice */}
+        <div className="flex justify-center mb-8">
+          <Badge variant="outline" className="text-muted-foreground border-muted-foreground/30">
+            Preview Data - Connect your analytics to see real metrics
+          </Badge>
+        </div>
+
         {/* Metrics Grid */}
         <div className="grid gap-8 md:grid-cols-4 mb-16">
           {metrics.map((metric, idx) => (
@@ -142,10 +150,12 @@ export default function ContentAgentPage() {
                     </div>
                   </div>
                 ))}
-                <Button className="w-full gap-2" variant="outline" data-testid="button-add-content">
-                  <Sparkles className="w-4 h-4" />
-                  Schedule New Content
-                </Button>
+                <Link href="/admin/content/create">
+                  <Button className="w-full gap-2" variant="outline" data-testid="button-add-content">
+                    <Sparkles className="w-4 h-4" />
+                    Schedule New Content
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
 
@@ -185,10 +195,12 @@ export default function ContentAgentPage() {
                     </div>
                   </div>
                 ))}
-                <Button className="w-full gap-2" data-testid="button-content-analytics">
-                  <TrendingUp className="w-4 h-4" />
-                  View Full Analytics
-                </Button>
+                <Link href="/admin/content/analytics">
+                  <Button className="w-full gap-2" data-testid="button-content-analytics">
+                    <TrendingUp className="w-4 h-4" />
+                    View Full Analytics
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
           </div>

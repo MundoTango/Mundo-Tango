@@ -746,6 +746,9 @@ router.put('/photos/reorder', authenticateToken, async (req: AuthRequest, res: R
  * POST /api/profile/cover
  * Upload/change user's cover photo (hero background)
  * Following Media Handling Architecture (PRD/media-handling.md)
+ * 
+ * NOTE: This route handles JSON-based base64 uploads (matching ProfilePage.tsx line 108)
+ * The /background route above handles multipart form uploads
  */
 router.post('/cover', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
@@ -778,10 +781,15 @@ router.post('/cover', authenticateToken, async (req: AuthRequest, res: Response)
       }
     }
 
+    // Save the cover image to the database (using backgroundImage column)
+    await db.update(users)
+      .set({ backgroundImage: coverImageUrl })
+      .where(eq(users.id, req.userId));
+
     console.log(`[ProfileMedia] Cover photo updated for user ${req.userId}`);
     res.json({ 
       message: 'Cover photo updated successfully',
-      coverImage: coverImageUrl
+      backgroundImage: coverImageUrl
     });
   } catch (error) {
     console.error('[ProfileMedia] Cover photo upload error:', error);

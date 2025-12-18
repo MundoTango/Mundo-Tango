@@ -5,17 +5,121 @@ import {
   eventRsvps,
   eventPhotos,
   eventComments,
+  eventInvitations,
   users,
+  posts,
   insertEventSchema,
   insertEventRsvpSchema,
-  insertEventCommentSchema
+  insertEventCommentSchema,
+  insertEventInvitationSchema
 } from "@shared/schema";
+import { notificationService } from "../services/notification-service";
+import crypto from "crypto";
 import { authenticateToken, optionalAuth, AuthRequest } from "../middleware/auth";
 import { requireMinimumRole } from "../middleware/tierEnforcement";
 import { eq, and, desc, gte, lte, sql, or, asc, inArray, count } from "drizzle-orm";
 import { z } from "zod";
+import { PostingPermissionService } from "../services/PostingPermissionService";
+import multer from "multer";
+import { v2 as cloudinary } from "cloudinary";
 
 const router = Router();
+
+// ============================================================================
+// PERFORMANCE: SHARED EVENT FIELD SELECTORS (MB.MD Pattern 28 Optimization)
+// Exclude coverImage from queries to avoid loading megabyte-scale base64 data
+// ============================================================================
+const eventSummaryFields = {
+  id: events.id,
+  title: events.title,
+  slug: events.slug,
+  description: events.description,
+  eventType: events.eventType,
+  category: events.category,
+  userId: events.userId,
+  startDate: events.startDate,
+  endDate: events.endDate,
+  date: events.date,
+  timezone: events.timezone,
+  isRecurring: events.isRecurring,
+  location: events.location,
+  venue: events.venue,
+  venueName: events.venueName,
+  address: events.address,
+  city: events.city,
+  country: events.country,
+  latitude: events.latitude,
+  longitude: events.longitude,
+  isOnline: events.isOnline,
+  onlineLink: events.onlineLink,
+  meetingUrl: events.meetingUrl,
+  imageUrl: events.imageUrl,  // URL-based images (not base64)
+  coverImage: events.coverImage,  // RESTORED: Now safe - Object Storage URLs, not base64
+  mediaUrls: events.mediaUrls,
+  organizerId: events.organizerId,
+  coOrganizers: events.coOrganizers,
+  groupId: events.groupId,
+  maxAttendees: events.maxAttendees,
+  currentAttendees: events.currentAttendees,
+  waitlistEnabled: events.waitlistEnabled,
+  waitlistCount: events.waitlistCount,
+  isPaid: events.isPaid,
+  isFree: events.isFree,
+  price: events.price,
+  currency: events.currency,
+  ticketUrl: events.ticketUrl,
+  ticketLink: events.ticketLink,
+  visibility: events.visibility,
+  requiresApproval: events.requiresApproval,
+  allowGuestPlusOne: events.allowGuestPlusOne,
+  allowPhotos: events.allowPhotos,
+  allowComments: events.allowComments,
+  musicStyle: events.musicStyle,
+  danceStyles: events.danceStyles,
+  djName: events.djName,
+  tags: events.tags,
+  dressCode: events.dressCode,
+  ageRestriction: events.ageRestriction,
+  wheelchairAccessible: events.wheelchairAccessible,
+  parkingAvailable: events.parkingAvailable,
+  status: events.status,
+  viewCount: events.viewCount,
+  shareCount: events.shareCount,
+  sourceName: events.sourceName,
+  sourceUrl: events.sourceUrl,
+  seriesId: events.seriesId,
+  createdAt: events.createdAt,
+  updatedAt: events.updatedAt,
+  publishedAt: events.publishedAt,
+};
+
+// ============================================================================
+// MULTER CONFIGURATION WITH SECURITY VALIDATION
+// ============================================================================
+const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: MAX_FILE_SIZE,
+  },
+  fileFilter: (req, file, cb) => {
+    // Check MIME type
+    if (!ALLOWED_MIME_TYPES.includes(file.mimetype)) {
+      cb(new Error(`Invalid file type. Allowed: ${ALLOWED_MIME_TYPES.join(', ')}`));
+      return;
+    }
+    cb(null, true);
+  }
+});
+
+// Configure Cloudinary (ensure it uses env vars)
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 // Sample events data for when database is empty
 const sampleEvents = [
@@ -123,6 +227,7 @@ router.get("/", optionalAuth, async (req: AuthRequest, res: Response) => {
       offset = "0",
       category,
       upcoming,
+      past,
       search
     } = req.query;
 
@@ -176,6 +281,11 @@ router.get("/", optionalAuth, async (req: AuthRequest, res: Response) => {
     // Handle upcoming=true: filter for events starting from now
     if (upcoming === "true") {
       conditions.push(gte(events.startDate, new Date()));
+    }
+
+    // Handle past=true: filter for events that have already ended
+    if (past === "true") {
+      conditions.push(lte(events.startDate, new Date()));
     }
 
     if (conditions.length > 0) {
@@ -329,6 +439,7 @@ router.get("/search", optionalAuth, async (req: AuthRequest, res: Response) => {
       dateFrom,
       dateTo,
       type,
+      types,
       priceMin,
       priceMax,
       danceStyle,
@@ -336,6 +447,9 @@ router.get("/search", optionalAuth, async (req: AuthRequest, res: Response) => {
       online,
       verified,
       tags,
+      languages,
+      languageMatchOnly,
+      past,
       sortBy = "relevance",
       page = "1",
       limit = "20"
@@ -385,17 +499,26 @@ router.get("/search", optionalAuth, async (req: AuthRequest, res: Response) => {
       );
     }
 
-    // Date range filter
+    // Date range filter (use startDateTime if startDate is null)
     if (dateFrom) {
-      conditions.push(gte(events.startDate, new Date(dateFrom as string)));
+      conditions.push(
+        sql`COALESCE(${events.startDate}, ${events.startDateTime}::date) >= ${new Date(dateFrom as string)}`
+      );
     }
     if (dateTo) {
-      conditions.push(lte(events.startDate, new Date(dateTo as string)));
+      conditions.push(
+        sql`COALESCE(${events.startDate}, ${events.startDateTime}::date) <= ${new Date(dateTo as string)}`
+      );
     }
 
-    // Event type filter
+    // Event type filter (single or multiple types)
     if (type && typeof type === 'string') {
       conditions.push(eq(events.eventType, type));
+    } else if (types && typeof types === 'string') {
+      const typeList = types.split(',').map(t => t.trim().toLowerCase());
+      conditions.push(
+        sql`LOWER(${events.eventType}) = ANY(ARRAY[${sql.raw(typeList.map(t => `'${t}'`).join(','))}])`
+      );
     }
 
     // Price range filter
@@ -449,11 +572,42 @@ router.get("/search", optionalAuth, async (req: AuthRequest, res: Response) => {
       });
     }
 
+    // Language filter
+    // Note: Requires hostLanguages field on events table (text[])
+    // Schema update needed: hostLanguages: text("host_languages").array()
+    if (languages && typeof languages === 'string') {
+      const languageArray = languages.split(',').map(l => l.trim());
+      if (languageMatchOnly === "true") {
+        // Strict matching - event must have at least one of the specified languages
+        conditions.push(
+          sql`${events.tags} && ARRAY[${sql.join(languageArray.map(l => sql`${l}`), sql`, `)}]::text[]`
+        );
+      }
+      // Note: Once hostLanguages field is added, replace with:
+      // conditions.push(
+      //   sql`${events.hostLanguages} && ARRAY[${sql.join(languageArray.map(l => sql`${l}`), sql`, `)}]::text[]`
+      // );
+    }
+
+    // Past events filter - show events that have already ended
+    // If past=true, show only past events
+    // If past=false or upcoming=true, show only upcoming
+    // If neither is specified (discover mode), show ALL events
+    const { upcoming } = req.query;
+    if (past === "true") {
+      conditions.push(lte(events.startDate, new Date()));
+    } else if (upcoming === "true") {
+      conditions.push(gte(events.startDate, new Date()));
+    }
+    // If neither past nor upcoming is specified, show all events (Discover mode)
+
     if (conditions.length > 0) {
       query = query.where(and(...conditions));
     }
 
-    // Sorting
+    // Sorting - with support for prioritizing big events (festivals, marathons, encuentros)
+    const { prioritizeBigEvents } = req.query;
+    
     switch (sortBy) {
       case "date":
         query = query.orderBy(asc(events.startDate));
@@ -463,7 +617,17 @@ router.get("/search", optionalAuth, async (req: AuthRequest, res: Response) => {
         break;
       case "relevance":
       default:
-        if (q) {
+        if (prioritizeBigEvents === "true") {
+          // Prioritize big events: festivals, marathons, encuentros, competitions first
+          query = query.orderBy(
+            desc(sql`CASE 
+              WHEN ${events.eventType} IN ('festival', 'marathon', 'encuentro', 'competition') THEN 3
+              WHEN ${events.eventType} IN ('workshop', 'performance') THEN 2
+              ELSE 1
+            END`),
+            desc(events.startDate)
+          );
+        } else if (q) {
           query = query.orderBy(
             desc(sql`
               ts_rank(
@@ -617,6 +781,45 @@ router.get("/analytics/attendance", async (req: Request, res: Response) => {
   }
 });
 
+// GET /api/events/invitations/pending - Get user's pending invitations (MUST be before /:id route!)
+router.get("/invitations/pending", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+
+    const invitations = await db
+      .select({
+        invitation: eventInvitations,
+        event: {
+          id: events.id,
+          title: events.title,
+          startDate: events.startDate,
+          venue: events.venue,
+          city: events.city,
+          imageUrl: events.imageUrl
+        },
+        inviter: {
+          id: users.id,
+          name: users.name,
+          username: users.username,
+          profileImage: users.profileImage
+        }
+      })
+      .from(eventInvitations)
+      .innerJoin(events, eq(eventInvitations.eventId, events.id))
+      .leftJoin(users, eq(eventInvitations.inviterId, users.id))
+      .where(and(
+        eq(eventInvitations.inviteeId, userId),
+        eq(eventInvitations.status, 'pending')
+      ))
+      .orderBy(desc(eventInvitations.createdAt));
+
+    res.json(invitations);
+  } catch (error) {
+    console.error("[Events] Error fetching pending invitations:", error);
+    res.status(500).json({ message: "Failed to fetch invitations" });
+  }
+});
+
 // GET /api/events/my-rsvps - Get user's RSVPs (MUST be before /:id route!)
 router.get("/my-rsvps", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
@@ -643,6 +846,86 @@ router.get("/my-rsvps", authenticateToken, async (req: AuthRequest, res: Respons
   } catch (error) {
     console.error("[Events] Error fetching user RSVPs:", error);
     res.status(500).json({ message: "Failed to fetch user RSVPs" });
+  }
+});
+
+// GET /api/events/city-group - Get events from user's city groups (MUST be before /:id route!)
+router.get("/city-group", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const upcoming = req.query.upcoming === 'true';
+    
+    // Get user's city group memberships
+    const userCityGroups = await db
+      .select({ groupId: groupMembers.groupId, city: groups.city, country: groups.country })
+      .from(groupMembers)
+      .innerJoin(groups, eq(groupMembers.groupId, groups.id))
+      .where(and(
+        eq(groupMembers.userId, userId),
+        eq(groupMembers.status, 'active'),
+        eq(groups.type, 'city')
+      ));
+    
+    if (userCityGroups.length === 0) {
+      // Fallback: return general upcoming events if user has no city groups
+      const now = new Date();
+      const fallbackEvents = await db
+        .select({
+          id: events.id,
+          title: events.title,
+          description: events.description,
+          startDate: events.startDate,
+          endDate: events.endDate,
+          location: events.location,
+          city: events.city,
+          country: events.country,
+          imageUrl: events.imageUrl,
+          rsvpCount: events.rsvpCount,
+          category: events.category,
+        })
+        .from(events)
+        .where(and(
+          eq(events.status, 'published'),
+          upcoming ? gte(events.startDate, now) : undefined
+        ))
+        .orderBy(events.startDate)
+        .limit(limit);
+      
+      return res.json(fallbackEvents);
+    }
+    
+    // Get events from user's city groups
+    const cities = userCityGroups.map(g => g.city).filter(Boolean) as string[];
+    const now = new Date();
+    
+    const cityGroupEvents = await db
+      .select({
+        id: events.id,
+        title: events.title,
+        description: events.description,
+        startDate: events.startDate,
+        endDate: events.endDate,
+        location: events.location,
+        city: events.city,
+        country: events.country,
+        imageUrl: events.imageUrl,
+        rsvpCount: events.rsvpCount,
+        category: events.category,
+      })
+      .from(events)
+      .where(and(
+        eq(events.status, 'published'),
+        inArray(events.city, cities),
+        upcoming ? gte(events.startDate, now) : undefined
+      ))
+      .orderBy(events.startDate)
+      .limit(limit);
+    
+    res.json(cityGroupEvents);
+  } catch (error) {
+    console.error("[Events] Error fetching city group events:", error);
+    res.status(500).json({ message: "Failed to fetch city group events" });
   }
 });
 
@@ -674,13 +957,14 @@ router.get("/upcoming", async (req: Request, res: Response) => {
 });
 
 // GET /api/events/:id - Get event details
+// PERFORMANCE: Uses eventSummaryFields to exclude base64 coverImage from DB query
 router.get("/:id", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
     const result = await db
       .select({
-        event: events,
+        event: eventSummaryFields,  // OPTIMIZED: excludes coverImage from DB load
         organizer: {
           id: users.id,
           name: users.name,
@@ -706,9 +990,17 @@ router.get("/:id", async (req: Request, res: Response) => {
         eq(eventRsvps.eventId, parseInt(id)),
         eq(eventRsvps.status, "going")
       ));
-
+    
+    // PERFORMANCE FIX: Filter out base64 data from mediaUrls (can be megabytes per image)
+    const eventData = result[0].event;
+    const cleanMediaUrls = eventData.mediaUrls?.filter((url: string) => !url?.startsWith('data:')) || [];
+    
     res.json({
-      ...result[0],
+      event: {
+        ...eventData,
+        mediaUrls: cleanMediaUrls,  // Only URL-based media, no base64
+      },
+      organizer: result[0].organizer,
       attendeeCount: rsvpCount[0]?.count || 0
     });
   } catch (error) {
@@ -720,28 +1012,117 @@ router.get("/:id", async (req: Request, res: Response) => {
 // POST /api/events - Create new event
 // TIER ENFORCEMENT: Requires Community Leader (level 3) or higher
 // Level 3 = Community Leader, Level 4 = Admin, Level 5+ = Higher tiers
+// AUTO-CREATES: City if not found, based on event city field
 router.post("/", authenticateToken, requireMinimumRole(3), async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user!.id;
+    const { startTime, endTime, timezone, maxCapacity, ...rest } = req.body;
     
-    const eventData = insertEventSchema.omit({ userId: true }).parse(req.body);
+    console.log("[Events] Creating event for user:", userId);
+    console.log("[Events] Request body keys:", Object.keys(req.body));
+    console.log("[Events] Title:", rest.title, "| Description length:", rest.description?.length || 0);
+    console.log("[Events] Location:", rest.location, "| City:", rest.city, "| Country:", rest.country);
+    console.log("[Events] Photos count:", rest.photos?.length || 0, "| Cover URL:", rest.coverImageUrl ? "yes" : "no");
+    
+    // Combine date with time if time strings are provided
+    let startDate = new Date(rest.startDate);
+    let endDate = new Date(rest.endDate || rest.startDate);
+    
+    if (startTime) {
+      const [hours, minutes] = startTime.split(':').map(Number);
+      startDate.setHours(hours, minutes, 0, 0);
+    }
+    
+    if (endTime) {
+      const [hours, minutes] = endTime.split(':').map(Number);
+      endDate.setHours(hours, minutes, 0, 0);
+    }
+    
+    // Build clean event data with required fields only
+    const cleanData = {
+      title: rest.title,
+      description: rest.description,
+      eventType: rest.eventType,
+      startDate,
+      endDate,
+      location: rest.location || rest.city || "Unknown Location",
+      venue: rest.venue || null,
+      venueName: rest.venueName || null,
+      address: rest.address || null,
+      city: rest.city || null,
+      country: rest.country || null,
+      latitude: rest.latitude ? String(rest.latitude) : null,
+      longitude: rest.longitude ? String(rest.longitude) : null,
+      timezone: timezone || "UTC",
+      maxAttendees: maxCapacity || null,
+      musicStyle: rest.musicStyle || null,
+      danceStyles: rest.danceStyles || null,
+      price: rest.price || null,
+      currency: rest.currency || "USD",
+      isFree: rest.isFree !== false,
+      isPaid: rest.price ? true : false,
+      isOnline: false,
+      visibility: "public",
+      imageUrl: rest.coverImageUrl || null,  // FIX: Save to imageUrl for hero section display
+      coverImage: rest.coverImageUrl || null,  // Also save to coverImage for backward compatibility
+      mediaUrls: rest.photos?.map((p: any) => p.url) || null
+    };
 
     const [event] = await db
       .insert(events)
       .values({
-        ...eventData,
+        ...cleanData,
         userId,
         status: "published"
       })
       .returning();
 
+    // AUTO-RSVP: Organizer is automatically "going" to their own event
+    try {
+      await db
+        .insert(eventRsvps)
+        .values({
+          eventId: event.id,
+          userId,
+          status: "going",
+          isOrganizer: true,
+        })
+        .onConflictDoNothing();
+      console.log("[Events] Auto-RSVP'd organizer as going to event:", event.id);
+    } catch (rsvpError) {
+      // Non-blocking - event creation still succeeds
+      console.error("[Events] Auto-RSVP failed (non-blocking):", rsvpError);
+    }
+
+    // CASCADE: Auto-create city group if new location (Pattern 8: Cascade Detection)
+    if (cleanData.city && cleanData.country) {
+      try {
+        const { ensureCityGroupExists } = await import("../utils/cityGroupAutomation");
+        const cityGroupResult = await ensureCityGroupExists(
+          cleanData.city,
+          cleanData.country,
+          userId
+        );
+        
+        if (cityGroupResult?.wasCreated) {
+          console.log(`[Events] CASCADE: Created new city group "${cityGroupResult.groupName}" for event ${event.id}`);
+        } else if (cityGroupResult) {
+          console.log(`[Events] City group "${cityGroupResult.groupName}" already exists for ${cleanData.city}`);
+        }
+      } catch (cascadeError) {
+        // Don't fail event creation if cascade fails
+        console.error("[Events] City group cascade error (non-blocking):", cascadeError);
+      }
+    }
+
     res.status(201).json(event);
   } catch (error) {
     if (error instanceof z.ZodError) {
+      console.error("[Events] Validation error:", error.errors);
       return res.status(400).json({ message: "Validation error", errors: error.errors });
     }
     console.error("[Events] Error creating event:", error);
-    res.status(500).json({ message: "Failed to create event" });
+    res.status(500).json({ message: "Failed to create event", error: String(error).substring(0, 200) });
   }
 });
 
@@ -816,67 +1197,121 @@ router.delete("/:id", authenticateToken, async (req: AuthRequest, res: Response)
 // EVENT RSVP ROUTES
 // ============================================================================
 
-// POST /api/events/:id/rsvp - RSVP to event (auth required)
+// POST /api/events/:id/rsvp - RSVP to event (auth required) with capacity enforcement
 router.post("/:id/rsvp", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user!.id;
-    const { id } = req.params;
+    const eventId = parseInt(req.params.id);
     const { status = "going", guestCount = 0 } = req.body;
 
-    // Check if event exists
-    const event = await db
+    console.log(`[Events RSVP] Creating RSVP - userId: ${userId}, eventId: ${eventId}, status: ${status}`);
+
+    // Check if event exists and get capacity info
+    const [event] = await db
       .select()
       .from(events)
-      .where(eq(events.id, parseInt(id)))
+      .where(eq(events.id, eventId))
       .limit(1);
 
-    if (event.length === 0) {
+    if (!event) {
+      console.log(`[Events RSVP] Event not found: ${eventId}`);
       return res.status(404).json({ message: "Event not found" });
     }
 
     // Check if already RSVP'd
-    const existing = await db
+    const [existing] = await db
       .select()
       .from(eventRsvps)
       .where(and(
-        eq(eventRsvps.eventId, parseInt(id)),
+        eq(eventRsvps.eventId, eventId),
         eq(eventRsvps.userId, userId)
       ))
       .limit(1);
 
-    if (existing.length > 0) {
-      // Update existing RSVP
+    // Capacity enforcement for new RSVPs or status changes to 'going'
+    if (status === "going" && (!existing || existing.status !== "going")) {
+      const maxCapacity = event.maxAttendees || event.capacity;
+      if (maxCapacity && maxCapacity > 0) {
+        // Count current attendees
+        const [{ count: currentCount }] = await db
+          .select({ count: sql<number>`COUNT(*)::int` })
+          .from(eventRsvps)
+          .where(and(
+            eq(eventRsvps.eventId, eventId),
+            eq(eventRsvps.status, "going")
+          ));
+
+        const totalNeeded = (existing?.status === "going" ? 0 : 1) + guestCount;
+        if (currentCount + totalNeeded > maxCapacity) {
+          console.log(`[Events RSVP] Event at capacity: ${currentCount}/${maxCapacity}`);
+          return res.status(409).json({ 
+            message: "Event is at full capacity",
+            capacity: maxCapacity,
+            current: currentCount,
+            waitlistAvailable: true
+          });
+        }
+      }
+    }
+
+    if (existing) {
+      console.log(`[Events RSVP] Updating existing RSVP for user ${userId} on event ${eventId}`);
+      const previousStatus = existing.status;
       const [updated] = await db
         .update(eventRsvps)
         .set({ status, guestCount, updatedAt: new Date() })
         .where(and(
-          eq(eventRsvps.eventId, parseInt(id)),
+          eq(eventRsvps.eventId, eventId),
           eq(eventRsvps.userId, userId)
         ))
         .returning();
 
+      // Update attendee count if status changed
+      if (previousStatus !== status) {
+        const delta = (status === "going" ? 1 : 0) - (previousStatus === "going" ? 1 : 0);
+        if (delta !== 0) {
+          await db
+            .update(events)
+            .set({ currentAttendees: sql`GREATEST(0, COALESCE(${events.currentAttendees}, 0) + ${delta})` })
+            .where(eq(events.id, eventId));
+        }
+      }
+
+      console.log(`[Events RSVP] Updated RSVP:`, updated);
       return res.json(updated);
     }
 
     // Create new RSVP
+    console.log(`[Events RSVP] Creating new RSVP - values: { eventId: ${eventId}, userId: ${userId}, status: ${status}, guestCount: ${guestCount} }`);
     const [rsvp] = await db
       .insert(eventRsvps)
       .values({
-        eventId: parseInt(id),
+        eventId,
         userId,
         status,
         guestCount
       })
       .returning();
 
-    // Update event attendee count
-    await db
-      .update(events)
-      .set({
-        currentAttendees: sql`${events.currentAttendees} + ${guestCount + 1}`
-      })
-      .where(eq(events.id, parseInt(id)));
+    console.log(`[Events RSVP] RSVP created successfully:`, rsvp);
 
+    // Update event attendee count for 'going' status
+    if (status === "going") {
+      await db
+        .update(events)
+        .set({
+          currentAttendees: sql`COALESCE(${events.currentAttendees}, 0) + ${guestCount + 1}`
+        })
+        .where(eq(events.id, eventId));
+    }
+
+    console.log(`[Events RSVP] Event attendee count updated`);
+    
+    // Notify event organizer about new RSVP
+    if (event.userId !== userId) {
+      notificationService.notifyEventRsvp(event.userId, eventId, event.title, userId, status).catch(console.error);
+    }
+    
     res.status(201).json(rsvp);
   } catch (error) {
     console.error("[Events] Error creating RSVP:", error);
@@ -888,7 +1323,13 @@ router.post("/:id/rsvp", authenticateToken, async (req: AuthRequest, res: Respon
 router.get("/:id/attendees", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { status = "going" } = req.query;
+    const { status = "all" } = req.query;
+
+    const whereConditions = [eq(eventRsvps.eventId, parseInt(id))];
+    
+    if (status !== "all") {
+      whereConditions.push(eq(eventRsvps.status, status as string));
+    }
 
     const attendees = await db
       .select({
@@ -904,10 +1345,7 @@ router.get("/:id/attendees", async (req: Request, res: Response) => {
       })
       .from(eventRsvps)
       .leftJoin(users, eq(eventRsvps.userId, users.id))
-      .where(and(
-        eq(eventRsvps.eventId, parseInt(id)),
-        eq(eventRsvps.status, status as string)
-      ))
+      .where(and(...whereConditions))
       .orderBy(desc(eventRsvps.createdAt));
 
     res.json(attendees);
@@ -979,12 +1417,13 @@ router.post("/:id/comments", authenticateToken, async (req: AuthRequest, res: Re
 // EVENT PHOTOS ROUTES
 // ============================================================================
 
-// GET /api/events/:id/photos - Get event photos
+// GET /api/events/:id/photos - Get event photos (includes organizer photos from mediaUrls)
 router.get("/:id/photos", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
-    const photos = await db
+    // Get photos from eventPhotos table (participant uploads)
+    const participantPhotos = await db
       .select({
         photo: eventPhotos,
         uploader: {
@@ -999,10 +1438,268 @@ router.get("/:id/photos", async (req: Request, res: Response) => {
       .where(eq(eventPhotos.eventId, parseInt(id)))
       .orderBy(desc(eventPhotos.createdAt));
 
-    res.json(photos);
+    // Get event to include organizer photos from mediaUrls
+    const [event] = await db
+      .select({
+        id: events.id,
+        userId: events.userId,
+        mediaUrls: events.mediaUrls,
+        organizerName: users.name,
+        organizerUsername: users.username,
+        organizerImage: users.profileImage
+      })
+      .from(events)
+      .leftJoin(users, eq(events.userId, users.id))
+      .where(eq(events.id, parseInt(id)))
+      .limit(1);
+
+    // Transform organizer photos from mediaUrls to same format
+    const organizerPhotos = (event?.mediaUrls || []).map((url: string, idx: number) => ({
+      photo: {
+        id: -(idx + 1), // Negative IDs for organizer photos (won't conflict with DB)
+        eventId: parseInt(id),
+        uploaderId: event?.userId || 0,
+        photoUrl: url,
+        imageUrl: url, // Add imageUrl for frontend compatibility
+        caption: null,
+        isOrganizer: true,
+        createdAt: null
+      },
+      uploader: {
+        id: event?.userId || 0,
+        name: event?.organizerName || 'Organizer',
+        username: event?.organizerUsername || 'organizer',
+        profileImage: event?.organizerImage || null
+      },
+      isOrganizer: true
+    }));
+
+    // Normalize participant photos to include imageUrl for frontend
+    const normalizedParticipantPhotos = participantPhotos.map(p => ({
+      ...p,
+      photo: {
+        ...p.photo,
+        imageUrl: p.photo.photoUrl // Add imageUrl alias
+      },
+      isOrganizer: false
+    }));
+
+    // Combine: organizer photos first, then participant photos
+    res.json([...organizerPhotos, ...normalizedParticipantPhotos]);
   } catch (error) {
     console.error("[Events] Error fetching photos:", error);
     res.status(500).json({ message: "Failed to fetch photos" });
+  }
+});
+
+// Helper function to validate image magic bytes
+function validateImageMagicBytes(buffer: Buffer): { valid: boolean; type: string | null } {
+  if (buffer.length < 4) return { valid: false, type: null };
+  
+  // JPEG: FF D8 FF
+  if (buffer[0] === 0xFF && buffer[1] === 0xD8 && buffer[2] === 0xFF) {
+    return { valid: true, type: 'image/jpeg' };
+  }
+  // PNG: 89 50 4E 47 0D 0A 1A 0A
+  if (buffer[0] === 0x89 && buffer[1] === 0x50 && buffer[2] === 0x4E && buffer[3] === 0x47) {
+    return { valid: true, type: 'image/png' };
+  }
+  // GIF: 47 49 46 38
+  if (buffer[0] === 0x47 && buffer[1] === 0x49 && buffer[2] === 0x46 && buffer[3] === 0x38) {
+    return { valid: true, type: 'image/gif' };
+  }
+  // WebP: 52 49 46 46 ... 57 45 42 50
+  if (buffer[0] === 0x52 && buffer[1] === 0x49 && buffer[2] === 0x46 && buffer[3] === 0x46 && 
+      buffer.length >= 12 && buffer[8] === 0x57 && buffer[9] === 0x45 && buffer[10] === 0x42 && buffer[11] === 0x50) {
+    return { valid: true, type: 'image/webp' };
+  }
+  
+  return { valid: false, type: null };
+}
+
+// POST /api/events/:id/photos - Upload photo to event (auth required, RSVP'd or organizer)
+router.post("/:id/photos", authenticateToken, upload.single("file"), async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    const eventId = parseInt(req.params.id);
+    const { caption } = req.body;
+
+    // Check event exists
+    const [event] = await db
+      .select()
+      .from(events)
+      .where(eq(events.id, eventId))
+      .limit(1);
+
+    if (!event) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+
+    // Check if user is organizer or RSVP'd
+    const isOrganizer = event.userId === userId || event.organizerId === userId;
+    
+    if (!isOrganizer) {
+      const [rsvp] = await db
+        .select()
+        .from(eventRsvps)
+        .where(and(
+          eq(eventRsvps.eventId, eventId),
+          eq(eventRsvps.userId, userId),
+          eq(eventRsvps.status, "going")
+        ))
+        .limit(1);
+
+      if (!rsvp) {
+        return res.status(403).json({ message: "Only event attendees can upload photos" });
+      }
+    }
+
+    // Upload to Cloudinary
+    const file = req.file;
+    if (!file) {
+      return res.status(400).json({ message: "No file provided" });
+    }
+
+    // Validate magic bytes to prevent spoofed MIME types
+    const magicCheck = validateImageMagicBytes(file.buffer);
+    if (!magicCheck.valid) {
+      return res.status(400).json({ 
+        message: "Invalid image file. File content does not match a valid image format." 
+      });
+    }
+
+    const result: any = await new Promise((resolve, reject) => {
+      cloudinary.uploader.upload_stream(
+        {
+          folder: `events/${eventId}`,
+          transformation: [
+            { width: 1200, height: 1200, crop: "limit" },
+            { quality: "auto", fetch_format: "auto" }
+          ]
+        },
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result);
+        }
+      ).end(file.buffer);
+    });
+
+    // Insert into database
+    const [photo] = await db
+      .insert(eventPhotos)
+      .values({
+        eventId,
+        uploaderId: userId,
+        photoUrl: result.secure_url,
+        thumbnailUrl: result.secure_url.replace('/upload/', '/upload/w_300,h_300,c_fill/'),
+        caption: caption || null
+      })
+      .returning();
+
+    // Get uploader info
+    const [uploader] = await db
+      .select({
+        id: users.id,
+        name: users.name,
+        username: users.username,
+        profileImage: users.profileImage
+      })
+      .from(users)
+      .where(eq(users.id, userId))
+      .limit(1);
+
+    // Notify event organizer about new photo upload
+    if (event.userId !== userId) {
+      notificationService.notifyEventPhotoUploaded(event.userId, eventId, event.title, userId).catch(console.error);
+    }
+
+    res.status(201).json({
+      photo: { ...photo, imageUrl: photo.photoUrl },
+      uploader,
+      isOrganizer: false
+    });
+  } catch (error) {
+    console.error("[Events] Error uploading photo:", error);
+    res.status(500).json({ message: "Failed to upload photo" });
+  }
+});
+
+// DELETE /api/events/:id/photos/:photoId - Delete photo (auth required, owner or organizer)
+router.delete("/:id/photos/:photoId", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    const eventId = parseInt(req.params.id);
+    const photoId = parseInt(req.params.photoId);
+
+    // Check if photo exists
+    const [photo] = await db
+      .select()
+      .from(eventPhotos)
+      .where(and(
+        eq(eventPhotos.id, photoId),
+        eq(eventPhotos.eventId, eventId)
+      ))
+      .limit(1);
+
+    if (!photo) {
+      return res.status(404).json({ message: "Photo not found" });
+    }
+
+    // Check if user is photo owner or event organizer
+    const [event] = await db
+      .select()
+      .from(events)
+      .where(eq(events.id, eventId))
+      .limit(1);
+
+    const isPhotoOwner = photo.uploaderId === userId;
+    const isOrganizer = event?.userId === userId || event?.organizerId === userId;
+
+    if (!isPhotoOwner && !isOrganizer) {
+      return res.status(403).json({ message: "Not authorized to delete this photo" });
+    }
+
+    // Delete from database (Cloudinary cleanup could be added later)
+    await db
+      .delete(eventPhotos)
+      .where(eq(eventPhotos.id, photoId));
+
+    res.json({ message: "Photo deleted successfully" });
+  } catch (error) {
+    console.error("[Events] Error deleting photo:", error);
+    res.status(500).json({ message: "Failed to delete photo" });
+  }
+});
+
+// POST /api/events/:id/photos/:photoId/report - Report a photo (auth required)
+router.post("/:id/photos/:photoId/report", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    const eventId = parseInt(req.params.id);
+    const photoId = parseInt(req.params.photoId);
+    const { reason } = req.body;
+
+    // Check if photo exists
+    const [photo] = await db
+      .select()
+      .from(eventPhotos)
+      .where(and(
+        eq(eventPhotos.id, photoId),
+        eq(eventPhotos.eventId, eventId)
+      ))
+      .limit(1);
+
+    if (!photo) {
+      return res.status(404).json({ message: "Photo not found" });
+    }
+
+    // For now, just log the report (could add a reports table later)
+    console.log(`[Events] Photo ${photoId} reported by user ${userId}: ${reason || 'No reason given'}`);
+
+    res.json({ message: "Photo reported successfully. Our team will review it." });
+  } catch (error) {
+    console.error("[Events] Error reporting photo:", error);
+    res.status(500).json({ message: "Failed to report photo" });
   }
 });
 
@@ -1075,6 +1772,603 @@ router.post("/:id/check-in", authenticateToken, async (req: AuthRequest, res: Re
     console.error("[Events] Error checking in attendee:", error);
     res.status(500).json({ message: "Failed to check in attendee" });
   }
+});
+
+// ============================================================================
+// EVENT POSTS (Discussion Tab)
+// ============================================================================
+
+// GET /api/events/:id/permissions - Get user's posting permissions for an event
+router.get("/:id/permissions", optionalAuth, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user?.id;
+    const eventId = parseInt(req.params.id);
+    
+    console.log(`[Events Permissions] Request for eventId: ${eventId}, userId: ${userId || 'unauthenticated'}`);
+
+    // Return default (no permission) for unauthenticated users
+    if (!userId) {
+      console.log(`[Events Permissions] Unauthenticated user, returning default permissions`);
+      return res.json({
+        canPost: false,
+        canComment: false,
+        role: null,
+        isRsvpd: false,
+        isOrganizer: false,
+        reason: "Login to join the discussion"
+      });
+    }
+
+    console.log(`[Events Permissions] Fetching permissions for userId: ${userId}, eventId: ${eventId}`);
+    const permissions = await PostingPermissionService.getEventPermissions(userId, eventId);
+    console.log(`[Events Permissions] PostingPermissionService returned:`, JSON.stringify(permissions));
+    
+    // Check if user is the event organizer
+    const [event] = await db.select({ userId: events.userId }).from(events).where(eq(events.id, eventId)).limit(1);
+    const isOrganizer = event?.userId === userId;
+    
+    const result = { ...permissions, isOrganizer };
+    console.log(`[Events Permissions] Final result:`, JSON.stringify(result));
+    res.json(result);
+  } catch (error) {
+    console.error("[Events] Error fetching permissions:", error);
+    res.status(500).json({ message: "Failed to fetch permissions" });
+  }
+});
+
+// GET /api/events/:id/posts - Get all posts for an event
+router.get("/:id/posts", async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { limit = "20", offset = "0" } = req.query;
+
+    const eventPosts = await db
+      .select({
+        id: posts.id,
+        userId: posts.userId,
+        eventId: posts.eventId,
+        content: posts.content,
+        imageUrl: posts.imageUrl,
+        videoUrl: posts.videoUrl,
+        visibility: posts.visibility,
+        likes: posts.likes,
+        comments: posts.comments,
+        createdAt: posts.createdAt,
+        tags: posts.tags,
+        location: posts.location,
+        user: {
+          id: users.id,
+          name: users.name,
+          username: users.username,
+          profileImage: users.profileImage
+        }
+      })
+      .from(posts)
+      .leftJoin(users, eq(posts.userId, users.id))
+      .where(eq(posts.eventId, parseInt(id)))
+      .orderBy(desc(posts.createdAt))
+      .limit(parseInt(limit as string))
+      .offset(parseInt(offset as string));
+
+    res.json(eventPosts);
+  } catch (error) {
+    console.error("[Events] Error fetching posts:", error);
+    res.status(500).json({ message: "Failed to fetch posts" });
+  }
+});
+
+// POST /api/events/:id/posts - Create a post for an event (RBAC enforced)
+router.post("/:id/posts", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    const { id } = req.params;
+    const { content, imageUrl, videoUrl, tags, location } = req.body;
+    const eventId = parseInt(id);
+
+    // Verify event exists
+    const [event] = await db
+      .select()
+      .from(events)
+      .where(eq(events.id, eventId))
+      .limit(1);
+
+    if (!event) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+
+    // Allow any logged-in user to post to event discussions (no RSVP required)
+    // This enables open community discussion about events
+
+    if (!content || content.trim().length === 0) {
+      return res.status(400).json({ message: "Post content is required" });
+    }
+
+    const [post] = await db
+      .insert(posts)
+      .values({
+        userId,
+        eventId: eventId,
+        content: content.trim(),
+        imageUrl: imageUrl || null,
+        videoUrl: videoUrl || null,
+        tags: tags || [],
+        location: location || null,
+        visibility: "public",
+        postType: "event_discussion"
+      })
+      .returning();
+
+    // Fetch with user info
+    const [postWithUser] = await db
+      .select({
+        id: posts.id,
+        userId: posts.userId,
+        eventId: posts.eventId,
+        content: posts.content,
+        imageUrl: posts.imageUrl,
+        videoUrl: posts.videoUrl,
+        visibility: posts.visibility,
+        likes: posts.likes,
+        comments: posts.comments,
+        createdAt: posts.createdAt,
+        tags: posts.tags,
+        location: posts.location,
+        user: {
+          id: users.id,
+          name: users.name,
+          username: users.username,
+          profileImage: users.profileImage
+        }
+      })
+      .from(posts)
+      .leftJoin(users, eq(posts.userId, users.id))
+      .where(eq(posts.id, post.id))
+      .limit(1);
+
+    res.status(201).json(postWithUser);
+
+    // Send notification to organizer about new post
+    if (event.userId !== userId) {
+      notificationService.notifyEventPost(event.userId, eventId, event.title, userId).catch(console.error);
+    }
+  } catch (error) {
+    console.error("[Events] Error creating post:", error);
+    res.status(500).json({ message: "Failed to create post" });
+  }
+});
+
+// ============================================================================
+// EVENT INVITATION ROUTES
+// ============================================================================
+
+// POST /api/events/:id/invitations - Invite user(s) to event (organizer or attendee)
+router.post("/:id/invitations", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    const eventId = parseInt(req.params.id);
+    const { inviteeIds, emails, message, role } = req.body;
+
+    // Check event exists
+    const [event] = await db
+      .select()
+      .from(events)
+      .where(eq(events.id, eventId))
+      .limit(1);
+
+    if (!event) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+
+    const isOrganizer = event.userId === userId || event.organizerId === userId;
+    
+    // Check if user can invite (organizer or RSVP'd attendee)
+    if (!isOrganizer) {
+      const [rsvp] = await db
+        .select()
+        .from(eventRsvps)
+        .where(and(
+          eq(eventRsvps.eventId, eventId),
+          eq(eventRsvps.userId, userId),
+          eq(eventRsvps.status, "going")
+        ))
+        .limit(1);
+
+      if (!rsvp) {
+        return res.status(403).json({ message: "Only organizers and attendees can invite others" });
+      }
+    }
+
+    const invitations = [];
+
+    // Handle user ID invitations
+    if (inviteeIds && Array.isArray(inviteeIds)) {
+      for (const inviteeId of inviteeIds) {
+        // Skip if already invited
+        const [existing] = await db
+          .select()
+          .from(eventInvitations)
+          .where(and(
+            eq(eventInvitations.eventId, eventId),
+            eq(eventInvitations.inviteeId, inviteeId)
+          ))
+          .limit(1);
+
+        if (existing) continue;
+
+        const inviteCode = crypto.randomBytes(16).toString('hex');
+        const [invitation] = await db
+          .insert(eventInvitations)
+          .values({
+            eventId,
+            inviterId: userId,
+            inviteeId,
+            inviteCode,
+            message: message || null,
+            role: role || 'guest',
+            status: 'pending',
+            expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days
+          })
+          .returning();
+
+        invitations.push(invitation);
+
+        // Send notification
+        notificationService.notifyEventInvitation(inviteeId, eventId, event.title, userId).catch(console.error);
+      }
+    }
+
+    // Handle email invitations (for non-users)
+    if (emails && Array.isArray(emails)) {
+      for (const emailObj of emails) {
+        const email = typeof emailObj === 'string' ? emailObj : emailObj.email;
+        const name = typeof emailObj === 'string' ? null : emailObj.name;
+
+        const inviteCode = crypto.randomBytes(16).toString('hex');
+        const [invitation] = await db
+          .insert(eventInvitations)
+          .values({
+            eventId,
+            inviterId: userId,
+            inviteeEmail: email,
+            inviteeName: name,
+            inviteCode,
+            message: message || null,
+            role: role || 'guest',
+            status: 'pending',
+            expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+          })
+          .returning();
+
+        invitations.push(invitation);
+        // TODO: Send email invitation
+      }
+    }
+
+    res.status(201).json({ 
+      message: `${invitations.length} invitation(s) sent`,
+      invitations 
+    });
+  } catch (error) {
+    console.error("[Events] Error creating invitations:", error);
+    res.status(500).json({ message: "Failed to create invitations" });
+  }
+});
+
+// GET /api/events/:id/invitations - Get event invitations (organizer only)
+router.get("/:id/invitations", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    const eventId = parseInt(req.params.id);
+
+    // Check if user is organizer
+    const [event] = await db
+      .select()
+      .from(events)
+      .where(eq(events.id, eventId))
+      .limit(1);
+
+    if (!event) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+
+    if (event.userId !== userId && event.organizerId !== userId) {
+      return res.status(403).json({ message: "Only organizers can view invitations" });
+    }
+
+    const invitations = await db
+      .select({
+        invitation: eventInvitations,
+        inviter: {
+          id: users.id,
+          name: users.name,
+          username: users.username,
+          profileImage: users.profileImage
+        }
+      })
+      .from(eventInvitations)
+      .leftJoin(users, eq(eventInvitations.inviterId, users.id))
+      .where(eq(eventInvitations.eventId, eventId))
+      .orderBy(desc(eventInvitations.createdAt));
+
+    res.json(invitations);
+  } catch (error) {
+    console.error("[Events] Error fetching invitations:", error);
+    res.status(500).json({ message: "Failed to fetch invitations" });
+  }
+});
+
+
+// POST /api/events/:id/invitations/:invitationId/respond - Respond to invitation
+router.post("/:id/invitations/:invitationId/respond", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    const eventId = parseInt(req.params.id);
+    const invitationId = parseInt(req.params.invitationId);
+    const { response } = req.body; // 'accepted' or 'declined'
+
+    if (!['accepted', 'declined'].includes(response)) {
+      return res.status(400).json({ message: "Invalid response. Use 'accepted' or 'declined'" });
+    }
+
+    // Find invitation
+    const [invitation] = await db
+      .select()
+      .from(eventInvitations)
+      .where(and(
+        eq(eventInvitations.id, invitationId),
+        eq(eventInvitations.eventId, eventId),
+        eq(eventInvitations.inviteeId, userId)
+      ))
+      .limit(1);
+
+    if (!invitation) {
+      return res.status(404).json({ message: "Invitation not found" });
+    }
+
+    if (invitation.status !== 'pending') {
+      return res.status(400).json({ message: "Invitation already responded to" });
+    }
+
+    // Update invitation
+    const [updated] = await db
+      .update(eventInvitations)
+      .set({ 
+        status: response,
+        respondedAt: new Date()
+      })
+      .where(eq(eventInvitations.id, invitationId))
+      .returning();
+
+    // If accepted, auto-RSVP
+    if (response === 'accepted') {
+      const [existingRsvp] = await db
+        .select()
+        .from(eventRsvps)
+        .where(and(
+          eq(eventRsvps.eventId, eventId),
+          eq(eventRsvps.userId, userId)
+        ))
+        .limit(1);
+
+      if (!existingRsvp) {
+        await db
+          .insert(eventRsvps)
+          .values({
+            eventId,
+            userId,
+            status: 'going',
+            guestCount: 0
+          });
+      }
+    }
+
+    res.json(updated);
+  } catch (error) {
+    console.error("[Events] Error responding to invitation:", error);
+    res.status(500).json({ message: "Failed to respond to invitation" });
+  }
+});
+
+// ============================================================================
+// SMART TEAM MEMBER SEARCH (MB.MD Pattern 28 - Parallel Agent Orchestration)
+// ============================================================================
+// Search Priority:
+// 1. Previous collaborators (users the organizer has worked with before)
+// 2. City-based professionals with matching tangoRole
+// 3. All users with matching tangoRole
+// 4. General user search fallback
+
+router.get("/:id/search-team-members", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    const eventId = parseInt(req.params.id);
+    const role = (req.query.role as string) || '';
+    const query = (req.query.q as string) || '';
+    const limit = Math.min(parseInt(req.query.limit as string) || 15, 50);
+
+    if (!query || query.length < 2) {
+      return res.json([]);
+    }
+
+    // Get event and organizer info
+    const [event] = await db
+      .select({
+        id: events.id,
+        organizerId: events.organizerId,
+        userId: events.userId,
+        city: events.city,
+        country: events.country
+      })
+      .from(events)
+      .where(eq(events.id, eventId))
+      .limit(1);
+
+    if (!event) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+
+    const organizerId = event.organizerId || event.userId;
+    
+    // Get organizer's city for location-based search
+    const [organizer] = await db
+      .select({ city: users.city, country: users.country })
+      .from(users)
+      .where(eq(users.id, organizerId!))
+      .limit(1);
+
+    const searchCity = event.city || organizer?.city || '';
+    const searchLower = query.toLowerCase();
+
+    // Map participant roles to tangoRoles array values
+    const tangoRoleMapping: Record<string, string> = {
+      'dj': 'dj',
+      'teacher': 'teacher',
+      'performer': 'performer',
+      'photographer': 'photographer',
+      'host': 'organizer',
+      'co_organizer': 'organizer'
+    };
+    const mappedRole = tangoRoleMapping[role] || role;
+
+    // TIER 1: Previous collaborators (users who have participated in organizer's past events)
+    const previousCollaborators = await db
+      .select({
+        id: users.id,
+        name: users.name,
+        username: users.username,
+        email: users.email,
+        profileImage: users.profileImage,
+        city: users.city,
+        tangoRoles: users.tangoRoles,
+        tier: sql<number>`1`.as('tier')
+      })
+      .from(users)
+      .innerJoin(eventRsvps, eq(users.id, eventRsvps.userId))
+      .innerJoin(events, eq(eventRsvps.eventId, events.id))
+      .where(and(
+        or(
+          eq(events.organizerId, organizerId!),
+          eq(events.userId, organizerId!)
+        ),
+        sql`${events.id} != ${eventId}`,
+        or(
+          sql`LOWER(${users.name}) LIKE ${'%' + searchLower + '%'}`,
+          sql`LOWER(${users.username}) LIKE ${'%' + searchLower + '%'}`
+        ),
+        mappedRole ? sql`${users.tangoRoles} @> ARRAY[${mappedRole}]::text[]` : sql`1=1`
+      ))
+      .groupBy(users.id)
+      .limit(limit);
+
+    // TIER 2: City-based professionals with matching role
+    const cityProfessionals = await db
+      .select({
+        id: users.id,
+        name: users.name,
+        username: users.username,
+        email: users.email,
+        profileImage: users.profileImage,
+        city: users.city,
+        tangoRoles: users.tangoRoles,
+        tier: sql<number>`2`.as('tier')
+      })
+      .from(users)
+      .where(and(
+        searchCity ? sql`LOWER(${users.city}) = ${searchCity.toLowerCase()}` : sql`1=1`,
+        or(
+          sql`LOWER(${users.name}) LIKE ${'%' + searchLower + '%'}`,
+          sql`LOWER(${users.username}) LIKE ${'%' + searchLower + '%'}`
+        ),
+        mappedRole ? sql`${users.tangoRoles} @> ARRAY[${mappedRole}]::text[]` : sql`1=1`,
+        sql`${users.id} NOT IN (${previousCollaborators.length > 0 
+          ? sql.join(previousCollaborators.map(u => sql`${u.id}`), sql`, `)
+          : sql`-1`})`
+      ))
+      .limit(limit);
+
+    // TIER 3: All users with matching role (anywhere)
+    const allWithRole = await db
+      .select({
+        id: users.id,
+        name: users.name,
+        username: users.username,
+        email: users.email,
+        profileImage: users.profileImage,
+        city: users.city,
+        tangoRoles: users.tangoRoles,
+        tier: sql<number>`3`.as('tier')
+      })
+      .from(users)
+      .where(and(
+        or(
+          sql`LOWER(${users.name}) LIKE ${'%' + searchLower + '%'}`,
+          sql`LOWER(${users.username}) LIKE ${'%' + searchLower + '%'}`
+        ),
+        mappedRole ? sql`${users.tangoRoles} @> ARRAY[${mappedRole}]::text[]` : sql`1=1`,
+        sql`${users.id} NOT IN (${[...previousCollaborators, ...cityProfessionals].length > 0
+          ? sql.join([...previousCollaborators, ...cityProfessionals].map(u => sql`${u.id}`), sql`, `)
+          : sql`-1`})`
+      ))
+      .limit(limit);
+
+    // TIER 4: General search fallback (all users matching query)
+    const generalSearch = await db
+      .select({
+        id: users.id,
+        name: users.name,
+        username: users.username,
+        email: users.email,
+        profileImage: users.profileImage,
+        city: users.city,
+        tangoRoles: users.tangoRoles,
+        tier: sql<number>`4`.as('tier')
+      })
+      .from(users)
+      .where(and(
+        or(
+          sql`LOWER(${users.name}) LIKE ${'%' + searchLower + '%'}`,
+          sql`LOWER(${users.username}) LIKE ${'%' + searchLower + '%'}`,
+          sql`LOWER(${users.email}) LIKE ${'%' + searchLower + '%'}`
+        ),
+        sql`${users.id} NOT IN (${[...previousCollaborators, ...cityProfessionals, ...allWithRole].length > 0
+          ? sql.join([...previousCollaborators, ...cityProfessionals, ...allWithRole].map(u => sql`${u.id}`), sql`, `)
+          : sql`-1`})`
+      ))
+      .limit(Math.max(0, limit - previousCollaborators.length - cityProfessionals.length - allWithRole.length));
+
+    // Combine and sort by tier
+    const results = [
+      ...previousCollaborators.map(u => ({ ...u, matchType: 'previous_collaborator' })),
+      ...cityProfessionals.map(u => ({ ...u, matchType: 'city_professional' })),
+      ...allWithRole.map(u => ({ ...u, matchType: 'role_match' })),
+      ...generalSearch.map(u => ({ ...u, matchType: 'general' }))
+    ].slice(0, limit);
+
+    console.log(`[SmartSearch] Event ${eventId}, Role: ${role}, Query: "${query}" → ${results.length} results (${previousCollaborators.length} collaborators, ${cityProfessionals.length} city pros, ${allWithRole.length} role matches, ${generalSearch.length} general)`);
+
+    res.json(results);
+  } catch (error) {
+    console.error("[Events] Smart team member search error:", error);
+    res.status(500).json({ message: "Search failed" });
+  }
+});
+
+// ============================================================================
+// MULTER ERROR HANDLER MIDDLEWARE
+// ============================================================================
+router.use((err: any, req: Request, res: Response, next: any) => {
+  if (err instanceof multer.MulterError) {
+    if (err.code === 'LIMIT_FILE_SIZE') {
+      return res.status(400).json({ 
+        message: `File too large. Maximum size is ${MAX_FILE_SIZE / (1024 * 1024)}MB` 
+      });
+    }
+    return res.status(400).json({ message: `Upload error: ${err.message}` });
+  }
+  if (err && err.message && err.message.includes('Invalid file type')) {
+    return res.status(400).json({ message: err.message });
+  }
+  next(err);
 });
 
 export default router;

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { 
@@ -9,23 +10,11 @@ import {
   Users, 
   Image, 
   Info,
-  GraduationCap,
-  Music,
-  Camera,
   Briefcase,
-  Theater,
-  ShoppingBag,
-  Mic,
-  Palette,
-  School,
-  Hotel,
-  Heart,
-  MapPin,
-  Building,
-  Map,
-  BookOpen,
-  Lightbulb,
-  Car
+  MessageSquare,
+  UserPlus,
+  UserCheck,
+  HeartHandshake
 } from "lucide-react";
 
 interface User {
@@ -34,14 +23,38 @@ interface User {
   [key: string]: any;
 }
 
+interface FriendshipState {
+  isFriend: boolean;
+  hasPendingRequest: boolean;
+  hasIncomingRequest: boolean;
+}
+
 interface ProfileTabsNavProps {
   user: User;
   activeTab: string;
   onTabChange: (tab: string) => void;
   isOwnProfile: boolean;
+  isPublicView?: boolean;
+  friendshipState?: FriendshipState;
+  onAddFriend?: () => void;
+  onReviewRequest?: () => void;
+  isAddingFriend?: boolean;
 }
 
-// Tab configuration with icons and labels
+const PROFESSIONAL_ROLES = [
+  'teacher', 'dj', 'performer', 'organizer', 'photographer', 'musician',
+  'choreographer', 'content_creator', 'tango_guide', 'taxi_dancer', 
+  'tour_operator', 'host_venue', 'tango_school', 'tango_hotel', 'vendor',
+  'wellness', 'learning_resource', 'host', 'guide', 'wellness_provider',
+  'learning_source', 'venue-owner', 'coach', 'mc', 'business', 'artist',
+  'journalist', 'historian', 'clothing-designer'
+];
+
+export function hasProfessionalRoles(roles: string[] | null | undefined): boolean {
+  if (!roles || roles.length === 0) return false;
+  return roles.some(role => PROFESSIONAL_ROLES.includes(role.toLowerCase()));
+}
+
 const BASE_TABS = [
   { id: 'feed', label: 'Posts', icon: FileText },
   { id: 'travel', label: 'Travel', icon: Plane },
@@ -51,54 +64,38 @@ const BASE_TABS = [
   { id: 'about', label: 'About', icon: Info },
 ];
 
-// Conditional role-based tabs (from handoff doc A10.2)
-const ROLE_TABS: Record<string, { id: string; label: string; icon: any }> = {
-  'teacher': { id: 'classes', label: 'Classes', icon: GraduationCap },
-  'dj': { id: 'music', label: 'Music', icon: Music },
-  'photographer': { id: 'gallery', label: 'Gallery', icon: Camera },
-  'organizer': { id: 'events-organized', label: 'Events', icon: Briefcase },
-  'performer': { id: 'performances', label: 'Performances', icon: Theater },
-  'vendor': { id: 'shop', label: 'Shop', icon: ShoppingBag },
-  'musician': { id: 'orchestra', label: 'Orchestra', icon: Mic },
-  'choreographer': { id: 'choreographies', label: 'Choreographies', icon: Palette },
-  'tango_school': { id: 'school', label: 'School', icon: School },
-  'tango_hotel': { id: 'accommodation', label: 'Accommodation', icon: Hotel },
-  'wellness_provider': { id: 'wellness', label: 'Wellness', icon: Heart },
-  'tour_operator': { id: 'tours', label: 'Tours', icon: MapPin },
-  'host': { id: 'venue', label: 'Venue', icon: Building },
-  'guide': { id: 'guide-services', label: 'Guide', icon: Map },
-  'content_creator': { id: 'content', label: 'Content', icon: BookOpen },
-  'learning_source': { id: 'resources', label: 'Resources', icon: Lightbulb },
-  'taxi_dancer': { id: 'taxi-services', label: 'Taxi Services', icon: Car },
-};
+const PRO_TAB = { id: 'pro', label: 'PRO', icon: Briefcase };
 
-// Get visible tabs based on user's tango roles (from handoff doc A10.2)
 export const getVisibleTabs = (user: User): Array<{ id: string; label: string; icon: any }> => {
   const allTabs = [...BASE_TABS];
   
-  if (!user.tangoRoles || user.tangoRoles.length === 0) {
-    return allTabs;
+  if (hasProfessionalRoles(user.tangoRoles)) {
+    allTabs.push(PRO_TAB);
   }
-  
-  // Add role-specific tabs
-  user.tangoRoles.forEach((role) => {
-    const roleTab = ROLE_TABS[role];
-    if (roleTab) {
-      allTabs.push(roleTab);
-    }
-  });
   
   return allTabs;
 };
 
-export default function ProfileTabsNav({ user, activeTab, onTabChange, isOwnProfile }: ProfileTabsNavProps) {
+export default function ProfileTabsNav({ 
+  user, 
+  activeTab, 
+  onTabChange, 
+  isOwnProfile, 
+  isPublicView,
+  friendshipState,
+  onAddFriend,
+  onReviewRequest,
+  isAddingFriend
+}: ProfileTabsNavProps) {
   const visibleTabs = getVisibleTabs(user);
   const [hoveredTab, setHoveredTab] = useState<string | null>(null);
   
   return (
     <div className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-40">
       <div className="max-w-5xl mx-auto px-6">
-        <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide py-2">
+        <div className="flex items-center justify-between gap-2 py-2">
+          {/* Left: Tab buttons */}
+          <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide">
           {visibleTabs.map((tab, index) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -131,17 +128,6 @@ export default function ProfileTabsNav({ user, activeTab, onTabChange, isOwnProf
                   <Icon className="w-4 h-4" />
                   <span className="font-medium">{tab.label}</span>
                   
-                  {/* Role badge for professional tabs */}
-                  {isRoleTab && (
-                    <Badge 
-                      variant="secondary" 
-                      className="ml-1 text-[10px] px-1.5 py-0 h-4"
-                      data-testid={`badge-role-${tab.id}`}
-                    >
-                      Pro
-                    </Badge>
-                  )}
-                  
                   {/* Active tab underline */}
                   {isActive && (
                     <motion.div
@@ -166,6 +152,71 @@ export default function ProfileTabsNav({ user, activeTab, onTabChange, isOwnProf
               </motion.div>
             );
           })}
+          </div>
+          
+          {/* Right: Friend/Message Buttons (only on other profiles) */}
+          {!isOwnProfile && friendshipState && (
+            <div className="flex items-center gap-2 flex-shrink-0">
+              {/* Message Button */}
+              <Link href={`/messages/direct/${user.id}`}>
+                <Button 
+                  variant="outline"
+                  size="sm"
+                  className="gap-2"
+                  data-testid={`button-message-${user.id}`}
+                >
+                  <MessageSquare className="h-4 w-4" />
+                  Message
+                </Button>
+              </Link>
+              
+              {/* Friend Status Button */}
+              {friendshipState.isFriend ? (
+                <Link href={`/friendship/${user.id}`}>
+                  <Button 
+                    size="sm"
+                    className="gap-2"
+                    data-testid={`button-see-friendship-${user.id}`}
+                  >
+                    <HeartHandshake className="h-4 w-4" />
+                    See Friendship
+                  </Button>
+                </Link>
+              ) : friendshipState.hasIncomingRequest ? (
+                <Button 
+                  size="sm"
+                  className="gap-2"
+                  onClick={onReviewRequest}
+                  data-testid={`button-review-request-${user.id}`}
+                >
+                  <UserCheck className="h-4 w-4" />
+                  Review Request
+                </Button>
+              ) : friendshipState.hasPendingRequest ? (
+                <Button 
+                  variant="outline"
+                  size="sm"
+                  className="gap-2"
+                  disabled
+                  data-testid="button-request-pending"
+                >
+                  <UserCheck className="h-4 w-4" />
+                  Request Sent
+                </Button>
+              ) : (
+                <Button 
+                  size="sm"
+                  className="gap-2"
+                  onClick={onAddFriend}
+                  disabled={isAddingFriend}
+                  data-testid={`button-add-friend-${user.id}`}
+                >
+                  <UserPlus className="h-4 w-4" />
+                  Add Friend
+                </Button>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -16,25 +16,47 @@ import { ErrorBoundary } from "./components/ErrorBoundary";
 import { MrBlueWidget } from "./components/MrBlueWidget";
 import { MrBlueFloatingButton } from "./components/mrBlue/MrBlueFloatingButton";
 import { LoadingFallback } from "./components/LoadingFallback";
-import { initErrorDetection, cleanupErrorDetection } from "./lib/proactiveErrorDetection";
-import { initHttpInterceptor, cleanupHttpInterceptor } from "./lib/httpInterceptor";
-import { initComponentHealthMonitor, cleanupComponentHealthMonitor } from "./lib/componentHealthMonitor";
+import {
+  initErrorDetection,
+  cleanupErrorDetection,
+} from "./lib/proactiveErrorDetection";
+import {
+  initHttpInterceptor,
+  cleanupHttpInterceptor,
+} from "./lib/httpInterceptor";
+import {
+  initComponentHealthMonitor,
+  cleanupComponentHealthMonitor,
+} from "./lib/componentHealthMonitor";
 import { setupNavigationInterceptor } from "./lib/navigationInterceptor";
 
 // Lazy load heavy components - Updated to use new unified interface
 const UnifiedMrBlue = lazy(() => import("./components/mr-blue/UnifiedMrBlue"));
-const VisualEditorSplitPane = lazy(() => import("./components/visual-editor/VisualEditorSplitPane"));
+const VisualEditorSplitPane = lazy(
+  () => import("./components/visual-editor/VisualEditorSplitPane"),
+);
 
 // Core Pages (loaded immediately for fast initial render)
 import NotFound from "@/pages/not-found";
 import HomePage from "@/pages/HomePage";
 import LandingPage from "@/pages/LandingPage";
+import DemosPage from "@/pages/DemosPage";
 import LoginPage from "@/pages/LoginPage";
 import RegisterPage from "@/pages/RegisterPage";
 import FacebookCallbackPage from "@/pages/auth/FacebookCallbackPage";
 import MarketingPrototype from "@/pages/MarketingPrototype";
 import MarketingPrototypeEnhanced from "@/pages/MarketingPrototypeEnhanced";
 import MarketingPrototypeOcean from "@/pages/MarketingPrototypeOcean";
+import ForDancersPage from "@/pages/marketing/ForDancersPage";
+import ForTeachersPage from "@/pages/marketing/ForTeachersPage";
+import ForOrganizersPage from "@/pages/marketing/ForOrganizersPage";
+import SupportPage from "@/pages/marketing/SupportPage";
+import DonatePage from "@/pages/DonatePage";
+import SupportersPage from "@/pages/marketing/SupportersPage";
+import VolunteerPage from "@/pages/marketing/VolunteerPage";
+import MrBluePage from "@/pages/marketing/MrBluePage";
+import AmbassadorsPage from "@/pages/marketing/AmbassadorsPage";
+import OpenSourcePage from "@/pages/marketing/OpenSourcePage";
 import FeedPrototypePage from "@/pages/FeedPrototypePage";
 import GroupsPrototypePage from "@/pages/GroupsPrototypePage";
 import CommunityPrototypePage from "@/pages/CommunityPrototypePage";
@@ -50,11 +72,13 @@ import EventsGalleryPrototypePage from "@/pages/EventsGalleryPrototypePage";
 const AboutPage = lazy(() => import("@/pages/AboutPage"));
 const FeaturesPage = lazy(() => import("@/pages/FeaturesPage"));
 const TestimonialsPage = lazy(() => import("@/pages/TestimonialsPage"));
+const FAQPage = lazy(() => import("@/pages/FAQPage"));
 const CalendarPage = lazy(() => import("@/pages/CalendarPage"));
 // Social & Community
 const DiscoverPage = lazy(() => import("@/pages/DiscoverPage"));
-const VolunteerPage = lazy(() => import("@/pages/VolunteerPage"));
-const GamificationDashboard = lazy(() => import("@/pages/GamificationDashboard"));
+const GamificationDashboard = lazy(
+  () => import("@/pages/GamificationDashboard"),
+);
 const FeedPage = lazy(() => import("@/pages/FeedPage"));
 const ProfilePage = lazy(() => import("@/pages/ProfilePage"));
 const FriendsListPage = lazy(() => import("@/pages/FriendsListPage"));
@@ -68,14 +92,22 @@ const CreatePostPage = lazy(() => import("@/pages/CreatePostPage"));
 
 // Messages Platform (P0 #12-16)
 const UnifiedInboxPage = lazy(() => import("@/pages/messages/UnifiedInbox"));
-const ChannelConnectionsPage = lazy(() => import("@/pages/messages/ChannelConnections"));
+const ChannelConnectionsPage = lazy(
+  () => import("@/pages/messages/ChannelConnections"),
+);
 const MessageTemplatesPage = lazy(() => import("@/pages/messages/Templates"));
-const MessageAutomationsPage = lazy(() => import("@/pages/messages/Automations"));
+const MessageAutomationsPage = lazy(
+  () => import("@/pages/messages/Automations"),
+);
 
 // New Messaging Pages (Pages 21-24)
-const DirectMessagesPage = lazy(() => import("@/pages/messages/DirectMessages"));
+const DirectMessagesPage = lazy(
+  () => import("@/pages/messages/DirectMessages"),
+);
 const GroupChatPage = lazy(() => import("@/pages/messages/GroupChat"));
-const MessageThreadsPage = lazy(() => import("@/pages/messages/MessageThreads"));
+const MessageThreadsPage = lazy(
+  () => import("@/pages/messages/MessageThreads"),
+);
 
 // Subscription & Billing Pages (Pages 25-28)
 const SubscriptionPlansPage = lazy(() => import("@/pages/SubscriptionPlans"));
@@ -85,7 +117,9 @@ const InvoiceManagementPage = lazy(() => import("@/pages/InvoiceManagement"));
 
 const NotificationsPage = lazy(() => import("@/pages/NotificationsPage"));
 const SearchPage = lazy(() => import("@/pages/SearchPage"));
-const CommunityWorldMapPage = lazy(() => import("@/pages/CommunityWorldMapPage"));
+const CommunityWorldMapPage = lazy(
+  () => import("@/pages/CommunityWorldMapPage"),
+);
 const RecommendationsPage = lazy(() => import("@/pages/RecommendationsPage"));
 const InvitationsPage = lazy(() => import("@/pages/InvitationsPage"));
 const FacebookInvites = lazy(() => import("@/pages/FacebookInvites"));
@@ -99,22 +133,33 @@ const ReputationProfile = lazy(() => import("@/pages/ReputationProfile"));
 const EventsPage = lazy(() => import("@/pages/EventsPage"));
 const EventSearchPage = lazy(() => import("@/pages/events/EventSearchPage"));
 const EventDetailsPage = lazy(() => import("@/pages/EventDetailsPage"));
-const CreateEventPage = lazy(() => import("@/pages/CreateEventPage"));
+const EditEventPage = lazy(() => import("@/pages/EditEventPage"));
 const MyEventsPage = lazy(() => import("@/pages/MyEventsPage"));
 const GroupsPage = lazy(() => import("@/pages/GroupsPage"));
+const GroupCreatePage = lazy(() => import("@/pages/GroupCreatePage"));
 const GroupDetailsPage = lazy(() => import("@/pages/GroupDetailsPage"));
+const EventSeriesPage = lazy(() => import("@/pages/EventSeriesPage"));
 
 // Community & Events Pages (Pages 11-20)
 const CommunityMapPage = lazy(() => import("@/pages/CommunityMapPage"));
 const CityGroupsPage = lazy(() => import("@/pages/CityGroupsPage"));
-const ProfessionalGroupsPage = lazy(() => import("@/pages/ProfessionalGroupsPage"));
+const CityGroupRedirectPage = lazy(() => import("@/pages/CityGroupRedirectPage"));
+const CityHubPage = lazy(() => import("@/pages/CityHubPage"));
+const ProfessionalGroupsPage = lazy(
+  () => import("@/pages/ProfessionalGroupsPage"),
+);
 const CustomGroupsPage = lazy(() => import("@/pages/CustomGroupsPage"));
 const EventCalendarPage = lazy(() => import("@/pages/EventCalendarPage"));
 const EventCreationPage = lazy(() => import("@/pages/EventCreationPage"));
 const EventDetailPage = lazy(() => import("@/pages/EventDetailPage"));
-const HousingMarketplacePage = lazy(() => import("@/pages/HousingMarketplacePage"));
-const HousingListingDetailPage = lazy(() => import("@/pages/HousingListingDetailPage"));
+const HousingMarketplacePage = lazy(
+  () => import("@/pages/HousingMarketplacePage"),
+);
+const HousingListingDetailPage = lazy(
+  () => import("@/pages/HousingListingDetailPage"),
+);
 const HousingSearchPage = lazy(() => import("@/pages/HousingSearchPage"));
+const CreateListingPage = lazy(() => import("@/pages/housing/CreateListingPage"));
 
 // Week 9 Day 5: Stories, Live Streams, Saved Posts
 const StoriesPage = lazy(() => import("@/pages/StoriesPage"));
@@ -122,10 +167,18 @@ const LiveStreamPage = lazy(() => import("@/pages/LiveStreamPage"));
 const SavedPostsPage = lazy(() => import("@/pages/SavedPostsPage"));
 
 // Travel Integration
-const TravelTripPlannerPage = lazy(() => import("@/pages/travel/TravelTripPlannerPage"));
-const TravelItineraryPage = lazy(() => import("@/pages/travel/TravelItineraryPage"));
-const TravelExpensesPage = lazy(() => import("@/pages/travel/TravelExpensesPage"));
-const TravelEventCoordinationPage = lazy(() => import("@/pages/travel/TravelEventCoordinationPage"));
+const TravelTripPlannerPage = lazy(
+  () => import("@/pages/travel/TravelTripPlannerPage"),
+);
+const TravelItineraryPage = lazy(
+  () => import("@/pages/travel/TravelItineraryPage"),
+);
+const TravelExpensesPage = lazy(
+  () => import("@/pages/travel/TravelExpensesPage"),
+);
+const TravelEventCoordinationPage = lazy(
+  () => import("@/pages/travel/TravelEventCoordinationPage"),
+);
 
 // Media & Albums
 const AlbumsPage = lazy(() => import("@/pages/albums"));
@@ -138,27 +191,48 @@ const VideoStudio = lazy(() => import("@/pages/VideoStudio"));
 const MrBlueVideoDemo = lazy(() => import("@/pages/mr-blue-video-demo"));
 const MrBlueAvatarDemo = lazy(() => import("@/pages/mr-blue-avatar-demo"));
 const MrBlueStudioPage = lazy(() => import("@/pages/mr-blue-studio"));
+const MrBlueAvatar3DPage = lazy(() => import("@/pages/mr-blue-avatar-3d"));
 const AvatarDesignerPage = lazy(() => import("@/pages/AvatarDesignerPage"));
 const PremiumFeaturesPage = lazy(() => import("@/pages/PremiumFeaturesPage"));
 
 // Life CEO Suite (16 agents)
 const LifeCEODashboardPage = lazy(() => import("@/pages/LifeCEODashboardPage"));
 const HealthAgentPage = lazy(() => import("@/pages/life-ceo/HealthAgentPage"));
-const FinanceAgentPage = lazy(() => import("@/pages/life-ceo/FinanceAgentPage"));
+const FinanceAgentPage = lazy(
+  () => import("@/pages/life-ceo/FinanceAgentPage"),
+);
 const CareerAgentPage = lazy(() => import("@/pages/life-ceo/CareerAgentPage"));
-const ProductivityAgentPage = lazy(() => import("@/pages/life-ceo/ProductivityAgentPage"));
+const ProductivityAgentPage = lazy(
+  () => import("@/pages/life-ceo/ProductivityAgentPage"),
+);
 const TravelAgentPage = lazy(() => import("@/pages/life-ceo/TravelAgentPage"));
-const HomeManagementPage = lazy(() => import("@/pages/life-ceo/HomeManagementPage"));
-const LearningAgentPage = lazy(() => import("@/pages/life-ceo/LearningAgentPage"));
+const HomeManagementPage = lazy(
+  () => import("@/pages/life-ceo/HomeManagementPage"),
+);
+const LearningAgentPage = lazy(
+  () => import("@/pages/life-ceo/LearningAgentPage"),
+);
 const SocialAgentPage = lazy(() => import("@/pages/life-ceo/SocialAgentPage"));
-const WellnessAgentPage = lazy(() => import("@/pages/life-ceo/WellnessAgentPage"));
-const EntertainmentAgentPage = lazy(() => import("@/pages/life-ceo/EntertainmentAgentPage"));
-const CreativityAgentPage = lazy(() => import("@/pages/life-ceo/CreativityAgentPage"));
-const FitnessAgentPage = lazy(() => import("@/pages/life-ceo/FitnessAgentPage"));
-const NutritionAgentPage = lazy(() => import("@/pages/life-ceo/NutritionAgentPage"));
+const WellnessAgentPage = lazy(
+  () => import("@/pages/life-ceo/WellnessAgentPage"),
+);
+const EntertainmentAgentPage = lazy(
+  () => import("@/pages/life-ceo/EntertainmentAgentPage"),
+);
+const CreativityAgentPage = lazy(
+  () => import("@/pages/life-ceo/CreativityAgentPage"),
+);
+const FitnessAgentPage = lazy(
+  () => import("@/pages/life-ceo/FitnessAgentPage"),
+);
+const NutritionAgentPage = lazy(
+  () => import("@/pages/life-ceo/NutritionAgentPage"),
+);
 const SleepAgentPage = lazy(() => import("@/pages/life-ceo/SleepAgentPage"));
 const StressAgentPage = lazy(() => import("@/pages/life-ceo/StressAgentPage"));
-const RelationshipAgentPage = lazy(() => import("@/pages/life-ceo/RelationshipAgentPage"));
+const RelationshipAgentPage = lazy(
+  () => import("@/pages/life-ceo/RelationshipAgentPage"),
+);
 
 // AI Services Consolidation (Week 10-12)
 const AIBudgetBuilder = lazy(() => import("@/pages/AIBudgetBuilder"));
@@ -166,46 +240,93 @@ const EnhancedTalentMatch = lazy(() => import("@/pages/EnhancedTalentMatch"));
 const PrivacyHub = lazy(() => import("@/pages/PrivacyHub"));
 
 // Admin & ESA Framework
-const TalentPipelinePage = lazy(() => import("@/pages/admin/TalentPipelinePage"));
+const TalentPipelinePage = lazy(
+  () => import("@/pages/admin/TalentPipelinePage"),
+);
+const MyTasksPage = lazy(() => import("@/pages/MyTasksPage"));
 const TaskBoardPage = lazy(() => import("@/pages/admin/TaskBoardPage"));
-const PricingManagerPage = lazy(() => import("@/pages/admin/PricingManagerPage"));
+// DELETED: Pricing system rework per Payment & Billing Audit (Dec 2025)
+// const PricingManagerPage = lazy(
+//   () => import("@/pages/admin/PricingManagerPage"),
+// );
 const SelfHealingPage = lazy(() => import("@/pages/admin/SelfHealingPage"));
-const ProjectTrackerPage = lazy(() => import("@/pages/admin/ProjectTrackerPage"));
+const ProjectTrackerPage = lazy(
+  () => import("@/pages/admin/ProjectTrackerPage"),
+);
 const UserReportsPage = lazy(() => import("@/pages/admin/UserReportsPage"));
 const RoleRequestsPage = lazy(() => import("@/pages/admin/RoleRequestsPage"));
-const EventApprovalsPage = lazy(() => import("@/pages/admin/EventApprovalsPage"));
-const HousingReviewsPage = lazy(() => import("@/pages/admin/HousingReviewsPage"));
-const AgentHealthDashboard = lazy(() => import("@/pages/admin/AgentHealthDashboard"));
+const EventApprovalsPage = lazy(
+  () => import("@/pages/admin/EventApprovalsPage"),
+);
+const AdminEventsPage = lazy(
+  () => import("@/pages/admin/AdminEventsPage"),
+);
+const HousingReviewsPage = lazy(
+  () => import("@/pages/admin/HousingReviewsPage"),
+);
+const AgentHealthDashboard = lazy(
+  () => import("@/pages/admin/AgentHealthDashboard"),
+);
 const AdsManager = lazy(() => import("@/pages/admin/AdsManager"));
 
 // P0 Workflow Pages
-const FounderApprovalPage = lazy(() => import("@/pages/admin/FounderApprovalPage"));
+const FounderApprovalPage = lazy(
+  () => import("@/pages/admin/FounderApprovalPage"),
+);
 const SafetyReviewPage = lazy(() => import("@/pages/admin/SafetyReviewPage"));
 const AISupportPage = lazy(() => import("@/pages/admin/AISupportPage"));
 const AdminDashboardPage = lazy(() => import("@/pages/AdminDashboardPage"));
 const AdminUsersPage = lazy(() => import("@/pages/AdminUsersPage"));
-const AdminUsersManagementPage = lazy(() => import("@/pages/AdminUsersManagementPage"));
+const AdminUsersManagementPage = lazy(
+  () => import("@/pages/AdminUsersManagementPage"),
+);
 const AdminModerationPage = lazy(() => import("@/pages/AdminModerationPage"));
-const ModerationDashboard = lazy(() => import("@/pages/admin/ModerationDashboard"));
-const AnalyticsDashboard = lazy(() => import("@/pages/admin/AnalyticsDashboard"));
-const AdminFacebookImport = lazy(() => import("@/pages/admin/AdminFacebookImport"));
-const AnalyticsDashboardPage = lazy(() => import("@/pages/AnalyticsDashboardPage"));
+const ModerationDashboard = lazy(
+  () => import("@/pages/admin/ModerationDashboard"),
+);
+const AnalyticsDashboard = lazy(
+  () => import("@/pages/admin/AnalyticsDashboard"),
+);
+const AdminFacebookImport = lazy(
+  () => import("@/pages/admin/AdminFacebookImport"),
+);
+const AnalyticsDashboardPage = lazy(
+  () => import("@/pages/AnalyticsDashboardPage"),
+);
 const UserAnalyticsPage = lazy(() => import("@/pages/UserAnalyticsPage"));
-const ContentModerationPage = lazy(() => import("@/pages/ContentModerationPage"));
+const ContentModerationPage = lazy(
+  () => import("@/pages/ContentModerationPage"),
+);
 
 // The Plan: Missing Pages (Pages 37, 38, 46, 47, 48, 49)
-const AdminProjectTrackerPage = lazy(() => import("@/pages/AdminProjectTrackerPage"));
+const AdminProjectTrackerPage = lazy(
+  () => import("@/pages/AdminProjectTrackerPage"),
+);
 const AdminCompliancePage = lazy(() => import("@/pages/AdminCompliancePage"));
-const AdminTranslationsPage = lazy(() => import("@/pages/AdminTranslationsPage"));
+const AdminTranslationsPage = lazy(
+  () => import("@/pages/AdminTranslationsPage"),
+);
 const AdminScrapingPage = lazy(() => import("@/pages/AdminScrapingPage"));
-const ClosenessMetricsDashboardPage = lazy(() => import("@/pages/ClosenessMetricsDashboardPage"));
-const ProfessionalReputationPage = lazy(() => import("@/pages/ProfessionalReputationPage"));
+const ClosenessMetricsDashboardPage = lazy(
+  () => import("@/pages/ClosenessMetricsDashboardPage"),
+);
+const ProfessionalReputationPage = lazy(
+  () => import("@/pages/ProfessionalReputationPage"),
+);
 
 // Part 10: Final Admin & Mr Blue Pages (29-47)
-const AdminDashboardOverviewPage = lazy(() => import("@/pages/admin/AdminDashboardPage"));
-const UserManagementPage = lazy(() => import("@/pages/admin/UserManagementPage"));
-const PlatformSettingsPage = lazy(() => import("@/pages/admin/PlatformSettingsPage"));
-const RolesPermissionsPage = lazy(() => import("@/pages/admin/RolesPermissionsPage"));
+const AdminDashboardOverviewPage = lazy(
+  () => import("@/pages/admin/AdminDashboardPage"),
+);
+const UserManagementPage = lazy(
+  () => import("@/pages/admin/UserManagementPage"),
+);
+const PlatformSettingsPage = lazy(
+  () => import("@/pages/admin/PlatformSettingsPage"),
+);
+const RolesPermissionsPage = lazy(
+  () => import("@/pages/admin/RolesPermissionsPage"),
+);
 const ReportsLogsPage = lazy(() => import("@/pages/admin/ReportsLogsPage"));
 const IntegrationsPage = lazy(() => import("@/pages/admin/IntegrationsPage"));
 const FeatureFlagsPage = lazy(() => import("@/pages/admin/FeatureFlagsPage"));
@@ -213,65 +334,121 @@ const SystemHealthPage = lazy(() => import("@/pages/admin/SystemHealthPage"));
 
 // Mr Blue Pages (40-47)
 const MrBlueVoicePage = lazy(() => import("@/pages/mrblue/VoicePage"));
-const MrBlueVibecodingPage = lazy(() => import("@/pages/mrblue/VibecodingPage"));
-const VisualEditorMode = lazy(() => import("@/components/mr-blue/VisualEditorMode").then(m => ({ default: m.VisualEditorMode })));
+const MrBlueVibecodingPage = lazy(
+  () => import("@/pages/mrblue/VibecodingPage"),
+);
+const VisualEditorMode = lazy(() =>
+  import("@/components/mr-blue/VisualEditorMode").then((m) => ({
+    default: m.VisualEditorMode,
+  })),
+);
 const MrBlueSettingsPage = lazy(() => import("@/pages/mrblue/SettingsPage"));
-const MrBlueContextMemoryPage = lazy(() => import("@/pages/mrblue/ContextMemoryPage"));
+const MrBlueContextMemoryPage = lazy(
+  () => import("@/pages/mrblue/ContextMemoryPage"),
+);
 const MrBlueAnalyticsPage = lazy(() => import("@/pages/mrblue/AnalyticsPage"));
-const MrBlueOnboardingPage = lazy(() => import("@/pages/mrblue/OnboardingPage"));
+const MrBlueOnboardingPage = lazy(
+  () => import("@/pages/mrblue/OnboardingPage"),
+);
 const DashboardPage = lazy(() => import("@/pages/DashboardPage"));
 const PlatformPage = lazy(() => import("@/pages/Platform"));
 const SecretsPage = lazy(() => import("@/pages/SecretsPage"));
 const GitRepositoryPage = lazy(() => import("@/pages/GitRepositoryPage"));
 const MonitoringPage = lazy(() => import("@/pages/MonitoringPage"));
 const AnalyticsPage = lazy(() => import("@/pages/AnalyticsPage"));
-const ESADashboardPage = lazy(() => import("@/pages/platform/ESADashboardPage"));
+const ESADashboardPage = lazy(
+  () => import("@/pages/platform/ESADashboardPage"),
+);
 const ESATasksPage = lazy(() => import("@/pages/platform/ESATasksPage"));
-const ESACommunicationsPage = lazy(() => import("@/pages/platform/ESACommunicationsPage"));
+const ESACommunicationsPage = lazy(
+  () => import("@/pages/platform/ESACommunicationsPage"),
+);
 const AgentTasksPage = lazy(() => import("@/pages/AgentTasksPage"));
-const AgentCommunicationsPage = lazy(() => import("@/pages/AgentCommunicationsPage"));
+const AgentCommunicationsPage = lazy(
+  () => import("@/pages/AgentCommunicationsPage"),
+);
 
 // Social Media Integration (Wave 2)
-const SocialMediaDashboardPage = lazy(() => import("@/pages/SocialMediaDashboardPage"));
-const SocialMediaComposerPage = lazy(() => import("@/pages/SocialMediaComposerPage"));
-const SocialMediaConnectionsPage = lazy(() => import("@/pages/SocialMediaConnectionsPage"));
-const SocialMediaCampaignsPage = lazy(() => import("@/pages/SocialMediaCampaignsPage"));
+const SocialMediaDashboardPage = lazy(
+  () => import("@/pages/SocialMediaDashboardPage"),
+);
+const SocialMediaComposerPage = lazy(
+  () => import("@/pages/SocialMediaComposerPage"),
+);
+const SocialMediaConnectionsPage = lazy(
+  () => import("@/pages/SocialMediaConnectionsPage"),
+);
+const SocialMediaCampaignsPage = lazy(
+  () => import("@/pages/SocialMediaCampaignsPage"),
+);
 
 // Marketing & HR Agents
 const SEOAgentPage = lazy(() => import("@/pages/marketing/SEOAgentPage"));
-const ContentAgentPage = lazy(() => import("@/pages/marketing/ContentAgentPage"));
-const SocialMediaAgentPage = lazy(() => import("@/pages/marketing/SocialMediaAgentPage"));
+const ContentAgentPage = lazy(
+  () => import("@/pages/marketing/ContentAgentPage"),
+);
+const SocialMediaAgentPage = lazy(
+  () => import("@/pages/marketing/SocialMediaAgentPage"),
+);
 const EmailAgentPage = lazy(() => import("@/pages/marketing/EmailAgentPage"));
-const AnalyticsAgentPage = lazy(() => import("@/pages/marketing/AnalyticsAgentPage"));
+const AnalyticsAgentPage = lazy(
+  () => import("@/pages/marketing/AnalyticsAgentPage"),
+);
 const RecruiterAgentPage = lazy(() => import("@/pages/hr/RecruiterAgentPage"));
-const OnboardingAgentPage = lazy(() => import("@/pages/hr/OnboardingAgentPage"));
-const PerformanceAgentPage = lazy(() => import("@/pages/hr/PerformanceAgentPage"));
+const OnboardingAgentPage = lazy(
+  () => import("@/pages/hr/OnboardingAgentPage"),
+);
+const PerformanceAgentPage = lazy(
+  () => import("@/pages/hr/PerformanceAgentPage"),
+);
 const RetentionAgentPage = lazy(() => import("@/pages/hr/RetentionAgentPage"));
 const CultureAgentPage = lazy(() => import("@/pages/hr/CultureAgentPage"));
 const H2ACDashboardPage = lazy(() => import("@/pages/H2ACDashboardPage"));
 
 // Financial Management System (Agents #73-105)
-const FinancialDashboardPage = lazy(() => import("@/pages/FinancialDashboardPage"));
-const FinancialPortfoliosPage = lazy(() => import("@/pages/FinancialPortfoliosPage"));
-const FinancialAccountsPage = lazy(() => import("@/pages/FinancialAccountsPage"));
+const FinancialDashboardPage = lazy(
+  () => import("@/pages/FinancialDashboardPage"),
+);
+const FinancialPortfoliosPage = lazy(
+  () => import("@/pages/FinancialPortfoliosPage"),
+);
+const FinancialAccountsPage = lazy(
+  () => import("@/pages/FinancialAccountsPage"),
+);
 const FinancialTradingPage = lazy(() => import("@/pages/FinancialTradingPage"));
-const FinancialInsightsPage = lazy(() => import("@/pages/FinancialInsightsPage"));
+const FinancialInsightsPage = lazy(
+  () => import("@/pages/FinancialInsightsPage"),
+);
 
 // Premium Features
 const GodLevelDashboard = lazy(() => import("@/pages/GodLevelDashboard"));
 const AutonomousPage = lazy(() => import("@/pages/AutonomousPage"));
 
 // Legal Document Management
-const LegalDashboardPage = lazy(() => import("@/pages/legal/LegalDashboardPage"));
-const LegalDocumentsPage = lazy(() => import("@/pages/legal/LegalDocumentsPage"));
-const LegalDocumentDetailPage = lazy(() => import("@/pages/legal/LegalDocumentDetailPage"));
-const LegalTemplatesPage = lazy(() => import("@/pages/legal/LegalTemplatesPage"));
-const LegalSignaturePage = lazy(() => import("@/pages/legal/LegalSignaturePage"));
+const LegalDashboardPage = lazy(
+  () => import("@/pages/legal/LegalDashboardPage"),
+);
+const LegalDocumentsPage = lazy(
+  () => import("@/pages/legal/LegalDocumentsPage"),
+);
+const LegalDocumentDetailPage = lazy(
+  () => import("@/pages/legal/LegalDocumentDetailPage"),
+);
+const LegalTemplatesPage = lazy(
+  () => import("@/pages/legal/LegalTemplatesPage"),
+);
+const LegalSignaturePage = lazy(
+  () => import("@/pages/legal/LegalSignaturePage"),
+);
 
 // User Testing & QA
 const UserTestingPage = lazy(() => import("@/pages/UserTestingPage"));
-const VolunteerRecruitmentPage = lazy(() => import("@/pages/VolunteerRecruitmentPage"));
-const VolunteerTestingInterface = lazy(() => import("@/pages/VolunteerTestingInterface"));
+const VolunteerRecruitmentPage = lazy(
+  () => import("@/pages/VolunteerRecruitmentPage"),
+);
+const VolunteerTestingInterface = lazy(
+  () => import("@/pages/VolunteerTestingInterface"),
+);
 
 // Error Detection Test Page (Phase 2 - Proactive Error Detection)
 const ErrorDetectionTest = lazy(() => import("@/pages/ErrorDetectionTest"));
@@ -279,12 +456,20 @@ const ErrorDetectionTest = lazy(() => import("@/pages/ErrorDetectionTest"));
 // Settings & Account
 const SettingsPage = lazy(() => import("@/pages/SettingsPage"));
 const UserSettingsPage = lazy(() => import("@/pages/UserSettingsPage"));
-const EmailPreferencesPage = lazy(() => import("@/pages/settings/EmailPreferences"));
-const NotificationSettingsPage = lazy(() => import("@/pages/NotificationSettingsPage"));
-const NotificationPreferencesPage = lazy(() => import("@/pages/NotificationPreferencesPage"));
+const EmailPreferencesPage = lazy(
+  () => import("@/pages/settings/EmailPreferences"),
+);
+const NotificationSettingsPage = lazy(
+  () => import("@/pages/NotificationSettingsPage"),
+);
+const NotificationPreferencesPage = lazy(
+  () => import("@/pages/NotificationPreferencesPage"),
+);
 const PrivacySettingsPage = lazy(() => import("@/pages/PrivacySettings"));
 const AccountSettingsPage = lazy(() => import("@/pages/AccountSettingsPage"));
-const AdminUserDetailPage = lazy(() => import("@/pages/admin/AdminUserDetailPage"));
+const AdminUserDetailPage = lazy(
+  () => import("@/pages/admin/AdminUserDetailPage"),
+);
 const AdminIntegrationsPage = lazy(() => import("@/pages/admin/integrations"));
 const ProfileEditPage = lazy(() => import("@/pages/ProfileEditPage"));
 const ActivityLogPage = lazy(() => import("@/pages/ActivityLogPage"));
@@ -292,20 +477,26 @@ const BlockedUsersPage = lazy(() => import("@/pages/BlockedUsersPage"));
 const BlockedContentPage = lazy(() => import("@/pages/BlockedContentPage"));
 
 // Billing & Subscription
-const BillingDashboard = lazy(() => import("@/pages/settings/BillingDashboard"));
+const BillingDashboard = lazy(
+  () => import("@/pages/settings/BillingDashboard"),
+);
 const PaymentHistory = lazy(() => import("@/pages/settings/PaymentHistory"));
 const PaymentMethods = lazy(() => import("@/pages/settings/PaymentMethods"));
 const CheckoutPage = lazy(() => import("@/pages/Checkout"));
 
 // GDPR Compliance Settings
-const SecuritySettingsPage = lazy(() => import("@/pages/settings/SecuritySettingsPage"));
+const SecuritySettingsPage = lazy(
+  () => import("@/pages/settings/SecuritySettingsPage"),
+);
 const PrivacyPage = lazy(() => import("@/pages/settings/PrivacyPage"));
 const DataExportPage = lazy(() => import("@/pages/DataExport"));
 const DeleteAccountPage = lazy(() => import("@/pages/AccountDeletion"));
 
 // Auth & Security
 const PasswordResetPage = lazy(() => import("@/pages/PasswordResetPage"));
-const EmailVerificationPage = lazy(() => import("@/pages/EmailVerificationPage"));
+const EmailVerificationPage = lazy(
+  () => import("@/pages/EmailVerificationPage"),
+);
 const TwoFactorAuthPage = lazy(() => import("@/pages/TwoFactorAuthPage"));
 const SecuritySettings = lazy(() => import("@/pages/SecuritySettings"));
 const TwoFactorSetup = lazy(() => import("@/pages/TwoFactorSetup"));
@@ -332,66 +523,104 @@ const HostHomePage = lazy(() => import("@/pages/housing/HostHomePage"));
 // Commerce & Subscriptions
 const MarketplacePage = lazy(() => import("@/pages/MarketplacePage"));
 const MarketplaceItemPage = lazy(() => import("@/pages/MarketplaceItemPage"));
-const MarketplaceProductDetailPage = lazy(() => import("@/pages/MarketplaceProductDetailPage"));
+const MarketplaceProductDetailPage = lazy(
+  () => import("@/pages/MarketplaceProductDetailPage"),
+);
 const MarketplaceCartPage = lazy(() => import("@/pages/MarketplaceCartPage"));
-const MarketplaceCheckoutPage = lazy(() => import("@/pages/MarketplaceCheckoutPage"));
-const MarketplaceSellerDashboardPage = lazy(() => import("@/pages/MarketplaceSellerDashboardPage"));
-const MarketplaceOrdersPage = lazy(() => import("@/pages/MarketplaceOrdersPage"));
+const MarketplaceCheckoutPage = lazy(
+  () => import("@/pages/MarketplaceCheckoutPage"),
+);
+const MarketplaceSellerDashboardPage = lazy(
+  () => import("@/pages/MarketplaceSellerDashboardPage"),
+);
+const MarketplaceOrdersPage = lazy(
+  () => import("@/pages/MarketplaceOrdersPage"),
+);
 const BillingPage = lazy(() => import("@/pages/BillingPage"));
 const PaymentSuccessPage = lazy(() => import("@/pages/PaymentSuccessPage"));
 const PaymentFailedPage = lazy(() => import("@/pages/PaymentFailedPage"));
-const BookingConfirmationPage = lazy(() => import("@/pages/BookingConfirmationPage"));
-const PricingPage = lazy(() => import("@/pages/PricingPage"));
+const BookingConfirmationPage = lazy(
+  () => import("@/pages/BookingConfirmationPage"),
+);
+// DELETED: Pricing system rework per Payment & Billing Audit (Dec 2025)
+// const PricingPage = lazy(() => import("@/pages/PricingPage"));
 const SubscriptionsPage = lazy(() => import("@/pages/SubscriptionsPage"));
-const ManageSubscriptionPage = lazy(() => import("@/pages/ManageSubscriptionPage"));
+const ManageSubscriptionPage = lazy(
+  () => import("@/pages/ManageSubscriptionPage"),
+);
 
 // Crowdfunding
-const CrowdfundingDashboardPage = lazy(() => import("@/pages/crowdfunding/CrowdfundingDashboardPage"));
-const CrowdfundingCampaignDetailPage = lazy(() => import("@/pages/crowdfunding/CrowdfundingCampaignDetailPage"));
-const CrowdfundingCreatePage = lazy(() => import("@/pages/crowdfunding/CrowdfundingCreatePage"));
-const CrowdfundingMyPage = lazy(() => import("@/pages/crowdfunding/CrowdfundingMyPage"));
+const CrowdfundingDashboardPage = lazy(
+  () => import("@/pages/crowdfunding/CrowdfundingDashboardPage"),
+);
+const CrowdfundingCampaignDetailPage = lazy(
+  () => import("@/pages/crowdfunding/CrowdfundingCampaignDetailPage"),
+);
+const CrowdfundingCreatePage = lazy(
+  () => import("@/pages/crowdfunding/CrowdfundingCreatePage"),
+);
+const CrowdfundingMyPage = lazy(
+  () => import("@/pages/crowdfunding/CrowdfundingMyPage"),
+);
 
 // Content & Info
-const BlogPage = lazy(() => import("@/pages/BlogPage"));
 const NewsletterPage = lazy(() => import("@/pages/NewsletterPage"));
 const StreamDetailPage = lazy(() => import("@/pages/StreamDetailPage"));
 const ReviewsPage = lazy(() => import("@/pages/ReviewsPage"));
 const MediaGalleryPage = lazy(() => import("@/pages/MediaGalleryPage"));
 const LeaderboardPage = lazy(() => import("@/pages/LeaderboardPage"));
-const FAQPage = lazy(() => import("@/pages/FAQPage"));
 const HelpPage = lazy(() => import("@/pages/HelpPage"));
 const HelpCenterPage = lazy(() => import("@/pages/HelpCenterPage"));
 const ContactPage = lazy(() => import("@/pages/ContactPage"));
-const UserProfilePublicPage = lazy(() => import("@/pages/UserProfilePublicPage"));
 const MessagesDetailPage = lazy(() => import("@/pages/MessagesDetailPage"));
 const CheckoutSuccessPage = lazy(() => import("@/pages/CheckoutSuccessPage"));
 const AboutTangoPage = lazy(() => import("@/pages/AboutTangoPage"));
-const DanceStylesDetailPage = lazy(() => import("@/pages/DanceStylesDetailPage"));
-const AdminContentModerationDetailPage = lazy(() => import("@/pages/AdminContentModerationDetailPage"));
+const DanceStylesDetailPage = lazy(
+  () => import("@/pages/DanceStylesDetailPage"),
+);
+const AdminContentModerationDetailPage = lazy(
+  () => import("@/pages/AdminContentModerationDetailPage"),
+);
 const EventCheckInPage = lazy(() => import("@/pages/EventCheckInPage"));
 const GroupsDetailPage = lazy(() => import("@/pages/GroupsDetailPage"));
 const AdminSettingsPage = lazy(() => import("@/pages/AdminSettingsPage"));
 const AdminReportsPage = lazy(() => import("@/pages/AdminReportsPage"));
 const TeacherProfilePage = lazy(() => import("@/pages/TeacherProfilePage"));
-const MarketplaceItemDetailPage = lazy(() => import("@/pages/MarketplaceItemDetailPage"));
+const MarketplaceItemDetailPage = lazy(
+  () => import("@/pages/MarketplaceItemDetailPage"),
+);
 const BlogDetailPage = lazy(() => import("@/pages/BlogDetailPage"));
-const VenueRecommendationsPage = lazy(() => import("@/pages/VenueRecommendationsPage"));
+const VenueRecommendationsPage = lazy(
+  () => import("@/pages/VenueRecommendationsPage"),
+);
 const TermsPage = lazy(() => import("@/pages/TermsPage"));
 const PrivacyPolicyPage = lazy(() => import("@/pages/PrivacyPolicyPage"));
-const CommunityGuidelinesPage = lazy(() => import("@/pages/CommunityGuidelinesPage"));
+const CommunityGuidelinesPage = lazy(
+  () => import("@/pages/CommunityGuidelinesPage"),
+);
 
 // Onboarding
 const OnboardingPage = lazy(() => import("@/pages/OnboardingPage"));
 const WelcomeTourPage = lazy(() => import("@/pages/WelcomeTourPage"));
 const WelcomePage = lazy(() => import("@/pages/onboarding/WelcomePage"));
-const CitySelectionPage = lazy(() => import("@/pages/onboarding/CitySelectionPage"));
-const PhotoUploadPage = lazy(() => import("@/pages/onboarding/PhotoUploadPage"));
+const CitySelectionPage = lazy(
+  () => import("@/pages/onboarding/CitySelectionPage"),
+);
+const PhotoUploadPage = lazy(
+  () => import("@/pages/onboarding/PhotoUploadPage"),
+);
 const TangoRolesPage = lazy(() => import("@/pages/onboarding/TangoRolesPage"));
 const LanguagesPage = lazy(() => import("@/pages/onboarding/LanguagesPage"));
-const DanceExperiencePage = lazy(() => import("@/pages/onboarding/DanceExperiencePage"));
+const DanceExperiencePage = lazy(
+  () => import("@/pages/onboarding/DanceExperiencePage"),
+);
 const GuidedTourPage = lazy(() => import("@/pages/onboarding/GuidedTourPage"));
-const LegalAcceptance = lazy(() => import("@/pages/onboarding/LegalAcceptance"));
-const SubscriptionOnboarding = lazy(() => import("@/pages/onboarding/SubscriptionOnboarding"));
+const LegalAcceptance = lazy(
+  () => import("@/pages/onboarding/LegalAcceptance"),
+);
+const SubscriptionOnboarding = lazy(
+  () => import("@/pages/onboarding/SubscriptionOnboarding"),
+);
 
 // Legal / Settings
 const LegalStatus = lazy(() => import("@/pages/settings/LegalStatus"));
@@ -403,13 +632,106 @@ const ReportContentPage = lazy(() => import("@/pages/ReportContentPage"));
 // Visual Editor - Production version
 const VisualEditorPage = lazy(() => import("@/pages/VisualEditorPage"));
 
+// PRO Discovery Pages - Public professional discovery
+const PROLearningPage = lazy(() =>
+  import("@/pages/pro/PROGroupPublicPage").then((m) => ({
+    default: m.LearningPage,
+  })),
+);
+const PROMusicPage = lazy(() =>
+  import("@/pages/pro/PROGroupPublicPage").then((m) => ({
+    default: m.MusicPage,
+  })),
+);
+const PROMediaGalleryPage = lazy(() =>
+  import("@/pages/pro/PROGroupPublicPage").then((m) => ({
+    default: m.MediaGalleryPage,
+  })),
+);
+const PROPerformancesPage = lazy(() =>
+  import("@/pages/pro/PROGroupPublicPage").then((m) => ({
+    default: m.PerformancesPage,
+  })),
+);
+const PROVenuesPage = lazy(() =>
+  import("@/pages/pro/PROGroupPublicPage").then((m) => ({
+    default: m.VenuesPage,
+  })),
+);
+const PROOrganizersPage = lazy(() =>
+  import("@/pages/pro/PROGroupPublicPage").then((m) => ({
+    default: m.OrganizersPage,
+  })),
+);
+const PROStoriesBlogPage = lazy(() =>
+  import("@/pages/pro/PROGroupPublicPage").then((m) => ({
+    default: m.StoriesBlogPage,
+  })),
+);
+const PROArtistsPage = lazy(() =>
+  import("@/pages/pro/PROGroupPublicPage").then((m) => ({
+    default: m.ArtistsPage,
+  })),
+);
+const PROMusiciansPage = lazy(() =>
+  import("@/pages/pro/PROGroupPublicPage").then((m) => ({
+    default: m.MusiciansPage,
+  })),
+);
+const PROClothingDesignersPage = lazy(() =>
+  import("@/pages/pro/PROGroupPublicPage").then((m) => ({
+    default: m.ClothingDesignersPage,
+  })),
+);
+const PROHistoriansPage = lazy(() =>
+  import("@/pages/pro/PROGroupPublicPage").then((m) => ({
+    default: m.HistoriansPage,
+  })),
+);
+const PROCoachesPage = lazy(() =>
+  import("@/pages/pro/PROGroupPublicPage").then((m) => ({
+    default: m.CoachesPage,
+  })),
+);
+const PROHostsMCsPage = lazy(() =>
+  import("@/pages/pro/PROGroupPublicPage").then((m) => ({
+    default: m.HostsMCsPage,
+  })),
+);
+const PROVendorsPage = lazy(() =>
+  import("@/pages/pro/PROGroupPublicPage").then((m) => ({
+    default: m.VendorsPage,
+  })),
+);
+const PROCommunityBuildersPage = lazy(() =>
+  import("@/pages/pro/PROGroupPublicPage").then((m) => ({
+    default: m.CommunityBuildersPage,
+  })),
+);
+const PROTaxiDancersPage = lazy(() =>
+  import("@/pages/pro/PROGroupPublicPage").then((m) => ({
+    default: m.TaxiDancersPage,
+  })),
+);
+const PRODancersPage = lazy(() =>
+  import("@/pages/pro/PROGroupPublicPage").then((m) => ({
+    default: m.DancersPage,
+  })),
+);
+const PROResearchersPage = lazy(() =>
+  import("@/pages/pro/PROGroupPublicPage").then((m) => ({
+    default: m.ResearchersPage,
+  })),
+);
+
 function Router() {
   return (
     <Switch>
       <Route path="/">
-        <Redirect to="/profile/admin" />
+        <Redirect to="/landing" />
       </Route>
       <Route path="/landing" component={LandingPage} />
+      <Route path="/demos" component={DemosPage} />
       <Route path="/dashboard">
         <ProtectedRoute>
           <AppLayout>
@@ -429,8 +751,24 @@ function Router() {
         </ProtectedRoute>
       </Route>
       <Route path="/marketing-prototype" component={MarketingPrototype} />
-      <Route path="/marketing-prototype-enhanced" component={MarketingPrototypeEnhanced} />
-      <Route path="/marketing-prototype-ocean" component={MarketingPrototypeOcean} />
+      <Route
+        path="/marketing-prototype-enhanced"
+        component={MarketingPrototypeEnhanced}
+      />
+      <Route
+        path="/marketing-prototype-ocean"
+        component={MarketingPrototypeOcean}
+      />
+      <Route path="/for-dancers" component={ForDancersPage} />
+      <Route path="/for-teachers" component={ForTeachersPage} />
+      <Route path="/for-organizers" component={ForOrganizersPage} />
+      <Route path="/support" component={SupportPage} />
+      <Route path="/donate" component={DonatePage} />
+      <Route path="/supporters" component={SupportersPage} />
+      <Route path="/volunteer" component={VolunteerPage} />
+      <Route path="/mr-blue" component={MrBluePage} />
+      <Route path="/ambassadors" component={AmbassadorsPage} />
+      <Route path="/open-source" component={OpenSourcePage} />
       <Route path="/feed-prototype" component={FeedPrototypePage} />
       <Route path="/groups-prototype" component={GroupsPrototypePage} />
       <Route path="/community-prototype" component={CommunityPrototypePage} />
@@ -439,32 +777,54 @@ function Router() {
       <Route path="/messages-prototype" component={MessagesPrototypePage} />
       <Route path="/friends-prototype" component={FriendsPrototypePage} />
       <Route path="/favorites-prototype" component={FavoritesPrototypePage} />
-      <Route path="/notifications-prototype" component={NotificationsPrototypePage} />
-      <Route path="/events-gallery-prototype" component={EventsGalleryPrototypePage} />
+      <Route
+        path="/notifications-prototype"
+        component={NotificationsPrototypePage}
+      />
+      <Route
+        path="/events-gallery-prototype"
+        component={EventsGalleryPrototypePage}
+      />
       <Route path="/about" component={AboutPage} />
+      <Route path="/faq" component={FAQPage} />
       <Route path="/features" component={FeaturesPage} />
       <Route path="/testimonials" component={TestimonialsPage} />
       <Route path="/discover" component={DiscoverPage} />
-      <Route path="/volunteer" component={VolunteerPage} />
+      {/* /pro redirects to discover page for PRO discovery */}
+      <Route path="/pro">
+        <Redirect to="/discover" />
+      </Route>
+      <Route path="/my-tasks" component={MyTasksPage} />
       <Route path="/gamification" component={GamificationDashboard} />
-      <Route path="/talent-match" component={TalentMatchPage} />
+      <Route path="/talent-match">
+        <AppLayout>
+          <TalentMatchPage />
+        </AppLayout>
+      </Route>
       <Route path="/mr-blue">
         <Suspense fallback={<LoadingFallback message="Loading Mr Blue..." />}>
           <UnifiedMrBlue />
         </Suspense>
       </Route>
       <Route path="/mr-blue-chat">
-        <Suspense fallback={<LoadingFallback />}>
-          <MrBlueChatPage />
-        </Suspense>
+        <AppLayout>
+          <Suspense fallback={<LoadingFallback />}>
+            <MrBlueChatPage />
+          </Suspense>
+        </AppLayout>
       </Route>
       <Route path="/video-studio" component={VideoStudio} />
       <Route path="/mr-blue-demo" component={MrBlueVideoDemo} />
       <Route path="/mr-blue-avatar-demo" component={MrBlueAvatarDemo} />
       <Route path="/mr-blue-studio" component={MrBlueStudioPage} />
+      <Route path="/mr-blue-avatar-3d" component={MrBlueAvatar3DPage} />
       <Route path="/avatar-designer" component={AvatarDesignerPage} />
       <Route path="/premium-features" component={PremiumFeaturesPage} />
-      <Route path="/life-ceo" component={LifeCEODashboardPage} />
+      <Route path="/life-ceo">
+        <AppLayout>
+          <LifeCEODashboardPage />
+        </AppLayout>
+      </Route>
       <Route path="/life-ceo/health" component={HealthAgentPage} />
       <Route path="/life-ceo/finance" component={FinanceAgentPage} />
       <Route path="/life-ceo/career" component={CareerAgentPage} />
@@ -474,18 +834,25 @@ function Router() {
       <Route path="/life-ceo/learning" component={LearningAgentPage} />
       <Route path="/life-ceo/social" component={SocialAgentPage} />
       <Route path="/life-ceo/wellness" component={WellnessAgentPage} />
-      <Route path="/life-ceo/entertainment" component={EntertainmentAgentPage} />
+      <Route
+        path="/life-ceo/entertainment"
+        component={EntertainmentAgentPage}
+      />
       <Route path="/life-ceo/creativity" component={CreativityAgentPage} />
       <Route path="/life-ceo/fitness" component={FitnessAgentPage} />
       <Route path="/life-ceo/nutrition" component={NutritionAgentPage} />
       <Route path="/life-ceo/sleep" component={SleepAgentPage} />
       <Route path="/life-ceo/stress" component={StressAgentPage} />
       <Route path="/life-ceo/relationship" component={RelationshipAgentPage} />
-      
+
       <Route path="/ai-budget-builder" component={AIBudgetBuilder} />
-      <Route path="/enhanced-talent-match" component={EnhancedTalentMatch} />
+      <Route path="/enhanced-talent-match">
+        <AppLayout>
+          <EnhancedTalentMatch />
+        </AppLayout>
+      </Route>
       <Route path="/privacy-hub" component={PrivacyHub} />
-      
+
       <Route path="/admin/talent-pipeline">
         <ProtectedRoute>
           <AdminLayout>
@@ -493,7 +860,7 @@ function Router() {
           </AdminLayout>
         </ProtectedRoute>
       </Route>
-      
+
       <Route path="/admin/task-board">
         <ProtectedRoute>
           <AdminLayout>
@@ -504,7 +871,7 @@ function Router() {
       <Route path="/login" component={LoginPage} />
       <Route path="/register" component={RegisterPage} />
       <Route path="/auth/callback" component={FacebookCallbackPage} />
-      
+
       <Route path="/feed">
         <ProtectedRoute>
           <FeedPage />
@@ -529,6 +896,15 @@ function Router() {
 
       {/* Alias for shorter URL */}
       <Route path="/community-map">
+        <ProtectedRoute>
+          <AppLayout>
+            <CommunityWorldMapPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      {/* Alias for world-map URL */}
+      <Route path="/world-map">
         <ProtectedRoute>
           <AppLayout>
             <CommunityWorldMapPage />
@@ -605,9 +981,11 @@ function Router() {
       </Route>
 
       <Route path="/profile/:id">
-        <AppLayout>
-          <ProfilePage />
-        </AppLayout>
+        <ProtectedRoute>
+          <AppLayout>
+            <ProfilePage />
+          </AppLayout>
+        </ProtectedRoute>
       </Route>
       <Route path="/reputation/:userId">
         <AppLayout>
@@ -616,11 +994,9 @@ function Router() {
       </Route>
 
       <Route path="/events">
-        <ProtectedRoute>
-          <AppLayout>
-            <EventsPage />
-          </AppLayout>
-        </ProtectedRoute>
+        <AppLayout>
+          <EventsPage />
+        </AppLayout>
       </Route>
 
       <Route path="/events/search">
@@ -634,7 +1010,15 @@ function Router() {
       <Route path="/events/create">
         <ProtectedRoute>
           <AppLayout>
-            <CreateEventPage />
+            <EventCreationPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/events/:id/edit">
+        <ProtectedRoute>
+          <AppLayout>
+            <EditEventPage />
           </AppLayout>
         </ProtectedRoute>
       </Route>
@@ -680,10 +1064,22 @@ function Router() {
         </ProtectedRoute>
       </Route>
 
+      <Route path="/travel">
+        <ProtectedRoute>
+          <AppLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <TravelTripPlannerPage />
+            </Suspense>
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
       <Route path="/travel/planner">
         <ProtectedRoute>
           <AppLayout>
-            <TravelTripPlannerPage />
+            <Suspense fallback={<LoadingFallback />}>
+              <TravelTripPlannerPage />
+            </Suspense>
           </AppLayout>
         </ProtectedRoute>
       </Route>
@@ -691,7 +1087,9 @@ function Router() {
       <Route path="/travel/trip/:id">
         <ProtectedRoute>
           <AppLayout>
-            <TravelItineraryPage />
+            <Suspense fallback={<LoadingFallback />}>
+              <TravelItineraryPage />
+            </Suspense>
           </AppLayout>
         </ProtectedRoute>
       </Route>
@@ -699,7 +1097,9 @@ function Router() {
       <Route path="/travel/trip/:id/expenses">
         <ProtectedRoute>
           <AppLayout>
-            <TravelExpensesPage />
+            <Suspense fallback={<LoadingFallback />}>
+              <TravelExpensesPage />
+            </Suspense>
           </AppLayout>
         </ProtectedRoute>
       </Route>
@@ -707,53 +1107,30 @@ function Router() {
       <Route path="/travel/events/:eventId">
         <ProtectedRoute>
           <AppLayout>
-            <TravelEventCoordinationPage />
+            <Suspense fallback={<LoadingFallback />}>
+              <TravelEventCoordinationPage />
+            </Suspense>
           </AppLayout>
         </ProtectedRoute>
       </Route>
 
       <Route path="/groups">
-        <ProtectedRoute>
-          <AppLayout>
-            <GroupsPage />
-          </AppLayout>
-        </ProtectedRoute>
+        <AppLayout>
+          <GroupsPage />
+        </AppLayout>
       </Route>
 
-      <Route path="/groups/:id">
+      <Route path="/groups/create">
         <ProtectedRoute>
           <AppLayout>
-            <GroupDetailsPage />
-          </AppLayout>
-        </ProtectedRoute>
-      </Route>
-
-      {/* Community & Events Pages (Pages 11-20) */}
-      <Route path="/map">
-        <ProtectedRoute>
-          <AppLayout>
-            <CommunityMapPage />
-          </AppLayout>
-        </ProtectedRoute>
-      </Route>
-
-      <Route path="/community-map">
-        <ProtectedRoute>
-          <AppLayout>
-            <CommunityMapPage />
+            <Suspense fallback={<LoadingFallback />}>
+              <GroupCreatePage />
+            </Suspense>
           </AppLayout>
         </ProtectedRoute>
       </Route>
 
       <Route path="/groups/cities">
-        <ProtectedRoute>
-          <AppLayout>
-            <CityGroupsPage />
-          </AppLayout>
-        </ProtectedRoute>
-      </Route>
-
-      <Route path="/city-groups">
         <ProtectedRoute>
           <AppLayout>
             <CityGroupsPage />
@@ -777,6 +1154,58 @@ function Router() {
         </ProtectedRoute>
       </Route>
 
+      <Route path="/groups/city/:cityName">
+        <ProtectedRoute>
+          <AppLayout>
+            <CityGroupRedirectPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/groups/:id">
+        <AppLayout>
+          <GroupDetailsPage />
+        </AppLayout>
+      </Route>
+
+      <Route path="/event-series/:id">
+        <ProtectedRoute>
+          <AppLayout>
+            <EventSeriesPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      {/* Community & Events Pages (Pages 11-20) */}
+      <Route path="/map">
+        <ProtectedRoute>
+          <AppLayout>
+            <CommunityMapPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/community-map">
+        <ProtectedRoute>
+          <AppLayout>
+            <CommunityMapPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/city-groups">
+        <ProtectedRoute>
+          <AppLayout>
+            <CityGroupsPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      {/* /cities redirects to city-groups */}
+      <Route path="/cities">
+        <Redirect to="/city-groups" />
+      </Route>
+
       <Route path="/events/calendar">
         <ProtectedRoute>
           <AppLayout>
@@ -786,11 +1215,9 @@ function Router() {
       </Route>
 
       <Route path="/housing">
-        <ProtectedRoute>
-          <AppLayout>
-            <HousingMarketplacePage />
-          </AppLayout>
-        </ProtectedRoute>
+        <AppLayout>
+          <HousingMarketplacePage />
+        </AppLayout>
       </Route>
 
       <Route path="/housing/search">
@@ -805,6 +1232,26 @@ function Router() {
         <ProtectedRoute>
           <AppLayout>
             <HousingListingDetailPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/housing/new">
+        <ProtectedRoute>
+          <AppLayout>
+            <CreateListingPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/housing/create">
+        <Redirect to="/housing/new" />
+      </Route>
+
+      <Route path="/housing/my-listings">
+        <ProtectedRoute>
+          <AppLayout>
+            <HostHomePage />
           </AppLayout>
         </ProtectedRoute>
       </Route>
@@ -828,7 +1275,9 @@ function Router() {
       {/* Messages Platform - P0 #12-16 */}
       <Route path="/messages">
         <ProtectedRoute>
-          <UnifiedInboxPage />
+          <AppLayout>
+            <UnifiedInboxPage />
+          </AppLayout>
         </ProtectedRoute>
       </Route>
 
@@ -888,7 +1337,7 @@ function Router() {
       <Route path="/users/:userId">
         <ProtectedRoute>
           <AppLayout>
-            <UserProfilePublicPage />
+            <ProfilePage />
           </AppLayout>
         </ProtectedRoute>
       </Route>
@@ -1009,6 +1458,187 @@ function Router() {
         <ProtectedRoute>
           <AppLayout>
             <TutorialsPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      {/* PRO Discovery Pages - Public professional discovery */}
+      <Route path="/pro/learning">
+        <ProtectedRoute>
+          <AppLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <PROLearningPage />
+            </Suspense>
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/pro/music">
+        <ProtectedRoute>
+          <AppLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <PROMusicPage />
+            </Suspense>
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/pro/media">
+        <ProtectedRoute>
+          <AppLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <PROMediaGalleryPage />
+            </Suspense>
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/pro/performances">
+        <ProtectedRoute>
+          <AppLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <PROPerformancesPage />
+            </Suspense>
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/pro/venues">
+        <ProtectedRoute>
+          <AppLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <PROVenuesPage />
+            </Suspense>
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/pro/organizers">
+        <ProtectedRoute>
+          <AppLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <PROOrganizersPage />
+            </Suspense>
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/pro/stories">
+        <ProtectedRoute>
+          <AppLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <PROStoriesBlogPage />
+            </Suspense>
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/pro/artists">
+        <ProtectedRoute>
+          <AppLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <PROArtistsPage />
+            </Suspense>
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/pro/musicians">
+        <ProtectedRoute>
+          <AppLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <PROMusiciansPage />
+            </Suspense>
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/pro/fashion">
+        <ProtectedRoute>
+          <AppLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <PROClothingDesignersPage />
+            </Suspense>
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/pro/historians">
+        <ProtectedRoute>
+          <AppLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <PROHistoriansPage />
+            </Suspense>
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/pro/coaches">
+        <ProtectedRoute>
+          <AppLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <PROCoachesPage />
+            </Suspense>
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/pro/hosts">
+        <ProtectedRoute>
+          <AppLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <PROHostsMCsPage />
+            </Suspense>
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/pro/vendors">
+        <ProtectedRoute>
+          <AppLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <PROVendorsPage />
+            </Suspense>
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/pro/community">
+        <ProtectedRoute>
+          <AppLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <PROCommunityBuildersPage />
+            </Suspense>
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/pro/taxi-dancers">
+        <ProtectedRoute>
+          <AppLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <PROTaxiDancersPage />
+            </Suspense>
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/pro/dancers">
+        <ProtectedRoute>
+          <AppLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <PRODancersPage />
+            </Suspense>
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/pro/researchers">
+        <ProtectedRoute>
+          <AppLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <PROResearchersPage />
+            </Suspense>
           </AppLayout>
         </ProtectedRoute>
       </Route>
@@ -1229,8 +1859,6 @@ function Router() {
         </ProtectedRoute>
       </Route>
 
-      <Route path="/faq" component={FAQPage} />
-
       <Route path="/dance-styles" component={DanceStylesPage} />
 
       <Route path="/partner-finder">
@@ -1330,8 +1958,6 @@ function Router() {
         </ProtectedRoute>
       </Route>
       <Route path="/travel-planner" component={TravelPlannerPage} />
-      <Route path="/blog" component={BlogPage} />
-      <Route path="/blog/:slug" component={BlogPage} />
       <Route path="/music" component={MusicLibraryPage} />
       <Route path="/music-library" component={MusicLibraryPage} />
       <Route path="/community-guidelines" component={CommunityGuidelinesPage} />
@@ -1347,8 +1973,9 @@ function Router() {
           <VenueRecommendationsPage />
         </ProtectedRoute>
       </Route>
-      <Route path="/pricing" component={PricingPage} />
-      
+      {/* DELETED: Pricing system rework per Payment & Billing Audit (Dec 2025) */}
+      {/* <Route path="/pricing" component={PricingPage} /> */}
+
       <Route path="/checkout">
         <ProtectedRoute>
           <CheckoutPage />
@@ -1442,9 +2069,12 @@ function Router() {
       <Route path="/onboarding/step-5" component={DanceExperiencePage} />
       <Route path="/onboarding/tour" component={GuidedTourPage} />
       <Route path="/onboarding/legal" component={LegalAcceptance} />
-      <Route path="/onboarding/subscription" component={SubscriptionOnboarding} />
+      <Route
+        path="/onboarding/subscription"
+        component={SubscriptionOnboarding}
+      />
       <Route path="/welcome" component={WelcomeTourPage} />
-      
+
       <Route path="/live-streams">
         <ProtectedRoute>
           <AppLayout>
@@ -1470,7 +2100,7 @@ function Router() {
       </Route>
 
       <Route path="/workshops/:id" component={WorkshopDetailPage} />
-      
+
       <Route path="/reviews">
         <ProtectedRoute>
           <AppLayout>
@@ -1504,15 +2134,25 @@ function Router() {
       </Route>
 
       <Route path="/newsletter" component={NewsletterPage} />
-      
+
       <Route path="/admin">
         <Redirect to="/admin/dashboard" />
       </Route>
-      
+
       <Route path="/admin/dashboard">
         <ProtectedRoute>
           <AdminLayout>
             <AdminDashboardPage />
+          </AdminLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/admin/content">
+        <ProtectedRoute>
+          <AdminLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <ContentModerationPage />
+            </Suspense>
           </AdminLayout>
         </ProtectedRoute>
       </Route>
@@ -1549,6 +2189,16 @@ function Router() {
         </ProtectedRoute>
       </Route>
 
+      <Route path="/admin/events">
+        <ProtectedRoute>
+          <AdminLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <AdminEventsPage />
+            </Suspense>
+          </AdminLayout>
+        </ProtectedRoute>
+      </Route>
+
       <Route path="/admin/housing-reviews">
         <ProtectedRoute>
           <AdminLayout>
@@ -1565,13 +2215,14 @@ function Router() {
         </ProtectedRoute>
       </Route>
 
-      <Route path="/admin/pricing-manager">
+      {/* DELETED: Pricing system rework per Payment & Billing Audit (Dec 2025) */}
+      {/* <Route path="/admin/pricing-manager">
         <ProtectedRoute>
           <AdminLayout>
             <PricingManagerPage />
           </AdminLayout>
         </ProtectedRoute>
-      </Route>
+      </Route> */}
 
       <Route path="/admin/self-healing">
         <ProtectedRoute>
@@ -1718,6 +2369,14 @@ function Router() {
       </Route>
 
       <Route path="/admin/health">
+        <ProtectedRoute>
+          <AdminLayout>
+            <SystemHealthPage />
+          </AdminLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/admin/system-health">
         <ProtectedRoute>
           <AdminLayout>
             <SystemHealthPage />
@@ -1884,19 +2543,19 @@ function Router() {
       <Route path="/payment/failed" component={PaymentFailedPage} />
       <Route path="/about-tango" component={AboutTangoPage} />
       <Route path="/dance-styles/:styleId" component={DanceStylesDetailPage} />
-      
+
       <Route path="/events/:eventId/check-in">
         <ProtectedRoute>
           <EventCheckInPage />
         </ProtectedRoute>
       </Route>
-      
+
       <Route path="/admin/moderation/:reportId">
         <ProtectedRoute>
           <AdminContentModerationDetailPage />
         </ProtectedRoute>
       </Route>
-      
+
       <Route path="/admin/users/:userId">
         <ProtectedRoute>
           <AdminUserDetailPage />
@@ -1938,7 +2597,7 @@ function Router() {
           <BlogDetailPage />
         </ProtectedRoute>
       </Route>
-      
+
       <Route path="/settings/email">
         <ProtectedRoute>
           <AppLayout>
@@ -1964,8 +2623,12 @@ function Router() {
       </Route>
 
       <Route path="/password-reset" component={PasswordResetPage} />
+      {/* /forgot-password alias for password-reset */}
+      <Route path="/forgot-password">
+        <Redirect to="/password-reset" />
+      </Route>
       <Route path="/verify-email" component={EmailVerificationPage} />
-      
+
       <Route path="/settings/2fa">
         <ProtectedRoute>
           <AppLayout>
@@ -2082,7 +2745,7 @@ function Router() {
 
       <Route path="/report/user" component={ReportUserPage} />
       <Route path="/report/content" component={ReportContentPage} />
-      
+
       <Route path="/dashboard">
         <ProtectedRoute>
           <AppLayout>
@@ -2124,13 +2787,13 @@ function Router() {
       <Route path="/marketing/social-media" component={SocialMediaAgentPage} />
       <Route path="/marketing/email" component={EmailAgentPage} />
       <Route path="/marketing/analytics" component={AnalyticsAgentPage} />
-      
+
       <Route path="/hr/recruiter" component={RecruiterAgentPage} />
       <Route path="/hr/onboarding" component={OnboardingAgentPage} />
       <Route path="/hr/performance" component={PerformanceAgentPage} />
       <Route path="/hr/retention" component={RetentionAgentPage} />
       <Route path="/hr/culture" component={CultureAgentPage} />
-      
+
       <Route path="/h2ac-dashboard" component={H2ACDashboardPage} />
 
       <Route component={NotFound} />
@@ -2146,26 +2809,26 @@ function AppContent() {
 
   // Initialize Proactive Error Detection + HTTP Interceptor + Component Health Monitor + Navigation Interceptor
   useEffect(() => {
-    console.log('[App] Initializing Proactive Error Detection...');
+    console.log("[App] Initializing Proactive Error Detection...");
     const detector = initErrorDetection();
-    
-    console.log('[App] Initializing HTTP Interceptor...');
+
+    console.log("[App] Initializing HTTP Interceptor...");
     initHttpInterceptor();
-    
-    console.log('[App] Initializing Component Health Monitor...');
+
+    console.log("[App] Initializing Component Health Monitor...");
     initComponentHealthMonitor();
-    
-    console.log('[App] Initializing Navigation Interceptor...');
+
+    console.log("[App] Initializing Navigation Interceptor...");
     setupNavigationInterceptor();
-    
+
     return () => {
-      console.log('[App] Cleaning up Component Health Monitor...');
+      console.log("[App] Cleaning up Component Health Monitor...");
       cleanupComponentHealthMonitor();
-      
-      console.log('[App] Cleaning up HTTP Interceptor...');
+
+      console.log("[App] Cleaning up HTTP Interceptor...");
       cleanupHttpInterceptor();
-      
-      console.log('[App] Cleaning up Proactive Error Detection...');
+
+      console.log("[App] Cleaning up Proactive Error Detection...");
       cleanupErrorDetection();
     };
   }, []);
@@ -2174,24 +2837,24 @@ function AppContent() {
     // Check for ?edit=true in URL to open Visual Editor
     const checkEditMode = () => {
       const params = new URLSearchParams(window.location.search);
-      const editMode = params.get('edit') === 'true';
+      const editMode = params.get("edit") === "true";
       setIsVisualEditorOpen(editMode);
     };
 
     // Check on mount and URL changes
     checkEditMode();
-    window.addEventListener('popstate', checkEditMode);
-    
+    window.addEventListener("popstate", checkEditMode);
+
     // Also check on any navigation
     const interval = setInterval(checkEditMode, 500);
 
     return () => {
-      window.removeEventListener('popstate', checkEditMode);
+      window.removeEventListener("popstate", checkEditMode);
       clearInterval(interval);
     };
   }, []);
 
-  const isOnVisualEditorPage = location === '/admin/visual-editor';
+  const isOnVisualEditorPage = location === "/admin/visual-editor";
 
   return (
     <>
@@ -2201,9 +2864,9 @@ function AppContent() {
       </Suspense>
       {isVisualEditorOpen && (
         <Suspense fallback={<LoadingFallback />}>
-          <VisualEditorSplitPane 
-            isOpen={isVisualEditorOpen} 
-            onClose={() => setIsVisualEditorOpen(false)} 
+          <VisualEditorSplitPane
+            isOpen={isVisualEditorOpen}
+            onClose={() => setIsVisualEditorOpen(false)}
           />
         </Suspense>
       )}

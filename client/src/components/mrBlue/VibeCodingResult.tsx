@@ -43,27 +43,20 @@ export function VibeCodingResult({ sessionId, fileChanges, onApplySuccess }: Vib
   const applyChanges = async () => {
     setIsApplying(true);
     try {
-      const response = await apiRequest('/api/mrblue/vibecoding/apply', {
-        method: 'POST',
-        body: JSON.stringify({
-          sessionId,
-          fileChanges,
-        }),
+      const response = await apiRequest('POST', '/api/mrblue/vibecoding/apply', {
+        sessionId,
+        fileChanges,
+      });
+      const result = await response.json();
+      
+      setAppliedFiles(new Set(result.appliedFiles || fileChanges.map(fc => fc.filePath)));
+      
+      toast({
+        title: "✅ Changes Applied!",
+        description: `Successfully updated ${fileChanges.length} file(s)`,
       });
 
-      if (response.ok) {
-        const result = await response.json();
-        setAppliedFiles(new Set(result.appliedFiles || fileChanges.map(fc => fc.filePath)));
-        
-        toast({
-          title: "✅ Changes Applied!",
-          description: `Successfully updated ${fileChanges.length} file(s)`,
-        });
-
-        onApplySuccess?.();
-      } else {
-        throw new Error('Failed to apply changes');
-      }
+      onApplySuccess?.();
     } catch (error) {
       console.error('[VibeCodingResult] Apply failed:', error);
       toast({

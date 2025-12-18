@@ -33,10 +33,8 @@ export default function SettingsPage() {
 
   const saveSettingsMutation = useMutation({
     mutationFn: async (data: Partial<AISettings>) => {
-      return apiRequest('/api/mrblue/settings', {
-        method: 'PUT',
-        body: JSON.stringify(data),
-      });
+      const response = await apiRequest('PUT', '/api/mrblue/settings', data);
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/mrblue/settings'] });

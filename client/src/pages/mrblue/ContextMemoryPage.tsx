@@ -41,9 +41,8 @@ export default function ContextMemoryPage() {
 
   const deleteItemMutation = useMutation({
     mutationFn: async (itemId: string) => {
-      return apiRequest(`/api/mrblue/context/${itemId}`, {
-        method: 'DELETE',
-      });
+      const response = await apiRequest('DELETE', `/api/mrblue/context/${itemId}`);
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/mrblue/context'] });
@@ -56,9 +55,8 @@ export default function ContextMemoryPage() {
 
   const clearCategoryMutation = useMutation({
     mutationFn: async (category: string) => {
-      return apiRequest(`/api/mrblue/context/clear/${category}`, {
-        method: 'DELETE',
-      });
+      const response = await apiRequest('DELETE', `/api/mrblue/context/clear/${category}`);
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/mrblue/context'] });

@@ -12,10 +12,12 @@ import { useAuth } from "@/contexts/AuthContext";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { SimpleMentionsInput, type MentionEntity } from "@/components/input/SimpleMentionsInput";
 import { UnifiedLocationPicker } from "@/components/input/UnifiedLocationPicker";
+import { FriendshipClosenessFilter } from "@/components/filters/FriendshipClosenessFilter";
+import type { ClosenessVisibility } from "@shared/schema";
 import { 
   MapPin, Hash, Camera, Sparkles, Globe, Users, Lock, 
   Send, Loader2, X, DollarSign, Star, MapPinned,
-  Image as ImageIcon, Video as VideoIcon, FileText,
+  Image as ImageIcon, Video as VideoIcon, Video, FileText,
   Plane, Pizza, Drama, Mountain, Moon, Leaf, Palette,
   Music, Dumbbell, Camera as PhotoIcon, HeartHandshake,
   UserPlus, Briefcase, Target, PartyPopper,
@@ -74,16 +76,17 @@ interface PostCreatorProps {
   existingPost?: any;
   className?: string;
   showStoryToggle?: boolean;
+  initialContent?: string;
 }
 
-export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMode = false, existingPost, className, showStoryToggle = false }: PostCreatorProps) {
+export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMode = false, existingPost, className, showStoryToggle = false, initialContent = "" }: PostCreatorProps) {
   const { user } = useAuth();
   const { toast } = useToast();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Content state
-  const [content, setContent] = useState(existingPost?.content || "");
+  const [content, setContent] = useState(existingPost?.content || initialContent || "");
   const [richContent, setRichContent] = useState(existingPost?.richContent || "");
   const [mentions, setMentions] = useState<MentionEntity[]>(existingPost?.mentions || []);
   const [mentionIds, setMentionIds] = useState<string[]>([]);
@@ -104,9 +107,11 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
   // Feature state
   const [selectedTags, setSelectedTags] = useState<string[]>(existingPost?.tags || []);
   const [visibility, setVisibility] = useState<'public' | 'friends' | 'private'>(existingPost?.visibility || 'public');
+  const [audienceCloseness, setAudienceCloseness] = useState<ClosenessVisibility>(existingPost?.audienceCloseness || 'all');
   const [isRecommendation, setIsRecommendation] = useState(existingPost?.isRecommendation || false);
   const [recommendationType, setRecommendationType] = useState(existingPost?.recommendationType || "");
   const [priceRange, setPriceRange] = useState(existingPost?.priceRange || "");
+  const [businessName, setBusinessName] = useState(existingPost?.businessName || "");
   const [location, setLocation] = useState(existingPost?.location || "");
   const [coordinates, setCoordinates] = useState<{lat: number; lng: number} | undefined>(existingPost?.coordinates || undefined);
   
@@ -454,14 +459,30 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
     setUploadProgress(0);
 
     try {
-      const finalContent = showEnhancement && enhancedContent ? enhancedContent : content;
+      let finalContent = showEnhancement && enhancedContent ? enhancedContent : content;
+      
+      // Auto-append @mention of group/event name for context-specific posts (in canonical format)
+      if ((context.type === 'group' || context.type === 'event') && context.name && context.id) {
+        const mentionType = context.type === 'event' ? 'event' : 'group';
+        const entityId = typeof context.id === 'string' ? parseInt(context.id) : context.id;
+        const safeName = context.name.replace(/ /g, '_');
+        // Use canonical format: @type:id:Name_With_Underscores
+        const canonicalMention = `@${mentionType}:${mentionType}_${entityId}:${safeName}`;
+        // Only add mention if not already present
+        if (!finalContent.includes(canonicalMention)) {
+          finalContent = `${canonicalMention} ${finalContent}`;
+        }
+      }
+      
       console.log('[PostCreator] Submitting post with content:', finalContent);
       console.log('[PostCreator] Media files:', mediaFiles.length);
+      console.log('[PostCreator] Context:', context);
       
       // Build post data object
       const postData: any = {
         content: finalContent,
         visibility,
+        audienceCloseness,
         tags: selectedTags,
         mentions: mentionIds,
       };
@@ -580,8 +601,9 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
       console.log('[PostCreator] imageUrl included:', !!postData.imageUrl);
       console.log('[PostCreator] videoUrl included:', !!postData.videoUrl);
       
-      if (isRecommendation && location) {
-        postData.location = location;
+      if (isRecommendation) {
+        postData.isRecommendation = true;
+        if (businessName) postData.location = businessName;
         if (recommendationType) postData.postType = recommendationType;
         if (priceRange) postData.richContent = { priceRange };
         if (coordinates) postData.coordinates = coordinates;
@@ -599,7 +621,25 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
 
       setUploadProgress(85);
       const method = editMode ? 'PATCH' : 'POST';
-      const endpoint = editMode ? `/api/posts/${existingPost?.id}` : '/api/posts';
+      
+      // Determine endpoint based on context
+      let endpoint = '/api/posts';
+      let cacheKey: any[] = ["/api/posts"];
+      
+      if (!editMode) {
+        if (context.type === 'event' && context.id) {
+          const eventId = typeof context.id === 'string' ? parseInt(context.id) : context.id;
+          endpoint = `/api/events/${eventId}/posts`;
+          cacheKey = ["/api/events", eventId, "posts"];
+        } else if (context.type === 'group' && context.id) {
+          const groupId = typeof context.id === 'string' ? parseInt(context.id) : context.id;
+          endpoint = `/api/groups/${groupId}/posts`;
+          cacheKey = ["/api/groups", groupId, "posts"];
+        }
+      } else {
+        endpoint = `/api/posts/${existingPost?.id}`;
+      }
+      
       console.log(`[PostCreator] Sending ${method} request to ${endpoint}...`);
       
       try {
@@ -618,7 +658,7 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
 
       // apiRequest throws on error, so if we get here it succeeded
       // Invalidate posts cache to refresh feed
-      queryClient.invalidateQueries({ queryKey: ["/api/posts"] });
+      queryClient.invalidateQueries({ queryKey: cacheKey });
 
       toast({
         title: "🎉 Memory shared!",
@@ -640,6 +680,7 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
       setMediaPreviews([]);
       setSelectedTags([]);
       setIsRecommendation(false);
+      setBusinessName("");
       setLocation("");
       setCoordinates(undefined);
       setRecommendationType("");
@@ -868,6 +909,17 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
               Hidden Gems - Share your favorite places
             </h3>
 
+            {/* Business Name Input - Simple text input */}
+            <div>
+              <Label className="text-xs mb-1.5 block">Business / Place Name</Label>
+              <Input
+                value={businessName}
+                onChange={(e) => setBusinessName(e.target.value)}
+                placeholder="Enter business name (e.g. La Viruta Tango)"
+                data-testid="input-business-name"
+              />
+            </div>
+
             {/* Category Selector */}
             <div>
               <Label className="text-xs mb-1.5 block">Category</Label>
@@ -1020,6 +1072,19 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
                 <span className="text-xs">Private</span>
               </Button>
             </div>
+            
+            {/* Friendship Closeness Filter */}
+            {visibility === 'friends' && (
+              <div className="mt-4 pt-4 border-t border-green-500/20">
+                <FriendshipClosenessFilter
+                  value={audienceCloseness}
+                  onChange={setAudienceCloseness}
+                  label="Which friends can see this?"
+                  description="Fine-tune your audience based on friendship closeness"
+                  testIdPrefix="post-audience-closeness"
+                />
+              </div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
@@ -1252,7 +1317,30 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
             </Button>
           </motion.div>
 
-          {/* 6. Cross-Post Toggle */}
+          {/* 6. Live Stream */}
+          <motion.div
+            custom={5}
+            initial="hidden"
+            animate="visible"
+            variants={iconButtonVariants}
+          >
+            <Button
+              type="button"
+              size="icon"
+              variant="ghost"
+              onClick={() => window.location.href = '/live-stream'}
+              className="relative group"
+              data-testid="button-go-live"
+              title="Go Live - Start a live stream"
+            >
+              <div className="relative">
+                <Video className="w-5 h-5 transition-transform group-hover:scale-110" />
+                <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+              </div>
+            </Button>
+          </motion.div>
+
+          {/* 7. Cross-Post Toggle */}
           <motion.div
             custom={6}
             initial="hidden"

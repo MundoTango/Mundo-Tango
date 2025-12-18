@@ -7,9 +7,10 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { SEO } from "@/components/SEO";
 import { useToast } from "@/hooks/use-toast";
-import { Send, Bot, User, Sparkles, Home, Mic, Code, Zap, Computer } from "lucide-react";
+import { Send, Bot, User, Sparkles, Home, Mic, Code, Zap, Computer, Brain } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ComputerUseAutomation } from "@/components/mr-blue/ComputerUseAutomation";
+import { AICollaborationPanel } from "@/components/mr-blue/AICollaborationPanel";
 import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
@@ -138,13 +139,12 @@ export default function MrBlueChatPage() {
   return (
     <SelfHealingErrorBoundary pageName="Mr Blue AI Chat" fallbackRoute="/feed">
       <PageLayout title="Mr Blue AI" showBreadcrumbs>
-<>
-      <SEO
-        title="Mr Blue AI Chat - Mundo Tango"
-        description="Chat with Mr Blue, your AI-powered assistant for code analysis, debugging, and task management."
-      />
+        <SEO
+          title="Mr Blue AI Chat - Mundo Tango"
+          description="Chat with Mr Blue, your AI-powered assistant for code analysis, debugging, and task management."
+        />
 
-      <div className="h-screen flex flex-col" data-testid="page-mr-blue">
+        <div className="h-full flex flex-col" data-testid="page-mr-blue">
         {/* Header */}
         <div className="border-b glass-topbar p-4">
           <div className="container mx-auto max-w-6xl">
@@ -259,6 +259,10 @@ export default function MrBlueChatPage() {
                     <Computer className="h-4 w-4" />
                     Computer Use
                   </TabsTrigger>
+                  <TabsTrigger value="collaboration" className="gap-2" data-testid="tab-collaboration">
+                    <Brain className="h-4 w-4" />
+                    AI Collaboration
+                  </TabsTrigger>
                 </TabsList>
               </div>
             </div>
@@ -364,11 +368,17 @@ export default function MrBlueChatPage() {
                 </div>
               </ScrollArea>
             </TabsContent>
+
+            {/* AI Collaboration Tab - MB.MD v9.3 Hierarchical Execution */}
+            <TabsContent value="collaboration" className="flex-1 overflow-hidden mt-0 p-4">
+              <div className="container mx-auto max-w-4xl h-full">
+                <AICollaborationPanel />
+              </div>
+            </TabsContent>
           </Tabs>
         </div>
       </div>
-    </>
-    </PageLayout>
+      </PageLayout>
     </SelfHealingErrorBoundary>
   );
 }

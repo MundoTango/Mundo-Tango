@@ -15,8 +15,11 @@
 import { agentRegistry } from './AgentRegistry';
 import { BasePageAgent } from './agents/BasePageAgent';
 import { PreFlightCheckService } from '../self-healing/PreFlightCheckService';
-import { PageAuditService, type AuditResults } from '../self-healing/PageAuditService';
+import { PageAuditService, type AuditResults, type AuditIssue } from '../self-healing/PageAuditService';
 import { getAutoFixEngine } from '../mrBlue/AutoFixEngine';
+import { db } from '../../db';
+import { errorPatterns } from '@shared/schema';
+import { eq, and } from 'drizzle-orm';
 
 export interface AgentActivationResult {
   route: string;
@@ -104,23 +107,26 @@ export class AgentLifecycle {
         this.currentRoute = route;
       }
       
-      // Step 3: Activate agents for new route
-      const agents: BasePageAgent[] = [];
-      for (const agentId of agentIds) {
-        const agent = agentRegistry.getAgent(agentId);
-        if (agent) {
-          agents.push(agent);
-          this.activeAgents.set(agentId, {
-            agent,
-            route,
-            activatedAt: new Date(),
-            state: 'initializing',
-          });
-          console.log(`[AgentLifecycle] ✅ Activated: ${agent.getName()}`);
-        } else {
-          console.warn(`[AgentLifecycle] ⚠️ Agent ${agentId} not found in registry`);
-        }
-      }
+      // Step 3: Activate agents for new route IN PARALLEL (MB.MD v9.8 - Pattern 28)
+      console.log(`[AgentLifecycle] 🚀 Activating ${agentIds.length} agents in PARALLEL`);
+      const agents: BasePageAgent[] = agentIds
+        .map(agentId => {
+          const agent = agentRegistry.getAgent(agentId);
+          if (agent) {
+            this.activeAgents.set(agentId, {
+              agent,
+              route,
+              activatedAt: new Date(),
+              state: 'initializing',
+            });
+            console.log(`[AgentLifecycle] ✅ Activated: ${agent.getName()}`);
+            return agent;
+          } else {
+            console.warn(`[AgentLifecycle] ⚠️ Agent ${agentId} not found in registry`);
+            return null;
+          }
+        })
+        .filter((a): a is BasePageAgent => a !== null);
       
       if (agents.length === 0) {
         console.log(`[AgentLifecycle] ℹ️ No agents registered for route ${route}`);
@@ -286,38 +292,137 @@ export class AgentLifecycle {
   
   /**
    * Auto-fix high-confidence issues
-   * Uses AutoFixEngine to apply fixes automatically
+   * MB.MD v9.8: Now actually executes fixes via AutoFixEngine
+   * Bridge: Page Audit Issues → errorPatterns table → AutoFixEngine.processError()
    */
   private async autoFixIssues(auditResults: AuditResults): Promise<number> {
     try {
       const autoFixEngine = getAutoFixEngine();
       let fixedCount = 0;
       
-      // Get all critical issues
-      const criticalIssues = [
-        ...auditResults.issuesByCategory.ui_ux,
-        ...auditResults.issuesByCategory.routing,
-        ...auditResults.issuesByCategory.integration,
-        ...auditResults.issuesByCategory.performance,
-        ...auditResults.issuesByCategory.accessibility,
-        ...auditResults.issuesByCategory.security,
-      ].filter(issue => issue.severity === 'critical');
+      // Get critical issues from all categories (safe access with fallbacks)
+      const categories = auditResults.issuesByCategory || {};
+      const allIssues: AuditIssue[] = [
+        ...(categories.ui_ux || []),
+        ...(categories.routing || []),
+        ...(categories.integration || []),
+        ...(categories.performance || []),
+        ...(categories.accessibility || []),
+        ...(categories.security || []),
+      ];
       
-      console.log(`[AgentLifecycle] 🔧 Found ${criticalIssues.length} critical issues to auto-fix`);
+      // Filter for critical and high severity issues
+      const fixableIssues = allIssues.filter(
+        issue => issue.severity === 'critical' || issue.severity === 'high'
+      );
       
-      // Note: AutoFixEngine expects error IDs from errorPatterns table
-      // For page audit issues, we'd need to create error patterns first
-      // For now, we'll just log what we'd fix
-      for (const issue of criticalIssues) {
-        console.log(`[AgentLifecycle] 📝 Would fix: ${issue.description}`);
-        console.log(`[AgentLifecycle] 💡 Suggested: ${issue.suggestedFix}`);
-        // In production, this would call autoFixEngine.processError(errorId)
+      console.log(`[AgentLifecycle] 🔧 Found ${fixableIssues.length} issues to auto-fix`);
+      
+      if (fixableIssues.length === 0) {
+        console.log('[AgentLifecycle] ✅ No critical issues - system healthy');
+        return 0;
       }
+      
+      // Process issues in parallel (mb.md Pattern 28 - Parallel Agent Squads)
+      const fixPromises = fixableIssues.map(async (issue) => {
+        try {
+          // Step 1: Bridge - Insert issue into errorPatterns table
+          const errorId = await this.createErrorPatternFromAudit(issue);
+          
+          if (!errorId) {
+            console.log(`[AgentLifecycle] ⏭️ Skipping duplicate issue: ${issue.description?.substring(0, 50)}`);
+            return false;
+          }
+          
+          console.log(`[AgentLifecycle] 📝 Created errorPattern #${errorId}: ${issue.description?.substring(0, 50)}`);
+          
+          // Step 2: Execute fix via AutoFixEngine
+          const result = await autoFixEngine.processError(errorId);
+          
+          if (result.success) {
+            console.log(`[AgentLifecycle] ✅ Fixed #${errorId}: ${result.decision.action}`);
+            return true;
+          } else {
+            console.log(`[AgentLifecycle] ⚠️ Fix #${errorId} ${result.decision.action}: ${result.error || 'No error message'}`);
+            return false;
+          }
+        } catch (error: any) {
+          console.error(`[AgentLifecycle] ❌ Error fixing issue:`, error.message);
+          return false;
+        }
+      });
+      
+      // Wait for all fixes to complete
+      const results = await Promise.all(fixPromises);
+      fixedCount = results.filter(Boolean).length;
+      
+      console.log(`[AgentLifecycle] 🎯 Auto-fixed ${fixedCount}/${fixableIssues.length} issues`);
       
       return fixedCount;
     } catch (error) {
       console.error('[AgentLifecycle] Auto-fix failed:', error);
       return 0;
+    }
+  }
+  
+  /**
+   * Bridge: Convert AuditIssue → errorPatterns table entry
+   * Returns the new error ID, or null if duplicate
+   */
+  private async createErrorPatternFromAudit(issue: AuditIssue): Promise<number | null> {
+    try {
+      // Null safety for issue fields
+      const errorMessage = issue.description || issue.message || 'Unknown issue';
+      const errorType = issue.type || issue.category || 'audit_issue';
+      const suggestedFix = issue.suggestedFix || issue.fix || '';
+      
+      // Check for existing similar error to avoid duplicates
+      const [existing] = await db
+        .select()
+        .from(errorPatterns)
+        .where(
+          and(
+            eq(errorPatterns.errorMessage, errorMessage),
+            eq(errorPatterns.status, 'pending')
+          )
+        )
+        .limit(1);
+      
+      if (existing) {
+        // Update frequency instead of creating duplicate
+        await db
+          .update(errorPatterns)
+          .set({
+            frequency: (existing.frequency || 0) + 1,
+            lastSeen: new Date(),
+            updatedAt: new Date(),
+          })
+          .where(eq(errorPatterns.id, existing.id));
+        return null; // Already exists
+      }
+      
+      // Insert new error pattern
+      const [inserted] = await db.insert(errorPatterns).values({
+        errorType,
+        errorMessage,
+        suggestedFix,
+        status: 'pending',
+        frequency: 1,
+        firstSeen: new Date(),
+        lastSeen: new Date(),
+        metadata: {
+          source: 'page_audit',
+          severity: issue.severity,
+          category: issue.category,
+          affectedElement: issue.affectedElement,
+          priority: issue.priority,
+        },
+      }).returning({ id: errorPatterns.id });
+      
+      return inserted?.id || null;
+    } catch (error: any) {
+      console.error('[AgentLifecycle] Failed to create errorPattern:', error.message);
+      return null;
     }
   }
   

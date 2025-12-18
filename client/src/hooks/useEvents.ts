@@ -152,11 +152,15 @@ export function useDeleteEvent() {
   });
 }
 
-export function useEventRSVPs(eventId: string | number) {
+export function useEventRSVPs(eventId: string | number, statusFilter?: string) {
+  // CRITICAL: Normalize eventId to number for consistent query key matching
+  const numericEventId = typeof eventId === 'string' ? parseInt(eventId, 10) : eventId;
+  
   return useQuery({
-    queryKey: ["/api/events", eventId, "attendees"],
+    queryKey: ["/api/events", numericEventId, "attendees", statusFilter || "all"],
     queryFn: async () => {
-      const res = await fetch(`/api/events/${eventId}/attendees`);
+      const status = statusFilter || "all";
+      const res = await fetch(`/api/events/${numericEventId}/attendees?status=${status}`);
       if (!res.ok) throw new Error('Failed to fetch RSVPs');
       return await res.json();
     },
@@ -185,6 +189,69 @@ export function useMyRSVPs() {
   });
 }
 
+/**
+ * UNIFIED HOOK: My Events (user's RSVP'd events)
+ * Used by: EventsPage "My Events" tab, UpcomingEventsSidebar "My Events" tab
+ * Endpoint: /api/events/my-rsvps
+ */
+export function useMyEvents(options?: { limit?: number; upcoming?: boolean; enabled?: boolean }) {
+  const { limit = 20, upcoming = true, enabled = true } = options || {};
+  
+  return useQuery({
+    queryKey: ["/api/events/my-rsvps", { limit, upcoming }],
+    queryFn: async () => {
+      const token = localStorage.getItem('accessToken');
+      if (!token) return [];
+      
+      const params = new URLSearchParams();
+      if (limit) params.append('limit', String(limit));
+      if (upcoming) params.append('upcoming', 'true');
+      
+      const res = await fetch(`/api/events/my-rsvps?${params.toString()}`, {
+        headers: { 'Authorization': `Bearer ${token}` },
+        credentials: 'include',
+      });
+      if (!res.ok) return [];
+      return res.json();
+    },
+    enabled,
+    staleTime: 3 * 60 * 1000, // 3 minutes - reduces API calls
+    gcTime: 10 * 60 * 1000, // 10 minutes cache retention
+  });
+}
+
+/**
+ * UNIFIED HOOK: Upcoming Events (smart personalized events)
+ * Used by: EventsPage "Upcoming" tab, UpcomingEventsSidebar "Upcoming" tab
+ * Endpoint: /api/events/smart
+ * Returns events from: user's city + joined group cities + RSVP'd events
+ */
+export function useUpcomingEvents(options?: { limit?: number; offset?: number; enabled?: boolean }) {
+  const { limit = 20, offset = 0, enabled = true } = options || {};
+  
+  return useQuery({
+    queryKey: ["/api/events/smart", { limit, offset }],
+    queryFn: async () => {
+      const token = localStorage.getItem('accessToken');
+      if (!token) return { events: [], filters: {} };
+      
+      const params = new URLSearchParams();
+      params.append('limit', String(limit));
+      params.append('offset', String(offset));
+      
+      const res = await fetch(`/api/events/smart?${params.toString()}`, {
+        headers: { 'Authorization': `Bearer ${token}` },
+        credentials: 'include',
+      });
+      if (!res.ok) return { events: [], filters: {} };
+      return res.json();
+    },
+    enabled,
+    staleTime: 2 * 60 * 1000, // 2 minutes cache - reduces API calls
+    gcTime: 10 * 60 * 1000, // 10 minutes cache retention
+  });
+}
+
 export function useRSVPEvent() {
   const { user } = useAuth();
   const { toast } = useToast();
@@ -196,17 +263,19 @@ export function useRSVPEvent() {
       return await res.json();
     },
     onMutate: async (variables) => {
-      await queryClient.cancelQueries({ queryKey: ["/api/events", variables.eventId, "attendees"] });
+      const eventId = typeof variables.eventId === 'string' ? parseInt(variables.eventId, 10) : variables.eventId;
+      
+      await queryClient.cancelQueries({ queryKey: ["/api/events", eventId, "attendees", "all"] });
       await queryClient.cancelQueries({ queryKey: ["/api/events/my-rsvps"] });
 
-      const previousAttendees = queryClient.getQueryData(["/api/events", variables.eventId, "attendees"]);
+      const previousAttendees = queryClient.getQueryData(["/api/events", eventId, "attendees", "all"]);
       const previousMyRsvps = queryClient.getQueryData(["/api/events/my-rsvps"]);
 
-      return { previousAttendees, previousMyRsvps };
+      return { previousAttendees, previousMyRsvps, eventId };
     },
     onError: (err, variables, context) => {
       if (context?.previousAttendees) {
-        queryClient.setQueryData(["/api/events", variables.eventId, "attendees"], context.previousAttendees);
+        queryClient.setQueryData(["/api/events", context.eventId, "attendees", "all"], context.previousAttendees);
       }
       if (context?.previousMyRsvps) {
         queryClient.setQueryData(["/api/events/my-rsvps"], context.previousMyRsvps);
@@ -218,8 +287,13 @@ export function useRSVPEvent() {
       });
     },
     onSuccess: (data, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["/api/events", variables.eventId, "attendees"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/events", variables.eventId] });
+      const eventId = typeof variables.eventId === 'string' ? parseInt(variables.eventId, 10) : variables.eventId;
+      
+      queryClient.invalidateQueries({ queryKey: ["/api/events", eventId, "attendees", "all"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/events", eventId, "attendees", "going"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/events", eventId, "attendees", "maybe"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/events", eventId, "attendees", "not_going"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/events", eventId] });
       queryClient.invalidateQueries({ queryKey: ["/api/events/my-rsvps"] });
       queryClient.invalidateQueries({ queryKey: ["/api/events"] });
 

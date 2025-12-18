@@ -60,7 +60,7 @@ export class NotificationService {
       senderId,
       priority,
       metadata,
-      read: false,
+      isRead: false,
     });
 
     // Send via appropriate channels
@@ -167,6 +167,83 @@ export class NotificationService {
       actionUrl: `/life-ceo/goals`,
       priority: 'normal',
       metadata: { goalTitle, percentage },
+    });
+  }
+
+  async notifyEventInvitation(inviteeId: number, eventId: number, eventTitle: string, inviterId: number) {
+    const inviter = await storage.getUserById(inviterId);
+    if (!inviter) return;
+
+    return this.createNotification({
+      userId: inviteeId,
+      type: 'event_invitation',
+      title: 'Event invitation',
+      message: `${inviter.name} invited you to ${eventTitle}`,
+      actionUrl: `/events/${eventId}`,
+      senderId: inviterId,
+      priority: 'high',
+      metadata: { eventId, eventTitle },
+    });
+  }
+
+  async notifyEventRsvp(organizerId: number, eventId: number, eventTitle: string, attendeeId: number, status: string) {
+    const attendee = await storage.getUserById(attendeeId);
+    if (!attendee || organizerId === attendeeId) return;
+
+    const action = status === 'going' ? 'is going to' : status === 'interested' ? 'is interested in' : 'declined';
+    return this.createNotification({
+      userId: organizerId,
+      type: 'event_rsvp',
+      title: 'New RSVP',
+      message: `${attendee.name} ${action} ${eventTitle}`,
+      actionUrl: `/events/${eventId}`,
+      senderId: attendeeId,
+      priority: 'normal',
+      metadata: { eventId, eventTitle, status },
+    });
+  }
+
+  async notifyEventUpdate(attendeeId: number, eventId: number, eventTitle: string, updateType: string) {
+    return this.createNotification({
+      userId: attendeeId,
+      type: 'event_update',
+      title: 'Event updated',
+      message: `${eventTitle} has been ${updateType}`,
+      actionUrl: `/events/${eventId}`,
+      priority: 'normal',
+      metadata: { eventId, eventTitle, updateType },
+    });
+  }
+
+  async notifyEventPhotoUploaded(organizerId: number, eventId: number, eventTitle: string, uploaderId: number) {
+    const uploader = await storage.getUserById(uploaderId);
+    if (!uploader || organizerId === uploaderId) return;
+
+    return this.createNotification({
+      userId: organizerId,
+      type: 'event_update',
+      title: 'New event photo',
+      message: `${uploader.name} uploaded a photo to ${eventTitle}`,
+      actionUrl: `/events/${eventId}?tab=photos`,
+      senderId: uploaderId,
+      priority: 'low',
+      metadata: { eventId, eventTitle },
+    });
+  }
+
+  async notifyEventPost(organizerId: number, eventId: number, eventTitle: string, posterId: number) {
+    const poster = await storage.getUserById(posterId);
+    if (!poster || organizerId === posterId) return;
+
+    return this.createNotification({
+      userId: organizerId,
+      type: 'event_update',
+      title: 'New event discussion',
+      message: `${poster.name} posted in ${eventTitle}`,
+      actionUrl: `/events/${eventId}?tab=discussion`,
+      senderId: posterId,
+      priority: 'low',
+      metadata: { eventId, eventTitle },
     });
   }
 }

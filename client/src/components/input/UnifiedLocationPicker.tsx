@@ -1,7 +1,9 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { MapPin, Loader2, X, Home } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { MapPin, Loader2, X, Home, Building2, Star, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface LocationResult {
@@ -20,6 +22,20 @@ interface LocationResult {
   };
 }
 
+// Venue search result from 3-tier API
+interface VenueSearchResult {
+  id: string;
+  name: string;
+  address: string;
+  city: string;
+  country: string;
+  source: 'user_events' | 'city_venues' | 'database' | 'google_maps';
+  verified?: boolean;
+  rating?: number;
+  placeId?: string;
+  coordinates?: { lat: number; lng: number };
+}
+
 interface ParsedLocation {
   fullAddress: string;
   street?: string;
@@ -28,17 +44,33 @@ interface ParsedLocation {
   country?: string;
   postalCode?: string;
   coordinates: { lat: number; lng: number };
+  groupId?: string; // City group ID if this is a city_group result
+  source?: string; // Result source: city_group, popular, nominatim
+  memberCount?: number; // Number of dancers in the city group
+}
+
+// Extended parsed location for venue mode
+interface ParsedVenue extends ParsedLocation {
+  venueName?: string;
+  venueId?: string;
+  source?: string;
+  verified?: boolean;
+  rating?: number;
 }
 
 interface UnifiedLocationPickerProps {
   value?: string;
   coordinates?: { lat: number; lng: number };
-  onChange: (location: string, coordinates: { lat: number; lng: number }, parsed?: ParsedLocation) => void;
+  onChange: (location: string, coordinates: { lat: number; lng: number }, parsed?: ParsedLocation | ParsedVenue) => void;
   placeholder?: string;
   className?: string;
-  mode?: "city" | "address";
+  mode?: "city" | "address" | "venue";
   showCoordinates?: boolean;
   label?: string;
+  // Venue mode specific props
+  userId?: number;
+  userCity?: string;
+  onVenueSelect?: (venue: VenueSearchResult) => void;
 }
 
 export function UnifiedLocationPicker({
@@ -50,22 +82,57 @@ export function UnifiedLocationPicker({
   mode = "city",
   showCoordinates = false,
   label,
+  userId,
+  userCity,
+  onVenueSelect,
 }: UnifiedLocationPickerProps) {
   const [searchQuery, setSearchQuery] = useState(value);
   const [isSearching, setIsSearching] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [results, setResults] = useState<LocationResult[]>([]);
+  const [venueResults, setVenueResults] = useState<{
+    userVenues: VenueSearchResult[];
+    cityVenues: VenueSearchResult[];
+    googleVenues: VenueSearchResult[];
+  }>({ userVenues: [], cityVenues: [], googleVenues: [] });
   const [selectedLocation, setSelectedLocation] = useState<string>(value);
+  const [dropdownPosition, setDropdownPosition] = useState<{ top: number; left: number; width: number }>({ top: 0, left: 0, width: 0 });
   const searchRef = useRef<HTMLDivElement>(null);
+  const inputContainerRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const clientCacheRef = useRef<Map<string, LocationResult[]>>(new Map());
+  const venueCacheRef = useRef<Map<string, typeof venueResults>>(new Map());
   const userHasTypedRef = useRef(false);
+  const lastExternalValueRef = useRef(value);
+  const justSelectedRef = useRef(false); // Guard against infinite loop on selection
+  const selectionLockRef = useRef(false); // NUCLEAR LOCK - blocks ALL dropdown opening for 500ms after selection
+  const finalSelectedValueRef = useRef<string | null>(null); // Stores the confirmed selected value - prevents re-search
 
-  const defaultPlaceholder = mode === "address" 
-    ? "Search for an address..." 
-    : "Search for a city...";
+  const updateDropdownPosition = useCallback(() => {
+    if (inputContainerRef.current) {
+      const rect = inputContainerRef.current.getBoundingClientRect();
+      setDropdownPosition({
+        top: rect.bottom + window.scrollY + 8,
+        left: rect.left + window.scrollX,
+        width: rect.width,
+      });
+    }
+  }, []);
+
+  const defaultPlaceholder = mode === "venue"
+    ? "Search for a venue..."
+    : mode === "address" 
+      ? "Search for an address..." 
+      : "Search for a city...";
 
   useEffect(() => {
-    if (value !== searchQuery && value) {
+    // NUCLEAR LOCK CHECK - skip ALL syncs during selection lock
+    if (selectionLockRef.current || justSelectedRef.current) {
+      return;
+    }
+    // Only sync if value changed from an external source (not from our own onChange)
+    if (value && value !== lastExternalValueRef.current) {
+      lastExternalValueRef.current = value;
       setSearchQuery(value);
       setSelectedLocation(value);
       setShowResults(false);
@@ -76,28 +143,269 @@ export function UnifiedLocationPicker({
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+      const target = event.target as Node;
+      const isInSearchRef = searchRef.current && searchRef.current.contains(target);
+      const isInDropdownRef = dropdownRef.current && dropdownRef.current.contains(target);
+      
+      if (!isInSearchRef && !isInDropdownRef) {
         setShowResults(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    // Use 'click' instead of 'mousedown' to allow onClick handlers to fire first
+    document.addEventListener('click', handleClickOutside, true);
+    return () => document.removeEventListener('click', handleClickOutside, true);
   }, []);
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchQuery(value);
+    userHasTypedRef.current = true;
+    // Clear final selection when user types - allows new search
+    finalSelectedValueRef.current = null;
+    setShowResults(!!value);
+  };
+
   useEffect(() => {
-    if (searchQuery.trim().length < 2) {
-      setResults([]);
+    // NUCLEAR LOCK CHECK - skip ALL searches during selection lock
+    if (selectionLockRef.current || justSelectedRef.current) {
+      console.log('[UnifiedLocationPicker] Search blocked by lock');
+      return;
+    }
+    
+    // FINAL SELECTION CHECK - prevent re-search for already selected value
+    if (finalSelectedValueRef.current && searchQuery === finalSelectedValueRef.current) {
+      console.log('[UnifiedLocationPicker] Search blocked - value is final selection:', searchQuery);
       return;
     }
 
-    if (!userHasTypedRef.current) {
+    if (searchQuery.trim().length < 1) {
+      setResults([]);
+      setVenueResults({ userVenues: [], cityVenues: [], googleVenues: [] });
+      setShowResults(false);
       return;
     }
 
     const searchLocations = async () => {
       const queryKey = `${mode}_${searchQuery.toLowerCase().trim()}`;
       
+      // Venue mode uses different API endpoint
+      if (mode === "venue") {
+        const cachedVenues = venueCacheRef.current.get(queryKey);
+        if (cachedVenues) {
+          setVenueResults(cachedVenues);
+          setShowResults(true);
+          return;
+        }
+
+        setIsSearching(true);
+        try {
+          const params = new URLSearchParams({
+            q: searchQuery,
+            ...(userId && { userId: userId.toString() }),
+            ...(userCity && { city: userCity }),
+          });
+          
+          const response = await fetch(`/api/venues/search?${params}`);
+          if (response.ok) {
+            const data = await response.json();
+            venueCacheRef.current.set(queryKey, data);
+            if (venueCacheRef.current.size > 50) {
+              const firstKey = venueCacheRef.current.keys().next().value;
+              if (firstKey) venueCacheRef.current.delete(firstKey);
+            }
+            setVenueResults(data);
+            setShowResults(true);
+          }
+        } catch (error) {
+          console.error('Venue search failed:', error);
+        } finally {
+          setIsSearching(false);
+        }
+        return;
+      }
+
+      // City mode - use 3-tier City Group priority search
+      if (mode === "city") {
+        const cached = clientCacheRef.current.get(queryKey);
+        if (cached) {
+          setResults(cached);
+          setShowResults(true);
+          return;
+        }
+
+        setIsSearching(true);
+        try {
+          const response = await fetch(`/api/cities/search?q=${encodeURIComponent(searchQuery)}`);
+          if (response.ok) {
+            const data = await response.json();
+            // Transform City Group priority results into LocationResult format
+            const transformedResults: LocationResult[] = [];
+            
+            // Tier 1: MT City Groups (highest priority - with member count badge)
+            data.cityGroups?.forEach((city: any) => {
+              transformedResults.push({
+                place_id: city.id,
+                display_name: `${city.name}, ${city.country}`,
+                lat: city.coordinates?.lat?.toString() || '0',
+                lon: city.coordinates?.lng?.toString() || '0',
+                type: 'city_group',
+                address: { city: city.name, country: city.country },
+                // @ts-ignore - adding custom fields for tier display
+                _memberCount: city.memberCount,
+                _groupId: city.groupId,
+                _source: 'city_group',
+              });
+            });
+            
+            // Tier 2: Popular Cities
+            data.popularCities?.forEach((city: any) => {
+              transformedResults.push({
+                place_id: city.id,
+                display_name: `${city.name}, ${city.country}`,
+                lat: city.coordinates?.lat?.toString() || '0',
+                lon: city.coordinates?.lng?.toString() || '0',
+                type: 'popular',
+                address: { city: city.name, country: city.country },
+                // @ts-ignore
+                _source: 'popular',
+              });
+            });
+            
+            // Tier 3: Nominatim fallback
+            data.nominatimResults?.forEach((city: any) => {
+              transformedResults.push({
+                place_id: city.id,
+                display_name: `${city.name}, ${city.country}`,
+                lat: city.coordinates?.lat?.toString() || '0',
+                lon: city.coordinates?.lng?.toString() || '0',
+                type: 'nominatim',
+                address: { city: city.name, country: city.country },
+                // @ts-ignore
+                _source: 'nominatim',
+              });
+            });
+            
+            // Deduplicate: Keep only ONE result per city
+            // If a city_group exists for a city, filter out ALL other sources for that city
+            // Step 1: Collect all city_group city names (normalized)
+            const cityGroupNames = new Set<string>();
+            const cityGroupCountries = new Map<string, string>();
+            
+            const normalizeCityName = (name: string): string => {
+              // Remove common prefixes and normalize for matching
+              return name
+                .toLowerCase()
+                .replace(/^ciudad autónoma de\s*/i, '')
+                .replace(/^ciudad de\s*/i, '')
+                .replace(/^provincia de\s*/i, '')
+                .replace(/^metropolitan\s*/i, '')
+                .replace(/^greater\s*/i, '')
+                .replace(/^area\s*/i, '')
+                .trim();
+            };
+            
+            transformedResults.forEach((result) => {
+              // @ts-ignore
+              if (result._source === 'city_group') {
+                const normalized = normalizeCityName(result.address?.city || '');
+                const country = (result.address?.country || '').toLowerCase();
+                cityGroupNames.add(normalized);
+                cityGroupCountries.set(normalized, country);
+              }
+            });
+            
+            // Step 2: Filter results - if a city_group exists for this city, only show the city_group
+            const seenCities = new Set<string>();
+            const deduplicatedResults = transformedResults.filter((result) => {
+              // @ts-ignore - custom source field
+              const source = result._source;
+              const cityName = result.address?.city || '';
+              const cityCountry = result.address?.country || '';
+              const normalizedName = normalizeCityName(cityName);
+              const normalizedCountry = cityCountry.toLowerCase();
+              
+              // Check if this city matches any city_group (even partial match)
+              let matchesCityGroup = false;
+              cityGroupNames.forEach((groupName) => {
+                const groupCountry = cityGroupCountries.get(groupName) || '';
+                // Match if normalized names are equal, or one contains the other
+                if (normalizedName === groupName || 
+                    normalizedName.includes(groupName) || 
+                    groupName.includes(normalizedName)) {
+                  // Also verify same country (or close match)
+                  if (normalizedCountry === groupCountry || 
+                      normalizedCountry.includes(groupCountry) ||
+                      groupCountry.includes(normalizedCountry)) {
+                    matchesCityGroup = true;
+                  }
+                }
+              });
+              
+              // If this matches a city_group but ISN'T a city_group, filter it out
+              if (matchesCityGroup && source !== 'city_group') {
+                return false;
+              }
+              
+              // Standard deduplication for non-city_group matches
+              const cityKey = `${normalizedName}|${normalizedCountry}`;
+              if (seenCities.has(cityKey)) {
+                return source === 'city_group';
+              }
+              
+              seenCities.add(cityKey);
+              return true;
+            });
+            
+            // Smart consolidation: if we have city_group results that closely match the query,
+            // hide other tiers unless the query has additional specificity
+            const hasCityGroupResults = deduplicatedResults.some(r => {
+              // @ts-ignore
+              return r._source === 'city_group';
+            });
+            
+            let finalResults = deduplicatedResults;
+            if (hasCityGroupResults) {
+              // Only keep city_group results + other results that add specificity
+              // "Buenos Aires" -> show only city_group
+              // "Buenos Aires restaurant" -> show both city_group and other matches
+              const normalizedQuery = searchQuery.toLowerCase().trim();
+              const hasPureCityQuery = deduplicatedResults.some(r => {
+                // @ts-ignore
+                if (r._source === 'city_group') {
+                  const cityName = r.address?.city?.toLowerCase() || '';
+                  return normalizedQuery.includes(cityName) && 
+                         normalizedQuery.length <= cityName.length + 5; // Allow minor variations
+                }
+                return false;
+              });
+              
+              if (hasPureCityQuery) {
+                // Query is just city name, show ONLY city_group results
+                finalResults = deduplicatedResults.filter(r => {
+                  // @ts-ignore
+                  return r._source === 'city_group';
+                });
+              }
+            }
+            
+            clientCacheRef.current.set(queryKey, finalResults);
+            if (clientCacheRef.current.size > 50) {
+              const firstKey = clientCacheRef.current.keys().next().value;
+              if (firstKey) clientCacheRef.current.delete(firstKey);
+            }
+            setResults(finalResults);
+            setShowResults(true);
+          }
+        } catch (error) {
+          console.error('City search failed:', error);
+        } finally {
+          setIsSearching(false);
+        }
+        return;
+      }
+
+      // Address mode - use POST to avoid URL length limits
       const cached = clientCacheRef.current.get(queryKey);
       if (cached) {
         setResults(cached);
@@ -107,10 +415,14 @@ export function UnifiedLocationPicker({
 
       setIsSearching(true);
       try {
-        const addressDetail = mode === "address" ? "&addressdetails=1" : "";
-        const response = await fetch(
-          `/api/locations/search?q=${encodeURIComponent(searchQuery)}${addressDetail}`
-        );
+        const response = await fetch('/api/locations/search', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            q: searchQuery,
+            addressdetails: 1
+          })
+        });
 
         if (response.ok) {
           const data = await response.json();
@@ -129,9 +441,9 @@ export function UnifiedLocationPicker({
       }
     };
 
-    const debounce = setTimeout(searchLocations, 50);
+    const debounce = setTimeout(searchLocations, mode === "venue" ? 150 : 50);
     return () => clearTimeout(debounce);
-  }, [searchQuery, mode]);
+  }, [searchQuery, mode, userId, userCity]);
 
   const parseLocationResult = (location: LocationResult): ParsedLocation => {
     const parts = location.display_name.split(',').map(p => p.trim());
@@ -139,6 +451,14 @@ export function UnifiedLocationPicker({
       lat: parseFloat(location.lat),
       lng: parseFloat(location.lon),
     };
+
+    // Extract custom fields for city_group results
+    // @ts-ignore - accessing custom fields added during search
+    const groupId = location._groupId;
+    // @ts-ignore
+    const source = location._source;
+    // @ts-ignore
+    const memberCount = location._memberCount;
 
     if (mode === "address" && location.address) {
       return {
@@ -151,18 +471,31 @@ export function UnifiedLocationPicker({
         country: location.address.country,
         postalCode: location.address.postcode,
         coordinates: coords,
+        groupId,
+        source,
+        memberCount,
       };
     }
 
     const city = parts[0];
     const country = parts[parts.length - 1];
     
-    return {
+    const result: ParsedLocation = {
       fullAddress: location.display_name,
       city,
       country,
       coordinates: coords,
     };
+
+    // Add group ID, source, and memberCount if this is a city_group result
+    if (groupId) {
+      result.groupId = groupId;
+      result.source = source;
+      result.memberCount = memberCount;
+      console.log('[UnifiedLocationPicker] Selected city_group:', { city, groupId, source, memberCount });
+    }
+
+    return result;
   };
 
   const getDisplayName = (location: LocationResult): string => {
@@ -179,21 +512,119 @@ export function UnifiedLocationPicker({
     const parsed = parseLocationResult(location);
     const displayName = mode === "city" ? getDisplayName(location) : location.display_name;
 
+    // NUCLEAR LOCK - blocks ALL dropdown opening for 500ms
+    selectionLockRef.current = true;
+    justSelectedRef.current = true;
     userHasTypedRef.current = false;
+    
+    // PERMANENT SELECTION LOCK - prevents re-search for this value until user types again
+    finalSelectedValueRef.current = displayName;
+    
+    // Update lastExternalValueRef BEFORE onChange to prevent value sync effect
+    lastExternalValueRef.current = displayName;
+    
+    // Close dropdown immediately
+    setResults([]);
+    setShowResults(false);
+    
+    // Update fields
     setSelectedLocation(displayName);
     setSearchQuery(displayName);
-    setShowResults(false);
+    
+    console.log('[UnifiedLocationPicker] Selection complete - value locked:', displayName);
     onChange(displayName, parsed.coordinates, parsed);
+    
+    // Reset nuclear lock after React batch update completes (but keep finalSelectedValueRef)
+    setTimeout(() => { 
+      justSelectedRef.current = false; 
+      selectionLockRef.current = false;
+      console.log('[UnifiedLocationPicker] NUCLEAR LOCK RELEASED - finalSelectedValueRef still active');
+    }, 500);
   };
 
   const clearLocation = () => {
     setSelectedLocation("");
     setSearchQuery("");
     setResults([]);
+    setVenueResults({ userVenues: [], cityVenues: [], googleVenues: [] });
+    // Clear final selection so user can search again
+    finalSelectedValueRef.current = null;
     onChange("", { lat: 0, lng: 0 }, undefined);
   };
 
-  const Icon = mode === "address" ? Home : MapPin;
+  // Select a venue from the 3-tier search results
+  const selectVenue = (venue: VenueSearchResult) => {
+    const displayName = venue.name;
+    const fullAddress = `${venue.address}, ${venue.city}, ${venue.country}`;
+    
+    const parsed: ParsedVenue = {
+      fullAddress,
+      venueName: venue.name,
+      venueId: venue.id,
+      street: venue.address,
+      city: venue.city,
+      country: venue.country,
+      source: venue.source,
+      verified: venue.verified,
+      rating: venue.rating,
+      coordinates: venue.coordinates || { lat: 0, lng: 0 },
+    };
+
+    // NUCLEAR LOCK - blocks ALL dropdown opening for 500ms
+    selectionLockRef.current = true;
+    justSelectedRef.current = true;
+    userHasTypedRef.current = false;
+    
+    // PERMANENT SELECTION LOCK - prevents re-search for this value until user types again
+    finalSelectedValueRef.current = displayName;
+    
+    // Update lastExternalValueRef BEFORE onChange to prevent value sync effect
+    lastExternalValueRef.current = displayName;
+    
+    // Close dropdown immediately
+    setVenueResults({ userVenues: [], cityVenues: [], googleVenues: [] });
+    setShowResults(false);
+    
+    // Update fields
+    setSelectedLocation(displayName);
+    setSearchQuery(displayName);
+    
+    console.log('[UnifiedLocationPicker] Venue selection complete - value locked:', displayName);
+    onChange(displayName, parsed.coordinates, parsed);
+    onVenueSelect?.(venue);
+    
+    // Reset nuclear lock after React batch update completes (but keep finalSelectedValueRef)
+    setTimeout(() => { 
+      justSelectedRef.current = false; 
+      selectionLockRef.current = false;
+      console.log('[UnifiedLocationPicker] NUCLEAR LOCK RELEASED - finalSelectedValueRef still active');
+    }, 500);
+  };
+
+  const Icon = mode === "venue" ? Building2 : mode === "address" ? Home : MapPin;
+
+  // Helper to get source badge info
+  const getSourceBadge = (source: VenueSearchResult['source']) => {
+    switch (source) {
+      case 'user_events':
+        return { label: 'Your Venue', color: 'bg-emerald-500' };
+      case 'city_venues':
+        return { label: userCity || 'City', color: 'bg-blue-500' };
+      case 'database':
+        return { label: 'Database', color: 'bg-purple-500' };
+      case 'google_maps':
+        return { label: 'Google Maps', color: 'bg-red-500' };
+      default:
+        return { label: 'Venue', color: 'bg-gray-500' };
+    }
+  };
+
+  // Check if we have any venue results
+  const hasVenueResults = mode === "venue" && (
+    venueResults.userVenues.length > 0 || 
+    venueResults.cityVenues.length > 0 || 
+    venueResults.googleVenues.length > 0
+  );
 
   return (
     <div ref={searchRef} className={`relative ${className}`}>
@@ -202,16 +633,30 @@ export function UnifiedLocationPicker({
           {label}
         </label>
       )}
-      <div className="relative">
-        <Icon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+      <div className="relative" ref={inputContainerRef}>
+        <Icon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground flex-shrink-0" />
         <Input
+          type="text"
           value={searchQuery}
           onChange={(e) => {
+            // NUCLEAR LOCK CHECK - block ALL input changes during selection lock
+            if (selectionLockRef.current) {
+              console.log('[UnifiedLocationPicker] Input blocked by selection lock');
+              return;
+            }
             userHasTypedRef.current = true;
+            // Clear final selection when user types - allows new search
+            finalSelectedValueRef.current = null;
             setSearchQuery(e.target.value);
+            setShowResults(true);
+            updateDropdownPosition();
           }}
+          onFocus={updateDropdownPosition}
           placeholder={placeholder || defaultPlaceholder}
           className="pl-10 pr-10"
+          maxLength={500}
+          spellCheck="false"
+          autoComplete="off"
           data-testid="input-location-search"
         />
         {isSearching && (
@@ -229,48 +674,162 @@ export function UnifiedLocationPicker({
         )}
       </div>
 
-      <AnimatePresence>
-        {showResults && results.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="absolute z-50 mt-2 w-full"
-          >
-            <Card
-              className="p-2 max-h-80 overflow-y-auto"
+      {typeof document !== 'undefined' && createPortal(
+        <AnimatePresence>
+          {/* Venue mode dropdown */}
+          {showResults && hasVenueResults && (
+            <motion.div
+              ref={dropdownRef}
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="fixed z-[9999]"
               style={{
-                background: 'linear-gradient(135deg, rgba(64, 224, 208, 0.25), rgba(30, 144, 255, 0.2))',
-                backdropFilter: 'blur(12px)',
-                borderColor: 'rgba(64, 224, 208, 0.6)',
+                top: dropdownPosition.top,
+                left: dropdownPosition.left,
+                width: dropdownPosition.width,
               }}
-              data-testid="location-results-dropdown"
+              onMouseDown={(e) => e.stopPropagation()}
             >
-              <div className="space-y-1">
-                {results.map((location) => (
-                  <button
-                    key={location.place_id}
-                    type="button"
-                    onClick={() => selectLocation(location)}
-                    className="w-full flex items-start gap-3 p-3 rounded-lg text-left hover:bg-gradient-to-r hover:from-cyan-500/10 hover:to-blue-500/10 transition-colors"
-                    data-testid={`location-result-${location.place_id}`}
-                  >
-                    <Icon className="w-4 h-4 mt-0.5 text-cyan-500 flex-shrink-0" />
-                    <div className="flex-1 min-w-0">
-                      <div className="font-medium text-sm truncate">
-                        {location.display_name.split(',')[0]}
+              <Card
+                className="p-2 max-h-96 overflow-y-auto shadow-xl pointer-events-auto"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(64, 224, 208, 0.95), rgba(30, 144, 255, 0.9))',
+                  backdropFilter: 'blur(12px)',
+                  borderColor: 'rgba(64, 224, 208, 0.6)',
+                  pointerEvents: 'auto',
+                }}
+                data-testid="venue-results-dropdown"
+              >
+                <div className="space-y-2 pointer-events-auto">
+                  {/* Tier 1: User's venues (highest priority) */}
+                  {venueResults.userVenues.length > 0 && (
+                    <div>
+                      <div className="px-2 py-1 text-xs font-semibold text-white/70 uppercase tracking-wide flex items-center gap-1">
+                        <Star className="w-3 h-3" /> Your Past Venues
                       </div>
-                      <div className="text-xs text-muted-foreground truncate">
-                        {mode === "city" ? getDisplayName(location) : location.display_name}
-                      </div>
+                      {venueResults.userVenues.map((venue) => (
+                        <VenueResultItem 
+                          key={venue.id} 
+                          venue={venue} 
+                          onSelect={selectVenue}
+                          badge={getSourceBadge(venue.source)}
+                        />
+                      ))}
                     </div>
-                  </button>
-                ))}
-              </div>
-            </Card>
-          </motion.div>
-        )}
-      </AnimatePresence>
+                  )}
+
+                  {/* Tier 2: City venues */}
+                  {venueResults.cityVenues.length > 0 && (
+                    <div>
+                      <div className="px-2 py-1 text-xs font-semibold text-white/70 uppercase tracking-wide flex items-center gap-1">
+                        <MapPin className="w-3 h-3" /> {userCity || 'City'} Venues
+                      </div>
+                      {venueResults.cityVenues.map((venue) => (
+                        <VenueResultItem 
+                          key={venue.id} 
+                          venue={venue} 
+                          onSelect={selectVenue}
+                          badge={getSourceBadge(venue.source)}
+                        />
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Tier 3: Google Maps results */}
+                  {venueResults.googleVenues.length > 0 && (
+                    <div>
+                      <div className="px-2 py-1 text-xs font-semibold text-white/70 uppercase tracking-wide flex items-center gap-1">
+                        <Building2 className="w-3 h-3" /> Google Maps
+                      </div>
+                      {venueResults.googleVenues.map((venue) => (
+                        <VenueResultItem 
+                          key={venue.id} 
+                          venue={venue} 
+                          onSelect={selectVenue}
+                          badge={getSourceBadge(venue.source)}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </Card>
+            </motion.div>
+          )}
+
+          {/* City/Address mode dropdown */}
+          {showResults && results.length > 0 && mode !== "venue" && (
+            <motion.div
+              ref={dropdownRef}
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="fixed z-[9999]"
+              style={{
+                top: dropdownPosition.top,
+                left: dropdownPosition.left,
+                width: dropdownPosition.width,
+              }}
+              onMouseDown={(e) => e.stopPropagation()}
+            >
+              <Card
+                className="p-2 max-h-80 overflow-y-auto shadow-xl pointer-events-auto"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(64, 224, 208, 0.95), rgba(30, 144, 255, 0.9))',
+                  backdropFilter: 'blur(12px)',
+                  borderColor: 'rgba(64, 224, 208, 0.6)',
+                  pointerEvents: 'auto',
+                }}
+                data-testid="location-results-dropdown"
+              >
+                <div className="space-y-1 pointer-events-auto">
+                  {results.map((location) => {
+                    // @ts-ignore - check for custom tier fields
+                    const source = location._source;
+                    // @ts-ignore
+                    const memberCount = location._memberCount;
+                    
+                    return (
+                      <button
+                        key={location.place_id}
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          selectLocation(location);
+                        }}
+                        className="w-full flex items-start gap-3 p-3 rounded-lg text-left hover:bg-white/20 transition-colors text-white pointer-events-auto"
+                        data-testid={`location-result-${location.place_id}`}
+                      >
+                        <Icon className="w-4 h-4 mt-0.5 text-white flex-shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium text-sm truncate">
+                              {location.display_name.split(',')[0]}
+                            </span>
+                            {source === 'city_group' && (
+                              <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4 bg-emerald-500/30 text-emerald-100 border-emerald-400/50 shrink-0">
+                                {memberCount} dancers
+                              </Badge>
+                            )}
+                            {source === 'popular' && (
+                              <Star className="w-3 h-3 text-amber-300 shrink-0" />
+                            )}
+                          </div>
+                          <div className="text-xs text-white/80 truncate">
+                            {mode === "city" ? getDisplayName(location) : location.display_name}
+                          </div>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </Card>
+            </motion.div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
 
       {showCoordinates && selectedLocation && coordinates && coordinates.lat !== 0 && (
         <div className="mt-2 p-2 rounded-lg bg-gradient-to-r from-cyan-500/10 to-blue-500/10 border border-cyan-500/20">
@@ -287,6 +846,54 @@ export function UnifiedLocationPicker({
   );
 }
 
+// Venue result item component for 3-tier dropdown
+function VenueResultItem({ 
+  venue, 
+  onSelect, 
+  badge 
+}: { 
+  venue: VenueSearchResult; 
+  onSelect: (venue: VenueSearchResult) => void;
+  badge: { label: string; color: string };
+}) {
+  return (
+    <button
+      type="button"
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        onSelect(venue);
+      }}
+      className="w-full flex items-start gap-3 p-3 rounded-lg text-left hover:bg-white/20 transition-colors text-white pointer-events-auto"
+      data-testid={`venue-result-${venue.id}`}
+    >
+      <Building2 className="w-4 h-4 mt-0.5 text-white flex-shrink-0" />
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2">
+          <span className="font-medium text-sm truncate">{venue.name}</span>
+          {venue.verified && (
+            <Check className="w-3 h-3 text-emerald-300 flex-shrink-0" />
+          )}
+          {venue.rating && venue.rating > 0 && (
+            <span className="text-xs text-yellow-300 flex items-center gap-0.5">
+              <Star className="w-3 h-3 fill-yellow-300" />
+              {venue.rating}
+            </span>
+          )}
+        </div>
+        <div className="text-xs text-white/80 truncate">
+          {venue.address}, {venue.city}, {venue.country}
+        </div>
+        <Badge 
+          className={`mt-1 text-[10px] px-1.5 py-0 h-4 ${badge.color} text-white border-0`}
+        >
+          {badge.label}
+        </Badge>
+      </div>
+    </button>
+  );
+}
+
 export function extractCityCountry(fullLocation: string): { city: string; country: string } {
   const parts = fullLocation.split(',').map(p => p.trim());
   return {
@@ -294,3 +901,6 @@ export function extractCityCountry(fullLocation: string): { city: string; countr
     country: parts[parts.length - 1] || '',
   };
 }
+
+// Export types for external use
+export type { VenueSearchResult, ParsedVenue };

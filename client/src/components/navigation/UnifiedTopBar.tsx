@@ -4,6 +4,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/hooks/use-theme";
+import { useSidebar } from "@/components/ui/sidebar";
 import {
   Menu,
   Search,
@@ -19,6 +20,12 @@ import {
   LogOut,
   ChevronDown,
   ArrowRight,
+  MapPin,
+  Users,
+  Briefcase,
+  Calendar,
+  Star,
+  UserPlus,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -35,7 +42,7 @@ import { InlineSearchInput } from "@/components/navigation/InlineSearchInput";
 import { cn } from "@/lib/utils";
 
 interface UnifiedTopBarProps {
-  onMenuToggle: () => void;
+  onMenuToggle?: () => void;
   theme?: 'light' | 'dark';
   onThemeToggle?: () => void;
   showMenuButton?: boolean;
@@ -54,8 +61,35 @@ function PulseIcon({ children, pulseColor }: { children: React.ReactNode; pulseC
   );
 }
 
+// Get notification icon based on type
+function getNotificationIcon(type: string) {
+  const iconClass = "h-4 w-4 flex-shrink-0";
+  const iconStyle = { color: '#40E0D0' };
+  
+  switch (type) {
+    case 'role_change':
+      return <Briefcase className={iconClass} style={iconStyle} />;
+    case 'location_change':
+      return <MapPin className={iconClass} style={iconStyle} />;
+    case 'group_join':
+    case 'group_leave':
+      return <Users className={iconClass} style={iconStyle} />;
+    case 'event_invite':
+    case 'event_update':
+    case 'event_rsvp':
+      return <Calendar className={iconClass} style={iconStyle} />;
+    case 'friend_request':
+      return <UserPlus className={iconClass} style={iconStyle} />;
+    case 'like':
+    case 'favorite':
+      return <Star className={iconClass} style={iconStyle} />;
+    default:
+      return <Bell className={iconClass} style={iconStyle} />;
+  }
+}
+
 function UnifiedTopBar({ 
-  onMenuToggle, 
+  onMenuToggle: externalMenuToggle, 
   theme: externalTheme, 
   onThemeToggle: externalThemeToggle,
   showMenuButton = true 
@@ -65,6 +99,16 @@ function UnifiedTopBar({
   const { user, profile, logout } = useAuth();
   const { theme: internalTheme, setTheme: setInternalTheme } = useTheme();
   const queryClient = useQueryClient();
+  
+  // Use shadcn sidebar toggle if available, fallback to external prop
+  let sidebarToggle: (() => void) | undefined;
+  try {
+    const sidebar = useSidebar();
+    sidebarToggle = sidebar?.toggleSidebar;
+  } catch {
+    // useSidebar throws if not inside SidebarProvider, fallback to external
+  }
+  const onMenuToggle = sidebarToggle || externalMenuToggle || (() => {});
 
   // Use external theme if provided, otherwise use internal
   const theme = externalTheme || internalTheme;
@@ -89,19 +133,73 @@ function UnifiedTopBar({
 
   const notificationCount = notificationData?.count || 0;
 
-  // Fetch recent notifications (most recent 10)
-  const { data: recentNotifications = [] } = useQuery<any[]>({
-    queryKey: ['/api/notifications/recent'],
-    queryFn: async () => {
-      const response = await fetch('/api/notifications?limit=10&offset=0', {
-        credentials: 'include',
-      });
-      if (!response.ok) return [];
-      return response.json();
-    },
-    refetchInterval: 15000,
+  // Fetch recent notifications (most recent 10) - uses proper auth headers
+  const { data: recentNotifications = [], refetch: refetchNotifications } = useQuery<any[]>({
+    queryKey: ['/api/notifications', { limit: 10 }],
+    refetchInterval: 5000, // Auto-refresh every 5 seconds for real-time feel
     enabled: !!user,
   });
+
+  // Mark notifications as read when dropdown opens
+  const handleNotificationDropdownOpen = async (open: boolean) => {
+    if (open && recentNotifications.length > 0 && notificationCount > 0) {
+      try {
+        const token = localStorage.getItem('accessToken');
+        await fetch('/api/notifications/mark-all-read', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+        });
+        // Invalidate with exact key structure
+        queryClient.invalidateQueries({ queryKey: ['/api/notifications/count'] });
+        queryClient.invalidateQueries({ queryKey: ['/api/notifications', { limit: 10 }] });
+        console.log('[Notifications] Marked all as read');
+      } catch (error) {
+        console.error('[Notifications] Failed to mark as read:', error);
+      }
+    }
+  };
+
+  // Handle individual notification click - navigate and close dropdown
+  const handleNotificationClick = async (notif: any) => {
+    console.log('[DEBUG] Notification clicked:', { id: notif.id, actionUrl: notif.actionUrl, isRead: notif.isRead, read: notif.read, title: notif.title });
+    let url = notif.actionUrl || notif.link;
+    console.log('[DEBUG] Navigation URL:', url);
+    
+    if (url) {
+      // For friend request notifications, add the reviewRequest param to auto-open the modal
+      if (notif.type === 'friend_request' && url.includes('/profile/')) {
+        url = url + (url.includes('?') ? '&' : '?') + 'reviewRequest=true';
+      }
+      
+      // Mark individual notification as read if not already read (isRead is the Drizzle mapped field name)
+      if (!notif.isRead && notif.id) {
+        try {
+          const token = localStorage.getItem('accessToken');
+          await fetch(`/api/notifications/${notif.id}/read`, {
+            method: 'PUT',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+          });
+          queryClient.invalidateQueries({ queryKey: ['/api/notifications/count'] });
+          queryClient.invalidateQueries({ queryKey: ['/api/notifications', { limit: 10 }] });
+        } catch (error) {
+          console.error('[Notifications] Failed to mark as read:', error);
+        }
+      }
+      // Navigate to the notification target
+      console.log('[DEBUG] Navigating to:', url);
+      setLocation(url);
+    } else {
+      console.warn('[WARNING] No actionUrl or link found in notification:', notif);
+    }
+  };
 
   // Fetch message count - uses default queryFn which includes auth headers
   const { data: messageData } = useQuery<{ count: number }>({
@@ -274,7 +372,7 @@ function UnifiedTopBar({
           </Link>
 
           {/* Notifications Dropdown - MT Ocean Badge */}
-          <DropdownMenu>
+          <DropdownMenu onOpenChange={handleNotificationDropdownOpen}>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="relative transition-all duration-200" data-testid="button-notifications">
                 {notificationCount > 0 ? (
@@ -307,10 +405,13 @@ function UnifiedTopBar({
                   {recentNotifications.map((notif, idx) => (
                     <DropdownMenuItem
                       key={notif.id || idx}
-                      onClick={() => notif.link && setLocation(notif.link)}
-                      className="cursor-pointer flex items-start gap-2 px-4 py-3 border-b last:border-0"
+                      onClick={() => handleNotificationClick(notif)}
+                      className="cursor-pointer flex items-start gap-3 px-4 py-3 border-b last:border-0 hover:bg-accent/50"
                       data-testid={`notification-item-${idx}`}
                     >
+                      <div className="mt-0.5">
+                        {getNotificationIcon(notif.type)}
+                      </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium truncate">{notif.title}</p>
                         <p className="text-xs text-muted-foreground truncate">{notif.message}</p>
@@ -320,9 +421,9 @@ function UnifiedTopBar({
                           </p>
                         )}
                       </div>
-                      {!notif.read && (
+                      {!notif.isRead && (
                         <div 
-                          className="flex-shrink-0 w-2 h-2 rounded-full"
+                          className="flex-shrink-0 w-2 h-2 rounded-full mt-1"
                           style={{ background: '#40E0D0' }}
                         />
                       )}

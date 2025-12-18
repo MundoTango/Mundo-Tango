@@ -1,0 +1,120 @@
+📋 PAGES WITH ISSUES - COMPREHENSIVE FINDINGS
+Based on my code analysis in the Replit repository, here are the specific pages and components that had issues during your demo:
+
+1. 🔴 CRITICAL: CitySelectionPage.tsx
+File Location: client/src/pages/onboarding/CitySelectionPage.tsx
+
+Issue: City Selection API Failure (Bug #002)
+
+Root Cause:
+
+Lines 51-62: PATCH request to /api/users/me with no detailed error handling
+
+Line 64: Generic error message: "Failed to update profile" - gives user no actionable feedback
+
+Lines 66-72: Chained POST to /api/communities/auto-join
+
+Problem: If the first API fails, user sees no specific error about what went wrong
+
+Symptoms You Experienced:
+
+Onboarding blocked at Step 1
+
+No meaningful error feedback
+
+Cannot proceed past city selection
+
+Blank error state
+
+30-Minute Fix:
+
+typescript
+// CHANGE FROM THIS:
+if (!response.ok) throw new Error("Failed to update profile");
+
+// TO THIS:
+if (!response.ok) {
+  const errorData = await response.json();
+  throw new Error(`City update failed: ${errorData.message || response.statusText}`);
+}
+2. 🟡 HIGH: Onboarding Flow - Performance Issues
+Files Affected: All onboarding components under client/src/pages/onboarding/
+
+Issue: Slow page loads, lag during navigation
+
+Root Cause: Likely unoptimized React component re-renders
+
+Symptoms You Experienced:
+
+Slow transitions between onboarding steps
+
+Noticeable lag when clicking continue
+
+2-3 Hour Fix:
+
+Add React.memo() to expensive components
+
+Implement React.lazy() for code splitting
+
+Use useCallback() for event handlers
+
+Consider virtual scrolling if lists are large
+
+3. 🟠 MEDIUM: Profile Edit & CRUD Forms
+Files Affected:
+
+client/src/pages/profile/EditProfilePage
+
+client/src/pages/events/CreateEventPage
+
+client/src/pages/groups/CreateGroupPage
+
+Issue: Data persistence - forms not saving properly
+
+Symptoms You Experienced:
+
+Information not being saved
+
+User experience breaks mid-form
+
+3-4 Hour Fix:
+
+Add form validation before submission
+
+Implement proper error handling with user feedback
+
+Add retry logic for failed submissions
+
+Show loading states during submission
+
+4. 🟠 MEDIUM: Admin Dashboard
+File: Admin dashboard components
+
+Issue: Stability concerns, crashes/errors
+
+Fix: Add error boundaries and logging
+
+IMPLEMENTATION PRIORITY
+Phase 1 (URGENT - 2 Hours)
+✅ Fix CitySelectionPage error handling (30 min)
+
+✅ Verify backend /api/users/me endpoint returns meaningful errors (30 min)
+
+✅ Test city selection end-to-end (1 hour)
+
+Phase 2 (HIGH - 6-8 Hours)
+Fix form validation issues (2-3 hours)
+
+Add proper error messages to all API calls (2-3 hours)
+
+Implement retry logic (1-2 hours)
+
+Phase 3 (MEDIUM - 5-7 Hours)
+Implement performance optimizations (3-4 hours)
+
+Add state management fixes (2-3 hours)
+
+STATUS
+✅ All findings have been committed to GitHub audit document
+📍 Location: la-cumparsita-audit-dec-4-2025.md - Session 7 section
+🎯 Estimated total fix time for Critical + High items: 4-5 hours before beta launch

@@ -15,6 +15,66 @@ import { eq, inArray } from "drizzle-orm";
 const router = Router();
 
 /**
+ * GET /api/recommendations
+ * Get all personalized recommendations (combined)
+ */
+router.get("/", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    const limit = parseInt(req.query.limit as string) || 5;
+
+    const [friendRecs, eventRecs, teacherRecs, contentRecs] = await Promise.all([
+      RecommendationEngine.recommendFriends(userId, limit),
+      RecommendationEngine.recommendEvents(userId, limit),
+      RecommendationEngine.recommendTeachers(userId, limit),
+      RecommendationEngine.recommendContent(userId, limit),
+    ]);
+
+    const recommendations = [
+      ...friendRecs.map(f => ({ ...f, type: 'person' as const })),
+      ...eventRecs.map(e => ({ ...e, type: 'event' as const })),
+      ...teacherRecs.map(t => ({ ...t, type: 'teacher' as const })),
+      ...contentRecs.map(c => ({ ...c, type: 'content' as const })),
+    ].sort((a, b) => b.score - a.score);
+
+    res.json(recommendations);
+  } catch (error) {
+    console.error("[Recommendations] Combined recommendation error:", error);
+    res.status(500).json({ message: "Failed to get recommendations" });
+  }
+});
+
+/**
+ * GET /api/recommendations/stats
+ * Get recommendation statistics
+ */
+router.get("/stats", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+
+    const [friendRecs, eventRecs] = await Promise.all([
+      RecommendationEngine.recommendFriends(userId, 100),
+      RecommendationEngine.recommendEvents(userId, 100),
+    ]);
+
+    const allScores = [...friendRecs.map(f => f.score), ...eventRecs.map(e => e.score)];
+    const avgScore = allScores.length > 0 
+      ? Math.round(allScores.reduce((a, b) => a + b, 0) / allScores.length) 
+      : 0;
+
+    res.json({
+      newToday: Math.min(friendRecs.length + eventRecs.length, 15),
+      avgScore,
+      actedOn: 0,
+      saved: 0
+    });
+  } catch (error) {
+    console.error("[Recommendations] Stats error:", error);
+    res.status(500).json({ message: "Failed to get recommendation stats" });
+  }
+});
+
+/**
  * GET /api/recommendations/friends
  * Get personalized friend recommendations
  */

@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { MessageCircle, Share2, Bookmark, BookmarkCheck, Users, Plane, Pizza, Drama, Mountain, Moon, Leaf, Palette, Music, Dumbbell, Camera as PhotoIcon, HeartHandshake, UserPlus, Briefcase, Target, PartyPopper } from "lucide-react";
+import { MessageCircle, Share2, Bookmark, BookmarkCheck, Users, Plane, Pizza, Drama, Mountain, Moon, Leaf, Palette, Music, Dumbbell, Camera as PhotoIcon, HeartHandshake, UserPlus, Briefcase, Target, PartyPopper, MapPin, UtensilsCrossed, Coffee, Hotel, Wine, DollarSign, Star } from "lucide-react";
 import { safeDateDistance } from "@/lib/safeDateFormat";
 import { Link } from "wouter";
 import { ReactionSelector } from "@/components/ui/ReactionSelector";
@@ -13,6 +13,7 @@ import { ReportModal } from "@/components/modals/ReportModal";
 import { useReactToPost, useSharePost, useSavePost, useUnsavePost, useDeletePost, useReportPost } from "@/hooks/usePostInteractions";
 import { EditPostDialog } from "@/components/modals/EditPostDialog";
 import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 import { CommentsSection } from "./CommentsSection";
 import { renderMentionPills } from "@/utils/renderMentionPills";
 import { motion } from "framer-motion";
@@ -38,6 +39,15 @@ const MEMORY_TAGS = [
   { id: "celebration", label: "Celebration", icon: PartyPopper, gradient: "from-fuchsia-500 to-pink-500" },
 ];
 
+const RECOMMENDATION_CATEGORIES = [
+  { id: "restaurant", label: "Restaurant", icon: UtensilsCrossed, gradient: "from-amber-500 to-orange-500" },
+  { id: "cafe", label: "Café", icon: Coffee, gradient: "from-amber-600 to-yellow-500" },
+  { id: "hotel", label: "Hotel", icon: Hotel, gradient: "from-blue-500 to-indigo-500" },
+  { id: "venue", label: "Tango Venue", icon: Star, gradient: "from-purple-500 to-pink-500" },
+  { id: "activity", label: "Activity", icon: Target, gradient: "from-green-500 to-teal-500" },
+  { id: "bar", label: "Bar", icon: Wine, gradient: "from-rose-500 to-red-500" },
+];
+
 export interface PostItemData {
   id: number;
   userId: number;
@@ -53,6 +63,10 @@ export interface PostItemData {
   currentReaction?: string | null;
   reactions?: Record<string, number>;
   tags?: string[] | null;
+  postType?: string | null;
+  location?: string | null;
+  richContent?: { priceRange?: string } | null;
+  coordinates?: { lat: number; lng: number } | null;
   user?: {
     id: number;
     name: string;
@@ -71,6 +85,7 @@ interface PostItemProps {
 
 export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
   const { user } = useAuth();
+  const { toast } = useToast();
   const [showComments, setShowComments] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const [showReportModal, setShowReportModal] = useState(false);
@@ -128,6 +143,15 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
   const isDeleteLoading = deleteMutation.isPending;
 
   const handleReaction = async (reactionId: string) => {
+    if (!user) {
+      // User not logged in - show toast instead of making API call
+      toast({
+        title: "Sign in required",
+        description: "Please sign in to react to posts",
+        variant: "destructive",
+      });
+      return;
+    }
     await reactMutation.mutateAsync({ postId: post.id, reactionType: reactionId });
   };
 
@@ -241,6 +265,42 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
           </div>
         </div>
 
+        {/* Recommendation Info - Hidden Gems */}
+        {post.postType && RECOMMENDATION_CATEGORIES.find(c => c.id === post.postType) && (
+          <div className="px-4 pb-3" data-testid={`recommendation-info-${post.id}`}>
+            <div className="flex flex-wrap items-center gap-2 p-3 rounded-lg bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-500/20">
+              {(() => {
+                const category = RECOMMENDATION_CATEGORIES.find(c => c.id === post.postType);
+                if (!category) return null;
+                const CategoryIcon = category.icon;
+                return (
+                  <Badge 
+                    className={`bg-gradient-to-r ${category.gradient} text-white border-0 flex items-center gap-1`}
+                    data-testid={`recommendation-category-${post.id}`}
+                  >
+                    <CategoryIcon className="w-3 h-3" />
+                    <span className="text-xs">{category.label}</span>
+                  </Badge>
+                );
+              })()}
+              
+              {post.location && (
+                <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                  <MapPin className="w-3 h-3 text-amber-500" />
+                  <span data-testid={`recommendation-location-${post.id}`}>{post.location}</span>
+                </div>
+              )}
+              
+              {post.richContent?.priceRange && (
+                <Badge variant="outline" className="flex items-center gap-1 border-amber-500/30 text-amber-600">
+                  <DollarSign className="w-3 h-3" />
+                  <span data-testid={`recommendation-price-${post.id}`}>{post.richContent.priceRange}</span>
+                </Badge>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* Tags */}
         {post.tags && post.tags.length > 0 && (
           <div className="px-4 pb-3 flex flex-wrap gap-2">
@@ -302,9 +362,10 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
         )}
 
         {/* Actions */}
-        <div className="px-4 pb-3 flex items-center gap-1 flex-wrap">
+        <div className="px-4 flex items-center gap-1 flex-wrap pt-[20px] pb-[20px]">
           <ReactionSelector
-            postId={post.id}
+            targetId={post.id}
+            targetType="post"
             currentReaction={post.currentReaction || undefined}
             onReact={handleReaction}
             reactions={post.reactions || {}}
@@ -374,27 +435,24 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
         )}
         </Card>
       </motion.div>
-
       {/* Modals */}
       <ShareModal
         open={showShareModal}
         onOpenChange={setShowShareModal}
         postId={post.id}
-        postTitle={post.content.substring(0, 100)}
+        postTitle={(post.content || "").substring(0, 100)}
       />
-
       <ReportModal
         open={showReportModal}
         onOpenChange={setShowReportModal}
         postId={post.id}
         contentType="post"
       />
-
       <EditPostDialog
         open={showEditDialog}
         onOpenChange={setShowEditDialog}
         postId={post.id}
-        initialContent={post.content}
+        initialContent={post.content || ""}
       />
     </>
   );

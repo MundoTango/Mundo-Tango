@@ -362,13 +362,35 @@ export default function TeachersPage() {
               ))}
             </div>
           ) : (
-            <Card className="bg-card/50">
+            <Card className="bg-card/50" data-testid="empty-state-teachers">
               <CardContent className="py-16 text-center">
-                <GraduationCap className="mx-auto h-16 w-16 mb-6 opacity-30" />
+                <div className="p-4 rounded-full bg-muted inline-block mb-6">
+                  <GraduationCap className="h-12 w-12 text-muted-foreground" aria-hidden="true" />
+                </div>
                 <h3 className="text-xl font-serif font-bold mb-2">No Teachers Found</h3>
-                <p className="text-muted-foreground">
-                  {searchTerm || showFilters ? 'Try adjusting your search or filters' : 'No teachers available'}
+                <p className="text-muted-foreground mb-6">
+                  {searchTerm || showFilters ? 'Try adjusting your search or filters' : 'No teachers are available in your area yet.'}
                 </p>
+                {(searchTerm || showFilters) && (
+                  <Button 
+                    variant="outline"
+                    onClick={() => {
+                      setSearchTerm("");
+                      setShowFilters(false);
+                      setFilters({
+                        experienceLevel: 'all',
+                        minPrice: 0,
+                        maxPrice: 200,
+                        availability: 'all',
+                        sortBy: 'rating'
+                      });
+                    }}
+                    data-testid="button-clear-filters"
+                  >
+                    <X className="h-4 w-4 mr-2" />
+                    Clear Filters
+                  </Button>
+                )}
               </CardContent>
             </Card>
           )}

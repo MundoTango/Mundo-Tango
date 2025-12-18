@@ -101,15 +101,13 @@ function ValidationDialog({ page, userId, onValidate }: ValidationDialogProps) {
 
   const validateMutation = useMutation({
     mutationFn: async () => {
-      return await apiRequest('/api/mrblue/plan/validate-page', {
-        method: 'POST',
-        body: JSON.stringify({
-          userId,
-          pageName: page.name,
-          notes: notes || undefined,
-          issuesFound: issuesFound || undefined,
-        }),
+      const response = await apiRequest('POST', '/api/mrblue/plan/validate-page', {
+        userId,
+        pageName: page.name,
+        notes: notes || undefined,
+        issuesFound: issuesFound || undefined,
       });
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/mrblue/plan/roadmap'] });

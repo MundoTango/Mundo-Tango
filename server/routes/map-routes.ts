@@ -49,7 +49,7 @@ router.get("/markers", async (req: Request, res: Response) => {
 
     // Get event markers
     if (!type || type === 'events') {
-      const eventMarkers = await db
+      const eventMarkersRaw = await db
         .select({
           id: events.id,
           type: sql<string>`'event'`.as('type'),
@@ -64,7 +64,9 @@ router.get("/markers", async (req: Request, res: Response) => {
           imageUrl: events.imageUrl,
           isFree: events.isFree,
           price: events.price,
-          status: events.status
+          status: events.status,
+          address: events.address,
+          location: events.location
         })
         .from(events)
         .where(and(
@@ -75,6 +77,17 @@ router.get("/markers", async (req: Request, res: Response) => {
           country ? eq(events.country, country as string) : sql`1=1`
         ))
         .limit(500);
+
+      // Transform to include coordinates object for frontend compatibility
+      const eventMarkers = eventMarkersRaw.map(event => {
+        const lat = parseFloat(String(event.latitude || 0));
+        const lng = parseFloat(String(event.longitude || 0));
+        return {
+          ...event,
+          coordinates: { lat, lng },
+          address: event.address || event.location || ''
+        };
+      }).filter(e => !isNaN(e.coordinates.lat) && !isNaN(e.coordinates.lng));
 
       markers.push(...eventMarkers);
     }
@@ -99,6 +112,7 @@ router.get("/markers", async (req: Request, res: Response) => {
         .where(and(
           isNotNull(groups.latitude),
           isNotNull(groups.longitude),
+          eq(groups.type, 'city'),
           city ? eq(groups.city, city as string) : sql`1=1`,
           country ? eq(groups.country, country as string) : sql`1=1`
         ))

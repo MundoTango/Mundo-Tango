@@ -30,9 +30,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/UnifiedLocationPicker";
+import { FriendshipClosenessFilter } from "@/components/filters/FriendshipClosenessFilter";
+import { closenessVisibilitySchema, type ClosenessVisibility } from "@shared/schema";
+
 const formSchema = z.object({
   name: z.string().min(3, "Name must be at least 3 characters"),
   slug: z.string().min(3, "Slug must be at least 3 characters").regex(/^[a-z0-9-]+$/, "Slug must be lowercase letters, numbers, and hyphens only"),
@@ -40,7 +44,7 @@ const formSchema = z.object({
   longDescription: z.string().optional(),
   type: z.string().default("city"),
   visibility: z.string().default("public"),
-  joinApproval: z.string().default("open"),
+  joinApproval: z.boolean().default(true),
   city: z.string().optional(),
   country: z.string().optional(),
   region: z.string().optional(),
@@ -49,6 +53,7 @@ const formSchema = z.object({
   allowEvents: z.boolean().default(true),
   allowPosts: z.boolean().default(true),
   allowDiscussions: z.boolean().default(true),
+  membershipCloseness: closenessVisibilitySchema.default("all"),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -71,7 +76,7 @@ export function GroupCreationModal({ open, onOpenChange }: GroupCreationModalPro
       longDescription: "",
       type: "city",
       visibility: "public",
-      joinApproval: "open",
+      joinApproval: true,
       city: "",
       country: "",
       region: "",
@@ -80,6 +85,7 @@ export function GroupCreationModal({ open, onOpenChange }: GroupCreationModalPro
       allowDiscussions: true,
       whoCanPost: "members",
       language: "en",
+      membershipCloseness: "all" as ClosenessVisibility,
     },
   });
 
@@ -330,21 +336,20 @@ export function GroupCreationModal({ open, onOpenChange }: GroupCreationModalPro
                 control={form.control}
                 name="joinApproval"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Join Approval</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger data-testid="select-join-approval">
-                          <SelectValue placeholder="Select approval type" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="open">Open - Anyone can join</SelectItem>
-                        <SelectItem value="approval">Approval Required</SelectItem>
-                        <SelectItem value="invite_only">Invite Only</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
+                    <div className="space-y-0.5">
+                      <FormLabel>Open Membership</FormLabel>
+                      <p className="text-sm text-muted-foreground">
+                        {field.value ? "Anyone can join" : "Approval required"}
+                      </p>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        data-testid="switch-join-approval"
+                      />
+                    </FormControl>
                   </FormItem>
                 )}
               />
@@ -372,6 +377,24 @@ export function GroupCreationModal({ open, onOpenChange }: GroupCreationModalPro
                 )}
               />
             </div>
+
+            {/* Membership Visibility */}
+            <FormField
+              control={form.control}
+              name="membershipCloseness"
+              render={({ field }) => (
+                <FormItem>
+                  <FriendshipClosenessFilter
+                    value={field.value}
+                    onChange={field.onChange}
+                    label="Who Can Join"
+                    description="Control who can discover and join this group based on network proximity"
+                    testIdPrefix="group-membership-closeness"
+                  />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <DialogFooter>
               <Button

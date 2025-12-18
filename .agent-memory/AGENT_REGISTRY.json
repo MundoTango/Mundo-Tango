@@ -1,0 +1,51 @@
+{
+  "version": "1.0",
+  "lastUpdated": "2025-12-02T11:00:00Z",
+  "agents": {
+    "facebook": {
+      "role": "Facebook Integration & Mr. Blue API",
+      "primaryFiles": [
+        "client/src/services/facebookApi.ts",
+        "client/src/services/mrBlueApi.ts",
+        "client/src/components/facebook/",
+        "server/routes/facebook.ts"
+      ],
+      "capabilities": ["OAuth", "Graph API", "webhooks", "Mr. Blue integration"],
+      "lastActive": "2025-12-02T11:00:00Z",
+      "status": "active"
+    },
+    "events": {
+      "role": "Events System & Luma Integration",
+      "primaryFiles": [
+        "client/src/pages/Events.tsx",
+        "server/routes/luma.ts",
+        "client/src/services/lumaApi.ts"
+      ],
+      "capabilities": ["Event CRUD", "Luma API", "Calendar sync", "Event listing"],
+      "lastActive": "2025-12-02T09:30:00Z",
+      "status": "idle"
+    },
+    "governance": {
+      "role": "Documentation & MB.MD Maintenance",
+      "primaryFiles": [
+        "mb.md",
+        "docs/governance/",
+        "AGENT_MEMORY.md"
+      ],
+      "capabilities": ["Pattern creation", "Documentation", "Cleanup", "Compliance"],
+      "lastActive": "2025-12-01T16:00:00Z",
+      "status": "idle"
+    },
+    "testing": {
+      "role": "Test Infrastructure & E2E",
+      "primaryFiles": [
+        "tests/",
+        "cypress/",
+        "vitest.config.ts"
+      ],
+      "capabilities": ["E2E testing", "Unit testing", "Test setup", "CI/CD"],
+      "lastActive": "2025-12-01T14:00:00Z",
+      "status": "idle"
+    }
+  }
+}

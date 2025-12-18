@@ -2,6 +2,7 @@ import { Router, type Request, type Response } from "express";
 import { storage } from "../storage";
 import { authenticateToken, AuthRequest } from "../middleware/auth";
 import { z } from "zod";
+import { ensureCityGroupExists } from "../utils/cityGroupAutomation";
 import {
   updateTeacherProfileSchema,
   updateDJProfileSchema,
@@ -109,6 +110,23 @@ router.put("/:userId", authenticateToken, async (req: AuthRequest, res: Response
 
     if (!updatedProfile) {
       return res.status(404).json({ message: "Profile not found" });
+    }
+
+    // Auto-create city group when user updates their city
+    if (validatedData.city) {
+      try {
+        const result = await ensureCityGroupExists(
+          validatedData.city,
+          validatedData.country || (updatedProfile as any).country,
+          userId
+        );
+        if (result?.wasCreated) {
+          console.log(`[Profile] Auto-created city group for ${validatedData.city}: ${result.groupName}`);
+        }
+      } catch (cityGroupError) {
+        // Don't fail the profile update if city group creation fails
+        console.error("[Profile] Failed to create city group:", cityGroupError);
+      }
     }
 
     res.json(updatedProfile);

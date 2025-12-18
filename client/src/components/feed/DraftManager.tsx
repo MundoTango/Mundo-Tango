@@ -55,15 +55,11 @@ export function DraftManager({
   const saveDraftMutation = useMutation({
     mutationFn: async () => {
       if (activeDraftId) {
-        return apiRequest(`/api/posts/drafts/${activeDraftId}`, {
-          method: 'PUT',
-          body: JSON.stringify(currentDraft),
-        });
+        const response = await apiRequest('PUT', `/api/posts/drafts/${activeDraftId}`, currentDraft);
+        return response.json();
       } else {
-        return apiRequest('/api/posts/drafts', {
-          method: 'POST',
-          body: JSON.stringify(currentDraft),
-        });
+        const response = await apiRequest('POST', '/api/posts/drafts', currentDraft);
+        return response.json();
       }
     },
     onSuccess: (data) => {
@@ -99,9 +95,8 @@ export function DraftManager({
   // Delete draft mutation
   const deleteDraftMutation = useMutation({
     mutationFn: async (draftId: number) => {
-      return apiRequest(`/api/posts/drafts/${draftId}`, {
-        method: 'DELETE',
-      });
+      const response = await apiRequest('DELETE', `/api/posts/drafts/${draftId}`);
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/posts/drafts'] });

@@ -114,10 +114,8 @@ export function WorkflowBuilder() {
         })),
       };
 
-      await apiRequest('/api/mrblue/workflows', {
-        method: 'POST',
-        body: JSON.stringify(workflow),
-      });
+      const response = await apiRequest('POST', '/api/mrblue/workflows', workflow);
+      await response.json();
 
       toast({
         title: 'Workflow saved',
@@ -159,10 +157,8 @@ export function WorkflowBuilder() {
         })),
       };
 
-      const result = await apiRequest('/api/mrblue/orchestration/a2a/execute', {
-        method: 'POST',
-        body: JSON.stringify(executionPlan),
-      });
+      const response = await apiRequest('POST', '/api/mrblue/orchestration/a2a/execute', executionPlan);
+      const result = await response.json();
 
       toast({
         title: 'Workflow executed',

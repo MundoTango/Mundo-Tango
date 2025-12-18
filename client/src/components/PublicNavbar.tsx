@@ -1,6 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Moon, Sun, Globe } from "lucide-react";
+import { Moon, Sun, Globe, ChevronDown, Users, GraduationCap, CalendarCheck, Heart, Bot, Flag, HandHeart, Code } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
@@ -13,8 +13,21 @@ export function PublicNavbar() {
     { label: "About", path: "/about" },
     { label: "Pricing", path: "/pricing" },
     { label: "FAQ", path: "/faq" },
-    { label: "Contact", path: "/contact" },
-    { label: "Dance Styles", path: "/dance-styles" }
+    { label: "Contact", path: "/contact" }
+  ];
+
+  const audienceItems = [
+    { label: "For Dancers", path: "/for-dancers", icon: Users },
+    { label: "For Teachers", path: "/for-teachers", icon: GraduationCap },
+    { label: "For Organizers", path: "/for-organizers", icon: CalendarCheck }
+  ];
+
+  const communityItems = [
+    { label: "Support Us", path: "/support", icon: Heart },
+    { label: "Mr. Blue AI", path: "/mr-blue", icon: Bot },
+    { label: "Ambassadors", path: "/ambassadors", icon: Flag },
+    { label: "Volunteer", path: "/volunteer", icon: HandHeart },
+    { label: "Open Source", path: "/open-source", icon: Code }
   ];
 
   const isActive = (path: string) => location === path;
@@ -45,6 +58,60 @@ export function PublicNavbar() {
               </Button>
             </Link>
           ))}
+          
+          {/* Who It's For Dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button 
+                variant={audienceItems.some(item => isActive(item.path)) ? "secondary" : "ghost"}
+                className={audienceItems.some(item => isActive(item.path)) ? "bg-accent" : ""}
+                data-testid="nav-who-its-for"
+              >
+                Who It's For
+                <ChevronDown className="ml-1 h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="center">
+              {audienceItems.map((item) => (
+                <Link key={item.path} href={item.path}>
+                  <DropdownMenuItem 
+                    className="cursor-pointer gap-2"
+                    data-testid={`nav-${item.label.toLowerCase().replace(" ", "-")}`}
+                  >
+                    <item.icon className="h-4 w-4" />
+                    {item.label}
+                  </DropdownMenuItem>
+                </Link>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* Community Dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button 
+                variant={communityItems.some(item => isActive(item.path)) ? "secondary" : "ghost"}
+                className={communityItems.some(item => isActive(item.path)) ? "bg-accent" : ""}
+                data-testid="nav-community"
+              >
+                Community
+                <ChevronDown className="ml-1 h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="center">
+              {communityItems.map((item) => (
+                <Link key={item.path} href={item.path}>
+                  <DropdownMenuItem 
+                    className="cursor-pointer gap-2"
+                    data-testid={`nav-${item.label.toLowerCase().replace(/\s+/g, "-")}`}
+                  >
+                    <item.icon className="h-4 w-4" />
+                    {item.label}
+                  </DropdownMenuItem>
+                </Link>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </nav>
 
         {/* Right Actions */}
@@ -98,6 +165,32 @@ export function PublicNavbar() {
                 className={isActive(item.path) ? "bg-accent" : ""}
                 data-testid={`nav-mobile-${item.label.toLowerCase().replace(" ", "-")}`}
               >
+                {item.label}
+              </Button>
+            </Link>
+          ))}
+          {audienceItems.map((item) => (
+            <Link key={item.path} href={item.path}>
+              <Button
+                size="sm"
+                variant={isActive(item.path) ? "secondary" : "ghost"}
+                className={isActive(item.path) ? "bg-accent" : ""}
+                data-testid={`nav-mobile-${item.label.toLowerCase().replace(" ", "-")}`}
+              >
+                <item.icon className="h-3 w-3 mr-1" />
+                {item.label}
+              </Button>
+            </Link>
+          ))}
+          {communityItems.map((item) => (
+            <Link key={item.path} href={item.path}>
+              <Button
+                size="sm"
+                variant={isActive(item.path) ? "secondary" : "ghost"}
+                className={isActive(item.path) ? "bg-accent" : ""}
+                data-testid={`nav-mobile-${item.label.toLowerCase().replace(/\s+/g, "-")}`}
+              >
+                <item.icon className="h-3 w-3 mr-1" />
                 {item.label}
               </Button>
             </Link>

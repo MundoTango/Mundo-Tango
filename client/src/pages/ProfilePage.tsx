@@ -1,12 +1,12 @@
 import { useState, useEffect, useRef } from "react";
-import { useRoute, Link, useSearch } from "wouter";
+import { useRoute, Link, useSearch, useLocation } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Settings, UserPlus, UserMinus, UserCheck, Plane, Calendar, CheckCircle, Instagram, Facebook, Twitter, Linkedin, Youtube, Globe, Award, Plus, Camera, Music, Users, ImageIcon, Mic2, Home, Briefcase, BookOpen, Heart } from "lucide-react";
+import { MapPin, Settings, UserPlus, UserMinus, UserCheck, Plane, Calendar, CheckCircle, Instagram, Facebook, Twitter, Linkedin, Youtube, Globe, Award, Plus, Camera, Music, Users, ImageIcon, Mic2, Home, Briefcase, BookOpen, Heart, Eye, MessageSquare, HeartHandshake } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useAuth } from "@/contexts/AuthContext";
 import { SEO } from "@/components/SEO";
@@ -21,25 +21,13 @@ import ProfileTabEvents from "@/components/profile/ProfileTabEvents";
 import ProfileTabFriends from "@/components/profile/ProfileTabFriends";
 import ProfileTabPhotos from "@/components/profile/ProfileTabPhotos";
 import ProfileTabAbout from "@/components/profile/ProfileTabAbout";
-import ProfileTabTeacher from "@/components/profile/ProfileTabTeacher";
-import ProfileTabDJ from "@/components/profile/ProfileTabDJ";
-import ProfileTabPhotographer from "@/components/profile/ProfileTabPhotographer";
-import ProfileTabPerformer from "@/components/profile/ProfileTabPerformer";
-import ProfileTabVendor from "@/components/profile/ProfileTabVendor";
-import ProfileTabMusician from "@/components/profile/ProfileTabMusician";
-import ProfileTabChoreographer from "@/components/profile/ProfileTabChoreographer";
-import ProfileTabTangoSchool from "@/components/profile/ProfileTabTangoSchool";
-import ProfileTabTangoHotel from "@/components/profile/ProfileTabTangoHotel";
-import ProfileTabWellness from "@/components/profile/ProfileTabWellness";
-import ProfileTabTourOperator from "@/components/profile/ProfileTabTourOperator";
-import ProfileTabHostVenue from "@/components/profile/ProfileTabHostVenue";
-import ProfileTabTangoGuide from "@/components/profile/ProfileTabTangoGuide";
-import ProfileTabContentCreator from "@/components/profile/ProfileTabContentCreator";
-import ProfileTabLearningResource from "@/components/profile/ProfileTabLearningResource";
-import ProfileTabTaxiDancer from "@/components/profile/ProfileTabTaxiDancer";
-import ProfileTabOrganizer from "@/components/profile/ProfileTabOrganizer";
 import ProfileTabMemories from "@/components/profile/ProfileTabMemories";
+import ProfileTabPro from "@/components/profile/ProfileTabPro";
 import DashboardCustomerToggle from "@/components/profile/DashboardCustomerToggle";
+import { PhotoUploadDialog } from "@/components/PhotoUploadDialog";
+import { FriendshipQuestionnaire } from "@/components/friendship/FriendshipQuestionnaire";
+import { FriendRequestReviewModal } from "@/components/friendship/FriendRequestReviewModal";
+import { normalizeRole, getRoleByValue, getRoleLabel, getRoleIcon, getRoleColor } from "@/lib/tangoRoles";
 
 interface User {
   id: number;
@@ -47,7 +35,7 @@ interface User {
   username: string;
   name: string;
   profileImage?: string | null;
-  coverImage?: string | null;
+  backgroundImage?: string | null;
   bio?: string | null;
   city?: string | null;
   country?: string | null;
@@ -81,16 +69,29 @@ interface Post {
 }
 
 export default function ProfilePage() {
-  const [, params] = useRoute("/profile/:id");
+  // Support multiple route patterns: /profile/:id and /users/:userId
+  const [, profileParams] = useRoute("/profile/:id");
+  const [, userParams] = useRoute("/users/:userId");
+  const params = profileParams || (userParams ? { id: userParams.userId } : null);
   const searchString = useSearch();
   const { user: currentUser } = useAuth();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<string>('feed');
+  
+  // Detect public view mode from ?view=public query param
+  const searchParams = new URLSearchParams(searchString);
+  const isPublicView = searchParams.get('view') === 'public';
+  
+  // PRO tab dashboard/customer toggle (separate from public view mode)
   const [viewMode, setViewMode] = useState<'dashboard' | 'customer'>('dashboard');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const coverPhotoInputRef = useRef<HTMLInputElement>(null);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [uploadingCover, setUploadingCover] = useState(false);
+  const [profilePhotoDialogOpen, setProfilePhotoDialogOpen] = useState(false);
+  const [coverPhotoDialogOpen, setCoverPhotoDialogOpen] = useState(false);
+  const [friendshipQuestionnaireOpen, setFriendshipQuestionnaireOpen] = useState(false);
+  const [friendRequestReviewOpen, setFriendRequestReviewOpen] = useState(false);
 
   // Upload profile photo mutation (send compressed base64)
   const uploadPhotoMutation = useMutation({
@@ -205,43 +206,14 @@ export default function ProfilePage() {
     });
   };
 
-  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    
+  const handlePhotoUploadCropped = (croppedBase64: string) => {
     setUploadingPhoto(true);
-    
-    try {
-      // Compress image first (matching PostCreator pattern)
-      const compressedBase64 = await compressImage(file);
-      uploadPhotoMutation.mutate(compressedBase64);
-    } catch (err) {
-      toast({ title: "Error", description: "Failed to process image", variant: "destructive" });
-      setUploadingPhoto(false);
-    }
-    
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
+    uploadPhotoMutation.mutate(croppedBase64);
   };
 
-  const handleCoverPhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    
+  const handleCoverPhotoUploadCropped = (croppedBase64: string) => {
     setUploadingCover(true);
-    
-    try {
-      const compressedBase64 = await compressImage(file);
-      uploadCoverMutation.mutate(compressedBase64);
-    } catch (err) {
-      toast({ title: "Error", description: "Failed to process image", variant: "destructive" });
-      setUploadingCover(false);
-    }
-    
-    if (coverPhotoInputRef.current) {
-      coverPhotoInputRef.current.value = '';
-    }
+    uploadCoverMutation.mutate(croppedBase64);
   };
   
   // Read tab from URL query params (e.g., /profile?tab=memories)
@@ -256,7 +228,9 @@ export default function ProfilePage() {
   // Support both numeric ID and username - use username/ID from URL or current user's ID
   const profileIdentifier = params?.id || currentUser?.id?.toString();
 
-  const { data: user, isLoading: userLoading } = useQuery<User>({
+  const [, navigate] = useLocation();
+
+  const { data: user, isLoading: userLoading, isError: userError } = useQuery<User>({
     queryKey: ["user", profileIdentifier],
     queryFn: async () => {
       const res = await fetch(`/api/users/${profileIdentifier}`);
@@ -264,7 +238,16 @@ export default function ProfilePage() {
       return res.json();
     },
     enabled: !!profileIdentifier,
+    retry: false, // Don't retry on 404 - we'll redirect to current user's profile instead
+    staleTime: 30000, // Cache for 30 seconds to prevent repeated requests
   });
+
+  // If we tried to fetch a specific profile and got an error, redirect to current user's profile
+  useEffect(() => {
+    if (userError && params?.id && currentUser?.id) {
+      navigate(`/profile/${currentUser.id}`);
+    }
+  }, [userError, params?.id, currentUser?.id, navigate]);
 
   const { data: posts = [], isLoading: postsLoading } = useQuery<Post[]>({
     queryKey: ["user-posts", user?.id],
@@ -276,17 +259,41 @@ export default function ProfilePage() {
     enabled: !!user?.id,
   });
 
-  // Fetch friends to check if already friends
-  const { data: friends = [] } = useQuery<any[]>({
-    queryKey: ['/api/friends'],
-    enabled: !!(currentUser && user && currentUser.id !== user.id),
+  // Fetch friendship status with this specific user
+  const isOtherProfile = !!(currentUser && user && currentUser.id !== user.id);
+  
+  const { data: friendshipStatus, isLoading: friendshipLoading, refetch: refetchFriendshipStatus } = useQuery<{
+    isFriend: boolean;
+    hasIncomingRequest: boolean;
+    hasOutgoingRequest: boolean;
+    incomingRequest: any | null;
+    outgoingRequest: any | null;
+  }>({
+    queryKey: ['/api/friends/status', user?.id],
+    queryFn: async () => {
+      const res = await fetch(`/api/friends/status/${user?.id}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+        },
+      });
+      if (!res.ok) throw new Error('Failed to fetch friendship status');
+      return res.json();
+    },
+    enabled: isOtherProfile && !!user?.id,
+    staleTime: 5000, // Cache for 5 seconds
   });
 
-  // Fetch friend requests to check if pending
-  const { data: friendRequests = [] } = useQuery<any[]>({
-    queryKey: ['/api/friends/requests'],
-    enabled: !!(currentUser && user && currentUser.id !== user.id),
-  });
+  // Debug: Log friendship status
+  useEffect(() => {
+    if (isOtherProfile) {
+      console.log('[ProfilePage] Friendship status:', {
+        currentUserId: currentUser?.id,
+        profileUserId: user?.id,
+        friendshipStatus,
+        friendshipLoading,
+      });
+    }
+  }, [currentUser?.id, user?.id, friendshipStatus, friendshipLoading, isOtherProfile]);
 
   // Fetch upcoming travel plans for this user
   const { data: upcomingTravel = [] } = useQuery<any[]>({
@@ -315,20 +322,57 @@ export default function ProfilePage() {
 
   const isOwnProfile = currentUser?.id === user?.id;
   
-  // Check friendship status
-  const isFriend = friends.some((f: any) => f.id === user?.id);
-  const hasPendingRequest = friendRequests.some(
-    (r: any) => r.receiverId === user?.id && r.status === 'pending'
-  );
+  // Use friendship status from API
+  const isFriend = friendshipStatus?.isFriend ?? false;
+  const hasPendingRequest = friendshipStatus?.hasOutgoingRequest ?? false;
+  const hasIncomingRequest = friendshipStatus?.hasIncomingRequest ?? false;
+  const incomingRequest = friendshipStatus?.incomingRequest;
+  
+  // Prepare incoming request data with sender info for review modal
+  const incomingRequestWithSender = incomingRequest ? {
+    ...incomingRequest,
+    sender: {
+      id: user?.id,
+      name: user?.name,
+      username: user?.username,
+      profileImage: user?.profileImage,
+      city: user?.city,
+      country: user?.country,
+    },
+  } : null;
 
-  // Send friend request mutation
+  // Auto-open friend request review modal if ?reviewRequest=true and there's an incoming request
+  useEffect(() => {
+    const urlParams = new URLSearchParams(searchString);
+    const reviewRequest = urlParams.get('reviewRequest');
+    if (reviewRequest === 'true' && hasIncomingRequest && !friendshipLoading) {
+      setFriendRequestReviewOpen(true);
+    }
+  }, [searchString, hasIncomingRequest, friendshipLoading]);
+
+  // Send friend request mutation with questionnaire data
   const sendFriendRequestMutation = useMutation({
-    mutationFn: async () => {
-      return await apiRequest('POST', `/api/friends/request/${user?.id}`);
+    mutationFn: async (questionnaireData?: {
+      whenWeMet?: Date;
+      whereWeMet: string;
+      ourStory: string;
+      privateNote?: string;
+    }) => {
+      const payload = questionnaireData ? {
+        senderMessage: questionnaireData.ourStory,
+        senderPrivateNote: questionnaireData.privateNote,
+        didWeDance: true,
+        danceLocation: questionnaireData.whereWeMet,
+        danceStory: questionnaireData.ourStory,
+        danceDate: questionnaireData.whenWeMet?.toISOString(),
+      } : {};
+      return await apiRequest('POST', `/api/friends/request/${user?.id}`, payload);
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['/api/friends/requests'] });
-      await queryClient.refetchQueries({ queryKey: ['/api/friends/requests'] });
+      // Invalidate friendship status for this profile
+      await queryClient.invalidateQueries({ queryKey: ['/api/friends/status', user?.id] });
+      await queryClient.refetchQueries({ queryKey: ['/api/friends/status', user?.id] });
+      setFriendshipQuestionnaireOpen(false);
       toast({
         title: "Friend request sent!",
         description: `Request sent to ${user?.name}`,
@@ -349,9 +393,9 @@ export default function ProfilePage() {
       return await apiRequest('DELETE', `/api/friends/${user?.id}`);
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['/api/friends'] });
-      await queryClient.refetchQueries({ queryKey: ['/api/friends'] });
-      await queryClient.invalidateQueries({ queryKey: ['/api/friends/requests'] });
+      // Invalidate friendship status for this profile
+      await queryClient.invalidateQueries({ queryKey: ['/api/friends/status', user?.id] });
+      await queryClient.refetchQueries({ queryKey: ['/api/friends/status', user?.id] });
       toast({
         title: "Friend removed",
         description: `Removed ${user?.name} from friends`,
@@ -366,7 +410,7 @@ export default function ProfilePage() {
     },
   });
 
-  if (userLoading || !user) {
+  if (userLoading) {
     return (
       <SelfHealingErrorBoundary pageName="Profile" fallbackRoute="/feed">
         <SEO 
@@ -384,340 +428,360 @@ export default function ProfilePage() {
     );
   }
 
+  if (userError || !user) {
+    return (
+      <SelfHealingErrorBoundary pageName="Profile" fallbackRoute="/feed">
+        <SEO 
+          title="User Not Found - Mundo Tango"
+          description="The requested user profile could not be found"
+        />
+        <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-6 px-4" data-testid="container-user-not-found">
+          <div className="text-center space-y-4">
+            <div className="w-24 h-24 mx-auto rounded-full bg-muted flex items-center justify-center">
+              <Users className="w-12 h-12 text-muted-foreground" />
+            </div>
+            <h1 className="text-2xl font-bold" data-testid="text-user-not-found-title">User Not Found</h1>
+            <p className="text-muted-foreground max-w-md" data-testid="text-user-not-found-message">
+              The profile you're looking for doesn't exist or may have been removed.
+            </p>
+          </div>
+          <div className="flex gap-4">
+            <Button 
+              variant="outline" 
+              onClick={() => window.history.back()}
+              data-testid="button-go-back"
+            >
+              Go Back
+            </Button>
+            <Link href="/feed">
+              <Button data-testid="button-go-home">
+                <Home className="w-4 h-4 mr-2" />
+                Go to Feed
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </SelfHealingErrorBoundary>
+    );
+  }
+
   return (
     <SelfHealingErrorBoundary pageName="Profile" fallbackRoute="/feed">
       <SEO 
         title={`${user.name} (@${user.username}) - Mundo Tango`}
         description={user.bio || `${user.name}'s profile on Mundo Tango`}
       />
-      
       {/* PART_4: Hero Profile Photo Section - Editorial Glassmorphic Design */}
-      <div className="relative w-full h-[400px] overflow-hidden">
+      <div className="relative w-full h-[50vh] md:h-[60vh] overflow-hidden group">
         {/* Cover Photo as Hero Image */}
         <img 
-          src={user.coverImage || 'https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?w=1600&auto=format&fit=crop'} 
+          src={user.backgroundImage || 'https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?w=1600&auto=format&fit=crop'} 
           alt={`${user.name}'s cover`}
-          className="w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-cover"
           data-testid="img-hero-cover"
         />
         
-        {/* Editorial Gradient Overlay (bottom 40%) */}
-        <div className="absolute bottom-0 left-0 right-0 h-[60%] bg-gradient-to-t from-black/80 via-black/60 to-transparent" />
-        
-        {/* Profile Photo & Action Buttons - Top Right */}
-        <div className="absolute top-6 left-6 z-20 flex gap-3">
-          {isOwnProfile && (
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button size="icon" variant="outline" className="text-white border-white/30 bg-black/20 backdrop-blur-sm hover:bg-black/30 absolute" style={{bottom: '80px'}} data-testid="button-upload-profile-photo">
-                  <Camera className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Change Profile Photo</TooltipContent>
-            </Tooltip>
-          )}
-        </div>
+        {/* Dark Overlay Gradient for Text Readability */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-transparent" />
 
-        {/* Action Buttons - Top Right */}
-        <div className="absolute top-6 right-6 z-20 flex gap-3">
-          {isOwnProfile && (
-            <>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button size="icon" variant="outline" className="text-white border-white/30 bg-black/20 backdrop-blur-sm hover:bg-black/30" onClick={() => coverPhotoInputRef.current?.click()} disabled={uploadingCover} data-testid="button-upload-cover">
-                    <ImageIcon className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>{uploadingCover ? 'Uploading...' : 'Change Cover Photo'}</TooltipContent>
-              </Tooltip>
-              <input
-                ref={coverPhotoInputRef}
-                type="file"
-                accept="image/jpeg,image/png,image/gif,image/webp"
-                onChange={handleCoverPhotoUpload}
-                className="hidden"
-                data-testid="input-cover-photo"
-              />
-              <Button asChild variant="outline" className="gap-2 text-white border-white/30 bg-black/20 backdrop-blur-sm hover:bg-black/30" data-testid="button-edit-profile">
-                <Link href="/profile/edit">
-                  <Settings className="h-4 w-4" />
-                  Edit Profile
-                </Link>
-              </Button>
-            </>
-          )}
-          {!isOwnProfile && (
-            <>
-              {isFriend ? (
-                <Button 
-                  variant="outline"
-                  className="gap-2 text-white border-white/30 bg-black/20 backdrop-blur-sm hover:bg-black/30"
-                  onClick={() => removeFriendMutation.mutate()}
-                  disabled={removeFriendMutation.isPending}
-                  data-testid={`button-remove-friend-${user.id}`}
-                >
-                  <UserMinus className="h-4 w-4" />
-                  {removeFriendMutation.isPending ? 'Removing...' : 'Remove Friend'}
-                </Button>
-              ) : hasPendingRequest ? (
-                <Button 
-                  variant="outline"
-                  className="gap-2 text-white border-white/30 bg-black/20 backdrop-blur-sm"
-                  disabled
-                  data-testid="button-request-pending"
-                >
-                  <UserCheck className="h-4 w-4" />
-                  Request Sent
-                </Button>
-              ) : (
-                <Button 
-                  className="gap-2 text-white bg-primary/80 backdrop-blur-sm hover:bg-primary"
-                  onClick={() => sendFriendRequestMutation.mutate()}
-                  disabled={sendFriendRequestMutation.isPending}
-                  data-testid={`button-add-friend-${user.id}`}
-                >
-                  <UserPlus className="h-4 w-4" />
-                  {sendFriendRequestMutation.isPending ? 'Sending...' : 'Add Friend'}
-                </Button>
-              )}
-            </>
-          )}
-        </div>
-        
-        {/* Profile Photo Circle - Bottom Left */}
-        <div className="absolute bottom-0 left-6 z-10">
-          <div className="relative">
-            <Avatar className="w-32 h-32 border-4 border-white/30 shadow-lg">
-              <AvatarImage src={user.profileImage || undefined} alt={user.name} />
-              <AvatarFallback className="bg-primary/80 text-white text-xl font-bold">
-                {user.name.split(' ').map(n => n[0]).join('')}
-              </AvatarFallback>
-            </Avatar>
-            {isOwnProfile && (
-              <>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button 
-                      size="icon" 
-                      variant="outline" 
-                      className="absolute bottom-0 right-0 rounded-full text-white border-white/30 bg-black/20 backdrop-blur-sm hover:bg-black/30" 
-                      data-testid="button-change-profile-photo"
-                      onClick={() => fileInputRef.current?.click()}
-                      disabled={uploadingPhoto}
-                    >
-                      <Camera className="h-4 w-4" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>{uploadingPhoto ? 'Uploading...' : 'Change Profile Photo'}</TooltipContent>
-                </Tooltip>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/jpeg,image/png,image/gif,image/webp"
-                  onChange={handlePhotoUpload}
-                  className="hidden"
-                  data-testid="input-profile-photo"
-                />
-              </>
-            )}
-          </div>
-        </div>
-
-        {/* Glassmorphic User Info Card - Bottom Right Overlay */}
+        {/* User Info Card Overlay - Left Side */}
         <motion.div 
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="absolute bottom-0 right-0 p-6"
+          className="absolute left-6 top-20 z-20"
         >
-          <div className="backdrop-blur-md bg-white/10 dark:bg-black/20 border border-white/20 rounded-t-2xl p-6 shadow-2xl max-w-xl w-full">
-            {/* Name & Verification */}
-            <div className="flex items-center gap-3 mb-2">
-              <h1 className="text-3xl font-bold text-white drop-shadow-lg" data-testid="text-username">
-                {user.name}
-              </h1>
-              {user.role === 'super_admin' && (
-                <Badge className="bg-primary text-white border-0" data-testid="badge-verified">
-                  <CheckCircle className="w-3 h-3 mr-1" />
-                  Verified
-                </Badge>
+          <Card className="p-6 w-[500px] bg-background/95 backdrop-blur-md border-white/20">
+          {/* Profile Photo + Content Layout */}
+          <div className="flex gap-6">
+            {/* Left: Profile Photo Circle with Edit Button */}
+            <div className="flex-shrink-0">
+              <div className="relative">
+                <Avatar className="w-40 h-40 border-4 border-border shadow-lg">
+                  <AvatarImage src={user.profileImage || undefined} alt={user.name} />
+                  <AvatarFallback className="bg-primary/80 text-white text-xl font-bold">
+                    {user.name.split(' ').map(n => n[0]).join('')}
+                  </AvatarFallback>
+                </Avatar>
+                {isOwnProfile && !isPublicView && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button 
+                        size="icon" 
+                        variant="outline" 
+                        className="absolute bottom-0 right-0 rounded-full text-white border-white/30 bg-black/20 backdrop-blur-sm hover:bg-black/30" 
+                        data-testid="button-change-profile-photo"
+                        onClick={() => setProfilePhotoDialogOpen(true)}
+                        disabled={uploadingPhoto}
+                      >
+                        <Camera className="h-3 w-3" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>{uploadingPhoto ? 'Uploading...' : 'Change Profile Photo'}</TooltipContent>
+                  </Tooltip>
+                )}
+              </div>
+              {isOwnProfile && !isPublicView && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button 
+                      size="sm"
+                      variant="outline" 
+                      className="w-full mt-3 text-xs gap-1 bg-black/20 backdrop-blur-sm hover:bg-black/30" 
+                      onClick={() => setCoverPhotoDialogOpen(true)} 
+                      disabled={uploadingCover} 
+                      data-testid="button-upload-cover"
+                    >
+                      <ImageIcon className="h-3 w-3" />
+                      {uploadingCover ? 'Upload...' : 'Edit Cover'}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Edit Cover Photo</TooltipContent>
+                </Tooltip>
+              )}
+              {isOwnProfile && !isPublicView && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button 
+                      size="sm"
+                      variant="outline" 
+                      className="w-full mt-2 text-xs gap-1 bg-black/20 backdrop-blur-sm hover:bg-black/30" 
+                      onClick={() => navigate(`/profile/${user.id}?view=public`)}
+                      data-testid="button-view-public-profile"
+                    >
+                      <Eye className="h-3 w-3" />
+                      View Public Profile
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>See how your profile looks to others</TooltipContent>
+                </Tooltip>
               )}
             </div>
-            
-            {/* Username */}
-            <p className="text-white/90 text-sm mb-3 font-medium" data-testid="text-handle">@{user.username}</p>
-            
-            {/* Bio */}
-            {user.bio && (
-              <p className="text-white/80 text-sm mb-4" data-testid="text-bio">{user.bio}</p>
-            )}
-            
-            {/* Tango Roles - Icons with Tooltips */}
-            {user.tangoRoles && user.tangoRoles.length > 0 && (
-              <div className="flex flex-wrap gap-1 mb-4">
-                <TooltipProvider>
-                  {user.tangoRoles.map((role, index) => {
-                    const roleIconMap: Record<string, any> = {
-                      'teacher': { icon: BookOpen, label: 'Teacher' },
-                      'dancer': { icon: Users, label: 'Dancer' },
-                      'dj': { icon: Music, label: 'DJ' },
-                      'photographer': { icon: Camera, label: 'Photographer' },
-                      'organizer': { icon: Home, label: 'Organizer' },
-                      'performer': { icon: Mic2, label: 'Performer' },
-                      'vendor': { icon: Briefcase, label: 'Vendor' },
-                      'musician': { icon: Music, label: 'Musician' },
-                      'choreographer': { icon: Heart, label: 'Choreographer' },
-                      'school': { icon: BookOpen, label: 'School' },
-                      'hotel': { icon: Home, label: 'Hotel' },
-                      'wellness': { icon: Heart, label: 'Wellness' },
-                      'tour_operator': { icon: Plane, label: 'Tour Operator' },
-                      'guide': { icon: MapPin, label: 'Guide' },
-                      'content_creator': { icon: Camera, label: 'Content Creator' },
-                    };
-                    
-                    const roleKey = role.toLowerCase();
-                    const roleInfo = roleIconMap[roleKey];
-                    const Icon = roleInfo?.icon || Briefcase;
-                    
-                    return (
-                      <Tooltip key={index}>
-                        <TooltipTrigger asChild>
-                          <div className="p-1.5 rounded-lg bg-white/20 border border-white/30 backdrop-blur-sm cursor-help" data-testid={`icon-role-${role}`}>
-                            <Icon className="w-4 h-4 text-white" />
-                          </div>
-                        </TooltipTrigger>
-                        <TooltipContent>{roleInfo?.label || role.replace(/_/g, ' ')}</TooltipContent>
-                      </Tooltip>
-                    );
-                  })}
-                </TooltipProvider>
-              </div>
-            )}
 
-            {/* Professional Score - Only show if yearsOfDancing > 0 */}
-            {user.yearsOfDancing && user.yearsOfDancing > 0 && (
-              <div className="bg-primary/20 border border-primary/30 rounded-lg p-3 backdrop-blur-sm mb-3" data-testid="section-professional-score">
-                <div className="flex items-center gap-2">
-                  <Award className="w-4 h-4 text-primary" />
-                  <span className="text-sm font-semibold text-white">
-                    {user.yearsOfDancing} {user.yearsOfDancing === 1 ? 'year' : 'years'} of tango experience
-                  </span>
+            {/* Right: User Info */}
+            <div className="flex-1 space-y-3">
+              {/* Name & Verification */}
+              <div className="flex items-center gap-2">
+                <h1 className="text-2xl font-bold" data-testid="text-username">
+                  {user.name}
+                </h1>
+                {user.role === 'super_admin' && (
+                  <Badge className="bg-primary text-white border-0 text-xs" data-testid="badge-verified">
+                    <CheckCircle className="w-2 h-2 mr-1" />
+                    Verified
+                  </Badge>
+                )}
+              </div>
+              
+              {/* Username */}
+              <p className="text-muted-foreground text-xs font-medium" data-testid="text-handle">@{user.username}</p>
+              
+              {/* Bio */}
+              {user.bio && (
+                <p className="text-sm" data-testid="text-bio">{user.bio}</p>
+              )}
+              
+              {/* Tango Roles - Icons with Tooltips */}
+              {user.tangoRoles && user.tangoRoles.length > 0 && (
+                <div className="flex flex-wrap gap-1">
+                  <TooltipProvider>
+                    {user.tangoRoles
+                      .map((role) => normalizeRole(role))
+                      .filter((role, idx, arr) => arr.indexOf(role) === idx)
+                      .map((role) => {
+                      const Icon = getRoleIcon(role);
+                      const label = getRoleLabel(role);
+                      const color = getRoleColor(role);
+                      
+                      return (
+                        <Tooltip key={role}>
+                          <TooltipTrigger asChild>
+                            <div 
+                              className="p-1 rounded-lg border cursor-help hover-elevate" 
+                              style={{ backgroundColor: `${color}15`, borderColor: `${color}40` }}
+                              data-testid={`icon-role-${role}`}
+                            >
+                              <Icon className="w-3 h-3" style={{ color }} />
+                            </div>
+                          </TooltipTrigger>
+                          <TooltipContent>{label}</TooltipContent>
+                        </Tooltip>
+                      );
+                    })}
+                  </TooltipProvider>
                 </div>
-                {(user.leaderLevel || user.followerLevel) && (
-                  <div className="mt-2 flex gap-4 text-xs text-white/90">
-                    {user.leaderLevel && user.leaderLevel > 0 && (
-                      <span data-testid="text-leader-level">Leader: Level {user.leaderLevel}</span>
-                    )}
-                    {user.followerLevel && user.followerLevel > 0 && (
-                      <span data-testid="text-follower-level">Follower: Level {user.followerLevel}</span>
-                    )}
+              )}
+
+              {/* Professional Score - Only show if yearsOfDancing > 0 */}
+              {user.yearsOfDancing && user.yearsOfDancing > 0 && (
+                <div className="bg-primary/10 border border-primary/30 rounded-lg p-2 text-xs" data-testid="section-professional-score">
+                  <div className="flex items-center gap-1">
+                    <Award className="w-3 h-3 text-primary" />
+                    <span className="font-semibold">
+                      {user.yearsOfDancing} {user.yearsOfDancing === 1 ? 'year' : 'years'} of tango experience
+                    </span>
                   </div>
-                )}
-              </div>
-            )}
+                  {(user.leaderLevel || user.followerLevel) && (
+                    <div className="mt-1 flex gap-3 text-xs text-muted-foreground">
+                      {user.leaderLevel && user.leaderLevel > 0 && (
+                        <span data-testid="text-leader-level">Leader: Level {user.leaderLevel}</span>
+                      )}
+                      {user.followerLevel && user.followerLevel > 0 && (
+                        <span data-testid="text-follower-level">Follower: Level {user.followerLevel}</span>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
 
-            {/* Social Links */}
-            {user.socialLinks && Object.values(user.socialLinks).some(link => link) && (
-              <div className="flex flex-wrap gap-3 mb-3" data-testid="section-social-links">
-                {user.socialLinks.instagram && (
-                  <a
-                    href={user.socialLinks.instagram}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-2 rounded-full bg-white/20 hover:bg-white/30 border border-white/30 backdrop-blur-sm transition-colors"
-                    aria-label="Instagram"
-                    data-testid="link-instagram"
-                  >
-                    <Instagram className="w-4 h-4 text-white" />
-                  </a>
-                )}
-                {user.socialLinks.facebook && (
-                  <a
-                    href={user.socialLinks.facebook}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-2 rounded-full bg-white/20 hover:bg-white/30 border border-white/30 backdrop-blur-sm transition-colors"
-                    aria-label="Facebook"
-                    data-testid="link-facebook"
-                  >
-                    <Facebook className="w-4 h-4 text-white" />
-                  </a>
-                )}
-                {user.socialLinks.twitter && (
-                  <a
-                    href={user.socialLinks.twitter}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-2 rounded-full bg-white/20 hover:bg-white/30 border border-white/30 backdrop-blur-sm transition-colors"
-                    aria-label="Twitter"
-                    data-testid="link-twitter"
-                  >
-                    <Twitter className="w-4 h-4 text-white" />
-                  </a>
-                )}
-                {user.socialLinks.linkedin && (
-                  <a
-                    href={user.socialLinks.linkedin}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-2 rounded-full bg-white/20 hover:bg-white/30 border border-white/30 backdrop-blur-sm transition-colors"
-                    aria-label="LinkedIn"
-                    data-testid="link-linkedin"
-                  >
-                    <Linkedin className="w-4 h-4 text-white" />
-                  </a>
-                )}
-                {user.socialLinks.youtube && (
-                  <a
-                    href={user.socialLinks.youtube}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-2 rounded-full bg-white/20 hover:bg-white/30 border border-white/30 backdrop-blur-sm transition-colors"
-                    aria-label="YouTube"
-                    data-testid="link-youtube"
-                  >
-                    <Youtube className="w-4 h-4 text-white" />
-                  </a>
-                )}
-                {user.socialLinks.website && (
-                  <a
-                    href={user.socialLinks.website}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-2 rounded-full bg-white/20 hover:bg-white/30 border border-white/30 backdrop-blur-sm transition-colors"
-                    aria-label="Website"
-                    data-testid="link-website"
-                  >
-                    <Globe className="w-4 h-4 text-white" />
-                  </a>
-                )}
-              </div>
-            )}
-            
-            {/* Current Location */}
-            {(user.city || user.country) && (
-              <div className="flex items-center gap-2 text-white/80 text-sm" data-testid="text-location">
-                <MapPin className="w-4 h-4" />
-                <span>{[user.city, user.country].filter(Boolean).join(', ')}</span>
-              </div>
-            )}
+              {/* Social Links */}
+              {user.socialLinks && Object.values(user.socialLinks).some(link => link) && (
+                <div className="flex flex-wrap gap-2" data-testid="section-social-links">
+                  {user.socialLinks.instagram && (
+                    <a
+                      href={user.socialLinks.instagram}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-1.5 rounded-full hover-elevate"
+                      aria-label="Instagram"
+                      data-testid="link-instagram"
+                    >
+                      <Instagram className="w-3 h-3" />
+                    </a>
+                  )}
+                  {user.socialLinks.facebook && (
+                    <a
+                      href={user.socialLinks.facebook}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-1.5 rounded-full hover-elevate"
+                      aria-label="Facebook"
+                      data-testid="link-facebook"
+                    >
+                      <Facebook className="w-3 h-3" />
+                    </a>
+                  )}
+                  {user.socialLinks.twitter && (
+                    <a
+                      href={user.socialLinks.twitter}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-1.5 rounded-full hover-elevate"
+                      aria-label="Twitter"
+                      data-testid="link-twitter"
+                    >
+                      <Twitter className="w-3 h-3" />
+                    </a>
+                  )}
+                  {user.socialLinks.linkedin && (
+                    <a
+                      href={user.socialLinks.linkedin}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-1.5 rounded-full hover-elevate"
+                      aria-label="LinkedIn"
+                      data-testid="link-linkedin"
+                    >
+                      <Linkedin className="w-3 h-3" />
+                    </a>
+                  )}
+                  {user.socialLinks.youtube && (
+                    <a
+                      href={user.socialLinks.youtube}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-1.5 rounded-full hover-elevate"
+                      aria-label="YouTube"
+                      data-testid="link-youtube"
+                    >
+                      <Youtube className="w-3 h-3" />
+                    </a>
+                  )}
+                  {user.socialLinks.website && (
+                    <a
+                      href={user.socialLinks.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-1.5 rounded-full hover-elevate"
+                      aria-label="Website"
+                      data-testid="link-website"
+                    >
+                      <Globe className="w-3 h-3" />
+                    </a>
+                  )}
+                </div>
+              )}
+              
+              {/* Current Location */}
+              {(user.city || user.country) && (
+                <div className="flex items-center gap-1 text-muted-foreground text-xs" data-testid="text-location">
+                  <MapPin className="w-3 h-3" />
+                  <span>{[user.city, user.country].filter(Boolean).join(', ')}</span>
+                </div>
+              )}
+            </div>
           </div>
+          </Card>
         </motion.div>
+        
       </div>
-
+      {/* Photo Upload Dialogs */}
+      <PhotoUploadDialog
+        open={profilePhotoDialogOpen}
+        onOpenChange={setProfilePhotoDialogOpen}
+        onUpload={handlePhotoUploadCropped}
+        type="profile"
+        isUploading={uploadingPhoto}
+      />
+      <PhotoUploadDialog
+        open={coverPhotoDialogOpen}
+        onOpenChange={setCoverPhotoDialogOpen}
+        onUpload={handleCoverPhotoUploadCropped}
+        type="cover"
+        isUploading={uploadingCover}
+      />
+      {/* Friendship Questionnaire Dialog */}
+      {user && !isOwnProfile && (
+        <FriendshipQuestionnaire
+          open={friendshipQuestionnaireOpen}
+          onOpenChange={setFriendshipQuestionnaireOpen}
+          friendName={user.name}
+          onSubmit={(data) => sendFriendRequestMutation.mutate(data)}
+          isLoading={sendFriendRequestMutation.isPending}
+        />
+      )}
+      {/* Friend Request Review Modal (for incoming requests) */}
+      {incomingRequestWithSender && (
+        <FriendRequestReviewModal
+          open={friendRequestReviewOpen}
+          onOpenChange={setFriendRequestReviewOpen}
+          request={incomingRequestWithSender}
+          onActionComplete={() => {
+            queryClient.invalidateQueries({ queryKey: ['/api/friends'] });
+            queryClient.invalidateQueries({ queryKey: ['/api/friends/requests'] });
+          }}
+        />
+      )}
       {/* Tab Navigation */}
       <ProfileTabsNav
         user={user}
         activeTab={activeTab}
         onTabChange={setActiveTab}
         isOwnProfile={isOwnProfile}
+        isPublicView={isPublicView}
+        friendshipState={!isOwnProfile ? {
+          isFriend,
+          hasPendingRequest,
+          hasIncomingRequest,
+        } : undefined}
+        onAddFriend={() => setFriendshipQuestionnaireOpen(true)}
+        onReviewRequest={() => setFriendRequestReviewOpen(true)}
+        isAddingFriend={sendFriendRequestMutation.isPending}
       />
-
       {/* Tab Content */}
       <div className="max-w-5xl mx-auto px-6 py-12">
-        {/* Dashboard/Customer Toggle for Role Tabs */}
-        {activeTab !== 'feed' && activeTab !== 'memories' && activeTab !== 'travel' && activeTab !== 'events' && 
-         activeTab !== 'friends' && activeTab !== 'photos' && activeTab !== 'about' && (
+        {/* Dashboard/Customer Toggle for PRO Tab */}
+        {activeTab === 'pro' && !isPublicView && (
           <DashboardCustomerToggle isOwnProfile={isOwnProfile} onViewChange={setViewMode} />
         )}
 
@@ -734,7 +798,7 @@ export default function ProfilePage() {
               <h2 className="text-3xl md:text-4xl font-serif font-bold mb-8" data-testid="text-posts-title">
                 {isOwnProfile ? 'Your Posts' : 'Posts'}
               </h2>
-              <ProfileTabFeed posts={posts} isLoading={postsLoading} isOwnProfile={isOwnProfile} userId={user.id} />
+              <ProfileTabFeed posts={posts} isLoading={postsLoading} isOwnProfile={isOwnProfile} userId={user.id} isPublicView={isPublicView} />
             </div>
 
             {/* Right Column - Sidebar */}
@@ -814,7 +878,7 @@ export default function ProfilePage() {
                           onClick={isOwnProfile ? () => setActiveTab('photos') : undefined}
                           className={`aspect-square rounded-lg overflow-hidden ${
                             photo 
-                              ? 'border border-border' 
+                              ? '' 
                               : 'bg-muted border-2 border-dashed border-border/50 flex items-center justify-center'
                           } ${isOwnProfile ? 'hover:opacity-90 cursor-pointer' : ''} transition-all`}
                           data-testid={`photo-slot-${index}`}
@@ -832,7 +896,7 @@ export default function ProfilePage() {
                       );
                     })}
                   </div>
-                  {isOwnProfile && (
+                  {isOwnProfile && !isPublicView && (
                     <Button
                       variant="default"
                       size="sm"
@@ -856,7 +920,7 @@ export default function ProfilePage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <ProfileTabMemories isOwnProfile={isOwnProfile} profileId={user.id} />
+            <ProfileTabMemories isOwnProfile={isOwnProfile} profileId={user.id} isPublicView={isPublicView} />
           </motion.div>
         )}
 
@@ -867,7 +931,7 @@ export default function ProfilePage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <ProfileTabTravel profileId={user.id} isOwnProfile={isOwnProfile} />
+            <ProfileTabTravel profileId={user.id} isOwnProfile={isOwnProfile} isPublicView={isPublicView} />
           </motion.div>
         )}
 
@@ -878,7 +942,7 @@ export default function ProfilePage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <ProfileTabEvents />
+            <ProfileTabEvents profileId={user.id} isOwnProfile={isOwnProfile} isPublicView={isPublicView} />
           </motion.div>
         )}
 
@@ -889,7 +953,7 @@ export default function ProfilePage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <ProfileTabFriends />
+            <ProfileTabFriends profileId={user.id} isOwnProfile={isOwnProfile} isPublicView={isPublicView} />
           </motion.div>
         )}
 
@@ -911,194 +975,24 @@ export default function ProfilePage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <ProfileTabAbout user={user} isOwnProfile={isOwnProfile} />
+            <ProfileTabAbout user={user} isOwnProfile={isOwnProfile} isPublicView={isPublicView} />
           </motion.div>
         )}
 
-        {/* Teacher Tab (Classes) */}
-        {activeTab === 'classes' && (
+        {/* PRO Tab - Unified Professional Roles */}
+        {activeTab === 'pro' && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <ProfileTabTeacher isOwnProfile={isOwnProfile} viewMode={viewMode} />
-          </motion.div>
-        )}
-
-        {/* DJ Tab (Music) */}
-        {activeTab === 'music' && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <ProfileTabDJ isOwnProfile={isOwnProfile} viewMode={viewMode} />
-          </motion.div>
-        )}
-
-        {/* Photographer Tab (Gallery) */}
-        {activeTab === 'gallery' && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <ProfileTabPhotographer isOwnProfile={isOwnProfile} viewMode={viewMode} />
-          </motion.div>
-        )}
-
-        {/* Organizer Tab (Events Organized) */}
-        {activeTab === 'events-organized' && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <ProfileTabOrganizer isOwnProfile={isOwnProfile} viewMode={viewMode} />
-          </motion.div>
-        )}
-
-        {/* Performer Tab (Performances) */}
-        {activeTab === 'performances' && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <ProfileTabPerformer isOwnProfile={isOwnProfile} viewMode={viewMode} />
-          </motion.div>
-        )}
-
-        {/* Vendor Tab (Shop) */}
-        {activeTab === 'shop' && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <ProfileTabVendor isOwnProfile={isOwnProfile} viewMode={viewMode} />
-          </motion.div>
-        )}
-
-        {/* Musician Tab (Orchestra) */}
-        {activeTab === 'orchestra' && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <ProfileTabMusician isOwnProfile={isOwnProfile} viewMode={viewMode} />
-          </motion.div>
-        )}
-
-        {/* Choreographer Tab (Choreographies) */}
-        {activeTab === 'choreographies' && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <ProfileTabChoreographer isOwnProfile={isOwnProfile} viewMode={viewMode} />
-          </motion.div>
-        )}
-
-        {/* Tango School Tab (School) */}
-        {activeTab === 'school' && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <ProfileTabTangoSchool isOwnProfile={isOwnProfile} viewMode={viewMode} />
-          </motion.div>
-        )}
-
-        {/* Tango Hotel Tab (Accommodation) */}
-        {activeTab === 'accommodation' && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <ProfileTabTangoHotel isOwnProfile={isOwnProfile} viewMode={viewMode} />
-          </motion.div>
-        )}
-
-        {/* Wellness Provider Tab (Wellness) */}
-        {activeTab === 'wellness' && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <ProfileTabWellness isOwnProfile={isOwnProfile} viewMode={viewMode} />
-          </motion.div>
-        )}
-
-        {/* Tour Operator Tab (Tours) */}
-        {activeTab === 'tours' && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <ProfileTabTourOperator isOwnProfile={isOwnProfile} viewMode={viewMode} />
-          </motion.div>
-        )}
-
-        {/* Host/Venue Tab (Venue) */}
-        {activeTab === 'venue' && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <ProfileTabHostVenue isOwnProfile={isOwnProfile} viewMode={viewMode} />
-          </motion.div>
-        )}
-
-        {/* Tango Guide Tab (Guide Services) */}
-        {activeTab === 'guide-services' && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <ProfileTabTangoGuide isOwnProfile={isOwnProfile} viewMode={viewMode} />
-          </motion.div>
-        )}
-
-        {/* Content Creator Tab (Content) */}
-        {activeTab === 'content' && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <ProfileTabContentCreator isOwnProfile={isOwnProfile} viewMode={viewMode} />
-          </motion.div>
-        )}
-
-        {/* Learning Resource Tab (Resources) */}
-        {activeTab === 'resources' && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <ProfileTabLearningResource isOwnProfile={isOwnProfile} viewMode={viewMode} />
-          </motion.div>
-        )}
-
-        {/* Taxi Dancer Tab (Taxi Services) */}
-        {activeTab === 'taxi-services' && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <ProfileTabTaxiDancer isOwnProfile={isOwnProfile} viewMode={viewMode} />
+            <ProfileTabPro 
+              userId={user.id}
+              isOwner={isOwnProfile}
+              tangoRoles={user.tangoRoles || []}
+              tangoRoleExperience={null}
+              viewMode={isPublicView ? 'customer' : viewMode}
+            />
           </motion.div>
         )}
       </div>

@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { MapPin, Loader2, ChevronRight } from "lucide-react";
 import { SEO } from "@/components/SEO";
 import { useAuth } from "@/contexts/AuthContext";
+import { extractApiError } from "@/lib/apiErrorHandler";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { motion } from "framer-motion";
 import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/UnifiedLocationPicker";
@@ -61,9 +62,12 @@ export default function CitySelectionPage() {
         }),
       });
 
-      if (!response.ok) throw new Error("Failed to update profile");
+      if (!response.ok) {
+        const errorMessage = await extractApiError(response, { context: "City selection" });
+        throw new Error(errorMessage);
+      }
 
-      await fetch("/api/communities/auto-join", {
+      const autoJoinResponse = await fetch("/api/communities/auto-join", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -75,11 +79,17 @@ export default function CitySelectionPage() {
         }),
       });
 
+      if (!autoJoinResponse.ok) {
+        const errorMessage = await extractApiError(autoJoinResponse, { context: "Community auto-join" });
+        throw new Error(errorMessage);
+      }
+
       navigate("/onboarding/step-2");
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Failed to save city";
       toast({
-        title: "Error",
-        description: "Failed to save city. Please try again.",
+        title: "City Selection Failed",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {

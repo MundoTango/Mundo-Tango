@@ -63,20 +63,29 @@ export class PredictiveAnalysisService {
     issue: AuditIssue,
     proposedFix?: any
   ): Promise<CascadingPrediction[]> {
-    console.log('[PredictiveAnalysis] 🔮 Predicting cascading issues for:', issue.message);
+    // Null safety: guard against undefined issue
+    if (!issue) {
+      console.log('[PredictiveAnalysis] ⚠️ No issue provided, skipping prediction');
+      return [];
+    }
+    
+    const issueType = issue.type || '';
+    const issueMessage = issue.message || '';
+    
+    console.log('[PredictiveAnalysis] 🔮 Predicting cascading issues for:', issueMessage);
     
     const predictions: CascadingPrediction[] = [];
     
     // 1. Analyze historical patterns from GlobalKnowledgeBase
     const similarIssues = await GlobalKnowledgeBase.querySimilarSolutions(
-      issue.type,
-      issue.message
+      issueType,
+      issueMessage
     );
     
     console.log('[PredictiveAnalysis] Found', similarIssues.length, 'similar historical issues');
     
     // Pattern: Import changes often cause cascading errors
-    if (issue.type === 'import' || issue.message.includes('import')) {
+    if (issueType === 'import' || issueMessage.includes('import')) {
       predictions.push({
         predictedIssue: 'Adding import may cause circular dependency',
         predictionType: 'cascading_bug',
@@ -97,7 +106,7 @@ export class PredictiveAnalysisService {
     }
     
     // Pattern: Component changes often break parent components
-    if (issue.type === 'component' || issue.type === 'react') {
+    if (issueType === 'component' || issueType === 'react') {
       predictions.push({
         predictedIssue: 'Changing component props may break parent components',
         predictionType: 'cascading_bug',
@@ -118,7 +127,7 @@ export class PredictiveAnalysisService {
     }
     
     // Pattern: Provider changes affect entire subtree
-    if (issue.message.includes('Context') || issue.message.includes('Provider')) {
+    if (issueMessage.includes('Context') || issueMessage.includes('Provider')) {
       predictions.push({
         predictedIssue: 'Provider change will re-render all consuming components',
         predictionType: 'performance_impact',
@@ -130,7 +139,7 @@ export class PredictiveAnalysisService {
     }
     
     // Pattern: Type changes often cascade through codebase
-    if (issue.type === 'type' || issue.message.includes('type')) {
+    if (issueType === 'type' || issueMessage.includes('type')) {
       predictions.push({
         predictedIssue: 'Type change may break all files using this type',
         predictionType: 'cascading_bug',

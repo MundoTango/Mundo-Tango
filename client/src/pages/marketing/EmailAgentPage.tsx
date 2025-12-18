@@ -6,9 +6,10 @@ import { Mail, Send, Users, TrendingUp, MousePointerClick, Eye, Sparkles } from 
 import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
-import emailHeroImg from "@assets/stock_images/professional_office__3f3e5cfe.jpg";
-import emailImg1 from "@assets/stock_images/professional_office__0fd5582e.jpg";
-import emailImg2 from "@assets/stock_images/professional_office__c4038cdf.jpg";
+import { Link } from "wouter";
+import emailHeroImg from "@assets/stock_images/tango_dancers_in_ele_9f76090c.jpg";
+import emailImg1 from "@assets/stock_images/milonga_dance_hall,__ffbc0d71.jpg";
+import emailImg2 from "@assets/stock_images/milonga_dance_hall,__8449cbb5.jpg";
 
 export default function EmailAgentPage() {
   const metrics = [
@@ -70,6 +71,13 @@ export default function EmailAgentPage() {
       </div>
 
       <div className="max-w-7xl mx-auto px-6 py-16">
+        {/* Preview Notice */}
+        <div className="flex justify-center mb-8">
+          <Badge variant="outline" className="text-muted-foreground border-muted-foreground/30">
+            Preview Data - Connect your email provider to see real metrics
+          </Badge>
+        </div>
+
         {/* Metrics Grid */}
         <div className="grid gap-8 md:grid-cols-4 mb-16">
           {metrics.map((metric, idx) => (
@@ -156,10 +164,12 @@ export default function EmailAgentPage() {
                     )}
                   </div>
                 ))}
-                <Button className="w-full gap-2" variant="outline" data-testid="button-create-campaign">
-                  <Sparkles className="w-4 h-4" />
-                  Create Campaign
-                </Button>
+                <Link href="/admin/email/create">
+                  <Button className="w-full gap-2" variant="outline" data-testid="button-create-campaign">
+                    <Sparkles className="w-4 h-4" />
+                    Create Campaign
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
 
@@ -190,10 +200,12 @@ export default function EmailAgentPage() {
                     <p className="text-xs text-muted-foreground">subscribers</p>
                   </div>
                 ))}
-                <Button className="w-full gap-2" data-testid="button-manage-segments">
-                  <Users className="w-4 h-4" />
-                  Manage Segments
-                </Button>
+                <Link href="/admin/email/segments">
+                  <Button className="w-full gap-2" data-testid="button-manage-segments">
+                    <Users className="w-4 h-4" />
+                    Manage Segments
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
           </div>

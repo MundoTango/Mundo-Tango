@@ -55,10 +55,8 @@ export function DependencyGraph() {
   // Mutation: Analyze file dependencies
   const analyzeMutation = useMutation({
     mutationFn: async (path: string) => {
-      return await apiRequest('/api/mrblue/dependencies/analyze', {
-        method: 'POST',
-        body: { filePath: path }
-      });
+      const response = await apiRequest('POST', '/api/mrblue/dependencies/analyze', { filePath: path });
+      return response.json();
     },
     onSuccess: (data) => {
       setAnalysis(data);
@@ -79,10 +77,8 @@ export function DependencyGraph() {
   // Mutation: Calculate impact
   const impactMutation = useMutation({
     mutationFn: async (path: string) => {
-      return await apiRequest('/api/mrblue/dependencies/impact', {
-        method: 'POST',
-        body: { filePath: path }
-      });
+      const response = await apiRequest('POST', '/api/mrblue/dependencies/impact', { filePath: path });
+      return response.json();
     },
     onSuccess: (data) => {
       setImpact(data);
@@ -103,10 +99,8 @@ export function DependencyGraph() {
   // Mutation: Build dependency graph
   const graphMutation = useMutation({
     mutationFn: async (rootPath: string) => {
-      return await apiRequest('/api/mrblue/dependencies/graph', {
-        method: 'POST',
-        body: { rootPath }
-      });
+      const response = await apiRequest('POST', '/api/mrblue/dependencies/graph', { rootPath });
+      return response.json();
     },
     onSuccess: (data) => {
       setGraph(data);

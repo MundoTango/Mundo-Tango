@@ -1,0 +1,61 @@
+use mb.md: That is all great.The Events all need to use a unified deisgn for the landing page and events filters. Event Filter, right now it opens a big window, this is distracting for the user so it needs to be more compact and you should look at our other filters for inspiration. !
+Just like this work you've preppared, there are a few other things that are documented and some worked on that we again need to surface and test the UI. so do the same research that you did to your work already to understand what you had missed for the ui on the following.
+Housing. I'm not seeing any UI for it.
+	•	Side bar: no Housing marketing place icon with connection to our Pro hsouing hosts
+	•	Landing page with filters tied to the property details page, Filter for firend closeness should be inlcuded, general metrics for housing, --order of the page: Metircs, map with pins that are connected to friendship closeness so we can know which of our friends we can stay with, filters tied to property details, then airbnb's log out
+	•	Event details: standard design, of course rbac for the owner and assistance, friendship clossness options to host.
+	•	City Groups: should be airbnb design zoomed in for that city
+	•	host wizard -Guest both for general preference for housing and travel with to better match guest with host (host should also do this) and requestin gthe resvartion wizards -host managment: you know.
+
+
+
+City gropus -> City Hub - nothing is there! This should be a map zoomed in to that city, each pin is an event, reommendations from the PostCreator, and housing. like airbnd design it should have a filterbox with all of the filters. Add metrics to the top.
+
+
+
+Pro Discovery Icons: since each icon is tied to the live version of what our pros are creating (organizers -> Events), then they should have a button to click in to enter their Pro groups. So on the landing it is button "Become a x" and if the user is a memeber of the group then a button to "See my x".
+This then means, that since City groups are tied to the Community page, Pro groups are now tied to the Pro Discovery icons, and My stuff shows the user's groups, this means we don't need the Groups landing page or icon in the side bar. The only thing would be "Create a community" so lets add this to within City Groups, add a "Local Gropus" tab with the creat button all those groups have rbac. For Pros do the same. Right now users can't make unassociated groups but is a feature flag and God level admin can make groups.
+
+
+
+Talent match. -no sidebar or top bar! major violation
+	•	landing: --looks great, some how say that we don't believe in the paper resume, we want to know what you have really done and love, with each resume you have to shorten your previeous work loads which means all of the work you have done is forgotten. so find as many resumes as you can and upload them for a better experiance. --no need for text resume --"or share.." remove --linkedin andgithub should be scrapped if they provide -- Iget an error when i submit --
+
+
+
+Pro group detials page:
+	•	names should just be "teacher" "organizer", we all know we are in tango Discussion -should have follow the Memories feed design for postcreator and memories page. Make sure we then also have a unifed fitler for all Memories feeds
+	•	no need for housing, hub, members, or city guide, we have talked about sub groups already
+
+
+
+memoreis feed: if a user is a friend show the "see Friendship" this has been documented so much. use one of our test users and have it send me a firend requests and have another already be my friend.
+
+
+
+Send Friend Request form
+	•	Where did we dance - this is supposed to be an auto fill that searches recent events the two users have gone to, cities they live in, and then go to standard location search using our unified deisgn
+	•	you have Personal message and Share the memroy, these need detail so the user doesnt get confuesd. -could not submit
+
+
+
+recommendations make sure htat all of this is wired up
+
+
+
+Leader board make sure the data is wired correctly,
+
+
+
+messages this should have the top bar, no sidebar is ok. What do you need to do to get all of thes services wired up? We need to oauth or what?, n8n?
+__________- Mr Blue bottom right circle RBAC for users and site should be updated when I accessed on a incognito i could still see the page location and active agents.
+
+
+
+the doc i uploaded is a synthisys of docs/handoff/Comet/The Audits.md. do an audit of what you still need to do. in the same way I need you to do the same for the other files in docs/handoff/Comet by reviewing them and identifing what still needs to be done.
+
+
+
+FINAL THOUGHT once you are done with all of this, the site should be basically done so now you can run the 60+ languages to be translated.
+Again all of this has been documented extensivly and lots of it has been worked on so we are nearly there, this is mostly just the final UI and routes check .
+any questions before we start building, think critically?

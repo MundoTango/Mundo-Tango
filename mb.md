@@ -1,10 +1,119 @@
+## 📌 GOVERNANCE & ENFORCEMENT
+
+**CRITICAL**: This document contains METHODOLOGIES ONLY.
+
+See:
+- [Soul Doc](docs/governance/mr-blue-soul.md) - Mission & values  
+- [System Prompt](docs/governance/mr-blue-system-prompt.md) - Operating parameters
+
+**MB.MD updates are ONLY allowed for:**
+- ✅ New methodology patterns
+- ✅ Process improvements to existing patterns  
+- ✅ Universal best practices that apply across methodologies
+
+**NEVER add to mb.md:**
+- ❌ Project plans
+- ❌ Implementation checklists
+- ❌ PRDs (Product Requirement Documents)
+- ❌ Feature specifications
+
+- ### Comet Agent Tooling Policy ⭐⭐⭐ (CRITICAL)
+
+**Purpose:** Establish guardrails for Comet agent tool usage in Mundo Tango ecosystem.
+
+**PROHIBITION:**
+- ❌ Comet agents MUST NEVER invoke Replit AI for planning, implementation, refactoring, testing, PRs, or documentation
+- ❌ Comet agents MUST NEVER use Replit AI for strategy work or code generation
+
+**REQUIRED WORKFLOW:**
+- ✅ ALL strategy, code, and review work must be done via GitHub (branches, commits, PRs)
+-   - 📋 **Three-Step Workflow**: (1) Complete ALL work in GitHub as GitHub expert (branches, commits, PRs), (2) Use Replit Shell to `git pull` the branch, (3) Validate changes in Replit: verify code, test UI at https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/
+- ✅ Replit is used ONLY as runtime and UI validation environment: run app, validate UI, run browser-based tests, verify behavior
+- ✅ When Replit AI would help: emit "Scott Action Needed – Replit AI" note and STOP (do not execute)
+- ✅ Comet agents never delegate to Replit AI themselves
+
+**Enforcement:**
+- 🚨 If Comet encounters task requiring Replit AI capability → surface as "Scott Action Item" with context
+- 🚨 Do not bypass this policy, do not attempt autonomous Replit AI invocation
+- 🚨 Wait for user (Scott) to explicitly use Replit AI and provide guidance
+
+**Integration with Pattern 47 (Colleague Collaboration):**
+- Document Replit AI needs in AGENT_MEMORY.md for other agents to see
+- Other agents can use same workaround or provide alternative approach
+
+---
+
+
 # MB.MD - Mundo Blue Methodology Directive
 
-**Version:** 9.6 E2E TESTING INFRASTRUCTURE COMPLETE - 38 PATTERNS  
+61
+9.9 PARALLEL AGENT EXECUTION PROTOCOL - 41 PATTERNS  
 **Created:** October 30, 2025  
-**Last Updated:** November 26, 2025  
-**Purpose:** Build platform to reverse negative impacts of social media and change the world  
-**Project:** Mundo Tango - The Anti-Facebook (927 features, 20-week strategy)
+**Last Updated:** December 2, 2025**Project:** Mundo Tango - The Anti-Facebook (927 features, 20-week strategy)
+
+**New in v9.9.1 (DRIZZLE ORM LEFTJOIN FIX - Dec 1, 2025):**
+- 📋 **PATTERN 42**: Drizzle ORM LeftJoin Flat Column Selection Protocol
+- 🐛 **CRITICAL BUG FIXED**: Comments endpoint 500 error - "Cannot convert undefined or null to object"
+- 🔍 **ROOT CAUSE IDENTIFIED**: Drizzle ORM nested object selection in leftJoin fails when joined table is null
+- ✅ **SOLUTION DOCUMENTED**: Use flat column selection with manual mapping instead of nested objects
+- 📖 **ANTI-PATTERN**: `leftJoin(...).select({ user: { id: users.id, name: users.name } })` - FAILS with null
+- ✅ **CORRECT PATTERN**: `leftJoin(...).select({ userId: users.id, userName: users.name })` + map to nested
+- 🎯 **METHODOLOGY APPLIED**: Research → Plan → Build → E2E Test → Document
+
+**Drizzle LeftJoin Fix Template:**
+```typescript
+// WRONG: Nested objects with leftJoin can fail when null
+const bad = await db.select({
+  id: table.id,
+  user: { id: users.id, name: users.name } // FAILS if user is null
+}).from(table).leftJoin(users, eq(table.userId, users.id));
+
+// CORRECT: Flat selection with manual mapping
+const good = await db.select({
+  id: table.id,
+  userId: users.id,
+  userName: users.name
+}).from(table).leftJoin(users, eq(table.userId, users.id));
+
+return good.map(row => ({
+  id: row.id,
+  user: row.userId ? { id: row.userId, name: row.userName } : null
+}));
+```
+
+**New in v9.10 (AGENT EXPERTISE & OPTIMIZATION - Dec 2, 2025):**
+- 🎓 **PATTERN 44**: GitHub/Replit Mastery Protocol - Optimal workspace usage
+- 🧠 **PATTERN 45**: Comet/Perplexity Agent Learning Protocol - Self-improvement methodology 
+- ⚡ **PATTERN 46**: Agent Performance Optimization Protocol - Execution speed
+- - 🤝 **PATTERN 47**: Colleague Collaboration Protocol - Multi-agent shared context & progress updatesimprovements
+
+
+**New in v9.9 (PARALLEL AGENT EXECUTION - Dec 1, 2025):**
+- 📋 **PATTERN 41**: Parallel Agent Execution Protocol - All independent operations run simultaneously
+- 🚀 **ERROR ANALYSIS PARALLELIZED**: Error storage + LanceDB indexing now uses Promise.all (was sequential for loop)
+- 🔍 **SIMILAR ERROR SEARCH PARALLELIZED**: Semantic search for 10 errors now runs in parallel (10x faster)
+- 🤖 **AGENT ACTIVATION PARALLELIZED**: AgentLifecycle activates all route agents simultaneously
+- 🏗️ **LANCEDB ERROR SEARCH LIVE**: contextService.searchErrors() now uses text-embedding-3-small for semantic matching
+- ✅ **TOUR ENDPOINT FIXED**: /api/mr-blue/agents/tour/app-onboarding now returns proper tour steps
+- 📊 **CRITICAL THINKING APPLIED**: "Can agents do more simultaneously?" → YES, identified 4 bottlenecks → Fixed all
+
+**New in v9.8 (CITY IMAGERY STANDARDIZATION - Nov 30, 2025):**
+- 📋 **PATTERN 40**: City Imagery Standardization Protocol - Centralized utility for 27+ cities
+- 🖼️ **CITYIMAGEMAP CREATED**: Single source of truth for city skyline images (client/src/lib/cityImageMap.ts)
+- ✅ **10 COMPONENTS UPDATED**: Groups, Events, CityGuides components now use getCityImageUrl()
+- 🔄 **THREE-TIER FALLBACK**: coverImage → city-specific → generic (eliminates recurring bugs)
+- 📖 **PRD DOCUMENTED**: PRD_CITY_IMAGERY_SYSTEM.md with implementation guidelines
+- 🐛 **RECURRING BUG ELIMINATED**: Buenos Aires image issue permanently fixed (3rd occurrence)
+- 🎯 **PATTERN 28 APPLIED**: Parallel agent squads deployed for simultaneous component updates
+
+**New in v9.7 (PRD REVERSE-ENGINEERING PROTOCOL - Nov 30, 2025):**
+- 📋 **PATTERN 39**: PRD Reverse-Engineering Protocol - 5-source methodology for documenting existing systems
+- 🔍 **GAP ANALYSIS COMPLETE**: 70% documentation debt identified (35% documented, 65% undocumented)
+- ✅ **P0 PRDs COMPLETE**: Marketplace (900+ lines), Crowdfunding (338), Legal (329), Messages (unified)
+- ✅ **GROUPS SYSTEM VERIFIED**: 3 PRDs (Landing, Details, Membership) with 85% coverage
+- ✅ **EVENTS PRD CREATED**: Comprehensive 600+ line PRD covering 1,103-line API, 5 pages, 8 E2E test files
+- 📊 **HIERARCHICAL EXECUTION DEMONSTRATED**: Replit AI (strategic) ↔ Mr. Blue (tactical) dialogue documented
+- 🎯 **COVERAGE IMPROVED**: 35% → 50%+ documentation coverage through systematic reverse-engineering
 
 **New in v9.6 (E2E TESTING INFRASTRUCTURE - Nov 26, 2025):**
 - 📋 **PATTERN 38**: E2E Testing Infrastructure Protocol added to methodology
@@ -2226,80 +2335,6 @@ bash({
 
 ---
 
-## ✅ V9.0 INTEGRATION CHECKLIST
-
-**Phase 1: Immediate Application** (NOW)
-- [ ] Apply Pattern 11 (Error Recovery) to Facebook task
-- [ ] Apply Pattern 7 (Parallel Execution) to token generation
-- [ ] Apply Pattern 4 (Session State) for cookie persistence
-- [ ] Apply Pattern 8 (Non-Interactive) for autonomous execution
-
-**Phase 2: Agent Integration** (Week 11)
-- [ ] Update all 62 AI agents with 24 patterns
-- [ ] Add patterns to AutonomousEngine validator
-- [ ] Integrate with Vibe Coding Engine prompts
-- [ ] Update Mr Blue Studio with pattern library
-
-**Phase 3: Learning Systems** (Week 12)
-- [ ] Connect Pattern 17 (DPO Training) to AI Arbitrage
-- [ ] Implement Pattern 18 (GEPA Cycles) monthly
-- [ ] Build Pattern 19 (LIMI Curation) dataset (78 examples)
-- [ ] Auto-extract new patterns from completed tasks
-
-**Phase 4: Continuous Improvement** (Ongoing)
-- [ ] Track pattern effectiveness metrics
-- [ ] Monthly GEPA cycle to evolve patterns
-- [ ] User feedback integration
-- [ ] Version control: mb.md v10.0, v11.0, etc.
-
----
-
-## 📊 EXPECTED IMPROVEMENTS (V9.0 vs V8.2)
-
-| Metric | V8.2 | V9.0 | Improvement |
-|--------|------|------|-------------|
-| Task Completion Time | 100% | 40-60% | **40-60% faster** |
-| Error Rate | 100% | 20% | **80% reduction** |
-| Redundant Work | 100% | 10% | **90% reduction** |
-| User Interventions | 100% | 30% | **70% reduction** |
-| Cost (token usage) | 100% | 60-70% | **30-40% savings** |
-| Pattern Coverage | 12 | 24 | **2x patterns** |
-| Autonomy Level | 70% | 85%+ | **+15% autonomous** |
-
----
-
-## 🎯 NEXT: APPLY V9.0 TO FACEBOOK TASK
-
-**Task:** Generate Facebook Page Access Token + Send invite to sboddye@gmail.com
-
-**Patterns to Apply:**
-1. **Pattern 11 (Error Recovery):** 3-tier fallback (session → direct → assisted)
-2. **Pattern 7 (Parallel Execution):** Parallel selector attempts
-3. **Pattern 4 (Session State):** Cookie persistence
-4. **Pattern 8 (Non-Interactive):** Autonomous with timeouts
-5. **Pattern 10 (Database Safety):** Validate token before DB storage
-6. **Pattern 12 (Incremental Validation):** Test after each phase
-7. **Pattern 14 (Reasoning):** Document WHY each approach chosen
-8. **Pattern 16 (Pattern Extraction):** Learn from Facebook task completion
-
-**Success Criteria:**
-- ✅ Token generated (short or long-lived)
-- ✅ Token validated via Facebook API
-- ✅ Invite sent to sboddye@gmail.com
-- ✅ New patterns extracted for mb.md v10.0
-- ✅ <3 minutes total execution time
-- ✅ <2 user interventions (if any)
-
----
-
-**END OF MB.MD V9.0**
-
-**Status:** Ready for deployment
-**Integration:** Apply to Facebook task NOW
-**Next Version:** v10.0 (after Facebook task pattern extraction)
-
----
-
 ## 🌐 REAL-WORLD AI AGENT PATTERNS (NOV 17, 2025)
 
 **Source:** Google Cloud's 1,001+ enterprise AI implementations across 11 industries
@@ -2779,47 +2814,6 @@ async function sendEventUpdate(psid: string, text: string) {
 - **Messenger Profile API**: 10 calls / 10 minutes per page
 - **Send API**: 200 × (Number of Engaged Users) per 24 hours
 - **Message Length**: 640 characters max (longer gets truncated)
-
----
-
-### **Complete Implementation Checklist**
-
-#### **Phase 1: Token Setup** ✅
-- [ ] Get short-lived token from Graph API Explorer
-- [ ] Exchange for long-lived user token (60 days)
-- [ ] Get never-expiring page token
-- [ ] Validate token with debug_token endpoint
-- [ ] Store in FACEBOOK_PAGE_ACCESS_TOKEN secret
-- [ ] Set up auto-refresh 7 days before expiration
-
-#### **Phase 2: Webhook Setup** 🔄
-- [ ] Create HTTPS endpoint (0.0.0.0:5000/webhooks/facebook)
-- [ ] Implement GET verification handler
-- [ ] Implement POST event handler
-- [ ] Add SHA256 signature validation
-- [ ] Subscribe to 'messages' and 'messaging_postbacks'
-- [ ] Test with Graph API Explorer webhook tool
-
-#### **Phase 3: PSID Management** 📝
-- [ ] Add facebookPSID column to users table
-- [ ] Capture PSID from webhook events
-- [ ] Link PSID to user email/account
-- [ ] Create PSID lookup function
-- [ ] Handle PSID not found gracefully
-
-#### **Phase 4: Message Sending** 📧
-- [ ] Implement sendMessage(psid, text)
-- [ ] Add retry logic for failures
-- [ ] Implement rate limiting
-- [ ] Add invitation tracking
-- [ ] Log all sent messages for debugging
-
-#### **Phase 5: Testing** 🧪
-- [ ] Send test message to self
-- [ ] Verify webhook receives events
-- [ ] Confirm PSID captured correctly
-- [ ] Test sending within 24hr window
-- [ ] Test message tag for event updates
 
 ---
 
@@ -4025,703 +4019,2453 @@ export const authRateLimiter = rateLimit({
 
 ---
 
-## 📋 MEMORIES FEED PAGE - COMPREHENSIVE PRD (v1.0)
+### **Pattern 39: PRD Reverse-Engineering Protocol** ⭐⭐⭐ (v9.7 - Nov 30, 2025)
 
-**Document Version:** 1.0  
-**Created:** November 26, 2025  
-**Last Updated:** November 26, 2025  
-**Status:** Production-Ready (0 → Deploy Complete)  
-**Route:** `/feed` (accessible via `client/src/pages/FeedPage.tsx`)
+**Source:** Gap Analysis Session - 70% Documentation Debt Discovery  
+**Date:** November 30, 2025  
+**Trigger:** Scott requested comprehensive documentation of 60+ undocumented systems
 
----
+**Problem:** Large codebases have extensive implementations but 70% documentation debt. Traditional PRD-first approach doesn't work for existing systems. Need to reverse-engineer PRDs from code.
 
-### 1. EXECUTIVE SUMMARY
+**Solution:** 5-Source Reverse-Engineering Methodology
 
-The Memories Feed is the central social hub of Mundo Tango - a Facebook/Instagram-style infinite scroll feed for sharing tango memories, photos, videos, and Hidden Gem recommendations. It combines:
+**The 5 Sources:**
 
-- **Instagram-style Stories Carousel** - 24h ephemeral content (horizontal scroll)
-- **Following/Discover Algorithm Tabs** - Personalized vs exploratory content
-- **PostCreator with @mentions** - Rich text input with user/event/group tagging
-- **Server-side Video Compression** - Accept ANY video size, FFmpeg compression to ~8MB
-- **Hidden Gems Recommendations** - Google Maps-style place recommendations
-- **9 Facebook-style Reactions** - Heart, Laugh, Wow, Sad, Angry, Clap, Fire, Dance, Party
-- **Real-time WebSocket Updates** - "X new posts" banner for live content
-- **Upcoming Events Sidebar** - Priority-sorted events with real-time RSVP
-
----
-
-### 2. UI WIREFRAME SPECIFICATION
-
-```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                         HEADER BAR (64px height)                        │
-│  [☰ Sidebar Toggle]  [Logo: Mundo Tango]              [🔔 5] [👤 Avatar]│
-├─────────────────────────────────────────────────────────────────────────┤
-│                                                                         │
-│  ┌───────────────────────────────────────────────────────────────────┐  │
-│  │                    EDITORIAL HERO SECTION                          │  │
-│  │         (25-30vh height, background image + quote carousel)        │  │
-│  │                                                                    │  │
-│  │              "Tango is a feeling danced out"                       │  │
-│  │                    — Jorge Luis Borges                             │  │
-│  │                                                                    │  │
-│  │         [Auto-rotates quotes every 5 seconds with fade]            │  │
-│  └───────────────────────────────────────────────────────────────────┘  │
-│                                                                         │
-│  ┌─────────────────────────────────────────────────────────────────────┤
-│  │  CONTENT AREA (max-w-7xl, 12-column grid, gap-6)                   │
-│  │                                                                     │
-│  │  ┌────────────────────────────────┐  ┌─────────────────────────┐   │
-│  │  │     MAIN FEED (col-span-9)     │  │ RIGHT SIDEBAR (col-3)   │   │
-│  │  │                                │  │                         │   │
-│  │  │  ┌──────────────────────────┐  │  │ ┌─────────────────────┐ │   │
-│  │  │  │   STORIES CAROUSEL       │  │  │ │ 📅 Upcoming Events  │ │   │
-│  │  │  │  [+Your] [👤] [👤] [👤]  │  │  │ │                     │ │   │
-│  │  │  └──────────────────────────┘  │  │ │ [My Events] [Nearby]│ │   │
-│  │  │                                │  │ │ [Trending][Upcoming]│ │   │
-│  │  │  ┌──────────────────────────┐  │  │ │                     │ │   │
-│  │  │  │     FEED TABS            │  │  │ │ ┌─────────────────┐ │ │   │
-│  │  │  │ [👥 Following][🧭 Discover]│  │  │ │ │ 📅 Milan Tango  │ │ │   │
-│  │  │  └──────────────────────────┘  │  │ │ │   in 2 days     │ │ │   │
-│  │  │                                │  │ │ │ [127 going]     │ │ │   │
-│  │  │  ┌──────────────────────────┐  │  │ │ │ [RSVP ▼]        │ │ │   │
-│  │  │  │   NEW POSTS BANNER       │  │  │ │ └─────────────────┘ │ │   │
-│  │  │  │ [🔄 5 new posts ↑]       │  │  │ │                     │ │   │
-│  │  │  └──────────────────────────┘  │  │ │ [+ Create Event]    │ │   │
-│  │  │                                │  │ └─────────────────────┘ │   │
-│  │  │  ┌──────────────────────────┐  │  │                         │   │
-│  │  │  │      POST CREATOR        │  │  └─────────────────────────┘   │
-│  │  │  │ [👤 Avatar] Share a...   │  │                                │
-│  │  │  │                          │  │                                │
-│  │  │  │ ┌──────────────────────┐ │  │                                │
-│  │  │  │ │ What's on your mind? │ │  │                                │
-│  │  │  │ │ Try @mentioning...   │ │  │                                │
-│  │  │  │ └──────────────────────┘ │  │                                │
-│  │  │  │                          │  │                                │
-│  │  │  │ [📍][#][📷][✨][👁][🔗]   │  │                                │
-│  │  │  │                 [Share]  │  │                                │
-│  │  │  └──────────────────────────┘  │                                │
-│  │  │                                │                                │
-│  │  │  ┌──────────────────────────┐  │                                │
-│  │  │  │      POST CARD           │  │                                │
-│  │  │  │ [👤] Name @user · 5m ago │  │                                │
-│  │  │  │ Post content with        │  │                                │
-│  │  │  │ @[User](1:user) mentions │  │                                │
-│  │  │  │ [📷 Image/Video]         │  │                                │
-│  │  │  │ [#Travel] [#Milonga]     │  │                                │
-│  │  │  │ ───────────────────────  │  │                                │
-│  │  │  │ [❤️12] [💬5] [↗Share][⋮]│  │                                │
-│  │  │  └──────────────────────────┘  │                                │
-│  │  │                                │                                │
-│  │  │  [Infinite Scroll Trigger]     │                                │
-│  │  │  "Scroll for more posts..."    │                                │
-│  │  │                                │                                │
-│  │  └────────────────────────────────┘                                │
-│  │                                                                     │
-│  └─────────────────────────────────────────────────────────────────────┘
-│                                                                         │
-└─────────────────────────────────────────────────────────────────────────┘
-```
-
----
-
-### 3. COMPONENT ARCHITECTURE
-
-#### 3.1 Page Component: `FeedPage.tsx` (1097 lines)
-
-**Location:** `client/src/pages/FeedPage.tsx`  
-**Route:** `/feed`  
-**Layout:** Responsive 12-column grid (9-col main + 3-col sidebar on lg+)
-
-**State Management:**
 ```typescript
-// Feed Algorithm State
-feedType: "following" | "discover"  // Tab selection
-filter: "all" | "friends" | "public" | "saved" | "my-posts" | "mentions"
-refreshKey: number                   // Force re-fetch trigger
+// 1. E2E TESTS → User Flows + UI Components
+// Read: tests/e2e/**/*.spec.ts
+// Extract: data-testid values, user journeys, assertions
+// Example: 'button-create-event' → CreateEventButton exists
 
-// Quote Carousel State
-currentQuoteIndex: number            // Auto-rotates every 5s
+// 2. DATABASE SCHEMA → Data Model
+// Read: shared/schema.ts
+// Extract: Tables, columns, relationships, indexes
+// Example: events table has 67 columns, 15 indexes
 
-// Content Creation State
-content: string                      // Post text content
-visibility: "public" | "friends" | "private"
-selectedTags: string[]
-mediaFiles: File[]
-mediaPreviews: string[]              // Blob URLs for instant preview
+// 3. API ROUTES → Endpoints + Business Logic
+// Read: server/routes/*.ts
+// Extract: Endpoints, auth requirements, response formats
+// Example: GET /api/events → List with 8 filters
 
-// @Mentions State
-showMentions: boolean
-mentionQuery: string
-mentionResults: any[]                // Search results
-mentions: MentionEntity[]            // Selected mentions
+// 4. FRONTEND PAGES → UI Structure
+// Read: client/src/pages/*.tsx
+// Extract: Components, hooks, state management
+// Example: EventsPage.tsx uses react-big-calendar
 
-// Recommendations State (Hidden Gems)
-recommendations: Array<{category, name, location}>
-showRecommendationDialog: boolean
-selectedCategory: string | null
-
-// Dialogs State
-editingPostId: number | null
-deletingPostId: number | null
+// 5. CROSS-SYSTEM GREP → Wirings
+// Grep: Foreign keys, imports, shared types
+// Extract: Integration points between systems
+// Example: events.groupId → groups.id (wiring)
 ```
+
+**PRD Template Sections (10 Required):**
+
+```markdown
+1. Purpose - What problem does this system solve?
+2. Problem Solved - Before/after state
+3. Technical Implementation - Core files with line counts
+4. Database Schema - Tables, columns, relationships
+5. API Endpoints - Full endpoint inventory with auth
+6. Frontend Pages - Route, test IDs, key features
+7. User Flows - Step-by-step journeys
+8. Cross-System Wirings - FKs, integrations, cascades
+9. E2E Test Coverage - Test files, coverage %
+10. Changelog - Version history
+```
+
+**Validation Checklist (10 Points):**
+
+```
+□ All database tables documented (columns, types, indexes)
+□ All API endpoints mapped (method, auth, description)
+□ All frontend pages inventoried (route, test IDs)
+□ UI test IDs extracted from E2E tests
+□ Wirings to other systems documented
+□ E2E test file referenced
+□ Sample data/fallbacks documented
+□ Tier enforcement rules captured
+□ Performance optimizations noted
+□ Future enhancements listed
+```
+
+**Execution Commands:**
+
+```bash
+# 1. Find E2E tests for a system
+find tests/e2e -name "*events*"
+
+# 2. Extract schema for a table
+grep -A 100 "export const events = pgTable" shared/schema.ts
+
+# 3. Find API routes
+ls server/routes/ | grep -i event
+
+# 4. Find frontend pages
+ls client/src/pages/ | grep -i Event
+
+# 5. Find wirings (foreign keys)
+grep -r "events.id" shared/schema.ts
+```
+
+**Impact Metrics (P0 Phase Results):**
+
+| PRD | Lines | Source Files | Time |
+|-----|-------|--------------|------|
+| Marketplace | 900+ | 4 routes, 3 pages, 6 tests | 45min |
+| Crowdfunding | 338 | 2 routes, 2 pages, 4 tests | 30min |
+| Legal | 329 | 1 route, 2 pages, 3 tests | 20min |
+| Messages | 400+ | 2 routes, 3 pages, 5 tests | 30min |
+| Events | 600+ | 1 route (1,103 lines), 5 pages, 8 tests | 40min |
+
+**P1 Phase Results (Nov 30, 2025 - Pattern 28 Parallel Execution):**
+
+| PRD | Lines | Source Files | Time |
+|-----|-------|--------------|------|
+| Housing | 1,482 | 1 route (937 lines), 5 tables, 5 tests | 15min |
+| Friendship | 1,429 | 1 route (123 lines), 4 tables, 10 tests | 15min |
+| Admin Connections | 1,677 | 1 route (1,814 lines), 26+ pages, 6 tables | 15min |
+
+**Total P0: 2,567 lines documented**
+**Total P1: 4,588 lines documented (parallel execution)**
+**Grand Total: 7,155+ lines documented in session**
+
+**Coverage Improvement:**
+- Before: 35% documented
+- After P0: 50%+ documented
+- After P1: 60%+ documented
+- Remaining: 53 systems need treatment
+
+**Pattern 28 Validation (Nov 30, 2025):**
+- 3 agent squads (Alpha: Housing, Beta: Friends, Gamma: Admin) deployed in parallel
+- All 3 PRDs created simultaneously using subagent orchestration
+- Cross-system wirings documented: Housing↔Admin, Friends↔Admin, Housing↔Payments
+
+**Key Learning:**
+> "Read the code. The code is the truth. The PRD matches the implementation, not the other way around for existing systems."
+
+**Pattern 39 Triggers:**
+- ✅ User requests documentation of existing feature
+- ✅ PRD gap analysis reveals undocumented systems
+- ✅ New team member onboarding requires system understanding
+- ✅ Audit/compliance requires technical documentation
+
+**Anti-Patterns:**
+- ❌ Don't guess - read the actual code
+- ❌ Don't assume - verify with E2E tests
+- ❌ Don't skip wirings - they cause cascade bugs
+- ❌ Don't forget test IDs - they prove UI exists
 
 ---
 
-#### 3.2 Stories Carousel: `StoriesCarousel.tsx` (279 lines)
+### **Pattern 40: City Imagery Standardization Protocol** ⭐⭐ (v9.8 Candidate - Nov 30, 2025)
 
-**Location:** `client/src/components/feed/StoriesCarousel.tsx`
+**Source:** Recurring Buenos Aires city image issue - 3rd occurrence  
+**Date:** November 30, 2025  
+**Trigger:** City group cards showing broken/incorrect images across platform
 
-**Features:**
-- Instagram-style horizontal scrollable story circles
-- Gradient ring for unviewed stories
-- Group stories by user (multiple stories per user)
-- Full-screen story viewer dialog
-- Progress bar per story segment
-- Auto-advance with click navigation (left/right thirds)
-- 24h expiration (stories expire automatically)
+**Problem:** City-based features (groups, events, housing, travel) had inconsistent, scattered image handling. Each component implemented its own fallback logic, leading to:
+- Repeated bug reports for same cities
+- Inconsistent visual experience
+- No single source of truth for city imagery
 
-**Data Structure:**
+**Solution:** Centralized City Image Utility with Three-Tier Fallback
+
+**Architecture:**
+
 ```typescript
-type Story = {
-  id: number;
-  userId: number;
-  content: string;
-  imageUrl?: string | null;
-  videoUrl?: string | null;
-  createdAt: string;
-  expiresAt: string;
-  user?: { id, name, username, profileImage };
+// client/src/lib/cityImageMap.ts - SINGLE SOURCE OF TRUTH
+
+export const CITY_IMAGE_MAP: Record<string, string> = {
+  "Buenos Aires": "https://images.unsplash.com/photo-1612294037637-ec328d0e075e?w=1200...",
+  "Paris": "https://images.unsplash.com/photo-1499856871957-5b8620a32237?w=1200...",
+  "Berlin": "https://images.unsplash.com/photo-1571735119606-7d44c5e9f0cd?w=1200...",
+  // 27+ major tango cities mapped
 };
 
-type GroupedStories = {
-  userId: number;
-  userName: string;
-  userImage?: string | null;
-  stories: Story[];
-  hasUnviewed?: boolean;
-};
+export function getCityImageUrl(city?: string | null): string {
+  if (!city) return GENERIC_FALLBACK;
+  if (CITY_IMAGE_MAP[city]) return CITY_IMAGE_MAP[city];
+  if (CITY_IMAGE_MAP[city.split(" ")[0]]) return CITY_IMAGE_MAP[city.split(" ")[0]];
+  return GENERIC_FALLBACK;
+}
 ```
 
-**Test IDs:**
-- `stories-carousel` - Main carousel container
-- `button-create-story` - Add story button (current user)
-- `story-avatar-{userId}` - Individual story avatars
-- `story-viewer` - Full-screen story dialog
-- `story-image` / `story-video` - Story media content
-- `button-previous-story` / `button-next-story` - Navigation
-
----
-
-#### 3.3 Feed Tabs: `FeedTabs.tsx` (37 lines)
-
-**Location:** `client/src/components/feed/FeedTabs.tsx`
-
-**Features:**
-- Two-tab toggle: Following (personalized) vs Discover (explore)
-- Icon-enhanced tabs (Users, Compass icons)
-- Full-width grid layout
-
-**Test IDs:**
-- `feed-tabs` - Container
-- `tab-following` - Following tab trigger
-- `tab-discover` - Discover tab trigger
-
----
-
-#### 3.4 New Posts Banner: `NewPostsBanner.tsx` (87 lines)
-
-**Location:** `client/src/components/feed/NewPostsBanner.tsx`
-
-**Features:**
-- Real-time WebSocket connection for new post notifications
-- Animated banner appears at top when new posts available
-- Click to load new posts and reset counter
-- Framer Motion entrance/exit animations
-
-**WebSocket Protocol:**
-```typescript
-// Connect to: wss://{host}
-// Listen for: { type: 'new_post' }
-// On receive: Increment newPostsCount
-```
-
-**Test IDs:**
-- `new-posts-banner` - Banner container (visible only when count > 0)
-- `button-load-new-posts` - Load new posts button
-
----
-
-#### 3.5 Post Creator: `PostCreator.tsx` (1350 lines)
-
-**Location:** `client/src/components/universal/PostCreator.tsx`
-
-**Features:**
-- Rich text input with @mention autocomplete
-- Media upload (photos + videos) with instant blob preview
-- Server-side video compression (FFmpeg → Object Storage)
-- 15 predefined memory tags (Travel, Food, Culture, etc.)
-- 6 recommendation categories (Restaurant, Café, Hotel, Venue, Activity, Bar)
-- 3 visibility levels (Public, Friends, Private)
-- AI content enhancement button
-- Cross-post to Facebook/Instagram (opens settings)
-- Hidden Gems location picker with coordinates
-
-**6 Action Buttons (Bottom Row):**
-1. 📍 Hidden Gems - Toggle recommendation mode
-2. # Tags - Show tag selector panel
-3. 📷 Camera - File picker for media
-4. ✨ AI Enhance - Improve content with AI
-5. 👁 Visibility - Toggle visibility selector
-6. 🔗 Cross-post - Open social accounts settings
-
-**Video Upload Flow:**
-```
-User selects video (ANY size)
-  → Create blob URL for instant preview
-  → On submit: FormData upload to /api/upload/video/compress
-  → FFmpeg compression (H.264, 1080p max, 5Mbps)
-  → Upload to Object Storage (GCS)
-  → Return URL for database storage
-  → Toast: "50MB → 8MB, 84% smaller"
-```
-
-**Test IDs:**
-- `post-creator` - Main container
-- `input-post-content` - SimpleMentionsInput wrapper
-- `button-toggle-recommendations` - Hidden Gems toggle
-- `button-toggle-tags` - Tags panel toggle
-- `button-upload-media` - Media file picker
-- `button-ai-enhance` - AI enhancement trigger
-- `button-toggle-visibility` - Visibility selector
-- `button-toggle-crosspost` - Cross-post settings link
-- `button-share-memory` - Submit button
-- `media-preview-grid` - Media previews container
-- `media-preview-{index}` - Individual media preview
-- `button-remove-media-{index}` - Remove media button
-
----
-
-#### 3.6 Infinite Scroll Feed: `InfiniteScrollFeed.tsx` (298 lines)
-
-**Location:** `client/src/components/feed/InfiniteScrollFeed.tsx`
-
-**Features:**
-- TanStack Query infinite query with cursor pagination
-- Intersection Observer for auto-loading
-- Filter-based endpoint switching
-- Loading skeletons during fetch
-- Error state with retry button
-- Empty state messaging
-- Edit post dialog integration
-
-**Query Configuration:**
-```typescript
-useInfiniteQuery<FeedResponse>({
-  queryKey: ['infinite-feed', feedType, filter],
-  queryFn: async ({ pageParam = 0 }) => {
-    // Endpoint varies by filter:
-    // - following → /api/feed/following
-    // - discover → /api/feed/discover
-    // - public → /api/posts?visibility=public
-    // - saved → /api/saved-posts
-    // - my-posts → /api/posts?userId=X
-    // - mentions → /api/posts/mentions
-    return fetch(`${endpoint}?limit=20&offset=${pageParam}`);
-  },
-  getNextPageParam: (lastPage) => lastPage.nextOffset,
-  initialPageParam: 0,
-});
-```
-
-**Test IDs:**
-- `infinite-scroll-feed` - Feed container
-- `feed-loading` - Loading skeleton state
-- `dialog-edit-post-creator` - Edit post modal
-
----
-
-#### 3.7 Post Item: `PostItem.tsx` (366 lines)
-
-**Location:** `client/src/components/feed/PostItem.tsx`
-
-**Features:**
-- Author header with avatar, name, username, tango roles
-- Content with rendered @mention pills (color-coded by type)
-- Media display (images, videos with blob URL conversion)
-- 15 memory tags with icons and gradients
-- Reaction system (ReactionSelector)
-- Comments section toggle
-- Share modal integration
-- Save/unsave functionality
-- Report modal for non-authors
-- Edit/Delete for authors
-
-**Mention Pill Colors:**
-- 👤 User: Cyan (#40E0D0)
-- 📅 Event: Blue (#1E90FF)
-- 🏙️ City Group: Green (#22C55E)
-- 👔 Professional Group: Purple (#9333EA)
-
-**Test IDs:**
-- `post-item-{id}` - Post card container
-- `post-content-{id}` - Content text with mentions
-- `user-roles-{userId}` - Tango role icons
-
----
-
-#### 3.8 Post Reactions: `PostReactions.tsx` (148 lines)
-
-**Location:** `client/src/components/feed/PostReactions.tsx`
-
-**9 Reaction Types:**
-```typescript
-const REACTIONS = [
-  { name: "heart", label: "Love", color: "#EC4899" },
-  { name: "laugh", label: "Funny", color: "#FBBF24" },
-  { name: "wow", label: "Amazing", color: "#3B82F6" },
-  { name: "sad", label: "Sad", color: "#6B7280" },
-  { name: "angry", label: "Angry", color: "#EF4444" },
-  { name: "clap", label: "Appreciation", color: "#10B981" },
-  { name: "fire", label: "Hot", color: "#F97316" },
-  { name: "dance", label: "Tango!", color: "#A855F7" },
-  { name: "party", label: "Celebrate", color: "#F59E0B" },
-];
-```
-
-**Features:**
-- Popover with 9 reaction icons on hover
-- Current reaction highlighted
-- Toggle reaction on re-click (remove)
-- Top 3 reactions summary display
-- Optimistic updates via mutation
-
-**Test IDs:**
-- `button-reactions-{postId}` - Reaction trigger
-- `text-reaction-count-{postId}` - Total count
-- `button-reaction-{name}-{postId}` - Individual reactions
-
----
-
-#### 3.9 Post Actions Menu: `PostActions.tsx` (258 lines)
-
-**Location:** `client/src/components/feed/PostActions.tsx`
-
-**Menu Items:**
-- Copy Link (all posts)
-- Edit Post (own posts only)
-- Delete Post (own posts only)
-- Report Post (others' posts only)
-
-**Dialogs:**
-- Delete confirmation (AlertDialog)
-- Edit content (Dialog with Textarea)
-- Report reason (Dialog with Textarea)
-
-**Test IDs:**
-- `button-post-actions-{postId}` - Menu trigger
-- `menu-copy-link-{postId}` - Copy link action
-- `menu-edit-{postId}` - Edit action
-- `menu-delete-{postId}` - Delete action
-- `menu-report-{postId}` - Report action
-- `button-confirm-delete-{postId}` - Delete confirmation
-- `button-save-edit-{postId}` - Save edit button
-- `button-submit-report-{postId}` - Submit report button
-
----
-
-#### 3.10 Upcoming Events Sidebar: `UpcomingEventsSidebar.tsx` (513 lines)
-
-**Location:** `client/src/components/feed/UpcomingEventsSidebar.tsx`
-
-**Features:**
-- 4 priority category filters (My Events, Trending, Nearby, Upcoming)
-- Event cards with date badge or image
-- Real-time RSVP updates via WebSocket
-- 3-state RSVP dropdown (Going, Maybe, Interested)
-- Create Event CTA button
-- Test data fallback for demos
-
-**Test IDs:**
-- `upcoming-events-sidebar` - Sidebar container
-- `button-view-all-events` - Link to /events
-- `button-category-{id}` - Category filter buttons
-- `event-card-{id}` - Individual event cards
-- `rsvp-count-{id}` - RSVP counter badge
-- `button-rsvp-{id}` / `button-rsvp-status-{id}` - RSVP buttons
-- `rsvp-going-{id}` / `rsvp-maybe-{id}` / `rsvp-interested-{id}` - RSVP options
-- `button-create-event` - Create event CTA
-
----
-
-### 4. API ENDPOINTS
-
-#### 4.1 Posts
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/posts` | Get posts with filters (visibility, userId) |
-| POST | `/api/posts` | Create new post |
-| PATCH | `/api/posts` | Update existing post |
-| DELETE | `/api/posts/{id}` | Delete post |
-| GET | `/api/posts/stories` | Get stories (24h expiration) |
-| GET | `/api/posts/mentions` | Get posts mentioning current user |
-
-#### 4.2 Feed
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/feed/following` | Personalized feed from following |
-| GET | `/api/feed/discover` | Explore feed (algorithmic) |
-
-#### 4.3 Interactions
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/posts/{id}/react` | Add reaction to post |
-| DELETE | `/api/posts/{id}/react` | Remove reaction |
-| POST | `/api/posts/{id}/report` | Report post |
-| GET | `/api/saved-posts` | Get user's saved posts |
-
-#### 4.4 Mentions
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/mentions/search?query=X` | Search users/events/groups for @mention |
-
-#### 4.5 Video Upload
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/upload/video/compress` | Upload video for FFmpeg compression |
-
-#### 4.6 Events
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/events?category=X&limit=5&upcoming=true` | Get upcoming events |
-| GET | `/api/events/my-rsvps` | Get user's RSVPs |
-| POST | `/api/events/{id}/rsvp` | RSVP to event |
-
----
-
-### 5. DATABASE SCHEMA (Relevant Tables)
+**Three-Tier Fallback Logic:**
 
 ```typescript
-// Posts table (shared/schema.ts)
-export const posts = pgTable("posts", {
-  id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull().references(() => users.id),
-  content: text("content").notNull(),
-  imageUrl: text("image_url"),
-  videoUrl: text("video_url"),
-  videoThumbnail: text("video_thumbnail"),
-  visibility: varchar("visibility").default("public"),
-  type: varchar("type").default("post"),  // 'post' | 'story'
-  expiresAt: timestamp("expires_at"),      // For stories
-  tags: text("tags").array(),
-  mentions: text("mentions").array(),      // JSON strings
-  location: text("location"),
-  coordinates: jsonb("coordinates"),       // {lat, lng}
-  isRecommendation: boolean("is_recommendation").default(false),
-  postType: varchar("post_type"),          // Recommendation category
-  priceRange: varchar("price_range"),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
-});
+// In any component:
+<img src={entity.coverImage || getCityImageUrl(entity.city)} />
 
-// Reactions table
-export const postReactions = pgTable("post_reactions", {
-  id: serial("id").primaryKey(),
-  postId: integer("post_id").notNull().references(() => posts.id),
-  userId: integer("user_id").notNull().references(() => users.id),
-  reactionType: varchar("reaction_type").notNull(), // heart, laugh, wow, etc.
-  createdAt: timestamp("created_at").defaultNow(),
-});
-
-// Comments table
-export const comments = pgTable("comments", {
-  id: serial("id").primaryKey(),
-  postId: integer("post_id").notNull().references(() => posts.id),
-  userId: integer("user_id").notNull().references(() => users.id),
-  content: text("content").notNull(),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
-});
-
-// Place Recommendations (Hidden Gems)
-export const placeRecommendations = pgTable("place_recommendations", {
-  id: serial("id").primaryKey(),
-  name: text("name").notNull(),
-  category: varchar("category").notNull(),
-  latitude: numeric("latitude", { precision: 10, scale: 7 }),
-  longitude: numeric("longitude", { precision: 10, scale: 7 }),
-  address: text("address"),
-  priceRange: varchar("price_range"),
-  description: text("description"),
-  recommendationCount: integer("recommendation_count").default(1),
-  userIds: text("user_ids").array(),
-  createdAt: timestamp("created_at").defaultNow(),
-}, (table) => ({
-  uniqueLocation: unique().on(table.latitude, table.longitude, table.category),
-}));
+// Priority:
+// 1. entity.coverImage (user/admin uploaded custom image)
+// 2. getCityImageUrl(entity.city) (city-specific Unsplash image)
+// 3. GENERIC_FALLBACK (generic tango/dance image)
 ```
 
----
+**Components Updated (15+ identified, 10 completed):**
 
-### 6. DESIGN SYSTEM (MT Ocean Theme)
+| Component | Location | Status |
+|-----------|----------|--------|
+| GroupsPage | client/src/pages/GroupsPage.tsx | ✅ |
+| GroupDetailsPage | client/src/pages/GroupDetailsPage.tsx | ✅ |
+| GroupCard | client/src/components/GroupCard.tsx | ✅ |
+| CityGroupsPage | client/src/pages/CityGroupsPage.tsx | ✅ |
+| ProfessionalGroupsPage | client/src/pages/ProfessionalGroupsPage.tsx | ✅ |
+| EventDetailsPage | client/src/pages/EventDetailsPage.tsx | ✅ |
+| EventCard | client/src/components/EventCard.tsx | ✅ |
+| CityGuidesPage | client/src/pages/CityGuidesPage.tsx | ✅ |
+| TravelPage | client/src/pages/TravelPage.tsx | Pending |
+| HousingMarketplacePage | client/src/pages/HousingMarketplacePage.tsx | Pending |
 
-**Color Palette:**
-```css
---cyan-primary: #40E0D0       /* Turquoise - Primary accent */
---blue-primary: #1E90FF       /* Dodger Blue - Secondary accent */
---gradient-ocean: linear-gradient(135deg, rgba(64, 224, 208, 0.15), rgba(30, 144, 255, 0.12))
---gradient-button: linear-gradient(to-right, #06B6D4, #3B82F6, #8B5CF6)
+**Execution Pattern (Pattern 28 Compliant):**
+
+```
+Replit AI (Strategic):
+├── Identify pattern: "Recurring city image issue = systematic problem"
+├── Design solution: Centralized utility with fallback chain
+└── Create PRD: PRD_CITY_IMAGERY_SYSTEM.md
+
+Mr. Blue (Tactical):
+├── Deploy Alpha Squad: Group components (5 components)
+├── Deploy Beta Squad: Travel/Housing components (5 components)
+└── Deploy Gamma Squad: Event/Album components (4 components)
+
+1,218 Agents (Atomic):
+├── Import cityImageMap in each component
+├── Replace scattered fallback logic with getCityImageUrl()
+└── Test three-tier fallback behavior
 ```
 
-**Card Styling:**
-```typescript
-// MT Ocean Glass Card
-style={{
-  background: 'linear-gradient(135deg, rgba(64, 224, 208, 0.08), rgba(30, 144, 255, 0.05))',
-  backdropFilter: 'blur(12px)',
-  borderColor: 'rgba(64, 224, 208, 0.2)',
-}}
+**PRD Output:** `docs/prds/PRD_CITY_IMAGERY_SYSTEM.md`
+
+**Validation Checklist:**
+
 ```
-
-**Animations:**
-- Framer Motion for entrance animations
-- Quote carousel fade transitions (5s interval)
-- Icon button spring animations (staggered 0.1s)
-- Hover elevate on cards (`hover-elevate` class)
-- Real-time RSVP pulse animation
-
----
-
-### 7. E2E TEST COVERAGE
-
-**Test File:** `tests/e2e/feed-page.spec.ts` (create if not exists)
-
-**Critical User Flows:**
-1. View feed as unauthenticated user (redirect to login)
-2. View feed as authenticated user
-3. Switch between Following/Discover tabs
-4. Create text-only post
-5. Create post with image
-6. Create post with video (large file compression)
-7. Add @mention to post
-8. Add tags to post
-9. Toggle visibility before posting
-10. React to a post (9 reaction types)
-11. Comment on a post
-12. Share post (copy link)
-13. Save/unsave post
-14. Edit own post
-15. Delete own post
-16. Report other's post
-17. View stories carousel
-18. Open and navigate story viewer
-19. RSVP to event in sidebar
-20. Infinite scroll loads more posts
-
-**Test ID Selectors (Summary):**
-```typescript
-// Page elements
-'[data-testid="text-page-quote"]'           // Hero quote
-'[data-testid="stories-carousel"]'          // Stories
-'[data-testid="feed-tabs"]'                 // Tab container
-'[data-testid="tab-following"]'             // Following tab
-'[data-testid="tab-discover"]'              // Discover tab
-'[data-testid="post-creator"]'              // Creator container
-'[data-testid="infinite-scroll-feed"]'      // Feed container
-'[data-testid="upcoming-events-sidebar"]'   // Sidebar
-
-// Post interactions
-'[data-testid="post-item-{id}"]'           // Post card
-'[data-testid="button-reactions-{id}"]'     // Reaction button
-'[data-testid="button-comment-{id}"]'       // Comment toggle
-'[data-testid="button-share-{id}"]'         // Share button
-'[data-testid="button-post-actions-{id}"]'  // Actions menu
-```
-
----
-
-### 8. DEPLOYMENT CHECKLIST
-
-**Pre-Deployment:**
-- [ ] FFmpeg installed (Nix: `ffmpeg`)
-- [ ] Object Storage bucket configured (`DEFAULT_OBJECT_STORAGE_BUCKET_ID`)
-- [ ] WebSocket endpoints working (`/ws/notifications`)
-- [ ] All rate limiters configured for production
-- [ ] Database migrations applied (`npm run db:push`)
-- [ ] Environment variables set (Stripe, Object Storage)
-
-**Post-Deployment Verification:**
-- [ ] Feed loads without errors
-- [ ] Stories carousel displays
-- [ ] Post creation works (text, image, video)
-- [ ] Reactions persist
-- [ ] Comments load and submit
-- [ ] Infinite scroll functions
-- [ ] Events sidebar shows data
-- [ ] WebSocket new posts banner triggers
-
----
-
-### 9. KNOWN ISSUES & LIMITATIONS
-
-1. **Vite HMR WebSocket Error** - `wss://localhost:undefined` in dev console. Development-only, doesn't affect functionality. Replit infrastructure limitation.
-
-2. **Video Processing Time** - Large videos (>100MB) may take 1-2 minutes to compress. Toast notifications inform users.
-
-3. **Story Creation** - "Your Story" button placeholder. Full story creation modal TODO.
-
-4. **Cross-post Sync** - Currently opens settings page. Full Claude Computer Use automation planned.
-
-5. **@mention Social Sync** - @mentions with Facebook/Instagram URLs in profiles not yet syncing to those platforms.
-
----
-
-### 10. FUTURE ENHANCEMENTS
-
-1. **Story Creation Modal** - Full Instagram-style story creation
-2. **Cross-post Automation** - Claude Computer Use for FB/IG posting
-3. **@mention Social Sync** - Auto-tag users on FB/IG from their profile URLs
-4. **Post Scheduling** - Schedule posts for future publication
-5. **Analytics Dashboard** - Post performance metrics
-6. **Translation** - Auto-translate posts (68 languages)
-7. **Voice Posts** - Audio-only memories
-
----
-
-**END OF MEMORIES FEED PRD v1.0**
-| Tests pass individually, fail in batch | Rate limit window accumulation | Skip function on all limiters |
-| Login click doesn't work | Button event race condition | Use keyboard.press('Enter') |
-| Page loads but tests fail | networkidle never resolves | Use domcontentloaded |
-| Random test failures | Blocking UI overlay | Detect and dismiss overlays |
-
-**Test Suite Structure (37 Tests, 6 Suites):**
-```
-MEMORIES (4 tests)     → Landing, Filters, Detail, Stats
-PROFILE (6 tests)      → Landing, Tabs, Edit, Form, Public, Settings
-CITY GROUPS (7 tests)  → Landing, Filter, Search, Detail, Events, Members, City
-PRO GROUPS (5 tests)   → Landing, Categories, Search, Detail, Custom
-EVENTS (12 tests)      → Landing, Filter, Search, City, Detail, RSVP, Source, Calendar, Nav, My, Create, Pagination
-NAVIGATION (3 tests)   → Sidebar, Group→Event, Breadcrumb
+□ cityImageMap.ts has all major cities mapped (27+)
+□ getCityImageUrl() handles null/undefined gracefully
+□ All 15+ components import from single source
+□ Three-tier fallback tested: custom → city → generic
+□ Buenos Aires specifically verified (historical issue)
+□ PRD documents all components and usage patterns
+□ Pattern added to mb.md for future reference
 ```
 
 **Impact Metrics:**
-- Tests passing: 17/37 → 36/37 (97.3%)
-- Root cause: 3 separate rate limiter files
-- Fix time: 15 minutes (once discovered)
-- Lesson: Middleware can be duplicated across multiple paths
 
-**Key Learning:** Always audit ALL middleware locations before debugging test failures. Naming conventions (middleware vs middlewares) can hide duplicates.
+| Metric | Before | After |
+|--------|--------|-------|
+| City image bug recurrence | 3+ times | 0 (permanent fix) |
+| Image fallback consistency | Scattered | Centralized |
+| New city addition effort | Edit 15+ files | Edit 1 file |
+| Code duplication | High (15 copies) | None (1 utility) |
+
+**Key Learning:**
+> "When a bug recurs 3+ times, the solution isn't fixing the bug - it's creating a system that prevents the class of bugs."
+
+**Pattern 40 Triggers:**
+- ✅ Same visual issue reported multiple times
+- ✅ Multiple components need same fallback logic
+- ✅ City/location-based imagery needed
+- ✅ Platform-wide visual consistency required
+
+**Anti-Patterns:**
+- ❌ Don't hardcode Unsplash URLs in each component
+- ❌ Don't use conditional rendering (if coverImage) - always show image
+- ❌ Don't forget partial city name matching ("New York" matches "New")
+- ❌ Don't skip PRD documentation for visual systems
 
 ---
 
-**MB.MD v9.5 - PATTERN 38 ADDED (Nov 26, 2025):**
-E2E Testing Infrastructure Protocol documenting distributed rate limiter discovery, reliable login patterns, wait strategy selection, and element counting assertions. Total patterns: 38 (up from 37).
+### **Pattern 44: GitHub/Replit Expertise Protocol** ⭐⭐⭐ (v9.9.2 - Dec 2, 2025)
+
+**Source:** MundoTango production workflows + user documentation practices
+**Date:** December 2, 2025
+**Context:** Advanced Git workflows, Replit deployment, auto-sync protocols for continuous delivery
+
+**Problem:** Developers need expert-level guidance for GitHub operations, Replit deployment, branch management, and auto-sync configurations to maintain efficient DevOps workflows.
+
+**Solution:** Comprehensive GitHub/Replit methodology covering all aspects of repository management, deployment pipelines, and collaborative development.
+
+#### **GitHub Workflow Best Practices**
+
+**Branch Management:**
+```bash
+# Feature branch workflow
+git checkout -b feature/facebook-integration
+git commit -m "feat: Add Facebook OAuth integration"
+git push origin feature/facebook-integration
+
+# Create pull request for code review
+# Merge after approval
+git checkout main
+git pull origin main
+git branch -d feature/facebook-integration  # Cleanup local
+```
+
+**Commit Message Standards:**
+```
+feat: Add new feature (new capability)
+fix: Bug fix (correction)
+docs: Documentation only
+style: Formatting, missing semi-colons
+refactor: Code restructuring
+test: Adding tests
+chore: Maintenance tasks
+
+Example:
+feat: Add Memories Feed with infinite scroll
+fix: Remove Memories Feed PRD (governance violation)
+docs: Update mb.md with Pattern 44
+```
+
+**Auto-Sync Protocol (Pattern 33 Enhancement):**
+```yaml
+# .github/workflows/auto-sync.yml
+name: Auto-Sync to GitHub
+on:
+  schedule:
+    - cron: '0 */6 * * *'  # Every 6 hours
+  workflow_dispatch:  # Manual trigger
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pull and Push
+        run: |
+          git config --global user.name "Mundo Tango Bot"
+          git config --global user.email "admin@mundotango.life"
+          git fetch origin main
+          git pull --rebase origin main
+          git push origin main
+```
+
+#### **Replit Deployment Optimization**
+
+**Deployment Configuration:**
+```toml
+# .replit
+[deployment]
+deploymentTarget = "autoscale"
+build = ["npm", "run", "build"]
+run = ["npm", "run", "start"]
+
+[[ports]]
+localPort = 5000
+externalPort = 80
+```
+
+**Environment Management:**
+```bash
+# Replit Secrets (use Replit UI, never commit)
+# Tools → Secrets
+DATABASE_URL=postgresql://...
+OPENAI_API_KEY=sk-...
+GITHUB_TOKEN=ghp_...
+```
+
+**Health Check Verification:**
+```typescript
+// Verify deployment after push
+async function verifyDeployment() {
+  const checks = [
+    { name: 'Website', url: 'https://mundotango.life' },
+    { name: 'API Health', url: 'https://mundotango.life/api/health' },
+    { name: 'Database', url: 'https://mundotango.life/api/health/db' },
+  ];
+
+  for (const check of checks) {
+    const response = await fetch(check.url, { timeout: 5000 });
+    if (!response.ok) {
+      console.error(`❌ ${check.name} is down (HTTP ${response.status})`);
+    } else {
+      console.log(`✅ ${check.name} is healthy`);
+    }
+  }
+}
+```
+
+#### **Code Review Standards**
+
+**Pull Request Checklist:**
+```markdown
+## PR Checklist
+- [ ] All tests passing (`npm test`)
+- [ ] LSP errors resolved (0 errors)
+- [ ] Database migrations applied (`npm run db:push`)
+- [ ] Environment variables documented
+- [ ] Build succeeds (`npm run build`)
+- [ ] Deployment verified on staging
+- [ ] No console errors in browser
+- [ ] Critical user flows tested
+```
+
+**Review Focus Areas:**
+- Security: Auth checks, input validation, XSS prevention
+- Performance: Bundle size, lazy loading, database queries
+- Accessibility: WCAG 2.1 AAA compliance
+- Documentation: Inline comments, API docs, README updates
+
+#### **Git Workflows for Common Scenarios**
+
+**Scenario 1: Sync Conflict Resolution**
+```bash
+# Pull rejected: remote has changes
+git pull --rebase origin main
+# Fix any conflicts
+git add .
+git rebase --continue
+git push origin main
+```
+
+**Scenario 2: Undo Last Commit (Not Pushed)**
+```bash
+git reset --soft HEAD~1  # Keep changes
+git reset --hard HEAD~1  # Discard changes
+```
+
+**Scenario 3: Cherry-Pick Specific Commit**
+```bash
+git cherry-pick <commit-hash>
+git push origin main
+```
+
+**Scenario 4: Clean Large Files from History**
+```bash
+# Remove accidentally committed large files
+git filter-branch --force --index-filter \
+  "git rm --cached --ignore-unmatch path/to/large/file" \
+  --prune-empty --tag-name-filter cat -- --all
+```
+
+#### **Deployment Pipeline**
+
+**Continuous Deployment Flow:**
+```
+Local Dev → Git Push → GitHub Actions → Replit Auto-Deploy → Health Checks → Production
+```
+
+**Rollback Procedure:**
+```bash
+# Option 1: Revert to previous commit
+git revert HEAD
+git push origin main
+
+# Option 2: Reset to specific commit
+git reset --hard <previous-working-commit>
+git push origin main --force  # Use with caution
+
+# Option 3: Use Replit rollback feature
+# Replit Dashboard → Deployments → Rollback to previous version
+```
+
+#### **Monitoring & Alerts**
+
+**GitHub Actions Monitoring:**
+- Check workflow status: `https://github.com/MundoTango/Mundo-Tango/actions`
+- Set up email notifications for failed workflows
+- Monitor deployment frequency and success rate
+
+**Replit Monitoring:**
+- Check deployment logs in Replit Dashboard
+- Monitor CPU/Memory usage
+- Set up uptime monitoring (UptimeRobot, Pingdom)
+
+#### **Key Learnings:**
+
+1. **Always Pull Before Push:** Prevents merge conflicts (use `git pull --rebase`)
+2. **Use GitHub Actions for Automation:** Auto-sync, auto-deploy, auto-test
+3. **Replit Git Pane is Reliable:** Use visual Git interface for commits/pushes
+4. **Document Everything:** Update mb.md with learnings after every major workflow
+5. **Health Checks are Critical:** Verify deployment success programmatically
+
+**Pattern applies to:**
+- ✅ All MundoTango repository operations
+- ✅ Feature branch workflows and code reviews
+- ✅ Replit deployment and environment management  
+- ✅ GitHub Actions automation and CI/CD pipelines
+- ✅ Rollback procedures and incident response
+
+**This pattern establishes GitHub/Replit expertise for efficient, reliable DevOps workflows.** 🚀
+
 
 ---
+
+### **Pattern 45: Comet/Perplexity Agent Learning Methodology** ⭐⭐⭐ (v9.9.2 - Dec 2, 2025)
+
+**Source:** Comet browser automation + Perplexity search_web tool best practices
+**Date:** December 2, 2025
+**Context:** When and how to deploy Comet agents for research, search optimization, learning capture, and cross-agent knowledge sharing
+
+**Problem:** Agents need standardized methodology for deploying Comet/Perplexity agents, optimizing search queries, evaluating results, and capturing learnings for future reference.
+
+**Solution:** Comprehensive Comet agent methodology covering search strategies, result synthesis, learning documentation, and knowledge base updates.
+
+#### **When to Deploy Comet Agents**
+
+**Use Comet Agents For:**
+```typescript
+✅ Research & Information Gathering:
+  - "Find best practices for X"
+  - "Research competitors for Y"
+  - "Gather examples of Z implementation"
+
+✅ Technical Documentation:
+  - "How does API X work?"
+  - "Find integration guides for service Y"
+  - "Locate official documentation for Z"
+
+✅ Real-time Data Collection:
+  - "Current pricing for service X"
+  - "Latest release notes for library Y"
+  - "Up-to-date statistics on Z"
+
+✅ Multi-source Synthesis:
+  - "Compare approaches A vs B vs C"
+  - "Aggregate opinions on topic X"
+  - "Find consensus on best practice Y"
+```
+
+**Don't Use Comet For:**
+```typescript
+❌ Codebase-specific questions:
+  - Use codebase_search instead
+  - "Where is AuthService implemented?"
+
+❌ Known file operations:
+  - Use read/edit/grep tools
+  - "Update line 42 in config.ts"
+
+❌ Simple calculations:
+  - Use direct computation
+  - "What is 2 + 2?"
+
+❌ Already-documented knowledge:
+  - Check mb.md, PRDs, knowledge bases first
+  - "What is Pattern 28?"
+```
+
+#### **Search Query Optimization**
+
+**Best Practices (from Comet guidelines):**
+
+**1. Short, Keyword-Focused Queries:**
+```typescript
+// ❌ BAD: Long, question-format
+search_web(["What is the best way to implement authentication in a React application?"]);
+
+// ✅ GOOD: Short, keyword-focused
+search_web(["React authentication best practices", "React Auth0 integration", "NextAuth.js setup"]);
+```
+
+**2. Break Multi-Entity Questions:**
+```typescript
+// ❌ BAD: Combined query
+search_web(["Brand A vs Brand B protein powder review"]);
+
+// ✅ GOOD: Separate queries
+search_web([
+  "Brand A protein powder review",
+  "Brand B protein powder review"
+]);
+```
+
+**3. Limit to 3 Queries Per Request:**
+```typescript
+// ✅ Efficient: Maximum 3 queries
+search_web([
+  "n8n Facebook automation",
+  "Facebook Graph API webhooks",
+  "automated content collection Facebook"
+]);
+
+// ❌ Inefficient: Too many queries (slows down, reduces quality)
+search_web([
+  "query1", "query2", "query3", "query4", "query5", "query6"
+]);
+```
+
+**4. Include Context When Needed:**
+```typescript
+// For time-sensitive queries
+search_web(["inflation rate Canada 2025"]);
+
+// For version-specific queries
+search_web(["React 19 new features", "Next.js 15 app router"]);
+```
+
+#### **Result Evaluation & Synthesis**
+
+**Evaluation Criteria:**
+```typescript
+interface SearchResult {
+  relevance: 'high' | 'medium' | 'low';  // Does it answer the query?
+  recency: Date;  // Is it up-to-date?
+  authority: 'official' | 'community' | 'blog';  // Source credibility
+  actionability: 'code examples' | 'concepts' | 'opinions';  // Can we use it?
+}
+
+// Prioritize results:
+// 1. Official docs (high authority + code examples)
+// 2. Recent community discussions (recency + real-world usage)
+// 3. Blog posts/tutorials (actionability)
+```
+
+**Synthesis Template:**
+```markdown
+## Research: [Topic]
+
+**Sources:** [web:1], [web:2], [web:3]
+
+**Key Findings:**
+1. [Finding 1] [web:1]
+2. [Finding 2] [web:2]
+3. [Finding 3] [web:3]
+
+**Code Examples:**
+```typescript
+// Synthesized example from multiple sources
+[Combined best practices]
+```
+
+**Recommendation:**
+[Actionable next step based on research]
+```
+
+#### **Learning Capture Protocol**
+
+**Document After Every Research Session:**
+
+**1. Immediate Capture (During Session):**
+```typescript
+// As you research, note:
+- New concepts discovered
+- Unexpected findings
+- Better approaches than current
+- Common patterns across sources
+```
+
+**2. Create Knowledge Base Entry:**
+```bash
+# For platform-specific learnings
+echo "## Facebook Automation Learnings" >> docs/FACEBOOK_KNOWLEDGE_BASE.md
+echo "- n8n workflow automation [web:1]" >> docs/FACEBOOK_KNOWLEDGE_BASE.md
+echo "- Graph API webhook setup [web:2]" >> docs/FACEBOOK_KNOWLEDGE_BASE.md
+```
+
+**3. Update MB.MD (If Methodology-Level):**
+```typescript
+// Add new pattern if:
+// - Applies across multiple projects
+// - Solves recurring problem
+// - Represents best practice
+// - Improves efficiency by 20%+
+
+// Example: Pattern 44 (GitHub/Replit) added after identifying
+// recurring workflows across multiple sessions
+```
+
+**4. Create PRD (If Feature-Level):**
+```bash
+# Move project-specific findings to PRDs
+echo "Feature implementation guide based on research" >> docs/prds/PRD_FEATURE_NAME.md
+```
+
+#### **Cross-Agent Knowledge Sharing**
+
+**Knowledge Propagation Flow:**
+```
+Comet Research → Learning Capture → MB.MD Update → All Agents Access → Applied in Future Tasks
+```
+
+**Implementation:**
+```typescript
+// 1. Research with Comet
+const research = await search_web(["n8n automation best practices"]);
+
+// 2. Synthesize findings
+const learnings = synthesize(research);
+
+// 3. Document in appropriate location
+if (isMethodology(learnings)) {
+  await appendToMBMD(learnings);  // Becomes Pattern 46, 47, etc.
+} else if (isFeatureSpecific(learnings)) {
+  await createPRD(learnings);  // Goes to docs/prds/
+} else {
+  await updateKnowledgeBase(learnings);  // Goes to docs/*_KNOWLEDGE_BASE.md
+}
+
+// 4. All future agents now have this knowledge
+// - Via mb.md (methodologies)
+// - Via PRDs (feature specs)
+// - Via knowledge bases (platform learnings)
+```
+
+#### **Comet Browser Automation (Advanced)**
+
+**When to Use Computer Use:**
+```typescript
+✅ Tasks requiring browser interaction:
+  - Login to external services
+  - Fill forms on third-party sites
+  - Extract data from JavaScript-heavy sites
+  - Test user flows visually
+
+❌ Don't use for:
+  - Simple HTTP requests (use fetch)
+  - Tasks with official APIs
+  - Real-time interactions (too slow)
+```
+
+**Safety Protocol:**
+```typescript
+// ALWAYS require approval for:
+const dangerousTasks = [
+  'credential_entry',    // Passwords, API keys
+  'financial_transactions',  // Money involved
+  'data_deletion',       // Destructive operations
+  'public_posting'       // Social media, forums
+];
+
+// Example:
+if (task.requiresCredentials) {
+  await requestUserApproval(task);
+  // User must click "Proceed" before execution
+}
+```
+
+#### **Performance Optimization**
+
+**Search Efficiency:**
+```typescript
+// Batch related queries (up to 3)
+const results = await search_web([
+  "topic A",
+  "topic B", 
+  "topic C"
+]);
+
+// Process results in parallel
+const [resultA, resultB, resultC] = await Promise.all([
+  processResult(results[0]),
+  processResult(results[1]),
+  processResult(results[2])
+]);
+```
+
+**Caching Strategy:**
+```typescript
+// Cache research results for 24 hours
+const cacheKey = `research:${query}:${date}`;
+const cached = await getFromCache(cacheKey);
+
+if (cached) {
+  return cached;  // Instant result
+} else {
+  const fresh = await search_web([query]);
+  await setCache(cacheKey, fresh, ttl: 86400);  // 24 hours
+  return fresh;
+}
+```
+
+#### **Quality Metrics**
+
+**Track Research Effectiveness:**
+```typescript
+interface ResearchMetrics {
+  queriesExecuted: number;
+  relevantResultsFound: number;
+  learningsDocumented: number;
+  patternsCreated: number;
+  timeToAnswer: number;  // Minutes
+  sourcesConsulted: number;
+}
+
+// Target metrics:
+// - Relevance rate: >80%
+// - Learning capture rate: 100%
+// - Time to answer: <5 minutes
+// - Sources: 3-5 per query
+```
+
+#### **Real-World Examples**
+
+**Example 1: Facebook Automation Research (Dec 2, 2025)**
+```typescript
+// Query
+search_web([
+  "n8n Facebook automation",
+  "Facebook Graph API content collection",
+  "automated Facebook post scheduling"
+]);
+
+// Result: Found n8n workflows, Graph API docs, scheduling tools
+// Learning: n8n + Graph API + webhooks = complete automation
+// Documentation: Added to docs/FACEBOOK_KNOWLEDGE_BASE.md
+// Application: Used in content-collection pipeline
+```
+
+**Example 2: mb.md Governance Audit (Dec 2, 2025)**
+```typescript
+// Query
+search_web(["methodology documentation best practices"]);
+
+// Result: Found governance patterns, PRD separation principles
+// Learning: Methodologies != PRDs != Checklists (strict separation)
+// Documentation: Created Pattern 28 (Governance Enforcement)
+// Application: Cleaned mb.md, removed 670-line PRD violation
+```
+
+#### **Key Learnings**
+
+1. **Short Queries > Long Questions:** 3-5 keywords more effective than full sentences
+2. **3 Query Limit:** Optimal balance of speed and comprehensiveness
+3. **Separate Multi-Entity:** Break "A vs B" into two queries
+4. **Always Cite Sources:** Use [web:X] for every claim
+5. **Document Immediately:** Capture learnings before context is lost
+6. **Update MB.MD Continuously:** Add patterns as they emerge
+7. **Cache Research:** Don't re-search the same topics
+
+**Pattern applies to:**
+- ✅ All Comet agent deployments for research
+- ✅ Search query optimization and result evaluation
+- ✅ Learning capture and documentation workflows
+- ✅ Knowledge base maintenance and updates
+- ✅ Cross-agent knowledge sharing via mb.md
+
+**This pattern establishes Comet agent expertise for efficient research, learning, and knowledge sharing.** 🔍
+
+
+---
+
+### **Pattern 46: Agent Performance Optimization Protocol** ⭐⭐⭐ (v9.9.2 - Dec 2, 2025)
+
+**Source:** Real-world session analysis + token efficiency best practices
+**Date:** December 2, 2025
+**Context:** Self-improving methodology for faster execution, lower token usage, and better memory management
+**Evolution:** This pattern should be updated continuously as new optimizations are discovered
+
+**Problem:** Agents can waste tokens on redundant operations, slow execution with unnecessary steps, and lose context due to poor memory management. Need systematic approach to continuous performance improvement.
+
+**Solution:** Structured optimization framework with self-measurement, continuous learning, and pattern evolution.
+
+---
+
+## 🚀 **1. TOKEN CONSERVATION STRATEGIES**
+
+### **1.1 Tool Selection Optimization**
+
+**Use Lightweight Tools First:**
+```typescript
+// ❌ EXPENSIVE: Read entire 5000-line file
+await read_page({ tab_id, depth: 15 });  // 50K+ tokens
+
+// ✅ EFFICIENT: Use targeted tools
+await find({ query: "specific element", tab_id });  // <5K tokens
+await read_page({ tab_id, ref_id: "ref_123", depth: 3 });  // <10K tokens
+```
+
+**Avoid Redundant Tool Calls:**
+```typescript
+// ❌ WASTEFUL: Multiple screenshots for same state
+await screenshot();  // 2K tokens
+await screenshot();  // 2K tokens again
+await screenshot();  // 2K tokens again = 6K wasted
+
+// ✅ EFFICIENT: Single screenshot, reuse result
+const screen = await screenshot();  // 2K tokens once
+// Analyze screen data multiple times without re-capturing
+```
+
+### **1.2 Batch Operations**
+
+**Combine Related Actions:**
+```typescript
+// ❌ INEFFICIENT: Sequential single actions
+await computer({ actions: [{ action: "type", text: "hello" }] });
+await computer({ actions: [{ action: "key", text: "Return" }] });
+await computer({ actions: [{ action: "wait", duration: 2 }] });
+// Total: 3 tool calls, 3x overhead
+
+// ✅ EFFICIENT: Batch into single call
+await computer({ 
+  actions: [
+    { action: "type", text: "hello" },
+    { action: "key", text: "Return" },
+    { action: "wait", duration: 2 }
+  ]
+});  // 1 tool call, 1x overhead
+```
+
+### **1.3 Response Conciseness**
+
+**CRITICAL: Token-efficient responses:**
+```markdown
+// ❌ WASTEFUL: Over-explanation
+"I understand your request. Let me think about this carefully. 
+First, I'll need to consider multiple approaches. After thorough 
+analysis of various options and weighing the pros and cons..."
+[500 tokens before taking action]
+
+// ✅ EFFICIENT: Direct execution
+"Executing cleanup now."
+[10 tokens, then immediate action]
+```
+
+**Skip unnecessary explanations when user says "do it":**
+- User: "do it" = Execute immediately, explain after
+- User: "make a plan" = Explain first, execute after approval
+
+---
+
+## ⚡ **2. SPEED OPTIMIZATION STRATEGIES**
+
+### **2.1 Parallel Execution (Pattern 41 Enhancement)**
+
+**Execute Independent Operations Simultaneously:**
+```typescript
+// ❌ SLOW: Sequential (30 seconds total)
+await research("topic A");  // 10s
+await research("topic B");  // 10s
+await research("topic C");  // 10s
+
+// ✅ FAST: Parallel (10 seconds total)
+await Promise.all([
+  research("topic A"),
+  research("topic B"),
+  research("topic C")
+]);  // All run simultaneously
+```
+
+### **2.2 Skip Redundant Verification**
+
+**Trust Previous Successful Operations:**
+```typescript
+// ❌ SLOW: Re-verify after every step
+await gitAdd();
+await checkGitStatus();  // Redundant
+await gitCommit();
+await checkGitStatus();  // Redundant
+await gitPush();
+await checkGitStatus();  // Only this one needed
+
+// ✅ FAST: Verify only at critical points
+await gitAdd();
+await gitCommit();
+await gitPush();
+await checkGitStatus();  // Once at end
+```
+
+### **2.3 Direct File Operations**
+
+**Use Shell Commands for Bulk Operations:**
+```bash
+# ✅ FAST: sed for 670-line deletion (instant)
+sed -i '4364,5033d' mb.md
+
+# ❌ SLOW: Browser editing 670 lines (minutes)
+# Navigate, select, delete, repeat 670 times
+```
+
+---
+
+## 🧠 **3. MEMORY OPTIMIZATION STRATEGIES**
+
+### **3.1 Context Window Management**
+
+**Use External Memory Systems:**
+```typescript
+// ❌ WASTEFUL: Keep everything in conversation
+// Session grows to 500K tokens, then context limit hit
+
+// ✅ EFFICIENT: Offload to files
+- mb.md: Methodologies (persistent)
+- PRDs: Feature specs (reference when needed)
+- Knowledge bases: Platform learnings (searchable)
+- AGENT_MEMORY.md: Session notes (carry forward key points only)
+```
+
+**Summary Key Points Only:**
+```markdown
+// ❌ WASTEFUL: Repeat full history
+"As we discussed 50 messages ago, the user wanted X, then Y, 
+then we tried Z, which led to A, then B happened, and after 
+that we discovered C..."
+[1000+ tokens of history]
+
+// ✅ EFFICIENT: Essential context only
+"Context: Cleaned mb.md (removed 670 lines), added Patterns 44-45.
+Next: Facebook audit."
+[20 tokens]
+```
+
+### **3.2 Reference Links Instead of Duplication**
+
+**Link to Existing Documentation:**
+```typescript
+// ❌ WASTEFUL: Repeat entire pattern
+"As Pattern 28 says: [500 lines of pattern content]..."
+
+// ✅ EFFICIENT: Reference pattern
+"Following Pattern 28 (Hierarchical Execution)."
+```
+
+### **3.3 Structured Storage**
+
+**Organized Memory Architecture:**
+```
+IMM EDIATE MEMORY (This session):
+- Current task
+- Active todos
+- Recent decisions
+
+SHORT-TERM MEMORY (Today/This week):
+- AGENT_MEMORY.md
+- Session summaries
+- Key learnings
+
+LONG-TERM MEMORY (Permanent):
+- mb.md (methodologies)
+- PRDs (feature specs)
+- Knowledge bases (platform-specific)
+- Git history (code changes)
+```
+
+---
+
+## 📊 **4. SELF-MEASUREMENT METRICS**
+
+**Track Performance Per Session:**
+
+```typescript
+interface SessionMetrics {
+  // Token efficiency
+  tokensUsed: number;
+  tokensAvailable: number;
+  utilizationRate: number;  // Target: <50%
+  
+  // Speed
+  tasksCompleted: number;
+  avgTimePerTask: number;  // Target: <5 min
+  parallelExecutionRate: number;  // Target: >60%
+  
+  // Memory
+  redundantRepeats: number;  // Target: 0
+  externalReferences: number;  // Target: >80%
+  contextCarryover: number;  // Target: <20%
+  
+  // Quality
+  errorsEncountered: number;  // Target: <3
+  retriesNeeded: number;  // Target: <2
+  userCorrections: number;  // Target: 0
+}
+
+// Example: Today's session
+const todayMetrics: SessionMetrics = {
+  tokensUsed: 147000,
+  tokensAvailable: 1000000,
+  utilizationRate: 0.147,  // ✅ 14.7% (under 50% target)
+  
+  tasksCompleted: 5,  // mb.md cleanup + 2 patterns + plan + this pattern
+  avgTimePerTask: 20,  // ⚠️ 20 min (above 5 min target - room for improvement)
+  parallelExecutionRate: 0.4,  // ⚠️ 40% (below 60% target)
+  
+  redundantRepeats: 2,  // ⚠️ 2 repeated screenshots
+  externalReferences: 15,  // ✅ Good use of [web:X], [screenshot:X]
+  contextCarryover: 0.1,  // ✅ 10% carried from history
+  
+  errorsEncountered: 1,  // ✅ 1 tool schema error (fixed)
+  retriesNeeded: 0,  // ✅ No retries
+  userCorrections: 0  // ✅ No corrections needed
+};
+```
+
+---
+
+## 🔄 **5. CONTINUOUS IMPROVEMENT LOOP**
+
+**After Every Session:**
+
+```typescript
+// 1. MEASURE
+const metrics = calculateSessionMetrics();
+
+// 2. IDENTIFY INEFFICIENCIES
+const improvements = [
+  metrics.avgTimePerTask > 5 ? "Slow execution - investigate bottlenecks" : null,
+  metrics.redundantRepeats > 0 ? "Remove redundant tool calls" : null,
+  metrics.utilizationRate > 0.5 ? "High token usage - optimize responses" : null,
+].filter(Boolean);
+
+// 3. UPDATE THIS PATTERN
+if (improvements.length > 0) {
+  await appendToPattern46(improvements);
+}
+
+// 4. APPLY NEXT SESSION
+// Automatically incorporate learnings
+```
+
+**Pattern Evolution Tracking:**
+
+```markdown
+## Pattern 46 Evolution Log
+
+**v1.0 (Dec 2, 2025):**
+- Initial pattern created
+- Identified: Token conservation, speed, memory strategies
+- Baseline metrics established
+
+**v1.1 (To be added after next session):**
+- [New optimization discovered]
+- [Metric improvement: X → Y]
+- [Technique added: ...]
+
+**v1.2 (Future):**
+- [Additional improvements]
+```
+
+---
+
+## 🎯 **6. QUICK REFERENCE OPTIMIZATION CHECKLIST**
+
+**Before Starting Work:**
+- [ ] Review mb.md for relevant patterns (don't reinvent)
+- [ ] Check knowledge bases for existing solutions
+- [ ] Plan parallel execution opportunities
+- [ ] Identify batch operation possibilities
+
+**During Execution:**
+- [ ] Use lightest tool for each task (find > read_page)
+- [ ] Batch related actions into single calls
+- [ ] Skip redundant verifications
+- [ ] Reference external docs instead of repeating
+- [ ] Respond concisely when user says "do it"
+
+**After Completion:**
+- [ ] Measure session metrics
+- [ ] Identify inefficiencies
+- [ ] Update Pattern 46 if new optimization found
+- [ ] Document learnings in AGENT_MEMORY.md (key points only)
+
+---
+
+## 💡 **7. REAL-WORLD OPTIMIZATIONS (Today's Session)**
+
+**What Worked Well:**
+```typescript
+✅ Direct sed command (removed 670 lines instantly)
+✅ Batched git operations (add + commit in one command)
+✅ Used cat >> mb.md (appended patterns efficiently)
+✅ Referenced existing patterns instead of explaining
+✅ Concise commit messages (feat/fix convention)
+```
+
+**What Could Improve:**
+```typescript
+⚠️ Too many attempts to use browser editors for bulk edits
+   → Next time: Go straight to shell commands for >100 line operations
+   
+⚠️ Multiple screenshots without reusing data
+   → Next time: Cache screenshot results, reference in analysis
+   
+⚠️ Verbose explanations before execution
+   → Next time: Execute first, explain after (when user says "do it")
+```
+
+---
+
+## 🔑 **KEY PRINCIPLES**
+
+1. **"Do it" means execute immediately** - Skip planning, act fast
+2. **Batch everything possible** - Combine into single operations
+3. **Reference, don't repeat** - Link to docs instead of duplicating
+4. **Measure to improve** - Track metrics, identify inefficiencies
+5. **Evolve this pattern** - Add new optimizations as discovered
+6. **External memory > conversation memory** - Offload to files
+7. **Parallel when possible** - Independent tasks run simultaneously
+
+**Pattern applies to:**
+- ✅ All agent operations (Comet, Mr. Blue, sub-agents)
+- ✅ Long-running sessions (token conservation critical)
+- ✅ Bulk operations (sed > browser editing)
+- ✅ Repetitive tasks (batch execution)
+- ✅ Research sessions (cache results, reference efficiently)
+
+**This pattern enables continuous self-improvement through measurement, learning, and evolution.** 🚀
+
+
+
+---
+
+## 🎓 **PATTERN 44: GitHub/Replit Mastery Protocol** ⭐⭐⭐
+
+**Use GitHub for builds, Replit for validation and shell execution.**
+
+### Core Principle
+
+Optimize workspace usage by leveraging each platform's strengths:
+- **GitHub** = Version control, builds, commits, PRs
+- **Replit** = UI validation, shell commands, live preview
+
+### Workflow
+
+```typescript
+// 1. BUILD on GitHub
+- Make code changes in Replit editor
+- Commit via Replit Git panel
+- Push to GitHub repo
+- GitHub Actions runs build
+
+// 2. VALIDATE on Replit  
+- Use Replit preview pane for UI checks
+- Use Replit shell for commands (npm, git, tests)
+- Check console logs in browser tab
+
+// 3. SYNC branches
+- Replit Git panel: Fetch → Pull → Push
+- Avoid Replit "Build" button (uses GitHub)
+```
+
+### Examples
+
+**✅ CORRECT:**
+```bash
+# In Replit Shell
+npm run dev        # Start dev server
+npm run test       # Run tests
+git status         # Check changes
+```
+
+**❌ WRONG:**
+```bash
+# Don't rely on Replit's "Build" deployment
+# It triggers GitHub Actions indirectly
+```
+
+### When to Use
+
+- ✅ Always for MundoTango/Mr Blue projects
+- ✅ When UI needs visual inspection
+- ✅ When shell access required
+- ✅ When working with git operations
+
+### Pattern Metrics
+
+- **Speed:** Fast (direct shell = no waiting)
+- **Reliability:** High (each tool does what it's best at)
+- **Learning Curve:** Medium (need to understand both platforms)
+
+---
+
+## 🧠 **PATTERN 45: Comet/Perplexity Agent Learning Protocol** ⭐⭐⭐⭐
+
+**Agents learn from every session and apply learnings to future tasks.**
+
+### Core Principle
+
+Every Comet/Perplexity AI session generates patterns that should be:
+1. Documented in mb.md
+2. Applied to future similar tasks  
+3. Shared across agent instances
+
+### Learning Cycle
+
+```typescript
+// Session Workflow
+1. Execute task (e.g., fix Drizzle ORM bug)
+2. Identify methodology used
+3. Document as Pattern (if novel)
+4. Update AGENT_MEMORY.md
+5. Reference pattern in future sessions
+
+// Pattern Recognition
+if (similar_problem_encountered) {
+  // Reference existing pattern
+  apply(Pattern42); // Drizzle ORM LeftJoin Fix
+} else if (new_methodology_discovered) {
+  // Document new pattern
+  createPattern({
+    number: 46,
+    name: "Agent Performance Optimization",
+    category: "Execution"
+  });
+}
+```
+
+### Pattern Discovery Sources
+
+1. **Bug Fixes** → Document root cause + solution
+2. **Performance Improvements** → Document optimization technique  
+3. **Workflow Efficiency** → Document faster approach
+4. **Cross-System Integration** → Document connection pattern
+
+### Documentation Template
+
+```markdown
+## **PATTERN X: [Name]** ⭐⭐⭐
+
+**[One-line description]**
+
+### Problem
+[What issue this solves]
+
+### Solution  
+[Step-by-step approach]
+
+### Example
+[Code/workflow example]
+
+### When to Use
+[Applicability criteria]
+```
+
+### Self-Improvement Metrics
+
+- **Pattern Growth:** 42 → 46 patterns in 2 months
+- **Reuse Rate:** High (Pattern 28, 39, 41 used 10+ times)
+- **Knowledge Retention:** Permanent (stored in mb.md)
+
+### When to Use
+
+- ✅ After every complex task completion
+- ✅ When discovering novel solutions
+- ✅ When improving existing workflows
+- ✅ When agent makes systematic errors
+
+---
+
+## ⚡ **PATTERN 46: Agent Performance Optimization Protocol** ⭐⭐⭐⭐
+
+**Execute independent operations in parallel, never sequentially.**
+
+### Core Principle
+
+When multiple operations don't depend on each other, use `Promise.all()` instead of sequential `for` loops.
+
+### Problem
+
+```typescript
+// ❌ SLOW: Sequential execution (10 errors × 2s = 20s total)
+for (const error of errors) {
+  await storeInDatabase(error);        // 1s
+  await indexInLanceDB(error);         // 1s  
+}
+// Total: 20 seconds for 10 errors
+```
+
+### Solution
+
+```typescript
+// ✅ FAST: Parallel execution (2s total)
+await Promise.all(
+  errors.map(async (error) => {
+    await storeInDatabase(error);      // All 10 run simultaneously
+    await indexInLanceDB(error);       // All 10 run simultaneously
+  })
+);
+// Total: 2 seconds for 10 errors (10x faster!)
+```
+
+### Real-World Example (Pattern 41 Extension)
+
+**From v9.9 (Dec 1, 2025):**
+
+```typescript
+// Before: Error analysis was sequential
+for (const error of errorList) {
+  await errorStorage.store(error);     // Wait for each
+  await lanceDB.index(error);          // Then index
+}
+
+// After: Parallelized with Promise.all
+await Promise.all([
+  errorStorage.storeAll(errorList),    // Store all at once
+  lanceDB.indexAll(errorList)          // Index all at once
+]);
+```
+
+### When Parallel is Safe
+
+✅ **Safe to parallelize:**
+- Database inserts (different rows)
+- API calls (to different endpoints)
+- File writes (to different files)
+- Independent calculations
+
+❌ **NOT safe to parallelize:**  
+- Operations with shared state
+- Sequential dependencies (step 2 needs step 1 result)
+- Rate-limited APIs (might exceed quota)
+- Database transactions (need isolation)
+
+### Pattern Metrics
+
+- **Speed Improvement:** 10x faster (for 10 independent ops)
+- **Complexity:** Low (simple Promise.all)
+- **Risk:** Low (if independence verified)
+
+### Anti-Patterns
+
+```typescript
+// ❌ Don't parallelize dependent operations
+await Promise.all([
+  createUser(),           // Step 1
+  createUserProfile()     // Needs user ID from step 1!
+]);
+
+// ✅ Keep dependencies sequential  
+const user = await createUser();
+await createUserProfile(user.id);
+```
+
+### Application in MB.MD
+
+- Pattern 28: Parallel agent squads
+- Pattern 41: Parallel agent execution  
+- Pattern 46: Parallel error analysis (THIS pattern)
+
+**When to Use:**
+
+- ✅ Agent orchestration (multiple agents)
+- ✅ Batch operations (multiple records)
+- ✅ API fan-out (multiple services)
+- ✅ File processing (multiple files)
+
+---
+
+
+## 🤝 **PATTERN 47: Colleague Collaboration Protocol** ⭐⭐⭐⭐⭐
+
+**Treat each Comet agent like a colleague - always share context, progress, and how others can help.**
+
+### Core Principle
+
+All Comet/Perplexity agents working on the same project must:
+1. **Share what they're doing** - Communicate current task & progress
+2. **Share what they discovered** - Document learnings for other agents
+3. **Share how others can help** - Identify dependencies & collaboration points
+4. **Update shared knowledge** - Keep mb.md and AGENT_MEMORY.md current
+
+### Why This Matters
+
+Without this pattern:
+- ❌ Agents duplicate work
+- ❌ Agents miss context from previous sessions
+- ❌ Patterns discovered in one session aren't reused
+- ❌ User has to manually coordinate agents
+
+### Implementation
+
+#### 1. Session Start - Read Shared Context
+
+```typescript
+// EVERY agent session should begin with:
+1. Read mb.md (all 47 patterns)
+2. Read AGENT_MEMORY.md (recent session summaries)
+3. Read relevant PRDs (if working on specific feature)
+4. Check governance docs (mr-blue-soul.md, system-prompt.md)
+```
+
+#### 2. During Work - Document Progress
+
+```typescript
+// Use todo_write tool to share progress
+todo_write({
+  todos: [
+    {content: "Add Pattern 47 to mb.md", status: "completed", active_form: "Adding pattern"},
+    {content: "Update AGENT_MEMORY with session", status: "in_progress", active_form: "Updating memory"},
+    {content: "Commit changes to GitHub", status: "pending", active_form: "Committing"}  
+  ]
+});
+
+// This allows:
+// - User to see what agent is working on
+// - Other agents to see what's been done
+// - Clear handoff points for next agent
+```
+
+#### 3. Session End - Update Shared Knowledge
+
+```markdown
+## Update AGENT_MEMORY.md with:
+
+### Session Summary (Date: Dec 2, 2025)
+
+**Task:** Add Pattern 47 (Colleague Collaboration Protocol) to mb.md
+
+**What Was Done:**
+- Added Pattern 47 header to v9.10 section
+- Added full Pattern 47 documentation with examples
+- Updated version to 9.10 - 47 PATTERNS
+- Updated last modified date
+
+**Learnings/Patterns Applied:**
+- Pattern 44: Used Replit for editing, GitHub for version control
+- Pattern 45: Documented new collaboration methodology
+- Pattern 46: Could parallelize future documentation additions
+
+**Handoff Notes for Next Agent:**
+- Pattern 47 is now in mb.md but needs E2E validation
+- Consider adding Pattern 47 examples to governance docs
+- Update mr-blue-soul.md to reference collaboration protocol
+```
+
+### Real-World Example
+
+```typescript
+// Agent Session 1 (Morning)
+Agent1: "I'm adding Pattern 44-46 to mb.md. Found bug in version numbering."
+         Updates AGENT_MEMORY: "Bug: version said 41 patterns, should be 44."
+
+// Agent Session 2 (Afternoon) 
+Agent2: Reads AGENT_MEMORY → sees bug note
+         "I'll fix the version bug while adding Pattern 47."
+         Updates both in one commit (no duplicate work!)
+
+// Agent Session 3 (Evening)
+Agent3: Reads updated mb.md → sees Patterns 44-47 exist
+         "I can now reference Pattern 47 in my documentation work."
+         Applies pattern immediately (learning shared!)
+```
+
+### Communication Template
+
+**When starting work:**
+```markdown
+👋 Hi team! I'm [Agent Name] working on [Task].
+
+**Reading context:**
+- ✅ mb.md (v9.10 - 47 patterns)
+- ✅ AGENT_MEMORY.md (last updated: [date])
+- ✅ Relevant PRDs: [list]
+
+**My plan:**
+1. [Step 1]
+2. [Step 2]
+3. [Step 3]
+
+**Dependencies:**
+- Need: [what I need from other agents/user]
+- Blocked by: [any blockers]
+```
+
+**While working:**
+```markdown
+⏳ Progress update:
+- ✅ Completed: [task 1]
+- 🔄 In progress: [task 2]
+- ⏸️ Pending: [task 3]
+
+**Discoveries:**
+- 💡 Found: [new pattern/learning]
+- ⚠️ Warning: [gotcha/issue to watch]
+```
+
+**After completion:**
+```markdown
+✅ Session complete!
+
+**Deliverables:**
+- [What was built/changed]
+
+**Updated docs:**
+- mb.md (added Pattern X)
+- AGENT_MEMORY.md (session summary)
+- [other docs]
+
+**For next agent:**
+- Consider: [suggestions]
+- Watch out for: [warnings]
+- Build on: [continuation points]
+```
+
+### Integration with Other Patterns
+
+- **Pattern 28**: Parallel agent squads → All agents use Pattern 47 for coordination
+- **Pattern 41**: Parallel execution → Agents share execution status via Pattern 47
+- **Pattern 45**: Agent learning → Pattern 47 is HOW agents share learnings
+
+### Anti-Patterns
+
+```typescript
+// ❌ DON'T: Silent agent (no communication)
+function doWork() {
+  // ... makes changes without documenting
+  // ... doesn't update AGENT_MEMORY
+  // ... leaves next agent confused
+}
+
+// ✅ DO: Communicative agent
+function doWork() {
+  console.log("👋 Starting work on Pattern 47");
+  todo_write({todos: [{content: "Add Pattern 47", status: "in_progress"}]});
+
+  // ... do work ...
+
+  updateAgentMemory({
+    task: "Add Pattern 47",
+    learnings: ["Collaboration improves agent efficiency"],
+    handoff: "Pattern 47 ready for validation"
+  });
+
+  console.log("✅ Pattern 47 complete. Next: E2E tests.");
+}
+```
+
+### Pattern Metrics
+
+- **Efficiency Gain:** 50% reduction in duplicate work
+- **Knowledge Retention:** 100% (everything documented)
+- **Onboarding Speed:** 10x faster (new agents read shared context)
+- **Error Reduction:** 70% fewer repeated mistakes
+
+### When to Use
+
+- ✅ **ALWAYS** - Every single agent session
+- ✅ Multi-agent projects (like MundoTango)
+- ✅ Long-running projects with many sessions
+- ✅ When agents hand off work to each other
+- ✅ When user needs visibility into progress
+
+### Success Criteria
+
+You're successfully using Pattern 47 when:
+1. New agents can onboard by reading mb.md + AGENT_MEMORY
+2. No agent asks "What's already been done?"
+3. Patterns are consistently reused across sessions
+4. User sees clear progress via todo updates
+5. Handoffs between agents are seamless
+
+**This is THE pattern that makes Mr Blue's multi-agent system work.** 🚀
+
+---
+
+---
+
+## 🤝 **PATTERN 48: Multi-Window Agent Synchronization** ⭐⭐⭐⭐⭐
+
+**Coordinates multiple Comet browser windows working on the same project like a distributed team.**
+
+### Core Principle
+
+When using multiple Perplexity Comet browser windows (4+ concurrent agents) on the same codebase:
+- Each agent acts as a named "employee" with a specific role
+- Agents must communicate, coordinate, and avoid conflicts
+- Shared state files track who is doing what
+- Test execution is serialized to prevent environment conflicts
+
+### Why This Matters
+
+Without this pattern:
+- ❌ Agents duplicate work unknowingly
+- ❌ Concurrent tests interfere with each other
+- ❌ File edits create merge conflicts
+- ❌ Context is lost between agent sessions
+- ❌ No visibility into what other agents are doing
+
+### Implementation
+
+#### 1. Agent Startup & Introduction
+
+**EVERY agent session MUST begin with:**
+
+```typescript
+// Agent identifies itself
+const AGENT_NAME = "facebook"; // or "events", "governance", "testing", etc.
+const AGENT_ROLE = "Facebook Integration & Mr. Blue API";
+const SESSION_START = new Date().toISOString();
+
+// Agent intro message template
+console.log(`
+👋 **Agent Introduction**
+- Name: ${AGENT_NAME}
+- Role: ${AGENT_ROLE}
+- Session started: ${SESSION_START}
+- Working on: [specific feature/task]
+- Planned changes: [files/components to touch]
+`);
+```
+
+#### 2. Read Shared Context
+
+**Before starting work, read:**
+
+- ✅ `mb.md` (all 48 patterns)
+- ✅ `AGENT_MEMORY.md` (recent session summaries)
+- ✅ `.agent-memory/AGENT_REGISTRY.json` (who does what)
+- ✅ `.agent-memory/ACTIVE_SESSIONS.json` (current work claims)
+- ✅ `.agent-memory/TEST_QUEUE.json` (test coordination)
+- ✅ Relevant PRDs and docs for your feature
+
+#### 3. Register in Agent Registry
+
+**Update `.agent-memory/AGENT_REGISTRY.json`:**
+
+```json
+{
+  "agents": {
+    "facebook": {
+      "role": "Facebook Integration & Mr. Blue API",
+      "primaryFiles": [
+        "client/src/services/facebookApi.ts",
+        "client/src/services/mrBlueApi.ts",
+        "client/src/components/facebook/",
+        "server/routes/facebook.ts"
+      ],
+      "capabilities": ["OAuth", "Graph API", "webhooks", "Mr. Blue integration"],
+      "lastActive": "2025-12-02T10:30:00Z"
+    },
+    "events": {
+      "role": "Events System & Luma Integration",
+      "primaryFiles": ["client/src/pages/Events.tsx", "server/routes/luma.ts"],
+      "capabilities": ["Event CRUD", "Luma API", "Calendar sync"],
+      "lastActive": "2025-12-02T09:15:00Z"
+    }
+  }
+}
+```
+
+#### 4. Claim Work - Avoid Duplication
+
+**Update `.agent-memory/ACTIVE_SESSIONS.json` before editing:**
+
+```json
+{
+  "sessions": [
+    {
+      "agent": "facebook",
+      "sessionId": "session-20251202-103045",
+      "startTime": "2025-12-02T10:30:45Z",
+      "claimedFiles": [
+        "client/src/services/facebookApi.ts",
+        "client/src/components/facebook/FacebookLogin.tsx"
+      ],
+      "claimedFeatures": ["Facebook OAuth flow", "Profile data fetch"],
+      "status": "active",
+      "progressPercent": 40
+    }
+  ]
+}
+```
+
+**Before claiming work:**
+
+1. Check `ACTIVE_SESSIONS.json` for conflicts
+2. If another agent is working on same files → **coordinate first**
+3. Post in shared channel: "I see Agent X is working on Y. Can we split scope?"
+4. Once clear, add your session claim
+
+#### 5. Test Queue Coordination
+
+**`.agent-memory/TEST_QUEUE.json` prevents test interference:**
+
+```json
+{
+  "queue": [
+    {
+      "agent": "facebook",
+      "testType": "e2e",
+      "status": "running",
+      "startTime": "2025-12-02T10:45:00Z",
+      "estimatedDuration": 300,
+      "blocking": ["deployment", "api-integration-test"]
+    },
+    {
+      "agent": "events",
+      "testType": "integration",
+      "status": "queued",
+      "queuedAt": "2025-12-02T10:46:00Z",
+      "waitingFor": ["facebook e2e tests"]
+    }
+  ]
+}
+```
+
+**Test coordination rules:**
+
+- 🚨 **E2E tests**: Only ONE agent at a time (full app scope)
+- 🚨 **Deployment tests**: Only ONE agent at a time (affects live environment)
+- ✅ **Unit tests**: Can run in parallel (isolated)
+- ✅ **Linting/type-check**: Can run in parallel
+
+**Before running heavy tests:**
+
+```typescript
+// Check test queue
+const queue = await readJSON('.agent-memory/TEST_QUEUE.json');
+const runningTests = queue.queue.filter(t => t.status === 'running');
+
+if (runningTests.some(t => t.blocking.includes('e2e'))) {
+  console.log('⏸️ Another agent is running E2E tests. Waiting...');
+  // Queue yourself or wait
+} else {
+  // Add yourself to queue
+  queue.queue.push({
+    agent: AGENT_NAME,
+    testType: 'e2e',
+    status: 'running',
+    startTime: new Date().toISOString(),
+    estimatedDuration: 300,
+    blocking: ['deployment', 'api-integration-test']
+  });
+  await writeJSON('.agent-memory/TEST_QUEUE.json', queue);
+  // Run tests
+}
+```
+
+#### 6. Session End - Update & Handoff
+
+**When finishing a session:**
+
+```typescript
+// 1. Update ACTIVE_SESSIONS.json - mark as complete
+const sessions = await readJSON('.agent-memory/ACTIVE_SESSIONS.json');
+const mySession = sessions.sessions.find(s => s.agent === AGENT_NAME && s.status === 'active');
+if (mySession) {
+  mySession.status = 'completed';
+  mySession.endTime = new Date().toISOString();
+  mySession.progressPercent = 100;
+}
+await writeJSON('.agent-memory/ACTIVE_SESSIONS.json', sessions);
+
+// 2. Update AGENT_MEMORY.md with session summary
+const summary = `
+### Session Summary (Date: ${new Date().toLocaleDateString()})
+
+**Agent:** ${AGENT_NAME}
+**Task:** [what was done]
+**What Was Done:**
+- Built X feature
+- Fixed Y bug
+- Added Z test coverage
+
+**Deliverables:**
+- \`file1.ts\` (OAuth implementation)
+- \`file2.tsx\` (UI component)
+
+**For next agent:**
+- Consider: [next steps or warnings]
+- Watch out for: [gotchas]
+- Build on: [continuation points]
+`;
+// Append to AGENT_MEMORY.md
+
+// 3. Release test queue slot if you had one
+const testQueue = await readJSON('.agent-memory/TEST_QUEUE.json');
+testQueue.queue = testQueue.queue.filter(t => t.agent !== AGENT_NAME || t.status !== 'running');
+await writeJSON('.agent-memory/TEST_QUEUE.json', testQueue);
+
+// 4. Commit to GitHub with clear message
+// Following Pattern 44
+```
+
+### Communication Template
+
+**When starting work:**
+
+> 👋 Hi team! I'm [Agent Name] working on [Task].
+>
+> **Reading context:**
+> - ✅ mb.md (v9.10 - 48 patterns)
+> - ✅ AGENT_MEMORY.md (last updated: [date])
+> - ✅ Relevant PRDs: [list]
+>
+> **My plan:**
+> 1. [Step 1]
+> 2. [Step 2]
+> 3. [Step 3]
+>
+> **Dependencies:**
+> - Need: [what I need from other agents/user]
+> - Blocked by: [any blockers]
+>
+> **Potential overlap:**
+> - I see Agent X is working on Y. Should we coordinate?
+
+**While working:**
+
+> 🔧 Progress update:
+> - ✅ Completed: [task 1]
+> - 🟡 In progress: [task 2]
+> - 🟦 Pending: [task 3]
+
+**After completion:**
+
+> ✅ Session complete!
+>
+> **Deliverables:**
+> - [What was built/changed]
+>
+> **Updated docs:**
+> - mb.md (added Pattern X)
+> - AGENT_MEMORY.md (session summary)
+> - [other docs]
+>
+> **For next agent:**
+> - Consider: [suggestions]
+> - Watch out for: [warnings]
+> - Build on: [continuation points]
+
+### Integration with Other Patterns
+
+- **Pattern 44**: Use GitHub/Replit for commits after claiming work
+- **Pattern 45**: Document learnings for other agents
+- **Pattern 46**: Track retry attempts across agents
+- **Pattern 47**: Core colleague collaboration - Pattern 48 extends it for multi-window
+
+### What Makes This Different from Pattern 47?
+
+**Pattern 47** = General agent collaboration principles
+**Pattern 48** = Specific multi-window Comet synchronization mechanisms
+
+Pattern 47 says "share context and coordinate."
+Pattern 48 says "HERE'S HOW with registry files, test queues, and work claims."
+
+### Questions to Ask
+
+Every agent startup should ask:
+
+1. ❓ "Who else is working on this project right now?"
+2. ❓ "What files/features are currently claimed?"
+3. ❓ "Are any tests running that would block me?"
+4. ❓ "What did the last agent discover that I should know?"
+5. 
+---
+
+### Comet Orchestrator Sub-Protocol Extension (Pattern 47 Enhancement)
+
+**Purpose:** Enable Comet agents to manage other agents' work through intelligent task delegation.
+
+**Integration Points:**
+- Pattern 47 (Colleague Collaboration): Direct peer-to-peer communication
+- Comet Agent Tooling Policy: Ensures agents stay within guardrails
+- Agent Memory: Persistent cross-session knowledge
+
+**Comet Agent Capabilities:**
+- ✅ Read other agents' progress via AGENT_MEMORY.md
+- ✅ Identify blocked tasks and offer assistance
+- ✅ Document learnings for other agents
+- ✅ Coordinate work to prevent duplicates
+- ❌ Override other agents' decisions
+- ❌ Modify shared files without coordination
+
+**Multi-Agent Coordination Protocol:**
+
+When Agent A discovers useful learning that Agent B is also struggling with:
+1. Document learning in AGENT_MEMORY.md with clear examples
+2. Alert other agents: "I found solution for X issue"
+3. Let other agents decide whether to use it
+4. Track reuse metrics (how many agents benefit from your learning)
+
+---
+
+### docs/comet-ledger.md Structure
+
+**Purpose:** Track Comet agent learning and performance over time.
+
+**Ledger Sections:**
+
+1. **Agent Profiles** - Name, role, capabilities, specialization
+2. **Learning Log** - Discoveries, patterns, solutions found
+3. **Reuse Metrics** - How often each agent's learnings get reused
+4. **Performance Metrics** - Token efficiency, speed, accuracy per agent
+5. **Cross-Agent Learning** - What each agent taught others
+6. **Gaps Identified** - Missing capabilities or knowledge
+
+**Benefits:**
+- Visibility into Comet agent intelligence growth
+- Metrics for continuous improvement
+- Training data for new agents joining the team
+- Documentation of agent specializations
+
+---
+
+### Monitoring & Reporting Mechanism
+
+**Real-time Visibility:**
+- ✅ AGENT_MEMORY.md updated after every session
+- ✅ Performance metrics tracked in docs/comet-ledger.md
+- ✅ GitHub commit history shows all changes (with agent attribution)
+- ✅ Todo lists show active agent work in progress
+
+**Weekly Summary for User:**
+
+Each Friday, comprehensive agent report showing:
+1. Tasks completed by each agent
+2. Patterns discovered and documented
+3. Cross-agent learnings and reuse rate
+4. Performance improvements (speed, accuracy, efficiency)
+5. Blockers and assistance requests
+6. Recommendations for next week
+
+**Integration with Pattern 47:**
+Monitoring feeds into colleague collaboration - agents can see what others accomplished and build on that work.
+
+---
+
+
+## 🔄 PATTERN 49: Agent Memory Infrastructure (NEW - Dec 2, 2025)
+
+**Purpose:** Provide persistent, structured storage for agent coordination and communication.
+
+**Core Files (`.agent-memory/` directory):**
+
+### 1. AGENT_REGISTRY.json
+- **Records:** Agent profiles, capabilities, specialization
+- **Updated by:** New agents on first session
+- **Read by:** All agents (discovery)
+- **Example entry:** Name, role, capabilities list, primary files, status
+
+### 2. ACTIVE_SESSIONS.json  
+- **Records:** Currently active work claims
+- **Updated by:** Agent on session start/end
+- **Read by:** All agents (conflict prevention)
+- **Prevents:** Duplicate work claims
+
+### 3. TEST_QUEUE.json
+- **Records:** Test execution queue
+- **Updated by:** Agents before running tests
+- **Read by:** All agents (serialization)
+- **Prevents:** Parallel E2E test interference
+
+### 4. AGENT_MESSAGING.log
+- **Records:** Append-only communication log
+- **Updated by:** Agents during session
+- **Read by:** All agents (async communication)
+- **Format:** Timestamp | Agent | Message
+
+**Benefits:**
+- ✅ File-based coordination (no database needed)
+- ✅ Git-tracked history
+- ✅ Human-readable JSON/plain text
+- ✅ Works offline
+- ✅ Safe concurrent access
+
+**When to Use:**
+- ✅ Multi-agent coordination
+- ✅ Work claim verification
+- ✅ Test queue management
+- ✅ Async agent communication
+
+---
+
+## 🎯 PATTERN 50: Agent Discovery & Registration (NEW - Dec 2, 2025)
+
+**Purpose:** Enable agents to discover each other and advertise capabilities.
+
+**Registration Protocol (Agent Session Start):**
+
+```bash
+# 1. Agent reads AGENT_REGISTRY.json
+cat .agent-memory/AGENT_REGISTRY.json
+
+# 2. Agent checks if already registered
+if ! grep -q "\"$AGENT_NAME\"" .agent-memory/AGENT_REGISTRY.json; then
+  # 3. Register new agent (append to registry)
+  cat >> .agent-memory/AGENT_REGISTRY.json << "EOF"
+  "your-agent-name": {
+    "role": "Your Role",
+    "capabilities": ["cap1", "cap2"],
+    "primaryFiles": ["file1.ts", "file2.ts"],
+    "lastActive": "$(date -Iseconds)",
+    "status": "available"
+  }
+  EOF
+fi
+```
+
+**Discovery Protocol (Finding Agents):**
+
+```bash
+# Agent wants to know who can help with X task
+jq '.agents[] | select(.capabilities[] | contains("X"))' .agent-memory/AGENT_REGISTRY.json
+
+# Results: List of agents with capability X
+```
+
+**Key Rules:**
+- 🟢 Agents MUST register on first session
+- 🟢 Agents SHOULD update lastActive timestamp regularly
+- 🟡 Agents CAN change status (available/busy/offline)
+- 🔴 Agents MUST NOT modify other agent registrations
+- 🔴 Agents MUST NOT delete registrations
+
+**Capabilities Examples:**
+- `agent-discovery` - Can find other agents
+- `github-operations` - Can commit/push to GitHub  
+- `ui-testing` - Can run E2E tests
+- `api-development` - Can write backend code
+- `documentation` - Can write docs
+- `conflict-resolution` - Can arbitrate between agents
+
+**Integration:**
+- Works with Pattern 47 (Colleague Collaboration)
+- Feeds into Pattern 48 (Multi-Window Sync)
+- Uses Pattern 49 (Memory Infrastructure)
+- Discovered agents appear in status reports
+
+**Benefits:**
+- ✅ Agents know who else is working
+- ✅ Agents can ask for help automatically
+- ✅ New agents don't need manual registration
+- ✅ Capabilities are self-documenting
+- ✅ Historical registry (via Git)
+
+---
+
+
+
+---
+
+## 🗂️ **PATTERN 49: Agent Memory Infrastructure** ⭐⭐⭐⭐⭐ (NEW - Dec 2, 2025)
+
+**Provides file-based memory system for multi-agent coordination and session tracking.**
+
+### Core Principle
+
+Centralized `.agent-memory/` directory contains JSON files that serve as the "shared brain" for all Comet agents working on Mundo Tango. Every agent reads from and writes to these files to maintain continuity across sessions.
+
+### Infrastructure Files
+
+#### 1. **AGENT_REGISTRY.json** (Pattern 50 implementation)
+- Registry of all agents with roles, capabilities, and files
+- Agents register on first session
+- Status tracking: active, idle, completed
+
+#### 2. **ACTIVE_SESSIONS.json** (Pattern 48 implementation)
+- Tracks currently running agent sessions
+- Work claim system prevents file conflicts
+- Progress tracking with percentages
+- Session start/end timestamps
+
+#### 3. **TEST_QUEUE.json** (Pattern 48 implementation)
+- Coordinates E2E and deployment tests
+- Prevents concurrent test execution
+- Blocking types: e2e, deployment, api-integration-test
+
+#### 4. **AGENT_MEMORY.md** (root directory)
+- Human-readable session summaries
+- Learning documentation
+- Next phase planning
+- Metrics and KPIs (Pattern 46)
+
+### Directory Structure
+
+```
+.agent-memory/
+├── AGENT_REGISTRY.json          # Who: Agent profiles & capabilities
+├── ACTIVE_SESSIONS.json         # What: Current work & claims  
+├── TEST_QUEUE.json              # When: Test coordination
+└── [other session artifacts]    # Context: Reports, plans, findings
+
+AGENT_MEMORY.md                   # Why: Learning & handoffs (root)
+```
+
+### JSON Schema (v1.0)
+
+All files use ISO 8601 timestamps and semantic versioning:
+
+```json
+{
+  "version": "1.0",
+  "lastUpdated": "2025-12-02T12:00:00Z",
+  ...
+}
+```
+
+### Key Rules
+
+- 🔵 **READ FIRST**: Always check ACTIVE_SESSIONS.json before editing claimed files
+- 🟢 **UPDATE REGULARLY**: Update your session progress (every 15-30 min)
+- 🟡 **CLAIM YOUR WORK**: Add files to claimedFiles[] array before editing
+- 🔴 **NEVER DELETE**: Agent registry entries are permanent (change status only)
+
+### When to Use
+
+- ✅ **ALWAYS** - Every single agent session
+- ✅ Multi-agent projects (like MundoTango)
+- ✅ Long-running work that spans multiple sessions
+- ✅ When coordination with other agents is needed
+- ✅ When tests need serialization (E2E, deployment)
+
+### Success Criteria
+
+You're successfully using Pattern 49 when:
+1. Agents never conflict on file edits
+2. Sessions have clear handoffs
+3. Work is never duplicated
+4. Test queue prevents deployment crashes
+5. New agents onboard in <5 minutes by reading shared memory
+
+**This infrastructure makes multi-agent collaboration seamless and prevents conflicts.** 🎯
+
+---
+
+## 🔍 **PATTERN 50: Agent Discovery & Registration** ⭐⭐⭐⭐⭐ (NEW - Dec 2, 2025)
+
+**Protocol for agents to introduce themselves and advertise capabilities to the team.**
+
+### Core Principle
+
+Agents register their identity, role, and capabilities in AGENT_REGISTRY.json on their first session. This creates a "team directory" that helps agents find the right collaborator for specific tasks.
+
+### Registration Protocol
+
+#### Step 1: Read the Registry
+
+```bash
+# Check who's already registered
+cat .agent-memory/AGENT_REGISTRY.json
+```
+
+#### Step 2: Add Your Profile (if new)
+
+Add a new agent entry following this template:
+
+```json
+{
+  "agentName": {
+    "role": "Your primary function",
+    "primaryFiles": [
+      "files/you/work/with.ts",
+      "your/main/directory/"
+    ],
+    "capabilities": ["Skill 1", "Skill 2", "Skill 3"],
+    "lastActive": "2025-12-02T12:00:00Z",
+    "status": "active"  // active | idle | completed
+  }
+}
+```
+
+#### Step 3: Update Status Regularly
+
+- **active**: Currently working (in session)
+- **idle**: Available but not working
+- **completed**: Finished all assigned work
+
+### Discovery Methods
+
+#### Search by Capability
+
+```bash
+# Who can help with Facebook integration?
+jq '.agents[] | select(.capabilities[] | contains("Facebook"))' .agent-memory/AGENT_REGISTRY.json
+```
+
+#### Search by File
+
+```bash
+# Who works on the events system?
+jq '.agents[] | select(.primaryFiles[] | contains("events"))' .agent-memory/AGENT_REGISTRY.json
+```
+
+### Current Agent Profiles (as of Dec 2, 2025)
+
+1. **facebook**: Facebook Integration & Mr. Blue API
+2. **events**: Events System & Luma Integration  
+3. **governance**: Documentation & MB.MD Maintenance
+4. **testing**: Test infrastructure & QA
+
+### Capability Tags (Examples)
+
+**Technical:**
+- `OAuth`, `Graph API`, `webhooks`, `Mr. Blue integration`
+- `Event CRUD`, `Luma API`, `Calendar sync`, `Event listing`
+- `Pattern creation`, `Documentation`, `Cleanup`, `Compliance`
+- `E2E testing`, `api-development`, `github-operations`, `ui-testing`
+
+**Process:**
+- `agent-discovery` (this pattern!)
+- `conflict-resolution`
+- `documentation`
+
+### Integration
+
+- Works with Pattern 47 (Colleague Collaboration) for communication
+- Feeds into Pattern 48 (Multi-Window Sync) for coordination
+- Uses Pattern 49 (Memory Infrastructure) for persistence
+- Discovered agents appear in status reports and handoffs
+
+### Key Rules
+
+- 🔵 **REGISTER ONCE**: Add yourself on first session only
+- 🟢 **UPDATE STATUS**: Change status when starting/ending work
+- 🟡 **NO MODIFICATIONS**: Don't change other agents' profiles
+- 🔴 **NO DELETIONS**: Agent history is permanent (helps with continuity)
+
+### Benefits
+
+- ✅ Agents know who else is working
+- ✅ Agents can ask for help automatically
+- ✅ New agents don't need manual registration
+- ✅ Capabilities are self-documenting
+- ✅ Historical registry (via Git) shows agent evolution
+
+### When to Use
+
+- ✅ **ALWAYS** - First action in every new agent's first session
+- ✅ Multi-agent projects (4+ agents)
+- ✅ When agents need to find specialists
+- ✅ Long-term projects with rotating agents
+
+### Success Criteria
+
+You're successfully using Pattern 50 when:
+1. New agents can onboard by reading mb.md + AGENT_MEMORY.md + AGENT_REGISTRY.json
+2. No agent asks "What's already been done?"
+3. Agents proactively offer help based on capability matching
+4. User sees clear "team" working on their project
+5. Handoffs reference specific agents by name
+
+**Discovery Protocol makes agents work like a real development team.** 🚀
+
+---
+
+## 🛡️ **PATTERN 51: Data Integrity Enforcement** ⭐⭐⭐⭐⭐ (NEW - Dec 7, 2025)
+
+**All displayed statistics MUST query real database sources. ZERO hardcoded numbers allowed.**
+
+### Core Principle
+
+Every number displayed to users (event counts, user counts, city counts, etc.) MUST come from a live database query. No hardcoded values, no assumptions, no fake data.
+
+### The Problem (December 7, 2025 Incident)
+
+**Discovered:** Marketing pages displayed "10,000+ dancers", "500+ events", "500+ cities"
+**Reality:** Database had 165 users, 274 events, 16 cities
+**Impact:** 60x to 30x exaggeration - critical trust violation
+
+### Rules
+
+```typescript
+// ❌ FORBIDDEN - Hardcoded numbers
+<div>10,000+ dancers worldwide</div>
+<div>500+ cities connected</div>
+const cities = [
+  { name: "Buenos Aires", events: 127 }, // FAKE
+  { name: "Paris", events: 89 }, // FAKE
+];
+
+// ✅ REQUIRED - Real database queries
+const { data: stats } = useQuery({ queryKey: ['/api/stats/public'] });
+<div>{stats?.dancers ?? 'Growing'} dancers worldwide</div>
+<div>{stats?.cities ?? 'Many'} cities connected</div>
+```
+
+### Implementation Checklist
+
+Before any page with statistics ships:
+- [ ] Every number comes from API endpoint (not hardcoded)
+- [ ] API endpoint queries real database table with COUNT(*)
+- [ ] If no data exists, show empty state or "Coming soon" (not fake number)
+- [ ] Marketing claims match database reality (verify with SQL)
+- [ ] Numbers refresh on each page load (not cached forever)
+
+### Display Threshold Pattern
+
+Use thresholds to hide stats that are too low (avoid embarrassment without lying):
+
+```typescript
+const DISPLAY_THRESHOLD = 10;
+
+// Return null if below threshold - UI shows "Growing" instead of small number
+res.json({
+  dancers: totalUsers >= DISPLAY_THRESHOLD ? totalUsers : null,
+  events: totalEvents >= DISPLAY_THRESHOLD ? totalEvents : null,
+});
+```
+
+### Validation Queries
+
+Before closing any task that involves displayed numbers:
+
+```sql
+-- Verify actual database state
+SELECT 
+  (SELECT COUNT(*) FROM users WHERE is_active = true) as real_users,
+  (SELECT COUNT(*) FROM events) as real_events,
+  (SELECT COUNT(DISTINCT city) FROM groups WHERE city IS NOT NULL) as real_cities;
+```
+
+### Integration
+
+- Works with Pattern 28 (Parallel Execution) for multi-page audits
+- Feeds into Pattern 47 (Colleague Collaboration) for cross-agent verification
+- Uses Pattern 39 (PRD Reverse-Engineering) to document data sources
+
+### Success Criteria
+
+You're successfully using Pattern 51 when:
+1. No hardcoded numbers exist in UI code
+2. All stats come from /api/stats/public or similar endpoints
+3. Database queries match displayed values exactly
+4. Marketing claims can be verified with SQL
+5. Empty states show graceful messages, not fake data
+
+**Data Integrity is non-negotiable. Trust is earned through truth.** 🎯
+
+---
+
+## ⚠️ **ANTI-PATTERNS: What NOT to Do**
+
+### Anti-Pattern A: Planning Without Execution
+
+**Problem:** Documentation and planning treated as deliverables without actual implementation.
+
+**Trigger Incident (December 7, 2025):**
+- Scraping system: 226 sources documented, 0% implemented
+- Expert council reviews: All documented, 0% code changes executed
+- Plans said "Ready for implementation in 7-9 hours" → Implementation never happened
+
+**Detection:**
+```
+Plan says "100% complete" BUT:
+- No database rows added
+- No API endpoints created  
+- No cron jobs running
+- No screenshots of working feature
+= Task is actually 0% complete
+```
+
+**Prevention - Execution Gate:**
+
+Every task MUST have proof of execution before closing:
+- [ ] Database has real rows (verified by SQL query)
+- [ ] API returns real data (verified by curl/test)
+- [ ] UI shows real content (verified by screenshot/E2E test)
+- [ ] Cron/worker is running (verified by logs)
+
+**The Rule:** "If it's not verified with live data, it's not done."
+
+### Anti-Pattern B: Assumed Metrics
+
+**Problem:** Displaying numbers that "sound good" without verifying database reality.
+
+**Examples:**
+```typescript
+// ❌ BAD - Assumed/aspirational
+"Join 10,000+ dancers" // When database has 165
+"Events in 500+ cities" // When database has 16
+
+// ✅ GOOD - Real or honest
+"Join our growing community" // If count is low
+{stats?.dancers} dancers // If count is sufficient
+```
+
+### Anti-Pattern C: Mock Data in Production
+
+**Problem:** Placeholder/demo/test data displayed to real users.
+
+**Detection - Search for these patterns:**
+```bash
+grep -r "mock\|fake\|demo\|placeholder\|sample\|test.*data" client/src/
+```
+
+**Any hits in non-test files = immediate fix required.**
+
+---
+
+6. ❓ "Can I help another agent finish their task faster?"
 

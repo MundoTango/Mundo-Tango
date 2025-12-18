@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, SlidersHorizontal, Calendar, MapPin, Image as ImageIcon, Video, TrendingUp, Clock, X } from "lucide-react";
+import { Search, SlidersHorizontal, Calendar, MapPin, Image as ImageIcon, Video, TrendingUp, Clock, X, Users } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { formatDistanceToNow } from "date-fns";
 import { UnifiedLocationPicker } from "@/components/input/UnifiedLocationPicker";
@@ -59,6 +59,14 @@ const TIME_FILTERS = [
   { value: "year", label: "This Year" },
 ];
 
+const FRIENDSHIP_LEVEL_FILTERS = [
+  { value: "all", label: "Everyone" },
+  { value: "close_friend", label: "Close Friends" },
+  { value: "friends_1st", label: "Friends" },
+  { value: "friends_2nd", label: "Friends of Friends" },
+  { value: "friends_3rd", label: "Extended Network" },
+];
+
 function SmartPostFeedComponent({ posts, onFilterChange, children }: SmartPostFeedProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("all");
@@ -69,6 +77,7 @@ function SmartPostFeedComponent({ posts, onFilterChange, children }: SmartPostFe
   const [engagementFilter, setEngagementFilter] = useState("all");
   const [mediaTypeFilter, setMediaTypeFilter] = useState("all");
   const [locationFilter, setLocationFilter] = useState("");
+  const [friendshipFilter, setFriendshipFilter] = useState("all");
 
   // Filter logic
   const filteredPosts = useMemo(() => {
@@ -158,8 +167,16 @@ function SmartPostFeedComponent({ posts, onFilterChange, children }: SmartPostFe
       );
     }
 
+    // Friendship level filter
+    if (friendshipFilter !== "all") {
+      filtered = filtered.filter(post => {
+        const level = (post as any).closenessLevel || "friends_3rd";
+        return level === friendshipFilter;
+      });
+    }
+
     return filtered;
-  }, [posts, searchQuery, activeCategory, timeFilter, engagementFilter, mediaTypeFilter, locationFilter]);
+  }, [posts, searchQuery, activeCategory, timeFilter, engagementFilter, mediaTypeFilter, locationFilter, friendshipFilter]);
 
   // Notify parent of filter changes
   useState(() => {
@@ -172,6 +189,7 @@ function SmartPostFeedComponent({ posts, onFilterChange, children }: SmartPostFe
     timeFilter !== "all",
     engagementFilter !== "all",
     locationFilter.trim() !== "",
+    friendshipFilter !== "all",
   ].filter(Boolean).length;
 
   return (
@@ -326,6 +344,26 @@ function SmartPostFeedComponent({ posts, onFilterChange, children }: SmartPostFe
                     onChange={(location) => setLocationFilter(location)}
                   />
                 </div>
+
+                {/* Friendship Level */}
+                <div className="space-y-2">
+                  <label className="text-xs font-medium flex items-center gap-1.5">
+                    <Users className="w-3.5 h-3.5" style={{ color: '#40E0D0' }} />
+                    Friendship Level
+                  </label>
+                  <Select value={friendshipFilter} onValueChange={setFriendshipFilter}>
+                    <SelectTrigger data-testid="select-friendship-filter">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {FRIENDSHIP_LEVEL_FILTERS.map(filter => (
+                        <SelectItem key={filter.value} value={filter.value}>
+                          {filter.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
 
               {/* Clear All Filters */}
@@ -337,6 +375,7 @@ function SmartPostFeedComponent({ posts, onFilterChange, children }: SmartPostFe
                     setTimeFilter("all");
                     setEngagementFilter("all");
                     setLocationFilter("");
+                    setFriendshipFilter("all");
                   }}
                   className="w-full"
                   data-testid="button-clear-all-filters"

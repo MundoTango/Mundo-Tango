@@ -1,51 +1,37 @@
-import { memo } from "react";
-import { 
-  Home, 
-  Calendar, 
-  Users, 
-  MessageSquare, 
-  Settings, 
-  LogOut, 
-  Server,
-  Rss,
+import { memo, useMemo } from "react";
+import {
+  Home,
+  Calendar,
+  Users,
+  MessageSquare,
+  LogOut,
   UserCircle,
   UserPlus,
-  Bell,
-  Compass,
   GraduationCap,
   MapPin,
-  PlayCircle,
   Brain,
   ShoppingBag,
-  ShoppingCart,
-  Package,
-  Store,
-  Bot,
-  Bookmark,
-  Shield,
-  Sparkles,
   Globe,
-  Star,
-  ListChecks,
-  Network,
-  Layout,
-  LayoutDashboard,
-  Briefcase,
+  Sparkles,
   Building2,
-  TrendingUp,
-  Share2,
-  PenSquare,
-  Link as LinkIcon,
-  Megaphone,
-  Plane,
-  PlaneTakeoff,
-  Heart,
-  PlusCircle,
-  Folder,
-  FileText,
-  Files,
-  BookTemplate,
-  PenTool,
+  Music,
+  Camera,
+  Drama,
+  PenLine,
+  Palette,
+  Piano,
+  Shirt,
+  Target,
+  Trophy,
+  Home as HousingIcon,
+  Briefcase,
+  List,
+  Map,
+  Star,
+  Search,
+  User,
+  Handshake,
+  BookOpen,
 } from "lucide-react";
 import { useLocation, Link } from "wouter";
 import { cn } from "@/lib/utils";
@@ -59,638 +45,499 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarFooter,
-  SidebarSeparator,
 } from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { TANGO_ROLES, type TangoRole, getRoleByValue, normalizeRole } from "@/lib/tangoRoles";
 
-// Core Social Hub (3 items)
 const socialItems = [
-  { title: "Memories", url: "/memories", icon: Home },
-  { title: "Profile", url: "/profile", icon: UserCircle },
-  { title: "Discover", url: "/discover", icon: Compass },
+  {
+    title: "Memories",
+    url: "/feed",
+    icon: Home,
+    tooltip: "Your feed and memories",
+  },
+  {
+    title: "Profile",
+    url: "/profile",
+    icon: UserCircle,
+    tooltip: "View your profile",
+  },
 ];
 
-// Community & Connections (6 items)
 const communityItems = [
-  { title: "Friends", url: "/friends-list", icon: UserPlus },
-  { title: "Recommendations", url: "/recommendations", icon: Sparkles },
-  { title: "Invitations", url: "/invitations", icon: UserPlus },
-  { title: "Notifications", url: "/notifications", icon: Bell },
-  { title: "Groups", url: "/groups", icon: Users },
-  { title: "Messages", url: "/messages", icon: MessageSquare },
+  {
+    title: "Community Map",
+    url: "/community-world-map",
+    icon: Globe,
+    tooltip: "Explore the global tango community",
+  },
+  {
+    title: "Events",
+    url: "/events",
+    icon: Calendar,
+    tooltip: "Browse events - list, calendar, or map view",
+  },
+  {
+    title: "Friends",
+    url: "/friends",
+    icon: UserPlus,
+    tooltip: "Manage your friends",
+  },
+  {
+    title: "Messages",
+    url: "/messages",
+    icon: MessageSquare,
+    tooltip: "Your conversations",
+  },
+  {
+    title: "Leaderboard",
+    url: "/leaderboard",
+    icon: Trophy,
+    tooltip: "Top contributors",
+  },
 ];
 
-// Events & Calendar (2 items)
-const eventsItems = [
-  { title: "Events", url: "/events", icon: Calendar },
-  { title: "Calendar", url: "/calendar", icon: Calendar },
+const proDiscoveryItems = [
+  {
+    title: "Learning",
+    url: "/pro/learning",
+    icon: GraduationCap,
+    color: "#10B981",
+    tooltip: "Classes and workshops",
+  },
+  {
+    title: "Music",
+    url: "/pro/music",
+    icon: Music,
+    color: "#8B5CF6",
+    tooltip: "Tango music and DJs",
+  },
+  {
+    title: "Media",
+    url: "/pro/media",
+    icon: Camera,
+    color: "#EF4444",
+    tooltip: "Photos and videos",
+  },
+  {
+    title: "Performances",
+    url: "/pro/performances",
+    icon: Drama,
+    color: "#F59E0B",
+    tooltip: "Show performances",
+  },
+  {
+    title: "Venues",
+    url: "/pro/venues",
+    icon: Building2,
+    color: "#6B7280",
+    tooltip: "Dance venues",
+  },
+  {
+    title: "Organizers",
+    url: "/pro/organizers",
+    icon: Calendar,
+    color: "#3B82F6",
+    tooltip: "Event organizers",
+  },
+  {
+    title: "Stories",
+    url: "/pro/stories",
+    icon: PenLine,
+    color: "#14B8A6",
+    tooltip: "Blog and stories",
+  },
+  {
+    title: "Artists",
+    url: "/pro/artists",
+    icon: Palette,
+    color: "#EC4899",
+    tooltip: "Visual artists",
+  },
+  {
+    title: "Musicians",
+    url: "/pro/musicians",
+    icon: Piano,
+    color: "#A855F7",
+    tooltip: "Live musicians",
+  },
+  {
+    title: "Fashion",
+    url: "/pro/fashion",
+    icon: Shirt,
+    color: "#EC4899",
+    tooltip: "Tango fashion",
+  },
+  {
+    title: "Coaches",
+    url: "/pro/coaches",
+    icon: Target,
+    color: "#10B981",
+    tooltip: "Personal coaches",
+  },
+  {
+    title: "Vendors",
+    url: "/pro/vendors",
+    icon: Briefcase,
+    color: "#6366F1",
+    tooltip: "Tango vendors",
+  },
+  {
+    title: "Leaders",
+    url: "/pro/community",
+    icon: Globe,
+    color: "#40E0D0",
+    tooltip: "Community leaders",
+  },
+  {
+    title: "Dancers",
+    url: "/pro/dancers",
+    icon: Users,
+    color: "#1E90FF",
+    tooltip: "Find dance partners",
+  },
+  {
+    title: "Researchers",
+    url: "/pro/researchers",
+    icon: Search,
+    color: "#F97316",
+    tooltip: "Tango researchers",
+  },
+  {
+    title: "Historians",
+    url: "/pro/historians",
+    icon: BookOpen,
+    color: "#8B5CF6",
+    tooltip: "Tango history experts",
+  },
+  {
+    title: "Taxi Dancers",
+    url: "/pro/taxi-dancers",
+    icon: Handshake,
+    color: "#F97316",
+    tooltip: "Professional taxi dancers",
+  },
+  {
+    title: "Talent Match",
+    url: "/talent-match",
+    icon: Sparkles,
+    color: "#1E90FF",
+    tooltip: "Find the perfect match",
+  },
+  {
+    title: "Marketplace",
+    url: "/marketplace",
+    icon: ShoppingBag,
+    color: "#F59E0B",
+    tooltip: "Browse products and services",
+  },
+  {
+    title: "Housing",
+    url: "/housing",
+    icon: HousingIcon,
+    color: "#10B981",
+    tooltip: "Find tango-friendly accommodations",
+  },
 ];
 
-// Travel (4 items)
-const travelItems = [
-  { title: "Dashboard", url: "/travel", icon: Plane },
-  { title: "Plan Trip", url: "/travel/planner", icon: PlaneTakeoff },
-  { title: "My Trips", url: "/travel", icon: MapPin },
-  { title: "Event Travel", url: "/events", icon: Users },
+const servicesItems = [
+  {
+    title: "Life CEO",
+    url: "/life-ceo",
+    icon: Brain,
+    tooltip: "AI-powered life management",
+  },
 ];
 
-// Tango Resources (3 items)
-const tangoItems = [
-  { title: "Teachers", url: "/teachers", icon: GraduationCap },
-  { title: "Venues", url: "/venues", icon: MapPin },
-  { title: "Tutorials", url: "/tutorials", icon: PlayCircle },
-];
-
-// Resources (1 item)
-const resourcesItems = [
-  { title: "Community Map", url: "/community-world-map", icon: Globe },
-];
-
-// AI & Tools (3 items)
-const toolsItems = [
-  { title: "Life CEO", url: "/life-ceo", icon: Brain },
-  { title: "Mr Blue AI", url: "/mr-blue", icon: Bot },
-  { title: "Autonomous Dev", url: "/autonomous", icon: Brain },
-];
-
-// Marketplace (4 items)
-const marketplaceItems = [
-  { title: "Browse Products", url: "/marketplace", icon: ShoppingBag },
-  { title: "Cart", url: "/marketplace/cart", icon: ShoppingCart },
-  { title: "My Orders", url: "/marketplace/orders", icon: Package },
-  { title: "Seller Dashboard", url: "/marketplace/seller", icon: Store },
-];
-
-// Crowdfunding (3 items)
-const crowdfundingItems = [
-  { title: "Discover", url: "/crowdfunding", icon: Heart },
-  { title: "Create Campaign", url: "/crowdfunding/create", icon: PlusCircle },
-  { title: "My Campaigns", url: "/crowdfunding/my", icon: Folder },
-];
-
-// Social Media (4 items)
-const socialMediaItems = [
-  { title: "Dashboard", url: "/social", icon: Share2 },
-  { title: "Compose", url: "/social/compose", icon: PenSquare },
-  { title: "Connections", url: "/social/connections", icon: LinkIcon },
-  { title: "Campaigns", url: "/social/campaigns", icon: Megaphone },
-];
-
-// Financial (5 items)
-const financialItems = [
-  { title: "Dashboard", url: "/financial", icon: LayoutDashboard },
-  { title: "Portfolios", url: "/financial/portfolios", icon: Briefcase },
-  { title: "Accounts", url: "/financial/accounts", icon: Building2 },
-  { title: "Trading", url: "/financial/trading", icon: TrendingUp },
-  { title: "Insights", url: "/financial/insights", icon: Brain },
-];
-
-// Legal (4 items)
-const legalItems = [
-  { title: "Dashboard", url: "/legal", icon: FileText },
-  { title: "Documents", url: "/legal/documents", icon: Files },
-  { title: "Templates", url: "/legal/templates", icon: BookTemplate },
-  { title: "Pending Signatures", url: "/legal/documents?filter=pending", icon: PenTool },
-];
-
-// Personal (3 items)
-const personalItems = [
-  { title: "Saved Posts", url: "/saved-posts", icon: Bookmark },
-  { title: "Favorites", url: "/favorites", icon: Star },
-  { title: "Settings", url: "/settings", icon: Settings },
-];
-
-// Admin (3 items - role-based)
-const adminItems = [
-  { title: "Admin", url: "/admin", icon: Shield },
-  { title: "Platform", url: "/platform", icon: Server },
-  { title: "Visual Editor", url: "/admin/visual-editor", icon: Layout },
-];
-
-// ESA Framework (3 items - God/Super Admin only)
-const esaItems = [
-  { title: "ESA Framework", url: "/platform/esa", icon: Brain },
-  { title: "ESA Tasks", url: "/platform/esa/tasks", icon: ListChecks },
-  { title: "ESA Comms", url: "/platform/esa/communications", icon: Network },
-];
+const roleToProDiscoveryMap: Record<string, string> = {
+  teacher: "/pro/learning",
+  dj: "/pro/music",
+  photographer: "/pro/media",
+  videographer: "/pro/media",
+  performer: "/pro/performances",
+  "venue-owner": "/pro/venues",
+  organizer: "/pro/organizers",
+  blogger: "/pro/stories",
+  journalist: "/pro/stories",
+  artist: "/pro/artists",
+  musician: "/pro/musicians",
+  "fashion-designer": "/pro/fashion",
+  "clothing-designer": "/pro/fashion",
+  coach: "/pro/coaches",
+  vendor: "/pro/vendors",
+  business: "/pro/vendors",
+  "community-leader": "/pro/community",
+  "community-builder": "/pro/community",
+  "dancer-leader": "/pro/dancers",
+  "dancer-follower": "/pro/dancers",
+  researcher: "/pro/researchers",
+  historian: "/pro/historians",
+  "taxi-dancer": "/pro/taxi-dancers",
+  fan: "/pro/community",
+};
 
 function AppSidebarComponent() {
   const [location] = useLocation();
   const { user, profile, logout } = useAuth();
 
-  // Use profile data for display, fallback to user email
-  const displayName = profile?.name || user?.email?.split('@')[0] || "User";
-  const username = profile?.username || user?.email?.split('@')[0] || "user";
+  const displayName = profile?.name || user?.email?.split("@")[0] || "User";
+  const username = profile?.username || user?.email?.split("@")[0] || "user";
   const avatarUrl = profile?.profileImage;
+  // Read from user first (has authoritative data from API), fallback to profile
+  const userCity = (user as any)?.city || profile?.city;
+  const userTangoRoles = (user as any)?.tangoRoles || (profile as any)?.tangoRoles || [];
 
-  // Check if user is admin (role === 'admin' or 'god')
-  const isAdmin = user?.role === 'admin' || user?.role === 'god';
-  // Check if user is God/Super Admin (only 'god' role for ESA access)
-  const isGodAdmin = user?.role === 'god';
+  const myStuffItems = useMemo(() => {
+    const items: Array<{
+      title: string;
+      url: string;
+      icon: React.ElementType;
+      color?: string;
+      tooltip: string;
+    }> = [];
+
+    // Track added URLs to prevent duplicates
+    const addedUrls = new Set<string>();
+
+    if (userCity) {
+      items.push({
+        title: userCity,
+        url: `/groups/city/${encodeURIComponent(userCity)}`,
+        icon: MapPin,
+        color: "#40E0D0",
+        tooltip: `Your city: ${userCity}`,
+      });
+    }
+
+    userTangoRoles.forEach((roleValue) => {
+      const role = getRoleByValue(roleValue);
+      const normalizedValue = normalizeRole(roleValue);
+      const proUrl = roleToProDiscoveryMap[normalizedValue];
+
+      if (role && proUrl && !addedUrls.has(proUrl)) {
+        addedUrls.add(proUrl);
+        items.push({
+          title: role.label,
+          url: proUrl,
+          icon: role.icon,
+          color: role.color,
+          tooltip: `Your PRO role: ${role.label}`,
+        });
+      }
+    });
+
+    return items;
+  }, [userCity, userTangoRoles]);
+
+  const isActive = (url: string) =>
+    location === url || location.startsWith(url + "/");
+
+  const renderIconGridItem = (item: {
+    title: string;
+    url: string;
+    icon: React.ElementType;
+    color?: string;
+    tooltip: string;
+  }) => (
+    <Tooltip key={item.title}>
+      <TooltipTrigger asChild>
+        <Link to={item.url}>
+          <div
+            className={cn(
+              "flex items-center justify-center p-2 rounded-lg cursor-pointer transition-all duration-200",
+              "hover:bg-[#40E0D0]/20",
+              isActive(item.url) &&
+                "bg-gradient-to-r from-[#40E0D0]/30 to-transparent ring-1 ring-[#40E0D0]/50",
+            )}
+            data-testid={`sidebar-icon-${item.title.toLowerCase().replace(/\s+/g, "-")}`}
+          >
+            <item.icon
+              className="h-8 w-8"
+              style={{
+                color:
+                  item.color ||
+                  (isActive(item.url) ? "#40E0D0" : "#9CA3AF"),
+              }}
+            />
+          </div>
+        </Link>
+      </TooltipTrigger>
+      <TooltipContent
+        side="right"
+        className="bg-slate-900 text-white border-slate-700 z-50"
+      >
+        <p className="font-medium">{item.title}</p>
+        <p className="text-xs text-slate-400">{item.tooltip}</p>
+      </TooltipContent>
+    </Tooltip>
+  );
+
+  const renderSingleItem = (item: {
+    title: string;
+    url: string;
+    icon: React.ElementType;
+    tooltip: string;
+  }) => (
+    <Tooltip key={item.title}>
+      <TooltipTrigger asChild>
+        <SidebarMenuItem>
+          <SidebarMenuButton
+            asChild
+            data-active={isActive(item.url)}
+            data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, "-")}`}
+            className={cn(
+              "transition-all duration-200 rounded-lg",
+              isActive(item.url) &&
+                "bg-gradient-to-r from-[#40E0D0]/20 to-transparent border-l-2 border-[#40E0D0]",
+            )}
+            style={isActive(item.url) ? { color: "#40E0D0" } : undefined}
+          >
+            <Link to={item.url}>
+              <>
+                <item.icon className="h-5 w-5 transition-colors duration-200" />
+                <span className="font-medium">{item.title}</span>
+              </>
+            </Link>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      </TooltipTrigger>
+      <TooltipContent
+        side="right"
+        className="bg-slate-900 text-white border-slate-700 z-50"
+      >
+        <p className="text-xs text-slate-400">{item.tooltip}</p>
+      </TooltipContent>
+    </Tooltip>
+  );
+
+  const renderIconGrid = (
+    items: Array<{
+      title: string;
+      url: string;
+      icon: React.ElementType;
+      color?: string;
+      tooltip: string;
+    }>,
+  ) => (
+    <div className="grid grid-cols-3 gap-2 px-2">
+      {items.map(renderIconGridItem)}
+    </div>
+  );
 
   return (
-    <Sidebar 
-      className="border-r border-white/10"
+    <Sidebar
+      className="border-r border-white/10 z-50"
       style={{
-        background: 'linear-gradient(180deg, rgba(10, 24, 40, 0.95) 0%, rgba(30, 144, 255, 0.12) 100%)',
-        backdropFilter: 'blur(32px)',
+        background:
+          "linear-gradient(180deg, rgba(10, 24, 40, 0.95) 0%, rgba(30, 144, 255, 0.12) 100%)",
+        backdropFilter: "blur(32px)",
       }}
     >
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel 
+          <SidebarGroupLabel
             className="text-xl font-serif font-bold py-4"
             style={{
-              background: 'linear-gradient(135deg, #40E0D0 0%, #1E90FF 50%, #0047AB 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
+              background:
+                "linear-gradient(135deg, #40E0D0 0%, #1E90FF 50%, #0047AB 100%)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
             }}
           >
             Mundo Tango
           </SidebarGroupLabel>
         </SidebarGroup>
 
-        {/* Core Social Hub */}
         <SidebarGroup className="border-b border-white/10 pb-4">
-          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">Social</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">
+            Social
+          </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
-              {socialItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton 
-                    asChild 
-                    data-active={location === item.url} 
-                    data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
-                    className={cn(
-                      "transition-all duration-200 rounded-lg",
-                      location === item.url && "bg-gradient-to-r from-[#40E0D0]/20 to-transparent border-l-2 border-[#40E0D0]"
-                    )}
-                    style={location === item.url ? { color: '#40E0D0' } : undefined}
-                  >
-                    <Link to={item.url}>
-                      <>
-                        <item.icon className="h-5 w-5 transition-colors duration-200" />
-                        <span className="font-medium">{item.title}</span>
-                      </>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
+            {renderIconGrid(socialItems)}
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* Community & Connections */}
         <SidebarGroup className="border-b border-white/10 pb-4">
-          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">Community</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60 flex items-center gap-1">
+            <Star className="h-3 w-3" style={{ color: "#FFD700" }} />
+            My Stuff
+          </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
-              {communityItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton 
-                    asChild 
-                    data-active={location === item.url} 
-                    data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
-                    className={cn(
-                      "transition-all duration-200 rounded-lg",
-                      location === item.url && "bg-gradient-to-r from-[#40E0D0]/20 to-transparent border-l-2 border-[#40E0D0]"
-                    )}
-                    style={location === item.url ? { color: '#40E0D0' } : undefined}
-                  >
-                    <Link to={item.url}>
-                      <>
-                        <item.icon className="h-5 w-5 transition-colors duration-200" />
-                        <span className="font-medium">{item.title}</span>
-                      </>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
+            {myStuffItems.length > 0 ? (
+              renderIconGrid(myStuffItems)
+            ) : (
+              <div className="px-3 py-2 text-xs text-white/50">
+                <Link to="/profile" className="hover:text-[#40E0D0] transition-colors">
+                  Set your city in your profile
+                </Link>
+              </div>
+            )}
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* Events & Calendar */}
         <SidebarGroup className="border-b border-white/10 pb-4">
-          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">Events</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">
+            Community
+          </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
-              {eventsItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton 
-                    asChild 
-                    data-active={location === item.url} 
-                    data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
-                    className={cn(
-                      "transition-all duration-200 rounded-lg",
-                      location === item.url && "bg-gradient-to-r from-[#40E0D0]/20 to-transparent border-l-2 border-[#40E0D0]"
-                    )}
-                    style={location === item.url ? { color: '#40E0D0' } : undefined}
-                  >
-                    <Link to={item.url}>
-                      <>
-                        <item.icon className="h-5 w-5 transition-colors duration-200" />
-                        <span className="font-medium">{item.title}</span>
-                      </>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
+            {renderIconGrid(communityItems)}
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* Travel */}
         <SidebarGroup className="border-b border-white/10 pb-4">
-          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">Travel</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">
+            PRO Discovery
+          </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
-              {travelItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton 
-                    asChild 
-                    data-active={location === item.url} 
-                    data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
-                    className={cn(
-                      "transition-all duration-200 rounded-lg",
-                      location === item.url && "bg-gradient-to-r from-[#40E0D0]/20 to-transparent border-l-2 border-[#40E0D0]"
-                    )}
-                    style={location === item.url ? { color: '#40E0D0' } : undefined}
-                  >
-                    <Link to={item.url}>
-                      <>
-                        <item.icon className="h-5 w-5 transition-colors duration-200" />
-                        <span className="font-medium">{item.title}</span>
-                      </>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
+            {renderIconGrid(proDiscoveryItems)}
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* Tango Resources */}
         <SidebarGroup className="border-b border-white/10 pb-4">
-          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">Tango Resources</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">
+            Services
+          </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
-              {tangoItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton 
-                    asChild 
-                    data-active={location === item.url} 
-                    data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
-                    className={cn(
-                      "transition-all duration-200 rounded-lg",
-                      location === item.url && "bg-gradient-to-r from-[#40E0D0]/20 to-transparent border-l-2 border-[#40E0D0]"
-                    )}
-                    style={location === item.url ? { color: '#40E0D0' } : undefined}
-                  >
-                    <Link to={item.url}>
-                      <>
-                        <item.icon className="h-5 w-5 transition-colors duration-200" />
-                        <span className="font-medium">{item.title}</span>
-                      </>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
+            {renderIconGrid(servicesItems)}
           </SidebarGroupContent>
         </SidebarGroup>
-
-        {/* Resources */}
-        <SidebarGroup className="border-b border-white/10 pb-4">
-          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">Resources</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {resourcesItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton 
-                    asChild 
-                    data-active={location === item.url} 
-                    data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
-                    className={cn(
-                      "transition-all duration-200 rounded-lg",
-                      location === item.url && "bg-gradient-to-r from-[#40E0D0]/20 to-transparent border-l-2 border-[#40E0D0]"
-                    )}
-                    style={location === item.url ? { color: '#40E0D0' } : undefined}
-                  >
-                    <Link to={item.url}>
-                      <>
-                        <item.icon className="h-5 w-5 transition-colors duration-200" />
-                        <span className="font-medium">{item.title}</span>
-                      </>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        {/* AI & Tools */}
-        <SidebarGroup className="border-b border-white/10 pb-4">
-          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">AI & Tools</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {toolsItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton 
-                    asChild 
-                    data-active={location === item.url} 
-                    data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
-                    className={cn(
-                      "transition-all duration-200 rounded-lg",
-                      location === item.url && "bg-gradient-to-r from-[#40E0D0]/20 to-transparent border-l-2 border-[#40E0D0]"
-                    )}
-                    style={location === item.url ? { color: '#40E0D0' } : undefined}
-                  >
-                    <Link to={item.url}>
-                      <>
-                        <item.icon className="h-5 w-5 transition-colors duration-200" />
-                        <span className="font-medium">{item.title}</span>
-                      </>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        {/* Marketplace */}
-        <SidebarGroup className="border-b border-white/10 pb-4">
-          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">Marketplace</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {marketplaceItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton 
-                    asChild 
-                    data-active={location === item.url || location.startsWith(item.url + '/')} 
-                    data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
-                    className={cn(
-                      "transition-all duration-200 rounded-lg",
-                      (location === item.url || location.startsWith(item.url + '/')) && "bg-gradient-to-r from-[#40E0D0]/20 to-transparent border-l-2 border-[#40E0D0]"
-                    )}
-                    style={(location === item.url || location.startsWith(item.url + '/')) ? { color: '#40E0D0' } : undefined}
-                  >
-                    <Link to={item.url}>
-                      <>
-                        <item.icon className="h-5 w-5 transition-colors duration-200" />
-                        <span className="font-medium">{item.title}</span>
-                      </>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        {/* Crowdfunding */}
-        <SidebarGroup className="border-b border-white/10 pb-4">
-          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">Crowdfunding</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {crowdfundingItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton 
-                    asChild 
-                    data-active={location === item.url || location.startsWith('/crowdfunding')} 
-                    data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
-                    className={cn(
-                      "transition-all duration-200 rounded-lg",
-                      (location === item.url || (item.url === "/crowdfunding" && location.startsWith('/crowdfunding'))) && "bg-gradient-to-r from-[#40E0D0]/20 to-transparent border-l-2 border-[#40E0D0]"
-                    )}
-                    style={(location === item.url || (item.url === "/crowdfunding" && location.startsWith('/crowdfunding'))) ? { color: '#40E0D0' } : undefined}
-                  >
-                    <Link to={item.url}>
-                      <>
-                        <item.icon className="h-5 w-5 transition-colors duration-200" />
-                        <span className="font-medium">{item.title}</span>
-                      </>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        {/* Social Media */}
-        <SidebarGroup className="border-b border-white/10 pb-4">
-          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">Social Media</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {socialMediaItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton 
-                    asChild 
-                    data-active={location === item.url} 
-                    data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
-                    className={cn(
-                      "transition-all duration-200 rounded-lg",
-                      location === item.url && "bg-gradient-to-r from-[#40E0D0]/20 to-transparent border-l-2 border-[#40E0D0]"
-                    )}
-                    style={location === item.url ? { color: '#40E0D0' } : undefined}
-                  >
-                    <Link to={item.url}>
-                      <>
-                        <item.icon className="h-5 w-5 transition-colors duration-200" />
-                        <span className="font-medium">{item.title}</span>
-                      </>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        {/* Financial */}
-        <SidebarGroup className="border-b border-white/10 pb-4">
-          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">Financial</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {financialItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton 
-                    asChild 
-                    data-active={location === item.url || (item.url === "/financial" && location.startsWith("/financial"))} 
-                    data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
-                    className={cn(
-                      "transition-all duration-200 rounded-lg",
-                      (location === item.url || (item.url === "/financial" && location.startsWith("/financial") && !financialItems.slice(1).some(fi => location === fi.url))) && "bg-gradient-to-r from-[#40E0D0]/20 to-transparent border-l-2 border-[#40E0D0]"
-                    )}
-                    style={(location === item.url || (item.url === "/financial" && location.startsWith("/financial") && !financialItems.slice(1).some(fi => location === fi.url))) ? { color: '#40E0D0' } : undefined}
-                  >
-                    <Link to={item.url}>
-                      <>
-                        <item.icon className="h-5 w-5 transition-colors duration-200" />
-                        <span className="font-medium">{item.title}</span>
-                      </>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        {/* Legal */}
-        <SidebarGroup className="border-b border-white/10 pb-4">
-          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">Legal</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {legalItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton 
-                    asChild 
-                    data-active={location === item.url || (item.url === "/legal" && location.startsWith("/legal"))} 
-                    data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
-                    className={cn(
-                      "transition-all duration-200 rounded-lg",
-                      (location === item.url || (item.url === "/legal" && location.startsWith("/legal") && !legalItems.slice(1).some(li => location === li.url))) && "bg-gradient-to-r from-[#40E0D0]/20 to-transparent border-l-2 border-[#40E0D0]"
-                    )}
-                    style={(location === item.url || (item.url === "/legal" && location.startsWith("/legal") && !legalItems.slice(1).some(li => location === li.url))) ? { color: '#40E0D0' } : undefined}
-                  >
-                    <Link to={item.url}>
-                      <>
-                        <item.icon className="h-5 w-5 transition-colors duration-200" />
-                        <span className="font-medium">{item.title}</span>
-                      </>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        {/* Personal */}
-        <SidebarGroup className="border-b border-white/10 pb-4">
-          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">Personal</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {personalItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton 
-                    asChild 
-                    data-active={location === item.url} 
-                    data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
-                    className={cn(
-                      "transition-all duration-200 rounded-lg",
-                      location === item.url && "bg-gradient-to-r from-[#40E0D0]/20 to-transparent border-l-2 border-[#40E0D0]"
-                    )}
-                    style={location === item.url ? { color: '#40E0D0' } : undefined}
-                  >
-                    <Link to={item.url}>
-                      <>
-                        <item.icon className="h-5 w-5 transition-colors duration-200" />
-                        <span className="font-medium">{item.title}</span>
-                      </>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        {/* Admin (role-based visibility) */}
-        {isAdmin && (
-          <>
-            <SidebarSeparator className="bg-white/10" />
-            <SidebarGroup className="border-b border-white/10 pb-4">
-              <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">Admin</SidebarGroupLabel>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  {adminItems.map((item) => (
-                    <SidebarMenuItem key={item.title}>
-                      <SidebarMenuButton 
-                        asChild 
-                        data-active={location === item.url} 
-                        data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
-                        className={cn(
-                          "transition-all duration-200 rounded-lg",
-                          location === item.url && "bg-gradient-to-r from-[#40E0D0]/20 to-transparent border-l-2 border-[#40E0D0]"
-                        )}
-                        style={location === item.url ? { color: '#40E0D0' } : undefined}
-                      >
-                        <Link to={item.url}>
-                          <>
-                            <item.icon className="h-5 w-5 transition-colors duration-200" />
-                            <span className="font-medium">{item.title}</span>
-                          </>
-                        </Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  ))}
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </SidebarGroup>
-          </>
-        )}
-
-        {/* ESA Framework (God/Super Admin only) */}
-        {isGodAdmin && (
-          <SidebarGroup className="border-b border-white/10 pb-4">
-            <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">ESA Framework</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {esaItems.map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton 
-                      asChild 
-                      data-active={location === item.url} 
-                      data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
-                      className={cn(
-                        "transition-all duration-200 rounded-lg",
-                        location === item.url && "bg-gradient-to-r from-[#40E0D0]/20 to-transparent border-l-2 border-[#40E0D0]"
-                      )}
-                      style={location === item.url ? { color: '#40E0D0' } : undefined}
-                    >
-                      <Link to={item.url}>
-                        <>
-                          <item.icon className="h-5 w-5 transition-colors duration-200" />
-                          <span className="font-medium">{item.title}</span>
-                        </>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        )}
       </SidebarContent>
 
-      <SidebarFooter 
+      <SidebarFooter
         className="p-4 border-t border-white/10"
         style={{
-          background: 'linear-gradient(180deg, rgba(64, 224, 208, 0.08) 0%, rgba(30, 144, 255, 0.05) 100%)',
+          background:
+            "linear-gradient(180deg, rgba(64, 224, 208, 0.08) 0%, rgba(30, 144, 255, 0.05) 100%)",
         }}
       >
         <div className="flex items-center gap-3 mb-3">
           <Avatar className="h-10 w-10 ring-2 ring-[#40E0D0]/30">
             <AvatarImage src={avatarUrl || undefined} />
-            <AvatarFallback style={{ background: 'linear-gradient(135deg, #40E0D0 0%, #1E90FF 100%)', color: 'white' }}>
+            <AvatarFallback
+              style={{
+                background: "linear-gradient(135deg, #40E0D0 0%, #1E90FF 100%)",
+                color: "white",
+              }}
+            >
               {displayName?.charAt(0).toUpperCase() || "U"}
             </AvatarFallback>
           </Avatar>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold truncate" data-testid="text-username">
+            <p
+              className="text-sm font-semibold truncate"
+              data-testid="text-username"
+            >
               {displayName}
             </p>
-            <p className="text-xs truncate opacity-60">
-              @{username}
-            </p>
+            <p className="text-xs truncate opacity-60">@{username}</p>
           </div>
         </div>
         <Button
@@ -699,8 +546,8 @@ function AppSidebarComponent() {
           onClick={logout}
           className="w-full font-medium transition-all duration-200"
           style={{
-            borderColor: '#40E0D0',
-            color: '#40E0D0',
+            borderColor: "#40E0D0",
+            color: "#40E0D0",
           }}
           data-testid="button-logout"
         >
@@ -712,4 +559,4 @@ function AppSidebarComponent() {
   );
 }
 
-export const AppSidebar = memo(AppSidebarComponent);
+export const AppSidebar = AppSidebarComponent;

@@ -58,6 +58,13 @@ export function useRealtimeVoice({
     try {
       setError(null);
 
+      // Validate host before creating WebSocket
+      if (!window.location.host || window.location.host.includes('undefined')) {
+        console.warn('[RealtimeVoice] Skipping connection - invalid host:', window.location.host);
+        setError('Invalid host configuration');
+        return;
+      }
+
       // Build WebSocket URL
       const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
       const host = window.location.host;

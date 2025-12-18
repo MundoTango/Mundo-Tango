@@ -6,9 +6,10 @@ import { BarChart3, TrendingUp, Users, Clock, Globe, Smartphone, Sparkles } from
 import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
-import analyticsHeroImg from "@assets/stock_images/professional_office__7baceb73.jpg";
-import analyticsImg1 from "@assets/stock_images/professional_office__e56fc639.jpg";
-import analyticsImg2 from "@assets/stock_images/professional_office__ac13e3df.jpg";
+import { Link } from "wouter";
+import analyticsHeroImg from "@assets/stock_images/tango_dancers_in_ele_e6cc8a3a.jpg";
+import analyticsImg1 from "@assets/stock_images/milonga_dance_hall,__36c486f2.jpg";
+import analyticsImg2 from "@assets/stock_images/buenos_aires_argenti_9805cd85.jpg";
 
 export default function AnalyticsAgentPage() {
   const metrics = [
@@ -71,6 +72,13 @@ export default function AnalyticsAgentPage() {
       </div>
 
       <div className="max-w-7xl mx-auto px-6 py-16">
+        {/* Preview Notice */}
+        <div className="flex justify-center mb-8">
+          <Badge variant="outline" className="text-muted-foreground border-muted-foreground/30">
+            Preview Data - Connect your analytics to see real metrics
+          </Badge>
+        </div>
+
         {/* Metrics Grid */}
         <div className="grid gap-8 md:grid-cols-4 mb-16">
           {metrics.map((metric, idx) => (
@@ -142,10 +150,12 @@ export default function AnalyticsAgentPage() {
                     </div>
                   </div>
                 ))}
-                <Button className="w-full gap-2" variant="outline" data-testid="button-view-all-pages">
-                  <BarChart3 className="w-4 h-4" />
-                  View All Pages
-                </Button>
+                <Link href="/admin/analytics">
+                  <Button className="w-full gap-2" variant="outline" data-testid="button-view-all-pages">
+                    <BarChart3 className="w-4 h-4" />
+                    View All Pages
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
 
@@ -185,10 +195,12 @@ export default function AnalyticsAgentPage() {
                     </div>
                   </div>
                 ))}
-                <Button className="w-full mt-4 gap-2" data-testid="button-traffic-report">
-                  <Sparkles className="w-4 h-4" />
-                  Generate Traffic Report
-                </Button>
+                <Link href="/admin/analytics/report">
+                  <Button className="w-full mt-4 gap-2" data-testid="button-traffic-report">
+                    <Sparkles className="w-4 h-4" />
+                    Generate Traffic Report
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
           </div>

@@ -1,0 +1,109 @@
+use mb.md: That is all great.The Events all need to use a unified deisgn for the landing page and events filters. Event Filter, right now it opens a big window, this is distracting for the user so it needs to be more compact and you should look at our other filters for inspiration. !
+Just like this work you've preppared, there are a few other things that are documented and some worked on that we again need to surface and test the UI. so do the same research that you did to your work already to understand what you had missed for the ui on the following.
+Housing. I'm not seeing any UI for it.
+	•	Side bar: no Housing marketing place icon with connection to our Pro hsouing hosts
+	•	Landing page with filters tied to the property details page, Filter for firend closeness should be inlcuded, general metrics for housing, --order of the page: Metircs, map with pins that are connected to friendship closeness so we can know which of our friends we can stay with, filters tied to property details, then airbnb's log out
+	•	Event details: standard design, of course rbac for the owner and assistance, friendship clossness options to host.
+	•	City Groups: should be airbnb design zoomed in for that city
+	•	host wizard -Guest both for general preference for housing and travel with to better match guest with host (host should also do this) and requestin gthe resvartion wizards -host managment: you know.
+
+
+
+City gropus -> City Hub - nothing is there! This should be a map zoomed in to that city, each pin is an event, reommendations from the PostCreator, and housing. like airbnd design it should have a filterbox with all of the filters. Add metrics to the top.
+
+
+
+Pro Discovery Icons: since each icon is tied to the live version of what our pros are creating (organizers -> Events), then they should have a button to click in to enter their Pro groups. So on the landing it is button "Become a x" and if the user is a memeber of the group then a button to "See my x".
+This then means, that since City groups are tied to the Community page, Pro groups are now tied to the Pro Discovery icons, and My stuff shows the user's groups, this means we don't need the Groups landing page or icon in the side bar. The only thing would be "Create a community" so lets add this to within City Groups, add a "Local Gropus" tab with the creat button all those groups have rbac. For Pros do the same. Right now users can't make unassociated groups but is a feature flag and God level admin can make groups.
+
+
+
+Talent match. -no sidebar or top bar! major violation
+	•	landing: --looks great, some how say that we don't believe in the paper resume, we want to know what you have really done and love, with each resume you have to shorten your previeous work loads which means all of the work you have done is forgotten. so find as many resumes as you can and upload them for a better experiance. --no need for text resume --"or share.." remove --linkedin andgithub should be scrapped if they provide -- Iget an error when i submit --
+
+
+
+Pro group detials page:
+	•	names should just be "teacher" "organizer", we all know we are in tango Discussion -should have follow the Memories feed design for postcreator and memories page. Make sure we then also have a unifed fitler for all Memories feeds
+	•	no need for housing, hub, members, or city guide, we have talked about sub groups already
+
+
+
+memoreis feed: if a user is a friend show the "see Friendship" this has been documented so much. use one of our test users and have it send me a firend requests and have another already be my friend.
+
+
+
+Send Friend Request form
+	•	Where did we dance - this is supposed to be an auto fill that searches recent events the two users have gone to, cities they live in, and then go to standard location search using our unified deisgn
+	•	you have Personal message and Share the memroy, these need detail so the user doesnt get confuesd. -could not submit
+
+
+
+recommendations make sure htat all of this is wired up
+
+
+
+Leader board make sure the data is wired correctly,
+
+
+
+messages this should have the top bar, no sidebar is ok. What do you need to do to get all of thes services wired up? We need to oauth or what?, n8n?
+__________- Mr Blue bottom right circle RBAC for users and site should be updated when I accessed on a incognito i could still see the page location and active agents.
+
+
+
+the doc i uploaded is a synthisys of docs/handoff/Comet/The Audits.md. do an audit of what you still need to do. in the same way I need you to do the same for the other files in docs/handoff/Comet by reviewing them and identifing what still needs to be done.
+
+
+
+FINAL THOUGHT once you are done with all of this, the site should be basically done so now you can run the 60+ languages to be translated.
+Again all of this has been documented extensivly and lots of it has been worked on so we are nearly there, this is mostly just the final UI and routes check .
+any questions before we start building, think critically?
+                        use mb.md: 1)leverage all the mb.md's methodologies to have replit ai and Mr blue chat about #3 to do the research, planning, building, testing including e2e and playwright, fixing. orchestrate similtaneous work with mb.md sub agents
+2: what is your mb.md plan for the following prompt #3?
+3: Great job!
+
+If a user has created a travel plan, the city groups are watching for visitors so on the city group: 
+-  Hero section remove "city"
+-memory feed like the upcoming events on memoreis feed add "Upcoming Visitors" shows 10 users based on friendship closeness and "see all x". tabs for "this week", "this month", "1+ months". The users will have their profile photo, tango role icons, dates, and their statuses planning or confirmed
+- Vistors landing page: metrics, grid of all upcoming users with tango role icons, dates, and status with fitlers for firendship closeness and Pro role
+_________
+
+User profile - PRO- PRO Dashboard
+-  the form:
+-- is a boring desing, since we have our PRO icons with colors, those colors should dictate what the form's color scheme is. 
+-- remove role, when using the "add" button we are already clicking on the form for that role. 
+--look at our other forms for design inspiration
+-- the forms are all very basic
+--think of it more hollistically, the PRO Dashboard form, the data from the PRO dashboard, the sidebar Pro icons and where they go, and the PRO groups should all be interconnected both data, visusally, and routing.  in our documenation we have more data as to what each pro's work and environment should look like. find and reasearch recursively. 
+- this means you should exapnd what should be on the dashboard for each PRO
+
+________________
+
+Admin Center
+- is all data actually tied to what it is supposed to be tied to? It looks like static or stubs. 
+- many pages don’t work at all can we combine the pages in a smarter way? this page is also RBAC dependent so God level has more powers here than standard admin. So as god level I need analytics of everything at a high level and then be able to drill into each analytic or IC page you have already made. These pages also don’t need the full editorial treatment, it is an admin center so right to the point
+- it has a different top menu bar, design violation
+- side bar, is great but can each section of a dashboard with the over view of all pages?
+________________
+admin/ads Looks great!
+	•	The form, always the forms can you standardize the designs and fields of the all forms?
+	◦	I’m not a marketer or ads person nor are most tango people so make it easier
+	◦	add type and placement: can’t an add be in any of these places? it’s just a matter of different images right?
+	◦	locations, are great but again use our standardized location picker
+	◦	new field something “how often seen” - I don’t want users to be overwhelmed so maybe not on every login or every page
+	◦	new field our user data is now extensive how can we offer better routing for better placement? one example: I’m a organizer and I want to target users who are in/coming to/or based on events usually come to Europe during May, looking for dancers who dance both roles, and are teachers with open calendars. We have this awesome wealth of knowledge and we can do so much with it everywhere!
+	◦	Create button didn’t work
+	•	final product is you need to make 2 ads, one for volunteers to use talent match and the other for our financial support. This should in all memory feed sidebars. 
+
+__________
+
+Mr Blue tours 
+He now that we are done with the platform you need to prepare his tours. 
+So starting from when the user completes registration, what tours will they have? 
+________________
+final testing
+i expect to see fresh playright entered posts, events, groups, chats with mr blue, friend requests, trave, reactions, coments, .... any user action should be tested. 
+
+do you have questions about any ofo the work?
+

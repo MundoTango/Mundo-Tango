@@ -20,6 +20,7 @@ export interface Language {
 
 export const ALL_LANGUAGES: Language[] = [
   { code: 'en', name: 'English', nativeName: 'English', flag: '🇬🇧' },
+  { code: 'es-AR', name: 'Argentine Spanish (Rioplatense)', nativeName: 'Español Rioplatense', flag: '🇦🇷' },
   { code: 'es', name: 'Spanish', nativeName: 'Español', flag: '🇪🇸' },
   { code: 'pt', name: 'Portuguese', nativeName: 'Português', flag: '🇵🇹' },
   { code: 'fr', name: 'French', nativeName: 'Français', flag: '🇫🇷' },
@@ -90,7 +91,18 @@ export const ALL_LANGUAGES: Language[] = [
   { code: 'mn', name: 'Mongolian', nativeName: 'Монгол', flag: '🇲🇳' },
 ];
 
-export const TOP_10_LANGUAGES = ALL_LANGUAGES.slice(0, 10);
+export const TOP_10_LANGUAGES = [
+  ALL_LANGUAGES[0],  // English (🇬🇧)
+  ALL_LANGUAGES[1],  // Argentine Spanish (🇦🇷)
+  ALL_LANGUAGES[3],  // Portuguese (🇵🇹)
+  ALL_LANGUAGES[4],  // French (🇫🇷)
+  ALL_LANGUAGES[5],  // German (🇩🇪)
+  ALL_LANGUAGES[6],  // Italian (🇮🇹)
+  ALL_LANGUAGES[7],  // Chinese (🇨🇳)
+  ALL_LANGUAGES[8],  // Japanese (🇯🇵)
+  ALL_LANGUAGES[9],  // Korean (🇰🇷)
+  ALL_LANGUAGES[10], // Russian (🇷🇺)
+];
 
 export function getLanguageByCode(code: string): Language | undefined {
   return ALL_LANGUAGES.find(lang => lang.code === code);

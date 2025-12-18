@@ -1,151 +1,428 @@
-import { useQuery } from "@tanstack/react-query";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { useState, useMemo } from "react";
+import { Link } from "wouter";
+import { useAuth } from "@/contexts/AuthContext";
+import { useEventRSVPs } from "@/hooks/useEvents";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Calendar, MapPin, Ticket } from "lucide-react";
-import { format } from "date-fns";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Calendar as CalendarIcon, MapPin, Search, Users, ChevronRight, SlidersHorizontal, Languages } from "lucide-react";
+import { getLanguageByCode } from "@/components/input/UnifiedLanguagePicker";
+import { safeDateFormat } from "@/lib/safeDateFormat";
+import { useQuery } from "@tanstack/react-query";
+import type { RSVP } from "@shared/supabase-types";
+import { motion } from "framer-motion";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { UnifiedRSVPButton, type RSVPStatus } from "@/components/unified/UnifiedRSVPButton";
 
-interface Event {
-  event: {
-    id: number;
-    title: string;
-    description?: string;
-    startDate: string;
-    endDate: string;
-    venue?: string;
-    city?: string;
-    eventType: string;
-    price?: string;
-    imageUrl?: string;
-    status: string;
-  };
-  organizer: {
-    id: number;
-    name: string;
-  };
-  _count: number;
+const CATEGORIES = ["All", "Milonga", "Practica", "Class", "Workshop", "Festival", "Marathon", "Encuentro", "Performance", "Social", "Online"];
+
+interface EventData {
+  id: number;
+  title: string;
+  description?: string;
+  startDate: string;
+  endDate?: string;
+  venue?: string;
+  city?: string;
+  category?: string;
+  eventType?: string;
+  imageUrl?: string;
+  hostLanguages?: string[];
+  maxAttendees?: number;
+  price?: number;
 }
 
-export default function ProfileTabEvents() {
-  const { data: events = [], isLoading } = useQuery<Event[]>({
-    queryKey: ["/api/events"],
-    queryFn: () => fetch("/api/events").then(r => r.json()),
+interface EventItem {
+  event?: EventData;
+  _count?: number;
+  [key: string]: any;
+}
+
+function EventCard({ event, index = 0 }: { event: any; index?: number }) {
+  const { user } = useAuth();
+  
+  const eventData = event.event || event;
+  const attendeeCount = event._count || 0;
+  
+  const { data: eventRsvps = [] } = useEventRSVPs(eventData.id);
+
+  // API returns [{rsvp: {...}, user: {...}}, ...] - the RSVP data is nested
+  const userRsvp = eventRsvps?.find((r: any) => {
+    const rsvpData = r.rsvp || r;
+    return String(rsvpData.userId || rsvpData.user_id) === String(user?.id);
+  });
+  const rsvpStatus = (userRsvp?.rsvp?.status || userRsvp?.status || null) as RSVPStatus;
+  const isFull = eventData.maxAttendees && attendeeCount >= eventData.maxAttendees;
+
+  const formatEventDateTime = (dateString: string): string => {
+    return safeDateFormat(dateString, "MMM dd, yyyy", "Date TBD");
+  };
+
+  const formatEventTime = (dateString: string): string => {
+    return safeDateFormat(dateString, "h:mm a", "Time TBD");
+  };
+  
+  const imageUrl = eventData.imageUrl || "https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?w=800&auto=format&fit=crop";
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{ duration: 0.6, delay: index * 0.1 }}
+    >
+      <Card 
+        className="overflow-hidden hover-elevate" 
+        data-testid={`card-event-${eventData.id}`}
+      >
+        <div className="relative aspect-[16/9] overflow-hidden">
+          <motion.img
+            src={imageUrl}
+            alt={eventData.title}
+            className="w-full h-full object-cover"
+            whileHover={{ scale: 1.05 }}
+            transition={{ duration: 0.6 }}
+            data-testid={`img-event-${eventData.id}`}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+          <div className="absolute top-4 right-4 flex gap-2">
+            {(eventData.category || eventData.eventType) && (
+              <Badge className="bg-white/10 text-white border-white/30 backdrop-blur-sm" data-testid={`badge-category-${eventData.id}`}>
+                {eventData.category || eventData.eventType}
+              </Badge>
+            )}
+            {isFull && (
+              <Badge className="bg-red-500 text-white" data-testid={`badge-full-${eventData.id}`}>
+                Full
+              </Badge>
+            )}
+          </div>
+          <div className="absolute bottom-4 left-4 right-4 text-white">
+            <h3 
+              className="text-2xl font-serif font-bold line-clamp-2 mb-2" 
+              data-testid={`text-event-title-${eventData.id}`}
+            >
+              {eventData.title || "Untitled Event"}
+            </h3>
+          </div>
+        </div>
+
+        <CardContent className="p-6 space-y-3">
+          {eventData.description && (
+            <p className="text-sm text-muted-foreground line-clamp-2">
+              {eventData.description}
+            </p>
+          )}
+          
+          <div className="space-y-2 text-sm">
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <CalendarIcon className="h-4 w-4" />
+              <span data-testid={`text-event-date-${eventData.id}`}>
+                {formatEventDateTime(eventData.startDate)} • {formatEventTime(eventData.startDate)}
+              </span>
+            </div>
+
+            {(eventData.venue || eventData.city) && (
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <MapPin className="h-4 w-4" />
+                <span className="line-clamp-1" data-testid={`text-event-location-${eventData.id}`}>
+                  {eventData.venue || eventData.city}
+                </span>
+              </div>
+            )}
+
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <Users className="h-4 w-4" />
+              <span data-testid={`text-rsvp-count-${eventData.id}`}>
+                {attendeeCount} {attendeeCount === 1 ? 'person' : 'people'}
+                {eventData.maxAttendees && ` / ${eventData.maxAttendees}`}
+              </span>
+            </div>
+
+            {eventData.hostLanguages && eventData.hostLanguages.length > 0 && (
+              <div className="flex items-center gap-2 text-sm flex-wrap" data-testid={`languages-${eventData.id}`}>
+                <Languages className="h-4 w-4 flex-shrink-0 text-primary" />
+                <div className="flex flex-wrap gap-1">
+                  {eventData.hostLanguages.slice(0, 3).map((code: string) => {
+                    const lang = getLanguageByCode(code);
+                    return (
+                      <Badge 
+                        key={code} 
+                        variant="secondary" 
+                        className="text-xs gap-1"
+                        data-testid={`badge-language-${eventData.id}-${code}`}
+                      >
+                        {lang?.flag} {lang?.name || code}
+                      </Badge>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+        </CardContent>
+
+        <CardFooter className="flex gap-2 pt-0 px-6 pb-6">
+          <UnifiedRSVPButton
+            eventId={eventData.id}
+            currentStatus={rsvpStatus}
+            variant="expanded"
+            className="flex-1"
+            data-testid={`button-rsvp-unified-${eventData.id}`}
+          />
+
+          <Link href={`/events/${eventData.id}`}>
+            <Button variant="outline" className="gap-2" data-testid={`button-view-event-${eventData.id}`}>
+              Details
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </Link>
+        </CardFooter>
+      </Card>
+    </motion.div>
+  );
+}
+
+interface ProfileTabEventsProps {
+  profileId?: number;
+  isOwnProfile?: boolean;
+  isPublicView?: boolean;
+}
+
+export default function ProfileTabEvents({
+  profileId,
+  isOwnProfile = false,
+  isPublicView = false,
+}: ProfileTabEventsProps = {}) {
+  const { user } = useAuth();
+  const canEdit = isOwnProfile && !isPublicView;
+  const [activeTab, setActiveTab] = useState("my-events");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [eventType, setEventType] = useState("all");
+  const [filtersOpen, setFiltersOpen] = useState(false);
+
+  // Fetch my events (RSVP'd events)
+  const { data: myEventsData = [], isLoading: myEventsLoading } = useQuery({
+    queryKey: ["/api/users/me/events", user?.id],
+    queryFn: async () => {
+      if (!user) return [];
+      const res = await fetch(`/api/users/${user.id}/events?status=going,maybe,interested`);
+      if (!res.ok) return [];
+      return res.json();
+    },
+    enabled: !!user && activeTab === "my-events",
   });
 
-  if (isLoading) {
-    return (
-      <div className="space-y-4">
-        {[...Array(3)].map((_, i) => (
-          <div key={i} className="h-32 bg-muted rounded-lg animate-pulse" />
-        ))}
-      </div>
-    );
+  // Fetch upcoming events in user's city/followed cities
+  const { data: upcomingEventsData = [], isLoading: upcomingEventsLoading } = useQuery({
+    queryKey: ["/api/events/nearby", user?.city, user?.country],
+    queryFn: async () => {
+      if (!user) return [];
+      const params = new URLSearchParams();
+      if (user.city) params.append("city", user.city);
+      if (user.country) params.append("country", user.country);
+      params.append("upcoming", "true");
+      const res = await fetch(`/api/events?${params.toString()}`);
+      if (!res.ok) return [];
+      const data = await res.json();
+      return data.events || data || [];
+    },
+    enabled: !!user && activeTab === "upcoming",
+  });
+
+  // Fetch past events (RSVP'd events that have passed)
+  const { data: pastEventsData = [], isLoading: pastEventsLoading } = useQuery({
+    queryKey: ["/api/users/me/events/past", user?.id],
+    queryFn: async () => {
+      if (!user) return [];
+      const res = await fetch(`/api/users/${user.id}/events?status=going,maybe,interested&past=true`);
+      if (!res.ok) return [];
+      return res.json();
+    },
+    enabled: !!user && activeTab === "past",
+  });
+
+  let displayedEvents = [];
+  let isLoading = false;
+  
+  if (activeTab === "my-events") {
+    displayedEvents = myEventsData;
+    isLoading = myEventsLoading;
+  } else if (activeTab === "upcoming") {
+    displayedEvents = upcomingEventsData;
+    isLoading = upcomingEventsLoading;
+  } else if (activeTab === "past") {
+    displayedEvents = pastEventsData;
+    isLoading = pastEventsLoading;
   }
 
-  if (events.length === 0) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Calendar className="w-5 h-5" />
-            Events
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground">
-            No events available.
-          </p>
-        </CardContent>
-      </Card>
-    );
-  }
+  // Filter events
+  const filteredEvents = useMemo(() => {
+    return displayedEvents.filter((event: EventItem) => {
+      const eventData = event.event || event;
+      const matchesSearch = !searchQuery || 
+        (eventData.title?.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (eventData.description?.toLowerCase().includes(searchQuery.toLowerCase()));
+      
+      const matchesType = eventType === "all" || 
+        (eventData.category === eventType) ||
+        (eventData.eventType === eventType);
+      
+      return matchesSearch && matchesType;
+    });
+  }, [displayedEvents, searchQuery, eventType]);
+
+  const isLoadingState = isLoading;
 
   return (
     <div className="space-y-6">
-      <h2 className="text-3xl font-bold">Events ({events.length})</h2>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {events.map((item) => {
-          const event = item.event;
-          const startDate = new Date(event.startDate);
-          
-          return (
-            <Card 
-              key={event.id} 
-              className="overflow-hidden hover-elevate transition-all"
-              data-testid={`event-card-${event.id}`}
-            >
-              {event.imageUrl && (
-                <div className="w-full h-48 overflow-hidden bg-muted">
-                  <img
-                    src={event.imageUrl}
-                    alt={event.title}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              )}
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between gap-2">
-                  <div className="flex-1">
-                    <CardTitle className="line-clamp-2">{event.title}</CardTitle>
-                    <div className="flex items-center gap-2 mt-2">
-                      <Badge variant="secondary" className="text-xs">
-                        {event.eventType}
-                      </Badge>
-                      {event.price && (
-                        <Badge variant="outline" className="text-xs">
-                          ${event.price}
-                        </Badge>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </CardHeader>
-              
-              <CardContent className="space-y-3">
-                {event.description && (
-                  <p className="text-sm text-muted-foreground line-clamp-2">
-                    {event.description}
-                  </p>
-                )}
-                
-                <div className="space-y-2 text-sm">
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Calendar className="w-4 h-4" />
-                    {format(startDate, "MMM d, yyyy")} at {format(startDate, "h:mm a")}
-                  </div>
-                  
-                  {event.venue && (
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                      <MapPin className="w-4 h-4" />
-                      <span className="line-clamp-1">
-                        {event.venue}
-                        {event.city ? `, ${event.city}` : ""}
-                      </span>
-                    </div>
-                  )}
-                  
-                  {item._count > 0 && (
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                      <Ticket className="w-4 h-4" />
-                      {item._count} attendee{item._count !== 1 ? "s" : ""}
-                    </div>
-                  )}
-                </div>
-
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="w-full"
-                  data-testid={`button-view-event-${event.id}`}
-                >
-                  View Event
-                </Button>
-              </CardContent>
-            </Card>
-          );
-        })}
+      <div className="flex items-center justify-between">
+        <h2 className="text-3xl font-bold">Events ({filteredEvents.length})</h2>
       </div>
+
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="my-events">My Events</TabsTrigger>
+          <TabsTrigger value="upcoming">Nearby & Following</TabsTrigger>
+          <TabsTrigger value="past">Past Events</TabsTrigger>
+        </TabsList>
+
+        <div className="mt-6 space-y-4">
+          {/* Search & Filters */}
+          <div className="flex flex-col sm:flex-row gap-3 items-end">
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search events..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10"
+                data-testid="input-search-events"
+              />
+            </div>
+
+            <Sheet open={filtersOpen} onOpenChange={setFiltersOpen}>
+              <SheetTrigger asChild>
+                <Button variant="outline" className="gap-2 w-full sm:w-auto" data-testid="button-filters">
+                  <SlidersHorizontal className="h-4 w-4" />
+                  Filters
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-full sm:w-96 overflow-y-auto">
+                <SheetHeader>
+                  <SheetTitle>Filter Events</SheetTitle>
+                  <SheetDescription>
+                    Refine your event search
+                  </SheetDescription>
+                </SheetHeader>
+                <div className="mt-6 space-y-4">
+                  <div>
+                    <label className="text-sm font-medium">Event Type</label>
+                    <Select value={eventType} onValueChange={setEventType}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select event type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {CATEGORIES.map((cat) => (
+                          <SelectItem key={cat} value={cat.toLowerCase()} data-testid={`option-${cat.toLowerCase()}`}>
+                            {cat}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </SheetContent>
+            </Sheet>
+          </div>
+
+          {/* Events Grid */}
+          <TabsContent value="my-events" className="mt-6">
+            {isLoadingState ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {[...Array(4)].map((_, i) => (
+                  <div key={i} className="h-96 bg-muted rounded-lg animate-pulse" />
+                ))}
+              </div>
+            ) : filteredEvents.length === 0 ? (
+              <Card>
+                <CardHeader>
+                  <h3 className="text-lg font-semibold">No events yet</h3>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">
+                    RSVP to events on the Upcoming & Following tab to see them here.
+                  </p>
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {filteredEvents.map((event: EventItem, index: number) => (
+                  <EventCard key={(event.event?.id || event.id) as number} event={event} index={index} />
+                ))}
+              </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="upcoming" className="mt-6">
+            {isLoadingState ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {[...Array(6)].map((_, i) => (
+                  <div key={i} className="h-96 bg-muted rounded-lg animate-pulse" />
+                ))}
+              </div>
+            ) : filteredEvents.length === 0 ? (
+              <Card>
+                <CardHeader>
+                  <h3 className="text-lg font-semibold">No upcoming events</h3>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">
+                    {user?.city ? `No events found in ${user.city}. Check back soon!` : "Add your city to see nearby events."}
+                  </p>
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {filteredEvents.map((event: EventItem, index: number) => (
+                  <EventCard key={(event.event?.id || event.id) as number} event={event} index={index} />
+                ))}
+              </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="past" className="mt-6">
+            {isLoadingState ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {[...Array(4)].map((_, i) => (
+                  <div key={i} className="h-96 bg-muted rounded-lg animate-pulse" />
+                ))}
+              </div>
+            ) : filteredEvents.length === 0 ? (
+              <Card>
+                <CardHeader>
+                  <h3 className="text-lg font-semibold">No past events</h3>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">
+                    You haven't attended any events yet. RSVP to upcoming events to build your history!
+                  </p>
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {filteredEvents.map((event: EventItem, index: number) => (
+                  <EventCard key={(event.event?.id || event.id) as number} event={event} index={index} />
+                ))}
+              </div>
+            )}
+          </TabsContent>
+        </div>
+      </Tabs>
     </div>
   );
 }

@@ -2,9 +2,12 @@ import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Heart, MessageCircle, Trash2, Loader2 } from "lucide-react";
+import { MessageCircle, Trash2, Loader2 } from "lucide-react";
 import { safeDateDistance } from "@/lib/safeDateFormat";
 import { UserRoleBadges } from "@/components/UserRoleBadges";
+import { ReactionSelector } from "@/components/ui/ReactionSelector";
+import { useAuth } from "@/contexts/AuthContext";
+import { Link } from "wouter";
 
 export interface CommentData {
   id: number;
@@ -12,6 +15,8 @@ export interface CommentData {
   content: string;
   likes?: number;
   isLiked?: boolean;
+  currentReaction?: string;
+  reactions?: Record<string, number>;
   parentId?: number | null;
   createdAt: string;
   user: {
@@ -26,6 +31,7 @@ export interface CommentData {
 
 interface CommentItemProps {
   comment: CommentData;
+  postId: number;
   currentUserId?: number;
   depth?: number;
   onLike?: (commentId: number) => void;
@@ -37,12 +43,14 @@ const MAX_DEPTH = 3;
 
 export const CommentItem = ({
   comment,
+  postId,
   currentUserId,
   depth = 0,
   onLike,
   onReply,
   onDelete,
 }: CommentItemProps) => {
+  const { user } = useAuth();
   const [showReplyInput, setShowReplyInput] = useState(false);
   const [replyContent, setReplyContent] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -50,9 +58,11 @@ export const CommentItem = ({
   const isAuthor = currentUserId === comment.userId;
   const canReply = depth < MAX_DEPTH;
 
-  const handleLike = () => {
-    onLike?.(comment.id);
-  };
+  const displayName = comment.user?.name || comment.user?.username || `User #${comment.userId}`;
+  const userInitial = comment.user?.name?.charAt(0) || comment.user?.username?.charAt(0) || "?";
+  const profileLink = comment.user?.username 
+    ? `/profile/${comment.user.username}` 
+    : `/profile/${comment.userId}`;
 
   const handleReply = async () => {
     if (!replyContent.trim()) return;
@@ -75,6 +85,9 @@ export const CommentItem = ({
     }
   };
 
+  const currentReaction = comment.currentReaction || (comment.isLiked ? 'love' : undefined);
+  const reactions = comment.reactions || { love: comment.likes || 0 };
+
   return (
     <div
       className="flex gap-3"
@@ -83,82 +96,93 @@ export const CommentItem = ({
       }}
       data-testid={`comment-item-${comment.id}`}
     >
-      <Avatar className="h-8 w-8 flex-shrink-0">
-        <AvatarImage src={comment.user?.profileImage || ""} />
-        <AvatarFallback style={{ background: 'linear-gradient(135deg, #40E0D0, #1E90FF)' }}>
-          {comment.user?.name?.charAt(0) || comment.user?.username?.charAt(0) || "U"}
-        </AvatarFallback>
-      </Avatar>
+      <Link href={profileLink} data-testid={`link-avatar-${comment.id}`}>
+        <Avatar className="h-8 w-8 flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity">
+          <AvatarImage src={comment.user?.profileImage || ""} alt={displayName} />
+          <AvatarFallback className="bg-gradient-to-br from-primary/80 to-primary text-primary-foreground text-xs font-medium">
+            {userInitial}
+          </AvatarFallback>
+        </Avatar>
+      </Link>
 
       <div className="flex-1 min-w-0">
         <div 
-          className="p-3 rounded-lg"
-          style={{
-            background: depth % 2 === 0 
-              ? 'linear-gradient(135deg, rgba(64, 224, 208, 0.08), rgba(30, 144, 255, 0.05))'
-              : 'linear-gradient(135deg, rgba(64, 224, 208, 0.05), rgba(30, 144, 255, 0.03))',
-          }}
+          className="p-3 rounded-lg bg-muted/50 dark:bg-muted/30"
+          data-testid={`comment-bubble-${comment.id}`}
         >
-          <div className="flex items-center gap-2 mb-1">
-            <span className="font-semibold text-sm">
-              {comment.user?.name || comment.user?.username || "Unknown User"}
-            </span>
+          <div className="flex items-center gap-2 mb-1 flex-wrap">
+            <Link 
+              href={profileLink}
+              className="font-semibold text-sm hover:underline cursor-pointer"
+              data-testid={`link-username-${comment.id}`}
+            >
+              {displayName}
+            </Link>
             {comment.user?.tangoRoles && comment.user.tangoRoles.length > 0 && (
-              <UserRoleBadges roles={comment.user.tangoRoles} size="xs" maxDisplay={2} />
+              <UserRoleBadges 
+                roles={comment.user.tangoRoles} 
+                size="xs" 
+                maxDisplay={2} 
+                data-testid={`badges-roles-${comment.id}`}
+              />
             )}
-            <span className="text-xs text-muted-foreground">
+            <span 
+              className="text-xs text-muted-foreground"
+              data-testid={`text-date-${comment.id}`}
+            >
               {safeDateDistance(comment.createdAt, { addSuffix: true })}
             </span>
           </div>
           
-          <p className="text-sm whitespace-pre-wrap" data-testid={`comment-content-${comment.id}`}>
+          <p 
+            className="text-sm whitespace-pre-wrap break-words" 
+            data-testid={`comment-content-${comment.id}`}
+          >
             {comment.content}
           </p>
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex items-center gap-4 mt-2 ml-3">
-          <button
-            onClick={handleLike}
-            className="flex items-center gap-1 text-xs transition-colors hover-elevate px-2 py-1 rounded"
-            style={{
-              color: comment.isLiked ? '#EF4444' : 'var(--muted-foreground)',
-            }}
-            data-testid={`button-like-comment-${comment.id}`}
-          >
-            <Heart 
-              className="w-3.5 h-3.5" 
-              fill={comment.isLiked ? '#EF4444' : 'none'}
+        <div className="flex items-center gap-1 mt-2 ml-1 flex-wrap">
+          {user && (
+            <ReactionSelector 
+              targetId={comment.id}
+              targetType="comment"
+              postId={postId}
+              currentReaction={currentReaction}
+              reactions={reactions}
+              data-testid={`reactions-comment-${comment.id}`}
             />
-            {comment.likes ? comment.likes : null}
-          </button>
+          )}
 
           {canReply && onReply && (
-            <button
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={() => setShowReplyInput(!showReplyInput)}
-              className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors hover-elevate px-2 py-1 rounded"
+              className="h-8 px-2 text-xs gap-1"
               data-testid={`button-reply-comment-${comment.id}`}
             >
               <MessageCircle className="w-3.5 h-3.5" />
               Reply
-            </button>
+            </Button>
           )}
 
           {isAuthor && onDelete && (
-            <button
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={handleDelete}
-              className="flex items-center gap-1 text-xs text-red-600 hover:text-red-700 transition-colors hover-elevate px-2 py-1 rounded"
+              className="h-8 px-2 text-xs gap-1 text-destructive hover:text-destructive"
               data-testid={`button-delete-comment-${comment.id}`}
             >
               <Trash2 className="w-3.5 h-3.5" />
               Delete
-            </button>
+            </Button>
           )}
         </div>
 
-        {/* Reply Input */}
         {showReplyInput && (
-          <div className="mt-3 ml-3 space-y-2">
+          <div className="mt-3 ml-1 space-y-2">
             <Textarea
               placeholder="Write a reply..."
               value={replyContent}
@@ -167,7 +191,7 @@ export const CommentItem = ({
               className="text-sm"
               data-testid={`textarea-reply-${comment.id}`}
             />
-            <div className="flex gap-2">
+            <div className="flex gap-2 flex-wrap">
               <Button
                 variant="outline"
                 size="sm"
@@ -183,10 +207,6 @@ export const CommentItem = ({
                 size="sm"
                 onClick={handleReply}
                 disabled={!replyContent.trim() || isSubmitting}
-                style={{
-                  background: 'linear-gradient(90deg, rgba(64, 224, 208, 0.9), rgba(30, 144, 255, 0.9))',
-                  color: 'white',
-                }}
                 data-testid={`button-submit-reply-${comment.id}`}
               >
                 {isSubmitting ? (
@@ -202,13 +222,13 @@ export const CommentItem = ({
           </div>
         )}
 
-        {/* Nested Replies */}
         {comment.replies && comment.replies.length > 0 && (
           <div className="mt-3 space-y-3">
             {comment.replies.map((reply) => (
               <CommentItem
                 key={reply.id}
                 comment={reply}
+                postId={postId}
                 currentUserId={currentUserId}
                 depth={depth + 1}
                 onLike={onLike}

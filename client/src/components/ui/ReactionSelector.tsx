@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useQueryClient } from "@tanstack/react-query";
 import { 
   Heart, 
   Flame, 
@@ -35,29 +36,46 @@ export const REACTION_TYPES: Reaction[] = [
 ];
 
 interface ReactionSelectorProps {
-  postId: number;
+  targetId: number;
+  targetType: 'post' | 'comment';
+  postId?: number;
   currentReaction?: string;
   reactions?: { [key: string]: number };
   totalCount?: number;
-  onReact: (reactionId: string) => void;
   className?: string;
   isLoading?: boolean;
+  onReact?: (reactionId: string) => Promise<void> | void;
+  'data-testid'?: string;
 }
 
 export const ReactionSelector = ({
+  targetId,
+  targetType,
   postId,
   currentReaction,
   reactions = {},
   totalCount,
-  onReact,
   className = '',
-  isLoading = false
+  isLoading = false,
+  onReact,
+  'data-testid': dataTestId
 }: ReactionSelectorProps) => {
+  const queryClient = useQueryClient();
   const [showReactions, setShowReactions] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
+  const [localReaction, setLocalReaction] = useState(currentReaction);
+  const [localReactions, setLocalReactions] = useState(reactions);
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const leaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setLocalReaction(currentReaction);
+  }, [currentReaction]);
+
+  useEffect(() => {
+    setLocalReactions(reactions);
+  }, [reactions]);
 
   useEffect(() => {
     return () => {
@@ -70,31 +88,71 @@ export const ReactionSelector = ({
     };
   }, []);
 
-  const handleReactionClick = (reactionId: string) => {
-    if (currentReaction === reactionId) {
-      onReact('');
-    } else {
-      onReact(reactionId);
+  const handleReactionClick = async (reactionId: string) => {
+    const toggledReaction = localReaction === reactionId ? '' : reactionId;
+    const previousReaction = localReaction;
+    const previousReactions = { ...localReactions };
+    
+    setLocalReaction(toggledReaction || undefined);
+    const newReactions = { ...localReactions };
+    if (previousReaction && newReactions[previousReaction]) {
+      newReactions[previousReaction] = Math.max(0, newReactions[previousReaction] - 1);
     }
-    setShowReactions(false);
+    if (toggledReaction) {
+      newReactions[toggledReaction] = (newReactions[toggledReaction] || 0) + 1;
+    }
+    setLocalReactions(newReactions);
+    
+    try {
+      if (onReact) {
+        await onReact(toggledReaction);
+      } else {
+        const endpoint = targetType === 'post' 
+          ? `/api/posts/${targetId}/react`
+          : `/api/comments/${targetId}/react`;
+        
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ reactionType: toggledReaction })
+        });
+        
+        if (!response.ok) {
+          throw new Error(`Reaction failed: ${response.status}`);
+        }
+        
+        if (targetType === 'comment' && postId) {
+          queryClient.invalidateQueries({ queryKey: ['/api/posts', postId, 'comments'] });
+        } else if (targetType === 'post') {
+          queryClient.invalidateQueries({ queryKey: ['/api/posts'] });
+          queryClient.invalidateQueries({ queryKey: ['/api/posts', targetId] });
+        }
+      }
+      setShowReactions(false);
+    } catch (error) {
+      console.error('Reaction failed:', error);
+      setLocalReaction(previousReaction);
+      setLocalReactions(previousReactions);
+    }
   };
 
   const getTotalReactions = () => {
     if (totalCount !== undefined) return totalCount;
-    return Object.values(reactions).reduce((sum, count) => sum + count, 0);
+    return Object.values(localReactions).reduce((sum, count) => sum + count, 0);
   };
 
   const getCurrentReactionIcon = () => {
-    if (currentReaction) {
-      const reaction = REACTION_TYPES.find(r => r.id === currentReaction);
+    if (localReaction) {
+      const reaction = REACTION_TYPES.find(r => r.id === localReaction);
       return reaction?.icon || Heart;
     }
     return null;
   };
 
   const getCurrentReactionColor = () => {
-    if (currentReaction) {
-      const reaction = REACTION_TYPES.find(r => r.id === currentReaction);
+    if (localReaction) {
+      const reaction = REACTION_TYPES.find(r => r.id === localReaction);
       return reaction?.color || '#40E0D0';
     }
     return '#40E0D0';
@@ -135,15 +193,15 @@ export const ReactionSelector = ({
         type="button"
         className="group flex items-center gap-2 px-3 py-1.5 rounded-xl transition-all hover-elevate bg-black/5 dark:bg-white/10"
         style={{
-          ...(currentReaction && {
+          ...(localReaction && {
             background: `linear-gradient(135deg, ${getCurrentReactionColor()}15, ${getCurrentReactionColor()}25)`,
           }),
-          color: currentReaction ? getCurrentReactionColor() : 'inherit',
+          color: localReaction ? getCurrentReactionColor() : 'inherit',
         }}
-        onClick={() => currentReaction ? onReact('') : onReact('love')}
-        data-testid={`button-react-${postId}`}
+        onClick={() => handleReactionClick(localReaction || 'love')}
+        data-testid={`button-react-${targetId}`}
       >
-        {currentReaction ? (() => {
+        {localReaction ? (() => {
           const IconComponent = getCurrentReactionIcon();
           return IconComponent ? (
             <IconComponent 
@@ -164,7 +222,7 @@ export const ReactionSelector = ({
           />
         )}
         {getTotalReactions() > 0 && (
-          <span className="text-sm font-medium" data-testid={`text-reaction-count-${postId}`}>
+          <span className="text-sm font-medium" data-testid={`text-reaction-count-${targetId}`}>
             {getTotalReactions()}
           </span>
         )}
@@ -188,7 +246,9 @@ export const ReactionSelector = ({
               border: '1px solid rgba(255, 255, 255, 0.3)',
               pointerEvents: 'auto',
             }}
-            data-testid={`popup-reactions-${postId}`}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+            data-testid={`popup-reactions-${targetId}`}
           >
             <div className="flex gap-2">
               {REACTION_TYPES.map((reaction) => {
@@ -200,24 +260,24 @@ export const ReactionSelector = ({
                     onClick={() => handleReactionClick(reaction.id)}
                     className="group relative flex flex-col items-center gap-1 p-2 rounded-lg transition-all hover-elevate"
                     style={{
-                      background: currentReaction === reaction.id 
+                      background: localReaction === reaction.id 
                         ? 'rgba(255, 255, 255, 0.3)'
                         : 'rgba(255, 255, 255, 0.1)',
                     }}
                     title={reaction.label}
-                    data-testid={`button-reaction-${reaction.id}-${postId}`}
+                    data-testid={`button-reaction-${reaction.id}-${targetId}`}
                   >
                     <IconComponent 
                       className="w-6 h-6 transition-transform group-hover:scale-125"
                       style={{ color: reaction.color }}
-                      fill={currentReaction === reaction.id ? reaction.color : 'none'}
+                      fill={localReaction === reaction.id ? reaction.color : 'none'}
                       strokeWidth={2}
                     />
-                    {reactions[reaction.id] && reactions[reaction.id] > 0 && (
+                    {localReactions[reaction.id] && localReactions[reaction.id] > 0 && (
                       <span className="absolute -top-1 -right-1 bg-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center"
                         style={{ color: reaction.color }}
                       >
-                        {reactions[reaction.id]}
+                        {localReactions[reaction.id]}
                       </span>
                     )}
                   </button>
@@ -229,9 +289,9 @@ export const ReactionSelector = ({
       </AnimatePresence>
 
       {/* Reaction Breakdown (if there are multiple reactions) */}
-      {getTotalReactions() > 0 && Object.keys(reactions).filter(k => reactions[k] > 0).length > 1 && (
+      {getTotalReactions() > 0 && Object.keys(localReactions).filter(k => localReactions[k] > 0).length > 1 && (
         <div className="absolute top-full left-0 mt-1 text-xs text-muted-foreground flex gap-1 flex-wrap">
-          {Object.entries(reactions)
+          {Object.entries(localReactions)
             .filter(([_, count]) => count > 0)
             .map(([reactionId, count]) => {
               const reaction = REACTION_TYPES.find(r => r.id === reactionId);

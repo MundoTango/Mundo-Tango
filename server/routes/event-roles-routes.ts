@@ -22,6 +22,7 @@ import {
 import { eq, and, desc, sql } from "drizzle-orm";
 import { authenticateToken } from "../middleware/auth";
 import { randomBytes } from "crypto";
+import { notificationService } from "../services/notification-service";
 
 const router = Router();
 
@@ -45,6 +46,8 @@ router.get("/events/:id/participants", async (req, res) => {
           username: users.username,
           email: users.email,
           city: users.city,
+          name: users.name,
+          profileImage: users.profileImage,
         }
       })
       .from(eventParticipants)
@@ -87,20 +90,38 @@ router.post("/events/:id/participants", authenticateToken, async (req, res) => {
     const eventId = parseInt(req.params.id);
     const userId = (req as any).userId;
 
-    // Verify user is organizer/co-organizer/host
-    const organizer = await db
+    // Get event details first
+    const [event] = await db
       .select()
-      .from(eventParticipants)
-      .where(
-        and(
-          eq(eventParticipants.eventId, eventId),
-          eq(eventParticipants.userId, userId),
-          sql`${eventParticipants.role} IN ('organizer', 'co_organizer', 'host')`
-        )
-      )
+      .from(events)
+      .where(eq(events.id, eventId))
       .limit(1);
 
-    if (organizer.length === 0) {
+    if (!event) {
+      return res.status(404).json({ error: "Event not found" });
+    }
+
+    // Verify user is event creator OR organizer/co-organizer/host participant
+    const isEventCreator = event.userId === userId;
+    
+    let isOrganizerParticipant = false;
+    if (!isEventCreator) {
+      const [organizer] = await db
+        .select()
+        .from(eventParticipants)
+        .where(
+          and(
+            eq(eventParticipants.eventId, eventId),
+            eq(eventParticipants.userId, userId),
+            sql`${eventParticipants.role} IN ('organizer', 'co_organizer', 'host')`
+          )
+        )
+        .limit(1);
+      
+      isOrganizerParticipant = !!organizer;
+    }
+
+    if (!isEventCreator && !isOrganizerParticipant) {
       return res.status(403).json({ error: "Only organizers can add participants" });
     }
 
@@ -123,7 +144,94 @@ router.post("/events/:id/participants", authenticateToken, async (req, res) => {
       .values(participantData)
       .returning();
 
-    res.status(201).json({ participant: newParticipant });
+    // Get user details for notifications
+    const [addedUser] = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, newParticipant.userId))
+      .limit(1);
+
+    // ========== DOWNSTREAM EFFECT 1: Create notification ==========
+    try {
+      await notificationService.createNotification({
+        userId: newParticipant.userId,
+        type: "event_rsvp",
+        title: `Added to ${event.title}`,
+        message: `You've been added as a ${validatedData.role.replace('_', ' ')} to "${event.title}"`,
+        actionUrl: `/events/${eventId}`,
+        senderId: userId,
+        priority: "high",
+        metadata: {
+          role: validatedData.role,
+          eventId: eventId,
+          organizerId: userId
+        }
+      });
+      console.log(`[Notification] ✅ Created notification for user ${newParticipant.userId}`);
+    } catch (error) {
+      console.error("[Notification] Failed to create participant notification:", error);
+    }
+
+    // ========== DOWNSTREAM EFFECT 2: Create activity log ==========
+    try {
+      if ((sql as any).raw) {
+        await db.execute(sql.raw(`
+          INSERT INTO event_activity_logs (event_id, user_id, action, details, created_at)
+          VALUES (${eventId}, ${userId}, 'participant_added', ${'{"role": "' + validatedData.role + '", "target_user_id": ' + newParticipant.userId + '}'}, NOW())
+        `));
+      }
+    } catch (error) {
+      console.error("[ActivityLog] Failed to log participant addition:", error);
+    }
+
+    // ========== DOWNSTREAM EFFECT 3: WebSocket real-time update ==========
+    try {
+      // Emit to all users watching this event
+      const eventUpdateMessage = {
+        type: "participant_added",
+        eventId: eventId,
+        participant: {
+          id: newParticipant.id,
+          userId: newParticipant.userId,
+          userName: addedUser?.name,
+          role: newParticipant.role,
+          status: newParticipant.status
+        },
+        timestamp: new Date().toISOString()
+      };
+      
+      // TODO: Broadcast via WebSocket/Socket.io to event viewers
+      // io.to(`event-${eventId}`).emit('participant_added', eventUpdateMessage);
+      console.log("[WebSocket] Participant added event:", eventUpdateMessage);
+    } catch (error) {
+      console.error("[WebSocket] Failed to broadcast participant update:", error);
+    }
+
+    // ========== DOWNSTREAM EFFECT 4: Send email notification ==========
+    try {
+      // TODO: Send email to newParticipant with event details
+      if (addedUser?.email) {
+        console.log(`[Email] Would send participant invitation to ${addedUser.email} for event ${event.title}`);
+        // Example implementation:
+        // await emailService.sendParticipantInvitation({
+        //   recipientEmail: addedUser.email,
+        //   recipientName: addedUser.name,
+        //   eventTitle: event.title,
+        //   eventDate: event.startDate,
+        //   eventVenue: event.venue,
+        //   role: validatedData.role,
+        //   organizerName: (await db.select().from(users).where(eq(users.id, userId)))[0]?.name,
+        //   eventLink: `https://mundotango.com/events/${eventId}`
+        // });
+      }
+    } catch (error) {
+      console.error("[Email] Failed to send participant notification email:", error);
+    }
+
+    res.status(201).json({ 
+      participant: newParticipant,
+      message: `${addedUser?.name || 'User'} added as ${validatedData.role.replace('_', ' ')} successfully`
+    });
   } catch (error: any) {
     console.error("Error adding participant:", error);
     res.status(400).json({ error: error.message || "Failed to add participant" });
@@ -210,20 +318,38 @@ router.delete("/events/:id/participants/:targetUserId", authenticateToken, async
     const targetUserId = parseInt(req.params.targetUserId);
     const userId = (req as any).userId;
 
-    // Verify user has permission
-    const manager = await db
+    // Get event to check if user is creator
+    const [event] = await db
       .select()
-      .from(eventParticipants)
-      .where(
-        and(
-          eq(eventParticipants.eventId, eventId),
-          eq(eventParticipants.userId, userId),
-          eq(eventParticipants.canManageParticipants, true)
-        )
-      )
+      .from(events)
+      .where(eq(events.id, eventId))
       .limit(1);
 
-    if (manager.length === 0) {
+    if (!event) {
+      return res.status(404).json({ error: "Event not found" });
+    }
+
+    // Verify user has permission (either event creator OR has canManageParticipants)
+    const isEventCreator = event.userId === userId;
+    
+    let hasManagementPermission = isEventCreator;
+    if (!isEventCreator) {
+      const [manager] = await db
+        .select()
+        .from(eventParticipants)
+        .where(
+          and(
+            eq(eventParticipants.eventId, eventId),
+            eq(eventParticipants.userId, userId),
+            eq(eventParticipants.canManageParticipants, true)
+          )
+        )
+        .limit(1);
+
+      hasManagementPermission = !!manager;
+    }
+
+    if (!hasManagementPermission) {
       return res.status(403).json({ error: "Permission denied" });
     }
 
@@ -590,6 +716,204 @@ router.delete("/events/:id/updates/:updateId", authenticateToken, async (req, re
   } catch (error: any) {
     console.error("Error deleting update:", error);
     res.status(500).json({ error: "Failed to delete update" });
+  }
+});
+
+// ============================================================================
+// PARTICIPANT SELF-MANAGEMENT - PRO Tab Integration
+// ============================================================================
+
+/**
+ * GET /api/events/:id/my-participation
+ * Get current user's participation details for an event
+ */
+router.get("/events/:id/my-participation", authenticateToken, async (req, res) => {
+  try {
+    const eventId = parseInt(req.params.id);
+    const userId = (req as any).userId;
+
+    const [participation] = await db
+      .select({
+        participant: eventParticipants,
+        event: {
+          id: events.id,
+          title: events.title,
+          startDate: events.startDate,
+          venue: events.venue,
+          city: events.city,
+        }
+      })
+      .from(eventParticipants)
+      .leftJoin(events, eq(eventParticipants.eventId, events.id))
+      .where(
+        and(
+          eq(eventParticipants.eventId, eventId),
+          eq(eventParticipants.userId, userId)
+        )
+      )
+      .limit(1);
+
+    if (!participation) {
+      return res.status(404).json({ error: "You are not a participant in this event" });
+    }
+
+    res.json({ participation });
+  } catch (error: any) {
+    console.error("Error fetching participation:", error);
+    res.status(500).json({ error: "Failed to fetch participation details" });
+  }
+});
+
+/**
+ * PATCH /api/events/:id/my-participation
+ * Self-update participation status (confirm, decline) and PRO visibility
+ * Body: { status?: 'confirmed' | 'declined', isPubliclyListed?: boolean }
+ * 
+ * This endpoint allows participants to:
+ * 1. Accept/decline their role invitation
+ * 2. Toggle whether this participation shows in their public PRO portfolio
+ */
+router.patch("/events/:id/my-participation", authenticateToken, async (req, res) => {
+  try {
+    const eventId = parseInt(req.params.id);
+    const userId = (req as any).userId;
+    const { status, isPubliclyListed } = req.body;
+
+    // Validate status if provided
+    if (status && !['confirmed', 'declined', 'pending'].includes(status)) {
+      return res.status(400).json({ 
+        error: "Invalid status. Must be 'confirmed', 'declined', or 'pending'" 
+      });
+    }
+
+    // Find user's participation
+    const [existing] = await db
+      .select()
+      .from(eventParticipants)
+      .where(
+        and(
+          eq(eventParticipants.eventId, eventId),
+          eq(eventParticipants.userId, userId)
+        )
+      )
+      .limit(1);
+
+    if (!existing) {
+      return res.status(404).json({ error: "You are not a participant in this event" });
+    }
+
+    // Cannot change status if already declined or cancelled
+    if (status && ['declined', 'cancelled'].includes(existing.status) && status === 'confirmed') {
+      return res.status(400).json({ 
+        error: "Cannot confirm participation that was already declined or cancelled" 
+      });
+    }
+
+    const updateData: any = {
+      updatedAt: new Date()
+    };
+
+    if (status !== undefined) {
+      updateData.status = status;
+      
+      // Set confirmedAt when confirming
+      if (status === 'confirmed' && !existing.confirmedAt) {
+        updateData.confirmedAt = new Date();
+      }
+    }
+
+    if (isPubliclyListed !== undefined) {
+      updateData.isPubliclyListed = isPubliclyListed;
+    }
+
+    const [updated] = await db
+      .update(eventParticipants)
+      .set(updateData)
+      .where(
+        and(
+          eq(eventParticipants.eventId, eventId),
+          eq(eventParticipants.userId, userId)
+        )
+      )
+      .returning();
+
+    // Fetch event details for response
+    const [event] = await db
+      .select({
+        id: events.id,
+        title: events.title,
+        startDate: events.startDate,
+        venue: events.venue,
+        city: events.city,
+      })
+      .from(events)
+      .where(eq(events.id, eventId))
+      .limit(1);
+
+    res.json({ 
+      participant: updated,
+      event,
+      message: status === 'confirmed' 
+        ? "Participation confirmed! This event will appear in your PRO profile event history."
+        : status === 'declined'
+        ? "Participation declined."
+        : "Participation updated."
+    });
+  } catch (error: any) {
+    console.error("Error updating participation:", error);
+    res.status(500).json({ error: "Failed to update participation" });
+  }
+});
+
+/**
+ * GET /api/users/:userId/participations
+ * Get all event participations for a user (for PRO tab)
+ * Query params: ?status=confirmed&role=teacher&publicOnly=true
+ */
+router.get("/users/:userId/participations", async (req, res) => {
+  try {
+    const userId = parseInt(req.params.userId);
+    const { status, role, publicOnly } = req.query;
+
+    const conditions = [eq(eventParticipants.userId, userId)];
+
+    if (status) {
+      conditions.push(sql`${eventParticipants.status} = ${status}`);
+    }
+
+    if (role) {
+      conditions.push(sql`${eventParticipants.role} = ${role}`);
+    }
+
+    if (publicOnly === 'true') {
+      conditions.push(eq(eventParticipants.isPubliclyListed, true));
+    }
+
+    const participations = await db
+      .select({
+        id: eventParticipants.id,
+        eventId: eventParticipants.eventId,
+        role: eventParticipants.role,
+        status: eventParticipants.status,
+        customTitle: eventParticipants.customTitle,
+        isPubliclyListed: eventParticipants.isPubliclyListed,
+        confirmedAt: eventParticipants.confirmedAt,
+        createdAt: eventParticipants.createdAt,
+        eventTitle: events.title,
+        eventDate: events.startDate,
+        eventVenue: events.venue,
+        eventCity: events.city,
+        eventType: events.eventType,
+      })
+      .from(eventParticipants)
+      .leftJoin(events, eq(eventParticipants.eventId, events.id))
+      .where(and(...conditions))
+      .orderBy(desc(events.startDate));
+
+    res.json({ participations });
+  } catch (error: any) {
+    console.error("Error fetching user participations:", error);
+    res.status(500).json({ error: "Failed to fetch participations" });
   }
 });
 

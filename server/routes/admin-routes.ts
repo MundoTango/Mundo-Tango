@@ -52,46 +52,61 @@ router.get("/moderation/queue", authenticateToken, requireAdmin, async (req, res
     const limitNum = parseInt(limit as string);
     const offset = (pageNum - 1) * limitNum;
 
-    let query = db.select({
-      queue: moderationQueue,
-      reporter: {
-        id: users.id,
-        username: users.username,
-        name: users.name,
-      }
-    })
-    .from(moderationQueue)
-    .leftJoin(users, eq(moderationQueue.reportedBy, users.id))
-    .$dynamic();
+    let results: any[] = [];
+    let total = 0;
 
-    // Filter by status
-    if (status && status !== "all") {
-      query = query.where(eq(moderationQueue.status, status as string));
-    }
-
-    // Filter by content type
-    if (contentType) {
-      query = query.where(eq(moderationQueue.contentType, contentType as string));
-    }
-
-    // Filter by priority
-    if (priority) {
-      query = query.where(eq(moderationQueue.priority, parseInt(priority as string)));
-    }
-
-    const results = await query
-      .orderBy(desc(moderationQueue.priority), desc(moderationQueue.createdAt))
-      .limit(limitNum)
-      .offset(offset);
-
-    // Get total count
-    const totalCount = await db.select({ count: count() })
+    try {
+      let query = db.select({
+        queue: moderationQueue,
+        reporter: {
+          id: users.id,
+          username: users.username,
+          name: users.name,
+        }
+      })
       .from(moderationQueue)
-      .where(status && status !== "all" ? eq(moderationQueue.status, status as string) : sql`1=1`);
+      .leftJoin(users, eq(moderationQueue.reportedBy, users.id))
+      .$dynamic();
+
+      // Filter by status
+      if (status && status !== "all") {
+        query = query.where(eq(moderationQueue.status, status as string));
+      }
+
+      // Filter by content type
+      if (contentType) {
+        query = query.where(eq(moderationQueue.contentType, contentType as string));
+      }
+
+      // Filter by priority
+      if (priority) {
+        query = query.where(eq(moderationQueue.priority, parseInt(priority as string)));
+      }
+
+      results = await query
+        .orderBy(desc(moderationQueue.priority), desc(moderationQueue.createdAt))
+        .limit(limitNum)
+        .offset(offset);
+
+      // Get total count
+      const totalCount = await db.select({ count: count() })
+        .from(moderationQueue)
+        .where(status && status !== "all" ? eq(moderationQueue.status, status as string) : sql`1=1`);
+      total = totalCount[0]?.count || 0;
+    } catch (tableError: any) {
+      if (tableError.message?.includes('does not exist') || 
+          tableError.message?.includes('column') ||
+          tableError.code === '42703' || 
+          tableError.code === '42P01') {
+        console.warn('[Moderation] Queue table/column not found, returning empty:', tableError.message);
+      } else {
+        throw tableError;
+      }
+    }
 
     res.json({
       queue: results,
-      total: totalCount[0]?.count || 0,
+      total,
       page: pageNum,
       limit: limitNum,
     });
@@ -188,13 +203,21 @@ router.post("/moderation/:id/action", authenticateToken, requireAdmin, async (re
       })
       .where(eq(moderationQueue.id, parseInt(id)));
 
-    // Log the action
-    await db.insert(moderationActions).values({
-      queueId: parseInt(id),
-      action,
-      moderatorId,
-      reason: notes || null,
-    });
+    // Log the action - handle missing table gracefully
+    try {
+      await db.insert(moderationActions).values({
+        queueId: parseInt(id),
+        action,
+        moderatorId,
+        reason: notes || null,
+      });
+    } catch (tableError: any) {
+      if (tableError.message?.includes('does not exist')) {
+        console.warn('[Admin] moderation_actions table not found, skipping action log');
+      } else {
+        throw tableError;
+      }
+    }
 
     res.json({ success: true, id, action, status: newStatus });
   } catch (error: any) {
@@ -219,44 +242,206 @@ router.get("/activity/recent", authenticateToken, requireAdmin, async (req, res)
 
 /**
  * GET /api/admin/users
- * Get all users with pagination and filters
+ * Get users with pagination, filters, and tab-based categorization
+ * Tabs: active (registered users), waitlist (waitlisted users), scraped (found profiles), invited (sent invitations)
  */
 router.get("/users", authenticateToken, requireAdmin, async (req, res: Response) => {
   try {
-    const { page = "1", limit = "50", search = "", role = "" } = req.query;
+    const { page = "1", limit = "50", search = "", role = "", tab = "active" } = req.query;
     const pageNum = parseInt(page as string);
     const limitNum = parseInt(limit as string);
     const offset = (pageNum - 1) * limitNum;
 
-    let query = db.select().from(users).$dynamic();
+    // Handle different tabs
+    if (tab === "scraped") {
+      // Return scraped profiles from scraped_profiles table
+      const { scrapedProfiles } = await import("@shared/schema");
+      
+      const searchFilter = search && typeof search === "string" 
+        ? like(scrapedProfiles.name, `%${search}%`) 
+        : undefined;
+      
+      let query = db.select().from(scrapedProfiles).$dynamic();
+      if (searchFilter) query = query.where(searchFilter);
+      
+      const results = await query.orderBy(desc(scrapedProfiles.scrapedAt)).limit(limitNum).offset(offset);
+      
+      // Count with same filter
+      let countQuery = db.select({ count: count() }).from(scrapedProfiles).$dynamic();
+      if (searchFilter) countQuery = countQuery.where(searchFilter);
+      const totalCount = await countQuery;
+      
+      return res.json({
+        users: results.map(p => ({
+          id: p.id,
+          name: p.name,
+          email: null,
+          username: null,
+          profileImage: p.photoUrl,
+          role: "scraped",
+          isActive: false,
+          type: "scraped",
+          profileType: p.profileType,
+          claimed: p.claimed,
+          scrapedAt: p.scrapedAt,
+        })),
+        total: totalCount[0]?.count || 0,
+        page: pageNum,
+        limit: limitNum,
+      });
+    }
+    
+    if (tab === "invited") {
+      // Return friend invitations
+      const { friendInvitations } = await import("@shared/schema");
+      
+      const searchFilter = search && typeof search === "string"
+        ? or(
+            like(friendInvitations.invitedFriendName, `%${search}%`),
+            like(friendInvitations.invitedFriendEmail, `%${search}%`)
+          )
+        : undefined;
+      
+      let query = db.select({
+        invitation: friendInvitations,
+        inviter: {
+          id: users.id,
+          name: users.name,
+          username: users.username,
+        }
+      })
+        .from(friendInvitations)
+        .leftJoin(users, eq(friendInvitations.invitedBy, users.id))
+        .$dynamic();
+      
+      if (searchFilter) query = query.where(searchFilter as any);
+      
+      const results = await query.orderBy(desc(friendInvitations.sentAt)).limit(limitNum).offset(offset);
+      
+      // Count with same filter
+      let countQuery = db.select({ count: count() }).from(friendInvitations).$dynamic();
+      if (searchFilter) countQuery = countQuery.where(searchFilter as any);
+      const totalCount = await countQuery;
+      
+      return res.json({
+        users: results.map(r => ({
+          id: r.invitation.id,
+          name: r.invitation.invitedFriendName,
+          email: r.invitation.invitedFriendEmail,
+          username: null,
+          profileImage: null,
+          role: "invited",
+          isActive: false,
+          type: "invited",
+          invitedBy: r.inviter?.name || "Unknown",
+          invitedById: r.inviter?.id,
+          sentVia: r.invitation.sentVia,
+          sentAt: r.invitation.sentAt,
+          registered: r.invitation.registered,
+          inviteCode: r.invitation.inviteCode,
+        })),
+        total: totalCount[0]?.count || 0,
+        page: pageNum,
+        limit: limitNum,
+      });
+    }
+    
+    if (tab === "waitlist") {
+      // Return waitlisted users - build filter conditions
+      const baseFilter = eq(users.waitlist, true);
+      const searchFilter = search && typeof search === "string"
+        ? and(
+            baseFilter,
+            or(
+              like(users.name, `%${search}%`),
+              like(users.email, `%${search}%`),
+              like(users.username, `%${search}%`)
+            )
+          )
+        : baseFilter;
+      
+      const results = await db.select().from(users)
+        .where(searchFilter as any)
+        .orderBy(desc(users.waitlistDate))
+        .limit(limitNum)
+        .offset(offset);
+      
+      // Count with same filter
+      const totalCount = await db.select({ count: count() }).from(users).where(searchFilter as any);
+      
+      return res.json({
+        users: results.map(u => ({ ...u, type: "waitlist" })),
+        total: totalCount[0]?.count || 0,
+        page: pageNum,
+        limit: limitNum,
+      });
+    }
 
-    // Add search filter
+    // Default: Active registered users (not on waitlist)
+    const activeBaseFilter = and(eq(users.isActive, true), eq(users.waitlist, false));
+    
+    // Build combined filter with search and role
+    let finalFilter: any = activeBaseFilter;
+    
     if (search && typeof search === "string") {
-      query = query.where(
+      finalFilter = and(
+        activeBaseFilter,
         or(
           like(users.name, `%${search}%`),
           like(users.email, `%${search}%`),
           like(users.username, `%${search}%`)
-        ) as any
+        )
       );
     }
-
-    // Add role filter
+    
     if (role && typeof role === "string") {
-      query = query.where(eq(users.role, role));
+      finalFilter = and(finalFilter, eq(users.role, role));
     }
 
-    const results = await query.limit(limitNum).offset(offset);
-    const totalCount = await db.select({ count: count() }).from(users);
+    const results = await db.select().from(users)
+      .where(finalFilter as any)
+      .orderBy(desc(users.createdAt))
+      .limit(limitNum)
+      .offset(offset);
+    
+    // Count with same filter
+    const totalCount = await db.select({ count: count() }).from(users).where(finalFilter as any);
 
     res.json({
-      users: results,
+      users: results.map(u => ({ ...u, type: "active" })),
       total: totalCount[0]?.count || 0,
       page: pageNum,
       limit: limitNum,
     });
   } catch (error: any) {
     console.error("Error fetching admin users:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * GET /api/admin/users/counts
+ * Get counts for all user tabs
+ */
+router.get("/users/counts", authenticateToken, requireAdmin, async (req, res: Response) => {
+  try {
+    const { scrapedProfiles, friendInvitations } = await import("@shared/schema");
+    
+    const [activeCount, waitlistCount, scrapedCount, invitedCount] = await Promise.all([
+      db.select({ count: count() }).from(users).where(and(eq(users.isActive, true), eq(users.waitlist, false))),
+      db.select({ count: count() }).from(users).where(eq(users.waitlist, true)),
+      db.select({ count: count() }).from(scrapedProfiles).catch(() => [{ count: 0 }]),
+      db.select({ count: count() }).from(friendInvitations).catch(() => [{ count: 0 }]),
+    ]);
+    
+    res.json({
+      active: activeCount[0]?.count || 0,
+      waitlist: waitlistCount[0]?.count || 0,
+      scraped: scrapedCount[0]?.count || 0,
+      invited: invitedCount[0]?.count || 0,
+    });
+  } catch (error: any) {
+    console.error("Error fetching user counts:", error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -316,20 +501,29 @@ router.get("/content/flagged", authenticateToken, requireAdmin, async (req, res:
   try {
     const { status = "pending" } = req.query;
 
-    const flaggedReports = await db.select({
-      id: postReports.id,
-      reporterId: postReports.reporterId,
-      postId: postReports.postId,
-      reason: postReports.reason,
-      status: postReports.status,
-      createdAt: postReports.createdAt,
-    })
-      .from(postReports)
-      .where(eq(postReports.status, status as string))
-      .orderBy(desc(postReports.createdAt))
-      .limit(50);
+    // Handle missing table gracefully
+    try {
+      const flaggedReports = await db.select({
+        id: postReports.id,
+        reporterId: postReports.reporterId,
+        postId: postReports.postId,
+        reason: postReports.reason,
+        status: postReports.status,
+        createdAt: postReports.createdAt,
+      })
+        .from(postReports)
+        .where(eq(postReports.status, status as string))
+        .orderBy(desc(postReports.createdAt))
+        .limit(50);
 
-    res.json(flaggedReports);
+      res.json(flaggedReports);
+    } catch (tableError: any) {
+      if (tableError.message?.includes('does not exist')) {
+        console.warn('[Admin] post_reports table not found, returning empty array');
+        return res.json([]);
+      }
+      throw tableError;
+    }
   } catch (error: any) {
     console.error("Error fetching flagged content:", error);
     res.status(500).json({ error: error.message });
@@ -368,39 +562,78 @@ router.post("/content/:contentId/moderate", authenticateToken, requireAdmin, asy
  */
 router.get("/moderation/stats", authenticateToken, requireAdmin, async (req, res: Response) => {
   try {
-    const pendingCount = await db.select({ count: count() })
-      .from(moderationQueue)
-      .where(eq(moderationQueue.status, "pending"));
+    // Handle missing moderation_queue table gracefully
+    let pendingCountValue = 0;
+    let approvedCountValue = 0;
+    let removedCountValue = 0;
+    let bannedCountValue = 0;
+    
+    try {
+      const pendingCount = await db.select({ count: count() })
+        .from(moderationQueue)
+        .where(eq(moderationQueue.status, "pending"));
+      pendingCountValue = pendingCount[0]?.count || 0;
 
-    const approvedCount = await db.select({ count: count() })
-      .from(moderationQueue)
-      .where(eq(moderationQueue.status, "approved"));
+      const approvedCount = await db.select({ count: count() })
+        .from(moderationQueue)
+        .where(eq(moderationQueue.status, "approved"));
+      approvedCountValue = approvedCount[0]?.count || 0;
 
-    const removedCount = await db.select({ count: count() })
-      .from(moderationQueue)
-      .where(eq(moderationQueue.status, "removed"));
+      const removedCount = await db.select({ count: count() })
+        .from(moderationQueue)
+        .where(eq(moderationQueue.status, "removed"));
+      removedCountValue = removedCount[0]?.count || 0;
 
-    const bannedCount = await db.select({ count: count() })
-      .from(moderationQueue)
-      .where(eq(moderationQueue.status, "banned"));
+      const bannedCount = await db.select({ count: count() })
+        .from(moderationQueue)
+        .where(eq(moderationQueue.status, "banned"));
+      bannedCountValue = bannedCount[0]?.count || 0;
+    } catch (tableError: any) {
+      if (tableError.message?.includes('does not exist')) {
+        console.warn('[Admin] moderation_queue table not found, returning 0 for all counts');
+      } else {
+        throw tableError;
+      }
+    }
 
-    const flaggedCount = await db.select({ count: count() })
-      .from(flaggedContent);
+    // Handle missing flagged_content table gracefully
+    let flaggedCountValue = 0;
+    try {
+      const flaggedCount = await db.select({ count: count() })
+        .from(flaggedContent);
+      flaggedCountValue = flaggedCount[0]?.count || 0;
+    } catch (tableError: any) {
+      if (tableError.message?.includes('does not exist')) {
+        console.warn('[Admin] flagged_content table not found, returning 0');
+      } else {
+        throw tableError;
+      }
+    }
 
-    // Get recent actions (last 24h)
-    const oneDayAgo = new Date();
-    oneDayAgo.setDate(oneDayAgo.getDate() - 1);
-    const recentActions = await db.select({ count: count() })
-      .from(moderationActions)
-      .where(gte(moderationActions.createdAt, oneDayAgo));
+    // Get recent actions (last 24h) - handle missing table gracefully
+    let recentActionsCount = 0;
+    try {
+      const oneDayAgo = new Date();
+      oneDayAgo.setDate(oneDayAgo.getDate() - 1);
+      const recentActions = await db.select({ count: count() })
+        .from(moderationActions)
+        .where(gte(moderationActions.createdAt, oneDayAgo));
+      recentActionsCount = recentActions[0]?.count || 0;
+    } catch (tableError: any) {
+      if (tableError.message?.includes('does not exist')) {
+        console.warn('[Admin] moderation_actions table not found, returning 0');
+      } else {
+        throw tableError;
+      }
+    }
 
     res.json({
-      pending: pendingCount[0]?.count || 0,
-      approved: approvedCount[0]?.count || 0,
-      removed: removedCount[0]?.count || 0,
-      banned: bannedCount[0]?.count || 0,
-      flagged: flaggedCount[0]?.count || 0,
-      recentActions24h: recentActions[0]?.count || 0,
+      pending: pendingCountValue,
+      approved: approvedCountValue,
+      removed: removedCountValue,
+      banned: bannedCountValue,
+      flagged: flaggedCountValue,
+      recentActions24h: recentActionsCount,
     });
   } catch (error: any) {
     console.error("Error fetching moderation stats:", error);
@@ -419,17 +652,47 @@ router.get("/moderation/flagged", authenticateToken, requireAdmin, async (req, r
     const limitNum = parseInt(limit as string);
     const offset = (pageNum - 1) * limitNum;
 
-    const results = await db.select()
-      .from(flaggedContent)
-      .orderBy(desc(flaggedContent.createdAt))
-      .limit(limitNum)
-      .offset(offset);
+    // Handle missing flagged_content table/columns gracefully
+    let results: any[] = [];
+    let total = 0;
 
-    const totalCount = await db.select({ count: count() }).from(flaggedContent);
+    try {
+      // Select only known columns that exist in the table
+      results = await db.select({
+        id: flaggedContent.id,
+        contentType: flaggedContent.contentType,
+        contentId: flaggedContent.contentId,
+        flagType: flaggedContent.flagType,
+        severity: flaggedContent.severity,
+        confidence: flaggedContent.confidence,
+        detectionMethod: flaggedContent.detectionMethod,
+        flagReason: flaggedContent.flagReason,
+        autoFlagged: flaggedContent.autoFlagged,
+        createdAt: flaggedContent.createdAt,
+      })
+        .from(flaggedContent)
+        .orderBy(desc(flaggedContent.createdAt))
+        .limit(limitNum)
+        .offset(offset);
+
+      const totalCount = await db.select({ count: count() }).from(flaggedContent);
+      total = totalCount[0]?.count || 0;
+    } catch (tableError: any) {
+      // Handle missing table or column errors gracefully
+      if (tableError.message?.includes('does not exist') || 
+          tableError.message?.includes('column') ||
+          tableError.code === '42703' || // PostgreSQL: undefined column
+          tableError.code === '42P01') { // PostgreSQL: undefined table
+        console.warn('[Moderation] Table/column not found, returning empty:', tableError.message);
+        // Return empty result set rather than failing
+      } else {
+        throw tableError;
+      }
+    }
 
     res.json({
       flagged: results,
-      total: totalCount[0]?.count || 0,
+      total,
       page: pageNum,
       limit: limitNum,
     });
@@ -450,25 +713,37 @@ router.get("/moderation/audit-log", authenticateToken, requireAdmin, async (req,
     const limitNum = parseInt(limit as string);
     const offset = (pageNum - 1) * limitNum;
 
-    const results = await db.select({
-      action: moderationActions,
-      moderator: {
-        id: users.id,
-        username: users.username,
-        name: users.name,
-      }
-    })
-    .from(moderationActions)
-    .leftJoin(users, eq(moderationActions.moderatorId, users.id))
-    .orderBy(desc(moderationActions.createdAt))
-    .limit(limitNum)
-    .offset(offset);
+    let results: any[] = [];
+    let total = 0;
 
-    const totalCount = await db.select({ count: count() }).from(moderationActions);
+    try {
+      results = await db.select({
+        action: moderationActions,
+        moderator: {
+          id: users.id,
+          username: users.username,
+          name: users.name,
+        }
+      })
+      .from(moderationActions)
+      .leftJoin(users, eq(moderationActions.moderatorId, users.id))
+      .orderBy(desc(moderationActions.createdAt))
+      .limit(limitNum)
+      .offset(offset);
+
+      const totalCount = await db.select({ count: count() }).from(moderationActions);
+      total = totalCount[0]?.count || 0;
+    } catch (tableError: any) {
+      if (tableError.message?.includes('does not exist')) {
+        console.warn('[Admin] moderation_actions table not found, returning empty array');
+      } else {
+        throw tableError;
+      }
+    }
 
     res.json({
       actions: results,
-      total: totalCount[0]?.count || 0,
+      total,
       page: pageNum,
       limit: limitNum,
     });

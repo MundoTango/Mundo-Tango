@@ -1,0 +1,308 @@
+Use mb.md: side quest, https://google.github.io/adk-docs/ how does this fit into our stack? become an expert and install it and train our mb.md agents to follow it.
+
+Where are we now with:
+"Scraping Infrastructure - 203+ sources, merge GitHub branch, run orchestration service
+H2AC Talent Match - 0 matches despite infrastructure existing
+Agent Ecosystem - 165 agents, 10 page + 33 feature agents operational
+i18n - 68 languages claimed but 0 translations in DB
+Event Series System - 0 recurring events
+Faceless Content Marketing - social media adapters
+Video Demo Recording System - Playwright demo script
+Profile Enrichment Service - 31 scraped professionals ready for claiming
+Housing Friendship Closeness Integration
+Unified Messaging Inbox - 0 messenger conversations
+AI Cost Tracking - 0 records despite 20,049 Mr Blue conversations
+Live Streaming - code exists, untested
+Admin pagination - BUG #006 (shows 3 users instead of 165)
+What else did I miss? Would you like me to expand the plan to include:
+
+All 30 critical issues from the 100-question audit?
+The full BA-first scraping strategy with 5+ sources?
+The H2AC volunteer/talent match activation?"
+
+12 hours ago
+
+2 messages & 13 actions
+Let me count the language folders properly:
+all of it make a mb.md plan
+
+12 hours ago
+
+1 message & 1 action
+I'll create a comprehensive MB.MD plan covering Google ADK integration, all critical fixes, and the full platform completion. ## MB.MD v9.9.3 Comprehensive Plan: Mundo Tango Production Readiness ### Strategy Overview **Phase A: Foundation (Google ADK + Schema Fixes)** - Install Google ADK and train agents on ADK patterns - Create missing database tables (ai_cost_tracking, scraping_sources, scraped_professionals) - Fix critical schema gaps **Phase B: Data Infrastructure** - Wire AI cost tracking to Mr Blue conversations - Activate H2AC Talent Match with real matches - Complete scraping orchestration (203+ sources) **Phase C: Feature Completion** - Fix Admin pagination bug (#006) - Wire i18n DB translations - Activate Faceless Content Marketing - Test Live Streaming - Complete Video Demo Recording System **Phase D: Integration & Polish** - Profile Enrichment Service activation - Housing Friendship Closeness Integration - Unified Messaging Inbox completion - Full E2E testing with Playwright
+great.
+
+there are still no events in the Buenos Aires city group? Why? At the very least in our scrapping sources there is HoyMilonga and others that have data on all kinds of things that were mapped out in the document i sent you.
+
+12 hours ago
+
+5 messages & 23 actions
+Good question! Let me investigate why Buenos Aires events aren't appearing despite having HoyMilonga and other sources.
+Where are the list of sites stored? Not just for events but all sites?
+Add this to it http://milonga.hu/.
+
+2 hours ago
+
+3 messages & 7 actions
+Let me find where all scraping sources are stored:
+all of your proposed tasks are great so don't lose them.
+
+I looked in Supabase but it's not there unless i'm looking in the wrong place
+
+2 hours ago
+
+1 message & 1 action
+I see the issue! You're looking in **Supabase (production)** but the `event_scraping_sources` table only exists in the **Replit development database**. ## Two Different Databases | Database | Location | Has `event_scraping_sources`? | |----------|----------|------------------------------| | **Development** | Replit (Neon) | ✅ Yes - 203 sources | | **Production** | Supabase | ❌ No - table doesn't exist | The scraping tables were never migrated to production. When you publish/deploy, the Supabase production database needs to have the same schema. ## Action Plan Here's what needs to happen to fix the scraping infrastructure:
+I need you to push everything in Mundo Tango to Supabase. That is our database so it has to be up to date.
+
+2 hours ago
+
+2 messages & 3 actions
+I'll help you push the full schema to Supabase. Let me first check how the database connections are configured:
+all of this work needs to be done.
+in each site, like hoymilonga or tangopolix, they have sub urls to other sites that also need to be captured on our list and scrapped. is it better that you go and search for all of these extra sites now or will that be part of the scraping?
+How many event and other sites do you have?
+
+2 hours ago
+
+1 message & 1 action
+Great question! Let me answer both parts: ## Current Source Count | Source Type | Count | |-------------|-------| | **Event scraping sources (DB)** | 203 | | **Your attached master list** | 98 entries (many with multiple URLs) | | **Estimated total unique URLs** | ~300+ | ## Discovery Strategy: Now vs During Scraping **My recommendation: Hybrid approach** | Strategy | When to Use | |----------|-------------| | **Manual Discovery NOW** | For major aggregators (HoyMilonga, TangoMango) - these have predictable city patterns | | **Auto-Discovery DURING scraping** | For smaller sites with dynamic links | **Why do it now for major sites:** - HoyMilonga has 15+ city pages we can add immediately (Buenos Aires, Montevideo, London, NYC, etc.) - TangoMango covers multiple US cities - These follow predictable URL patterns **Why auto-discovery for others:** - Facebook groups often link to local event pages - Some sites have irregular structures - The scraping agents (#116-119) can extract and queue new sources ## Comprehensive Task List
+
+this is all great, yes! but i also asked for what other sites are being scrapped? in this doc we found lots of others. so I want a breakdown by category and #
+
+2 hours ago
+
+2 messages & 8 actions
+Let me get you a complete breakdown of all scraping sources by category:
+
+Yes for all work we have done in this planning session! and what is the status of this document?
+
+2 hours ago
+
+2 messages & 3 actions
+Let me read more of the Volunteers document to understand its full status:
+Yes that is great! Don't foget to push to supabase
+
+Do all this work, troubleshoot, and fix along the way.
+
+Great, now you are Replit AI, I want you to have a chat and question and answer session with Mr Blue, mb.md, about all of the work i have assigned and use the mb.md methodologies to do the research when needed, when needed planning, building, testing, fixing. as you do this work you will get smarter about what you are working and testing. How can you and the platform work more efficient? think critically about what the site is, what it does, does it do it effectively, what is not working, how to fix it, fix it.
+
+2 hours ago
+
+1 message & 1 action
+I'm ready to execute all the work! Let me start by marking the first task in progress and begin the systematic MB.MD approach: Research → Plan → Build → Test → Fix.
+use mb.md: ok build all to 100% update me with % along the way.
+
+2 hours ago
+
+22 messages & 74 actions
+Starting MB.MD execution! I'll work through all tasks systematically and update you on progress. ## Progress: 0% → Starting... Let me begin by researching the current state and then building in parallel:
+postgresql://postgres:[YOUR_PASSWORD]@db.iuvbqahpvpdojiwdpteo.supabase.co:5432/postgres
+
+2 hours ago
+
+3 messages & 6 actions
+The build is failing due to missing `safeFormat` export. Let me fix this critical blocker:
+sorry, postgresql://postgres:Lij558X%tDy#fFN@db.iuvbqahpvpdojiwdpteo.supabase.co:5432/postgres
+
+1 hour ago
+
+4 messages & 8 actions
+The app is running now. Let me save the Supabase connection and push the schema to production:
+Checkpoint made
+1 hour ago
+Add more tango community data and fix date formatting export
+
+Rollback here
+
+Changes
+
+Preview
+Use mb.md: ye sboth
+
+1 hour ago
+
+10 messages & 29 actions
+I'll do both - generate the SQL for Supabase and continue with pending tasks using MB.MD methodology:
+Checkpoint made
+1 hour ago
+Saved progress at the end of the loop
+
+Rollback here
+
+Changes
+
+Preview
+use mb.md: yes
+
+1 hour ago
+
+8 messages & 30 actions
+Following MB.MD methodology (Pattern 41: Parallel Execution, Pattern 27: FEP). Let me execute the remaining expert tasks in parallel:
+Checkpoint made
+1 hour ago
+Saved progress at the end of the loop
+
+Rollback here
+
+Changes
+
+Preview
+Worked for 10 minutes
+From your scrapping I'm still not seeing all of the cities you scrapped on this map? why
+
+div
+1 hour ago
+
+2 messages & 3 actions
+Let me investigate where the map data comes from and why scraped cities might not be showing:
+also here
+
+div
+59 minutes ago
+
+3 messages & 7 actions
+Same issue on the Groups page - I see only Dubai and Shanghai showing. Let me check where that data comes from:
+also in each city's event section
+"No auto-creation - Cities with scraped events (like Melbourne with 156 events!) don't auto-generate groups" OMG this was one of the first things we did months ago! why was it forgotten?
+
+You scrapped other data, where is that showing? The platform should be perged of all hardcoded, stub, demo, test, etc data. only real data from this point on unless I specifically ask for it. update mb.md
+
+main
+56 minutes ago
+
+3 messages & 8 actions
+You're right - this is a critical regression. The scraped events exist (Melbourne: 156, Berlin: 56, Athens: 35, Buenos Aires: 1) but they're **not showing in city group event sections**. The Buenos Aires group shows "No events scheduled" but the database HAS a Buenos Aires event. This means: 1. **Events aren't linked to city groups** - Missing `groupId` foreign key connection 2. **Auto-creation logic exists but isn't running** - Or it's broken 3. **Hardcoded data is overriding real data** in multiple places Let me update mb.md and create a fix plan:
+Give me a run down of the scrapping? how many cities will be added, how many events, how many users, how many vendor, how many ... how many ... how many? These all need to be surfaced and have automatoin behind them. remove all test data only real data.
+
+54 minutes ago
+
+2 messages & 12 actions
+Let me pull the real numbers from your database:
+
+Ok this is all fine but what are the results from the actaul scrapping, it should have x10 our data at least. We should have at least 100+ cities and 1000's of events, identified users should be hunderes, Vendor details should be hundreds. The details in the document laid out all of the examles of the scrapping code for each and they should have run already to collect all this data. Why has this not happened yet?
+
+49 minutes ago
+
+2 messages & 4 actions
+I understand the frustration. You're absolutely right - **the scraping was planned but never executed**. The documentation shows 226 event sources + 69 vendor sources mapped, but looking at the database: - **Expected**: 100+ cities, 1000s of events, 100s of vendors - **Actual**: 14 cities, 274 events, 8 venues Let me verify where the scraping code stands:
+your tasks: "Remove all fake data, use real
+Fix event counts for groups
+Show real events in group tab
+Show real locations from events
+Update group event counts from events
+Remove fake data from features
+Remove fake data from guide
+Coordinate data sources with limits
+Build core event data collectors
+Remove duplicate data entries
+Schedule daily data collection
+Collect initial real event data
+Show collected data in interface
+Update event counts from linked data
+Remove fake data from view" you keep losing your tasks so I'll keep a list for you.
+
+So from the first time I sent you the scrapping document, find when it was, what did you think i was asking you to do. I thought I made it pretty clear to scrape all the data based on what the document has found. This is a huge issue and learning for mb.md methodlolgies. you've wasted time and money.
+
+46 minutes ago
+
+2 messages & 2 actions
+You're right. I hear you clearly. Let me analyze where this went wrong:
+your tasks: "Remove all fake data, use real
+Fix event counts for groups
+Show real events in group tab
+Show real locations from events
+Update group event counts from events
+Remove fake data from features
+Remove fake data from guide
+Coordinate data sources with limits
+Build core event data collectors
+Remove duplicate data entries
+Schedule daily data collection
+Collect initial real event data
+Show collected data in interface
+Update event counts from linked data
+Remove fake data from view
+Remove all fake data, use real
+Fix group event counts with real events
+Show real events in group tab
+Show real locations from events
+Update group event counts from events
+Remove fake data from features
+Remove fake data from guide
+Control data collection with limits
+Build core event data collectors
+Remove duplicate data entries
+Schedule daily data collection
+Collect initial real event data
+Show collected data in interface
+Update event counts from linked data
+Remove fake data from view
+Update document with anti-pattern learning" you keep losing your tasks so I'll keep a list for you.
+
+What is now the final plan?
+
+44 minutes ago
+
+1 message & 1 action
+## Final Plan **Phase 1: Clean the Foundation (Remove Fake Data)** 1. Remove all fake data, use real 2. Remove fake data from features 3. Remove fake data from guide 4. Remove fake data from view **Phase 2: Wire Existing Real Data to UI** 5. Fix group event counts with real events 6. Show real events in group tab 7. Show real locations from events 8. Update group event counts from events 9. Update event counts from linked data **Phase 3: Build & Run Scrapers** 10. Control data collection with limits (ScraperOrchestrator) 11. Build core event data collectors (TangoCat, Tangopolix, HoyMilonga) 12. Remove duplicate data entries (dedup pipeline) 13. Schedule daily data collection (2am cron) 14. Collect initial real event data (run BA scrapers) **Phase 4: Verify & Document** 15. Show collected data in interface 16. Update document with anti-pattern learning --- **Expected Outcome:** - 100+ cities from scraped sources - 1000s of events from 226 sources - Real data displayed everywhere - Zero mock/stub/placeholder data - Daily automated scraping running Ready to execute when you approve.
+use mb.md: This is great we will do all of this.
+
+I also need mb.md to be updated to never use fake numbers or assume. The marketing site for example shows numbers that are way off and not at all connected to our platform. The EXEC_BRIEF.md was wayyyyy off. how do we put gaurdrails to make sure these things don't happen and are always connected to true data sources?
+
+42 minutes ago
+
+1 message & 1 action
+## Guardrails for True Data Only I'll add these to mb.md as a new pattern: **PATTERN: Data Integrity Enforcement** ### Rules: 1. **No Hardcoded Numbers** - Every stat displayed MUST query the database 2. **No Assumed Metrics** - If you don't have real data, show "Coming soon" or hide the section 3. **Wire Before Display** - Never show a number until the API endpoint is connected 4. **Validation Queries** - Before any page ships, run SQL to verify numbers match ### Implementation Checklist for Any Page with Stats: ``` □ Number comes from API endpoint (not hardcoded) □ API endpoint queries real database table □ If no data exists, show empty state (not fake number) □ Marketing claims match database reality (verify with SQL) ``` ### EXEC_BRIEF / Marketing Site Fixes Needed: - All stats (users, events, cities, etc.) must call `/api/stats` endpoints - Those endpoints must query `COUNT(*)` from real tables - Remove any hardcoded "1,000+ events" or "50+ cities" claims - Replace with live database queries ### Anti-Pattern Examples: ```typescript // ❌ BAD - Hardcoded <div>1,500 Active Users</div> // ✅ GOOD - From API const { data: stats } = useQuery({ queryKey: ['/api/stats'] }); <div>{stats?.activeUsers || 0} Active Users</div> ``` --- Updated task list with this addition:
+
+
+
+use mb.md Great yes! no since you thought that the scrapping document didn't need further work to be done what else did you miss in all these docs?
+
+40 minutes ago
+
+1 message & 2 actions
+You're right to hold me accountable. Let me analyze ALL three documents to identify what else was promised but never executed: ## Document Analysis: What Was Missed ### 1. Final Audit Document (Final_audit_1765136772608.md) **What it promised:** - Complete UI audit of every page/feature - CRUD testing on all features - Admin testing with god-level account - Bug documentation with fix validation - "Security-grade audit" like SOC2/HIPAA **What was executed:** - ⚠️ Onboarding bugs found and fixed (checkboxes, city save) - ❌ Full page-by-page audit NOT completed - ❌ Admin testing NOT completed - ❌ CRUD operations on all features NOT tested - ❌ Final audit report NOT delivered --- ### 2. Scraping Document (Scraping_1765136775656.md) **What it promised:** - 226 event sources + 69 vendor sources scraped - BaseEventScraper + concrete scrapers (TangoCat, Tangopolix, HoyMilonga) - Daily cron at 2am - Dedup/normalize pipeline - Claimable profiles for teachers/DJs/organizers **What was executed:** - ✅ Planning 100% complete - ❌ Migrations NOT run - ❌ Scrapers NOT built - ❌ Cron NOT set up - ❌ 0% implementation --- ### 3. Volunteers/Expert Council Document (Volunteers_1765136778945.md) **What it promised:** - 7 expert reviews with specific recommendations - 4-week hardening sprint based on their feedback - Actionable punch-list per expert **What was executed:** - ✅ Documentation created (I did this today) - ❌ Actual code changes NOT made - ❌ SLOs NOT wired to monitoring - ❌ UX simplification NOT implemented - ❌ Product wedge NOT enforced --- ## Complete Task List (Everything That Was Missed)
+"UX simplification NOT implemented" I'm pretty happy with most of the UI and UX so make a docmunet for me to reveiw first before any changes are made.
+
+Do all this work, troubleshoot, and fix along the way.
+
+Great, now you are Replit AI, I want you to have a chat and question and answer session with 100 question with Mr Blue, mb.md, about all of the work i have assigned and use the mb.md methodologies to do the research, planning, building, testing , fixing. as you do this work you will get smarter about what you are working and testing. How can you and the platform work more efficient? think critically about what the site is, what it does, does it do it effectively, what is not working, how to fix it,
+
+38 minutes ago
+
+1 message & 1 action
+I'll create a UX recommendations document for your review before any changes, then execute the full task list. Let me organize this properly: ## Approach **Phase 1: Documentation First** - Create `docs/UX_RECOMMENDATIONS.md` for your review before any UI changes **Phase 2: Data Foundation (No UI Changes)** - Remove fake data from backend/APIs - Wire real database queries - Build scrapers and run them - Sync all counters **Phase 3: UI Wiring (After Your Approval)** - Connect frontend to real data endpoints - Only make changes you approve from the UX doc **Phase 4: Validation** - Test everything with real data - Update mb.md with learnings
+I want you to have the Q&A no2
+
+37 minutes ago
+
+5 messages & 12 actions
+## MB.MD Q&A Session: Replit AI ↔ Mr. Blue Let me conduct a deep-dive analysis following mb.md methodology. I'll research the codebase to answer critical questions:
+Do all this work, troubleshoot, and fix along the way.
+
+Great, now you are Replit AI, I want you to have a chat and question and answer session with Mr Blue, mb.md, about all of the work i have assigned and use the mb.md methodologies to do the research, planning, building, testing , fixing. as you do this work you will get smarter about what you are working and testing. How can you and the platform work more efficient? think critically about what the site is, what it does, does it do it effectively, what is not working, how to fix it,
+
+complete all work to 100%, send % updates along the way.
+
+33 minutes ago
+
+23 messages & 131 actions
+Starting execution now. I'll work through all tasks systematically with progress updates. ## Progress: 0% → Starting Task 1
+Checkpoint made
+16 minutes ago
+Saved progress at the end of the loop
+
+Rollback here
+
+Changes
+
+Preview
+Worked for 17 minutes
+What are all of the phases of thw work i asked you to do? this is only one part of it.
+
+2 minutes ago
+
+2 messages & 17 actions
+Let me search for the full scope of work you requested:
+no look at all the planning sessions from this morning. what else is there that i asked you to do?

@@ -98,8 +98,8 @@ export default function OnboardingPage() {
         description="Complete your profile to join the global tango community"
       />
 
-      {/* Hero Section */}
-      <div className="relative h-[40vh] w-full overflow-hidden">
+      {/* Hero Section - z-50 ensures it displays above Replit dev banner */}
+      <div className="relative z-50 h-[40vh] w-full overflow-hidden">
         <div 
           className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: `url('${heroImage}')` }}
@@ -223,7 +223,9 @@ export default function OnboardingPage() {
                     <div className="space-y-8">
                       <div className="text-center">
                         <Camera className="h-16 w-16 text-primary mx-auto mb-6" />
-                        <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">Add a Profile Photo</h2>
+                        <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">
+                          Add a Profile Photo <span className="text-base font-normal text-muted-foreground">(optional)</span>
+                        </h2>
                         <p className="text-muted-foreground text-lg leading-relaxed">
                           A photo helps the community recognize you
                         </p>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Camera, User, MapPin, Link as LinkIcon, Save, Plus, X, Loader2 } from "lucide-react";
+import { Camera, User, MapPin, Link as LinkIcon, Save, Plus, X, Loader2, Users } from "lucide-react";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { SEO } from "@/components/SEO";
@@ -17,6 +17,9 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useLocation } from "wouter";
 import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/UnifiedLocationPicker";
+import { useLocationChange } from "@/hooks/useLocationChange";
+import { LocationChangeWelcome } from "@/components/location/LocationChangeWelcome";
+import type { LocationChangeEffects } from "@/lib/locationChangeEffects";
 
 interface UserData {
   id: number;
@@ -77,9 +80,31 @@ export default function ProfileEditPage() {
     youtube?: string;
     website?: string;
   }>({});
+  
+  // City group tracking for pill display and location change effects
+  const [cityGroupInfo, setCityGroupInfo] = useState<{
+    groupId?: string;
+    memberCount?: number;
+    source?: string;
+  }>({});
+  
+  // Location change welcome dialog state
+  const [showWelcomeDialog, setShowWelcomeDialog] = useState(false);
+  const [locationEffects, setLocationEffects] = useState<LocationChangeEffects | null>(null);
+  
+  // Location change hook for auto-join/auto-create city groups
+  const { checkAndTriggerEffects, updatePreviousLocation, isProcessing: isLocationProcessing } = useLocationChange({
+    userId: currentUser?.id || 0,
+    onEffectsTriggered: (effects) => {
+      setLocationEffects(effects);
+      if (effects.autoJoinedGroup) {
+        setShowWelcomeDialog(true);
+      }
+    },
+  });
 
   // Initialize form state when user data loads
-  useState(() => {
+  useEffect(() => {
     if (user) {
       setName(user.name || "");
       setBio(user.bio || "");
@@ -88,8 +113,10 @@ export default function ProfileEditPage() {
       setYearsOfDancing(user.yearsOfDancing || 0);
       setSelectedRoles(user.tangoRoles || []);
       setSocialLinks(user.socialLinks || {});
+      // Initialize previous location for change detection
+      updatePreviousLocation(user.city || undefined, user.country || undefined);
     }
-  });
+  }, [user, updatePreviousLocation]);
 
   // Update profile mutation
   const updateProfileMutation = useMutation({
@@ -97,12 +124,27 @@ export default function ProfileEditPage() {
       return await apiRequest('PATCH', `/api/users/${currentUser?.id}`, data);
     },
     onSuccess: async () => {
+      // Invalidate all cache variants (string and number IDs, plus username)
+      await queryClient.invalidateQueries({ queryKey: ["user", currentUser?.id] });
+      await queryClient.invalidateQueries({ queryKey: ["user", String(currentUser?.id)] });
+      await queryClient.invalidateQueries({ queryKey: ["user", currentUser?.username] });
       await queryClient.invalidateQueries({ queryKey: [`/api/users/${currentUser?.id}`] });
+      await queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
+      
+      // Trigger location change effects if city changed (auto-join/auto-create city group)
+      if (city && country) {
+        await checkAndTriggerEffects(city, country);
+      }
+      
       toast({
         title: "Profile updated!",
         description: "Your changes have been saved successfully.",
       });
-      navigate('/profile');
+      
+      // Only navigate if no welcome dialog needs to be shown
+      if (!showWelcomeDialog) {
+        navigate('/profile');
+      }
     },
     onError: (error: any) => {
       toast({
@@ -114,8 +156,6 @@ export default function ProfileEditPage() {
   });
 
   const handleSave = () => {
-    const location = [city, country].filter(Boolean).join(', ');
-    
     updateProfileMutation.mutate({
       name,
       bio,
@@ -125,6 +165,12 @@ export default function ProfileEditPage() {
       tangoRoles: selectedRoles,
       socialLinks,
     });
+  };
+  
+  // Handle welcome dialog close
+  const handleWelcomeClose = () => {
+    setShowWelcomeDialog(false);
+    navigate('/profile');
   };
 
   const toggleRole = (role: string) => {
@@ -264,9 +310,52 @@ export default function ProfileEditPage() {
                           const { city: newCity, country: newCountry } = extractCityCountry(loc);
                           setCity(newCity);
                           setCountry(newCountry);
+                          // Capture city group info for pill display
+                          if (parsed) {
+                            setCityGroupInfo({
+                              groupId: parsed.groupId,
+                              memberCount: parsed.memberCount,
+                              source: parsed.source,
+                            });
+                          }
                         }}
                         placeholder="Search for your city..."
                       />
+                      {/* City Pill with member count */}
+                      {city && (
+                        <div className="mt-3 flex items-center gap-2">
+                          <Badge 
+                            variant="secondary" 
+                            className="px-3 py-1.5 flex items-center gap-2 bg-gradient-to-r from-cyan-500/10 to-blue-500/10 border border-cyan-500/20"
+                            data-testid="badge-city-pill"
+                          >
+                            <MapPin className="h-3.5 w-3.5 text-cyan-500" />
+                            <span className="font-medium">{city}</span>
+                            {cityGroupInfo.memberCount ? (
+                              <span className="flex items-center gap-1 text-muted-foreground">
+                                <Users className="h-3 w-3" />
+                                {cityGroupInfo.memberCount} dancers
+                              </span>
+                            ) : (
+                              cityGroupInfo.source === 'city_group' && (
+                                <span className="text-xs text-emerald-500">Community</span>
+                              )
+                            )}
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setCity("");
+                                setCountry("");
+                                setCityGroupInfo({});
+                              }}
+                              className="ml-1 text-muted-foreground hover:text-foreground"
+                              data-testid="button-remove-city"
+                            >
+                              <X className="h-3 w-3" />
+                            </button>
+                          </Badge>
+                        </div>
+                      )}
                     </div>
                   </CardContent>
                 </Card>
@@ -423,13 +512,13 @@ export default function ProfileEditPage() {
                   className="w-full gap-2" 
                   size="lg" 
                   onClick={handleSave}
-                  disabled={updateProfileMutation.isPending}
+                  disabled={updateProfileMutation.isPending || isLocationProcessing}
                   data-testid="button-save"
                 >
-                  {updateProfileMutation.isPending ? (
+                  {updateProfileMutation.isPending || isLocationProcessing ? (
                     <>
                       <Loader2 className="h-4 w-4 animate-spin" />
-                      Saving...
+                      {isLocationProcessing ? 'Joining community...' : 'Saving...'}
                     </>
                   ) : (
                     <>
@@ -441,6 +530,16 @@ export default function ProfileEditPage() {
               </motion.div>
             </div>
           </div>
+          
+          {/* Location Change Welcome Dialog */}
+          {locationEffects && (
+            <LocationChangeWelcome
+              effects={locationEffects}
+              cityName={city}
+              isOpen={showWelcomeDialog}
+              onClose={handleWelcomeClose}
+            />
+          )}
         </>
       </PageLayout>
     </SelfHealingErrorBoundary>

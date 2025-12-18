@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { Link } from "wouter";
+import { Link, useSearch } from "wouter";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -10,9 +10,22 @@ import { Search, Users, MapPin, Plus, TrendingUp } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/UnifiedLocationPicker";
+import { getCityImageUrl } from "@/lib/cityImageMap";
 
 export default function CityGroupsPage() {
-  const [searchQuery, setSearchQuery] = useState("");
+  // Read city from URL query parameter
+  const searchString = useSearch();
+  const urlParams = new URLSearchParams(searchString);
+  const cityFromUrl = urlParams.get("city") || "";
+  
+  const [searchQuery, setSearchQuery] = useState(cityFromUrl);
+  
+  // Update search when URL changes
+  useEffect(() => {
+    if (cityFromUrl) {
+      setSearchQuery(cityFromUrl);
+    }
+  }, [cityFromUrl]);
   const [selectedCountry, setSelectedCountry] = useState("");
   const { toast } = useToast();
 
@@ -95,15 +108,13 @@ export default function CityGroupsPage() {
               
               return (
                 <Card key={group.id} className="hover-elevate" data-testid={`card-group-${group.id}`}>
-                  {group.coverImage && (
-                    <div className="h-32 overflow-hidden rounded-t-lg">
-                      <img
-                        src={group.coverImage}
-                        alt={group.name}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  )}
+                  <div className="h-32 overflow-hidden rounded-t-lg">
+                    <img
+                      src={group.coverImage || getCityImageUrl(group.city)}
+                      alt={group.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
                   <CardHeader>
                     <div className="flex items-center gap-3">
                       <Avatar>

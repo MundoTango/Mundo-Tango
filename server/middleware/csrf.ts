@@ -45,6 +45,11 @@ export function verifyCsrfToken(req: Request, res: Response, next: NextFunction)
     return next();
   }
   
+  // Skip CSRF for n8n messaging webhooks (external automation platform)
+  if (req.originalUrl.startsWith("/api/messaging/webhook/")) {
+    return next();
+  }
+  
   // Skip CSRF for public Mr. Blue endpoints (no auth required)
   const publicMrBlueEndpoints = [
     "/api/mrblue/chat",
@@ -61,13 +66,42 @@ export function verifyCsrfToken(req: Request, res: Response, next: NextFunction)
     return next();
   }
   
+  // Skip CSRF for public auth endpoints (unauthenticated user registration/waitlist)
+  // These have their own rate limiting and validation in production
+  const publicAuthEndpoints = [
+    "/api/auth/register",
+    "/api/auth/login", 
+    "/api/auth/waitlist",
+    "/api/auth/refresh"
+  ];
+  if (publicAuthEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
+    return next();
+  }
+  
+  // Skip CSRF for location search endpoints (read-only search, no state changes)
+  const searchEndpoints = [
+    "/api/locations/search",  // Address/city search via Nominatim
+    "/api/cities/search",     // City group search
+    "/api/venues/search"      // Venue search
+  ];
+  if (searchEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
+    return next();
+  }
+  
   // Skip CSRF for file upload endpoints (use JWT auth, multipart is CSRF-resistant)
   const uploadEndpoints = [
     "/api/upload/video",  // Video compression uploads
     "/api/upload/image",  // Image uploads
+    "/api/media/upload",  // Object Storage media uploads (MB.MD Pattern 28)
     "/api/posts"  // Post creation with media
   ];
   if (uploadEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
+    return next();
+  }
+  
+  // Skip CSRF for event photo uploads specifically (JWT auth + multipart CSRF-resistant)
+  // Pattern: /api/events/:id/photos where :id is numeric
+  if (/^\/api\/events\/\d+\/photos/.test(req.originalUrl)) {
     return next();
   }
   
@@ -87,6 +121,22 @@ export function verifyCsrfToken(req: Request, res: Response, next: NextFunction)
     return next();
   }
   
+  // Skip CSRF for Agent Learning endpoints (MB.MD v9.9.3 + Samsung TRM - A2A communication)
+  const agentLearningEndpoints = [
+    "/api/agents/learning/"
+  ];
+  if (agentLearningEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
+    return next();
+  }
+  
+  // Skip CSRF for Orchestration Phase endpoints (MB.MD v9.9.3 - A2A communication)
+  const orchestrationPhasesEndpoints = [
+    "/api/orchestration/phases/"
+  ];
+  if (orchestrationPhasesEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
+    return next();
+  }
+  
   // Skip CSRF for external API endpoints (Replit AI bridge)
   const externalApiEndpoints = [
     "/api/replit-ai/"
@@ -98,13 +148,28 @@ export function verifyCsrfToken(req: Request, res: Response, next: NextFunction)
   // Skip CSRF for auth endpoints in development/testing (Playwright E2E tests)
   // Production uses additional security: rate limiting, bot detection, CAPTCHA
   if (process.env.NODE_ENV === 'development') {
-    const authEndpoints = ["/api/auth/login", "/api/auth/register", "/api/auth/refresh"];
+    const authEndpoints = ["/api/auth/login", "/api/auth/register", "/api/auth/refresh", "/api/auth/waitlist"];
     if (authEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
       return next();
     }
     // Skip CSRF for travel scraping endpoints in development (for testing)
     const travelScrapingEndpoints = ["/api/travel/scrape-accommodation", "/api/travel/scrape-transport"];
     if (travelScrapingEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
+      return next();
+    }
+    // Skip CSRF for location history endpoints (JWT protected)
+    const locationEndpoints = ["/api/location-history"];
+    if (locationEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
+      return next();
+    }
+    // Skip CSRF for event series endpoints in development (TRACK A)
+    const eventSeriesEndpoints = ["/api/event-series"];
+    if (eventSeriesEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
+      return next();
+    }
+    // Skip CSRF for talent match profile enrichment endpoints (MB.MD Subagent #4)
+    const talentMatchEndpoints = ["/api/v1/enrich-github", "/api/v1/enrich-profile", "/api/v1/validate-linkedin", "/api/v1/validate-urls", "/api/v1/volunteers", "/api/v1/clarifier", "/api/talent-match"];
+    if (talentMatchEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
       return next();
     }
   }
@@ -155,6 +220,11 @@ export function verifyDoubleSubmitCookie(req: Request, res: Response, next: Next
     return next();
   }
   
+  // Skip CSRF for n8n messaging webhooks (external automation platform)
+  if (req.originalUrl.startsWith("/api/messaging/webhook/")) {
+    return next();
+  }
+  
   // Skip CSRF for public Mr. Blue endpoints (no auth required)
   const publicMrBlueEndpoints = [
     "/api/mrblue/chat",
@@ -171,13 +241,42 @@ export function verifyDoubleSubmitCookie(req: Request, res: Response, next: Next
     return next();
   }
   
+  // Skip CSRF for public auth endpoints (unauthenticated user registration/waitlist)
+  // These have their own rate limiting and validation in production
+  const publicAuthEndpoints = [
+    "/api/auth/register",
+    "/api/auth/login", 
+    "/api/auth/waitlist",
+    "/api/auth/refresh"
+  ];
+  if (publicAuthEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
+    return next();
+  }
+  
+  // Skip CSRF for location search endpoints (read-only search via Nominatim, no state changes)
+  const searchEndpoints = [
+    "/api/locations/search",  // Address/city search via Nominatim
+    "/api/cities/search",     // City group search
+    "/api/venues/search"      // Venue search
+  ];
+  if (searchEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
+    return next();
+  }
+  
   // Skip CSRF for file upload endpoints (use JWT auth, multipart is CSRF-resistant)
   const uploadEndpoints = [
     "/api/upload/video",  // Video compression uploads
     "/api/upload/image",  // Image uploads
+    "/api/media/upload",  // Object Storage media uploads (MB.MD Pattern 28)
     "/api/posts"  // Post creation with media
   ];
   if (uploadEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
+    return next();
+  }
+  
+  // Skip CSRF for event photo uploads specifically (JWT auth + multipart CSRF-resistant)
+  // Pattern: /api/events/:id/photos where :id is numeric
+  if (/^\/api\/events\/\d+\/photos/.test(req.originalUrl)) {
     return next();
   }
   
@@ -197,6 +296,14 @@ export function verifyDoubleSubmitCookie(req: Request, res: Response, next: Next
     return next();
   }
   
+  // Skip CSRF for Agent Learning endpoints (MB.MD v9.9.3 + Samsung TRM - A2A communication)
+  const agentLearningEndpoints = [
+    "/api/agents/learning/"
+  ];
+  if (agentLearningEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
+    return next();
+  }
+  
   // Skip CSRF for external API endpoints (Replit AI bridge)
   const externalApiEndpoints = [
     "/api/replit-ai/"
@@ -205,16 +312,27 @@ export function verifyDoubleSubmitCookie(req: Request, res: Response, next: Next
     return next();
   }
   
+  // Skip CSRF for Orchestration Phase endpoints (MB.MD v9.9.3 - A2A communication)
+  if (req.originalUrl.startsWith("/api/orchestration/phases/")) {
+    return next();
+  }
+  
   // Skip CSRF for auth endpoints in development/testing (Playwright E2E tests)
   // Production uses additional security: rate limiting, bot detection, CAPTCHA
   const isDev = process.env.NODE_ENV === 'development';
-  const authEndpoints = ["/api/auth/login", "/api/auth/register", "/api/auth/refresh"];
+  const authEndpoints = ["/api/auth/login", "/api/auth/register", "/api/auth/refresh", "/api/auth/waitlist"];
   const journeyEndpoints = ["/api/journey"]; // Internal API for recording development progress
   const travelScrapingEndpoints = ["/api/travel/scrape-accommodation", "/api/travel/scrape-transport"];
+  const eventSeriesEndpoints = ["/api/event-series"]; // Event series management (TRACK A)
+  const talentMatchEndpoints = ["/api/v1/volunteers", "/api/v1/clarifier", "/api/talent-match", "/api/v1/enrich-github", "/api/v1/enrich-profile", "/api/v1/validate-linkedin", "/api/v1/validate-urls"]; // Talent Match system (JWT protected)
+  const friendsEndpoints = ["/api/friends"]; // Friends system (JWT protected)
   const isAuthEndpoint = authEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint));
   const isJourneyEndpoint = journeyEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint));
   const isTravelScrapingEndpoint = travelScrapingEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint));
-  const shouldBypass = isAuthEndpoint || isJourneyEndpoint || isTravelScrapingEndpoint;
+  const isEventSeriesEndpoint = eventSeriesEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint));
+  const isTalentMatchEndpoint = talentMatchEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint));
+  const isFriendsEndpoint = friendsEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint));
+  const shouldBypass = isAuthEndpoint || isJourneyEndpoint || isTravelScrapingEndpoint || isEventSeriesEndpoint || isTalentMatchEndpoint || isFriendsEndpoint;
   
   console.log(`[CSRF DEBUG] isDev=${isDev}, url=${req.originalUrl}, isAuthEndpoint=${isAuthEndpoint}, isJourneyEndpoint=${isJourneyEndpoint}, shouldBypass=${shouldBypass}`);
   

@@ -76,7 +76,7 @@ export default function MarketingPrototypeOcean() {
             transition={{ duration: 1, delay: 0.5 }}
             className="text-xl md:text-2xl text-white/90 mb-12 max-w-3xl mx-auto"
           >
-            Connect with 10,000+ dancers worldwide. Discover events, find partners, and immerse yourself in the global tango movement.
+            Connect with dancers worldwide. Discover events, find partners, and immerse yourself in the global tango movement.
           </motion.p>
 
           <motion.div
@@ -117,16 +117,13 @@ export default function MarketingPrototypeOcean() {
         </motion.div>
       </motion.section>
 
-      {/* Stats Section */}
+      {/* Community Section */}
       <ScrollRevealSection delay={0.2}>
-        <section className="py-20 bg-gradient-to-br from-cyan-500/10 via-blue-600/10 to-purple-600/10" data-testid="section-stats-ocean">
-          <div className="max-w-7xl mx-auto px-4">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-              <StatCard number="10,000+" label="Active Dancers" delay={0.1} color="text-cyan-400" />
-              <StatCard number="50+" label="Countries" delay={0.2} color="text-blue-400" />
-              <StatCard number="500+" label="Events Monthly" delay={0.3} color="text-purple-400" />
-              <StatCard number="100+" label="Cities" delay={0.4} color="text-cyan-500" />
-            </div>
+        <section className="py-20 bg-gradient-to-br from-cyan-500/10 via-blue-600/10 to-purple-600/10" data-testid="section-community-ocean">
+          <div className="max-w-7xl mx-auto px-4 text-center">
+            <p className="text-xl text-white/80">
+              Building connections across continents, one dance at a time
+            </p>
           </div>
         </section>
       </ScrollRevealSection>

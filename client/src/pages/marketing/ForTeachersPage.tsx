@@ -1,0 +1,290 @@
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { 
+  GraduationCap, Users, Calendar, Star, Video, Globe,
+  DollarSign, BarChart3, MessageCircle, ArrowRight, Check, Sparkles
+} from "lucide-react";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
+import { SEO } from "@/components/SEO";
+import { Link } from "wouter";
+
+const features = [
+  {
+    icon: Users,
+    title: "Student Management",
+    description: "Track student progress, manage class rosters, and build lasting relationships with your dancers."
+  },
+  {
+    icon: Calendar,
+    title: "Class Scheduling",
+    description: "Easy booking system for classes, privates, and workshops. Students book directly on your profile."
+  },
+  {
+    icon: Video,
+    title: "Video Library",
+    description: "Upload and share instructional videos with your students. Build your teaching archive."
+  },
+  {
+    icon: DollarSign,
+    title: "Payment Processing",
+    description: "Accept payments for classes, packages, and workshops. Integrated billing keeps it simple."
+  },
+  {
+    icon: BarChart3,
+    title: "Analytics Dashboard",
+    description: "Track your growth, student retention, and revenue. Make data-driven decisions for your school."
+  },
+  {
+    icon: Globe,
+    title: "Global Visibility",
+    description: "Get discovered by dancers worldwide. Your teaching profile reaches the global tango community."
+  }
+];
+
+const benefits = [
+  "7-day free trial with Pro features",
+  "Cancel anytime",
+  "Unlimited class listings",
+  "Student management tools",
+  "Integrated calendar sync",
+  "Priority support"
+];
+
+const pricingTiers = [
+  {
+    name: "Basic",
+    price: "$4.99",
+    period: "/month",
+    description: "Essential teaching tools",
+    features: ["Profile listing", "5 class listings", "Basic analytics", "Community access"]
+  },
+  {
+    name: "Teacher Pro",
+    price: "$29.99",
+    period: "/month",
+    description: "Everything you need to grow",
+    features: ["Unlimited listings", "Video library", "Payment processing", "Advanced analytics", "Priority support", "Verified badge"],
+    highlighted: true
+  }
+];
+
+export default function ForTeachersPage() {
+  const heroRef = useRef(null);
+  
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end start"]
+  });
+
+  const heroOpacity = useTransform(scrollYProgress, [0, 1], [1, 0]);
+
+  return (
+    <SelfHealingErrorBoundary pageName="For Teachers" fallbackRoute="/">
+      <SEO 
+        title="For Teachers - Mundo Tango"
+        description="Grow your tango teaching business. Manage students, schedule classes, and reach dancers worldwide with Mundo Tango."
+      />
+      
+      <div className="min-h-screen bg-background overflow-x-hidden">
+        <motion.section
+          ref={heroRef}
+          style={{ opacity: heroOpacity }}
+          className="relative h-[60vh] md:h-[70vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-accent/20 via-primary/10 to-background"
+          data-testid="section-hero-teachers"
+        >
+          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-background" />
+
+          <div className="relative z-10 text-center px-8 max-w-6xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1 }}
+            >
+              <Badge 
+                variant="outline" 
+                className="mb-6 border-accent/30 bg-accent/10"
+                data-testid="badge-teachers"
+              >
+                FOR TEACHERS
+              </Badge>
+              
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif font-bold mb-6 tracking-tight leading-tight">
+                Teach Tango{" "}
+                <br />
+                <span className="text-accent">Your Way</span>
+              </h1>
+            </motion.div>
+
+            <motion.p
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, delay: 0.3 }}
+              className="text-xl text-muted-foreground mb-10 max-w-3xl mx-auto leading-relaxed"
+            >
+              Build your teaching business with powerful tools for scheduling, payments, and student management. Reach dancers worldwide.
+            </motion.p>
+
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, delay: 0.5 }}
+              className="flex flex-wrap gap-4 justify-center"
+            >
+              <Link href="/register?role=teacher">
+                <Button size="lg" className="text-lg px-8" data-testid="button-join-teachers">
+                  Start Teaching
+                  <GraduationCap className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
+              <Link href="/pricing">
+                <Button size="lg" variant="outline" className="text-lg px-8" data-testid="button-view-pricing">
+                  View Pricing
+                </Button>
+              </Link>
+            </motion.div>
+          </div>
+        </motion.section>
+
+        <section className="py-20 px-8" data-testid="section-features-teachers">
+          <div className="max-w-6xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-center mb-16"
+            >
+              <h2 className="text-4xl md:text-5xl font-serif font-bold mb-6">
+                Tools Built for Teachers
+              </h2>
+              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                Everything you need to grow your tango teaching business.
+              </p>
+            </motion.div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {features.map((feature, idx) => (
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: idx * 0.1 }}
+                >
+                  <Card className="h-full hover-elevate" data-testid={`card-feature-teacher-${idx}`}>
+                    <CardHeader>
+                      <feature.icon className="h-10 w-10 text-accent mb-4" />
+                      <CardTitle className="text-xl">{feature.title}</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-muted-foreground">{feature.description}</p>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="py-20 px-8 bg-muted/30" data-testid="section-pricing-teachers">
+          <div className="max-w-6xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-center mb-16"
+            >
+              <h2 className="text-4xl md:text-5xl font-serif font-bold mb-6">
+                Simple Pricing
+              </h2>
+              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                Start free, upgrade when ready. No hidden fees.
+              </p>
+            </motion.div>
+
+            <div className="grid md:grid-cols-3 gap-8">
+              {pricingTiers.map((tier, idx) => (
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: idx * 0.1 }}
+                >
+                  <Card 
+                    className={`h-full ${tier.highlighted ? 'border-2 border-primary ring-2 ring-primary/20' : ''}`}
+                    data-testid={`card-pricing-${idx}`}
+                  >
+                    <CardHeader className="text-center">
+                      {tier.highlighted && (
+                        <Badge className="w-fit mx-auto mb-4">Most Popular</Badge>
+                      )}
+                      <CardTitle className="text-2xl">{tier.name}</CardTitle>
+                      <div className="mt-4">
+                        <span className="text-4xl font-bold">{tier.price}</span>
+                        {tier.period && <span className="text-muted-foreground">{tier.period}</span>}
+                      </div>
+                      <p className="text-muted-foreground mt-2">{tier.description}</p>
+                    </CardHeader>
+                    <CardContent>
+                      <ul className="space-y-3">
+                        {tier.features.map((feature, fidx) => (
+                          <li key={fidx} className="flex items-center gap-2">
+                            <Check className="h-4 w-4 text-primary" />
+                            <span className="text-sm">{feature}</span>
+                          </li>
+                        ))}
+                      </ul>
+                      <Link href={`/register?role=teacher&plan=${tier.name.toLowerCase()}`}>
+                        <Button 
+                          className="w-full mt-6" 
+                          variant={tier.highlighted ? "default" : "outline"}
+                          data-testid={`button-select-${tier.name.toLowerCase()}`}
+                        >
+                          Get Started
+                        </Button>
+                      </Link>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="py-20 px-8" data-testid="section-cta-teachers">
+          <div className="max-w-4xl mx-auto text-center">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+            >
+              <h2 className="text-4xl md:text-5xl font-serif font-bold mb-6">
+                Ready to Grow?
+              </h2>
+              <p className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto">
+                Join hundreds of teachers who have built thriving tango businesses.
+              </p>
+              <div className="flex flex-wrap justify-center gap-4 mb-10">
+                {benefits.map((benefit, idx) => (
+                  <Badge key={idx} variant="secondary" className="text-sm">
+                    <Check className="h-3 w-3 mr-1" />
+                    {benefit}
+                  </Badge>
+                ))}
+              </div>
+              <Link href="/register?role=teacher">
+                <Button size="lg" className="text-lg px-12" data-testid="button-cta-teachers">
+                  Start Your Free Trial
+                  <Sparkles className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
+            </motion.div>
+          </div>
+        </section>
+      </div>
+    </SelfHealingErrorBoundary>
+  );
+}

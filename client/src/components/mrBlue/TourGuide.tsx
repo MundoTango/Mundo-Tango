@@ -18,10 +18,21 @@ export default function TourGuide({ feature, userId, autoStart = false, onComple
   const { data: tourData, isLoading } = useQuery({
     queryKey: ['/api/mr-blue/agents/tour', feature],
     queryFn: async () => {
-      const response = await apiRequest('GET', `/api/mr-blue/agents/tour/${feature}`);
-      return response.json();
+      try {
+        const response = await apiRequest('GET', `/api/mr-blue/agents/tour/${feature}`);
+        if (!response.ok) {
+          // Tour not found is expected for new features - return null silently
+          return { success: false, data: null };
+        }
+        return response.json();
+      } catch {
+        // Network errors are not critical for tours - fail silently
+        return { success: false, data: null };
+      }
     },
-    enabled: !!feature
+    enabled: !!feature,
+    retry: false, // Don't retry 404s
+    staleTime: 60000 // Cache for 1 minute
   });
 
   useEffect(() => {

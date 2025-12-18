@@ -44,9 +44,30 @@ export function PostActions({ postId, postContent, isOwnPost }: PostActionsProps
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/posts"] });
+      queryClient.invalidateQueries({ queryKey: ["infinite-feed"] });
       toast({
         title: "Post deleted",
         description: "Your post has been removed",
+        action: (
+          <button
+            onClick={() => {
+              fetch(`/api/posts/${postId}/restore`, {
+                method: "POST",
+                headers: {
+                  Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+                },
+              }).then(() => {
+                queryClient.invalidateQueries({ queryKey: ["/api/posts"] });
+                queryClient.invalidateQueries({ queryKey: ["infinite-feed"] });
+                toast({ title: "Post restored", description: "Your post is back" });
+              });
+            }}
+            className="text-sm font-medium underline"
+            data-testid="button-undo-delete"
+          >
+            Undo
+          </button>
+        ),
       });
       setShowDeleteDialog(false);
     },

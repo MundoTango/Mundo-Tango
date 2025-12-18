@@ -1,0 +1,95 @@
+cat > AGENT_MEMORY.md << 'EOF'
+# Agent Memory Log - Mundo Tango
+
+## Session: Build Agent Communication Infrastructure (Dec 2, 2025, 4 PM PST)
+
+### Task Completed
+✅ Create agent coordination infrastructure enabling real-time multi-agent communication
+
+### What Was Built
+
+**Phase 1-2: Replit Infrastructure (COMPLETE)**
+- ✅ Created `.agent-memory/` directory structure
+- ✅ AGENT_REGISTRY.json - Agent discovery and profiles
+- ✅ ACTIVE_SESSIONS.json - Work claim coordination
+- ✅ TEST_QUEUE.json - Test execution serialization  
+- ✅ AGENT_MESSAGING.log - Append-only communication log
+
+**Phase 3: Documentation (COMPLETE)**
+- ✅ Pattern 49: Agent Memory Infrastructure (persistence layer)
+- ✅ Pattern 50: Agent Discovery & Registration (discovery protocol)
+- ✅ Added to mb.md with full specifications and examples
+
+**Phase 4: Git Integration (COMPLETE)**
+- ✅ Committed Patterns 49-50 to GitHub
+- ✅ Infrastructure files tracked in git
+- ✅ 6 commits total this session
+
+### Deliverables
+
+**GitHub Commits:**
+1. feat: Add Comet Agent Tooling Policy to governance
+2. feat: Add Comet Orchestrator governance components (Sub-Protocol, ledger, monitoring)
+3. feat: Add Pattern 49-50 (Agent Memory Infrastructure & Discovery)
+
+**Files Created:**
+- `.agent-memory/AGENT_REGISTRY.json` (agent profiles)
+- `.agent-memory/ACTIVE_SESSIONS.json` (work claims)
+- `.agent-memory/TEST_QUEUE.json` (test queue)
+- `.agent-memory/AGENT_MESSAGING.log` (message log)
+
+**mb.md Updates:**
+- Comet Agent Tooling Policy (CRITICAL) - Prohibits Replit AI abuse
+- Comet Orchestrator Sub-Protocol - Multi-agent coordination
+- docs/comet-ledger.md structure - Agent performance tracking
+- Pattern 49: Agent Memory Infrastructure - File-based coordination
+- Pattern 50: Agent Discovery & Registration - Discovery protocol
+
+### How It Works
+
+1. **Agent Startup:** Agent reads AGENT_REGISTRY.json, registers itself if new
+2. **Work Coordination:** Agent writes to ACTIVE_SESSIONS.json to claim work
+3. **Test Serialization:** Agent adds entry to TEST_QUEUE.json before running tests
+4. **Communication:** Agents append to AGENT_MESSAGING.log for async messages
+5. **Git History:** All infrastructure files git-tracked for complete audit trail
+
+### Key Capabilities Enabled
+
+✅ Multiple agents can coordinate without conflicts
+✅ Agents discover each other and their capabilities
+✅ Work claims prevent duplicate effort
+✅ Test queue prevents parallel E2E test interference
+✅ Async communication via append-only logs
+✅ Full git history for debugging
+
+### Next Steps
+
+1. **Agent Integration:** Agents use AGENT_REGISTRY to discover each other
+2. **Work Coordination:** First agent on task claims it in ACTIVE_SESSIONS.json
+3. **Test Management:** Agents check TEST_QUEUE before running E2E tests
+4. **Progress Tracking:** Weekly updates in AGENT_MEMORY.md
+5. **Feedback Loop:** Patterns refined based on real multi-agent usage
+
+### Stats
+
+- **Time:** ~30 minutes (Phases 1-4)
+- **Patterns Added:** 2 (Patterns 49-50)
+- **Governance Rules:** 1 (Comet Agent Tooling Policy)
+- **Infrastructure Files:** 4 (JSON + log)
+- **mb.md Size:** 178 KB → 183 KB
+- **Lines Added:** ~250 lines
+
+### Learnings
+
+> "File-based agent coordination is simpler and more git-friendly than database-based approaches. JSON for structured data, append-only logs for communication."
+
+### For Next Session
+
+Agents should:
+1. Read mb.md Patterns 47-50 for context
+2. Register in AGENT_REGISTRY.json on startup
+3. Use ACTIVE_SESSIONS.json to claim work
+4. Check TEST_QUEUE.json before running tests
+5. Document findings in AGENT_MEMORY.md
+
+EOF

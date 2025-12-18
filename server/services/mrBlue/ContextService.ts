@@ -556,13 +556,11 @@ export class ContextService {
 
   /**
    * Search for similar errors (Phase 3: Error Analysis API)
+   * MB.MD v9.8: Now fully implemented with LanceDB semantic search
    * 
    * @param errorMessage - The error message to search for
    * @param topK - Number of similar errors to return (default: 5)
-   * @returns Array of similar errors (empty for now - LanceDB implementation pending)
-   * 
-   * NOTE: This is a stub implementation. Full LanceDB error search will be implemented
-   * in a future phase when we add error embeddings to LanceDB.
+   * @returns Array of similar errors with similarity scores
    */
   async searchErrors(errorMessage: string, topK: number = 5): Promise<Array<{
     id: number;
@@ -570,12 +568,68 @@ export class ContextService {
     similarity: number;
   }>> {
     console.log(`[MrBlue Context] searchErrors() called for: "${errorMessage.substring(0, 50)}..." (topK: ${topK})`);
-    console.log('[MrBlue Context] ⏳ LanceDB error search not yet implemented - returning empty array');
     
-    // TODO: Implement LanceDB error search when error embeddings are added
-    // This will enable semantic similarity search for error patterns
-    
-    return [];
+    try {
+      // Use dedicated error_patterns LanceDB table for semantic search
+      const errorTableName = 'error_patterns_vectors';
+      
+      // Search for similar errors using LanceDB semantic similarity
+      const searchResults = await lanceDB.searchMemories(
+        errorTableName,
+        errorMessage,
+        topK
+      );
+      
+      if (searchResults.length === 0) {
+        console.log('[MrBlue Context] ⚠️ No similar errors found in LanceDB');
+        return [];
+      }
+      
+      // Map LanceDB results to expected format
+      const results = searchResults.map(result => ({
+        id: parseInt(result.id?.replace('error_', '') || '0', 10),
+        errorMessage: result.content || '',
+        similarity: result.similarity || 0
+      })).filter(r => r.id > 0 && r.similarity > 0.3); // Filter low-confidence matches
+      
+      console.log(`[MrBlue Context] ✅ Found ${results.length} similar error(s) via LanceDB semantic search`);
+      
+      return results;
+    } catch (error: any) {
+      // If error_patterns_vectors table doesn't exist yet, fall back gracefully
+      if (error.message?.includes('table') || error.message?.includes('not found')) {
+        console.log('[MrBlue Context] ℹ️ Error patterns table not yet initialized - will populate on first error');
+        return [];
+      }
+      
+      console.error('[MrBlue Context] ❌ Error searching similar errors:', error.message);
+      return [];
+    }
+  }
+  
+  /**
+   * Index an error in LanceDB for future semantic search
+   * Called when new errors are stored in PostgreSQL
+   */
+  async indexError(errorId: number, errorMessage: string, metadata?: Record<string, any>): Promise<void> {
+    try {
+      const errorTableName = 'error_patterns_vectors';
+      
+      await lanceDB.addMemory(errorTableName, {
+        id: `error_${errorId}`,
+        content: errorMessage,
+        metadata: {
+          errorId,
+          indexedAt: new Date().toISOString(),
+          ...metadata
+        },
+        timestamp: Date.now()
+      });
+      
+      console.log(`[MrBlue Context] ✅ Indexed error #${errorId} in LanceDB for semantic search`);
+    } catch (error: any) {
+      console.error(`[MrBlue Context] ❌ Failed to index error #${errorId}:`, error.message);
+    }
   }
 }
 

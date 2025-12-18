@@ -42,18 +42,12 @@ export default function FacebookCallbackPage() {
       setState('exchanging');
       console.log('[FacebookCallback] Exchanging for Page Access Token...');
 
-      const response = await apiRequest('/api/auth/facebook/connect', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          supabaseUserId: session.user.id,
-          userAccessToken: session.provider_token,
-          email: session.user.email,
-          fullName: session.user.user_metadata.full_name,
-          facebookUserId: session.user.user_metadata.sub,
-        }),
+      const response = await apiRequest('POST', '/api/auth/facebook/connect', {
+        supabaseUserId: session.user.id,
+        userAccessToken: session.provider_token,
+        email: session.user.email,
+        fullName: session.user.user_metadata.full_name,
+        facebookUserId: session.user.user_metadata.sub,
       });
 
       if (!response.ok) {
