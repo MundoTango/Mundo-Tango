@@ -88,6 +88,15 @@ export function verifyCsrfToken(req: Request, res: Response, next: NextFunction)
     return next();
   }
   
+  // Skip CSRF for public event source suggestion (community contribution, rate-limited)
+  const publicEventEndpoints = [
+    "/api/public/event-sources",  // Event source suggestions from onboarding
+    "/api/public-stats/event-sources/suggest"  // User-suggested event sources
+  ];
+  if (publicEventEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
+    return next();
+  }
+  
   // Skip CSRF for file upload endpoints (use JWT auth, multipart is CSRF-resistant)
   const uploadEndpoints = [
     "/api/upload/video",  // Video compression uploads
@@ -260,6 +269,15 @@ export function verifyDoubleSubmitCookie(req: Request, res: Response, next: Next
     "/api/venues/search"      // Venue search
   ];
   if (searchEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
+    return next();
+  }
+  
+  // Skip CSRF for public event source suggestion (community contribution, rate-limited)
+  const publicEventEndpoints = [
+    "/api/public/event-sources",  // Event source suggestions from onboarding
+    "/api/public-stats/event-sources/suggest"  // User-suggested event sources
+  ];
+  if (publicEventEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
     return next();
   }
   

@@ -16,74 +16,111 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
 const router = Router();
 
 // Subscription plan definitions - MB.MD v9.9.3 Stripe Integration
-const SUBSCRIPTION_PLANS = {
-  free: {
-    id: 'free',
-    name: 'Free',
+// Simplified to Trial + Basic only (Dec 2025)
+const SUBSCRIPTION_PLANS: Record<string, {
+  id: string;
+  name: string;
+  price: number;
+  interval: string;
+  trialDays?: number;
+  stripePriceId?: string;
+  stripePriceIdYearly?: string;
+  features: string[];
+}> = {
+  trial: {
+    id: 'trial',
+    name: 'Free Trial',
     price: 0,
-    interval: 'month',
-    stripePriceId: process.env.STRIPE_PRICE_FREE_MONTHLY || 'price_1SbWX06k8N6PKChVniBnzes2',
+    interval: 'week',
+    trialDays: 7,
+    stripePriceId: process.env.STRIPE_PRICE_TRIAL,
     features: [
-      'Community features',
-      'Basic event browsing',
-      'Profile creation',
-      'Up to 5 event RSVPs per month',
+      'Full access for 7 days',
+      'No credit card required',
+      'Event discovery',
+      'Community access',
+      'AI assistant access',
+      'Messaging',
     ],
   },
-  pro: {
-    id: 'pro',
-    name: 'Pro',
-    price: 29,
+  basic: {
+    id: 'basic',
+    name: 'Basic',
+    price: 4.99,
     interval: 'month',
-    stripePriceId: process.env.STRIPE_PRICE_PRO_MONTHLY || 'price_1SbWX06k8N6PKChVPNazDMLa',
-    stripePriceIdYearly: process.env.STRIPE_PRICE_PRO_YEARLY || 'price_1SbWX16k8N6PKChVAGQBraV2',
+    stripePriceId: process.env.STRIPE_PRICE_BASIC_MONTHLY,
+    stripePriceIdYearly: process.env.STRIPE_PRICE_BASIC_YEARLY,
     features: [
-      'Unlimited event RSVPs',
-      'Advanced matching algorithm',
-      'Unlimited event creation',
-      'Group participation',
-      'Direct messaging',
-      'Analytics dashboard',
-      'Priority support',
+      'Profile & messaging',
+      'Browse & RSVP to events',
+      'Join groups',
+      'Community access',
+      'Basic AI queries',
+      'Partner matching',
     ],
-  },
-  business: {
-    id: 'business',
-    name: 'Business',
-    price: 79,
-    interval: 'month',
-    stripePriceId: process.env.STRIPE_PRICE_BUSINESS_MONTHLY || 'price_1SbWX16k8N6PKChV3WXuYZ5s',
-    stripePriceIdYearly: process.env.STRIPE_PRICE_BUSINESS_YEARLY || 'price_1SbWX26k8N6PKChV0fdsCKXN',
-    features: [
-      'Everything in Pro',
-      'Mr. Blue AI Assistant',
-      'Custom profile badges',
-      'Early access to features',
-      'Advanced analytics',
-      'Promotional tools',
-      'Featured listings',
-      'Priority event placement',
-    ],
-  },
-  enterprise: {
-    id: 'enterprise',
-    name: 'Enterprise',
-    price: 299,
-    interval: 'month',
-    stripePriceId: process.env.STRIPE_PRICE_ENTERPRISE_MONTHLY || 'price_1SbWX26k8N6PKChVLYQ600aD',
-    features: [
-      'Everything in Business',
-      'Dedicated account manager',
-      'Custom branding options',
-      'API access',
-      'White-label options',
-      'Custom integrations',
-      'SLA guarantee',
-      'Unlimited everything',
-    ],
-    contactRequired: true,
   },
 };
+
+// Cache for dynamically created prices
+const priceCache: Record<string, string> = {};
+
+// Helper function to get or create a Stripe price
+async function getOrCreatePrice(planId: string, plan: typeof SUBSCRIPTION_PLANS[string]): Promise<string> {
+  // Check cache first
+  if (priceCache[planId]) {
+    return priceCache[planId];
+  }
+
+  // Check if price ID is set in environment
+  if (plan.stripePriceId) {
+    try {
+      await stripe.prices.retrieve(plan.stripePriceId);
+      priceCache[planId] = plan.stripePriceId;
+      return plan.stripePriceId;
+    } catch (error) {
+      console.log(`[Billing] Price ${plan.stripePriceId} not found, will create new one`);
+    }
+  }
+
+  // Create a new product and price
+  console.log(`[Billing] Creating Stripe product and price for ${plan.name}...`);
+  
+  const product = await stripe.products.create({
+    name: `Mundo Tango ${plan.name}`,
+    description: plan.features.join(', '),
+    metadata: {
+      planId: planId,
+    },
+  });
+
+  const price = await stripe.prices.create({
+    product: product.id,
+    unit_amount: Math.round(plan.price * 100), // Convert to cents
+    currency: 'usd',
+    recurring: {
+      interval: plan.interval === 'month' ? 'month' : 'week',
+    },
+    metadata: {
+      planId: planId,
+    },
+  });
+
+  console.log(`[Billing] Created price ${price.id} for ${plan.name}`);
+  priceCache[planId] = price.id;
+  return price.id;
+}
+
+// Coming soon features (for roadmap display)
+const COMING_SOON_FEATURES = [
+  'Unlimited AI assistant',
+  'Advanced partner matching',
+  'Housing marketplace access',
+  'Travel planning tools',
+  'Event creation & management',
+  'Analytics dashboard',
+  'Teacher & organizer tools',
+  'Verified badges',
+];
 
 // Add-on definitions
 const ADDONS = {
@@ -202,7 +239,7 @@ router.post("/create-subscription", authenticateToken, async (req: AuthRequest, 
 
     const plan = SUBSCRIPTION_PLANS[planId as keyof typeof SUBSCRIPTION_PLANS];
 
-    if (planId === 'free') {
+    if (planId === 'free' || planId === 'trial') {
       await db.update(users)
         .set({
           subscriptionTier: 'free',
@@ -214,9 +251,8 @@ router.post("/create-subscription", authenticateToken, async (req: AuthRequest, 
       return res.json({ success: true, tier: 'free' });
     }
 
-    if (!plan.stripePriceId) {
-      return res.status(400).json({ message: "Price ID not configured for this plan" });
-    }
+    // Get or create the Stripe price dynamically
+    const stripePriceId = await getOrCreatePrice(planId, plan);
 
     const [user] = await db.select().from(users).where(eq(users.id, userId)).limit(1);
 
@@ -255,7 +291,7 @@ router.post("/create-subscription", authenticateToken, async (req: AuthRequest, 
 
     const subscription = await stripe.subscriptions.create({
       customer: customerId,
-      items: [{ price: plan.stripePriceId }],
+      items: [{ price: stripePriceId }],
       payment_behavior: 'default_incomplete',
       payment_settings: { save_default_payment_method: 'on_subscription' },
       expand: ['latest_invoice.payment_intent'],
@@ -322,16 +358,15 @@ router.post("/update-subscription", authenticateToken, async (req: AuthRequest, 
       return res.status(400).json({ message: "No active subscription found" });
     }
 
-    if (!plan.stripePriceId) {
-      return res.status(400).json({ message: "Price ID not configured for this plan" });
-    }
+    // Get or create the Stripe price dynamically
+    const stripePriceId = await getOrCreatePrice(planId, plan);
 
     const subscription = await stripe.subscriptions.retrieve(user.stripeSubscriptionId);
     
     const updatedSubscription = await stripe.subscriptions.update(user.stripeSubscriptionId, {
       items: [{
         id: subscription.items.data[0].id,
-        price: plan.stripePriceId,
+        price: stripePriceId,
       }],
       proration_behavior: 'create_prorations',
     });

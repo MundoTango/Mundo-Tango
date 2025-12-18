@@ -4,8 +4,10 @@ import {
   platformDonations, 
   ambassadors,
   users,
+  eventScrapingSources,
+  notifications,
 } from "@shared/schema";
-import { sql, eq, and, sum, count } from "drizzle-orm";
+import { sql, eq, and, sum, count, ilike, or } from "drizzle-orm";
 
 const router = Router();
 
@@ -304,6 +306,100 @@ router.get("/volunteer-divisions", async (req, res) => {
   ];
 
   res.json(divisions);
+});
+
+router.get("/event-sources", async (req, res) => {
+  try {
+    const { city } = req.query;
+    
+    if (!city || typeof city !== 'string') {
+      return res.status(400).json({ error: "City parameter is required" });
+    }
+
+    const sources = await db.select({
+      id: eventScrapingSources.id,
+      name: eventScrapingSources.name,
+      url: eventScrapingSources.url,
+      platform: eventScrapingSources.platform,
+      city: eventScrapingSources.city,
+      country: eventScrapingSources.country,
+    })
+      .from(eventScrapingSources)
+      .where(and(
+        eq(eventScrapingSources.isActive, true),
+        ilike(eventScrapingSources.city, `%${city}%`)
+      ))
+      .limit(10);
+
+    res.json({
+      city,
+      sources,
+      count: sources.length,
+    });
+  } catch (error) {
+    console.error("Error fetching event sources:", error);
+    res.json({ city: req.query.city, sources: [], count: 0 });
+  }
+});
+
+router.post("/event-sources/suggest", async (req, res) => {
+  try {
+    const { city, country, url, name } = req.body;
+    
+    if (!city || !url) {
+      return res.status(400).json({ error: "City and URL are required" });
+    }
+
+    // Check for duplicate URL
+    const existing = await db.select({ id: eventScrapingSources.id })
+      .from(eventScrapingSources)
+      .where(eq(eventScrapingSources.url, url))
+      .limit(1);
+    
+    if (existing.length > 0) {
+      return res.status(400).json({ error: "This website has already been submitted" });
+    }
+
+    const [newSource] = await db.insert(eventScrapingSources).values({
+      name: name || `User suggested: ${url}`,
+      url,
+      platform: "user_suggested",
+      city,
+      country: country || null,
+      isActive: false,
+    }).returning({ id: eventScrapingSources.id });
+
+    // Notify admins about new source suggestion
+    try {
+      const admins = await db.select({ id: users.id })
+        .from(users)
+        .where(or(
+          eq(users.role, 'super_admin'),
+          eq(users.role, 'admin')
+        ))
+        .limit(10);
+
+      for (const admin of admins) {
+        await db.insert(notifications).values({
+          userId: admin.id,
+          type: 'system_announcement',
+          title: 'New Event Source Suggested',
+          message: `A user suggested a new event source for ${city}: ${url}`,
+          actionUrl: '/admin/scraping',
+          isRead: false,
+          priority: 'normal',
+        });
+      }
+    } catch (notifyError) {
+      console.error("Failed to notify admins:", notifyError);
+      // Don't fail the request if notification fails
+    }
+
+    res.json({ success: true, message: "Thank you! We'll review this source." });
+  } catch (error) {
+    console.error("Error adding suggested source:", error);
+    res.status(500).json({ error: "Failed to add suggestion" });
+  }
 });
 
 export default router;

@@ -141,21 +141,34 @@ export default function LandingPage() {
     }
   ];
 
+  // Coming Soon features for roadmap display
+  const comingSoonFeatures = [
+    "Unlimited AI assistant",
+    "Advanced partner matching", 
+    "Housing marketplace access",
+    "Travel planning tools",
+    "Event creation & management",
+    "Analytics dashboard",
+    "Teacher & organizer tools",
+    "Verified badges"
+  ];
+
   const pricingTiers = [
     {
       name: "Free Trial",
       price: "$0",
       period: "7 days",
-      description: "Try Pro features free",
+      description: "Try all features free",
       features: [
-        "Full Pro features for 7 days",
+        "Full access for 7 days",
         "No credit card required",
         "Event discovery",
         "Community access",
-        "AI assistant access"
+        "AI assistant access",
+        "Messaging"
       ],
       cta: "Start Free Trial",
-      popular: false
+      popular: true
     },
     {
       name: "Basic",
@@ -163,46 +176,14 @@ export default function LandingPage() {
       period: "per month",
       description: "Essential tango tools",
       features: [
-        "Basic profile & messaging",
-        "Browse events",
+        "Profile & messaging",
+        "Browse & RSVP to events",
         "Join groups",
         "Community access",
-        "Limited AI queries"
+        "Basic AI queries",
+        "Partner matching"
       ],
       cta: "Get Started",
-      popular: false
-    },
-    {
-      name: "Dancer Pro",
-      price: "$9.99",
-      period: "per month",
-      description: "For dedicated dancers",
-      features: [
-        "Everything in Basic",
-        "Unlimited AI assistant",
-        "Advanced partner matching",
-        "Housing marketplace access",
-        "Priority event listings",
-        "Ad-free experience",
-        "Travel planning tools"
-      ],
-      cta: "Start Free Trial",
-      popular: true
-    },
-    {
-      name: "Professional",
-      price: "$29.99",
-      period: "per month",
-      description: "For teachers & organizers",
-      features: [
-        "Everything in Dancer Pro",
-        "Event creation & management",
-        "Analytics dashboard",
-        "Student management tools",
-        "Verified badge",
-        "Priority support"
-      ],
-      cta: "Start Free Trial",
       popular: false
     }
   ];
@@ -518,17 +499,17 @@ export default function LandingPage() {
               </motion.p>
             </div>
 
-            {/* Pricing Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+            {/* Pricing Cards - 2 column layout */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto">
               {pricingTiers.map((tier, index) => (
                 <motion.div key={index} variants={fadeInUp}>
                   <Card 
                     className={`h-full relative ${tier.popular ? 'border-primary border-2' : ''}`}
-                    data-testid={`pricing-card-${tier.name.toLowerCase()}`}
+                    data-testid={`pricing-card-${tier.name.toLowerCase().replace(' ', '-')}`}
                   >
                     {tier.popular && (
                       <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground">
-                        Most Popular
+                        Recommended
                       </Badge>
                     )}
                     <CardHeader>
@@ -554,7 +535,7 @@ export default function LandingPage() {
                         <Button 
                           className={`w-full ${tier.popular ? 'ocean-gradient text-white' : ''}`}
                           variant={tier.popular ? "default" : "outline"}
-                          data-testid={`button-pricing-${tier.name.toLowerCase()}`}
+                          data-testid={`button-pricing-${tier.name.toLowerCase().replace(' ', '-')}`}
                         >
                           {tier.cta}
                         </Button>
@@ -564,6 +545,27 @@ export default function LandingPage() {
                 </motion.div>
               ))}
             </div>
+
+            {/* Coming Soon Features */}
+            <motion.div variants={fadeInUp} className="max-w-3xl mx-auto mt-12">
+              <Card className="border-dashed border-2 bg-muted/30">
+                <CardHeader className="text-center pb-2">
+                  <Badge variant="outline" className="w-fit mx-auto mb-2">Coming Soon</Badge>
+                  <CardTitle className="text-xl">More Features on the Way</CardTitle>
+                  <CardDescription>Premium features we're building for the tango community</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    {comingSoonFeatures.map((feature, index) => (
+                      <div key={index} className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <div className="h-1.5 w-1.5 rounded-full bg-primary/50" />
+                        {feature}
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
           </motion.div>
         </div>
       </section>

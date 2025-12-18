@@ -37,6 +37,24 @@ export function createTalentMatchRoutes(storage: IStorage) {
     }
   });
 
+  // Get current user's volunteer profile (must be before :id route)
+  router.get("/volunteers/me", async (req, res) => {
+    try {
+      // @ts-expect-error - user is set by session middleware
+      const userId = req.user?.id || req.session?.userId;
+      if (!userId) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+      const volunteer = await storage.getVolunteerByUserId(Number(userId));
+      if (!volunteer) {
+        return res.status(404).json({ error: "Volunteer profile not found" });
+      }
+      res.json(volunteer);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   // Get volunteer by ID
   router.get("/volunteers/:id", async (req, res) => {
     try {
@@ -132,6 +150,39 @@ export function createTalentMatchRoutes(storage: IStorage) {
   // ============================================================================
   // AI CLARIFIER SESSIONS
   // ============================================================================
+
+  // Guest clarifier session - no login required
+  router.post("/volunteers/guest-clarifier", async (req, res) => {
+    try {
+      const { profile, skills, resumeText } = req.body;
+      
+      // Create a temporary session ID
+      const sessionId = `guest_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
+      
+      const initialSignals = skills && skills.length > 0
+        ? detectSkillSignals(resumeText || "", skills)
+        : [];
+
+      const firstQuestion = generateClarifierQuestions(initialSignals, [])[0] || 
+        "Tell me about your technical background and what you're passionate about building.";
+
+      res.json({
+        sessionId,
+        isGuest: true,
+        chatLog: [
+          {
+            role: "assistant",
+            message: `Hi! I'm here to learn more about your skills and match you with the right opportunities. ${firstQuestion}`,
+            timestamp: new Date().toISOString(),
+          }
+        ],
+        detectedSignals: initialSignals.map(s => s.signal),
+        status: "active"
+      });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
 
   // Start clarifier session with AI
   router.post("/volunteers/:volunteerId/clarifier", async (req, res) => {

@@ -396,8 +396,6 @@ export default function UnifiedInbox() {
       </div>
     );
   };
-  messages: Message[];
-}
 
 function formatMessageTime(dateStr: string) {
   const date = new Date(dateStr);
@@ -415,14 +413,6 @@ function formatChatTime(dateStr: string) {
   return format(date, "h:mm a");
 }
 
-function getInitials(name: string) {
-  return name
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2);
-}
 
 // Message Reaction Component
 function MessageReactionBar({ 
@@ -663,23 +653,7 @@ function MessageReactionBar({
                     {selectedConversation.isOnline ? "Active now" : `Active ${getRelativeTime(selectedConversation.lastMessageAt)} ago`}
                   </p>
                 </div>
-              </Link>
-              
-              <div className="flex-1 min-w-0">
-                <Link href={`/profile/${thread.partner.id}`}>
-                  <h2 className="font-semibold truncate cursor-pointer hover:underline" data-testid="chat-partner-name">
-                    {thread.partner.name}
-                  </h2>
-                </Link>
-                <p className="text-xs text-muted-foreground">
-                  {thread.partner.id % 2 === 0 ? (
-                    <span className="text-green-600 dark:text-green-500">Active now</span>
-                  ) : (
-                    `Active ${formatDistanceToNow(new Date(Date.now() - Math.random() * 3600000))} ago`
-                  )}
-                </p>
               </div>
-              
             </div>
 
             {/* Messages */}

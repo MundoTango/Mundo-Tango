@@ -2,15 +2,16 @@ import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { MapPin, Loader2, ChevronRight } from "lucide-react";
+import { MapPin, Loader2, ChevronRight, Globe, Plus, ExternalLink } from "lucide-react";
 import { SEO } from "@/components/SEO";
 import { useAuth } from "@/contexts/AuthContext";
 import { extractApiError } from "@/lib/apiErrorHandler";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/UnifiedLocationPicker";
 import heroImage from "@assets/stock_images/global_world_map_con_854a9c2d.jpg";
 
@@ -20,21 +21,101 @@ interface SelectedCity {
   country: string;
 }
 
+interface EventSource {
+  id: number;
+  name: string;
+  url: string;
+  platform: string;
+}
+
 export default function CitySelectionPage() {
   const [, navigate] = useLocation();
-  const { user } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
   const { toast } = useToast();
   const [citySearch, setCitySearch] = useState("");
   const [selectedCity, setSelectedCity] = useState<SelectedCity | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [eventSources, setEventSources] = useState<EventSource[]>([]);
+  const [showAddSource, setShowAddSource] = useState(false);
+  const [newSourceUrl, setNewSourceUrl] = useState("");
+  const [isAddingSource, setIsAddingSource] = useState(false);
 
   useEffect(() => {
+    if (authLoading) return;
+    
     if (!user) {
       navigate("/login");
     } else if (user.isOnboardingComplete) {
       navigate("/feed");
     }
-  }, [user, navigate]);
+  }, [user, authLoading, navigate]);
+
+  useEffect(() => {
+    if (selectedCity?.name) {
+      fetch(`/api/public/event-sources?city=${encodeURIComponent(selectedCity.name)}`)
+        .then(res => res.json())
+        .then(data => {
+          setEventSources(data.sources || []);
+        })
+        .catch(() => setEventSources([]));
+    } else {
+      setEventSources([]);
+    }
+  }, [selectedCity]);
+
+  const handleAddSource = async () => {
+    if (!newSourceUrl || !selectedCity) return;
+    
+    // Basic URL validation
+    try {
+      new URL(newSourceUrl);
+    } catch {
+      toast({
+        title: "Invalid URL",
+        description: "Please enter a valid website URL (e.g., https://example.com)",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    setIsAddingSource(true);
+    try {
+      const response = await fetch("/api/public/event-sources/suggest", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          city: selectedCity.name,
+          country: selectedCity.country,
+          url: newSourceUrl,
+        }),
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok) {
+        toast({
+          title: "Thank you!",
+          description: "We'll review this event source and add it to our system.",
+        });
+        setNewSourceUrl("");
+        setShowAddSource(false);
+      } else {
+        toast({
+          title: "Submission failed",
+          description: data.error || "Please try again later.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Failed to submit",
+        description: "Please check your connection and try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsAddingSource(false);
+    }
+  };
 
   const handleContinue = async () => {
     if (!selectedCity) {
@@ -169,21 +250,90 @@ export default function CitySelectionPage() {
                     }}
                     placeholder="Search for your city..."
                   />
+                </div>
 
-                  {selectedCity && selectedCity.name && (
-                    <motion.div 
-                      className="flex items-center gap-2 p-4 rounded-xl bg-primary/10 border border-primary/20"
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
+                <AnimatePresence>
+                  {selectedCity && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="space-y-4 pt-4 border-t"
                     >
-                      <MapPin className="h-5 w-5 text-primary" />
-                      <div>
-                        <p className="font-medium">{selectedCity.name}</p>
-                        <p className="text-sm text-muted-foreground">{selectedCity.country}</p>
+                      <div className="flex items-center gap-2">
+                        <Globe className="h-5 w-5 text-primary" />
+                        <p className="font-medium">Event Sources for {selectedCity.name}</p>
                       </div>
+                      
+                      {eventSources.length > 0 ? (
+                        <div className="space-y-2">
+                          <p className="text-sm text-muted-foreground">
+                            We found {eventSources.length} website(s) for finding tango events:
+                          </p>
+                          <div className="space-y-2">
+                            {eventSources.map((source) => (
+                              <a
+                                key={source.id}
+                                href={source.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center gap-2 p-2 rounded-lg bg-muted/50 hover-elevate text-sm"
+                                data-testid={`link-source-${source.id}`}
+                              >
+                                <ExternalLink className="h-4 w-4 text-muted-foreground" />
+                                <span className="truncate">{source.name}</span>
+                              </a>
+                            ))}
+                          </div>
+                        </div>
+                      ) : (
+                        <p className="text-sm text-muted-foreground">
+                          We don't have any event sources for {selectedCity.name} yet.
+                        </p>
+                      )}
+
+                      {!showAddSource ? (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setShowAddSource(true)}
+                          className="gap-2"
+                          data-testid="button-add-source"
+                        >
+                          <Plus className="h-4 w-4" />
+                          Know another site? Add it!
+                        </Button>
+                      ) : (
+                        <div className="space-y-3 p-4 rounded-lg bg-muted/30">
+                          <Label className="text-sm">Add an event website for {selectedCity.name}</Label>
+                          <div className="flex gap-2">
+                            <Input
+                              placeholder="https://example.com/events"
+                              value={newSourceUrl}
+                              onChange={(e) => setNewSourceUrl(e.target.value)}
+                              data-testid="input-new-source"
+                            />
+                            <Button
+                              onClick={handleAddSource}
+                              disabled={!newSourceUrl || isAddingSource}
+                              size="sm"
+                              data-testid="button-submit-source"
+                            >
+                              {isAddingSource ? <Loader2 className="h-4 w-4 animate-spin" /> : "Submit"}
+                            </Button>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setShowAddSource(false)}
+                          >
+                            Cancel
+                          </Button>
+                        </div>
+                      )}
                     </motion.div>
                   )}
-                </div>
+                </AnimatePresence>
               </CardContent>
 
               <CardFooter className="p-8 bg-muted/20 flex justify-between">

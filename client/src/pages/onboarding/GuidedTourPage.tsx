@@ -42,14 +42,15 @@ const TOUR_STEPS: Step[] = [
 
 export default function GuidedTourPage() {
   const [, navigate] = useLocation();
-  const { user } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
   const [runTour, setRunTour] = useState(true);
 
   useEffect(() => {
+    if (authLoading) return;
     if (!user) {
       navigate("/login");
     }
-  }, [user, navigate]);
+  }, [user, authLoading, navigate]);
 
   const handleJoyrideCallback = async (data: CallBackProps) => {
     const { status } = data;
@@ -68,10 +69,23 @@ export default function GuidedTourPage() {
             formStatus: 4,
           }),
         });
-        navigate("/feed");
+        
+        // Check if user is a waitlist user - redirect to waitlist page
+        const isWaitlistUser = localStorage.getItem("isWaitlistUser");
+        if (isWaitlistUser === "true") {
+          navigate("/waitlist");
+        } else {
+          navigate("/feed");
+        }
       } catch (error) {
         console.error("Error completing onboarding:", error);
-        navigate("/feed");
+        // Still check waitlist flag on error
+        const isWaitlistUser = localStorage.getItem("isWaitlistUser");
+        if (isWaitlistUser === "true") {
+          navigate("/waitlist");
+        } else {
+          navigate("/feed");
+        }
       }
     }
   };

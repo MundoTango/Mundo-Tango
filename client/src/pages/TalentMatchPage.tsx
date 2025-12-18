@@ -110,27 +110,43 @@ export default function TalentMatchPage() {
       return;
     }
 
-    if (!user) {
-      toast({
-        title: "Login required",
-        description: "Please login to continue with talent matching",
-        variant: "destructive"
-      });
-      setLocation("/login");
-      return;
-    }
-
     setIsSubmitting(true);
     
     try {
+      // Store talent match data in session storage for guest users
+      const talentMatchData = {
+        resumeText,
+        linkedinUrl,
+        githubUrl,
+        uploadedFileName: uploadedFile?.name
+      };
+      
+      if (!user) {
+        // Guest flow: Store data and redirect to Mr Blue chat with guest session
+        sessionStorage.setItem("talentMatchData", JSON.stringify(talentMatchData));
+        
+        // Create a guest clarifier session
+        const guestSessionResponse = await apiRequest("POST", "/api/v1/volunteers/guest-clarifier", {
+          profile: talentMatchData,
+          skills: [],
+          availability: "flexible",
+          hoursPerWeek: 10
+        });
+        const guestSession = await guestSessionResponse.json();
+        
+        toast({
+          title: "Starting AI Interview",
+          description: "You can create an account after the interview to save your profile.",
+        });
+        
+        setLocation(`/mr-blue-chat?session=${guestSession.sessionId}&guest=true&returnTo=/register`);
+        return;
+      }
+      
+      // Authenticated user flow
       const volunteerResponse = await apiRequest("POST", "/api/v1/volunteers", {
         userId: user.id,
-        profile: {
-          resumeText,
-          linkedinUrl,
-          githubUrl,
-          uploadedFileName: uploadedFile?.name
-        },
+        profile: talentMatchData,
         skills: [],
         availability: "flexible",
         hoursPerWeek: 10

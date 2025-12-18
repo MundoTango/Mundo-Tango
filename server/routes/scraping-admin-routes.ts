@@ -575,4 +575,103 @@ router.get('/admin/scraping/hoymilonga/cities', authenticateToken, async (req: A
   }
 });
 
+// Get pending user-suggested sources awaiting approval
+router.get('/admin/scraping/pending-sources', authenticateToken, async (req: AuthRequest, res) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, userId)
+    });
+
+    if (!user || !['super_admin', 'admin'].includes(user.role || '')) {
+      return res.status(403).json({ error: 'Forbidden: Admin access required' });
+    }
+
+    const pendingSources = await db.select()
+      .from(eventScrapingSources)
+      .where(and(
+        eq(eventScrapingSources.isActive, false),
+        eq(eventScrapingSources.platform, 'user_suggested')
+      ))
+      .orderBy(desc(eventScrapingSources.createdAt));
+
+    res.json({
+      pendingSources,
+      count: pendingSources.length,
+    });
+  } catch (error) {
+    console.error('Error fetching pending sources:', error);
+    res.status(500).json({ error: 'Failed to fetch pending sources' });
+  }
+});
+
+// Approve or reject a user-suggested source
+router.post('/admin/scraping/sources/:id/review', authenticateToken, async (req: AuthRequest, res) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, userId)
+    });
+
+    if (!user || !['super_admin', 'admin'].includes(user.role || '')) {
+      return res.status(403).json({ error: 'Forbidden: Admin access required' });
+    }
+
+    const sourceId = parseInt(req.params.id);
+    const { action, name, platform } = req.body;
+
+    if (!action || !['approve', 'reject'].includes(action)) {
+      return res.status(400).json({ error: 'Action must be "approve" or "reject"' });
+    }
+
+    const [source] = await db.select()
+      .from(eventScrapingSources)
+      .where(eq(eventScrapingSources.id, sourceId))
+      .limit(1);
+
+    if (!source) {
+      return res.status(404).json({ error: 'Source not found' });
+    }
+
+    if (action === 'approve') {
+      // Activate the source and optionally update name/platform
+      await db.update(eventScrapingSources)
+        .set({
+          isActive: true,
+          name: name || source.name,
+          platform: platform || 'website',
+          updatedAt: new Date(),
+        })
+        .where(eq(eventScrapingSources.id, sourceId));
+
+      res.json({
+        success: true,
+        message: 'Source approved and will be included in next scraping run',
+        sourceId,
+      });
+    } else {
+      // Reject by deleting the source
+      await db.delete(eventScrapingSources)
+        .where(eq(eventScrapingSources.id, sourceId));
+
+      res.json({
+        success: true,
+        message: 'Source rejected and removed',
+        sourceId,
+      });
+    }
+  } catch (error) {
+    console.error('Error reviewing source:', error);
+    res.status(500).json({ error: 'Failed to review source' });
+  }
+});
+
 export default router;

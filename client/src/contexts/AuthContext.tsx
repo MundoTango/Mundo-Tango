@@ -57,7 +57,7 @@ interface AuthContextType {
   session: { accessToken: string } | null;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (data: { name: string; username: string; email: string; password: string }) => Promise<void>;
+  register: (data: { name: string; username: string; email: string; password: string; inviteCode: string }) => Promise<void>;
   logout: () => Promise<void>;
   updateProfile: (updates: Partial<Profile>) => Promise<{ error: Error | null }>;
   refreshCurrentUser: () => Promise<boolean>;
@@ -271,7 +271,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const register = async (registerData: { name: string; username: string; email: string; password: string }) => {
+  const register = async (registerData: { name: string; username: string; email: string; password: string; inviteCode: string }) => {
     try {
       console.log("Starting registration for:", registerData.email);
       

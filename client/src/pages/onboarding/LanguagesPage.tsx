@@ -17,7 +17,7 @@ import { UnifiedLanguagePicker, getLanguageByCode, getLanguageByName } from "@/c
 
 export default function LanguagesPage() {
   const [, navigate] = useLocation();
-  const { user } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
   const { toast } = useToast();
   const { i18n } = useTranslation();
   const [primaryLanguage, setPrimaryLanguage] = useState<string>("");
@@ -25,12 +25,13 @@ export default function LanguagesPage() {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    if (authLoading) return;
     if (!user) {
       navigate("/login");
     } else if (user.isOnboardingComplete) {
       navigate("/feed");
     }
-  }, [user, navigate]);
+  }, [user, authLoading, navigate]);
 
   const handlePrimaryLanguageChange = (value: string | string[]) => {
     const langCode = value as string;

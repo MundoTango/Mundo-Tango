@@ -8,7 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { SEO } from "@/components/SEO";
-import { Eye, EyeOff, Check, X, Loader2, Sparkles, Heart, Users, Globe, Lock, HandHeart, CreditCard, ArrowRight, KeyRound, PartyPopper } from "lucide-react";
+import { Eye, EyeOff, Check, X, Loader2, Sparkles, Heart, Users, Globe, Lock, HandHeart, CreditCard, ArrowRight, KeyRound, PartyPopper, Star, Headphones } from "lucide-react";
 import { PublicLayout } from "@/components/PublicLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { motion } from "framer-motion";
@@ -34,6 +34,15 @@ export default function RegisterPage() {
   const [isCheckingEmail, setIsCheckingEmail] = useState(false);
   const { register } = useAuth();
   const { toast } = useToast();
+
+  // Store registration role from URL params for post-onboarding routing
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const role = urlParams.get('role');
+    if (role) {
+      localStorage.setItem('registrationRole', role);
+    }
+  }, []);
 
   const handleCodeChange = (code: string) => {
     setInviteCode(code);
@@ -128,6 +137,81 @@ export default function RegisterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Validate all required fields
+    if (!name.trim()) {
+      toast({
+        title: "Name required",
+        description: "Please enter your full name",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!email.trim()) {
+      toast({
+        title: "Email required",
+        description: "Please enter your email address",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      toast({
+        title: "Invalid email",
+        description: "Please enter a valid email address (e.g., name@example.com)",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (emailAvailable === false) {
+      toast({
+        title: "Email already registered",
+        description: "This email is already in use. Please try another.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!username.trim()) {
+      toast({
+        title: "Username required",
+        description: "Please enter a username",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (usernameAvailable === false) {
+      toast({
+        title: "Username taken",
+        description: "Please choose a different username",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!password) {
+      toast({
+        title: "Password required",
+        description: "Please enter a password",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!confirmPassword) {
+      toast({
+        title: "Confirm password",
+        description: "Please confirm your password",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (!termsAccepted) {
       toast({
         title: "Terms required",
@@ -159,8 +243,10 @@ export default function RegisterPage() {
 
     try {
       if (isCodeValid) {
-        await register({ name, username, email, password });
+        // Full registration with invite code - proceed to onboarding
+        await register({ name, username, email, password, inviteCode });
       } else {
+        // No invite code - create waitlist account and proceed to onboarding
         const response = await fetch("/api/auth/waitlist", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -169,18 +255,39 @@ export default function RegisterPage() {
             name: name || undefined,
             username: username || undefined,
             password: password || undefined,
+            proceedToOnboarding: true, // Enable onboarding for waitlist users
           }),
         });
         
         const data = await response.json();
         
         if (!response.ok) {
-          throw new Error(data.message || "Failed to join waitlist");
+          throw new Error(data.message || "Failed to complete signup");
         }
         
+        // Store tokens and mark as waitlist user
+        if (data.accessToken) {
+          localStorage.setItem("accessToken", data.accessToken);
+          if (data.refreshToken) {
+            localStorage.setItem("refreshToken", data.refreshToken);
+          }
+          // Flag to redirect to waitlist page after onboarding
+          localStorage.setItem("isWaitlistUser", "true");
+          
+          toast({
+            title: "Account created!",
+            description: "Let's set up your profile.",
+          });
+          
+          // Redirect to onboarding
+          window.location.href = "/onboarding/step-1";
+          return;
+        }
+        
+        // Fallback if no tokens returned
         setWaitlistSuccess(true);
         toast({
-          title: "You're on the list!",
+          title: "You're on the waitlist!",
           description: "We'll notify you when your account is ready.",
         });
       }
@@ -213,7 +320,7 @@ export default function RegisterPage() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, ease: "easeOut" }}
-              className="w-full max-w-lg"
+              className={`w-full ${waitlistSuccess ? 'max-w-4xl' : 'max-w-lg'}`}
             >
               <div className="text-center mb-8">
                 <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-welcome">
@@ -260,42 +367,69 @@ export default function RegisterPage() {
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.5 }}
-                  className="backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl p-8 shadow-2xl"
+                  className="backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl p-8 shadow-2xl max-w-4xl"
                   data-testid="section-waitlist-success"
                 >
-                  <div className="text-center">
+                  <div className="text-center mb-8">
                     <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
                       <PartyPopper className="w-10 h-10 text-green-400" />
                     </div>
                     <h3 className="text-2xl font-semibold text-white mb-2">Welcome, {name || "Dancer"}!</h3>
-                    <p className="text-white/70 mb-8">You're on the list. We'll email you at <span className="text-white font-medium">{email}</span> when your account is ready.</p>
+                    <p className="text-white/70">You're on the waitlist. We'll email you at <span className="text-white font-medium">{email}</span> when your account is ready.</p>
+                  </div>
+                  
+                  <div className="border-t border-white/10 pt-8">
+                    <p className="text-sm text-white/60 font-medium uppercase tracking-wide text-center mb-6">While you wait, get involved</p>
                     
-                    <div className="space-y-4">
-                      <p className="text-sm text-white/60 font-medium uppercase tracking-wide">While you wait, help us grow</p>
-                      <div className="flex flex-col gap-3">
-                        <Link href="/talent-match">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      <div className="flex flex-col items-center text-center">
+                        <Link href="/talent-match" className="w-full">
                           <Button 
-                            className="w-full bg-white text-black hover:bg-white/90"
+                            className="w-full bg-white text-black hover:bg-white/90 mb-4"
                             size="lg"
                             data-testid="button-volunteer-cta"
                           >
                             <HandHeart className="mr-2 h-5 w-5" />
-                            Volunteer with us
-                            <ArrowRight className="ml-2 h-5 w-5" />
+                            Volunteer
                           </Button>
                         </Link>
-                        <Link href="/crowdfunding">
+                        <p className="text-white/70 text-sm">
+                          Join our volunteer team and help build the global tango community. Contribute your skills in translation, event coordination, content creation, and more.
+                        </p>
+                      </div>
+                      
+                      <div className="flex flex-col items-center text-center">
+                        <Link href="/ambassadors" className="w-full">
                           <Button 
                             variant="outline" 
-                            className="w-full border-white/30 text-white hover:bg-white/10"
+                            className="w-full border-white/30 text-white hover:bg-white/10 mb-4"
+                            size="lg"
+                            data-testid="button-ambassador-cta"
+                          >
+                            <Star className="mr-2 h-5 w-5" />
+                            Ambassador
+                          </Button>
+                        </Link>
+                        <p className="text-white/70 text-sm">
+                          Represent Mundo Tango in your city. Ambassadors help grow the local tango scene, connect dancers, and bring our global community together.
+                        </p>
+                      </div>
+                      
+                      <div className="flex flex-col items-center text-center">
+                        <Link href="/support" className="w-full">
+                          <Button 
+                            variant="outline" 
+                            className="w-full border-white/30 text-white hover:bg-white/10 mb-4"
                             size="lg"
                             data-testid="button-support-cta"
                           >
-                            <CreditCard className="mr-2 h-5 w-5" />
-                            Support Mundo Tango
-                            <ArrowRight className="ml-2 h-5 w-5" />
+                            <Headphones className="mr-2 h-5 w-5" />
+                            Support
                           </Button>
                         </Link>
+                        <p className="text-white/70 text-sm">
+                          Need help or have questions? Our support team is here to assist you with any inquiries about your waitlist status or the platform.
+                        </p>
                       </div>
                     </div>
                   </div>

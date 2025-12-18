@@ -1,0 +1,23 @@
+                                             Table "public.event_scraping_sources"
+        Column        |            Type             | Collation | Nullable |                      Default                       
+----------------------+-----------------------------+-----------+----------+----------------------------------------------------
+ id                   | integer                     |           | not null | nextval('event_scraping_sources_id_seq'::regclass)
+ name                 | character varying(255)      |           | not null | 
+ url                  | character varying(500)      |           | not null | 
+ rss_url              | character varying(500)      |           |          | 
+ platform             | character varying(50)       |           | not null | 
+ country              | character varying(100)      |           |          | 
+ city                 | character varying(100)      |           |          | 
+ is_active            | boolean                     |           | not null | true
+ custom_selectors     | jsonb                       |           |          | 
+ last_scraped_at      | timestamp without time zone |           |          | 
+ total_events_scraped | integer                     |           |          | 0
+ scrape_frequency     | character varying(20)       |           | not null | 'daily'::character varying
+ created_at           | timestamp without time zone |           |          | now()
+ updated_at           | timestamp without time zone |           |          | now()
+Indexes:
+    "event_scraping_sources_pkey" PRIMARY KEY, btree (id)
+Referenced by:
+    TABLE "scraped_community_data" CONSTRAINT "scraped_community_data_source_id_event_scraping_sources_id_fk" FOREIGN KEY (source_id) REFERENCES event_scraping_sources(id) ON DELETE CASCADE
+    TABLE "scraped_profiles" CONSTRAINT "scraped_profiles_source_id_event_scraping_sources_id_fk" FOREIGN KEY (source_id) REFERENCES event_scraping_sources(id) ON DELETE CASCADE
+

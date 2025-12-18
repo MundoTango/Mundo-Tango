@@ -52,7 +52,7 @@ function generateYearOptions(): number[] {
 
 export default function DanceExperiencePage() {
   const [, navigate] = useLocation();
-  const { user, refreshUser } = useAuth();
+  const { user, refreshUser, isLoading: authLoading } = useAuth();
   const { toast } = useToast();
   
   const [tangoStartYear, setTangoStartYear] = useState<number>(currentYear);
@@ -68,12 +68,13 @@ export default function DanceExperiencePage() {
   }, [user?.tangoRoles]);
 
   useEffect(() => {
+    if (authLoading) return;
     if (!user) {
       navigate("/login");
     } else if (user.isOnboardingComplete) {
       navigate("/feed");
     }
-  }, [user, navigate]);
+  }, [user, authLoading, navigate]);
 
   useEffect(() => {
     if (userRoles.length > 0 && roleExperiences.length === 0) {
@@ -167,9 +168,7 @@ export default function DanceExperiencePage() {
                   Step 5 of 5 - Final Step!
                 </Badge>
                 
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-white font-bold leading-tight mb-6">
-                  Your Dance Experience
-                </h1>
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-white font-bold leading-tight mb-6">Your Tango Experience</h1>
                 
                 <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto">
                   Help us match you with compatible dancers
