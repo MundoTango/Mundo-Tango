@@ -33,6 +33,7 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { BannerAd } from "@/components/ads/BannerAd";
 import { EventFilters, type EventFilterValues } from "@/components/events/EventFilters";
 import { getCityImageUrl } from "@/lib/cityImageMap";
+import { optimizeCover } from "@/lib/imageOptimizer";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
@@ -108,7 +109,8 @@ function EventCard({ event, index = 0 }: { event: any; index?: number }) {
   // Determine image URL with city imagery fallback (MB.MD v9.8 auto-fix pattern)
   const rawImageUrl = eventData.imageUrl || eventData.image_url;
   const cityFallback = getCityImageUrl(eventData.city);
-  const imageUrl = imgError || !rawImageUrl ? cityFallback : rawImageUrl;
+  const optimizedImage = optimizeCover(rawImageUrl);
+  const imageUrl = imgError || !optimizedImage ? cityFallback : optimizedImage;
   
   // Handle image load error - fallback to city imagery
   const handleImageError = () => {
@@ -132,6 +134,8 @@ function EventCard({ event, index = 0 }: { event: any; index?: number }) {
             src={imageUrl}
             alt={eventData.title}
             className="w-full h-full object-cover"
+            loading="lazy"
+            decoding="async"
             whileHover={{ scale: 1.05 }}
             transition={{ duration: 0.6 }}
             onError={handleImageError}
