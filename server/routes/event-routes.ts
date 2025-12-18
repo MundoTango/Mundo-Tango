@@ -6,6 +6,7 @@ import {
   eventPhotos,
   eventComments,
   eventInvitations,
+  eventTeamMembers,
   users,
   posts,
   scrapedEvents,
@@ -1119,14 +1120,58 @@ router.get("/:id", async (req: Request, res: Response) => {
         eq(eventRsvps.status, "going")
       ));
     
+    // Fetch team members from event_team_members table with user profiles
+    const teamMembers = await db
+      .select({
+        role: eventTeamMembers.role,
+        userId: eventTeamMembers.userId,
+        displayName: eventTeamMembers.displayName,
+        userName: users.name,
+        userUsername: users.username,
+        userProfileImage: users.profileImage,
+        userBio: users.bio
+      })
+      .from(eventTeamMembers)
+      .leftJoin(users, eq(eventTeamMembers.userId, users.id))
+      .where(eq(eventTeamMembers.eventId, parseInt(id)));
+    
+    // Helper to create profile from team member
+    const toProfile = (m: typeof teamMembers[0]) => ({
+      id: m.userId,
+      name: m.userName || m.displayName,
+      username: m.userUsername,
+      profileImage: m.userProfileImage,
+      bio: m.userBio
+    });
+    
+    // Group team members by role
+    const djProfiles = teamMembers.filter(m => m.role === 'dj').map(toProfile);
+    const teacherProfiles = teamMembers.filter(m => m.role === 'teacher').map(toProfile);
+    const performerProfiles = teamMembers.filter(m => m.role === 'performer').map(toProfile);
+    const organizerProfiles = teamMembers.filter(m => m.role === 'organizer').map(toProfile);
+    
     // PERFORMANCE FIX: Filter out base64 data from mediaUrls (can be megabytes per image)
     const eventData = result[0].event;
     const cleanMediaUrls = eventData.mediaUrls?.filter((url: string) => !url?.startsWith('data:')) || [];
+    
+    // Derive text fields from profiles if not already set (for scraped events)
+    const derivedDjText = eventData.djText || djProfiles.map(p => p.name).join(', ') || null;
+    const derivedTeacherText = eventData.teacherText || teacherProfiles.map(p => p.name).join(', ') || null;
+    const derivedPerformerText = eventData.performerText || performerProfiles.map(p => p.name).join(', ') || null;
+    const derivedOrganizerText = eventData.organizerText || organizerProfiles.map(p => p.name).join(', ') || null;
     
     res.json({
       event: {
         ...eventData,
         mediaUrls: cleanMediaUrls,  // Only URL-based media, no base64
+        djText: derivedDjText,
+        teacherText: derivedTeacherText,
+        performerText: derivedPerformerText,
+        organizerText: derivedOrganizerText,
+        djProfiles,
+        teacherProfiles,
+        performerProfiles,
+        organizerProfiles
       },
       organizer: result[0].organizer,
       attendeeCount: rsvpCount[0]?.count || 0

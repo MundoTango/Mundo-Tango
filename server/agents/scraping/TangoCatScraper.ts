@@ -138,14 +138,14 @@ export class TangoCatScraper {
     // This is more reliable than trying to parse the full JSON which may have special chars
     
     // Extract all IDs first
-    const idMatches = scripts.matchAll(/"id":(\d+)/g);
+    const idMatches = Array.from(scripts.matchAll(/"id":(\d+)/g));
     const ids = new Set<number>();
     for (const m of idMatches) {
       ids.add(parseInt(m[1], 10));
     }
     
     // For each ID, extract all associated fields by finding the JSON object context
-    for (const id of ids) {
+    for (const id of Array.from(ids)) {
       try {
         // Find the object containing this ID
         // Look for the JSON context around the ID
@@ -319,7 +319,7 @@ export class TangoCatScraper {
     // Extract each role
     for (const { key, patterns } of rolePatterns) {
       for (const pattern of patterns) {
-        const matches = [...note.matchAll(pattern)];
+        const matches = Array.from(note.matchAll(pattern));
         if (matches.length > 0) {
           const names = matches.map(m => m[1].trim()).filter(n => n.length > 2);
           if (names.length > 0) {
@@ -421,7 +421,7 @@ export class TangoCatScraper {
     console.log(`[TangoCat] Extracted ${events.length} events:`);
     console.log(`  - With coordinates: ${events.filter(e => e.latitude && e.longitude).length}`);
     console.log(`  - With external URLs: ${events.filter(e => !e.website?.includes('tangocat.net')).length}`);
-    console.log(`  - Event types: ${[...new Set(events.map(e => e.eventType))].join(', ')}`);
+    console.log(`  - Event types: ${Array.from(new Set(events.map(e => e.eventType))).join(', ')}`);
     
     return events.slice(0, 100); // Increase limit
   }

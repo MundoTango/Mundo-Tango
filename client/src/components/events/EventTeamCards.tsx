@@ -4,7 +4,11 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 
 interface ProfileLink {
+  id?: number | null;
   name: string;
+  username?: string | null;
+  profileImage?: string | null;
+  bio?: string | null;
   profileId?: number;
   userId?: number;
 }
@@ -58,7 +62,11 @@ export function EventTeamCards({
     if (profiles && profiles.length > 0) {
       const profile = profiles.find(p => p.name.toLowerCase() === name.toLowerCase());
       if (profile) {
-        // If user has claimed the profile, link to their user profile
+        // If we have an id (from API), use it - this is the user profile id
+        if (profile.id) {
+          return `/profile/${profile.id}`;
+        }
+        // Legacy support for userId field
         if (profile.userId) {
           return `/profile/${profile.userId}`;
         }
@@ -70,6 +78,15 @@ export function EventTeamCards({
     }
     // Fallback to discover search
     return `/discover?search=${encodeURIComponent(name)}`;
+  };
+  
+  // Get profile image for a name from profiles array
+  const getProfileImage = (name: string, profiles?: ProfileLink[]): string | null | undefined => {
+    if (profiles && profiles.length > 0) {
+      const profile = profiles.find(p => p.name.toLowerCase() === name.toLowerCase());
+      return profile?.profileImage;
+    }
+    return null;
   };
 
   const participants: ParticipantType[] = [
@@ -126,24 +143,27 @@ export function EventTeamCards({
             </div>
 
             <div className="flex flex-wrap gap-3 ml-4">
-              {participant.names.map((name, idx) => (
-                <Link key={idx} href={getProfileHref(name, participant.profiles)}>
-                  <div 
-                    className="flex items-center gap-3 p-3 rounded-lg border hover-elevate cursor-pointer" 
-                    data-testid={`card-${participant.type}-${idx}`}
-                  >
-                    <Avatar className="h-10 w-10 flex-shrink-0">
-                      <AvatarImage src="" />
-                      <AvatarFallback className="bg-primary/10 text-primary font-semibold">
-                        {getInitials(name)}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1">
-                      <p className="font-medium text-foreground">{name}</p>
+              {participant.names.map((name, idx) => {
+                const profileImage = getProfileImage(name, participant.profiles);
+                return (
+                  <Link key={idx} href={getProfileHref(name, participant.profiles)}>
+                    <div 
+                      className="flex items-center gap-3 p-3 rounded-lg border hover-elevate cursor-pointer" 
+                      data-testid={`card-${participant.type}-${idx}`}
+                    >
+                      <Avatar className="h-10 w-10 flex-shrink-0">
+                        <AvatarImage src={profileImage || ""} />
+                        <AvatarFallback className="bg-primary/10 text-primary font-semibold">
+                          {getInitials(name)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1">
+                        <p className="font-medium text-foreground">{name}</p>
+                      </div>
                     </div>
-                  </div>
-                </Link>
-              ))}
+                  </Link>
+                );
+              })}
             </div>
           </div>
         ))}

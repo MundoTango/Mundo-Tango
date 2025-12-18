@@ -261,7 +261,7 @@ class ScrapedEventIngestionService {
   private extractCity(scraped: any): string {
     if (scraped.city && scraped.city !== 'Various') return scraped.city;
     if (scraped.address) {
-      const parts = scraped.address.split(',').map(p => p.trim());
+      const parts = scraped.address.split(',').map((p: string) => p.trim());
       // Format: "Street Address, City, Country" - take middle part
       if (parts.length >= 3) return parts[parts.length - 2];
       if (parts.length === 2) return parts[0];

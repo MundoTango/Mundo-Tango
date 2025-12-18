@@ -9,6 +9,14 @@ export type EventFilters = {
   dateFilter?: 'upcoming' | 'past' | 'all';
 };
 
+interface TeamMemberProfile {
+  id: number | null;
+  name: string;
+  username: string | null;
+  profileImage: string | null;
+  bio: string | null;
+}
+
 interface Event {
   id: number;
   title: string;
@@ -29,6 +37,14 @@ interface Event {
     username: string;
     avatarUrl: string | null;
   };
+  djText?: string | null;
+  teacherText?: string | null;
+  performerText?: string | null;
+  organizerText?: string | null;
+  djProfiles?: TeamMemberProfile[];
+  teacherProfiles?: TeamMemberProfile[];
+  performerProfiles?: TeamMemberProfile[];
+  organizerProfiles?: TeamMemberProfile[];
 }
 
 interface RSVP {
