@@ -270,7 +270,7 @@ export function InfiniteScrollFeed({ feedType, filter, onRefresh }: InfiniteScro
         isLoading={false}
         context={{ type: 'feed' }}
         showPostCreator={false}
-        showFilters={true}
+        showFilters={false}
         onEdit={handleEdit}
         onDelete={handleDelete}
       />

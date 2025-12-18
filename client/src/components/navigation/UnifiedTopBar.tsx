@@ -166,15 +166,10 @@ function UnifiedTopBar({
   // Handle individual notification click - navigate and close dropdown
   const handleNotificationClick = async (notif: any) => {
     console.log('[DEBUG] Notification clicked:', { id: notif.id, actionUrl: notif.actionUrl, isRead: notif.isRead, read: notif.read, title: notif.title });
-    let url = notif.actionUrl || notif.link;
+    const url = notif.actionUrl || notif.link;
     console.log('[DEBUG] Navigation URL:', url);
     
     if (url) {
-      // For friend request notifications, add the reviewRequest param to auto-open the modal
-      if (notif.type === 'friend_request' && url.includes('/profile/')) {
-        url = url + (url.includes('?') ? '&' : '?') + 'reviewRequest=true';
-      }
-      
       // Mark individual notification as read if not already read (isRead is the Drizzle mapped field name)
       if (!notif.isRead && notif.id) {
         try {

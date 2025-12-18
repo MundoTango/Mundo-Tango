@@ -37,7 +37,7 @@ export default function HousingListingDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="bg-background flex items-center justify-center py-12">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <p className="text-muted-foreground">Loading listing...</p>
       </div>
     );
@@ -45,7 +45,7 @@ export default function HousingListingDetailPage() {
 
   if (!listingData) {
     return (
-      <div className="bg-background flex items-center justify-center py-12">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <p className="text-muted-foreground">Listing not found</p>
       </div>
     );
@@ -56,7 +56,7 @@ export default function HousingListingDetailPage() {
   const images = listing.images || [];
 
   return (
-    <div className="bg-background">
+    <div className="min-h-screen bg-background">
       <div className="container mx-auto max-w-5xl p-4 space-y-6">
         {images.length > 0 && (
           <div className="grid md:grid-cols-2 gap-4">

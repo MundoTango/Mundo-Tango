@@ -21,33 +21,6 @@ import { relations } from "drizzle-orm";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
-// ============================================================================
-// CLOSENESS VISIBILITY TYPE - Friendship-based content filtering
-// ============================================================================
-// Scoring Reference:
-// - 86-100: Best Friend
-// - 71-85: Close Friend  
-// - 41-70: Friend
-// - 0-40: Acquaintance
-// - connectionDegree 1: Direct friend
-// - connectionDegree 2: Friend of friend
-// - connectionDegree 3: Extended network
-
-export type ClosenessVisibility = 
-  | 'all'           // Everyone (default)
-  | 'close_friend'  // Close friends only (closenessScore 71+)
-  | 'friends_1st'   // Direct friends only (connectionDegree 1)
-  | 'friends_2nd'   // Up to 2nd degree (connectionDegree 1-2)
-  | 'friends_3rd';  // Up to 3rd degree (connectionDegree 1-3)
-
-export const closenessVisibilitySchema = z.enum([
-  'all',
-  'close_friend',
-  'friends_1st',
-  'friends_2nd',
-  'friends_3rd',
-]);
-
 // Re-export message schemas
 export * from "./messageSchemas";
 
@@ -759,8 +732,6 @@ export const events = pgTable(
     // Visibility & Privacy
     visibility: varchar("visibility", { length: 20 }).default("public"),
     requiresApproval: boolean("requires_approval").default(false),
-    // Friendship closeness filter: who can see/RSVP to this event
-    attendeeCloseness: varchar("attendee_closeness", { length: 20 }).default("all"),
 
     // Features
     allowGuestPlusOne: boolean("allow_guest_plus_one").default(false),
@@ -1084,8 +1055,6 @@ export const groups = pgTable(
     isPrivate: boolean("is_private").default(false),
     visibility: varchar("visibility", { length: 20 }).default("public"),
     joinApproval: boolean("join_approval").default(true),
-    // Friendship closeness filter: who can join this group
-    membershipCloseness: varchar("membership_closeness", { length: 20 }).default("all"),
 
     // Media
     emoji: varchar("emoji", { length: 10 }),
@@ -1376,8 +1345,6 @@ export const posts = pgTable(
     placeId: text("place_id"),
     formattedAddress: text("formatted_address"),
     visibility: varchar("visibility").default("public"),
-    // Friendship closeness filter: who can see this post
-    audienceCloseness: varchar("audience_closeness", { length: 20 }).default("all"),
     postType: varchar("post_type").default("post"),
     type: varchar("type", { length: 20 }).notNull().default("post"), // 'post' | 'story'
     status: varchar("status", { length: 20 }).default("published"), // 'draft' | 'scheduled' | 'published'
@@ -2729,7 +2696,6 @@ export const friendRequests = pgTable(
     danceLocation: text("dance_location"),
     danceEventId: integer("dance_event_id").references(() => events.id),
     danceStory: text("dance_story"),
-    meetingDate: timestamp("meeting_date"),
 
     // Messages
     senderMessage: text("sender_message"),
@@ -4717,21 +4683,6 @@ export const housingListings = pgTable(
     coverPhotoUrl: text("cover_photo_url"),
     status: varchar("status").default("active").notNull(),
 
-    // Airbnb-style listing details
-    listingType: varchar("listing_type").default("entire_place"), // entire_place, private_room, shared_room
-    beds: integer("beds"),
-    checkInTime: varchar("check_in_time").default("15:00"), // 24h format
-    checkoutTime: varchar("checkout_time").default("11:00"),
-    minNights: integer("min_nights").default(1),
-    maxNights: integer("max_nights").default(365),
-    instantBook: boolean("instant_book").default(true),
-    cancellationPolicy: varchar("cancellation_policy").default("flexible"), // flexible, moderate, strict
-    selfCheckIn: varchar("self_check_in"), // lockbox, keypad, doorman, smart_lock
-    weeklyDiscount: integer("weekly_discount").default(0), // percentage
-    monthlyDiscount: integer("monthly_discount").default(0), // percentage
-    cleaningFee: integer("cleaning_fee").default(0),
-    safetyAmenities: text("safety_amenities").array(), // smoke_detector, carbon_monoxide, fire_extinguisher, first_aid_kit
-
     // Safety Verification (admin reviews for trust & safety)
     verificationStatus: varchar("verification_status")
       .default("pending")
@@ -4745,9 +4696,6 @@ export const housingListings = pgTable(
     // {pricingDetails: any, cleaningFee?: number, securityDeposit?: number, hostPaymentInfo?: any}
     encryptedData: text("encrypted_data"),
 
-    // Friendship closeness filter: who can book this listing
-    guestVisibility: varchar("guest_visibility", { length: 20 }).default("all"),
-
     createdAt: timestamp("created_at").defaultNow(),
     updatedAt: timestamp("updated_at").defaultNow(),
   },
@@ -4756,7 +4704,6 @@ export const housingListings = pgTable(
     cityIdx: index("housing_city_idx").on(table.city),
     statusIdx: index("housing_status_idx").on(table.status),
     createdAtIdx: index("housing_created_at_idx").on(table.createdAt),
-    guestVisibilityIdx: index("housing_guest_visibility_idx").on(table.guestVisibility),
   }),
 );
 

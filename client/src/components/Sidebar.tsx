@@ -8,6 +8,7 @@ import {
   UsersRound, 
   UserCheck, 
   MessageCircle, 
+  Network, 
   Calendar, 
   Star, 
   Mail,
@@ -125,6 +126,7 @@ export default function Sidebar({ isOpen: externalIsOpen, setIsOpen: externalSet
   const mainRoutes = [
     { icon: Heart, title: t('navigation.memories'), link: "/" },
     { icon: UsersRound, title: t('navigation.tangoCommunity'), link: "/community-world-map" },
+    { icon: Network, title: t('navigation.groups'), link: "/groups" },
     { icon: Calendar, title: t('navigation.events'), link: "/events" },
     { icon: MessageCircle, title: t('navigation.messages'), link: "/messages" },
     { icon: UserCheck, title: t('navigation.friends'), link: "/friends-list" },
@@ -166,6 +168,7 @@ export default function Sidebar({ isOpen: externalIsOpen, setIsOpen: externalSet
     { icon: Plane, title: "Travel Planner", link: "/travel-planner" },
     { icon: Phone, title: "Contact", link: "/contact" },
     { icon: Mail, title: t('navigation.roleInvitations'), link: "/invitations" },
+    { icon: Star, title: t('navigation.recommendations'), link: "/recommendations" },
   ];
 
   // Global statistics (4 stats)

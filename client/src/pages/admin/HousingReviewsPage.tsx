@@ -204,7 +204,7 @@ export default function HousingReviewsPage() {
             description="Review and verify housing listings for community safety and trust."
           />
 
-          <div className="bg-gradient-to-br from-primary/10 via-accent/5 to-background py-6 px-4">
+          <div className="min-h-screen bg-gradient-to-br from-primary/10 via-accent/5 to-background py-12 px-4">
             <div className="container mx-auto max-w-7xl space-y-6">
               {/* Header */}
               <motion.div

@@ -4,7 +4,6 @@ import { db } from "../storage";
 import { userLocationHistory, groups, groupMembers, users } from "@shared/schema";
 import { eq, and, desc, ilike, sql } from "drizzle-orm";
 import { z } from "zod";
-import { ensureCityGroupExists } from "../utils/cityGroupAutomation";
 
 const router = Router();
 
@@ -89,13 +88,16 @@ router.post("/", authenticateToken, async (req: AuthRequest, res: Response) => {
         ));
     }
 
-    // Find or create city group - using centralized automation
+    // Find or create city group
     let groupId: number | null = null;
-    const cityGroupResult = await ensureCityGroupExists(city, country || '', userId);
-    
-    if (cityGroupResult) {
-      groupId = cityGroupResult.groupId;
-      console.log(`[LocationHistory] ${cityGroupResult.wasCreated ? 'Created' : 'Found'} city group: ${cityGroupResult.groupName} (ID: ${groupId})`);
+    const existingGroup = await db
+      .select({ id: groups.id })
+      .from(groups)
+      .where(and(eq(groups.type, "city"), ilike(groups.city, city)))
+      .limit(1);
+
+    if (existingGroup.length > 0) {
+      groupId = existingGroup[0].id;
       
       // Auto-join user to the city group if not already a member
       try {
@@ -106,10 +108,8 @@ router.post("/", authenticateToken, async (req: AuthRequest, res: Response) => {
           status: "active",
           joinedAt: new Date(),
         }).onConflictDoNothing();
-        console.log(`[LocationHistory] User ${userId} joined city group ${groupId}`);
       } catch (e) {
         // Already a member, ignore
-        console.log(`[LocationHistory] User ${userId} already member of city group ${groupId}`);
       }
     }
 

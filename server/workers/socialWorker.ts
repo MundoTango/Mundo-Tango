@@ -81,14 +81,12 @@ async function handleFriendRequestNotification(job: Job) {
   const sender = await storage.getUserById(senderId);
   if (!sender) return;
   
-  // Navigate to sender's profile About tab so receiver can review their data
   await storage.createNotification({
     userId: receiverId,
     type: "friend_request",
     title: "New friend request",
     message: `${sender.name} sent you a friend request`,
-    actionUrl: `/profile/${senderId}?tab=about`,
-    data: JSON.stringify({ senderId, requestType: 'friend_request' }),
+    actionUrl: "/friends/requests",
   });
   
   console.log(`[A-SOCIAL-04] ✅ Friend request notification sent`);

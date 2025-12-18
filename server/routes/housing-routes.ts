@@ -187,8 +187,7 @@ router.post("/listings", authenticateToken, async (req: AuthRequest, res: Respon
       longitude,
       amenities,
       houseRules,
-      images,
-      guestVisibility
+      images
     } = req.body;
 
     const [listing] = await db
@@ -211,7 +210,6 @@ router.post("/listings", authenticateToken, async (req: AuthRequest, res: Respon
         amenities,
         houseRules,
         images,
-        guestVisibility: guestVisibility || "all",
         status: "active"
       })
       .returning();

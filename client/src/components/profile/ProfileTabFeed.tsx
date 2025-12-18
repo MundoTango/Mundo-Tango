@@ -51,7 +51,7 @@ export default function ProfileTabFeed({ posts, isLoading, isOwnProfile, userId,
       posts={posts}
       isLoading={isLoading}
       context={{ type: 'profile', id: userId }}
-      showFilters={true}
+      showFilters={false}
       ownerId={userId}
       onPostCreated={() => queryClient.invalidateQueries({ queryKey: ['/api/posts/user', userId] })}
       onEdit={handleEdit}

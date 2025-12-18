@@ -1,6 +1,6 @@
 import { db } from "../db";
-import { groups, groupMembers, notifications, users } from "@shared/schema";
-import { eq, and, ilike, or, isNull } from "drizzle-orm";
+import { groups, groupMembers, notifications } from "@shared/schema";
+import { eq, and, ilike } from "drizzle-orm";
 
 export interface CityGroupResult {
   groupId: number;
@@ -12,56 +12,28 @@ export interface CityGroupResult {
 
 export async function ensureCityGroupExists(
   city: string,
-  country: string | null | undefined,
+  country: string,
   creatorUserId: number
 ): Promise<CityGroupResult | null> {
-  if (!city) {
-    console.log("[CityGroupAutomation] Missing city, skipping");
+  if (!city || !country) {
+    console.log("[CityGroupAutomation] Missing city or country, skipping");
     return null;
   }
 
   const normalizedCity = city.trim();
-  let normalizedCountry = country?.trim() || '';
+  const normalizedCountry = country.trim();
   
-  // If country is missing, try to get it from user's profile
-  if (!normalizedCountry) {
-    console.log(`[CityGroupAutomation] Country missing for ${normalizedCity}, checking user profile...`);
-    const [user] = await db.select({ country: users.country }).from(users).where(eq(users.id, creatorUserId)).limit(1);
-    if (user?.country) {
-      normalizedCountry = user.country.trim();
-      console.log(`[CityGroupAutomation] Found country from user profile: ${normalizedCountry}`);
-    }
-  }
-  
-  // First, try to find existing group by city (and country if available)
-  let existingGroup;
-  if (normalizedCountry) {
-    existingGroup = await db
-      .select()
-      .from(groups)
-      .where(
-        and(
-          ilike(groups.city, normalizedCity),
-          ilike(groups.country, normalizedCountry),
-          eq(groups.type, "city")
-        )
+  const existingGroup = await db
+    .select()
+    .from(groups)
+    .where(
+      and(
+        ilike(groups.city, normalizedCity),
+        ilike(groups.country, normalizedCountry),
+        eq(groups.type, "city")
       )
-      .limit(1);
-  }
-  
-  // If no country or no match with country, try city-only match
-  if (!existingGroup?.length) {
-    existingGroup = await db
-      .select()
-      .from(groups)
-      .where(
-        and(
-          ilike(groups.city, normalizedCity),
-          eq(groups.type, "city")
-        )
-      )
-      .limit(1);
-  }
+    )
+    .limit(1);
 
   if (existingGroup.length > 0) {
     console.log(`[CityGroupAutomation] City group already exists: ${existingGroup[0].name}`);
@@ -76,7 +48,6 @@ export async function ensureCityGroupExists(
 
   const slug = `${normalizedCity.toLowerCase().replace(/\s+/g, "-")}-tango-community`;
   const groupName = `${normalizedCity} Tango Community`;
-  const locationStr = normalizedCountry ? `${normalizedCity}, ${normalizedCountry}` : normalizedCity;
   
   console.log(`[CityGroupAutomation] Creating new city group: ${groupName}`);
 
@@ -85,12 +56,12 @@ export async function ensureCityGroupExists(
     .values({
       name: groupName,
       slug: slug,
-      description: `The official tango community group for dancers in ${locationStr}. Connect with local milongas, workshops, and fellow dancers.`,
+      description: `The official tango community group for dancers in ${normalizedCity}, ${normalizedCountry}. Connect with local milongas, workshops, and fellow dancers.`,
       longDescription: `Welcome to the ${normalizedCity} Tango Community! This group was automatically created when the first tango event was posted in ${normalizedCity}. Join us to:\n\n- Discover local milongas and practicas\n- Connect with dancers in your area\n- Share event announcements\n- Find dance partners\n- Discuss the local tango scene`,
       type: "city",
       visibility: "public",
       city: normalizedCity,
-      country: normalizedCountry || null,
+      country: normalizedCountry,
       memberCount: 1,
       createdBy: creatorUserId,
       ownerId: creatorUserId,

@@ -2,7 +2,6 @@ import { Router, type Request, type Response } from "express";
 import { storage } from "../storage";
 import { authenticateToken, AuthRequest } from "../middleware/auth";
 import { z } from "zod";
-import { ensureCityGroupExists } from "../utils/cityGroupAutomation";
 import {
   updateTeacherProfileSchema,
   updateDJProfileSchema,
@@ -113,19 +112,13 @@ router.put("/:userId", authenticateToken, async (req: AuthRequest, res: Response
     }
 
     // Auto-create city group when user updates their city
-    if (validatedData.city) {
+    if (validatedData.city && validatedData.country) {
       try {
-        const result = await ensureCityGroupExists(
-          validatedData.city,
-          validatedData.country || (updatedProfile as any).country,
-          userId
-        );
-        if (result?.wasCreated) {
-          console.log(`[Profile] Auto-created city group for ${validatedData.city}: ${result.groupName}`);
-        }
-      } catch (cityGroupError) {
-        // Don't fail the profile update if city group creation fails
-        console.error("[Profile] Failed to create city group:", cityGroupError);
+        const { ensureCityGroupExists } = await import('../utils/cityGroupAutomation');
+        await ensureCityGroupExists(validatedData.city, validatedData.country, userId);
+      } catch (cityError) {
+        console.error('[Profile] Failed to auto-create city group:', cityError);
+        // Non-blocking - profile update still succeeds
       }
     }
 

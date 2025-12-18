@@ -405,7 +405,7 @@ export function UnifiedLocationPicker({
         return;
       }
 
-      // Address mode - use POST to avoid URL length limits
+      // Address mode - use standard Nominatim API
       const cached = clientCacheRef.current.get(queryKey);
       if (cached) {
         setResults(cached);
@@ -415,14 +415,9 @@ export function UnifiedLocationPicker({
 
       setIsSearching(true);
       try {
-        const response = await fetch('/api/locations/search', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
-            q: searchQuery,
-            addressdetails: 1
-          })
-        });
+        const response = await fetch(
+          `/api/locations/search?q=${encodeURIComponent(searchQuery)}&addressdetails=1`
+        );
 
         if (response.ok) {
           const data = await response.json();
@@ -634,9 +629,8 @@ export function UnifiedLocationPicker({
         </label>
       )}
       <div className="relative" ref={inputContainerRef}>
-        <Icon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground flex-shrink-0" />
+        <Icon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
         <Input
-          type="text"
           value={searchQuery}
           onChange={(e) => {
             // NUCLEAR LOCK CHECK - block ALL input changes during selection lock
@@ -654,9 +648,6 @@ export function UnifiedLocationPicker({
           onFocus={updateDropdownPosition}
           placeholder={placeholder || defaultPlaceholder}
           className="pl-10 pr-10"
-          maxLength={500}
-          spellCheck="false"
-          autoComplete="off"
           data-testid="input-location-search"
         />
         {isSearching && (

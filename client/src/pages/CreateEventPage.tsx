@@ -23,8 +23,6 @@ import { EVENT_TYPES, EVENT_TYPE_VALUES } from "@/lib/eventTypes";
 import { getTimezoneFromCity, formatTimezoneAbbr } from "@/lib/timezoneUtils";
 import { getCurrencyFromCountry, getCurrencySymbol } from "@/lib/currencyUtils";
 import { CurrencyPicker } from "@/components/input/CurrencyPicker";
-import { FriendshipClosenessFilter } from "@/components/filters/FriendshipClosenessFilter";
-import { closenessVisibilitySchema, type ClosenessVisibility } from "@shared/schema";
 
 const DAYS_OF_WEEK = [
   { value: "0", label: "Sunday" },
@@ -74,7 +72,6 @@ const eventFormSchema = z.object({
   isRecurringSeries: z.boolean().default(false),
   recurrenceType: z.enum(["weekly", "monthly", "yearly"]).optional(),
   recurrenceDay: z.number().optional(),
-  attendeeCloseness: closenessVisibilitySchema.default("all"),
 });
 
 type EventFormValues = z.infer<typeof eventFormSchema>;
@@ -110,7 +107,6 @@ export default function CreateEventPage() {
       isRecurringSeries: false,
       recurrenceType: undefined,
       recurrenceDay: undefined,
-      attendeeCloseness: "all" as ClosenessVisibility,
     },
   });
 
@@ -730,24 +726,6 @@ export default function CreateEventPage() {
                           <FormDescription>
                             Set a maximum capacity for your event
                           </FormDescription>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    {/* Attendee Visibility */}
-                    <FormField
-                      control={form.control}
-                      name="attendeeCloseness"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FriendshipClosenessFilter
-                            value={field.value}
-                            onChange={field.onChange}
-                            label="Who Can Attend"
-                            description="Control who can see and register for this event based on your network"
-                            testIdPrefix="event-attendee-closeness"
-                          />
                           <FormMessage />
                         </FormItem>
                       )}

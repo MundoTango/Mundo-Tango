@@ -34,9 +34,6 @@ import { Switch } from "@/components/ui/switch";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/UnifiedLocationPicker";
-import { FriendshipClosenessFilter } from "@/components/filters/FriendshipClosenessFilter";
-import { closenessVisibilitySchema, type ClosenessVisibility } from "@shared/schema";
-
 const formSchema = z.object({
   name: z.string().min(3, "Name must be at least 3 characters"),
   slug: z.string().min(3, "Slug must be at least 3 characters").regex(/^[a-z0-9-]+$/, "Slug must be lowercase letters, numbers, and hyphens only"),
@@ -53,7 +50,6 @@ const formSchema = z.object({
   allowEvents: z.boolean().default(true),
   allowPosts: z.boolean().default(true),
   allowDiscussions: z.boolean().default(true),
-  membershipCloseness: closenessVisibilitySchema.default("all"),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -85,7 +81,6 @@ export function GroupCreationModal({ open, onOpenChange }: GroupCreationModalPro
       allowDiscussions: true,
       whoCanPost: "members",
       language: "en",
-      membershipCloseness: "all" as ClosenessVisibility,
     },
   });
 
@@ -377,24 +372,6 @@ export function GroupCreationModal({ open, onOpenChange }: GroupCreationModalPro
                 )}
               />
             </div>
-
-            {/* Membership Visibility */}
-            <FormField
-              control={form.control}
-              name="membershipCloseness"
-              render={({ field }) => (
-                <FormItem>
-                  <FriendshipClosenessFilter
-                    value={field.value}
-                    onChange={field.onChange}
-                    label="Who Can Join"
-                    description="Control who can discover and join this group based on network proximity"
-                    testIdPrefix="group-membership-closeness"
-                  />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
 
             <DialogFooter>
               <Button

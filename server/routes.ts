@@ -286,7 +286,6 @@ import {
   insertUserPrivacySettingsSchema,
   venues,
   housingListings,
-  userLocationHistory,
 } from "@shared/schema";
 import { 
   esaAgents,
@@ -4259,11 +4258,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         country: user.country,
         role: user.role,
         danceLevel: user.yearsOfDancing,
-        yearsOfDancing: user.yearsOfDancing,
-        leaderLevel: user.leaderLevel,
-        followerLevel: user.followerLevel,
-        socialLinks: user.socialLinks,
-        tangoRoles: user.tangoRoles,
         joinedAt: user.createdAt,
         stats: {
           posts: postsCount,
@@ -5344,32 +5338,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get friends for a specific user (public endpoint for viewing profiles)
-  app.get("/api/users/:userId/friends", async (req: Request, res: Response) => {
-    try {
-      const userId = parseInt(req.params.userId);
-      if (isNaN(userId)) {
-        return res.status(400).json({ message: "Invalid user ID" });
-      }
-      const friends = await storage.getUserFriends(userId);
-      // Return public-safe friend data
-      const publicFriends = friends.map(f => ({
-        id: f.id,
-        name: f.name,
-        username: f.username,
-        profileImage: f.profileImage,
-        bio: f.bio,
-        city: f.city,
-        tangoRoles: f.tangoRoles,
-        closenessScore: f.closenessScore,
-      }));
-      res.json(publicFriends);
-    } catch (error) {
-      console.error("[GET /api/users/:userId/friends] Error:", error);
-      res.status(500).json({ message: "Failed to fetch user friends" });
-    }
-  });
-
   app.get("/api/friends/requests", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const requests = await storage.getFriendRequests(req.user!.id);
@@ -5525,23 +5493,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("[GET /api/friends/mutual/:userId] Error:", error);
       res.status(500).json({ message: "Failed to fetch mutual friends" });
-    }
-  });
-
-  // Get friendship info (base route)
-  app.get("/api/friends/friendship/:friendId", authenticateToken, async (req: AuthRequest, res: Response) => {
-    try {
-      const friendId = parseInt(req.params.friendId);
-      const friendshipInfo = await storage.getFriendshipInfo(req.user!.id, friendId);
-      
-      if (!friendshipInfo) {
-        return res.status(404).json({ error: "Friendship not found" });
-      }
-      
-      res.json(friendshipInfo);
-    } catch (error) {
-      console.error("[GET /api/friends/friendship/:friendId] Error:", error);
-      res.status(500).json({ message: "Failed to fetch friendship info" });
     }
   });
 
@@ -6873,7 +6824,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // ============================================================================
 
   // 1. GET /api/community/locations - Get all community locations with stats (PUBLIC)
-  // MB.MD v9.8: City groups as primary data source + user profile cities
+  // MB.MD v9.8: City groups as primary data source (not users table)
   app.get("/api/community/locations", async (req: Request, res: Response) => {
     try {
       // PRIMARY SOURCE: Get all city groups from groups table
@@ -6893,37 +6844,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         eq(groups.type, 'city'),
         isNotNull(groups.city)
       ));
-
-      // SECONDARY SOURCE: Get unique cities from user profiles (current city)
-      const userCities = await db.select({
-        city: users.city,
-        country: users.country,
-        memberCount: sql<number>`count(*)::int`,
-      })
-      .from(users)
-      .where(and(
-        isNotNull(users.city),
-        eq(users.isActive, true),
-        eq(users.suspended, false)
-      ))
-      .groupBy(users.city, users.country);
-
-      // SECONDARY SOURCE: Get unique cities from location history (previous tango cities)
-      const locationHistoryCities = await db.select({
-        city: userLocationHistory.city,
-        country: userLocationHistory.country,
-        latitude: userLocationHistory.latitude,
-        longitude: userLocationHistory.longitude,
-        memberCount: sql<number>`count(distinct ${userLocationHistory.userId})::int`,
-      })
-      .from(userLocationHistory)
-      .where(isNotNull(userLocationHistory.city))
-      .groupBy(
-        userLocationHistory.city, 
-        userLocationHistory.country,
-        userLocationHistory.latitude,
-        userLocationHistory.longitude
-      );
 
       // ENRICHMENT: Get event counts by city
       const eventsByCity = await db.select({
@@ -6993,131 +6913,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
         'Athens': { lat: 37.9838, lng: 23.7275 },
       };
 
-      // Normalize city key for consistent lookups (case-insensitive, trimmed)
-      const normalizeKey = (city: string) => city.toLowerCase().trim();
-
-      // Build enrichment lookup maps with normalized keys
-      const eventsMap = new Map<string, number>();
-      for (const e of eventsByCity) {
-        const key = normalizeKey(e.city || '');
-        eventsMap.set(key, (eventsMap.get(key) || 0) + (e.eventCount || 0));
-      }
-      const venuesMap = new Map<string, number>();
-      for (const v of venuesByCity) {
-        const key = normalizeKey(v.city || '');
-        venuesMap.set(key, (venuesMap.get(key) || 0) + (v.venueCount || 0));
-      }
-      const housingMap = new Map<string, number>();
-      for (const h of housingByCity) {
-        const key = normalizeKey(h.city || '');
-        housingMap.set(key, (housingMap.get(key) || 0) + (h.housingCount || 0));
-      }
-
-      // Track cities we've already added (by normalized city key)
-      const addedCities = new Set<string>();
+      // Build enrichment lookup maps
+      const eventsMap = new Map(eventsByCity.map(e => [`${e.city}`, e.eventCount]));
+      const venuesMap = new Map(venuesByCity.map(v => [`${v.city}`, v.venueCount]));
+      const housingMap = new Map(housingByCity.map(h => [`${h.city}`, h.housingCount]));
 
       // Build locations from city groups (PRIMARY SOURCE)
-      const locations: any[] = [];
-      
-      for (const group of cityGroups) {
+      const locations = cityGroups.map((group) => {
         const city = group.city || '';
-        const cityKey = normalizeKey(city);
-        if (!cityKey) continue;
-        
-        addedCities.add(cityKey);
-        
         const coords = cityCoords[city] || {
           lat: parseFloat(group.latitude as string) || 0,
           lng: parseFloat(group.longitude as string) || 0
         };
         
-        locations.push({
+        return {
           id: group.id,
           groupId: group.id,
           city: city,
           country: group.country || '',
           coordinates: coords,
           memberCount: group.memberCount || 0,
-          activeEvents: eventsMap.get(cityKey) || group.eventCount || 0,
-          venues: venuesMap.get(cityKey) || 0,
-          housing: housingMap.get(cityKey) || 0,
-          recommendations: venuesMap.get(cityKey) || 0,
+          activeEvents: eventsMap.get(city) || group.eventCount || 0,
+          venues: venuesMap.get(city) || 0,
+          housing: housingMap.get(city) || 0,
+          recommendations: venuesMap.get(city) || 0,
           coverImage: group.coverImage,
           isActive: true
-        });
-      }
-
-      // Build coordinates map from location history for cities without known coords
-      const locationHistoryCoords = new Map<string, { lat: number; lng: number }>();
-      for (const h of locationHistoryCities) {
-        if (h.latitude && h.longitude) {
-          const key = normalizeKey(h.city || '');
-          locationHistoryCoords.set(key, {
-            lat: parseFloat(h.latitude as string),
-            lng: parseFloat(h.longitude as string)
-          });
-        }
-      }
-
-      // Add cities from user profiles that don't have city groups yet
-      let tempId = -1;
-      for (const userCity of userCities) {
-        const city = userCity.city || '';
-        const cityKey = normalizeKey(city);
-        if (!cityKey || addedCities.has(cityKey)) continue;
-        
-        addedCities.add(cityKey);
-        
-        // Try coords from: known lookup, location history, or default
-        const coords = cityCoords[city] || locationHistoryCoords.get(cityKey) || { lat: 0, lng: 0 };
-        
-        locations.push({
-          id: tempId--,
-          groupId: null, // No city group yet
-          city: city,
-          country: userCity.country || '',
-          coordinates: coords,
-          memberCount: userCity.memberCount || 0,
-          activeEvents: eventsMap.get(cityKey) || 0,
-          venues: venuesMap.get(cityKey) || 0,
-          housing: housingMap.get(cityKey) || 0,
-          recommendations: venuesMap.get(cityKey) || 0,
-          coverImage: null,
-          isActive: true
-        });
-      }
-
-      // Add cities from location history (previous tango cities) that aren't in groups or user cities
-      for (const historyCity of locationHistoryCities) {
-        const city = historyCity.city || '';
-        const cityKey = normalizeKey(city);
-        if (!cityKey || addedCities.has(cityKey)) continue;
-        
-        addedCities.add(cityKey);
-        
-        // Use stored coordinates from location history if available
-        const storedCoords = historyCity.latitude && historyCity.longitude ? {
-          lat: parseFloat(historyCity.latitude as string),
-          lng: parseFloat(historyCity.longitude as string)
-        } : null;
-        
-        const coords = storedCoords || cityCoords[city] || { lat: 0, lng: 0 };
-        
-        locations.push({
-          id: tempId--,
-          groupId: null, // No city group yet
-          city: city,
-          country: historyCity.country || '',
-          coordinates: coords,
-          memberCount: historyCity.memberCount || 0,
-          activeEvents: eventsMap.get(cityKey) || 0,
-          venues: venuesMap.get(cityKey) || 0,
-          housing: housingMap.get(cityKey) || 0,
-          recommendations: venuesMap.get(cityKey) || 0,
-          coverImage: null,
-          isActive: true
-        });
-      }
+        };
+      });
 
       res.json(locations);
     } catch (error) {
@@ -7129,9 +6952,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // 2. GET /api/community/stats - Get global community statistics (PUBLIC)
   app.get("/api/community/stats", async (req: Request, res: Response) => {
     try {
-      // MB.MD v9.8.1: Calculate stats from all location sources (city groups + user profiles + location history)
-      
-      // Get stats from city groups (primary source)
+      // MB.MD v9.8: Calculate stats from actual city groups (not users)
       const cityGroupStats = await db.select({
         totalCities: sql<number>`count(*)::int`,
         countries: sql<number>`count(distinct ${groups.country})::int`,
@@ -7141,48 +6962,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
       .from(groups)
       .where(eq(groups.type, 'city'));
 
-      // Get user profile cities (users with non-null city)
-      const userCitiesStats = await db.select({
-        uniqueCities: sql<number>`count(distinct ${users.city})::int`,
-        uniqueCountries: sql<number>`count(distinct ${users.country})::int`,
-        totalUsers: sql<number>`count(distinct ${users.id})::int`,
-      })
-      .from(users)
-      .where(and(eq(users.isActive, true), isNotNull(users.city)));
-
-      // Get location history cities
-      const locationHistoryStats = await db.select({
-        uniqueCities: sql<number>`count(distinct ${userLocationHistory.city})::int`,
-        uniqueCountries: sql<number>`count(distinct ${userLocationHistory.country})::int`,
-      })
-      .from(userLocationHistory);
-
-      // Get venue recommendations
+      // Get venue recommendations count
       const venueStats = await db.select({
         totalVenues: sql<number>`count(*)::int`,
       })
       .from(venues);
 
-      // Get housing listings
+      // Get housing count
       const housingStats = await db.select({
         totalHousing: sql<number>`count(*)::int`,
       })
       .from(housingListings)
       .where(eq(housingListings.status, 'active'));
 
-      // Combine stats from all sources
-      const totalCities = (cityGroupStats[0]?.totalCities || 0) + 
-                          (userCitiesStats[0]?.uniqueCities || 0) + 
-                          (locationHistoryStats[0]?.uniqueCities || 0);
-      const totalCountries = (cityGroupStats[0]?.countries || 0) + 
-                             (userCitiesStats[0]?.uniqueCountries || 0) + 
-                             (locationHistoryStats[0]?.uniqueCountries || 0);
-      const totalMembers = (cityGroupStats[0]?.totalMembers || 0) + (userCitiesStats[0]?.totalUsers || 0);
-
       res.json({
-        totalCities,
-        countries: totalCountries,
-        totalMembers,
+        totalCities: cityGroupStats[0]?.totalCities || 0,
+        countries: cityGroupStats[0]?.countries || 0,
+        totalMembers: cityGroupStats[0]?.totalMembers || 0,
         activeEvents: cityGroupStats[0]?.totalEvents || 0,
         totalVenues: venueStats[0]?.totalVenues || 0,
         totalRecommendations: venueStats[0]?.totalVenues || 0,

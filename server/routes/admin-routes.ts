@@ -242,206 +242,44 @@ router.get("/activity/recent", authenticateToken, requireAdmin, async (req, res)
 
 /**
  * GET /api/admin/users
- * Get users with pagination, filters, and tab-based categorization
- * Tabs: active (registered users), waitlist (waitlisted users), scraped (found profiles), invited (sent invitations)
+ * Get all users with pagination and filters
  */
 router.get("/users", authenticateToken, requireAdmin, async (req, res: Response) => {
   try {
-    const { page = "1", limit = "50", search = "", role = "", tab = "active" } = req.query;
+    const { page = "1", limit = "50", search = "", role = "" } = req.query;
     const pageNum = parseInt(page as string);
     const limitNum = parseInt(limit as string);
     const offset = (pageNum - 1) * limitNum;
 
-    // Handle different tabs
-    if (tab === "scraped") {
-      // Return scraped profiles from scraped_profiles table
-      const { scrapedProfiles } = await import("@shared/schema");
-      
-      const searchFilter = search && typeof search === "string" 
-        ? like(scrapedProfiles.name, `%${search}%`) 
-        : undefined;
-      
-      let query = db.select().from(scrapedProfiles).$dynamic();
-      if (searchFilter) query = query.where(searchFilter);
-      
-      const results = await query.orderBy(desc(scrapedProfiles.scrapedAt)).limit(limitNum).offset(offset);
-      
-      // Count with same filter
-      let countQuery = db.select({ count: count() }).from(scrapedProfiles).$dynamic();
-      if (searchFilter) countQuery = countQuery.where(searchFilter);
-      const totalCount = await countQuery;
-      
-      return res.json({
-        users: results.map(p => ({
-          id: p.id,
-          name: p.name,
-          email: null,
-          username: null,
-          profileImage: p.photoUrl,
-          role: "scraped",
-          isActive: false,
-          type: "scraped",
-          profileType: p.profileType,
-          claimed: p.claimed,
-          scrapedAt: p.scrapedAt,
-        })),
-        total: totalCount[0]?.count || 0,
-        page: pageNum,
-        limit: limitNum,
-      });
-    }
-    
-    if (tab === "invited") {
-      // Return friend invitations
-      const { friendInvitations } = await import("@shared/schema");
-      
-      const searchFilter = search && typeof search === "string"
-        ? or(
-            like(friendInvitations.invitedFriendName, `%${search}%`),
-            like(friendInvitations.invitedFriendEmail, `%${search}%`)
-          )
-        : undefined;
-      
-      let query = db.select({
-        invitation: friendInvitations,
-        inviter: {
-          id: users.id,
-          name: users.name,
-          username: users.username,
-        }
-      })
-        .from(friendInvitations)
-        .leftJoin(users, eq(friendInvitations.invitedBy, users.id))
-        .$dynamic();
-      
-      if (searchFilter) query = query.where(searchFilter as any);
-      
-      const results = await query.orderBy(desc(friendInvitations.sentAt)).limit(limitNum).offset(offset);
-      
-      // Count with same filter
-      let countQuery = db.select({ count: count() }).from(friendInvitations).$dynamic();
-      if (searchFilter) countQuery = countQuery.where(searchFilter as any);
-      const totalCount = await countQuery;
-      
-      return res.json({
-        users: results.map(r => ({
-          id: r.invitation.id,
-          name: r.invitation.invitedFriendName,
-          email: r.invitation.invitedFriendEmail,
-          username: null,
-          profileImage: null,
-          role: "invited",
-          isActive: false,
-          type: "invited",
-          invitedBy: r.inviter?.name || "Unknown",
-          invitedById: r.inviter?.id,
-          sentVia: r.invitation.sentVia,
-          sentAt: r.invitation.sentAt,
-          registered: r.invitation.registered,
-          inviteCode: r.invitation.inviteCode,
-        })),
-        total: totalCount[0]?.count || 0,
-        page: pageNum,
-        limit: limitNum,
-      });
-    }
-    
-    if (tab === "waitlist") {
-      // Return waitlisted users - build filter conditions
-      const baseFilter = eq(users.waitlist, true);
-      const searchFilter = search && typeof search === "string"
-        ? and(
-            baseFilter,
-            or(
-              like(users.name, `%${search}%`),
-              like(users.email, `%${search}%`),
-              like(users.username, `%${search}%`)
-            )
-          )
-        : baseFilter;
-      
-      const results = await db.select().from(users)
-        .where(searchFilter as any)
-        .orderBy(desc(users.waitlistDate))
-        .limit(limitNum)
-        .offset(offset);
-      
-      // Count with same filter
-      const totalCount = await db.select({ count: count() }).from(users).where(searchFilter as any);
-      
-      return res.json({
-        users: results.map(u => ({ ...u, type: "waitlist" })),
-        total: totalCount[0]?.count || 0,
-        page: pageNum,
-        limit: limitNum,
-      });
-    }
+    let query = db.select().from(users).$dynamic();
 
-    // Default: Active registered users (not on waitlist)
-    const activeBaseFilter = and(eq(users.isActive, true), eq(users.waitlist, false));
-    
-    // Build combined filter with search and role
-    let finalFilter: any = activeBaseFilter;
-    
+    // Add search filter
     if (search && typeof search === "string") {
-      finalFilter = and(
-        activeBaseFilter,
+      query = query.where(
         or(
           like(users.name, `%${search}%`),
           like(users.email, `%${search}%`),
           like(users.username, `%${search}%`)
-        )
+        ) as any
       );
     }
-    
+
+    // Add role filter
     if (role && typeof role === "string") {
-      finalFilter = and(finalFilter, eq(users.role, role));
+      query = query.where(eq(users.role, role));
     }
 
-    const results = await db.select().from(users)
-      .where(finalFilter as any)
-      .orderBy(desc(users.createdAt))
-      .limit(limitNum)
-      .offset(offset);
-    
-    // Count with same filter
-    const totalCount = await db.select({ count: count() }).from(users).where(finalFilter as any);
+    const results = await query.limit(limitNum).offset(offset);
+    const totalCount = await db.select({ count: count() }).from(users);
 
     res.json({
-      users: results.map(u => ({ ...u, type: "active" })),
+      users: results,
       total: totalCount[0]?.count || 0,
       page: pageNum,
       limit: limitNum,
     });
   } catch (error: any) {
     console.error("Error fetching admin users:", error);
-    res.status(500).json({ error: error.message });
-  }
-});
-
-/**
- * GET /api/admin/users/counts
- * Get counts for all user tabs
- */
-router.get("/users/counts", authenticateToken, requireAdmin, async (req, res: Response) => {
-  try {
-    const { scrapedProfiles, friendInvitations } = await import("@shared/schema");
-    
-    const [activeCount, waitlistCount, scrapedCount, invitedCount] = await Promise.all([
-      db.select({ count: count() }).from(users).where(and(eq(users.isActive, true), eq(users.waitlist, false))),
-      db.select({ count: count() }).from(users).where(eq(users.waitlist, true)),
-      db.select({ count: count() }).from(scrapedProfiles).catch(() => [{ count: 0 }]),
-      db.select({ count: count() }).from(friendInvitations).catch(() => [{ count: 0 }]),
-    ]);
-    
-    res.json({
-      active: activeCount[0]?.count || 0,
-      waitlist: waitlistCount[0]?.count || 0,
-      scraped: scrapedCount[0]?.count || 0,
-      invited: invitedCount[0]?.count || 0,
-    });
-  } catch (error: any) {
-    console.error("Error fetching user counts:", error);
     res.status(500).json({ error: error.message });
   }
 });

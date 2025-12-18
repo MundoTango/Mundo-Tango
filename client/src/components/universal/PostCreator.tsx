@@ -12,8 +12,6 @@ import { useAuth } from "@/contexts/AuthContext";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { SimpleMentionsInput, type MentionEntity } from "@/components/input/SimpleMentionsInput";
 import { UnifiedLocationPicker } from "@/components/input/UnifiedLocationPicker";
-import { FriendshipClosenessFilter } from "@/components/filters/FriendshipClosenessFilter";
-import type { ClosenessVisibility } from "@shared/schema";
 import { 
   MapPin, Hash, Camera, Sparkles, Globe, Users, Lock, 
   Send, Loader2, X, DollarSign, Star, MapPinned,
@@ -76,17 +74,16 @@ interface PostCreatorProps {
   existingPost?: any;
   className?: string;
   showStoryToggle?: boolean;
-  initialContent?: string;
 }
 
-export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMode = false, existingPost, className, showStoryToggle = false, initialContent = "" }: PostCreatorProps) {
+export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMode = false, existingPost, className, showStoryToggle = false }: PostCreatorProps) {
   const { user } = useAuth();
   const { toast } = useToast();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Content state
-  const [content, setContent] = useState(existingPost?.content || initialContent || "");
+  const [content, setContent] = useState(existingPost?.content || "");
   const [richContent, setRichContent] = useState(existingPost?.richContent || "");
   const [mentions, setMentions] = useState<MentionEntity[]>(existingPost?.mentions || []);
   const [mentionIds, setMentionIds] = useState<string[]>([]);
@@ -107,11 +104,9 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
   // Feature state
   const [selectedTags, setSelectedTags] = useState<string[]>(existingPost?.tags || []);
   const [visibility, setVisibility] = useState<'public' | 'friends' | 'private'>(existingPost?.visibility || 'public');
-  const [audienceCloseness, setAudienceCloseness] = useState<ClosenessVisibility>(existingPost?.audienceCloseness || 'all');
   const [isRecommendation, setIsRecommendation] = useState(existingPost?.isRecommendation || false);
   const [recommendationType, setRecommendationType] = useState(existingPost?.recommendationType || "");
   const [priceRange, setPriceRange] = useState(existingPost?.priceRange || "");
-  const [businessName, setBusinessName] = useState(existingPost?.businessName || "");
   const [location, setLocation] = useState(existingPost?.location || "");
   const [coordinates, setCoordinates] = useState<{lat: number; lng: number} | undefined>(existingPost?.coordinates || undefined);
   
@@ -482,7 +477,6 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
       const postData: any = {
         content: finalContent,
         visibility,
-        audienceCloseness,
         tags: selectedTags,
         mentions: mentionIds,
       };
@@ -601,9 +595,8 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
       console.log('[PostCreator] imageUrl included:', !!postData.imageUrl);
       console.log('[PostCreator] videoUrl included:', !!postData.videoUrl);
       
-      if (isRecommendation) {
-        postData.isRecommendation = true;
-        if (businessName) postData.location = businessName;
+      if (isRecommendation && location) {
+        postData.location = location;
         if (recommendationType) postData.postType = recommendationType;
         if (priceRange) postData.richContent = { priceRange };
         if (coordinates) postData.coordinates = coordinates;
@@ -680,7 +673,6 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
       setMediaPreviews([]);
       setSelectedTags([]);
       setIsRecommendation(false);
-      setBusinessName("");
       setLocation("");
       setCoordinates(undefined);
       setRecommendationType("");
@@ -909,17 +901,6 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
               Hidden Gems - Share your favorite places
             </h3>
 
-            {/* Business Name Input - Simple text input */}
-            <div>
-              <Label className="text-xs mb-1.5 block">Business / Place Name</Label>
-              <Input
-                value={businessName}
-                onChange={(e) => setBusinessName(e.target.value)}
-                placeholder="Enter business name (e.g. La Viruta Tango)"
-                data-testid="input-business-name"
-              />
-            </div>
-
             {/* Category Selector */}
             <div>
               <Label className="text-xs mb-1.5 block">Category</Label>
@@ -1072,19 +1053,6 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
                 <span className="text-xs">Private</span>
               </Button>
             </div>
-            
-            {/* Friendship Closeness Filter */}
-            {visibility === 'friends' && (
-              <div className="mt-4 pt-4 border-t border-green-500/20">
-                <FriendshipClosenessFilter
-                  value={audienceCloseness}
-                  onChange={setAudienceCloseness}
-                  label="Which friends can see this?"
-                  description="Fine-tune your audience based on friendship closeness"
-                  testIdPrefix="post-audience-closeness"
-                />
-              </div>
-            )}
           </motion.div>
         )}
       </AnimatePresence>

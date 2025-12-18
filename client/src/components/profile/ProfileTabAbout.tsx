@@ -17,7 +17,7 @@ import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/Un
 import { UnifiedLanguagePicker, getLanguageByCode, getLanguageByName } from "@/components/input/UnifiedLanguagePicker";
 import { triggerLocationChangeEffects, detectLocationChange, formatWelcomeMessage, LocationChangeEvent } from '@/lib/locationChangeEffects';
 import { triggerRoleChangeEffects } from '@/lib/roleChangeEffects';
-import { TANGO_ROLES, getRoleByValue, normalizeRole } from "@/lib/tangoRoles";
+import { TANGO_ROLES, getRoleByValue } from "@/lib/tangoRoles";
 import { 
   calculateYearsInRole, 
   formatRoleExperience, 
@@ -1315,42 +1315,40 @@ export default function ProfileTabAbout({ user, isOwnProfile, isPublicView = fal
             {user.tangoRoles && user.tangoRoles.length > 0 ? (
               <div className="flex flex-wrap gap-2">
                 {user.tangoRoles
-                  .map((originalRole) => {
-                    const normalizedRole = normalizeRole(originalRole);
-                    const role = getRoleByValue(normalizedRole);
-                    const startYear = getRoleStartYear(user, originalRole) || getRoleStartYear(user, normalizedRole);
-                    return { originalRole, normalizedRole, role, startYear };
+                  .map((roleValue) => {
+                    const role = getRoleByValue(roleValue);
+                    const startYear = getRoleStartYear(user, roleValue);
+                    return { roleValue, role, startYear };
                   })
-                  .filter((item, index, array) => array.findIndex(a => a.normalizedRole === item.normalizedRole) === index)
                   .sort((a, b) => (b.startYear || 0) - (a.startYear || 0))
-                  .map(({ originalRole, normalizedRole, role, startYear }) => {
+                  .map(({ roleValue, role, startYear }) => {
                     const IconComponent = role?.icon;
                     const yearsExp = startYear ? calculateYearsOfExperience(startYear) : 0;
                     
                     return (
-                      <Tooltip key={normalizedRole}>
+                      <Tooltip key={roleValue}>
                         <TooltipTrigger asChild>
                           <div className="relative group">
                             <Badge 
                               variant="secondary" 
                               className="flex items-center gap-1.5 py-1.5 px-3 cursor-pointer hover-elevate transition-all"
                               style={role ? { borderColor: `${role.color}40` } : undefined}
-                              data-testid={`badge-role-experience-${normalizedRole}`}
+                              data-testid={`badge-role-experience-${roleValue}`}
                               onClick={() => canEdit && setIsEditing(true)}
                             >
                               {IconComponent && <IconComponent className="w-3.5 h-3.5" style={{ color: role?.color }} />}
-                              <span>{role?.label || normalizedRole.replace(/_/g, ' ')}</span>
+                              <span>{role?.label || roleValue.replace(/_/g, ' ')}</span>
                               <span className="text-muted-foreground">:</span>
                               <span className="font-medium">{startYear}</span>
                             </Badge>
                             {isEditing && (
                               <button
                                 onClick={() => {
-                                  const updated = editValues.tangoRoles.filter((r: string) => normalizeRole(r) !== normalizedRole);
+                                  const updated = editValues.tangoRoles.filter((r: string) => r !== roleValue);
                                   setEditValues({ ...editValues, tangoRoles: updated });
                                 }}
                                 className="absolute -top-2 -right-2 w-5 h-5 bg-destructive rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity"
-                                data-testid={`button-remove-role-${normalizedRole}`}
+                                data-testid={`button-remove-role-${roleValue}`}
                               >
                                 <X className="w-3 h-3" />
                               </button>

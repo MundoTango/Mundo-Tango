@@ -15,16 +15,15 @@ import {
   Camera,
   Palette,
   Briefcase,
-  Search,
+  Mic,
   PenLine,
   BookOpen,
   Target,
   Shirt,
   Globe,
   Piano,
-  Sparkles,
+  Eye,
   Heart,
-  Handshake,
   type LucideIcon
 } from 'lucide-react';
 
@@ -115,13 +114,13 @@ export const TANGO_ROLES: readonly TangoRole[] = [
     category: 'professional'
   },
   {
-    value: 'researcher',
-    label: 'Researcher',
-    icon: Search,
+    value: 'mc',
+    label: 'MC/Host',
+    icon: Mic,
     color: '#F97316',
-    description: 'I research tango culture and traditions',
-    bookable: false,
-    category: 'creative'
+    description: 'I host/MC tango events',
+    bookable: true,
+    category: 'professional'
   },
   {
     value: 'business',
@@ -202,7 +201,7 @@ export const TANGO_ROLES: readonly TangoRole[] = [
   {
     value: 'fan',
     label: 'Fan/Enthusiast',
-    icon: Sparkles,
+    icon: Eye,
     color: '#F59E0B',
     description: "I'm a tango enthusiast",
     bookable: false,
@@ -222,7 +221,7 @@ export const TANGO_ROLES: readonly TangoRole[] = [
   {
     value: 'taxi-dancer',
     label: 'Taxi Dancer',
-    icon: Handshake,
+    icon: Users,
     color: '#F97316',
     description: 'I dance as a taxi dancer at milongas',
     bookable: true,
@@ -280,8 +279,6 @@ const LEGACY_ROLE_MAP: Record<string, string> = {
   'content_creator': 'photographer',
   'learning_resource': 'teacher',
   'taxi_dancer': 'taxi-dancer',
-  'mc': 'researcher',
-  'mc-host': 'researcher',
 };
 
 export function normalizeRole(roleValue: string): string {

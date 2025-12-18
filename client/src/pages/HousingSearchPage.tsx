@@ -58,7 +58,7 @@ export default function HousingSearchPage() {
   };
 
   return (
-    <div className="bg-background">
+    <div className="min-h-screen bg-background">
       <div className="container mx-auto p-4">
         <h1 className="text-3xl font-bold mb-6" data-testid="heading-housing-search">Advanced Housing Search</h1>
 

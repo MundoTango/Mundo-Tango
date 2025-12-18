@@ -6,7 +6,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Settings, UserPlus, UserMinus, UserCheck, Plane, Calendar, CheckCircle, Instagram, Facebook, Twitter, Linkedin, Youtube, Globe, Award, Plus, Camera, Music, Users, ImageIcon, Mic2, Home, Briefcase, BookOpen, Heart, Eye, MessageSquare, HeartHandshake } from "lucide-react";
+import { MapPin, Settings, UserPlus, UserMinus, UserCheck, Plane, Calendar, CheckCircle, Instagram, Facebook, Twitter, Linkedin, Youtube, Globe, Award, Plus, Camera, Music, Users, ImageIcon, Mic2, Home, Briefcase, BookOpen, Heart, Eye, MessageCircle } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { ComposeMessage } from "@/components/messages/ComposeMessage";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useAuth } from "@/contexts/AuthContext";
 import { SEO } from "@/components/SEO";
@@ -26,8 +33,41 @@ import ProfileTabPro from "@/components/profile/ProfileTabPro";
 import DashboardCustomerToggle from "@/components/profile/DashboardCustomerToggle";
 import { PhotoUploadDialog } from "@/components/PhotoUploadDialog";
 import { FriendshipQuestionnaire } from "@/components/friendship/FriendshipQuestionnaire";
-import { FriendRequestReviewModal } from "@/components/friendship/FriendRequestReviewModal";
-import { normalizeRole, getRoleByValue, getRoleLabel, getRoleIcon, getRoleColor } from "@/lib/tangoRoles";
+
+function MessageDialogWithNavigation({ 
+  open, 
+  onOpenChange, 
+  recipientName, 
+  recipientId 
+}: { 
+  open: boolean; 
+  onOpenChange: (open: boolean) => void; 
+  recipientName: string; 
+  recipientId: string;
+}) {
+  const [, setLocation] = useLocation();
+  
+  const handleSuccess = () => {
+    onOpenChange(false);
+    setLocation('/messages');
+  };
+  
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-2xl">
+        <DialogHeader>
+          <DialogTitle>Send Message to {recipientName}</DialogTitle>
+        </DialogHeader>
+        <ComposeMessage 
+          onClose={() => onOpenChange(false)}
+          onSuccess={handleSuccess}
+          defaultChannel="mt"
+          defaultRecipient={recipientId}
+        />
+      </DialogContent>
+    </Dialog>
+  );
+}
 
 interface User {
   id: number;
@@ -90,8 +130,8 @@ export default function ProfilePage() {
   const [uploadingCover, setUploadingCover] = useState(false);
   const [profilePhotoDialogOpen, setProfilePhotoDialogOpen] = useState(false);
   const [coverPhotoDialogOpen, setCoverPhotoDialogOpen] = useState(false);
-  const [friendshipQuestionnaireOpen, setFriendshipQuestionnaireOpen] = useState(false);
-  const [friendRequestReviewOpen, setFriendRequestReviewOpen] = useState(false);
+  const [messageDialogOpen, setMessageDialogOpen] = useState(false);
+  const [friendRequestDialogOpen, setFriendRequestDialogOpen] = useState(false);
 
   // Upload profile photo mutation (send compressed base64)
   const uploadPhotoMutation = useMutation({
@@ -259,41 +299,17 @@ export default function ProfilePage() {
     enabled: !!user?.id,
   });
 
-  // Fetch friendship status with this specific user
-  const isOtherProfile = !!(currentUser && user && currentUser.id !== user.id);
-  
-  const { data: friendshipStatus, isLoading: friendshipLoading, refetch: refetchFriendshipStatus } = useQuery<{
-    isFriend: boolean;
-    hasIncomingRequest: boolean;
-    hasOutgoingRequest: boolean;
-    incomingRequest: any | null;
-    outgoingRequest: any | null;
-  }>({
-    queryKey: ['/api/friends/status', user?.id],
-    queryFn: async () => {
-      const res = await fetch(`/api/friends/status/${user?.id}`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-        },
-      });
-      if (!res.ok) throw new Error('Failed to fetch friendship status');
-      return res.json();
-    },
-    enabled: isOtherProfile && !!user?.id,
-    staleTime: 5000, // Cache for 5 seconds
+  // Fetch friends to check if already friends
+  const { data: friends = [] } = useQuery<any[]>({
+    queryKey: ['/api/friends'],
+    enabled: !!(currentUser && user && currentUser.id !== user.id),
   });
 
-  // Debug: Log friendship status
-  useEffect(() => {
-    if (isOtherProfile) {
-      console.log('[ProfilePage] Friendship status:', {
-        currentUserId: currentUser?.id,
-        profileUserId: user?.id,
-        friendshipStatus,
-        friendshipLoading,
-      });
-    }
-  }, [currentUser?.id, user?.id, friendshipStatus, friendshipLoading, isOtherProfile]);
+  // Fetch friend requests to check if pending
+  const { data: friendRequests = [] } = useQuery<any[]>({
+    queryKey: ['/api/friends/requests'],
+    enabled: !!(currentUser && user && currentUser.id !== user.id),
+  });
 
   // Fetch upcoming travel plans for this user
   const { data: upcomingTravel = [] } = useQuery<any[]>({
@@ -322,57 +338,31 @@ export default function ProfilePage() {
 
   const isOwnProfile = currentUser?.id === user?.id;
   
-  // Use friendship status from API
-  const isFriend = friendshipStatus?.isFriend ?? false;
-  const hasPendingRequest = friendshipStatus?.hasOutgoingRequest ?? false;
-  const hasIncomingRequest = friendshipStatus?.hasIncomingRequest ?? false;
-  const incomingRequest = friendshipStatus?.incomingRequest;
-  
-  // Prepare incoming request data with sender info for review modal
-  const incomingRequestWithSender = incomingRequest ? {
-    ...incomingRequest,
-    sender: {
-      id: user?.id,
-      name: user?.name,
-      username: user?.username,
-      profileImage: user?.profileImage,
-      city: user?.city,
-      country: user?.country,
-    },
-  } : null;
-
-  // Auto-open friend request review modal if ?reviewRequest=true and there's an incoming request
-  useEffect(() => {
-    const urlParams = new URLSearchParams(searchString);
-    const reviewRequest = urlParams.get('reviewRequest');
-    if (reviewRequest === 'true' && hasIncomingRequest && !friendshipLoading) {
-      setFriendRequestReviewOpen(true);
-    }
-  }, [searchString, hasIncomingRequest, friendshipLoading]);
+  // Check friendship status
+  const isFriend = friends.some((f: any) => f.id === user?.id);
+  // hasPendingRequest: Check if CURRENT user sent a pending request TO this profile user
+  const hasPendingRequest = friendRequests.some(
+    (r: any) => r.receiverId === user?.id && r.senderId === currentUser?.id && r.status === 'pending'
+  );
 
   // Send friend request mutation with questionnaire data
+  // Maps frontend fields to backend schema: whereWeMet → danceLocation, ourStory → danceStory, privateNote → senderPrivateNote
   const sendFriendRequestMutation = useMutation({
-    mutationFn: async (questionnaireData?: {
-      whenWeMet?: Date;
-      whereWeMet: string;
-      ourStory: string;
-      privateNote?: string;
-    }) => {
+    mutationFn: async (questionnaireData?: { whenWeMet?: Date; whereWeMet: string; ourStory: string; privateNote?: string; mediaUrls?: string[] }) => {
+      // Map questionnaire fields to backend schema
       const payload = questionnaireData ? {
-        senderMessage: questionnaireData.ourStory,
-        senderPrivateNote: questionnaireData.privateNote,
-        didWeDance: true,
         danceLocation: questionnaireData.whereWeMet,
         danceStory: questionnaireData.ourStory,
-        danceDate: questionnaireData.whenWeMet?.toISOString(),
-      } : {};
+        senderPrivateNote: questionnaireData.privateNote,
+        senderMessage: questionnaireData.ourStory || `Hi! I'd love to connect with you.`,
+        mediaUrls: questionnaireData.mediaUrls,
+      } : undefined;
       return await apiRequest('POST', `/api/friends/request/${user?.id}`, payload);
     },
     onSuccess: async () => {
-      // Invalidate friendship status for this profile
-      await queryClient.invalidateQueries({ queryKey: ['/api/friends/status', user?.id] });
-      await queryClient.refetchQueries({ queryKey: ['/api/friends/status', user?.id] });
-      setFriendshipQuestionnaireOpen(false);
+      setFriendRequestDialogOpen(false);
+      await queryClient.invalidateQueries({ queryKey: ['/api/friends/requests'] });
+      await queryClient.refetchQueries({ queryKey: ['/api/friends/requests'] });
       toast({
         title: "Friend request sent!",
         description: `Request sent to ${user?.name}`,
@@ -393,9 +383,9 @@ export default function ProfilePage() {
       return await apiRequest('DELETE', `/api/friends/${user?.id}`);
     },
     onSuccess: async () => {
-      // Invalidate friendship status for this profile
-      await queryClient.invalidateQueries({ queryKey: ['/api/friends/status', user?.id] });
-      await queryClient.refetchQueries({ queryKey: ['/api/friends/status', user?.id] });
+      await queryClient.invalidateQueries({ queryKey: ['/api/friends'] });
+      await queryClient.refetchQueries({ queryKey: ['/api/friends'] });
+      await queryClient.invalidateQueries({ queryKey: ['/api/friends/requests'] });
       toast({
         title: "Friend removed",
         description: `Removed ${user?.name} from friends`,
@@ -585,26 +575,37 @@ export default function ProfilePage() {
               {user.tangoRoles && user.tangoRoles.length > 0 && (
                 <div className="flex flex-wrap gap-1">
                   <TooltipProvider>
-                    {user.tangoRoles
-                      .map((role) => normalizeRole(role))
-                      .filter((role, idx, arr) => arr.indexOf(role) === idx)
-                      .map((role) => {
-                      const Icon = getRoleIcon(role);
-                      const label = getRoleLabel(role);
-                      const color = getRoleColor(role);
+                    {user.tangoRoles.map((role, index) => {
+                      const roleIconMap: Record<string, any> = {
+                        'teacher': { icon: BookOpen, label: 'Teacher' },
+                        'dancer': { icon: Users, label: 'Dancer' },
+                        'dj': { icon: Music, label: 'DJ' },
+                        'photographer': { icon: Camera, label: 'Photographer' },
+                        'organizer': { icon: Home, label: 'Organizer' },
+                        'performer': { icon: Mic2, label: 'Performer' },
+                        'vendor': { icon: Briefcase, label: 'Vendor' },
+                        'musician': { icon: Music, label: 'Musician' },
+                        'choreographer': { icon: Heart, label: 'Choreographer' },
+                        'school': { icon: BookOpen, label: 'School' },
+                        'hotel': { icon: Home, label: 'Hotel' },
+                        'wellness': { icon: Heart, label: 'Wellness' },
+                        'tour_operator': { icon: Plane, label: 'Tour Operator' },
+                        'guide': { icon: MapPin, label: 'Guide' },
+                        'content_creator': { icon: Camera, label: 'Content Creator' },
+                      };
+                      
+                      const roleKey = role.toLowerCase();
+                      const roleInfo = roleIconMap[roleKey];
+                      const Icon = roleInfo?.icon || Briefcase;
                       
                       return (
-                        <Tooltip key={role}>
+                        <Tooltip key={index}>
                           <TooltipTrigger asChild>
-                            <div 
-                              className="p-1 rounded-lg border cursor-help hover-elevate" 
-                              style={{ backgroundColor: `${color}15`, borderColor: `${color}40` }}
-                              data-testid={`icon-role-${role}`}
-                            >
-                              <Icon className="w-3 h-3" style={{ color }} />
+                            <div className="p-1 rounded-lg bg-muted border border-border cursor-help hover-elevate" data-testid={`icon-role-${role}`}>
+                              <Icon className="w-3 h-3" />
                             </div>
                           </TooltipTrigger>
-                          <TooltipContent>{label}</TooltipContent>
+                          <TooltipContent>{roleInfo?.label || role.replace(/_/g, ' ')}</TooltipContent>
                         </Tooltip>
                       );
                     })}
@@ -740,28 +741,21 @@ export default function ProfilePage() {
         type="cover"
         isUploading={uploadingCover}
       />
-      {/* Friendship Questionnaire Dialog */}
-      {user && !isOwnProfile && (
-        <FriendshipQuestionnaire
-          open={friendshipQuestionnaireOpen}
-          onOpenChange={setFriendshipQuestionnaireOpen}
-          friendName={user.name}
-          onSubmit={(data) => sendFriendRequestMutation.mutate(data)}
-          isLoading={sendFriendRequestMutation.isPending}
-        />
-      )}
-      {/* Friend Request Review Modal (for incoming requests) */}
-      {incomingRequestWithSender && (
-        <FriendRequestReviewModal
-          open={friendRequestReviewOpen}
-          onOpenChange={setFriendRequestReviewOpen}
-          request={incomingRequestWithSender}
-          onActionComplete={() => {
-            queryClient.invalidateQueries({ queryKey: ['/api/friends'] });
-            queryClient.invalidateQueries({ queryKey: ['/api/friends/requests'] });
-          }}
-        />
-      )}
+      {/* Message Dialog */}
+      <MessageDialogWithNavigation
+        open={messageDialogOpen}
+        onOpenChange={setMessageDialogOpen}
+        recipientName={user.name}
+        recipientId={String(user.id)}
+      />
+      {/* Friend Request Questionnaire Dialog */}
+      <FriendshipQuestionnaire
+        open={friendRequestDialogOpen}
+        onOpenChange={setFriendRequestDialogOpen}
+        friendName={user.name}
+        onSubmit={(data) => sendFriendRequestMutation.mutate(data)}
+        isLoading={sendFriendRequestMutation.isPending}
+      />
       {/* Tab Navigation */}
       <ProfileTabsNav
         user={user}
@@ -769,14 +763,53 @@ export default function ProfilePage() {
         onTabChange={setActiveTab}
         isOwnProfile={isOwnProfile}
         isPublicView={isPublicView}
-        friendshipState={!isOwnProfile ? {
-          isFriend,
-          hasPendingRequest,
-          hasIncomingRequest,
-        } : undefined}
-        onAddFriend={() => setFriendshipQuestionnaireOpen(true)}
-        onReviewRequest={() => setFriendRequestReviewOpen(true)}
-        isAddingFriend={sendFriendRequestMutation.isPending}
+        actionButtons={!isOwnProfile && (
+          <>
+            {isFriend ? (
+              <Link href={`/friends/${user.id}`}>
+                <Button 
+                  size="sm"
+                  className="gap-2"
+                  data-testid={`button-see-friendship-${user.id}`}
+                >
+                  <Heart className="h-4 w-4" />
+                  See Friendship
+                </Button>
+              </Link>
+            ) : hasPendingRequest ? (
+              <Button 
+                variant="outline"
+                size="sm"
+                className="gap-2"
+                disabled
+                data-testid="button-request-pending"
+              >
+                <UserCheck className="h-4 w-4" />
+                Request Sent
+              </Button>
+            ) : (
+              <Button 
+                size="sm"
+                className="gap-2"
+                onClick={() => setFriendRequestDialogOpen(true)}
+                data-testid={`button-add-friend-${user.id}`}
+              >
+                <UserPlus className="h-4 w-4" />
+                Add Friend
+              </Button>
+            )}
+            <Button 
+              variant="outline"
+              size="sm"
+              className="gap-2"
+              onClick={() => setMessageDialogOpen(true)}
+              data-testid="button-message"
+            >
+              <MessageCircle className="h-4 w-4" />
+              Message
+            </Button>
+          </>
+        )}
       />
       {/* Tab Content */}
       <div className="max-w-5xl mx-auto px-6 py-12">

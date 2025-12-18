@@ -1,31 +1,52 @@
-import { useState, useRef, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useState, useEffect, useRef } from "react";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { 
   MessageCircle, 
-  Mail, 
   Search, 
-  Plus, 
+  Send, 
+  ArrowLeft, 
+  Phone, 
+  Video, 
+  Info,
+  Camera,
+  Smile,
   MoreHorizontal,
-  Send,
+  Check,
   CheckCheck,
-  Pin,
-  Edit3
+  Heart,
+  Flame,
+  Music,
+  Lightbulb,
+  Eye,
+  Frown,
+  Link2,
+  Mail,
+  MessagesSquare,
+  Instagram,
+  Phone as WhatsAppIcon,
+  Settings2,
+  X,
+  Loader2
 } from "lucide-react";
-import { SiFacebook, SiInstagram, SiWhatsapp } from "react-icons/si";
-import { formatDistanceToNow } from "date-fns";
-import { ComposeMessage } from "@/components/messages/ComposeMessage";
-import { Dialog, DialogContent, DialogTrigger, DialogTitle } from "@/components/ui/dialog";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { SiFacebook, SiInstagram, SiWhatsapp, SiGmail } from "react-icons/si";
+import { format, isToday, isYesterday, formatDistanceToNow } from "date-fns";
 import { cn } from "@/lib/utils";
-import { ReactionSelector } from "@/components/ui/ReactionSelector";
-import { ImageGalleryUploader } from "@/components/feed/ImageGalleryUploader";
 import { apiRequest, queryClient } from "@/lib/queryClient";
+import { Link } from "wouter";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { motion, AnimatePresence } from "framer-motion";
+import { useAuth } from "@/contexts/AuthContext";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { uploadMediaFile } from "@/lib/mediaUpload";
 import { useToast } from "@/hooks/use-toast";
-import { useAuth } from "@/hooks/use-auth";
 
 // Tango-themed reaction types matching MT design system
 const REACTION_TYPES = [
@@ -37,364 +58,38 @@ const REACTION_TYPES = [
   { id: 'inspiration', icon: Lightbulb, label: 'Inspiration', color: '#10B981' },
 ];
 
-const channelLabels = {
-  mt: "Mundo Tango",
-  gmail: "Gmail",
-  facebook: "Facebook",
-  instagram: "Instagram",
-  whatsapp: "WhatsApp",
-};
-
-const channelColors = {
-  mt: "hsl(var(--primary))",
-  gmail: "#EA4335",
-  facebook: "#1877F2",
-  instagram: "#E4405F",
-  whatsapp: "#25D366",
-};
-
-type Channel = "all" | "mt" | "gmail" | "facebook" | "instagram" | "whatsapp";
-
-// Helper to get initials from name
-function getInitials(name: string): string {
-  if (!name) return "?";
-  const parts = name.trim().split(/\s+/);
-  if (parts.length >= 2) {
-    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-  }
-  return name.slice(0, 2).toUpperCase();
-}
-
-// Helper for relative time (Messenger style: "2h", "1d", "1w")
-function getRelativeTime(date: Date | string): string {
-  const d = new Date(date);
-  const now = new Date();
-  const diffMs = now.getTime() - d.getTime();
-  const diffMins = Math.floor(diffMs / 60000);
-  const diffHours = Math.floor(diffMins / 60);
-  const diffDays = Math.floor(diffHours / 24);
-  const diffWeeks = Math.floor(diffDays / 7);
-
-  if (diffMins < 1) return "now";
-  if (diffMins < 60) return `${diffMins}m`;
-  if (diffHours < 24) return `${diffHours}h`;
-  if (diffDays < 7) return `${diffDays}d`;
-  if (diffWeeks < 4) return `${diffWeeks}w`;
-  return formatDistanceToNow(d, { addSuffix: false });
-}
-
-// Conversation bubble colors (Messenger gradient style)
-const bubbleGradients = [
-  "from-blue-500 to-blue-600",
-  "from-purple-500 to-pink-500",
-  "from-orange-400 to-pink-500",
-  "from-green-400 to-cyan-500",
-  "from-indigo-500 to-purple-500",
-];
-
-function getBubbleGradient(id: string | number): string {
-  // Convert string IDs to a stable numeric hash
-  const numericId = typeof id === 'string' 
-    ? id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)
-    : id;
-  return bubbleGradients[Math.abs(numericId) % bubbleGradients.length];
-}
-
-interface ImageItem {
-  id: string;
-  url: string;
-  file?: File;
-  order: number;
-}
-
-export default function UnifiedInbox() {
-  const { toast } = useToast();
-  const { user } = useAuth();
-  const currentUserId = user?.id;
-  const [selectedChannel, setSelectedChannel] = useState<Channel>("all");
-  const [selectedConversation, setSelectedConversation] = useState<any>(null);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [showCompose, setShowCompose] = useState(false);
-  const [messageInput, setMessageInput] = useState("");
-  const [isSearchFocused, setIsSearchFocused] = useState(false);
-  const [attachedImages, setAttachedImages] = useState<ImageItem[]>([]);
-  const [showImageUploader, setShowImageUploader] = useState(false);
-  const [localSentMessages, setLocalSentMessages] = useState<any[]>([]);
-  const [optimisticConversations, setOptimisticConversations] = useState<any[]>([]);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  const { data: messages, isLoading } = useQuery({
-    queryKey: ["/api/messages/unified", { channel: selectedChannel === "all" ? undefined : selectedChannel, search: searchQuery || undefined }],
-    refetchInterval: 30000,
-    select: (data: any) => data?.messages || data || [],
-  });
-
-  const { data: channels } = useQuery({
-    queryKey: ["/api/messages/channels"],
-  });
-
-  // Group messages by counterparty (the other person in the conversation) for Messenger-style view
-  const serverConversations = messages?.reduce((acc: any[], msg: any) => {
-    // For MT messages, use counterpartyId/counterpartyName from the API
-    // For external messages, fallback to sender info
-    const conversationKey = msg.counterpartyId 
-      ? `${msg.counterpartyId}-${msg.channel}` 
-      : `${msg.from}-${msg.channel}`;
-    
-    const existingConv = acc.find(c => c.conversationKey === conversationKey);
-    if (existingConv) {
-      existingConv.messages.push(msg);
-      if (new Date(msg.receivedAt) > new Date(existingConv.lastMessageAt)) {
-        existingConv.lastMessage = msg.body;
-        existingConv.lastMessageAt = msg.receivedAt;
-        // For incoming messages, update read status
-        if (!msg.isOutgoing) {
-          existingConv.isRead = msg.isRead;
-        }
-      }
-      // Only count unread for incoming messages
-      if (!msg.isRead && !msg.isOutgoing) existingConv.unreadCount++;
-    } else {
-      // Use counterparty info for display name and avatar
-      const displayName = msg.counterpartyName || msg.from;
-      const displayAvatar = msg.counterpartyAvatar || msg.senderAvatar;
-      const counterpartyId = msg.counterpartyId || msg.senderId;
-      
-      acc.push({
-        id: msg.id,
-        conversationKey,
-        from: displayName,
-        counterpartyId,
-        senderId: msg.senderId,
-        channel: msg.channel,
-        avatar: displayAvatar,
-        isOnline: Math.random() > 0.5, // Simulated - would come from presence API
-        isPinned: msg.isStarred,
-        lastMessage: msg.body,
-        lastMessageAt: msg.receivedAt,
-        isRead: msg.isOutgoing ? true : msg.isRead, // Outgoing messages are always "read"
-        unreadCount: (!msg.isRead && !msg.isOutgoing) ? 1 : 0,
-        messages: [msg],
-      });
-    }
-    return acc;
-  }, []) || [];
-  
-  // Merge optimistic conversations with server conversations
-  const conversations = [...optimisticConversations, ...serverConversations].reduce((acc: any[], conv: any) => {
-    // Use conversationKey as the primary dedup key (works for both MT and external messages)
-    // Fall back to counterpartyId+channel only for MT messages
-    const exists = acc.find(c => {
-      // If both have conversationKey, compare those
-      if (c.conversationKey && conv.conversationKey) {
-        return c.conversationKey === conv.conversationKey;
-      }
-      // For MT messages with counterpartyId, compare those
-      if (c.counterpartyId && conv.counterpartyId) {
-        return c.counterpartyId === conv.counterpartyId && c.channel === conv.channel;
-      }
-      // For external messages without counterpartyId, never merge
-      return false;
-    });
-    
-    if (!exists) {
-      acc.push(conv);
-    } else if (conv.isOptimistic) {
-      // Update the existing conversation with optimistic message if newer
-      if (new Date(conv.lastMessageAt) > new Date(exists.lastMessageAt)) {
-        exists.lastMessage = conv.lastMessage;
-        exists.lastMessageAt = conv.lastMessageAt;
-      }
-    }
-    return acc;
-  }, []);
-
-  // Sort: pinned first, then by most recent
-  const sortedConversations = [...conversations].sort((a, b) => {
-    if (a.isPinned && !b.isPinned) return -1;
-    if (!a.isPinned && b.isPinned) return 1;
-    return new Date(b.lastMessageAt).getTime() - new Date(a.lastMessageAt).getTime();
-  });
-
-  const filteredConversations = sortedConversations.filter((conv: any) => {
-    const matchesChannel = selectedChannel === "all" || conv.channel === selectedChannel;
-    const matchesSearch = searchQuery === "" || 
-      conv.from?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      conv.lastMessage?.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesChannel && matchesSearch;
-  });
-
-  const pinnedConversations = filteredConversations.filter(c => c.isPinned);
-  const regularConversations = filteredConversations.filter(c => !c.isPinned);
-
-  // Scroll to bottom when conversation changes and mark messages as read
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    
-    // Mark messages as read when viewing a conversation
-    // Only mark as read if this is an MT internal message (channel === 'mt')
-    // Use counterpartyId instead of senderId to correctly identify the other person
-    if (selectedConversation?.counterpartyId && selectedConversation?.channel === 'mt') {
-      const markAsRead = async () => {
-        try {
-          await apiRequest('POST', '/api/messages/mark-read', {
-            senderId: selectedConversation.counterpartyId,
-            senderName: selectedConversation.from,
-          });
-          // Invalidate unread count to update the badge
-          queryClient.invalidateQueries({ queryKey: ['/api/messages/unread-count'] });
-          // Also refresh the messages list to update read status
-          queryClient.invalidateQueries({ queryKey: ['/api/messages/unified'] });
-        } catch (error) {
-          console.error('Failed to mark messages as read:', error);
-        }
-      };
-      markAsRead();
-    }
-  }, [selectedConversation]);
-
-  const getChannelCount = (channel: Channel) => {
-    if (channel === "all") return conversations.length;
-    return conversations.filter((c: any) => c.channel === channel).length;
+interface Conversation {
+  partnerId: number;
+  partnerName: string;
+  partnerUsername?: string;
+  partnerImage?: string;
+  lastMessage: {
+    id: number;
+    content: string;
+    createdAt: string;
+    isMine: boolean;
   };
   unreadCount: number;
 }
 
-  const handleSendMessage = async () => {
-    if ((!messageInput.trim() && attachedImages.length === 0) || !selectedConversation) {
-      console.log('Send blocked - no content or no conversation selected');
-      return;
-    }
-    
-    const messageBody = messageInput.trim();
-    const newLocalMessage = {
-      id: `local-${Date.now()}`,
-      body: messageBody,
-      from: 'me',
-      to: selectedConversation.from,
-      channel: selectedConversation.channel || 'mt',
-      receivedAt: new Date().toISOString(),
-      isOwn: true,
-      conversationId: selectedConversation.id,
-    };
-    
-    // Optimistically add message to UI
-    setLocalSentMessages(prev => [...prev, newLocalMessage]);
-    setMessageInput("");
-    setAttachedImages([]);
-    setShowImageUploader(false);
-    
-    try {
-      console.log('Sending message:', { to: selectedConversation.from, body: messageBody });
-      const response = await apiRequest('POST', '/api/messages/send', {
-        to: selectedConversation.from,
-        channel: selectedConversation.channel || 'mt',
-        body: messageBody,
-        attachments: attachedImages.map(img => img.url)
-      });
-      console.log('Message sent successfully:', response);
-      
-      queryClient.invalidateQueries({ queryKey: ['/api/messages/unified'] });
-      
-      toast({
-        title: "Message sent",
-        description: `Your message to ${selectedConversation.from} was sent successfully.`,
-      });
-    } catch (error) {
-      console.error('Failed to send message:', error);
-      // Remove the optimistic message on failure
-      setLocalSentMessages(prev => prev.filter(m => m.id !== newLocalMessage.id));
-      toast({
-        title: "Failed to send",
-        description: "There was a problem sending your message. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
+interface Message {
+  id: number;
+  content: string;
+  mediaUrl?: string;
+  mediaType?: string;
+  createdAt: string;
+  isMine: boolean;
+  isRead: boolean;
+  reactions: Record<string, number>;
+  userReaction: string | null;
+}
 
-  const handleMessageReaction = async (msgId: number, reactionId: string) => {
-    // Would call API to save reaction
-    console.log('Reacting to message', msgId, 'with', reactionId);
-  };
-
-  const ConversationItem = ({ conv, isSelected }: { conv: any; isSelected: boolean }) => {
-    const Icon = channelIcons[conv.channel as keyof typeof channelIcons];
-    
-    return (
-      <div
-        className={cn(
-          "flex items-center gap-3 p-3 cursor-pointer rounded-lg mx-2 transition-all",
-          isSelected 
-            ? "bg-accent" 
-            : "hover-elevate"
-        )}
-        onClick={() => setSelectedConversation(conv)}
-        data-testid={`conversation-${conv.id}`}
-      >
-        {/* Avatar with online indicator */}
-        <div className="relative flex-shrink-0">
-          <Avatar className="h-14 w-14">
-            <AvatarImage src={conv.avatar} alt={conv.from} />
-            <AvatarFallback className={cn(
-              "bg-gradient-to-br text-white font-medium",
-              getBubbleGradient(conv.id)
-            )}>
-              {getInitials(conv.from)}
-            </AvatarFallback>
-          </Avatar>
-          {conv.isOnline && (
-            <div className="absolute bottom-0 right-0 w-4 h-4 bg-green-500 rounded-full border-2 border-background" />
-          )}
-          {/* Channel indicator */}
-          <div 
-            className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center border-2 border-background"
-            style={{ backgroundColor: channelColors[conv.channel as keyof typeof channelColors] }}
-          >
-            <Icon className="h-3 w-3 text-white" />
-          </div>
-        </div>
-
-        {/* Content */}
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center justify-between gap-2">
-            <span className={cn(
-              "font-medium truncate",
-              !conv.isRead && "font-bold"
-            )}>
-              {conv.from}
-            </span>
-            <span className={cn(
-              "text-xs flex-shrink-0",
-              conv.isRead ? "text-muted-foreground" : "text-primary font-medium"
-            )}>
-              {getRelativeTime(conv.lastMessageAt)}
-            </span>
-          </div>
-          
-          <div className="flex items-center gap-2 mt-0.5">
-            {/* Read receipt icon */}
-            {conv.isRead && conv.channel === 'mt' && (
-              <CheckCheck className="h-3.5 w-3.5 text-primary flex-shrink-0" />
-            )}
-            <p className={cn(
-              "text-sm truncate",
-              conv.isRead ? "text-muted-foreground" : "text-foreground font-medium"
-            )}>
-              {conv.lastMessage?.substring(0, 50)}
-            </p>
-          </div>
-        </div>
-
-        {/* Unread badge */}
-        {conv.unreadCount > 0 && (
-          <div className="flex-shrink-0 w-5 h-5 bg-primary rounded-full flex items-center justify-center">
-            <span className="text-xs font-bold text-primary-foreground">
-              {conv.unreadCount > 9 ? "9+" : conv.unreadCount}
-            </span>
-          </div>
-        )}
-      </div>
-    );
+interface ConversationThread {
+  partner: {
+    id: number;
+    name: string;
+    username?: string;
+    profileImage?: string;
   };
   messages: Message[];
 }
@@ -439,229 +134,573 @@ function MessageReactionBar({
   const [showPicker, setShowPicker] = useState(false);
 
   return (
-    <div className="flex h-full bg-background overflow-hidden">
-        {/* Left Sidebar - Conversations List */}
-        <div className="w-80 border-r flex flex-col bg-card">
-        {/* Header */}
-        <div className="p-4 flex items-center justify-between border-b">
-          <h1 className="text-2xl font-bold">Chats</h1>
-          <div className="flex items-center gap-1">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="ghost" size="icon" data-testid="button-options">
-                  <MoreHorizontal className="h-5 w-5" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Options</TooltipContent>
-            </Tooltip>
-            <Dialog open={showCompose} onOpenChange={setShowCompose}>
-              <DialogTrigger asChild>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon" data-testid="button-new-message">
-                      <Edit3 className="h-5 w-5" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>New message</TooltipContent>
-                </Tooltip>
-              </DialogTrigger>
-              <DialogContent className="max-w-md p-0">
-                <DialogTitle className="sr-only">New Message</DialogTitle>
-                <ComposeMessage 
-                  onClose={() => setShowCompose(false)} 
-                  onSendSuccess={(data) => {
-                    // Create optimistic conversation with real user data
-                    const newConversation = {
-                      id: `conv-${data.recipientId}`,
-                      conversationKey: `${data.recipientId}-${data.channel}`,
-                      counterpartyId: data.recipientId,
-                      from: data.recipientName,
-                      channel: data.channel,
-                      avatar: data.recipientAvatar,
-                      isOnline: false,
-                      isPinned: false,
-                      lastMessage: data.body,
-                      lastMessageAt: new Date().toISOString(),
-                      isRead: true,
-                      unreadCount: 0,
-                      messages: [],
-                      isOptimistic: true,
-                    };
-                    
-                    // Add to optimistic conversations to show in list immediately
-                    setOptimisticConversations(prev => {
-                      // Don't add duplicate
-                      const exists = prev.find(c => c.counterpartyId === data.recipientId);
-                      if (exists) return prev;
-                      return [...prev, newConversation];
-                    });
-                    
-                    setSelectedConversation(newConversation);
-                    
-                    // Add the sent message to local state
-                    setLocalSentMessages(prev => [...prev, {
-                      id: `local-${Date.now()}`,
-                      body: data.body,
-                      from: 'me',
-                      to: data.recipientName,
-                      channel: data.channel,
-                      receivedAt: new Date().toISOString(),
-                      isOwn: true,
-                      conversationId: newConversation.id,
-                    }]);
-                  }}
+    <Popover open={showPicker} onOpenChange={setShowPicker}>
+      <PopoverTrigger asChild>
+        <button 
+          className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-full hover:bg-muted"
+          data-testid={`button-react-message-${messageId}`}
+        >
+          {userReaction ? (
+            (() => {
+              const reaction = REACTION_TYPES.find(r => r.id === userReaction);
+              const IconComponent = reaction?.icon || Smile;
+              return <IconComponent className="h-4 w-4" style={{ color: reaction?.color }} />;
+            })()
+          ) : (
+            <Smile className="h-4 w-4 text-muted-foreground" />
+          )}
+        </button>
+      </PopoverTrigger>
+      <PopoverContent className="w-auto p-2" align="center" side="top">
+        <motion.div 
+          className="flex gap-1"
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+        >
+          {REACTION_TYPES.map((reaction) => {
+            const IconComponent = reaction.icon;
+            return (
+              <button
+                key={reaction.id}
+                onClick={() => {
+                  onReact(messageId, reaction.id, userReaction);
+                  setShowPicker(false);
+                }}
+                className={cn(
+                  "p-2 rounded-lg transition-all hover:scale-125 hover:bg-muted",
+                  userReaction === reaction.id && "bg-muted ring-2 ring-primary"
+                )}
+                title={reaction.label}
+                data-testid={`button-reaction-${reaction.id}-${messageId}`}
+              >
+                <IconComponent 
+                  className="w-6 h-6" 
+                  style={{ color: reaction.color }}
+                  fill={userReaction === reaction.id ? reaction.color : 'none'}
                 />
-              </DialogContent>
-            </Dialog>
+              </button>
+            );
+          })}
+        </motion.div>
+      </PopoverContent>
+    </Popover>
+  );
+}
+
+// Reaction Display under message
+function ReactionDisplay({ reactions }: { reactions: Record<string, number> }) {
+  const totalReactions = Object.values(reactions).reduce((sum, count) => sum + count, 0);
+  if (totalReactions === 0) return null;
+
+  return (
+    <div className="flex items-center gap-0.5 mt-1 px-2 py-1 rounded-full bg-muted/50 w-fit">
+      {Object.entries(reactions)
+        .filter(([_, count]) => count > 0)
+        .slice(0, 3)
+        .map(([reactionId, count]) => {
+          const reaction = REACTION_TYPES.find(r => r.id === reactionId);
+          if (!reaction) return null;
+          const IconComponent = reaction.icon;
+          return (
+            <IconComponent 
+              key={reactionId}
+              className="w-3.5 h-3.5" 
+              style={{ color: reaction.color }} 
+              fill={reaction.color}
+            />
+          );
+        })}
+      {totalReactions > 1 && (
+        <span className="text-xs text-muted-foreground ml-1">{totalReactions}</span>
+      )}
+    </div>
+  );
+}
+
+// God-Level Admin Channel Hub
+function ChannelConnectionHub({ onClose }: { onClose: () => void }) {
+  const channels = [
+    { id: 'gmail', name: 'Gmail', icon: SiGmail, color: '#EA4335', connected: false, description: 'Connect your Gmail to receive and send emails' },
+    { id: 'facebook', name: 'Facebook Messenger', icon: SiFacebook, color: '#1877F2', connected: false, description: 'Connect Facebook Pages for Messenger' },
+    { id: 'instagram', name: 'Instagram DMs', icon: SiInstagram, color: '#E4405F', connected: false, description: 'Connect Instagram business accounts' },
+    { id: 'whatsapp', name: 'WhatsApp Business', icon: SiWhatsapp, color: '#25D366', connected: false, description: 'Connect WhatsApp Business API' },
+  ];
+
+  return (
+    <div className="p-6">
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h2 className="text-xl font-bold">Connect Channels</h2>
+          <p className="text-sm text-muted-foreground">Manage all your messaging platforms in one place</p>
+        </div>
+      </div>
+      
+      <div className="space-y-4">
+        {channels.map((channel) => {
+          const IconComponent = channel.icon;
+          return (
+            <Card 
+              key={channel.id}
+              className="p-4 hover-elevate cursor-pointer transition-all"
+              data-testid={`channel-${channel.id}`}
+            >
+              <div className="flex items-center gap-4">
+                <div 
+                  className="w-12 h-12 rounded-xl flex items-center justify-center"
+                  style={{ backgroundColor: `${channel.color}20` }}
+                >
+                  <IconComponent className="w-6 h-6" style={{ color: channel.color }} />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-semibold">{channel.name}</h3>
+                  <p className="text-sm text-muted-foreground">{channel.description}</p>
+                </div>
+                <Button 
+                  variant={channel.connected ? "outline" : "default"}
+                  size="sm"
+                  className="rounded-full"
+                  data-testid={`button-connect-${channel.id}`}
+                >
+                  {channel.connected ? "Manage" : "Connect"}
+                </Button>
+              </div>
+            </Card>
+          );
+        })}
+      </div>
+      
+      <div className="mt-6 p-4 rounded-xl bg-gradient-to-r from-primary/10 to-primary/5 border border-primary/20">
+        <div className="flex items-start gap-3">
+          <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+            <Settings2 className="w-5 h-5 text-primary" />
+          </div>
+          <div>
+            <h4 className="font-medium">Advanced Settings</h4>
+            <p className="text-sm text-muted-foreground">Configure auto-responses, routing rules, and team assignments</p>
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
 
-        {/* Search */}
-        <div className="p-3">
-          <div className={cn(
-            "relative rounded-full transition-all",
-            isSearchFocused ? "ring-2 ring-primary" : ""
-          )}>
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+// Loading skeleton for conversation list
+function ConversationSkeleton() {
+  return (
+    <div className="space-y-2 p-3">
+      {[1, 2, 3, 4, 5].map((i) => (
+        <div key={i} className="flex items-center gap-3 p-3 rounded-lg animate-pulse">
+          <Skeleton className="w-12 h-12 rounded-full" />
+          <div className="flex-1 space-y-2">
+            <Skeleton className="h-4 w-3/4" />
+            <Skeleton className="h-3 w-1/2" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export default function UnifiedInbox() {
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [selectedPartnerId, setSelectedPartnerId] = useState<number | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [messageText, setMessageText] = useState("");
+  const [showChannelHub, setShowChannelHub] = useState(false);
+  const [mediaFiles, setMediaFiles] = useState<File[]>([]);
+  const [mediaPreviews, setMediaPreviews] = useState<string[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [inputKey, setInputKey] = useState(0);
+  const [messageOffset, setMessageOffset] = useState(0);
+  const [hasMoreMessages, setHasMoreMessages] = useState(true);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const isGodAdmin = user?.role === 'god' || user?.role === 'admin';
+
+  const { data: conversations = [], isLoading: conversationsLoading } = useQuery<Conversation[]>({
+    queryKey: ["/api/messages/conversations"],
+    refetchInterval: 10000,
+  });
+
+  interface ThreadResponse extends ConversationThread {
+    hasMore?: boolean;
+    totalCount?: number;
+  }
+
+  const { data: thread, isLoading: threadLoading } = useQuery<ThreadResponse>({
+    queryKey: ["/api/messages/conversations", selectedPartnerId, messageOffset],
+    queryFn: async () => {
+      const token = localStorage.getItem('accessToken');
+      const headers: Record<string, string> = {};
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+      const res = await fetch(
+        `/api/messages/conversations/${selectedPartnerId}?limit=30&offset=${messageOffset}`,
+        { headers, credentials: "include" }
+      );
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(`${res.status}: ${text}`);
+      }
+      return res.json();
+    },
+    enabled: !!selectedPartnerId,
+  });
+
+  const sendMessageMutation = useMutation({
+    mutationFn: async (data: { to: string; body: string; mediaUrl?: string }) => {
+      return apiRequest("POST", "/api/messages/send", {
+        channel: "mt",
+        to: data.to,
+        body: data.body,
+        mediaUrl: data.mediaUrl,
+      });
+    },
+    onSuccess: () => {
+      setMessageText("");
+      mediaPreviews.forEach(url => {
+        if (url.startsWith('blob:')) {
+          URL.revokeObjectURL(url);
+        }
+      });
+      setMediaFiles([]);
+      setMediaPreviews([]);
+      setUploadProgress(0);
+      setInputKey(prev => prev + 1);
+      queryClient.invalidateQueries({ queryKey: ["/api/messages/conversations"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/messages/conversations", selectedPartnerId] });
+      queryClient.invalidateQueries({ queryKey: ["/api/messages/unread-count"] });
+    },
+  });
+
+  const reactToMessageMutation = useMutation({
+    mutationFn: async (data: { messageId: number; reactionType: string; isRemove: boolean }) => {
+      if (data.isRemove) {
+        return apiRequest("DELETE", `/api/messages/dm/${data.messageId}/react`);
+      }
+      return apiRequest("POST", `/api/messages/dm/${data.messageId}/react`, {
+        reactionType: data.reactionType,
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/messages/conversations", selectedPartnerId] });
+    },
+  });
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [thread?.messages]);
+
+  // Reset pagination when partner changes
+  useEffect(() => {
+    setMessageOffset(0);
+    setHasMoreMessages(true);
+  }, [selectedPartnerId]);
+
+  // When conversation is opened, the backend marks messages as read
+  // Invalidate unread count to update the top nav badge
+  useEffect(() => {
+    if (selectedPartnerId && thread) {
+      const timer = setTimeout(() => {
+        queryClient.invalidateQueries({ queryKey: ["/api/messages/unread-count"] });
+        queryClient.invalidateQueries({ queryKey: ["/api/messages/conversations"] });
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [selectedPartnerId, thread]);
+
+  const filteredConversations = conversations.filter((conv) => {
+    if (!searchQuery) return true;
+    return (
+      conv.partnerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      conv.partnerUsername?.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  });
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFiles = Array.from(e.target.files || []);
+    if (selectedFiles.length === 0) return;
+
+    // Validate total files (max 10 per message)
+    if (mediaFiles.length + selectedFiles.length > 10) {
+      toast({
+        title: "Too many files",
+        description: "Maximum 10 files per message",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Create blob URLs for INSTANT preview
+    const blobUrls = selectedFiles.map(file => URL.createObjectURL(file));
+    
+    // Store files and previews - NO upload yet
+    setMediaFiles(prev => [...prev, ...selectedFiles]);
+    setMediaPreviews(prev => [...prev, ...blobUrls]);
+    
+    toast({
+      title: "Media added!",
+      description: `${selectedFiles.length} file(s) ready to send`,
+    });
+  };
+
+  const removeMedia = (index: number) => {
+    const urlToRemove = mediaPreviews[index];
+    if (urlToRemove && urlToRemove.startsWith('blob:')) {
+      URL.revokeObjectURL(urlToRemove);
+    }
+    setMediaFiles(mediaFiles.filter((_, i) => i !== index));
+    setMediaPreviews(mediaPreviews.filter((_, i) => i !== index));
+  };
+
+  const handleSendMessage = async () => {
+    if ((!messageText.trim() && mediaFiles.length === 0) || !selectedPartnerId) return;
+    
+    setIsUploading(true);
+    setUploadProgress(0);
+
+    try {
+      let mediaUrl: string | undefined;
+      
+      // Upload first media file during send (PostCreator pattern)
+      if (mediaFiles.length > 0) {
+        setUploadProgress(10);
+        const firstFile = mediaFiles[0];
+        
+        try {
+          const result = await uploadMediaFile(firstFile);
+          mediaUrl = result.url;
+          setUploadProgress(70);
+        } catch (err) {
+          toast({
+            title: "Upload failed",
+            description: err instanceof Error ? err.message : "Could not upload media",
+            variant: "destructive",
+          });
+          setIsUploading(false);
+          return;
+        }
+      }
+
+      setUploadProgress(80);
+      
+      // Use mutateAsync to properly await the mutation
+      await sendMessageMutation.mutateAsync({
+        to: selectedPartnerId.toString(),
+        body: messageText.trim(),
+        mediaUrl,
+      });
+      
+      setUploadProgress(100);
+      setIsUploading(false);
+    } catch (err) {
+      console.error('Send message error:', err);
+      toast({
+        title: "Failed to send message",
+        description: err instanceof Error ? err.message : "Could not send message",
+        variant: "destructive",
+      });
+      setIsUploading(false);
+      setUploadProgress(0);
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
+  };
+
+  const handleReaction = (messageId: number, reactionType: string, currentUserReaction: string | null) => {
+    const isRemove = currentUserReaction === reactionType;
+    reactToMessageMutation.mutate({ messageId, reactionType, isRemove });
+  };
+
+  return (
+    <div className="flex h-[calc(100vh-4rem)] bg-background">
+      {/* Conversations List - Left Panel */}
+      <div
+        className={cn(
+          "w-full md:w-80 lg:w-96 border-r flex flex-col bg-gradient-to-b from-background to-muted/20",
+          selectedPartnerId && "hidden md:flex"
+        )}
+      >
+        {/* Header with gradient accent */}
+        <div className="p-4 border-b bg-gradient-to-r from-primary/5 via-primary/10 to-transparent">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center">
+                <MessagesSquare className="h-5 w-5 text-primary-foreground" />
+              </div>
+              <h1 className="text-xl font-bold" data-testid="heading-messages">Chats</h1>
+            </div>
+            <div className="flex items-center gap-1">
+              {isGodAdmin && (
+                <Dialog open={showChannelHub} onOpenChange={setShowChannelHub}>
+                  <DialogTrigger asChild>
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="h-9 w-9"
+                      data-testid="button-channel-hub"
+                    >
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Link2 className="h-5 w-5 text-primary" />
+                        </TooltipTrigger>
+                        <TooltipContent>Connect Channels</TooltipContent>
+                      </Tooltip>
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-lg">
+                    <ChannelConnectionHub onClose={() => setShowChannelHub(false)} />
+                  </DialogContent>
+                </Dialog>
+              )}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="ghost" size="icon" className="h-9 w-9" data-testid="button-new-message">
+                    <MessageCircle className="h-5 w-5" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>New Message</TooltipContent>
+              </Tooltip>
+            </div>
+          </div>
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search Messenger"
-              className="pl-10 pr-4 h-10 rounded-full bg-muted border-0"
+              className="pl-10 rounded-full bg-muted/50 border-0 focus-visible:ring-1"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              onFocus={() => setIsSearchFocused(true)}
-              onBlur={() => setIsSearchFocused(false)}
-              data-testid="input-search"
+              data-testid="input-search-conversations"
             />
           </div>
         </div>
 
-        {/* Channel Filter Tabs */}
-        <div className="px-3 pb-2 flex gap-1 overflow-x-auto">
-          {(["all", "mt", "gmail", "facebook", "instagram", "whatsapp"] as Channel[]).map((channel) => {
-            const Icon = channel === "all" ? MessageCircle : channelIcons[channel as keyof typeof channelIcons];
-            const count = getChannelCount(channel);
-            const isActive = selectedChannel === channel;
-            const isConnected = channel === "all" || channel === "mt" || channels?.find((c: any) => c.channel === channel && c.isActive);
-            
-            return (
-              <Button
-                key={channel}
-                variant={isActive ? "default" : "secondary"}
-                size="sm"
-                className={cn(
-                  "rounded-full flex-shrink-0 gap-1.5",
-                  !isActive && "bg-muted hover:bg-muted/80"
-                )}
-                onClick={() => setSelectedChannel(channel)}
-                disabled={channel !== "all" && channel !== "mt" && !isConnected}
-                data-testid={`button-filter-${channel}`}
-              >
-                <Icon className="h-4 w-4" />
-                {channel === "all" ? "All" : channelLabels[channel].split(" ")[0]}
-                {count > 0 && (
-                  <span className={cn(
-                    "text-xs",
-                    isActive ? "text-primary-foreground/80" : "text-muted-foreground"
-                  )}>
-                    {count}
-                  </span>
-                )}
-              </Button>
-            );
-          })}
-        </div>
-
         {/* Conversations List */}
         <ScrollArea className="flex-1">
-          {isLoading ? (
-            <div className="p-8 text-center">
-              <div className="animate-pulse space-y-4">
-                {[1, 2, 3, 4].map(i => (
-                  <div key={i} className="flex items-center gap-3 mx-2">
-                    <div className="w-14 h-14 rounded-full bg-muted" />
-                    <div className="flex-1 space-y-2">
-                      <div className="h-4 bg-muted rounded w-3/4" />
-                      <div className="h-3 bg-muted rounded w-1/2" />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+          {conversationsLoading ? (
+            <ConversationSkeleton />
           ) : filteredConversations.length === 0 ? (
             <div className="p-8 text-center">
-              <div className="w-16 h-16 rounded-full bg-muted mx-auto mb-4 flex items-center justify-center">
-                <MessageCircle className="h-8 w-8 text-muted-foreground" />
-              </div>
-              <h3 className="font-semibold mb-2">No conversations</h3>
+              <motion.div 
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-primary/20 to-primary/40 flex items-center justify-center"
+              >
+                <MessageCircle className="h-10 w-10 text-primary" />
+              </motion.div>
+              <h3 className="font-semibold mb-2">No conversations yet</h3>
               <p className="text-sm text-muted-foreground mb-4">
-                {searchQuery ? "No results found" : "Start a conversation to get chatting"}
+                Start a conversation by messaging someone from their profile
               </p>
-              <Button onClick={() => setShowCompose(true)} data-testid="button-start-chat">
-                <Plus className="mr-2 h-4 w-4" />
-                New Message
-              </Button>
             </div>
           ) : (
             <div className="py-2">
-              {/* Pinned conversations */}
-              {pinnedConversations.length > 0 && (
-                <>
-                  <div className="px-4 py-2 flex items-center gap-2 text-xs font-medium text-muted-foreground">
-                    <Pin className="h-3 w-3" />
-                    PINNED
+              {filteredConversations.map((conv, index) => (
+                <motion.div
+                  key={conv.partnerId}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  onClick={() => setSelectedPartnerId(conv.partnerId)}
+                  className={cn(
+                    "flex items-center gap-3 px-3 py-2.5 mx-2 rounded-xl cursor-pointer transition-all",
+                    selectedPartnerId === conv.partnerId 
+                      ? "bg-primary/10 shadow-sm" 
+                      : "hover:bg-muted/50"
+                  )}
+                  data-testid={`conversation-item-${conv.partnerId}`}
+                >
+                  {/* Avatar with online indicator */}
+                  <div className="relative">
+                    <Avatar className="h-12 w-12 ring-2 ring-background shadow-md">
+                      <AvatarImage src={conv.partnerImage || undefined} alt={conv.partnerName} />
+                      <AvatarFallback className="bg-gradient-to-br from-primary/60 to-primary text-primary-foreground font-semibold">
+                        {getInitials(conv.partnerName)}
+                      </AvatarFallback>
+                    </Avatar>
+                    {conv.partnerId % 2 === 0 && (
+                      <div className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 rounded-full border-2 border-background" />
+                    )}
                   </div>
-                  {pinnedConversations.map((conv: any) => (
-                    <ConversationItem 
-                      key={conv.id} 
-                      conv={conv} 
-                      isSelected={selectedConversation?.id === conv.id}
-                    />
-                  ))}
-                  <div className="my-2 mx-4 border-t" />
-                </>
-              )}
-              
-              {/* All conversations */}
-              {regularConversations.map((conv: any) => (
-                <ConversationItem 
-                  key={conv.id} 
-                  conv={conv} 
-                  isSelected={selectedConversation?.id === conv.id}
-                />
+                  
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className={cn(
+                        "font-medium truncate",
+                        conv.unreadCount > 0 && "font-bold text-foreground"
+                      )}>
+                        {conv.partnerName}
+                      </span>
+                      <span className={cn(
+                        "text-xs whitespace-nowrap",
+                        conv.unreadCount > 0 ? "text-primary font-medium" : "text-muted-foreground"
+                      )}>
+                        {formatMessageTime(conv.lastMessage.createdAt)}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <p className={cn(
+                        "text-sm truncate flex-1",
+                        conv.unreadCount > 0 ? "text-foreground font-medium" : "text-muted-foreground"
+                      )}>
+                        {conv.lastMessage.isMine && (
+                          <span className="text-muted-foreground">You: </span>
+                        )}
+                        {conv.lastMessage.content}
+                      </p>
+                      {conv.unreadCount > 0 && (
+                        <Badge 
+                          className="h-5 min-w-5 flex items-center justify-center p-0 text-xs bg-primary"
+                          data-testid={`unread-badge-${conv.partnerId}`}
+                        >
+                          {conv.unreadCount > 9 ? "9+" : conv.unreadCount}
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+                </motion.div>
               ))}
             </div>
           )}
         </ScrollArea>
       </div>
 
-      {/* Chat Area */}
-      <div className="flex-1 flex flex-col">
-        {selectedConversation ? (
+      {/* Chat View - Right Panel */}
+      <div className={cn("flex-1 flex flex-col", !selectedPartnerId && "hidden md:flex")}>
+        {selectedPartnerId && thread ? (
           <>
-            {/* Chat Header */}
-            <div className="h-16 px-4 flex items-center justify-between border-b bg-card">
-              <div className="flex items-center gap-3">
+            {/* Chat Header with gradient */}
+            <div className="px-4 py-3 border-b flex items-center gap-3 bg-gradient-to-r from-background via-muted/20 to-background">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="md:hidden"
+                onClick={() => setSelectedPartnerId(null)}
+                data-testid="button-back-to-list"
+              >
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
+              
+              <Link href={`/profile/${thread.partner.id}`}>
                 <div className="relative">
-                  <Avatar className="h-10 w-10">
-                    <AvatarImage src={selectedConversation.avatar} alt={selectedConversation.from} />
-                    <AvatarFallback className={cn(
-                      "bg-gradient-to-br text-white text-sm font-medium",
-                      getBubbleGradient(selectedConversation.id)
-                    )}>
-                      {getInitials(selectedConversation.from)}
+                  <Avatar className="h-10 w-10 cursor-pointer ring-2 ring-background shadow-md">
+                    <AvatarImage src={thread.partner.profileImage || undefined} alt={thread.partner.name} />
+                    <AvatarFallback className="bg-gradient-to-br from-primary/60 to-primary text-primary-foreground">
+                      {getInitials(thread.partner.name)}
                     </AvatarFallback>
                   </Avatar>
-                  {selectedConversation.isOnline && (
-                    <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-card" />
+                  {thread.partner.id % 2 === 0 && (
+                    <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-background" />
                   )}
-                </div>
-                <div>
-                  <h2 className="font-semibold" data-testid="chat-header-name">
-                    {selectedConversation.from}
-                  </h2>
-                  <p className="text-xs text-muted-foreground">
-                    {selectedConversation.isOnline ? "Active now" : `Active ${getRelativeTime(selectedConversation.lastMessageAt)} ago`}
-                  </p>
                 </div>
               </Link>
               
@@ -680,206 +719,305 @@ function MessageReactionBar({
                 </p>
               </div>
               
+              <div className="flex items-center gap-1">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="ghost" size="icon" className="text-primary hover:bg-primary/10" data-testid="button-call">
+                      <Phone className="h-5 w-5" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Voice Call</TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="ghost" size="icon" className="text-primary hover:bg-primary/10" data-testid="button-video">
+                      <Video className="h-5 w-5" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Video Call</TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="ghost" size="icon" data-testid="button-info">
+                      <Info className="h-5 w-5" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Conversation Info</TooltipContent>
+                </Tooltip>
+              </div>
             </div>
 
-            {/* Messages */}
-            <ScrollArea className="flex-1 p-4">
-              <div className="max-w-3xl mx-auto space-y-4">
-                {/* Profile intro card */}
-                <div className="flex flex-col items-center py-8 text-center">
-                  <Avatar className="h-20 w-20 mb-3">
-                    <AvatarImage src={selectedConversation.avatar} alt={selectedConversation.from} />
-                    <AvatarFallback className={cn(
-                      "bg-gradient-to-br text-white text-2xl font-medium",
-                      getBubbleGradient(selectedConversation.id)
-                    )}>
-                      {getInitials(selectedConversation.from)}
+            {/* Messages Area */}
+            <ScrollArea className="flex-1 px-4 py-2">
+              {threadLoading ? (
+                <div className="flex items-center justify-center h-full text-muted-foreground">
+                  <Loader2 className="h-6 w-6 animate-spin mr-2" />
+                  Loading messages...
+                </div>
+              ) : thread.messages.length === 0 ? (
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex flex-col items-center justify-center h-full text-center py-12"
+                >
+                  <Avatar className="h-24 w-24 mb-4 ring-4 ring-primary/20 shadow-xl">
+                    <AvatarImage src={thread.partner.profileImage || undefined} alt={thread.partner.name} />
+                    <AvatarFallback className="text-3xl bg-gradient-to-br from-primary/60 to-primary text-primary-foreground">
+                      {getInitials(thread.partner.name)}
                     </AvatarFallback>
                   </Avatar>
-                  <h3 className="text-xl font-bold">{selectedConversation.from}</h3>
-                  <p className="text-sm text-muted-foreground">Mundo Tango</p>
-                  <p className="text-xs text-muted-foreground mt-2">
-                    You're connected on Mundo Tango
+                  <h3 className="font-semibold text-lg">{thread.partner.name}</h3>
+                  {thread.partner.username && (
+                    <p className="text-sm text-muted-foreground">@{thread.partner.username}</p>
+                  )}
+                  <p className="text-sm text-muted-foreground mt-2">
+                    Say hi to start the conversation!
                   </p>
-                </div>
-
-                {/* Message bubbles - combine server messages with local sent messages */}
-                {(() => {
-                  const conversationLocalMessages = localSentMessages.filter(
-                    m => m.conversationId === selectedConversation.id
-                  );
-                  const allMessages = [
-                    ...(selectedConversation.messages || []),
-                    ...conversationLocalMessages
-                  ].sort((a, b) => new Date(a.receivedAt).getTime() - new Date(b.receivedAt).getTime());
-                  
-                  return allMessages.map((msg: any, idx: number) => {
-                    // Only local optimistic messages (with isOwn flag) are outgoing - server messages are incoming
-                    const isOwn = msg.isOwn === true;
-                    const prevMsg = allMessages[idx - 1];
-                    const prevIsOwn = prevMsg?.isOwn === true;
-                    const showAvatar = idx === 0 || (prevIsOwn !== isOwn);
+                </motion.div>
+              ) : (
+                <div className="space-y-1 py-2">
+                  {thread?.hasMore && (
+                    <div className="flex justify-center py-3">
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => setMessageOffset(prev => prev + 30)}
+                        data-testid="button-load-more-messages"
+                      >
+                        Load more messages
+                      </Button>
+                    </div>
+                  )}
+                  {thread.messages.map((msg, index) => {
+                    const showAvatar = !msg.isMine && (index === 0 || thread.messages[index - 1]?.isMine);
+                    const isLastInGroup = index === thread.messages.length - 1 || thread.messages[index + 1]?.isMine !== msg.isMine;
                     
                     return (
                       <div
                         key={msg.id}
                         className={cn(
-                          "flex items-end gap-2",
-                          isOwn ? "justify-end" : "justify-start"
+                          "flex items-end gap-2 group",
+                          msg.isMine ? "justify-end" : "justify-start",
+                          isLastInGroup && "mb-3"
                         )}
                         data-testid={`message-bubble-${msg.id}`}
                       >
-                        {!isOwn && (
-                          <div className="w-7 flex-shrink-0">
+                        {!msg.isMine && (
+                          <div className="w-8 flex-shrink-0">
                             {showAvatar && (
-                              <Avatar className="h-7 w-7">
-                                <AvatarImage src={selectedConversation.avatar} />
-                                <AvatarFallback className={cn(
-                                  "bg-gradient-to-br text-white text-xs",
-                                  getBubbleGradient(selectedConversation.id)
-                                )}>
-                                  {getInitials(selectedConversation.from)}
-                                </AvatarFallback>
-                              </Avatar>
+                              <Link href={`/profile/${thread.partner.id}`}>
+                                <Avatar className="h-8 w-8 cursor-pointer hover:ring-2 hover:ring-primary transition-all">
+                                  <AvatarImage src={thread.partner.profileImage || undefined} alt={thread.partner.name} />
+                                  <AvatarFallback className="text-xs bg-gradient-to-br from-primary/60 to-primary text-primary-foreground">
+                                    {getInitials(thread.partner.name)}
+                                  </AvatarFallback>
+                                </Avatar>
+                              </Link>
                             )}
                           </div>
                         )}
                         
-                        <div className={cn(
-                          "group relative max-w-[70%]"
-                        )}>
-                          <div className={cn(
-                            "px-4 py-2.5 rounded-2xl",
-                            isOwn 
-                              ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-br-sm"
-                              : "bg-muted rounded-bl-sm"
-                          )}>
-                            <p className="text-sm whitespace-pre-wrap break-words">
-                              {msg.body}
+                        <div className={cn("max-w-[70%] relative")}>
+                          {/* Message bubble */}
+                          <div
+                            className={cn(
+                              "px-4 py-2.5 rounded-2xl shadow-sm",
+                              msg.isMine
+                                ? "bg-gradient-to-r from-primary to-primary/90 text-primary-foreground rounded-br-md"
+                                : "bg-muted rounded-bl-md"
+                            )}
+                          >
+                            {/* Media display */}
+                            {msg.mediaUrl && (
+                              <div className="mb-2 rounded-lg overflow-hidden">
+                                {msg.mediaType?.startsWith('image') ? (
+                                  <img 
+                                    src={msg.mediaUrl} 
+                                    alt="Media" 
+                                    className="max-w-full rounded-lg"
+                                    data-testid={`media-image-${msg.id}`}
+                                  />
+                                ) : msg.mediaType?.startsWith('video') ? (
+                                  <video 
+                                    src={msg.mediaUrl} 
+                                    controls 
+                                    className="max-w-full rounded-lg"
+                                    data-testid={`media-video-${msg.id}`}
+                                  />
+                                ) : (
+                                  <a 
+                                    href={msg.mediaUrl} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    className="flex items-center gap-2 p-2 bg-background/20 rounded-lg"
+                                  >
+                                    <Paperclip className="h-4 w-4" />
+                                    <span className="text-sm">View attachment</span>
+                                  </a>
+                                )}
+                              </div>
+                            )}
+                            <p className="text-sm whitespace-pre-wrap break-words leading-relaxed">
+                              {msg.content}
                             </p>
                           </div>
                           
-                          {/* Timestamp on hover */}
+                          {/* Reaction bar - appears on hover */}
                           <div className={cn(
-                            "absolute bottom-0 opacity-0 group-hover:opacity-100 transition-opacity text-xs text-muted-foreground whitespace-nowrap",
-                            isOwn ? "right-full mr-2" : "left-full ml-2"
+                            "absolute top-1/2 -translate-y-1/2",
+                            msg.isMine ? "-left-8" : "-right-8"
                           )}>
-                            {getRelativeTime(msg.receivedAt)}
+                            <MessageReactionBar
+                              messageId={msg.id}
+                              reactions={msg.reactions}
+                              userReaction={msg.userReaction}
+                              onReact={handleReaction}
+                            />
                           </div>
                           
-                          {/* Reactions bar - only for received messages */}
-                          {!isOwn && (
+                          {/* Reaction display under message */}
+                          <ReactionDisplay reactions={msg.reactions} />
+                          
+                          {/* Time and read status */}
+                          {isLastInGroup && (
                             <div className={cn(
-                              "absolute -bottom-2 opacity-0 group-hover:opacity-100 transition-opacity",
-                              "right-0"
+                              "flex items-center gap-1 mt-1 text-xs text-muted-foreground",
+                              msg.isMine ? "justify-end" : "justify-start ml-1"
                             )}>
-                              <ReactionSelector
-                                targetId={typeof msg.id === 'string' ? parseInt(msg.id) || idx : msg.id}
-                                targetType="post"
-                                currentReaction={msg.currentReaction}
-                                reactions={msg.reactions || {}}
-                                totalCount={msg.likes || 0}
-                                onReact={(reactionId) => handleMessageReaction(msg.id, reactionId)}
-                                className="scale-75 origin-bottom-left"
-                              />
+                              <span>{formatChatTime(msg.createdAt)}</span>
+                              {msg.isMine && (
+                                msg.isRead ? (
+                                  <CheckCheck className="h-3.5 w-3.5 text-primary" />
+                                ) : (
+                                  <Check className="h-3.5 w-3.5" />
+                                )
+                              )}
                             </div>
                           )}
                         </div>
-                        
-                        {isOwn && showAvatar && (
-                          <Avatar className="h-7 w-7 flex-shrink-0">
-                            <AvatarFallback className="bg-gradient-to-br from-blue-500 to-blue-600 text-white text-xs">
-                              Me
-                            </AvatarFallback>
-                          </Avatar>
-                        )}
                       </div>
                     );
-                  });
-                })()}
-                <div ref={messagesEndRef} />
-              </div>
+                  })}
+                  <div ref={messagesEndRef} />
+                </div>
+              )}
             </ScrollArea>
 
-            {/* Message Input - Messenger style */}
-            <div className="border-t bg-card">
-              <div className="p-3">
-                {/* Image Gallery Uploader */}
-                {showImageUploader && (
-                  <div className="mb-3">
-                    <ImageGalleryUploader
-                      images={attachedImages}
-                      onImagesChange={setAttachedImages}
-                      maxImages={10}
-                    />
-                  </div>
-                )}
-                
-                <div className="flex items-end gap-2">
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button 
-                        variant={showImageUploader ? "default" : "ghost"} 
-                        size="icon" 
-                        className="text-primary rounded-full flex-shrink-0" 
-                        onClick={() => setShowImageUploader(!showImageUploader)}
-                        data-testid="button-attach-image"
+            {/* Message Input - Enhanced */}
+            <div className="px-4 py-3 border-t bg-gradient-to-r from-muted/20 via-background to-muted/20">
+              {/* Media Preview */}
+              {mediaPreviews.length > 0 && (
+                <div className="mb-3 flex gap-2 overflow-x-auto pb-2">
+                  {mediaPreviews.map((preview, index) => (
+                    <div key={index} className="relative flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border border-primary/30 bg-muted/50 group">
+                      {mediaFiles[index]?.type.startsWith('image') ? (
+                        <img src={preview} alt="preview" className="w-full h-full object-cover" />
+                      ) : mediaFiles[index]?.type.startsWith('video') ? (
+                        <video src={preview} className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-xs text-muted-foreground">
+                          {mediaFiles[index]?.name.split('.').pop()?.toUpperCase()}
+                        </div>
+                      )}
+                      <button
+                        onClick={() => removeMedia(index)}
+                        className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
+                        data-testid={`button-remove-media-${index}`}
                       >
-                        <Plus className="h-5 w-5" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>Add media</TooltipContent>
-                  </Tooltip>
-                  
-                  <div className="flex-1">
-                    <Input
-                      placeholder="Type a message..."
-                      className="rounded-full bg-muted border-0 h-10"
-                      value={messageInput}
-                      onChange={(e) => setMessageInput(e.target.value)}
-                      onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleSendMessage()}
-                      data-testid="input-message"
-                    />
-                  </div>
-                  
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button 
-                        size="icon" 
-                        className="rounded-full flex-shrink-0"
-                        onClick={handleSendMessage}
-                        disabled={!messageInput.trim() && attachedImages.length === 0}
-                        data-testid="button-send"
-                      >
-                        <Send className="h-5 w-5" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>Send</TooltipContent>
-                  </Tooltip>
+                        <X className="h-4 w-4 text-white" />
+                      </button>
+                    </div>
+                  ))}
                 </div>
+              )}
+
+              <div className="flex items-center gap-2">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <label htmlFor="media-upload">
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className={`h-9 w-9 text-primary hover:bg-primary/10 ${mediaFiles.length > 0 ? 'bg-gradient-to-br from-blue-500 to-purple-500 text-white' : ''}`}
+                        data-testid="button-attach-media"
+                        asChild
+                      >
+                        <Camera className="h-5 w-5" />
+                      </Button>
+                    </label>
+                  </TooltipTrigger>
+                  <TooltipContent>Attach Media or File</TooltipContent>
+                </Tooltip>
+                {mediaFiles.length > 0 && (
+                  <span className="text-xs font-semibold text-primary bg-primary/20 px-2 py-1 rounded-full">
+                    {mediaFiles.length}
+                  </span>
+                )}
+                <input
+                  key={inputKey}
+                  ref={fileInputRef}
+                  id="media-upload"
+                  type="file"
+                  multiple
+                  accept="image/*,video/*,.pdf,.doc,.docx,.xls,.xlsx,.txt"
+                  className="hidden"
+                  onChange={handleFileUpload}
+                  disabled={isUploading}
+                  data-testid="input-media-upload"
+                />
+                
+                <div className="flex-1">
+                  <Input
+                    placeholder="Type a message..."
+                    value={messageText}
+                    onChange={(e) => setMessageText(e.target.value)}
+                    onKeyDown={handleKeyPress}
+                    className="rounded-full bg-muted/50 border-0 focus-visible:ring-1 focus-visible:ring-primary"
+                    data-testid="input-message"
+                  />
+                </div>
+                
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      size="icon"
+                      onClick={handleSendMessage}
+                      disabled={(!messageText.trim() && mediaFiles.length === 0) || isUploading || sendMessageMutation.isPending}
+                      className="rounded-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-md"
+                      data-testid="button-send-message"
+                    >
+                      {isUploading || sendMessageMutation.isPending ? (
+                        <Loader2 className="h-5 w-5 animate-spin" />
+                      ) : (
+                        <Send className="h-5 w-5" />
+                      )}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Send Message</TooltipContent>
+                </Tooltip>
               </div>
             </div>
           </>
         ) : (
           /* Empty State */
-          <div className="flex-1 flex items-center justify-center bg-muted/30">
-            <div className="text-center max-w-sm">
-              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 mx-auto mb-6 flex items-center justify-center">
-                <MessageCircle className="h-12 w-12 text-white" />
+          <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-muted/10 via-background to-muted/20">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="text-center max-w-sm px-4"
+            >
+              <div className="w-28 h-28 mx-auto mb-6 rounded-full bg-gradient-to-br from-primary/20 via-primary/30 to-primary/40 flex items-center justify-center shadow-xl">
+                <MessagesSquare className="h-14 w-14 text-primary" />
               </div>
-              <h2 className="text-2xl font-bold mb-2">Your Messages</h2>
+              <h3 className="text-2xl font-bold mb-2">Your Messages</h3>
               <p className="text-muted-foreground mb-6">
-                Send private messages to a friend or group
+                Send private messages to friends and dancers in the Mundo Tango community
               </p>
-              <Button 
-                size="lg" 
-                className="rounded-full"
-                onClick={() => setShowCompose(true)}
-                data-testid="button-send-message-cta"
-              >
-                Send message
+              <Button className="rounded-full shadow-lg bg-gradient-to-r from-primary to-primary/80" data-testid="button-start-conversation">
+                <MessageCircle className="h-4 w-4 mr-2" />
+                Start a Conversation
               </Button>
-            </div>
+            </motion.div>
           </div>
         )}
       </div>

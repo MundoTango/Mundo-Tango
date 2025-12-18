@@ -21,8 +21,6 @@ import { EVENT_TYPES } from "@/lib/eventTypes";
 import { getCurrencySymbol } from "@/lib/currencyUtils";
 import { CurrencyPicker } from "@/components/input/CurrencyPicker";
 import { getTimezoneFromCity } from "@/lib/timezoneUtils";
-import { FriendshipClosenessFilter } from "@/components/filters/FriendshipClosenessFilter";
-import type { ClosenessVisibility } from "@shared/schema";
 
 export default function EventCreationPage() {
   const [, navigate] = useLocation();
@@ -76,7 +74,6 @@ export default function EventCreationPage() {
     maxCapacity: 0,
     musicStyle: "mixed",
     level: "all",
-    attendeeCloseness: "all" as ClosenessVisibility,
   });
 
   const createMutation = useMutation({
@@ -217,7 +214,6 @@ export default function EventCreationPage() {
       maxCapacity: formData.maxCapacity || null,
       latitude: formData.coordinates.lat || null,
       longitude: formData.coordinates.lng || null,
-      attendeeCloseness: formData.attendeeCloseness,
     });
   };
 
@@ -538,20 +534,6 @@ export default function EventCreationPage() {
                   </Select>
                 </div>
               </div>
-            </div>
-
-            <Separator />
-
-            {/* Attendee Visibility */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Who Can Attend</h3>
-              <FriendshipClosenessFilter
-                value={formData.attendeeCloseness}
-                onChange={(value) => setFormData({ ...formData, attendeeCloseness: value })}
-                label="Attendee Visibility"
-                description="Control who can see and register for this event based on your network"
-                testIdPrefix="event-attendee-closeness"
-              />
             </div>
 
             <Separator />

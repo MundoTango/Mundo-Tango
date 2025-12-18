@@ -40,22 +40,17 @@ interface FriendRequest {
   danceStory?: string;
   danceLocation?: string;
   didWeDance?: boolean;
-  mediaUrls?: string[];
-  meetingDate?: string;
 }
 
 export default function FriendsListPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [showRequestDialog, setShowRequestDialog] = useState(false);
   const [selectedUser, setSelectedUser] = useState<Friend | null>(null);
-  const [selectedReviewRequest, setSelectedReviewRequest] = useState<FriendRequest | null>(null);
-  const [showReviewDialog, setShowReviewDialog] = useState(false);
   const [requestData, setRequestData] = useState({
     message: "",
     didWeDance: false,
     danceLocation: "",
     danceStory: "",
-    meetingDate: "",
   });
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [filePreviews, setFilePreviews] = useState<string[]>([]);
@@ -81,7 +76,7 @@ export default function FriendsListPage() {
     onSuccess: () => {
       toast({ title: "✨ Friend request sent!" });
       setShowRequestDialog(false);
-      setRequestData({ message: "", didWeDance: false, danceLocation: "", danceStory: "", meetingDate: "" });
+      setRequestData({ message: "", didWeDance: false, danceLocation: "", danceStory: "" });
       setUploadedFiles([]);
       setFilePreviews([]);
       queryClient.invalidateQueries({ queryKey: ["/api/friends/suggestions"] });
@@ -128,11 +123,6 @@ export default function FriendsListPage() {
   const handleSendRequest = (friend: Friend) => {
     setSelectedUser(friend);
     setShowRequestDialog(true);
-  };
-
-  const handleReviewRequest = (request: FriendRequest) => {
-    setSelectedReviewRequest(request);
-    setShowReviewDialog(true);
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -213,7 +203,6 @@ export default function FriendsListPage() {
         didWeDance: requestData.didWeDance,
         danceLocation: requestData.didWeDance ? requestData.danceLocation : null,
         danceStory: requestData.didWeDance ? requestData.danceStory : null,
-        meetingDate: requestData.didWeDance ? requestData.meetingDate : null,
         mediaUrls: mediaUrls,
       });
     } catch (error) {
@@ -355,11 +344,6 @@ export default function FriendsListPage() {
                     📍 {request.danceLocation}
                   </p>
                 )}
-                {request.meetingDate && (
-                  <p className="text-xs text-muted-foreground mb-1">
-                    📅 {new Date(request.meetingDate).toLocaleDateString()}
-                  </p>
-                )}
                 {request.danceStory && (
                   <p className="text-sm mt-2 italic">
                     "{request.danceStory}"
@@ -373,150 +357,25 @@ export default function FriendsListPage() {
         <div className="flex gap-2 ml-4">
           <Button
             size="sm"
-            onClick={() => handleReviewRequest(request)}
-            disabled={false}
-            data-testid={`button-review-request-${request.id}`}
-            className="bg-gradient-to-r from-purple-500 to-pink-600"
+            onClick={() => acceptRequestMutation.mutate(request.id)}
+            disabled={acceptRequestMutation.isPending}
+            data-testid={`button-accept-${request.id}`}
+            className="bg-gradient-to-r from-green-500 to-emerald-600"
           >
-            Review Request
+            Accept
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => rejectRequestMutation.mutate(request.id)}
+            disabled={rejectRequestMutation.isPending}
+            data-testid={`button-reject-${request.id}`}
+          >
+            Decline
           </Button>
         </div>
       </div>
     </Card>
-  );
-
-  const RequestReviewDialog = ({ request, open, onOpenChange }: { request: FriendRequest | null; open: boolean; onOpenChange: (open: boolean) => void }) => (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="backdrop-blur-xl bg-white/90 dark:bg-slate-900/90 max-w-lg">
-        <DialogHeader>
-          <DialogTitle className="text-xl bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-            Friend Request from {request?.sender?.name}
-          </DialogTitle>
-        </DialogHeader>
-        
-        {request && (
-          <div className="space-y-4">
-            {/* Sender Info */}
-            <div className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-800 rounded-lg">
-              <Avatar className="h-12 w-12">
-                <AvatarImage src={request.sender?.profileImage} />
-                <AvatarFallback className="bg-gradient-to-br from-purple-400 to-pink-500 text-white">
-                  {request.sender?.name.charAt(0)}
-                </AvatarFallback>
-              </Avatar>
-              <div>
-                <p className="font-semibold">{request.sender?.name}</p>
-                <p className="text-sm text-muted-foreground">@{request.sender?.username}</p>
-              </div>
-            </div>
-
-            {/* Personal Message */}
-            {request.senderMessage && (
-              <div>
-                <p className="text-sm font-medium text-muted-foreground mb-2">Message</p>
-                <p className="text-sm p-3 bg-slate-100 dark:bg-slate-800 rounded-md">
-                  "{request.senderMessage}"
-                </p>
-              </div>
-            )}
-
-            {/* Dance Story Section */}
-            {request.didWeDance && (
-              <div className="space-y-2 p-4 bg-gradient-to-br from-cyan-50 to-blue-50 dark:from-cyan-950/20 dark:to-blue-950/20 rounded-lg border border-cyan-200 dark:border-cyan-800">
-                <div className="flex items-center gap-2 text-sm font-medium text-cyan-700 dark:text-cyan-300 mb-2">
-                  <Heart className="h-4 w-4 fill-current" />
-                  We danced together!
-                </div>
-                
-                {request.danceLocation && (
-                  <div>
-                    <p className="text-xs font-medium text-muted-foreground mb-1">Location</p>
-                    <p className="text-sm">{request.danceLocation}</p>
-                  </div>
-                )}
-                
-                {request.meetingDate && (
-                  <div>
-                    <p className="text-xs font-medium text-muted-foreground mb-1">When we met</p>
-                    <p className="text-sm">{new Date(request.meetingDate).toLocaleDateString()}</p>
-                  </div>
-                )}
-                
-                {request.danceStory && (
-                  <div>
-                    <p className="text-xs font-medium text-muted-foreground mb-1">Memory</p>
-                    <p className="text-sm italic">"{request.danceStory}"</p>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Media Section */}
-            {request.mediaUrls && request.mediaUrls.length > 0 && (
-              <div>
-                <p className="text-sm font-medium text-muted-foreground mb-2">Attached Photos & Videos</p>
-                <div className="grid grid-cols-3 gap-2">
-                  {request.mediaUrls.map((url, index) => (
-                    <div
-                      key={index}
-                      className="relative aspect-square rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800"
-                    >
-                      {url.includes('video') || url.match(/\.(mp4|webm|mov)$/i) ? (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <div className="text-center">
-                            <ImageIcon className="h-8 w-8 text-slate-400 mx-auto mb-1" />
-                            <p className="text-xs text-slate-500">Video</p>
-                          </div>
-                        </div>
-                      ) : (
-                        <img
-                          src={url}
-                          alt={`Attached media ${index + 1}`}
-                          className="w-full h-full object-cover"
-                        />
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Request Date */}
-            <div>
-              <p className="text-xs text-muted-foreground">
-                Sent {new Date(request.createdAt).toLocaleDateString()}
-              </p>
-            </div>
-
-            {/* Action Buttons */}
-            <div className="flex justify-end gap-2 pt-2">
-              <Button
-                variant="outline"
-                onClick={() => {
-                  rejectRequestMutation.mutate(request.id);
-                  onOpenChange(false);
-                }}
-                disabled={rejectRequestMutation.isPending}
-                data-testid={`button-decline-review-${request.id}`}
-              >
-                Decline
-              </Button>
-              <Button
-                onClick={() => {
-                  acceptRequestMutation.mutate(request.id);
-                  onOpenChange(false);
-                }}
-                disabled={acceptRequestMutation.isPending}
-                className="bg-gradient-to-r from-green-500 to-emerald-600"
-                data-testid={`button-accept-review-${request.id}`}
-              >
-                Accept
-              </Button>
-            </div>
-          </div>
-        )}
-      </DialogContent>
-    </Dialog>
   );
 
   return (
@@ -645,13 +504,6 @@ export default function FriendsListPage() {
         </Tabs>
       </div>
 
-      {/* Review Request Dialog */}
-      <RequestReviewDialog 
-        request={selectedReviewRequest} 
-        open={showReviewDialog} 
-        onOpenChange={setShowReviewDialog}
-      />
-
       {/* Send Request Dialog with Dance Story */}
       <Dialog open={showRequestDialog} onOpenChange={setShowRequestDialog}>
         <DialogContent className="backdrop-blur-xl bg-white/90 dark:bg-slate-900/90">
@@ -698,19 +550,6 @@ export default function FriendsListPage() {
                     }
                     className="mt-1"
                     data-testid="input-dance-location"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="meetingDate">When did we meet?</Label>
-                  <Input
-                    id="meetingDate"
-                    type="date"
-                    value={requestData.meetingDate}
-                    onChange={(e) =>
-                      setRequestData({ ...requestData, meetingDate: e.target.value })
-                    }
-                    className="mt-1"
-                    data-testid="input-meeting-date"
                   />
                 </div>
                 <div>
