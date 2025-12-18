@@ -293,12 +293,11 @@ router.post('/admin/scraping/deduplicate', authenticateToken, async (req: AuthRe
     }
 
     // Trigger deduplication
-    const result = await deduplicator.deduplicate();
+    await deduplicator.deduplicate();
 
     res.json({
       success: true,
       message: 'Deduplication complete',
-      duplicatesRemoved: result?.duplicatesRemoved || 0,
       timestamp: new Date().toISOString()
     });
 
