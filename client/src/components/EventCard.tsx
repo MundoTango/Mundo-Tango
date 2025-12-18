@@ -5,6 +5,7 @@ import { Link } from "wouter";
 import { SelectEvent } from "@shared/client-types";
 import { safeDateFormat } from "@/lib/safeDateFormat";
 import { getCityImageUrl } from "@/lib/cityImageMap";
+import { optimizeCover } from "@/lib/imageOptimizer";
 import { UnifiedRSVPButton, RSVPStatus } from "@/components/unified/UnifiedRSVPButton";
 
 interface EventCardProps {
@@ -39,9 +40,10 @@ export function EventCard({ event, userRSVPStatus }: EventCardProps) {
     <Card className="hover-elevate" data-testid={`card-event-${event.id}`}>
       <div className="relative h-48 overflow-hidden rounded-t-lg">
           <img 
-            src={event.coverImage || getCityImageUrl(event.city)} 
+            src={optimizeCover(event.coverImage) || getCityImageUrl(event.city || '')} 
             alt={event.title}
             className="w-full h-full object-cover"
+            loading="lazy"
             data-testid={`img-event-cover-${event.id}`}
           />
           <div className="absolute top-3 right-3">
@@ -119,7 +121,7 @@ export function EventCard({ event, userRSVPStatus }: EventCardProps) {
             currentStatus={userRSVPStatus}
             variant="compact"
             attendeeCount={event.currentAttendees || 0}
-            maxAttendees={event.maxAttendees}
+            maxAttendees={event.maxAttendees ?? undefined}
           />
         </div>
         
