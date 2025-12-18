@@ -7,6 +7,7 @@ import { Link } from "wouter";
 import { SelectGroup } from "@shared/client-types";
 import { safeDateDistance } from "@/lib/safeDateFormat";
 import { getCityImageUrl } from "@/lib/cityImageMap";
+import { optimizeAvatar } from "@/lib/imageOptimizer";
 
 interface GroupCardProps {
   group: SelectGroup;
@@ -21,7 +22,7 @@ export function GroupCard({ group, onJoin, isJoined }: GroupCardProps) {
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-start gap-3 flex-1">
             <Avatar className="h-12 w-12">
-              <AvatarImage src={group.coverImage || getCityImageUrl(group.city)} alt={group.name} />
+              <AvatarImage src={optimizeAvatar(group.coverImage, 'md') || getCityImageUrl(group.city || '')} alt={group.name} />
               <AvatarFallback className="bg-primary/10 text-primary text-lg font-semibold">
                 {group.name.charAt(0).toUpperCase()}
               </AvatarFallback>

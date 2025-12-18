@@ -44,6 +44,9 @@ export function EventCard({ event, userRSVPStatus }: EventCardProps) {
             alt={event.title}
             className="w-full h-full object-cover"
             loading="lazy"
+            decoding="async"
+            width={400}
+            height={256}
             data-testid={`img-event-cover-${event.id}`}
           />
           <div className="absolute top-3 right-3">

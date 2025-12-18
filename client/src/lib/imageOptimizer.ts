@@ -51,13 +51,32 @@ export function optimizeCloudinaryUrl(
   
   const transformString = transformations.join(',');
   
-  const uploadMatch = url.match(/(.*\/upload\/)(v\d+\/)?(.+)/);
-  if (uploadMatch) {
-    const [, baseUrl, version = '', imagePath] = uploadMatch;
-    return `${baseUrl}${transformString}/${version}${imagePath}`;
+  // Handle URLs with existing transformations: .../upload/existing_transforms/v123/path
+  // or without: .../upload/v123/path or .../upload/path
+  const uploadIndex = url.indexOf('/upload/');
+  if (uploadIndex === -1) return url;
+  
+  const baseUrl = url.substring(0, uploadIndex + 8); // includes '/upload/'
+  const afterUpload = url.substring(uploadIndex + 8);
+  
+  // Check if there's a version segment (v followed by digits)
+  const versionMatch = afterUpload.match(/^(.*?)(v\d+\/.+)$/);
+  if (versionMatch) {
+    // Has version - strip any existing transforms before version
+    const [, existingTransforms, versionAndPath] = versionMatch;
+    return `${baseUrl}${transformString}/${versionAndPath}`;
   }
   
-  return url;
+  // No version - check if starts with transforms (contains underscore before first slash)
+  const firstSlash = afterUpload.indexOf('/');
+  if (firstSlash > 0 && afterUpload.substring(0, firstSlash).includes('_')) {
+    // Existing transforms - replace them
+    const imagePath = afterUpload.substring(firstSlash + 1);
+    return `${baseUrl}${transformString}/${imagePath}`;
+  }
+  
+  // No existing transforms - just add ours
+  return `${baseUrl}${transformString}/${afterUpload}`;
 }
 
 export function optimizeAvatar(url: string | null | undefined, size: 'sm' | 'md' | 'lg' = 'md'): string | undefined {
@@ -70,9 +89,10 @@ export function optimizeAvatar(url: string | null | undefined, size: 'sm' | 'md'
   });
 }
 
-export function optimizeCover(url: string | null | undefined, width: number = 400): string | undefined {
+export function optimizeCover(url: string | null | undefined, width: number = 400, height: number = 256): string | undefined {
   return optimizeCloudinaryUrl(url, {
     width,
+    height,
     crop: 'fill',
   });
 }
