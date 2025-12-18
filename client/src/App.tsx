@@ -39,7 +39,11 @@ const UnifiedMrBlue = HEAVY_FEATURES_ENABLED
   ? lazy(() => import("./components/mr-blue/UnifiedMrBlue"))
   : FeatureDisabled;
 const VisualEditorSplitPane = HEAVY_FEATURES_ENABLED
-  ? lazy(() => import("./components/visual-editor/VisualEditorSplitPane"))
+  ? lazy(() =>
+      import("./components/visual-editor/VisualEditorSplitPane").then((m) => ({
+        default: m.VisualEditorSplitPane,
+      })),
+    )
   : FeatureDisabled;
 
 // Core Pages - Only critical auth pages loaded immediately
@@ -2828,7 +2832,16 @@ function AppContent() {
   const [location] = useLocation();
 
   // Initialize Proactive Error Detection + HTTP Interceptor + Component Health Monitor + Navigation Interceptor
+  // PERFORMANCE FIX: Disable in development mode - these systems add significant overhead
   useEffect(() => {
+    // Only enable self-healing systems in production or when explicitly enabled
+    const enableSelfHealing = !import.meta.env.DEV || import.meta.env.VITE_ENABLE_SELF_HEALING === "true";
+    
+    if (!enableSelfHealing) {
+      console.log("[App] Self-healing systems DISABLED in development mode for performance");
+      return;
+    }
+
     console.log("[App] Initializing Proactive Error Detection...");
     const detector = initErrorDetection();
 

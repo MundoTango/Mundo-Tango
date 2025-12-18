@@ -5,6 +5,24 @@ import Backend from 'i18next-http-backend';
 
 const i18nKey = '__i18n_initialized__';
 
+// PERFORMANCE FIX: In development, only load English to reduce overhead
+const isDev = import.meta.env.DEV;
+const devLangs = ['en'];
+const allLangs = [
+  'en', 'es', 'pt', 'fr', 'de', 'it',
+  'zh', 'ja', 'ko', 'ru', 'ar', 'hi',
+  'nl', 'sv', 'no', 'da', 'fi', 'pl',
+  'tr', 'he', 'th', 'vi', 'id', 'ms',
+  'tl', 'cs', 'el', 'hu', 'ro', 'uk',
+  'bg', 'hr', 'sr', 'sk', 'sl', 'et',
+  'lv', 'lt', 'is', 'ga', 'mt', 'cy',
+  'sq', 'mk', 'bs', 'ka', 'az', 'hy',
+  'bn', 'ur', 'fa', 'sw', 'zu', 'xh',
+  'af', 'am', 'kn', 'ml', 'ta', 'te',
+  'mr', 'gu', 'pa', 'ne', 'si', 'km',
+  'lo', 'my', 'ka', 'mn'
+];
+
 if (!(window as any)[i18nKey]) {
   (window as any)[i18nKey] = true;
   
@@ -17,7 +35,7 @@ if (!(window as any)[i18nKey]) {
       defaultNS: 'common',
       ns: ['common', 'navigation', 'pages', 'errors'],
       
-      debug: import.meta.env.DEV,
+      debug: false, // Disable debug logging for performance
       
       interpolation: {
         escapeValue: false,
@@ -37,20 +55,7 @@ if (!(window as any)[i18nKey]) {
         useSuspense: true,
       },
       
-      supportedLngs: [
-        'en', 'es', 'pt', 'fr', 'de', 'it',
-        'zh', 'ja', 'ko', 'ru', 'ar', 'hi',
-        'nl', 'sv', 'no', 'da', 'fi', 'pl',
-        'tr', 'he', 'th', 'vi', 'id', 'ms',
-        'tl', 'cs', 'el', 'hu', 'ro', 'uk',
-        'bg', 'hr', 'sr', 'sk', 'sl', 'et',
-        'lv', 'lt', 'is', 'ga', 'mt', 'cy',
-        'sq', 'mk', 'bs', 'ka', 'az', 'hy',
-        'bn', 'ur', 'fa', 'sw', 'zu', 'xh',
-        'af', 'am', 'kn', 'ml', 'ta', 'te',
-        'mr', 'gu', 'pa', 'ne', 'si', 'km',
-        'lo', 'my', 'ka', 'mn'
-      ],
+      supportedLngs: isDev ? devLangs : allLangs,
     });
 }
 
