@@ -767,7 +767,7 @@ export default function EventsPage() {
                     {events && events.length > 0 ? (
                       <>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                          {events.map((event, index) => {
+                          {events.map((event: any, index: number) => {
                             const eventId = event.event?.id || event.id;
                             return (
                               <EventCard key={eventId || `event-${index}`} event={event} index={index} />
@@ -884,7 +884,7 @@ export default function EventsPage() {
                         endAccessor="end"
                         style={{ height: '100%' }}
                         views={[Views.MONTH, Views.WEEK, Views.DAY]}
-                        onSelectEvent={(event) => {
+                        onSelectEvent={(event: any) => {
                           window.location.href = `/events/${event.id}`;
                         }}
                         eventPropGetter={(event) => ({
@@ -915,7 +915,7 @@ export default function EventsPage() {
                           attribution='&copy; <a href="https://carto.com/attributions">CARTO</a>'
                           url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
                         />
-                        {eventsWithCoordinates.map((event, index) => {
+                        {eventsWithCoordinates.map((event: any, index: number) => {
                           const eventData = event.event || event;
                           const eventId = eventData.id;
                           return (
