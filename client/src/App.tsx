@@ -11,7 +11,8 @@ import { TalentMatchSessionProvider } from "./contexts/TalentMatchSessionContext
 import { PredictiveContextProvider } from "./providers/PredictiveContextProvider";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { LoadingFallback } from "./components/LoadingFallback";
-import { MrBlueFloatingButton } from "./components/mrBlue/MrBlueFloatingButton";
+import { GlobalMrBlue } from "./components/mrblue/GlobalMrBlue";
+import { ChatSidePanel } from "./components/mrblue/ChatSidePanel";
 import {
   initErrorDetection,
   cleanupErrorDetection,
@@ -94,7 +95,8 @@ function AppContent() {
   return (
     <>
       <Toaster />
-      <MrBlueFloatingButton />
+      <GlobalMrBlue />
+      <ChatSidePanel />
       <Suspense fallback={<LoadingFallback />}>
         <RouteLoader />
       </Suspense>
