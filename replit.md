@@ -24,7 +24,40 @@ The platform utilizes an "MT Ocean Theme" with dark mode, built using Tailwind C
 The backend is developed with Express and TypeScript, leveraging PostgreSQL (Neon) and Drizzle ORM. It incorporates modular routes, JWT authentication with Google/Facebook OAuth, an 8-tier Role-Based Access Control (RBAC) system, and automated database migrations. Server-side FFmpeg is used for video transcoding. The API supports PRO functionalities, place recommendations, and enhanced Talent Match AI features.
 
 ### AI Systems
-Mundo Tango features an extensive AI ecosystem comprising 48 specialized agents (10 Page, 33 Feature, 5 Scraping agents) for strategic oversight and atomic execution. It includes self-healing infrastructure, a production-ready validation loop, a Visual Validation Framework, contextual agent activation, a Backend Agent System, Mr. Blue AI Assistant, and a Bifrost AI Gateway for multi-provider AI interactions. A RecursiveContextService handles hierarchical code summarization, and a TRM Learning Protocol is integrated. Scraping agents gather event data and automatically create city groups. The `/api/mrblue/chat` endpoint supports a `systemPrompt` parameter for custom AI interactions, bypassing the ConversationOrchestrator for direct prompt usage with Groq's llama-3.3-70b-versatile model.
+Mundo Tango features an extensive AI ecosystem comprising **140+ specialized agents** (10 Page, 35+ Feature, 16 Life CEO, 10 Self-Healing, 10 Scraping, 32 Business, 49 Core agents) for strategic oversight and atomic execution. It includes self-healing infrastructure, a production-ready validation loop, a Visual Validation Framework, contextual agent activation, a Backend Agent System, Mr. Blue AI Assistant, and a Bifrost AI Gateway for multi-provider AI interactions. A RecursiveContextService handles hierarchical code summarization, and a TRM Learning Protocol is integrated. Scraping agents gather event data and automatically create city groups. The `/api/mrblue/chat` endpoint supports a `systemPrompt` parameter for custom AI interactions, bypassing the ConversationOrchestrator for direct prompt usage with Groq's llama-3.3-70b-versatile model.
+
+### Mr. Blue Brain v2.0 (Modular Architecture)
+The AI brain has been restructured from a monolithic 6,472-line mb.md into a modular `/mr-blue-brain/` folder system with **30+ files across 9 folders** using invocation syntax for token-efficient loading.
+
+**Folder Structure:**
+- `/identity/` - WHO Mr. Blue is (soul, system-prompt, values, personality-modes)
+- `/cognition/` - HOW Mr. Blue thinks (ReAct, Chain-of-Thought, Tree of Thoughts, Reflexion, FEP, Bayesian)
+- `/operations/` - HOW Mr. Blue works (10-step-workflow, error-recovery)
+- `/orchestration/` - HOW Mr. Blue coordinates (MoE, Magentic, A2A, Hierarchical, Parallel)
+- `/patterns/` - 61 MB.MD patterns (core-patterns, advanced-patterns)
+- `/agents/` - 140+ agent profiles (page, life-ceo, self-healing, scraping, business, core)
+- `/n8n/` - External integration guide (connection-guide, webhooks, workflow-templates)
+
+**NEW Cognitive Frameworks (v2.0):**
+- **ReAct Protocol**: Thought → Action → Observe loops for tool-based reasoning
+- **Chain-of-Thought**: Step-by-step reasoning for complex problems
+- **Tree of Thoughts**: Multi-path exploration with evaluation and pruning
+- **Reflexion Loop**: Self-critique and learning from failures without retraining
+- **Mixture of Experts Router**: Smart routing for 140+ agents based on capability matching
+- **Magentic Dynamic Orchestration**: Context-aware agent selection and adaptive workflows
+
+**Invocation Syntax:**
+```
+use mb.md: identity              → Load /identity/soul.md
+use mb.md: cognition:react       → Load ReAct Protocol
+use mb.md: orchestration:moe     → Load Mixture of Experts routing
+use mb.md: agents:life-ceo       → Load 16 Life CEO agent profiles
+use mb.md: n8n                   → Load n8n connection guide
+use mb.md: legacy                → Load full mb-legacy.md (6,472 lines)
+```
+
+**Master Index:** `mr-blue-brain/mb.md` (central navigation)
+**Legacy Backup:** `mb-legacy.md` (complete v9.10 preserved)
 
 ### Event Scraping System
 Multi-stage scraping architecture coordinated by Master Orchestrator (`server/agents/scraping/masterOrchestrator.ts`):
