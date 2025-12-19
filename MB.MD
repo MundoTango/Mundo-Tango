@@ -370,6 +370,187 @@ Expected response:
 - Current: ~95K
 - Saved: ~25K (via read_page optimization)
 
+
+## 🧹 Pattern 53: Data Quality Validation
+
+**Problem:** Scraped data may contain duplicates, stale entries, or formatting inconsistencies that degrade user experience and database integrity.
+
+**Solution:** Implement scraper-level validation and Mr. Blue oversight to ensure clean, deduplicated data:
+
+1. **Deduplication Strategy:**
+   - Use `eventSourceUrl` as primary deduplication key
+   - For events: Check `eventName` + `eventDate` + `venueId` combo
+   - For users: Match on `email`, `facebook`, `instagram`, or `website` URLs
+   - For venues: Match on `venueName` + normalized address
+
+2. **Staleness Detection:**
+   - Flag events with `eventDate < NOW()` as past events
+   - Mark scrapers with `lastSuccessfulRun > 7 days ago` as stale
+   - Archive POIs with 404 errors on 3+ consecutive scrapes
+
+3. **Format Validation:**
+   - Zod schemas on all scraper outputs (existing)
+   - Phone numbers: Normalize to E.164 format
+   - URLs: Validate protocol, remove tracking params
+   - Addresses: Geocode and verify against Google Maps API
+
+4. **Mr. Blue Validation Role:**
+   - Pattern 52 audit extends to data quality
+   - Flag suspiciously large batch imports (>1000 items)
+   - Alert on duplicate rate spikes (>10% in single run)
+   - Review new scraper outputs for first 3 runs
+
+**Implementation Status:**
+- [x] Zod validation on scraper outputs
+- [ ] Deduplication layer in scraper orchestrator
+- [ ] Staleness cleanup cron job
+- [ ] Mr. Blue data quality dashboard
+
+---
+
+## 🎭 Pattern 54: Professional Identity Resolution
+
+**Problem:** Scrapers identify teachers, DJs, organizers, and venue owners, but these roles need to be mapped to user profiles and assigned professional-tier access.
+
+**Solution:** Create identity resolution system with automatic professional role assignment:
+
+1. **Identity Matching Logic:**
+   ```
+   IF (scraped_user.email MATCHES users.email) OR
+      (scraped_user.facebook MATCHES users.facebookUrl) OR
+      (scraped_user.instagram MATCHES users.instagramUrl) OR
+      (scraped_user.website MATCHES users.websiteUrl)
+   THEN
+     MATCH = users.userId
+   ELSE
+     CREATE shadow_profile (unclaimedUserId, contactEmail)
+   ```
+
+2. **Role Assignment Rules:**
+   - **Teachers:** Auto-assign `userTier = 'PROFESSIONAL'` if found on 2+ school sites
+   - **DJs:** Auto-assign `PROFESSIONAL` if listed as DJ on 3+ events
+   - **Organizers:** Auto-assign `PROFESSIONAL` if created 5+ events
+   - **Venue Owners:** Auto-assign `BUSINESS` tier if owns verified venue
+
+3. **Shadow Profiles (Unclaimed):**
+   - Create `unclaimedUsers` table with scraped professional data
+   - Store contact info + role evidence (event links, school pages)
+   - Email invitation: "We found your tango profile, claim it for Pro access"
+   - On claim: Merge shadow profile → real user, grant tier upgrade
+
+4. **Professional Profile Enrichment:**
+   - Auto-populate bio from scraped school/event descriptions
+   - Link to teaching locations (schools table)
+   - Badge system: "Verified Teacher", "Active DJ", "Event Organizer"
+
+**Database Schema Additions:**
+```sql
+CREATE TABLE unclaimed_users (
+  unclaimedUserId UUID PRIMARY KEY,
+  fullName TEXT NOT NULL,
+  contactEmail TEXT,
+  facebookUrl TEXT,
+  instagramUrl TEXT,
+  websiteUrl TEXT,
+  detectedRole TEXT[], -- ['teacher', 'dj', 'organizer']
+  evidenceLinks JSONB, -- {schools: [urls], events: [urls]}
+  invitationSentAt TIMESTAMPTZ,
+  claimedByUserId UUID REFERENCES users(userId),
+  createdAt TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE users ADD COLUMN professionalBadges TEXT[];
+ALTER TABLE users ADD COLUMN teachingLocations UUID[] REFERENCES schools(schoolId);
+```
+
+**Implementation Status:**
+- [ ] Create unclaimed_users table
+- [ ] Build identity resolution algorithm
+- [ ] Professional auto-assignment logic
+- [ ] Email invitation flow
+- [ ] Mr. Blue verification dashboard
+
+---
+
+## 🎯 Pattern 55: Multi-Source Verification Scoring
+
+**Problem:** Scraped data varies in trustworthiness - official venue sites are more reliable than user-submitted aggregator data.
+
+**Solution:** Implement confidence scoring system for scraped data with Mr. Blue review thresholds:
+
+1. **Source Reliability Tiers:**
+   - **TIER 1 (High Trust - 90-100%):** Official venue websites, government tourism sites
+   - **TIER 2 (Medium Trust - 70-89%):** Established aggregators (HoyMilonga, TangoMagazin)
+   - **TIER 3 (Low Trust - 40-69%):** Social media events, user-submitted calendars
+   - **TIER 4 (Unverified - 0-39%):** First-time sources, broken site structure
+
+2. **Verification Score Calculation:**
+   ```javascript
+   verificationScore = baseScore + bonuses - penalties
+   
+   baseScore = sourceTier (40-100)
+   
+   bonuses:
+   + 10: Data appears on 2+ independent sources
+   + 5: Venue has verified Google Maps listing
+   + 5: Contact email/phone validated
+   + 5: Event has >10 RSVPs on Facebook
+   
+   penalties:
+   - 20: Missing critical fields (date, location, name)
+   - 15: Geocoding fails or returns ambiguous results
+   - 10: Phone/email format invalid
+   - 10: Event date in past (stale data)
+   ```
+
+3. **Mr. Blue Review Triggers:**
+   - Score < 50: Automatically flag for manual review
+   - Score 50-70: Show in "Needs Verification" dashboard
+   - Score > 70: Auto-publish with "Verified" badge
+   - New source's first 10 events: Always require review
+
+4. **Cross-Source Validation:**
+   - If same event scraped from 2+ sources, boost score by 10
+   - Conflicting data (different times/addresses): Flag for resolution
+   - Consistent data across sources: Merge and mark as "Multi-Verified"
+
+5. **Feedback Loop:**
+   - User reports ("This event is wrong"): Reduce source score by 5
+   - Successful check-ins at event: Boost source score by 3
+   - 3+ user corrections on source: Demote to lower tier
+
+**Database Schema Additions:**
+```sql
+ALTER TABLE scrapers ADD COLUMN sourceTier INTEGER DEFAULT 3;
+ALTER TABLE scrapers ADD COLUMN reliabilityScore INTEGER DEFAULT 50;
+ALTER TABLE scrapers ADD COLUMN userReportCount INTEGER DEFAULT 0;
+
+ALTER TABLE events ADD COLUMN verificationScore INTEGER;
+ALTER TABLE events ADD COLUMN verificationStatus TEXT DEFAULT 'pending';
+ALTER TABLE events ADD COLUMN verifiedBySources TEXT[]; -- URLs of confirming sources
+
+CREATE TABLE data_quality_reports (
+  reportId UUID PRIMARY KEY,
+  entityType TEXT, -- 'event', 'venue', 'user'
+  entityId UUID,
+  scraperId UUID REFERENCES scrapers(scraperId),
+  issueType TEXT, -- 'incorrect_date', 'wrong_location', 'duplicate'
+  reportedByUserId UUID REFERENCES users(userId),
+  resolutionStatus TEXT DEFAULT 'open',
+  createdAt TIMESTAMPTZ DEFAULT NOW()
+);
+```
+
+**Implementation Status:**
+- [ ] Add verification scoring to scraper pipeline
+- [ ] Create source tier classification system
+- [ ] Build cross-source deduplication logic
+- [ ] Mr. Blue review dashboard for flagged data
+- [ ] User feedback reporting UI
+- [ ] Automated source tier adjustment based on corrections
+
+---
+
 ### 📊 SYSTEM HEALTH:
 
 - ✅ Server running stable
