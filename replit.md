@@ -16,6 +16,12 @@ Mundo Tango is a production-ready social platform designed to connect the global
 - MB.MD Methodology - Apply v9.9.3 patterns systematically: Research → Plan → Build → Test → Fix → Document
 
 ## Recent Fixes & Updates (Dec 19, 2025)
+- **Deployment Size Optimization**: Fixed 8+ GiB deployment image limit issue
+  - Added `.local/` (952MB), `.replit/`, `.upm/` to exclusions
+  - Added explicit `.cache/ms-playwright/` exclusion for Playwright browsers (600MB+)
+  - Added voice samples/training data and report directory exclusions
+  - Total reduction: ~1.5GB+ from deployment bundle
+  - Current dist/ size: 46MB (within limits)
 - **City-Prioritized Address Search**: Enhanced address search to prioritize results from user's current city context
   - Updated HousingCreationWizard to accept `initialCity` prop and pass to address picker
   - Updated EventCreationPage to pass `formData.city` to address picker for local prioritization

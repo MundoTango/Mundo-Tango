@@ -13,6 +13,14 @@ lancedb_data/
 .cache/
 .npm/
 .pnpm-store/
+.local/
+.replit/
+.upm/
+
+# ==========================================
+# PLAYWRIGHT BROWSERS (600MB+)
+# ==========================================
+.cache/ms-playwright/
 
 # ==========================================
 # TEST ARTIFACTS
@@ -59,10 +67,12 @@ client/
 .git/
 .mcp/
 .config/
-.local/
-.upm/
 agent-memory/
 bifrost-config/
+.vscode/
+.idea/
+*.swp
+*.swo
 
 # ==========================================
 # MISC DEVELOPMENT FILES
@@ -151,3 +161,32 @@ coverage/
 *.old_backup
 *.bak
 *.backup
+
+# ==========================================
+# LARGE ASSET FILES (voice samples, training data)
+# ==========================================
+attached_assets/voice_samples/
+attached_assets/voice_training/
+attached_assets/*.mp3
+attached_assets/*.wav
+attached_assets/*.mp4
+attached_assets/*.mov
+
+# ==========================================
+# REPORTS AND GENERATED FILES
+# ==========================================
+qa_reports/
+agent-reports/
+lighthouse-reports/
+bundle-analysis/
+
+# ==========================================
+# PRODUCTION-EXCLUDED MODULES
+# ==========================================
+# These are handled via .nix or npm prune in production
+# but we explicitly list common dev tool directories
+cypress/
+jest/
+.jest/
+__mocks__/
+__tests__/
