@@ -6,7 +6,7 @@
 
 import { db } from '@shared/db';
 import { events, scrapedEvents, users, eventTeamMembers } from '@shared/schema';
-import { eq, and, isNull, ilike, or } from 'drizzle-orm';
+import { eq, and, isNull, ilike, or, sql } from 'drizzle-orm';
 import { extractParticipants } from './participant-extraction';
 
 const SCRAPER_BOT_USERNAME = 'scraper_bot';
@@ -420,8 +420,9 @@ class ScrapedEventIngestionService {
         return null;
       }
 
-      if (scraped.status !== 'approved') {
-        console.log(`[Ingestion] Event ${scrapedEventId} not approved (status: ${scraped.status})`);
+      // Allow all scraped events except rejected ones (immediate visibility without approval)
+      if (scraped.status === 'rejected') {
+        console.log(`[Ingestion] Event ${scrapedEventId} rejected, skipping`);
         return null;
       }
 
@@ -465,22 +466,25 @@ class ScrapedEventIngestionService {
   }
 
   /**
-   * Backfill all approved scraped events that haven't been ingested
+   * Backfill all scraped events that haven't been ingested (except rejected)
    */
   async backfillApproved(): Promise<{ ingested: number; failed: number }> {
-    console.log('[Ingestion] 🔄 Starting backfill of approved scraped events...');
+    console.log('[Ingestion] 🔄 Starting backfill of scraped events...');
 
-    const approved = await db
+    const toIngest = await db
       .select({ id: scrapedEvents.id, title: scrapedEvents.title })
       .from(scrapedEvents)
-      .where(eq(scrapedEvents.status, 'approved'));
+      .where(and(
+        sql`${scrapedEvents.status} != 'rejected'`,
+        sql`${scrapedEvents.status} != 'ingested'`
+      ));
 
-    console.log(`[Ingestion] Found ${approved.length} approved events to ingest`);
+    console.log(`[Ingestion] Found ${toIngest.length} events to ingest`);
 
     let ingested = 0;
     let failed = 0;
 
-    for (const event of approved) {
+    for (const event of toIngest) {
       const result = await this.ingestEvent(event.id);
       if (result) {
         ingested++;

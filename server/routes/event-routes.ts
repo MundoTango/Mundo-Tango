@@ -289,11 +289,17 @@ router.get("/", optionalAuth, async (req: AuthRequest, res: Response) => {
       .limit(parseInt(limit as string))
       .offset(parseInt(offset as string));
 
-    // 2. Also fetch approved scraped events if requested (for immediate visibility)
+    // 2. Also fetch scraped events if requested (for immediate visibility - no approval required)
     let allResults = mainResults;
     
     if (includeScraped === "true" && category !== "my-events") {
-      const scrapedConditions = [eq(scrapedEvents.status, 'approved')];
+      // Show scraped events that are pending_review or approved (not rejected or already ingested)
+      const scrapedConditions = [
+        or(
+          eq(scrapedEvents.status, 'pending_review'),
+          eq(scrapedEvents.status, 'approved')
+        )!
+      ];
       
       if (city) {
         scrapedConditions.push(sql`LOWER(${scrapedEvents.city}) = LOWER(${city as string})`);
