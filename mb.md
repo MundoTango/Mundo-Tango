@@ -170,4 +170,21 @@ use mb.md: testing:auth          → Authenticated test template
 
 ---
 
+## 🛡️ DEPLOYMENT PROTECTION
+
+**CRITICAL:** These files are protected and must NEVER be deleted:
+
+| Protected File/Dir | Reason |
+|-------------------|--------|
+| `mb.md` | Core methodology (this file) |
+| `mb-legacy.md` | Legacy backup (6,472 lines) |
+| `replit.md` | Project documentation |
+| `mr-blue-brain/` | Modular AI brain (30+ files) |
+| `attached_assets/optimized/` | Used by 7 React pages |
+| `attached_assets/stock_images/` | Used by 20+ React pages |
+
+**Protection mechanism:** `scripts/prebuild-cleanup.sh` has explicit exclusions. See `replit.md` → "Critical Files Protection" for full documentation.
+
+---
+
 **Note:** For the full 6,472-line legacy document, use `use mb.md: legacy` or read `mb-legacy.md` directly.

@@ -57,3 +57,34 @@ The marketing site integrates a Human to Agent Collaboration (H2AC) Volunteer Pr
 - **UI Libraries:** shadcn/ui, Radix UI, Framer Motion, Leaflet
 - **Internationalization:** i18next
 - **Other:** Sentry, Playwright, BullMQ, FFmpeg, fluent-ffmpeg, Wouter, Multer, `@octokit/rest`
+
+## Critical Files Protection (NEVER DELETE)
+
+The following files and directories are protected and must NEVER be deleted during deployment or cleanup:
+
+### Core Documentation
+| File | Purpose |
+|------|---------|
+| `mb.md` | MB.MD v2.0 methodology - core AI brain reference |
+| `mb-legacy.md` | Legacy methodology backup (6,472 lines) |
+| `replit.md` | Project documentation and preferences |
+
+### AI Brain System
+| Directory | Purpose |
+|-----------|---------|
+| `mr-blue-brain/` | Modular AI brain with 30+ files, 140+ agents |
+| `mr-blue-brain/identity/` | Core identity (soul, values, personality) |
+| `mr-blue-brain/cognition/` | Thinking frameworks (ReAct, CoT, ToT) |
+| `mr-blue-brain/patterns/` | 61 MB.MD patterns |
+| `mr-blue-brain/agents/` | 140+ specialized agent profiles |
+
+### Asset Directories (Used by React Components)
+| Directory | Used By |
+|-----------|---------|
+| `attached_assets/optimized/` | 7 pages (About, Home, Friends, Life-CEO) |
+| `attached_assets/stock_images/` | 20+ pages (landing, marketing, etc.) |
+
+### Protection Mechanism
+- `scripts/prebuild-cleanup.sh` - Has explicit exclusions for these files
+- `.gitignore` - Has exceptions for required asset directories
+- All protected files must be tracked in git
