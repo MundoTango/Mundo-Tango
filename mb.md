@@ -116,4 +116,58 @@ use mb.md: legacy                → mb-legacy.md (complete v9.10)
 
 ---
 
+## 🧪 UI TESTING METHODOLOGY (PLAYWRIGHT-FIRST)
+
+For UI tasks, run Playwright FIRST to understand the issue before coding:
+
+### Pre-Development Testing (UNDERSTAND phase)
+```
+1. OBSERVE    → Run Playwright to see current state
+2. NAVIGATE   → Go directly to the page with the issue
+3. CAPTURE    → Screenshot/record the problem
+4. ANALYZE    → Identify root cause from real behavior
+```
+
+### Credentials Strategy
+| Scenario | Credentials | Login Required |
+|----------|-------------|----------------|
+| Public pages (landing, login, register) | None | No - skip login |
+| Admin features, existing data | admin@mundotango.life / admin123 | Yes |
+| New user flows, onboarding | Create fresh user with nanoid suffix | Yes |
+
+### Test Plan Template (Public Page - No Login)
+```
+1. [New Context] Create browser context
+2. [Browser] Navigate directly to /target-page
+3. [Verify] Observe and document current behavior
+4. [Capture] Screenshot the issue
+```
+
+### Test Plan Template (Authenticated Page)
+```
+1. [New Context] Create browser context
+2. [Browser] Navigate to /login
+3. [Browser] Login with admin@mundotango.life / admin123
+4. [Browser] Navigate to /target-page
+5. [Verify] Observe and document current behavior
+```
+
+### Post-Development Testing (TEST phase)
+After implementing fix, run same navigation path to verify:
+```
+1. [Browser] Navigate to fixed page (login if needed)
+2. [Verify] Assert fix is working
+3. [Verify] Assert no regressions
+```
+
+### Invocation
+```markdown
+use mb.md: testing:playwright    → Playwright-first methodology
+use mb.md: testing:credentials   → Admin/test user strategy
+use mb.md: testing:public        → No-login test template
+use mb.md: testing:auth          → Authenticated test template
+```
+
+---
+
 **Note:** For the full 6,472-line legacy document, use `use mb.md: legacy` or read `mb-legacy.md` directly.

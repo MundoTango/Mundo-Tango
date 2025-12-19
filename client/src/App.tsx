@@ -13,6 +13,7 @@ import { ErrorBoundary } from "./components/ErrorBoundary";
 import { LoadingFallback } from "./components/LoadingFallback";
 import { GlobalMrBlue } from "./components/mrblue/GlobalMrBlue";
 import { ChatSidePanel } from "./components/mrblue/ChatSidePanel";
+import { MrBlueFloatingButton } from "./components/mrBlue/MrBlueFloatingButton";
 import {
   initErrorDetection,
   cleanupErrorDetection,
@@ -95,8 +96,11 @@ function AppContent() {
   return (
     <>
       <Toaster />
+      {/* Marketing Mr. Blue for guests (FAQ only) - rendered via MrBlueProvider/Context */}
       <GlobalMrBlue />
       <ChatSidePanel />
+      {/* Full-featured Mr. Blue for authenticated users - RBAC gated */}
+      <MrBlueFloatingButton />
       <Suspense fallback={<LoadingFallback />}>
         <RouteLoader />
       </Suspense>
