@@ -11,6 +11,7 @@ import { TalentMatchSessionProvider } from "./contexts/TalentMatchSessionContext
 import { PredictiveContextProvider } from "./providers/PredictiveContextProvider";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { LoadingFallback } from "./components/LoadingFallback";
+import { GlobalMrBlue } from "./components/mrblue/GlobalMrBlue";
 import {
   initErrorDetection,
   cleanupErrorDetection,
@@ -93,6 +94,7 @@ function AppContent() {
   return (
     <>
       <Toaster />
+      <GlobalMrBlue />
       <Suspense fallback={<LoadingFallback />}>
         <RouteLoader />
       </Suspense>
