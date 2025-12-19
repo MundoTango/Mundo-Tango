@@ -27,6 +27,8 @@ import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/Un
 import { getCityImageUrl } from "@/lib/cityImageMap";
 import { useAuth } from "@/contexts/AuthContext";
 import { format } from "date-fns";
+import { AirbnbListingCard } from "@/components/housing/AirbnbListingCard";
+import { AirbnbHousingView } from "@/components/housing/AirbnbHousingView";
 
 const CommunityMapWithLayers = lazy(() => import("@/components/map/CommunityMapWithLayers").then(m => ({ default: m.CommunityMapWithLayers })));
 
@@ -169,14 +171,10 @@ export default function CityHubPage() {
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
             <div>
               <h1 className="text-3xl md:text-4xl font-bold text-white drop-shadow-lg" data-testid="heading-city-hub">
-                {selectedCity.city || "Explore Cities"}
+                {selectedCity.city 
+                  ? `${selectedCity.city}${selectedCity.country ? `, ${selectedCity.country}` : ''}`
+                  : "Explore Cities"}
               </h1>
-              {selectedCity.country && (
-                <p className="text-white/80 flex items-center gap-2 mt-1">
-                  <MapPin className="h-4 w-4" />
-                  {selectedCity.country}
-                </p>
-              )}
             </div>
             <div className="w-full md:w-80">
               <UnifiedLocationPicker
@@ -205,7 +203,7 @@ export default function CityHubPage() {
               </TabsTrigger>
               <TabsTrigger value="groups" data-testid="tab-groups">
                 <Users className="h-4 w-4 mr-2" />
-                Groups
+                Members
               </TabsTrigger>
               <TabsTrigger value="housing" data-testid="tab-housing">
                 <Home className="h-4 w-4 mr-2" />
@@ -252,7 +250,7 @@ export default function CityHubPage() {
                   <Globe className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
                   <h3 className="text-xl font-semibold mb-2">Select a City</h3>
                   <p className="text-muted-foreground">
-                    Use the search above to explore events, groups, and housing in any city
+                    Use the search above to explore events, members, and housing in any city
                   </p>
                 </CardContent>
               </Card>
@@ -297,7 +295,7 @@ export default function CityHubPage() {
                   <div className="flex items-center justify-between mb-4">
                     <h2 className="text-xl font-semibold flex items-center gap-2">
                       <Calendar className="h-5 w-5 text-primary" />
-                      Upcoming Events
+                      {selectedCity.city} Events
                     </h2>
                     <Button variant="ghost" size="sm" asChild data-testid="link-view-all-events">
                       <Link href={`/events?city=${encodeURIComponent(selectedCity.city)}`}>
@@ -357,7 +355,7 @@ export default function CityHubPage() {
                   <div className="flex items-center justify-between mb-4">
                     <h2 className="text-xl font-semibold flex items-center gap-2">
                       <Users className="h-5 w-5 text-primary" />
-                      Local Groups
+                      {selectedCity.city} Members
                     </h2>
                     <Button variant="ghost" size="sm" asChild data-testid="link-view-all-groups">
                       <Link href={`/groups?city=${encodeURIComponent(selectedCity.city)}`}>
@@ -405,9 +403,9 @@ export default function CityHubPage() {
                     <Card className="text-center py-8">
                       <CardContent>
                         <Users className="h-12 w-12 mx-auto text-muted-foreground mb-2" />
-                        <p className="text-muted-foreground">No groups in {selectedCity.city} yet</p>
+                        <p className="text-muted-foreground">No members in {selectedCity.city} yet</p>
                         <Button variant="outline" className="mt-4" asChild>
-                          <Link href="/groups/create">Create First Group</Link>
+                          <Link href={`/city-groups?city=${encodeURIComponent(selectedCity.city)}`}>Browse All Members</Link>
                         </Button>
                       </CardContent>
                     </Card>
@@ -418,7 +416,7 @@ export default function CityHubPage() {
                   <div className="flex items-center justify-between mb-4">
                     <h2 className="text-xl font-semibold flex items-center gap-2">
                       <Home className="h-5 w-5 text-primary" />
-                      Tango-Friendly Housing
+                      {selectedCity.city} Housing
                     </h2>
                     <Button variant="ghost" size="sm" asChild data-testid="link-view-all-housing">
                       <Link href={`/housing?city=${encodeURIComponent(selectedCity.city)}`}>
@@ -439,32 +437,29 @@ export default function CityHubPage() {
                   ) : housingListings.length > 0 ? (
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                       {housingListings.map((listing: any) => (
-                        <Card key={listing.id} className="hover-elevate" data-testid={`card-housing-${listing.id}`}>
-                          <div className="h-32 overflow-hidden rounded-t-lg">
-                            <img
-                              src={listing.imageUrl || listing.images?.[0] || getCityImageUrl(selectedCity.city)}
-                              alt={listing.title}
-                              className="w-full h-full object-cover"
-                            />
-                          </div>
-                          <CardHeader className="pb-2">
-                            <CardTitle className="text-base line-clamp-1">
-                              <Link href={`/housing/${listing.id}`} className="hover:underline">
-                                {listing.title}
-                              </Link>
-                            </CardTitle>
-                            <CardDescription className="flex items-center gap-2">
-                              <Star className="h-3 w-3" />
-                              {listing.rating || "New"} rating
-                            </CardDescription>
-                          </CardHeader>
-                          <CardContent className="pt-0 flex items-center justify-between">
-                            <span className="font-semibold text-primary">
-                              ${listing.pricePerNight || listing.price}/night
-                            </span>
-                            <Badge variant="outline">{listing.type || "Shared"}</Badge>
-                          </CardContent>
-                        </Card>
+                        <AirbnbListingCard
+                          key={listing.id}
+                          listing={{
+                            id: listing.id,
+                            hostId: listing.hostId || 0,
+                            title: listing.title,
+                            city: listing.city || selectedCity.city,
+                            country: listing.country || selectedCity.country,
+                            pricePerNight: listing.pricePerNight || (listing.price ? parseInt(listing.price) : 0),
+                            photos: listing.photos || listing.images || (listing.imageUrl ? [listing.imageUrl] : []),
+                            bedrooms: listing.bedrooms,
+                            beds: listing.beds,
+                            bathrooms: listing.bathrooms,
+                            maxGuests: listing.maxGuests,
+                            averageRating: listing.rating || listing.averageRating,
+                            reviewCount: listing.reviewCount || 0,
+                            isGuestFavorite: listing.isGuestFavorite,
+                            host: listing.host,
+                            weeklyDiscount: listing.weeklyDiscount
+                          }}
+                          isFavorite={false}
+                          onFavoriteToggle={() => {}}
+                        />
                       ))}
                     </div>
                   ) : (
@@ -484,7 +479,7 @@ export default function CityHubPage() {
                   <div className="flex items-center justify-between mb-4">
                     <h2 className="text-xl font-semibold flex items-center gap-2">
                       <Plane className="h-5 w-5 text-primary" />
-                      Upcoming Visitors
+                      {selectedCity.city} Visitors
                     </h2>
                     <Button variant="ghost" size="sm" asChild data-testid="link-view-all-visitors">
                       <Link href={`/travel?destination=${encodeURIComponent(selectedCity.city)}`}>
@@ -546,7 +541,7 @@ export default function CityHubPage() {
             <Card>
               <CardContent className="py-8 text-center">
                 <Calendar className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                <h3 className="text-lg font-semibold mb-2">Events in {selectedCity.city || "your city"}</h3>
+                <h3 className="text-lg font-semibold mb-2">{selectedCity.city || "City"} Events</h3>
                 <p className="text-muted-foreground mb-4">View all events with calendar and map views</p>
                 <Button asChild>
                   <Link href={`/events?city=${encodeURIComponent(selectedCity.city || "")}`}>
@@ -561,11 +556,11 @@ export default function CityHubPage() {
             <Card>
               <CardContent className="py-8 text-center">
                 <Users className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                <h3 className="text-lg font-semibold mb-2">Groups in {selectedCity.city || "your city"}</h3>
-                <p className="text-muted-foreground mb-4">Connect with local tango communities</p>
+                <h3 className="text-lg font-semibold mb-2">{selectedCity.city || "City"} Members</h3>
+                <p className="text-muted-foreground mb-4">Connect with local tango dancers</p>
                 <Button asChild>
                   <Link href={`/city-groups?city=${encodeURIComponent(selectedCity.city || "")}`}>
-                    Browse Groups
+                    Browse Members
                   </Link>
                 </Button>
               </CardContent>
@@ -573,18 +568,10 @@ export default function CityHubPage() {
           </TabsContent>
 
           <TabsContent value="housing" data-testid="content-housing">
-            <Card>
-              <CardContent className="py-8 text-center">
-                <Home className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                <h3 className="text-lg font-semibold mb-2">Housing in {selectedCity.city || "your city"}</h3>
-                <p className="text-muted-foreground mb-4">Find tango-friendly accommodations</p>
-                <Button asChild>
-                  <Link href={`/housing?city=${encodeURIComponent(selectedCity.city || "")}`}>
-                    Browse Housing
-                  </Link>
-                </Button>
-              </CardContent>
-            </Card>
+            <AirbnbHousingView 
+              city={selectedCity.city} 
+              showCreateButton={true}
+            />
           </TabsContent>
 
           <TabsContent value="visitors" className="space-y-6" data-testid="content-visitors">
