@@ -720,6 +720,44 @@ router.delete("/:id", authenticateToken, async (req: AuthRequest, res: Response)
   }
 });
 
+// GET /api/venues/recommendations/by-city/:city - Get recommendations by city name
+router.get("/recommendations/by-city/:city", async (req, res: Response) => {
+  try {
+    const { city } = req.params;
+    const limit = parseInt(req.query.limit as string) || 10;
+
+    const result = await db.select()
+      .from(venues)
+      .where(and(
+        sql`LOWER(${venues.city}) = LOWER(${city})`,
+        or(
+          eq(venues.verified, true),
+          sql`${venues.rating} >= 4`
+        ) as any
+      ))
+      .orderBy(desc(venues.rating), desc(venues.reviewCount))
+      .limit(limit);
+
+    // Transform to recommendation format - use actual data or null for missing values
+    const recommendations = result.map(v => ({
+      id: v.id,
+      placeName: v.name,
+      category: 'venue',
+      latitude: null,
+      longitude: null,
+      address: v.address,
+      priceRange: null,
+      recommendationCount: v.reviewCount || 0,
+      description: v.description,
+    }));
+
+    res.json(recommendations);
+  } catch (error) {
+    console.error("Error fetching city recommendations:", error);
+    res.status(500).json({ message: "Failed to fetch city recommendations" });
+  }
+});
+
 // GET /api/venues/recommendations - Get venue recommendations based on location and rating
 router.get("/recommendations", async (req, res: Response) => {
   try {

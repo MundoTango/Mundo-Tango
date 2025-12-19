@@ -120,7 +120,6 @@ const createListingSchema = z.object({
   checkoutTime: z.string().default("11:00"),
   minNights: z.coerce.number().min(1).default(1),
   maxNights: z.coerce.number().min(1).default(365),
-  instantBook: z.boolean().default(true),
   cancellationPolicy: z.string().default("flexible"),
   selfCheckIn: z.string().optional(),
   weeklyDiscount: z.coerce.number().min(0).max(100).default(0),
@@ -163,7 +162,6 @@ export default function CreateListingPage() {
       checkoutTime: "11:00",
       minNights: 1,
       maxNights: 365,
-      instantBook: true,
       cancellationPolicy: "flexible",
       weeklyDiscount: 0,
       monthlyDiscount: 0,
@@ -185,6 +183,7 @@ export default function CreateListingPage() {
     },
     onSuccess: (listing) => {
       setCreatedListingId(listing.id);
+      setCurrentStep(6);
       queryClient.invalidateQueries({ queryKey: ["/api/housing/listings"] });
       toast({
         title: "Listing created",
@@ -254,18 +253,18 @@ export default function CreateListingPage() {
   const toggleAmenity = (amenityId: string) => {
     const current = form.getValues("amenities") || [];
     if (current.includes(amenityId)) {
-      form.setValue("amenities", current.filter(a => a !== amenityId), { shouldDirty: true, shouldValidate: true });
+      form.setValue("amenities", current.filter(a => a !== amenityId), { shouldDirty: true });
     } else {
-      form.setValue("amenities", [...current, amenityId], { shouldDirty: true, shouldValidate: true });
+      form.setValue("amenities", [...current, amenityId], { shouldDirty: true });
     }
   };
 
   const toggleSafetyAmenity = (amenityId: string) => {
     const current = form.getValues("safetyAmenities") || [];
     if (current.includes(amenityId)) {
-      form.setValue("safetyAmenities", current.filter(a => a !== amenityId), { shouldDirty: true, shouldValidate: true });
+      form.setValue("safetyAmenities", current.filter(a => a !== amenityId), { shouldDirty: true });
     } else {
-      form.setValue("safetyAmenities", [...current, amenityId], { shouldDirty: true, shouldValidate: true });
+      form.setValue("safetyAmenities", [...current, amenityId], { shouldDirty: true });
     }
   };
 
@@ -883,29 +882,6 @@ export default function CreateListingPage() {
                       <div className="space-y-4">
                         <FormField
                           control={form.control}
-                          name="instantBook"
-                          render={({ field }) => (
-                            <div className="flex items-center justify-between p-4 rounded-lg border">
-                              <div className="flex items-center gap-3">
-                                <div className="p-2 bg-yellow-500/10 rounded-lg">
-                                  <Zap className="h-5 w-5 text-yellow-600" />
-                                </div>
-                                <div>
-                                  <Label className="font-medium">Instant Book</Label>
-                                  <p className="text-sm text-muted-foreground">Guests can book without your approval</p>
-                                </div>
-                              </div>
-                              <Switch
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                                data-testid="switch-instant-book"
-                              />
-                            </div>
-                          )}
-                        />
-
-                        <FormField
-                          control={form.control}
                           name="selfCheckIn"
                           render={({ field }) => (
                             <FormItem>
@@ -1163,46 +1139,87 @@ export default function CreateListingPage() {
                 </Card>
               )}
 
-              {/* Navigation Buttons */}
-              <div className="flex items-center justify-between pt-4">
-                {currentStep > 1 ? (
+              {/* Step 6: Photos */}
+              {displayStep === 6 && createdListingId && (
+                <Card className="overflow-visible">
+                  <CardHeader className="pb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-primary/10 rounded-lg">
+                        <Camera className="h-5 w-5 text-primary" />
+                      </div>
+                      <div>
+                        <CardTitle className="text-lg">Photos</CardTitle>
+                        <CardDescription>Add photos to showcase your space</CardDescription>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <PhotoUpload 
+                      listingId={createdListingId}
+                      onPhotosChange={(photos) => {
+                        if (photos.length > 0) {
+                          toast({
+                            title: "Photos updated",
+                            description: `${photos.length} photo${photos.length !== 1 ? 's' : ''} saved`,
+                          });
+                        }
+                      }}
+                    />
+                    <div className="mt-6 flex justify-end">
+                      <Button 
+                        onClick={handlePhotosComplete}
+                        data-testid="button-finish"
+                      >
+                        <Check className="h-4 w-4 mr-2" />
+                        Finish
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Navigation Buttons - hide on step 6 (Photos has its own Finish button) */}
+              {displayStep !== 6 && (
+                <div className="flex items-center justify-between pt-4">
+                  {currentStep > 1 ? (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={handleBack}
+                      data-testid="button-back"
+                    >
+                      <ArrowLeft className="h-4 w-4 mr-2" />
+                      Back
+                    </Button>
+                  ) : (
+                    <div />
+                  )}
+
                   <Button
                     type="button"
-                    variant="outline"
-                    onClick={handleBack}
-                    data-testid="button-back"
+                    onClick={handleNext}
+                    disabled={createListingMutation.isPending}
+                    data-testid="button-next"
                   >
-                    <ArrowLeft className="h-4 w-4 mr-2" />
-                    Back
+                    {createListingMutation.isPending ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        Creating...
+                      </>
+                    ) : currentStep === 5 ? (
+                      <>
+                        Create Listing
+                        <Check className="h-4 w-4 ml-2" />
+                      </>
+                    ) : (
+                      <>
+                        Continue
+                        <ArrowRight className="h-4 w-4 ml-2" />
+                      </>
+                    )}
                   </Button>
-                ) : (
-                  <div />
-                )}
-
-                <Button
-                  type="button"
-                  onClick={handleNext}
-                  disabled={createListingMutation.isPending}
-                  data-testid="button-next"
-                >
-                  {createListingMutation.isPending ? (
-                    <>
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      Creating...
-                    </>
-                  ) : currentStep === 5 ? (
-                    <>
-                      Create Listing
-                      <Check className="h-4 w-4 ml-2" />
-                    </>
-                  ) : (
-                    <>
-                      Continue
-                      <ArrowRight className="h-4 w-4 ml-2" />
-                    </>
-                  )}
-                </Button>
-              </div>
+                </div>
+              )}
             </form>
           </Form>
         )}

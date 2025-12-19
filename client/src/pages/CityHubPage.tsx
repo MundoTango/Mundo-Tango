@@ -295,8 +295,9 @@ export default function CityHubPage() {
                 </CardContent>
               </Card>
             ) : (
-              <div className="flex flex-col lg:flex-row gap-6">
-                <div className="flex-1 lg:w-[55%] space-y-6">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Column 1: Events + Housing */}
+                <div className="space-y-6">
                   <section data-testid="section-events">
                     <div className="flex items-center justify-between mb-4">
                       <h2 className="text-lg font-semibold flex items-center gap-2">
@@ -404,7 +405,30 @@ export default function CityHubPage() {
                   </section>
                 </div>
 
-                <div className="lg:w-[45%] lg:sticky lg:top-4 h-fit">
+                {/* Column 2: Recommendations / Tips */}
+                <div className="space-y-6">
+                  <section data-testid="section-recommendations">
+                    <div className="flex items-center justify-between mb-4">
+                      <h2 className="text-lg font-semibold flex items-center gap-2">
+                        <Star className="h-5 w-5 text-primary" />
+                        Local Tips
+                      </h2>
+                      <Button variant="ghost" size="sm" asChild data-testid="link-view-all-tips">
+                        <Link href={`/recommendations?city=${encodeURIComponent(selectedCity.city)}`}>
+                          View All <ArrowRight className="h-4 w-4 ml-1" />
+                        </Link>
+                      </Button>
+                    </div>
+                    <RecommendationsList 
+                      city={selectedCity.city}
+                      compact={true}
+                      limit={5}
+                    />
+                  </section>
+                </div>
+
+                {/* Column 3: Map (sticky) */}
+                <div className="lg:sticky lg:top-4 h-fit">
                   <Card className="overflow-hidden" data-testid="section-map-overview">
                     <CardHeader className="pb-2 py-3">
                       <div className="flex items-center justify-between">

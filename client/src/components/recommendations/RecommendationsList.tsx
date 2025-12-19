@@ -25,6 +25,8 @@ interface RecommendationsListProps {
   radius?: number;
   category?: string;
   limit?: number;
+  city?: string;
+  compact?: boolean;
 }
 
 const CATEGORY_ICONS: Record<string, string> = {
@@ -46,21 +48,30 @@ export function RecommendationsList({
   radius = 5,
   category,
   limit = 10,
+  city,
+  compact = false,
 }: RecommendationsListProps) {
   const [expandedId, setExpandedId] = useState<number | null>(null);
 
   const { data: recommendations = [], isLoading } = useQuery<PlaceRecommendation[]>({
-    queryKey: category 
+    queryKey: city
+      ? ['/api/recommendations/by-city', city, limit]
+      : category 
       ? ['/api/recommendations/by-category', category, limit]
       : latitude && longitude
       ? ['/api/recommendations/by-location', latitude, longitude, radius, limit]
       : ['/api/recommendations/empty'],
     queryFn: async () => {
-      if (!category && (!latitude || !longitude)) {
+      if (!city && !category && (!latitude || !longitude)) {
         return [];
       }
 
-      if (category) {
+      if (city) {
+        const response = await apiRequest('GET', 
+          `/api/venues/recommendations/by-city/${encodeURIComponent(city)}?limit=${limit}`
+        );
+        return response.json();
+      } else if (category) {
         const response = await apiRequest('GET', 
           `/api/recommendations/by-category/${category}?limit=${limit}`
         );
@@ -72,7 +83,7 @@ export function RecommendationsList({
         return response.json();
       }
     },
-    enabled: !!(category || (latitude && longitude)),
+    enabled: !!(city || category || (latitude && longitude)),
   });
 
   if (isLoading) {
@@ -95,6 +106,32 @@ export function RecommendationsList({
     );
   }
 
+  if (compact) {
+    return (
+      <div className="space-y-2">
+        {recommendations.slice(0, limit).map((place) => (
+          <Card 
+            key={place.id} 
+            className="p-3 hover-elevate cursor-pointer"
+            onClick={() => setExpandedId(expandedId === place.id ? null : place.id)}
+            data-testid={`recommendation-${place.id}`}
+          >
+            <div className="flex items-center gap-2">
+              <span className="text-base">{CATEGORY_ICONS[place.category] || '📍'}</span>
+              <div className="flex-1 min-w-0">
+                <p className="font-medium text-sm truncate">{place.placeName}</p>
+                <p className="text-xs text-muted-foreground truncate">{place.address || place.category}</p>
+              </div>
+              <Badge variant="outline" className="text-xs shrink-0">
+                {place.recommendationCount}
+              </Badge>
+            </div>
+          </Card>
+        ))}
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-3">
       {recommendations.map((place) => (
@@ -102,6 +139,7 @@ export function RecommendationsList({
           key={place.id} 
           className="p-4 hover-elevate cursor-pointer transition-all"
           onClick={() => setExpandedId(expandedId === place.id ? null : place.id)}
+          data-testid={`recommendation-${place.id}`}
         >
           <div className="space-y-3">
             {/* Header */}
