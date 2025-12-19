@@ -1,0 +1,738 @@
+{
+  "auditMetadata": {
+    "agentId": "AGENT_83",
+    "mission": "Translation Coverage - Events & Workshops (10 pages)",
+    "auditDate": "2025-11-12",
+    "auditor": "Replit AI Agent",
+    "scope": "Events, Workshops, Venues, Teachers, Calendar pages i18n coverage"
+  },
+  "summary": {
+    "totalPagesRequested": 10,
+    "totalPagesFound": 8,
+    "totalPagesMissing": 2,
+    "pagesWithI18n": 0,
+    "pagesWithoutI18n": 8,
+    "overallCoverage": "0%",
+    "translationFilesExist": true,
+    "translationFilesPath": "client/public/locales/",
+    "availableLanguages": ["de", "en", "es", "fr", "it", "pt"],
+    "totalHardcodedStrings": 327,
+    "criticalFindings": [
+      "ZERO pages implement useTranslation() hook",
+      "ALL user-facing text is hardcoded in English",
+      "Translation infrastructure exists but is not utilized",
+      "High priority: Events and Workshops modules completely untranslated"
+    ]
+  },
+  "pageAudits": [
+    {
+      "pageName": "EventsPage",
+      "path": "client/src/pages/EventsPage.tsx",
+      "status": "EXISTS",
+      "usesI18n": false,
+      "usesTranslationHook": false,
+      "translationKeysAvailable": true,
+      "translationNamespace": "pages.events",
+      "hardcodedStrings": {
+        "count": 52,
+        "categories": {
+          "heroSection": [
+            "Events & Milongas",
+            "Discover Tango Events",
+            "Find milongas, workshops, and performances near you. Join the global tango community.",
+            "Create Event"
+          ],
+          "searchAndFilters": [
+            "Search events...",
+            "Category",
+            "All",
+            "Milonga",
+            "Workshop",
+            "Performance",
+            "Festival",
+            "All Events",
+            "Upcoming",
+            "Past Events"
+          ],
+          "viewModes": [
+            "List View",
+            "Calendar View",
+            "Map View"
+          ],
+          "eventCard": [
+            "Full",
+            "people",
+            "person",
+            "Loading...",
+            "Cancel RSVP",
+            "RSVP",
+            "Details"
+          ],
+          "calendarLabels": [
+            "Sun",
+            "Mon",
+            "Tue",
+            "Wed",
+            "Thu",
+            "Fri",
+            "Sat"
+          ],
+          "emptyState": [
+            "No events available",
+            "Check back soon for upcoming events"
+          ]
+        }
+      },
+      "coverage": "0%",
+      "recommendations": [
+        "Import useTranslation from react-i18next",
+        "Replace hero text with t('pages.events.hero.*')",
+        "Replace filter labels with t('pages.events.filters.*')",
+        "Replace button text with t('common.buttons.*')",
+        "Replace calendar labels with locale-aware date formatting"
+      ]
+    },
+    {
+      "pageName": "EventDetailsPage",
+      "path": "client/src/pages/EventDetailsPage.tsx",
+      "status": "EXISTS",
+      "usesI18n": false,
+      "usesTranslationHook": false,
+      "hardcodedStrings": {
+        "count": 28,
+        "categories": {
+          "actions": [
+            "I'm Going",
+            "Maybe"
+          ],
+          "sections": [
+            "Event Details",
+            "Date & Time",
+            "Location",
+            "Online Event",
+            "Attendees",
+            "About This Event"
+          ],
+          "messages": [
+            "Event not found",
+            "RSVP confirmed!",
+            "You are going for this event",
+            "RSVP failed",
+            "Please try again"
+          ],
+          "labels": [
+            "Virtual Event",
+            "Join virtually from anywhere",
+            "Join the community"
+          ]
+        }
+      },
+      "coverage": "0%",
+      "recommendations": [
+        "Add useTranslation hook",
+        "Replace RSVP buttons with t('events.rsvp.*')",
+        "Replace section headings with t('events.details.*')",
+        "Replace toast messages with t('messages.*')",
+        "Use i18n for date/time formatting"
+      ]
+    },
+    {
+      "pageName": "CreateEventPage",
+      "path": "NOT FOUND",
+      "status": "MISSING",
+      "usesI18n": null,
+      "usesTranslationHook": null,
+      "hardcodedStrings": {
+        "count": 0
+      },
+      "coverage": "N/A",
+      "recommendations": [
+        "Page does not exist - may need to be created with i18n from the start"
+      ]
+    },
+    {
+      "pageName": "WorkshopsPage",
+      "path": "client/src/pages/WorkshopsPage.tsx",
+      "status": "EXISTS",
+      "usesI18n": false,
+      "usesTranslationHook": false,
+      "translationKeysAvailable": true,
+      "translationNamespace": "navigation.events.workshops",
+      "hardcodedStrings": {
+        "count": 24,
+        "categories": {
+          "heroSection": [
+            "Intensive Learning",
+            "Tango Workshops",
+            "Learn from world-class instructors in intensive workshops",
+            "Host a Workshop"
+          ],
+          "workshopCard": [
+            "Few spots left",
+            "with",
+            "registered",
+            "Register"
+          ],
+          "emptyState": [
+            "No workshops available at the moment",
+            "Check back soon for upcoming workshops",
+            "Loading workshops..."
+          ]
+        }
+      },
+      "coverage": "0%",
+      "recommendations": [
+        "Import useTranslation hook",
+        "Replace hero section with t('pages.workshops.*')",
+        "Replace status badges with t('workshops.status.*')",
+        "Replace loading/empty states with t('messages.*')"
+      ]
+    },
+    {
+      "pageName": "WorkshopDetailPage",
+      "path": "client/src/pages/WorkshopDetailPage.tsx",
+      "status": "EXISTS",
+      "usesI18n": false,
+      "usesTranslationHook": false,
+      "hardcodedStrings": {
+        "count": 31,
+        "categories": {
+          "badges": [
+            "Workshop",
+            "Advanced Level"
+          ],
+          "sections": [
+            "Workshop Details",
+            "About This Workshop",
+            "Registration"
+          ],
+          "details": [
+            "Dates",
+            "December 15-17, 2025",
+            "Schedule",
+            "9:00 AM - 5:00 PM daily",
+            "Location",
+            "Tango Studio Buenos Aires",
+            "Capacity",
+            "25/30 registered"
+          ],
+          "description": [
+            "Join us for an immersive 3-day workshop focused on advanced tango technique.",
+            "You'll learn from two of the most renowned tango instructors in the world.",
+            "This workshop covers musicality, embrace technique, complex sequences, and improvisation.",
+            "Perfect for intermediate to advanced dancers looking to elevate their skills."
+          ],
+          "registration": [
+            "per person",
+            "Register Now",
+            "30-day money back guarantee"
+          ]
+        }
+      },
+      "coverage": "0%",
+      "recommendations": [
+        "Add useTranslation hook",
+        "Replace section titles with t('workshops.detail.*')",
+        "Replace field labels with t('common.labels.*')",
+        "Replace action buttons with t('common.buttons.*')",
+        "Use dynamic content translation for descriptions"
+      ]
+    },
+    {
+      "pageName": "VenuesPage",
+      "path": "client/src/pages/VenuesPage.tsx",
+      "status": "EXISTS",
+      "usesI18n": false,
+      "usesTranslationHook": false,
+      "translationKeysAvailable": true,
+      "translationNamespace": "pages.venues",
+      "hardcodedStrings": {
+        "count": 36,
+        "categories": {
+          "heroSection": [
+            "Worldwide Locations",
+            "Tango Venues",
+            "Discover the world's most beautiful milongas and tango spaces"
+          ],
+          "searchAndFilters": [
+            "Search venues...",
+            "Filter by city...",
+            "Venue Type",
+            "All Types",
+            "Milonga",
+            "Dance Hall",
+            "Club",
+            "Studio"
+          ],
+          "venueCard": [
+            "reviews",
+            "Visit Website",
+            "View Details"
+          ],
+          "emptyState": [
+            "No Venues Found",
+            "Try adjusting your search or filters",
+            "No venues available",
+            "Loading venues..."
+          ]
+        }
+      },
+      "coverage": "0%",
+      "recommendations": [
+        "Import useTranslation hook",
+        "Replace hero with t('pages.venues.hero.*')",
+        "Replace filters with t('pages.venues.filters.*')",
+        "Replace venue types with t('venues.types.*')",
+        "Replace empty states with t('messages.*')"
+      ]
+    },
+    {
+      "pageName": "VenueDetailPage",
+      "path": "NOT FOUND",
+      "status": "MISSING",
+      "usesI18n": null,
+      "usesTranslationHook": null,
+      "hardcodedStrings": {
+        "count": 0
+      },
+      "coverage": "N/A",
+      "recommendations": [
+        "Page does not exist - should be created with i18n from the start"
+      ]
+    },
+    {
+      "pageName": "TeachersPage",
+      "path": "client/src/pages/TeachersPage.tsx",
+      "status": "EXISTS",
+      "usesI18n": false,
+      "usesTranslationHook": false,
+      "translationKeysAvailable": true,
+      "translationNamespace": "pages.teachers",
+      "hardcodedStrings": {
+        "count": 78,
+        "categories": {
+          "heroSection": [
+            "Expert Instructors",
+            "Tango Teachers",
+            "Learn from world-class instructors and master the art of Argentine tango"
+          ],
+          "searchAndFilters": [
+            "Search by name, style, or specialization...",
+            "Filters",
+            "Advanced Filters",
+            "Experience Level",
+            "All Levels",
+            "Beginner (<3 years)",
+            "Intermediate (3-7 years)",
+            "Advanced (7-15 years)",
+            "Professional (15+ years)",
+            "Availability",
+            "All Teachers",
+            "Available Now",
+            "Fully Booked",
+            "Sort By",
+            "Highest Rating",
+            "Most Experience",
+            "Price: Low to High",
+            "Price: High to Low",
+            "Hourly Rate:"
+          ],
+          "teacherCard": [
+            "Hourly Rate",
+            "years experience",
+            "View Profile"
+          ],
+          "results": [
+            "Showing",
+            "teacher",
+            "teachers"
+          ],
+          "emptyState": [
+            "No Teachers Found",
+            "Try adjusting your search or filters",
+            "No teachers available",
+            "Loading teachers..."
+          ]
+        }
+      },
+      "coverage": "0%",
+      "recommendations": [
+        "Add useTranslation hook",
+        "Replace hero with t('pages.teachers.*')",
+        "Replace all filter labels with t('teachers.filters.*')",
+        "Replace sort options with t('teachers.sort.*')",
+        "Replace card content with t('teachers.card.*')",
+        "Use plural forms for result count"
+      ]
+    },
+    {
+      "pageName": "TeacherDetailPage",
+      "path": "client/src/pages/TeacherDetailPage.tsx",
+      "status": "EXISTS",
+      "usesI18n": false,
+      "usesTranslationHook": false,
+      "hardcodedStrings": {
+        "count": 42,
+        "categories": {
+          "actions": [
+            "Follow",
+            "Message"
+          ],
+          "stats": [
+            "Teaching Experience",
+            "15+ years",
+            "Students Taught",
+            "5,000+",
+            "Workshops",
+            "120+"
+          ],
+          "sections": [
+            "About",
+            "Upcoming Classes",
+            "Quick Info"
+          ],
+          "aboutContent": [
+            "Carlos Rodriguez is a world-renowned tango instructor with over 15 years of experience teaching dancers of all levels.",
+            "His unique approach combines traditional Argentine tango techniques with modern teaching methodologies.",
+            "He has taught workshops in over 30 countries and trained thousands of dancers worldwide.",
+            "Carlos specializes in musicality, connection, and helping dancers find their authentic expression through tango."
+          ],
+          "upcomingClasses": [
+            "Advanced Technique Workshop",
+            "Dec 15-17, 2025",
+            "5 spots left",
+            "Musicality Masterclass",
+            "Jan 8-10, 2026",
+            "10 spots left",
+            "Connection & Embrace",
+            "Feb 22-24, 2026",
+            "8 spots left",
+            "View Details"
+          ],
+          "quickInfo": [
+            "Hourly Rate",
+            "$80/hour",
+            "Specialties",
+            "Musicality",
+            "Connection",
+            "Technique",
+            "Languages",
+            "Spanish, English, Italian",
+            "Book a Lesson"
+          ]
+        }
+      },
+      "coverage": "0%",
+      "recommendations": [
+        "Add useTranslation hook",
+        "Replace section titles with t('teachers.detail.*')",
+        "Replace stats labels with t('teachers.stats.*')",
+        "Replace action buttons with t('common.buttons.*')",
+        "Use dynamic content translation for bio"
+      ]
+    },
+    {
+      "pageName": "CalendarPage",
+      "path": "client/src/pages/CalendarPage.tsx",
+      "status": "EXISTS",
+      "usesI18n": false,
+      "usesTranslationHook": false,
+      "translationKeysAvailable": true,
+      "translationNamespace": "navigation.events.calendar",
+      "hardcodedStrings": {
+        "count": 36,
+        "categories": {
+          "heroSection": [
+            "Event Calendar",
+            "Tango Event Calendar",
+            "Discover upcoming milongas, workshops, and performances"
+          ],
+          "navigation": [
+            "Today"
+          ],
+          "dayHeaders": [
+            "Sun",
+            "Mon",
+            "Tue",
+            "Wed",
+            "Thu",
+            "Fri",
+            "Sat"
+          ],
+          "sections": [
+            "Upcoming Events"
+          ],
+          "eventIndicator": [
+            "more"
+          ]
+        }
+      },
+      "coverage": "0%",
+      "recommendations": [
+        "Import useTranslation hook",
+        "Replace hero with t('pages.calendar.*')",
+        "Replace day names with locale-aware formatting (date-fns locale)",
+        "Replace 'Today' button with t('calendar.today')",
+        "Use i18n for month/year display",
+        "Replace '+X more' with pluralized translation"
+      ]
+    }
+  ],
+  "translationInfrastructure": {
+    "i18nLibrary": "react-i18next",
+    "configFile": "client/src/lib/i18n.ts",
+    "translationFilesExist": true,
+    "translationFiles": {
+      "common": "client/public/locales/{lang}/common.json",
+      "pages": "client/public/locales/{lang}/pages.json",
+      "navigation": "client/public/locales/{lang}/navigation.json",
+      "errors": "client/public/locales/{lang}/errors.json"
+    },
+    "supportedLanguages": [
+      "de (German)",
+      "en (English)",
+      "es (Spanish)",
+      "fr (French)",
+      "it (Italian)",
+      "pt (Portuguese)"
+    ],
+    "relevantTranslationKeys": {
+      "events": {
+        "available": true,
+        "namespace": "pages.events",
+        "keys": ["title", "description", "upcoming", "past", "filters", "noEvents"]
+      },
+      "venues": {
+        "available": true,
+        "namespace": "pages.venues",
+        "keys": ["title", "description", "filters", "getDirections"]
+      },
+      "teachers": {
+        "available": true,
+        "namespace": "pages.teachers",
+        "keys": ["title", "description", "filters", "viewProfile", "bookLesson"]
+      },
+      "navigation": {
+        "available": true,
+        "namespace": "navigation.events",
+        "keys": ["events", "calendar", "myEvents", "workshops"]
+      }
+    }
+  },
+  "detailedFindings": {
+    "criticalIssues": [
+      {
+        "severity": "CRITICAL",
+        "issue": "Zero i18n implementation across all pages",
+        "impact": "Non-English speakers cannot use Events, Workshops, Venues, Teachers, or Calendar features",
+        "affectedPages": [
+          "EventsPage",
+          "EventDetailsPage",
+          "WorkshopsPage",
+          "WorkshopDetailPage",
+          "VenuesPage",
+          "TeachersPage",
+          "TeacherDetailPage",
+          "CalendarPage"
+        ],
+        "usersImpacted": "ALL users who don't speak English (estimated 70%+ of global tango community)"
+      },
+      {
+        "severity": "HIGH",
+        "issue": "Translation keys exist but are not utilized",
+        "impact": "Development waste - translation infrastructure built but not connected",
+        "affectedPages": "ALL",
+        "effort": "Medium - keys exist, only need to wire up useTranslation hooks"
+      },
+      {
+        "severity": "HIGH",
+        "issue": "Date/time formatting not locale-aware",
+        "impact": "Dates displayed in US format regardless of user locale",
+        "affectedPages": ["EventsPage", "EventDetailsPage", "CalendarPage", "WorkshopsPage"],
+        "recommendation": "Use date-fns with locale parameter from i18n"
+      },
+      {
+        "severity": "MEDIUM",
+        "issue": "Missing VenueDetailPage and CreateEventPage",
+        "impact": "Incomplete feature set",
+        "recommendation": "Create missing pages with i18n from the start"
+      }
+    ],
+    "opportunities": [
+      {
+        "area": "Quick Win",
+        "description": "Hero sections - High visibility, low complexity",
+        "estimatedEffort": "1-2 hours",
+        "impact": "Immediate visual improvement for non-English speakers"
+      },
+      {
+        "area": "Buttons & Actions",
+        "description": "All buttons use common.buttons.* keys",
+        "estimatedEffort": "2-3 hours",
+        "impact": "Core interaction elements become accessible"
+      },
+      {
+        "area": "Filters & Search",
+        "description": "Replace hardcoded filter options",
+        "estimatedEffort": "3-4 hours",
+        "impact": "Users can navigate content in their language"
+      },
+      {
+        "area": "Date Formatting",
+        "description": "Implement locale-aware date/time display",
+        "estimatedEffort": "2-3 hours",
+        "impact": "Culturally appropriate date formats"
+      }
+    ]
+  },
+  "recommendations": {
+    "immediate": [
+      {
+        "priority": 1,
+        "action": "Add useTranslation hook to all 8 existing pages",
+        "estimatedEffort": "30 minutes",
+        "files": [
+          "EventsPage.tsx",
+          "EventDetailsPage.tsx",
+          "WorkshopsPage.tsx",
+          "WorkshopDetailPage.tsx",
+          "VenuesPage.tsx",
+          "TeachersPage.tsx",
+          "TeacherDetailPage.tsx",
+          "CalendarPage.tsx"
+        ]
+      },
+      {
+        "priority": 2,
+        "action": "Replace hero section text with translations",
+        "estimatedEffort": "1 hour",
+        "impact": "High visibility improvement"
+      },
+      {
+        "priority": 3,
+        "action": "Replace all button labels with t('common.buttons.*')",
+        "estimatedEffort": "2 hours",
+        "impact": "Core interactions become multilingual"
+      }
+    ],
+    "shortTerm": [
+      {
+        "action": "Replace filter labels and options with translations",
+        "estimatedEffort": "3 hours"
+      },
+      {
+        "action": "Implement locale-aware date/time formatting",
+        "estimatedEffort": "2 hours"
+      },
+      {
+        "action": "Replace empty states and loading messages",
+        "estimatedEffort": "1 hour"
+      },
+      {
+        "action": "Add missing translation keys to locale files",
+        "estimatedEffort": "2 hours"
+      }
+    ],
+    "longTerm": [
+      {
+        "action": "Create VenueDetailPage with i18n from the start",
+        "estimatedEffort": "4 hours"
+      },
+      {
+        "action": "Create CreateEventPage with i18n from the start",
+        "estimatedEffort": "6 hours"
+      },
+      {
+        "action": "Implement dynamic content translation system",
+        "estimatedEffort": "8 hours"
+      },
+      {
+        "action": "Add RTL language support for future expansion",
+        "estimatedEffort": "6 hours"
+      }
+    ]
+  },
+  "implementationGuide": {
+    "step1": {
+      "title": "Import useTranslation hook",
+      "example": "import { useTranslation } from 'react-i18next';",
+      "addToAllPages": true
+    },
+    "step2": {
+      "title": "Initialize hook in component",
+      "example": "const { t } = useTranslation(['common', 'pages', 'navigation']);",
+      "note": "Include all namespaces used in the component"
+    },
+    "step3": {
+      "title": "Replace hardcoded strings",
+      "examples": [
+        {
+          "before": "\"Discover Tango Events\"",
+          "after": "t('pages.events.hero.title')"
+        },
+        {
+          "before": "\"Search events...\"",
+          "after": "t('common.buttons.search')"
+        },
+        {
+          "before": "\"{count} people\"",
+          "after": "t('events.attendees', { count })"
+        }
+      ]
+    },
+    "step4": {
+      "title": "Implement locale-aware date formatting",
+      "example": "format(date, 'PPP', { locale: locales[i18n.language] })",
+      "note": "Import locale from date-fns based on i18n.language"
+    },
+    "step5": {
+      "title": "Test in all supported languages",
+      "languages": ["de", "en", "es", "fr", "it", "pt"]
+    }
+  },
+  "estimatedTotalEffort": {
+    "allPages": "24-32 hours",
+    "perPage": "3-4 hours average",
+    "priorityPages": [
+      {
+        "page": "EventsPage",
+        "effort": "4 hours",
+        "reason": "Most complex - has calendar, map, filters"
+      },
+      {
+        "page": "TeachersPage",
+        "effort": "4 hours",
+        "reason": "Complex filters and sorting"
+      },
+      {
+        "page": "EventDetailsPage",
+        "effort": "3 hours",
+        "reason": "Dynamic content + RSVP flow"
+      }
+    ]
+  },
+  "coverageMetrics": {
+    "byPage": {
+      "EventsPage": "0%",
+      "EventDetailsPage": "0%",
+      "CreateEventPage": "N/A",
+      "WorkshopsPage": "0%",
+      "WorkshopDetailPage": "0%",
+      "VenuesPage": "0%",
+      "VenueDetailPage": "N/A",
+      "TeachersPage": "0%",
+      "TeacherDetailPage": "0%",
+      "CalendarPage": "0%"
+    },
+    "byCategory": {
+      "heroSections": "0%",
+      "buttons": "0%",
+      "labels": "0%",
+      "filters": "0%",
+      "messages": "0%",
+      "emptyStates": "0%",
+      "dateFormatting": "0%"
+    },
+    "overall": "0%"
+  }
+}

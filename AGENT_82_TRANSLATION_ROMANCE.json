@@ -1,0 +1,167 @@
+{
+  "agent": "AGENT-82",
+  "language_group": "Romance",
+  "languages_tested": [
+    "es",
+    "fr",
+    "it",
+    "pt",
+    "ro"
+  ],
+  "baseline_keys_total": 340,
+  "results_by_language": {
+    "es": {
+      "files_exist": true,
+      "total_keys": 57,
+      "coverage_percent": 16.76,
+      "keys_by_namespace": {
+        "common": 29,
+        "navigation": 18,
+        "errors": 3,
+        "pages": 7
+      },
+      "missing_keys_count": 282,
+      "missing_keys_sample": [
+        "buttons.filter",
+        "buttons.upload",
+        "buttons.download",
+        "buttons.share",
+        "buttons.send",
+        "buttons.reply",
+        "buttons.like",
+        "buttons.comment",
+        "buttons.follow",
+        "buttons.unfollow",
+        "buttons.block",
+        "buttons.report",
+        "buttons.viewMore",
+        "buttons.loadMore",
+        "buttons.learnMore",
+        "buttons.watchDemo",
+        "buttons.bookNow",
+        "buttons.apply",
+        "buttons.reset",
+        "buttons.refresh"
+      ]
+    },
+    "fr": {
+      "files_exist": true,
+      "total_keys": 57,
+      "coverage_percent": 16.76,
+      "keys_by_namespace": {
+        "common": 29,
+        "navigation": 18,
+        "errors": 3,
+        "pages": 7
+      },
+      "missing_keys_count": 282,
+      "missing_keys_sample": [
+        "buttons.filter",
+        "buttons.upload",
+        "buttons.download",
+        "buttons.share",
+        "buttons.send",
+        "buttons.reply",
+        "buttons.like",
+        "buttons.comment",
+        "buttons.follow",
+        "buttons.unfollow",
+        "buttons.block",
+        "buttons.report",
+        "buttons.viewMore",
+        "buttons.loadMore",
+        "buttons.learnMore",
+        "buttons.watchDemo",
+        "buttons.bookNow",
+        "buttons.apply",
+        "buttons.reset",
+        "buttons.refresh"
+      ]
+    },
+    "it": {
+      "files_exist": true,
+      "total_keys": 57,
+      "coverage_percent": 16.76,
+      "keys_by_namespace": {
+        "common": 29,
+        "navigation": 18,
+        "errors": 3,
+        "pages": 7
+      },
+      "missing_keys_count": 282,
+      "missing_keys_sample": [
+        "buttons.filter",
+        "buttons.upload",
+        "buttons.download",
+        "buttons.share",
+        "buttons.send",
+        "buttons.reply",
+        "buttons.like",
+        "buttons.comment",
+        "buttons.follow",
+        "buttons.unfollow",
+        "buttons.block",
+        "buttons.report",
+        "buttons.viewMore",
+        "buttons.loadMore",
+        "buttons.learnMore",
+        "buttons.watchDemo",
+        "buttons.bookNow",
+        "buttons.apply",
+        "buttons.reset",
+        "buttons.refresh"
+      ]
+    },
+    "pt": {
+      "files_exist": true,
+      "total_keys": 57,
+      "coverage_percent": 16.76,
+      "keys_by_namespace": {
+        "common": 29,
+        "navigation": 18,
+        "errors": 3,
+        "pages": 7
+      },
+      "missing_keys_count": 282,
+      "missing_keys_sample": [
+        "buttons.filter",
+        "buttons.upload",
+        "buttons.download",
+        "buttons.share",
+        "buttons.send",
+        "buttons.reply",
+        "buttons.like",
+        "buttons.comment",
+        "buttons.follow",
+        "buttons.unfollow",
+        "buttons.block",
+        "buttons.report",
+        "buttons.viewMore",
+        "buttons.loadMore",
+        "buttons.learnMore",
+        "buttons.watchDemo",
+        "buttons.bookNow",
+        "buttons.apply",
+        "buttons.reset",
+        "buttons.refresh"
+      ]
+    },
+    "ro": {
+      "files_exist": false,
+      "total_keys": 0,
+      "coverage_percent": 0,
+      "keys_by_namespace": {
+        "common": 0,
+        "navigation": 0,
+        "errors": 0,
+        "pages": 0
+      },
+      "missing_keys_count": 340,
+      "missing_keys_sample": []
+    }
+  },
+  "translation_files_exist": true,
+  "average_coverage": 13.41,
+  "rtl_rendering": "n/a",
+  "status": "PARTIAL"
+}

@@ -1,0 +1,98 @@
+# Life CEO & Multi-Community Platform
+
+## Overview
+This project is an AI-powered life management system (Life CEO) integrated with independent, data-isolated social community platforms. It features 16 specialized AI agents for personalized life management via a mobile-first, voice-controlled interface. Community Platforms offer social networking, event management, and real-time messaging. An Integration Layer ensures secure, API-based communication while maintaining data isolation. Built on the ESA Framework, the platform prioritizes security, performance, and user experience, featuring a global payment system, advanced internationalization, comprehensive administrative controls, and AI-driven performance optimization. It is designed as a production-ready system with full AI integration, PWA capabilities, and enterprise-grade security, targeting significant market potential and ambitious growth.
+
+## User Preferences
+Preferred communication style: Simple, everyday language.
+Do not reference monetary values or investment amounts when describing the platform.
+When user says "Use ESA", reference **docs/platform-handoff/esa.md** as the primary entry point.
+When user says "use mb.md" or "mb.md:", execute with MB.MD methodology (Simultaneously, Recursively, Critically). See **docs/handoff/COMPREHENSIVE_AI_COMPLETE_HANDOFF.md Section 17** for complete guide.
+**CRITICAL:** New agents must be added to ESA_AGENT_ORG_CHART.md (see ESA_NEW_AGENT_GUIDE.md Step 5).
+**AI Infrastructure Reference:** For all AI, multi-AI orchestration, agent architecture, and MB.MD methodology, see **docs/handoff/COMPREHENSIVE_AI_COMPLETE_HANDOFF.md** (8,640 lines, 21 sections, 927+ agents).
+
+## System Architecture
+The platform utilizes a decoupled, microservices-oriented architecture, separating the Life CEO system, Community Platforms, and an Integration Layer, adhering to the ESA Framework. It is designed as a Progressive Web App (PWA) with a mobile-first approach.
+
+### UI/UX Decisions
+The design system, "MT Ocean Theme," incorporates glassmorphic elements, turquoise-to-blue gradients, design tokens, and an international icon/tooltip system. It aligns with the Aurora Tide design system, ensuring accessibility (WCAG 2.1 AA compliant) and supporting dark mode and internationalization. The Mr Blue AI Companion features both a 3D interactive avatar (React Three Fiber) with voice and emotions, and an AI video avatar (D-ID) with ElevenLabs voice cloning.
+
+### Technical Implementations
+- **Frontend**: React with functional components, hooks, React Query, and context APIs.
+- **Backend**: Node.js with Express.js and TypeScript.
+- **Real-time**: WebSocket communication via Socket.io.
+- **Authentication**: JWT and session-based authentication with RBAC/ABAC using `@casl/ability`.
+- **Database Interaction**: Drizzle ORM for PostgreSQL.
+- **Container Orchestration**: Docker stack.
+- **Automation Platform**: n8n integration.
+- **Automated Testing**: TestSprite AI.
+- **Internationalization**: Functional translation generation (68 languages via OpenAI).
+- **Payments**: Full Stripe integration.
+- **Media Upload System**: Hybrid approach using YouTube/Vimeo, Cloudinary, and direct server uploads with client-side compression.
+
+### Feature Specifications
+- **Life CEO**: 16 specialized AI agents with semantic memory and self-learning capabilities.
+- **Community Platforms**: User profiles, social features, city-specific groups, events, housing listings, and an interactive map.
+- **Groups & Communities System**: Supports three group types (City, Professional, Custom) with robust membership, roles, permissions, and analytics.
+- **Post Creator & News Feed**: Universal post creation with rich media, AI content enhancement, and real-time feed.
+- **Memory Feed Page & System**: Personal timeline with emotion tags, trust circle privacy, and rich media integration.
+- **Tango Community Map**: Multi-layered geographic visualization for events, housing, and recommendations with advanced filters.
+- **AI Integration**: AI-powered analytics, user support AI with vector database, ML journey prediction, automated audit learning, and cross-page context preservation, leveraging 71 AI agents.
+- **Mr Blue AI Companion**: Universal AI companion (Agents #73-80) with role-based content adaptation, 3D avatar, interactive tours, and subscription management.
+- **Security**: Database Row Level Security (RLS), audit logging, CSRF protection, and multi-factor authentication (2FA).
+- **Comprehensive Audit System**: Automated, multi-layer audit system for continuous quality improvement.
+- **Self-Hosted Project Tracker (Agent #65)**: Jira replacement with bidirectional GitHub integration.
+- **Comments System (Agent #65)**: Rich collaboration features with @mentions, threading, and file attachments.
+- **ESA Mind (/admin/esa-mind)**: Context-aware intelligence dashboard for the ESA Framework (105 Agents, 61 Layers).
+- **ESA MindMap**: Globally accessible interactive AI chat and navigator for Super Admins.
+- **AI Intelligence Network**: Self-learning user support system with AI Help Button, Smart Page Suggestions, AI Context Bar, Pattern Learning (Agent #68), and Cross-Page Context preservation.
+- **Multi-AI Integration Strategy**: Comprehensive AI orchestration framework including Multi-AI decision matrix, prompt engineering, long-context AI, agent memory systems, and vector database.
+- **MB.MD Enhancements**: Production-ready Multi-AI orchestration with semantic caching, data drift detection, FinOps cost tracking, Token Bucket rate limiting, and Agent Blackboard communication.
+- **Visual Editor with Cost Tracking**: Replit-style visual page editor with AI code generation, real-time cost estimates, and ESA Framework integration.
+- **H2AC Framework**: Human-to-Agent Communication system enabling seamless interaction with 110+ agents.
+- **Automated Workflows**: 8 automation workflows covering user management, event synchronization, notifications, friend requests, goal progress, housing alerts, volunteer onboarding, and event promotion.
+- **AI-Powered User Testing Platform (Agents #163-166)**: Live video testing platform for automated bug detection, Jira ticket creation, and knowledge base building.
+
+### System Design Choices
+- **Microservices**: Decoupled architecture for core components.
+- **Framework**: Adheres to the ESA Framework (114 Agents, 61 Layers).
+- **PWA**: Progressive Web App capabilities.
+- **Unified Map Architecture**: 100% CDN-free map infrastructure.
+- **Route Protection System**: 4-layer production/debug separation.
+- **Agent Training**: "Ultra-Micro Parallel Methodology" for rapid agent training.
+- **Project Management**: Self-hosted project tracker (Agent #65) with GitHub integration.
+- **105-Agent Organizational Structure**: Complete training infrastructure.
+- **19-Phase Tiered Audit System**: Comprehensive audit framework.
+- **AI Intelligence Network**: Self-learning user support system with cross-page context preservation, ML journey predictions, and audit pattern learning, powered by LanceDB.
+- **Open Source Deployment Verification (Agent #59)**: Automated tracking and validation of open-source components.
+- **Quality Gates Before Work (Principle 5)**: Mandatory 4-gate pre-work protocol for all agents.
+- **Collaborative Intelligence Protocol (Agents #79-80)**: Inter-agent learning system.
+- **MB.MD Methodology**: Defines how AI agents execute (Simultaneously, Recursively, Critically).
+
+## External Dependencies
+- **Database**: PostgreSQL (Neon serverless)
+- **ORM**: Drizzle ORM
+- **Payment Processing**: Stripe
+- **Real-time Communication**: Socket.io
+- **Mapping**: Leaflet.js, OpenStreetMap Nominatim API, Google Maps API
+- **AI/Machine Learning**: OpenAI GPT-4o, LanceDB (vector database), Claude (Anthropic), Groq AI, Google Gemini
+- **Avatar Generation**: Luma AI (photo-to-Pixar-3D), Meshy AI (backup 3D), HeyGen (AI video avatar), D-ID (video avatar backup), ElevenLabs (voice cloning)
+- **Error Tracking**: Sentry
+- **Background Job Queue**: BullMQ
+- **Metrics/Monitoring**: Prometheus
+- **Search**: Elasticsearch
+- **Caching**: Redis
+- **Image/Media Handling**: Multer, Cloudinary, FFmpeg.wasm, Sharp
+- **Authentication/Authorization**: jsonwebtoken, bcrypt, @casl/ability, Passport
+- **UI Framework**: React, Tailwind CSS, shadcn/ui, Radix UI, Material-UI (MUI), Three.js (React Three Fiber), GrapesJS
+- **Date/Time Utilities**: date-fns
+- **PDF Generation**: jsPDF, html2canvas
+- **Data Visualization**: Recharts, D3
+- **Forms**: react-hook-form
+- **Email Service**: Resend, Nodemailer, SendGrid
+- **Analytics**: PostHog, OpenReplay, SimilarWeb
+- **Internationalization**: i18next, react-i18next
+- **Version Control Integration**: GitHub OAuth via Replit connection, @octokit/rest
+- **Testing**: Playwright, Jest, Vitest, Backstop.js, Percy
+- **Mobile**: Capacitor (iOS/Android PWA)
+- **Photo Integration**: Google Photos API

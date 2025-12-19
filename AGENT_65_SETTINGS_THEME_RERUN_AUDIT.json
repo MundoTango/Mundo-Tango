@@ -1,0 +1,372 @@
+{
+  "audit_metadata": {
+    "agent_id": "AGENT_65",
+    "audit_name": "USER_SETTINGS_PAGES_THEME_AUDIT_RERUN",
+    "date": "2025-01-13",
+    "theme": "MT_Ocean_Theme",
+    "auditor": "Replit Agent Subagent",
+    "total_pages_audited": 6,
+    "audit_type": "RE-RUN",
+    "audit_criteria": [
+      "Ocean-themed form borders (border-input: 195 20% 75% light / 218 20% 25% dark)",
+      "Turquoise toggles when active (primary: 177 72% 56%)",
+      "Glassmorphic cards (backdrop-blur, semi-transparent bg)",
+      "Dark mode support on all forms",
+      "i18n implementation status"
+    ]
+  },
+  "theme_configuration": {
+    "primary_color": "177 72% 56%",
+    "input_border_light": "195 20% 75%",
+    "input_border_dark": "218 20% 25%",
+    "ring_focus": "177 72% 45%",
+    "card_bg_light": "0 0% 96%",
+    "card_bg_dark": "218 25% 12%",
+    "glassmorphic_utilities": {
+      "glass": "rgba(255,255,255,0.1) with backdrop-blur-18px",
+      "glass_card": "rgba(255,255,255,0.7) with backdrop-blur-18px",
+      "glass_dark": "rgba(0,0,0,0.2-0.4) with backdrop-blur"
+    }
+  },
+  "overall_summary": {
+    "pages_passed": 0,
+    "pages_partial": 2,
+    "pages_failed": 4,
+    "overall_compliance_rate": "52%",
+    "theme_consistency": "Partial",
+    "critical_findings": [
+      "No glassmorphic styling on settings cards (0% compliance)",
+      "No i18n implementation on any page (0% compliance)",
+      "Dark mode broken on help search inputs (2 pages affected)",
+      "Toggle switches correctly use turquoise primary (100% compliance)",
+      "Most form inputs use ocean-themed borders (80% compliance)"
+    ]
+  },
+  "page_audits": [
+    {
+      "page_name": "SettingsPage",
+      "file_path": "client/src/pages/SettingsPage.tsx",
+      "status": "PARTIAL_PASS",
+      "compliance_score": "60%",
+      "findings": {
+        "form_inputs": {
+          "status": "PASS",
+          "score": "100%",
+          "details": "Uses Select components that inherit border-input (ocean-themed). Input component uses proper semantic tokens.",
+          "components_used": ["Select", "SelectTrigger", "SelectContent", "SelectItem"],
+          "ocean_border_applied": true
+        },
+        "toggle_switches": {
+          "status": "PASS",
+          "score": "100%",
+          "details": "Switch component uses data-[state=checked]:bg-primary which is turquoise (177 72% 56%)",
+          "turquoise_when_active": true,
+          "switch_instances": 5,
+          "switches_found": [
+            { "id": "email-notifications", "label": "Email Notifications", "uses_primary_color": true },
+            { "id": "push-notifications", "label": "Push Notifications", "uses_primary_color": true },
+            { "id": "location-sharing", "label": "Location Sharing", "uses_primary_color": true },
+            { "id": "two-factor", "label": "Two-Factor Authentication", "uses_primary_color": true }
+          ]
+        },
+        "cards_glassmorphic": {
+          "status": "FAIL",
+          "score": "0%",
+          "details": "Cards use standard Card component with bg-card. No glassmorphic styling (.glass, .glass-card) applied.",
+          "glassmorphic_applied": false,
+          "cards_count": 5
+        },
+        "dark_mode": {
+          "status": "PASS",
+          "score": "100%",
+          "details": "All components use semantic tokens that automatically adapt to dark mode",
+          "semantic_tokens_used": true
+        },
+        "i18n": {
+          "status": "FAIL",
+          "score": "0%",
+          "details": "No i18n implementation. All text is hardcoded.",
+          "uses_translation": false
+        }
+      }
+    },
+    {
+      "page_name": "AccountSettingsPage",
+      "file_path": "client/src/pages/AccountSettingsPage.tsx",
+      "status": "PARTIAL_PASS",
+      "compliance_score": "55%",
+      "findings": {
+        "form_inputs": {
+          "status": "PASS",
+          "score": "100%",
+          "details": "Uses Input component which has border-input (ocean-themed borders)",
+          "components_used": ["Input"],
+          "ocean_border_applied": true
+        },
+        "toggle_switches": {
+          "status": "N/A",
+          "score": "N/A",
+          "details": "No toggle switches present on this page"
+        },
+        "cards_glassmorphic": {
+          "status": "FAIL",
+          "score": "0%",
+          "details": "Cards use standard Card component with hover-elevate. No glassmorphic styling applied.",
+          "glassmorphic_applied": false
+        },
+        "dark_mode": {
+          "status": "PASS",
+          "score": "100%",
+          "details": "All components use semantic tokens that automatically adapt to dark mode"
+        },
+        "i18n": {
+          "status": "FAIL",
+          "score": "0%",
+          "details": "No i18n implementation. All text is hardcoded."
+        }
+      }
+    },
+    {
+      "page_name": "PrivacySettingsPage",
+      "file_path": "client/src/pages/PrivacySettingsPage.tsx",
+      "status": "PARTIAL_PASS",
+      "compliance_score": "60%",
+      "findings": {
+        "form_inputs": {
+          "status": "PASS",
+          "score": "100%",
+          "details": "Uses Select components with h-12 height. Inherits border-input ocean-themed styling.",
+          "components_used": ["Select"],
+          "ocean_border_applied": true
+        },
+        "toggle_switches": {
+          "status": "PASS",
+          "score": "100%",
+          "details": "Switch components use turquoise when active (data-[state=checked]:bg-primary)",
+          "turquoise_when_active": true,
+          "switch_instances": 3
+        },
+        "cards_glassmorphic": {
+          "status": "PARTIAL",
+          "score": "50%",
+          "details": "One card uses bg-primary/5 border-primary/20 which is closer to glassmorphic. Other card is standard."
+        },
+        "dark_mode": {
+          "status": "PASS",
+          "score": "100%",
+          "details": "All components use semantic tokens that automatically adapt to dark mode"
+        },
+        "i18n": {
+          "status": "FAIL",
+          "score": "0%",
+          "details": "No i18n implementation. All text is hardcoded."
+        }
+      }
+    },
+    {
+      "page_name": "ActivityLogPage",
+      "file_path": "client/src/pages/ActivityLogPage.tsx",
+      "status": "PARTIAL_PASS",
+      "compliance_score": "50%",
+      "findings": {
+        "form_inputs": {
+          "status": "N/A",
+          "score": "N/A",
+          "details": "No form inputs present on this page"
+        },
+        "toggle_switches": {
+          "status": "N/A",
+          "score": "N/A",
+          "details": "No toggle switches present on this page"
+        },
+        "cards_glassmorphic": {
+          "status": "FAIL",
+          "score": "0%",
+          "details": "Card uses standard Card component with hover-elevate. No glassmorphic styling."
+        },
+        "dark_mode": {
+          "status": "PASS",
+          "score": "100%",
+          "details": "All components use semantic tokens that automatically adapt to dark mode"
+        },
+        "i18n": {
+          "status": "FAIL",
+          "score": "0%",
+          "details": "No i18n implementation. All text is hardcoded."
+        }
+      }
+    },
+    {
+      "page_name": "HelpPage",
+      "file_path": "client/src/pages/HelpPage.tsx",
+      "status": "FAIL",
+      "compliance_score": "40%",
+      "findings": {
+        "form_inputs": {
+          "status": "FAIL",
+          "score": "0%",
+          "details": "Search input uses inline styles with hardcoded bg-white/95, not using Input component",
+          "ocean_border_applied": false,
+          "issue": "Search input bypasses component system with inline className"
+        },
+        "toggle_switches": {
+          "status": "N/A",
+          "score": "N/A",
+          "details": "No toggle switches present on this page"
+        },
+        "cards_glassmorphic": {
+          "status": "FAIL",
+          "score": "0%",
+          "details": "Cards use standard Card component with hover-elevate. No glassmorphic styling."
+        },
+        "dark_mode": {
+          "status": "FAIL",
+          "score": "0%",
+          "details": "Search input has hardcoded bg-white/95 which will not work properly in dark mode"
+        },
+        "i18n": {
+          "status": "FAIL",
+          "score": "0%",
+          "details": "No i18n implementation. All text is hardcoded."
+        }
+      }
+    },
+    {
+      "page_name": "HelpCenterPage",
+      "file_path": "client/src/pages/HelpCenterPage.tsx",
+      "status": "FAIL",
+      "compliance_score": "40%",
+      "findings": {
+        "form_inputs": {
+          "status": "FAIL",
+          "score": "0%",
+          "details": "Search input uses inline styles with hardcoded bg-white/95, not using Input component",
+          "ocean_border_applied": false
+        },
+        "toggle_switches": {
+          "status": "N/A",
+          "score": "N/A",
+          "details": "No toggle switches present on this page"
+        },
+        "cards_glassmorphic": {
+          "status": "PARTIAL",
+          "score": "10%",
+          "details": "Most cards standard. One CTA card uses gradient background but not true glassmorphic."
+        },
+        "dark_mode": {
+          "status": "FAIL",
+          "score": "0%",
+          "details": "Search input has hardcoded bg-white/95 which will not work properly in dark mode"
+        },
+        "i18n": {
+          "status": "FAIL",
+          "score": "0%",
+          "details": "No i18n implementation. All text is hardcoded."
+        }
+      }
+    }
+  ],
+  "compliance_summary": {
+    "form_inputs_ocean_themed": {
+      "total_pages_with_forms": 4,
+      "pages_passing": 2,
+      "pages_failing": 2,
+      "compliance_rate": "50%",
+      "issues": [
+        "HelpPage and HelpCenterPage use inline-styled search inputs instead of Input component",
+        "Hardcoded bg-white/95 breaks dark mode support"
+      ]
+    },
+    "toggle_switches_turquoise": {
+      "total_pages_with_toggles": 2,
+      "pages_passing": 2,
+      "pages_failing": 0,
+      "compliance_rate": "100%",
+      "total_switches": 8,
+      "all_switches_use_primary": true
+    },
+    "cards_glassmorphic": {
+      "total_pages": 6,
+      "pages_passing": 0,
+      "pages_partial": 2,
+      "pages_failing": 4,
+      "compliance_rate": "0%",
+      "total_cards": 26,
+      "glassmorphic_cards": 0,
+      "critical_issue": "No pages use true glassmorphic styling (.glass, .glass-card utilities)"
+    },
+    "dark_mode_support": {
+      "total_pages": 6,
+      "pages_passing": 4,
+      "pages_failing": 2,
+      "compliance_rate": "67%",
+      "issues": [
+        "HelpPage search input hardcoded to bg-white/95",
+        "HelpCenterPage search input hardcoded to bg-white/95"
+      ]
+    },
+    "i18n_implementation": {
+      "total_pages": 6,
+      "pages_passing": 0,
+      "pages_failing": 6,
+      "compliance_rate": "0%",
+      "critical_issue": "No i18n implementation on any settings pages"
+    }
+  },
+  "critical_issues": [
+    {
+      "severity": "HIGH",
+      "category": "Glassmorphic Cards",
+      "issue": "None of the 26 cards across settings pages use glassmorphic styling",
+      "impact": "Settings pages don't match MT Ocean Theme design guidelines",
+      "files_affected": [
+        "SettingsPage.tsx",
+        "AccountSettingsPage.tsx",
+        "PrivacySettingsPage.tsx",
+        "ActivityLogPage.tsx",
+        "HelpPage.tsx",
+        "HelpCenterPage.tsx"
+      ]
+    },
+    {
+      "severity": "HIGH",
+      "category": "Dark Mode",
+      "issue": "Search inputs in HelpPage and HelpCenterPage hardcoded to light backgrounds",
+      "impact": "Broken UX in dark mode",
+      "files_affected": ["HelpPage.tsx", "HelpCenterPage.tsx"]
+    },
+    {
+      "severity": "HIGH",
+      "category": "Internationalization",
+      "issue": "Zero i18n implementation across all settings pages",
+      "impact": "Platform cannot support multiple languages for settings",
+      "files_affected": "All 6 settings pages"
+    }
+  ],
+  "recommendations": [
+    {
+      "priority": "HIGH",
+      "action": "Apply glassmorphic styling to all settings cards",
+      "implementation": "Add 'glass-card' utility class or apply backdrop-blur-lg with semi-transparent backgrounds",
+      "estimated_effort": "2-3 hours"
+    },
+    {
+      "priority": "HIGH",
+      "action": "Fix dark mode for search inputs",
+      "implementation": "Replace inline-styled inputs with Input component in HelpPage and HelpCenterPage",
+      "estimated_effort": "30 minutes"
+    },
+    {
+      "priority": "HIGH",
+      "action": "Implement i18n across all settings pages",
+      "implementation": "Add useTranslation hook, create translation keys",
+      "estimated_effort": "4-6 hours"
+    }
+  ],
+  "overall_assessment": {
+    "compliance_grade": "D+",
+    "compliance_percentage": "52%",
+    "status": "NEEDS_IMPROVEMENT",
+    "summary": "Settings pages have partial MT Ocean Theme compliance. Toggle switches correctly use turquoise. However, critical failures in glassmorphic card styling, i18n implementation, and dark mode issues prevent full compliance."
+  }
+}

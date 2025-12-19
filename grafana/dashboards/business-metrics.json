@@ -1,0 +1,150 @@
+{
+  "dashboard": {
+    "id": null,
+    "uid": "mundotango-business",
+    "title": "Mundo Tango - Business Metrics",
+    "tags": ["mundotango", "business"],
+    "timezone": "browser",
+    "schemaVersion": 16,
+    "version": 1,
+    "refresh": "1m",
+    "panels": [
+      {
+        "id": 1,
+        "gridPos": { "x": 0, "y": 0, "w": 8, "h": 8 },
+        "type": "stat",
+        "title": "Total Events Created (24h)",
+        "targets": [
+          {
+            "expr": "increase(events_created_total[24h])"
+          }
+        ],
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area"
+        }
+      },
+      {
+        "id": 2,
+        "gridPos": { "x": 8, "y": 0, "w": 8, "h": 8 },
+        "type": "stat",
+        "title": "Total Event RSVPs (24h)",
+        "targets": [
+          {
+            "expr": "increase(event_rsvps_total[24h])"
+          }
+        ],
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area"
+        }
+      },
+      {
+        "id": 3,
+        "gridPos": { "x": 16, "y": 0, "w": 8, "h": 8 },
+        "type": "stat",
+        "title": "Total Posts Created (24h)",
+        "targets": [
+          {
+            "expr": "increase(posts_created_total[24h])"
+          }
+        ],
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area"
+        }
+      },
+      {
+        "id": 4,
+        "gridPos": { "x": 0, "y": 8, "w": 12, "h": 8 },
+        "type": "piechart",
+        "title": "Event Types Distribution",
+        "targets": [
+          {
+            "expr": "sum by (event_type) (events_created_total)"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "gridPos": { "x": 12, "y": 8, "w": 12, "h": 8 },
+        "type": "piechart",
+        "title": "Post Reactions Distribution",
+        "targets": [
+          {
+            "expr": "sum by (reaction_type) (post_reactions_total)"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "gridPos": { "x": 0, "y": 16, "w": 8, "h": 8 },
+        "type": "stat",
+        "title": "Housing Bookings (24h)",
+        "targets": [
+          {
+            "expr": "increase(housing_bookings_total{status=\"confirmed\"}[24h])"
+          }
+        ],
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area"
+        }
+      },
+      {
+        "id": 7,
+        "gridPos": { "x": 8, "y": 16, "w": 8, "h": 8 },
+        "type": "stat",
+        "title": "Life CEO Agent Invocations (24h)",
+        "targets": [
+          {
+            "expr": "increase(life_ceo_agent_invocations_total[24h])"
+          }
+        ],
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area"
+        }
+      },
+      {
+        "id": 8,
+        "gridPos": { "x": 16, "y": 16, "w": 8, "h": 8 },
+        "type": "stat",
+        "title": "AI Requests (24h)",
+        "targets": [
+          {
+            "expr": "increase(ai_requests_total[24h])"
+          }
+        ],
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area"
+        }
+      },
+      {
+        "id": 9,
+        "gridPos": { "x": 0, "y": 24, "w": 12, "h": 8 },
+        "type": "graph",
+        "title": "Revenue Trends (Stripe Payments)",
+        "targets": [
+          {
+            "expr": "rate(stripe_payments_total{status=\"succeeded\"}[1h])",
+            "legendFormat": "{{type}}"
+          }
+        ]
+      },
+      {
+        "id": 10,
+        "gridPos": { "x": 12, "y": 24, "w": 12, "h": 8 },
+        "type": "graph",
+        "title": "Admin Workflow Activity",
+        "targets": [
+          {
+            "expr": "rate(admin_workflow_actions_total[1h])",
+            "legendFormat": "{{workflow_type}} {{action}}"
+          }
+        ]
+      }
+    ]
+  }
+}

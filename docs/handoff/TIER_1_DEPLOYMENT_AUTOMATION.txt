@@ -1,0 +1,289 @@
+╔═══════════════════════════════════════════════════════════════════╗
+║                                                                   ║
+║        TIER 1.1: DEPLOYMENT AUTOMATION - Complete Documentation  ║
+║     One-Click Deploy to Vercel (Frontend) + Railway (Backend)    ║
+║                                                                   ║
+╚═══════════════════════════════════════════════════════════════════╝
+
+FEATURE: Deployment Automation
+TIER: 1 (Critical - Required for platform independence)
+STATUS: IN PROGRESS (Database + Backend + Frontend layers built simultaneously)
+CREATED: October 31, 2025
+METHOD: MB.MD (Simultaneously, Recursively, Critically)
+
+=======================================================================
+📋 OVERVIEW
+=======================================================================
+
+GOAL: Enable one-click deployment from Mundo Tango to Vercel + Railway
+
+USER EXPERIENCE:
+1. User clicks "Deploy to Production" button
+2. Real-time progress modal shows build status
+3. Deployment completes in 2-3 minutes
+4. User gets production URLs for frontend + backend
+
+RESULT: Complete platform independence - no need for Replit deployment UI
+
+=======================================================================
+🏗️ ARCHITECTURE (3 LAYERS - BUILT SIMULTANEOUSLY)
+=======================================================================
+
+LAYER 1: DATABASE (shared/platform-schema.ts)
+  ├─ deployments table
+  │  • Tracks all deployments (production/preview/rollback)
+  │  • Stores status, URLs, build logs, timing
+  │  • References users.id (serial primary key)
+  │
+  ├─ platform_integrations table
+  │  • Stores API keys for Vercel, Railway, GitHub
+  │  • JSONB settings field (encrypted)
+  │  • Unique constraint: (user_id, platform)
+  │
+  └─ environment_variables table (for Tier 1.2)
+     • Stores encrypted env vars
+     • Tracks sync status to Vercel/Railway
+     • Supports dev/preview/production environments
+
+LAYER 2: BACKEND (server/routes/deployments.ts)
+  ├─ POST /api/deployments
+  │  • Creates new deployment
+  │  • Gets latest commit from GitHub
+  │  • Triggers Vercel + Railway deploy
+  │  • Returns deployment object
+  │
+  ├─ GET /api/deployments
+  │  • Lists all deployments for user
+  │  • Supports filtering (type, status)
+  │  • Pagination (limit, offset)
+  │
+  ├─ GET /api/deployments/:id
+  │  • Gets specific deployment details
+  │  • Includes build logs
+  │
+  ├─ PATCH /api/deployments/:id
+  │  • Updates deployment status
+  │  • Used by webhook handlers
+  │
+  └─ POST /api/deployments/:id/cancel
+     • Cancels in-progress deployment
+
+LAYER 3: FRONTEND (client/src/components/platform/DeployButton.tsx)
+  ├─ DeployButton component
+  │  • Single button: "Deploy to Production"
+  │  • Shows loading state during deployment
+  │  • Opens progress dialog
+  │
+  └─ Progress Dialog
+     • Real-time status updates
+     • Progress bar (0-100%)
+     • Git commit info
+     • Deployment URLs (when complete)
+     • Error messages (if failed)
+     • Action buttons (Cancel/Retry/Close)
+
+=======================================================================
+🔄 DEPLOYMENT FLOW
+=======================================================================
+
+STEP 1: USER CLICKS DEPLOY
+  User: Clicks "Deploy to Production" button
+  Frontend: Sends POST /api/deployments { type: "production", gitBranch: "main" }
+
+STEP 2: BACKEND CREATES DEPLOYMENT
+  Backend: Creates deployment record (status: "pending")
+  Backend: Gets latest commit from GitHub API
+  Backend: Returns deployment object to frontend
+
+STEP 3: FRONTEND SHOWS PROGRESS
+  Frontend: Opens dialog with deployment status
+  Frontend: Shows "Pending" → "Building" → "Deploying" → "Success"
+  Frontend: Updates progress bar (10% → 40% → 70% → 100%)
+
+STEP 4: BACKEND TRIGGERS VERCEL
+  Backend: Calls Vercel API to deploy frontend
+  Backend: Monitors build status
+  Backend: Updates deployment.status = "building"
+  Backend: Stores vercel_deployment_id
+
+STEP 5: BACKEND TRIGGERS RAILWAY
+  Backend: Calls Railway API to deploy backend
+  Backend: Monitors build status
+  Backend: Updates deployment.status = "deploying"
+  Backend: Stores railway_deployment_id
+
+STEP 6: DEPLOYMENT COMPLETES
+  Backend: Both deployments succeed
+  Backend: Updates deployment.status = "success"
+  Backend: Stores vercelUrl and railwayUrl
+  Backend: Records duration_seconds
+
+STEP 7: USER GETS URLS
+  Frontend: Shows green checkmark ✅
+  Frontend: Displays clickable links:
+    • Frontend: https://mundo-tango.vercel.app
+    • Backend: https://mundo-tango.railway.app
+  Frontend: Shows "Completed in 147s"
+
+=======================================================================
+🗄️ DATABASE SCHEMA
+=======================================================================
+
+TABLE: deployments
+┌────────────────────────┬────────────────────┬───────────────────────┐
+│ Column                 │ Type               │ Description           │
+├────────────────────────┼────────────────────┼───────────────────────┤
+│ id                     │ serial PRIMARY KEY │ Auto-increment ID     │
+│ user_id                │ integer NOT NULL   │ FK → users.id         │
+│ type                   │ varchar(20)        │ production/preview    │
+│ status                 │ varchar(20)        │ pending/building/...  │
+│ git_commit_sha         │ varchar(40)        │ Full SHA hash         │
+│ git_branch             │ varchar(255)       │ main/develop          │
+│ git_commit_message     │ text               │ Latest commit msg     │
+│ vercel_url             │ text               │ Frontend URL          │
+│ railway_url            │ text               │ Backend URL           │
+│ vercel_deployment_id   │ varchar(255)       │ Vercel ID             │
+│ railway_deployment_id  │ varchar(255)       │ Railway ID            │
+│ build_logs             │ text               │ Complete build logs   │
+│ error_message          │ text               │ Error if failed       │
+│ started_at             │ timestamp          │ Start time            │
+│ completed_at           │ timestamp          │ End time              │
+│ duration_seconds       │ integer            │ Total time            │
+│ created_at             │ timestamp          │ Record creation       │
+│ updated_at             │ timestamp          │ Last update           │
+└────────────────────────┴────────────────────┴───────────────────────┘
+
+INDEXES:
+  • deployments_user_id_idx ON user_id
+  • deployments_status_idx ON status
+  • deployments_type_idx ON type
+  • deployments_created_at_idx ON created_at DESC
+
+=======================================================================
+🔌 API INTEGRATION POINTS
+=======================================================================
+
+GITHUB API (via @octokit/rest):
+  • Get repository info
+  • Get latest commit on branch
+  • Trigger deployment (GitHub Actions)
+  • List deployments
+
+VERCEL API:
+  • POST /v13/deployments
+    Body: { name, gitSource: { type: "github", repoId, ref } }
+    Returns: { id, url, readyState }
+  
+  • GET /v13/deployments/:id
+    Returns: { readyState: "READY"|"ERROR"|"BUILDING" }
+
+RAILWAY API:
+  • POST /projects/:projectId/deployments
+    Body: { environmentId, branch }
+    Returns: { id, status }
+  
+  • GET /deployments/:id
+    Returns: { status: "SUCCESS"|"FAILED"|"BUILDING" }
+
+=======================================================================
+📝 IMPLEMENTATION CHECKLIST
+=======================================================================
+
+✅ COMPLETED (MB.MD Simultaneous Execution):
+  ✅ Database schema created (shared/platform-schema.ts)
+  ✅ Backend routes created (server/routes/deployments.ts)
+  ✅ Frontend component created (client/src/components/platform/DeployButton.tsx)
+  ✅ GitHub client helper (server/lib/github-client.ts)
+  ✅ Routes registered (server/routes.ts)
+  ✅ Documentation created (this file)
+
+⏳ TODO (Next Steps):
+  ⏳ Add storage layer methods (server/storage.ts)
+  ⏳ Implement Vercel API client (server/lib/vercel-client.ts)
+  ⏳ Implement Railway API client (server/lib/railway-client.ts)
+  ⏳ Add webhook handlers for deployment status updates
+  ⏳ Add real-time updates using WebSockets
+  ⏳ Test end-to-end deployment flow
+  ⏳ Add DeployButton to dashboard/settings page
+
+=======================================================================
+🧪 TESTING PLAN
+=======================================================================
+
+UNIT TESTS:
+  • GitHub client: getLatestCommit()
+  • Deployment routes: POST /api/deployments
+  • DeployButton: renders correctly
+
+INTEGRATION TESTS:
+  • Create deployment → Returns valid object
+  • List deployments → Pagination works
+  • Update deployment status → Updates in DB
+
+E2E TESTS (using run_test tool):
+  1. [New Context] Create browser context
+  2. [Browser] Navigate to /settings
+  3. [Browser] Click "Deploy to Production" button
+  4. [Verify] Deployment dialog opens
+  5. [Verify] Status shows "Pending"
+  6. [API] Check deployment was created in database
+  7. [Verify] Progress bar visible
+  8. [Browser] Wait for status to change to "Success"
+  9. [Verify] Vercel URL and Railway URL are displayed
+  10. [Browser] Click Vercel URL
+  11. [Verify] Opens in new tab
+
+=======================================================================
+🎯 SUCCESS CRITERIA
+=======================================================================
+
+✅ USER CAN:
+  • Click one button to deploy entire app
+  • See real-time progress in modal
+  • Get production URLs when complete
+  • Retry failed deployments
+  • Cancel in-progress deployments
+
+✅ TECHNICAL:
+  • Zero manual steps required
+  • Complete in under 3 minutes
+  • Handles errors gracefully
+  • Logs stored in database
+  • Works with any Git branch
+
+✅ PLATFORM INDEPENDENCE:
+  • No reliance on Replit deployment UI
+  • Can migrate to Vercel + Railway easily
+  • User controls deployment process
+  • API keys stored securely
+
+=======================================================================
+💰 COST COMPARISON
+=======================================================================
+
+BEFORE (Replit Only):
+  • Replit: $20/month (Cycles plan)
+  • Total: $20/month
+
+AFTER (Vercel + Railway):
+  • Vercel Hobby: $0/month (frontend)
+  • Railway: $5/month (backend)
+  • Total: $5/month
+  
+SAVINGS: $15/month ($180/year) ✅
+
+=======================================================================
+📚 RELATED DOCUMENTATION
+=======================================================================
+
+• MB_MD_MASTER_GUIDE.txt - Methodology (Simultaneously, Recursively, Critically)
+• shared/platform-schema.ts - Database schema
+• server/routes/deployments.ts - Backend API
+• server/lib/github-client.ts - GitHub integration
+• client/src/components/platform/DeployButton.tsx - Frontend component
+
+NEXT FEATURES:
+• TIER_1_SECRETS_MANAGEMENT.txt (Feature 1.2)
+• TIER_1_PREVIEW_DEPLOYMENTS.txt (Feature 1.3)
+
+END OF DEPLOYMENT AUTOMATION DOCUMENTATION

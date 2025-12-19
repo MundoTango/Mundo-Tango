@@ -1,0 +1,83 @@
+{
+  "agent": "AGENT-87",
+  "language_group": "Indian",
+  "languages_tested": [
+    "hi",
+    "bn",
+    "ta",
+    "te",
+    "gu"
+  ],
+  "baseline_keys_total": 340,
+  "results_by_language": {
+    "hi": {
+      "files_exist": false,
+      "total_keys": 0,
+      "coverage_percent": 0,
+      "keys_by_namespace": {
+        "common": 0,
+        "navigation": 0,
+        "errors": 0,
+        "pages": 0
+      },
+      "missing_keys_count": 340,
+      "missing_keys_sample": []
+    },
+    "bn": {
+      "files_exist": false,
+      "total_keys": 0,
+      "coverage_percent": 0,
+      "keys_by_namespace": {
+        "common": 0,
+        "navigation": 0,
+        "errors": 0,
+        "pages": 0
+      },
+      "missing_keys_count": 340,
+      "missing_keys_sample": []
+    },
+    "ta": {
+      "files_exist": false,
+      "total_keys": 0,
+      "coverage_percent": 0,
+      "keys_by_namespace": {
+        "common": 0,
+        "navigation": 0,
+        "errors": 0,
+        "pages": 0
+      },
+      "missing_keys_count": 340,
+      "missing_keys_sample": []
+    },
+    "te": {
+      "files_exist": false,
+      "total_keys": 0,
+      "coverage_percent": 0,
+      "keys_by_namespace": {
+        "common": 0,
+        "navigation": 0,
+        "errors": 0,
+        "pages": 0
+      },
+      "missing_keys_count": 340,
+      "missing_keys_sample": []
+    },
+    "gu": {
+      "files_exist": false,
+      "total_keys": 0,
+      "coverage_percent": 0,
+      "keys_by_namespace": {
+        "common": 0,
+        "navigation": 0,
+        "errors": 0,
+        "pages": 0
+      },
+      "missing_keys_count": 340,
+      "missing_keys_sample": []
+    }
+  },
+  "translation_files_exist": false,
+  "average_coverage": 0,
+  "rtl_rendering": "n/a",
+  "status": "FAIL"
+}

@@ -1,0 +1,83 @@
+{
+  "agent": "AGENT-86",
+  "language_group": "Middle_Eastern",
+  "languages_tested": [
+    "ar",
+    "he",
+    "tr",
+    "fa",
+    "ur"
+  ],
+  "baseline_keys_total": 340,
+  "results_by_language": {
+    "ar": {
+      "files_exist": false,
+      "total_keys": 0,
+      "coverage_percent": 0,
+      "keys_by_namespace": {
+        "common": 0,
+        "navigation": 0,
+        "errors": 0,
+        "pages": 0
+      },
+      "missing_keys_count": 340,
+      "missing_keys_sample": []
+    },
+    "he": {
+      "files_exist": false,
+      "total_keys": 0,
+      "coverage_percent": 0,
+      "keys_by_namespace": {
+        "common": 0,
+        "navigation": 0,
+        "errors": 0,
+        "pages": 0
+      },
+      "missing_keys_count": 340,
+      "missing_keys_sample": []
+    },
+    "tr": {
+      "files_exist": false,
+      "total_keys": 0,
+      "coverage_percent": 0,
+      "keys_by_namespace": {
+        "common": 0,
+        "navigation": 0,
+        "errors": 0,
+        "pages": 0
+      },
+      "missing_keys_count": 340,
+      "missing_keys_sample": []
+    },
+    "fa": {
+      "files_exist": false,
+      "total_keys": 0,
+      "coverage_percent": 0,
+      "keys_by_namespace": {
+        "common": 0,
+        "navigation": 0,
+        "errors": 0,
+        "pages": 0
+      },
+      "missing_keys_count": 340,
+      "missing_keys_sample": []
+    },
+    "ur": {
+      "files_exist": false,
+      "total_keys": 0,
+      "coverage_percent": 0,
+      "keys_by_namespace": {
+        "common": 0,
+        "navigation": 0,
+        "errors": 0,
+        "pages": 0
+      },
+      "missing_keys_count": 340,
+      "missing_keys_sample": []
+    }
+  },
+  "translation_files_exist": false,
+  "average_coverage": 0,
+  "rtl_rendering": "not_implemented",
+  "status": "FAIL"
+}

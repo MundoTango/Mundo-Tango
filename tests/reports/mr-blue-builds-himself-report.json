@@ -1,0 +1,11 @@
+{
+  "startTime": "2025-11-15T08:59:05.746Z",
+  "iterations": 0,
+  "finalValidationScore": 0,
+  "mrBlueResponses": [],
+  "screenshots": [],
+  "status": "failed",
+  "error": "page.waitForURL: Timeout 10000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation until \"load\"\n  navigated to \"http://localhost:5000/\"\n============================================================",
+  "endTime": "2025-11-15T08:59:24.525Z",
+  "duration": 18779
+}
