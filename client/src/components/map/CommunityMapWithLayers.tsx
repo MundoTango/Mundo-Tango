@@ -228,11 +228,36 @@ export function CommunityMapWithLayers({
   zoom,
   onCityClick,
 }: CommunityMapWithLayersProps) {
-  // Filter to only valid coordinates
+  // Build set of enabled layer IDs for filtering
+  const enabledLayers = new Set(
+    layers.filter(layer => layer.enabled).map(layer => layer.id)
+  );
+  
+  // Filter to only valid coordinates and enabled layers
   const displayMarkers = locations.filter(loc => {
     const lat = loc.coordinates?.lat;
     const lng = loc.coordinates?.lng;
-    return typeof lat === 'number' && typeof lng === 'number' && !isNaN(lat) && !isNaN(lng);
+    const hasValidCoords = typeof lat === 'number' && typeof lng === 'number' && !isNaN(lat) && !isNaN(lng);
+    
+    if (!hasValidCoords) return false;
+    
+    // If no layers specified, no enabled layers, or all enabled, show all markers
+    if (layers.length === 0 || enabledLayers.size === 0 || enabledLayers.size === layers.length) return true;
+    
+    // Map location type to layer ID patterns (flexible matching)
+    const locationType = loc.type || 'city';
+    const layerPatterns: Record<string, RegExp> = {
+      'event': /event/i,
+      'housing': /housing|listing/i,
+      'recommendation': /recommend/i,
+      'city': /cit|group/i
+    };
+    
+    const pattern = layerPatterns[locationType];
+    if (!pattern) return true; // Unknown types show by default
+    
+    // Check if any enabled layer matches the pattern
+    return Array.from(enabledLayers).some(layerId => pattern.test(layerId));
   });
 
   return (
