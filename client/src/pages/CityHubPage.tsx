@@ -29,6 +29,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { format } from "date-fns";
 import { AirbnbListingCard } from "@/components/housing/AirbnbListingCard";
 import { AirbnbHousingView } from "@/components/housing/AirbnbHousingView";
+import { RecommendationsList } from "@/components/recommendations/RecommendationsList";
 
 const CommunityMapWithLayers = lazy(() => import("@/components/map/CommunityMapWithLayers").then(m => ({ default: m.CommunityMapWithLayers })));
 
@@ -212,6 +213,10 @@ export default function CityHubPage() {
               <TabsTrigger value="visitors" data-testid="tab-visitors">
                 <Plane className="h-4 w-4 mr-2" />
                 Visitors
+              </TabsTrigger>
+              <TabsTrigger value="recommendations" data-testid="tab-recommendations">
+                <Star className="h-4 w-4 mr-2" />
+                Tips
               </TabsTrigger>
             </TabsList>
 
@@ -539,6 +544,36 @@ export default function CityHubPage() {
                     </Card>
                   )}
                 </section>
+
+                <section data-testid="section-recommendations">
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-xl font-semibold flex items-center gap-2">
+                      <Star className="h-5 w-5 text-primary" />
+                      {selectedCity.city} Tips & Recommendations
+                    </h2>
+                    <Button variant="ghost" size="sm" asChild data-testid="link-view-all-recommendations">
+                      <Link href={`/recommendations?city=${encodeURIComponent(selectedCity.city)}`}>
+                        View All <ArrowRight className="h-4 w-4 ml-1" />
+                      </Link>
+                    </Button>
+                  </div>
+                  
+                  {selectedCity.coords ? (
+                    <RecommendationsList
+                      latitude={selectedCity.coords.lat}
+                      longitude={selectedCity.coords.lng}
+                      radius={10}
+                      limit={6}
+                    />
+                  ) : (
+                    <Card className="text-center py-8">
+                      <CardContent>
+                        <Star className="h-12 w-12 mx-auto text-muted-foreground mb-2" />
+                        <p className="text-muted-foreground">Select a city to see recommendations</p>
+                      </CardContent>
+                    </Card>
+                  )}
+                </section>
               </>
             )}
           </TabsContent>
@@ -641,6 +676,39 @@ export default function CityHubPage() {
                   <Button asChild>
                     <Link href="/travel/plan">Plan Your Visit</Link>
                   </Button>
+                </CardContent>
+              </Card>
+            )}
+          </TabsContent>
+
+          <TabsContent value="recommendations" className="space-y-6" data-testid="content-recommendations">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-semibold flex items-center gap-2">
+                <Star className="h-5 w-5 text-primary" />
+                Tips & Recommendations in {selectedCity.city || "City"}
+              </h2>
+              <Button variant="outline" asChild data-testid="button-add-recommendation">
+                <Link href="/recommendations/add">
+                  Add Recommendation
+                </Link>
+              </Button>
+            </div>
+            
+            {selectedCity.coords ? (
+              <RecommendationsList
+                latitude={selectedCity.coords.lat}
+                longitude={selectedCity.coords.lng}
+                radius={20}
+                limit={20}
+              />
+            ) : (
+              <Card className="text-center py-12">
+                <CardContent>
+                  <Star className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
+                  <h3 className="text-lg font-semibold mb-2">Select a City</h3>
+                  <p className="text-muted-foreground mb-4">
+                    Use the search above to see recommendations
+                  </p>
                 </CardContent>
               </Card>
             )}
