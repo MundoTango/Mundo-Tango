@@ -2,9 +2,17 @@
 # This reduces the deployment image size to stay under Replit's 8 GiB limit
 
 # ==========================================
+# NODE_MODULES (Replit rebuilds in deployment)
+# ==========================================
+node_modules/
+
+# ==========================================
 # LARGE DATA DIRECTORIES (4.2 GB+)
 # ==========================================
 lancedb_data/
+.cache/
+.npm/
+.pnpm-store/
 
 # ==========================================
 # TEST ARTIFACTS

@@ -295,70 +295,166 @@ export default function CityHubPage() {
                 </CardContent>
               </Card>
             ) : (
-              <>
-                <section data-testid="section-events">
-                  <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-xl font-semibold flex items-center gap-2">
-                      <Calendar className="h-5 w-5 text-primary" />
-                      {selectedCity.city} Events
-                    </h2>
-                    <Button variant="ghost" size="sm" asChild data-testid="link-view-all-events">
-                      <Link href={`/events?city=${encodeURIComponent(selectedCity.city)}`}>
-                        View All <ArrowRight className="h-4 w-4 ml-1" />
-                      </Link>
-                    </Button>
-                  </div>
-                  
-                  {eventsLoading ? (
-                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                      {[1, 2, 3].map((i) => (
-                        <Card key={i} className="animate-pulse">
-                          <div className="h-32 bg-muted rounded-t-lg" />
-                          <CardHeader><div className="h-4 bg-muted rounded w-3/4" /></CardHeader>
-                        </Card>
-                      ))}
+              <div className="flex flex-col lg:flex-row gap-6">
+                <div className="flex-1 lg:w-[55%] space-y-6">
+                  <section data-testid="section-events">
+                    <div className="flex items-center justify-between mb-4">
+                      <h2 className="text-lg font-semibold flex items-center gap-2">
+                        <Calendar className="h-5 w-5 text-primary" />
+                        Upcoming Events
+                      </h2>
+                      <Button variant="ghost" size="sm" asChild data-testid="link-view-all-events">
+                        <Link href={`/events?city=${encodeURIComponent(selectedCity.city)}`}>
+                          View All <ArrowRight className="h-4 w-4 ml-1" />
+                        </Link>
+                      </Button>
                     </div>
-                  ) : upcomingEvents.length > 0 ? (
-                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                      {upcomingEvents.map((event: any) => (
-                        <Card key={event.id} className="hover-elevate" data-testid={`card-event-${event.id}`}>
-                          <div className="h-32 overflow-hidden rounded-t-lg">
-                            <img
-                              src={event.imageUrl || getCityImageUrl(selectedCity.city)}
-                              alt={event.title || event.name}
-                              className="w-full h-full object-cover"
-                            />
-                          </div>
-                          <CardHeader className="pb-2">
-                            <CardTitle className="text-base line-clamp-1">
-                              <Link href={`/events/${event.id}`} className="hover:underline">
-                                {event.title || event.name}
-                              </Link>
-                            </CardTitle>
-                            <CardDescription className="flex items-center gap-2">
-                              <Clock className="h-3 w-3" />
-                              {event.date ? format(new Date(event.date), "MMM d, yyyy") : "TBD"}
-                            </CardDescription>
-                          </CardHeader>
-                          <CardContent className="pt-0">
-                            <Badge variant="outline">{event.type || "Event"}</Badge>
-                          </CardContent>
-                        </Card>
-                      ))}
-                    </div>
-                  ) : (
-                    <Card className="text-center py-8">
-                      <CardContent>
-                        <Calendar className="h-12 w-12 mx-auto text-muted-foreground mb-2" />
-                        <p className="text-muted-foreground">No upcoming events in {selectedCity.city}</p>
-                      </CardContent>
-                    </Card>
-                  )}
-                </section>
+                    
+                    {eventsLoading ? (
+                      <div className="space-y-3">
+                        {[1, 2, 3].map((i) => (
+                          <Card key={i} className="animate-pulse p-3">
+                            <div className="h-4 bg-muted rounded w-3/4" />
+                          </Card>
+                        ))}
+                      </div>
+                    ) : upcomingEvents.length > 0 ? (
+                      <div className="space-y-3">
+                        {upcomingEvents.slice(0, 4).map((event: any) => (
+                          <Card key={event.id} className="hover-elevate p-3" data-testid={`card-event-${event.id}`}>
+                            <Link href={`/events/${event.id}`} className="flex items-center gap-3">
+                              <div className="w-2 h-2 rounded-full bg-[#FF5A5F]" />
+                              <div className="flex-1 min-w-0">
+                                <p className="font-medium text-sm truncate">{event.title || event.name}</p>
+                                <p className="text-xs text-muted-foreground flex items-center gap-1">
+                                  <Calendar className="h-3 w-3" />
+                                  {event.date ? format(new Date(event.date), "MMM d") : "TBD"}
+                                  <span className="mx-1">•</span>
+                                  <MapPin className="h-3 w-3" />
+                                  {event.venue || event.location || selectedCity.city}
+                                </p>
+                              </div>
+                              <Badge variant="outline" className="text-xs">{event.eventType || event.type || "Event"}</Badge>
+                            </Link>
+                          </Card>
+                        ))}
+                      </div>
+                    ) : (
+                      <Card className="text-center py-6">
+                        <CardContent>
+                          <Calendar className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
+                          <p className="text-sm text-muted-foreground">No upcoming events</p>
+                        </CardContent>
+                      </Card>
+                    )}
+                  </section>
 
-                <section data-testid="section-groups">
+                  <section data-testid="section-housing">
+                    <div className="flex items-center justify-between mb-4">
+                      <h2 className="text-lg font-semibold flex items-center gap-2">
+                        <Home className="h-5 w-5 text-primary" />
+                        Available Housing
+                      </h2>
+                      <Button variant="ghost" size="sm" asChild data-testid="link-view-all-housing">
+                        <Link href={`/housing?city=${encodeURIComponent(selectedCity.city)}`}>
+                          View All <ArrowRight className="h-4 w-4 ml-1" />
+                        </Link>
+                      </Button>
+                    </div>
+                    
+                    {housingLoading ? (
+                      <div className="space-y-3">
+                        {[1, 2].map((i) => (
+                          <Card key={i} className="animate-pulse p-3">
+                            <div className="h-4 bg-muted rounded w-3/4" />
+                          </Card>
+                        ))}
+                      </div>
+                    ) : housingListings.length > 0 ? (
+                      <div className="space-y-3">
+                        {housingListings.slice(0, 4).map((listing: any) => (
+                          <Card key={listing.id} className="hover-elevate p-3" data-testid={`card-housing-${listing.id}`}>
+                            <Link href={`/housing/listing/${listing.id}`} className="flex items-center gap-3">
+                              <div className="w-2 h-2 rounded-full bg-[#00A699]" />
+                              <div className="flex-1 min-w-0">
+                                <p className="font-medium text-sm truncate">{listing.title}</p>
+                                <p className="text-xs text-muted-foreground flex items-center gap-1">
+                                  <MapPin className="h-3 w-3" />
+                                  {listing.address || listing.city || selectedCity.city}
+                                </p>
+                              </div>
+                              <Badge className="bg-[#00A699] text-white text-xs">
+                                ${listing.pricePerNight || listing.price || 0}/night
+                              </Badge>
+                            </Link>
+                          </Card>
+                        ))}
+                      </div>
+                    ) : (
+                      <Card className="text-center py-6">
+                        <CardContent>
+                          <Home className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
+                          <p className="text-sm text-muted-foreground">No housing available</p>
+                          <Button variant="outline" size="sm" className="mt-3" asChild>
+                            <Link href="/housing/create">List Your Space</Link>
+                          </Button>
+                        </CardContent>
+                      </Card>
+                    )}
+                  </section>
+                </div>
+
+                <div className="lg:w-[45%] lg:sticky lg:top-4 h-fit">
+                  <Card className="overflow-hidden" data-testid="section-map-overview">
+                    <CardHeader className="pb-2 py-3">
+                      <div className="flex items-center justify-between">
+                        <CardTitle className="text-sm flex items-center gap-2">
+                          <Map className="h-4 w-4 text-primary" />
+                          Map
+                        </CardTitle>
+                        <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                          <span className="flex items-center gap-1">
+                            <div className="w-2 h-2 rounded-full bg-[#FF5A5F]" /> Events
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <div className="w-2 h-2 rounded-full bg-[#00A699]" /> Housing
+                          </span>
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="p-0">
+                      <div className="h-[400px] w-full">
+                        <Suspense fallback={
+                          <div className="h-full flex items-center justify-center bg-muted">
+                            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                          </div>
+                        }>
+                          <CommunityMapWithLayers
+                            locations={mapLocations}
+                            layers={[]}
+                            center={mapCenter}
+                            zoom={12}
+                            onCityClick={(loc) => {
+                              if (loc.type === 'housing') {
+                                window.location.href = `/housing/listing/${String(loc.id).replace('housing-', '')}`;
+                              } else {
+                                window.location.href = `/events/${loc.id}`;
+                              }
+                            }}
+                          />
+                        </Suspense>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
+            )}
+
+            {selectedCity.city && viewMode !== "map" && (
+              <>
+                <section data-testid="section-groups" className="mt-8">
                   <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-xl font-semibold flex items-center gap-2">
+                    <h2 className="text-lg font-semibold flex items-center gap-2">
                       <Users className="h-5 w-5 text-primary" />
                       {selectedCity.city} Members
                     </h2>
@@ -370,15 +466,15 @@ export default function CityHubPage() {
                   </div>
                   
                   {groupsLoading ? (
-                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                      {[1, 2, 3].map((i) => (
+                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                      {[1, 2, 3, 4].map((i) => (
                         <Card key={i} className="animate-pulse">
                           <CardHeader><div className="h-4 bg-muted rounded w-3/4" /></CardHeader>
                         </Card>
                       ))}
                     </div>
                   ) : cityGroups.length > 0 ? (
-                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                       {cityGroups.map((item: any) => {
                         const group = item.group || item;
                         return (
@@ -411,134 +507,6 @@ export default function CityHubPage() {
                         <p className="text-muted-foreground">No members in {selectedCity.city} yet</p>
                         <Button variant="outline" className="mt-4" asChild>
                           <Link href={`/city-groups?city=${encodeURIComponent(selectedCity.city)}`}>Browse All Members</Link>
-                        </Button>
-                      </CardContent>
-                    </Card>
-                  )}
-                </section>
-
-                <section data-testid="section-housing">
-                  <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-xl font-semibold flex items-center gap-2">
-                      <Home className="h-5 w-5 text-primary" />
-                      {selectedCity.city} Housing
-                    </h2>
-                    <div className="flex items-center gap-2">
-                      <Button variant="outline" size="sm" asChild data-testid="button-list-space">
-                        <Link href="/housing/create">List Your Space</Link>
-                      </Button>
-                      <Button variant="ghost" size="sm" asChild data-testid="link-view-all-housing">
-                        <Link href={`/housing?city=${encodeURIComponent(selectedCity.city)}`}>
-                          View All <ArrowRight className="h-4 w-4 ml-1" />
-                        </Link>
-                      </Button>
-                    </div>
-                  </div>
-                  
-                  {housingLoading ? (
-                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                      {[1, 2, 3].map((i) => (
-                        <Card key={i} className="animate-pulse">
-                          <div className="h-32 bg-muted rounded-t-lg" />
-                          <CardHeader><div className="h-4 bg-muted rounded w-3/4" /></CardHeader>
-                        </Card>
-                      ))}
-                    </div>
-                  ) : housingListings.length > 0 ? (
-                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                      {housingListings.map((listing: any) => (
-                        <Link key={listing.id} href={`/housing/listing/${listing.id}`}>
-                          <AirbnbListingCard
-                            listing={{
-                              id: listing.id,
-                              hostId: listing.hostId || 0,
-                              title: listing.title,
-                              city: listing.city || selectedCity.city,
-                              country: listing.country || selectedCity.country,
-                              pricePerNight: listing.pricePerNight || (listing.price ? parseInt(listing.price) : 0),
-                              photos: listing.photos || listing.images || (listing.imageUrl ? [listing.imageUrl] : []),
-                              bedrooms: listing.bedrooms,
-                              beds: listing.beds,
-                              bathrooms: listing.bathrooms,
-                              maxGuests: listing.maxGuests,
-                              averageRating: listing.rating || listing.averageRating,
-                              reviewCount: listing.reviewCount || 0,
-                              isGuestFavorite: listing.isGuestFavorite,
-                              host: listing.host,
-                              weeklyDiscount: listing.weeklyDiscount
-                            }}
-                            isFavorited={false}
-                            onFavorite={() => {}}
-                          />
-                        </Link>
-                      ))}
-                    </div>
-                  ) : (
-                    <Card className="text-center py-8">
-                      <CardContent>
-                        <Home className="h-12 w-12 mx-auto text-muted-foreground mb-2" />
-                        <p className="text-muted-foreground">No housing listings in {selectedCity.city} yet</p>
-                        <Button variant="outline" className="mt-4" asChild>
-                          <Link href="/housing/create">List Your Space</Link>
-                        </Button>
-                      </CardContent>
-                    </Card>
-                  )}
-                </section>
-
-                <section data-testid="section-visitors">
-                  <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-xl font-semibold flex items-center gap-2">
-                      <Plane className="h-5 w-5 text-primary" />
-                      {selectedCity.city} Visitors
-                    </h2>
-                    <Button variant="ghost" size="sm" asChild data-testid="link-view-all-visitors">
-                      <Link href={`/travel?destination=${encodeURIComponent(selectedCity.city)}`}>
-                        View All <ArrowRight className="h-4 w-4 ml-1" />
-                      </Link>
-                    </Button>
-                  </div>
-                  
-                  {visitorsLoading ? (
-                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                      {[1, 2, 3, 4].map((i) => (
-                        <Card key={i} className="animate-pulse">
-                          <CardContent className="flex items-center gap-3 py-4">
-                            <div className="h-10 w-10 bg-muted rounded-full" />
-                            <div className="space-y-2 flex-1">
-                              <div className="h-4 bg-muted rounded w-3/4" />
-                              <div className="h-3 bg-muted rounded w-1/2" />
-                            </div>
-                          </CardContent>
-                        </Card>
-                      ))}
-                    </div>
-                  ) : visitors && visitors.length > 0 ? (
-                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                      {visitors.slice(0, 8).map((visitor: any) => (
-                        <Card key={visitor.id} className="hover-elevate" data-testid={`card-visitor-${visitor.id}`}>
-                          <CardContent className="flex items-center gap-3 py-4">
-                            <Avatar>
-                              <AvatarImage src={visitor.profileImage} />
-                              <AvatarFallback>{visitor.name?.charAt(0) || "V"}</AvatarFallback>
-                            </Avatar>
-                            <div className="flex-1 min-w-0">
-                              <p className="font-medium truncate">{visitor.name}</p>
-                              <p className="text-sm text-muted-foreground">
-                                {visitor.arrivalDate ? format(new Date(visitor.arrivalDate), "MMM d") : "Soon"}
-                              </p>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      ))}
-                    </div>
-                  ) : (
-                    <Card className="text-center py-8">
-                      <CardContent>
-                        <Plane className="h-12 w-12 mx-auto text-muted-foreground mb-2" />
-                        <p className="text-muted-foreground">No upcoming visitors to {selectedCity.city}</p>
-                        <Button variant="outline" className="mt-4" asChild>
-                          <Link href="/travel/plan">Plan Your Visit</Link>
                         </Button>
                       </CardContent>
                     </Card>
