@@ -165,11 +165,71 @@ Response: {
 
 ---
 
+
+---
+
+## ⏰ SCHEDULE TRIGGER CONFIGURATION (SELF-HOSTED)
+
+### Important Settings for Catch-Up Functionality
+
+For self-hosted n8n, configure Schedule Trigger nodes with these settings:
+
+**Required Configuration:**
+1. **Trigger Interval**: Use cron expression for precise timing
+   - Daily 11 AM: `0 11 * * *`
+   - Monday 11 AM: `0 11 * * 1`
+   - Every 4 hours: `0 */4 * * *`
+   - Every 30 minutes: `*/30 * * * *`
+
+2. **Timezone**: `America/Los_Angeles` (PST)
+
+3. **Catch-Up Mode**: ENABLED
+   - In Schedule Trigger node settings → Advanced
+   - Enable "Execute Missed Runs"
+   - This ensures if n8n is offline at 11 AM, the workflow runs as soon as n8n restarts
+
+**Example Configuration:**
+```json
+{
+  "triggerTimes": {
+    "mode": "everyX",
+    "hour": 11,
+    "minute": 0,
+    "timezone": "America/Los_Angeles"
+  },
+  "executeMissedRuns": true,
+  "workflowData": {
+    "catchUp": true
+  }
+}
+```
+
+### Catch-Up Behavior
+- If n8n is offline at scheduled time (e.g., 11 AM)
+- When n8n comes back online (e.g., 2 PM)
+- The workflow will execute immediately for the missed run
+- Only runs ONCE for the missed schedule (won't execute multiple times)
+
+### Testing Catch-Up
+1. Set workflow to run at specific time (e.g., 11:05 AM)
+2. Stop n8n before trigger time
+3. Wait past trigger time
+4. Start n8n
+5. Verify workflow executes immediately
 ## 🔐 ENVIRONMENT VARIABLES
 
 ```bash
 # Required in n8n
 MUNDO_TANGO_URL=https://mundo-tango.replit.app
+
+# Self-hosted n8n configuration
+EXECUTIONS_MODE=queue
+N8N_SKIP_WEBHOOK_DEREGISTRATION_SHUTDOWN=true
+TIMEZONE=America/Los_Angeles  # PST
+
+# Enable catch-up for missed scheduled triggers
+# This ensures workflows run when n8n comes back online
+N8N_WORKFLOWS_DEFAULT_ENABLE_CATCH_UP=true
 MRBLUE_API_KEY=your_api_key_here
 INTERNAL_API_KEY=your_internal_key_here
 SLACK_BOT_TOKEN=xoxb-your-slack-token
