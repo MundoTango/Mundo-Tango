@@ -23,7 +23,7 @@ import { CommunityMapWithLayers } from "@/components/map/CommunityMapWithLayers"
 import { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import { getCityImageUrl } from "@/lib/cityImageMap";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 
 // Fix Leaflet default marker icon
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -55,6 +55,7 @@ interface MapLayer {
 
 
 export default function CommunityWorldMapPage() {
+  const [, setLocation] = useLocation();
   const [selectedCity, setSelectedCity] = useState<CommunityLocation | null>(null);
   const [mapCenter, setMapCenter] = useState<[number, number]>([20, 0]); // World view centered
   const [mapZoom, setMapZoom] = useState(2); // Zoom out to see all cities
@@ -200,9 +201,9 @@ export default function CommunityWorldMapPage() {
   };
 
   const handleCityClick = (location: CommunityLocation) => {
-    setSelectedCity(location);
-    setMapCenter([location.coordinates.lat, location.coordinates.lng]);
-    setMapZoom(13);
+    // Navigate to the city hub page (encode city name for URL safety)
+    const citySlug = encodeURIComponent(location.city.toLowerCase().replace(/\s+/g, '-'));
+    setLocation(`/city/${citySlug}`);
   };
 
   return (
