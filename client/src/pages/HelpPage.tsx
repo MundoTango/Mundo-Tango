@@ -7,7 +7,6 @@ import { Link } from "wouter";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from '@/components/SelfHealingErrorBoundary';
 import { motion } from "framer-motion";
-import tangoHeroImage from "@assets/optimized/IMG_9144-optimized.jpg";
 
 export default function HelpPage() {
   return (
@@ -27,12 +26,6 @@ export default function HelpPage() {
         data-testid="section-hero"
       >
         <div className="absolute inset-0 aspect-video">
-          <img
-            src={tangoHeroImage}
-            alt="Help Center"
-            className="w-full h-full object-cover"
-            data-testid="img-hero"
-          />
         </div>
         <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
         <div className="relative h-full flex items-center justify-center text-center px-4">
