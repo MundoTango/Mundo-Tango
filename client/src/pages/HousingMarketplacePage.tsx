@@ -35,7 +35,7 @@ export default function HousingMarketplacePage() {
           </div>
           
           <Button asChild data-testid="button-post-listing">
-            <Link href="/housing/new">
+            <Link href="/housing/create">
               <Plus className="h-4 w-4 mr-2" />
               Post a Listing
             </Link>
@@ -159,7 +159,7 @@ export default function HousingMarketplacePage() {
                 {city ? "Try adjusting your search filters" : "Be the first to post a listing"}
               </p>
               <Button asChild>
-                <Link href="/housing/new">
+                <Link href="/housing/create">
                   <Plus className="h-4 w-4 mr-2" />
                   Post a Listing
                 </Link>

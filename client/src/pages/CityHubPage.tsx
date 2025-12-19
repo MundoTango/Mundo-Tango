@@ -418,11 +418,16 @@ export default function CityHubPage() {
                       <Home className="h-5 w-5 text-primary" />
                       {selectedCity.city} Housing
                     </h2>
-                    <Button variant="ghost" size="sm" asChild data-testid="link-view-all-housing">
-                      <Link href={`/housing?city=${encodeURIComponent(selectedCity.city)}`}>
-                        View All <ArrowRight className="h-4 w-4 ml-1" />
-                      </Link>
-                    </Button>
+                    <div className="flex items-center gap-2">
+                      <Button variant="outline" size="sm" asChild data-testid="button-list-space">
+                        <Link href="/housing/create">List Your Space</Link>
+                      </Button>
+                      <Button variant="ghost" size="sm" asChild data-testid="link-view-all-housing">
+                        <Link href={`/housing?city=${encodeURIComponent(selectedCity.city)}`}>
+                          View All <ArrowRight className="h-4 w-4 ml-1" />
+                        </Link>
+                      </Button>
+                    </div>
                   </div>
                   
                   {housingLoading ? (
@@ -437,29 +442,30 @@ export default function CityHubPage() {
                   ) : housingListings.length > 0 ? (
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                       {housingListings.map((listing: any) => (
-                        <AirbnbListingCard
-                          key={listing.id}
-                          listing={{
-                            id: listing.id,
-                            hostId: listing.hostId || 0,
-                            title: listing.title,
-                            city: listing.city || selectedCity.city,
-                            country: listing.country || selectedCity.country,
-                            pricePerNight: listing.pricePerNight || (listing.price ? parseInt(listing.price) : 0),
-                            photos: listing.photos || listing.images || (listing.imageUrl ? [listing.imageUrl] : []),
-                            bedrooms: listing.bedrooms,
-                            beds: listing.beds,
-                            bathrooms: listing.bathrooms,
-                            maxGuests: listing.maxGuests,
-                            averageRating: listing.rating || listing.averageRating,
-                            reviewCount: listing.reviewCount || 0,
-                            isGuestFavorite: listing.isGuestFavorite,
-                            host: listing.host,
-                            weeklyDiscount: listing.weeklyDiscount
-                          }}
-                          isFavorite={false}
-                          onFavoriteToggle={() => {}}
-                        />
+                        <Link key={listing.id} href={`/housing/listing/${listing.id}`}>
+                          <AirbnbListingCard
+                            listing={{
+                              id: listing.id,
+                              hostId: listing.hostId || 0,
+                              title: listing.title,
+                              city: listing.city || selectedCity.city,
+                              country: listing.country || selectedCity.country,
+                              pricePerNight: listing.pricePerNight || (listing.price ? parseInt(listing.price) : 0),
+                              photos: listing.photos || listing.images || (listing.imageUrl ? [listing.imageUrl] : []),
+                              bedrooms: listing.bedrooms,
+                              beds: listing.beds,
+                              bathrooms: listing.bathrooms,
+                              maxGuests: listing.maxGuests,
+                              averageRating: listing.rating || listing.averageRating,
+                              reviewCount: listing.reviewCount || 0,
+                              isGuestFavorite: listing.isGuestFavorite,
+                              host: listing.host,
+                              weeklyDiscount: listing.weeklyDiscount
+                            }}
+                            isFavorited={false}
+                            onFavorite={() => {}}
+                          />
+                        </Link>
                       ))}
                     </div>
                   ) : (

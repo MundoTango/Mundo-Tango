@@ -149,7 +149,7 @@ function getEmptyStateContent(config: EmptyStateConfig): EmptyStateContent {
         cta: 'Browse Listings',
         ctaLink: '/housing',
         secondaryCta: 'Offer Your Space',
-        secondaryCtaLink: '/housing/new',
+        secondaryCtaLink: '/housing/create',
         encouragement: 'The tango community takes care of its own!'
       };
 
