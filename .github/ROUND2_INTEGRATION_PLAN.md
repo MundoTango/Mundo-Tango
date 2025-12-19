@@ -304,9 +304,386 @@ class Agent120HoyMilonga extends BaseScraper {
 | Teachers | users + user_external_links | - |
 | Events | events | - |
 
+## Phase 3A: Professional Role Auto-Assignment
+
+### Overview
+
+Automatic role assignment when scraping discovers professionals (teachers, DJs, venue owners, schools) from HoyMilonga and other aggregators.
+
+### Identity Resolution Service
+
+**File**: `server/services/identity-resolution.ts`
+
+```typescript
+interface IdentityMatch {
+  userId: number | null;
+  confidence: number; // 0-100
+  matchType: 'email' | 'name+city' | 'external_link' | 'none';
+  candidates: User[];
+}
+
+class IdentityResolutionService {
+  async findUser(scraped: ScrapedProfessional): Promise<IdentityMatch> {
+    // 1. Try exact email match (highest confidence)
+    if (scraped.email) {
+      const user = await db.users.findFirst({ where: { email: scraped.email } });
+      if (user) return { userId: user.id, confidence: 95, matchType: 'email', candidates: [user] };
+    }
+    
+    // 2. Try external_link match (high confidence)
+    if (scraped.website) {
+      const link = await db.user_external_links.findFirst({ where: { url: scraped.website } });
+      if (link) return { userId: link.user_id, confidence: 90, matchType: 'external_link', candidates: [] };
+    }
+    
+    // 3. Try name + city match (medium confidence, may have multiple candidates)
+    const candidates = await db.users.findMany({
+      where: {
+        AND: [
+          { display_name: { contains: scraped.name, mode: 'insensitive' } },
+          { city: scraped.city }
+        ]
+      },
+      take: 5
+    });
+    
+    if (candidates.length === 1) {
+      return { userId: candidates[0].id, confidence: 70, matchType: 'name+city', candidates };
+    } else if (candidates.length > 1) {
+      return { userId: null, confidence: 40, matchType: 'name+city', candidates };
+    }
+    
+    // 4. No match - create shadow profile
+    return { userId: null, confidence: 0, matchType: 'none', candidates: [] };
+  }
+  
+  async createShadowProfile(scraped: ScrapedProfessional): Promise<number> {
+    const user = await db.users.create({
+      data: {
+        username: this.generateUsername(scraped.name),
+        display_name: scraped.name,
+        email: scraped.email || null,
+        city: scraped.city,
+        is_shadow_profile: true, // New column
+        shadow_profile_source: 'hoymilonga',
+        created_at: new Date()
+      }
+    });
+    return user.id;
+  }
+}
+```
+
+### Role Assignment Logic
+
+**File**: `server/services/scrapers/agents/agent-120-hoymilonga.ts` (Enhanced)
+
+```typescript
+class Agent120HoyMilonga extends BaseScraper {
+  async processDiscoveredProfessionals(data: HoyMilongaData, cityId: string) {
+    const identityService = new IdentityResolutionService();
+    const rolesAssigned: Array<{userId: number; role: string;}> = [];
+    
+    // Process Teachers
+    for (const teacher of data.teachers) {
+      const match = await identityService.findUser({
+        name: teacher.name,
+        email: teacher.email,
+        website: teacher.website,
+        city: cityId
+      });
+      
+      let userId: number;
+      if (match.confidence >= 70 && match.userId) {
+        userId = match.userId;
+      } else if (match.confidence === 0) {
+        // Create shadow profile for unregistered professional
+        userId = await identityService.createShadowProfile(teacher);
+      } else {
+        // Low confidence (40-69) - flag for manual review
+        await this.flagForManualReview(match, teacher);
+        continue;
+      }
+      
+      // Assign teacher role if not already assigned
+      await this.assignRole(userId, 'teacher', {
+        yearsExperience: teacher.yearsExperience || 0,
+        verified: true,
+        verificationSource: 'hoymilonga',
+        discoveredAt: new Date()
+      });
+      
+      // Create external link record
+      if (teacher.website) {
+        await db.user_external_links.upsert({
+          where: { user_id_url: { user_id: userId, url: teacher.website } },
+          create: {
+            user_id: userId,
+            link_type: 'teaching_page',
+            url: teacher.website,
+            title: teacher.schoolName,
+            verified: true,
+            discovered_via: 'hoymilonga_scraper'
+          },
+          update: { verified: true }
+        });
+      }
+      
+      rolesAssigned.push({ userId, role: 'teacher' });
+    }
+    
+    // Similar processing for DJs, venue owners, schools...
+    return rolesAssigned;
+  }
+  
+  async assignRole(userId: number, role: string, metadata: RoleMetadata) {
+    const user = await db.users.findUnique({ where: { id: userId } });
+    if (!user) return;
+    
+    // Check if role already assigned
+    if (user.tangoRoles?.includes(role)) {
+      // Update verification if from trusted source
+      if (metadata.verified) {
+        await this.updateRoleVerification(userId, role, metadata.verificationSource);
+      }
+      return;
+    }
+    
+    // Add new role
+    await db.users.update({
+      where: { id: userId },
+      data: {
+        tangoRoles: [...(user.tangoRoles || []), role],
+        tangoRoleExperience: [
+          ...(user.tangoRoleExperience || []),
+          {
+            role,
+            startDate: metadata.discoveredAt,
+            yearsExperience: metadata.yearsExperience,
+            isVerified: metadata.verified,
+            verificationSource: metadata.verificationSource
+          }
+        ]
+      }
+    });
+  }
+}
+```
+
+### Verification Confidence Scoring
+
+| Source | Base Confidence | Notes |
+|--------|----------------|-------|
+| HoyMilonga | 90 | Trusted aggregator |
+| TangoCat | 85 | Trusted aggregator |
+| Individual school site | 70 | Domain verified |
+| Social media listing | 50 | Requires additional verification |
+| User self-claim | 30 | Unverified until confirmed |
+
+**Multi-Source Boost**: +10 confidence per additional source (max 100)
+
+```typescript
+function calculateVerificationScore(sources: VerificationSource[]): number {
+  if (sources.length === 0) return 0;
+  
+  const baseScore = Math.max(...sources.map(s => s.confidence));
+  const multiSourceBonus = Math.min((sources.length - 1) * 10, 30);
+  
+  return Math.min(baseScore + multiSourceBonus, 100);
+}
+```
+
+### Event Team Auto-Population
+
+When scraping events with listed professionals:
+
+```typescript
+async scrapeEventWithProfessionals(eventUrl: string) {
+  const event = await this.extractEventData(eventUrl);
+  
+  // Save event
+  const eventId = await this.saveEvent(event);
+  
+  // Extract and match professionals
+  const professionals = event.teachers.concat(event.djs).concat(event.performers);
+  
+  for (const pro of professionals) {
+    const userId = await this.findOrCreateProfessional(pro);
+    
+    // Create event participant record (auto-populates PRO tab)
+    await db.eventParticipants.create({
+      data: {
+        eventId,
+        userId,
+        role: pro.role, // 'teacher' | 'dj' | 'performer'
+        status: 'confirmed',
+        isPubliclyListed: true,
+        customTitle: pro.title, // "Guest DJ from Berlin"
+        source: 'hoymilonga_scraper',
+        confirmedAt: new Date()
+      }
+    });
+  }
+  
+  return eventId;
+}
+```
+
+**Result**: Professionals automatically get verified event history in their PRO tab[web:23].
+
+### Role Mapping from Scraped Data
+
+| Scraped Type | Mundo Tango Role | Auto-Assign |
+|--------------|------------------|-------------|
+| Escuela Teacher | `teacher` | ✅ Yes |
+| DJ (event listing) | `dj` | ✅ Yes |
+| Tienda Owner | `business` | ✅ Yes |
+| Milonga Venue Owner | `venue-owner` | ✅ Yes |
+| School Administrator | `teacher` | ✅ Yes (primary role) |
+| Event Performer | `performer` | ✅ Yes |
+
+## Phase 3B: Mr. Blue Validation Agent
+
+### Overview
+
+Mr. Blue AI acts as the **Professional Onboarding Agent**, validating scraped data and reaching out to discovered professionals.
+
+### Data Quality Validation
+
+**Pattern 53: Data Quality Validation Protocol**
+
+Before assigning roles, Mr. Blue validates:
+
+```typescript
+interface DataQualityCheck {
+  professionalName: string;
+  checks: {
+    nameValid: boolean; // Not "Unknown" or "TBA"
+    contactValid: boolean; // Has email OR website
+    cityValid: boolean; // Matches known city
+    duplicateCheck: boolean; // Not duplicate of existing user
+    websiteReachable: boolean; // Website returns 200
+  };
+  overallScore: number; // 0-100
+  recommendation: 'auto_assign' | 'flag_for_review' | 'reject';
+}
+
+class MrBlueValidationAgent {
+  async validateProfessional(scraped: ScrapedProfessional): Promise<DataQualityCheck> {
+    const checks = {
+      nameValid: this.validateName(scraped.name),
+      contactValid: !!(scraped.email || scraped.website),
+      cityValid: await this.validateCity(scraped.city),
+      duplicateCheck: await this.checkDuplicates(scraped),
+      websiteReachable: await this.checkWebsite(scraped.website)
+    };
+    
+    const score = Object.values(checks).filter(Boolean).length * 20;
+    
+    return {
+      professionalName: scraped.name,
+      checks,
+      overallScore: score,
+      recommendation: score >= 80 ? 'auto_assign' : score >= 60 ? 'flag_for_review' : 'reject'
+    };
+  }
+}
+```
+
+### Professional Outreach System
+
+**Pattern 54: Professional Identity Resolution**
+
+Mr. Blue sends onboarding emails to newly discovered professionals:
+
+```typescript
+interface OutreachEmail {
+  to: string;
+  subject: string;
+  template: 'shadow_profile_created' | 'role_assigned' | 'profile_claim';
+  personalizations: {
+    professionalName: string;
+    role: string;
+    discoverySource: string;
+    claimUrl: string;
+  };
+}
+
+async sendProfessionalOutreach(userId: number, role: string) {
+  const user = await db.users.findUnique({ where: { id: userId } });
+  if (!user.email || !user.is_shadow_profile) return;
+  
+  const claimToken = await this.generateClaimToken(userId);
+  
+  await emailService.send({
+    to: user.email,
+    subject: `You've been listed as a ${role} on Mundo Tango`,
+    template: 'shadow_profile_created',
+    personalizations: {
+      professionalName: user.display_name,
+      role,
+      discoverySource: 'HoyMilonga',
+      claimUrl: `https://mundo-tango.vercel.app/claim-profile/${claimToken}`
+    }
+  });
+}
+```
+
+### Conflict Resolution
+
+**Pattern 55: Multi-Source Verification Scoring**
+
+When same professional found on multiple sites with different roles:
+
+```typescript
+async resolveRoleConflict(userId: number, conflicts: RoleConflict[]) {
+  // Assign ALL roles found across sources
+  const uniqueRoles = [...new Set(conflicts.map(c => c.role))];
+  
+  for (const role of uniqueRoles) {
+    const sources = conflicts.filter(c => c.role === role);
+    const confidence = calculateVerificationScore(sources);
+    
+    await this.assignRole(userId, role, {
+      yearsExperience: Math.max(...sources.map(s => s.yearsExperience || 0)),
+      verified: confidence >= 70,
+      verificationSource: sources.map(s => s.source).join(', '),
+      discoveredAt: new Date()
+    });
+  }
+  
+  // If ambiguous (e.g., 3 "Maria Santos" in Buenos Aires), flag for review
+  if (conflicts.some(c => c.confidence < 70)) {
+    await db.manual_review_queue.create({
+      data: {
+        entity_type: 'professional_identity',
+        entity_id: userId,
+        reason: 'low_confidence_match',
+        conflicts: JSON.stringify(conflicts),
+        assigned_to: 'mr_blue_agent',
+        status: 'pending'
+      }
+    });
+  }
+}
+```
+
+### Mr. Blue Dashboard Integration
+
+Add to Mr. Blue's orchestration capabilities:
+
+- **Daily Validation Pass**: Review all scraped professionals from previous day
+- **Outreach Campaign**: Email 50 shadow profile users per day
+- **Conflict Resolution**: Present ambiguous cases for admin review
+- **Verification Scoring**: Real-time confidence calculation
+
+
+
 ## Phase 4: Master Orchestrator Enhancements
 
 ### Site Validation Before Scraping
+
+
 
 **File**: `server/services/scrapers/orchestrator.ts`
 
