@@ -336,94 +336,74 @@ export class TangoCatScraper {
   private extractEvents($: cheerio.CheerioAPI, year: string): TangoCatEvent[] {
     const events: TangoCatEvent[] = [];
     const seenIds = new Set<number>();
-    const seenTitles = new Set<string>();
 
     // Get all script content
     const scripts = $('script').text();
     
-    // Parse embedded JSON to get all event data
+    // Parse embedded JSON to get ALL event data directly
     const jsonEvents = this.parseEmbeddedJSON(scripts);
-    
-    // Build a map of ID -> full event data from JSON
-    const eventDataMap = new Map<number, TangoCatJSONEvent>();
-    for (const jsonEvent of jsonEvents) {
-      eventDataMap.set(jsonEvent.id, jsonEvent);
-    }
-    console.log(`[TangoCat] Built event data map with ${eventDataMap.size} entries`);
+    console.log(`[TangoCat] Processing ALL ${jsonEvents.length} JSON events (no filtering)`);
 
-    // Now extract events from /go/ links and enrich with JSON data
-    $('a[href^="/go/"]').each((i, elem) => {
-      const $link = $(elem);
-      const href = $link.attr('href') || '';
+    // Process ALL JSON events directly - no link-based filtering
+    for (const jsonData of jsonEvents) {
+      if (seenIds.has(jsonData.id)) continue;
+      if (!jsonData.title || jsonData.title.length < 3) continue;
       
-      // Extract event name and ID from URL: /go/Event+Name/12345 -> Event Name, 12345
-      const nameMatch = href.match(/\/go\/([^/]+)\/(\d+)/);
-      if (nameMatch) {
-        const name = decodeURIComponent(nameMatch[1].replace(/\+/g, ' '));
-        const eventId = parseInt(nameMatch[2], 10);
-        const titleLower = name.toLowerCase();
-        
-        if (!seenIds.has(eventId) && !seenTitles.has(titleLower) && name.length > 3) {
-          seenIds.add(eventId);
-          seenTitles.add(titleLower);
-          
-          // Get rich data from JSON
-          const jsonData = eventDataMap.get(eventId);
-          const eventType = this.classifyEventType(jsonData?.title || name);
-          const { country, city } = this.parseLocation(jsonData?.l);
-          const { maestros, djs, performers, orchestras, hosts } = this.parseNote(jsonData?.note);
-          
-          // Build URL - prefer actual website over TangoCat redirect
-          let website = `https://tangocat.net${href}`;
-          if (jsonData?.url && jsonData.url.startsWith('http') && 
-              !jsonData.url.includes('facebook.com') && 
-              !jsonData.url.includes('google.com')) {
-            website = jsonData.url;
-          }
-          
-          // Build description with all roles
-          let description = `${eventType.charAt(0).toUpperCase() + eventType.slice(1)} in ${city}, ${country}`;
-          if (maestros) description += `\n\nMaestros: ${maestros}`;
-          if (djs) description += `\nDJs: ${djs}`;
-          if (orchestras) description += `\nOrchestra: ${orchestras}`;
-          if (performers) description += `\nPerformers: ${performers}`;
-          if (hosts) description += `\nHosts: ${hosts}`;
-          
-          // Check if event is free (from JSON isf field)
-          const isFree = jsonData?.isf === true;
-          
-          events.push({
-            id: eventId,
-            title: jsonData?.title || name,
-            dates: year,
-            startDate: jsonData?.ds,  // "MM/DD/YYYY" from JSON
-            endDate: jsonData?.de,    // "MM/DD/YYYY" from JSON
-            location: jsonData?.l || `${city}, ${country}`,
-            country,
-            city,
-            eventType,
-            website,
-            description,
-            latitude: jsonData?.p?.[0],
-            longitude: jsonData?.p?.[1],
-            maestros,
-            djs,
-            performers,
-            orchestras,
-            hosts,
-            isFree,
-            price: isFree ? 'Free' : undefined
-          });
-        }
+      seenIds.add(jsonData.id);
+      
+      const eventType = this.classifyEventType(jsonData.title);
+      const { country, city } = this.parseLocation(jsonData.l);
+      const { maestros, djs, performers, orchestras, hosts } = this.parseNote(jsonData.note);
+      
+      // Build URL - prefer actual website over TangoCat redirect
+      let website = `https://tangocat.net/go/${encodeURIComponent(jsonData.title).replace(/%20/g, '+')}/${jsonData.id}`;
+      if (jsonData.url && jsonData.url.startsWith('http') && 
+          !jsonData.url.includes('facebook.com') && 
+          !jsonData.url.includes('google.com')) {
+        website = jsonData.url;
       }
-    });
+      
+      // Build description with all roles
+      let description = `${eventType.charAt(0).toUpperCase() + eventType.slice(1)} in ${city}, ${country}`;
+      if (maestros) description += `\n\nMaestros: ${maestros}`;
+      if (djs) description += `\nDJs: ${djs}`;
+      if (orchestras) description += `\nOrchestra: ${orchestras}`;
+      if (performers) description += `\nPerformers: ${performers}`;
+      if (hosts) description += `\nHosts: ${hosts}`;
+      
+      // Check if event is free (from JSON isf field)
+      const isFree = jsonData.isf === true;
+      
+      events.push({
+        id: jsonData.id,
+        title: jsonData.title,
+        dates: year,
+        startDate: jsonData.ds,  // "MM/DD/YYYY" from JSON
+        endDate: jsonData.de,    // "MM/DD/YYYY" from JSON
+        location: jsonData.l || `${city}, ${country}`,
+        country,
+        city,
+        eventType,
+        website,
+        description,
+        latitude: jsonData.p?.[0],
+        longitude: jsonData.p?.[1],
+        maestros,
+        djs,
+        performers,
+        orchestras,
+        hosts,
+        isFree,
+        price: isFree ? 'Free' : undefined
+      });
+    }
 
     console.log(`[TangoCat] Extracted ${events.length} events:`);
     console.log(`  - With coordinates: ${events.filter(e => e.latitude && e.longitude).length}`);
     console.log(`  - With external URLs: ${events.filter(e => !e.website?.includes('tangocat.net')).length}`);
     console.log(`  - Event types: ${Array.from(new Set(events.map(e => e.eventType))).join(', ')}`);
     
-    return events.slice(0, 100); // Increase limit
+    return events; // Return ALL events - no limit
   }
 
   /**
@@ -490,7 +470,14 @@ export class TangoCatScraper {
         let sourceUrl = `https://tangocat.net/${year}/`;
         let sourceName = 'tangocat.net';
         let enrichedDescription = event.description || `${event.eventType} - ${event.location}`;
-        let price = event.price || (event.isFree ? 'Free' : undefined);
+        // Price handling: database expects numeric, store null for "Free" or text prices
+        let priceValue: string | null = null;
+        if (event.price && /^\d+/.test(event.price)) {
+          // Extract numeric value from price string like "$50" or "50"
+          const numMatch = event.price.match(/(\d+)/);
+          priceValue = numMatch ? numMatch[1] : null;
+        }
+        // Note: event.isFree events get priceValue = null (database accepts null for free events)
         let imageUrl = event.imageUrl;
         let fullAddress = `${event.city}, ${event.country}`;
 
@@ -511,8 +498,10 @@ export class TangoCatScraper {
               if (enrichedData.description && enrichedData.description.length > enrichedDescription.length) {
                 enrichedDescription = enrichedData.description;
               }
-              if (enrichedData.price && !price) {
-                price = enrichedData.price;
+              if (enrichedData.price && !priceValue) {
+                // Extract numeric from enriched price
+                const numMatch = enrichedData.price.match(/(\d+)/);
+                priceValue = numMatch ? numMatch[1] : null;
               }
               if (enrichedData.imageUrl && !imageUrl) {
                 imageUrl = enrichedData.imageUrl;
@@ -569,7 +558,7 @@ export class TangoCatScraper {
           groupId,
           status: 'approved',
           externalId,
-          price,
+          price: priceValue,
           imageUrl,
           organizerText: participantData.organizerText,
           djText: participantData.djText,
