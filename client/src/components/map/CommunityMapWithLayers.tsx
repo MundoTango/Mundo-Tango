@@ -155,7 +155,7 @@ function HousingPopupCard({ location }: { location: CommunityLocation }) {
         )}
       </div>
 
-      <Link href={`/housing/${location.id}`} className="block">
+      <Link href={`/housing/listing/${location.id}`} className="block">
         <Button className="w-full text-xs" data-testid={`button-view-housing-${location.id}`}>
           View Details
         </Button>

@@ -139,15 +139,13 @@ export function HousingCreationWizard() {
 
   const createMutation = useMutation({
     mutationFn: async (data: ListingFormData) => {
-      return apiRequest("/api/housing/listings", {
-        method: "POST",
-        body: JSON.stringify(data),
-      });
+      const response = await apiRequest("POST", "/api/housing/listings", data);
+      return response.json();
     },
     onSuccess: (data: { id: number }) => {
       toast({ title: "Success!", description: "Your listing has been created." });
       queryClient.invalidateQueries({ queryKey: ["/api/housing/listings"] });
-      setLocation(`/housing/${data.id}`);
+      setLocation(`/housing/listing/${data.id}`);
     },
     onError: (error: Error) => {
       toast({ 

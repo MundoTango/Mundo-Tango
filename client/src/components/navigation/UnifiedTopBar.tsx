@@ -136,7 +136,7 @@ function UnifiedTopBar({
   // Fetch recent notifications (most recent 10) - uses proper auth headers
   const { data: recentNotifications = [], refetch: refetchNotifications } = useQuery<any[]>({
     queryKey: ['/api/notifications', { limit: 10 }],
-    refetchInterval: 5000, // Auto-refresh every 5 seconds for real-time feel
+    refetchInterval: 60000, // Auto-refresh every 60 seconds (was 5s, too aggressive)
     enabled: !!user,
   });
 
@@ -165,9 +165,7 @@ function UnifiedTopBar({
 
   // Handle individual notification click - navigate and close dropdown
   const handleNotificationClick = async (notif: any) => {
-    console.log('[DEBUG] Notification clicked:', { id: notif.id, actionUrl: notif.actionUrl, isRead: notif.isRead, read: notif.read, title: notif.title });
     let url = notif.actionUrl || notif.link;
-    console.log('[DEBUG] Navigation URL:', url);
     
     if (url) {
       // For friend request notifications, add the reviewRequest param to auto-open the modal
@@ -194,10 +192,7 @@ function UnifiedTopBar({
         }
       }
       // Navigate to the notification target
-      console.log('[DEBUG] Navigating to:', url);
       setLocation(url);
-    } else {
-      console.warn('[WARNING] No actionUrl or link found in notification:', notif);
     }
   };
 

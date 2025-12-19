@@ -124,3 +124,30 @@ homepage_after_login.png
 memories-3-column-layout.png
 3-column-spacing.png
 patterns_for_import.json
+events-3-column-layout.png
+events-page.png
+events-page-2.png
+final-topbar-verification.png
+
+# ==========================================
+# MR BLUE BRAIN DOCUMENTATION (not needed at runtime)
+# ==========================================
+mr-blue-brain/
+mb-legacy.md
+
+# ==========================================
+# ADDITIONAL DEVELOPMENT FILES
+# ==========================================
+*.map
+*.tsbuildinfo
+.storybook/
+storybook-static/
+coverage/
+.nyc_output/
+
+# ==========================================
+# BACKUP FILES
+# ==========================================
+*.old_backup
+*.bak
+*.backup

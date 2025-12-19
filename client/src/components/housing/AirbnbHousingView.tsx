@@ -121,7 +121,8 @@ export function AirbnbHousingView({
           memberCount: 0,
           activeEvents: 0,
           recommendations: 0,
-          housing: listing.pricePerNight || (listing.price ? parseInt(listing.price) : 0),
+          housing: 0,
+          price: listing.pricePerNight || (listing.price ? parseInt(listing.price) : 0),
           isActive: true
         };
       });
@@ -140,7 +141,7 @@ export function AirbnbHousingView({
   };
 
   const handleListingClick = (id: number) => {
-    setLocation(`/housing/${id}`);
+    setLocation(`/housing/listing/${id}`);
   };
 
   const mapCenter: [number, number] = useMemo(() => {

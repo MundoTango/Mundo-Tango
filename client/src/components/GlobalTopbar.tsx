@@ -9,14 +9,27 @@ import { useTheme } from "@/hooks/use-theme";
 import { SearchBar } from "./SearchBar";
 import { LanguageSelectorButton } from "./LanguageSelector";
 import { UserRoleBadges } from "@/components/UserRoleBadges";
+import { useQuery } from "@tanstack/react-query";
 
 export function GlobalTopbar() {
   const { user, logout } = useAuth();
   const { theme, setTheme } = useTheme();
   const [, setLocation] = useLocation();
 
-  const unreadNotifications = 3; // TODO: Get from API
-  const unreadMessages = 5; // TODO: Get from API
+  const { data: notificationData } = useQuery<{ count: number }>({
+    queryKey: ["/api/notifications/count"],
+    enabled: !!user,
+    refetchInterval: 60000,
+  });
+  
+  const { data: messageData } = useQuery<{ count: number }>({
+    queryKey: ["/api/messages/unread-count"],
+    enabled: !!user,
+    refetchInterval: 60000,
+  });
+
+  const unreadNotifications = notificationData?.count || 0;
+  const unreadMessages = messageData?.count || 0;
   
   // Check if user has admin access
   const hasAdminAccess = user?.role && ['god', 'super_admin', 'admin', 'moderator'].includes(user.role);
