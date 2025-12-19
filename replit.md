@@ -39,6 +39,13 @@ The AI brain is restructured into a modular `/mr-blue-brain/` folder system with
 ### Event Scraping System
 A multi-stage scraping architecture coordinated by a Master Orchestrator. It includes Priority Scrapers (HoyMilonga, TangoCat, TangoFestivalsScraper) and an AI-powered UnifiedEventScraper for generic websites. The system scrapes aggregator sites, then follows links to actual event pages for detailed information. Key features include AI-powered extraction, 14 event type classifications, source transparency ("View on {sourceName}"), city matching, and auto-city creation for new event locations. Scrapers can extract team member names in multiple languages from subpages. Scraped events are stored in a `scraped_events` table and ingested into the main events table by `ScrapedEventIngestionService`.
 
+**HoyMilonga Playwright Scraper** (December 2025):
+- Supports 8 cities: Buenos Aires (40), Athens (5), Berlin (5), São Paulo (3), Miami (2), Istanbul, London, Montevideo
+- Uses Playwright chromium for JavaScript SPA rendering
+- Enriches events from detail pages (venue, address, organizers, price, cover image)
+- Extracts participant profiles (DJs, teachers, organizers) automatically
+- Country mapping: Argentina, Brazil, Germany, Greece, Turkey, UK, USA, Uruguay
+
 ### Platform Features
 Core functionalities include social features (events, groups, posts, notifications, media management, live streaming, marketplaces, reviews) and business features (Talent Match AI, LIFE CEO AI, Multi-AI Orchestration, Automated Scraping, Admin Dashboard, Stripe Payments, BullMQ Workers). Recent enhancements include an Event Series System, redesigned City Groups Events Tab, RSS Feed Scraping, Profile Enrichment Service, OpenStreetMap Geocoding, Unified Messaging Inbox, and a Faceless Content System. The Talent Match AI system integrates volunteer onboarding, resume analysis, AI interviews, and task assignment, with an International Payment System supporting 30 currencies and 6 regions.
 

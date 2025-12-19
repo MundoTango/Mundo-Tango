@@ -59,6 +59,17 @@ export class HoyMilongaScraper {
     'Montevideo': 'montevideo'
   };
 
+  private cityCountryMap: Record<string, string> = {
+    'Buenos Aires': 'Argentina',
+    'São Paulo': 'Brazil',
+    'Berlin': 'Germany',
+    'Athens': 'Greece',
+    'Istanbul': 'Turkey',
+    'London': 'United Kingdom',
+    'Miami': 'United States',
+    'Montevideo': 'Uruguay'
+  };
+
   /**
    * Scrape all supported Hoy Milonga cities
    */
@@ -512,7 +523,7 @@ export class HoyMilongaScraper {
           location: event.venue !== 'Unknown Venue' ? event.venue : undefined,
           address,
           city: cityName,
-          country: 'Argentina',
+          country: this.cityCountryMap[cityName] || 'Argentina',
           organizer,
           groupId,
           imageUrl: event.coverImage || undefined,
