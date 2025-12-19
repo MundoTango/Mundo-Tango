@@ -359,7 +359,7 @@ export default function CreateListingPage() {
             <CardContent>
               <PhotoUpload
                 listingId={createdListingId}
-                onComplete={handlePhotosComplete}
+                onPhotosChange={handlePhotosComplete}
               />
             </CardContent>
           </Card>

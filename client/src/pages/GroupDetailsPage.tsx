@@ -35,7 +35,7 @@ import { format, parse, startOfWeek, getDay } from 'date-fns';
 import { enUS } from 'date-fns/locale';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { HousingSearchFilters } from "@/components/housing/HousingSearchFilters";
+import { AirbnbHousingView } from "@/components/housing/AirbnbHousingView";
 
 const locales = { 'en-US': enUS };
 const localizer = dateFnsLocalizer({
@@ -67,10 +67,23 @@ interface HousingListing {
   latitude?: string;
   longitude?: string;
   status: string;
+  photos?: string[];
+  images?: string[];
+  coverPhotoUrl?: string;
+  bedrooms?: number;
+  beds?: number;
+  bathrooms?: number;
+  maxGuests?: number;
+  averageRating?: number;
+  reviewCount?: number;
+  isGuestFavorite?: boolean;
+  weeklyDiscount?: number;
   host?: {
     id: number;
     name: string;
+    email?: string;
     profileImage?: string;
+    isSuperhost?: boolean;
   };
 }
 
@@ -316,7 +329,7 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
         <CardHeader className="border-b">
           <CardTitle className="text-2xl font-serif flex items-center gap-2">
             <Calendar className="h-6 w-6 text-primary" />
-            Group Events
+            {groupCity || "City"} Events
           </CardTitle>
         </CardHeader>
         <CardContent className="p-8 space-y-6">
@@ -345,7 +358,7 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
             <div>
               <CardTitle className="text-2xl font-serif flex items-center gap-2" data-testid="text-group-events-title">
                 <Calendar className="h-6 w-6 text-primary" />
-                Group Events
+                {groupCity || "City"} Events
               </CardTitle>
               <CardDescription data-testid="text-group-events-description">
                 {totalEvents > 0 
@@ -724,195 +737,9 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
 }
 
 function GroupHousingTab({ groupCity }: { groupCity?: string | null }) {
-  const [showMap, setShowMap] = useState(false);
-  const [propertyType, setPropertyType] = useState("");
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 500]);
-  const [checkInDate, setCheckInDate] = useState<Date | undefined>();
-  const [checkOutDate, setCheckOutDate] = useState<Date | undefined>();
-  
-  const { data: listings, isLoading } = useQuery<HousingListing[]>({
-    queryKey: ['/api/housing/listings', groupCity, propertyType, priceRange, checkInDate, checkOutDate],
-    queryFn: async () => {
-      const params = new URLSearchParams();
-      if (groupCity) params.append('city', groupCity);
-      params.append('status', 'active');
-      if (propertyType && propertyType !== 'all') params.append('propertyType', propertyType);
-      if (priceRange[0] > 0) params.append('minPrice', priceRange[0].toString());
-      if (priceRange[1] < 500) params.append('maxPrice', priceRange[1].toString());
-      if (checkInDate) params.append('checkIn', checkInDate.toISOString());
-      if (checkOutDate) params.append('checkOut', checkOutDate.toISOString());
-      
-      const res = await fetch(`/api/housing/listings?${params.toString()}`, { credentials: 'include' });
-      if (!res.ok) return [];
-      const data = await res.json();
-      return data.listings || data || [];
-    },
-    enabled: true,
-  });
-
-  if (isLoading) {
-    return (
-      <Card className="overflow-hidden">
-        <CardHeader className="border-b">
-          <CardTitle className="text-2xl font-serif flex items-center gap-2">
-            <Home className="h-6 w-6 text-primary" />
-            Housing Options
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-8 space-y-6">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="flex items-start gap-6 p-6 border rounded-xl">
-              <Skeleton className="w-16 h-16 rounded-xl" />
-              <div className="flex-1 space-y-3">
-                <Skeleton className="h-6 w-2/3" />
-                <Skeleton className="h-4 w-1/3" />
-                <Skeleton className="h-4 w-1/4" />
-              </div>
-            </div>
-          ))}
-        </CardContent>
-      </Card>
-    );
-  }
-
-  const listingsWithCoords = listings?.filter(l => l.latitude && l.longitude) || [];
-  const defaultCenter: [number, number] = listingsWithCoords.length > 0 
-    ? [parseFloat(listingsWithCoords[0].latitude!), parseFloat(listingsWithCoords[0].longitude!)]
-    : [0, 0];
-
   return (
-    <div className="space-y-6">
-      <HousingSearchFilters
-        city={groupCity || ""}
-        onCityChange={() => {}}
-        propertyType={propertyType}
-        onPropertyTypeChange={setPropertyType}
-        priceRange={priceRange}
-        onPriceRangeChange={setPriceRange}
-        checkInDate={checkInDate}
-        onCheckInDateChange={setCheckInDate}
-        checkOutDate={checkOutDate}
-        onCheckOutDateChange={setCheckOutDate}
-        maxPrice={500}
-        showCityFilter={false}
-        compact={true}
-      />
-
-      <Card className="overflow-hidden">
-        <CardHeader className="border-b">
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle className="text-2xl font-serif flex items-center gap-2">
-                <Home className="h-6 w-6 text-primary" />
-                Housing Options
-              </CardTitle>
-              <CardDescription>
-                {listings?.length || 0} housing options available in {groupCity || "the area"}
-              </CardDescription>
-            </div>
-            {listingsWithCoords.length > 0 && (
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="gap-2"
-                onClick={() => setShowMap(!showMap)}
-                data-testid="button-toggle-housing-map"
-              >
-                <MapIcon className="h-4 w-4" />
-                {showMap ? 'List View' : 'Map View'}
-              </Button>
-            )}
-          </div>
-        </CardHeader>
-        <CardContent className="p-6">
-          {showMap && listingsWithCoords.length > 0 ? (
-            <div className="h-[400px] rounded-xl overflow-hidden border mb-6">
-              <MapContainer 
-                center={defaultCenter} 
-                zoom={12} 
-                className="h-full w-full"
-              >
-                <TileLayer
-                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                />
-                {listingsWithCoords.map((listing) => (
-                  <Marker 
-                    key={listing.id}
-                    position={[parseFloat(listing.latitude!), parseFloat(listing.longitude!)]}
-                  >
-                    <Popup>
-                      <div className="p-2">
-                        <h4 className="font-semibold">{listing.title}</h4>
-                        <p className="text-sm text-muted-foreground">{listing.roomType}</p>
-                        <p className="font-medium">{listing.currency} {listing.pricePerNight}/night</p>
-                      </div>
-                    </Popup>
-                  </Marker>
-                ))}
-              </MapContainer>
-            </div>
-          ) : null}
-
-          {!listings || listings.length === 0 ? (
-            <div className="text-center py-12">
-              <Home className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-              <h3 className="text-lg font-medium mb-2">No Housing Available</h3>
-              <p className="text-muted-foreground">
-                No housing options listed for {groupCity || "this area"} yet.
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {listings.map((listing, index) => (
-                <motion.div
-                  key={listing.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.05 }}
-                  className="flex items-start gap-6 p-6 border rounded-xl hover-elevate"
-                  data-testid={`housing-listing-${listing.id}`}
-                >
-                  <div className="w-16 h-16 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-                    <Home className="h-8 w-8 text-primary" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-xl font-serif font-bold mb-2">{listing.title}</h3>
-                    <div className="space-y-2 text-sm text-muted-foreground">
-                      <div className="flex items-center gap-4">
-                        <Badge variant="outline">{listing.propertyType}</Badge>
-                        <Badge variant="secondary">{listing.roomType}</Badge>
-                      </div>
-                      {listing.host && (
-                        <div className="flex items-center gap-2">
-                          <Avatar className="h-6 w-6">
-                            <AvatarImage src={listing.host.profileImage} />
-                            <AvatarFallback>{listing.host.name?.charAt(0) || 'H'}</AvatarFallback>
-                          </Avatar>
-                          <span>Hosted by {listing.host.name}</span>
-                        </div>
-                      )}
-                      <div className="font-medium text-foreground text-lg flex items-center gap-1">
-                        <DollarSign className="h-4 w-4" />
-                        {listing.currency} {listing.pricePerNight}/night
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <MapPin className="h-3 w-3" />
-                        {listing.city}, {listing.country}
-                      </div>
-                    </div>
-                  </div>
-                  <Link href={`/housing/${listing.id}`}>
-                    <Button data-testid={`button-view-housing-${listing.id}`}>
-                      View Details
-                    </Button>
-                  </Link>
-                </motion.div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+    <div className="h-[calc(100vh-300px)] min-h-[600px]" data-testid="group-housing-tab">
+      <AirbnbHousingView city={groupCity || undefined} showCreateButton={true} />
     </div>
   );
 }
@@ -977,10 +804,10 @@ function GroupHubTab({ groupCity, groupCountry }: { groupCity?: string | null; g
         <CardHeader className="border-b">
           <CardTitle className="text-2xl font-serif flex items-center gap-2">
             <Heart className="h-6 w-6 text-primary" />
-            Community Hub
+            {groupCity || "Tango"} Hub
           </CardTitle>
           <CardDescription>
-            Local tango resources in {groupCity || groupCountry || "your area"}
+            Discover tango resources in {groupCity || groupCountry || "your area"}
           </CardDescription>
         </CardHeader>
       </Card>
@@ -1687,35 +1514,19 @@ export default function GroupDetailsPage() {
               transition={{ duration: 1, ease: "easeOut" }}
               className="max-w-4xl w-full"
             >
-              {group.type && (
-                <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm capitalize">
-                  {group.type}
-                </Badge>
-              )}
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-white font-bold leading-tight mb-4" data-testid="text-city-name">
+                {group.city ? `${group.city}${group.country ? `, ${group.country}` : ''}` : group.name}
+              </h1>
               
-              <div className="flex items-center justify-center gap-4 mb-6">
-                {group.imageUrl && (
-                  <Avatar className="h-20 w-20 border-4 border-white/30">
-                    <AvatarImage src={group.imageUrl} />
-                    <AvatarFallback className="text-2xl">{group.name?.charAt(0) || 'G'}</AvatarFallback>
-                  </Avatar>
-                )}
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-white font-bold leading-tight">
-                  {group.name}
-                </h1>
-              </div>
+              {group.name !== group.city && (
+                <p className="text-xl text-white/80 mb-4">{group.name}</p>
+              )}
               
               <div className="flex flex-wrap items-center justify-center gap-6 text-white/90 mb-8">
                 <div className="flex items-center gap-2">
                   <Users className="h-5 w-5" />
                   <span>{group.memberCount || 0} members</span>
                 </div>
-                {(group.city || group.country) && (
-                  <div className="flex items-center gap-2">
-                    <MapPin className="h-5 w-5" />
-                    <span>{[group.city, group.country].filter(Boolean).join(', ')}</span>
-                  </div>
-                )}
               </div>
 
               <div className="flex flex-wrap gap-3 justify-center">
@@ -1759,7 +1570,7 @@ export default function GroupDetailsPage() {
             {group.description && (
               <Card className="mb-8 overflow-hidden">
                 <CardHeader>
-                  <CardTitle className="text-2xl font-serif">About This Group</CardTitle>
+                  <CardTitle className="text-2xl font-serif">About {group.city || "This Community"}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-lg leading-relaxed text-muted-foreground whitespace-pre-wrap">

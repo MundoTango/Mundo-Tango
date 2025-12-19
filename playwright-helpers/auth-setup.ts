@@ -13,7 +13,10 @@
 import { chromium, Browser, BrowserContext } from '@playwright/test';
 import * as fs from 'fs';
 import * as path from 'path';
+import { fileURLToPath } from 'url';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const AUTH_FILE = path.join(__dirname, '../.playwright-auth.json');
 
 interface AuthConfig {
@@ -96,8 +99,9 @@ export function clearAuthSession(): void {
   }
 }
 
-// CLI support: node playwright-helpers/auth-setup.ts
-if (require.main === module) {
+// CLI support: npx tsx playwright-helpers/auth-setup.ts
+const isMainModule = import.meta.url === `file://${process.argv[1]}`;
+if (isMainModule) {
   const baseURL = process.env.BASE_URL || 'http://localhost:5000';
   const email = process.env.TEST_EMAIL || 'admin@mundotango.life';
   const password = process.env.TEST_PASSWORD || 'admin123';

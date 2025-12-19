@@ -112,7 +112,7 @@ export function AirbnbHousingView({
         const lat = typeof listing.latitude === 'string' ? parseFloat(listing.latitude) : listing.latitude;
         const lng = typeof listing.longitude === 'string' ? parseFloat(listing.longitude) : listing.longitude;
         return {
-          id: `housing-${listing.id}`,
+          id: listing.id,
           type: 'housing' as const,
           title: listing.title,
           city: listing.city || "",
@@ -266,9 +266,8 @@ export function AirbnbHousingView({
               center={mapCenter}
               zoom={12}
               onCityClick={(loc) => {
-                const id = String(loc.id).replace('housing-', '');
-                setSelectedListing(parseInt(id));
-                handleListingClick(parseInt(id));
+                setSelectedListing(loc.id);
+                handleListingClick(loc.id);
               }}
             />
           </Suspense>
