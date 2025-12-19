@@ -192,14 +192,8 @@ export class ScrapingOrchestrator {
         
         console.log(`[Agent #115 → HoyMilonga] Scraping ${city}...`);
         
-        // HoyMilongaScraper handles city-specific scraping
-        const cityCode = this.getCityCode(city);
-        if (!cityCode) {
-          console.warn(`[Agent #115] No city code mapping for ${city}`);
-          continue;
-        }
-        
-        const events = await hoyMilongaScraper.scrapeCity(city, cityCode, source.id);
+        // HoyMilongaScraper handles city-specific scraping via public method
+        const events = await hoyMilongaScraper.scrapeSingleCity(city, source.id);
         totalEvents += events;
         citiesProcessed.add(city);
         

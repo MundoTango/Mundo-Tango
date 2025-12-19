@@ -13442,6 +13442,8 @@ export const eventScrapingSources = pgTable(
     url: varchar("url", { length: 500 }).notNull(),
     rssUrl: varchar("rss_url", { length: 500 }),
     platform: varchar("platform", { length: 50 }).notNull(),
+    scraperType: varchar("scraper_type", { length: 50 }).default("static"),
+    priority: varchar("priority", { length: 20 }).default("normal"),
     country: varchar("country", { length: 100 }),
     city: varchar("city", { length: 100 }),
     isActive: boolean("is_active").default(true).notNull(),
@@ -13457,6 +13459,7 @@ export const eventScrapingSources = pgTable(
   (table) => ({
     platformIdx: index("scraping_sources_platform_idx").on(table.platform),
     activeIdx: index("scraping_sources_active_idx").on(table.isActive),
+    scraperTypeIdx: index("scraping_sources_scraper_type_idx").on(table.scraperType),
     cityCountryIdx: index("scraping_sources_city_country_idx").on(
       table.city,
       table.country,
