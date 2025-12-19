@@ -1,10 +1,10 @@
 # ===========================================
 # DOCKER IGNORE FILE - Reduce deployment image to under 8 GiB
-# Replit uses Docker for deployments
+# Replit runs `npm run build` INSIDE Docker, so keep source files
 # ===========================================
 
 # ==========================================
-# CRITICAL: LARGE DATA DIRECTORIES (8+ GB total)
+# CRITICAL: LARGE DATA DIRECTORIES (7+ GB total)
 # These are the main contributors to image size
 # ==========================================
 lancedb_data/
@@ -15,16 +15,15 @@ attached_assets/
 .pnpm-store/
 .replit/
 .upm/
+node_modules/
 
 # ==========================================
 # GIT HISTORY (1.6+ GB)
 # ==========================================
 .git/
-.gitignore
-.gitattributes
 
 # ==========================================
-# TEST ARTIFACTS & E2E
+# TEST ARTIFACTS & E2E (34+ MB)
 # ==========================================
 test-videos/
 test-results/
@@ -44,7 +43,7 @@ __mocks__/
 __tests__/
 
 # ==========================================
-# DOCUMENTATION & REPORTS
+# DOCUMENTATION & REPORTS (20+ MB)
 # ==========================================
 docs/
 reports/
@@ -56,27 +55,7 @@ mr-blue-brain/
 mb-legacy.md
 
 # ==========================================
-# CLIENT SOURCE (already bundled in dist/public)
-# ==========================================
-client/
-
-# ==========================================
-# PUBLIC FOLDER (bundled into dist/public)
-# ==========================================
-public/
-
-# ==========================================
-# DEVELOPMENT SCRIPTS
-# ==========================================
-scripts/
-
-# ==========================================
-# MIGRATIONS (run at startup, not runtime)
-# ==========================================
-migrations/
-
-# ==========================================
-# DEV CONFIG FILES
+# DEV CONFIG FILES (not needed for build or runtime)
 # ==========================================
 .husky/
 .mcp/
@@ -85,17 +64,6 @@ migrations/
 .idea/
 agent-memory/
 bifrost-config/
-
-# ==========================================
-# BUILD CONFIG (not needed at runtime)
-# ==========================================
-drizzle.config.ts
-tailwind.config.ts
-postcss.config.js
-tsconfig.json
-eslint.config.js
-commitlint.config.js
-vite.config.ts
 
 # ==========================================
 # LOGS & TEMP FILES
@@ -132,7 +100,7 @@ db/
 *.sqlite
 
 # ==========================================
-# BUILD ARTIFACTS & MAPS
+# BUILD ARTIFACTS & MAPS (cleaned during build)
 # ==========================================
 *.map
 *.tsbuildinfo
@@ -171,14 +139,14 @@ patterns_for_import.json
 .uploads/
 
 # ==========================================
-# CI/CD
+# CI/CD (not needed in container)
 # ==========================================
 .github/
 .gitlab-ci.yml
 .circleci/
 
 # ==========================================
-# ENVIRONMENT FILES
+# ENVIRONMENT FILES (injected at runtime)
 # ==========================================
 .env
 .env.local
@@ -187,17 +155,18 @@ patterns_for_import.json
 .mcp/logs/
 
 # ==========================================
-# MARKDOWN FILES (except critical ones)
-# ==========================================
-*.md
-!README.md
-
-# ==========================================
-# KEEP THESE (needed for production runtime):
-# - dist/           (built application - DO NOT EXCLUDE)
-# - server/         (Express server source - needed for runtime imports)
-# - shared/         (shared types/schemas - needed for runtime)
-# - package.json    (dependencies manifest)
+# KEEP THESE FOR BUILD & RUNTIME:
+# - client/          (needed for vite build)
+# - public/          (needed for vite build)
+# - server/          (Express server source)
+# - shared/          (shared types/schemas)
+# - scripts/         (build scripts)
+# - package.json     (dependencies)
 # - package-lock.json (reproducible installs)
-# - node_modules/   (Replit rebuilds this during deployment)
+# - vite.config.ts   (Vite configuration)
+# - tsconfig.json    (TypeScript config)
+# - tailwind.config.ts (Tailwind config)
+# - postcss.config.js (PostCSS config)
+# - drizzle.config.ts (Drizzle ORM config)
+# - migrations/      (database migrations)
 # ==========================================
