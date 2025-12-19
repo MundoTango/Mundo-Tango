@@ -46,7 +46,7 @@ function MapUpdater({ center }: { center: [number, number] }) {
   const map = useMap();
   useEffect(() => {
     map.setView(center, map.getZoom());
-  }, [center, map]);
+  }, [center]);
   return null;
 }
 
