@@ -558,11 +558,16 @@ export default function CityHubPage() {
                     </Button>
                   </div>
                   
-                  {selectedCity.coords ? (
+                  {(selectedCity.coords || mapLocations.length > 0) ? (
                     <RecommendationsList
-                      latitude={selectedCity.coords.lat}
-                      longitude={selectedCity.coords.lng}
+                      latitude={selectedCity.coords?.lat || mapLocations[0]?.coordinates.lat}
+                      longitude={selectedCity.coords?.lng || mapLocations[0]?.coordinates.lng}
                       radius={10}
+                      limit={6}
+                    />
+                  ) : selectedCity.city ? (
+                    <RecommendationsList
+                      category="venue"
                       limit={6}
                     />
                   ) : (
@@ -694,11 +699,16 @@ export default function CityHubPage() {
               </Button>
             </div>
             
-            {selectedCity.coords ? (
+            {(selectedCity.coords || mapLocations.length > 0) ? (
               <RecommendationsList
-                latitude={selectedCity.coords.lat}
-                longitude={selectedCity.coords.lng}
+                latitude={selectedCity.coords?.lat || mapLocations[0]?.coordinates.lat}
+                longitude={selectedCity.coords?.lng || mapLocations[0]?.coordinates.lng}
                 radius={20}
+                limit={20}
+              />
+            ) : selectedCity.city ? (
+              <RecommendationsList
+                category="venue"
                 limit={20}
               />
             ) : (
