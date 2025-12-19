@@ -155,10 +155,14 @@ router.get("/search", async (req, res: Response) => {
     }
 
     // STEP 1: Try instant popular cities match first (no API call needed!)
-    const popularMatches = matchPopularCities(query);
-    if (popularMatches.length > 0) {
-      console.log(`[LocationSearch] Instant match for "${query}": ${popularMatches.length} popular cities`);
-      return res.json(popularMatches);
+    // BUT: Skip popular cities fast-track if query looks like an address (has numbers or street keywords)
+    const isAddressQuery = /\d+|^(?:av|avenida|calle|street|st|rd|road|lane|blvd|boulevard|plaza|plz|pza)/i.test(query);
+    if (!isAddressQuery) {
+      const popularMatches = matchPopularCities(query);
+      if (popularMatches.length > 0) {
+        console.log(`[LocationSearch] Instant match for "${query}": ${popularMatches.length} popular cities`);
+        return res.json(popularMatches);
+      }
     }
 
     // STEP 2: Check cache for API results
@@ -235,10 +239,14 @@ router.post("/search", async (req, res: Response) => {
     }
 
     // STEP 1: Try instant popular cities match first (no API call needed!)
-    const popularMatches = matchPopularCities(query);
-    if (popularMatches.length > 0) {
-      console.log(`[LocationSearch] Instant match for "${query}": ${popularMatches.length} popular cities`);
-      return res.json(popularMatches);
+    // BUT: Skip popular cities fast-track if query looks like an address (has numbers or street keywords)
+    const isAddressQuery = /\d+|^(?:av|avenida|calle|street|st|rd|road|lane|blvd|boulevard|plaza|plz|pza)/i.test(query);
+    if (!isAddressQuery) {
+      const popularMatches = matchPopularCities(query);
+      if (popularMatches.length > 0) {
+        console.log(`[LocationSearch] Instant match for "${query}": ${popularMatches.length} popular cities`);
+        return res.json(popularMatches);
+      }
     }
 
     // STEP 2: Check cache for API results
