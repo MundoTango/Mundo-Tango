@@ -19600,6 +19600,145 @@ export type InsertPlanTask = z.infer<typeof insertPlanTaskSchema>;
 export type SelectPlanTask = typeof planTasks.$inferSelect;
 
 // ============================================================================
+// SCRAPER ROUND 2: HOYMILONGA EXPANSION TABLES
+// ============================================================================
+
+export const poiTypeEnum = pgEnum("poi_type", [
+  "school",
+  "shop",
+  "venue_rental",
+  "cultural_center",
+]);
+
+export const cityPois = pgTable(
+  "city_pois",
+  {
+    id: serial("id").primaryKey(),
+    cityName: varchar("city_name", { length: 255 }).notNull(),
+    countryName: varchar("country_name", { length: 255 }),
+    poiType: poiTypeEnum("poi_type").notNull(),
+    name: varchar("name", { length: 255 }).notNull(),
+    slug: varchar("slug", { length: 255 }),
+    description: text("description"),
+    address: text("address"),
+    latitude: numeric("latitude", { precision: 10, scale: 8 }),
+    longitude: numeric("longitude", { precision: 11, scale: 8 }),
+    phone: varchar("phone", { length: 50 }),
+    email: varchar("email", { length: 255 }),
+    website: varchar("website", { length: 500 }),
+    socialMedia: jsonb("social_media").$type<Record<string, string>>().default({}),
+    businessHours: jsonb("business_hours"),
+    amenities: text("amenities").array(),
+    priceRange: varchar("price_range", { length: 20 }),
+    images: jsonb("images").$type<string[]>().default([]),
+    verified: boolean("verified").default(false),
+    claimedByUserId: integer("claimed_by_user_id").references(() => users.id),
+    sourceUrl: varchar("source_url", { length: 500 }),
+    scrapedAt: timestamp("scraped_at").defaultNow(),
+    metadata: jsonb("metadata").default({}),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  },
+  (table) => ({
+    cityIdx: index("city_pois_city_idx").on(table.cityName),
+    typeIdx: index("city_pois_type_idx").on(table.poiType),
+    verifiedIdx: index("city_pois_verified_idx").on(table.verified),
+    claimedIdx: index("city_pois_claimed_idx").on(table.claimedByUserId),
+  }),
+);
+
+export const insertCityPoiSchema = createInsertSchema(cityPois).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+export type InsertCityPoi = z.infer<typeof insertCityPoiSchema>;
+export type SelectCityPoi = typeof cityPois.$inferSelect;
+
+export const participantTypeEnum = pgEnum("participant_type", [
+  "organizer",
+  "dj",
+  "teacher",
+  "performer",
+  "host",
+  "volunteer",
+  "other",
+]);
+
+export const eventParticipants = pgTable(
+  "event_participants",
+  {
+    id: serial("id").primaryKey(),
+    eventId: integer("event_id").references(() => events.id, { onDelete: "cascade" }).notNull(),
+    userId: integer("user_id").references(() => users.id, { onDelete: "set null" }),
+    participantType: participantTypeEnum("participant_type").notNull(),
+    name: varchar("name", { length: 255 }).notNull(),
+    roleDescription: text("role_description"),
+    isPrimary: boolean("is_primary").default(false),
+    metadata: jsonb("metadata").default({}),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  },
+  (table) => ({
+    eventIdx: index("event_participants_event_idx").on(table.eventId),
+    userIdx: index("event_participants_user_idx").on(table.userId),
+    typeIdx: index("event_participants_type_idx").on(table.participantType),
+    primaryIdx: index("event_participants_primary_idx").on(table.isPrimary),
+  }),
+);
+
+export const insertEventParticipantSchema = createInsertSchema(eventParticipants).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+export type InsertEventParticipant = z.infer<typeof insertEventParticipantSchema>;
+export type SelectEventParticipant = typeof eventParticipants.$inferSelect;
+
+export const linkTypeEnum = pgEnum("link_type", [
+  "website",
+  "facebook",
+  "instagram",
+  "youtube",
+  "tiktok",
+  "teaching_site",
+  "event_site",
+  "other",
+]);
+
+export const userExternalLinks = pgTable(
+  "user_external_links",
+  {
+    id: serial("id").primaryKey(),
+    userId: integer("user_id").references(() => users.id, { onDelete: "cascade" }).notNull(),
+    linkType: linkTypeEnum("link_type").notNull(),
+    url: varchar("url", { length: 500 }).notNull(),
+    title: varchar("title", { length: 255 }),
+    description: text("description"),
+    verified: boolean("verified").default(false),
+    isPrimary: boolean("is_primary").default(false),
+    metadata: jsonb("metadata").default({}),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  },
+  (table) => ({
+    userIdx: index("user_external_links_user_idx").on(table.userId),
+    typeIdx: index("user_external_links_type_idx").on(table.linkType),
+    verifiedIdx: index("user_external_links_verified_idx").on(table.verified),
+    primaryIdx: index("user_external_links_primary_idx").on(table.isPrimary),
+    uniqueUserUrl: unique("user_external_links_unique_url").on(table.userId, table.url),
+  }),
+);
+
+export const insertUserExternalLinkSchema = createInsertSchema(userExternalLinks).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+export type InsertUserExternalLink = z.infer<typeof insertUserExternalLinkSchema>;
+export type SelectUserExternalLink = typeof userExternalLinks.$inferSelect;
+
+// ============================================================================
 // PLATFORM INDEPENDENCE SCHEMA (PATH 2)
 // ============================================================================
 
