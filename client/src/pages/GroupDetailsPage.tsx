@@ -16,8 +16,9 @@ import type { SelectGroup, SelectEvent } from "@shared/client-types";
 import { SEO } from "@/components/SEO";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { GroupPostFeed } from "@/components/groups/GroupPostFeed";
-import { GroupMembersList } from "@/components/groups/GroupMembersList";
+import { EnhancedMembersList } from "@/components/groups/EnhancedMembersList";
 import { GroupSettingsPanel } from "@/components/groups/GroupSettingsPanel";
+import { CompactEventFilters, type CompactEventFilterValues } from "@/components/events/CompactEventFilters";
 import { motion } from "framer-motion";
 import { useMyRSVPs } from "@/hooks/useEvents";
 import { useAuth } from "@/contexts/AuthContext";
@@ -744,239 +745,431 @@ function GroupHousingTab({ groupCity }: { groupCity?: string | null }) {
   );
 }
 
-function GroupHubTab({ groupCity, groupCountry }: { groupCity?: string | null; groupCountry?: string | null }) {
-  const { data: milongas, isLoading: loadingMilongas } = useQuery<SelectEvent[]>({
-    queryKey: ['/api/events', 'milonga', groupCity],
+function GroupHubTab({ groupCity, groupCountry, group }: { groupCity?: string | null; groupCountry?: string | null; group?: SelectGroup }) {
+  const [activeLayer, setActiveLayer] = useState<'all' | 'events' | 'housing' | 'recommendations'>('all');
+  
+  // Fetch events
+  const { data: events = [], isLoading: loadingEvents } = useQuery<SelectEvent[]>({
+    queryKey: ['/api/events', 'hub', groupCity],
     queryFn: async () => {
       const url = groupCity 
-        ? `/api/events?city=${encodeURIComponent(groupCity)}&eventType=milonga&limit=10&upcoming=true`
-        : '/api/events?eventType=milonga&limit=10&upcoming=true';
+        ? `/api/events?city=${encodeURIComponent(groupCity)}&limit=20&upcoming=true`
+        : '/api/events?limit=20&upcoming=true';
       const res = await fetch(url, { credentials: 'include' });
       if (!res.ok) return [];
       const data = await res.json();
-      let events = data.events || data || [];
-      if (events.length > 0 && events[0]?.event) {
-        events = events.map((item: any) => item.event || item);
+      let eventList = data.events || data || [];
+      if (eventList.length > 0 && eventList[0]?.event) {
+        eventList = eventList.map((item: any) => item.event || item);
       }
-      return events;
+      return eventList;
     },
   });
 
-  const { data: teachers, isLoading: loadingTeachers } = useQuery<UserByRole[]>({
+  // Fetch housing
+  const { data: housing = [], isLoading: loadingHousing } = useQuery<HousingListing[]>({
+    queryKey: ['/api/housing/listings', 'hub', groupCity],
+    queryFn: async () => {
+      const url = groupCity 
+        ? `/api/housing/listings?city=${encodeURIComponent(groupCity)}&status=active`
+        : '/api/housing/listings?status=active';
+      const res = await fetch(url, { credentials: 'include' });
+      if (!res.ok) return [];
+      return res.json();
+    },
+  });
+
+  // Fetch key people
+  const { data: teachers = [] } = useQuery<UserByRole[]>({
     queryKey: ['/api/users/by-role', 'teacher', groupCity],
     queryFn: async () => {
       const url = groupCity 
         ? `/api/users/by-role?role=teacher&city=${encodeURIComponent(groupCity)}&limit=6`
         : '/api/users/by-role?role=teacher&limit=6';
       const res = await fetch(url, { credentials: 'include' });
-      if (!res.ok) return [];
-      return res.json();
+      return res.ok ? res.json() : [];
     },
   });
 
-  const { data: djs, isLoading: loadingDJs } = useQuery<UserByRole[]>({
+  const { data: djs = [] } = useQuery<UserByRole[]>({
     queryKey: ['/api/users/by-role', 'dj', groupCity],
     queryFn: async () => {
       const url = groupCity 
         ? `/api/users/by-role?role=dj&city=${encodeURIComponent(groupCity)}&limit=6`
         : '/api/users/by-role?role=dj&limit=6';
       const res = await fetch(url, { credentials: 'include' });
-      if (!res.ok) return [];
-      return res.json();
+      return res.ok ? res.json() : [];
     },
   });
 
-  const { data: organizers, isLoading: loadingOrganizers } = useQuery<UserByRole[]>({
+  const { data: organizers = [] } = useQuery<UserByRole[]>({
     queryKey: ['/api/users/by-role', 'organizer', groupCity],
     queryFn: async () => {
       const url = groupCity 
         ? `/api/users/by-role?role=organizer&city=${encodeURIComponent(groupCity)}&limit=6`
         : '/api/users/by-role?role=organizer&limit=6';
       const res = await fetch(url, { credentials: 'include' });
-      if (!res.ok) return [];
-      return res.json();
+      return res.ok ? res.json() : [];
     },
   });
 
+  // Build map locations
+  const mapLocations = useMemo(() => {
+    const locations: any[] = [];
+    
+    if (activeLayer === 'all' || activeLayer === 'events') {
+      events.filter(e => e.latitude && e.longitude).forEach(event => {
+        locations.push({
+          id: event.id,
+          type: 'event',
+          title: event.title,
+          city: event.city || groupCity || '',
+          country: event.country || groupCountry || '',
+          coordinates: { 
+            lat: typeof event.latitude === 'string' ? parseFloat(event.latitude) : event.latitude,
+            lng: typeof event.longitude === 'string' ? parseFloat(event.longitude) : event.longitude
+          },
+          date: event.startDate,
+          location: event.location,
+        });
+      });
+    }
+    
+    if (activeLayer === 'all' || activeLayer === 'housing') {
+      housing.filter(h => h.latitude && h.longitude).forEach(listing => {
+        locations.push({
+          id: listing.id,
+          type: 'housing',
+          title: listing.title,
+          city: listing.city || groupCity || '',
+          country: listing.country || groupCountry || '',
+          coordinates: { 
+            lat: typeof listing.latitude === 'string' ? parseFloat(listing.latitude) : listing.latitude,
+            lng: typeof listing.longitude === 'string' ? parseFloat(listing.longitude) : listing.longitude
+          },
+          housing: listing.pricePerNight || 0,
+        });
+      });
+    }
+    
+    return locations;
+  }, [events, housing, activeLayer, groupCity, groupCountry]);
+
+  const mapCenter: [number, number] = useMemo(() => {
+    if (mapLocations.length > 0) {
+      return [mapLocations[0].coordinates.lat, mapLocations[0].coordinates.lng];
+    }
+    return [-34.6037, -58.3816]; // Buenos Aires default
+  }, [mapLocations]);
+
+  const isLoading = loadingEvents || loadingHousing;
+
   return (
-    <div className="space-y-8">
+    <div className="space-y-6" data-testid="unified-city-hub">
+      {/* Header */}
       <Card className="overflow-hidden">
-        <CardHeader className="border-b">
+        <CardHeader className="border-b bg-gradient-to-r from-primary/5 to-primary/10">
           <CardTitle className="text-2xl font-serif flex items-center gap-2">
-            <Heart className="h-6 w-6 text-primary" />
-            {groupCity || "Tango"} Hub
+            <Compass className="h-6 w-6 text-primary" />
+            {groupCity || "Tango"} City Hub
           </CardTitle>
           <CardDescription>
-            Discover tango resources in {groupCity || groupCountry || "your area"}
+            Explore events, housing, and recommendations in {groupCity || groupCountry || "your area"}
           </CardDescription>
         </CardHeader>
       </Card>
 
+      {/* Layer Filters */}
+      <div className="flex flex-wrap gap-2">
+        <Button 
+          variant={activeLayer === 'all' ? 'default' : 'outline'}
+          size="sm"
+          onClick={() => setActiveLayer('all')}
+          data-testid="button-layer-all"
+        >
+          <Globe className="h-4 w-4 mr-2" />
+          All ({events.length + housing.length})
+        </Button>
+        <Button 
+          variant={activeLayer === 'events' ? 'default' : 'outline'}
+          size="sm"
+          onClick={() => setActiveLayer('events')}
+          className={activeLayer === 'events' ? '' : 'border-red-500/50 text-red-600 hover:bg-red-50 dark:hover:bg-red-950'}
+          data-testid="button-layer-events"
+        >
+          <Calendar className="h-4 w-4 mr-2" />
+          Events ({events.length})
+        </Button>
+        <Button 
+          variant={activeLayer === 'housing' ? 'default' : 'outline'}
+          size="sm"
+          onClick={() => setActiveLayer('housing')}
+          className={activeLayer === 'housing' ? '' : 'border-green-500/50 text-green-600 hover:bg-green-50 dark:hover:bg-green-950'}
+          data-testid="button-layer-housing"
+        >
+          <Home className="h-4 w-4 mr-2" />
+          Housing ({housing.length})
+        </Button>
+        <Button 
+          variant={activeLayer === 'recommendations' ? 'default' : 'outline'}
+          size="sm"
+          onClick={() => setActiveLayer('recommendations')}
+          className={activeLayer === 'recommendations' ? '' : 'border-yellow-500/50 text-yellow-600 hover:bg-yellow-50 dark:hover:bg-yellow-950'}
+          data-testid="button-layer-recommendations"
+        >
+          <Star className="h-4 w-4 mr-2" />
+          Recommendations
+        </Button>
+      </div>
+
+      {/* Map */}
       <Card className="overflow-hidden">
-        <CardHeader className="border-b">
-          <CardTitle className="text-xl font-serif">Upcoming Milongas</CardTitle>
-          <CardDescription>Regular milongas in {groupCity || "the area"}</CardDescription>
-        </CardHeader>
-        <CardContent className="p-6">
-          {loadingMilongas ? (
-            <div className="space-y-4">
-              {[1, 2, 3].map((i) => (
-                <Skeleton key={i} className="h-20 w-full rounded-xl" />
-              ))}
-            </div>
-          ) : !milongas || milongas.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              <Music className="h-8 w-8 mx-auto mb-2 opacity-50" />
-              <p>No milongas scheduled yet</p>
+        <div className="h-[400px]">
+          {isLoading ? (
+            <div className="h-full flex items-center justify-center bg-muted">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
             </div>
           ) : (
-            <div className="space-y-4">
-              {milongas.slice(0, 5).map((milonga) => (
-                <Link key={milonga.id} href={`/events/${milonga.id}`}>
-                  <motion.div 
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="p-4 border rounded-xl hover-elevate cursor-pointer"
-                    data-testid={`milonga-${milonga.id}`}
-                  >
-                    <div className="flex justify-between items-center">
-                      <div>
-                        <h4 className="text-lg font-semibold mb-1">{milonga.title}</h4>
-                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+            <MapContainer
+              center={mapCenter}
+              zoom={12}
+              className="h-full w-full"
+              scrollWheelZoom={true}
+            >
+              <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              />
+              {mapLocations.map((loc, idx) => (
+                <Marker 
+                  key={`${loc.type}-${loc.id}-${idx}`}
+                  position={[loc.coordinates.lat, loc.coordinates.lng]}
+                >
+                  <Popup>
+                    <div className="p-2 min-w-[150px]">
+                      <Badge 
+                        variant="secondary" 
+                        className={`mb-2 ${loc.type === 'event' ? 'bg-red-100 text-red-700' : loc.type === 'housing' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}
+                      >
+                        {loc.type === 'event' ? 'Event' : loc.type === 'housing' ? 'Housing' : 'Recommendation'}
+                      </Badge>
+                      <h4 className="font-semibold text-sm">{loc.title}</h4>
+                      {loc.type === 'event' && loc.date && (
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {safeDateFormat(loc.date, "MMM d, yyyy")}
+                        </p>
+                      )}
+                      {loc.type === 'housing' && (
+                        <p className="text-xs font-medium text-green-600 mt-1">
+                          {loc.housing > 0 ? `$${loc.housing}/night` : 'Free'}
+                        </p>
+                      )}
+                      <Link href={loc.type === 'event' ? `/events/${loc.id}` : `/housing/${loc.id}`}>
+                        <Button size="sm" className="w-full mt-2">View</Button>
+                      </Link>
+                    </div>
+                  </Popup>
+                </Marker>
+              ))}
+            </MapContainer>
+          )}
+        </div>
+      </Card>
+
+      {/* Details Section */}
+      <div className="grid lg:grid-cols-2 gap-6">
+        {/* Events List */}
+        {(activeLayer === 'all' || activeLayer === 'events') && (
+          <Card className="overflow-hidden">
+            <CardHeader className="border-b py-3">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Calendar className="h-5 w-5 text-red-500" />
+                Upcoming Events
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-0 max-h-[400px] overflow-y-auto">
+              {events.length === 0 ? (
+                <p className="p-4 text-center text-muted-foreground">No events found</p>
+              ) : (
+                <div className="divide-y">
+                  {events.slice(0, 8).map(event => (
+                    <Link key={event.id} href={`/events/${event.id}`}>
+                      <div className="p-4 hover-elevate cursor-pointer" data-testid={`hub-event-${event.id}`}>
+                        <h4 className="font-medium truncate">{event.title}</h4>
+                        <div className="flex items-center gap-3 text-sm text-muted-foreground mt-1">
                           <span className="flex items-center gap-1">
                             <Calendar className="h-3 w-3" />
-                            {safeDateFormat(milonga.startDate, "EEE, MMM d")}
+                            {safeDateFormat(event.startDate, "MMM d")}
                           </span>
-                          {milonga.location && (
-                            <span className="flex items-center gap-1">
+                          {event.location && (
+                            <span className="flex items-center gap-1 truncate">
                               <MapPin className="h-3 w-3" />
-                              {milonga.location}
+                              {event.location}
                             </span>
                           )}
                         </div>
                       </div>
-                      <ChevronRight className="h-5 w-5 text-muted-foreground" />
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Housing List */}
+        {(activeLayer === 'all' || activeLayer === 'housing') && (
+          <Card className="overflow-hidden">
+            <CardHeader className="border-b py-3">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Home className="h-5 w-5 text-green-500" />
+                Available Housing
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-0 max-h-[400px] overflow-y-auto">
+              {housing.length === 0 ? (
+                <p className="p-4 text-center text-muted-foreground">No housing listings found</p>
+              ) : (
+                <div className="divide-y">
+                  {housing.slice(0, 8).map(listing => (
+                    <Link key={listing.id} href={`/housing/${listing.id}`}>
+                      <div className="p-4 hover-elevate cursor-pointer" data-testid={`hub-housing-${listing.id}`}>
+                        <div className="flex justify-between items-start">
+                          <div className="flex-1 min-w-0">
+                            <h4 className="font-medium truncate">{listing.title}</h4>
+                            <p className="text-sm text-muted-foreground">{listing.propertyType}</p>
+                          </div>
+                          <Badge variant="secondary" className="bg-green-100 text-green-700 ml-2">
+                            {listing.pricePerNight > 0 ? `$${listing.pricePerNight}` : 'Free'}
+                          </Badge>
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
+      </div>
+
+      {/* Key People Section */}
+      <Card className="overflow-hidden">
+        <CardHeader className="border-b">
+          <CardTitle className="text-xl font-serif flex items-center gap-2">
+            <Users className="h-5 w-5 text-primary" />
+            Key People in {groupCity || "This Community"}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-6">
+          <div className="grid md:grid-cols-3 gap-6">
+            {/* Teachers */}
+            <div>
+              <h4 className="font-semibold flex items-center gap-2 mb-4">
+                <GraduationCap className="h-5 w-5 text-blue-500" />
+                Teachers ({teachers.length})
+              </h4>
+              <div className="space-y-2">
+                {teachers.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">No teachers found</p>
+                ) : teachers.slice(0, 4).map(teacher => (
+                  <Link key={teacher.id} href={`/profile/${teacher.username || teacher.id}`}>
+                    <div className="flex items-center gap-3 p-2 rounded-lg hover-elevate cursor-pointer">
+                      <Avatar className="h-8 w-8">
+                        <AvatarImage src={teacher.profileImage} />
+                        <AvatarFallback className="bg-blue-500/20 text-blue-700 text-xs">
+                          {teacher.name?.charAt(0)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <span className="text-sm font-medium truncate">{teacher.name}</span>
                     </div>
-                  </motion.div>
-                </Link>
-              ))}
+                  </Link>
+                ))}
+              </div>
             </div>
-          )}
+
+            {/* DJs */}
+            <div>
+              <h4 className="font-semibold flex items-center gap-2 mb-4">
+                <Music className="h-5 w-5 text-purple-500" />
+                DJs ({djs.length})
+              </h4>
+              <div className="space-y-2">
+                {djs.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">No DJs found</p>
+                ) : djs.slice(0, 4).map(dj => (
+                  <Link key={dj.id} href={`/profile/${dj.username || dj.id}`}>
+                    <div className="flex items-center gap-3 p-2 rounded-lg hover-elevate cursor-pointer">
+                      <Avatar className="h-8 w-8">
+                        <AvatarImage src={dj.profileImage} />
+                        <AvatarFallback className="bg-purple-500/20 text-purple-700 text-xs">
+                          {dj.name?.charAt(0)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <span className="text-sm font-medium truncate">{dj.name}</span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            {/* Organizers */}
+            <div>
+              <h4 className="font-semibold flex items-center gap-2 mb-4">
+                <Mic2 className="h-5 w-5 text-amber-500" />
+                Organizers ({organizers.length})
+              </h4>
+              <div className="space-y-2">
+                {organizers.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">No organizers found</p>
+                ) : organizers.slice(0, 4).map(org => (
+                  <Link key={org.id} href={`/profile/${org.username || org.id}`}>
+                    <div className="flex items-center gap-3 p-2 rounded-lg hover-elevate cursor-pointer">
+                      <Avatar className="h-8 w-8">
+                        <AvatarImage src={org.profileImage} />
+                        <AvatarFallback className="bg-amber-500/20 text-amber-700 text-xs">
+                          {org.name?.charAt(0)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <span className="text-sm font-medium truncate">{org.name}</span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
         </CardContent>
       </Card>
 
-      <div className="grid md:grid-cols-3 gap-6">
-        <Card className="overflow-hidden">
-          <CardHeader className="border-b">
-            <CardTitle className="text-lg font-serif flex items-center gap-2">
-              <GraduationCap className="h-5 w-5 text-blue-500" />
-              Teachers
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-4">
-            {loadingTeachers ? (
-              <div className="space-y-3">
-                {[1, 2, 3].map((i) => <Skeleton key={i} className="h-12 w-full" />)}
-              </div>
-            ) : !teachers || teachers.length === 0 ? (
-              <p className="text-center text-muted-foreground py-4 text-sm">No teachers found</p>
-            ) : (
-              <div className="space-y-3">
-                {teachers.map((teacher) => (
-                  <Link key={teacher.id} href={`/profile/${teacher.username || teacher.id}`}>
-                    <div className="flex items-center gap-3 p-2 rounded-lg hover-elevate cursor-pointer">
-                      <Avatar className="h-10 w-10">
-                        <AvatarImage src={teacher.profileImage} />
-                        <AvatarFallback className="bg-blue-500/20 text-blue-700 dark:text-blue-300">
-                          {teacher.name?.charAt(0) || 'T'}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium truncate">{teacher.name}</p>
-                        <p className="text-xs text-muted-foreground truncate">{teacher.city}</p>
-                      </div>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card className="overflow-hidden">
-          <CardHeader className="border-b">
-            <CardTitle className="text-lg font-serif flex items-center gap-2">
-              <Music className="h-5 w-5 text-purple-500" />
-              DJs
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-4">
-            {loadingDJs ? (
-              <div className="space-y-3">
-                {[1, 2, 3].map((i) => <Skeleton key={i} className="h-12 w-full" />)}
-              </div>
-            ) : !djs || djs.length === 0 ? (
-              <p className="text-center text-muted-foreground py-4 text-sm">No DJs found</p>
-            ) : (
-              <div className="space-y-3">
-                {djs.map((dj) => (
-                  <Link key={dj.id} href={`/profile/${dj.username || dj.id}`}>
-                    <div className="flex items-center gap-3 p-2 rounded-lg hover-elevate cursor-pointer">
-                      <Avatar className="h-10 w-10">
-                        <AvatarImage src={dj.profileImage} />
-                        <AvatarFallback className="bg-purple-500/20 text-purple-700 dark:text-purple-300">
-                          {dj.name?.charAt(0) || 'D'}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium truncate">{dj.name}</p>
-                        <p className="text-xs text-muted-foreground truncate">{dj.city}</p>
-                      </div>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card className="overflow-hidden">
-          <CardHeader className="border-b">
-            <CardTitle className="text-lg font-serif flex items-center gap-2">
-              <Mic2 className="h-5 w-5 text-amber-500" />
-              Organizers
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-4">
-            {loadingOrganizers ? (
-              <div className="space-y-3">
-                {[1, 2, 3].map((i) => <Skeleton key={i} className="h-12 w-full" />)}
-              </div>
-            ) : !organizers || organizers.length === 0 ? (
-              <p className="text-center text-muted-foreground py-4 text-sm">No organizers found</p>
-            ) : (
-              <div className="space-y-3">
-                {organizers.map((org) => (
-                  <Link key={org.id} href={`/profile/${org.username || org.id}`}>
-                    <div className="flex items-center gap-3 p-2 rounded-lg hover-elevate cursor-pointer">
-                      <Avatar className="h-10 w-10">
-                        <AvatarImage src={org.profileImage} />
-                        <AvatarFallback className="bg-amber-500/20 text-amber-700 dark:text-amber-300">
-                          {org.name?.charAt(0) || 'O'}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium truncate">{org.name}</p>
-                        <p className="text-xs text-muted-foreground truncate">{org.city}</p>
-                      </div>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      </div>
+      {/* Stats */}
+      {group && (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <Card>
+            <CardContent className="p-4 text-center">
+              <div className="text-2xl font-bold text-primary">{group.memberCount || 0}</div>
+              <div className="text-sm text-muted-foreground">Members</div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4 text-center">
+              <div className="text-2xl font-bold text-red-500">{events.length}</div>
+              <div className="text-sm text-muted-foreground">Events</div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4 text-center">
+              <div className="text-2xl font-bold text-green-500">{housing.length}</div>
+              <div className="text-sm text-muted-foreground">Listings</div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4 text-center">
+              <div className="text-2xl font-bold text-blue-500">{teachers.length + djs.length + organizers.length}</div>
+              <div className="text-sm text-muted-foreground">Professionals</div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
     </div>
   );
 }
@@ -1387,6 +1580,7 @@ export default function GroupDetailsPage() {
   const [, params] = useRoute("/groups/:id");
   const groupIdOrSlug = params?.id || "";
   const { toast } = useToast();
+  const { user } = useAuth();
 
   const { data: group, isLoading } = useQuery<SelectGroup>({
     queryKey: ["/api/groups", groupIdOrSlug],
@@ -1582,7 +1776,7 @@ export default function GroupDetailsPage() {
 
             {/* Tabs */}
             <Tabs defaultValue="discussion">
-              <TabsList className="grid w-full grid-cols-4 lg:grid-cols-7 gap-1 mb-8">
+              <TabsList className="grid w-full grid-cols-4 lg:grid-cols-6 gap-1 mb-8">
                 <TabsTrigger value="discussion">Discussion</TabsTrigger>
                 <TabsTrigger value="events">
                   <Calendar className="h-4 w-4 lg:mr-2" />
@@ -1593,13 +1787,12 @@ export default function GroupDetailsPage() {
                   <span className="hidden lg:inline">Housing</span>
                 </TabsTrigger>
                 <TabsTrigger value="hub">
-                  <Heart className="h-4 w-4 lg:mr-2" />
-                  <span className="hidden lg:inline">Hub</span>
-                </TabsTrigger>
-                <TabsTrigger value="members">Members</TabsTrigger>
-                <TabsTrigger value="city-guide">
                   <Compass className="h-4 w-4 lg:mr-2" />
-                  <span className="hidden lg:inline">City Guide</span>
+                  <span className="hidden lg:inline">City Hub</span>
+                </TabsTrigger>
+                <TabsTrigger value="members">
+                  <Users className="h-4 w-4 lg:mr-2" />
+                  <span className="hidden lg:inline">Members</span>
                 </TabsTrigger>
                 {membershipData?.isMember && (
                   <TabsTrigger value="settings">
@@ -1627,21 +1820,14 @@ export default function GroupDetailsPage() {
               </TabsContent>
 
               <TabsContent value="hub">
-                <GroupHubTab groupCity={group.city} groupCountry={group.country} />
+                <GroupHubTab groupCity={group.city} groupCountry={group.country} group={group} />
               </TabsContent>
 
               <TabsContent value="members">
-                <GroupMembersList 
+                <EnhancedMembersList 
                   groupId={group.id}
                   canModerate={membershipData?.isMember || false}
-                />
-              </TabsContent>
-
-              <TabsContent value="city-guide">
-                <GroupCityGuideTab 
-                  group={group} 
-                  groupCity={group.city} 
-                  groupCountry={group.country} 
+                  currentUserId={user?.id}
                 />
               </TabsContent>
 
