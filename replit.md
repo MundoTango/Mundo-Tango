@@ -16,6 +16,13 @@ Mundo Tango is a production-ready social platform designed to connect the global
 - MB.MD Methodology - Apply v9.9.3 patterns systematically: Research → Plan → Build → Test → Fix → Document
 
 ## Recent Fixes & Updates (Dec 19, 2025)
+- **City-Prioritized Address Search**: Enhanced address search to prioritize results from user's current city context
+  - Updated HousingCreationWizard to accept `initialCity` prop and pass to address picker
+  - Updated EventCreationPage to pass `formData.city` to address picker for local prioritization
+  - Backend POST /api/locations/search now accepts `prioritizeCity` parameter and sorts results by city match
+  - Address queries with numbers/street keywords skip popular cities fast-track for accurate address results
+- **Address Search Regression Fix**: Fixed popular cities fast-track incorrectly matching partial city names (e.g., "5445 av cordoba" now searches OpenStreetMap instead of returning "Córdoba" city only)
+  - Implemented address detection regex to skip fast-track for address-like queries
 - **Mr. Blue Brain v2.0 Entry Point**: Updated root `mb.md` as concise entry point (~120 lines) with invocation syntax pointing to `mr-blue-brain/` modular folder. Legacy backup preserved in `mb-legacy.md`
 - **Deployment Fix**: Fixed `.deployignore` to retain `server/` and `shared/` directories needed for Express runtime (was incorrectly excluding them)
 - **Housing Wizard Fixes**: Fixed amenities selection blocking, removed instantBook feature, added Photos step (step 6) with proper navigation

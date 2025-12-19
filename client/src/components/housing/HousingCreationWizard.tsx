@@ -105,7 +105,11 @@ const listingSchema = z.object({
 
 type ListingFormData = z.infer<typeof listingSchema>;
 
-export function HousingCreationWizard() {
+interface HousingCreationWizardProps {
+  initialCity?: string;
+}
+
+export function HousingCreationWizard({ initialCity }: HousingCreationWizardProps = {}) {
   const [, setLocation] = useLocation();
   const [currentStep, setCurrentStep] = useState(1);
   const { toast } = useToast();
@@ -331,8 +335,9 @@ export function HousingCreationWizard() {
                                   form.setValue("country", parsed.country || "");
                                 }
                               }}
-                              mode="full"
+                              mode="address"
                               placeholder="Enter your address..."
+                              userCity={initialCity}
                             />
                           </FormControl>
                           <FormMessage />

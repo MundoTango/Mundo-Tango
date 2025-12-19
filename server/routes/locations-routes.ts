@@ -227,7 +227,7 @@ router.get("/search", async (req, res: Response) => {
 // MB.MD: Same as GET but accepts JSON body for full address support (no URL length limits)
 router.post("/search", async (req, res: Response) => {
   try {
-    const { q, addressdetails } = req.body;
+    const { q, addressdetails, prioritizeCity } = req.body;
 
     if (!q || typeof q !== "string") {
       return res.status(400).json({ message: "Search query required" });
@@ -279,9 +279,8 @@ router.post("/search", async (req, res: Response) => {
       const data = (await response.json()) as LocationResult[];
 
       // Filter and format results
-      const results = data
+      let results = data
         .filter((item) => item.display_name && item.lat && item.lon)
-        .slice(0, 8)
         .map((item) => ({
           place_id: item.place_id.toString(),
           display_name: item.display_name,
@@ -290,6 +289,20 @@ router.post("/search", async (req, res: Response) => {
           type: item.type,
           address: item.address,
         }));
+
+      // PRIORITIZE city results: If prioritizeCity is provided, sort by city match
+      if (prioritizeCity) {
+        const normalizedPriorityCity = prioritizeCity.toLowerCase();
+        results.sort((a, b) => {
+          const aCity = a.address?.city?.toLowerCase() || '';
+          const bCity = b.address?.city?.toLowerCase() || '';
+          const aMatches = aCity === normalizedPriorityCity ? 1 : 0;
+          const bMatches = bCity === normalizedPriorityCity ? 1 : 0;
+          return bMatches - aMatches; // Higher match value = earlier in list
+        });
+      }
+
+      results = results.slice(0, 8);
 
       // Cache the results
       setCachedResults(query, results);

@@ -420,7 +420,8 @@ export function UnifiedLocationPicker({
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ 
             q: searchQuery,
-            addressdetails: 1
+            addressdetails: 1,
+            prioritizeCity: userCity
           })
         });
 

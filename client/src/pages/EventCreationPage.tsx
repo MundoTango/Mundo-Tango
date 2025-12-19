@@ -490,6 +490,7 @@ export default function EventCreationPage() {
                   }}
                   mode="address"
                   placeholder="Search for the venue address"
+                  userCity={formData.city}
                 />
               </div>
             </div>
