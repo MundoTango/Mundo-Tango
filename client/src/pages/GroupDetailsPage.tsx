@@ -54,6 +54,61 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
 });
 
+const PIN_CONFIG = {
+  event: { bg: '#FF5A5F', shadow: 'rgba(255, 90, 95, 0.4)', svg: '<svg viewBox="0 0 24 24" width="14" height="14" fill="white"><rect x="3" y="4" width="18" height="18" rx="2" stroke="white" stroke-width="2" fill="none"/><line x1="8" y1="2" x2="8" y2="6" stroke="white" stroke-width="2"/><line x1="16" y1="2" x2="16" y2="6" stroke="white" stroke-width="2"/></svg>' },
+  housing: { bg: '#00A699', shadow: 'rgba(0, 166, 153, 0.4)', svg: '<svg viewBox="0 0 24 24" width="14" height="14" fill="white"><path d="M3 12l9-9 9 9M5 10v10h14V10" stroke="white" stroke-width="2" fill="none"/></svg>' },
+  recommendation: { bg: '#FFB400', shadow: 'rgba(255, 180, 0, 0.4)', svg: '<svg viewBox="0 0 24 24" width="14" height="14" fill="white"><polygon points="12,2 15,9 22,9 17,14 19,21 12,17 5,21 7,14 2,9 9,9" fill="white"/></svg>' },
+};
+
+const createStyledIcon = (type: 'event' | 'housing' | 'recommendation', price?: number) => {
+  const config = PIN_CONFIG[type] || PIN_CONFIG.event;
+  
+  if (type === 'housing' && typeof price === 'number' && price >= 0) {
+    return L.divIcon({
+      className: 'custom-marker',
+      html: `
+        <div style="
+          background: ${config.bg};
+          color: white;
+          border-radius: 16px;
+          padding: 4px 10px;
+          font-size: 12px;
+          font-weight: 600;
+          white-space: nowrap;
+          box-shadow: 0 4px 12px ${config.shadow};
+          transition: transform 0.2s;
+        ">
+          ${price > 0 ? `$${price}` : 'Free'}
+        </div>
+      `,
+      iconSize: [60, 28],
+      iconAnchor: [30, 14],
+    });
+  }
+  
+  return L.divIcon({
+    className: 'custom-marker',
+    html: `
+      <div style="
+        background: ${config.bg};
+        border: 3px solid white;
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 12px ${config.shadow};
+        transition: transform 0.2s;
+      ">
+        ${config.svg}
+      </div>
+    `,
+    iconSize: [32, 32],
+    iconAnchor: [16, 32],
+  });
+};
+
 interface HousingListing {
   id: number;
   hostId: number;
@@ -937,35 +992,43 @@ function GroupHubTab({ groupCity, groupCountry, group }: { groupCity?: string | 
               scrollWheelZoom={true}
             >
               <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                attribution='&copy; <a href="https://carto.com/attributions">CARTO</a>'
+                url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
               />
               {mapLocations.map((loc, idx) => (
                 <Marker 
                   key={`${loc.type}-${loc.id}-${idx}`}
                   position={[loc.coordinates.lat, loc.coordinates.lng]}
+                  icon={createStyledIcon(loc.type as 'event' | 'housing' | 'recommendation', loc.housing)}
                 >
                   <Popup>
-                    <div className="p-2 min-w-[150px]">
+                    <div className="p-3 min-w-[200px]">
                       <Badge 
                         variant="secondary" 
-                        className={`mb-2 ${loc.type === 'event' ? 'bg-red-100 text-red-700' : loc.type === 'housing' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}
+                        className={`mb-2 ${loc.type === 'event' ? 'bg-red-100 text-red-700' : loc.type === 'housing' ? 'bg-teal-100 text-teal-700' : 'bg-yellow-100 text-yellow-700'}`}
                       >
                         {loc.type === 'event' ? 'Event' : loc.type === 'housing' ? 'Housing' : 'Recommendation'}
                       </Badge>
-                      <h4 className="font-semibold text-sm">{loc.title}</h4>
+                      <h4 className="font-semibold text-sm mb-1">{loc.title}</h4>
                       {loc.type === 'event' && loc.date && (
-                        <p className="text-xs text-muted-foreground mt-1">
-                          {safeDateFormat(loc.date, "MMM d, yyyy")}
+                        <p className="text-xs text-muted-foreground flex items-center gap-1 mb-2">
+                          <Calendar className="h-3 w-3" />
+                          {safeDateFormat(loc.date, "EEE, MMM d, yyyy")}
+                        </p>
+                      )}
+                      {loc.type === 'event' && loc.location && (
+                        <p className="text-xs text-muted-foreground flex items-center gap-1 mb-2">
+                          <MapPin className="h-3 w-3" />
+                          {loc.location}
                         </p>
                       )}
                       {loc.type === 'housing' && (
-                        <p className="text-xs font-medium text-green-600 mt-1">
+                        <p className="text-sm font-medium text-teal-600 mb-2">
                           {loc.housing > 0 ? `$${loc.housing}/night` : 'Free'}
                         </p>
                       )}
                       <Link href={loc.type === 'event' ? `/events/${loc.id}` : `/housing/${loc.id}`}>
-                        <Button size="sm" className="w-full mt-2">View</Button>
+                        <Button size="sm" className="w-full">View Details</Button>
                       </Link>
                     </div>
                   </Popup>

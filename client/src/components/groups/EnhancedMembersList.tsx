@@ -29,13 +29,25 @@ import {
   Search,
   UserCheck,
   Crown,
-  Clock
+  Clock,
+  GraduationCap,
+  Music,
+  Calendar,
+  Drama,
+  X
 } from "lucide-react";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { safeDateDistance } from "@/lib/safeDateFormat";
 import { UserRoleBadges } from "@/components/UserRoleBadges";
 import { Link } from "wouter";
+
+const TANGO_ROLE_METRICS = [
+  { value: 'teacher', label: 'Teachers', icon: GraduationCap, color: 'text-emerald-500', bgColor: 'bg-emerald-500/10' },
+  { value: 'dj', label: 'DJs', icon: Music, color: 'text-purple-500', bgColor: 'bg-purple-500/10' },
+  { value: 'organizer', label: 'Organizers', icon: Calendar, color: 'text-blue-500', bgColor: 'bg-blue-500/10' },
+  { value: 'performer', label: 'Performers', icon: Drama, color: 'text-amber-500', bgColor: 'bg-amber-500/10' },
+];
 
 interface EnhancedMembersListProps {
   groupId: number;
@@ -65,6 +77,7 @@ export function EnhancedMembersList({ groupId, canModerate = false, currentUserI
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
   const [roleFilter, setRoleFilter] = useState<string>("all");
+  const [tangoRoleFilter, setTangoRoleFilter] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<string>("recent");
   
   const { data: rawMembers, isLoading } = useQuery<MemberData[]>({
@@ -105,6 +118,15 @@ export function EnhancedMembersList({ groupId, canModerate = false, currentUserI
       result = result.filter(m => m.role === roleFilter);
     }
     
+    if (tangoRoleFilter) {
+      result = result.filter(m => 
+        m.user?.tangoRoles?.some(r => {
+          const roleValue = typeof r === 'string' ? r : (r as any)?.value || '';
+          return roleValue.toLowerCase().includes(tangoRoleFilter.toLowerCase());
+        })
+      );
+    }
+    
     if (sortBy === "recent") {
       result.sort((a, b) => new Date(b.joinedAt).getTime() - new Date(a.joinedAt).getTime());
     } else if (sortBy === "oldest") {
@@ -114,17 +136,19 @@ export function EnhancedMembersList({ groupId, canModerate = false, currentUserI
     }
     
     return result;
-  }, [members, searchQuery, roleFilter, sortBy]);
+  }, [members, searchQuery, roleFilter, tangoRoleFilter, sortBy]);
 
-  const metrics = useMemo(() => {
-    const total = members.length;
-    const admins = members.filter(m => m.role === "admin" || m.role === "owner").length;
-    const moderators = members.filter(m => m.role === "moderator").length;
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    const recentJoins = members.filter(m => new Date(m.joinedAt) > thirtyDaysAgo).length;
-    
-    return { total, admins, moderators, recentJoins };
+  const tangoRoleMetrics = useMemo(() => {
+    const counts: Record<string, number> = {};
+    TANGO_ROLE_METRICS.forEach(role => {
+      counts[role.value] = members.filter(m => 
+        m.user?.tangoRoles?.some(r => {
+          const roleValue = typeof r === 'string' ? r : (r as any)?.value || '';
+          return roleValue.toLowerCase().includes(role.value.toLowerCase());
+        })
+      ).length;
+    });
+    return counts;
   }, [members]);
 
   const updateMemberRole = useMutation({
@@ -185,45 +209,54 @@ export function EnhancedMembersList({ groupId, canModerate = false, currentUserI
 
   return (
     <div className="space-y-6" data-testid="enhanced-members-list">
-      {/* Metrics Panel */}
+      {/* Tango Role Metrics Panel - Click to filter */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="overflow-hidden">
-          <CardContent className="p-4 text-center">
-            <div className="text-3xl font-bold text-primary">{metrics.total}</div>
-            <div className="text-sm text-muted-foreground flex items-center justify-center gap-1">
-              <UsersIcon className="h-4 w-4" />
-              Total Members
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="overflow-hidden">
-          <CardContent className="p-4 text-center">
-            <div className="text-3xl font-bold text-amber-500">{metrics.admins}</div>
-            <div className="text-sm text-muted-foreground flex items-center justify-center gap-1">
-              <Shield className="h-4 w-4" />
-              Admins
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="overflow-hidden">
-          <CardContent className="p-4 text-center">
-            <div className="text-3xl font-bold text-blue-500">{metrics.moderators}</div>
-            <div className="text-sm text-muted-foreground flex items-center justify-center gap-1">
-              <UserCog className="h-4 w-4" />
-              Moderators
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="overflow-hidden">
-          <CardContent className="p-4 text-center">
-            <div className="text-3xl font-bold text-green-500">{metrics.recentJoins}</div>
-            <div className="text-sm text-muted-foreground flex items-center justify-center gap-1">
-              <Clock className="h-4 w-4" />
-              New (30d)
-            </div>
-          </CardContent>
-        </Card>
+        {TANGO_ROLE_METRICS.map((role) => {
+          const Icon = role.icon;
+          const count = tangoRoleMetrics[role.value] || 0;
+          const isActive = tangoRoleFilter === role.value;
+          return (
+            <Card 
+              key={role.value}
+              className={`overflow-hidden cursor-pointer transition-all hover-elevate ${isActive ? 'ring-2 ring-primary ring-offset-2' : ''}`}
+              onClick={() => setTangoRoleFilter(isActive ? null : role.value)}
+              data-testid={`metric-${role.value}`}
+            >
+              <CardContent className={`p-4 text-center ${isActive ? role.bgColor : ''}`}>
+                <div className={`text-3xl font-bold ${role.color}`}>{count}</div>
+                <div className="text-sm text-muted-foreground flex items-center justify-center gap-1">
+                  <Icon className="h-4 w-4" />
+                  {role.label}
+                </div>
+                {isActive && (
+                  <Badge variant="secondary" className="mt-2 gap-1" onClick={(e) => { e.stopPropagation(); setTangoRoleFilter(null); }}>
+                    <X className="h-3 w-3" />
+                    Clear filter
+                  </Badge>
+                )}
+              </CardContent>
+            </Card>
+          );
+        })}
       </div>
+      
+      {/* Active filter indicator */}
+      {tangoRoleFilter && (
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <span>Showing members with tango role:</span>
+          <Badge variant="secondary" className="gap-1">
+            {TANGO_ROLE_METRICS.find(r => r.value === tangoRoleFilter)?.label || tangoRoleFilter}
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="h-4 w-4 ml-1 p-0" 
+              onClick={() => setTangoRoleFilter(null)}
+            >
+              <X className="h-3 w-3" />
+            </Button>
+          </Badge>
+        </div>
+      )}
 
       {/* Filters */}
       <Card className="overflow-hidden">
