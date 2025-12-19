@@ -35,10 +35,10 @@ qa_reports/
 logs/
 
 # ==========================================
-# SOURCE CODE (already bundled in dist/)
+# CLIENT SOURCE CODE (already bundled in dist/)
 # ==========================================
 client/
-server/
+# NOTE: server/ is NOT excluded - it's needed for Express runtime
 
 # ==========================================
 # DEVELOPMENT FILES
@@ -103,9 +103,8 @@ migrations/
 public/
 
 # ==========================================
-# SHARED (types already compiled)
+# NOTE: shared/ is NOT excluded - it's needed for Express runtime
 # ==========================================
-shared/
 
 # ==========================================
 # DATABASE LOCAL FILES

@@ -16,12 +16,13 @@ Mundo Tango is a production-ready social platform designed to connect the global
 - MB.MD Methodology - Apply v9.9.3 patterns systematically: Research → Plan → Build → Test → Fix → Document
 
 ## Recent Fixes & Updates (Dec 19, 2025)
-- **FIXED: "Maximum update depth exceeded" infinite loop** - Removed `map` from useEffect dependency array in MapUpdater component (`client/src/components/map/CommunityMapWithLayers.tsx`). The map object reference changes every render, causing infinite re-renders.
-- **City Hub 2-Column Layout**: Redesigned Overview tab with 55% events/housing list and 45% sticky map with color legend (Events=red, Housing=teal)
+- **Mr. Blue Brain v2.0 Entry Point**: Updated root `mb.md` as concise entry point (~120 lines) with invocation syntax pointing to `mr-blue-brain/` modular folder. Legacy backup preserved in `mb-legacy.md`
+- **Deployment Fix**: Fixed `.deployignore` to retain `server/` and `shared/` directories needed for Express runtime (was incorrectly excluding them)
+- **Housing Wizard Fixes**: Fixed amenities selection blocking, removed instantBook feature, added Photos step (step 6) with proper navigation
+- **City Hub 3-Column Layout**: Redesigned with Events/Housing (col 1), Recommendations/Tips (col 2), and sticky Map (col 3)
+- **City Recommendations Endpoint**: Added `/api/venues/recommendations/by-city/:city` for local tips
+- **FIXED: "Maximum update depth exceeded" infinite loop** - Removed `map` from useEffect dependency array in MapUpdater component
 - **Map Pin Colors**: Implemented color-coded markers - Events (#FF5A5F red), Housing (#00A699 teal)
-- **Database Cleanup**: Removed 2 dummy housing entries
-- **Deployment Optimization**: Added .deployignore to exclude node_modules and cache directories
-- **Playwright E2E Tests**: Created host onboarding test script with CSS selector fallbacks
 
 ## System Architecture
 
