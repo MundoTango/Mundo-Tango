@@ -203,12 +203,14 @@ export function MiscRoutes() {
           </Suspense>
         </AppLayout>
       </Route>
-      <Route path="/housing">
-        <AppLayout>
-          <Suspense fallback={<LoadingFallback />}>
-            <HousingMarketplacePage />
-          </Suspense>
-        </AppLayout>
+      <Route path="/housing/create">
+        <ProtectedRoute>
+          <AppLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <CreateListingPage />
+            </Suspense>
+          </AppLayout>
+        </ProtectedRoute>
       </Route>
       <Route path="/housing/listing/:id">
         <AppLayout>
@@ -224,14 +226,12 @@ export function MiscRoutes() {
           </Suspense>
         </AppLayout>
       </Route>
-      <Route path="/housing/create">
-        <ProtectedRoute>
-          <AppLayout>
-            <Suspense fallback={<LoadingFallback />}>
-              <CreateListingPage />
-            </Suspense>
-          </AppLayout>
-        </ProtectedRoute>
+      <Route path="/housing">
+        <AppLayout>
+          <Suspense fallback={<LoadingFallback />}>
+            <HousingMarketplacePage />
+          </Suspense>
+        </AppLayout>
       </Route>
       <Route path="/albums">
         <ProtectedRoute>

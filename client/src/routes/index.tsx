@@ -73,7 +73,7 @@ export function RouteLoader() {
     if (location.startsWith("/marketplace") || location.startsWith("/checkout") || location.startsWith("/billing") || location.startsWith("/payment") || location.startsWith("/subscription") || location.startsWith("/crowdfunding") || location.startsWith("/financial") || location.startsWith("/invoices") || location.startsWith("/booking")) {
       return <CommerceRoutes />;
     }
-    if (location.startsWith("/pro/")) {
+    if (location.startsWith("/pro/") || location.startsWith("/housing")) {
       return <MiscRoutes />;
     }
     if (location === "/" || location.startsWith("/landing") || location.startsWith("/demos") || location.startsWith("/for-dancers") || location.startsWith("/for-teachers") || location.startsWith("/for-organizers") || location.startsWith("/tango-roles") || location.startsWith("/support") || location.startsWith("/donate") || location.startsWith("/supporters") || (location.startsWith("/volunteer") && !location.startsWith("/volunteer-recruitment") && !location.startsWith("/volunteer-testing")) || location.startsWith("/ambassadors") || location.startsWith("/open-source") || location.startsWith("/about") || location.startsWith("/features") || location.startsWith("/testimonials") || location.startsWith("/discover") || location.startsWith("/terms") || (location.startsWith("/privacy") && !location.startsWith("/privacy-hub")) || location.startsWith("/community-guidelines") || location.startsWith("/help") || location.startsWith("/contact") || location.startsWith("/h2ac") || location.startsWith("/about-tango")) {

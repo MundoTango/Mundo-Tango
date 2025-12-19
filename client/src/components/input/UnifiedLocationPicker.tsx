@@ -90,6 +90,7 @@ export function UnifiedLocationPicker({
   const [isSearching, setIsSearching] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [results, setResults] = useState<LocationResult[]>([]);
+  const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const [venueResults, setVenueResults] = useState<{
     userVenues: VenueSearchResult[];
     cityVenues: VenueSearchResult[];
@@ -149,6 +150,7 @@ export function UnifiedLocationPicker({
       
       if (!isInSearchRef && !isInDropdownRef) {
         setShowResults(false);
+        setHighlightedIndex(-1);
       }
     };
 
@@ -156,6 +158,33 @@ export function UnifiedLocationPicker({
     document.addEventListener('click', handleClickOutside, true);
     return () => document.removeEventListener('click', handleClickOutside, true);
   }, []);
+
+  // Reset highlighted index when results change
+  useEffect(() => {
+    setHighlightedIndex(-1);
+  }, [results]);
+
+  // Keyboard navigation handler
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!showResults || results.length === 0) return;
+    
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setHighlightedIndex(prev => prev < results.length - 1 ? prev + 1 : 0);
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setHighlightedIndex(prev => prev > 0 ? prev - 1 : results.length - 1);
+    } else if (e.key === 'Enter') {
+      // Only select if we have a valid highlighted option
+      if (highlightedIndex >= 0 && highlightedIndex < results.length) {
+        e.preventDefault();
+        selectLocation(results[highlightedIndex]);
+      }
+    } else if (e.key === 'Escape') {
+      setShowResults(false);
+      setHighlightedIndex(-1);
+    }
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -655,12 +684,17 @@ export function UnifiedLocationPicker({
             updateDropdownPosition();
           }}
           onFocus={updateDropdownPosition}
+          onKeyDown={handleKeyDown}
           placeholder={placeholder || defaultPlaceholder}
           className="pl-10 pr-10"
           maxLength={500}
           spellCheck="false"
           autoComplete="off"
-          data-testid="input-location-search"
+          role="combobox"
+          aria-expanded={showResults && results.length > 0}
+          aria-haspopup="listbox"
+          aria-activedescendant={highlightedIndex >= 0 ? `location-option-${highlightedIndex}` : undefined}
+          data-testid={`input-location-${mode}`}
         />
         {isSearching && (
           <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 animate-spin text-muted-foreground" />
@@ -785,24 +819,33 @@ export function UnifiedLocationPicker({
                 }}
                 data-testid="location-results-dropdown"
               >
-                <div className="space-y-1 pointer-events-auto">
-                  {results.map((location) => {
+                <div className="space-y-1 pointer-events-auto" role="listbox">
+                  {results.map((location, index) => {
                     // @ts-ignore - check for custom tier fields
                     const source = location._source;
                     // @ts-ignore
                     const memberCount = location._memberCount;
+                    const isHighlighted = index === highlightedIndex;
                     
                     return (
                       <button
                         key={location.place_id}
                         type="button"
+                        id={`location-option-${index}`}
+                        role="option"
+                        aria-selected={isHighlighted}
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
                           selectLocation(location);
                         }}
-                        className="w-full flex items-start gap-3 p-3 rounded-lg text-left hover:bg-white/20 transition-colors text-white pointer-events-auto"
+                        onMouseEnter={() => setHighlightedIndex(index)}
+                        className={`w-full flex items-start gap-3 p-3 rounded-lg text-left transition-colors text-white pointer-events-auto ${
+                          isHighlighted ? 'bg-white/30 ring-2 ring-white/50' : 'hover:bg-white/20'
+                        }`}
                         data-testid={`location-result-${location.place_id}`}
+                        data-location-name={location.display_name.split(',')[0].trim().toLowerCase().replace(/\s+/g, '-')}
+                        data-highlighted={isHighlighted ? 'true' : undefined}
                       >
                         <Icon className="w-4 h-4 mt-0.5 text-white flex-shrink-0" />
                         <div className="flex-1 min-w-0">

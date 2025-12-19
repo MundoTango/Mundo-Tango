@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { apiRequest } from "@/lib/queryClient";
@@ -169,6 +169,11 @@ export default function CreateListingPage() {
       guestVisibility: "all" as ClosenessVisibility,
     },
   });
+
+  // Use useWatch for efficient reactive updates without infinite loops
+  const watchedAmenities = useWatch({ control: form.control, name: "amenities" }) || [];
+  const watchedSafetyAmenities = useWatch({ control: form.control, name: "safetyAmenities" }) || [];
+  const watchedAddress = useWatch({ control: form.control, name: "address" }) || "";
 
   const createListingMutation = useMutation({
     mutationFn: async (data: CreateListingFormData) => {
@@ -490,7 +495,7 @@ export default function CreateListingPage() {
                       <FormControl>
                         <UnifiedLocationPicker
                           mode="address"
-                          value={form.watch("address")}
+                          value={watchedAddress}
                           placeholder="Search for property address..."
                           onChange={(location, coordinates, parsed) => {
                             if (parsed) {
@@ -658,7 +663,7 @@ export default function CreateListingPage() {
                           <div
                             key={amenity.id}
                             className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors hover-elevate ${
-                              (form.watch("amenities") || []).includes(amenity.id)
+                              watchedAmenities.includes(amenity.id)
                                 ? "border-primary bg-primary/5"
                                 : "border-border"
                             }`}
@@ -666,7 +671,7 @@ export default function CreateListingPage() {
                             data-testid={`amenity-${amenity.id}`}
                           >
                             <Checkbox
-                              checked={(form.watch("amenities") || []).includes(amenity.id)}
+                              checked={watchedAmenities.includes(amenity.id)}
                               onCheckedChange={() => toggleAmenity(amenity.id)}
                             />
                             <Label className="cursor-pointer">{amenity.label}</Label>
@@ -686,7 +691,7 @@ export default function CreateListingPage() {
                           <div
                             key={amenity.id}
                             className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors hover-elevate ${
-                              (form.watch("safetyAmenities") || []).includes(amenity.id)
+                              watchedSafetyAmenities.includes(amenity.id)
                                 ? "border-green-500 bg-green-500/5"
                                 : "border-border"
                             }`}
@@ -694,7 +699,7 @@ export default function CreateListingPage() {
                             data-testid={`safety-${amenity.id}`}
                           >
                             <Checkbox
-                              checked={(form.watch("safetyAmenities") || []).includes(amenity.id)}
+                              checked={watchedSafetyAmenities.includes(amenity.id)}
                               onCheckedChange={() => toggleSafetyAmenity(amenity.id)}
                             />
                             <Label className="cursor-pointer">{amenity.label}</Label>
@@ -711,7 +716,7 @@ export default function CreateListingPage() {
                           <div
                             key={amenity.id}
                             className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors hover-elevate ${
-                              (form.watch("amenities") || []).includes(amenity.id)
+                              watchedAmenities.includes(amenity.id)
                                 ? "border-primary bg-primary/5"
                                 : "border-border"
                             }`}
@@ -719,7 +724,7 @@ export default function CreateListingPage() {
                             data-testid={`amenity-${amenity.id}`}
                           >
                             <Checkbox
-                              checked={(form.watch("amenities") || []).includes(amenity.id)}
+                              checked={watchedAmenities.includes(amenity.id)}
                               onCheckedChange={() => toggleAmenity(amenity.id)}
                             />
                             <Label className="cursor-pointer">{amenity.label}</Label>
@@ -739,7 +744,7 @@ export default function CreateListingPage() {
                           <div
                             key={amenity.id}
                             className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors hover-elevate ${
-                              (form.watch("amenities") || []).includes(amenity.id)
+                              watchedAmenities.includes(amenity.id)
                                 ? "border-purple-500 bg-purple-500/5"
                                 : "border-border"
                             }`}
@@ -747,7 +752,7 @@ export default function CreateListingPage() {
                             data-testid={`amenity-${amenity.id}`}
                           >
                             <Checkbox
-                              checked={(form.watch("amenities") || []).includes(amenity.id)}
+                              checked={watchedAmenities.includes(amenity.id)}
                               onCheckedChange={() => toggleAmenity(amenity.id)}
                             />
                             <Label className="cursor-pointer">{amenity.label}</Label>
