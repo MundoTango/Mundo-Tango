@@ -16,6 +16,7 @@ import {
   primaryKey,
   pgEnum,
   date,
+  type AnyPgColumn,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
@@ -11920,7 +11921,7 @@ export const agentKnowledgeVersions = pgTable(
     activatedAt: timestamp("activated_at"),
     deactivatedAt: timestamp("deactivated_at"),
     supersededBy: integer("superseded_by").references(
-      () => agentKnowledgeVersions.id,
+      (): AnyPgColumn => agentKnowledgeVersions.id,
     ), // Next version that replaced this
   },
   (table) => ({

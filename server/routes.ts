@@ -288,6 +288,9 @@ import {
   venues,
   housingListings,
   userLocationHistory,
+  storyViews,
+  groupMembers,
+  friendRequests,
 } from "@shared/schema";
 import { 
   esaAgents,
@@ -3657,7 +3660,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get user's saved posts - Page 16 SavedPostsPage
   app.get("/api/saved-posts", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
-      const savedPosts = await db
+      const userSavedPosts = await db
         .select({
           id: posts.id,
           content: posts.content,
@@ -3678,7 +3681,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         .where(eq(savedPosts.userId, req.user!.id))
         .orderBy(desc(savedPosts.createdAt));
       
-      res.json(savedPosts);
+      res.json(userSavedPosts);
     } catch (error) {
       console.error("Get saved posts error:", error);
       res.status(500).json({ message: "Failed to fetch saved posts" });
