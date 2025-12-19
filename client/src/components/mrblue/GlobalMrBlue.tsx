@@ -1,4 +1,5 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useLocation } from 'wouter';
 import { MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -13,13 +14,19 @@ const HIDDEN_PAGES = ['/mr-blue-chat', '/admin/visual-editor'];
  * GlobalMrBlue - Simple button to open AI chat
  * 
  * Features:
- * - Fixed bottom-right positioning
+ * - Fixed bottom-right positioning with z-[9999] (above all overlays)
+ * - Uses React Portal to render at document.body level
  * - Opens ChatSidePanel on click
  * - Hidden on dedicated chat page
  */
 export function GlobalMrBlue() {
   const [location] = useLocation();
-  const { openChat } = useMrBlue();
+  const { openChat, isChatOpen } = useMrBlue();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Hide on pages where button isn't needed
   const shouldHide = HIDDEN_PAGES.some(page => location.startsWith(page));
@@ -28,18 +35,22 @@ export function GlobalMrBlue() {
   const urlParams = new URLSearchParams(window.location.search);
   const hideControls = urlParams.get('hideControls') === 'true';
   
-  if (shouldHide || hideControls) {
+  // Hide button when chat is open
+  if (shouldHide || hideControls || isChatOpen || !mounted) {
     return null;
   }
 
-  return (
+  const buttonContent = (
     <div 
-      className="fixed bottom-6 right-6 z-50"
+      className="fixed bottom-6 right-6 z-[9999]"
       data-testid="global-mr-blue"
     >
       <Button
         size="lg"
-        onClick={openChat}
+        onClick={() => {
+          console.log('[GlobalMrBlue] Button clicked, opening chat...');
+          openChat();
+        }}
         className="shadow-lg hover:shadow-xl transition-all gap-2"
         data-testid="button-ask-mr-blue"
       >
@@ -48,4 +59,6 @@ export function GlobalMrBlue() {
       </Button>
     </div>
   );
+
+  return createPortal(buttonContent, document.body);
 }

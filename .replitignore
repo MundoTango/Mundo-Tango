@@ -1,0 +1,61 @@
+# Replit Deployment Ignore File
+# These directories/files will be excluded from deployment to reduce image size
+
+# Large data directories (4.2GB + 1.1GB + 952MB + 614MB)
+lancedb_data/
+attached_assets/
+.local/
+.cache/
+.git/
+
+# Test and development files
+tests/
+e2e/
+docs/
+qa_reports/
+reports/
+playwright-helpers/
+postman/
+PRD/
+journeys/
+grafana/
+grafana-provisioning/
+
+# Development artifacts
+*.log
+*.md
+!README.md
+*.png
+*.json.backup
+*.backup
+
+# Monitoring and metrics
+prometheus.yml
+docker-compose*.yml
+Dockerfile*
+
+# Scripts not needed in production
+scripts/
+*.sh
+
+# Test output
+test-*.log
+*.test.ts
+*.spec.ts
+vitest.config.ts
+playwright.config.ts
+lighthouserc.json
+
+# Agent reports (not needed in production)
+AGENT_*.md
+AGENT_*.json
+MB*.md
+mb*.md
+HANDOFF*.md
+*_REPORT*.md
+*_REPORT*.json
+
+# Misc large files
+MundoTangoAppemergent/
+bifrost-config/
+mr-blue-brain/

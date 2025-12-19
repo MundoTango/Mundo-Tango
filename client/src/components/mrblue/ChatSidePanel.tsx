@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -106,7 +107,8 @@ export function ChatSidePanel() {
     }
   };
 
-  return (
+  // Use portal to render at document.body level above all overlays
+  const panelContent = (
     <AnimatePresence>
       {isChatOpen && (
         <motion.div
@@ -114,7 +116,7 @@ export function ChatSidePanel() {
           animate={{ x: 0 }}
           exit={{ x: "100%" }}
           transition={{ type: "spring", damping: 25, stiffness: 300 }}
-          className="fixed right-0 top-0 h-screen w-full md:w-[400px] lg:w-[480px] z-50 bg-background border-l shadow-2xl flex flex-col"
+          className="fixed right-0 top-0 h-screen w-full md:w-[400px] lg:w-[480px] z-[9999] bg-background border-l shadow-2xl flex flex-col"
           data-testid="chat-side-panel"
         >
           {/* Header */}
@@ -243,4 +245,7 @@ export function ChatSidePanel() {
       )}
     </AnimatePresence>
   );
+
+  // Render via portal at document.body level for z-index isolation
+  return createPortal(panelContent, document.body);
 }
