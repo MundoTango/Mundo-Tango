@@ -185,8 +185,8 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
     queryKey: ["/api/events", "group", groupId, groupCity, "all"],
     queryFn: async () => {
       // Use showAll=true to display all events including past scraped events
-      // Increased limit to 200 to capture all events for large cities like Buenos Aires (148+ events)
-      let res = await fetch(`/api/groups/${groupId}/events?limit=200&showAll=true`, { credentials: "include" });
+      // Increased limit to 250 to capture all events for large cities like Buenos Aires (231+ events)
+      let res = await fetch(`/api/groups/${groupId}/events?limit=250&showAll=true`, { credentials: "include" });
       if (res.ok) {
         const data = await res.json();
         let eventList = data.events || data || [];
@@ -198,7 +198,7 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
       
       // Fallback: fetch ALL events for this city (no date filter) and let frontend handle filtering
       if (groupCity) {
-        res = await fetch(`/api/events?city=${encodeURIComponent(groupCity)}&limit=200`, { credentials: "include" });
+        res = await fetch(`/api/events?city=${encodeURIComponent(groupCity)}&limit=250`, { credentials: "include" });
         if (res.ok) {
           const data = await res.json();
           let eventList = data.events || data || [];

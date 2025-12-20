@@ -51,9 +51,11 @@ Core functionalities include social features (events, groups, posts, notificatio
 
 **City Group Design (December 2025):**
 - Discussion tab now first/default for community engagement
-- Events tab has weekday filter tabs (Sun-Sat) for recurring milongas
+- Events tab has weekday filter tabs (Sun-Sat) for recurring milongas - displays all 226+ upcoming events
 - Weekday filter fix: Auto-switch to Past tab only happens on initial load, not when filtering by weekday
 - Weekday filter UX: Description now shows "{count} {DayName} events (try 'All Days')" when filter results in 0 events
+- Event fetch limit increased to 250 to capture all events for large cities (Buenos Aires: 231 events)
+- Events distributed: Monday (2), Wednesday (17), Thursday (31), Friday (78), Saturday (103)
 - Visitors tab has "This Week" / "All Upcoming" sub-tabs with proper display names (firstName + lastName)
 - Overview tab has interactive map with events/housing/recommendations layers
 - Group post authors show proper display names (not just usernames)
