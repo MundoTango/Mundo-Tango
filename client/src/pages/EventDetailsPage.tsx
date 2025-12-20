@@ -21,6 +21,7 @@ import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { getCityImageUrl } from "@/lib/cityImageMap";
+import { toCitySlug } from "@/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { EventPostFeed } from "@/components/events/EventPostFeed";
 import { EventParticipantManager } from "@/components/events/EventParticipantManager";
@@ -684,7 +685,7 @@ export default function EventDetailsPage() {
                           {event.city && (
                             <>
                               <br />
-                              <Link href={`/groups/city/${encodeURIComponent(event.city)}`} className="text-primary hover:underline font-medium">
+                              <Link href={`/cities/${toCitySlug(event.city)}`} className="text-primary hover:underline font-medium">
                                 {event.city}
                               </Link>
                               {event.country && `, ${event.country}`}

@@ -11,6 +11,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { Link } from "wouter";
+import { toCitySlug } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/UnifiedLocationPicker";
@@ -944,34 +945,10 @@ export default function ProfileTabAbout({ user, isOwnProfile, isPublicView = fal
                 />
               ) : user.city ? (
                 <div className="flex items-center gap-2 flex-wrap">
-                  {cityStats?.groupId ? (
-                    <Link href={`/groups/${cityStats.groupId}`}>
-                      <Badge 
-                        variant="default" 
-                        className="hover-elevate cursor-pointer flex items-center gap-1.5 px-3 py-1.5"
-                        data-testid="badge-primary-city"
-                      >
-                        <MapPin className="w-3.5 h-3.5" />
-                        <span className="font-medium">{user.city}</span>
-                        {user.country && (
-                          <>
-                            <span className="opacity-70">,</span>
-                            <span className="opacity-70">{user.country}</span>
-                          </>
-                        )}
-                        {cityStats.userCount > 0 && (
-                          <>
-                            <span className="opacity-50">•</span>
-                            <Users className="w-3 h-3 opacity-70" />
-                            <span className="opacity-70">{cityStats.userCount}</span>
-                          </>
-                        )}
-                      </Badge>
-                    </Link>
-                  ) : (
+                  <Link href={`/cities/${toCitySlug(user.city)}`}>
                     <Badge 
                       variant="default" 
-                      className="flex items-center gap-1.5 px-3 py-1.5"
+                      className="hover-elevate cursor-pointer flex items-center gap-1.5 px-3 py-1.5"
                       data-testid="badge-primary-city"
                     >
                       <MapPin className="w-3.5 h-3.5" />
@@ -982,8 +959,15 @@ export default function ProfileTabAbout({ user, isOwnProfile, isPublicView = fal
                           <span className="opacity-70">{user.country}</span>
                         </>
                       )}
+                      {cityStats?.userCount && cityStats.userCount > 0 && (
+                        <>
+                          <span className="opacity-50">•</span>
+                          <Users className="w-3 h-3 opacity-70" />
+                          <span className="opacity-70">{cityStats.userCount}</span>
+                        </>
+                      )}
                     </Badge>
-                  )}
+                  </Link>
                 </div>
               ) : (
                 <p className="text-sm text-muted-foreground italic">No primary city set</p>
@@ -1100,8 +1084,8 @@ export default function ProfileTabAbout({ user, isOwnProfile, isPublicView = fal
                     .filter(loc => !loc.isCurrent)
                     .map((location) => (
                       <div key={location.id} className="group relative">
-                        {location.groupId ? (
-                          <Link href={`/groups/${location.groupId}`}>
+                        {location.city ? (
+                          <Link href={`/cities/${toCitySlug(location.city)}`}>
                             <Badge 
                               variant="secondary" 
                               className="hover-elevate cursor-pointer flex items-center gap-1.5 px-3 py-1.5"

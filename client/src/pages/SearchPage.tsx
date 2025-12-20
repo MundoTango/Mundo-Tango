@@ -11,6 +11,7 @@ import { Search, Users, Calendar, MapPin } from "lucide-react";
 import { Link } from "wouter";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
+import { toCitySlug } from "@/lib/utils";
 
 export default function SearchPage() {
   const [query, setQuery] = useState("");
@@ -285,12 +286,19 @@ function EventCard({ event }: { event: any }) {
 }
 
 function GroupCard({ group }: { group: any }) {
+  // For city groups, use /cities/ URL pattern; for other groups use /groups/
+  // Handle both groupType and type field names for API compatibility
+  const isCityGroup = (group.groupType === 'city' || group.type === 'city') && group.city;
+  const groupUrl = isCityGroup
+    ? `/cities/${toCitySlug(group.city)}` 
+    : `/groups/${group.id}`;
+  
   return (
     <Card className="hover-elevate overflow-hidden group" data-testid={`group-result-${group.id}`}>
       <CardContent className="p-6">
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1 min-w-0">
-            <Link href={`/groups/${group.id}`}>
+            <Link href={groupUrl}>
               <h3 className="text-xl font-serif font-bold group-hover:text-primary transition-colors mb-2">{group.name}</h3>
             </Link>
             <div className="flex items-center gap-2 text-muted-foreground">

@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/UnifiedLocationPicker";
 import { getCityImageUrl } from "@/lib/cityImageMap";
+import { toCitySlug } from "@/lib/utils";
 
 export default function CityGroupsPage() {
   // Read city from URL query parameter
@@ -123,7 +124,7 @@ export default function CityGroupsPage() {
                       </Avatar>
                       <div className="flex-1 min-w-0">
                         <CardTitle className="text-lg truncate">
-                          <Link href={`/groups/${group.id}`} className="hover:underline">
+                          <Link href={group.city ? `/cities/${toCitySlug(group.city)}` : `/groups/${group.id}`} className="hover:underline">
                             {group.name}
                           </Link>
                         </CardTitle>

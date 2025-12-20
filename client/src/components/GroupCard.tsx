@@ -8,6 +8,7 @@ import { SelectGroup } from "@shared/client-types";
 import { safeDateDistance } from "@/lib/safeDateFormat";
 import { getCityImageUrl } from "@/lib/cityImageMap";
 import { optimizeAvatar } from "@/lib/imageOptimizer";
+import { toCitySlug } from "@/lib/utils";
 
 interface GroupCardProps {
   group: SelectGroup;
@@ -29,14 +30,14 @@ export function GroupCard({ group, onJoin, isJoined }: GroupCardProps) {
             </Avatar>
             
             <div className="flex-1 min-w-0">
-              <Link href={`/groups/${group.id}`}>
+              <Link href={group.groupType === 'city' && group.city ? `/cities/${toCitySlug(group.city)}` : `/groups/${group.id}`}>
                 <h3 className="font-semibold text-base hover:text-primary cursor-pointer truncate" data-testid={`text-group-name-${group.id}`}>
                   {group.name}
                 </h3>
               </Link>
               
               <div className="flex items-center gap-2 mt-1 flex-wrap">
-                {group.type === 'private' ? (
+                {group.privacy === 'private' ? (
                   <Badge variant="secondary" className="text-xs gap-1">
                     <Lock className="h-3 w-3" />
                     Private
@@ -85,9 +86,6 @@ export function GroupCard({ group, onJoin, isJoined }: GroupCardProps) {
             <Calendar className="h-3 w-3" />
             Created {safeDateDistance(group.createdAt, { addSuffix: true })}
           </span>
-          {(group.postCount || 0) > 0 && (
-            <span>{group.postCount || 0} posts</span>
-          )}
         </div>
       </CardContent>
     </Card>

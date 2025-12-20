@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Users, Calendar, Building2, ArrowRight } from "lucide-react";
 import type { LocationChangeEffects } from "@/lib/locationChangeEffects";
+import { toCitySlug } from "@/lib/utils";
 
 interface LocationChangeWelcomeProps {
   effects: LocationChangeEffects;
@@ -60,7 +61,7 @@ export function LocationChangeWelcome({
                       {effects.autoJoinedGroup.groupName}
                     </p>
                   </div>
-                  <Link href={`/groups/${effects.autoJoinedGroup.groupId}`}>
+                  <Link href={`/cities/${toCitySlug(cityName)}`}>
                     <Button 
                       variant="outline" 
                       size="sm"
