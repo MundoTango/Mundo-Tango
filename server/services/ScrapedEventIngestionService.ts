@@ -25,6 +25,35 @@ const TANGO_ROLE_MAP: Record<string, string> = {
   'host': 'organizer'
 };
 
+/**
+ * Deduplicate names in participant text fields
+ * Handles multiple delimiters: comma, semicolon, ampersand
+ * Normalizes whitespace and case-folds for comparison
+ * E.g., "Paula Crosa, Paula Crosa" -> "Paula Crosa"
+ * E.g., "DJ Max; dj max & Other" -> "DJ Max, Other"
+ */
+function deduplicateParticipantText(text: string | null | undefined): string | null {
+  if (!text) return null;
+  
+  const names = text
+    .split(/[,;&]/)
+    .map(n => n.replace(/\s+/g, ' ').trim())
+    .filter(Boolean);
+  
+  const seen = new Set<string>();
+  const unique: string[] = [];
+  
+  for (const name of names) {
+    const normalized = name.toLowerCase();
+    if (!seen.has(normalized)) {
+      seen.add(normalized);
+      unique.push(name);
+    }
+  }
+  
+  return unique.length > 0 ? unique.join(', ') : null;
+}
+
 class ScrapedEventIngestionService {
   private scraperUserId: number | null = null;
 
@@ -200,10 +229,10 @@ class ScrapedEventIngestionService {
       isOnline: false,
       isFree: this.isPriceFree(scraped.price),
       isPaid: !this.isPriceFree(scraped.price),
-      djText: scraped.djText || null,
-      teacherText: scraped.teacherText || null,
-      performerText: scraped.performerText || null,
-      organizerText: scraped.organizerText || null
+      djText: deduplicateParticipantText(scraped.djText),
+      teacherText: deduplicateParticipantText(scraped.teacherText),
+      performerText: deduplicateParticipantText(scraped.performerText),
+      organizerText: deduplicateParticipantText(scraped.organizerText)
     };
   }
 
