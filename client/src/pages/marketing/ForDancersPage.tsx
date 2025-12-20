@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { SEO } from "@/components/SEO";
+import { PublicNavbar } from "@/components/PublicNavbar";
 import { Link } from "wouter";
 
 const features = [
@@ -63,6 +64,7 @@ export default function ForDancersPage() {
       />
       
       <div className="min-h-screen bg-background overflow-x-hidden">
+        <PublicNavbar />
         <motion.section
           ref={heroRef}
           style={{ opacity: heroOpacity }}
