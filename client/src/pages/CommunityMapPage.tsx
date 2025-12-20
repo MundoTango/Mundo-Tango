@@ -26,10 +26,22 @@ interface EventMarker {
 export default function CommunityMapPage() {
   const [searchLocation, setSearchLocation] = useState("");
   const [mapCenter, setMapCenter] = useState<[number, number] | null>(null);
+  const [layerState, setLayerState] = useState({
+    events: true,
+    housing: false,
+    recommendations: false,
+  });
 
   const { data: eventMarkers = [], isLoading } = useQuery<EventMarker[]>({
     queryKey: ["/api/map/markers"],
   });
+
+  const toggleLayer = (layerId: string) => {
+    setLayerState(prev => ({
+      ...prev,
+      [layerId]: !prev[layerId as keyof typeof prev],
+    }));
+  };
 
   // Convert event markers to city location format for map display
   const locations: any[] = eventMarkers.map(marker => {
@@ -54,9 +66,9 @@ export default function CommunityMapPage() {
   });
 
   const layers = [
-    { id: "events", label: "Events", enabled: true, icon: Calendar },
-    { id: "housing", label: "Housing", enabled: false, icon: Building2 },
-    { id: "recommendations", label: "Recommendations", enabled: false, icon: MapPin },
+    { id: "events", label: "Events", enabled: layerState.events, icon: Calendar },
+    { id: "housing", label: "Housing", enabled: layerState.housing, icon: Building2 },
+    { id: "recommendations", label: "Recommendations", enabled: layerState.recommendations, icon: MapPin },
   ];
 
   return (
