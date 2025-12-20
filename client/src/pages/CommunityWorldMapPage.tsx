@@ -23,6 +23,7 @@ import { CommunityMapWithLayers } from "@/components/map/CommunityMapWithLayers"
 import { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import { getCityImageUrl } from "@/lib/cityImageMap";
+import { toCitySlug } from "@/lib/utils";
 import { Link, useLocation } from "wouter";
 
 // Fix Leaflet default marker icon
@@ -201,9 +202,8 @@ export default function CommunityWorldMapPage() {
   };
 
   const handleCityClick = (location: CommunityLocation) => {
-    // Navigate to the city hub page (encode city name for URL safety)
-    const citySlug = encodeURIComponent(location.city.toLowerCase().replace(/\s+/g, '-'));
-    setLocation(`/cities/${citySlug}`);
+    // Navigate to the city hub page using shared slug helper
+    setLocation(`/cities/${toCitySlug(location.city)}`);
   };
 
   return (
@@ -418,7 +418,7 @@ export default function CommunityWorldMapPage() {
 
                           <div className="flex gap-2">
                             <Link 
-                              href={`/cities/${encodeURIComponent(location.city.toLowerCase().replace(/\s+/g, '-'))}`}
+                              href={`/cities/${toCitySlug(location.city)}`}
                               className="flex-1"
                               onClick={(e) => e.stopPropagation()}
                             >
