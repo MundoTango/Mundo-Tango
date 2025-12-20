@@ -12,22 +12,32 @@ export function generateCsrfToken(): string {
 // Set CSRF token for session
 export function setCsrfToken(req: Request, res: Response, next: NextFunction) {
   if (req.method === "GET") {
-    const token = generateCsrfToken();
+    const existingToken = req.cookies?.["XSRF-TOKEN"];
     const sessionId = (req as any).session?.id || req.ip;
     
-    // Store token
-    csrfTokens.set(sessionId, token);
-    
-    // Set token in cookie (httpOnly for security)
-    res.cookie("XSRF-TOKEN", token, {
-      httpOnly: false, // Allow JavaScript to read for sending in headers
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 24 * 60 * 60 * 1000, // 24 hours
-    });
-    
-    // Also attach to response locals for templates
-    res.locals.csrfToken = token;
+    if (existingToken) {
+      // Re-register existing token in memory map (survives server restarts)
+      // This ensures the double-submit pattern works after restarts
+      csrfTokens.set(sessionId, existingToken);
+      res.locals.csrfToken = existingToken;
+    } else {
+      // Generate new token only for fresh sessions
+      const token = generateCsrfToken();
+      
+      // Store token
+      csrfTokens.set(sessionId, token);
+      
+      // Set token in cookie (httpOnly for security)
+      res.cookie("XSRF-TOKEN", token, {
+        httpOnly: false, // Allow JavaScript to read for sending in headers
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      });
+      
+      // Also attach to response locals for templates
+      res.locals.csrfToken = token;
+    }
   }
   
   next();
@@ -104,6 +114,8 @@ export function verifyCsrfToken(req: Request, res: Response, next: NextFunction)
   if (/^\/api\/events\/\d+\/photos/.test(req.originalUrl)) {
     return next();
   }
+  
+
   
   // Skip CSRF for The Plan endpoints (Scott's first-time login tour)
   const thePlanEndpoints = [
@@ -279,6 +291,8 @@ export function verifyDoubleSubmitCookie(req: Request, res: Response, next: Next
   if (/^\/api\/events\/\d+\/photos/.test(req.originalUrl)) {
     return next();
   }
+  
+
   
   // Skip CSRF for The Plan endpoints (Scott's first-time login tour)
   const thePlanEndpoints = [

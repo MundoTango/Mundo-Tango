@@ -440,9 +440,11 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
               </CardTitle>
               <CardDescription data-testid="text-group-events-description">
                 {totalEvents > 0 
-                  ? activeFilterCount > 0 
-                    ? `${displayEvents.length} of ${totalEvents} events (filtered)`
-                    : `${displayEvents.length} ${mainTab === "series" ? "recurring" : mainTab === "past" ? "past" : "upcoming"} events in ${groupCity || "this city"}`
+                  ? weekdayFilter !== null
+                    ? `${displayEvents.length} ${["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][weekdayFilter]} events (${upcomingEvents.length === 0 && filteredEvents.length > 0 ? "try 'All Days'" : `${filteredEvents.length} total upcoming`})`
+                    : activeFilterCount > 0 
+                      ? `${displayEvents.length} of ${totalEvents} events (filtered)`
+                      : `${displayEvents.length} ${mainTab === "series" ? "recurring" : mainTab === "past" ? "past" : "upcoming"} events in ${groupCity || "this city"}`
                   : `No events scheduled yet in ${groupCity || "this city"}`
                 }
               </CardDescription>

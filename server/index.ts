@@ -160,7 +160,7 @@ app.use((req, res, next) => {
   app.use('/api', apiRateLimiter);
   
   // CSRF Protection - Double-submit cookie pattern (stateless, no Redis needed)
-  app.use(setCsrfToken); // Set token cookie on all GET requests
+  // Note: setCsrfToken is already applied globally above, only verify on mutations here
   app.use('/api', verifyDoubleSubmitCookie); // Verify token on mutations
   
   const server = await registerRoutes(app);
