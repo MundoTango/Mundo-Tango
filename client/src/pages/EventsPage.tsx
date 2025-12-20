@@ -31,7 +31,7 @@ import { motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { BannerAd } from "@/components/ads/BannerAd";
-import { EventFilters, type EventFilterValues } from "@/components/events/EventFilters";
+import { EventFiltersCompact, type EventFilterValues } from "@/components/events/EventFiltersCompact";
 import { getCityImageUrl } from "@/lib/cityImageMap";
 import { optimizeCover } from "@/lib/imageOptimizer";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -276,8 +276,7 @@ export default function EventsPage() {
   const [viewMode, setViewMode] = useState<"list" | "calendar" | "map">("list");
   const [filters, setFilters] = useState<EventFilterValues>({});
   const [page, setPage] = useState(1);
-  const [sortBy, setSortBy] = useState<"relevance" | "date" | "price">("relevance");
-  const [filtersExpanded, setFiltersExpanded] = useState(false);
+  const [sortBy, setSortBy] = useState<"relevance" | "date" | "price">("date");
 
   // Build query params for search
   const buildSearchParams = () => {
@@ -614,54 +613,33 @@ export default function EventsPage() {
               {activeTab === "discover" && "Explore all events worldwide"}
             </div>
 
-            {/* Search Bar & Controls - Only show for Discover tab */}
+            {/* Compact Chip-Based Filters - Only show for Discover tab */}
             {activeTab === "discover" && (
               <div className="space-y-4">
-                <div className="flex flex-col lg:flex-row gap-4">
-                  {/* Quick Search */}
-                  <div className="relative flex-1">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      placeholder="Search events by title, description, or location..."
-                      value={filters.q || ""}
-                      onChange={(e) => {
-                        setFilters({ ...filters, q: e.target.value });
-                        setPage(1);
-                      }}
-                      className="pl-10"
-                      data-testid="input-search-events"
-                    />
-                  </div>
-
-                  {/* Collapsible Filters Toggle */}
-                  <Button 
-                    variant="outline" 
-                    className="gap-2" 
-                    onClick={() => setFiltersExpanded(!filtersExpanded)}
-                    data-testid="button-toggle-filters"
-                  >
-                    <SlidersHorizontal className="h-4 w-4" />
-                    Filters
-                    {activeFilterCount > 0 && (
-                      <Badge variant="secondary">{activeFilterCount}</Badge>
-                    )}
-                    <ChevronDown className={`h-4 w-4 transition-transform ${filtersExpanded ? 'rotate-180' : ''}`} />
-                  </Button>
-
+                <div className="flex flex-wrap items-center gap-3">
+                  <EventFiltersCompact 
+                    onFilterChange={(newFilters) => {
+                      setFilters(newFilters);
+                      setPage(1);
+                    }} 
+                    initialFilters={filters}
+                  />
+                  
                   {/* Sort Controls */}
                   <Select value={sortBy} onValueChange={(val: "relevance" | "date" | "price") => {
                     setSortBy(val);
                     setPage(1);
                   }}>
-                    <SelectTrigger className="w-full lg:w-48" data-testid="select-sort">
+                    <SelectTrigger className="w-36" data-testid="select-sort">
+                      <Clock className="h-4 w-4 mr-1" />
                       <SelectValue placeholder="Sort by" />
                     </SelectTrigger>
                     <SelectContent>
+                      <SelectItem value="date" data-testid="option-sort-date">
+                        Soonest
+                      </SelectItem>
                       <SelectItem value="relevance" data-testid="option-sort-relevance">
                         Relevance
-                      </SelectItem>
-                      <SelectItem value="date" data-testid="option-sort-date">
-                        Date
                       </SelectItem>
                       <SelectItem value="price" data-testid="option-sort-price">
                         Price
@@ -669,40 +647,6 @@ export default function EventsPage() {
                     </SelectContent>
                   </Select>
                 </div>
-
-                {/* Collapsible Filters Panel */}
-                {filtersExpanded && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: "auto" }}
-                    exit={{ opacity: 0, height: 0 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <Card className="p-6">
-                      <div className="flex items-center justify-between mb-4">
-                        <h3 className="font-medium">Advanced Filters</h3>
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
-                          onClick={() => {
-                            setFilters({});
-                            setPage(1);
-                          }}
-                          data-testid="button-clear-filters"
-                        >
-                          Clear All
-                        </Button>
-                      </div>
-                      <EventFilters 
-                        onFilterChange={(newFilters) => {
-                          setFilters(newFilters);
-                          setPage(1);
-                        }} 
-                        initialFilters={filters}
-                      />
-                    </Card>
-                  </motion.div>
-                )}
               </div>
             )}
 
