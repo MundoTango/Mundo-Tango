@@ -293,8 +293,8 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
     return filteredEvents.filter(event => {
       const eventDate = getEventDate(event);
       if (eventDate.getTime() <= 0 || eventDate < now) return false;
-      // Apply weekday filter if set
-      if (weekdayFilter !== null && eventDate.getDay() !== weekdayFilter) return false;
+      // Apply weekday filter if set (use getUTCDay for UTC-based events)
+      if (weekdayFilter !== null && eventDate.getUTCDay() !== weekdayFilter) return false;
       return true;
     }).sort((a, b) => {
       const dateA = getEventDate(a);
