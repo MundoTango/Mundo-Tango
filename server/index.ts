@@ -13,6 +13,7 @@ console.log("✅ [DEBUG] ./routes imported");
 import { setupVite, serveStatic, log } from "./vite";
 import { startPreviewExpirationChecker } from "./lib/preview-expiration";
 import { initStoryExpirationJob } from "./jobs/expireStories";
+import { initScrapingScheduler } from "./jobs/scraping-scheduler";
 import { apiRateLimiter } from "./middleware/security";
 import { compressionMiddleware, performanceMonitoringMiddleware } from "./config/performance";
 import { healthCheckHandler, readinessCheckHandler, livenessCheckHandler } from "./health-check";
@@ -204,6 +205,7 @@ app.use((req, res, next) => {
     
     startPreviewExpirationChecker();
     initStoryExpirationJob();
+    initScrapingScheduler();
     
     // MB.MD v9.9.3: Initialize Self-Healing and Content Services
     try {

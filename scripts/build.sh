@@ -28,6 +28,10 @@ echo "=== Step 3/4: Post-build cleanup ==="
 find dist/ -name "*.map" -delete 2>/dev/null || true
 
 echo ""
+echo "=== Creating server/public symlink for production ==="
+ln -sf ../dist/public server/public
+
+echo ""
 echo "=== Step 4/4: Build complete! ==="
 echo "Output: dist/public (client) and dist/index.js (server)"
 echo ""
