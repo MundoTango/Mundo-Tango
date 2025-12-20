@@ -892,6 +892,8 @@ router.get("/:id/posts", async (req: Request, res: Response) => {
         user: {
           id: users.id,
           name: users.name,
+          firstName: users.firstName,
+          lastName: users.lastName,
           username: users.username,
           profileImage: users.profileImage
         }

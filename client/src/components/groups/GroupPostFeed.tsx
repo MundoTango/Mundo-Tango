@@ -49,32 +49,46 @@ function GroupPostFeedComponent({ groupId, groupName = "Group" }: GroupPostFeedP
         const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
         return dateB - dateA;
       })
-      .map((post: any) => ({
-        id: post.id,
-        userId: post.userId || post.authorId,
-        content: post.content,
-        imageUrl: null,
-        videoUrl: null,
-        visibility: "public",
-        likes: post.likeCount || 0,
-        comments: post.commentCount || 0,
-        createdAt: post.createdAt || new Date().toISOString(),
-        isSaved: false,
-        currentReaction: null,
-        reactions: {},
-        tags: [],
-        user: post.user ? {
-          id: post.user.id,
-          name: post.user.name || `User #${post.userId}`,
-          username: post.user.username || `user${post.userId}`,
-          profileImage: post.user.profileImage || `https://api.dicebear.com/7.x/avataaars/svg?seed=${post.userId}`,
-        } : {
-          id: post.userId || post.authorId,
-          name: `User #${post.userId || post.authorId}`,
-          username: `user${post.userId || post.authorId}`,
-          profileImage: `https://api.dicebear.com/7.x/avataaars/svg?seed=${post.userId || post.authorId}`,
-        },
-      }));
+      .map((post: any) => {
+        // Build display name from firstName + lastName, fallback to name, then username
+        const getDisplayName = (user: any, fallbackId: number): string => {
+          if (!user) return `User #${fallbackId}`;
+          if (user.firstName && user.lastName) return `${user.firstName} ${user.lastName}`;
+          if (user.firstName) return user.firstName;
+          if (user.name) return user.name;
+          if (user.username) return user.username;
+          return `User #${fallbackId}`;
+        };
+        
+        const userId = post.userId || post.authorId;
+        
+        return {
+          id: post.id,
+          userId: userId,
+          content: post.content,
+          imageUrl: null,
+          videoUrl: null,
+          visibility: "public",
+          likes: post.likeCount || 0,
+          comments: post.commentCount || 0,
+          createdAt: post.createdAt || new Date().toISOString(),
+          isSaved: false,
+          currentReaction: null,
+          reactions: {},
+          tags: [],
+          user: post.user ? {
+            id: post.user.id,
+            name: getDisplayName(post.user, userId),
+            username: post.user.username || `user${userId}`,
+            profileImage: post.user.profileImage || `https://api.dicebear.com/7.x/avataaars/svg?seed=${userId}`,
+          } : {
+            id: userId,
+            name: `User #${userId}`,
+            username: `user${userId}`,
+            profileImage: `https://api.dicebear.com/7.x/avataaars/svg?seed=${userId}`,
+          },
+        };
+      });
   }, [posts]);
 
   const handlePostCreated = () => {
