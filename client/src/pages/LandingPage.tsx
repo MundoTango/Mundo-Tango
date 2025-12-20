@@ -207,7 +207,7 @@ export default function LandingPage() {
   // Only display stats that have real data (not null)
   const stats = [
     publicStats?.dancers
-      ? { value: `${publicStats.dancers}+`, label: "Dancers" }
+      ? { value: `${publicStats.dancers}+`, label: "Members" }
       : null,
     publicStats?.events
       ? { value: `${publicStats.events}+`, label: "Events" }
@@ -257,7 +257,7 @@ export default function LandingPage() {
                 data-testid="text-hero-subheadline"
               >
                 Connect with the global tango community. Discover events, find
-                dance partners, and grow your journey with passionate dancers
+                partners, and grow your journey with passionate tango lovers
                 worldwide.
               </motion.p>
 
@@ -600,7 +600,7 @@ export default function LandingPage() {
             {/* Social Proof */}
             {publicStats?.dancers && (
               <motion.p variants={fadeInUp} className="text-white/80 text-sm">
-                Join {publicStats.dancers}+ dancers worldwide
+                Join {publicStats.dancers}+ tango community members worldwide
               </motion.p>
             )}
           </motion.div>
@@ -615,7 +615,7 @@ export default function LandingPage() {
             <div className="flex flex-col md:flex-row gap-6 items-center">
               <div className="flex-1">
                 <h3 className="font-semibold text-lg mb-2">
-                  Built by a Dancer, For Dancers
+                  Built by a Tanguero, For Tangueros
                 </h3>
                 <p className="text-sm text-muted-foreground">
                   Scott started dancing tango in{" "}

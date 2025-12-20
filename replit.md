@@ -52,10 +52,13 @@ Core functionalities include social features (events, groups, posts, notificatio
 **City Group Design (December 2025):**
 - Discussion tab now first/default for community engagement
 - Events tab has weekday filter tabs (Sun-Sat) for recurring milongas
+- Weekday filter fix: Auto-switch to Past tab only happens on initial load, not when filtering by weekday
 - Visitors tab has "This Week" / "All Upcoming" sub-tabs with proper display names (firstName + lastName)
 - Overview tab has interactive map with events/housing/recommendations layers
 - Group post authors show proper display names (not just usernames)
 - Mr. Blue chat hidden on marketing pages for cleaner UX
+- `/cities/:cityName` URL pattern - publicly accessible, redirects to /groups/:id if group exists
+- `/groups/:id` now publicly viewable (auth-protected features like joining still require login)
 
 ### Testing & Production
 The platform utilizes End-to-End (E2E) tests with Playwright, automated unit test coverage, and visual regression testing. A Volunteer Testing System provides 148 scenarios with automated issue routing. Production deployments are managed via GitHub Actions for CI/CD, monitored by Prometheus/Grafana with Sentry, and deployed through Replit Publishing. Redis is used for caching, and PostgreSQL (Neon) with Drizzle ORM for the database. Deployment size optimization is achieved by excluding large directories via `.gitignore`, and the production build incorporates React.lazy() for code splitting.

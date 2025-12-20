@@ -69,7 +69,7 @@ export function CityPopupCard({
         </div>
 
         <Link 
-          href={groupId ? `/groups/${groupId}` : `/city/${encodeURIComponent(city.toLowerCase().replace(/\s+/g, '-'))}`} 
+          href={`/cities/${encodeURIComponent(city.toLowerCase().replace(/\s+/g, '-'))}`} 
           className="block"
         >
           <Button className="w-full gap-2" data-testid={`button-view-city-${city.toLowerCase().replace(/\s+/g, '-')}`}>

@@ -46,6 +46,7 @@ const CityGroupsPage = lazy(() => import("@/pages/CityGroupsPage"));
 const CityGroupRedirectPage = lazy(() => import("@/pages/CityGroupRedirectPage"));
 const CityHubPage = lazy(() => import("@/pages/CityHubPage"));
 const CitySlugRedirectPage = lazy(() => import("@/pages/CitySlugRedirectPage"));
+const CityDetailsPage = lazy(() => import("@/pages/CityDetailsPage"));
 const ProfessionalGroupsPage = lazy(() => import("@/pages/ProfessionalGroupsPage"));
 const CustomGroupsPage = lazy(() => import("@/pages/CustomGroupsPage"));
 const CommunityMapPage = lazy(() => import("@/pages/CommunityMapPage"));
@@ -472,13 +473,11 @@ export function SocialRoutes() {
         </ProtectedRoute>
       </Route>
       <Route path="/groups/:id">
-        <ProtectedRoute>
-          <AppLayout>
-            <Suspense fallback={<LoadingFallback />}>
-              <GroupDetailsPage />
-            </Suspense>
-          </AppLayout>
-        </ProtectedRoute>
+        <AppLayout>
+          <Suspense fallback={<LoadingFallback />}>
+            <GroupDetailsPage />
+          </Suspense>
+        </AppLayout>
       </Route>
       <Route path="/city-groups">
         <ProtectedRoute>
@@ -497,6 +496,13 @@ export function SocialRoutes() {
             </Suspense>
           </AppLayout>
         </ProtectedRoute>
+      </Route>
+      <Route path="/cities/:cityName">
+        <AppLayout>
+          <Suspense fallback={<LoadingFallback />}>
+            <CityDetailsPage />
+          </Suspense>
+        </AppLayout>
       </Route>
       <Route path="/report/user/:id">
         <ProtectedRoute>

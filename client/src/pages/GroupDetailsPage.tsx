@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { useRoute, Link } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -309,11 +309,20 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
   }, [filteredEvents]);
   
   // Auto-switch to "past" tab if no upcoming events but past events exist
+  // Only on initial load (when all events are loaded), not when filtering by weekday
+  const hasAutoSwitchedRef = useRef(false);
   useEffect(() => {
-    if (upcomingEvents.length === 0 && pastEvents.length > 0 && mainTab === "upcoming") {
+    // Reset when group changes
+    hasAutoSwitchedRef.current = false;
+  }, [groupId]);
+  
+  useEffect(() => {
+    // Only auto-switch once per group, and only when no weekday filter is active
+    if (!hasAutoSwitchedRef.current && weekdayFilter === null && upcomingEvents.length === 0 && pastEvents.length > 0 && mainTab === "upcoming") {
       setMainTab("past");
+      hasAutoSwitchedRef.current = true;
     }
-  }, [upcomingEvents.length, pastEvents.length, mainTab]);
+  }, [upcomingEvents.length, pastEvents.length, mainTab, weekdayFilter]);
   
   const displayEvents = mainTab === "series" ? seriesEvents : mainTab === "past" ? pastEvents : upcomingEvents;
   
