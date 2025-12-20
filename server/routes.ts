@@ -7403,10 +7403,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
         'Prague': { lat: 50.0755, lng: 14.4378 },
         'Lisbon': { lat: 38.7223, lng: -9.1393 },
         'Athens': { lat: 37.9838, lng: 23.7275 },
+        // Additional cities from scraped events
+        'Warsaw': { lat: 52.2297, lng: 21.0122 },
+        'Budapest': { lat: 47.4979, lng: 19.0402 },
+        'Porto': { lat: 41.1579, lng: -8.6291 },
+        'Riga': { lat: 56.9496, lng: 24.1052 },
+        'Belgrade': { lat: 44.7866, lng: 20.4489 },
+        'Bogota': { lat: 4.7110, lng: -74.0721 },
+        'Miami': { lat: 25.7617, lng: -80.1918 },
+        'Singapore': { lat: 1.3521, lng: 103.8198 },
+        'Hong Kong': { lat: 22.3193, lng: 114.1694 },
       };
 
-      // Normalize city key for consistent lookups (case-insensitive, trimmed)
-      const normalizeKey = (city: string) => city.toLowerCase().trim();
+      // Normalize city key for consistent lookups (case-insensitive, trimmed, Turkish chars)
+      const normalizeKey = (city: string) => {
+        return city
+          .toLowerCase()
+          .trim()
+          .replace(/İ/gi, 'i')  // Turkish capital İ
+          .replace(/ı/g, 'i')   // Turkish lowercase ı (dotless i)
+          .replace(/i̇/g, 'i'); // Combined i + combining dot above
+      };
+
+      // Build normalized coords lookup for consistent coordinate access
+      const normalizedCityCoords = new Map<string, { lat: number; lng: number }>();
+      for (const [cityName, coords] of Object.entries(cityCoords)) {
+        normalizedCityCoords.set(normalizeKey(cityName), coords);
+      }
+
+      // Helper to get coords by normalized key
+      const getCoordsByNormalizedKey = (city: string) => {
+        return normalizedCityCoords.get(normalizeKey(city)) || { lat: 0, lng: 0 };
+      };
 
       // Build enrichment lookup maps with normalized keys
       const eventsMap = new Map<string, number>();
@@ -7443,7 +7471,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         addedCities.add(cityKey);
         
-        const coords = cityCoords[city] || {
+        // Use normalized lookup for coords, fallback to group's stored coords
+        const normalizedCoords = normalizedCityCoords.get(cityKey);
+        const coords = normalizedCoords || cityCoords[city] || {
           lat: parseFloat(group.latitude as string) || 0,
           lng: parseFloat(group.longitude as string) || 0
         };
@@ -7485,8 +7515,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         addedCities.add(cityKey);
         
-        // Try coords from: known lookup, location history, or default
-        const coords = cityCoords[city] || locationHistoryCoords.get(cityKey) || { lat: 0, lng: 0 };
+        // Try coords from: normalized lookup, known lookup, location history, or default
+        const coords = normalizedCityCoords.get(cityKey) || cityCoords[city] || locationHistoryCoords.get(cityKey) || { lat: 0, lng: 0 };
         
         locations.push({
           id: tempId--,
@@ -7518,7 +7548,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           lng: parseFloat(historyCity.longitude as string)
         } : null;
         
-        const coords = storedCoords || cityCoords[city] || { lat: 0, lng: 0 };
+        const coords = storedCoords || normalizedCityCoords.get(cityKey) || cityCoords[city] || { lat: 0, lng: 0 };
         
         locations.push({
           id: tempId--,
@@ -7528,6 +7558,73 @@ export async function registerRoutes(app: Express): Promise<Server> {
           coordinates: coords,
           memberCount: historyCity.memberCount || 0,
           activeEvents: eventsMap.get(cityKey) || 0,
+          venues: venuesMap.get(cityKey) || 0,
+          housing: housingMap.get(cityKey) || 0,
+          recommendations: venuesMap.get(cityKey) || 0,
+          coverImage: null,
+          isActive: true
+        });
+      }
+
+      // TERTIARY SOURCE: Add cities from approved scraped events that aren't already in the list
+      // Query distinct cities from scraped events with coordinates
+      const scrapedEventCities = await db.select({
+        city: scrapedEvents.city,
+        country: scrapedEvents.country,
+        latitude: scrapedEvents.latitude,
+        longitude: scrapedEvents.longitude,
+        eventCount: sql<number>`count(*)::int`,
+      })
+      .from(scrapedEvents)
+      .where(and(
+        isNotNull(scrapedEvents.city),
+        or(
+          eq(scrapedEvents.status, 'approved'),
+          eq(scrapedEvents.status, 'ingested')
+        )
+      ))
+      .groupBy(
+        scrapedEvents.city, 
+        scrapedEvents.country,
+        scrapedEvents.latitude,
+        scrapedEvents.longitude
+      );
+
+      // Normalize country names (Turkey/Türkiye -> Turkey, İstanbul -> Istanbul)
+      const normalizeCountry = (country: string) => {
+        if (country === 'Türkiye') return 'Turkey';
+        return country;
+      };
+      const normalizeCity = (city: string) => {
+        // Replace Turkish İ with regular I
+        return city.replace(/İ/g, 'I').replace(/ı/g, 'i');
+      };
+
+      for (const scrapedCity of scrapedEventCities) {
+        const rawCity = scrapedCity.city || '';
+        const city = normalizeCity(rawCity);
+        const cityKey = normalizeKey(city);
+        if (!cityKey || addedCities.has(cityKey)) continue;
+        
+        addedCities.add(cityKey);
+        
+        // Use scraped event coordinates if available
+        const storedCoords = scrapedCity.latitude && scrapedCity.longitude ? {
+          lat: parseFloat(scrapedCity.latitude as string),
+          lng: parseFloat(scrapedCity.longitude as string)
+        } : null;
+        
+        const coords = storedCoords || normalizedCityCoords.get(cityKey) || cityCoords[city] || cityCoords[rawCity] || { lat: 0, lng: 0 };
+        const country = normalizeCountry(scrapedCity.country || '');
+        
+        locations.push({
+          id: tempId--,
+          groupId: null, // No city group yet - scraped event city
+          city: city,
+          country: country,
+          coordinates: coords,
+          memberCount: 0, // No members yet
+          activeEvents: scrapedCity.eventCount || 0,
           venues: venuesMap.get(cityKey) || 0,
           housing: housingMap.get(cityKey) || 0,
           recommendations: venuesMap.get(cityKey) || 0,

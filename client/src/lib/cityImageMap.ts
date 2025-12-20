@@ -46,6 +46,15 @@ export const CITY_IMAGE_MAP: Record<string, string> = {
   // Oceania
   "Sydney": "https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?w=1200&h=675&fit=crop",
   "Melbourne": "https://images.unsplash.com/photo-1514395462725-fb4566210144?w=1200&h=675&fit=crop",
+  
+  // Additional European Cities (from scraped events)
+  "Warsaw": "https://images.unsplash.com/photo-1519197924294-4ba991a11128?w=1200&h=675&fit=crop",
+  "Budapest": "https://images.unsplash.com/photo-1549923746-c502d488b3ea?w=1200&h=675&fit=crop",
+  "Porto": "https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=1200&h=675&fit=crop",
+  "Riga": "https://images.unsplash.com/photo-1534236097568-a3e8bf97a686?w=1200&h=675&fit=crop",
+  "Belgrade": "https://images.unsplash.com/photo-1563804951831-69d34d20f7db?w=1200&h=675&fit=crop",
+  "Montevideo": "https://images.unsplash.com/photo-1605211099255-c4c84e16cf44?w=1200&h=675&fit=crop",
+  "Bogota": "https://images.unsplash.com/photo-1560780553-3a21e9aa5d79?w=1200&h=675&fit=crop",
 };
 
 /**
