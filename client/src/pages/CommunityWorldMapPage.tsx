@@ -429,16 +429,19 @@ export default function CommunityWorldMapPage() {
                                 </Button>
                               </Link>
                             )}
-                            <Button 
-                              variant="outline" 
+                            <Link 
+                              href={location.groupId ? `/groups/${location.groupId}` : `/city/${encodeURIComponent(location.city.toLowerCase().replace(/\s+/g, '-'))}`}
                               className="flex-1"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                              }}
-                              data-testid={`button-join-community-${location.id}`}
+                              onClick={(e) => e.stopPropagation()}
                             >
-                              Join Community
-                            </Button>
+                              <Button 
+                                variant="outline" 
+                                className="w-full"
+                                data-testid={`button-join-community-${location.id}`}
+                              >
+                                Join Community
+                              </Button>
+                            </Link>
                           </div>
                         </CardContent>
                       </Card>

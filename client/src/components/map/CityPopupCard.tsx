@@ -68,14 +68,15 @@ export function CityPopupCard({
           </div>
         </div>
 
-        {groupId && (
-          <Link href={`/groups/${groupId}`} className="block">
-            <Button className="w-full gap-2" data-testid={`button-view-group-${groupId}`}>
-              <ChevronRight className="w-4 h-4" />
-              View Details
-            </Button>
-          </Link>
-        )}
+        <Link 
+          href={groupId ? `/groups/${groupId}` : `/city/${encodeURIComponent(city.toLowerCase().replace(/\s+/g, '-'))}`} 
+          className="block"
+        >
+          <Button className="w-full gap-2" data-testid={`button-view-city-${city.toLowerCase().replace(/\s+/g, '-')}`}>
+            <ChevronRight className="w-4 h-4" />
+            View City
+          </Button>
+        </Link>
       </div>
     </div>
   );

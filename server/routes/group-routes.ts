@@ -81,8 +81,8 @@ router.get("/", async (req: Request, res: Response) => {
       );
     }
     if (type) conditions.push(eq(groups.type, type as string));
-    if (city) conditions.push(eq(groups.city, city as string));
-    if (country) conditions.push(eq(groups.country, country as string));
+    if (city) conditions.push(ilike(groups.city, city as string));
+    if (country) conditions.push(ilike(groups.country, country as string));
     if (isPrivate !== undefined) {
       conditions.push(eq(groups.isPrivate, isPrivate === "true"));
     }

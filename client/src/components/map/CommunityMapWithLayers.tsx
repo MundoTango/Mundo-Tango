@@ -278,9 +278,6 @@ export function CommunityMapWithLayers({
           key={`marker-${location.type || 'loc'}-${location.id}`}
           position={[location.coordinates.lat, location.coordinates.lng]}
           icon={createLayerIcon(location.type, location.type === 'housing' ? location.price : undefined)}
-          eventHandlers={{
-            click: () => onCityClick(location)
-          }}
         >
           <Popup>
             <LocationPopupCard location={location} />
