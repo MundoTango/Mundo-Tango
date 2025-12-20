@@ -8,7 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Users, MapPin, Settings as SettingsIcon, Calendar, Home, Building2, Heart, Check, ChevronRight, ChevronDown, ChevronUp, Music, Mic2, Star, Clock, ExternalLink, Compass, GraduationCap, SlidersHorizontal, Languages, DollarSign, Loader2, Map as MapIcon, Utensils, Coffee, Wine, List, Search, Repeat, X, Database, Globe } from "lucide-react";
+import { Users, MapPin, Settings as SettingsIcon, Calendar, Home, Building2, Heart, Check, ChevronRight, ChevronDown, ChevronUp, Music, Mic2, Star, Clock, ExternalLink, Compass, GraduationCap, SlidersHorizontal, Languages, DollarSign, Loader2, Map as MapIcon, Utensils, Coffee, Wine, List, Search, Repeat, X, Database, Globe, Plane } from "lucide-react";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { safeDateFormat } from "@/lib/safeDateFormat";
@@ -796,6 +796,100 @@ function GroupHousingTab({ groupCity }: { groupCity?: string | null }) {
   return (
     <div className="h-[calc(100vh-300px)] min-h-[600px]" data-testid="group-housing-tab">
       <AirbnbHousingView city={groupCity || undefined} showCreateButton={true} />
+    </div>
+  );
+}
+
+function GroupVisitorsTab({ groupCity }: { groupCity?: string | null }) {
+  const { data: visitors, isLoading } = useQuery<any[]>({
+    queryKey: ["/api/travel/upcoming-visitors", { city: groupCity }],
+    enabled: !!groupCity
+  });
+
+  if (isLoading) {
+    return (
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {[1, 2, 3, 4].map((i) => (
+          <Card key={i}>
+            <CardContent className="flex items-center gap-4 py-4">
+              <Skeleton className="h-12 w-12 rounded-full" />
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-3 w-32" />
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    );
+  }
+
+  if (!visitors || visitors.length === 0) {
+    return (
+      <Card className="py-12">
+        <CardContent className="flex flex-col items-center justify-center text-center">
+          <Plane className="h-16 w-16 text-muted-foreground mb-4" />
+          <h3 className="text-lg font-semibold mb-2">No upcoming visitors</h3>
+          <p className="text-muted-foreground mb-4">
+            Be the first to plan a trip to {groupCity || "this city"}!
+          </p>
+          <Button asChild data-testid="button-plan-visit">
+            <Link href="/travel/plan">Plan Your Visit</Link>
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <div className="space-y-6" data-testid="group-visitors-tab">
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-semibold flex items-center gap-2">
+          <Plane className="h-5 w-5 text-primary" />
+          Upcoming Visitors to {groupCity || "This City"}
+        </h2>
+        <Button variant="outline" asChild data-testid="button-plan-visit">
+          <Link href="/travel/plan">Plan Your Visit</Link>
+        </Button>
+      </div>
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {visitors.map((visitor: any) => (
+          <Card key={visitor.id} className="hover-elevate" data-testid={`card-visitor-${visitor.id}`}>
+            <CardContent className="flex items-center gap-4 py-4">
+              <Avatar className="h-12 w-12">
+                <AvatarImage src={visitor.avatarUrl} />
+                <AvatarFallback>
+                  {visitor.name?.substring(0, 2).toUpperCase() || "?"}
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex-1 min-w-0">
+                <p className="font-medium truncate">{visitor.name || visitor.username}</p>
+                <p className="text-sm text-muted-foreground">
+                  {visitor.arrivalDate && safeDateFormat(visitor.arrivalDate, "MMM d")}
+                  {visitor.departureDate && ` - ${safeDateFormat(visitor.departureDate, "MMM d")}`}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function GroupTipsTab({ groupCity }: { groupCity?: string | null }) {
+  return (
+    <div className="space-y-6" data-testid="group-tips-tab">
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-semibold flex items-center gap-2">
+          <Star className="h-5 w-5 text-primary" />
+          Local Tips & Recommendations
+        </h2>
+        <Button variant="outline" asChild data-testid="button-add-tip">
+          <Link href="/recommendations/add">Add Recommendation</Link>
+        </Button>
+      </div>
+      <RecommendationsList city={groupCity || undefined} limit={20} />
     </div>
   );
 }
@@ -1838,25 +1932,33 @@ export default function GroupDetailsPage() {
             )}
 
             {/* Tabs */}
-            <Tabs defaultValue="discussion">
-              <TabsList className="grid w-full grid-cols-4 lg:grid-cols-6 gap-1 mb-8">
-                <TabsTrigger value="discussion">Discussion</TabsTrigger>
+            <Tabs defaultValue="events">
+              <TabsList className="flex flex-wrap gap-1 mb-8">
+                <TabsTrigger value="overview">
+                  <Compass className="h-4 w-4 lg:mr-2" />
+                  <span className="hidden lg:inline">Overview</span>
+                </TabsTrigger>
                 <TabsTrigger value="events">
                   <Calendar className="h-4 w-4 lg:mr-2" />
                   <span className="hidden lg:inline">Events</span>
-                </TabsTrigger>
-                <TabsTrigger value="housing">
-                  <Home className="h-4 w-4 lg:mr-2" />
-                  <span className="hidden lg:inline">Housing</span>
-                </TabsTrigger>
-                <TabsTrigger value="hub">
-                  <Compass className="h-4 w-4 lg:mr-2" />
-                  <span className="hidden lg:inline">City Hub</span>
                 </TabsTrigger>
                 <TabsTrigger value="members">
                   <Users className="h-4 w-4 lg:mr-2" />
                   <span className="hidden lg:inline">Members</span>
                 </TabsTrigger>
+                <TabsTrigger value="housing">
+                  <Home className="h-4 w-4 lg:mr-2" />
+                  <span className="hidden lg:inline">Housing</span>
+                </TabsTrigger>
+                <TabsTrigger value="visitors">
+                  <Plane className="h-4 w-4 lg:mr-2" />
+                  <span className="hidden lg:inline">Visitors</span>
+                </TabsTrigger>
+                <TabsTrigger value="tips">
+                  <Star className="h-4 w-4 lg:mr-2" />
+                  <span className="hidden lg:inline">Tips</span>
+                </TabsTrigger>
+                <TabsTrigger value="discussion">Discussion</TabsTrigger>
                 {membershipData?.isMember && (
                   <TabsTrigger value="settings">
                     <SettingsIcon className="h-4 w-4 lg:mr-2" />
@@ -1865,25 +1967,12 @@ export default function GroupDetailsPage() {
                 )}
               </TabsList>
               
-              <TabsContent value="discussion">
-                <GroupPostFeed 
-                  groupId={group.id}
-                  groupName={group.name}
-                  canPost={membershipData?.isMember || false}
-                  canModerate={membershipData?.isMember || false}
-                />
+              <TabsContent value="overview">
+                <GroupHubTab groupCity={group.city} groupCountry={group.country} group={group} />
               </TabsContent>
 
               <TabsContent value="events">
                 <GroupEventsTab groupId={group.id} groupCity={group.city} />
-              </TabsContent>
-
-              <TabsContent value="housing">
-                <GroupHousingTab groupCity={group.city} />
-              </TabsContent>
-
-              <TabsContent value="hub">
-                <GroupHubTab groupCity={group.city} groupCountry={group.country} group={group} />
               </TabsContent>
 
               <TabsContent value="members">
@@ -1891,6 +1980,27 @@ export default function GroupDetailsPage() {
                   groupId={group.id}
                   canModerate={membershipData?.isMember || false}
                   currentUserId={user?.id}
+                />
+              </TabsContent>
+
+              <TabsContent value="housing">
+                <GroupHousingTab groupCity={group.city} />
+              </TabsContent>
+
+              <TabsContent value="visitors">
+                <GroupVisitorsTab groupCity={group.city} />
+              </TabsContent>
+
+              <TabsContent value="tips">
+                <GroupTipsTab groupCity={group.city} />
+              </TabsContent>
+
+              <TabsContent value="discussion">
+                <GroupPostFeed 
+                  groupId={group.id}
+                  groupName={group.name}
+                  canPost={membershipData?.isMember || false}
+                  canModerate={membershipData?.isMember || false}
                 />
               </TabsContent>
 
