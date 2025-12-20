@@ -789,6 +789,53 @@ router.get('/admin/scraping/scraped-events-count', authenticateToken, async (req
 });
 
 /**
+ * VENUE SCRAPER
+ * Scrape tango retreat centers and venue operator websites
+ * Creates venue owner profiles with "Venue Owner" tango role
+ */
+router.post('/admin/scraping/scrape-venue', authenticateToken, async (req: AuthRequest, res) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, userId)
+    });
+
+    if (!user || user.role !== 'super_admin') {
+      return res.status(403).json({ error: 'Forbidden: Super Admin access required' });
+    }
+
+    const { url } = req.body;
+    if (!url) {
+      return res.status(400).json({ error: 'URL is required' });
+    }
+
+    console.log(`[VenueScraper] Admin requested venue scrape: ${url}`);
+    
+    const result = await venueScraper.scrapeAndIngestVenue(url);
+
+    res.json({
+      success: result.success,
+      venue: result.venue,
+      ownersCreated: result.owners.map(o => ({
+        userId: o.userId,
+        username: o.username,
+        name: o.name,
+        isNew: o.isNew
+      })),
+      timestamp: new Date().toISOString()
+    });
+
+  } catch (error) {
+    console.error('[VenueScraper] Error:', error);
+    res.status(500).json({ error: 'Failed to scrape venue' });
+  }
+});
+
+/**
  * INGEST APPROVED SCRAPED EVENTS
  * Moves all approved/pending scraped events to the main events table
  * Creates user profiles for discovered participants (DJs, teachers, organizers)
