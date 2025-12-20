@@ -203,7 +203,7 @@ export default function CommunityWorldMapPage() {
   const handleCityClick = (location: CommunityLocation) => {
     // Navigate to the city hub page (encode city name for URL safety)
     const citySlug = encodeURIComponent(location.city.toLowerCase().replace(/\s+/g, '-'));
-    setLocation(`/city/${citySlug}`);
+    setLocation(`/cities/${citySlug}`);
   };
 
   return (
@@ -417,29 +417,14 @@ export default function CommunityWorldMapPage() {
                           </div>
 
                           <div className="flex gap-2">
-                            {location.groupId && (
-                              <Link 
-                                href={`/groups/${location.groupId}`} 
-                                className="flex-1"
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                <Button className="w-full gap-2" data-testid={`button-view-group-${location.groupId}`}>
-                                  <Users className="w-4 h-4" />
-                                  View City Group
-                                </Button>
-                              </Link>
-                            )}
                             <Link 
-                              href={location.groupId ? `/groups/${location.groupId}` : `/city/${encodeURIComponent(location.city.toLowerCase().replace(/\s+/g, '-'))}`}
+                              href={`/cities/${encodeURIComponent(location.city.toLowerCase().replace(/\s+/g, '-'))}`}
                               className="flex-1"
                               onClick={(e) => e.stopPropagation()}
                             >
-                              <Button 
-                                variant="outline" 
-                                className="w-full"
-                                data-testid={`button-join-community-${location.id}`}
-                              >
-                                Join Community
+                              <Button className="w-full gap-2" data-testid={`button-view-city-${location.id}`}>
+                                <ChevronRight className="w-4 h-4" />
+                                View City
                               </Button>
                             </Link>
                           </div>

@@ -442,15 +442,41 @@ router.get("/:id", async (req: Request, res: Response) => {
   }
 });
 
-// GET /api/groups/:id/events - Get events for a group
+// GET /api/groups/:id/events - Get events for a group (includes city-matched events for city groups)
 router.get("/:id/events", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { limit = "20", offset = "0", past, showAll } = req.query;
+    const { limit = "200", offset = "0", past, showAll } = req.query;
     const now = new Date();
 
-    // Build conditions array
-    const conditions = [eq(events.groupId, parseInt(id))];
+    // First, get the group to check if it's a city group
+    const group = await db.query.groups.findFirst({
+      where: eq(groups.id, parseInt(id))
+    });
+
+    if (!group) {
+      return res.status(404).json({ message: "Group not found" });
+    }
+
+    const isCity = group.type === 'city';
+    const groupCity = group.city;
+
+    // Build conditions array based on group type
+    // For city groups: match events by city name (case-insensitive) OR by groupId
+    // For other groups: only match by groupId
+    let matchCondition;
+    if (isCity && groupCity) {
+      // Match events that either have this groupId OR are in this city
+      matchCondition = or(
+        eq(events.groupId, parseInt(id)),
+        sql`LOWER(${events.city}) = LOWER(${groupCity})`
+      );
+    } else {
+      matchCondition = eq(events.groupId, parseInt(id));
+    }
+
+    // Build full conditions with date filters
+    const conditions: any[] = [matchCondition];
     
     // Add date filter based on past/showAll parameters
     // If showAll=true, don't filter by date (show everything)
@@ -462,7 +488,7 @@ router.get("/:id/events", async (req: Request, res: Response) => {
       }
     }
 
-    // Get events linked to this group with date filter
+    // Get events linked to this group (or in this city for city groups)
     const groupEvents = await db
       .select({
         event: events,

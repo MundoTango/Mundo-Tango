@@ -216,7 +216,15 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
   const filteredEvents = useMemo(() => {
     if (!events) return [];
     
-    return events.filter(event => {
+    // Deduplicate events by id (in case of duplicate returns from city + groupId match)
+    const seenIds = new Set<number>();
+    const deduped = events.filter(event => {
+      if (seenIds.has(event.id)) return false;
+      seenIds.add(event.id);
+      return true;
+    });
+    
+    return deduped.filter(event => {
       if (filters.q) {
         const searchTerm = filters.q.toLowerCase();
         const titleMatch = event.title?.toLowerCase().includes(searchTerm);
