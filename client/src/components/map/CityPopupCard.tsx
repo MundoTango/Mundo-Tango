@@ -2,6 +2,7 @@ import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Users, Calendar, Sparkles, Home, ChevronRight } from "lucide-react";
 import { getCityImageUrl } from "@/lib/cityImageMap";
+import { toCitySlug } from "@/lib/utils";
 
 interface CityPopupCardProps {
   city: string;
@@ -69,10 +70,10 @@ export function CityPopupCard({
         </div>
 
         <Link 
-          href={`/cities/${encodeURIComponent(city.toLowerCase().replace(/\s+/g, '-'))}`} 
+          href={`/cities/${toCitySlug(city)}`} 
           className="block"
         >
-          <Button className="w-full gap-2" data-testid={`button-view-city-${city.toLowerCase().replace(/\s+/g, '-')}`}>
+          <Button className="w-full gap-2" data-testid={`button-view-city-${toCitySlug(city)}`}>
             <ChevronRight className="w-4 h-4" />
             View City
           </Button>

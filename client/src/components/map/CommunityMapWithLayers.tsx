@@ -85,26 +85,53 @@ const createLayerIcon = (type?: 'event' | 'housing' | 'recommendation' | 'city',
   }
   
   // For housing without price, show icon instead
+  // Use outer container for proper positioning with pointer/drop pin shape
   return L.divIcon({
     className: 'custom-marker',
     html: `
       <div style="
-        background: ${config.bg};
-        border: 3px solid white;
-        border-radius: 50%;
-        width: 28px;
-        height: 28px;
+        position: relative;
+        width: 34px;
+        height: 42px;
         display: flex;
+        flex-direction: column;
         align-items: center;
-        justify-content: center;
-        box-shadow: 0 4px 12px ${config.shadow};
-        transition: transform 0.2s;
       ">
-        ${config.svg}
+        <div style="
+          background: white;
+          border-radius: 50%;
+          width: 32px;
+          height: 32px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 4px 12px ${config.shadow};
+          transition: transform 0.2s;
+        ">
+          <div style="
+            background: ${config.bg};
+            border-radius: 50%;
+            width: 26px;
+            height: 26px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          ">
+            ${config.svg}
+          </div>
+        </div>
+        <div style="
+          width: 0;
+          height: 0;
+          border-left: 6px solid transparent;
+          border-right: 6px solid transparent;
+          border-top: 8px solid white;
+          margin-top: -2px;
+        "></div>
       </div>
     `,
-    iconSize: [28, 28],
-    iconAnchor: [14, 28],
+    iconSize: [34, 42],
+    iconAnchor: [17, 42],
   });
 };
 
@@ -260,16 +287,27 @@ export function CommunityMapWithLayers({
     return Array.from(enabledLayers).some(layerId => pattern.test(layerId));
   });
 
+  // World bounds to prevent infinite scrolling - limit to one world view
+  const worldBounds: L.LatLngBoundsExpression = [
+    [-85, -180], // Southwest corner
+    [85, 180]    // Northeast corner
+  ];
+
   return (
     <MapContainer
       center={center}
       zoom={zoom}
       style={{ height: '100%', width: '100%' }}
       className="rounded-b-lg"
+      maxBounds={worldBounds}
+      maxBoundsViscosity={1.0}
+      minZoom={2}
+      worldCopyJump={false}
     >
       <TileLayer
         url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
         attribution='&copy; <a href="https://carto.com/attributions">CARTO</a>'
+        noWrap={true}
       />
       <MapUpdater center={center} />
 
