@@ -33,6 +33,9 @@ export function MarketingRoutes() {
       <Route path="/">
         <Redirect to="/landing" />
       </Route>
+      <Route path="/lander">
+        <Redirect to="/landing" />
+      </Route>
       <Route path="/landing">
         <Suspense fallback={<LoadingFallback />}>
           <LandingPage />

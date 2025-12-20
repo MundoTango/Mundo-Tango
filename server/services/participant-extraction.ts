@@ -186,10 +186,19 @@ const SKILL_LEVEL_PATTERNS = [
 
 /**
  * Split comma/and-separated list of names into individual names
+ * Supports multiple languages:
+ * - English: "and", "&"
+ * - Spanish: "y" 
+ * - Italian: "e"
+ * - French: "et"
+ * - German: "und"
+ * - Portuguese: "e"
  */
 function splitNameList(text: string): string[] {
   return text
-    .split(/[,&]|\band\b/gi)
+    // Split on comma, ampersand, or language-specific "and" words
+    // Use word boundaries \b to avoid splitting on "y" within names like "Yolanda"
+    .split(/[,&]|\band\b|\by\b|\be\b|\bet\b|\bund\b/gi)
     .map(name => name.trim())
     .filter(name => name.length > 2 && name.length < 60)
     .filter(name => !name.match(/^\d+$/) && !name.includes('http'));

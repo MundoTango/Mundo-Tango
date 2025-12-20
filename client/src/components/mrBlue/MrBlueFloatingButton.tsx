@@ -7,7 +7,28 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 
-const HIDDEN_PAGES = ['/mr-blue-chat', '/admin/visual-editor'];
+const HIDDEN_PAGES = [
+  '/mr-blue-chat', 
+  '/admin/visual-editor',
+  // Marketing pages - hide Mr Blue for clean marketing experience
+  '/landing',
+  '/lander',
+  '/about',
+  '/pricing',
+  '/features',
+  '/careers',
+  '/contact',
+  '/press',
+  '/blog',
+  '/help',
+  '/terms',
+  '/privacy',
+  '/ambassador',
+  '/volunteer',
+  '/donate',
+  '/partners',
+  '/tango-roles',
+];
 
 export function MrBlueFloatingButton() {
   const [isOpen, setIsOpen] = useState(false);

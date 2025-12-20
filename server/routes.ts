@@ -7671,6 +7671,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
       })
       .from(userLocationHistory);
 
+      // Get scraped event cities (approved or ingested)
+      const scrapedEventsStats = await db.select({
+        uniqueCities: sql<number>`count(distinct ${scrapedEvents.city})::int`,
+        uniqueCountries: sql<number>`count(distinct ${scrapedEvents.country})::int`,
+        totalEvents: sql<number>`count(*)::int`,
+      })
+      .from(scrapedEvents)
+      .where(
+        and(
+          isNotNull(scrapedEvents.city),
+          or(
+            eq(scrapedEvents.status, 'approved'),
+            eq(scrapedEvents.status, 'ingested')
+          )
+        )
+      );
+
       // Get venue recommendations
       const venueStats = await db.select({
         totalVenues: sql<number>`count(*)::int`,
@@ -7684,20 +7701,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
       .from(housingListings)
       .where(eq(housingListings.status, 'active'));
 
-      // Combine stats from all sources
+      // Combine stats from all sources (including scraped events)
       const totalCities = (cityGroupStats[0]?.totalCities || 0) + 
                           (userCitiesStats[0]?.uniqueCities || 0) + 
-                          (locationHistoryStats[0]?.uniqueCities || 0);
+                          (locationHistoryStats[0]?.uniqueCities || 0) +
+                          (scrapedEventsStats[0]?.uniqueCities || 0);
       const totalCountries = (cityGroupStats[0]?.countries || 0) + 
                              (userCitiesStats[0]?.uniqueCountries || 0) + 
-                             (locationHistoryStats[0]?.uniqueCountries || 0);
+                             (locationHistoryStats[0]?.uniqueCountries || 0) +
+                             (scrapedEventsStats[0]?.uniqueCountries || 0);
       const totalMembers = (cityGroupStats[0]?.totalMembers || 0) + (userCitiesStats[0]?.totalUsers || 0);
+      const activeEventsTotal = (cityGroupStats[0]?.totalEvents || 0) + (scrapedEventsStats[0]?.totalEvents || 0);
 
       res.json({
         totalCities,
         countries: totalCountries,
         totalMembers,
-        activeEvents: cityGroupStats[0]?.totalEvents || 0,
+        activeEvents: activeEventsTotal,
         totalVenues: venueStats[0]?.totalVenues || 0,
         totalRecommendations: venueStats[0]?.totalVenues || 0,
         totalHousing: housingStats[0]?.totalHousing || 0

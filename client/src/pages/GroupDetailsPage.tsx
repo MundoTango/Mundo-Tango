@@ -179,6 +179,7 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
   const [mainTab, setMainTab] = useState<"upcoming" | "past" | "series">("upcoming");
   const [viewMode, setViewMode] = useState<"list" | "calendar" | "map">("list");
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+  const [weekdayFilter, setWeekdayFilter] = useState<number | null>(null); // 0=Sun, 1=Mon, etc.
   
   const { data: events, isLoading } = useQuery<SelectEvent[]>({
     queryKey: ["/api/events", "group", groupId, groupCity, "all"],
@@ -283,13 +284,16 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
     const now = new Date();
     return filteredEvents.filter(event => {
       const eventDate = getEventDate(event);
-      return eventDate.getTime() > 0 && eventDate >= now;
+      if (eventDate.getTime() <= 0 || eventDate < now) return false;
+      // Apply weekday filter if set
+      if (weekdayFilter !== null && eventDate.getDay() !== weekdayFilter) return false;
+      return true;
     }).sort((a, b) => {
       const dateA = getEventDate(a);
       const dateB = getEventDate(b);
       return dateA.getTime() - dateB.getTime();
     });
-  }, [filteredEvents]);
+  }, [filteredEvents, weekdayFilter]);
   
   const pastEvents = useMemo(() => {
     if (!filteredEvents) return [];
@@ -444,6 +448,31 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
               </TabsTrigger>
             </TabsList>
           </Tabs>
+          
+          {/* Weekday filter tabs - only show for upcoming events */}
+          {mainTab === "upcoming" && (
+            <div className="flex flex-wrap gap-1" data-testid="weekday-filter-tabs">
+              <Button
+                variant={weekdayFilter === null ? "default" : "outline"}
+                size="sm"
+                onClick={() => setWeekdayFilter(null)}
+                data-testid="weekday-all"
+              >
+                All Days
+              </Button>
+              {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day, index) => (
+                <Button
+                  key={day}
+                  variant={weekdayFilter === index ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setWeekdayFilter(weekdayFilter === index ? null : index)}
+                  data-testid={`weekday-${day.toLowerCase()}`}
+                >
+                  {day}
+                </Button>
+              ))}
+            </div>
+          )}
         </div>
       </CardHeader>
       
@@ -802,10 +831,37 @@ function GroupHousingTab({ groupCity }: { groupCity?: string | null }) {
 }
 
 function GroupVisitorsTab({ groupCity }: { groupCity?: string | null }) {
+  const [visitorTab, setVisitorTab] = useState<"thisWeek" | "upcoming">("thisWeek");
+  
   const { data: visitors, isLoading } = useQuery<any[]>({
     queryKey: ["/api/travel/upcoming-visitors", { city: groupCity }],
     enabled: !!groupCity
   });
+
+  // Filter visitors by time period
+  const filteredVisitors = useMemo(() => {
+    if (!visitors) return [];
+    const now = new Date();
+    const weekFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+    
+    if (visitorTab === "thisWeek") {
+      return visitors.filter((v: any) => {
+        const arrival = v.arrivalDate ? new Date(v.arrivalDate) : null;
+        return arrival && arrival <= weekFromNow;
+      });
+    }
+    return visitors;
+  }, [visitors, visitorTab]);
+
+  // Helper to get display name
+  const getDisplayName = (visitor: any): string => {
+    if (visitor.displayName) return visitor.displayName;
+    if (visitor.firstName && visitor.lastName) return `${visitor.firstName} ${visitor.lastName}`;
+    if (visitor.firstName) return visitor.firstName;
+    if (visitor.name) return visitor.name;
+    if (visitor.username) return visitor.username;
+    return "Tango Dancer";
+  };
 
   if (isLoading) {
     return (
@@ -844,36 +900,56 @@ function GroupVisitorsTab({ groupCity }: { groupCity?: string | null }) {
 
   return (
     <div className="space-y-6" data-testid="group-visitors-tab">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <h2 className="text-xl font-semibold flex items-center gap-2">
           <Plane className="h-5 w-5 text-primary" />
-          Upcoming Visitors to {groupCity || "This City"}
+          Visitors to {groupCity || "This City"}
         </h2>
-        <Button variant="outline" asChild data-testid="button-plan-visit">
-          <Link href="/travel/plan">Plan Your Visit</Link>
-        </Button>
+        <div className="flex items-center gap-2">
+          <Tabs value={visitorTab} onValueChange={(v) => setVisitorTab(v as "thisWeek" | "upcoming")} data-testid="visitor-time-tabs">
+            <TabsList>
+              <TabsTrigger value="thisWeek" data-testid="visitor-tab-thisweek">This Week</TabsTrigger>
+              <TabsTrigger value="upcoming" data-testid="visitor-tab-upcoming">All Upcoming</TabsTrigger>
+            </TabsList>
+          </Tabs>
+          <Button variant="outline" asChild data-testid="button-plan-visit">
+            <Link href="/travel/plan">Plan Your Visit</Link>
+          </Button>
+        </div>
       </div>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {visitors.map((visitor: any) => (
-          <Card key={visitor.id} className="hover-elevate" data-testid={`card-visitor-${visitor.id}`}>
-            <CardContent className="flex items-center gap-4 py-4">
-              <Avatar className="h-12 w-12">
-                <AvatarImage src={visitor.avatarUrl} />
-                <AvatarFallback>
-                  {visitor.name?.substring(0, 2).toUpperCase() || "?"}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex-1 min-w-0">
-                <p className="font-medium truncate">{visitor.name || visitor.username}</p>
-                <p className="text-sm text-muted-foreground">
-                  {visitor.arrivalDate && safeDateFormat(visitor.arrivalDate, "MMM d")}
-                  {visitor.departureDate && ` - ${safeDateFormat(visitor.departureDate, "MMM d")}`}
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+      
+      {filteredVisitors.length === 0 ? (
+        <Card className="py-8">
+          <CardContent className="text-center text-muted-foreground">
+            <p>No visitors {visitorTab === "thisWeek" ? "this week" : "scheduled"}</p>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {filteredVisitors.map((visitor: any) => (
+            <Card key={visitor.id} className="hover-elevate" data-testid={`card-visitor-${visitor.id}`}>
+              <CardContent className="flex items-center gap-4 py-4">
+                <Avatar className="h-12 w-12">
+                  <AvatarImage src={visitor.avatarUrl || visitor.profileImage} />
+                  <AvatarFallback>
+                    {getDisplayName(visitor).substring(0, 2).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium truncate">{getDisplayName(visitor)}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {visitor.arrivalDate && safeDateFormat(visitor.arrivalDate, "MMM d")}
+                    {visitor.departureDate && ` - ${safeDateFormat(visitor.departureDate, "MMM d")}`}
+                  </p>
+                  {visitor.homeCity && (
+                    <p className="text-xs text-muted-foreground truncate">From {visitor.homeCity}</p>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -1932,34 +2008,37 @@ export default function GroupDetailsPage() {
               </Card>
             )}
 
-            {/* Tabs */}
-            <Tabs defaultValue="events">
+            {/* Tabs - Discussion first for community engagement */}
+            <Tabs defaultValue="discussion">
               <TabsList className="flex flex-wrap gap-1 mb-8">
-                <TabsTrigger value="overview">
+                <TabsTrigger value="discussion" data-testid="tab-discussion">
+                  <Users className="h-4 w-4 lg:mr-2" />
+                  <span className="hidden lg:inline">Discussion</span>
+                </TabsTrigger>
+                <TabsTrigger value="overview" data-testid="tab-overview">
                   <Compass className="h-4 w-4 lg:mr-2" />
                   <span className="hidden lg:inline">Overview</span>
                 </TabsTrigger>
-                <TabsTrigger value="events">
+                <TabsTrigger value="events" data-testid="tab-events">
                   <Calendar className="h-4 w-4 lg:mr-2" />
                   <span className="hidden lg:inline">Events</span>
                 </TabsTrigger>
-                <TabsTrigger value="members">
+                <TabsTrigger value="members" data-testid="tab-members">
                   <Users className="h-4 w-4 lg:mr-2" />
                   <span className="hidden lg:inline">Members</span>
                 </TabsTrigger>
-                <TabsTrigger value="housing">
+                <TabsTrigger value="housing" data-testid="tab-housing">
                   <Home className="h-4 w-4 lg:mr-2" />
                   <span className="hidden lg:inline">Housing</span>
                 </TabsTrigger>
-                <TabsTrigger value="visitors">
+                <TabsTrigger value="visitors" data-testid="tab-visitors">
                   <Plane className="h-4 w-4 lg:mr-2" />
                   <span className="hidden lg:inline">Visitors</span>
                 </TabsTrigger>
-                <TabsTrigger value="tips">
+                <TabsTrigger value="tips" data-testid="tab-tips">
                   <Star className="h-4 w-4 lg:mr-2" />
                   <span className="hidden lg:inline">Tips</span>
                 </TabsTrigger>
-                <TabsTrigger value="discussion">Discussion</TabsTrigger>
                 {membershipData?.isMember && (
                   <TabsTrigger value="settings">
                     <SettingsIcon className="h-4 w-4 lg:mr-2" />
