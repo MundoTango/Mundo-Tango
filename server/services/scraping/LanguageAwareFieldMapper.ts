@@ -270,19 +270,32 @@ export class LanguageAwareFieldMapper {
     return null;
   }
 
+  /**
+   * Multi-language "and" separators for name extraction:
+   * - English: "and"
+   * - Spanish: "y" 
+   * - Portuguese: "e"
+   * - Italian: "e"
+   * - French: "et"
+   * - German: "und"
+   */
   extractNamesAfterKeyword(text: string, role: 'organizer' | 'dj' | 'teacher' | 'orchestra' | 'performer' | 'host', language: SupportedLanguage = 'en'): string[] {
     const names: string[] = [];
     const keywords = ROLE_KEYWORDS[language]?.[role] || ROLE_KEYWORDS.en[role] || [];
 
+    // Multi-language "and" pattern: y (ES), e (PT/IT), et (FR), und (DE), and (EN), &
+    const andPattern = 'y|e|et|und|and|&';
+
     for (const keyword of keywords) {
       const pattern = new RegExp(
-        `${keyword}[es/as]*[:\\s]+([A-ZÀ-ÿ][\\w'\\-\\.]+(?:\\s+(?:y|e|&|,|and)\\s+[A-ZÀ-ÿ][\\w'\\-\\.]+|\\s+[A-ZÀ-ÿ][\\w'\\-\\.]+)*)`,
+        `${keyword}[es/as]*[:\\s]+([A-ZÀ-ÿ][\\w'\\-\\.]+(?:\\s+(?:${andPattern}|,)\\s+[A-ZÀ-ÿ][\\w'\\-\\.]+|\\s+[A-ZÀ-ÿ][\\w'\\-\\.]+)*)`,
         'gi'
       );
       const matches = text.matchAll(pattern);
       for (const match of matches) {
         const nameGroup = match[1];
-        const splitNames = nameGroup.split(/\s*(?:,|y|e|&|and)\s*/i);
+        // Split by all multi-language "and" equivalents: comma, y (ES), e (PT/IT), et (FR), und (DE), and (EN), &
+        const splitNames = nameGroup.split(/\s*(?:,|\by\b|\be\b|\bet\b|\bund\b|\band\b|&)\s*/i);
         for (const name of splitNames) {
           const trimmed = name.trim();
           if (trimmed.length > 2 && trimmed.length < 60 && !names.includes(trimmed)) {
