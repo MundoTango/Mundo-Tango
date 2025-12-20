@@ -9,6 +9,8 @@ import { deduplicator } from '../agents/scraping/deduplicator.ts';
 import { rssFeedService } from '../services/scraping/RSSFeedService.ts';
 import { hoyMilongaScraper } from '../services/scraping/HoyMilongaScraper.ts';
 import { unifiedEventScraper } from '../services/scraping/UnifiedEventScraper.ts';
+import { scrapedEventIngestionService } from '../services/ScrapedEventIngestionService.ts';
+import { venueScraper } from '../agents/scraping/VenueScraper.ts';
 
 const router = Router();
 
@@ -783,6 +785,59 @@ router.get('/admin/scraping/scraped-events-count', authenticateToken, async (req
   } catch (error) {
     console.error('Scraped events count error:', error);
     res.status(500).json({ error: 'Failed to get scraped events count' });
+  }
+});
+
+/**
+ * INGEST APPROVED SCRAPED EVENTS
+ * Moves all approved/pending scraped events to the main events table
+ * Creates user profiles for discovered participants (DJs, teachers, organizers)
+ */
+router.post('/admin/scraping/ingest-events', authenticateToken, async (req: AuthRequest, res) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, userId)
+    });
+
+    if (!user || user.role !== 'super_admin') {
+      return res.status(403).json({ error: 'Forbidden: Super Admin access required' });
+    }
+
+    console.log('[Ingestion] 🚀 Admin triggered backfill of approved scraped events');
+    
+    const result = await scrapedEventIngestionService.backfillApproved();
+
+    // Get updated counts
+    const counts = await db.execute(sql`
+      SELECT status, COUNT(*) as count 
+      FROM scraped_events 
+      GROUP BY status
+    `);
+
+    const mainEventsCount = await db.execute(sql`
+      SELECT COUNT(*) as count FROM events WHERE status = 'published'
+    `);
+
+    res.json({
+      success: true,
+      message: `Ingested ${result.ingested} events, ${result.failed} skipped/duplicates`,
+      ingested: result.ingested,
+      failed: result.failed,
+      updatedCounts: {
+        scrapedEventsByStatus: counts.rows,
+        mainEventsCount: mainEventsCount.rows[0]?.count || 0
+      },
+      timestamp: new Date().toISOString()
+    });
+
+  } catch (error) {
+    console.error('[Ingestion] Error:', error);
+    res.status(500).json({ error: 'Failed to ingest scraped events' });
   }
 });
 
