@@ -39,6 +39,19 @@ The AI brain is restructured into a modular `/mr-blue-brain/` folder system with
 ### Event Scraping System
 A multi-stage scraping architecture coordinated by a Master Orchestrator. It includes Priority Scrapers (HoyMilonga, TangoCat, TangoFestivalsScraper) and an AI-powered UnifiedEventScraper for generic websites. The system scrapes aggregator sites, then follows links to actual event pages for detailed information. Key features include AI-powered extraction, 14 event type classifications, source transparency ("View on {sourceName}"), city matching, and auto-city creation for new event locations. Scrapers can extract team member names in multiple languages from subpages. Scraped events are stored in a `scraped_events` table and ingested into the main events table by `ScrapedEventIngestionService`.
 
+**Scraping Control Center (December 2025):**
+- Admin UI at `/admin/scraping` with real-time scraper status and moderation queue
+- Unified API endpoints:
+  - `GET /api/admin/scrapers` - List all scrapers with stats
+  - `POST /api/admin/scrapers/:id/run` - Trigger specific scraper
+  - `GET /api/admin/scraped-events` - Moderation queue with filters (status/city/source)
+  - `POST /api/admin/scraped-events/:id/approve` - Approve and ingest event
+  - `POST /api/admin/scraped-events/:id/reject` - Reject event
+  - `POST /api/admin/scraped-events/bulk` - Bulk approve/reject
+  - `POST /api/admin/scraped-events/ingest-all` - Backfill all approved
+- Stats dashboard: 824 scraped events, 816 ingested, 1 pending, 7 rejected
+- City image CITY_IMAGE_MAP now includes 25+ cities with proper cityscape photos
+
 **HoyMilonga Playwright Scraper** (December 2025):
 - Supports 8 cities: Buenos Aires (40), Athens (5), Berlin (5), São Paulo (3), Miami (2), Istanbul, London, Montevideo
 - Uses Playwright chromium for JavaScript SPA rendering

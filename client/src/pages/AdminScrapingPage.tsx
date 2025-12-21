@@ -1,363 +1,586 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import { 
-  Facebook,
-  Instagram, 
-  Twitter, 
-  Youtube,
   Globe,
+  Play,
   CheckCircle,
   XCircle,
   Clock,
-  Download,
-  Settings
+  Calendar,
+  MapPin,
+  ExternalLink,
+  RefreshCw,
+  Loader2,
+  AlertCircle,
+  CheckCheck,
+  Ban
 } from "lucide-react";
-import { SiFacebook, SiInstagram } from "react-icons/si";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { SEO } from "@/components/SEO";
-import { safeDateDistance } from "@/lib/safeDateFormat";
+import { safeDateDistance, safeFormat } from "@/lib/safeDateFormat";
+import { apiRequest, queryClient } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 
-interface ScrapingConfig {
-  platform: string;
-  enabled: boolean;
-  lastRun?: string;
-  status: 'active' | 'paused' | 'error' | 'idle';
-  itemsScraped: number;
-  errorCount: number;
+interface Scraper {
+  id: string;
+  name: string;
+  description: string;
+  status: 'running' | 'idle' | 'error';
+  lastRun: string | null;
+  sourcesActive: number;
+  endpoint: string;
 }
 
-interface ScrapingJob {
+interface ScrapedEvent {
   id: number;
-  platform: string;
-  type: string;
-  status: 'running' | 'completed' | 'failed';
-  startedAt: string;
-  completedAt?: string;
-  itemsProcessed: number;
+  title: string;
+  description: string | null;
+  city: string | null;
+  country: string | null;
+  startDate: string;
+  endDate: string | null;
+  location: string | null;
+  address: string | null;
+  sourceName: string;
+  sourceUrl: string;
+  status: string;
+  scrapedAt: string;
+  imageUrl: string | null;
+  eventType: string | null;
+}
+
+interface ScrapersResponse {
+  success: boolean;
+  scrapers: Scraper[];
+  stats: {
+    pending: number;
+    approved: number;
+    rejected: number;
+    ingested: number;
+    total: number;
+  };
+  orchestrator: {
+    isRunning: boolean;
+    activeJobs: number;
+  };
+}
+
+interface ScrapedEventsResponse {
+  success: boolean;
+  events: ScrapedEvent[];
+  pagination: {
+    total: number;
+    limit: number;
+    offset: number;
+  };
+  statusBreakdown: Array<{ status: string; count: string }>;
+  filters: {
+    cities: string[];
+    sources: string[];
+  };
 }
 
 export default function AdminScrapingPage() {
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState('scrapers');
+  const [statusFilter, setStatusFilter] = useState('pending');
+  const [cityFilter, setCityFilter] = useState('all');
+  const [sourceFilter, setSourceFilter] = useState('all');
+  const [selectedEvents, setSelectedEvents] = useState<number[]>([]);
+  const { toast } = useToast();
 
-  // Mock data
-  const mockConfigs: ScrapingConfig[] = [
-    {
-      platform: 'Facebook',
-      enabled: true,
-      lastRun: new Date(Date.now() - 3600000).toISOString(),
-      status: 'active',
-      itemsScraped: 1247,
-      errorCount: 3,
-    },
-    {
-      platform: 'Instagram',
-      enabled: true,
-      lastRun: new Date(Date.now() - 7200000).toISOString(),
-      status: 'active',
-      itemsScraped: 892,
-      errorCount: 1,
-    },
-    {
-      platform: 'Twitter',
-      enabled: false,
-      status: 'paused',
-      itemsScraped: 0,
-      errorCount: 0,
-    },
-    {
-      platform: 'TikTok',
-      enabled: false,
-      status: 'idle',
-      itemsScraped: 0,
-      errorCount: 0,
-    },
-  ];
-
-  const mockJobs: ScrapingJob[] = [
-    {
-      id: 1,
-      platform: 'Facebook',
-      type: 'Events Scraper',
-      status: 'running',
-      startedAt: new Date(Date.now() - 1800000).toISOString(),
-      itemsProcessed: 234,
-    },
-    {
-      id: 2,
-      platform: 'Instagram',
-      type: 'Posts Scraper',
-      status: 'completed',
-      startedAt: new Date(Date.now() - 7200000).toISOString(),
-      completedAt: new Date(Date.now() - 3600000).toISOString(),
-      itemsProcessed: 892,
-    },
-  ];
-
-  const { data: configs = mockConfigs } = useQuery<ScrapingConfig[]>({
-    queryKey: ["/api/admin/scraping/configs"],
+  const { data: scrapersData, isLoading: scrapersLoading, error: scrapersError, refetch: refetchScrapers } = useQuery<ScrapersResponse>({
+    queryKey: ["/api/admin/scrapers"],
   });
 
-  const { data: jobs = mockJobs } = useQuery<ScrapingJob[]>({
-    queryKey: ["/api/admin/scraping/jobs"],
+  const queryParams = new URLSearchParams();
+  queryParams.set('status', statusFilter);
+  if (cityFilter !== 'all') queryParams.set('city', cityFilter);
+  if (sourceFilter !== 'all') queryParams.set('source', sourceFilter);
+
+  const { data: eventsData, isLoading: eventsLoading, error: eventsError, refetch: refetchEvents } = useQuery<ScrapedEventsResponse>({
+    queryKey: ["/api/admin/scraped-events", statusFilter, cityFilter, sourceFilter],
+    queryFn: async () => {
+      const response = await apiRequest(`/api/admin/scraped-events?${queryParams.toString()}`);
+      return response as ScrapedEventsResponse;
+    }
   });
 
-  const stats = {
-    totalEnabled: configs.filter(c => c.enabled).length,
-    totalPlatforms: configs.length,
-    activeJobs: jobs.filter(j => j.status === 'running').length,
-    itemsToday: configs.reduce((sum, c) => sum + c.itemsScraped, 0),
+  const handleFilterChange = (setter: (val: string) => void, value: string) => {
+    setter(value);
+    setSelectedEvents([]);
   };
 
-  const getPlatformIcon = (platform: string) => {
-    switch (platform.toLowerCase()) {
-      case 'facebook': return <SiFacebook className="h-5 w-5 text-blue-600" />;
-      case 'instagram': return <SiInstagram className="h-5 w-5 text-pink-600" />;
-      case 'twitter': return <Twitter className="h-5 w-5 text-blue-400" />;
-      case 'youtube': return <Youtube className="h-5 w-5 text-red-600" />;
-      default: return <Globe className="h-5 w-5" />;
+  const runScraperMutation = useMutation({
+    mutationFn: async (scraperId: string) => {
+      return apiRequest(`/api/admin/scrapers/${scraperId}/run`, { method: 'POST' });
+    },
+    onSuccess: (_, scraperId) => {
+      toast({ title: "Scraper Started", description: `${scraperId} scraper is now running` });
+      refetchScrapers();
+    },
+    onError: (error: any) => {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    }
+  });
+
+  const approveEventMutation = useMutation({
+    mutationFn: async (eventId: number) => {
+      return apiRequest(`/api/admin/scraped-events/${eventId}/approve`, { method: 'POST' });
+    },
+    onSuccess: () => {
+      toast({ title: "Event Approved", description: "Event has been approved and ingested" });
+      refetchEvents();
+      refetchScrapers();
+    },
+    onError: (error: any) => {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    }
+  });
+
+  const rejectEventMutation = useMutation({
+    mutationFn: async (eventId: number) => {
+      return apiRequest(`/api/admin/scraped-events/${eventId}/reject`, { method: 'POST' });
+    },
+    onSuccess: () => {
+      toast({ title: "Event Rejected", description: "Event has been rejected" });
+      refetchEvents();
+      refetchScrapers();
+    },
+    onError: (error: any) => {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    }
+  });
+
+  const bulkActionMutation = useMutation({
+    mutationFn: async ({ action, eventIds }: { action: 'approve' | 'reject'; eventIds: number[] }) => {
+      return apiRequest('/api/admin/scraped-events/bulk', {
+        method: 'POST',
+        body: JSON.stringify({ action, eventIds })
+      });
+    },
+    onSuccess: (_, { action }) => {
+      toast({ 
+        title: action === 'approve' ? "Events Approved" : "Events Rejected", 
+        description: `${selectedEvents.length} events have been ${action}d` 
+      });
+      setSelectedEvents([]);
+      refetchEvents();
+      refetchScrapers();
+    },
+    onError: (error: any) => {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    }
+  });
+
+  const ingestAllMutation = useMutation({
+    mutationFn: async () => {
+      return apiRequest('/api/admin/scraped-events/ingest-all', { method: 'POST' });
+    },
+    onSuccess: (data: any) => {
+      toast({ 
+        title: "Ingestion Complete", 
+        description: `Ingested ${data.ingested} events, ${data.failed} failed` 
+      });
+      refetchEvents();
+      refetchScrapers();
+    },
+    onError: (error: any) => {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    }
+  });
+
+  const stats = scrapersData?.stats || { pending: 0, approved: 0, rejected: 0, ingested: 0, total: 0 };
+  const scrapers = scrapersData?.scrapers || [];
+  const events = eventsData?.events || [];
+  const filters = eventsData?.filters || { cities: [], sources: [] };
+
+  const toggleEventSelection = (eventId: number) => {
+    setSelectedEvents(prev => 
+      prev.includes(eventId) 
+        ? prev.filter(id => id !== eventId)
+        : [...prev, eventId]
+    );
+  };
+
+  const selectAllEvents = () => {
+    if (selectedEvents.length === events.length) {
+      setSelectedEvents([]);
+    } else {
+      setSelectedEvents(events.map(e => e.id));
     }
   };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'active': return <Badge variant="default"><CheckCircle className="h-3 w-3 mr-1" />Active</Badge>;
-      case 'paused': return <Badge variant="secondary"><Clock className="h-3 w-3 mr-1" />Paused</Badge>;
-      case 'error': return <Badge variant="destructive"><XCircle className="h-3 w-3 mr-1" />Error</Badge>;
-      default: return <Badge variant="outline">Idle</Badge>;
+      case 'pending':
+        return <Badge variant="outline" className="bg-yellow-500/10 text-yellow-600 border-yellow-500/30"><Clock className="w-3 h-3 mr-1" />Pending</Badge>;
+      case 'approved':
+        return <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/30"><CheckCircle className="w-3 h-3 mr-1" />Approved</Badge>;
+      case 'rejected':
+        return <Badge variant="outline" className="bg-red-500/10 text-red-600 border-red-500/30"><XCircle className="w-3 h-3 mr-1" />Rejected</Badge>;
+      case 'ingested':
+        return <Badge variant="outline" className="bg-blue-500/10 text-blue-600 border-blue-500/30"><CheckCheck className="w-3 h-3 mr-1" />Ingested</Badge>;
+      default:
+        return <Badge variant="outline">{status}</Badge>;
     }
   };
 
   return (
-    <SelfHealingErrorBoundary pageName="Scraping Dashboard" fallbackRoute="/admin">
-      <SEO 
-        title="Multi-Platform Scraping Dashboard"
-        description="Configure and monitor automated scraping from Facebook, Instagram, Twitter, and other social platforms"
-        ogImage="/og-image.png"
-      />
-      <PageLayout title="Multi-Platform Scraping Setup" showBreadcrumbs>
-        <div className="container mx-auto p-6 space-y-6" data-testid="page-scraping">
-          
-          {/* Stats Overview */}
-          <div className="grid gap-4 md:grid-cols-4">
-            <Card data-testid="stat-enabled-platforms">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Enabled Platforms</CardTitle>
-                <CheckCircle className="h-4 w-4 text-green-500" />
+    <SelfHealingErrorBoundary>
+      <SEO title="Scraping Control Center | Admin" description="Manage event scrapers and moderation queue" />
+      <PageLayout title="Scraping Control Center" description="Manage event scrapers and moderate scraped content">
+        <div className="space-y-6">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+            <Card>
+              <CardHeader className="pb-2">
+                <CardDescription>Total Scraped</CardDescription>
+                <CardTitle className="text-2xl" data-testid="stat-total">{stats.total}</CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-green-500">{stats.totalEnabled}</div>
-                <p className="text-xs text-muted-foreground mt-1">of {stats.totalPlatforms} total</p>
-              </CardContent>
             </Card>
-
-            <Card data-testid="stat-active-jobs">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Active Jobs</CardTitle>
-                <Clock className="h-4 w-4 text-blue-500" />
+            <Card>
+              <CardHeader className="pb-2">
+                <CardDescription>Pending Review</CardDescription>
+                <CardTitle className="text-2xl text-yellow-600" data-testid="stat-pending">{stats.pending}</CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-blue-500">{stats.activeJobs}</div>
-                <p className="text-xs text-muted-foreground mt-1">Running now</p>
-              </CardContent>
             </Card>
-
-            <Card data-testid="stat-items-scraped">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Items Scraped</CardTitle>
-                <Download className="h-4 w-4 text-muted-foreground" />
+            <Card>
+              <CardHeader className="pb-2">
+                <CardDescription>Approved</CardDescription>
+                <CardTitle className="text-2xl text-green-600" data-testid="stat-approved">{stats.approved}</CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stats.itemsToday.toLocaleString()}</div>
-                <p className="text-xs text-muted-foreground mt-1">Total collected</p>
-              </CardContent>
             </Card>
-
-            <Card data-testid="stat-scraping-health">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">System Health</CardTitle>
-                <CheckCircle className="h-4 w-4 text-green-500" />
+            <Card>
+              <CardHeader className="pb-2">
+                <CardDescription>Rejected</CardDescription>
+                <CardTitle className="text-2xl text-red-600" data-testid="stat-rejected">{stats.rejected}</CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-green-500">Healthy</div>
-                <p className="text-xs text-muted-foreground mt-1">All systems operational</p>
-              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="pb-2">
+                <CardDescription>Ingested</CardDescription>
+                <CardTitle className="text-2xl text-blue-600" data-testid="stat-ingested">{stats.ingested}</CardTitle>
+              </CardHeader>
             </Card>
           </div>
 
-          {/* Info Card */}
-          <Card data-testid="card-scraping-info">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Globe className="h-5 w-5" />
-                Automated Social Data Integration
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground mb-4">
-                Automated scraping system that collects tango events, community posts, and user 
-                activity from Facebook, Instagram, and other social platforms. Enriches Mundo 
-                Tango with real-world tango community data while respecting platform ToS and 
-                rate limits.
-              </p>
-              <div className="flex gap-2">
-                <Badge variant="default">Automated</Badge>
-                <Badge variant="secondary">Rate-Limited</Badge>
-                <Badge variant="outline">ToS Compliant</Badge>
-                <Badge variant="outline">Privacy-First</Badge>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Main Content Tabs */}
-          <Tabs value={activeTab} onValueChange={setActiveTab} data-testid="tabs-scraping">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="overview" data-testid="tab-overview">Overview</TabsTrigger>
-              <TabsTrigger value="platforms" data-testid="tab-platforms">Platforms</TabsTrigger>
-              <TabsTrigger value="jobs" data-testid="tab-jobs">Active Jobs</TabsTrigger>
+          <Tabs value={activeTab} onValueChange={setActiveTab}>
+            <TabsList>
+              <TabsTrigger value="scrapers" data-testid="tab-scrapers">Scrapers</TabsTrigger>
+              <TabsTrigger value="queue" data-testid="tab-queue">
+                Event Queue
+                {stats.pending > 0 && (
+                  <Badge variant="secondary" className="ml-2">{stats.pending}</Badge>
+                )}
+              </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="overview" className="space-y-4">
-              <Card data-testid="card-scraping-overview">
-                <CardHeader>
-                  <CardTitle>Scraping Overview</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid gap-4 md:grid-cols-2">
-                    {configs.map((config, idx) => (
-                      <div 
-                        key={idx} 
-                        className="flex items-center justify-between p-4 border rounded-lg"
-                        data-testid={`platform-overview-${idx}`}
-                      >
-                        <div className="flex items-center gap-3">
-                          {getPlatformIcon(config.platform)}
+            <TabsContent value="scrapers" className="space-y-4">
+              <div className="flex justify-between items-center">
+                <h3 className="text-lg font-medium">Available Scrapers</h3>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => refetchScrapers()}
+                  data-testid="button-refresh-scrapers"
+                >
+                  <RefreshCw className="w-4 h-4 mr-2" />
+                  Refresh
+                </Button>
+              </div>
+
+              {scrapersLoading ? (
+                <div className="flex justify-center py-8">
+                  <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+                </div>
+              ) : scrapersError ? (
+                <Card>
+                  <CardContent className="flex flex-col items-center justify-center py-12">
+                    <AlertCircle className="w-12 h-12 text-red-500 mb-4" />
+                    <p className="text-muted-foreground">Failed to load scrapers</p>
+                    <Button variant="outline" size="sm" className="mt-4" onClick={() => refetchScrapers()}>
+                      Retry
+                    </Button>
+                  </CardContent>
+                </Card>
+              ) : (
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {scrapers.map((scraper) => (
+                    <Card key={scraper.id} data-testid={`scraper-card-${scraper.id}`}>
+                      <CardHeader className="pb-2">
+                        <div className="flex justify-between items-start">
                           <div>
-                            <h4 className="font-semibold">{config.platform}</h4>
-                            <p className="text-xs text-muted-foreground">
-                              {config.itemsScraped.toLocaleString()} items collected
-                            </p>
+                            <CardTitle className="text-base">{scraper.name}</CardTitle>
+                            <CardDescription className="text-sm">{scraper.description}</CardDescription>
+                          </div>
+                          <Badge 
+                            variant={scraper.status === 'running' ? 'default' : 'outline'}
+                            className={scraper.status === 'running' ? 'bg-green-500' : ''}
+                          >
+                            {scraper.status === 'running' && <Loader2 className="w-3 h-3 mr-1 animate-spin" />}
+                            {scraper.status}
+                          </Badge>
+                        </div>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="space-y-2 text-sm text-muted-foreground">
+                          <div className="flex justify-between">
+                            <span>Sources Active:</span>
+                            <span className="font-medium">{scraper.sourcesActive}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span>Last Run:</span>
+                            <span className="font-medium">
+                              {scraper.lastRun ? safeDateDistance(new Date(scraper.lastRun)) : 'Never'}
+                            </span>
                           </div>
                         </div>
-                        {getStatusBadge(config.status)}
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="platforms" className="space-y-4">
-              <Card data-testid="card-platform-config">
-                <CardHeader>
-                  <CardTitle>Platform Configuration</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {configs.map((config, idx) => (
-                      <div 
-                        key={idx} 
-                        className="flex items-center justify-between p-4 border rounded-lg hover-elevate"
-                        data-testid={`platform-config-${idx}`}
-                      >
-                        <div className="flex items-center gap-4 flex-1">
-                          {getPlatformIcon(config.platform)}
-                          <div className="flex-1">
-                            <h4 className="font-semibold">{config.platform} Scraper</h4>
-                            <div className="flex items-center gap-3 text-xs text-muted-foreground mt-1">
-                              {config.lastRun && (
-                                <>
-                                  <span>Last run: {safeDateDistance(config.lastRun)}</span>
-                                  <span>•</span>
-                                </>
-                              )}
-                              <span>{config.itemsScraped.toLocaleString()} items</span>
-                              {config.errorCount > 0 && (
-                                <>
-                                  <span>•</span>
-                                  <span className="text-red-500">{config.errorCount} errors</span>
-                                </>
-                              )}
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-4">
-                            {getStatusBadge(config.status)}
-                            <Switch checked={config.enabled} data-testid={`switch-${idx}`} />
-                            <Button size="sm" variant="outline" data-testid={`button-config-${idx}`}>
-                              <Settings className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card data-testid="card-credentials">
-                <CardHeader>
-                  <CardTitle>API Credentials</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Configure API keys and authentication tokens for each platform
-                  </p>
-                  <div className="space-y-3">
-                    <div>
-                      <label className="text-sm font-medium">Facebook Access Token</label>
-                      <Input placeholder="Enter token..." className="mt-1" type="password" data-testid="input-facebook-token" />
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium">Instagram API Key</label>
-                      <Input placeholder="Enter API key..." className="mt-1" type="password" data-testid="input-instagram-key" />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="jobs" className="space-y-4">
-              <Card data-testid="card-active-jobs">
-                <CardHeader>
-                  <CardTitle>Active Scraping Jobs</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {jobs.length === 0 ? (
-                    <div className="text-center py-12 text-muted-foreground">
-                      No active jobs
-                    </div>
-                  ) : (
-                    <div className="space-y-3">
-                      {jobs.map((job) => (
-                        <div 
-                          key={job.id} 
-                          className="flex items-center justify-between p-4 border rounded-lg"
-                          data-testid={`job-${job.id}`}
+                        <Button
+                          className="w-full mt-4"
+                          size="sm"
+                          onClick={() => runScraperMutation.mutate(scraper.id)}
+                          disabled={runScraperMutation.isPending || scraper.status === 'running'}
+                          data-testid={`button-run-${scraper.id}`}
                         >
-                          <div className="flex items-center gap-3 flex-1">
-                            {getPlatformIcon(job.platform)}
-                            <div className="flex-1">
-                              <h4 className="font-semibold">{job.type}</h4>
-                              <p className="text-xs text-muted-foreground mt-1">
-                                Started {safeDateDistance(job.startedAt)} • {job.itemsProcessed} items processed
-                              </p>
+                          {runScraperMutation.isPending ? (
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          ) : (
+                            <Play className="w-4 h-4 mr-2" />
+                          )}
+                          Run Scraper
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
+            </TabsContent>
+
+            <TabsContent value="queue" className="space-y-4">
+              <div className="flex flex-wrap gap-4 items-center justify-between">
+                <div className="flex flex-wrap gap-2 items-center">
+                  <Select value={statusFilter} onValueChange={(v) => handleFilterChange(setStatusFilter, v)}>
+                    <SelectTrigger className="w-[140px]" data-testid="filter-status">
+                      <SelectValue placeholder="Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Status</SelectItem>
+                      <SelectItem value="pending">Pending</SelectItem>
+                      <SelectItem value="approved">Approved</SelectItem>
+                      <SelectItem value="rejected">Rejected</SelectItem>
+                      <SelectItem value="ingested">Ingested</SelectItem>
+                    </SelectContent>
+                  </Select>
+
+                  <Select value={cityFilter} onValueChange={(v) => handleFilterChange(setCityFilter, v)}>
+                    <SelectTrigger className="w-[160px]" data-testid="filter-city">
+                      <SelectValue placeholder="City" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Cities</SelectItem>
+                      {filters.cities.map(city => (
+                        <SelectItem key={city} value={city}>{city}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  <Select value={sourceFilter} onValueChange={(v) => handleFilterChange(setSourceFilter, v)}>
+                    <SelectTrigger className="w-[160px]" data-testid="filter-source">
+                      <SelectValue placeholder="Source" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Sources</SelectItem>
+                      {filters.sources.map(source => (
+                        <SelectItem key={source} value={source}>{source}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  <Button variant="outline" size="sm" onClick={() => refetchEvents()} data-testid="button-refresh-events">
+                    <RefreshCw className="w-4 h-4" />
+                  </Button>
+                </div>
+
+                <div className="flex gap-2">
+                  {selectedEvents.length > 0 && (
+                    <>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="text-green-600 border-green-600"
+                        onClick={() => bulkActionMutation.mutate({ action: 'approve', eventIds: selectedEvents })}
+                        disabled={bulkActionMutation.isPending}
+                        data-testid="button-bulk-approve"
+                      >
+                        <CheckCheck className="w-4 h-4 mr-1" />
+                        Approve ({selectedEvents.length})
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="text-red-600 border-red-600"
+                        onClick={() => bulkActionMutation.mutate({ action: 'reject', eventIds: selectedEvents })}
+                        disabled={bulkActionMutation.isPending}
+                        data-testid="button-bulk-reject"
+                      >
+                        <Ban className="w-4 h-4 mr-1" />
+                        Reject ({selectedEvents.length})
+                      </Button>
+                    </>
+                  )}
+                  <Button
+                    size="sm"
+                    onClick={() => ingestAllMutation.mutate()}
+                    disabled={ingestAllMutation.isPending}
+                    data-testid="button-ingest-all"
+                  >
+                    {ingestAllMutation.isPending ? (
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    ) : (
+                      <CheckCheck className="w-4 h-4 mr-2" />
+                    )}
+                    Ingest All Approved
+                  </Button>
+                </div>
+              </div>
+
+              {eventsLoading ? (
+                <div className="flex justify-center py-8">
+                  <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+                </div>
+              ) : eventsError ? (
+                <Card>
+                  <CardContent className="flex flex-col items-center justify-center py-12">
+                    <AlertCircle className="w-12 h-12 text-red-500 mb-4" />
+                    <p className="text-muted-foreground">Failed to load events</p>
+                    <Button variant="outline" size="sm" className="mt-4" onClick={() => refetchEvents()}>
+                      Retry
+                    </Button>
+                  </CardContent>
+                </Card>
+              ) : events.length === 0 ? (
+                <Card>
+                  <CardContent className="flex flex-col items-center justify-center py-12">
+                    <AlertCircle className="w-12 h-12 text-muted-foreground mb-4" />
+                    <p className="text-muted-foreground">No events found with current filters</p>
+                  </CardContent>
+                </Card>
+              ) : (
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 px-4 py-2 bg-muted/50 rounded-lg">
+                    <Checkbox
+                      checked={selectedEvents.length === events.length && events.length > 0}
+                      onCheckedChange={selectAllEvents}
+                      data-testid="checkbox-select-all"
+                    />
+                    <span className="text-sm text-muted-foreground">
+                      {selectedEvents.length > 0 
+                        ? `${selectedEvents.length} of ${events.length} selected` 
+                        : `${events.length} events`}
+                    </span>
+                  </div>
+
+                  {events.map((event) => (
+                    <Card 
+                      key={event.id} 
+                      className={`transition-colors ${selectedEvents.includes(event.id) ? 'ring-2 ring-primary' : ''}`}
+                      data-testid={`event-card-${event.id}`}
+                    >
+                      <CardContent className="p-4">
+                        <div className="flex gap-4">
+                          <div className="pt-1">
+                            <Checkbox
+                              checked={selectedEvents.includes(event.id)}
+                              onCheckedChange={() => toggleEventSelection(event.id)}
+                              data-testid={`checkbox-event-${event.id}`}
+                            />
+                          </div>
+                          
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-start justify-between gap-2 mb-2">
+                              <div>
+                                <h4 className="font-medium truncate">{event.title}</h4>
+                                <div className="flex flex-wrap gap-2 mt-1 text-sm text-muted-foreground">
+                                  {event.city && (
+                                    <span className="flex items-center gap-1">
+                                      <MapPin className="w-3 h-3" />
+                                      {event.city}{event.country ? `, ${event.country}` : ''}
+                                    </span>
+                                  )}
+                                  <span className="flex items-center gap-1">
+                                    <Calendar className="w-3 h-3" />
+                                    {safeFormat(new Date(event.startDate), 'MMM d, yyyy')}
+                                  </span>
+                                  <span className="flex items-center gap-1">
+                                    <Globe className="w-3 h-3" />
+                                    {event.sourceName}
+                                  </span>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                {getStatusBadge(event.status)}
+                                {event.eventType && (
+                                  <Badge variant="secondary">{event.eventType}</Badge>
+                                )}
+                              </div>
                             </div>
-                            <Badge variant={job.status === 'running' ? 'default' : job.status === 'completed' ? 'secondary' : 'destructive'}>
-                              {job.status}
-                            </Badge>
+
+                            {event.description && (
+                              <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+                                {event.description}
+                              </p>
+                            )}
+
+                            <div className="flex items-center gap-2">
+                              {event.status === 'pending' && (
+                                <>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="text-green-600 border-green-600 hover:bg-green-50"
+                                    onClick={() => approveEventMutation.mutate(event.id)}
+                                    disabled={approveEventMutation.isPending}
+                                    data-testid={`button-approve-${event.id}`}
+                                  >
+                                    <CheckCircle className="w-4 h-4 mr-1" />
+                                    Approve
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="text-red-600 border-red-600 hover:bg-red-50"
+                                    onClick={() => rejectEventMutation.mutate(event.id)}
+                                    disabled={rejectEventMutation.isPending}
+                                    data-testid={`button-reject-${event.id}`}
+                                  >
+                                    <XCircle className="w-4 h-4 mr-1" />
+                                    Reject
+                                  </Button>
+                                </>
+                              )}
+                              <a
+                                href={event.sourceUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-sm text-primary hover:underline flex items-center gap-1"
+                              >
+                                <ExternalLink className="w-3 h-3" />
+                                View Source
+                              </a>
+                            </div>
                           </div>
                         </div>
-                      ))}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
             </TabsContent>
           </Tabs>
         </div>

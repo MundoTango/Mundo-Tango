@@ -1006,4 +1006,494 @@ router.post('/admin/scraping/backfill-team-members', authenticateToken, async (r
   }
 });
 
+/**
+ * ============================================
+ * UNIFIED SCRAPER DASHBOARD APIs
+ * MB.MD Pattern: Scraping Control Center
+ * ============================================
+ */
+
+/**
+ * GET /api/admin/scrapers - List all available scrapers with status
+ */
+router.get('/admin/scrapers', authenticateToken, async (req: AuthRequest, res) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, userId)
+    });
+
+    if (!user || user.role !== 'super_admin') {
+      return res.status(403).json({ error: 'Forbidden: Super Admin access required' });
+    }
+
+    const orchestratorStatus = scrapingOrchestrator.getStatus();
+
+    // Get source counts by type
+    const sourceCounts = await db.execute(sql`
+      SELECT platform, COUNT(*) as count, 
+             SUM(CASE WHEN is_active = true THEN 1 ELSE 0 END) as active_count,
+             MAX(last_scraped_at) as last_run
+      FROM event_scraping_sources 
+      GROUP BY platform
+    `);
+
+    // Get scraped events stats
+    const eventStats = await db.execute(sql`
+      SELECT status, COUNT(*) as count 
+      FROM scraped_events 
+      GROUP BY status
+    `);
+
+    const scrapers = [
+      {
+        id: 'hoymilonga',
+        name: 'HoyMilonga Scraper',
+        description: 'Buenos Aires, Athens, Berlin, São Paulo + more',
+        status: orchestratorStatus.isRunning ? 'running' : 'idle',
+        lastRun: sourceCounts.rows.find((r: any) => r.platform === 'hoymilonga')?.last_run || null,
+        sourcesActive: Number(sourceCounts.rows.find((r: any) => r.platform === 'hoymilonga')?.active_count || 0),
+        endpoint: '/api/admin/scraping/hoymilonga'
+      },
+      {
+        id: 'tangomango',
+        name: 'TangoMango Scraper',
+        description: '37 US cities from tangomango.org',
+        status: 'idle',
+        lastRun: sourceCounts.rows.find((r: any) => r.platform === 'tangomango')?.last_run || null,
+        sourcesActive: Number(sourceCounts.rows.find((r: any) => r.platform === 'tangomango')?.active_count || 0),
+        endpoint: '/api/admin/scraping/tangomango'
+      },
+      {
+        id: 'unified',
+        name: 'Unified AI Scraper',
+        description: 'AI-powered extraction for any event website',
+        status: 'idle',
+        lastRun: sourceCounts.rows.find((r: any) => r.platform === 'unified')?.last_run || null,
+        sourcesActive: Number(sourceCounts.rows.find((r: any) => r.platform === 'unified')?.active_count || 0),
+        endpoint: '/api/admin/unified-scrape'
+      },
+      {
+        id: 'rss',
+        name: 'RSS Feed Scraper',
+        description: 'RSS/Atom feed aggregation',
+        status: 'idle',
+        lastRun: sourceCounts.rows.find((r: any) => r.platform === 'rss')?.last_run || null,
+        sourcesActive: Number(sourceCounts.rows.find((r: any) => r.platform === 'rss')?.active_count || 0),
+        endpoint: '/api/admin/scraping/rss-scrape'
+      },
+      {
+        id: 'venues',
+        name: 'Venue Scraper',
+        description: 'Venue data enrichment',
+        status: 'idle',
+        lastRun: null,
+        sourcesActive: 0,
+        endpoint: '/api/admin/scraping/venues'
+      }
+    ];
+
+    const stats = {
+      pending: Number(eventStats.rows.find((r: any) => r.status === 'pending')?.count || 0),
+      approved: Number(eventStats.rows.find((r: any) => r.status === 'approved')?.count || 0),
+      rejected: Number(eventStats.rows.find((r: any) => r.status === 'rejected')?.count || 0),
+      ingested: Number(eventStats.rows.find((r: any) => r.status === 'ingested')?.count || 0),
+      total: eventStats.rows.reduce((sum: number, r: any) => sum + Number(r.count), 0)
+    };
+
+    res.json({
+      success: true,
+      scrapers,
+      stats,
+      orchestrator: {
+        isRunning: orchestratorStatus.isRunning,
+        activeJobs: orchestratorStatus.activeJobs
+      }
+    });
+
+  } catch (error) {
+    console.error('[Scrapers List] Error:', error);
+    res.status(500).json({ error: 'Failed to list scrapers' });
+  }
+});
+
+/**
+ * POST /api/admin/scrapers/:id/run - Trigger a specific scraper
+ */
+router.post('/admin/scrapers/:id/run', authenticateToken, async (req: AuthRequest, res) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, userId)
+    });
+
+    if (!user || user.role !== 'super_admin') {
+      return res.status(403).json({ error: 'Forbidden: Super Admin access required' });
+    }
+
+    const { id } = req.params;
+    const { city } = req.body;
+
+    let result: any;
+
+    switch (id) {
+      case 'hoymilonga':
+        if (city) {
+          result = await hoyMilongaScraper.scrapeCity(city);
+        } else {
+          result = await hoyMilongaScraper.scrapeAllCities();
+        }
+        break;
+      case 'tangomango':
+        const { tangoMangoScraper } = await import('../agents/scraping/TangoMangoScraper');
+        const eventsScraped = await tangoMangoScraper.scrapeAllCities();
+        result = { success: true, eventsScraped };
+        break;
+      case 'unified':
+        result = await unifiedEventScraper.scrapeAllSources();
+        break;
+      case 'all':
+        scrapingOrchestrator.orchestrate().catch(console.error);
+        result = { success: true, message: 'Full orchestration started in background' };
+        break;
+      default:
+        return res.status(400).json({ error: `Unknown scraper: ${id}` });
+    }
+
+    res.json({
+      success: true,
+      scraperId: id,
+      result,
+      timestamp: new Date().toISOString()
+    });
+
+  } catch (error: any) {
+    console.error('[Scraper Run] Error:', error);
+    res.status(500).json({ error: 'Failed to run scraper', details: error.message });
+  }
+});
+
+/**
+ * ============================================
+ * SCRAPED EVENTS MODERATION APIs
+ * MB.MD Pattern: Queue Management
+ * ============================================
+ */
+
+/**
+ * GET /api/admin/scraped-events - List scraped events with filters
+ */
+router.get('/admin/scraped-events', authenticateToken, async (req: AuthRequest, res) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, userId)
+    });
+
+    if (!user || user.role !== 'super_admin') {
+      return res.status(403).json({ error: 'Forbidden: Super Admin access required' });
+    }
+
+    const { 
+      status = 'pending', 
+      city, 
+      source,
+      limit = 50, 
+      offset = 0 
+    } = req.query;
+
+    let whereConditions = [];
+    
+    if (status && status !== 'all') {
+      whereConditions.push(eq(scrapedEvents.status, status as string));
+    }
+    
+    if (city) {
+      whereConditions.push(eq(scrapedEvents.city, city as string));
+    }
+    
+    if (source) {
+      whereConditions.push(eq(scrapedEvents.sourceName, source as string));
+    }
+
+    const events = await db.query.scrapedEvents.findMany({
+      where: whereConditions.length > 0 ? and(...whereConditions) : undefined,
+      limit: Number(limit),
+      offset: Number(offset),
+      orderBy: desc(scrapedEvents.scrapedAt)
+    });
+
+    // Get total count
+    const countResult = await db.execute(sql`
+      SELECT COUNT(*) as total FROM scraped_events 
+      WHERE ${status === 'all' ? sql`1=1` : sql`status = ${status}`}
+    `);
+
+    // Get status breakdown
+    const statusBreakdown = await db.execute(sql`
+      SELECT status, COUNT(*) as count FROM scraped_events GROUP BY status
+    `);
+
+    // Get unique cities and sources for filters
+    const cities = await db.execute(sql`
+      SELECT DISTINCT city FROM scraped_events WHERE city IS NOT NULL ORDER BY city
+    `);
+
+    const sources = await db.execute(sql`
+      SELECT DISTINCT source_name FROM scraped_events ORDER BY source_name
+    `);
+
+    res.json({
+      success: true,
+      events,
+      pagination: {
+        total: Number(countResult.rows[0]?.total || 0),
+        limit: Number(limit),
+        offset: Number(offset)
+      },
+      statusBreakdown: statusBreakdown.rows,
+      filters: {
+        cities: cities.rows.map((r: any) => r.city),
+        sources: sources.rows.map((r: any) => r.source_name)
+      }
+    });
+
+  } catch (error) {
+    console.error('[Scraped Events List] Error:', error);
+    res.status(500).json({ error: 'Failed to list scraped events' });
+  }
+});
+
+/**
+ * GET /api/admin/scraped-events/:id - Get single scraped event details
+ */
+router.get('/admin/scraped-events/:id', authenticateToken, async (req: AuthRequest, res) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, userId)
+    });
+
+    if (!user || user.role !== 'super_admin') {
+      return res.status(403).json({ error: 'Forbidden: Super Admin access required' });
+    }
+
+    const { id } = req.params;
+
+    const event = await db.query.scrapedEvents.findFirst({
+      where: eq(scrapedEvents.id, Number(id))
+    });
+
+    if (!event) {
+      return res.status(404).json({ error: 'Scraped event not found' });
+    }
+
+    res.json({ success: true, event });
+
+  } catch (error) {
+    console.error('[Scraped Event Detail] Error:', error);
+    res.status(500).json({ error: 'Failed to get scraped event' });
+  }
+});
+
+/**
+ * POST /api/admin/scraped-events/:id/approve - Approve and ingest event
+ */
+router.post('/admin/scraped-events/:id/approve', authenticateToken, async (req: AuthRequest, res) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, userId)
+    });
+
+    if (!user || user.role !== 'super_admin') {
+      return res.status(403).json({ error: 'Forbidden: Super Admin access required' });
+    }
+
+    const { id } = req.params;
+
+    // Update status to approved
+    await db.update(scrapedEvents)
+      .set({ 
+        status: 'approved',
+        updatedAt: new Date()
+      })
+      .where(eq(scrapedEvents.id, Number(id)));
+
+    // Trigger ingestion
+    const result = await scrapedEventIngestionService.ingestEvent(Number(id));
+
+    res.json({
+      success: true,
+      message: 'Event approved and ingested',
+      eventId: Number(id),
+      ingestedEventId: result?.eventId,
+      timestamp: new Date().toISOString()
+    });
+
+  } catch (error: any) {
+    console.error('[Approve Event] Error:', error);
+    res.status(500).json({ error: 'Failed to approve event', details: error.message });
+  }
+});
+
+/**
+ * POST /api/admin/scraped-events/:id/reject - Reject event
+ */
+router.post('/admin/scraped-events/:id/reject', authenticateToken, async (req: AuthRequest, res) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, userId)
+    });
+
+    if (!user || user.role !== 'super_admin') {
+      return res.status(403).json({ error: 'Forbidden: Super Admin access required' });
+    }
+
+    const { id } = req.params;
+    const { reason } = req.body;
+
+    await db.update(scrapedEvents)
+      .set({ 
+        status: 'rejected',
+        updatedAt: new Date()
+      })
+      .where(eq(scrapedEvents.id, Number(id)));
+
+    res.json({
+      success: true,
+      message: 'Event rejected',
+      eventId: Number(id),
+      reason: reason || 'Rejected by admin',
+      timestamp: new Date().toISOString()
+    });
+
+  } catch (error) {
+    console.error('[Reject Event] Error:', error);
+    res.status(500).json({ error: 'Failed to reject event' });
+  }
+});
+
+/**
+ * POST /api/admin/scraped-events/bulk - Bulk approve/reject events
+ */
+router.post('/admin/scraped-events/bulk', authenticateToken, async (req: AuthRequest, res) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, userId)
+    });
+
+    if (!user || user.role !== 'super_admin') {
+      return res.status(403).json({ error: 'Forbidden: Super Admin access required' });
+    }
+
+    const { action, eventIds } = req.body;
+
+    if (!action || !eventIds || !Array.isArray(eventIds)) {
+      return res.status(400).json({ error: 'Missing action or eventIds array' });
+    }
+
+    if (!['approve', 'reject'].includes(action)) {
+      return res.status(400).json({ error: 'Action must be "approve" or "reject"' });
+    }
+
+    let processed = 0;
+    let ingested = 0;
+
+    for (const eventId of eventIds) {
+      await db.update(scrapedEvents)
+        .set({ 
+          status: action === 'approve' ? 'approved' : 'rejected',
+          updatedAt: new Date()
+        })
+        .where(eq(scrapedEvents.id, Number(eventId)));
+      processed++;
+
+      if (action === 'approve') {
+        try {
+          await scrapedEventIngestionService.ingestEvent(Number(eventId));
+          ingested++;
+        } catch (e) {
+          console.error(`[Bulk] Failed to ingest event ${eventId}:`, e);
+        }
+      }
+    }
+
+    res.json({
+      success: true,
+      action,
+      processed,
+      ingested: action === 'approve' ? ingested : 0,
+      timestamp: new Date().toISOString()
+    });
+
+  } catch (error) {
+    console.error('[Bulk Action] Error:', error);
+    res.status(500).json({ error: 'Failed to perform bulk action' });
+  }
+});
+
+/**
+ * POST /api/admin/scraped-events/ingest-all - Ingest all approved events
+ */
+router.post('/admin/scraped-events/ingest-all', authenticateToken, async (req: AuthRequest, res) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, userId)
+    });
+
+    if (!user || user.role !== 'super_admin') {
+      return res.status(403).json({ error: 'Forbidden: Super Admin access required' });
+    }
+
+    const result = await scrapedEventIngestionService.backfillApproved();
+
+    res.json({
+      success: true,
+      message: 'Ingestion complete',
+      ...result,
+      timestamp: new Date().toISOString()
+    });
+
+  } catch (error) {
+    console.error('[Ingest All] Error:', error);
+    res.status(500).json({ error: 'Failed to ingest events' });
+  }
+});
+
 export default router;

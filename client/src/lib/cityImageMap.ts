@@ -62,6 +62,11 @@ import miamiImg from "@assets/stock_images/miami_cityscape_down_2a6528de.jpg";
 import torontoImg from "@assets/stock_images/toronto_canada_citys_8ac3accc.jpg";
 import mexicoCityImg from "@assets/stock_images/mexico_city_cityscap_08a737b2.jpg";
 import cancunImg from "@assets/stock_images/cancun_mexico_citysc_e0dec5ba.jpg";
+import austinImg from "@assets/stock_images/austin_texas_citysca_4146dd9f.jpg";
+import bostonImg from "@assets/stock_images/boston_massachusetts_18a45e5c.jpg";
+import portlandImg from "@assets/stock_images/portland_oregon_city_fd85d1db.jpg";
+import seattleImg from "@assets/stock_images/seattle_washington_c_507cd6e7.jpg";
+import sanDiegoImg from "@assets/stock_images/san_diego_california_c2432f17.jpg";
 
 // Asia
 import tokyoImg from "@assets/stock_images/tokyo_cityscape_skyl_1e27ef74.jpg";
@@ -144,6 +149,11 @@ export const CITY_IMAGE_MAP: Record<string, string> = {
   "Mexico City": mexicoCityImg,
   "Cancún": cancunImg,
   "Cancun": cancunImg,
+  "Austin": austinImg,
+  "Boston": bostonImg,
+  "Portland": portlandImg,
+  "Seattle": seattleImg,
+  "San Diego": sanDiegoImg,
   
   // Asia
   "Tokyo": tokyoImg,
@@ -235,6 +245,11 @@ export const CITY_COUNTRY_MAP: Record<string, string> = {
   "Mexico City": "mx",
   "Cancún": "mx",
   "Cancun": "mx",
+  "Austin": "us",
+  "Boston": "us",
+  "Portland": "us",
+  "Seattle": "us",
+  "San Diego": "us",
   
   // Asia
   "Tokyo": "jp",
