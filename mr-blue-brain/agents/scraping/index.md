@@ -181,3 +181,33 @@ Scrape → Store in scraped_events → Admin Review → Approve → Move to even
 ---
 
 *Find every tango event worldwide.*
+
+---
+
+## 🔄 ENHANCED SCRAPERS (Latest Updates)
+
+### InfiniteScrollHelper
+**File:** `server/services/scraping/InfiniteScrollHelper.ts`
+**Purpose:** Handles infinite scroll loading for SPAs and dynamic sites
+**Used by:** HoyMilongaScraper (and other Playwright-based scrapers)
+**Features:**
+- Detects when page stops loading new content
+- Configurable scroll depth (default: 20 scrolls = 4-5 months of events)
+- Waits for content to load between scrolls (800ms default)
+
+### RecurringEventDetector
+**File:** `server/services/scraping/RecurringEventDetector.ts`
+**Purpose:** Identifies and marks recurring events for series creation
+**Features:**
+- Detects: "Milonga de los Domingos", "Every Friday", etc.
+- Multi-language support (Spanish/English)
+- Extracts day-of-week and frequency patterns
+- Can create event series records
+
+### HoyMilongaScraper v2.0
+- Now uses `InfiniteScrollHelper.scrollUntilEnd()` for full event loading
+- Imports `RecurringEventDetector` for series detection
+- Captures ALL recurring event instances with proper dates
+- 35-54 unique events per city (reflecting unique recurring venues)
+
+---

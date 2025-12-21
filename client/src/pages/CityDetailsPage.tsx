@@ -557,7 +557,7 @@ export default function CityDetailsPage() {
             <TabsContent value="events" className="mt-0">
               <CityEventsTab 
                 cityId={city.id} 
-                cityName={city.city || city.name}
+                cityName={city.city || city.name.replace(' Tango Community', '')}
                 legacyGroupId={city.legacyGroupId}
               />
             </TabsContent>
