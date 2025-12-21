@@ -93,14 +93,27 @@ function AppContent() {
     };
   }, []);
 
+  // Marketing pages where Mr Blue should NOT appear
+  const marketingPaths = [
+    '/landing', '/lander', '/for-dancers', '/for-teachers', '/for-organizers',
+    '/tango-roles', '/support', '/donate', '/supporters', '/volunteer',
+    '/ambassadors', '/open-source', '/about', '/features', '/testimonials',
+    '/discover', '/terms', '/privacy', '/community-guidelines', '/help',
+    '/help-center', '/contact', '/about-tango', '/h2ac', '/demos', '/faq'
+  ];
+  const isMarketingPage = location === '/' || marketingPaths.some(path => location.startsWith(path));
+
   return (
     <>
       <Toaster />
-      {/* Marketing Mr. Blue for guests (FAQ only) - rendered via MrBlueProvider/Context */}
-      <GlobalMrBlue />
-      <ChatSidePanel />
-      {/* Full-featured Mr. Blue for authenticated users - RBAC gated */}
-      <MrBlueFloatingButton />
+      {/* Mr. Blue components - hidden on marketing/public pages */}
+      {!isMarketingPage && (
+        <>
+          <GlobalMrBlue />
+          <ChatSidePanel />
+          <MrBlueFloatingButton />
+        </>
+      )}
       <Suspense fallback={<LoadingFallback />}>
         <RouteLoader />
       </Suspense>

@@ -107,9 +107,9 @@ export default function LandingPage() {
     },
     {
       icon: Bot,
-      title: "AI-Powered Matching",
+      title: "Smart Matching",
       description:
-        "Mr. Blue AI connects you with dancers who match your level, style, and interests. Smart recommendations that grow with you.",
+        "Connect with dancers who match your level, style, and interests. Smart recommendations that grow with you.",
     },
     {
       icon: Calendar,
@@ -136,10 +136,10 @@ export default function LandingPage() {
         "Attend virtual milongas, watch live performances, and take online classes from maestros around the world.",
     },
     {
-      icon: Bot,
-      title: "Mr. Blue AI Assistant",
+      icon: Users,
+      title: "Community Connections",
       description:
-        "Your personal tango companion answers questions, suggests events, helps plan trips, and provides learning resources 24/7.",
+        "Join city-based groups, connect with local dancers, and build lasting friendships in the global tango community.",
     },
     {
       icon: Globe,
@@ -494,7 +494,7 @@ export default function LandingPage() {
                 {
                   icon: Bot,
                   title: "Enhanced AI Matching",
-                  description: "Mr. Blue AI will learn your preferences and suggest perfect dance partners based on style, level, and personality."
+                  description: "Smart algorithms learn your preferences and suggest perfect dance partners based on style, level, and personality."
                 },
                 {
                   icon: Users,
@@ -801,14 +801,6 @@ export default function LandingPage() {
             <div>
               <h3 className="font-semibold mb-4">Resources</h3>
               <ul className="space-y-2 text-sm">
-                <li>
-                  <Link
-                    href="/mr-blue"
-                    className="text-muted-foreground hover:text-foreground"
-                  >
-                    Mr. Blue AI
-                  </Link>
-                </li>
                 <li>
                   <Link
                     href="/help"
