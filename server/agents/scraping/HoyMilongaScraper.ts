@@ -180,6 +180,7 @@ export class HoyMilongaScraper {
 
   /**
    * Scrape a specific city
+   * CRITICAL: HoyMilonga uses infinite scroll - must scroll to load all events!
    */
   private async scrapeCity(cityName: string, cityCode: string, sourceId: number): Promise<number> {
     console.log(`[HoyMilonga] 📍 Scraping ${cityName} with Playwright...`);
@@ -199,18 +200,44 @@ export class HoyMilongaScraper {
         try {
           await page.goto(url, { waitUntil: 'networkidle', timeout: 30000 });
           
-          // Wait for content to load
-          await page.waitForTimeout(2000);
+          // CRITICAL: HoyMilonga uses infinite scroll - scroll to load ALL events!
+          // Load multiple weeks of events by scrolling down repeatedly
+          let previousHeight = 0;
+          let scrollAttempts = 0;
+          const maxScrolls = 15; // Load ~4-5 months of events
           
-          // Extract events from the rendered page
+          console.log(`[HoyMilonga] 📜 Scrolling to load all events for ${cityName}...`);
+          
+          while (scrollAttempts < maxScrolls) {
+            // Get current page height
+            const currentHeight = await page.evaluate(() => document.body.scrollHeight);
+            
+            if (currentHeight === previousHeight) {
+              console.log(`[HoyMilonga] ✅ Reached end of events (no more scrolling)`);
+              break;
+            }
+            
+            // Scroll down
+            await page.evaluate(() => window.scrollBy(0, window.innerHeight * 2));
+            await page.waitForTimeout(800); // Wait for dynamic content to load
+            
+            previousHeight = currentHeight;
+            scrollAttempts++;
+            
+            // Extract current event count
+            const currentEvents = await this.extractEventsFromPage(page, cityName, url);
+            console.log(`[HoyMilonga] 📊 Scroll ${scrollAttempts}/${maxScrolls}: ${currentEvents.length} total events loaded`);
+          }
+          
+          // Final extraction after all scrolling
           events = await this.extractEventsFromPage(page, cityName, url);
           
           if (events.length > 0) {
-            console.log(`[HoyMilonga] Found ${events.length} events in ${lang} for ${cityName}`);
+            console.log(`[HoyMilonga] ✅ Found ${events.length} events in ${lang} for ${cityName}`);
             break;
           }
         } catch (error: any) {
-          console.log(`[HoyMilonga] Failed ${lang} for ${cityName}: ${error.message}`);
+          console.log(`[HoyMilonga] ❌ Failed ${lang} for ${cityName}: ${error.message}`);
         }
       }
     } finally {
