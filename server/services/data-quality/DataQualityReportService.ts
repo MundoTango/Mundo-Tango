@@ -73,7 +73,7 @@ export interface FoundPeopleMetrics {
   linkedOrganizers: number;
   linkedDJs: number;
   linkedTeachers: number;
-  unlinkdNamesCount: number;
+  unlinkedNamesCount: number;
   topUnlinkedNames: Array<{
     name: string;
     role: string;
@@ -383,7 +383,7 @@ export class DataQualityReportService {
       linkedOrganizers,
       linkedDJs,
       linkedTeachers,
-      unlinkdNamesCount: nameOccurrences.size,
+      unlinkedNamesCount: nameOccurrences.size,
       topUnlinkedNames,
     };
   }

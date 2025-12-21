@@ -178,10 +178,13 @@ export class ProfileLinkingService {
         }
       }
 
-      // Update event with linked profiles
+      // Update event with linked profiles (merge with existing, avoid duplicates)
       if (linkedUserIds.length > 0) {
+        const existingProfiles = (event as any)[profileField] as number[] | null;
+        const merged = [...new Set([...(existingProfiles || []), ...linkedUserIds])];
+        
         const updateData: Record<string, any> = {};
-        updateData[profileField] = linkedUserIds;
+        updateData[profileField] = merged;
         
         await db.update(events)
           .set(updateData)

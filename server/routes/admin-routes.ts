@@ -14,6 +14,7 @@ import { authenticateToken, AuthRequest } from "../middleware/auth";
 import { requireMinimumRole } from "../middleware/tierEnforcement";
 import { storage } from "../storage";
 import { AnalyticsService } from "../services/AnalyticsService";
+import { DataQualityReportService, ProfileLinkingService, CityDataMigrationService } from "../services/data-quality";
 
 const router = Router();
 
@@ -2088,8 +2089,6 @@ router.get("/analytics/export", authenticateToken, requireAdmin, async (req, res
 // =============================================================================
 // DATA QUALITY ROUTES
 // =============================================================================
-
-import { DataQualityReportService, ProfileLinkingService, CityDataMigrationService } from "../services/data-quality";
 
 /**
  * GET /api/admin/data-quality/report

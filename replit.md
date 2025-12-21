@@ -64,6 +64,14 @@ Core functionalities include social features (events, groups, posts, notificatio
 - `/groups/:id` now publicly viewable (auth-protected features like joining still require login)
 - CSRF token fix: Token reuse across server restarts, prevents 403 errors on RSVP and other mutations
 
+### Data Quality System (December 2025)
+A comprehensive data quality infrastructure for monitoring and fixing data issues:
+- **DataQualityReportService** - Generates quality reports for cities, events, sources, and found people metrics
+- **ProfileLinkingService** - Links scraped DJ/teacher/organizer names to user profiles using fuzzy matching (0.8 threshold)
+- **CityDataMigrationService** - Fixes city data with stock cover images (20 major cities + fallback) and auto-generated descriptions
+- Admin API endpoints: `/api/admin/data-quality/*` for reports, migrations, and profile linking
+- City cover image library with Unsplash images for Buenos Aires, NYC, Berlin, Paris, London, Athens, Istanbul, and more
+
 ### Testing & Production
 The platform utilizes End-to-End (E2E) tests with Playwright, automated unit test coverage, and visual regression testing. A Volunteer Testing System provides 148 scenarios with automated issue routing. Production deployments are managed via GitHub Actions for CI/CD, monitored by Prometheus/Grafana with Sentry, and deployed through Replit Publishing. Redis is used for caching, and PostgreSQL (Neon) with Drizzle ORM for the database. Deployment size optimization is achieved by excluding large directories via `.gitignore`, and the production build incorporates React.lazy() for code splitting.
 
