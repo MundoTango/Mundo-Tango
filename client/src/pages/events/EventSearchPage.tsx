@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
-import { EventFilters, EventFilterValues } from "@/components/events/EventFilters";
+import { EventFiltersCompact, EventFilterValues } from "@/components/events/EventFiltersCompact";
 import { EventCard } from "@/components/EventCard";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -44,7 +44,7 @@ export default function EventSearchPage() {
     priceMin: 0,
     priceMax: 500,
   });
-  const [sortBy, setSortBy] = useState<string>("relevance");
+  const [sortBy, setSortBy] = useState<string>("date");
   const [currentPage, setCurrentPage] = useState<number>(1);
 
   const buildQueryString = () => {
@@ -157,35 +157,11 @@ export default function EventSearchPage() {
       </div>
 
       <div className="flex flex-col lg:flex-row gap-8">
-        <aside className="hidden lg:block w-80 flex-shrink-0">
-          <div className="sticky top-4">
-            <EventFilters
-              onFilterChange={handleFilterChange}
-              initialFilters={filters}
-            />
-          </div>
-        </aside>
-
-        <div className="lg:hidden mb-4">
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="outline" className="w-full" data-testid="button-open-filters">
-                <SlidersHorizontal className="w-4 h-4 mr-2" />
-                Filters
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="w-80 overflow-y-auto">
-              <SheetHeader>
-                <SheetTitle>Filters</SheetTitle>
-              </SheetHeader>
-              <div className="mt-6">
-                <EventFilters
-                  onFilterChange={handleFilterChange}
-                  initialFilters={filters}
-                />
-              </div>
-            </SheetContent>
-          </Sheet>
+        <div className="w-full mb-6">
+          <EventFiltersCompact
+            onFilterChange={handleFilterChange}
+            initialFilters={filters}
+          />
         </div>
 
         <main className="flex-1">

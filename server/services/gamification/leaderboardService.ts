@@ -18,11 +18,11 @@ export interface UserRank {
 
 function getWeekStart(): Date {
   const now = new Date();
-  const dayOfWeek = now.getDay();
+  const dayOfWeek = now.getUTCDay();
   const diff = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
   const monday = new Date(now);
-  monday.setDate(now.getDate() - diff);
-  monday.setHours(0, 0, 0, 0);
+  monday.setUTCDate(now.getUTCDate() - diff);
+  monday.setUTCHours(0, 0, 0, 0);
   return monday;
 }
 

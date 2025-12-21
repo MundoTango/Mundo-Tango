@@ -33,8 +33,8 @@ export class OptimalEventTimingAlgorithm {
 
     history.forEach(event => {
       const date = new Date(event.date);
-      dayScores[date.getDay()] += event.attendance || 0;
-      hourScores[date.getHours()] += event.attendance || 0;
+      dayScores[date.getUTCDay()] += event.attendance || 0;
+      hourScores[date.getUTCHours()] += event.attendance || 0;
     });
 
     return { dayScores, hourScores };
@@ -58,7 +58,7 @@ export class OptimalEventTimingAlgorithm {
     eventType: string,
     patterns: any
   ): TimingRecommendation {
-    const dayOfWeek = date.getDay();
+    const dayOfWeek = date.getUTCDay();
     const hour = 20; // Default 8pm start
 
     let score = patterns.dayScores[dayOfWeek] / Math.max(...patterns.dayScores);

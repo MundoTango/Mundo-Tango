@@ -119,8 +119,8 @@ export class PostingTimeOptimizer {
         p.engagement
       ).forEach(post => {
         const publishedAt = new Date(post.publishedAt!);
-        const hour = publishedAt.getHours();
-        const dayOfWeek = publishedAt.getDay();
+        const hour = publishedAt.getUTCHours();
+        const dayOfWeek = publishedAt.getUTCDay();
         const key = `${hour}-${dayOfWeek}`;
 
         const engagement = post.engagement as any;
@@ -274,10 +274,10 @@ export class PostingTimeOptimizer {
 
   private getNextDateForDayOfWeek(targetDay: number): Date {
     const today = new Date();
-    const currentDay = today.getDay();
+    const currentDay = today.getUTCDay();
     const daysUntilTarget = (targetDay - currentDay + 7) % 7 || 7;
     const targetDate = new Date(today);
-    targetDate.setDate(today.getDate() + daysUntilTarget);
+    targetDate.setUTCDate(today.getUTCDate() + daysUntilTarget);
     return targetDate;
   }
 

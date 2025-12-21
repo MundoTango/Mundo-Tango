@@ -97,8 +97,8 @@ export class EventAttendancePredictionAlgorithm {
       adjusted *= 0.9; // Too far out also reduces attendance
     }
 
-    // Day of week factor
-    const dayOfWeek = event.date.getDay();
+    // Day of week factor - UTC based for consistency
+    const dayOfWeek = event.date.getUTCDay();
     if (dayOfWeek === 5 || dayOfWeek === 6) {
       adjusted *= 1.2; // Weekend events 20% boost
     } else if (dayOfWeek === 0) {
@@ -131,7 +131,7 @@ export class EventAttendancePredictionAlgorithm {
       factors.push({ name: "High ticket price", impact: "Negative (-30%)" });
     }
 
-    const dayOfWeek = event.date.getDay();
+    const dayOfWeek = event.date.getUTCDay();
     if (dayOfWeek === 5 || dayOfWeek === 6) {
       factors.push({ name: "Weekend timing", impact: "Positive (+20%)" });
     }

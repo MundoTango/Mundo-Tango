@@ -70,6 +70,9 @@ export function RecommendationsMap({
         zoom={13}
         style={{ width: '100%', height: '100%' }}
         className="rounded-lg"
+        maxBounds={[[-85, -180], [85, 180]]}
+        maxBoundsViscosity={1.0}
+        worldCopyJump={false}
       >
         <TileLayer
           url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"

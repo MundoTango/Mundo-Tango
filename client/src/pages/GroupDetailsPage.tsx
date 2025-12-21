@@ -813,6 +813,9 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
               center={mapCenter}
               zoom={12}
               style={{ height: '100%', width: '100%' }}
+              maxBounds={[[-85, -180], [85, 180]]}
+              maxBoundsViscosity={1.0}
+              worldCopyJump={false}
             >
               <TileLayer
                 attribution='&copy; <a href="https://carto.com/attributions">CARTO</a>'
@@ -1180,6 +1183,9 @@ function GroupHubTab({ groupCity, groupCountry, group }: { groupCity?: string | 
               zoom={12}
               className="h-full w-full"
               scrollWheelZoom={true}
+              maxBounds={[[-85, -180], [85, 180]]}
+              maxBoundsViscosity={1.0}
+              worldCopyJump={false}
             >
               <TileLayer
                 attribution='&copy; <a href="https://carto.com/attributions">CARTO</a>'

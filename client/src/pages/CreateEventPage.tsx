@@ -219,7 +219,7 @@ export default function CreateEventPage() {
   const getDayOfWeekFromDate = (dateString: string): number => {
     if (!dateString) return 0;
     const date = new Date(dateString);
-    return date.getDay();
+    return date.getUTCDay();
   };
 
   const getDayOfMonthFromDate = (dateString: string): number => {

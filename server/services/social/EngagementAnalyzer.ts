@@ -410,8 +410,8 @@ export class EngagementAnalyzer {
     posts.forEach(post => {
       if (post.publishedAt) {
         const publishedAt = new Date(post.publishedAt);
-        const hour = publishedAt.getHours();
-        const day = publishedAt.getDay();
+        const hour = publishedAt.getUTCHours();
+        const day = publishedAt.getUTCDay();
 
         hours.set(hour, (hours.get(hour) || 0) + 1);
         days.set(day, (days.get(day) || 0) + 1);

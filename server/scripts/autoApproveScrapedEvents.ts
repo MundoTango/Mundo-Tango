@@ -234,10 +234,10 @@ function mergeSources(existing: SourceInfo[], newSource: SourceInfo): SourceInfo
 }
 
 /**
- * Get day of week (0 = Sunday, 6 = Saturday)
+ * Get day of week (0 = Sunday, 6 = Saturday) - UTC based for consistency
  */
 function getDayOfWeek(date: Date): number {
-  return date.getDay();
+  return date.getUTCDay();
 }
 
 /**
