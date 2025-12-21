@@ -1112,6 +1112,11 @@ function GroupTipsTab({ groupCity }: { groupCity?: string | null }) {
 
 function GroupHubTab({ groupCity, groupCountry, group }: { groupCity?: string | null; groupCountry?: string | null; group?: SelectGroup }) {
   const [activeLayer, setActiveLayer] = useState<'all' | 'events' | 'housing' | 'recommendations'>('all');
+  const [eventTypeFilter, setEventTypeFilter] = useState<string>('');
+  const [priceMin, setPriceMin] = useState<number>(0);
+  const [priceMax, setPriceMax] = useState<number>(500);
+  const [dateFromFilter, setDateFromFilter] = useState<Date | undefined>();
+  const [dateToFilter, setDateToFilter] = useState<Date | undefined>();
   
   // Fetch events
   const { data: events = [], isLoading: loadingEvents } = useQuery<SelectEvent[]>({
@@ -1245,6 +1250,24 @@ function GroupHubTab({ groupCity, groupCountry, group }: { groupCity?: string | 
 
   const isLoading = loadingEvents || loadingHousing;
 
+  // Apply filters to events
+  const filteredEvents = useMemo(() => {
+    return events.filter(event => {
+      if (eventTypeFilter && event.eventType !== eventTypeFilter) return false;
+      if (dateFromFilter && event.startDate && new Date(event.startDate) < dateFromFilter) return false;
+      if (dateToFilter && event.startDate && new Date(event.startDate) > dateToFilter) return false;
+      return true;
+    });
+  }, [events, eventTypeFilter, dateFromFilter, dateToFilter]);
+
+  // Apply filters to housing
+  const filteredHousing = useMemo(() => {
+    return housing.filter(listing => {
+      if (listing.pricePerNight < priceMin || listing.pricePerNight > priceMax) return false;
+      return true;
+    });
+  }, [housing, priceMin, priceMax]);
+
   return (
     <div className="space-y-6" data-testid="unified-city-hub">
       {/* Header */}
@@ -1296,7 +1319,7 @@ function GroupHubTab({ groupCity, groupCountry, group }: { groupCity?: string | 
               <div className="flex flex-col items-center gap-2">
                 <Calendar className="h-6 w-6 text-red-500" />
                 <div>
-                  <div className="text-2xl font-bold text-red-600">{events.length}</div>
+                  <div className="text-2xl font-bold text-red-600">{filteredEvents.length}</div>
                   <div className="text-xs text-muted-foreground font-medium">Events</div>
                 </div>
               </div>
@@ -1315,7 +1338,7 @@ function GroupHubTab({ groupCity, groupCountry, group }: { groupCity?: string | 
               <div className="flex flex-col items-center gap-2">
                 <Home className="h-6 w-6 text-green-500" />
                 <div>
-                  <div className="text-2xl font-bold text-green-600">{housing.length}</div>
+                  <div className="text-2xl font-bold text-green-600">{filteredHousing.length}</div>
                   <div className="text-xs text-muted-foreground font-medium">Housing</div>
                 </div>
               </div>
@@ -1339,6 +1362,147 @@ function GroupHubTab({ groupCity, groupCountry, group }: { groupCity?: string | 
                 </div>
               </div>
             </button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Advanced Filters */}
+      <Card className="overflow-hidden">
+        <CardContent className="p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+            {/* Event Type Filter */}
+            {(activeLayer === 'all' || activeLayer === 'events') && (
+              <div>
+                <label className="text-sm font-medium block mb-2">Event Type</label>
+                <Select value={eventTypeFilter} onValueChange={setEventTypeFilter}>
+                  <SelectTrigger data-testid="select-event-type">
+                    <SelectValue placeholder="All Types" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">All Types</SelectItem>
+                    <SelectItem value="milonga">Milonga</SelectItem>
+                    <SelectItem value="practica">Practica</SelectItem>
+                    <SelectItem value="class">Class</SelectItem>
+                    <SelectItem value="workshop">Workshop</SelectItem>
+                    <SelectItem value="festival">Festival</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
+            {/* Date From Filter */}
+            {(activeLayer === 'all' || activeLayer === 'events') && (
+              <div>
+                <label className="text-sm font-medium block mb-2">From Date</label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button 
+                      variant="outline" 
+                      className="w-full justify-start"
+                      data-testid="button-date-from"
+                    >
+                      {dateFromFilter ? format(dateFromFilter, "MMM d") : "Select date"}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-4" align="start">
+                    <div className="space-y-4">
+                      <div>
+                        <p className="text-sm font-medium mb-3">Start Date</p>
+                      </div>
+                      <div>
+                        {/* Note: For production, import Calendar from @/components/ui/calendar */}
+                        <Input 
+                          type="date" 
+                          value={dateFromFilter ? format(dateFromFilter, 'yyyy-MM-dd') : ''}
+                          onChange={(e) => setDateFromFilter(e.target.value ? new Date(e.target.value) : undefined)}
+                        />
+                      </div>
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              </div>
+            )}
+
+            {/* Date To Filter */}
+            {(activeLayer === 'all' || activeLayer === 'events') && (
+              <div>
+                <label className="text-sm font-medium block mb-2">To Date</label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button 
+                      variant="outline" 
+                      className="w-full justify-start"
+                      data-testid="button-date-to"
+                    >
+                      {dateToFilter ? format(dateToFilter, "MMM d") : "Select date"}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-4" align="start">
+                    <div className="space-y-4">
+                      <div>
+                        <p className="text-sm font-medium mb-3">End Date</p>
+                      </div>
+                      <div>
+                        <Input 
+                          type="date" 
+                          value={dateToFilter ? format(dateToFilter, 'yyyy-MM-dd') : ''}
+                          onChange={(e) => setDateToFilter(e.target.value ? new Date(e.target.value) : undefined)}
+                        />
+                      </div>
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              </div>
+            )}
+
+            {/* Price Range Filter */}
+            {(activeLayer === 'all' || activeLayer === 'housing') && (
+              <div className="lg:col-span-2">
+                <label className="text-sm font-medium block mb-2">Price Range: ${priceMin} - ${priceMax}</label>
+                <div className="space-y-2">
+                  <Input 
+                    type="range" 
+                    min="0" 
+                    max="500" 
+                    value={priceMin}
+                    onChange={(e) => setPriceMin(Math.min(Number(e.target.value), priceMax))}
+                    className="w-full"
+                    data-testid="slider-price-min"
+                  />
+                  <Input 
+                    type="range" 
+                    min="0" 
+                    max="500" 
+                    value={priceMax}
+                    onChange={(e) => setPriceMax(Math.max(Number(e.target.value), priceMin))}
+                    className="w-full"
+                    data-testid="slider-price-max"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Clear Filters Button */}
+            {(eventTypeFilter || dateFromFilter || dateToFilter || priceMin > 0 || priceMax < 500) && (
+              <div className="flex items-end">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  className="w-full"
+                  onClick={() => {
+                    setEventTypeFilter('');
+                    setDateFromFilter(undefined);
+                    setDateToFilter(undefined);
+                    setPriceMin(0);
+                    setPriceMax(500);
+                  }}
+                  data-testid="button-clear-filters"
+                >
+                  <X className="h-4 w-4 mr-1" />
+                  Clear Filters
+                </Button>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -1424,7 +1588,9 @@ function GroupHubTab({ groupCity, groupCountry, group }: { groupCity?: string | 
                 <p className="p-4 text-center text-muted-foreground">No events found</p>
               ) : (
                 <div className="divide-y">
-                  {events.slice(0, 8).map(event => (
+                  {filteredEvents.length === 0 ? (
+                    <p className="p-4 text-center text-muted-foreground text-sm">No matching events</p>
+                  ) : filteredEvents.slice(0, 8).map(event => (
                     <Link key={event.id} href={`/events/${event.id}`}>
                       <div className="p-4 hover-elevate cursor-pointer" data-testid={`hub-event-${event.id}`}>
                         <h4 className="font-medium truncate">{event.title}</h4>
@@ -1461,9 +1627,11 @@ function GroupHubTab({ groupCity, groupCountry, group }: { groupCity?: string | 
             <CardContent className="p-0 max-h-[400px] overflow-y-auto">
               {housing.length === 0 ? (
                 <p className="p-4 text-center text-muted-foreground">No housing listings found</p>
+              ) : filteredHousing.length === 0 ? (
+                <p className="p-4 text-center text-muted-foreground text-sm">No matching listings</p>
               ) : (
                 <div className="divide-y">
-                  {housing.slice(0, 8).map(listing => (
+                  {filteredHousing.slice(0, 8).map(listing => (
                     <Link key={listing.id} href={`/housing/${listing.id}`}>
                       <div className="p-4 hover-elevate cursor-pointer" data-testid={`hub-housing-${listing.id}`}>
                         <div className="flex justify-between items-start">
