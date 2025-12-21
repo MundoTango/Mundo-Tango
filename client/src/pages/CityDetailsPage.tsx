@@ -5,13 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { getCityImageUrl } from "@/lib/cityImageMap";
 import { Link } from "wouter";
-
-function sanitizeCitySlug(slug: string): string {
-  return decodeURIComponent(slug)
-    .replace(/[-_]/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-}
+import { fromCitySlug } from "@/lib/utils";
 
 function titleCase(str: string): string {
   return str.replace(/\b\w/g, char => char.toUpperCase());
@@ -19,12 +13,18 @@ function titleCase(str: string): string {
 
 export default function CityDetailsPage() {
   const [, params] = useRoute("/cities/:cityName");
-  const citySlug = sanitizeCitySlug(params?.cityName || "");
-  const cityName = titleCase(citySlug);
+  const rawSlug = params?.cityName || "";
+  const cityName = fromCitySlug(rawSlug);
   
-  const { data: groups, isLoading: groupsLoading } = useQuery<any[]>({
-    queryKey: [`/api/groups?type=city&city=${encodeURIComponent(citySlug)}`],
-    enabled: !!citySlug
+  // Use API endpoint that searches by slug (handles diacritics)
+  const { data: cityGroup, isLoading: groupsLoading } = useQuery<any>({
+    queryKey: ["/api/cities/by-slug", rawSlug],
+    queryFn: async () => {
+      const res = await fetch(`/api/cities/by-slug/${encodeURIComponent(rawSlug)}`);
+      if (!res.ok) return null;
+      return res.json();
+    },
+    enabled: !!rawSlug
   });
   
   const { data: locations } = useQuery<any[]>({
@@ -32,7 +32,7 @@ export default function CityDetailsPage() {
   });
   
   const cityData = locations?.find(loc => 
-    loc.city?.toLowerCase() === citySlug.toLowerCase()
+    loc.city?.toLowerCase().includes(cityName.toLowerCase().split(' ')[0])
   );
   
   if (groupsLoading) {
@@ -44,11 +44,9 @@ export default function CityDetailsPage() {
     );
   }
   
-  const result = groups?.[0];
-  const groupId = result?.group?.id || result?.id;
-  
-  if (groupId) {
-    return <Redirect to={`/groups/${groupId}`} />;
+  // Redirect to group page if found
+  if (cityGroup?.groupId) {
+    return <Redirect to={`/groups/${cityGroup.groupId}`} />;
   }
   
   return (

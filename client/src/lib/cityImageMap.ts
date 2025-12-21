@@ -165,8 +165,23 @@ export const CITY_IMAGE_MAP: Record<string, string> = {
 export const DEFAULT_CITY_IMAGE = newYorkImg;
 
 /**
+ * Normalize diacritics to ASCII for matching
+ */
+function normalizeDiacritics(str: string): string {
+  return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+
+/**
+ * Title case a string
+ */
+function titleCase(str: string): string {
+  return str.replace(/\b\w/g, char => char.toUpperCase());
+}
+
+/**
  * Get city-specific image URL
  * Returns verified cityscape image for the city, or fallback for unknown cities
+ * Handles: "Buenos Aires", "buenos-aires", "Málaga", "malaga", etc.
  */
 export function getCityImageUrl(city: string): string {
   // Direct lookup
@@ -176,16 +191,32 @@ export function getCityImageUrl(city: string): string {
   
   // Normalize and try variations
   const normalized = city.trim();
+  const asciiVersion = normalizeDiacritics(normalized);
+  const fromSlug = titleCase(normalized.replace(/-/g, ' '));
+  const asciiFromSlug = titleCase(normalizeDiacritics(normalized.replace(/-/g, ' ')));
   
-  // Try with different accent variations
+  // Try with different variations
   const variations = [
     normalized,
-    normalized.normalize('NFD').replace(/[\u0300-\u036f]/g, ''), // Remove accents
+    asciiVersion,
+    fromSlug,
+    asciiFromSlug,
+    titleCase(normalized),
+    titleCase(asciiVersion),
   ];
   
   for (const variant of variations) {
     if (CITY_IMAGE_MAP[variant]) {
       return CITY_IMAGE_MAP[variant];
+    }
+  }
+  
+  // Try partial matching for multi-word cities like "Buenos Aires"
+  const normalizedLower = asciiVersion.toLowerCase();
+  for (const [cityName, image] of Object.entries(CITY_IMAGE_MAP)) {
+    const cityLower = normalizeDiacritics(cityName).toLowerCase();
+    if (cityLower === normalizedLower || cityLower.replace(/\s+/g, '-') === normalizedLower) {
+      return image;
     }
   }
   

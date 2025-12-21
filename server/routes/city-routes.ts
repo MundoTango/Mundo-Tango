@@ -368,4 +368,73 @@ router.get("/find-group", async (req: Request, res: Response) => {
   }
 });
 
+/**
+ * Normalize diacritics to ASCII for slug matching
+ */
+function normalizeDiacritics(str: string): string {
+  return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+
+/**
+ * GET /api/cities/by-slug/:slug
+ * Resolve ASCII city slug to group ID
+ * Example: /api/cities/by-slug/buenos-aires -> { groupId: 9, city: "Buenos Aires" }
+ */
+router.get("/by-slug/:slug", async (req: Request, res: Response) => {
+  try {
+    const slug = req.params.slug;
+    if (!slug) {
+      return res.status(400).json({ error: "Slug is required" });
+    }
+
+    // Convert slug back to search pattern
+    const searchPattern = slug.replace(/-/g, ' ').toLowerCase();
+    console.log(`[CityBySlug] Looking up slug: "${slug}" -> pattern: "${searchPattern}"`);
+
+    // Search for city groups matching the pattern
+    const cityGroupResults = await db
+      .select({
+        group: groups,
+        memberCount: sql<number>`(
+          SELECT COUNT(*)::int 
+          FROM ${groupMembers} 
+          WHERE ${groupMembers.groupId} = ${groups.id}
+          AND ${groupMembers.status} = 'active'
+        )`.as("member_count"),
+      })
+      .from(groups)
+      .where(
+        and(
+          eq(groups.type, "city"),
+          eq(groups.visibility, "public")
+        )
+      );
+
+    // Find best match by normalizing city names
+    const matchedGroup = cityGroupResults.find(r => {
+      const cityNormalized = normalizeDiacritics(r.group.city || '').toLowerCase().replace(/\s+/g, ' ');
+      return cityNormalized === searchPattern || 
+             cityNormalized.replace(/\s+/g, '-') === slug ||
+             normalizeDiacritics(r.group.city || '').toLowerCase().replace(/\s+/g, '-') === slug;
+    });
+
+    if (matchedGroup) {
+      console.log(`[CityBySlug] Found group: ${matchedGroup.group.name} (ID: ${matchedGroup.group.id})`);
+      return res.json({
+        groupId: matchedGroup.group.id,
+        groupName: matchedGroup.group.name,
+        city: matchedGroup.group.city,
+        country: matchedGroup.group.country,
+        memberCount: matchedGroup.memberCount || 0,
+      });
+    }
+
+    console.log(`[CityBySlug] No group found for slug: "${slug}"`);
+    return res.status(404).json({ error: "City group not found" });
+  } catch (error) {
+    console.error("[CityBySlug] Error:", error);
+    res.status(500).json({ error: "Failed to lookup city" });
+  }
+});
+
 export default router;

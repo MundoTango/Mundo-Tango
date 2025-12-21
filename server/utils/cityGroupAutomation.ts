@@ -77,7 +77,9 @@ export async function ensureCityGroupExists(
     };
   }
 
-  const slug = `${normalizedCity.toLowerCase().replace(/\s+/g, "-")}-tango-community`;
+  // Create ASCII-safe slug (normalize diacritics: Málaga -> malaga, Bogotá -> bogota)
+  const asciiCity = normalizedCity.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  const slug = `${asciiCity.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, '')}-tango-community`;
   const groupName = `${normalizedCity} Tango Community`;
   const locationStr = normalizedCountry ? `${normalizedCity}, ${normalizedCountry}` : normalizedCity;
   
