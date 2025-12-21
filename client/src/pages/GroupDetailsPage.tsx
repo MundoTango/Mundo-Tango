@@ -1260,48 +1260,88 @@ function GroupHubTab({ groupCity, groupCountry, group }: { groupCity?: string | 
         </CardHeader>
       </Card>
 
-      {/* Layer Filters */}
-      <div className="flex flex-wrap gap-2">
-        <Button 
-          variant={activeLayer === 'all' ? 'default' : 'outline'}
-          size="sm"
-          onClick={() => setActiveLayer('all')}
-          data-testid="button-layer-all"
-        >
-          <Globe className="h-4 w-4 mr-2" />
-          All ({events.length + housing.length})
-        </Button>
-        <Button 
-          variant={activeLayer === 'events' ? 'default' : 'outline'}
-          size="sm"
-          onClick={() => setActiveLayer('events')}
-          className={activeLayer === 'events' ? '' : 'border-red-500/50 text-red-600 hover:bg-red-50 dark:hover:bg-red-950'}
-          data-testid="button-layer-events"
-        >
-          <Calendar className="h-4 w-4 mr-2" />
-          Events ({events.length})
-        </Button>
-        <Button 
-          variant={activeLayer === 'housing' ? 'default' : 'outline'}
-          size="sm"
-          onClick={() => setActiveLayer('housing')}
-          className={activeLayer === 'housing' ? '' : 'border-green-500/50 text-green-600 hover:bg-green-50 dark:hover:bg-green-950'}
-          data-testid="button-layer-housing"
-        >
-          <Home className="h-4 w-4 mr-2" />
-          Housing ({housing.length})
-        </Button>
-        <Button 
-          variant={activeLayer === 'recommendations' ? 'default' : 'outline'}
-          size="sm"
-          onClick={() => setActiveLayer('recommendations')}
-          className={activeLayer === 'recommendations' ? '' : 'border-yellow-500/50 text-yellow-600 hover:bg-yellow-50 dark:hover:bg-yellow-950'}
-          data-testid="button-layer-recommendations"
-        >
-          <Star className="h-4 w-4 mr-2" />
-          Recommendations
-        </Button>
-      </div>
+      {/* Layer Filters - Rich UI/UX */}
+      <Card className="overflow-hidden border-0 shadow-md">
+        <CardContent className="p-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {/* All Layer */}
+            <button
+              onClick={() => setActiveLayer('all')}
+              className={`relative p-4 rounded-lg border-2 transition-all cursor-pointer ${
+                activeLayer === 'all'
+                  ? 'border-primary bg-primary/10 shadow-lg'
+                  : 'border-border hover:border-primary/50 hover:bg-muted/50'
+              }`}
+              data-testid="button-layer-all"
+            >
+              <div className="flex flex-col items-center gap-2">
+                <Globe className="h-6 w-6 text-primary" />
+                <div>
+                  <div className="text-2xl font-bold">{events.length + housing.length}</div>
+                  <div className="text-xs text-muted-foreground font-medium">All Items</div>
+                </div>
+              </div>
+            </button>
+
+            {/* Events Layer */}
+            <button
+              onClick={() => setActiveLayer('events')}
+              className={`relative p-4 rounded-lg border-2 transition-all cursor-pointer ${
+                activeLayer === 'events'
+                  ? 'border-red-500 bg-red-500/10 shadow-lg'
+                  : 'border-border hover:border-red-500/50 hover:bg-red-500/5'
+              }`}
+              data-testid="button-layer-events"
+            >
+              <div className="flex flex-col items-center gap-2">
+                <Calendar className="h-6 w-6 text-red-500" />
+                <div>
+                  <div className="text-2xl font-bold text-red-600">{events.length}</div>
+                  <div className="text-xs text-muted-foreground font-medium">Events</div>
+                </div>
+              </div>
+            </button>
+
+            {/* Housing Layer */}
+            <button
+              onClick={() => setActiveLayer('housing')}
+              className={`relative p-4 rounded-lg border-2 transition-all cursor-pointer ${
+                activeLayer === 'housing'
+                  ? 'border-green-500 bg-green-500/10 shadow-lg'
+                  : 'border-border hover:border-green-500/50 hover:bg-green-500/5'
+              }`}
+              data-testid="button-layer-housing"
+            >
+              <div className="flex flex-col items-center gap-2">
+                <Home className="h-6 w-6 text-green-500" />
+                <div>
+                  <div className="text-2xl font-bold text-green-600">{housing.length}</div>
+                  <div className="text-xs text-muted-foreground font-medium">Housing</div>
+                </div>
+              </div>
+            </button>
+
+            {/* Recommendations Layer */}
+            <button
+              onClick={() => setActiveLayer('recommendations')}
+              className={`relative p-4 rounded-lg border-2 transition-all cursor-pointer ${
+                activeLayer === 'recommendations'
+                  ? 'border-amber-500 bg-amber-500/10 shadow-lg'
+                  : 'border-border hover:border-amber-500/50 hover:bg-amber-500/5'
+              }`}
+              data-testid="button-layer-recommendations"
+            >
+              <div className="flex flex-col items-center gap-2">
+                <Star className="h-6 w-6 text-amber-500" />
+                <div>
+                  <div className="text-2xl font-bold text-amber-600">+</div>
+                  <div className="text-xs text-muted-foreground font-medium">Tips</div>
+                </div>
+              </div>
+            </button>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Map */}
       <Card className="overflow-hidden">
