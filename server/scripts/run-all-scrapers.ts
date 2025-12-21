@@ -1,9 +1,14 @@
 /**
  * RUN ALL SCRAPERS SCRIPT
  * MB.MD Pattern: Execute scrapers to populate events for all cities
+ * 
+ * Includes: HoyMilonga, TangoMango, TangoCat, TangoFestivals
  */
 
 import { hoyMilongaScraper } from '../services/scraping/HoyMilongaScraper';
+import { TangoMangoScraper } from '../agents/scraping/TangoMangoScraper';
+import { TangoCatScraper } from '../agents/scraping/TangoCatScraper';
+import { TangoFestivalsScraper } from '../agents/scraping/TangoFestivalsScraper';
 import { scrapedEventIngestionService } from '../services/ScrapedEventIngestionService';
 import { db } from '@shared/db';
 import { scrapedEvents, events, groups } from '@shared/schema';
@@ -14,8 +19,18 @@ async function main() {
   console.log('RUN ALL SCRAPERS - MB.MD Pattern');
   console.log('========================================\n');
   
-  // Step 1: Run HoyMilonga scraper
-  console.log('[1/3] Running HoyMilonga scraper...');
+  // Step 1: Run TangoMango scraper (US cities - most reliable)
+  console.log('[1/5] Running TangoMango scraper (US cities)...');
+  try {
+    const tangoMangoScraper = new TangoMangoScraper();
+    const mangoCount = await tangoMangoScraper.scrapeAllCities();
+    console.log(`TangoMango: Scraped ${mangoCount} events`);
+  } catch (error: any) {
+    console.error('TangoMango error:', error.message);
+  }
+  
+  // Step 2: Run HoyMilonga scraper
+  console.log('\n[2/5] Running HoyMilonga scraper...');
   try {
     const hoyResult = await hoyMilongaScraper.scrapeAllCities();
     console.log(`HoyMilonga: Found ${hoyResult.totalFound} events, stored ${hoyResult.totalStored}`);
@@ -23,16 +38,42 @@ async function main() {
     console.error('HoyMilonga error:', error.message);
   }
   
-  // Step 2: Check scraped events status
-  console.log('\n[2/3] Checking scraped events...');
+  // Step 3: Run TangoCat scraper (international festivals)
+  console.log('\n[3/5] Running TangoCat scraper (festivals)...');
+  try {
+    const tangoCatScraper = new TangoCatScraper();
+    const catCount = await tangoCatScraper.scrapeAllYears(1);
+    console.log(`TangoCat: Scraped ${catCount} festivals`);
+  } catch (error: any) {
+    console.error('TangoCat error:', error.message);
+  }
+  
+  // Step 4: Run TangoFestivals scraper
+  console.log('\n[4/5] Running TangoFestivals scraper...');
+  try {
+    const tangoFestivalsScraper = new TangoFestivalsScraper();
+    const festivalsCount = await tangoFestivalsScraper.scrapeAllEvents(1);
+    console.log(`TangoFestivals: Scraped ${festivalsCount} events`);
+  } catch (error: any) {
+    console.error('TangoFestivals error:', error.message);
+  }
+  
+  // Step 5: Check scraped events status and ingest
+  console.log('\n[5/5] Checking and ingesting scraped events...');
   const scrapedCountResult = await db.execute(sql`
     SELECT COUNT(*) as count FROM scraped_events WHERE status = 'pending'
   `);
   const scrapedCount = scrapedCountResult.rows[0] as any;
   console.log(`Pending scraped events: ${scrapedCount?.count || 0}`);
   
-  // Step 3: Ingest approved/pending scraped events
-  console.log('\n[3/3] Ingesting scraped events to main events table...');
+  // Auto-approve pending events
+  if (scrapedCount?.count > 0) {
+    await db.execute(sql`UPDATE scraped_events SET status = 'approved' WHERE status = 'pending'`);
+    console.log('Auto-approved pending events for ingestion');
+  }
+  
+  // Ingest approved events
+  console.log('Ingesting approved events...');
   try {
     const ingestResult = await scrapedEventIngestionService.backfillApproved();
     console.log(`Ingested: ${ingestResult.ingested} events, Failed: ${ingestResult.failed}`);
