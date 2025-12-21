@@ -50,7 +50,7 @@ A multi-stage scraping architecture coordinated by a Master Orchestrator. It inc
   - `POST /api/admin/scraped-events/bulk` - Bulk approve/reject
   - `POST /api/admin/scraped-events/ingest-all` - Backfill all approved
 - Stats dashboard: 824 scraped events, 816 ingested, 1 pending, 7 rejected
-- City image CITY_IMAGE_MAP now includes 25+ cities with proper cityscape photos
+- City image CITY_IMAGE_MAP now includes 280+ cities with proper cityscape photos (656 entries including diacritic variations)
 
 **HoyMilonga Playwright Scraper** (December 2025):
 - Supports 8 cities: Buenos Aires (40), Athens (5), Berlin (5), São Paulo (3), Miami (2), Istanbul, London, Montevideo
@@ -109,7 +109,7 @@ A comprehensive data quality infrastructure for monitoring and fixing data issue
 - **ProfileLinkingService** - Links scraped DJ/teacher/organizer names to user profiles using fuzzy matching (0.8 threshold)
 - **CityDataMigrationService** - Fixes city data with stock cover images (20 major cities + fallback) and auto-generated descriptions
 - Admin API endpoints: `/api/admin/data-quality/*` for reports, migrations, and profile linking
-- City cover image library with Unsplash images for Buenos Aires, NYC, Berlin, Paris, London, Athens, Istanbul, and more
+- City cover image library: 280+ cities with curated cityscape/landmark photos from 45+ countries, with diacritic variations and country flag fallbacks
 
 ### Testing & Production
 The platform utilizes End-to-End (E2E) tests with Playwright, automated unit test coverage, and visual regression testing. A Volunteer Testing System provides 148 scenarios with automated issue routing. Production deployments are managed via GitHub Actions for CI/CD, monitored by Prometheus/Grafana with Sentry, and deployed through Replit Publishing. Redis is used for caching, and PostgreSQL (Neon) with Drizzle ORM for the database. Deployment size optimization is achieved by excluding large directories via `.gitignore`, and the production build incorporates React.lazy() for code splitting.
