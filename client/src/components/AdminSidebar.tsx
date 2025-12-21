@@ -57,9 +57,10 @@ const userManagementItems = [
   { title: "Reports", url: "/admin/reports", icon: AlertTriangle },
 ];
 
-// Content & System (4 items)
+// Content & System (5 items)
 const contentItems = [
   { title: "Content Moderation", url: "/admin/moderation", icon: FileCheck },
+  { title: "Data Quality", url: "/admin/data-quality", icon: Database },
   { title: "Self-Healing", url: "/admin/self-healing", icon: Activity },
   { title: "Agent Health", url: "/admin/agent-health", icon: Activity },
   { title: "Notifications", url: "/admin/notifications", icon: Bell },

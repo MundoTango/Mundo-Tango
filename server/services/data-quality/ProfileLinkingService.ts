@@ -101,36 +101,44 @@ export class ProfileLinkingService {
   static async findCandidates(name: string, role: string, eventCity: string | null): Promise<MatchCandidate[]> {
     if (!name || name.length < 3) return [];
 
-    // Search for users with similar names
+    // Search for users with similar names (use firstName + lastName, or name field)
     const candidates = await db.select({
       id: users.id,
-      displayName: users.displayName,
+      firstName: users.firstName,
+      lastName: users.lastName,
+      name: users.name,
       username: users.username,
       tangoRoles: users.tangoRoles,
       city: users.city,
     }).from(users).where(
       or(
-        ilike(users.displayName, `%${name}%`),
+        ilike(users.name, `%${name}%`),
+        ilike(users.firstName, `%${name.split(' ')[0]}%`),
         ilike(users.username, `%${name.replace(/\s+/g, '')}%`)
       )
     ).limit(10);
 
     // Score each candidate
-    const scored: MatchCandidate[] = candidates.map(u => ({
-      userId: u.id,
-      displayName: u.displayName || '',
-      username: u.username || '',
-      tangoRoles: u.tangoRoles,
-      city: u.city,
-      score: this.calculateMatchScore(name, {
+    const scored: MatchCandidate[] = candidates.map(u => {
+      const displayName = u.firstName && u.lastName 
+        ? `${u.firstName} ${u.lastName}` 
+        : (u.name || u.username || '');
+      return {
         userId: u.id,
-        displayName: u.displayName || '',
+        displayName,
         username: u.username || '',
         tangoRoles: u.tangoRoles,
         city: u.city,
-        score: 0,
-      }, role, eventCity),
-    }));
+        score: this.calculateMatchScore(name, {
+          userId: u.id,
+          displayName,
+          username: u.username || '',
+          tangoRoles: u.tangoRoles,
+          city: u.city,
+          score: 0,
+        }, role, eventCity),
+      };
+    });
 
     // Sort by score descending
     return scored.sort((a, b) => b.score - a.score);
@@ -215,15 +223,15 @@ export class ProfileLinkingService {
 
     const limit = options.limit || 100;
     
-    // Get events with unlinked text fields
+    // Get events with unlinked text fields (JSONB arrays use jsonb_array_length)
     let query = db.select({
       id: events.id,
     }).from(events).where(
       and(
         or(
-          sql`${events.organizerText} IS NOT NULL AND (${events.organizerProfiles} IS NULL OR array_length(${events.organizerProfiles}, 1) = 0)`,
-          sql`${events.djText} IS NOT NULL AND (${events.djProfiles} IS NULL OR array_length(${events.djProfiles}, 1) = 0)`,
-          sql`${events.teacherText} IS NOT NULL AND (${events.teacherProfiles} IS NULL OR array_length(${events.teacherProfiles}, 1) = 0)`,
+          sql`${events.organizerText} IS NOT NULL AND ${events.organizerText} != '' AND (${events.organizerProfiles} IS NULL OR jsonb_array_length(${events.organizerProfiles}::jsonb) = 0)`,
+          sql`${events.djText} IS NOT NULL AND ${events.djText} != '' AND (${events.djProfiles} IS NULL OR jsonb_array_length(${events.djProfiles}::jsonb) = 0)`,
+          sql`${events.teacherText} IS NOT NULL AND ${events.teacherText} != '' AND (${events.teacherProfiles} IS NULL OR jsonb_array_length(${events.teacherProfiles}::jsonb) = 0)`,
         ),
         options.cityFilter ? ilike(events.city, `%${options.cityFilter}%`) : sql`1=1`
       )
