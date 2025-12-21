@@ -726,15 +726,14 @@ router.get("/search", optionalAuth, async (req: AuthRequest, res: Response) => {
 
     // Past events filter - show events that have already ended
     // If past=true, show only past events
-    // If past=false or upcoming=true, show only upcoming
-    // If neither is specified (discover mode), show ALL events
+    // Otherwise, default to showing only upcoming events (startDate >= today)
     const { upcoming } = req.query;
     if (past === "true") {
       conditions.push(lte(events.startDate, new Date()));
-    } else if (upcoming === "true") {
+    } else {
+      // Default: show only upcoming events (today and future)
       conditions.push(gte(events.startDate, new Date()));
     }
-    // If neither past nor upcoming is specified, show all events (Discover mode)
 
     if (conditions.length > 0) {
       query = query.where(and(...conditions));
