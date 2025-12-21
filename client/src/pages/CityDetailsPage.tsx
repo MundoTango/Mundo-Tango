@@ -38,6 +38,7 @@ interface CityData {
   id: number;
   slug: string;
   name: string;
+  city?: string;
   country: string;
   region?: string;
   description?: string;
@@ -523,7 +524,7 @@ export default function CityDetailsPage() {
             <TabsContent value="events" className="mt-0">
               <CityEventsTab 
                 cityId={city.id} 
-                cityName={city.city}
+                cityName={city.city || city.name}
                 legacyGroupId={city.legacyGroupId}
               />
             </TabsContent>
