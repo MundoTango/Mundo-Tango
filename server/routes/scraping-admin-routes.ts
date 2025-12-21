@@ -888,4 +888,65 @@ router.post('/admin/scraping/ingest-events', authenticateToken, async (req: Auth
   }
 });
 
+/**
+ * BACKFILL EVENT TEAM MEMBERS
+ * Reprocesses all events to extract team members (organizers, DJs, teachers, performers)
+ * from their titles and descriptions, populating the event_team_members table.
+ */
+router.post('/admin/scraping/backfill-team-members', authenticateToken, async (req: AuthRequest, res) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, userId)
+    });
+
+    if (!user || user.role !== 'super_admin') {
+      return res.status(403).json({ error: 'Forbidden: Super Admin access required' });
+    }
+
+    console.log('[TeamBackfill] 🚀 Admin triggered backfill of event team members');
+    
+    const { backfillAllEventTeamMembers, backfillFromScrapedEvents } = await import('../scripts/backfillEventTeamMembers');
+    
+    // Run both backfills
+    const stats1 = await backfillAllEventTeamMembers();
+    const stats2 = await backfillFromScrapedEvents();
+
+    const totalStats = {
+      eventsProcessed: stats1.eventsProcessed + stats2.eventsProcessed,
+      teamMembersAdded: stats1.teamMembersAdded + stats2.teamMembersAdded,
+      usersCreated: stats1.usersCreated + stats2.usersCreated,
+      errors: stats1.errors + stats2.errors
+    };
+
+    // Get updated counts
+    const teamMemberCount = await db.execute(sql`
+      SELECT COUNT(*) as count FROM event_team_members
+    `);
+
+    const eventsWithTeamCount = await db.execute(sql`
+      SELECT COUNT(DISTINCT event_id) as count FROM event_team_members
+    `);
+
+    res.json({
+      success: true,
+      message: `Processed ${totalStats.eventsProcessed} events, added ${totalStats.teamMembersAdded} team members`,
+      stats: totalStats,
+      updatedCounts: {
+        totalTeamMembers: teamMemberCount.rows[0]?.count || 0,
+        eventsWithTeam: eventsWithTeamCount.rows[0]?.count || 0
+      },
+      timestamp: new Date().toISOString()
+    });
+
+  } catch (error) {
+    console.error('[TeamBackfill] Error:', error);
+    res.status(500).json({ error: 'Failed to backfill event team members' });
+  }
+});
+
 export default router;
