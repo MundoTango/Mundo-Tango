@@ -1314,6 +1314,7 @@ router.get('/admin/scraped-events/:id', authenticateToken, async (req: AuthReque
 
 /**
  * POST /api/admin/scraped-events/:id/approve - Approve and ingest event
+ * Uses atomic operation: only marks approved if ingestion succeeds
  */
 router.post('/admin/scraped-events/:id/approve', authenticateToken, async (req: AuthRequest, res) => {
   try {
@@ -1331,25 +1332,70 @@ router.post('/admin/scraped-events/:id/approve', authenticateToken, async (req: 
     }
 
     const { id } = req.params;
+    const eventId = Number(id);
 
-    // Update status to approved
-    await db.update(scrapedEvents)
-      .set({ 
-        status: 'approved',
-        updatedAt: new Date()
-      })
-      .where(eq(scrapedEvents.id, Number(id)));
-
-    // Trigger ingestion
-    const result = await scrapedEventIngestionService.ingestEvent(Number(id));
-
-    res.json({
-      success: true,
-      message: 'Event approved and ingested',
-      eventId: Number(id),
-      ingestedEventId: result?.eventId,
-      timestamp: new Date().toISOString()
+    // First check if event exists and is in valid state
+    const event = await db.query.scrapedEvents.findFirst({
+      where: eq(scrapedEvents.id, eventId)
     });
+
+    if (!event) {
+      return res.status(404).json({ error: 'Scraped event not found' });
+    }
+
+    if (event.status === 'ingested') {
+      return res.status(400).json({ error: 'Event already ingested' });
+    }
+
+    // Try ingestion FIRST - if it fails, don't update status
+    try {
+      const result = await scrapedEventIngestionService.ingestEvent(eventId);
+      
+      if (!result || !result.eventId) {
+        // Ingestion returned but without valid result - mark as failed
+        await db.update(scrapedEvents)
+          .set({ 
+            status: 'rejected',
+            updatedAt: new Date()
+          })
+          .where(eq(scrapedEvents.id, eventId));
+        
+        return res.status(400).json({ 
+          success: false,
+          error: 'Ingestion failed - event data may be malformed',
+          eventId,
+          quarantined: true
+        });
+      }
+
+      // Ingestion succeeded - mark as ingested (service should have done this already)
+      res.json({
+        success: true,
+        message: 'Event approved and ingested',
+        eventId,
+        ingestedEventId: result.eventId,
+        timestamp: new Date().toISOString()
+      });
+
+    } catch (ingestionError: any) {
+      // Ingestion threw an error - quarantine the event by rejecting it
+      console.error(`[Approve Event] Ingestion failed for event ${eventId}:`, ingestionError);
+      
+      await db.update(scrapedEvents)
+        .set({ 
+          status: 'rejected',
+          updatedAt: new Date()
+        })
+        .where(eq(scrapedEvents.id, eventId));
+      
+      return res.status(400).json({ 
+        success: false,
+        error: 'Ingestion failed',
+        details: ingestionError.message || 'Unknown ingestion error',
+        eventId,
+        quarantined: true
+      });
+    }
 
   } catch (error: any) {
     console.error('[Approve Event] Error:', error);
