@@ -2085,4 +2085,138 @@ router.get("/analytics/export", authenticateToken, requireAdmin, async (req, res
   }
 });
 
+// =============================================================================
+// DATA QUALITY ROUTES
+// =============================================================================
+
+import { DataQualityReportService, ProfileLinkingService, CityDataMigrationService } from "../services/data-quality";
+
+/**
+ * GET /api/admin/data-quality/report
+ * Generate full data quality report
+ */
+router.get("/data-quality/report", authenticateToken, requireAdmin, async (req, res: Response) => {
+  try {
+    const report = await DataQualityReportService.generateFullReport();
+    res.json(report);
+  } catch (error: any) {
+    console.error("Error generating data quality report:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * GET /api/admin/data-quality/cities
+ * Get city-specific quality metrics
+ */
+router.get("/data-quality/cities", authenticateToken, requireAdmin, async (req, res: Response) => {
+  try {
+    const metrics = await DataQualityReportService.getCityMetrics();
+    res.json(metrics);
+  } catch (error: any) {
+    console.error("Error getting city metrics:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * GET /api/admin/data-quality/events
+ * Get event-specific quality metrics
+ */
+router.get("/data-quality/events", authenticateToken, requireAdmin, async (req, res: Response) => {
+  try {
+    const metrics = await DataQualityReportService.getEventMetrics();
+    res.json(metrics);
+  } catch (error: any) {
+    console.error("Error getting event metrics:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * GET /api/admin/data-quality/sources
+ * Get scraper source quality metrics
+ */
+router.get("/data-quality/sources", authenticateToken, requireAdmin, async (req, res: Response) => {
+  try {
+    const metrics = await DataQualityReportService.getSourceMetrics();
+    res.json(metrics);
+  } catch (error: any) {
+    console.error("Error getting source metrics:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * GET /api/admin/data-quality/found-people
+ * Get found people (DJ/teacher/organizer) metrics
+ */
+router.get("/data-quality/found-people", authenticateToken, requireAdmin, async (req, res: Response) => {
+  try {
+    const metrics = await DataQualityReportService.getFoundPeopleMetrics();
+    res.json(metrics);
+  } catch (error: any) {
+    console.error("Error getting found people metrics:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * POST /api/admin/data-quality/migrate-cities
+ * Run city data migration to fix covers and descriptions
+ */
+router.post("/data-quality/migrate-cities", authenticateToken, requireAdmin, async (req: AuthRequest, res: Response) => {
+  try {
+    const result = await CityDataMigrationService.migrateAllCities();
+    res.json(result);
+  } catch (error: any) {
+    console.error("Error migrating cities:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * POST /api/admin/data-quality/create-missing-cities
+ * Create city groups for cities that only exist in events
+ */
+router.post("/data-quality/create-missing-cities", authenticateToken, requireAdmin, async (req: AuthRequest, res: Response) => {
+  try {
+    const result = await CityDataMigrationService.createMissingCityGroups();
+    res.json(result);
+  } catch (error: any) {
+    console.error("Error creating missing cities:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * POST /api/admin/data-quality/link-profiles
+ * Run profile linking for found people
+ */
+router.post("/data-quality/link-profiles", authenticateToken, requireAdmin, async (req: AuthRequest, res: Response) => {
+  try {
+    const { limit = 100, cityFilter } = req.body;
+    const result = await ProfileLinkingService.batchLinkProfiles({ limit, cityFilter });
+    res.json(result);
+  } catch (error: any) {
+    console.error("Error linking profiles:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * POST /api/admin/data-quality/link-event/:id
+ * Link profiles for a specific event
+ */
+router.post("/data-quality/link-event/:id", authenticateToken, requireAdmin, async (req: AuthRequest, res: Response) => {
+  try {
+    const eventId = parseInt(req.params.id);
+    const results = await ProfileLinkingService.linkEventProfiles(eventId);
+    res.json({ eventId, results });
+  } catch (error: any) {
+    console.error("Error linking event profiles:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 export default router;
