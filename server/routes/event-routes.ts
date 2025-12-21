@@ -585,7 +585,7 @@ router.get("/search", optionalAuth, async (req: AuthRequest, res: Response) => {
       languages,
       languageMatchOnly,
       past,
-      sortBy = "relevance",
+      sortBy = "date",
       page = "1",
       limit = "20"
     } = req.query;
