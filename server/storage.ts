@@ -3568,7 +3568,8 @@ export class DbStorage implements IStorage {
     let conditions = [];
     
     if (params.city) {
-      conditions.push(eq(events.city, params.city));
+      // Use case-insensitive matching for city names
+      conditions.push(ilike(events.city, params.city));
     }
     
     if (params.eventType) {
