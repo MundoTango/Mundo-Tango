@@ -1,19 +1,25 @@
 /**
  * City Skyline & Cityscape Images
- * Using verified Unsplash search URLs with query parameters
+ * Using verified stock photo assets (actual cityscapes)
+ * Fallback to Unsplash URLs for other cities
  * Each city has a curated cityscape/skyline photo
  */
 
+import buenosAiresImg from "@assets/stock_images/buenos_aires_city_sk_e19a76a2.jpg";
+import saoPauloImg from "@assets/stock_images/são_paulo_cityscape__9e45fc09.jpg";
+import barcelonaImg from "@assets/stock_images/barcelona_cityscape__75599dda.jpg";
+import bogotaImg from "@assets/stock_images/bogota_cityscape_cit_29d0dc8c.jpg";
+
 export const CITY_IMAGE_MAP: Record<string, string> = {
   // South America
-  "Buenos Aires": "https://images.unsplash.com/photo-1550355291-bbee04a92027?w=1200&h=675&fit=crop&q=80",
+  "Buenos Aires": buenosAiresImg,
   "Rio de Janeiro": "https://images.unsplash.com/photo-1483729558449-99ef09a8c325?w=1200&h=675&fit=crop&q=80",
-  "Sao Paulo": "https://images.unsplash.com/photo-1519567770579-c2fc5436bcf9?w=1200&h=675&fit=crop&q=80",
-  "São Paulo": "https://images.unsplash.com/photo-1519567770579-c2fc5436bcf9?w=1200&h=675&fit=crop&q=80",
+  "Sao Paulo": saoPauloImg,
+  "São Paulo": saoPauloImg,
   
   // Europe
   "Paris": "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=1200&h=675&fit=crop&q=80",
-  "Barcelona": "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=1200&h=675&fit=crop&q=80",
+  "Barcelona": barcelonaImg,
   "Berlin": "https://images.unsplash.com/photo-1560969184-10fe8719e047?w=1200&h=675&fit=crop&q=80",
   "London": "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=1200&h=675&fit=crop&q=80",
   "Amsterdam": "https://images.unsplash.com/photo-1534351590666-13e3e96b5017?w=1200&h=675&fit=crop&q=80",
@@ -54,8 +60,8 @@ export const CITY_IMAGE_MAP: Record<string, string> = {
   "Riga": "https://images.unsplash.com/photo-1534236097568-a3e8bf97a686?w=1200&h=675&fit=crop&q=80",
   "Belgrade": "https://images.unsplash.com/photo-1563804951831-69d34d20f7db?w=1200&h=675&fit=crop&q=80",
   "Montevideo": "https://images.unsplash.com/photo-1605211099255-c4c84e16cf44?w=1200&h=675&fit=crop&q=80",
-  "Bogota": "https://images.unsplash.com/photo-1536063211352-0b94219f6212?w=1200&h=675&fit=crop&q=80",
-  "Bogotá": "https://images.unsplash.com/photo-1536063211352-0b94219f6212?w=1200&h=675&fit=crop&q=80",
+  "Bogota": bogotaImg,
+  "Bogotá": bogotaImg,
   
   // Additional cities
   "Cancún": "https://images.unsplash.com/photo-1510097467424-192d713fd8b2?w=1200&h=675&fit=crop&q=80",
