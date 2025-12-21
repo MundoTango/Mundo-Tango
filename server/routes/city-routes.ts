@@ -443,7 +443,73 @@ router.get("/by-slug/:slug", async (req: Request, res: Response) => {
       });
     }
 
-    console.log(`[CityBySlug] No city group found for slug: "${slug}"`);
+    // FALLBACK: Try to find by city name derived from slug
+    // Convert slug like "tbilisi" or "phoenix" to search pattern
+    console.log(`[CityBySlug] No exact slug match for: "${slug}", trying city name fallback`);
+    
+    const cityNameFromSlug = slug
+      .replace(/-tango(-community)?$/, '') // Remove -tango or -tango-community suffix
+      .replace(/-/g, ' ') // Convert dashes to spaces
+      .trim();
+    
+    // Search by normalized city name using ILIKE
+    const fallbackResult = await db
+      .select({
+        group: groups,
+        memberCount: sql<number>`(
+          SELECT COUNT(*)::int 
+          FROM ${groupMembers} 
+          WHERE ${groupMembers.groupId} = ${groups.id}
+          AND ${groupMembers.status} = 'active'
+        )`.as("member_count"),
+        eventCount: sql<number>`(
+          SELECT COUNT(*)::int 
+          FROM events 
+          WHERE ${sql`events.group_id`} = ${groups.id}
+          AND status = 'published'
+        )`.as("event_count"),
+      })
+      .from(groups)
+      .where(
+        and(
+          eq(groups.type, "city"),
+          or(
+            ilike(groups.city, cityNameFromSlug),
+            ilike(groups.city, `%${cityNameFromSlug}%`)
+          )
+        )
+      )
+      .limit(1);
+
+    if (fallbackResult.length > 0) {
+      const result = fallbackResult[0];
+      const group = result.group;
+      console.log(`[CityBySlug] Found via fallback: ${group.name} (ID: ${group.id})`);
+      return res.json({
+        id: group.id,
+        slug: group.slug,
+        name: group.name,
+        country: group.country,
+        description: group.description,
+        longDescription: group.long_description,
+        coverImage: group.cover_image,
+        logoImage: group.logo_image,
+        latitude: group.latitude,
+        longitude: group.longitude,
+        memberCount: result.memberCount || 0,
+        eventCount: result.eventCount || 0,
+        postCount: group.post_count || 0,
+        housingCount: 0,
+        recommendationCount: 0,
+        venueCount: 0,
+        timezone: null,
+        isActive: true,
+        isFeatured: false,
+        legacyGroupId: group.id,
+      });
+    }
+
+    console.log(`[CityBySlug] No city group found for slug: "${slug}" or city name: "${cityNameFromSlug}"`);
     return res.status(404).json({ error: "City not found" });
   } catch (error) {
     console.error("[CityBySlug] Error:", error);

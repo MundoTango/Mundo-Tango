@@ -7279,6 +7279,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const cityGroups = await db.select({
         id: groups.id,
         name: groups.name,
+        slug: groups.slug,
         city: groups.city,
         country: groups.country,
         latitude: groups.latitude,
@@ -7413,6 +7414,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
         'Miami': { lat: 25.7617, lng: -80.1918 },
         'Singapore': { lat: 1.3521, lng: 103.8198 },
         'Hong Kong': { lat: 22.3193, lng: 114.1694 },
+        // Additional US cities
+        'Phoenix': { lat: 33.4484, lng: -112.0740 },
+        'Denver': { lat: 39.7392, lng: -104.9903 },
+        'Seattle': { lat: 47.6062, lng: -122.3321 },
+        'Boston': { lat: 42.3601, lng: -71.0589 },
+        'Austin': { lat: 30.2672, lng: -97.7431 },
+        'Portland': { lat: 45.5051, lng: -122.6750 },
+        'San Diego': { lat: 32.7157, lng: -117.1611 },
+        'Washington': { lat: 38.9072, lng: -77.0369 },
+        'Washington DC': { lat: 38.9072, lng: -77.0369 },
+        // Additional European cities
+        'Munich': { lat: 48.1351, lng: 11.5820 },
+        'Cologne': { lat: 50.9375, lng: 6.9603 },
+        'Hamburg': { lat: 53.5511, lng: 9.9937 },
+        'Florence': { lat: 43.7696, lng: 11.2558 },
+        'Naples': { lat: 40.8518, lng: 14.2681 },
+        'Zurich': { lat: 47.3769, lng: 8.5417 },
+        'Krakow': { lat: 50.0647, lng: 19.9450 },
+        'Dublin': { lat: 53.3498, lng: -6.2603 },
+        'Stockholm': { lat: 59.3293, lng: 18.0686 },
+        'Oslo': { lat: 59.9139, lng: 10.7522 },
+        'Helsinki': { lat: 60.1699, lng: 24.9384 },
+        // Additional Latin American cities
+        'Lima': { lat: -12.0464, lng: -77.0428 },
+        'Santiago': { lat: -33.4489, lng: -70.6693 },
+        'Medellin': { lat: 6.2476, lng: -75.5658 },
+        // Additional Asian cities
+        'Taipei': { lat: 25.0330, lng: 121.5654 },
+        'Bangkok': { lat: 13.7563, lng: 100.5018 },
+        'Mumbai': { lat: 19.0760, lng: 72.8777 },
+        'Tbilisi': { lat: 41.7151, lng: 44.8271 },
       };
 
       // Normalize city key for consistent lookups (case-insensitive, trimmed, Turkish chars)
@@ -7471,18 +7503,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         addedCities.add(cityKey);
         
-        // Use normalized lookup for coords, fallback to group's stored coords
-        const normalizedCoords = normalizedCityCoords.get(cityKey);
-        const coords = normalizedCoords || cityCoords[city] || {
-          lat: parseFloat(group.latitude as string) || 0,
-          lng: parseFloat(group.longitude as string) || 0
-        };
+        // PRIORITY: Database coords FIRST (from geocoding), then hardcoded fallback
+        const dbLat = group.latitude ? parseFloat(group.latitude as string) : null;
+        const dbLng = group.longitude ? parseFloat(group.longitude as string) : null;
+        const hasValidDbCoords = dbLat !== null && dbLng !== null && !(dbLat === 0 && dbLng === 0);
+        
+        const coords = hasValidDbCoords
+          ? { lat: dbLat!, lng: dbLng! }
+          : (normalizedCityCoords.get(cityKey) || cityCoords[city] || { lat: 0, lng: 0 });
         
         locations.push({
           id: group.id,
           groupId: group.id,
           city: city,
           country: group.country || '',
+          slug: (group as any).slug || '', // Include slug for proper navigation
           coordinates: coords,
           memberCount: group.memberCount || 0,
           activeEvents: eventsMap.get(cityKey) || group.eventCount || 0,
@@ -7633,7 +7668,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      res.json(locations);
+      // Filter out locations with invalid (0,0) coordinates - these would appear in Africa
+      const validLocations = locations.filter(loc => 
+        !(loc.coordinates.lat === 0 && loc.coordinates.lng === 0)
+      );
+      
+      res.json(validLocations);
     } catch (error) {
       console.error("Get community locations error:", error);
       res.status(500).json({ message: "Failed to fetch community locations" });

@@ -38,6 +38,7 @@ interface CommunityLocation {
   id: number;
   city: string;
   country: string;
+  slug?: string;
   coordinates: { lat: number; lng: number };
   memberCount: number;
   activeEvents: number;
@@ -202,8 +203,9 @@ export default function CommunityWorldMapPage() {
   };
 
   const handleCityClick = (location: CommunityLocation) => {
-    // Navigate to the city hub page using shared slug helper
-    setLocation(`/cities/${toCitySlug(location.city)}`);
+    // Navigate to the city hub page using stored slug from API (preferred) or generated slug (fallback)
+    const citySlug = location.slug || toCitySlug(location.city);
+    setLocation(`/cities/${citySlug}`);
   };
 
   return (
