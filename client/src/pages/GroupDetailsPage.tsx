@@ -555,9 +555,8 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
           {/* More Filters Dropdown */}
           <Popover open={showAdvancedFilters} onOpenChange={setShowAdvancedFilters}>
             <PopoverTrigger asChild>
-              <Badge
-                variant="outline"
-                className="cursor-pointer text-xs px-2.5 py-1 gap-1 hover-elevate"
+              <button
+                className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-md border border-border bg-background hover-elevate cursor-pointer"
                 data-testid="chip-more-filters"
               >
                 <SlidersHorizontal className="h-3 w-3" />
@@ -567,7 +566,7 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
                     {activeFilterCount}
                   </span>
                 )}
-              </Badge>
+              </button>
             </PopoverTrigger>
             <PopoverContent className="w-80 p-4" align="start">
               <div className="space-y-4">
