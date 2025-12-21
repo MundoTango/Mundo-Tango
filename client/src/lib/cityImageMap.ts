@@ -1195,6 +1195,44 @@ export const CITY_COUNTRY_MAP: Record<string, string> = {
 };
 
 /**
+ * Country name to 2-letter ISO code mapping
+ * Used for proper flag fallback (Austria→at, not substring which gives au=Australia)
+ */
+const COUNTRY_NAME_TO_CODE: Record<string, string> = {
+  "Argentina": "ar", "Australia": "au", "Austria": "at", "Belgium": "be",
+  "Bolivia": "bo", "Bosnia and Herzegovina": "ba", "Brazil": "br", "Bulgaria": "bg",
+  "Canada": "ca", "Chile": "cl", "China": "cn", "Colombia": "co", "Croatia": "hr",
+  "Cyprus": "cy", "Czech Republic": "cz", "Czechia": "cz", "Denmark": "dk",
+  "Ecuador": "ec", "Egypt": "eg", "Estonia": "ee", "Finland": "fi", "France": "fr",
+  "Georgia": "ge", "Germany": "de", "Greece": "gr", "Hong Kong": "hk", "Hungary": "hu",
+  "India": "in", "Indonesia": "id", "Ireland": "ie", "Israel": "il", "Italy": "it",
+  "Japan": "jp", "Kazakhstan": "kz", "Latvia": "lv", "Lebanon": "lb", "Lithuania": "lt",
+  "Luxembourg": "lu", "Malaysia": "my", "Mexico": "mx", "Montenegro": "me",
+  "Morocco": "ma", "Netherlands": "nl", "New Zealand": "nz", "Norway": "no",
+  "Paraguay": "py", "Peru": "pe", "Philippines": "ph", "Poland": "pl", "Portugal": "pt",
+  "Romania": "ro", "Russia": "ru", "Serbia": "rs", "Singapore": "sg", "Slovakia": "sk",
+  "Slovenia": "si", "South Africa": "za", "South Korea": "kr", "Spain": "es",
+  "Sweden": "se", "Switzerland": "ch", "Taiwan": "tw", "Thailand": "th", "Turkey": "tr",
+  "Ukraine": "ua", "United Arab Emirates": "ae", "United Kingdom": "gb", "United States": "us",
+  "Uruguay": "uy", "Venezuela": "ve", "Vietnam": "vn",
+};
+
+/**
+ * Convert country name to 2-letter code
+ */
+function getCountryCode(country: string): string {
+  const code = COUNTRY_NAME_TO_CODE[country];
+  if (code) return code;
+  // Fallback: try lowercase lookup
+  const lowerCountry = country.toLowerCase();
+  for (const [name, c] of Object.entries(COUNTRY_NAME_TO_CODE)) {
+    if (name.toLowerCase() === lowerCountry) return c;
+  }
+  // Last resort: return "xx" for unknown
+  return "xx";
+}
+
+/**
  * Convert 2-letter country code to flag CDN URL
  * Uses flagcdn.com for high-quality flag images
  */
@@ -1219,10 +1257,22 @@ function titleCase(str: string): string {
 }
 
 /**
+ * Strip common suffixes from city group names
+ * "Salzburg Tango Community" → "Salzburg"
+ */
+function stripCitySuffixes(name: string): string {
+  return name
+    .replace(/\s+Tango\s+Community$/i, '')
+    .replace(/\s+Tango$/i, '')
+    .replace(/\s+Community$/i, '')
+    .trim();
+}
+
+/**
  * Get city-specific image URL
  * Returns verified cityscape image for the city
  * Falls back to country flag if no cityscape found
- * Handles: "Buenos Aires", "buenos-aires", "Málaga", "malaga", etc.
+ * Handles: "Buenos Aires", "buenos-aires", "Málaga", "malaga", "Salzburg Tango Community", etc.
  */
 export function getCityImageUrl(city: string, country?: string): string {
   // Direct lookup
@@ -1230,8 +1280,14 @@ export function getCityImageUrl(city: string, country?: string): string {
     return CITY_IMAGE_MAP[city];
   }
   
+  // Strip "Tango Community" suffix and try again
+  const strippedCity = stripCitySuffixes(city);
+  if (CITY_IMAGE_MAP[strippedCity]) {
+    return CITY_IMAGE_MAP[strippedCity];
+  }
+  
   // Normalize and try variations
-  const normalized = city.trim();
+  const normalized = strippedCity.trim();
   const asciiVersion = normalizeDiacritics(normalized);
   const fromSlug = titleCase(normalized.replace(/-/g, ' '));
   const asciiFromSlug = titleCase(normalizeDiacritics(normalized.replace(/-/g, ' ')));
@@ -1265,18 +1321,18 @@ export function getCityImageUrl(city: string, country?: string): string {
   for (const [cityName, countryCode] of Object.entries(CITY_COUNTRY_MAP)) {
     const cityLower = normalizeDiacritics(cityName).toLowerCase();
     if (cityLower === normalizedLower || cityLower.replace(/\s+/g, '-') === normalizedLower) {
-      console.log(`[getCityImageUrl] No cityscape for "${city}", using ${cityName} country flag (${countryCode})`);
       return getCountryFlagUrl(countryCode);
     }
   }
   
-  // If country provided, use country flag as final fallback
+  // If country provided, use country flag as final fallback (proper mapping)
   if (country) {
-    console.log(`[getCityImageUrl] No cityscape for "${city}", using country flag for ${country}`);
-    return getCountryFlagUrl(country.substring(0, 2).toLowerCase());
+    const countryCode = getCountryCode(country);
+    if (countryCode !== "xx") {
+      return getCountryFlagUrl(countryCode);
+    }
   }
   
-  // Last resort: return first city image as fallback
-  console.log(`[getCityImageUrl] No cityscape or country info for "${city}", using default cityscape`);
+  // Last resort: return NYC as fallback
   return newYorkImg;
 }
