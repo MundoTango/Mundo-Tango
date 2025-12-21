@@ -180,8 +180,9 @@ function titleCase(str: string): string {
 
 /**
  * Get city-specific image URL
- * Returns verified cityscape image for the city, or fallback for unknown cities
+ * Returns verified cityscape image for the city, or NYC as fallback
  * Handles: "Buenos Aires", "buenos-aires", "Málaga", "malaga", etc.
+ * Falls back to NYC if no cityscape found for the city
  */
 export function getCityImageUrl(city: string): string {
   // Direct lookup
@@ -220,5 +221,7 @@ export function getCityImageUrl(city: string): string {
     }
   }
   
+  // Fallback to NYC cityscape for any city without a specific image
+  console.log(`[getCityImageUrl] No cityscape found for "${city}", using NYC as fallback`);
   return DEFAULT_CITY_IMAGE;
 }

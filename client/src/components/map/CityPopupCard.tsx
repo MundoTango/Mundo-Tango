@@ -53,9 +53,9 @@ export function CityPopupCard({
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
         
-        <div className="absolute bottom-0 left-0 right-0 p-5 text-white">
-          <h3 className="text-2xl font-serif font-bold leading-tight">{city}</h3>
-          <p className="text-sm text-white/80">{country}</p>
+        <div className="absolute inset-0 flex flex-col items-center justify-end p-5 text-white">
+          <h3 className="text-2xl font-serif font-bold leading-tight text-center">{city}</h3>
+          <p className="text-sm text-white/80 text-center">{country}</p>
         </div>
       </div>
 
