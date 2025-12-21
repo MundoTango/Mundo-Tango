@@ -29,6 +29,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { getLanguageByCode } from "@/components/input/UnifiedLanguagePicker";
 import { RecommendationsList } from "@/components/recommendations/RecommendationsList";
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import MarkerClusterGroup from 'react-leaflet-cluster';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { Calendar as BigCalendar, dateFnsLocalizer, Views } from 'react-big-calendar';
@@ -1198,9 +1199,9 @@ function GroupHubTab({ groupCity, groupCountry, group }: { groupCity?: string | 
           lat = typeof event.latitude === 'string' ? parseFloat(event.latitude) : event.latitude;
           lng = typeof event.longitude === 'string' ? parseFloat(event.longitude) : event.longitude;
         } else {
-          // Add jitter to city center so multiple events don't stack
-          lat = defaultCoords[0] + (Math.random() - 0.5) * 0.15;
-          lng = defaultCoords[1] + (Math.random() - 0.5) * 0.15;
+          // Add small jitter to city center so multiple events don't stack (0.02° ≈ 2km)
+          lat = defaultCoords[0] + (Math.random() - 0.5) * 0.02;
+          lng = defaultCoords[1] + (Math.random() - 0.5) * 0.02;
         }
         
         locations.push({
@@ -1324,45 +1325,47 @@ function GroupHubTab({ groupCity, groupCountry, group }: { groupCity?: string | 
                 attribution='&copy; <a href="https://carto.com/attributions">CARTO</a>'
                 url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
               />
-              {mapLocations.map((loc, idx) => (
-                <Marker 
-                  key={`${loc.type}-${loc.id}-${idx}`}
-                  position={[loc.coordinates.lat, loc.coordinates.lng]}
-                  icon={createStyledIcon(loc.type as 'event' | 'housing' | 'recommendation', loc.housing)}
-                >
-                  <Popup>
-                    <div className="p-3 min-w-[200px]">
-                      <Badge 
-                        variant="secondary" 
-                        className={`mb-2 ${loc.type === 'event' ? 'bg-red-100 text-red-700' : loc.type === 'housing' ? 'bg-teal-100 text-teal-700' : 'bg-yellow-100 text-yellow-700'}`}
-                      >
-                        {loc.type === 'event' ? 'Event' : loc.type === 'housing' ? 'Housing' : 'Recommendation'}
-                      </Badge>
-                      <h4 className="font-semibold text-sm mb-1">{loc.title}</h4>
-                      {loc.type === 'event' && loc.date && (
-                        <p className="text-xs text-muted-foreground flex items-center gap-1 mb-2">
-                          <Calendar className="h-3 w-3" />
-                          {safeDateFormat(loc.date, "EEE, MMM d, yyyy")}
-                        </p>
-                      )}
-                      {loc.type === 'event' && loc.location && (
-                        <p className="text-xs text-muted-foreground flex items-center gap-1 mb-2">
-                          <MapPin className="h-3 w-3" />
-                          {loc.location}
-                        </p>
-                      )}
-                      {loc.type === 'housing' && (
-                        <p className="text-sm font-medium text-teal-600 mb-2">
-                          {loc.housing > 0 ? `$${loc.housing}/night` : 'Free'}
-                        </p>
-                      )}
-                      <Link href={loc.type === 'event' ? `/events/${loc.id}` : `/housing/${loc.id}`}>
-                        <Button size="sm" className="w-full">View Details</Button>
-                      </Link>
-                    </div>
-                  </Popup>
-                </Marker>
-              ))}
+              <MarkerClusterGroup chunkedLoading>
+                {mapLocations.map((loc, idx) => (
+                  <Marker 
+                    key={`${loc.type}-${loc.id}-${idx}`}
+                    position={[loc.coordinates.lat, loc.coordinates.lng]}
+                    icon={createStyledIcon(loc.type as 'event' | 'housing' | 'recommendation', loc.housing)}
+                  >
+                    <Popup>
+                      <div className="p-3 min-w-[200px]">
+                        <Badge 
+                          variant="secondary" 
+                          className={`mb-2 ${loc.type === 'event' ? 'bg-red-100 text-red-700' : loc.type === 'housing' ? 'bg-teal-100 text-teal-700' : 'bg-yellow-100 text-yellow-700'}`}
+                        >
+                          {loc.type === 'event' ? 'Event' : loc.type === 'housing' ? 'Housing' : 'Recommendation'}
+                        </Badge>
+                        <h4 className="font-semibold text-sm mb-1">{loc.title}</h4>
+                        {loc.type === 'event' && loc.date && (
+                          <p className="text-xs text-muted-foreground flex items-center gap-1 mb-2">
+                            <Calendar className="h-3 w-3" />
+                            {safeDateFormat(loc.date, "EEE, MMM d, yyyy")}
+                          </p>
+                        )}
+                        {loc.type === 'event' && loc.location && (
+                          <p className="text-xs text-muted-foreground flex items-center gap-1 mb-2">
+                            <MapPin className="h-3 w-3" />
+                            {loc.location}
+                          </p>
+                        )}
+                        {loc.type === 'housing' && (
+                          <p className="text-sm font-medium text-teal-600 mb-2">
+                            {loc.housing > 0 ? `$${loc.housing}/night` : 'Free'}
+                          </p>
+                        )}
+                        <Link href={loc.type === 'event' ? `/events/${loc.id}` : `/housing/${loc.id}`}>
+                          <Button size="sm" className="w-full">View Details</Button>
+                        </Link>
+                      </div>
+                    </Popup>
+                  </Marker>
+                ))}
+              </MarkerClusterGroup>
             </MapContainer>
           )}
         </div>
