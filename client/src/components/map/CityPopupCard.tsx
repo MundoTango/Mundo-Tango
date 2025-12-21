@@ -47,25 +47,25 @@ export function CityPopupCard({
         )}
         
         <div className="grid grid-cols-4 gap-2 text-sm">
-          <div className="flex flex-col items-center gap-1 p-2 bg-muted/50 rounded-lg">
-            <Users className="w-4 h-4 text-cyan-500" />
-            <div className="font-bold text-base">{memberCount}</div>
-            <div className="text-xs text-muted-foreground">Members</div>
+          <div className="flex flex-col items-center justify-center gap-1 p-2 bg-muted/50 rounded-lg h-full">
+            <Users className="w-5 h-5 text-cyan-500" />
+            <div className="font-bold text-sm">{memberCount}</div>
+            <div className="text-xs text-muted-foreground text-center">Members</div>
           </div>
-          <div className="flex flex-col items-center gap-1 p-2 bg-muted/50 rounded-lg">
-            <Calendar className="w-4 h-4 text-blue-500" />
-            <div className="font-bold text-base">{eventCount}</div>
-            <div className="text-xs text-muted-foreground">Events</div>
+          <div className="flex flex-col items-center justify-center gap-1 p-2 bg-muted/50 rounded-lg h-full">
+            <Calendar className="w-5 h-5 text-blue-500" />
+            <div className="font-bold text-sm">{eventCount}</div>
+            <div className="text-xs text-muted-foreground text-center">Events</div>
           </div>
-          <div className="flex flex-col items-center gap-1 p-2 bg-muted/50 rounded-lg">
-            <Sparkles className="w-4 h-4 text-purple-500" />
-            <div className="font-bold text-base">{recommendationCount}</div>
-            <div className="text-xs text-muted-foreground">Recs</div>
+          <div className="flex flex-col items-center justify-center gap-1 p-2 bg-muted/50 rounded-lg h-full">
+            <Sparkles className="w-5 h-5 text-purple-500" />
+            <div className="font-bold text-sm">{recommendationCount}</div>
+            <div className="text-xs text-muted-foreground text-center">Recs</div>
           </div>
-          <div className="flex flex-col items-center gap-1 p-2 bg-muted/50 rounded-lg">
-            <Home className="w-4 h-4 text-amber-500" />
-            <div className="font-bold text-base">{housingCount}</div>
-            <div className="text-xs text-muted-foreground">Housing</div>
+          <div className="flex flex-col items-center justify-center gap-1 p-2 bg-muted/50 rounded-lg h-full">
+            <Home className="w-5 h-5 text-amber-500" />
+            <div className="font-bold text-sm">{housingCount}</div>
+            <div className="text-xs text-muted-foreground text-center">Housing</div>
           </div>
         </div>
 
