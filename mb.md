@@ -226,6 +226,91 @@ use mb.md: testing:auth          → Authenticated test template
 
 ---
 
+## 🔄 BULK UPDATE METHODOLOGY (TEMPLATE DISTRIBUTION)
+
+For distributing template changes across all cities, events, or other entity types:
+
+### Invocation Syntax
+
+```markdown
+use mb.md: bulk:images          → City image distribution
+use mb.md: bulk:template        → Template change propagation
+use mb.md: bulk:data-migration  → Database data updates
+```
+
+### City Image Distribution Pattern
+
+When adding or updating cityscape images for all cities:
+
+```
+PHASE 1: AUDIT
+1. Query database for all cities: SELECT name, country FROM groups WHERE name LIKE '%Tango Community%'
+2. Cross-reference against CITY_IMAGE_MAP in client/src/lib/cityImageMap.ts
+3. Identify cities missing from map (using country flag fallback)
+4. Prioritize by: event_count DESC (high-traffic cities first)
+
+PHASE 2: ACQUIRE
+1. Use stock_image_tool to download cityscape images
+2. Naming: {city_name}_{country}_cityscape
+3. Store in: attached_assets/stock_images/
+4. Prefer: skyline, landmarks, architecture (NO people, NO generic)
+
+PHASE 3: INTEGRATE
+1. Add import statement to cityImageMap.ts
+2. Add entry to CITY_IMAGE_MAP object
+3. Add entry to CITY_COUNTRY_MAP if country not present
+4. Support variations (diacritics, hyphens): "São Paulo", "Sao Paulo"
+
+PHASE 4: VERIFY
+1. Restart workflow to pick up new assets
+2. Test getCityImageUrl() returns correct image
+3. Visual verification on city page
+```
+
+### Key Files
+
+| File | Purpose |
+|------|---------|
+| `client/src/lib/cityImageMap.ts` | CITY_IMAGE_MAP, CITY_COUNTRY_MAP, getCityImageUrl() |
+| `attached_assets/stock_images/` | Stored cityscape images |
+| `client/src/pages/CityDetailsPage.tsx` | Uses getCityImageUrl() for cover |
+
+### Fallback Chain
+
+```
+getCityImageUrl(city, country):
+1. Direct lookup in CITY_IMAGE_MAP
+2. Normalized variations (diacritics, slug, titlecase)
+3. Partial matching for multi-word cities
+4. Country flag from CITY_COUNTRY_MAP
+5. Country flag from provided country param
+6. Default: New York City skyline
+```
+
+### Batch Processing Guidelines
+
+For large updates (50+ cities):
+- Process in batches of 10-15 cities
+- Download images in parallel where possible
+- Update imports and map entries together
+- Restart workflow after each batch to verify
+- Document progress in task list
+
+### Template Change Propagation Pattern
+
+When a design template changes that affects all instances:
+
+```
+1. IDENTIFY → Find all files using the template pattern
+2. ANALYZE  → Understand what needs to change per instance
+3. SCRIPT   → Create transformation logic (if complex)
+4. APPLY    → Apply changes to all instances
+5. VERIFY   → Test representative samples
+6. DOCUMENT → Update replit.md with change log
+```
+
+---
+
 ## 🛡️ DEPLOYMENT PROTECTION
 
 **CRITICAL:** These files are protected and must NEVER be deleted:
