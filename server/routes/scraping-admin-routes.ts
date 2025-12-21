@@ -672,6 +672,63 @@ router.get('/admin/scraping/hoymilonga/cities', authenticateToken, async (req: A
   }
 });
 
+/**
+ * TangoMango Scraper - US Cities
+ * Scrapes 37+ US cities from tangomango.org
+ */
+router.post('/admin/scraping/tangomango', authenticateToken, async (req: AuthRequest, res) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, userId)
+    });
+
+    if (!user || user.role !== 'super_admin') {
+      return res.status(403).json({ error: 'Forbidden: Super Admin access required' });
+    }
+
+    console.log('[TangoMango] Starting US cities scrape...');
+    
+    const { tangoMangoScraper } = await import('../agents/scraping/TangoMangoScraper');
+    const eventsScraped = await tangoMangoScraper.scrapeAllCities();
+    
+    res.json({
+      success: true,
+      message: `Scraped ${eventsScraped} events from TangoMango US cities`,
+      eventsScraped,
+      cities: 37,
+      timestamp: new Date().toISOString()
+    });
+
+  } catch (error: any) {
+    console.error('TangoMango scrape error:', error);
+    res.status(500).json({ error: 'Failed to scrape TangoMango', details: error.message });
+  }
+});
+
+router.get('/admin/scraping/tangomango/cities', authenticateToken, async (req: AuthRequest, res) => {
+  try {
+    res.json({
+      cities: [
+        'San Francisco', 'New York', 'Los Angeles', 'Chicago', 'Seattle',
+        'Boston', 'Miami', 'Denver', 'Austin', 'Portland', 'San Diego',
+        'Washington DC', 'Atlanta', 'Philadelphia', 'Dallas', 'Houston',
+        'Phoenix', 'Minneapolis', 'Detroit', 'Cleveland', 'Pittsburgh',
+        'Las Vegas', 'Salt Lake City', 'Nashville', 'New Orleans', 'Raleigh',
+        'Sacramento', 'St. Louis', 'Tampa', 'Orlando', 'Charlotte',
+        'San Antonio', 'Tucson', 'Boulder', 'Buffalo', 'San Jose', 'Spokane'
+      ],
+      note: 'Use POST /api/admin/scraping/tangomango to scrape all US cities'
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to get cities' });
+  }
+});
+
 router.post('/admin/scraping/promote-events', authenticateToken, async (req: AuthRequest, res) => {
   try {
     const userId = req.user?.id;

@@ -272,6 +272,16 @@ export class ScrapingOrchestrator {
         console.error('[Agent #115] TangoFestivals scraper failed:', err);
       }
 
+      // Run TangoMango Scraper (US Cities)
+      try {
+        const { tangoMangoScraper } = await import('./TangoMangoScraper');
+        const tangoMangoEvents = await tangoMangoScraper.scrapeAllCities();
+        totalEvents += tangoMangoEvents;
+        console.log(`[Agent #115] TangoMango (US): ${tangoMangoEvents} events`);
+      } catch (err) {
+        console.error('[Agent #115] TangoMango scraper failed:', err);
+      }
+
       console.log(`[Agent #115] 🌟 Priority scrapers complete: ${totalEvents} total events`);
     } catch (error) {
       console.error('[Agent #115] Priority scrapers failed:', error);
