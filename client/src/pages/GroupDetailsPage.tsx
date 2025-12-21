@@ -1374,12 +1374,12 @@ function GroupHubTab({ groupCity, groupCountry, group }: { groupCity?: string | 
             {(activeLayer === 'all' || activeLayer === 'events') && (
               <div>
                 <label className="text-sm font-medium block mb-2">Event Type</label>
-                <Select value={eventTypeFilter} onValueChange={setEventTypeFilter}>
+                <Select value={eventTypeFilter || 'all'} onValueChange={(val) => setEventTypeFilter(val === 'all' ? '' : val)}>
                   <SelectTrigger data-testid="select-event-type">
                     <SelectValue placeholder="All Types" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Types</SelectItem>
+                    <SelectItem value="all">All Types</SelectItem>
                     <SelectItem value="milonga">Milonga</SelectItem>
                     <SelectItem value="practica">Practica</SelectItem>
                     <SelectItem value="class">Class</SelectItem>
