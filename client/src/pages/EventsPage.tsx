@@ -227,23 +227,6 @@ function EventCard({ event, index = 0 }: { event: any; index?: number }) {
               </div>
             </div>
           )}
-          
-          {eventData.sourceUrl && eventData.sourceUrl !== 'unknown' && (
-            <div className="pt-2 border-t">
-              <a 
-                href={eventData.sourceUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary"
-                data-testid={`link-event-source-${eventData.id}`}
-              >
-                <ExternalLink className="h-3 w-3" />
-                {eventData.sourceName && eventData.sourceName !== 'Static Scraper' 
-                  ? `View on ${eventData.sourceName}` 
-                  : 'View Original'}
-              </a>
-            </div>
-          )}
         </CardContent>
 
         <CardFooter className="flex gap-2 pt-0 px-6 pb-6">
