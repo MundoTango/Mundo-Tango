@@ -325,6 +325,121 @@ export class CityGroupEnrichmentService {
       avgDataQuality: Math.round(avgQuality)
     };
   }
+
+  /**
+   * Find or create a city group for a given city/country
+   * MB.MD Pattern: Ensure every city with events has a corresponding group
+   */
+  async findOrCreateCityGroup(city: string, country: string): Promise<number> {
+    if (!city || city.trim() === '') {
+      throw new Error('City name is required');
+    }
+
+    const normalizedCity = city.trim();
+    const normalizedCountry = country?.trim() || '';
+
+    // Try to find existing group
+    const existingGroup = await db.query.groups.findFirst({
+      where: and(
+        eq(groups.type, 'city'),
+        or(
+          ilike(groups.city, normalizedCity),
+          ilike(groups.name, `%${normalizedCity}%`)
+        )
+      )
+    });
+
+    if (existingGroup) {
+      return existingGroup.id;
+    }
+
+    // Create new city group
+    const slug = this.generateSlug(normalizedCity);
+    const groupName = `${normalizedCity} Tango Community`;
+    const description = `Welcome to the ${normalizedCity} tango community! Connect with dancers, find events, and explore the local tango scene.`;
+
+    const [newGroup] = await db.insert(groups)
+      .values({
+        name: groupName,
+        slug,
+        description,
+        type: 'city',
+        city: normalizedCity,
+        country: normalizedCountry,
+        visibility: 'public',
+        isPrivate: false,
+        joinApproval: false,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      })
+      .returning({ id: groups.id });
+
+    console.log(`[CityGroupEnrichment] ✅ Created city group: ${groupName} (ID: ${newGroup.id})`);
+    return newGroup.id;
+  }
+
+  /**
+   * Generate URL-safe slug from city name
+   */
+  private generateSlug(city: string): string {
+    return city
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      + '-tango';
+  }
+
+  /**
+   * Backfill: Create city groups for all cities with events but no group
+   * MB.MD Pattern: Bulk data quality fix
+   */
+  async backfillMissingCityGroups(): Promise<{
+    created: number;
+    skipped: number;
+    errors: string[];
+  }> {
+    console.log('[CityGroupEnrichment] 🚀 Starting city group backfill...');
+
+    // Find all unique cities from events that don't have groups
+    const citiesWithEvents = await db.execute(sql`
+      SELECT DISTINCT e.city, e.country, COUNT(*) as event_count
+      FROM events e
+      WHERE e.city IS NOT NULL AND e.city != ''
+      AND NOT EXISTS (
+        SELECT 1 FROM groups g 
+        WHERE g.type = 'city' 
+        AND (LOWER(g.city) = LOWER(e.city) OR g.name ILIKE '%' || e.city || '%')
+      )
+      GROUP BY e.city, e.country
+      ORDER BY COUNT(*) DESC
+    `);
+
+    const results = {
+      created: 0,
+      skipped: 0,
+      errors: [] as string[]
+    };
+
+    for (const row of citiesWithEvents.rows as any[]) {
+      try {
+        await this.findOrCreateCityGroup(row.city, row.country);
+        results.created++;
+        console.log(`[CityGroupEnrichment] ✅ Created: ${row.city}, ${row.country} (${row.event_count} events)`);
+      } catch (error: any) {
+        if (error.code === '23505') {
+          // Duplicate slug - group might exist with different city name match
+          results.skipped++;
+        } else {
+          results.errors.push(`${row.city}: ${error.message}`);
+        }
+      }
+    }
+
+    console.log(`[CityGroupEnrichment] 📊 Backfill complete: ${results.created} created, ${results.skipped} skipped, ${results.errors.length} errors`);
+    return results;
+  }
 }
 
 export const cityGroupEnrichmentService = new CityGroupEnrichmentService();

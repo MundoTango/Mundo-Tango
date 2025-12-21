@@ -247,24 +247,31 @@ export class CityDataMigrationService {
 
     const createdCities: string[] = [];
 
-    for (const { city, country } of missingCities.slice(0, 50)) { // Limit to 50 at a time
+    for (const { city, country } of missingCities) { // Process all missing cities
       if (!city) continue;
 
       try {
         const eventCount = await this.getEventCount(city);
-        const slug = city.toLowerCase().replace(/\s+/g, '-');
+        const slug = city.toLowerCase()
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/^-+|-+$/g, '')
+          + '-tango';
         const coverImage = this.getCoverImage(city, slug);
         const description = this.generateDescription(city, country, eventCount);
 
         await db.insert(groups).values({
-          name: `${city} Tango`,
+          name: `${city} Tango Community`,
+          slug,
           city,
           country: country || null,
           type: 'city',
           coverImage,
           description,
-          isPublic: true,
-          creatorId: 1, // System user
+          visibility: 'public',
+          isPrivate: false,
+          joinApproval: false,
           eventCount,
           createdAt: new Date(),
           updatedAt: new Date(),
@@ -272,8 +279,12 @@ export class CityDataMigrationService {
 
         createdCities.push(city);
         console.log(`[CityMigration] ✅ Created city group: ${city}`);
-      } catch (error) {
-        console.error(`[CityMigration] ❌ Failed to create ${city}:`, error);
+      } catch (error: any) {
+        if (error.code === '23505') {
+          console.log(`[CityMigration] ⚠️ Skipping ${city} - already exists`);
+        } else {
+          console.error(`[CityMigration] ❌ Failed to create ${city}:`, error.message);
+        }
       }
     }
 
