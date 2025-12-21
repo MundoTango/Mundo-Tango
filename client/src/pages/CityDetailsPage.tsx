@@ -107,13 +107,13 @@ export default function CityDetailsPage() {
             <h2 className="text-xl font-semibold">Explore {cityName}</h2>
           </CardHeader>
           <CardContent className="flex flex-col sm:flex-row gap-4">
-            <Link href={`/events?city=${encodeURIComponent(citySlug)}`} className="flex-1">
+            <Link href={`/events?city=${encodeURIComponent(cityName)}`} className="flex-1">
               <Button className="w-full gap-2" data-testid="button-view-events">
                 <Calendar className="w-4 h-4" />
                 View Events
               </Button>
             </Link>
-            <Link href={`/housing?city=${encodeURIComponent(citySlug)}`} className="flex-1">
+            <Link href={`/housing?city=${encodeURIComponent(cityName)}`} className="flex-1">
               <Button variant="outline" className="w-full gap-2" data-testid="button-view-housing">
                 <Home className="w-4 h-4" />
                 Find Housing
