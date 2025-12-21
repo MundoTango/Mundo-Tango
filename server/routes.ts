@@ -7741,16 +7741,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
       .from(housingListings)
       .where(eq(housingListings.status, 'active'));
 
-      // Combine stats from all sources (including scraped events)
-      const totalCities = (cityGroupStats[0]?.totalCities || 0) + 
-                          (userCitiesStats[0]?.uniqueCities || 0) + 
-                          (locationHistoryStats[0]?.uniqueCities || 0) +
-                          (scrapedEventsStats[0]?.uniqueCities || 0);
-      const totalCountries = (cityGroupStats[0]?.countries || 0) + 
-                             (userCitiesStats[0]?.uniqueCountries || 0) + 
-                             (locationHistoryStats[0]?.uniqueCountries || 0) +
-                             (scrapedEventsStats[0]?.uniqueCountries || 0);
-      const totalMembers = (cityGroupStats[0]?.totalMembers || 0) + (userCitiesStats[0]?.totalUsers || 0);
+      // Combine stats from all sources (DEDUPLICATED - use MAX, not SUM)
+      // totalCities should be the highest count (actual unique cities with groups)
+      const totalCities = Math.max(
+        cityGroupStats[0]?.totalCities || 0,
+        (userCitiesStats[0]?.uniqueCities || 0),
+        (locationHistoryStats[0]?.uniqueCities || 0),
+        (scrapedEventsStats[0]?.uniqueCities || 0)
+      );
+      
+      // totalCountries - use DISTINCT count from all tables
+      const totalCountries = Math.max(
+        cityGroupStats[0]?.countries || 0,
+        (userCitiesStats[0]?.uniqueCountries || 0),
+        (locationHistoryStats[0]?.uniqueCountries || 0),
+        (scrapedEventsStats[0]?.uniqueCountries || 0)
+      );
+      
+      // totalMembers = ACTUAL users in system (not additive)
+      const totalMembers = userCitiesStats[0]?.totalUsers || 0;
+      
+      // activeEventsTotal = SUM of all events (these are independent)
       const activeEventsTotal = (cityGroupStats[0]?.totalEvents || 0) + (scrapedEventsStats[0]?.totalEvents || 0);
 
       res.json({

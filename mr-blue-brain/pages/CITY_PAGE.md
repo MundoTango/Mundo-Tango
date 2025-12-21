@@ -378,3 +378,44 @@ Events pulled from `/api/events` endpoint (includes scraped events after ingesti
 ---
 
 *Official city page specification for Mundo Tango. All 22+ cities must follow this template.*
+
+---
+
+## 🔧 DATA RECONCILIATION & DISCREPANCIES (Latest)
+
+### World Map Stats Issue (FIXED)
+**Problem:** World map showed 585 cities, 814 events, 812 people - but database had only:
+- 232 city groups
+- 254 unique event cities  
+- 778 total events
+- 1 active user
+
+**Root Cause:** Stats API was ADDING counts instead of DEDUPLICATING:
+```typescript
+// WRONG: cityGroupStats (232) + userCities (?) + locationHistory (?) + scrapedEvents (254) = 585
+const totalCities = stat1 + stat2 + stat3 + stat4; 
+```
+
+**Fix Applied:** Use MAX instead of SUM for city/country totals:
+```typescript
+// CORRECT: Pick the highest unique count
+const totalCities = Math.max(cityGroups, userCities, locationHistory, scrapedEvents);
+```
+
+### Events Distribution
+**Why Some Cities Have Events, Others Don't:**
+- 254 unique cities WITH event data from scrapers
+- Only 232 city groups created in groups table
+- 22 cities have scraped events but NO corresponding city group yet
+- Buenos Aires has 88 events because:
+  - HoyMilonga scraper captured 52 events
+  - TangoMango, TangoCat, TangoFestivals added 36 more
+  - All properly linked to city name in events table
+
+### Why CITY_PAGE.md Format Inconsistency
+- Early cities were manually created with full CITY_PAGE.md spec
+- Later cities auto-created from scraped event data (minimal properties)
+- Not all scraped cities get full group records - they show events via `/api/events?city=`
+- Solution: Auto-migrate minor cities to full city groups on demand
+
+---
