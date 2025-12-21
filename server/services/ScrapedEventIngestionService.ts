@@ -379,7 +379,7 @@ class ScrapedEventIngestionService {
 
   /**
    * Ensure a city group exists for the event's city
-   * Auto-creates the group if it doesn't exist
+   * Auto-creates the group if it doesn't exist WITH GEOCODING
    * Skips placeholder values like "Unknown", "TBA", "Various"
    */
   private async ensureCityGroup(city: string | null, country: string | null): Promise<void> {
@@ -412,7 +412,23 @@ class ScrapedEventIngestionService {
         .replace(/^-+|-+$/g, '')
         + '-tango';
 
-      // Create city group
+      // Geocode the city BEFORE creating the group
+      let latitude: string | null = null;
+      let longitude: string | null = null;
+      
+      try {
+        const { geocodingService } = await import('./GeocodingService');
+        const geocodeResult = await geocodingService.geocodeCity(city, country || undefined);
+        if (geocodeResult) {
+          latitude = String(geocodeResult.lat);
+          longitude = String(geocodeResult.lng);
+          console.log(`[Ingestion] 📍 Geocoded ${city}: (${latitude}, ${longitude})`);
+        }
+      } catch (geoError) {
+        console.warn(`[Ingestion] Geocoding failed for ${city}:`, geoError);
+      }
+
+      // Create city group WITH coordinates
       await db.insert(groups).values({
         name: `${city} Tango Community`,
         slug,
@@ -424,11 +440,13 @@ class ScrapedEventIngestionService {
         isPrivate: false,
         joinApproval: false,
         eventCount: 1,
+        latitude,
+        longitude,
         createdAt: new Date(),
         updatedAt: new Date(),
       });
 
-      console.log(`[Ingestion] 🏙️ Auto-created city group: ${city}`);
+      console.log(`[Ingestion] 🏙️ Auto-created city group: ${city} with coords: (${latitude}, ${longitude})`);
     } catch (error: any) {
       // Ignore duplicate key errors (race condition)
       if (error.code !== '23505') {

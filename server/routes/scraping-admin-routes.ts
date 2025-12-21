@@ -1,8 +1,8 @@
 import { Router } from 'express';
 import { authenticateToken, AuthRequest } from '../middleware/auth';
 import { db } from '@shared/db';
-import { users, eventScrapingSources, scrapedEvents, scrapedCommunityData, events } from '@shared/schema';
-import { eq, sql, desc, and, gte } from 'drizzle-orm';
+import { users, eventScrapingSources, scrapedEvents, scrapedCommunityData, events, groups } from '@shared/schema';
+import { eq, sql, desc, and, gte, isNull } from 'drizzle-orm';
 import { scrapingOrchestrator } from '../agents/scraping/masterOrchestrator.ts';
 import { cityGroupEnrichmentService } from '../services/scraping/CityGroupEnrichmentService.ts';
 import { deduplicator } from '../agents/scraping/deduplicator.ts';
@@ -11,6 +11,7 @@ import { hoyMilongaScraper } from '../services/scraping/HoyMilongaScraper.ts';
 import { unifiedEventScraper } from '../services/scraping/UnifiedEventScraper.ts';
 import { scrapedEventIngestionService } from '../services/ScrapedEventIngestionService.ts';
 import { venueScraper } from '../agents/scraping/VenueScraper.ts';
+import { geocodingService } from '../services/GeocodingService.ts';
 
 const router = Router();
 
@@ -1539,6 +1540,140 @@ router.post('/admin/scraped-events/ingest-all', authenticateToken, async (req: A
   } catch (error) {
     console.error('[Ingest All] Error:', error);
     res.status(500).json({ error: 'Failed to ingest events' });
+  }
+});
+
+/**
+ * POST /api/admin/geocode-all-cities - Bulk geocode all city groups with NULL coordinates
+ * Uses Nominatim with rate limiting (1 req/sec). Takes ~4 minutes for 200 cities.
+ */
+router.post('/admin/geocode-all-cities', authenticateToken, async (req: AuthRequest, res) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, userId)
+    });
+
+    if (!user || user.role !== 'super_admin') {
+      return res.status(403).json({ error: 'Forbidden: Super Admin access required' });
+    }
+
+    // Find all city groups with NULL coordinates
+    const citiesWithoutCoords = await db
+      .select({
+        id: groups.id,
+        city: groups.city,
+        country: groups.country,
+        name: groups.name
+      })
+      .from(groups)
+      .where(and(
+        eq(groups.type, 'city'),
+        isNull(groups.latitude)
+      ));
+
+    console.log(`[Geocode] Found ${citiesWithoutCoords.length} cities without coordinates`);
+
+    let geocoded = 0;
+    let failed = 0;
+    const results: { city: string; success: boolean; lat?: number; lng?: number; error?: string }[] = [];
+
+    for (const cityGroup of citiesWithoutCoords) {
+      const cityName = cityGroup.city || cityGroup.name?.replace(' Tango Community', '');
+      const country = cityGroup.country;
+
+      if (!cityName) {
+        failed++;
+        results.push({ city: cityGroup.name || 'Unknown', success: false, error: 'No city name' });
+        continue;
+      }
+
+      try {
+        const result = await geocodingService.geocodeCity(cityName, country || undefined);
+
+        if (result) {
+          // Update the city group with coordinates
+          await db.update(groups)
+            .set({
+              latitude: String(result.lat),
+              longitude: String(result.lng),
+              updatedAt: new Date()
+            })
+            .where(eq(groups.id, cityGroup.id));
+
+          geocoded++;
+          results.push({ city: cityName, success: true, lat: result.lat, lng: result.lng });
+          console.log(`[Geocode] ✓ ${cityName}, ${country} → (${result.lat}, ${result.lng})`);
+        } else {
+          failed++;
+          results.push({ city: cityName, success: false, error: 'No geocoding result' });
+          console.log(`[Geocode] ✗ ${cityName}, ${country} → No result`);
+        }
+      } catch (error: any) {
+        failed++;
+        results.push({ city: cityName, success: false, error: error.message });
+        console.error(`[Geocode] Error for ${cityName}:`, error.message);
+      }
+    }
+
+    res.json({
+      success: true,
+      message: `Geocoded ${geocoded} cities, ${failed} failed`,
+      total: citiesWithoutCoords.length,
+      geocoded,
+      failed,
+      results: results.slice(0, 50), // Return first 50 for preview
+      timestamp: new Date().toISOString()
+    });
+
+  } catch (error) {
+    console.error('[Geocode All Cities] Error:', error);
+    res.status(500).json({ error: 'Failed to geocode cities' });
+  }
+});
+
+/**
+ * GET /api/admin/city-audit - Get city groups data quality report
+ */
+router.get('/admin/city-audit', authenticateToken, async (req: AuthRequest, res) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, userId)
+    });
+
+    if (!user || user.role !== 'super_admin') {
+      return res.status(403).json({ error: 'Forbidden: Super Admin access required' });
+    }
+
+    const stats = await db.execute(sql`
+      SELECT 
+        COUNT(*) as total_city_groups,
+        SUM(CASE WHEN latitude IS NULL THEN 1 ELSE 0 END) as null_coordinates,
+        SUM(CASE WHEN latitude IS NOT NULL THEN 1 ELSE 0 END) as has_coordinates,
+        SUM(CASE WHEN description IS NULL OR description = '' THEN 1 ELSE 0 END) as missing_description,
+        SUM(CASE WHEN cover_image IS NULL OR cover_image = '' THEN 1 ELSE 0 END) as missing_cover_image
+      FROM groups 
+      WHERE type = 'city'
+    `);
+
+    res.json({
+      success: true,
+      audit: stats.rows[0],
+      timestamp: new Date().toISOString()
+    });
+
+  } catch (error) {
+    console.error('[City Audit] Error:', error);
+    res.status(500).json({ error: 'Failed to audit cities' });
   }
 });
 

@@ -88,11 +88,16 @@ Core functionalities include social features (events, groups, posts, notificatio
 - **Standardized country/city naming**: "Türkiye" → "Turkey", "İstanbul" → "Istanbul"
 - **Created Taiwan city groups**: Added Taipei, Taipei City, and Taitung (都蘭村) with correct coordinates
   - **CRITICAL FIX**: Taiwan-in-Africa issue RESOLVED - Taiwan now shows at correct 25°N 121°E coordinates
-- **Populated 242 city group coordinates**: All major tango cities (Buenos Aires, Paris, NYC, Berlin, Athens, Istanbul, etc.) now have lat/lng
+- **BULK GEOCODING COMPLETE**: All 254 city groups now have valid coordinates (0 NULL)
+  - Used Nominatim (OpenStreetMap) API with 1 req/sec rate limiting
+  - Created `scripts/geocode-all-cities.ts` for future backfills
+  - New admin endpoints: `POST /api/admin/geocode-all-cities`, `GET /api/admin/city-audit`
+  - Auto-geocoding: New cities created by ScrapedEventIngestionService.ensureCityGroup() are automatically geocoded
 - **Fixed city routing endpoint**: `/api/cities/by-slug/:slug` was looking in wrong table, now correctly queries groups table
   - Miami (`/cities/miami-tango`), Taipei (`/cities/taipei-tango`), and all 254 city groups now accessible
 - **Total city groups**: 254 (one for each tango community with events)
 - **All scraped events**: Now contain only real, verified location data - zero placeholder values
+- **City Page Spec**: See `mr-blue-brain/pages/CITY_PAGE.md` for authoritative 7-tab design spec
 
 ### Data Quality System (December 2025)
 A comprehensive data quality infrastructure for monitoring and fixing data issues:
