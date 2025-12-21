@@ -10,6 +10,29 @@ import { eq, and, isNull, ilike, or, sql } from 'drizzle-orm';
 import { extractParticipants } from './participant-extraction';
 
 const SCRAPER_BOT_USERNAME = 'scraper_bot';
+
+/**
+ * Clean HTML entities and normalize text from scraped content
+ * Handles: &nbsp; &amp; &quot; numeric entities, etc.
+ */
+function cleanHtmlEntities(text: string | null | undefined): string | null {
+  if (!text) return null;
+  
+  return text
+    // Common HTML entities
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/&amp;/gi, '&')
+    .replace(/&quot;/gi, '"')
+    .replace(/&lt;/gi, '<')
+    .replace(/&gt;/gi, '>')
+    .replace(/&apos;/gi, "'")
+    .replace(/&#(\d+);/g, (_, num) => String.fromCharCode(parseInt(num, 10)))
+    .replace(/&#x([0-9a-f]+);/gi, (_, hex) => String.fromCharCode(parseInt(hex, 16)))
+    // Fix common scraping artifacts
+    .replace(/\s+/g, ' ')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim() || null;
+}
 const SCRAPER_BOT_EMAIL = 'scraper@mundotango.app';
 
 /**
@@ -199,23 +222,26 @@ class ScrapedEventIngestionService {
 
   /**
    * Map scraped event to events table format
+   * Cleans HTML entities and normalizes text data
    */
   private mapToEvent(scraped: any, userId: number) {
     const eventType = this.normalizeEventType(scraped.eventType);
+    const cleanTitle = cleanHtmlEntities(scraped.title) || 'Untitled Event';
+    const cleanDescription = cleanHtmlEntities(scraped.description) || `${eventType} event`;
     
     return {
-      title: scraped.title,
-      slug: this.generateSlug(scraped.title, scraped.id),
-      description: scraped.description || `${eventType} event`,
+      title: cleanTitle,
+      slug: this.generateSlug(cleanTitle, scraped.id),
+      description: cleanDescription,
       eventType,
       category: this.mapCategory(eventType),
       userId,
       startDate: scraped.startDate,
       endDate: scraped.endDate || scraped.startDate,
-      location: scraped.location || 'TBA',
-      venue: scraped.location || 'TBA',
-      address: scraped.address || scraped.location || '',
-      city: this.extractCity(scraped),
+      location: cleanHtmlEntities(scraped.location) || 'TBA',
+      venue: cleanHtmlEntities(scraped.location) || 'TBA',
+      address: cleanHtmlEntities(scraped.address || scraped.location) || '',
+      city: cleanHtmlEntities(this.extractCity(scraped)) || 'Unknown',
       country: this.extractCountry(scraped),
       latitude: scraped.latitude ? String(scraped.latitude) : null,
       longitude: scraped.longitude ? String(scraped.longitude) : null,
@@ -225,14 +251,14 @@ class ScrapedEventIngestionService {
       coverImage: scraped.imageUrl || null,
       sourceUrl: scraped.sourceUrl,
       sourceName: scraped.sourceName,
-      price: scraped.price || null,
+      price: cleanHtmlEntities(scraped.price),
       isOnline: false,
       isFree: this.isPriceFree(scraped.price),
       isPaid: !this.isPriceFree(scraped.price),
-      djText: deduplicateParticipantText(scraped.djText),
-      teacherText: deduplicateParticipantText(scraped.teacherText),
-      performerText: deduplicateParticipantText(scraped.performerText),
-      organizerText: deduplicateParticipantText(scraped.organizerText)
+      djText: deduplicateParticipantText(cleanHtmlEntities(scraped.djText)),
+      teacherText: deduplicateParticipantText(cleanHtmlEntities(scraped.teacherText)),
+      performerText: deduplicateParticipantText(cleanHtmlEntities(scraped.performerText)),
+      organizerText: deduplicateParticipantText(cleanHtmlEntities(scraped.organizerText))
     };
   }
 
