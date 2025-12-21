@@ -224,6 +224,9 @@ export const CITY_COUNTRY_MAP: Record<string, string> = {
   "Istanbul": "tr",
   "Athens": "gr",
   "Tel Aviv": "il",
+  "Limassol": "cy",
+  "Málaga": "es",
+  "Malaga": "es",
   
   // North America
   "New York": "us",
@@ -231,6 +234,12 @@ export const CITY_COUNTRY_MAP: Record<string, string> = {
   "San Francisco": "us",
   "Chicago": "us",
   "Miami": "us",
+  "Boston": "us",
+  "Austin": "us",
+  "Portland": "us",
+  "San Diego": "us",
+  "Seattle": "us",
+  "Denver": "us",
   "Toronto": "ca",
   "Mexico City": "mx",
   "Cancún": "mx",
