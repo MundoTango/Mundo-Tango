@@ -2,10 +2,13 @@
  * RUN ALL SCRAPERS SCRIPT
  * MB.MD Pattern: Execute scrapers to populate events for all cities
  * 
- * Includes: HoyMilonga, TangoMango, TangoCat, TangoFestivals
+ * Includes: HoyMilonga (Playwright), TangoMango, TangoCat, TangoFestivals
+ * 
+ * IMPORTANT: HoyMilonga is a JavaScript SPA - requires Playwright scraper!
+ * The HTML/Cheerio version DOES NOT WORK because events are loaded dynamically.
  */
 
-import { hoyMilongaScraper } from '../services/scraping/HoyMilongaScraper';
+import { HoyMilongaScraper } from '../agents/scraping/HoyMilongaScraper';  // Playwright version - 30+ cities
 import { TangoMangoScraper } from '../agents/scraping/TangoMangoScraper';
 import { TangoCatScraper } from '../agents/scraping/TangoCatScraper';
 import { TangoFestivalsScraper } from '../agents/scraping/TangoFestivalsScraper';
@@ -29,11 +32,14 @@ async function main() {
     console.error('TangoMango error:', error.message);
   }
   
-  // Step 2: Run HoyMilonga scraper
-  console.log('\n[2/5] Running HoyMilonga scraper...');
+  // Step 2: Run HoyMilonga Playwright scraper (30+ cities including Buenos Aires, Berlin, Paris, Istanbul)
+  // CRITICAL: HoyMilonga is a JavaScript SPA - must use Playwright, not HTML scraper
+  console.log('\n[2/5] Running HoyMilonga Playwright scraper (30+ cities)...');
   try {
-    const hoyResult = await hoyMilongaScraper.scrapeAllCities();
-    console.log(`HoyMilonga: Found ${hoyResult.totalFound} events, stored ${hoyResult.totalStored}`);
+    const hoyMilongaScraper = new HoyMilongaScraper();
+    const sourceId = 1; // HoyMilonga source ID
+    const hoyCount = await hoyMilongaScraper.scrapeAllCities(sourceId);
+    console.log(`HoyMilonga: Scraped ${hoyCount} events from 30+ cities`);
   } catch (error: any) {
     console.error('HoyMilonga error:', error.message);
   }
