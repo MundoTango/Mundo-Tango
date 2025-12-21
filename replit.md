@@ -39,7 +39,23 @@ The AI brain is structured into a modular `/mr-blue-brain/` folder system, encom
 A multi-stage scraping architecture coordinated by a Master Orchestrator. It includes Priority Scrapers (HoyMilonga, TangoCat, TangoFestivalsScraper) and an AI-powered UnifiedEventScraper for generic websites. The system scrapes aggregator sites, then follows links to actual event pages for detailed information. Key features include AI-powered extraction, 14 event type classifications, source transparency, city matching, and auto-city creation for new event locations. Scrapers can extract team member names in multiple languages from subpages. Scraped events are stored in a `scraped_events` table and ingested into the main events table by `ScrapedEventIngestionService`. An Admin UI at `/admin/scraping` provides real-time scraper status and a moderation queue.
 
 ### Platform Features
-Core functionalities include social features (events, groups, posts, notifications, media management, live streaming, marketplaces, reviews) and business features (Talent Match AI, LIFE CEO AI, Multi-AI Orchestration, Automated Scraping, Admin Dashboard, Stripe Payments, BullMQ Workers). Recent enhancements include an Event Series System, redesigned City Groups Events Tab, RSS Feed Scraping, Profile Enrichment Service, OpenStreetMap Geocoding, Unified Messaging Inbox, and a Faceless Content System. The Talent Match AI system integrates volunteer onboarding, resume analysis, AI interviews, and task assignment, with an International Payment System supporting 30 currencies and 6 regions. All 254 city groups have valid coordinates, auto-geocoding for new cities, and the city pages are publicly accessible. A comprehensive Data Quality System is in place for reports, migrations, and profile linking.
+Core functionalities include social features (events, groups, posts, notifications, media management, live streaming, marketplaces, reviews) and business features (Talent Match AI, LIFE CEO AI, Multi-AI Orchestration, Automated Scraping, Admin Dashboard, Stripe Payments, BullMQ Workers). Recent enhancements include an Event Series System, redesigned City Groups Events Tab, RSS Feed Scraping, Profile Enrichment Service, OpenStreetMap Geocoding, Unified Messaging Inbox, and a Faceless Content System. The Talent Match AI system integrates volunteer onboarding, resume analysis, AI interviews, and task assignment, with an International Payment System supporting 30 currencies and 6 regions. All 232 city groups have valid coordinates, auto-geocoding for new cities, and the city pages are publicly accessible. A comprehensive Data Quality System is in place for reports, migrations, and profile linking.
+
+### Data Architecture & Statistics
+**Current Database State:**
+- 232 city groups in `groups` table (full CITY_PAGE.md spec)
+- 254 unique cities with event data (from scrapers)
+- 811 total events, 820 active users, 62 countries
+
+**World Map Stats (FIXED Dec 2024):**
+- Previous bug: Stats API was ADDING counts (232 + userCities + locationHistory + 254 scraped = 585 cities ❌)
+- Fix: Use MAX for deduplication, now shows 248 cities correctly
+- City name matching: Events stored with city names ("Buenos Aires"), groups have full names ("Buenos Aires Tango Community") - CityDetailsPage extracts city name properly
+
+**Why Some Cities Lack Events:**
+- 22 cities have scraped events but NO city group yet (accessible via `/api/events?city=X`)
+- Early cities manually created with full spec; later cities auto-created with minimal properties
+- Events display correctly when city name matching is applied
 
 ### Testing & Production
 The platform utilizes End-to-End (E2E) tests with Playwright, automated unit test coverage, and visual regression testing. A Volunteer Testing System provides 148 scenarios with automated issue routing. Production deployments are managed via GitHub Actions for CI/CD, monitored by Prometheus/Grafana with Sentry, and deployed through Replit Publishing. Redis is used for caching, and PostgreSQL (Neon) with Drizzle ORM for the database.
