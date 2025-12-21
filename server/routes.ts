@@ -430,6 +430,37 @@ async function uploadMediaToCloudinary(
   }
 }
 
+// Simple in-memory cache for expensive community endpoints
+interface CacheEntry<T> {
+  data: T;
+  timestamp: number;
+}
+
+const communityCache = {
+  locations: null as CacheEntry<any[]> | null,
+  stats: null as CacheEntry<any> | null,
+  TTL: 5 * 60 * 1000, // 5 minutes
+  
+  get<T>(key: 'locations' | 'stats'): T | null {
+    const entry = this[key] as CacheEntry<T> | null;
+    if (!entry) return null;
+    if (Date.now() - entry.timestamp > this.TTL) {
+      this[key] = null;
+      return null;
+    }
+    return entry.data;
+  },
+  
+  set<T>(key: 'locations' | 'stats', data: T): void {
+    (this as any)[key] = { data, timestamp: Date.now() };
+  },
+  
+  invalidate(): void {
+    this.locations = null;
+    this.stats = null;
+  }
+};
+
 export async function registerRoutes(app: Express): Promise<Server> {
   // MB.MD Metrics endpoint (must be before CSRF middleware for Prometheus scraping)
   const { mbmdMetrics } = await import("./services/mb-md-metrics");
@@ -7273,106 +7304,148 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // 1. GET /api/community/locations - Get all community locations with stats (PUBLIC)
   // MB.MD v9.8: City groups as primary data source + user profile cities
+  // OPTIMIZED: Uses caching and parallel queries for performance
   app.get("/api/community/locations", async (req: Request, res: Response) => {
     try {
-      // PRIMARY SOURCE: Get all city groups from groups table
-      const cityGroups = await db.select({
-        id: groups.id,
-        name: groups.name,
-        slug: groups.slug,
-        city: groups.city,
-        country: groups.country,
-        latitude: groups.latitude,
-        longitude: groups.longitude,
-        memberCount: groups.memberCount,
-        eventCount: groups.eventCount,
-        coverImage: groups.coverImage,
-      })
-      .from(groups)
-      .where(and(
-        eq(groups.type, 'city'),
-        isNotNull(groups.city)
-      ));
+      // Check cache first (5 minute TTL)
+      const cached = communityCache.get<any[]>('locations');
+      if (cached) {
+        return res.json(cached);
+      }
 
-      // SECONDARY SOURCE: Get unique cities from user profiles (current city)
-      const userCities = await db.select({
-        city: users.city,
-        country: users.country,
-        memberCount: sql<number>`count(*)::int`,
-      })
-      .from(users)
-      .where(and(
-        isNotNull(users.city),
-        eq(users.isActive, true),
-        eq(users.suspended, false)
-      ))
-      .groupBy(users.city, users.country);
-
-      // SECONDARY SOURCE: Get unique cities from location history (previous tango cities)
-      const locationHistoryCities = await db.select({
-        city: userLocationHistory.city,
-        country: userLocationHistory.country,
-        latitude: userLocationHistory.latitude,
-        longitude: userLocationHistory.longitude,
-        memberCount: sql<number>`count(distinct ${userLocationHistory.userId})::int`,
-      })
-      .from(userLocationHistory)
-      .where(isNotNull(userLocationHistory.city))
-      .groupBy(
-        userLocationHistory.city, 
-        userLocationHistory.country,
-        userLocationHistory.latitude,
-        userLocationHistory.longitude
-      );
-
-      // ENRICHMENT: Get event counts by city (main events + approved scraped events)
-      const eventsByCity = await db.select({
-        city: events.city,
-        country: events.country,
-        eventCount: sql<number>`count(*)::int`,
-      })
-      .from(events)
-      .where(and(
-        isNotNull(events.city),
-        eq(events.status, 'published')
-      ))
-      .groupBy(events.city, events.country);
-
-      // Also count approved scraped events
-      const scrapedEventsByCity = await db.select({
-        city: scrapedEvents.city,
-        country: scrapedEvents.country,
-        eventCount: sql<number>`count(*)::int`,
-      })
-      .from(scrapedEvents)
-      .where(and(
-        isNotNull(scrapedEvents.city),
-        eq(scrapedEvents.status, 'approved')
-      ))
-      .groupBy(scrapedEvents.city, scrapedEvents.country);
-
-      // ENRICHMENT: Get venue counts by city
-      const venuesByCity = await db.select({
-        city: venues.city,
-        country: venues.country,
-        venueCount: sql<number>`count(*)::int`,
-      })
-      .from(venues)
-      .where(isNotNull(venues.city))
-      .groupBy(venues.city, venues.country);
-
-      // ENRICHMENT: Get housing counts by city
-      const housingByCity = await db.select({
-        city: housingListings.city,
-        country: housingListings.country,
-        housingCount: sql<number>`count(*)::int`,
-      })
-      .from(housingListings)
-      .where(and(
-        isNotNull(housingListings.city),
-        eq(housingListings.status, 'active')
-      ))
-      .groupBy(housingListings.city, housingListings.country);
+      // Run ALL queries in parallel for speed
+      const [
+        cityGroups,
+        userCities,
+        locationHistoryCities,
+        eventsByCity,
+        scrapedEventsByCity,
+        venuesByCity,
+        housingByCity,
+        scrapedEventCitiesData
+      ] = await Promise.all([
+        // PRIMARY SOURCE: Get all city groups from groups table
+        db.select({
+          id: groups.id,
+          name: groups.name,
+          slug: groups.slug,
+          city: groups.city,
+          country: groups.country,
+          latitude: groups.latitude,
+          longitude: groups.longitude,
+          memberCount: groups.memberCount,
+          eventCount: groups.eventCount,
+          coverImage: groups.coverImage,
+        })
+        .from(groups)
+        .where(and(
+          eq(groups.type, 'city'),
+          isNotNull(groups.city)
+        )),
+        
+        // SECONDARY SOURCE: Get unique cities from user profiles (current city)
+        db.select({
+          city: users.city,
+          country: users.country,
+          memberCount: sql<number>`count(*)::int`,
+        })
+        .from(users)
+        .where(and(
+          isNotNull(users.city),
+          eq(users.isActive, true),
+          eq(users.suspended, false)
+        ))
+        .groupBy(users.city, users.country),
+        
+        // SECONDARY SOURCE: Get unique cities from location history
+        db.select({
+          city: userLocationHistory.city,
+          country: userLocationHistory.country,
+          latitude: userLocationHistory.latitude,
+          longitude: userLocationHistory.longitude,
+          memberCount: sql<number>`count(distinct ${userLocationHistory.userId})::int`,
+        })
+        .from(userLocationHistory)
+        .where(isNotNull(userLocationHistory.city))
+        .groupBy(
+          userLocationHistory.city, 
+          userLocationHistory.country,
+          userLocationHistory.latitude,
+          userLocationHistory.longitude
+        ),
+        
+        // ENRICHMENT: Get event counts by city
+        db.select({
+          city: events.city,
+          country: events.country,
+          eventCount: sql<number>`count(*)::int`,
+        })
+        .from(events)
+        .where(and(
+          isNotNull(events.city),
+          eq(events.status, 'published')
+        ))
+        .groupBy(events.city, events.country),
+        
+        // Also count approved scraped events
+        db.select({
+          city: scrapedEvents.city,
+          country: scrapedEvents.country,
+          eventCount: sql<number>`count(*)::int`,
+        })
+        .from(scrapedEvents)
+        .where(and(
+          isNotNull(scrapedEvents.city),
+          eq(scrapedEvents.status, 'approved')
+        ))
+        .groupBy(scrapedEvents.city, scrapedEvents.country),
+        
+        // ENRICHMENT: Get venue counts by city
+        db.select({
+          city: venues.city,
+          country: venues.country,
+          venueCount: sql<number>`count(*)::int`,
+        })
+        .from(venues)
+        .where(isNotNull(venues.city))
+        .groupBy(venues.city, venues.country),
+        
+        // ENRICHMENT: Get housing counts by city
+        db.select({
+          city: housingListings.city,
+          country: housingListings.country,
+          housingCount: sql<number>`count(*)::int`,
+        })
+        .from(housingListings)
+        .where(and(
+          isNotNull(housingListings.city),
+          eq(housingListings.status, 'active')
+        ))
+        .groupBy(housingListings.city, housingListings.country),
+        
+        // TERTIARY SOURCE: Cities from scraped events
+        db.select({
+          city: scrapedEvents.city,
+          country: scrapedEvents.country,
+          latitude: scrapedEvents.latitude,
+          longitude: scrapedEvents.longitude,
+          eventCount: sql<number>`count(*)::int`,
+        })
+        .from(scrapedEvents)
+        .where(and(
+          isNotNull(scrapedEvents.city),
+          or(
+            eq(scrapedEvents.status, 'approved'),
+            eq(scrapedEvents.status, 'ingested')
+          )
+        ))
+        .groupBy(
+          scrapedEvents.city, 
+          scrapedEvents.country,
+          scrapedEvents.latitude,
+          scrapedEvents.longitude
+        )
+      ]);
 
       // City coordinates lookup for common cities
       const cityCoords: Record<string, { lat: number; lng: number }> = {
@@ -7601,29 +7674,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      // TERTIARY SOURCE: Add cities from approved scraped events that aren't already in the list
-      // Query distinct cities from scraped events with coordinates
-      const scrapedEventCities = await db.select({
-        city: scrapedEvents.city,
-        country: scrapedEvents.country,
-        latitude: scrapedEvents.latitude,
-        longitude: scrapedEvents.longitude,
-        eventCount: sql<number>`count(*)::int`,
-      })
-      .from(scrapedEvents)
-      .where(and(
-        isNotNull(scrapedEvents.city),
-        or(
-          eq(scrapedEvents.status, 'approved'),
-          eq(scrapedEvents.status, 'ingested')
-        )
-      ))
-      .groupBy(
-        scrapedEvents.city, 
-        scrapedEvents.country,
-        scrapedEvents.latitude,
-        scrapedEvents.longitude
-      );
+      // TERTIARY SOURCE: Add cities from approved scraped events (already fetched in parallel)
+      const scrapedEventCities = scrapedEventCitiesData;
 
       // Normalize country names (Turkey/Türkiye -> Turkey, İstanbul -> Istanbul)
       const normalizeCountry = (country: string) => {
@@ -7673,6 +7725,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         !(loc.coordinates.lat === 0 && loc.coordinates.lng === 0)
       );
       
+      // Cache the result for 5 minutes
+      communityCache.set('locations', validLocations);
+      
       res.json(validLocations);
     } catch (error) {
       console.error("Get community locations error:", error);
@@ -7681,65 +7736,81 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // 2. GET /api/community/stats - Get global community statistics (PUBLIC)
+  // OPTIMIZED: Uses caching and parallel queries for performance
   app.get("/api/community/stats", async (req: Request, res: Response) => {
     try {
+      // Check cache first (5 minute TTL)
+      const cached = communityCache.get<any>('stats');
+      if (cached) {
+        return res.json(cached);
+      }
+
       // MB.MD v9.8.1: Calculate stats from all location sources (city groups + user profiles + location history)
-      
-      // Get stats from city groups (primary source)
-      const cityGroupStats = await db.select({
-        totalCities: sql<number>`count(*)::int`,
-        countries: sql<number>`count(distinct ${groups.country})::int`,
-        totalMembers: sql<number>`sum(${groups.memberCount})::int`,
-        totalEvents: sql<number>`sum(${groups.eventCount})::int`,
-      })
-      .from(groups)
-      .where(eq(groups.type, 'city'));
-
-      // Get user profile cities (users with non-null city)
-      const userCitiesStats = await db.select({
-        uniqueCities: sql<number>`count(distinct ${users.city})::int`,
-        uniqueCountries: sql<number>`count(distinct ${users.country})::int`,
-        totalUsers: sql<number>`count(distinct ${users.id})::int`,
-      })
-      .from(users)
-      .where(and(eq(users.isActive, true), isNotNull(users.city)));
-
-      // Get location history cities
-      const locationHistoryStats = await db.select({
-        uniqueCities: sql<number>`count(distinct ${userLocationHistory.city})::int`,
-        uniqueCountries: sql<number>`count(distinct ${userLocationHistory.country})::int`,
-      })
-      .from(userLocationHistory);
-
-      // Get scraped event cities (approved or ingested)
-      const scrapedEventsStats = await db.select({
-        uniqueCities: sql<number>`count(distinct ${scrapedEvents.city})::int`,
-        uniqueCountries: sql<number>`count(distinct ${scrapedEvents.country})::int`,
-        totalEvents: sql<number>`count(*)::int`,
-      })
-      .from(scrapedEvents)
-      .where(
-        and(
-          isNotNull(scrapedEvents.city),
-          or(
-            eq(scrapedEvents.status, 'approved'),
-            eq(scrapedEvents.status, 'ingested')
+      // Run ALL queries in parallel for speed
+      const [
+        cityGroupStats,
+        userCitiesStats,
+        locationHistoryStats,
+        scrapedEventsStats,
+        venueStats,
+        housingStats
+      ] = await Promise.all([
+        // Get stats from city groups (primary source)
+        db.select({
+          totalCities: sql<number>`count(*)::int`,
+          countries: sql<number>`count(distinct ${groups.country})::int`,
+          totalMembers: sql<number>`sum(${groups.memberCount})::int`,
+          totalEvents: sql<number>`sum(${groups.eventCount})::int`,
+        })
+        .from(groups)
+        .where(eq(groups.type, 'city')),
+        
+        // Get user profile cities (users with non-null city)
+        db.select({
+          uniqueCities: sql<number>`count(distinct ${users.city})::int`,
+          uniqueCountries: sql<number>`count(distinct ${users.country})::int`,
+          totalUsers: sql<number>`count(distinct ${users.id})::int`,
+        })
+        .from(users)
+        .where(and(eq(users.isActive, true), isNotNull(users.city))),
+        
+        // Get location history cities
+        db.select({
+          uniqueCities: sql<number>`count(distinct ${userLocationHistory.city})::int`,
+          uniqueCountries: sql<number>`count(distinct ${userLocationHistory.country})::int`,
+        })
+        .from(userLocationHistory),
+        
+        // Get scraped event cities (approved or ingested)
+        db.select({
+          uniqueCities: sql<number>`count(distinct ${scrapedEvents.city})::int`,
+          uniqueCountries: sql<number>`count(distinct ${scrapedEvents.country})::int`,
+          totalEvents: sql<number>`count(*)::int`,
+        })
+        .from(scrapedEvents)
+        .where(
+          and(
+            isNotNull(scrapedEvents.city),
+            or(
+              eq(scrapedEvents.status, 'approved'),
+              eq(scrapedEvents.status, 'ingested')
+            )
           )
-        )
-      );
-
-      // Get venue recommendations
-      const venueStats = await db.select({
-        totalVenues: sql<number>`count(*)::int`,
-      })
-      .from(venues);
-
-      // Get housing listings
-      const housingStats = await db.select({
-        totalHousing: sql<number>`count(*)::int`,
-      })
-      .from(housingListings)
-      .where(eq(housingListings.status, 'active'));
+        ),
+        
+        // Get venue recommendations
+        db.select({
+          totalVenues: sql<number>`count(*)::int`,
+        })
+        .from(venues),
+        
+        // Get housing listings
+        db.select({
+          totalHousing: sql<number>`count(*)::int`,
+        })
+        .from(housingListings)
+        .where(eq(housingListings.status, 'active'))
+      ]);
 
       // Combine stats from all sources (DEDUPLICATED - use MAX, not SUM)
       // totalCities should be the highest count (actual unique cities with groups)
@@ -7764,7 +7835,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // activeEventsTotal = SUM of all events (these are independent)
       const activeEventsTotal = (cityGroupStats[0]?.totalEvents || 0) + (scrapedEventsStats[0]?.totalEvents || 0);
 
-      res.json({
+      const stats = {
         totalCities,
         countries: totalCountries,
         totalMembers,
@@ -7772,7 +7843,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         totalVenues: venueStats[0]?.totalVenues || 0,
         totalRecommendations: venueStats[0]?.totalVenues || 0,
         totalHousing: housingStats[0]?.totalHousing || 0
-      });
+      };
+      
+      // Cache the result for 5 minutes
+      communityCache.set('stats', stats);
+      
+      res.json(stats);
     } catch (error) {
       console.error("Get community stats error:", error);
       res.status(500).json({ message: "Failed to fetch community stats" });
