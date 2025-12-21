@@ -108,7 +108,9 @@ export class PostingPermissionService {
     }
     
     // Get role-based permissions
-    const groupRole = (memberRecord.role as GroupRole) || GROUP_ROLES.FOLLOWER;
+    // NOTE: Active members with NULL role should default to MEMBER (can post),
+    // not FOLLOWER (cannot post). This handles legacy data where role was not set.
+    const groupRole = (memberRecord.role as GroupRole) || GROUP_ROLES.MEMBER;
     const permissions = getDefaultPermissions(groupRole);
     
     // Map role to level for comparison
