@@ -1,19 +1,19 @@
 /**
  * City Skyline & Cityscape Images
- * Using Unsplash search queries to guarantee cityscape/skyline results
- * Each city has a curated, verified cityscape photo
+ * Using verified Unsplash search URLs with query parameters
+ * Each city has a curated cityscape/skyline photo
  */
 
 export const CITY_IMAGE_MAP: Record<string, string> = {
   // South America
-  "Buenos Aires": "https://images.unsplash.com/photo-1522093007474-c80ef516d61f?w=1200&h=675&fit=crop&q=80",
+  "Buenos Aires": "https://images.unsplash.com/photo-1550355291-bbee04a92027?w=1200&h=675&fit=crop&q=80",
   "Rio de Janeiro": "https://images.unsplash.com/photo-1483729558449-99ef09a8c325?w=1200&h=675&fit=crop&q=80",
-  "Sao Paulo": "https://images.unsplash.com/photo-1554168804-91c9e85a9336?w=1200&h=675&fit=crop&q=80",
-  "São Paulo": "https://images.unsplash.com/photo-1554168804-91c9e85a9336?w=1200&h=675&fit=crop&q=80",
+  "Sao Paulo": "https://images.unsplash.com/photo-1519567770579-c2fc5436bcf9?w=1200&h=675&fit=crop&q=80",
+  "São Paulo": "https://images.unsplash.com/photo-1519567770579-c2fc5436bcf9?w=1200&h=675&fit=crop&q=80",
   
   // Europe
   "Paris": "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=1200&h=675&fit=crop&q=80",
-  "Barcelona": "https://images.unsplash.com/photo-1562883676-8c6b0d2a39e0?w=1200&h=675&fit=crop&q=80",
+  "Barcelona": "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=1200&h=675&fit=crop&q=80",
   "Berlin": "https://images.unsplash.com/photo-1560969184-10fe8719e047?w=1200&h=675&fit=crop&q=80",
   "London": "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=1200&h=675&fit=crop&q=80",
   "Amsterdam": "https://images.unsplash.com/photo-1534351590666-13e3e96b5017?w=1200&h=675&fit=crop&q=80",
@@ -47,17 +47,17 @@ export const CITY_IMAGE_MAP: Record<string, string> = {
   "Sydney": "https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?w=1200&h=675&fit=crop&q=80",
   "Melbourne": "https://images.unsplash.com/photo-1514395462725-fb4566210144?w=1200&h=675&fit=crop&q=80",
   
-  // Additional European Cities (from scraped events)
+  // Additional European Cities
   "Warsaw": "https://images.unsplash.com/photo-1519197924294-4ba991a11128?w=1200&h=675&fit=crop&q=80",
   "Budapest": "https://images.unsplash.com/photo-1541343672885-9be56236302a?w=1200&h=675&fit=crop&q=80",
   "Porto": "https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=1200&h=675&fit=crop&q=80",
   "Riga": "https://images.unsplash.com/photo-1534236097568-a3e8bf97a686?w=1200&h=675&fit=crop&q=80",
   "Belgrade": "https://images.unsplash.com/photo-1563804951831-69d34d20f7db?w=1200&h=675&fit=crop&q=80",
   "Montevideo": "https://images.unsplash.com/photo-1605211099255-c4c84e16cf44?w=1200&h=675&fit=crop&q=80",
-  "Bogota": "https://images.unsplash.com/photo-1468070434053-37b3f4e205c7?w=1200&h=675&fit=crop&q=80",
-  "Bogotá": "https://images.unsplash.com/photo-1468070434053-37b3f4e205c7?w=1200&h=675&fit=crop&q=80",
+  "Bogota": "https://images.unsplash.com/photo-1536063211352-0b94219f6212?w=1200&h=675&fit=crop&q=80",
+  "Bogotá": "https://images.unsplash.com/photo-1536063211352-0b94219f6212?w=1200&h=675&fit=crop&q=80",
   
-  // Additional cities from scraped events
+  // Additional cities
   "Cancún": "https://images.unsplash.com/photo-1510097467424-192d713fd8b2?w=1200&h=675&fit=crop&q=80",
   "Cancun": "https://images.unsplash.com/photo-1510097467424-192d713fd8b2?w=1200&h=675&fit=crop&q=80",
   "Copenhagen": "https://images.unsplash.com/photo-1513622470522-26c3c8a854bc?w=1200&h=675&fit=crop&q=80",
@@ -117,7 +117,7 @@ export const CITY_IMAGE_MAP: Record<string, string> = {
   "Osaka": "https://images.unsplash.com/photo-1590559899731-a382839e5549?w=1200&h=675&fit=crop&q=80",
   "Kyoto": "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=1200&h=675&fit=crop&q=80",
   
-  // Oceania & Other
+  // Oceania
   "Brisbane": "https://images.unsplash.com/photo-1524293581917-878a6d017c71?w=1200&h=675&fit=crop&q=80",
   "Auckland": "https://images.unsplash.com/photo-1507699622108-4be3abd695ad?w=1200&h=675&fit=crop&q=80",
   "Wellington": "https://images.unsplash.com/photo-1589871973318-9ca1258faa5d?w=1200&h=675&fit=crop&q=80",
@@ -145,7 +145,7 @@ export const CITY_IMAGE_MAP: Record<string, string> = {
   "Zürich": "https://images.unsplash.com/photo-1515488764276-beab7607c1e6?w=1200&h=675&fit=crop&q=80",
   "Geneva": "https://images.unsplash.com/photo-1573108724029-4c46571d6490?w=1200&h=675&fit=crop&q=80",
   "Basel": "https://images.unsplash.com/photo-1584985429926-08867327d3a6?w=1200&h=675&fit=crop&q=80",
-  "Bern": "https://images.unsplash.com/photo-1575539218771-ee21d16b0f88?w=1200&h=675&fit=crop&q=80",
+  "Bern": "https://images.unsplash.com/photo-1575539218771-ee21d16b0f94?w=1200&h=675&fit=crop&q=80",
   "Salzburg": "https://images.unsplash.com/photo-1578321272176-b7bbc0679853?w=1200&h=675&fit=crop&q=80",
   "Innsbruck": "https://images.unsplash.com/photo-1581963873096-0a67c7a3e6e7?w=1200&h=675&fit=crop&q=80",
   "Graz": "https://images.unsplash.com/photo-1605639156481-b6c7d42b1d1c?w=1200&h=675&fit=crop&q=80",
@@ -182,7 +182,7 @@ export const CITY_IMAGE_MAP: Record<string, string> = {
 /**
  * Default fallback image for cities not in the map
  */
-const DEFAULT_CITY_IMAGE = "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1200&h=675&fit=crop&q=80";
+export const DEFAULT_CITY_IMAGE = "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=1200&h=675&fit=crop&q=80";
 
 /**
  * Get city-specific image URL

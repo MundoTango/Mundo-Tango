@@ -1,7 +1,8 @@
 import { Link } from "wouter";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Users, Calendar, Sparkles, Home, ChevronRight } from "lucide-react";
-import { getCityImageUrl } from "@/lib/cityImageMap";
+import { Users, Calendar, Sparkles, Home, ChevronRight, MapPin } from "lucide-react";
+import { getCityImageUrl, DEFAULT_CITY_IMAGE } from "@/lib/cityImageMap";
 import { toCitySlug } from "@/lib/utils";
 
 interface CityPopupCardProps {
@@ -25,14 +26,31 @@ export function CityPopupCard({
   housingCount,
   description,
 }: CityPopupCardProps) {
+  const [imgSrc, setImgSrc] = useState(getCityImageUrl(city));
+  const [imgError, setImgError] = useState(false);
+
+  const handleImageError = () => {
+    if (!imgError) {
+      setImgError(true);
+      setImgSrc(DEFAULT_CITY_IMAGE);
+    }
+  };
+
   return (
     <div className="w-[360px] max-w-[360px] overflow-hidden rounded-lg bg-card flex flex-col" data-testid={`popup-city-card-${city}`} style={{ maxWidth: '360px', width: '360px' }}>
-      <div className="relative aspect-[16/9] overflow-hidden">
-        <img
-          src={getCityImageUrl(city)}
-          alt={`${city}, ${country}`}
-          className="w-full h-full object-cover"
-        />
+      <div className="relative aspect-[16/9] overflow-hidden bg-muted">
+        {imgError && imgSrc === DEFAULT_CITY_IMAGE ? (
+          <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-primary/20 to-primary/40">
+            <MapPin className="w-16 h-16 text-primary/60" />
+          </div>
+        ) : (
+          <img
+            src={imgSrc}
+            alt={`${city}, ${country}`}
+            className="w-full h-full object-cover"
+            onError={handleImageError}
+          />
+        )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
         
         <div className="absolute bottom-0 left-0 right-0 p-5 text-white">
