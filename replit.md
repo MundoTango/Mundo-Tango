@@ -95,6 +95,10 @@ Core functionalities include social features (events, groups, posts, notificatio
   - Auto-geocoding: New cities created by ScrapedEventIngestionService.ensureCityGroup() are automatically geocoded
 - **Fixed city routing endpoint**: `/api/cities/by-slug/:slug` was looking in wrong table, now correctly queries groups table
   - Miami (`/cities/miami-tango`), Taipei (`/cities/taipei-tango`), and all 254 city groups now accessible
+- **Fixed city API eventCount**: Drizzle ORM subquery interpolation issue - now uses separate Promise.all() queries
+  - Drizzle's `${table}` syntax doesn't work in SQL subqueries; use separate count queries instead
+  - All cities now correctly show event counts (Buenos Aires: 231, Athens: 37, Berlin: 34)
+- **Fixed property mapping**: Changed snake_case to camelCase (`group.cover_image` → `group.coverImage`) to match Drizzle ORM
 - **Total city groups**: 254 (one for each tango community with events)
 - **All scraped events**: Now contain only real, verified location data - zero placeholder values
 - **City Page Spec**: See `mr-blue-brain/pages/CITY_PAGE.md` for authoritative 7-tab design spec

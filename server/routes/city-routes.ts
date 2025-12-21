@@ -1,6 +1,6 @@
 import { Router, type Response, type Request } from "express";
 import { db } from "../storage";
-import { groups, groupMembers, cities, cityMembers } from "@shared/schema";
+import { groups, groupMembers, cities, cityMembers, events } from "@shared/schema";
 import { eq, ilike, sql, or, and, desc } from "drizzle-orm";
 
 const router = Router();
@@ -391,21 +391,7 @@ router.get("/by-slug/:slug", async (req: Request, res: Response) => {
 
     // Look for city group by slug
     let groupResult = await db
-      .select({
-        group: groups,
-        memberCount: sql<number>`(
-          SELECT COUNT(*)::int 
-          FROM ${groupMembers} 
-          WHERE ${groupMembers.groupId} = ${groups.id}
-          AND ${groupMembers.status} = 'active'
-        )`.as("member_count"),
-        eventCount: sql<number>`(
-          SELECT COUNT(*)::int 
-          FROM events 
-          WHERE ${sql`events.group_id`} = ${groups.id}
-          AND status = 'published'
-        )`.as("event_count"),
-      })
+      .select()
       .from(groups)
       .where(
         and(
@@ -416,23 +402,37 @@ router.get("/by-slug/:slug", async (req: Request, res: Response) => {
       .limit(1);
 
     if (groupResult.length > 0) {
-      const result = groupResult[0];
-      const group = result.group;
-      console.log(`[CityBySlug] Found city group: ${group.name} (ID: ${group.id})`);
+      const group = groupResult[0];
+      
+      // Get counts separately for reliability
+      const [memberCountResult, eventCountResult] = await Promise.all([
+        db.select({ count: sql<number>`COUNT(*)::int` })
+          .from(groupMembers)
+          .where(and(eq(groupMembers.groupId, group.id), eq(groupMembers.status, 'active'))),
+        db.select({ count: sql<number>`COUNT(*)::int` })
+          .from(events)
+          .where(and(eq(events.groupId, group.id), eq(events.status, 'published')))
+      ]);
+      
+      const memberCount = memberCountResult[0]?.count || 0;
+      const eventCount = eventCountResult[0]?.count || 0;
+      
+      console.log(`[CityBySlug] Found city group: ${group.name} (ID: ${group.id}), events: ${eventCount}, cover: ${group.coverImage ? 'yes' : 'no'}`);
       return res.json({
         id: group.id,
         slug: group.slug,
         name: group.name,
+        city: group.city,
         country: group.country,
         description: group.description,
-        longDescription: group.long_description,
-        coverImage: group.cover_image,
-        logoImage: group.logo_image,
+        longDescription: group.longDescription,
+        coverImage: group.coverImage,
+        logoImage: group.logoImage,
         latitude: group.latitude,
         longitude: group.longitude,
-        memberCount: result.memberCount || 0,
-        eventCount: result.eventCount || 0,
-        postCount: group.post_count || 0,
+        memberCount,
+        eventCount,
+        postCount: group.postCount || 0,
         housingCount: 0,
         recommendationCount: 0,
         venueCount: 0,
@@ -454,21 +454,7 @@ router.get("/by-slug/:slug", async (req: Request, res: Response) => {
     
     // Search by normalized city name using ILIKE
     const fallbackResult = await db
-      .select({
-        group: groups,
-        memberCount: sql<number>`(
-          SELECT COUNT(*)::int 
-          FROM ${groupMembers} 
-          WHERE ${groupMembers.groupId} = ${groups.id}
-          AND ${groupMembers.status} = 'active'
-        )`.as("member_count"),
-        eventCount: sql<number>`(
-          SELECT COUNT(*)::int 
-          FROM events 
-          WHERE ${sql`events.group_id`} = ${groups.id}
-          AND status = 'published'
-        )`.as("event_count"),
-      })
+      .select()
       .from(groups)
       .where(
         and(
@@ -482,23 +468,37 @@ router.get("/by-slug/:slug", async (req: Request, res: Response) => {
       .limit(1);
 
     if (fallbackResult.length > 0) {
-      const result = fallbackResult[0];
-      const group = result.group;
-      console.log(`[CityBySlug] Found via fallback: ${group.name} (ID: ${group.id})`);
+      const group = fallbackResult[0];
+      
+      // Get counts separately for reliability
+      const [memberCountResult, eventCountResult] = await Promise.all([
+        db.select({ count: sql<number>`COUNT(*)::int` })
+          .from(groupMembers)
+          .where(and(eq(groupMembers.groupId, group.id), eq(groupMembers.status, 'active'))),
+        db.select({ count: sql<number>`COUNT(*)::int` })
+          .from(events)
+          .where(and(eq(events.groupId, group.id), eq(events.status, 'published')))
+      ]);
+      
+      const memberCount = memberCountResult[0]?.count || 0;
+      const eventCount = eventCountResult[0]?.count || 0;
+      
+      console.log(`[CityBySlug] Found via fallback: ${group.name} (ID: ${group.id}), events: ${eventCount}, cover: ${group.coverImage ? 'yes' : 'no'}`);
       return res.json({
         id: group.id,
         slug: group.slug,
         name: group.name,
+        city: group.city,
         country: group.country,
         description: group.description,
-        longDescription: group.long_description,
-        coverImage: group.cover_image,
-        logoImage: group.logo_image,
+        longDescription: group.longDescription,
+        coverImage: group.coverImage,
+        logoImage: group.logoImage,
         latitude: group.latitude,
         longitude: group.longitude,
-        memberCount: result.memberCount || 0,
-        eventCount: result.eventCount || 0,
-        postCount: group.post_count || 0,
+        memberCount,
+        eventCount,
+        postCount: group.postCount || 0,
         housingCount: 0,
         recommendationCount: 0,
         venueCount: 0,

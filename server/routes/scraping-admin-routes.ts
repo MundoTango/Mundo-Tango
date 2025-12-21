@@ -1544,6 +1544,110 @@ router.post('/admin/scraped-events/ingest-all', authenticateToken, async (req: A
 });
 
 /**
+ * POST /api/admin/scraped-events/backfill-orphans - Backfill groupId for orphan events
+ * Matches events without group_id to city groups by city/country
+ */
+router.post('/admin/scraped-events/backfill-orphans', authenticateToken, async (req: AuthRequest, res) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, userId)
+    });
+
+    if (!user || user.role !== 'super_admin') {
+      return res.status(403).json({ error: 'Forbidden: Super Admin access required' });
+    }
+
+    console.log('[Admin] 🔗 Starting orphan event backfill...');
+    const result = await scrapedEventIngestionService.backfillOrphanEvents();
+
+    res.json({
+      success: true,
+      message: 'Orphan event backfill complete',
+      ...result,
+      timestamp: new Date().toISOString()
+    });
+
+  } catch (error) {
+    console.error('[Backfill Orphans] Error:', error);
+    res.status(500).json({ error: 'Failed to backfill orphan events' });
+  }
+});
+
+/**
+ * POST /api/admin/scraped-events/sync-covers - Sync cover images from events to city groups
+ * Uses the most recent event image for groups without covers
+ */
+router.post('/admin/scraped-events/sync-covers', authenticateToken, async (req: AuthRequest, res) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, userId)
+    });
+
+    if (!user || user.role !== 'super_admin') {
+      return res.status(403).json({ error: 'Forbidden: Super Admin access required' });
+    }
+
+    console.log('[Admin] 🖼️ Starting cover image sync...');
+    const result = await scrapedEventIngestionService.syncGroupCoverImages();
+
+    res.json({
+      success: true,
+      message: 'Cover image sync complete',
+      ...result,
+      timestamp: new Date().toISOString()
+    });
+
+  } catch (error) {
+    console.error('[Sync Covers] Error:', error);
+    res.status(500).json({ error: 'Failed to sync cover images' });
+  }
+});
+
+/**
+ * POST /api/admin/scraped-events/update-counts - Update event counts for all city groups
+ */
+router.post('/admin/scraped-events/update-counts', authenticateToken, async (req: AuthRequest, res) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, userId)
+    });
+
+    if (!user || user.role !== 'super_admin') {
+      return res.status(403).json({ error: 'Forbidden: Super Admin access required' });
+    }
+
+    console.log('[Admin] 📊 Updating group event counts...');
+    const result = await scrapedEventIngestionService.updateGroupEventCounts();
+
+    res.json({
+      success: true,
+      message: 'Event counts updated',
+      ...result,
+      timestamp: new Date().toISOString()
+    });
+
+  } catch (error) {
+    console.error('[Update Counts] Error:', error);
+    res.status(500).json({ error: 'Failed to update event counts' });
+  }
+});
+
+/**
  * POST /api/admin/geocode-all-cities - Bulk geocode all city groups with NULL coordinates
  * Uses Nominatim with rate limiting (1 req/sec). Takes ~4 minutes for 200 cities.
  */

@@ -221,10 +221,73 @@ class ScrapedEventIngestionService {
   }
 
   /**
+   * Look up the city group ID by city and country
+   * Returns the matching group ID or null if no match found
+   */
+  private async resolveCityGroupId(city: string | null, country: string | null): Promise<number | null> {
+    if (!city) return null;
+    
+    // Skip placeholder city values
+    const placeholders = ['unknown', 'tba', 'various', 'online', 'virtual', 'tbd', 'n/a'];
+    if (placeholders.includes(city.toLowerCase().trim())) {
+      return null;
+    }
+
+    try {
+      // First try exact city match with type='city'
+      const [exactMatch] = await db
+        .select({ id: groups.id })
+        .from(groups)
+        .where(and(
+          eq(groups.type, 'city'),
+          ilike(groups.city, city)
+        ))
+        .limit(1);
+
+      if (exactMatch) {
+        return exactMatch.id;
+      }
+
+      // Try matching with country too for more precision
+      if (country) {
+        const [countryMatch] = await db
+          .select({ id: groups.id })
+          .from(groups)
+          .where(and(
+            eq(groups.type, 'city'),
+            ilike(groups.city, city),
+            ilike(groups.country, country)
+          ))
+          .limit(1);
+
+        if (countryMatch) {
+          return countryMatch.id;
+        }
+      }
+
+      // Try fuzzy match on group name (e.g., "Buenos Aires Tango Community")
+      const [nameMatch] = await db
+        .select({ id: groups.id })
+        .from(groups)
+        .where(and(
+          eq(groups.type, 'city'),
+          ilike(groups.name, `%${city}%`)
+        ))
+        .limit(1);
+
+      return nameMatch?.id || null;
+    } catch (error) {
+      console.warn(`[Ingestion] Failed to resolve group for ${city}:`, error);
+      return null;
+    }
+  }
+
+  /**
    * Map scraped event to events table format
    * Cleans HTML entities and normalizes text data
+   * Now accepts optional resolved groupId parameter
    */
-  private mapToEvent(scraped: any, userId: number) {
+  private mapToEvent(scraped: any, userId: number, resolvedGroupId?: number | null) {
     const eventType = this.normalizeEventType(scraped.eventType);
     const cleanTitle = cleanHtmlEntities(scraped.title) || 'Untitled Event';
     const cleanDescription = cleanHtmlEntities(scraped.description) || `${eventType} event`;
@@ -246,7 +309,7 @@ class ScrapedEventIngestionService {
       latitude: scraped.latitude ? String(scraped.latitude) : null,
       longitude: scraped.longitude ? String(scraped.longitude) : null,
       status: 'published' as const,
-      groupId: scraped.groupId,
+      groupId: resolvedGroupId ?? scraped.groupId ?? null,
       imageUrl: scraped.imageUrl || null,
       coverImage: scraped.imageUrl || null,
       sourceUrl: scraped.sourceUrl,
@@ -561,7 +624,24 @@ class ScrapedEventIngestionService {
       }
 
       const userId = await this.getScraperUserId();
-      const eventData = this.mapToEvent(scraped, userId);
+      
+      // Extract city/country from scraped event
+      const city = cleanHtmlEntities(this.extractCity(scraped));
+      const country = this.extractCountry(scraped);
+      
+      // Resolve group ID by city/country lookup (if not already set)
+      let resolvedGroupId = scraped.groupId;
+      if (!resolvedGroupId && city) {
+        // First ensure the city group exists
+        await this.ensureCityGroup(city, country);
+        // Then look up its ID
+        resolvedGroupId = await this.resolveCityGroupId(city, country);
+        if (resolvedGroupId) {
+          console.log(`[Ingestion] 🔗 Resolved ${city} → group ${resolvedGroupId}`);
+        }
+      }
+      
+      const eventData = this.mapToEvent(scraped, userId, resolvedGroupId);
 
       // Use transaction to ensure atomicity of core operations
       const result = await db.transaction(async (tx) => {
@@ -594,10 +674,7 @@ class ScrapedEventIngestionService {
         console.warn(`[Ingestion] Team member extraction failed for event ${result.eventId}, continuing anyway`);
       }
 
-      // Auto-create city group if it doesn't exist - non-critical enrichment
-      await this.ensureCityGroup(eventData.city, eventData.country);
-
-      console.log(`[Ingestion] ✅ Ingested: ${scraped.title} → events.id=${result.eventId}`);
+      console.log(`[Ingestion] ✅ Ingested: ${scraped.title} → events.id=${result.eventId}${resolvedGroupId ? ` (group ${resolvedGroupId})` : ''}`);
       return result;
     } catch (error: any) {
       if (error.code === '23505') {
@@ -647,6 +724,131 @@ class ScrapedEventIngestionService {
 
     console.log(`[Ingestion] ✅ Backfill complete: ${ingested} ingested, ${failed} skipped/failed`);
     return { ingested, failed };
+  }
+
+  /**
+   * Backfill group_id for existing orphan events in the events table
+   * Matches events without group_id to city groups by city/country
+   */
+  async backfillOrphanEvents(): Promise<{ updated: number; skipped: number }> {
+    console.log('[Ingestion] 🔄 Starting orphan event groupId backfill...');
+
+    // Find all events without a group_id that have a city
+    const orphanEvents = await db
+      .select({ 
+        id: events.id, 
+        title: events.title,
+        city: events.city, 
+        country: events.country 
+      })
+      .from(events)
+      .where(and(
+        isNull(events.groupId),
+        sql`${events.city} IS NOT NULL`,
+        sql`${events.city} != ''`
+      ));
+
+    console.log(`[Ingestion] Found ${orphanEvents.length} orphan events to process`);
+
+    let updated = 0;
+    let skipped = 0;
+
+    for (const event of orphanEvents) {
+      try {
+        // First ensure the city group exists
+        await this.ensureCityGroup(event.city, event.country);
+        
+        // Resolve the group ID
+        const groupId = await this.resolveCityGroupId(event.city, event.country);
+        
+        if (groupId) {
+          await db
+            .update(events)
+            .set({ groupId })
+            .where(eq(events.id, event.id));
+          
+          updated++;
+          if (updated % 50 === 0) {
+            console.log(`[Ingestion] Progress: ${updated} events updated...`);
+          }
+        } else {
+          skipped++;
+        }
+      } catch (err) {
+        skipped++;
+      }
+    }
+
+    console.log(`[Ingestion] ✅ Orphan backfill complete: ${updated} updated, ${skipped} skipped`);
+    return { updated, skipped };
+  }
+
+  /**
+   * Sync cover images from events to groups
+   * For groups without cover images, use the best event image from their events
+   */
+  async syncGroupCoverImages(): Promise<{ updated: number }> {
+    console.log('[Ingestion] 🔄 Syncing cover images to groups...');
+
+    // Find groups without cover images that have events with images
+    const groupsNeedingImages = await db.execute(sql`
+      SELECT DISTINCT g.id as group_id, g.name, g.city,
+        (SELECT e.cover_image 
+         FROM events e 
+         WHERE e.group_id = g.id 
+           AND e.cover_image IS NOT NULL 
+           AND e.cover_image != ''
+         ORDER BY e.start_date DESC
+         LIMIT 1
+        ) as best_image
+      FROM groups g
+      WHERE g.type = 'city'
+        AND (g.cover_image IS NULL OR g.cover_image = '')
+        AND EXISTS (
+          SELECT 1 FROM events e 
+          WHERE e.group_id = g.id 
+            AND e.cover_image IS NOT NULL 
+            AND e.cover_image != ''
+        )
+    `);
+
+    let updated = 0;
+
+    for (const row of groupsNeedingImages.rows as any[]) {
+      if (row.best_image) {
+        await db
+          .update(groups)
+          .set({ coverImage: row.best_image })
+          .where(eq(groups.id, row.group_id));
+        
+        console.log(`[Ingestion] 🖼️ Updated cover for ${row.city || row.name}`);
+        updated++;
+      }
+    }
+
+    console.log(`[Ingestion] ✅ Cover image sync complete: ${updated} groups updated`);
+    return { updated };
+  }
+
+  /**
+   * Update event counts for all city groups based on actual event data
+   */
+  async updateGroupEventCounts(): Promise<{ updated: number }> {
+    console.log('[Ingestion] 🔄 Updating group event counts...');
+
+    const result = await db.execute(sql`
+      UPDATE groups g
+      SET event_count = (
+        SELECT COUNT(*) 
+        FROM events e 
+        WHERE e.group_id = g.id 
+          AND e.start_date >= NOW()
+      )
+      WHERE g.type = 'city'
+    `);
+
+    console.log(`[Ingestion] ✅ Event counts updated for all city groups`);
+    return { updated: result.rowCount || 0 };
   }
 }
 
