@@ -523,7 +523,7 @@ export default function CityDetailsPage() {
             <TabsContent value="events" className="mt-0">
               <CityEventsTab 
                 cityId={city.id} 
-                cityName={city.name}
+                cityName={city.city}
                 legacyGroupId={city.legacyGroupId}
               />
             </TabsContent>
