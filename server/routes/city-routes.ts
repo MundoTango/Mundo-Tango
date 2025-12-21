@@ -437,4 +437,79 @@ router.get("/by-slug/:slug", async (req: Request, res: Response) => {
   }
 });
 
+/**
+ * Auto-create city group endpoint
+ * Creates a new city group when one doesn't exist
+ * All cities use GroupDetailPage template (groups of type "city")
+ */
+router.post("/auto-create", async (req: Request, res: Response) => {
+  try {
+    const { cityName, slug } = req.body;
+    
+    if (!cityName || !slug) {
+      return res.status(400).json({ error: "cityName and slug required" });
+    }
+    
+    // Look up city info from popular cities
+    const cityInfo = POPULAR_CITIES.find(c => 
+      normalizeDiacritics(c.name).toLowerCase().replace(/\s+/g, '-') === slug ||
+      c.name.toLowerCase() === cityName.toLowerCase()
+    );
+    
+    // Generate proper group slug
+    const groupSlug = `${slug}-tango-community`;
+    
+    // Check if group already exists
+    const existing = await db
+      .select()
+      .from(groups)
+      .where(eq(groups.slug, groupSlug))
+      .limit(1);
+      
+    if (existing.length > 0) {
+      return res.json({ 
+        groupId: existing[0].id,
+        message: "Group already exists"
+      });
+    }
+    
+    // Create new city group
+    const [newGroup] = await db
+      .insert(groups)
+      .values({
+        name: `${cityName} Tango Community`,
+        slug: groupSlug,
+        description: `Welcome to the ${cityName} Tango Community! Connect with dancers, find milongas, and discover the local tango scene.`,
+        city: cityName,
+        country: cityInfo?.country || '',
+        type: 'city',
+        isPrivate: false,
+        visibility: 'public',
+        allowEvents: true,
+        allowPosts: true,
+        allowDiscussions: true,
+        memberCount: 0,
+        postCount: 0,
+        eventCount: 0,
+        latitude: cityInfo?.lat?.toString(),
+        longitude: cityInfo?.lng?.toString(),
+        createdBy: 1, // System user
+      })
+      .returning();
+    
+    console.log(`[CityAutoCreate] Created city group: ${newGroup.name} (ID: ${newGroup.id})`);
+    
+    res.json({
+      groupId: newGroup.id,
+      groupName: newGroup.name,
+      city: newGroup.city,
+      country: newGroup.country,
+      message: "City group created successfully"
+    });
+  } catch (error) {
+    console.error("[CityAutoCreate] Error:", error);
+    res.status(500).json({ error: "Failed to create city group" });
+  }
+});
+
 export default router;
