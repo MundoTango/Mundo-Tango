@@ -49,25 +49,20 @@ A multi-stage scraping architecture coordinated by a Master Orchestrator. It inc
 ### Platform Features
 Core functionalities include social features (events, groups, posts, notifications, media management, live streaming, marketplaces, reviews) and business features (Talent Match AI, LIFE CEO AI, Multi-AI Orchestration, Automated Scraping, Admin Dashboard, Stripe Payments, BullMQ Workers). Recent enhancements include an Event Series System, redesigned City Groups Events Tab, RSS Feed Scraping, Profile Enrichment Service, OpenStreetMap Geocoding, Unified Messaging Inbox, and a Faceless Content System. The Talent Match AI system integrates volunteer onboarding, resume analysis, AI interviews, and task assignment, with an International Payment System supporting 30 currencies and 6 regions.
 
-**Cities as First-Class Entities (December 2025):**
-- Cities are now SEPARATE from groups - stored in `cities` table with 23 entries
-- Canonical URL pattern: `/cities/:slug` (e.g., `/cities/buenos-aires`, `/cities/rome`)
-- Cities table has: id, slug, name, country, cover_image, legacy_group_id, member counts, etc.
-- Legacy groups preserved for posts/members storage via `legacy_group_id` reference
-- CityDetailsPage has 7 tabs: Discussion (default), Events, Members, Overview, Housing, Visitors, Tips
-- Events tab has weekday filter buttons (Sun-Sat) with UTC date handling (getUTCDay())
-- Cityscape cover images (skylines, architecture - NO PEOPLE) in cityImageMap.ts
-- WorldMap, SearchPage, CityPopupCard all link to `/cities/:slug` URLs
-- cityGroupAutomation.ts creates cities in cities table (not groups)
-- Redirect pages (CitySlugRedirectPage, CityGroupRedirectPage) route to `/cities/:slug`
+**City Group Design (December 2025):**
+- Discussion tab now first/default for community engagement
+- Events tab has weekday filter tabs (Sun-Sat) for recurring milongas - displays all 226+ upcoming events
+- Weekday filter fix: Auto-switch to Past tab only happens on initial load, not when filtering by weekday
+- Weekday filter UX: Description now shows "{count} {DayName} events (try 'All Days')" when filter results in 0 events
+- Event fetch limit increased to 250 to capture all events for large cities (Buenos Aires: 231 events)
+- Events distributed: Monday (2), Wednesday (17), Thursday (31), Friday (78), Saturday (103)
+- Visitors tab has "This Week" / "All Upcoming" sub-tabs with proper display names (firstName + lastName)
+- Overview tab has interactive map with events/housing/recommendations layers
+- Group post authors show proper display names (not just usernames)
 - Mr. Blue chat hidden on marketing pages for cleaner UX
-- CSRF token fix: Token reuse across server restarts, prevents 403 errors on RSVP
-
-**Key City Files:**
-- `client/src/pages/CityDetailsPage.tsx` - Main city page with all 7 tabs
-- `client/src/lib/cityImageMap.ts` - Cityscape photo URLs for all 23 cities
-- `server/utils/cityGroupAutomation.ts` - City creation/lookup (uses cities table)
-- `server/routes/city-routes.ts` - City API endpoints (/api/cities/*)
+- `/cities/:cityName` URL pattern - publicly accessible, redirects to /groups/:id if group exists
+- `/groups/:id` now publicly viewable (auth-protected features like joining still require login)
+- CSRF token fix: Token reuse across server restarts, prevents 403 errors on RSVP and other mutations
 
 ### Testing & Production
 The platform utilizes End-to-End (E2E) tests with Playwright, automated unit test coverage, and visual regression testing. A Volunteer Testing System provides 148 scenarios with automated issue routing. Production deployments are managed via GitHub Actions for CI/CD, monitored by Prometheus/Grafana with Sentry, and deployed through Replit Publishing. Redis is used for caching, and PostgreSQL (Neon) with Drizzle ORM for the database. Deployment size optimization is achieved by excluding large directories via `.gitignore`, and the production build incorporates React.lazy() for code splitting.
