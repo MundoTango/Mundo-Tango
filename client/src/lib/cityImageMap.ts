@@ -160,6 +160,11 @@ export const CITY_IMAGE_MAP: Record<string, string> = {
 };
 
 /**
+ * Default fallback image (Buenos Aires as generic cityscape)
+ */
+export const DEFAULT_CITY_IMAGE = buenosAiresImg;
+
+/**
  * Map city names to 2-letter country codes for flag fallback
  */
 export const CITY_COUNTRY_MAP: Record<string, string> = {
