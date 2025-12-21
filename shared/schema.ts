@@ -206,6 +206,113 @@ export type InsertCityWebsite = z.infer<typeof insertCityWebsiteSchema>;
 export type CityWebsite = typeof cityWebsites.$inferSelect;
 
 // ============================================================================
+// CITIES - First-class city entities (NOT groups)
+// ============================================================================
+
+export const cities = pgTable(
+  "cities",
+  {
+    id: serial("id").primaryKey(),
+    slug: varchar("slug", { length: 255 }).notNull().unique(),
+    name: varchar("name", { length: 255 }).notNull(),
+    country: varchar("country", { length: 255 }).notNull(),
+    region: varchar("region", { length: 255 }),
+    
+    // Coordinates
+    latitude: numeric("latitude", { precision: 10, scale: 7 }),
+    longitude: numeric("longitude", { precision: 10, scale: 7 }),
+    
+    // Description
+    description: text("description"),
+    longDescription: text("long_description"),
+    
+    // Media
+    coverImage: text("cover_image"),
+    logoImage: text("logo_image"),
+    
+    // Stats (denormalized for performance)
+    memberCount: integer("member_count").default(0),
+    eventCount: integer("event_count").default(0),
+    postCount: integer("post_count").default(0),
+    housingCount: integer("housing_count").default(0),
+    recommendationCount: integer("recommendation_count").default(0),
+    venueCount: integer("venue_count").default(0),
+    
+    // Settings
+    language: varchar("language", { length: 10 }).default("en"),
+    timezone: varchar("timezone", { length: 50 }),
+    
+    // Flags
+    isActive: boolean("is_active").default(true),
+    isFeatured: boolean("is_featured").default(false),
+    
+    // Legacy references (for migration, nullable, will be removed later)
+    legacyGroupId: integer("legacy_group_id"),
+    legacyCityUuid: text("legacy_city_uuid"),
+    
+    // Timestamps
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+    lastActivityAt: timestamp("last_activity_at").defaultNow(),
+  },
+  (table) => ({
+    slugIdx: uniqueIndex("cities_slug_idx").on(table.slug),
+    nameIdx: index("cities_name_idx").on(table.name),
+    countryIdx: index("cities_country_idx").on(table.country),
+    coordsIdx: index("cities_coords_idx").on(table.latitude, table.longitude),
+    activeIdx: index("cities_active_idx").on(table.isActive),
+    featuredIdx: index("cities_featured_idx").on(table.isFeatured),
+  }),
+);
+
+export const insertCitySchema = createInsertSchema(cities).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  lastActivityAt: true,
+});
+
+export type InsertCity = z.infer<typeof insertCitySchema>;
+export type City = typeof cities.$inferSelect;
+
+// ============================================================================
+// CITY MEMBERS - Users who are members of a city community
+// ============================================================================
+
+export const cityMembers = pgTable(
+  "city_members",
+  {
+    id: serial("id").primaryKey(),
+    cityId: integer("city_id")
+      .notNull()
+      .references(() => cities.id, { onDelete: "cascade" }),
+    userId: integer("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    role: varchar("role", { length: 50 }).default("member"), // member, moderator, admin
+    status: varchar("status", { length: 50 }).default("active"), // active, pending, banned
+    joinedAt: timestamp("joined_at").defaultNow().notNull(),
+    lastVisitAt: timestamp("last_visit_at").defaultNow(),
+  },
+  (table) => ({
+    cityIdx: index("city_members_city_idx").on(table.cityId),
+    userIdx: index("city_members_user_idx").on(table.userId),
+    uniqueMembership: unique("city_members_unique").on(table.cityId, table.userId),
+    roleIdx: index("city_members_role_idx").on(table.cityId, table.role),
+    statusIdx: index("city_members_status_idx").on(table.cityId, table.status),
+  }),
+);
+
+export const insertCityMemberSchema = createInsertSchema(cityMembers).omit({
+  id: true,
+  joinedAt: true,
+  lastVisitAt: true,
+});
+
+export type InsertCityMember = z.infer<typeof insertCityMemberSchema>;
+export type CityMember = typeof cityMembers.$inferSelect;
+
+// ============================================================================
 // USER LOCATION HISTORY - Cities where user has lived for tango (6+ months)
 // ============================================================================
 
