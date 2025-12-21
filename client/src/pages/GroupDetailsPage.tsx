@@ -1181,19 +1181,35 @@ function GroupHubTab({ groupCity, groupCountry, group }: { groupCity?: string | 
   // Build map locations
   const mapLocations = useMemo(() => {
     const locations: any[] = [];
+    const cityCoords: { [key: string]: [number, number] } = {
+      'Buenos Aires': [-34.6037, -58.3816],
+      'New York': [40.7128, -74.0060],
+      'Berlin': [52.5200, 13.4050],
+      'Paris': [48.8566, 2.3522],
+      'London': [51.5074, -0.1278],
+    };
+    const defaultCoords = cityCoords[groupCity || ''] || [-34.6037, -58.3816];
     
     if (activeLayer === 'all' || activeLayer === 'events') {
-      events.filter(e => e.latitude && e.longitude).forEach(event => {
+      events.forEach((event, index) => {
+        let lat: number, lng: number;
+        
+        if (event.latitude && event.longitude) {
+          lat = typeof event.latitude === 'string' ? parseFloat(event.latitude) : event.latitude;
+          lng = typeof event.longitude === 'string' ? parseFloat(event.longitude) : event.longitude;
+        } else {
+          // Add jitter to city center so multiple events don't stack
+          lat = defaultCoords[0] + (Math.random() - 0.5) * 0.15;
+          lng = defaultCoords[1] + (Math.random() - 0.5) * 0.15;
+        }
+        
         locations.push({
           id: event.id,
           type: 'event',
           title: event.title,
           city: event.city || groupCity || '',
           country: event.country || groupCountry || '',
-          coordinates: { 
-            lat: typeof event.latitude === 'string' ? parseFloat(event.latitude) : event.latitude,
-            lng: typeof event.longitude === 'string' ? parseFloat(event.longitude) : event.longitude
-          },
+          coordinates: { lat, lng },
           date: event.startDate,
           location: event.location,
         });
