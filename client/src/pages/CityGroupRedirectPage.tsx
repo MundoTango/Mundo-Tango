@@ -1,28 +1,21 @@
 import { useRoute, Redirect } from "wouter";
-import { useQuery } from "@tanstack/react-query";
-import { Loader2 } from "lucide-react";
+
+function toCitySlug(cityName: string): string {
+  return cityName
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9-]/g, '');
+}
 
 export default function CityGroupRedirectPage() {
   const [, params] = useRoute("/groups/city/:cityName");
   const cityName = decodeURIComponent(params?.cityName || "");
   
-  const { data: groups, isLoading } = useQuery<any[]>({
-    queryKey: ["/api/groups", { type: "city", city: cityName }],
-    enabled: !!cityName
-  });
-  
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-[50vh]">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
+  if (!cityName) {
+    return <Redirect to="/community-world-map" />;
   }
   
-  const result = groups?.[0];
-  if (result?.group) {
-    return <Redirect to={`/groups/${result.group.id}`} />;
-  }
-  
-  return <Redirect to={`/city-groups?city=${encodeURIComponent(cityName)}`} />;
+  return <Redirect to={`/cities/${toCitySlug(cityName)}`} />;
 }

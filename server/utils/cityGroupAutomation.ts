@@ -1,131 +1,120 @@
 import { db } from "../db";
-import { groups, groupMembers, notifications, users } from "@shared/schema";
-import { eq, and, ilike, or, isNull } from "drizzle-orm";
+import { cities, cityMembers, notifications, users, groups } from "@shared/schema";
+import { eq, and, ilike, or } from "drizzle-orm";
 import { geocodingService } from "../services/GeocodingService";
 
-export interface CityGroupResult {
-  groupId: number;
-  groupName: string;
+export interface CityResult {
+  cityId: number;
+  citySlug: string;
+  cityName: string;
   wasCreated: boolean;
   city: string;
   country: string;
   latitude?: number;
   longitude?: number;
+  legacyGroupId?: number;
 }
 
-export async function ensureCityGroupExists(
+function createCitySlug(cityName: string): string {
+  const ascii = cityName.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  return ascii.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, '');
+}
+
+export async function ensureCityExists(
   city: string,
   country: string | null | undefined,
   creatorUserId: number
-): Promise<CityGroupResult | null> {
+): Promise<CityResult | null> {
   if (!city) {
-    console.log("[CityGroupAutomation] Missing city, skipping");
+    console.log("[CityAutomation] Missing city, skipping");
     return null;
   }
 
   const normalizedCity = city.trim();
   let normalizedCountry = country?.trim() || '';
   
-  // If country is missing, try to get it from user's profile
   if (!normalizedCountry) {
-    console.log(`[CityGroupAutomation] Country missing for ${normalizedCity}, checking user profile...`);
+    console.log(`[CityAutomation] Country missing for ${normalizedCity}, checking user profile...`);
     const [user] = await db.select({ country: users.country }).from(users).where(eq(users.id, creatorUserId)).limit(1);
     if (user?.country) {
       normalizedCountry = user.country.trim();
-      console.log(`[CityGroupAutomation] Found country from user profile: ${normalizedCountry}`);
+      console.log(`[CityAutomation] Found country from user profile: ${normalizedCountry}`);
     }
   }
   
-  // First, try to find existing group by city (and country if available)
-  let existingGroup;
+  let existingCity;
   if (normalizedCountry) {
-    existingGroup = await db
+    existingCity = await db
       .select()
-      .from(groups)
+      .from(cities)
       .where(
         and(
-          ilike(groups.city, normalizedCity),
-          ilike(groups.country, normalizedCountry),
-          eq(groups.type, "city")
+          ilike(cities.name, normalizedCity),
+          ilike(cities.country, normalizedCountry)
         )
       )
       .limit(1);
   }
   
-  // If no country or no match with country, try city-only match
-  if (!existingGroup?.length) {
-    existingGroup = await db
+  if (!existingCity?.length) {
+    existingCity = await db
       .select()
-      .from(groups)
-      .where(
-        and(
-          ilike(groups.city, normalizedCity),
-          eq(groups.type, "city")
-        )
-      )
+      .from(cities)
+      .where(ilike(cities.name, normalizedCity))
       .limit(1);
   }
 
-  if (existingGroup.length > 0) {
-    console.log(`[CityGroupAutomation] City group already exists: ${existingGroup[0].name}`);
+  if (existingCity && existingCity.length > 0) {
+    const found = existingCity[0];
+    console.log(`[CityAutomation] City already exists: ${found.name} (slug: ${found.slug})`);
     return {
-      groupId: existingGroup[0].id,
-      groupName: existingGroup[0].name,
+      cityId: found.id,
+      citySlug: found.slug,
+      cityName: found.name,
       wasCreated: false,
       city: normalizedCity,
-      country: normalizedCountry
+      country: normalizedCountry,
+      legacyGroupId: found.legacyGroupId || undefined
     };
   }
 
-  // Create ASCII-safe slug (normalize diacritics: Málaga -> malaga, Bogotá -> bogota)
-  const asciiCity = normalizedCity.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-  const slug = `${asciiCity.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, '')}-tango-community`;
-  const groupName = `${normalizedCity} Tango Community`;
+  const slug = createCitySlug(normalizedCity);
   const locationStr = normalizedCountry ? `${normalizedCity}, ${normalizedCountry}` : normalizedCity;
   
-  console.log(`[CityGroupAutomation] Creating new city group: ${groupName}`);
+  console.log(`[CityAutomation] Creating new city: ${normalizedCity} (slug: ${slug})`);
 
-  // Geocode the city to get coordinates for the community map
   let latitude: number | null = null;
   let longitude: number | null = null;
   
   try {
-    console.log(`[CityGroupAutomation] Geocoding ${locationStr}...`);
+    console.log(`[CityAutomation] Geocoding ${locationStr}...`);
     const geoResult = await geocodingService.geocodeAddress(null, normalizedCity, normalizedCountry || null);
     if (geoResult) {
       latitude = geoResult.lat;
       longitude = geoResult.lng;
-      console.log(`[CityGroupAutomation] Geocoded: ${latitude}, ${longitude}`);
-    } else {
-      console.log(`[CityGroupAutomation] Could not geocode ${locationStr}`);
+      console.log(`[CityAutomation] Geocoded: ${latitude}, ${longitude}`);
     }
   } catch (err: any) {
-    console.error(`[CityGroupAutomation] Geocoding error: ${err.message}`);
+    console.error(`[CityAutomation] Geocoding error: ${err.message}`);
   }
 
-  const [newGroup] = await db
-    .insert(groups)
+  const [newCity] = await db
+    .insert(cities)
     .values({
-      name: groupName,
       slug: slug,
-      description: `The official tango community group for dancers in ${locationStr}. Connect with local milongas, workshops, and fellow dancers.`,
-      longDescription: `Welcome to the ${normalizedCity} Tango Community! This group was automatically created when the first tango event was posted in ${normalizedCity}. Join us to:\n\n- Discover local milongas and practicas\n- Connect with dancers in your area\n- Share event announcements\n- Find dance partners\n- Discuss the local tango scene`,
-      type: "city",
-      visibility: "public",
-      city: normalizedCity,
-      country: normalizedCountry || null,
+      name: normalizedCity,
+      country: normalizedCountry || 'Unknown',
+      description: `Welcome to the ${normalizedCity} Tango Community! Connect with dancers, find milongas, and discover the local tango scene.`,
+      longDescription: `Welcome to the ${normalizedCity} Tango Community!\n\nThis city was automatically added when the first tango event was posted here. Join us to:\n\n- Discover local milongas and practicas\n- Connect with dancers in your area\n- Share event announcements\n- Find dance partners\n- Discuss the local tango scene`,
       latitude: latitude ? String(latitude) : null,
       longitude: longitude ? String(longitude) : null,
       memberCount: 1,
-      createdBy: creatorUserId,
-      ownerId: creatorUserId,
-      isPrivate: false,
-      joinApproval: false,
+      isActive: true,
     })
     .returning();
 
-  await db.insert(groupMembers).values({
-    groupId: newGroup.id,
+  await db.insert(cityMembers).values({
+    cityId: newCity.id,
     userId: creatorUserId,
     role: "admin",
     status: "active",
@@ -133,24 +122,26 @@ export async function ensureCityGroupExists(
 
   await db.insert(notifications).values({
     userId: creatorUserId,
-    type: "city_group_created",
+    type: "city_created",
     title: "🎉 You started a community!",
-    message: `Your event is the first in ${normalizedCity}! We've created the "${groupName}" for local dancers to connect.`,
+    message: `Your event is the first in ${normalizedCity}! We've created the city community for local dancers to connect.`,
     data: JSON.stringify({
-      groupId: newGroup.id,
-      groupName: newGroup.name,
+      cityId: newCity.id,
+      citySlug: newCity.slug,
+      cityName: newCity.name,
       city: normalizedCity,
       country: normalizedCountry
     }),
-    actionUrl: `/groups/${newGroup.id}`,
+    actionUrl: `/cities/${newCity.slug}`,
     isRead: false,
   });
 
-  console.log(`[CityGroupAutomation] Successfully created city group: ${groupName} (ID: ${newGroup.id})`);
+  console.log(`[CityAutomation] Successfully created city: ${newCity.name} (ID: ${newCity.id}, slug: ${newCity.slug})`);
 
   return {
-    groupId: newGroup.id,
-    groupName: newGroup.name,
+    cityId: newCity.id,
+    citySlug: newCity.slug,
+    cityName: newCity.name,
     wasCreated: true,
     city: normalizedCity,
     country: normalizedCountry,
@@ -159,19 +150,40 @@ export async function ensureCityGroupExists(
   };
 }
 
-export async function linkEventToCityGroup(
-  eventId: number,
-  groupId: number
-): Promise<void> {
-  console.log(`[CityGroupAutomation] Linking event ${eventId} to city group ${groupId}`);
+export async function ensureCityGroupExists(
+  city: string,
+  country: string | null | undefined,
+  creatorUserId: number
+): Promise<{ groupId: number; groupName: string; wasCreated: boolean; city: string; country: string; latitude?: number; longitude?: number } | null> {
+  const result = await ensureCityExists(city, country, creatorUserId);
+  if (!result) return null;
+  
+  return {
+    groupId: result.legacyGroupId || result.cityId,
+    groupName: result.cityName,
+    wasCreated: result.wasCreated,
+    city: result.city,
+    country: result.country,
+    latitude: result.latitude,
+    longitude: result.longitude
+  };
 }
 
-export async function backfillCityGroupForEvent(
+export async function linkEventToCity(
+  eventId: number,
+  cityId: number
+): Promise<void> {
+  console.log(`[CityAutomation] Linking event ${eventId} to city ${cityId}`);
+}
+
+export async function backfillCityForEvent(
   eventId: number,
   city: string,
   country: string,
   userId: number
-): Promise<CityGroupResult | null> {
-  console.log(`[CityGroupAutomation] Backfilling city group for event ${eventId}`);
-  return await ensureCityGroupExists(city, country, userId);
+): Promise<CityResult | null> {
+  console.log(`[CityAutomation] Backfilling city for event ${eventId}`);
+  return await ensureCityExists(city, country, userId);
 }
+
+export { ensureCityExists as default };
