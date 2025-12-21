@@ -17,7 +17,7 @@ import { db } from "../db";
 import { groups, events } from "@shared/schema";
 import { eq, sql, isNotNull, and } from "drizzle-orm";
 
-// Utility: Convert city name to slug
+// Utility: Convert city name to slug (strips diacritics for consistent matching)
 function toCitySlug(cityName: string): string {
   return cityName
     .toLowerCase()
@@ -26,6 +26,15 @@ function toCitySlug(cityName: string): string {
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '')
     + '-tango';
+}
+
+// Utility: Normalize city name for matching (strips diacritics)
+function normalizeCityName(cityName: string): string {
+  return cityName
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
+    .trim();
 }
 
 // Utility: Generate CITY_PAGE.md compliant description
@@ -98,15 +107,15 @@ async function migrateCitiesToGroups() {
   
   console.log(`   Found ${existingGroups.length} existing city groups`);
   
-  // Find cities missing groups (case-insensitive match)
-  const existingCitiesLower = new Set(
+  // Find cities missing groups (case-insensitive match with diacritic normalization)
+  const existingCitiesNormalized = new Set(
     existingGroups
       .filter(g => g.city)
-      .map(g => g.city!.toLowerCase())
+      .map(g => normalizeCityName(g.city!))
   );
   
   const missingCities = citiesWithEvents.filter(
-    c => c.city && !existingCitiesLower.has(c.city.toLowerCase())
+    c => c.city && !existingCitiesNormalized.has(normalizeCityName(c.city))
   );
   
   // Filter out invalid cities

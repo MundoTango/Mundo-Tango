@@ -42,20 +42,22 @@ A multi-stage scraping architecture coordinated by a Master Orchestrator. It inc
 Core functionalities include social features (events, groups, posts, notifications, media management, live streaming, marketplaces, reviews) and business features (Talent Match AI, LIFE CEO AI, Multi-AI Orchestration, Automated Scraping, Admin Dashboard, Stripe Payments, BullMQ Workers). Recent enhancements include an Event Series System, redesigned City Groups Events Tab, RSS Feed Scraping, Profile Enrichment Service, OpenStreetMap Geocoding, Unified Messaging Inbox, and a Faceless Content System. The Talent Match AI system integrates volunteer onboarding, resume analysis, AI interviews, and task assignment, with an International Payment System supporting 30 currencies and 6 regions. All 232 city groups have valid coordinates, auto-geocoding for new cities, and the city pages are publicly accessible. A comprehensive Data Quality System is in place for reports, migrations, and profile linking.
 
 ### Data Architecture & Statistics
-**Current Database State:**
-- 232 city groups in `groups` table (full CITY_PAGE.md spec)
+**Current Database State (Updated Dec 21, 2024):**
+- 276 city groups in `groups` table (all follow CITY_PAGE.md spec - Buenos Aires template)
 - 254 unique cities with event data (from scrapers)
 - 811 total events, 820 active users, 62 countries
 
 **World Map Stats (FIXED Dec 2024):**
 - Previous bug: Stats API was ADDING counts (232 + userCities + locationHistory + 254 scraped = 585 cities ❌)
-- Fix: Use MAX for deduplication, now shows 248 cities correctly
+- Fix: Use MAX for deduplication, now shows 276 cities correctly
 - City name matching: Events stored with city names ("Buenos Aires"), groups have full names ("Buenos Aires Tango Community") - CityDetailsPage extracts city name properly
 
-**Why Some Cities Lack Events:**
-- 22 cities have scraped events but NO city group yet (accessible via `/api/events?city=X`)
-- Early cities manually created with full spec; later cities auto-created with minimal properties
-- Events display correctly when city name matching is applied
+**City Migration (Completed Dec 21, 2024):**
+- All cities with events now have proper city groups following Buenos Aires template
+- 44 new city groups created via `server/scripts/migrate-cities-to-groups.ts`
+- All groups have geocoded coordinates from OpenStreetMap Nominatim
+- Event counts synced for all 276 city groups
+- Migration script can be re-run for future cities
 
 ### Testing & Production
 The platform utilizes End-to-End (E2E) tests with Playwright, automated unit test coverage, and visual regression testing. A Volunteer Testing System provides 148 scenarios with automated issue routing. Production deployments are managed via GitHub Actions for CI/CD, monitored by Prometheus/Grafana with Sentry, and deployed through Replit Publishing. Redis is used for caching, and PostgreSQL (Neon) with Drizzle ORM for the database.
