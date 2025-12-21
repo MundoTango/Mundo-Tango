@@ -1110,13 +1110,55 @@ function GroupTipsTab({ groupCity }: { groupCity?: string | null }) {
   );
 }
 
+// Filter constants matching EventFiltersCompact
+const DANCE_STYLES = [
+  { value: "traditional", label: "Traditional" },
+  { value: "nuevo", label: "Nuevo" },
+  { value: "vals", label: "Vals" },
+  { value: "milonga", label: "Milonga" },
+  { value: "fusion", label: "Fusion" },
+];
+
+const SKILL_LEVELS = [
+  { value: "beginner", label: "Beginner" },
+  { value: "intermediate", label: "Intermediate" },
+  { value: "advanced", label: "Advanced" },
+  { value: "all levels", label: "All Levels" },
+];
+
+const EVENT_TAGS = [
+  "live music", "potluck", "BYOB", "free parking", "live DJ", "outdoors"
+];
+
+const PROPERTY_TYPES = [
+  { value: "apartment", label: "Apartment" },
+  { value: "room", label: "Private Room" },
+  { value: "house", label: "House" },
+  { value: "studio", label: "Studio" },
+];
+
 function GroupHubTab({ groupCity, groupCountry, group }: { groupCity?: string | null; groupCountry?: string | null; group?: SelectGroup }) {
   const [activeLayer, setActiveLayer] = useState<'all' | 'events' | 'housing' | 'recommendations'>('all');
+  
+  // Event filters
   const [eventTypeFilter, setEventTypeFilter] = useState<string>('');
-  const [priceMin, setPriceMin] = useState<number>(0);
-  const [priceMax, setPriceMax] = useState<number>(500);
   const [dateFromFilter, setDateFromFilter] = useState<Date | undefined>();
   const [dateToFilter, setDateToFilter] = useState<Date | undefined>();
+  const [danceStyleFilter, setDanceStyleFilter] = useState<string>('');
+  const [skillLevelFilter, setSkillLevelFilter] = useState<string>('');
+  const [onlineFilter, setOnlineFilter] = useState<boolean | null>(null);
+  const [verifiedFilter, setVerifiedFilter] = useState<boolean>(false);
+  const [tagsFilter, setTagsFilter] = useState<string[]>([]);
+  
+  // Housing filters
+  const [priceMin, setPriceMin] = useState<number>(0);
+  const [priceMax, setPriceMax] = useState<number>(500);
+  const [propertyTypeFilter, setPropertyTypeFilter] = useState<string>('');
+  const [checkInFilter, setCheckInFilter] = useState<Date | undefined>();
+  const [checkOutFilter, setCheckOutFilter] = useState<Date | undefined>();
+  
+  // Advanced filters popover state
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   
   // Fetch events
   const { data: events = [], isLoading: loadingEvents } = useQuery<SelectEvent[]>({
@@ -1250,23 +1292,91 @@ function GroupHubTab({ groupCity, groupCountry, group }: { groupCity?: string | 
 
   const isLoading = loadingEvents || loadingHousing;
 
-  // Apply filters to events
+  // Apply comprehensive filters to events
   const filteredEvents = useMemo(() => {
     return events.filter(event => {
+      // Type filter
       if (eventTypeFilter && event.eventType !== eventTypeFilter) return false;
+      // Date filters
       if (dateFromFilter && event.startDate && new Date(event.startDate) < dateFromFilter) return false;
       if (dateToFilter && event.startDate && new Date(event.startDate) > dateToFilter) return false;
+      // Dance style filter - check both array and string formats
+      if (danceStyleFilter) {
+        const styles = event.danceStyles;
+        if (styles) {
+          const stylesArray = Array.isArray(styles) ? styles : (typeof styles === 'string' ? styles.split(',').map(s => s.trim().toLowerCase()) : []);
+          if (!stylesArray.some(s => s.toLowerCase().includes(danceStyleFilter.toLowerCase()))) return false;
+        } else {
+          return false;
+        }
+      }
+      // Skill level filter
+      if (skillLevelFilter) {
+        const eventLevel = (event as any).skillLevel || (event as any).level || '';
+        if (eventLevel && !eventLevel.toLowerCase().includes(skillLevelFilter.toLowerCase())) return false;
+      }
+      // Online filter
+      if (onlineFilter !== null && event.isOnline !== onlineFilter) return false;
+      // Verified filter
+      if (verifiedFilter && !(event as any).verified) return false;
+      // Tags filter - handle both array and string formats
+      if (tagsFilter.length > 0) {
+        const eventTags = event.tags;
+        let tagsArray: string[] = [];
+        if (Array.isArray(eventTags)) {
+          tagsArray = eventTags.map(t => t.toLowerCase());
+        } else if (typeof eventTags === 'string') {
+          tagsArray = eventTags.split(',').map(t => t.trim().toLowerCase());
+        }
+        const hasMatchingTag = tagsFilter.some(tag => tagsArray.includes(tag.toLowerCase()));
+        if (!hasMatchingTag) return false;
+      }
       return true;
     });
-  }, [events, eventTypeFilter, dateFromFilter, dateToFilter]);
+  }, [events, eventTypeFilter, dateFromFilter, dateToFilter, danceStyleFilter, skillLevelFilter, onlineFilter, verifiedFilter, tagsFilter]);
 
-  // Apply filters to housing
+  // Apply comprehensive filters to housing
   const filteredHousing = useMemo(() => {
     return housing.filter(listing => {
+      // Price filter
       if (listing.pricePerNight < priceMin || listing.pricePerNight > priceMax) return false;
+      // Property type filter
+      if (propertyTypeFilter && listing.propertyType !== propertyTypeFilter) return false;
+      // Check-in/Check-out date filters
+      if (checkInFilter) {
+        const listingAvailableFrom = (listing as any).availableFrom;
+        if (listingAvailableFrom && new Date(listingAvailableFrom) > checkInFilter) return false;
+      }
+      if (checkOutFilter) {
+        const listingAvailableTo = (listing as any).availableTo;
+        if (listingAvailableTo && new Date(listingAvailableTo) < checkOutFilter) return false;
+      }
       return true;
     });
-  }, [housing, priceMin, priceMax]);
+  }, [housing, priceMin, priceMax, propertyTypeFilter, checkInFilter, checkOutFilter]);
+  
+  // Check if any filters are active
+  const hasActiveFilters = eventTypeFilter || dateFromFilter || dateToFilter || 
+    danceStyleFilter || skillLevelFilter || onlineFilter !== null || verifiedFilter || 
+    tagsFilter.length > 0 || priceMin > 0 || priceMax < 500 || propertyTypeFilter || 
+    checkInFilter || checkOutFilter;
+  
+  // Clear all filters
+  const clearAllFilters = () => {
+    setEventTypeFilter('');
+    setDateFromFilter(undefined);
+    setDateToFilter(undefined);
+    setDanceStyleFilter('');
+    setSkillLevelFilter('');
+    setOnlineFilter(null);
+    setVerifiedFilter(false);
+    setTagsFilter([]);
+    setPriceMin(0);
+    setPriceMax(500);
+    setPropertyTypeFilter('');
+    setCheckInFilter(undefined);
+    setCheckOutFilter(undefined);
+  };
 
   return (
     <div className="space-y-6" data-testid="unified-city-hub">
@@ -1366,17 +1476,17 @@ function GroupHubTab({ groupCity, groupCountry, group }: { groupCity?: string | 
         </CardContent>
       </Card>
 
-      {/* Advanced Filters */}
+      {/* Comprehensive Filters */}
       <Card className="overflow-hidden">
-        <CardContent className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-            {/* Event Type Filter */}
+        <CardContent className="p-4">
+          {/* Primary Filter Row */}
+          <div className="flex flex-wrap gap-3 items-center">
+            {/* Event Filters */}
             {(activeLayer === 'all' || activeLayer === 'events') && (
-              <div>
-                <label className="text-sm font-medium block mb-2">Event Type</label>
+              <>
                 <Select value={eventTypeFilter || 'all'} onValueChange={(val) => setEventTypeFilter(val === 'all' ? '' : val)}>
-                  <SelectTrigger data-testid="select-event-type">
-                    <SelectValue placeholder="All Types" />
+                  <SelectTrigger className="w-[140px]" data-testid="select-event-type">
+                    <SelectValue placeholder="Event Type" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Types</SelectItem>
@@ -1385,125 +1495,266 @@ function GroupHubTab({ groupCity, groupCountry, group }: { groupCity?: string | 
                     <SelectItem value="class">Class</SelectItem>
                     <SelectItem value="workshop">Workshop</SelectItem>
                     <SelectItem value="festival">Festival</SelectItem>
+                    <SelectItem value="marathon">Marathon</SelectItem>
                   </SelectContent>
                 </Select>
-              </div>
-            )}
 
-            {/* Date From Filter */}
-            {(activeLayer === 'all' || activeLayer === 'events') && (
-              <div>
-                <label className="text-sm font-medium block mb-2">From Date</label>
+                <Select value={danceStyleFilter || 'all'} onValueChange={(val) => setDanceStyleFilter(val === 'all' ? '' : val)}>
+                  <SelectTrigger className="w-[140px]" data-testid="select-dance-style">
+                    <SelectValue placeholder="Dance Style" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Styles</SelectItem>
+                    {DANCE_STYLES.map(style => (
+                      <SelectItem key={style.value} value={style.value}>{style.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
                 <Popover>
                   <PopoverTrigger asChild>
-                    <Button 
-                      variant="outline" 
-                      className="w-full justify-start"
-                      data-testid="button-date-from"
-                    >
-                      {dateFromFilter ? format(dateFromFilter, "MMM d") : "Select date"}
+                    <Button variant="outline" className="w-[140px] justify-start" data-testid="button-date-range">
+                      <Calendar className="h-4 w-4 mr-2" />
+                      {dateFromFilter ? format(dateFromFilter, "MMM d") : "Dates"}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-4" align="start">
-                    <div className="space-y-4">
+                    <div className="grid gap-4">
                       <div>
-                        <p className="text-sm font-medium mb-3">Start Date</p>
-                      </div>
-                      <div>
-                        {/* Note: For production, import Calendar from @/components/ui/calendar */}
+                        <label className="text-sm font-medium">From</label>
                         <Input 
                           type="date" 
                           value={dateFromFilter ? format(dateFromFilter, 'yyyy-MM-dd') : ''}
                           onChange={(e) => setDateFromFilter(e.target.value ? new Date(e.target.value) : undefined)}
+                          className="mt-1"
                         />
                       </div>
-                    </div>
-                  </PopoverContent>
-                </Popover>
-              </div>
-            )}
-
-            {/* Date To Filter */}
-            {(activeLayer === 'all' || activeLayer === 'events') && (
-              <div>
-                <label className="text-sm font-medium block mb-2">To Date</label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button 
-                      variant="outline" 
-                      className="w-full justify-start"
-                      data-testid="button-date-to"
-                    >
-                      {dateToFilter ? format(dateToFilter, "MMM d") : "Select date"}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-4" align="start">
-                    <div className="space-y-4">
                       <div>
-                        <p className="text-sm font-medium mb-3">End Date</p>
-                      </div>
-                      <div>
+                        <label className="text-sm font-medium">To</label>
                         <Input 
                           type="date" 
                           value={dateToFilter ? format(dateToFilter, 'yyyy-MM-dd') : ''}
                           onChange={(e) => setDateToFilter(e.target.value ? new Date(e.target.value) : undefined)}
+                          className="mt-1"
                         />
                       </div>
                     </div>
                   </PopoverContent>
                 </Popover>
-              </div>
+              </>
             )}
 
-            {/* Price Range Filter */}
+            {/* Housing Filters */}
             {(activeLayer === 'all' || activeLayer === 'housing') && (
-              <div className="lg:col-span-2">
-                <label className="text-sm font-medium block mb-2">Price Range: ${priceMin} - ${priceMax}</label>
-                <div className="space-y-2">
-                  <Input 
-                    type="range" 
-                    min="0" 
-                    max="500" 
-                    value={priceMin}
-                    onChange={(e) => setPriceMin(Math.min(Number(e.target.value), priceMax))}
-                    className="w-full"
-                    data-testid="slider-price-min"
-                  />
-                  <Input 
-                    type="range" 
-                    min="0" 
-                    max="500" 
-                    value={priceMax}
-                    onChange={(e) => setPriceMax(Math.max(Number(e.target.value), priceMin))}
-                    className="w-full"
-                    data-testid="slider-price-max"
-                  />
-                </div>
-              </div>
+              <>
+                <Select value={propertyTypeFilter || 'all'} onValueChange={(val) => setPropertyTypeFilter(val === 'all' ? '' : val)}>
+                  <SelectTrigger className="w-[150px]" data-testid="select-property-type">
+                    <SelectValue placeholder="Property Type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Properties</SelectItem>
+                    {PROPERTY_TYPES.map(type => (
+                      <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" className="w-[160px] justify-start" data-testid="button-price-range">
+                      ${priceMin} - ${priceMax}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-64 p-4" align="start">
+                    <div className="space-y-4">
+                      <label className="text-sm font-medium">Price per night</label>
+                      <div className="space-y-3">
+                        <div className="flex justify-between text-sm">
+                          <span>Min: ${priceMin}</span>
+                          <span>Max: ${priceMax}</span>
+                        </div>
+                        <Input 
+                          type="range" 
+                          min="0" 
+                          max="500" 
+                          value={priceMin}
+                          onChange={(e) => setPriceMin(Math.min(Number(e.target.value), priceMax))}
+                          className="w-full"
+                        />
+                        <Input 
+                          type="range" 
+                          min="0" 
+                          max="500" 
+                          value={priceMax}
+                          onChange={(e) => setPriceMax(Math.max(Number(e.target.value), priceMin))}
+                          className="w-full"
+                        />
+                      </div>
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              </>
             )}
 
-            {/* Clear Filters Button */}
-            {(eventTypeFilter || dateFromFilter || dateToFilter || priceMin > 0 || priceMax < 500) && (
-              <div className="flex items-end">
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  className="w-full"
-                  onClick={() => {
-                    setEventTypeFilter('');
-                    setDateFromFilter(undefined);
-                    setDateToFilter(undefined);
-                    setPriceMin(0);
-                    setPriceMax(500);
-                  }}
-                  data-testid="button-clear-filters"
-                >
-                  <X className="h-4 w-4 mr-1" />
-                  Clear Filters
-                </Button>
-              </div>
+            {/* Advanced Filters Popover */}
+            {(activeLayer === 'all' || activeLayer === 'events') && (
+              <Popover open={showAdvancedFilters} onOpenChange={setShowAdvancedFilters}>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" data-testid="button-more-filters">
+                    <SlidersHorizontal className="h-4 w-4 mr-2" />
+                    More
+                    {(tagsFilter.length > 0 || onlineFilter !== null || verifiedFilter) && (
+                      <Badge variant="secondary" className="ml-2 h-5 w-5 p-0 flex items-center justify-center text-xs">
+                        {(tagsFilter.length > 0 ? 1 : 0) + (onlineFilter !== null ? 1 : 0) + (verifiedFilter ? 1 : 0)}
+                      </Badge>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-80 p-4" align="start">
+                  <div className="space-y-4">
+                    {/* Skill Level */}
+                    <div>
+                      <label className="text-sm font-medium block mb-2">Skill Level</label>
+                      <Select value={skillLevelFilter || 'all'} onValueChange={(val) => setSkillLevelFilter(val === 'all' ? '' : val)}>
+                        <SelectTrigger data-testid="select-skill-level">
+                          <SelectValue placeholder="All Levels" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">All Levels</SelectItem>
+                          {SKILL_LEVELS.map(level => (
+                            <SelectItem key={level.value} value={level.value}>{level.label}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Online/Offline Toggle */}
+                    <div className="flex items-center justify-between">
+                      <label className="text-sm font-medium">Online Events Only</label>
+                      <Button 
+                        variant={onlineFilter === true ? "default" : "outline"} 
+                        size="sm"
+                        onClick={() => setOnlineFilter(onlineFilter === true ? null : true)}
+                        data-testid="button-online-filter"
+                      >
+                        {onlineFilter === true ? "On" : "Off"}
+                      </Button>
+                    </div>
+
+                    {/* Verified Toggle */}
+                    <div className="flex items-center justify-between">
+                      <label className="text-sm font-medium">Verified Events Only</label>
+                      <Button 
+                        variant={verifiedFilter ? "default" : "outline"} 
+                        size="sm"
+                        onClick={() => setVerifiedFilter(!verifiedFilter)}
+                        data-testid="button-verified-filter"
+                      >
+                        {verifiedFilter ? "On" : "Off"}
+                      </Button>
+                    </div>
+
+                    {/* Tags */}
+                    <div>
+                      <label className="text-sm font-medium block mb-2">Tags</label>
+                      <div className="flex flex-wrap gap-2">
+                        {EVENT_TAGS.map(tag => (
+                          <Badge
+                            key={tag}
+                            variant={tagsFilter.includes(tag) ? "default" : "outline"}
+                            className="cursor-pointer"
+                            onClick={() => {
+                              setTagsFilter(prev => 
+                                prev.includes(tag) 
+                                  ? prev.filter(t => t !== tag) 
+                                  : [...prev, tag]
+                              );
+                            }}
+                            data-testid={`tag-${tag.replace(/\s+/g, '-')}`}
+                          >
+                            {tag}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </PopoverContent>
+              </Popover>
+            )}
+
+            {/* Clear Filters */}
+            {hasActiveFilters && (
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={clearAllFilters}
+                data-testid="button-clear-filters"
+              >
+                <X className="h-4 w-4 mr-1" />
+                Clear
+              </Button>
             )}
           </div>
+
+          {/* Active Filter Tags */}
+          {hasActiveFilters && (
+            <div className="flex flex-wrap gap-2 mt-3 pt-3 border-t">
+              {eventTypeFilter && (
+                <Badge variant="secondary" className="gap-1">
+                  Type: {eventTypeFilter}
+                  <X className="h-3 w-3 cursor-pointer" onClick={() => setEventTypeFilter('')} />
+                </Badge>
+              )}
+              {danceStyleFilter && (
+                <Badge variant="secondary" className="gap-1">
+                  Style: {danceStyleFilter}
+                  <X className="h-3 w-3 cursor-pointer" onClick={() => setDanceStyleFilter('')} />
+                </Badge>
+              )}
+              {dateFromFilter && (
+                <Badge variant="secondary" className="gap-1">
+                  From: {format(dateFromFilter, "MMM d")}
+                  <X className="h-3 w-3 cursor-pointer" onClick={() => setDateFromFilter(undefined)} />
+                </Badge>
+              )}
+              {dateToFilter && (
+                <Badge variant="secondary" className="gap-1">
+                  To: {format(dateToFilter, "MMM d")}
+                  <X className="h-3 w-3 cursor-pointer" onClick={() => setDateToFilter(undefined)} />
+                </Badge>
+              )}
+              {propertyTypeFilter && (
+                <Badge variant="secondary" className="gap-1">
+                  Property: {propertyTypeFilter}
+                  <X className="h-3 w-3 cursor-pointer" onClick={() => setPropertyTypeFilter('')} />
+                </Badge>
+              )}
+              {(priceMin > 0 || priceMax < 500) && (
+                <Badge variant="secondary" className="gap-1">
+                  ${priceMin}-${priceMax}/night
+                  <X className="h-3 w-3 cursor-pointer" onClick={() => { setPriceMin(0); setPriceMax(500); }} />
+                </Badge>
+              )}
+              {tagsFilter.map((tag, idx) => (
+                <Badge key={`tag-filter-${idx}-${tag}`} variant="secondary" className="gap-1">
+                  {tag}
+                  <X className="h-3 w-3 cursor-pointer" onClick={() => setTagsFilter(prev => prev.filter(t => t !== tag))} />
+                </Badge>
+              ))}
+              {onlineFilter === true && (
+                <Badge variant="secondary" className="gap-1">
+                  Online Only
+                  <X className="h-3 w-3 cursor-pointer" onClick={() => setOnlineFilter(null)} />
+                </Badge>
+              )}
+              {verifiedFilter && (
+                <Badge variant="secondary" className="gap-1">
+                  Verified
+                  <X className="h-3 w-3 cursor-pointer" onClick={() => setVerifiedFilter(false)} />
+                </Badge>
+              )}
+            </div>
+          )}
         </CardContent>
       </Card>
 
