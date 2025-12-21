@@ -57,6 +57,11 @@ export default function GroupsPage() {
     queryKey: ["/api/groups"],
   });
 
+  // Fetch cities from dedicated cities table
+  const { data: citiesList, isLoading: isLoadingCities } = useQuery<any[]>({
+    queryKey: ["/api/cities/list"],
+  });
+
   // Fetch user's actual group memberships with location awareness
   interface EnhancedGroupData {
     groups: Array<{
@@ -125,11 +130,7 @@ export default function GroupsPage() {
     return result;
   }, [enrichedGroups, searchQuery, filters]);
 
-  // Separate City and Professional groups (from filtered results so search works)
-  const cityGroups = useMemo(() => {
-    return filteredGroups.filter(g => g.type === "city");
-  }, [filteredGroups]);
-
+  // Professional groups only (cities are now accessed via /cities/ route, not groups)
   const professionalGroups = useMemo(() => {
     return filteredGroups.filter(g => g.type === "professional" || g.type === "role");
   }, [filteredGroups]);
@@ -546,22 +547,51 @@ export default function GroupsPage() {
                         </p>
                       </div>
 
-                      {isLoading ? (
+                      {isLoadingCities ? (
                         <div className="grid grid-cols-2 gap-6">
                           {[...Array(6)].map((_, i) => (
                             <Skeleton key={i} className="h-96 w-full" />
                           ))}
                         </div>
-                      ) : cityGroups.length > 0 ? (
+                      ) : citiesList && citiesList.length > 0 ? (
                         <div className="grid grid-cols-2 gap-6">
-                          {cityGroups.map((group) => renderCityCard(group))}
+                          {citiesList.map((city) => (
+                            <Link key={city.id} href={`/cities/${city.slug}`}>
+                              <Card className="overflow-hidden hover-elevate cursor-pointer h-full" data-testid={`card-city-${city.slug}`}>
+                                <div className="relative aspect-[16/9] overflow-hidden">
+                                  <img
+                                    src={city.coverImage || getCityImageUrl(city.name, city.country)}
+                                    alt={city.name}
+                                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                  />
+                                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+                                  <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+                                    <h3 className="text-2xl font-serif font-bold mb-1">{city.name}</h3>
+                                    <p className="text-white/80">{city.country}</p>
+                                  </div>
+                                </div>
+                                <div className="p-4">
+                                  <div className="flex items-center justify-between text-sm text-muted-foreground">
+                                    <span className="flex items-center gap-1">
+                                      <Users className="w-4 h-4" />
+                                      {city.memberCount || 0} members
+                                    </span>
+                                    <span className="flex items-center gap-1">
+                                      <CalendarIcon className="w-4 h-4" />
+                                      {city.eventCount || 0} events
+                                    </span>
+                                  </div>
+                                </div>
+                              </Card>
+                            </Link>
+                          ))}
                         </div>
                       ) : (
                         <Card className="p-8 text-center">
                           <MapPin className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-                          <h3 className="text-lg font-semibold mb-2">No City Groups Yet</h3>
+                          <h3 className="text-lg font-semibold mb-2">No Cities Yet</h3>
                           <p className="text-sm text-muted-foreground mb-4">
-                            City groups will appear here as they're created
+                            City communities will appear here as events are created
                           </p>
                         </Card>
                       )}
@@ -619,8 +649,8 @@ export default function GroupsPage() {
                         <span className="font-bold">{enrichedGroups.length}</span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-sm text-muted-foreground">City Groups</span>
-                        <span className="font-bold">{cityGroups.length}</span>
+                        <span className="text-sm text-muted-foreground">Cities</span>
+                        <span className="font-bold">{citiesList?.length || 0}</span>
                       </div>
                       <div className="flex items-center justify-between">
                         <span className="text-sm text-muted-foreground">Professional</span>
