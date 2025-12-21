@@ -41,8 +41,12 @@ Every visible UI page in Mundo Tango must have a comprehensive design document f
 | Page | Document | Status | Agent |
 |------|----------|--------|-------|
 | City Page | [CITY_PAGE.md](CITY_PAGE.md) | ✅ Active | GroupsPageAgent |
-| Events Page | [EVENTS_PAGE.md](EVENTS_PAGE.md) | 📝 Draft | EventsPageAgent |
-| Housing Page | [HOUSING_PAGE.md](HOUSING_PAGE.md) | 📝 Draft | HousingPageAgent |
+| Events Page | [EVENT_PAGE.md](EVENT_PAGE.md) | ✅ Active | EventsPageAgent |
+| Event Detail | [EVENT_DETAIL_PAGE.md](EVENT_DETAIL_PAGE.md) | ✅ Active | EventsPageAgent |
+| Housing Page | [HOUSING_PAGE.md](HOUSING_PAGE.md) | ✅ Active | HousingPageAgent |
+| Venue Page | [VENUE_PAGE.md](VENUE_PAGE.md) | ✅ Active | VenuePageAgent |
+| Community Map | [COMMUNITY_MAP.md](COMMUNITY_MAP.md) | ✅ Active | MapPageAgent |
+| Found People | [FOUND_PEOPLE.md](FOUND_PEOPLE.md) | ✅ Active | ProfileLinkingAgent |
 | Landing Page | LANDING_PAGE.md | ⏳ Planned | LandingPageAgent |
 | Feed Page | FEED_PAGE.md | ⏳ Planned | FeedPageAgent |
 | Profile Page | PROFILE_PAGE.md | ⏳ Planned | ProfilePageAgent |
