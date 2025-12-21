@@ -1,70 +1,90 @@
 # Scraping Agents
 
 **Invocation:** `use mb.md: agents:scraping`
+**Script:** `npx tsx server/scripts/run-all-scrapers.ts`
 
 ---
 
-## 🕷️ 10 SCRAPING AGENTS
+## 🕷️ SCRAPER INVENTORY
 
 Event data collection from global tango sources.
 
----
-
-### 1. MasterOrchestrator
-
-**Function:** Coordinates all scrapers
-
-```typescript
-interface MasterOrchestrator {
-  runAll(): Promise<ScrapeResult[]>;
-  runPriority(): Promise<ScrapeResult[]>;
-  schedule(cron: string): void;
-  getStatus(): OrchestratorStatus;
-}
-```
-
-**Schedule:** Daily at 4 AM UTC
-**Coordinates:** All scrapers in parallel
+| Scraper | Source | Type | Cities | Status |
+|---------|--------|------|--------|--------|
+| HoyMilongaScraper | hoy-milonga.com | Playwright | 30+ | ✅ Active |
+| TangoMangoScraper | tangomango.org | HTML | 37 US | ✅ Active |
+| TangoCatScraper | tangocat.net | HTML+AI | Global | ✅ Active |
+| TangoFestivalsScraper | tango-festivals.com | HTML | Global | ✅ Active |
+| UnifiedEventScraper | Various | AI | 50+ | ✅ Active |
 
 ---
 
-### 2. HoyMilongaScraper
+### 1. HoyMilongaScraper (PRIORITY 1)
 
-**Source:** HoyMilonga.com
-**Coverage:** ~8 cities
-- Buenos Aires
-- São Paulo
-- Berlin
-- Athens
-- Istanbul
-- London
-- Miami
-- Montevideo
+**Source:** hoy-milonga.com
+**File:** `server/agents/scraping/HoyMilongaScraper.ts`
+**Type:** Playwright (JavaScript SPA - REQUIRES BROWSER!)
+
+**CRITICAL:** HoyMilonga is a JavaScript SPA. The HTML/Cheerio scraper in 
+`server/services/scraping/HoyMilongaScraper.ts` DOES NOT WORK - events are loaded dynamically!
+Always use the Playwright version in `server/agents/scraping/HoyMilongaScraper.ts`
+
+**Coverage:** 30+ cities including:
+- Buenos Aires, São Paulo, Berlin, Athens, Istanbul, London, Miami, Montevideo
+- Paris, Rome, Madrid, Barcelona, Lisbon, Vienna, Munich, Hamburg
+- Amsterdam, Copenhagen, Brussels, Prague, Warsaw, Moscow
+- Tokyo, Sydney, Melbourne, New York, Los Angeles, San Francisco, Chicago
 
 **Features:**
-- Uses Playwright (SPA requires JS)
 - Weekly milonga/practica schedules
 - Venue and neighborhood data
 - Team extraction (DJs, teachers, orchestras)
+- Detail page enrichment
+
+---
+
+### 2. TangoMangoScraper (PRIORITY 1)
+
+**Source:** tangomango.org
+**File:** `server/agents/scraping/TangoMangoScraper.ts`
+**Type:** HTML/Cheerio
+
+**Coverage:** 37 US cities:
+San Francisco, New York, Los Angeles, Chicago, Seattle, Boston, Miami, 
+Denver, Austin, Portland, San Diego, Washington DC, Atlanta, Philadelphia,
+Dallas, Houston, Phoenix, Minneapolis, Detroit, Cleveland, Pittsburgh,
+Las Vegas, Salt Lake City, Nashville, New Orleans, Raleigh, Sacramento,
+St. Louis, Tampa, Orlando, Charlotte, San Antonio, Tucson, Boulder, Buffalo, San Jose, Spokane
+
+**Features:**
+- Calendar and event detail extraction
+- Price and contact info
+- Event type classification
 
 ---
 
 ### 3. TangoCatScraper
 
-**Source:** TangoCat.net
-**Coverage:** International festivals, marathons, encuentros
+**Source:** tangocat.net
+**File:** `server/agents/scraping/TangoCatScraper.ts`
+**Type:** HTML + AI enrichment
+
+**Coverage:** International festivals, marathons, encuentros (2025-2026)
 
 **Features:**
 - Multi-stage scraping (aggregator → source)
 - Link-following to actual event sites
-- Festival/marathon/encuentro detection
-- Builds ID→URL map from JSON
+- Team extraction from subpages (multi-language)
+- Automatic city matching and group creation
 
 ---
 
 ### 4. TangoFestivalsScraper
 
-**Source:** Tango-Festivals.com
+**Source:** tango-festivals.com
+**File:** `server/agents/scraping/TangoFestivalsScraper.ts`
+**Type:** HTML
+
 **Coverage:** Global festival calendar
 
 **Features:**
@@ -77,75 +97,23 @@ interface MasterOrchestrator {
 
 ### 5. UnifiedEventScraper
 
-**Function:** AI-powered generic scraper
-
-```typescript
-interface UnifiedEventScraper {
-  scrape(url: string): Promise<Event[]>;
-  configureForSite(config: SiteConfig): void;
-  learnFromFeedback(feedback: ScrapeFeedback): void;
-}
-```
+**File:** `server/services/scraping/UnifiedEventScraper.ts`
+**Type:** AI-powered generic scraper
 
 **Uses:** Groq llama-3.3-70b-versatile
 **Coverage:** ~50+ direct calendar sites
 
 ---
 
-### 6. StaticScraper
+### 6-10. Supporting Scrapers
 
-**Function:** Simple HTML sites
-
-**Best for:**
-- Static event listings
-- Basic calendars
-- No JavaScript required
-
----
-
-### 7. JSScraper
-
-**Function:** JavaScript-heavy sites
-
-**Uses:** Playwright browser automation
-**Best for:**
-- SPAs
-- Dynamic content
-- Lazy-loaded data
-
----
-
-### 8. SocialScraper
-
-**Function:** Social media events
-
-**Platforms:**
-- Facebook Events
-- Instagram posts
-- Meetup.com
-
----
-
-### 9. SubpageDiscovery
-
-**Function:** Finds event subpages
-
-**Discovers:**
-- /djs, /teachers, /maestros
-- /performers, /artists
-- /schedule, /program
-
----
-
-### 10. Deduplicator
-
-**Function:** Removes duplicate events
-
-**Logic:**
-- Title similarity
-- Date matching
-- Venue matching
-- Source preference
+| Scraper | File | Purpose |
+|---------|------|---------|
+| StaticScraper | `server/agents/scraping/staticScraper.ts` | Simple HTML sites |
+| JSScraper | `server/agents/scraping/jsScraper.ts` | Playwright for SPAs |
+| SocialScraper | `server/agents/scraping/socialScraper.ts` | Facebook/Instagram |
+| SubpageDiscovery | `server/agents/scraping/subpageDiscovery.ts` | Find team pages |
+| VenueScraper | `server/agents/scraping/VenueScraper.ts` | Venue details |
 
 ---
 
