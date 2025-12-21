@@ -81,6 +81,62 @@ import dubaiImg from "@assets/stock_images/dubai_cityscape_skyl_b23b4fcf.jpg";
 import sydneyImg from "@assets/stock_images/sydney_australia_cit_96425aea.jpg";
 import melbourneImg from "@assets/stock_images/melbourne_australia__0f529827.jpg";
 
+// Europe - Nordic
+import rigaImg from "@assets/stock_images/riga_latvia_cityscap_c0fb7086.jpg";
+import helsinkiImg from "@assets/stock_images/helsinki_finland_cit_b65fe838.jpg";
+import stockholmImg from "@assets/stock_images/stockholm_sweden_cit_bbd956b5.jpg";
+import osloImg from "@assets/stock_images/oslo_norway_cityscap_fc5b08df.jpg";
+import tallinnImg from "@assets/stock_images/tallinn_estonia_city_c2943c79.jpg";
+import vilniusImg from "@assets/stock_images/vilnius_lithuania_ci_f90fb37f.jpg";
+import gothenburgImg from "@assets/stock_images/gothenburg_sweden_ci_2a9e6d57.jpg";
+
+// Europe - Balkans/Eastern
+import belgradeImg from "@assets/stock_images/belgrade_serbia_city_ea6ebb7b.jpg";
+import ljubljanaImg from "@assets/stock_images/ljubljana_slovenia_c_70251d24.jpg";
+import sarajevoImg from "@assets/stock_images/sarajevo_bosnia_herz_97cae789.jpg";
+import timisoaraImg from "@assets/stock_images/timisoara_romania_ci_8d255bd3.jpg";
+import tbilisiImg from "@assets/stock_images/tbilisi_georgia_city_a01a9bcd.jpg";
+import thessalonikiImg from "@assets/stock_images/thessaloniki_greece__a9b33c1a.jpg";
+import creteImg from "@assets/stock_images/crete_greece_island__7a09cb45.jpg";
+import wrocławImg from "@assets/stock_images/wroclaw_poland_citys_ff074434.jpg";
+import lodzImg from "@assets/stock_images/lodz_poland_cityscap_c4b7a240.jpg";
+
+// Europe - Germany Additional
+import karlsruheImg from "@assets/stock_images/karlsruhe_germany_ci_39ab94a8.jpg";
+import heidelbergImg from "@assets/stock_images/heidelberg_germany_c_ee514a94.jpg";
+import dusseldorfImg from "@assets/stock_images/dusseldorf_germany_c_f3a4403a.jpg";
+
+// Europe - France Additional
+import toulouseImg from "@assets/stock_images/toulouse_france_city_a91d0483.jpg";
+import biarritzImg from "@assets/stock_images/biarritz_france_city_42eff401.jpg";
+
+// Europe - Spain Additional
+import zaragozaImg from "@assets/stock_images/zaragoza_spain_citys_35cb8e97.jpg";
+import granadaImg from "@assets/stock_images/granada_spain_alhamb_80513ef5.jpg";
+import tenerifeImg from "@assets/stock_images/tenerife_canary_isla_6975c716.jpg";
+
+// Europe - Italy Additional
+import turinImg from "@assets/stock_images/turin_italy_cityscap_0f3761f7.jpg";
+import cataniaImg from "@assets/stock_images/catania_italy_sicily_2ce47e9f.jpg";
+import palermoImg from "@assets/stock_images/palermo_sicily_italy_20d24534.jpg";
+import naplesImg from "@assets/stock_images/naples_italy_citysca_5afdaf69.jpg";
+import sienaImg from "@assets/stock_images/siena_tuscany_italy__8e142d2c.jpg";
+import triesteImg from "@assets/stock_images/trieste_italy_citysc_f124f4e1.jpg";
+import ravennaImg from "@assets/stock_images/ravenna_italy_citysc_21da5371.jpg";
+import cagliariImg from "@assets/stock_images/cagliari_sardinia_it_f626f352.jpg";
+
+// Europe - Switzerland
+import zurichImg from "@assets/stock_images/zurich_switzerland_c_44a2d96e.jpg";
+import genevaImg from "@assets/stock_images/geneva_switzerland_c_3cfbf147.jpg";
+
+// Mediterranean/Middle East Additional
+import antalyaImg from "@assets/stock_images/antalya_turkey_citys_d885b425.jpg";
+
+// Asia Additional
+import taipeiImg from "@assets/stock_images/taipei_taiwan_citysc_09bf7c27.jpg";
+import kualaLumpurImg from "@assets/stock_images/kuala_lumpur_malaysi_b081e8f8.jpg";
+import daNangImg from "@assets/stock_images/da_nang_vietnam_city_960d5af9.jpg";
+
 export const CITY_IMAGE_MAP: Record<string, string> = {
   // South America
   "Buenos Aires": buenosAiresImg,
@@ -167,6 +223,72 @@ export const CITY_IMAGE_MAP: Record<string, string> = {
   // Oceania
   "Sydney": sydneyImg,
   "Melbourne": melbourneImg,
+  
+  // Nordic/Baltic
+  "Riga": rigaImg,
+  "Helsinki": helsinkiImg,
+  "Stockholm": stockholmImg,
+  "Oslo": osloImg,
+  "Tallinn": tallinnImg,
+  "Vilnius": vilniusImg,
+  "Gothenburg": gothenburgImg,
+  "Göteborg": gothenburgImg,
+  
+  // Balkans/Eastern Europe Additional
+  "Belgrade": belgradeImg,
+  "Ljubljana": ljubljanaImg,
+  "Sarajevo": sarajevoImg,
+  "Timișoara": timisoaraImg,
+  "Timisoara": timisoaraImg,
+  "Tbilisi": tbilisiImg,
+  "Thessaloniki": thessalonikiImg,
+  "Crete": creteImg,
+  "Wrocław": wrocławImg,
+  "Wroclaw": wrocławImg,
+  "Łódź": lodzImg,
+  "Lodz": lodzImg,
+  
+  // Germany Additional
+  "Karlsruhe": karlsruheImg,
+  "Heidelberg": heidelbergImg,
+  "Düsseldorf": dusseldorfImg,
+  "Dusseldorf": dusseldorfImg,
+  
+  // France Additional
+  "Toulouse": toulouseImg,
+  "Biarritz": biarritzImg,
+  
+  // Spain Additional
+  "Zaragoza": zaragozaImg,
+  "Granada": granadaImg,
+  "Tenerife": tenerifeImg,
+  
+  // Italy Additional
+  "Turin": turinImg,
+  "Torino": turinImg,
+  "Catania": cataniaImg,
+  "Palermo": palermoImg,
+  "Naples": naplesImg,
+  "Napoli": naplesImg,
+  "Siena": sienaImg,
+  "Trieste": triesteImg,
+  "Ravenna": ravennaImg,
+  "Cagliari": cagliariImg,
+  
+  // Switzerland Additional
+  "Zürich": zurichImg,
+  "Zurich": zurichImg,
+  "Geneva": genevaImg,
+  "Genève": genevaImg,
+  
+  // Turkey Additional
+  "Antalya": antalyaImg,
+  
+  // Asia Additional
+  "Taipei": taipeiImg,
+  "Taipei City": taipeiImg,
+  "Kuala Lumpur": kualaLumpurImg,
+  "Da Nang": daNangImg,
 };
 
 /**
@@ -263,6 +385,72 @@ export const CITY_COUNTRY_MAP: Record<string, string> = {
   // Oceania
   "Sydney": "au",
   "Melbourne": "au",
+  
+  // Nordic/Baltic
+  "Riga": "lv",
+  "Helsinki": "fi",
+  "Stockholm": "se",
+  "Oslo": "no",
+  "Tallinn": "ee",
+  "Vilnius": "lt",
+  "Gothenburg": "se",
+  "Göteborg": "se",
+  
+  // Balkans/Eastern Europe Additional
+  "Belgrade": "rs",
+  "Ljubljana": "si",
+  "Sarajevo": "ba",
+  "Timișoara": "ro",
+  "Timisoara": "ro",
+  "Tbilisi": "ge",
+  "Thessaloniki": "gr",
+  "Crete": "gr",
+  "Wrocław": "pl",
+  "Wroclaw": "pl",
+  "Łódź": "pl",
+  "Lodz": "pl",
+  
+  // Germany Additional
+  "Karlsruhe": "de",
+  "Heidelberg": "de",
+  "Düsseldorf": "de",
+  "Dusseldorf": "de",
+  
+  // France Additional
+  "Toulouse": "fr",
+  "Biarritz": "fr",
+  
+  // Spain Additional
+  "Zaragoza": "es",
+  "Granada": "es",
+  "Tenerife": "es",
+  
+  // Italy Additional
+  "Turin": "it",
+  "Torino": "it",
+  "Catania": "it",
+  "Palermo": "it",
+  "Naples": "it",
+  "Napoli": "it",
+  "Siena": "it",
+  "Trieste": "it",
+  "Ravenna": "it",
+  "Cagliari": "it",
+  
+  // Switzerland
+  "Zürich": "ch",
+  "Zurich": "ch",
+  "Geneva": "ch",
+  "Genève": "ch",
+  
+  // Turkey Additional
+  "Antalya": "tr",
+  
+  // Asia Additional
+  "Taipei": "tw",
+  "Taipei City": "tw",
+  "Kuala Lumpur": "my",
+  "Da Nang": "vn",
 };
 
 /**

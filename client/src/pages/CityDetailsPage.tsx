@@ -433,7 +433,10 @@ export default function CityDetailsPage() {
     );
   }
 
-  const coverImageUrl = city.coverImage || getCityImageUrl(city.name, city.country);
+  // Always use curated city images from our map - never database coverImage
+  // Database images are often generic tango dancers, which we want to avoid
+  // Our map provides: city-specific cityscapes for known cities, or country flag as fallback
+  const coverImageUrl = getCityImageUrl(city.name, city.country);
 
   return (
     <>
