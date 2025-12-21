@@ -377,8 +377,8 @@ function normalizeDiacritics(str: string): string {
 
 /**
  * GET /api/cities/by-slug/:slug
- * Resolve ASCII city slug to city data from cities table
- * Example: /api/cities/by-slug/buenos-aires -> full city data
+ * Resolve ASCII city slug to city group data
+ * Example: /api/cities/by-slug/miami-tango -> full city group data
  */
 router.get("/by-slug/:slug", async (req: Request, res: Response) => {
   try {
@@ -389,59 +389,61 @@ router.get("/by-slug/:slug", async (req: Request, res: Response) => {
 
     console.log(`[CityBySlug] Looking up slug: "${slug}"`);
 
-    // First try exact slug match in cities table
-    let cityResult = await db
-      .select()
-      .from(cities)
-      .where(eq(cities.slug, slug))
+    // Look for city group by slug
+    let groupResult = await db
+      .select({
+        group: groups,
+        memberCount: sql<number>`(
+          SELECT COUNT(*)::int 
+          FROM ${groupMembers} 
+          WHERE ${groupMembers.groupId} = ${groups.id}
+          AND ${groupMembers.status} = 'active'
+        )`.as("member_count"),
+        eventCount: sql<number>`(
+          SELECT COUNT(*)::int 
+          FROM events 
+          WHERE ${sql`events.group_id`} = ${groups.id}
+          AND status = 'published'
+        )`.as("event_count"),
+      })
+      .from(groups)
+      .where(
+        and(
+          eq(groups.type, "city"),
+          eq(groups.slug, slug)
+        )
+      )
       .limit(1);
 
-    // If not found, try matching by normalized city name
-    if (cityResult.length === 0) {
-      const searchPattern = slug.replace(/-/g, ' ').toLowerCase();
-      const allCities = await db.select().from(cities);
-      
-      const matchedCity = allCities.find(c => {
-        const cityNormalized = normalizeDiacritics(c.name).toLowerCase();
-        const citySlug = cityNormalized.replace(/\s+/g, '-');
-        return citySlug === slug || cityNormalized === searchPattern;
-      });
-      
-      if (matchedCity) {
-        cityResult = [matchedCity];
-      }
-    }
-
-    if (cityResult.length > 0) {
-      const city = cityResult[0];
-      console.log(`[CityBySlug] Found city: ${city.name} (ID: ${city.id})`);
+    if (groupResult.length > 0) {
+      const result = groupResult[0];
+      const group = result.group;
+      console.log(`[CityBySlug] Found city group: ${group.name} (ID: ${group.id})`);
       return res.json({
-        id: city.id,
-        slug: city.slug,
-        name: city.name,
-        country: city.country,
-        region: city.region,
-        description: city.description,
-        longDescription: city.longDescription,
-        coverImage: city.coverImage,
-        logoImage: city.logoImage,
-        latitude: city.latitude,
-        longitude: city.longitude,
-        memberCount: city.memberCount || 0,
-        eventCount: city.eventCount || 0,
-        postCount: city.postCount || 0,
-        housingCount: city.housingCount || 0,
-        recommendationCount: city.recommendationCount || 0,
-        venueCount: city.venueCount || 0,
-        timezone: city.timezone,
-        isActive: city.isActive,
-        isFeatured: city.isFeatured,
-        // Legacy reference for backward compatibility during migration
-        legacyGroupId: city.legacyGroupId,
+        id: group.id,
+        slug: group.slug,
+        name: group.name,
+        country: group.country,
+        description: group.description,
+        longDescription: group.long_description,
+        coverImage: group.cover_image,
+        logoImage: group.logo_image,
+        latitude: group.latitude,
+        longitude: group.longitude,
+        memberCount: result.memberCount || 0,
+        eventCount: result.eventCount || 0,
+        postCount: group.post_count || 0,
+        housingCount: 0,
+        recommendationCount: 0,
+        venueCount: 0,
+        timezone: null,
+        isActive: true,
+        isFeatured: false,
+        legacyGroupId: group.id,
       });
     }
 
-    console.log(`[CityBySlug] No city found for slug: "${slug}"`);
+    console.log(`[CityBySlug] No city group found for slug: "${slug}"`);
     return res.status(404).json({ error: "City not found" });
   } catch (error) {
     console.error("[CityBySlug] Error:", error);

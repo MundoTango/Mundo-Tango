@@ -77,6 +77,23 @@ Core functionalities include social features (events, groups, posts, notificatio
 - `/groups/:id` now publicly viewable (auth-protected features like joining still require login)
 - CSRF token fix: Token reuse across server restarts, prevents 403 errors on RSVP and other mutations
 
+**Data Cleanup & City Infrastructure (December 21, 2025):**
+- **Removed all placeholder data**: Deleted 6 junk events with "Unknown" city (scraper errors), 2 scraped events with "Unknown" city
+- **Changed null handling**: Code now uses `null` instead of "Unknown" for unparseable locations - events without real city data won't be ingested
+- **Fixed data quality issues**: Corrected wrong country assignments:
+  - Athens, Argentina (8 events) → Athens, Greece
+  - Berlin, Argentina (8 events) → Berlin, Germany
+  - São Paulo, Argentina (4 events) → São Paulo, Brazil
+  - Miami, Argentina (2 events) → Miami, United States
+- **Standardized country/city naming**: "Türkiye" → "Turkey", "İstanbul" → "Istanbul"
+- **Created Taiwan city groups**: Added Taipei, Taipei City, and Taitung (都蘭村) with correct coordinates
+  - **CRITICAL FIX**: Taiwan-in-Africa issue RESOLVED - Taiwan now shows at correct 25°N 121°E coordinates
+- **Populated 242 city group coordinates**: All major tango cities (Buenos Aires, Paris, NYC, Berlin, Athens, Istanbul, etc.) now have lat/lng
+- **Fixed city routing endpoint**: `/api/cities/by-slug/:slug` was looking in wrong table, now correctly queries groups table
+  - Miami (`/cities/miami-tango`), Taipei (`/cities/taipei-tango`), and all 254 city groups now accessible
+- **Total city groups**: 254 (one for each tango community with events)
+- **All scraped events**: Now contain only real, verified location data - zero placeholder values
+
 ### Data Quality System (December 2025)
 A comprehensive data quality infrastructure for monitoring and fixing data issues:
 - **DataQualityReportService** - Generates quality reports for cities, events, sources, and found people metrics
