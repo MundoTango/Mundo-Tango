@@ -26,11 +26,11 @@ export function CityPopupCard({
   housingCount,
   description,
 }: CityPopupCardProps) {
-  const [imgSrc, setImgSrc] = useState(getCityImageUrl(city));
+  const [imgSrc, setImgSrc] = useState(getCityImageUrl(city, country));
   const [imgError, setImgError] = useState(false);
 
   const handleImageError = () => {
-    if (!imgError) {
+    if (!imgError && imgSrc !== DEFAULT_CITY_IMAGE) {
       setImgError(true);
       setImgSrc(DEFAULT_CITY_IMAGE);
     }

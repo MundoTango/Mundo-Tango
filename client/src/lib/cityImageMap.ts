@@ -160,9 +160,100 @@ export const CITY_IMAGE_MAP: Record<string, string> = {
 };
 
 /**
- * Default fallback image for cities not in the map (generic cityscape)
+ * Map city names to 2-letter country codes for flag fallback
  */
-export const DEFAULT_CITY_IMAGE = newYorkImg;
+export const CITY_COUNTRY_MAP: Record<string, string> = {
+  // South America
+  "Buenos Aires": "ar",
+  "Rio de Janeiro": "br",
+  "Sao Paulo": "br",
+  "São Paulo": "br",
+  "Montevideo": "uy",
+  "Bogota": "co",
+  "Bogotá": "co",
+  "Lima": "pe",
+  "Santiago": "cl",
+  "Medellín": "co",
+  "Medellin": "co",
+  
+  // Europe - Western
+  "Paris": "fr",
+  "London": "gb",
+  "Amsterdam": "nl",
+  "Copenhagen": "dk",
+  
+  // Europe - Southern
+  "Barcelona": "es",
+  "Madrid": "es",
+  "Lisbon": "pt",
+  "Porto": "pt",
+  "Rome": "it",
+  "Venice": "it",
+  "Florence": "it",
+  "Milan": "it",
+  "Milano": "it",
+  "Valencia": "es",
+  "Seville": "es",
+  "Sevilla": "es",
+  
+  // Europe - Central/Eastern
+  "Berlin": "de",
+  "Vienna": "at",
+  "Prague": "cz",
+  "Budapest": "hu",
+  "Warsaw": "pl",
+  "Krakow": "pl",
+  "Kraków": "pl",
+  "Bucharest": "ro",
+  "Moscow": "ru",
+  
+  // Europe - Germany
+  "Munich": "de",
+  "München": "de",
+  "Hamburg": "de",
+  "Frankfurt": "de",
+  "Cologne": "de",
+  "Köln": "de",
+  
+  // Mediterranean/Middle East
+  "Istanbul": "tr",
+  "Athens": "gr",
+  "Tel Aviv": "il",
+  
+  // North America
+  "New York": "us",
+  "Los Angeles": "us",
+  "San Francisco": "us",
+  "Chicago": "us",
+  "Miami": "us",
+  "Toronto": "ca",
+  "Mexico City": "mx",
+  "Cancún": "mx",
+  "Cancun": "mx",
+  
+  // Asia
+  "Tokyo": "jp",
+  "Bangkok": "th",
+  "Singapore": "sg",
+  "Hong Kong": "hk",
+  "Seoul": "kr",
+  "Shanghai": "cn",
+  "Dubai": "ae",
+  
+  // Oceania
+  "Sydney": "au",
+  "Melbourne": "au",
+};
+
+/**
+ * Convert 2-letter country code to flag CDN URL
+ * Uses flagcdn.com for high-quality flag images
+ */
+export function getCountryFlagUrl(countryCode: string): string {
+  const code = countryCode.toLowerCase();
+  // flagcdn.com provides 1x1 aspect ratio flag images
+  return `https://flagcdn.com/h240/${code}.jpg`;
+}
 
 /**
  * Normalize diacritics to ASCII for matching
@@ -180,11 +271,11 @@ function titleCase(str: string): string {
 
 /**
  * Get city-specific image URL
- * Returns verified cityscape image for the city, or NYC as fallback
+ * Returns verified cityscape image for the city
+ * Falls back to country flag if no cityscape found
  * Handles: "Buenos Aires", "buenos-aires", "Málaga", "malaga", etc.
- * Falls back to NYC if no cityscape found for the city
  */
-export function getCityImageUrl(city: string): string {
+export function getCityImageUrl(city: string, country?: string): string {
   // Direct lookup
   if (CITY_IMAGE_MAP[city]) {
     return CITY_IMAGE_MAP[city];
@@ -221,7 +312,22 @@ export function getCityImageUrl(city: string): string {
     }
   }
   
-  // Fallback to NYC cityscape for any city without a specific image
-  console.log(`[getCityImageUrl] No cityscape found for "${city}", using NYC as fallback`);
-  return DEFAULT_CITY_IMAGE;
+  // Try to get country flag from city map
+  for (const [cityName, countryCode] of Object.entries(CITY_COUNTRY_MAP)) {
+    const cityLower = normalizeDiacritics(cityName).toLowerCase();
+    if (cityLower === normalizedLower || cityLower.replace(/\s+/g, '-') === normalizedLower) {
+      console.log(`[getCityImageUrl] No cityscape for "${city}", using ${cityName} country flag (${countryCode})`);
+      return getCountryFlagUrl(countryCode);
+    }
+  }
+  
+  // If country provided, use country flag as final fallback
+  if (country) {
+    console.log(`[getCityImageUrl] No cityscape for "${city}", using country flag for ${country}`);
+    return getCountryFlagUrl(country.substring(0, 2).toLowerCase());
+  }
+  
+  // Last resort: return first city image as fallback
+  console.log(`[getCityImageUrl] No cityscape or country info for "${city}", using default cityscape`);
+  return newYorkImg;
 }
