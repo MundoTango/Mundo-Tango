@@ -1,7 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from "react";
-import { useRoute, Link, useLocation } from "wouter";
+import { useRoute, Link } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { toCitySlug } from "@/lib/utils";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -1876,7 +1875,6 @@ export default function GroupDetailsPage() {
   const groupIdOrSlug = params?.id || "";
   const { toast } = useToast();
   const { user } = useAuth();
-  const [, setLocation] = useLocation();
 
   const { data: group, isLoading } = useQuery<SelectGroup>({
     queryKey: ["/api/groups", groupIdOrSlug],
@@ -1906,13 +1904,6 @@ export default function GroupDetailsPage() {
     },
     enabled: !!group?.id,
   });
-
-  // Redirect city-type groups to /cities/:slug (cities are first-class entities now)
-  useEffect(() => {
-    if (group && (group.type === 'city' || group.groupType === 'city') && group.city) {
-      setLocation(`/cities/${toCitySlug(group.city)}`, { replace: true });
-    }
-  }, [group, setLocation]);
 
   const joinGroup = useMutation({
     mutationFn: async () => {
