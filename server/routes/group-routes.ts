@@ -72,12 +72,6 @@ router.get("/", async (req: Request, res: Response) => {
 
     const conditions = [];
 
-    // Cities are now accessed via /cities/ route, exclude city-type groups from main groups list
-    // unless explicitly requested via type filter
-    if (!type) {
-      conditions.push(sql`${groups.type} != 'city'`);
-    }
-
     if (search) {
       conditions.push(
         or(
