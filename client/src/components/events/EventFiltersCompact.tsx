@@ -275,12 +275,14 @@ export function EventFiltersCompact({ onFilterChange, initialFilters = {} }: Eve
               data-testid="button-date-filter"
             >
               <CalendarIcon className="h-4 w-4" />
-              {filters.dateFrom || filters.dateTo ? (
-                <span>
-                  {filters.dateFrom ? format(filters.dateFrom, "MMM d") : "Any"} - {filters.dateTo ? format(filters.dateTo, "MMM d") : "Any"}
-                </span>
+              {filters.dateFrom && filters.dateTo ? (
+                <span>{format(filters.dateFrom, "MMM d")} - {format(filters.dateTo, "MMM d")}</span>
+              ) : filters.dateFrom ? (
+                <span>From {format(filters.dateFrom, "MMM d")}</span>
+              ) : filters.dateTo ? (
+                <span>Until {format(filters.dateTo, "MMM d")}</span>
               ) : (
-                "Dates"
+                "Date Range"
               )}
               {(filters.dateFrom || filters.dateTo) && (
                 <X 
@@ -293,32 +295,50 @@ export function EventFiltersCompact({ onFilterChange, initialFilters = {} }: Eve
               )}
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-auto p-3" align="start">
-            <div className="space-y-3">
+          <PopoverContent className="w-auto p-4" align="start">
+            <div className="space-y-4">
               <div>
-                <p className="text-xs text-muted-foreground mb-2">From</p>
-                <Calendar
-                  mode="single"
-                  selected={filters.dateFrom}
-                  onSelect={(date) => updateFilters({ dateFrom: date })}
-                  initialFocus
-                />
+                <p className="text-sm font-medium mb-3">Select Date Range</p>
               </div>
-              <div>
-                <p className="text-xs text-muted-foreground mb-2">To</p>
-                <Calendar
-                  mode="single"
-                  selected={filters.dateTo}
-                  onSelect={(date) => updateFilters({ dateTo: date })}
-                />
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-xs text-muted-foreground mb-2 font-medium">Start Date</p>
+                  <Calendar
+                    mode="single"
+                    selected={filters.dateFrom}
+                    onSelect={(date) => updateFilters({ dateFrom: date })}
+                    initialFocus
+                  />
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground mb-2 font-medium">End Date</p>
+                  <Calendar
+                    mode="single"
+                    selected={filters.dateTo}
+                    onSelect={(date) => updateFilters({ dateTo: date })}
+                  />
+                </div>
               </div>
-              <Button 
-                size="sm" 
-                className="w-full"
-                onClick={() => setDateOpen(false)}
-              >
-                Apply
-              </Button>
+              <div className="flex gap-2 pt-2">
+                <Button 
+                  variant="outline"
+                  size="sm"
+                  className="flex-1"
+                  onClick={() => {
+                    updateFilters({ dateFrom: undefined, dateTo: undefined });
+                    setDateOpen(false);
+                  }}
+                >
+                  Clear
+                </Button>
+                <Button 
+                  size="sm" 
+                  className="flex-1"
+                  onClick={() => setDateOpen(false)}
+                >
+                  Apply
+                </Button>
+              </div>
             </div>
           </PopoverContent>
         </Popover>
