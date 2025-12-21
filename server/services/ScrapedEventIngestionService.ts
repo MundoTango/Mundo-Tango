@@ -461,8 +461,9 @@ class ScrapedEventIngestionService {
 
   /**
    * Ingest a single approved scraped event into events table
+   * Uses transaction to ensure atomicity - if any core operation fails, all are rolled back
    */
-  async ingestEvent(scrapedEventId: number): Promise<number | null> {
+  async ingestEvent(scrapedEventId: number): Promise<{ eventId: number } | null> {
     try {
       const [scraped] = await db
         .select()
@@ -484,28 +485,39 @@ class ScrapedEventIngestionService {
       const userId = await this.getScraperUserId();
       const eventData = this.mapToEvent(scraped, userId);
 
-      const [inserted] = await db
-        .insert(events)
-        .values(eventData)
-        .returning({ id: events.id });
+      // Use transaction to ensure atomicity of core operations
+      const result = await db.transaction(async (tx) => {
+        // Insert event
+        const [inserted] = await tx
+          .insert(events)
+          .values(eventData)
+          .returning({ id: events.id });
 
-      // Extract participants from description and create team members + user accounts
-      await this.extractAndCreateTeamMembers(
-        inserted.id, 
-        scraped.title, 
-        scraped.description,
-        eventData.city || undefined,
-        eventData.country || undefined
-      );
+        // Mark as ingested within same transaction
+        await tx
+          .update(scrapedEvents)
+          .set({ status: 'ingested' })
+          .where(eq(scrapedEvents.id, scrapedEventId));
 
-      // Mark as ingested
-      await db
-        .update(scrapedEvents)
-        .set({ status: 'ingested' })
-        .where(eq(scrapedEvents.id, scrapedEventId));
+        return { eventId: inserted.id };
+      });
 
-      console.log(`[Ingestion] ✅ Ingested: ${scraped.title} → events.id=${inserted.id}`);
-      return inserted.id;
+      // Team member extraction is non-critical - done outside transaction
+      // If this fails, the event is still ingested, just without team links
+      try {
+        await this.extractAndCreateTeamMembers(
+          result.eventId, 
+          scraped.title, 
+          scraped.description,
+          eventData.city || undefined,
+          eventData.country || undefined
+        );
+      } catch (teamError) {
+        console.warn(`[Ingestion] Team member extraction failed for event ${result.eventId}, continuing anyway`);
+      }
+
+      console.log(`[Ingestion] ✅ Ingested: ${scraped.title} → events.id=${result.eventId}`);
+      return result;
     } catch (error: any) {
       if (error.code === '23505') {
         // Duplicate - already exists, mark as ingested
@@ -516,7 +528,7 @@ class ScrapedEventIngestionService {
         return null;
       }
       console.error(`[Ingestion] Failed for ${scrapedEventId}:`, error.message);
-      return null;
+      throw error; // Re-throw so caller can handle appropriately
     }
   }
 
@@ -540,10 +552,14 @@ class ScrapedEventIngestionService {
     let failed = 0;
 
     for (const event of toIngest) {
-      const result = await this.ingestEvent(event.id);
-      if (result) {
-        ingested++;
-      } else {
+      try {
+        const result = await this.ingestEvent(event.id);
+        if (result && result.eventId) {
+          ingested++;
+        } else {
+          failed++;
+        }
+      } catch (err) {
         failed++;
       }
     }
