@@ -111,8 +111,64 @@ use mb.md: legacy                → mb-legacy.md (complete v9.10)
 | Orchestration | `mr-blue-brain/orchestration/` |
 | Patterns | `mr-blue-brain/patterns/` |
 | Agents | `mr-blue-brain/agents/` |
+| **Pages** | `mr-blue-brain/pages/` |
 | n8n | `mr-blue-brain/n8n/` |
 | Legacy Backup | `mb-legacy.md` |
+
+---
+
+## 📄 PAGE DESIGN DOCUMENTATION METHODOLOGY
+
+Every visible UI page must have a comprehensive design document following the 17-section template.
+
+### Invocation Syntax
+
+```markdown
+# Page Design Docs
+use mb.md: pages                    → Page design index
+use mb.md: pages:city               → City page spec
+use mb.md: pages:events             → Events page spec
+use mb.md: pages:housing            → Housing page spec
+use mb.md: pages:scraping           → Scraping control center
+use mb.md: pages:scraped-events     → Scraped events management
+use mb.md: pages:sources            → Scraper source registry
+use mb.md: pages:tangomango         → TangoMango scraper spec
+```
+
+### 17-Section Template
+
+| # | Section | Purpose |
+|---|---------|---------|
+| 1 | Overview | Page purpose, owner agent, MB.MD references |
+| 2 | Data Architecture | Database tables, relationships |
+| 3 | URL Routing | Routes, params, query strings |
+| 4 | Page Structure | Header, tabs, layout diagrams |
+| 5 | Tab Specifications | Each tab's detailed spec |
+| 6 | Filters | All filter controls and options |
+| 7 | Interactive Elements | Maps, modals, popovers |
+| 8 | API Endpoints | All API calls with methods |
+| 9 | Data Sources | Where data comes from |
+| 10 | Permissions Matrix | Public/Member/Admin access |
+| 11 | Mobile Responsiveness | Breakpoints, sizing |
+| 12 | Internationalization | Languages, localization |
+| 13 | Analytics Tracking | Events to track |
+| 14 | Related Pages | Connected pages |
+| 15 | Component Files | Source code locations |
+| 16 | Test Scenarios | E2E test cases |
+| 17 | Future Enhancements | Roadmap items |
+
+### Document Lifecycle
+
+```
+1. CREATE   → New page added → Create design doc using template
+2. UPDATE   → Page changed → Update doc with changes
+3. REVIEW   → Monthly → Audit doc against live page
+4. ARCHIVE  → Page removed → Move doc to /archived/
+```
+
+### Agent Ownership
+
+Each page agent (from `use mb.md: agents:page`) owns their respective design document and is responsible for keeping it current
 
 ---
 
