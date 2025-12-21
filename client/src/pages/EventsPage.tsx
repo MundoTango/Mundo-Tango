@@ -274,8 +274,9 @@ export default function EventsPage() {
       // Prioritize big events (festivals, marathons, encuentros, competitions) in Discover mode
       params.append("prioritizeBigEvents", "true");
     }
-    if (filters.priceMin !== undefined) params.append("priceMin", String(filters.priceMin));
-    if (filters.priceMax !== undefined) params.append("priceMax", String(filters.priceMax));
+    // Only send price filters if user explicitly changed them from defaults
+    if (filters.priceMin !== undefined && filters.priceMin > 0) params.append("priceMin", String(filters.priceMin));
+    if (filters.priceMax !== undefined && filters.priceMax < 500) params.append("priceMax", String(filters.priceMax));
     if (filters.danceStyle && filters.danceStyle !== "all") params.append("danceStyle", filters.danceStyle);
     if (filters.skillLevel && filters.skillLevel !== "all") params.append("skillLevel", filters.skillLevel);
     if (filters.online !== null && filters.online !== undefined) params.append("online", String(filters.online));
