@@ -867,18 +867,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
         .where(gte(events.startDate, new Date()));
       const totalEvents = eventsResult[0]?.count || 0;
       
-      // Get unique cities count
+      // Get city groups count (official city pages with tango communities)
+      const { groups } = await import("@shared/schema");
       const citiesResult = await db
-        .select({ count: sql<number>`COUNT(DISTINCT city)` })
-        .from(users)
-        .where(sql`city IS NOT NULL AND city != '' AND is_active = true`);
+        .select({ count: count() })
+        .from(groups)
+        .where(eq(groups.type, "city"));
       const totalCities = citiesResult[0]?.count || 0;
       
-      // Get unique countries count
+      // Get unique countries count from city groups
       const countriesResult = await db
         .select({ count: sql<number>`COUNT(DISTINCT country)` })
-        .from(users)
-        .where(sql`country IS NOT NULL AND country != '' AND is_active = true`);
+        .from(groups)
+        .where(and(eq(groups.type, "city"), sql`country IS NOT NULL AND country != ''`));
       const totalCountries = countriesResult[0]?.count || 0;
       
       // Platform stats (always shown - these are founder facts)

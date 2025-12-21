@@ -99,7 +99,8 @@ function AppContent() {
     '/tango-roles', '/support', '/donate', '/supporters', '/volunteer',
     '/ambassadors', '/open-source', '/about', '/features', '/testimonials',
     '/discover', '/terms', '/privacy', '/community-guidelines', '/help',
-    '/help-center', '/contact', '/about-tango', '/h2ac', '/demos', '/faq'
+    '/help-center', '/contact', '/about-tango', '/h2ac', '/demos', '/faq',
+    '/login', '/register', '/auth', '/forgot-password', '/reset-password'
   ];
   const isMarketingPage = location === '/' || marketingPaths.some(path => location.startsWith(path));
 
