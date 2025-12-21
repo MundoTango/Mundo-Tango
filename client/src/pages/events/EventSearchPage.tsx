@@ -156,16 +156,16 @@ export default function EventSearchPage() {
         </p>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-8">
-        <div className="w-full mb-6">
-          <EventFiltersCompact
-            onFilterChange={handleFilterChange}
-            initialFilters={filters}
-          />
-        </div>
+      <div className="mb-6">
+        <EventFiltersCompact
+          onFilterChange={handleFilterChange}
+          initialFilters={filters}
+        />
+      </div>
 
+      <div className="flex flex-col gap-8">
         <main className="flex-1">
-          <div className="mb-6 flex items-center justify-between">
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-2">
             <div className="text-sm text-muted-foreground">
               {isLoading ? (
                 <Skeleton className="w-32 h-5" />
