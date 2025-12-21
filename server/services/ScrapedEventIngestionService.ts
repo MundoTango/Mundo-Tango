@@ -241,7 +241,7 @@ class ScrapedEventIngestionService {
       location: cleanHtmlEntities(scraped.location) || 'TBA',
       venue: cleanHtmlEntities(scraped.location) || 'TBA',
       address: cleanHtmlEntities(scraped.address || scraped.location) || '',
-      city: cleanHtmlEntities(this.extractCity(scraped)) || 'Unknown',
+      city: cleanHtmlEntities(this.extractCity(scraped)) || null,
       country: this.extractCountry(scraped),
       latitude: scraped.latitude ? String(scraped.latitude) : null,
       longitude: scraped.longitude ? String(scraped.longitude) : null,
@@ -321,14 +321,14 @@ class ScrapedEventIngestionService {
       if (parts.length >= 3) return parts[parts.length - 2];
       if (parts.length === 2) return parts[0];
     }
-    return scraped.location || 'Unknown';
+    return scraped.location || null;
   }
 
   /**
    * Extract and normalize country from scraped event
    */
-  private extractCountry(scraped: any): string {
-    let country = 'Unknown';
+  private extractCountry(scraped: any): string | null {
+    let country: string | null = null;
     if (scraped.country && scraped.country !== 'Various') {
       country = scraped.country;
     } else if (scraped.address) {
