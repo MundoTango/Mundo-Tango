@@ -693,8 +693,22 @@ h2.text-4xl {
 
 .leaflet-popup {
   margin-bottom: 20px;
+  z-index: 1000 !important;
 }
 
 .leaflet-popup-tip {
   background: inherit;
+}
+
+/* Ensure popups stay within map boundaries and don't hide under header */
+.leaflet-popup-pane {
+  z-index: 1000 !important;
+}
+
+.event-map-popup {
+  z-index: 1000 !important;
+}
+
+.event-map-popup .leaflet-popup {
+  z-index: 1000 !important;
 }

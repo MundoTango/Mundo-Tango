@@ -317,7 +317,7 @@ export function CommunityMapWithLayers({
           position={[location.coordinates.lat, location.coordinates.lng]}
           icon={createLayerIcon(location.type, location.type === 'housing' ? location.price : undefined)}
         >
-          <Popup>
+          <Popup className="event-map-popup" offset={[0, -10]}>
             <LocationPopupCard location={location} />
           </Popup>
         </Marker>
