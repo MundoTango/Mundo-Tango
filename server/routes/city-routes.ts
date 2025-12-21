@@ -1,7 +1,7 @@
 import { Router, type Response, type Request } from "express";
 import { db } from "../storage";
-import { groups, groupMembers } from "@shared/schema";
-import { eq, ilike, sql, or, and } from "drizzle-orm";
+import { groups, groupMembers, cities, cityMembers } from "@shared/schema";
+import { eq, ilike, sql, or, and, desc } from "drizzle-orm";
 
 const router = Router();
 
@@ -377,8 +377,8 @@ function normalizeDiacritics(str: string): string {
 
 /**
  * GET /api/cities/by-slug/:slug
- * Resolve ASCII city slug to group ID
- * Example: /api/cities/by-slug/buenos-aires -> { groupId: 9, city: "Buenos Aires" }
+ * Resolve ASCII city slug to city data from cities table
+ * Example: /api/cities/by-slug/buenos-aires -> full city data
  */
 router.get("/by-slug/:slug", async (req: Request, res: Response) => {
   try {
@@ -387,50 +387,62 @@ router.get("/by-slug/:slug", async (req: Request, res: Response) => {
       return res.status(400).json({ error: "Slug is required" });
     }
 
-    // Convert slug back to search pattern
-    const searchPattern = slug.replace(/-/g, ' ').toLowerCase();
-    console.log(`[CityBySlug] Looking up slug: "${slug}" -> pattern: "${searchPattern}"`);
+    console.log(`[CityBySlug] Looking up slug: "${slug}"`);
 
-    // Search for city groups matching the pattern
-    const cityGroupResults = await db
-      .select({
-        group: groups,
-        memberCount: sql<number>`(
-          SELECT COUNT(*)::int 
-          FROM ${groupMembers} 
-          WHERE ${groupMembers.groupId} = ${groups.id}
-          AND ${groupMembers.status} = 'active'
-        )`.as("member_count"),
-      })
-      .from(groups)
-      .where(
-        and(
-          eq(groups.type, "city"),
-          eq(groups.visibility, "public")
-        )
-      );
+    // First try exact slug match in cities table
+    let cityResult = await db
+      .select()
+      .from(cities)
+      .where(eq(cities.slug, slug))
+      .limit(1);
 
-    // Find best match by normalizing city names
-    const matchedGroup = cityGroupResults.find(r => {
-      const cityNormalized = normalizeDiacritics(r.group.city || '').toLowerCase().replace(/\s+/g, ' ');
-      return cityNormalized === searchPattern || 
-             cityNormalized.replace(/\s+/g, '-') === slug ||
-             normalizeDiacritics(r.group.city || '').toLowerCase().replace(/\s+/g, '-') === slug;
-    });
+    // If not found, try matching by normalized city name
+    if (cityResult.length === 0) {
+      const searchPattern = slug.replace(/-/g, ' ').toLowerCase();
+      const allCities = await db.select().from(cities);
+      
+      const matchedCity = allCities.find(c => {
+        const cityNormalized = normalizeDiacritics(c.name).toLowerCase();
+        const citySlug = cityNormalized.replace(/\s+/g, '-');
+        return citySlug === slug || cityNormalized === searchPattern;
+      });
+      
+      if (matchedCity) {
+        cityResult = [matchedCity];
+      }
+    }
 
-    if (matchedGroup) {
-      console.log(`[CityBySlug] Found group: ${matchedGroup.group.name} (ID: ${matchedGroup.group.id})`);
+    if (cityResult.length > 0) {
+      const city = cityResult[0];
+      console.log(`[CityBySlug] Found city: ${city.name} (ID: ${city.id})`);
       return res.json({
-        groupId: matchedGroup.group.id,
-        groupName: matchedGroup.group.name,
-        city: matchedGroup.group.city,
-        country: matchedGroup.group.country,
-        memberCount: matchedGroup.memberCount || 0,
+        id: city.id,
+        slug: city.slug,
+        name: city.name,
+        country: city.country,
+        region: city.region,
+        description: city.description,
+        longDescription: city.longDescription,
+        coverImage: city.coverImage,
+        logoImage: city.logoImage,
+        latitude: city.latitude,
+        longitude: city.longitude,
+        memberCount: city.memberCount || 0,
+        eventCount: city.eventCount || 0,
+        postCount: city.postCount || 0,
+        housingCount: city.housingCount || 0,
+        recommendationCount: city.recommendationCount || 0,
+        venueCount: city.venueCount || 0,
+        timezone: city.timezone,
+        isActive: city.isActive,
+        isFeatured: city.isFeatured,
+        // Legacy reference for backward compatibility during migration
+        legacyGroupId: city.legacyGroupId,
       });
     }
 
-    console.log(`[CityBySlug] No group found for slug: "${slug}"`);
-    return res.status(404).json({ error: "City group not found" });
+    console.log(`[CityBySlug] No city found for slug: "${slug}"`);
+    return res.status(404).json({ error: "City not found" });
   } catch (error) {
     console.error("[CityBySlug] Error:", error);
     res.status(500).json({ error: "Failed to lookup city" });
@@ -438,9 +450,8 @@ router.get("/by-slug/:slug", async (req: Request, res: Response) => {
 });
 
 /**
- * Auto-create city group endpoint
- * Creates a new city group when one doesn't exist
- * All cities use GroupDetailPage template (groups of type "city")
+ * Auto-create city endpoint
+ * Creates a new city in the cities table when one doesn't exist
  */
 router.post("/auto-create", async (req: Request, res: Response) => {
   try {
@@ -456,59 +467,129 @@ router.post("/auto-create", async (req: Request, res: Response) => {
       c.name.toLowerCase() === cityName.toLowerCase()
     );
     
-    // Generate proper group slug
-    const groupSlug = `${slug}-tango-community`;
-    
-    // Check if group already exists
+    // Check if city already exists
     const existing = await db
       .select()
-      .from(groups)
-      .where(eq(groups.slug, groupSlug))
+      .from(cities)
+      .where(eq(cities.slug, slug))
       .limit(1);
       
     if (existing.length > 0) {
       return res.json({ 
-        groupId: existing[0].id,
-        message: "Group already exists"
+        id: existing[0].id,
+        slug: existing[0].slug,
+        name: existing[0].name,
+        country: existing[0].country,
+        message: "City already exists"
       });
     }
     
-    // Create new city group
-    const [newGroup] = await db
-      .insert(groups)
+    // Create new city
+    const [newCity] = await db
+      .insert(cities)
       .values({
-        name: `${cityName} Tango Community`,
-        slug: groupSlug,
+        name: cityName,
+        slug: slug,
         description: `Welcome to the ${cityName} Tango Community! Connect with dancers, find milongas, and discover the local tango scene.`,
-        city: cityName,
         country: cityInfo?.country || '',
-        type: 'city',
-        isPrivate: false,
-        visibility: 'public',
-        allowEvents: true,
-        allowPosts: true,
-        allowDiscussions: true,
-        memberCount: 0,
-        postCount: 0,
-        eventCount: 0,
         latitude: cityInfo?.lat?.toString(),
         longitude: cityInfo?.lng?.toString(),
-        createdBy: 1, // System user
+        memberCount: 0,
+        eventCount: 0,
+        postCount: 0,
+        housingCount: 0,
+        recommendationCount: 0,
+        venueCount: 0,
+        isActive: true,
+        isFeatured: false,
       })
       .returning();
     
-    console.log(`[CityAutoCreate] Created city group: ${newGroup.name} (ID: ${newGroup.id})`);
+    console.log(`[CityAutoCreate] Created city: ${newCity.name} (ID: ${newCity.id})`);
     
     res.json({
-      groupId: newGroup.id,
-      groupName: newGroup.name,
-      city: newGroup.city,
-      country: newGroup.country,
-      message: "City group created successfully"
+      id: newCity.id,
+      slug: newCity.slug,
+      name: newCity.name,
+      country: newCity.country,
+      message: "City created successfully"
     });
   } catch (error) {
     console.error("[CityAutoCreate] Error:", error);
-    res.status(500).json({ error: "Failed to create city group" });
+    res.status(500).json({ error: "Failed to create city" });
+  }
+});
+
+/**
+ * GET /api/cities/list
+ * Get all active cities
+ */
+router.get("/list", async (req: Request, res: Response) => {
+  try {
+    const allCities = await db
+      .select()
+      .from(cities)
+      .where(eq(cities.isActive, true))
+      .orderBy(desc(cities.memberCount));
+    
+    res.json(allCities);
+  } catch (error) {
+    console.error("[CityList] Error:", error);
+    res.status(500).json({ error: "Failed to get cities" });
+  }
+});
+
+/**
+ * GET /api/cities/:id
+ * Get city by ID
+ */
+router.get("/:id", async (req: Request, res: Response) => {
+  try {
+    const id = parseInt(req.params.id);
+    if (isNaN(id)) {
+      return res.status(400).json({ error: "Invalid city ID" });
+    }
+    
+    const [city] = await db
+      .select()
+      .from(cities)
+      .where(eq(cities.id, id))
+      .limit(1);
+    
+    if (!city) {
+      return res.status(404).json({ error: "City not found" });
+    }
+    
+    res.json(city);
+  } catch (error) {
+    console.error("[CityById] Error:", error);
+    res.status(500).json({ error: "Failed to get city" });
+  }
+});
+
+/**
+ * GET /api/cities/:id/members
+ * Get city members
+ */
+router.get("/:id/members", async (req: Request, res: Response) => {
+  try {
+    const id = parseInt(req.params.id);
+    if (isNaN(id)) {
+      return res.status(400).json({ error: "Invalid city ID" });
+    }
+    
+    const members = await db
+      .select()
+      .from(cityMembers)
+      .where(and(
+        eq(cityMembers.cityId, id),
+        eq(cityMembers.status, 'active')
+      ));
+    
+    res.json(members);
+  } catch (error) {
+    console.error("[CityMembers] Error:", error);
+    res.status(500).json({ error: "Failed to get city members" });
   }
 });
 
