@@ -5,7 +5,7 @@
  */
 
 import { db } from '@shared/db';
-import { events, scrapedEvents, users, eventTeamMembers } from '@shared/schema';
+import { events, scrapedEvents, users, eventTeamMembers, groups } from '@shared/schema';
 import { eq, and, isNull, ilike, or, sql } from 'drizzle-orm';
 import { extractParticipants } from './participant-extraction';
 
@@ -378,6 +378,59 @@ class ScrapedEventIngestionService {
   }
 
   /**
+   * Ensure a city group exists for the event's city
+   * Auto-creates the group if it doesn't exist
+   */
+  private async ensureCityGroup(city: string | null, country: string | null): Promise<void> {
+    if (!city) return;
+
+    try {
+      // Check if city group already exists
+      const [existing] = await db
+        .select({ id: groups.id })
+        .from(groups)
+        .where(and(
+          eq(groups.type, 'city'),
+          ilike(groups.city, city)
+        ))
+        .limit(1);
+
+      if (existing) return;
+
+      // Generate slug
+      const slug = city.toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '')
+        + '-tango';
+
+      // Create city group
+      await db.insert(groups).values({
+        name: `${city} Tango Community`,
+        slug,
+        city,
+        country: country || null,
+        type: 'city',
+        description: `Discover tango in ${city}${country ? ` in ${country}` : ''}. Connect with dancers who share your passion for Argentine tango.`,
+        visibility: 'public',
+        isPrivate: false,
+        joinApproval: false,
+        eventCount: 1,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+
+      console.log(`[Ingestion] 🏙️ Auto-created city group: ${city}`);
+    } catch (error: any) {
+      // Ignore duplicate key errors (race condition)
+      if (error.code !== '23505') {
+        console.warn(`[Ingestion] Failed to create city group for ${city}:`, error.message);
+      }
+    }
+  }
+
+  /**
    * Extract participants from event description and create team members
    * NEW: Creates actual user accounts for discovered participants (visible in admin/users)
    */
@@ -515,6 +568,9 @@ class ScrapedEventIngestionService {
       } catch (teamError) {
         console.warn(`[Ingestion] Team member extraction failed for event ${result.eventId}, continuing anyway`);
       }
+
+      // Auto-create city group if it doesn't exist - non-critical enrichment
+      await this.ensureCityGroup(eventData.city, eventData.country);
 
       console.log(`[Ingestion] ✅ Ingested: ${scraped.title} → events.id=${result.eventId}`);
       return result;
