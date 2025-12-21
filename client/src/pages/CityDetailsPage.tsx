@@ -14,7 +14,13 @@ import { safeDateFormat } from "@/lib/safeDateFormat";
 import { SEO } from "@/components/SEO";
 import { GroupPostFeed } from "@/components/groups/GroupPostFeed";
 import { EnhancedMembersList } from "@/components/groups/EnhancedMembersList";
-import { CompactEventFilters, type CompactEventFilterValues } from "@/components/events/CompactEventFilters";
+// Local filter interface for city events tab
+interface CityEventFilterValues {
+  eventTypes: string[];
+  weekdays: number[];
+  dateRange: 'upcoming' | 'past' | 'all';
+  sortBy: 'date-asc' | 'date-desc';
+}
 import { motion } from "framer-motion";
 import { useMyRSVPs } from "@/hooks/useEvents";
 import { useAuth } from "@/contexts/AuthContext";
@@ -78,7 +84,7 @@ function getEventDate(event: any): Date {
 }
 
 function CityEventsTab({ cityId, cityName, legacyGroupId }: { cityId: number; cityName: string; legacyGroupId?: number }) {
-  const [filters, setFilters] = useState<CompactEventFilterValues>({
+  const [filters, setFilters] = useState<CityEventFilterValues>({
     eventTypes: [],
     weekdays: [],
     dateRange: 'upcoming',
@@ -90,11 +96,17 @@ function CityEventsTab({ cityId, cityName, legacyGroupId }: { cityId: number; ci
     queryFn: async () => {
       const res = await fetch(`/api/events?city=${encodeURIComponent(cityName)}&limit=250`);
       if (!res.ok) return [];
-      return res.json();
+      const data = await res.json();
+      // API returns { event: {...}, organizer: {...}, _count: n } - flatten to event with organizer
+      return data.map((item: any) => ({
+        ...(item.event || item),
+        organizer: item.organizer,
+        rsvpCount: item._count
+      }));
     }
   });
 
-  const { rsvps } = useMyRSVPs();
+  const { data: rsvps } = useMyRSVPs();
 
   const filteredEvents = useMemo(() => {
     let result = [...events];
@@ -136,11 +148,33 @@ function CityEventsTab({ cityId, cityName, legacyGroupId }: { cityId: number; ci
 
   return (
     <div className="space-y-4">
-      <CompactEventFilters
-        value={filters}
-        onChange={setFilters}
-        eventCount={filteredEvents.length}
-      />
+      {/* Simple inline filters */}
+      <div className="flex flex-wrap items-center gap-2">
+        <Badge 
+          variant={filters.dateRange === 'upcoming' ? 'default' : 'outline'}
+          className="cursor-pointer"
+          onClick={() => setFilters(f => ({ ...f, dateRange: 'upcoming' }))}
+        >
+          Upcoming
+        </Badge>
+        <Badge 
+          variant={filters.dateRange === 'past' ? 'default' : 'outline'}
+          className="cursor-pointer"
+          onClick={() => setFilters(f => ({ ...f, dateRange: 'past' }))}
+        >
+          Past
+        </Badge>
+        <Badge 
+          variant={filters.dateRange === 'all' ? 'default' : 'outline'}
+          className="cursor-pointer"
+          onClick={() => setFilters(f => ({ ...f, dateRange: 'all' }))}
+        >
+          All
+        </Badge>
+        <span className="text-sm text-muted-foreground ml-2">
+          {filteredEvents.length} events
+        </span>
+      </div>
 
       {filteredEvents.length === 0 ? (
         <Card>
@@ -203,7 +237,6 @@ function CityEventsTab({ cityId, cityName, legacyGroupId }: { cityId: number; ci
                         <UnifiedRSVPButton
                           eventId={event.id}
                           currentStatus={userRsvp?.status as RSVPStatus}
-                          size="sm"
                         />
                       </div>
                     </div>
