@@ -274,7 +274,9 @@ export class TangoFestivalsScraper {
       try {
         // Match city to group
         const matchResult = await cityMatcherService.matchEventLocation(event.city);
-        const groupId = matchResult?.groupId || null;
+        const groupId = matchResult && typeof matchResult === 'object' && 'groupId' in matchResult 
+          ? (matchResult as any).groupId 
+          : null;
 
         // Parse date
         const startDate = this.parseDateFromString(event.dates);

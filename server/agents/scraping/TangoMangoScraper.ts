@@ -119,7 +119,7 @@ export class TangoMangoScraper {
     const html = await response.text();
     
     // Extract event IDs and dates from loadevent() calls
-    const eventMatches = html.matchAll(/loadevent\(this,'(\d{4}-\d{2}-\d{2})',(\d+),event\)/g);
+    const eventMatches = Array.from(html.matchAll(/loadevent\(this,'(\d{4}-\d{2}-\d{2})',(\d+),event\)/g));
     const eventRefs = new Set<string>();
     
     for (const match of eventMatches) {
@@ -133,7 +133,7 @@ export class TangoMangoScraper {
     let savedCount = 0;
     
     // Fetch and save each event
-    for (const ref of eventRefs) {
+    for (const ref of Array.from(eventRefs)) {
       const [date, eventId] = ref.split('|');
       
       try {

@@ -25,19 +25,17 @@ async function main() {
   
   // Step 2: Check scraped events status
   console.log('\n[2/3] Checking scraped events...');
-  const [scrapedCount] = await db.execute(sql`
+  const scrapedCountResult = await db.execute(sql`
     SELECT COUNT(*) as count FROM scraped_events WHERE status = 'pending'
   `);
-  console.log(`Pending scraped events: ${(scrapedCount as any).count || 0}`);
+  const scrapedCount = scrapedCountResult.rows[0] as any;
+  console.log(`Pending scraped events: ${scrapedCount?.count || 0}`);
   
   // Step 3: Ingest approved/pending scraped events
   console.log('\n[3/3] Ingesting scraped events to main events table...');
   try {
-    const ingestResult = await scrapedEventIngestionService.ingestAllApproved();
-    console.log(`Ingested: ${ingestResult.ingested} events`);
-    if (ingestResult.errors.length > 0) {
-      console.log(`Errors: ${ingestResult.errors.length}`);
-    }
+    const ingestResult = await scrapedEventIngestionService.backfillApproved();
+    console.log(`Ingested: ${ingestResult.ingested} events, Failed: ${ingestResult.failed}`);
   } catch (error: any) {
     console.error('Ingestion error:', error.message);
   }
@@ -47,13 +45,13 @@ async function main() {
   console.log('FINAL STATS');
   console.log('========================================');
   
-  const [cityCount] = await db.execute(sql`SELECT COUNT(*) as count FROM groups WHERE type = 'city'`);
-  const [eventCount] = await db.execute(sql`SELECT COUNT(*) as count FROM events`);
-  const [scrapedTotal] = await db.execute(sql`SELECT COUNT(*) as count FROM scraped_events`);
+  const cityCountResult = await db.execute(sql`SELECT COUNT(*) as count FROM groups WHERE type = 'city'`);
+  const eventCountResult = await db.execute(sql`SELECT COUNT(*) as count FROM events`);
+  const scrapedTotalResult = await db.execute(sql`SELECT COUNT(*) as count FROM scraped_events`);
   
-  console.log(`Cities: ${(cityCount as any).count}`);
-  console.log(`Events: ${(eventCount as any).count}`);
-  console.log(`Scraped Events: ${(scrapedTotal as any).count}`);
+  console.log(`Cities: ${(cityCountResult.rows[0] as any)?.count}`);
+  console.log(`Events: ${(eventCountResult.rows[0] as any)?.count}`);
+  console.log(`Scraped Events: ${(scrapedTotalResult.rows[0] as any)?.count}`);
   
   // Show cities with most events
   const topCities = await db.execute(sql`

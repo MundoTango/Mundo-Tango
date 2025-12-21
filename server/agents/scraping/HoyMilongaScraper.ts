@@ -279,22 +279,22 @@ export class HoyMilongaScraper {
           }
           
           if (detailData.organizers.length > 0) {
-            event.teamData.organizers = [...new Set([...(event.teamData.organizers || []), ...detailData.organizers])];
+            event.teamData.organizers = Array.from(new Set([...(event.teamData.organizers || []), ...detailData.organizers]));
           }
           if (detailData.djs.length > 0) {
-            event.teamData.djs = [...new Set([...event.teamData.djs, ...detailData.djs])];
+            event.teamData.djs = Array.from(new Set([...event.teamData.djs, ...detailData.djs]));
           }
           if (detailData.teachers.length > 0) {
-            event.teamData.teachers = [...new Set([...event.teamData.teachers, ...detailData.teachers])];
+            event.teamData.teachers = Array.from(new Set([...event.teamData.teachers, ...detailData.teachers]));
           }
           if (detailData.orchestras.length > 0) {
-            event.teamData.orchestras = [...new Set([...event.teamData.orchestras, ...detailData.orchestras])];
+            event.teamData.orchestras = Array.from(new Set([...event.teamData.orchestras, ...detailData.orchestras]));
           }
           if (detailData.performers.length > 0) {
-            event.teamData.performers = [...new Set([...event.teamData.performers, ...detailData.performers])];
+            event.teamData.performers = Array.from(new Set([...event.teamData.performers, ...detailData.performers]));
           }
           if (detailData.hosts.length > 0) {
-            event.teamData.hosts = [...new Set([...(event.teamData.hosts || []), ...detailData.hosts])];
+            event.teamData.hosts = Array.from(new Set([...(event.teamData.hosts || []), ...detailData.hosts]));
           }
 
           enrichedCount++;
@@ -418,7 +418,7 @@ export class HoyMilongaScraper {
 
           const teamData: any = { djs: [], teachers: [], orchestras: [], performers: [] };
           for (const [role, pattern] of Object.entries(teamPatterns)) {
-            const matches = cardText.matchAll(pattern as RegExp);
+            const matches = Array.from(cardText.matchAll(pattern as RegExp));
             const key = role === 'dj' ? 'djs' : role === 'teacher' ? 'teachers' : role === 'orchestra' ? 'orchestras' : 'performers';
             for (const match of matches) {
               const name = match[1]?.trim();

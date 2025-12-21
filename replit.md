@@ -1,7 +1,7 @@
 # Mundo Tango
 
 ## Overview
-Mundo Tango is a production-ready social platform connecting the global tango community. It features a resilient, self-sovereign architecture with enterprise-grade security and integrates with various business systems and specialized AI agents. The platform aims for monetization through premium services, event hosting, and targeted advertising, offering advanced functionalities for tango enthusiasts worldwide and an extensive AI ecosystem for strategic oversight and execution.
+Mundo Tango is a production-ready social platform designed to connect the global tango community. It features a resilient, self-sovereign architecture with enterprise-grade security, integrating various business systems and specialized AI agents. The platform aims for monetization through premium services, event hosting, and targeted advertising, offering advanced functionalities for tango enthusiasts and an extensive AI ecosystem for strategic oversight and execution.
 
 ## User Preferences
 - Work Simultaneously - Run operations in parallel (use Promise.all, parallel tool calls)
@@ -24,10 +24,9 @@ The platform uses an "MT Ocean Theme" with dark mode, built with Tailwind CSS, s
 The backend is developed with Express and TypeScript, leveraging PostgreSQL (Neon) and Drizzle ORM. It includes modular routes, JWT authentication with Google/Facebook OAuth, an 8-tier Role-Based Access Control (RBAC) system, and automated database migrations. Server-side FFmpeg is used for video transcoding. The API supports PRO functionalities, place recommendations, and enhanced Talent Match AI features.
 
 ### AI Systems
-Mundo Tango incorporates an extensive AI ecosystem with over 140 specialized agents for strategic oversight and atomic execution. This includes self-healing infrastructure, a production-ready validation loop, a Visual Validation Framework, contextual agent activation, a Backend Agent System, Mr. Blue AI Assistant, and a Bifrost AI Gateway for multi-provider AI interactions. A RecursiveContextService handles hierarchical code summarization, and a TRM Learning Protocol is integrated. Scraping agents gather event data and automatically create city groups. The `/api/mrblue/chat` endpoint supports a `systemPrompt` parameter for custom AI interactions, bypassing the ConversationOrchestrator for direct prompt usage with Groq's llama-3.3-70b-versatile model.
+Mundo Tango incorporates an extensive AI ecosystem with over 140 specialized agents. This includes self-healing infrastructure, a production-ready validation loop, a Visual Validation Framework, contextual agent activation, a Backend Agent System, Mr. Blue AI Assistant, and a Bifrost AI Gateway for multi-provider AI interactions. A RecursiveContextService handles hierarchical code summarization, and a TRM Learning Protocol is integrated. Scraping agents gather event data and automatically create city groups. The `/api/mrblue/chat` endpoint supports a `systemPrompt` parameter for custom AI interactions, bypassing the ConversationOrchestrator for direct prompt usage with Groq's llama-3.3-70b-versatile model.
 
-### Mr. Blue Brain v2.0 (Modular Architecture)
-The AI brain is restructured into a modular `/mr-blue-brain/` folder system with 30+ files across 9 folders, using invocation syntax for token-efficient loading. This includes:
+The AI brain is structured into a modular `/mr-blue-brain/` folder system, encompassing:
 - **Identity**: Defines Mr. Blue's core (soul, system-prompt, values, personality-modes).
 - **Cognition**: Implements thinking processes like ReAct Protocol, Chain-of-Thought, Tree of Thoughts, Reflexion Loop.
 - **Operations**: Details Mr. Blue's workflow and error recovery.
@@ -37,82 +36,13 @@ The AI brain is restructured into a modular `/mr-blue-brain/` folder system with
 - **n8n**: Guides external integrations.
 
 ### Event Scraping System
-A multi-stage scraping architecture coordinated by a Master Orchestrator. It includes Priority Scrapers (HoyMilonga, TangoCat, TangoFestivalsScraper) and an AI-powered UnifiedEventScraper for generic websites. The system scrapes aggregator sites, then follows links to actual event pages for detailed information. Key features include AI-powered extraction, 14 event type classifications, source transparency ("View on {sourceName}"), city matching, and auto-city creation for new event locations. Scrapers can extract team member names in multiple languages from subpages. Scraped events are stored in a `scraped_events` table and ingested into the main events table by `ScrapedEventIngestionService`.
-
-**Scraping Control Center (December 2025):**
-- Admin UI at `/admin/scraping` with real-time scraper status and moderation queue
-- Unified API endpoints:
-  - `GET /api/admin/scrapers` - List all scrapers with stats
-  - `POST /api/admin/scrapers/:id/run` - Trigger specific scraper
-  - `GET /api/admin/scraped-events` - Moderation queue with filters (status/city/source)
-  - `POST /api/admin/scraped-events/:id/approve` - Approve and ingest event
-  - `POST /api/admin/scraped-events/:id/reject` - Reject event
-  - `POST /api/admin/scraped-events/bulk` - Bulk approve/reject
-  - `POST /api/admin/scraped-events/ingest-all` - Backfill all approved
-- Stats dashboard: 824 scraped events, 816 ingested, 1 pending, 7 rejected
-- City image CITY_IMAGE_MAP now includes 280+ cities with proper cityscape photos (656 entries including diacritic variations)
-
-**HoyMilonga Playwright Scraper** (December 2025):
-- Supports 8 cities: Buenos Aires (40), Athens (5), Berlin (5), São Paulo (3), Miami (2), Istanbul, London, Montevideo
-- Uses Playwright chromium for JavaScript SPA rendering
-- Enriches events from detail pages (venue, address, organizers, price, cover image)
-- Extracts participant profiles (DJs, teachers, organizers) automatically
-- Country mapping: Argentina, Brazil, Germany, Greece, Turkey, UK, USA, Uruguay
+A multi-stage scraping architecture coordinated by a Master Orchestrator. It includes Priority Scrapers (HoyMilonga, TangoCat, TangoFestivalsScraper) and an AI-powered UnifiedEventScraper for generic websites. The system scrapes aggregator sites, then follows links to actual event pages for detailed information. Key features include AI-powered extraction, 14 event type classifications, source transparency, city matching, and auto-city creation for new event locations. Scrapers can extract team member names in multiple languages from subpages. Scraped events are stored in a `scraped_events` table and ingested into the main events table by `ScrapedEventIngestionService`. An Admin UI at `/admin/scraping` provides real-time scraper status and a moderation queue.
 
 ### Platform Features
-Core functionalities include social features (events, groups, posts, notifications, media management, live streaming, marketplaces, reviews) and business features (Talent Match AI, LIFE CEO AI, Multi-AI Orchestration, Automated Scraping, Admin Dashboard, Stripe Payments, BullMQ Workers). Recent enhancements include an Event Series System, redesigned City Groups Events Tab, RSS Feed Scraping, Profile Enrichment Service, OpenStreetMap Geocoding, Unified Messaging Inbox, and a Faceless Content System. The Talent Match AI system integrates volunteer onboarding, resume analysis, AI interviews, and task assignment, with an International Payment System supporting 30 currencies and 6 regions.
-
-**City Group Design (December 2025):**
-- Discussion tab now first/default for community engagement
-- Events tab has weekday filter tabs (Sun-Sat) for recurring milongas - displays all 226+ upcoming events
-- Weekday filter fix: Auto-switch to Past tab only happens on initial load, not when filtering by weekday
-- Weekday filter UX: Description now shows "{count} {DayName} events (try 'All Days')" when filter results in 0 events
-- Event fetch limit increased to 250 to capture all events for large cities (Buenos Aires: 231 events)
-- Events distributed: Monday (2), Wednesday (17), Thursday (31), Friday (78), Saturday (103)
-- Visitors tab has "This Week" / "All Upcoming" sub-tabs with proper display names (firstName + lastName)
-- Overview tab has interactive map with events/housing/recommendations layers
-- Group post authors show proper display names (not just usernames)
-- Mr. Blue chat hidden on marketing pages for cleaner UX
-- `/cities/:cityName` URL pattern - publicly accessible, redirects to /groups/:id if group exists
-- `/groups/:id` now publicly viewable (auth-protected features like joining still require login)
-- CSRF token fix: Token reuse across server restarts, prevents 403 errors on RSVP and other mutations
-
-**Data Cleanup & City Infrastructure (December 21, 2025):**
-- **Removed all placeholder data**: Deleted 6 junk events with "Unknown" city (scraper errors), 2 scraped events with "Unknown" city
-- **Changed null handling**: Code now uses `null` instead of "Unknown" for unparseable locations - events without real city data won't be ingested
-- **Fixed data quality issues**: Corrected wrong country assignments:
-  - Athens, Argentina (8 events) → Athens, Greece
-  - Berlin, Argentina (8 events) → Berlin, Germany
-  - São Paulo, Argentina (4 events) → São Paulo, Brazil
-  - Miami, Argentina (2 events) → Miami, United States
-- **Standardized country/city naming**: "Türkiye" → "Turkey", "İstanbul" → "Istanbul"
-- **Created Taiwan city groups**: Added Taipei, Taipei City, and Taitung (都蘭村) with correct coordinates
-  - **CRITICAL FIX**: Taiwan-in-Africa issue RESOLVED - Taiwan now shows at correct 25°N 121°E coordinates
-- **BULK GEOCODING COMPLETE**: All 254 city groups now have valid coordinates (0 NULL)
-  - Used Nominatim (OpenStreetMap) API with 1 req/sec rate limiting
-  - Created `scripts/geocode-all-cities.ts` for future backfills
-  - New admin endpoints: `POST /api/admin/geocode-all-cities`, `GET /api/admin/city-audit`
-  - Auto-geocoding: New cities created by ScrapedEventIngestionService.ensureCityGroup() are automatically geocoded
-- **Fixed city routing endpoint**: `/api/cities/by-slug/:slug` was looking in wrong table, now correctly queries groups table
-  - Miami (`/cities/miami-tango`), Taipei (`/cities/taipei-tango`), and all 254 city groups now accessible
-- **Fixed city API eventCount**: Drizzle ORM subquery interpolation issue - now uses separate Promise.all() queries
-  - Drizzle's `${table}` syntax doesn't work in SQL subqueries; use separate count queries instead
-  - All cities now correctly show event counts (Buenos Aires: 231, Athens: 37, Berlin: 34)
-- **Fixed property mapping**: Changed snake_case to camelCase (`group.cover_image` → `group.coverImage`) to match Drizzle ORM
-- **Total city groups**: 254 (one for each tango community with events)
-- **All scraped events**: Now contain only real, verified location data - zero placeholder values
-- **City Page Spec**: See `mr-blue-brain/pages/CITY_PAGE.md` for authoritative 7-tab design spec
-
-### Data Quality System (December 2025)
-A comprehensive data quality infrastructure for monitoring and fixing data issues:
-- **DataQualityReportService** - Generates quality reports for cities, events, sources, and found people metrics
-- **ProfileLinkingService** - Links scraped DJ/teacher/organizer names to user profiles using fuzzy matching (0.8 threshold)
-- **CityDataMigrationService** - Fixes city data with stock cover images (20 major cities + fallback) and auto-generated descriptions
-- Admin API endpoints: `/api/admin/data-quality/*` for reports, migrations, and profile linking
-- City cover image library: 280+ cities with curated cityscape/landmark photos from 45+ countries, with diacritic variations and country flag fallbacks
+Core functionalities include social features (events, groups, posts, notifications, media management, live streaming, marketplaces, reviews) and business features (Talent Match AI, LIFE CEO AI, Multi-AI Orchestration, Automated Scraping, Admin Dashboard, Stripe Payments, BullMQ Workers). Recent enhancements include an Event Series System, redesigned City Groups Events Tab, RSS Feed Scraping, Profile Enrichment Service, OpenStreetMap Geocoding, Unified Messaging Inbox, and a Faceless Content System. The Talent Match AI system integrates volunteer onboarding, resume analysis, AI interviews, and task assignment, with an International Payment System supporting 30 currencies and 6 regions. All 254 city groups have valid coordinates, auto-geocoding for new cities, and the city pages are publicly accessible. A comprehensive Data Quality System is in place for reports, migrations, and profile linking.
 
 ### Testing & Production
-The platform utilizes End-to-End (E2E) tests with Playwright, automated unit test coverage, and visual regression testing. A Volunteer Testing System provides 148 scenarios with automated issue routing. Production deployments are managed via GitHub Actions for CI/CD, monitored by Prometheus/Grafana with Sentry, and deployed through Replit Publishing. Redis is used for caching, and PostgreSQL (Neon) with Drizzle ORM for the database. Deployment size optimization is achieved by excluding large directories via `.gitignore`, and the production build incorporates React.lazy() for code splitting.
+The platform utilizes End-to-End (E2E) tests with Playwright, automated unit test coverage, and visual regression testing. A Volunteer Testing System provides 148 scenarios with automated issue routing. Production deployments are managed via GitHub Actions for CI/CD, monitored by Prometheus/Grafana with Sentry, and deployed through Replit Publishing. Redis is used for caching, and PostgreSQL (Neon) with Drizzle ORM for the database.
 
 ### Marketing Site Architecture
 The marketing site integrates a Human to Agent Collaboration (H2AC) Volunteer Program and an Ambassador Program. Public statistics are backed by real database data, and donations are handled via GoFundMe. The site includes "Coming Soon Features" and updated marketing pages with new footers and an updated About page. A new Tango Roles landing page is available.
@@ -126,34 +56,3 @@ The marketing site integrates a Human to Agent Collaboration (H2AC) Volunteer Pr
 - **UI Libraries:** shadcn/ui, Radix UI, Framer Motion, Leaflet
 - **Internationalization:** i18next
 - **Other:** Sentry, Playwright, BullMQ, FFmpeg, fluent-ffmpeg, Wouter, Multer, `@octokit/rest`
-
-## Critical Files Protection (NEVER DELETE)
-
-The following files and directories are protected and must NEVER be deleted during deployment or cleanup:
-
-### Core Documentation
-| File | Purpose |
-|------|---------|
-| `mb.md` | MB.MD v2.0 methodology - core AI brain reference |
-| `mb-legacy.md` | Legacy methodology backup (6,472 lines) |
-| `replit.md` | Project documentation and preferences |
-
-### AI Brain System
-| Directory | Purpose |
-|-----------|---------|
-| `mr-blue-brain/` | Modular AI brain with 30+ files, 140+ agents |
-| `mr-blue-brain/identity/` | Core identity (soul, values, personality) |
-| `mr-blue-brain/cognition/` | Thinking frameworks (ReAct, CoT, ToT) |
-| `mr-blue-brain/patterns/` | 61 MB.MD patterns |
-| `mr-blue-brain/agents/` | 140+ specialized agent profiles |
-
-### Asset Directories (Used by React Components)
-| Directory | Used By |
-|-----------|---------|
-| `attached_assets/optimized/` | 7 pages (About, Home, Friends, Life-CEO) |
-| `attached_assets/stock_images/` | 20+ pages (landing, marketing, etc.) |
-
-### Protection Mechanism
-- `scripts/prebuild-cleanup.sh` - Has explicit exclusions for these files
-- `.gitignore` - Has exceptions for required asset directories
-- All protected files must be tracked in git

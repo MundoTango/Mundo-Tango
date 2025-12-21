@@ -643,22 +643,19 @@ class ScrapedEventIngestionService {
       
       const eventData = this.mapToEvent(scraped, userId, resolvedGroupId);
 
-      // Use transaction to ensure atomicity of core operations
-      const result = await db.transaction(async (tx) => {
-        // Insert event
-        const [inserted] = await tx
-          .insert(events)
-          .values(eventData)
-          .returning({ id: events.id });
+      // Insert event (no transaction - Neon HTTP driver doesn't support them)
+      const [inserted] = await db
+        .insert(events)
+        .values(eventData)
+        .returning({ id: events.id });
 
-        // Mark as ingested within same transaction
-        await tx
-          .update(scrapedEvents)
-          .set({ status: 'ingested' })
-          .where(eq(scrapedEvents.id, scrapedEventId));
+      // Mark as ingested
+      await db
+        .update(scrapedEvents)
+        .set({ status: 'ingested' })
+        .where(eq(scrapedEvents.id, scrapedEventId));
 
-        return { eventId: inserted.id };
-      });
+      const result = { eventId: inserted.id };
 
       // Team member extraction is non-critical - done outside transaction
       // If this fails, the event is still ingested, just without team links
