@@ -495,102 +495,126 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
         </div>
       </CardHeader>
       
-      <div className="px-6 py-4 border-b bg-muted/30" data-testid="filter-bar">
-        <div className="flex flex-col lg:flex-row gap-3 items-start lg:items-center">
-          <div className="relative flex-1 w-full lg:max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+      <div className="px-6 py-4 border-b bg-gradient-to-r from-muted/40 to-muted/20" data-testid="filter-bar">
+        {/* Main Filter Row - Compact Chip Design */}
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Search Input - Compact */}
+          <div className="relative">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
             <Input
-              placeholder="Search events..."
+              placeholder="Search..."
               value={filters.q || ""}
               onChange={(e) => setFilters({ ...filters, q: e.target.value })}
-              className="pl-10"
+              className="pl-8 h-8 w-40 text-sm"
               data-testid="input-search-events"
             />
           </div>
           
-          <div className="flex flex-wrap gap-2 items-center">
-            <Select
-              value={filters.type || "all"}
-              onValueChange={(value) => setFilters({ ...filters, type: value === "all" ? undefined : value })}
-            >
-              <SelectTrigger className="w-32" data-testid="select-event-type">
-                <SelectValue placeholder="Type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Types</SelectItem>
-                <SelectItem value="milonga">Milonga</SelectItem>
-                <SelectItem value="practica">Practica</SelectItem>
-                <SelectItem value="class">Class</SelectItem>
-                <SelectItem value="workshop">Workshop</SelectItem>
-                <SelectItem value="festival">Festival</SelectItem>
-              </SelectContent>
-            </Select>
-            
-            <Button
-              variant={filters.verified ? "default" : "outline"}
-              size="sm"
-              onClick={() => setFilters({ ...filters, verified: !filters.verified })}
-              className="gap-1"
-              data-testid="button-filter-verified"
-            >
-              <Check className="h-3 w-3" />
-              Verified
-            </Button>
-            
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
-              className="gap-1"
-              data-testid="button-more-filters"
-            >
-              <SlidersHorizontal className="h-4 w-4" />
-              More
-              {activeFilterCount > 0 && (
-                <Badge variant="secondary" className="ml-1 h-5 min-w-5 p-0 flex items-center justify-center text-xs">
-                  {activeFilterCount}
-                </Badge>
-              )}
-            </Button>
-            
-            {activeFilterCount > 0 && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setFilters({})}
-                className="gap-1 text-muted-foreground"
-                data-testid="button-clear-filters"
+          {/* Quick Type Filter Chips */}
+          <div className="flex flex-wrap gap-1.5">
+            {[
+              { value: undefined, label: "All" },
+              { value: "milonga", label: "Milonga" },
+              { value: "practica", label: "Practica" },
+              { value: "class", label: "Class" },
+              { value: "workshop", label: "Workshop" },
+              { value: "festival", label: "Festival" },
+            ].map((type) => (
+              <Badge
+                key={type.value || "all"}
+                variant={filters.type === type.value ? "default" : "outline"}
+                className={`cursor-pointer text-xs px-2.5 py-1 transition-all ${
+                  filters.type === type.value 
+                    ? "bg-primary text-primary-foreground shadow-sm" 
+                    : "hover-elevate"
+                }`}
+                onClick={() => setFilters({ ...filters, type: type.value })}
+                data-testid={`chip-type-${type.value || "all"}`}
               >
-                <X className="h-4 w-4" />
-                Clear
-              </Button>
-            )}
+                {type.label}
+              </Badge>
+            ))}
           </div>
           
-          <div className="flex items-center gap-2 ml-auto">
-            <Tabs value={viewMode} onValueChange={(val) => setViewMode(val as "list" | "calendar" | "map")} data-testid="tabs-view-mode">
-              <TabsList>
-                <TabsTrigger value="list" data-testid="tab-list-view">
-                  <List className="h-4 w-4" />
-                </TabsTrigger>
-                <TabsTrigger value="calendar" data-testid="tab-calendar-view">
-                  <Calendar className="h-4 w-4" />
-                </TabsTrigger>
-                <TabsTrigger value="map" data-testid="tab-map-view">
-                  <MapIcon className="h-4 w-4" />
-                </TabsTrigger>
-              </TabsList>
-            </Tabs>
+          {/* Verified Toggle */}
+          <Badge
+            variant={filters.verified ? "default" : "outline"}
+            className={`cursor-pointer text-xs px-2.5 py-1 gap-1 transition-all ${
+              filters.verified 
+                ? "bg-green-600 text-white shadow-sm" 
+                : "hover-elevate"
+            }`}
+            onClick={() => setFilters({ ...filters, verified: !filters.verified })}
+            data-testid="chip-verified"
+          >
+            <Check className="h-3 w-3" />
+            Verified
+          </Badge>
+          
+          {/* More Filters Button */}
+          <Badge
+            variant="outline"
+            className="cursor-pointer text-xs px-2.5 py-1 gap-1 hover-elevate"
+            onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
+            data-testid="chip-more-filters"
+          >
+            <SlidersHorizontal className="h-3 w-3" />
+            More
+            {activeFilterCount > 0 && (
+              <span className="ml-0.5 bg-primary text-primary-foreground rounded-full h-4 min-w-4 px-1 flex items-center justify-center text-[10px] font-medium">
+                {activeFilterCount}
+              </span>
+            )}
+          </Badge>
+          
+          {/* Clear All */}
+          {activeFilterCount > 0 && (
+            <Badge
+              variant="outline"
+              className="cursor-pointer text-xs px-2 py-1 gap-1 text-muted-foreground hover:text-foreground hover-elevate"
+              onClick={() => setFilters({})}
+              data-testid="chip-clear-all"
+            >
+              <X className="h-3 w-3" />
+              Clear
+            </Badge>
+          )}
+          
+          {/* Spacer */}
+          <div className="flex-1" />
+          
+          {/* View Mode Toggle */}
+          <div className="flex items-center rounded-lg border bg-background p-0.5">
+            {[
+              { value: "list", icon: List, label: "List" },
+              { value: "calendar", icon: Calendar, label: "Calendar" },
+              { value: "map", icon: MapIcon, label: "Map" },
+            ].map((mode) => (
+              <button
+                key={mode.value}
+                onClick={() => setViewMode(mode.value as "list" | "calendar" | "map")}
+                className={`p-1.5 rounded-md transition-all ${
+                  viewMode === mode.value 
+                    ? "bg-primary text-primary-foreground shadow-sm" 
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+                data-testid={`tab-${mode.value}-view`}
+                title={mode.label}
+              >
+                <mode.icon className="h-4 w-4" />
+              </button>
+            ))}
           </div>
         </div>
         
+        {/* Advanced Filters Panel */}
         {showAdvancedFilters && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.2 }}
-            className="mt-4 pt-4 border-t"
+            className="mt-4 pt-4 border-t border-border/50"
           >
             <EventFilters 
               onFilterChange={(newFilters) => setFilters(newFilters)} 
@@ -599,44 +623,55 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
           </motion.div>
         )}
         
+        {/* Active Filter Pills */}
         {activeFilterCount > 0 && !showAdvancedFilters && (
-          <div className="flex flex-wrap gap-2 mt-3 pt-3 border-t">
+          <div className="flex flex-wrap gap-1.5 mt-3 pt-3 border-t border-border/50">
             {filters.q && (
-              <Badge variant="secondary" className="gap-1 cursor-pointer" onClick={() => setFilters({...filters, q: ''})} data-testid="badge-filter-search">
-                Search: {filters.q}
-                <X className="h-3 w-3 ml-1" />
-              </Badge>
-            )}
-            {filters.type && filters.type !== 'all' && (
-              <Badge variant="secondary" className="gap-1 cursor-pointer" onClick={() => setFilters({...filters, type: undefined})} data-testid="badge-filter-type">
-                {filters.type}
-                <X className="h-3 w-3 ml-1" />
-              </Badge>
-            )}
-            {filters.verified && (
-              <Badge variant="secondary" className="gap-1 cursor-pointer" onClick={() => setFilters({...filters, verified: false})} data-testid="badge-filter-verified">
-                Verified Only
-                <X className="h-3 w-3 ml-1" />
+              <Badge 
+                variant="secondary" 
+                className="gap-1 cursor-pointer text-xs hover-elevate" 
+                onClick={() => setFilters({...filters, q: ''})} 
+                data-testid="badge-filter-search"
+              >
+                <Search className="h-3 w-3" />
+                {filters.q}
+                <X className="h-3 w-3" />
               </Badge>
             )}
             {filters.skillLevel && filters.skillLevel !== 'all' && (
-              <Badge variant="secondary" className="gap-1 cursor-pointer" onClick={() => setFilters({...filters, skillLevel: undefined})} data-testid="badge-filter-level">
+              <Badge 
+                variant="secondary" 
+                className="gap-1 cursor-pointer text-xs hover-elevate" 
+                onClick={() => setFilters({...filters, skillLevel: undefined})} 
+                data-testid="badge-filter-level"
+              >
                 {filters.skillLevel}
-                <X className="h-3 w-3 ml-1" />
+                <X className="h-3 w-3" />
               </Badge>
             )}
             {filters.danceStyle && filters.danceStyle !== 'all' && (
-              <Badge variant="secondary" className="gap-1 cursor-pointer" onClick={() => setFilters({...filters, danceStyle: undefined})} data-testid="badge-filter-style">
+              <Badge 
+                variant="secondary" 
+                className="gap-1 cursor-pointer text-xs hover-elevate" 
+                onClick={() => setFilters({...filters, danceStyle: undefined})} 
+                data-testid="badge-filter-style"
+              >
                 {filters.danceStyle}
-                <X className="h-3 w-3 ml-1" />
+                <X className="h-3 w-3" />
               </Badge>
             )}
             {filters.languages?.map(code => {
               const lang = getLanguageByCode(code);
               return (
-                <Badge key={code} variant="secondary" className="gap-1 cursor-pointer" onClick={() => setFilters({...filters, languages: filters.languages?.filter(l => l !== code)})} data-testid={`badge-filter-lang-${code}`}>
+                <Badge 
+                  key={code} 
+                  variant="secondary" 
+                  className="gap-1 cursor-pointer text-xs hover-elevate" 
+                  onClick={() => setFilters({...filters, languages: filters.languages?.filter(l => l !== code)})} 
+                  data-testid={`badge-filter-lang-${code}`}
+                >
                   {lang?.flag} {lang?.name || code}
-                  <X className="h-3 w-3 ml-1" />
+                  <X className="h-3 w-3" />
                 </Badge>
               );
             })}
