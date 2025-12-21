@@ -36,6 +36,7 @@ import { format, parse, startOfWeek, getDay } from 'date-fns';
 import { enUS } from 'date-fns/locale';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { AirbnbHousingView } from "@/components/housing/AirbnbHousingView";
 
 const locales = { 'en-US': enUS };
@@ -551,21 +552,108 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
             Verified
           </Badge>
           
-          {/* More Filters Button */}
-          <Badge
-            variant="outline"
-            className="cursor-pointer text-xs px-2.5 py-1 gap-1 hover-elevate"
-            onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
-            data-testid="chip-more-filters"
-          >
-            <SlidersHorizontal className="h-3 w-3" />
-            More
-            {activeFilterCount > 0 && (
-              <span className="ml-0.5 bg-primary text-primary-foreground rounded-full h-4 min-w-4 px-1 flex items-center justify-center text-[10px] font-medium">
-                {activeFilterCount}
-              </span>
-            )}
-          </Badge>
+          {/* More Filters Dropdown */}
+          <Popover open={showAdvancedFilters} onOpenChange={setShowAdvancedFilters}>
+            <PopoverTrigger asChild>
+              <Badge
+                variant="outline"
+                className="cursor-pointer text-xs px-2.5 py-1 gap-1 hover-elevate"
+                data-testid="chip-more-filters"
+              >
+                <SlidersHorizontal className="h-3 w-3" />
+                More
+                {activeFilterCount > 0 && (
+                  <span className="ml-0.5 bg-primary text-primary-foreground rounded-full h-4 min-w-4 px-1 flex items-center justify-center text-[10px] font-medium">
+                    {activeFilterCount}
+                  </span>
+                )}
+              </Badge>
+            </PopoverTrigger>
+            <PopoverContent className="w-80 p-4" align="start">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h4 className="font-medium text-sm">Advanced Filters</h4>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={() => { setFilters({}); setShowAdvancedFilters(false); }}
+                    className="h-7 text-xs"
+                  >
+                    Reset All
+                  </Button>
+                </div>
+                
+                {/* Skill Level */}
+                <div className="space-y-1.5">
+                  <label className="text-xs text-muted-foreground font-medium">Skill Level</label>
+                  <Select 
+                    value={filters.skillLevel || "all"} 
+                    onValueChange={(v) => setFilters({...filters, skillLevel: v === "all" ? undefined : v})}
+                  >
+                    <SelectTrigger className="h-8 text-xs">
+                      <SelectValue placeholder="Any level" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Any level</SelectItem>
+                      <SelectItem value="beginner">Beginner</SelectItem>
+                      <SelectItem value="intermediate">Intermediate</SelectItem>
+                      <SelectItem value="advanced">Advanced</SelectItem>
+                      <SelectItem value="all_levels">All Levels</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                {/* Dance Style */}
+                <div className="space-y-1.5">
+                  <label className="text-xs text-muted-foreground font-medium">Dance Style</label>
+                  <Select 
+                    value={filters.danceStyle || "all"} 
+                    onValueChange={(v) => setFilters({...filters, danceStyle: v === "all" ? undefined : v})}
+                  >
+                    <SelectTrigger className="h-8 text-xs">
+                      <SelectValue placeholder="Any style" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Any style</SelectItem>
+                      <SelectItem value="tango">Traditional Tango</SelectItem>
+                      <SelectItem value="nuevo">Tango Nuevo</SelectItem>
+                      <SelectItem value="milonguero">Milonguero</SelectItem>
+                      <SelectItem value="vals">Tango Vals</SelectItem>
+                      <SelectItem value="mixed">Mixed Styles</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                {/* Online Toggle */}
+                <div className="flex items-center justify-between">
+                  <label className="text-xs text-muted-foreground font-medium">Online Events</label>
+                  <div className="flex gap-1">
+                    <Badge
+                      variant={filters.online === undefined ? "default" : "outline"}
+                      className="cursor-pointer text-xs"
+                      onClick={() => setFilters({...filters, online: undefined})}
+                    >
+                      All
+                    </Badge>
+                    <Badge
+                      variant={filters.online === true ? "default" : "outline"}
+                      className="cursor-pointer text-xs"
+                      onClick={() => setFilters({...filters, online: true})}
+                    >
+                      Online
+                    </Badge>
+                    <Badge
+                      variant={filters.online === false ? "default" : "outline"}
+                      className="cursor-pointer text-xs"
+                      onClick={() => setFilters({...filters, online: false})}
+                    >
+                      In-person
+                    </Badge>
+                  </div>
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
           
           {/* Clear All */}
           {activeFilterCount > 0 && (
@@ -606,22 +694,6 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
             ))}
           </div>
         </div>
-        
-        {/* Advanced Filters Panel */}
-        {showAdvancedFilters && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.2 }}
-            className="mt-4 pt-4 border-t border-border/50"
-          >
-            <EventFilters 
-              onFilterChange={(newFilters) => setFilters(newFilters)} 
-              initialFilters={filters}
-            />
-          </motion.div>
-        )}
         
         {/* Active Filter Pills */}
         {activeFilterCount > 0 && !showAdvancedFilters && (
@@ -984,26 +1056,37 @@ function GroupVisitorsTab({ groupCity }: { groupCity?: string | null }) {
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {filteredVisitors.map((visitor: any) => (
-            <Card key={visitor.id} className="hover-elevate" data-testid={`card-visitor-${visitor.id}`}>
-              <CardContent className="flex items-center gap-4 py-4">
-                <Avatar className="h-12 w-12">
-                  <AvatarImage src={visitor.avatarUrl || visitor.profileImage} />
-                  <AvatarFallback>
-                    {getDisplayName(visitor).substring(0, 2).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex-1 min-w-0">
-                  <p className="font-medium truncate">{getDisplayName(visitor)}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {visitor.arrivalDate && safeDateFormat(visitor.arrivalDate, "MMM d")}
-                    {visitor.departureDate && ` - ${safeDateFormat(visitor.departureDate, "MMM d")}`}
-                  </p>
-                  {visitor.homeCity && (
-                    <p className="text-xs text-muted-foreground truncate">From {visitor.homeCity}</p>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
+            <Link key={visitor.id} href={`/profile/${visitor.username || visitor.id}`}>
+              <Card className="hover-elevate cursor-pointer" data-testid={`card-visitor-${visitor.id}`}>
+                <CardContent className="flex items-center gap-4 py-4">
+                  <Avatar className="h-12 w-12">
+                    <AvatarImage src={visitor.avatarUrl || visitor.profileImage} />
+                    <AvatarFallback>
+                      {getDisplayName(visitor).substring(0, 2).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium truncate">{getDisplayName(visitor)}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {visitor.arrivalDate && safeDateFormat(visitor.arrivalDate, "MMM d")}
+                      {visitor.departureDate && ` - ${safeDateFormat(visitor.departureDate, "MMM d")}`}
+                    </p>
+                    {visitor.homeCity && (
+                      <p className="text-xs text-muted-foreground truncate">From {visitor.homeCity}</p>
+                    )}
+                    {visitor.tangoRoles && visitor.tangoRoles.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {visitor.tangoRoles.slice(0, 3).map((role: string) => (
+                          <Badge key={role} variant="outline" className="text-[10px] px-1.5 py-0">
+                            {role}
+                          </Badge>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
           ))}
         </div>
       )}
@@ -1270,8 +1353,8 @@ function GroupHubTab({ groupCity, groupCountry, group }: { groupCity?: string | 
         </div>
       </Card>
 
-      {/* Details Section */}
-      <div className="grid lg:grid-cols-2 gap-6">
+      {/* Details Section - 3 Column Layout */}
+      <div className="grid lg:grid-cols-3 gap-6">
         {/* Events List */}
         {(activeLayer === 'all' || activeLayer === 'events') && (
           <Card className="overflow-hidden">
@@ -1342,6 +1425,21 @@ function GroupHubTab({ groupCity, groupCountry, group }: { groupCity?: string | 
                   ))}
                 </div>
               )}
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Recommendations List */}
+        {(activeLayer === 'all' || activeLayer === 'recommendations') && (
+          <Card className="overflow-hidden">
+            <CardHeader className="border-b py-3">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Star className="h-5 w-5 text-yellow-500" />
+                Local Tips
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-0 max-h-[400px] overflow-y-auto">
+              <RecommendationsList city={groupCity || undefined} limit={8} compact />
             </CardContent>
           </Card>
         )}
@@ -2005,10 +2103,6 @@ export default function GroupDetailsPage() {
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-white font-bold leading-tight mb-4" data-testid="text-city-name">
                 {group.city ? `${group.city}${group.country ? `, ${group.country}` : ''}` : group.name}
               </h1>
-              
-              {group.name !== group.city && (
-                <p className="text-xl text-white/80 mb-4">{group.name}</p>
-              )}
               
               <div className="flex flex-wrap items-center justify-center gap-6 text-white/90 mb-8">
                 <div className="flex items-center gap-2">
