@@ -16,6 +16,8 @@ import { cityMatcherService } from '../../services/CityMatcherService';
 import { detailDiscoveryService } from '../../services/scraping/DetailDiscoveryService';
 import { languageAwareFieldMapper } from '../../services/scraping/LanguageAwareFieldMapper';
 import { attachParticipantProfiles } from '../../services/scraping/ParticipantProfileHelper';
+import { RecurringEventDetector } from '../../services/scraping/RecurringEventDetector';
+import { InfiniteScrollHelper } from '../../services/scraping/InfiniteScrollHelper';
 
 interface HoyMilongaTeamData {
   djs: string[];
@@ -200,34 +202,13 @@ export class HoyMilongaScraper {
         try {
           await page.goto(url, { waitUntil: 'networkidle', timeout: 30000 });
           
-          // CRITICAL: HoyMilonga uses infinite scroll - scroll to load ALL events!
-          // Load multiple weeks of events by scrolling down repeatedly
-          let previousHeight = 0;
-          let scrollAttempts = 0;
-          const maxScrolls = 15; // Load ~4-5 months of events
-          
+          // CRITICAL: HoyMilonga uses infinite scroll - use helper to load ALL events!
           console.log(`[HoyMilonga] 📜 Scrolling to load all events for ${cityName}...`);
-          
-          while (scrollAttempts < maxScrolls) {
-            // Get current page height
-            const currentHeight = await page.evaluate(() => document.body.scrollHeight);
-            
-            if (currentHeight === previousHeight) {
-              console.log(`[HoyMilonga] ✅ Reached end of events (no more scrolling)`);
-              break;
-            }
-            
-            // Scroll down
-            await page.evaluate(() => window.scrollBy(0, window.innerHeight * 2));
-            await page.waitForTimeout(800); // Wait for dynamic content to load
-            
-            previousHeight = currentHeight;
-            scrollAttempts++;
-            
-            // Extract current event count
-            const currentEvents = await this.extractEventsFromPage(page, cityName, url);
-            console.log(`[HoyMilonga] 📊 Scroll ${scrollAttempts}/${maxScrolls}: ${currentEvents.length} total events loaded`);
-          }
+          await InfiniteScrollHelper.scrollUntilEnd(page, {
+            maxScrolls: 20,
+            delayMs: 600,
+            heightThreshold: 100
+          });
           
           // Final extraction after all scrolling
           events = await this.extractEventsFromPage(page, cityName, url);
