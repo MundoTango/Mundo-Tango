@@ -380,9 +380,16 @@ class ScrapedEventIngestionService {
   /**
    * Ensure a city group exists for the event's city
    * Auto-creates the group if it doesn't exist
+   * Skips placeholder values like "Unknown", "TBA", "Various"
    */
   private async ensureCityGroup(city: string | null, country: string | null): Promise<void> {
     if (!city) return;
+    
+    // Skip placeholder city values
+    const placeholders = ['unknown', 'tba', 'various', 'online', 'virtual', 'tbd', 'n/a'];
+    if (placeholders.includes(city.toLowerCase().trim())) {
+      return;
+    }
 
     try {
       // Check if city group already exists
