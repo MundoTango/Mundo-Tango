@@ -29,7 +29,6 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { getLanguageByCode } from "@/components/input/UnifiedLanguagePicker";
 import { RecommendationsList } from "@/components/recommendations/RecommendationsList";
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import MarkerClusterGroup from 'react-leaflet-cluster';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { Calendar as BigCalendar, dateFnsLocalizer, Views } from 'react-big-calendar';
@@ -1325,8 +1324,7 @@ function GroupHubTab({ groupCity, groupCountry, group }: { groupCity?: string | 
                 attribution='&copy; <a href="https://carto.com/attributions">CARTO</a>'
                 url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
               />
-              <MarkerClusterGroup chunkedLoading>
-                {mapLocations.map((loc, idx) => (
+              {mapLocations.map((loc, idx) => (
                   <Marker 
                     key={`${loc.type}-${loc.id}-${idx}`}
                     position={[loc.coordinates.lat, loc.coordinates.lng]}
@@ -1365,7 +1363,6 @@ function GroupHubTab({ groupCity, groupCountry, group }: { groupCity?: string | 
                     </Popup>
                   </Marker>
                 ))}
-              </MarkerClusterGroup>
             </MapContainer>
           )}
         </div>
