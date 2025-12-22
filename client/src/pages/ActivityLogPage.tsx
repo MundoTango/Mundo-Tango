@@ -5,8 +5,10 @@ import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { SEO } from "@/components/SEO";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 export default function ActivityLogPage() {
+  const { t } = useTranslation(['pages', 'common']);
   const activities = [
     { id: 1, type: "login", text: "Logged in from New York, NY", time: "2 hours ago", icon: LogIn },
     { id: 2, type: "rsvp", text: "RSVP'd to Friday Night Milonga", time: "5 hours ago", icon: Calendar },
@@ -17,10 +19,10 @@ export default function ActivityLogPage() {
 
   return (
     <SelfHealingErrorBoundary pageName="Activity Log" fallbackRoute="/profile">
-      <PageLayout title="Activity Log" showBreadcrumbs>
+      <PageLayout title={t('pages:activityLog.title', 'Activity Log')} showBreadcrumbs>
         <SEO
-          title="Activity Log - Mundo Tango"
-          description="View your recent activity and interactions on Mundo Tango"
+          title={t('pages:activityLog.seoTitle', 'Activity Log - Mundo Tango')}
+          description={t('pages:activityLog.seoDescription', 'View your recent activity and interactions on Mundo Tango')}
         />
         
         {/* Hero Section */}
@@ -38,15 +40,15 @@ export default function ActivityLogPage() {
               transition={{ duration: 1, ease: "easeOut" }}
             >
               <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
-                Your Journey
+                {t('pages:activityLog.yourJourney', 'Your Journey')}
               </Badge>
               
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6" data-testid="text-page-title">
-                Activity Log
+                {t('pages:activityLog.heroTitle', 'Activity Log')}
               </h1>
               
               <p className="text-xl text-white/80 max-w-2xl mx-auto" data-testid="text-page-subtitle">
-                Track your interactions and engagement across the tango community
+                {t('pages:activityLog.heroSubtitle', 'Track your interactions and engagement across the tango community')}
               </p>
             </motion.div>
           </div>
@@ -62,7 +64,7 @@ export default function ActivityLogPage() {
             >
               <Card className="hover-elevate">
                 <CardHeader className="p-8">
-                  <CardTitle className="text-3xl font-serif font-bold">Recent Activity</CardTitle>
+                  <CardTitle className="text-3xl font-serif font-bold">{t('pages:activityLog.recentActivity', 'Recent Activity')}</CardTitle>
                 </CardHeader>
                 <CardContent className="p-8 pt-0">
                   <div className="space-y-6">

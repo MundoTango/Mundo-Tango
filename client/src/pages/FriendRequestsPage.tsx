@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { safeDateDistance } from "@/lib/safeDateFormat";
+import { useTranslation } from "react-i18next";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -55,6 +56,7 @@ interface FriendRequest {
 }
 
 export default function FriendRequestsPage() {
+  const { t } = useTranslation(['pages', 'common']);
   const { user } = useAuth();
   const { toast } = useToast();
   const [selectedRequest, setSelectedRequest] = useState<FriendRequest | null>(null);
@@ -192,10 +194,10 @@ export default function FriendRequestsPage() {
   return (
     <SelfHealingErrorBoundary pageName="Friend Requests" fallbackRoute="/friends">
       <SEO
-        title="Friend Requests - Mundo Tango"
-        description="Manage your friend requests. Accept or decline pending requests and view your sent requests."
+        title={t('pages:friendRequests.seoTitle', 'Friend Requests - Mundo Tango')}
+        description={t('pages:friendRequests.seoDescription', 'Manage your friend requests. Accept or decline pending requests and view your sent requests.')}
       />
-      <PageLayout title="Friend Requests" showBreadcrumbs>
+      <PageLayout title={t('pages:friendRequests.title', 'Friend Requests')} showBreadcrumbs>
         <div className="min-h-screen bg-background">
           {/* Hero Section */}
           <div className="bg-gradient-to-r from-primary/10 via-accent/10 to-primary/10 border-b">
@@ -208,22 +210,22 @@ export default function FriendRequestsPage() {
                 <div className="flex items-center gap-3 mb-4">
                   <UserPlus className="h-8 w-8 text-primary" />
                   <h1 className="text-4xl font-bold" data-testid="text-page-title">
-                    Friend Requests
+                    {t('pages:friendRequests.title', 'Friend Requests')}
                   </h1>
                 </div>
                 <p className="text-muted-foreground">
-                  Manage incoming and outgoing friend requests
+                  {t('pages:friendRequests.subtitle', 'Manage incoming and outgoing friend requests')}
                 </p>
 
                 {/* Stats */}
                 <div className="flex gap-6 mt-6">
                   <div>
                     <div className="text-2xl font-bold">{pendingReceived.length}</div>
-                    <div className="text-sm text-muted-foreground">Pending Requests</div>
+                    <div className="text-sm text-muted-foreground">{t('pages:friendRequests.pendingRequests', 'Pending Requests')}</div>
                   </div>
                   <div>
                     <div className="text-2xl font-bold">{pendingSent.length}</div>
-                    <div className="text-sm text-muted-foreground">Sent Requests</div>
+                    <div className="text-sm text-muted-foreground">{t('pages:friendRequests.sentRequests', 'Sent Requests')}</div>
                   </div>
                 </div>
               </motion.div>
@@ -238,7 +240,7 @@ export default function FriendRequestsPage() {
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-2xl font-semibold flex items-center gap-2">
                     <Clock className="h-5 w-5" />
-                    Pending Requests
+                    {t('pages:friendRequests.pendingRequests', 'Pending Requests')}
                     {pendingReceived.length > 0 && (
                       <Badge variant="secondary">{pendingReceived.length}</Badge>
                     )}
@@ -255,7 +257,7 @@ export default function FriendRequestsPage() {
                             data-testid="button-accept-all"
                           >
                             <CheckCircle className="h-4 w-4 mr-2" />
-                            Accept All
+                            {t('pages:friendRequests.acceptAll', 'Accept All')}
                           </Button>
                         </AlertDialogTrigger>
                         <AlertDialogContent>
@@ -285,7 +287,7 @@ export default function FriendRequestsPage() {
                             data-testid="button-decline-all"
                           >
                             <XCircle className="h-4 w-4 mr-2" />
-                            Decline All
+                            {t('pages:friendRequests.declineAll', 'Decline All')}
                           </Button>
                         </AlertDialogTrigger>
                         <AlertDialogContent>
@@ -335,14 +337,14 @@ export default function FriendRequestsPage() {
                   ) : pendingReceived.length === 0 ? (
                     <Card className="p-12 text-center">
                       <AlertCircle className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-                      <h3 className="font-semibold mb-2">No pending requests</h3>
+                      <h3 className="font-semibold mb-2">{t('pages:friendRequests.noPendingRequests', 'No pending requests')}</h3>
                       <p className="text-muted-foreground mb-4">
-                        You're all caught up! No new friend requests at this time.
+                        {t('pages:friendRequests.allCaughtUp', "You're all caught up! No new friend requests at this time.")}
                       </p>
                       <Link href="/search">
                         <Button data-testid="button-discover">
                           <UserPlus className="h-4 w-4 mr-2" />
-                          Discover People
+                          {t('pages:friendRequests.discoverPeople', 'Discover People')}
                         </Button>
                       </Link>
                     </Card>
@@ -399,7 +401,7 @@ export default function FriendRequestsPage() {
                                 data-testid={`button-accept-${index}`}
                               >
                                 <UserCheck className="h-4 w-4 mr-2" />
-                                Accept
+                                {t('common:accept', 'Accept')}
                               </Button>
                               <Button
                                 variant="outline"
@@ -422,7 +424,7 @@ export default function FriendRequestsPage() {
               <section>
                 <h2 className="text-2xl font-semibold flex items-center gap-2 mb-6">
                   <UserPlus className="h-5 w-5" />
-                  Sent Requests
+                  {t('pages:friendRequests.sentRequests', 'Sent Requests')}
                   {pendingSent.length > 0 && (
                     <Badge variant="secondary">{pendingSent.length}</Badge>
                   )}
@@ -443,7 +445,7 @@ export default function FriendRequestsPage() {
                     </>
                   ) : pendingSent.length === 0 ? (
                     <Card className="p-8 text-center">
-                      <p className="text-muted-foreground">No pending sent requests</p>
+                      <p className="text-muted-foreground">{t('pages:friendRequests.noPendingSentRequests', 'No pending sent requests')}</p>
                     </Card>
                   ) : (
                     pendingSent.map((request, index) => (
@@ -482,7 +484,7 @@ export default function FriendRequestsPage() {
                               disabled={cancelMutation.isPending}
                               data-testid={`button-cancel-${index}`}
                             >
-                              {cancelMutation.isPending ? 'Cancelling...' : 'Cancel Request'}
+                              {cancelMutation.isPending ? t('common:cancelling', 'Cancelling...') : t('pages:friendRequests.cancelRequest', 'Cancel Request')}
                             </Button>
                           </div>
                         </Card>

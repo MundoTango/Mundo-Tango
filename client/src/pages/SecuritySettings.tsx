@@ -11,6 +11,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { safeDateDistance } from "@/lib/safeDateFormat";
 import { Link } from "wouter";
+import { useTranslation } from "react-i18next";
 
 interface Session {
   id: string;
@@ -31,6 +32,7 @@ interface AuditLog {
 }
 
 export default function SecuritySettings() {
+  const { t } = useTranslation(['pages', 'common']);
   const { toast } = useToast();
 
   const { data: twoFactorStatus, isLoading: statusLoading } = useQuery<{ enabled: boolean }>({
@@ -51,14 +53,14 @@ export default function SecuritySettings() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/settings/sessions'] });
       toast({
-        title: "Session revoked",
-        description: "The session has been successfully logged out.",
+        title: t('pages:security.sessionRevoked', 'Session revoked'),
+        description: t('pages:security.sessionRevokedDesc', 'The session has been successfully logged out.'),
       });
     },
     onError: () => {
       toast({
-        title: "Error",
-        description: "Failed to revoke session. Please try again.",
+        title: t('common:error', 'Error'),
+        description: t('pages:security.revokeSessionFailed', 'Failed to revoke session. Please try again.'),
         variant: "destructive",
       });
     },
@@ -70,27 +72,27 @@ export default function SecuritySettings() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/auth/2fa/status'] });
       toast({
-        title: "2FA Disabled",
-        description: "Two-factor authentication has been disabled for your account.",
+        title: t('pages:security.twoFaDisabled', '2FA Disabled'),
+        description: t('pages:security.twoFaDisabledDesc', 'Two-factor authentication has been disabled for your account.'),
       });
     },
     onError: () => {
       toast({
-        title: "Error",
-        description: "Failed to disable 2FA. Please verify your token.",
+        title: t('common:error', 'Error'),
+        description: t('pages:security.disableTwoFaFailed', 'Failed to disable 2FA. Please verify your token.'),
         variant: "destructive",
       });
     },
   });
 
   const handleRevokeSession = (sessionId: string) => {
-    if (confirm("Are you sure you want to log out this session?")) {
+    if (confirm(t('pages:security.confirmRevokeSession', 'Are you sure you want to log out this session?'))) {
       revokeSessionMutation.mutate(sessionId);
     }
   };
 
   const handleDisable2FA = () => {
-    const token = prompt("Enter your 2FA token to disable two-factor authentication:");
+    const token = prompt(t('pages:security.enterTokenToDisable', 'Enter your 2FA token to disable two-factor authentication:'));
     if (token) {
       disable2FAMutation.mutate(token);
     }
@@ -98,60 +100,59 @@ export default function SecuritySettings() {
 
   return (
     <SelfHealingErrorBoundary pageName="Security Settings" fallbackRoute="/settings">
-      <PageLayout title="Security Settings" showBreadcrumbs>
+      <PageLayout title={t('pages:security.title', 'Security Settings')} showBreadcrumbs>
         <>
           <SEO 
-            title="Security Settings"
-            description="Manage your account security settings, active sessions, and two-factor authentication."
+            title={t('pages:security.title', 'Security Settings')}
+            description={t('pages:security.description', 'Manage your account security settings, active sessions, and two-factor authentication.')}
           />
           <div className="max-w-5xl mx-auto p-6 space-y-8">
             <div>
               <h1 className="text-4xl font-serif font-bold bg-gradient-to-r from-[#40E0D0] via-[#1E90FF] to-[#9370DB] bg-clip-text text-transparent mb-2" data-testid="heading-security-settings">
-                Security Settings
+                {t('pages:security.title', 'Security Settings')}
               </h1>
               <p className="text-muted-foreground">
-                Protect your account and manage security preferences
+                {t('pages:security.subtitle', 'Protect your account and manage security preferences')}
               </p>
             </div>
 
-            {/* Two-Factor Authentication */}
             <Card className="backdrop-blur-md bg-white/10 dark:bg-black/10 border-white/20 dark:border-white/10">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 font-serif">
                   <Shield className="h-5 w-5 text-[#40E0D0]" />
-                  Two-Factor Authentication
+                  {t('pages:security.twoFactorAuth', 'Two-Factor Authentication')}
                 </CardTitle>
                 <CardDescription>
-                  Add an extra layer of security to your account
+                  {t('pages:security.twoFactorDesc', 'Add an extra layer of security to your account')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 {statusLoading ? (
-                  <p className="text-sm text-muted-foreground">Loading 2FA status...</p>
+                  <p className="text-sm text-muted-foreground">{t('pages:security.loading2faStatus', 'Loading 2FA status...')}</p>
                 ) : (
                   <>
                     <div className="flex items-center justify-between">
                       <div className="space-y-1">
                         <div className="flex items-center gap-2">
                           <p className="font-medium" data-testid="text-2fa-status">
-                            Status: {twoFactorStatus?.enabled ? 'Enabled' : 'Disabled'}
+                            {t('pages:security.status', 'Status')}: {twoFactorStatus?.enabled ? t('common:enabled', 'Enabled') : t('common:disabled', 'Disabled')}
                           </p>
                           {twoFactorStatus?.enabled ? (
                             <Badge variant="default" className="text-xs" data-testid="badge-2fa-enabled">
                               <CheckCircle2 className="h-3 w-3 mr-1" />
-                              Active
+                              {t('common:active', 'Active')}
                             </Badge>
                           ) : (
                             <Badge variant="secondary" className="text-xs" data-testid="badge-2fa-disabled">
                               <XCircle className="h-3 w-3 mr-1" />
-                              Inactive
+                              {t('common:inactive', 'Inactive')}
                             </Badge>
                           )}
                         </div>
                         <p className="text-sm text-muted-foreground">
                           {twoFactorStatus?.enabled 
-                            ? "Your account is protected with 2FA" 
-                            : "Require a verification code in addition to your password"}
+                            ? t('pages:security.accountProtected', 'Your account is protected with 2FA')
+                            : t('pages:security.requireVerification', 'Require a verification code in addition to your password')}
                         </p>
                       </div>
                       {twoFactorStatus?.enabled ? (
@@ -161,13 +162,13 @@ export default function SecuritySettings() {
                           disabled={disable2FAMutation.isPending}
                           data-testid="button-disable-2fa"
                         >
-                          {disable2FAMutation.isPending ? "Disabling..." : "Disable 2FA"}
+                          {disable2FAMutation.isPending ? t('pages:security.disabling', 'Disabling...') : t('pages:security.disable2fa', 'Disable 2FA')}
                         </Button>
                       ) : (
                         <Link href="/settings/2fa/setup">
                           <Button variant="default" data-testid="button-enable-2fa">
                             <KeyRound className="h-4 w-4 mr-2" />
-                            Enable 2FA
+                            {t('pages:security.enable2fa', 'Enable 2FA')}
                           </Button>
                         </Link>
                       )}
@@ -176,7 +177,7 @@ export default function SecuritySettings() {
                     {!twoFactorStatus?.enabled && (
                       <div className="mt-4 p-4 rounded-lg bg-blue-500/10 border border-blue-500/20">
                         <p className="text-sm text-blue-600 dark:text-blue-400">
-                          <strong>Recommended:</strong> Enable two-factor authentication to protect your account from unauthorized access.
+                          <strong>{t('pages:security.recommended', 'Recommended')}:</strong> {t('pages:security.enable2faRecommendation', 'Enable two-factor authentication to protect your account from unauthorized access.')}
                         </p>
                       </div>
                     )}
@@ -185,20 +186,19 @@ export default function SecuritySettings() {
               </CardContent>
             </Card>
 
-            {/* Active Sessions */}
             <Card className="backdrop-blur-md bg-white/10 dark:bg-black/10 border-white/20 dark:border-white/10">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 font-serif">
                   <Smartphone className="h-5 w-5 text-[#40E0D0]" />
-                  Active Sessions
+                  {t('pages:security.activeSessions', 'Active Sessions')}
                 </CardTitle>
                 <CardDescription>
-                  Manage devices and locations where you're logged in
+                  {t('pages:security.activeSessionsDesc', 'Manage devices and locations where you\'re logged in')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 {sessionsLoading ? (
-                  <p className="text-sm text-muted-foreground">Loading sessions...</p>
+                  <p className="text-sm text-muted-foreground">{t('pages:security.loadingSessions', 'Loading sessions...')}</p>
                 ) : sessions && sessions.length > 0 ? (
                   sessions.map((session, index) => (
                     <div key={session.id}>
@@ -208,7 +208,7 @@ export default function SecuritySettings() {
                             <p className="font-medium" data-testid={`text-session-device-${session.id}`}>{session.device}</p>
                             {session.current && (
                               <Badge variant="default" className="text-xs" data-testid="badge-current-session">
-                                Current
+                                {t('common:current', 'Current')}
                               </Badge>
                             )}
                           </div>
@@ -235,7 +235,7 @@ export default function SecuritySettings() {
                             disabled={revokeSessionMutation.isPending}
                             data-testid={`button-revoke-session-${session.id}`}
                           >
-                            Revoke
+                            {t('pages:security.revoke', 'Revoke')}
                           </Button>
                         )}
                       </div>
@@ -243,25 +243,24 @@ export default function SecuritySettings() {
                     </div>
                   ))
                 ) : (
-                  <p className="text-sm text-muted-foreground">No active sessions found.</p>
+                  <p className="text-sm text-muted-foreground">{t('pages:security.noActiveSessions', 'No active sessions found.')}</p>
                 )}
               </CardContent>
             </Card>
 
-            {/* Security Audit Log */}
             <Card className="backdrop-blur-md bg-white/10 dark:bg-black/10 border-white/20 dark:border-white/10">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 font-serif">
                   <AlertTriangle className="h-5 w-5 text-[#40E0D0]" />
-                  Security Audit Log
+                  {t('pages:security.auditLog', 'Security Audit Log')}
                 </CardTitle>
                 <CardDescription>
-                  Recent security events on your account
+                  {t('pages:security.auditLogDesc', 'Recent security events on your account')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 {logsLoading ? (
-                  <p className="text-sm text-muted-foreground">Loading audit logs...</p>
+                  <p className="text-sm text-muted-foreground">{t('pages:security.loadingAuditLogs', 'Loading audit logs...')}</p>
                 ) : auditLogs && auditLogs.length > 0 ? (
                   auditLogs.map((log, index) => (
                     <div key={log.id}>
@@ -291,7 +290,7 @@ export default function SecuritySettings() {
                     </div>
                   ))
                 ) : (
-                  <p className="text-sm text-muted-foreground">No security events found.</p>
+                  <p className="text-sm text-muted-foreground">{t('pages:security.noSecurityEvents', 'No security events found.')}</p>
                 )}
               </CardContent>
             </Card>

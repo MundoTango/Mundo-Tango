@@ -6,8 +6,10 @@ import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { type PostItemData } from "@/components/feed/PostItem";
 import { UnifiedMemoriesFeed } from "@/components/feed/UnifiedMemoriesFeed";
+import { useTranslation } from "react-i18next";
 
 export default function SavedPostsPage() {
+  const { t } = useTranslation(['pages', 'common']);
   const { data: savedPosts, isLoading } = useQuery<PostItemData[]>({
     queryKey: ["/api/saved-posts"],
   });
@@ -19,7 +21,7 @@ export default function SavedPostsPage() {
 
   return (
     <SelfHealingErrorBoundary pageName="Saved Posts" fallbackRoute="/feed">
-      <PageLayout title="Saved Posts" showBreadcrumbs>
+      <PageLayout title={t('pages:savedPosts.title', 'Saved Posts')} showBreadcrumbs>
         <div className="min-h-screen bg-background">
           <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">
             <div 
@@ -38,15 +40,15 @@ export default function SavedPostsPage() {
                 transition={{ duration: 1, ease: "easeOut" }}
               >
                 <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm">
-                  Your Collection
+                  {t('pages:savedPosts.yourCollection', 'Your Collection')}
                 </Badge>
                 
                 <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6" data-testid="text-saved-posts-title">
-                  Saved Posts
+                  {t('pages:savedPosts.heroTitle', 'Saved Posts')}
                 </h1>
                 
                 <p className="text-xl text-white/80 max-w-2xl mx-auto">
-                  Curated moments and memories you've bookmarked
+                  {t('pages:savedPosts.heroSubtitle', "Curated moments and memories you've bookmarked")}
                 </p>
               </motion.div>
             </div>
@@ -59,7 +61,7 @@ export default function SavedPostsPage() {
               context={{ type: 'memory' }}
               showPostCreator={false}
               showFilters={true}
-              emptyMessage="No saved posts yet. Bookmark posts to see them here!"
+              emptyMessage={t('pages:savedPosts.emptyMessage', 'No saved posts yet. Bookmark posts to see them here!')}
               emptyIcon={Bookmark}
               data-testid="saved-posts-feed"
             />

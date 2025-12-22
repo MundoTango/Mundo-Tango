@@ -23,6 +23,7 @@ import { useToast } from "@/hooks/use-toast";
 import { type PostItemData } from "@/components/feed/PostItem";
 import { UnifiedMemoriesFeed } from "@/components/feed/UnifiedMemoriesFeed";
 import tangoHeroImage from "@assets/optimized/IMG_9144-optimized.jpg";
+import { useTranslation } from "react-i18next";
 
 interface UserProfile {
   id: number;
@@ -195,6 +196,7 @@ function UserProfileCard({ user, side }: { user: UserProfile | undefined; side: 
 }
 
 export default function FriendshipPage() {
+  const { t } = useTranslation(['pages', 'common']);
   const { userId } = useParams<{ userId: string }>();
   const friendId = parseInt(userId || "0");
   const queryClient = useQueryClient();
@@ -302,7 +304,7 @@ export default function FriendshipPage() {
             <Heart className="w-8 h-8 md:w-10 md:h-10 text-primary-foreground fill-primary-foreground" />
           </div>
           <Badge variant="secondary" className="mt-3 text-xs md:text-sm backdrop-blur-sm shadow-lg" data-testid="badge-friends-since">
-            Friends {friendshipDate}
+            {t('pages:friendship.friendsSince', { date: friendshipDate, defaultValue: `Friends ${friendshipDate}` })}
           </Badge>
         </motion.div>
 
@@ -321,7 +323,7 @@ export default function FriendshipPage() {
               </div>
               <div>
                 <p className="text-xl font-bold text-primary">{friendshipStats?.closenessScore || 0}/100</p>
-                <p className="text-xs text-muted-foreground">Closeness</p>
+                <p className="text-xs text-muted-foreground">{t('pages:friendship.closeness', 'Closeness')}</p>
               </div>
             </div>
 
@@ -331,7 +333,7 @@ export default function FriendshipPage() {
               </div>
               <div>
                 <p className="text-xl font-bold text-primary">{friendshipStats?.daysSinceFriendship || 0}</p>
-                <p className="text-xs text-muted-foreground">Days as Friends</p>
+                <p className="text-xs text-muted-foreground">{t('pages:friendship.daysAsFriends', 'Days as Friends')}</p>
               </div>
             </div>
 
@@ -341,7 +343,7 @@ export default function FriendshipPage() {
               </div>
               <div>
                 <p className="text-xl font-bold text-primary">{friendshipStats?.sharedEvents || 0}</p>
-                <p className="text-xs text-muted-foreground">Shared Events</p>
+                <p className="text-xs text-muted-foreground">{t('pages:friendship.sharedEvents', 'Shared Events')}</p>
               </div>
             </div>
 
@@ -351,7 +353,7 @@ export default function FriendshipPage() {
               </div>
               <div>
                 <p className="text-xl font-bold text-primary">{mutualFriends?.length || 0}</p>
-                <p className="text-xs text-muted-foreground">Mutual Friends</p>
+                <p className="text-xs text-muted-foreground">{t('pages:friendship.mutualFriends', 'Mutual Friends')}</p>
               </div>
             </div>
           </div>
@@ -371,20 +373,20 @@ export default function FriendshipPage() {
               <CardHeader className="pb-3">
                 <CardTitle className="text-lg flex items-center gap-2">
                   <Music className="w-5 h-5 text-primary" />
-                  Our Tango Story
+                  {t('pages:friendship.ourTangoStory', 'Our Tango Story')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 {friendshipInfo.friendRequest.didWeDance && (
                   <Badge className="bg-primary/10 text-primary border-primary/20">
                     <Heart className="w-3 h-3 mr-1 fill-current" />
-                    We danced together!
+                    {t('pages:friendship.weDancedTogether', 'We danced together!')}
                   </Badge>
                 )}
                 
                 {friendshipInfo.friendRequest.danceLocation && (
                   <div>
-                    <p className="text-xs text-muted-foreground mb-1">Where we met</p>
+                    <p className="text-xs text-muted-foreground mb-1">{t('pages:friendship.whereWeMet', 'Where we met')}</p>
                     <p className="text-sm flex items-center gap-2">
                       <MapPin className="w-4 h-4 text-muted-foreground" />
                       {friendshipInfo.friendRequest.danceLocation}
@@ -394,7 +396,7 @@ export default function FriendshipPage() {
                 
                 {friendshipInfo.friendRequest.danceStory && (
                   <div>
-                    <p className="text-xs text-muted-foreground mb-1">Our story</p>
+                    <p className="text-xs text-muted-foreground mb-1">{t('pages:friendship.ourStory', 'Our story')}</p>
                     <p className="text-sm italic text-muted-foreground" data-testid="text-dance-story">
                       "{friendshipInfo.friendRequest.danceStory}"
                     </p>
@@ -403,7 +405,7 @@ export default function FriendshipPage() {
                 
                 {friendshipInfo.friendRequest.senderMessage && (
                   <div className="border-l-2 border-primary/30 pl-3">
-                    <p className="text-xs text-muted-foreground mb-1">Friend request message</p>
+                    <p className="text-xs text-muted-foreground mb-1">{t('pages:friendship.friendRequestMessage', 'Friend request message')}</p>
                     <p className="text-sm" data-testid="text-sender-message">
                       {friendshipInfo.friendRequest.senderMessage}
                     </p>
@@ -412,7 +414,7 @@ export default function FriendshipPage() {
                 
                 {friendshipInfo.friendRequest.receiverMessage && (
                   <div className="border-l-2 border-primary/30 pl-3">
-                    <p className="text-xs text-muted-foreground mb-1">Response message</p>
+                    <p className="text-xs text-muted-foreground mb-1">{t('pages:friendship.responseMessage', 'Response message')}</p>
                     <p className="text-sm" data-testid="text-receiver-message">
                       {friendshipInfo.friendRequest.receiverMessage}
                     </p>
@@ -426,7 +428,7 @@ export default function FriendshipPage() {
                   
                   return userPrivateNote ? (
                     <div className="border-l-2 border-primary/30 pl-3 bg-primary/5 p-3 rounded">
-                      <p className="text-xs text-muted-foreground mb-1">Your private message</p>
+                      <p className="text-xs text-muted-foreground mb-1">{t('pages:friendship.yourPrivateMessage', 'Your private message')}</p>
                       <p className="text-sm italic" data-testid="text-private-note">
                         {userPrivateNote}
                       </p>
@@ -444,22 +446,22 @@ export default function FriendshipPage() {
             {isLoadingSharedData ? (
               <div className="flex items-center justify-center py-12">
                 <Loader2 className="w-8 h-8 animate-spin text-primary" />
-                <span className="ml-3 text-muted-foreground">Loading shared content...</span>
+                <span className="ml-3 text-muted-foreground">{t('pages:friendship.loadingSharedContent', 'Loading shared content...')}</span>
               </div>
             ) : (
               <Tabs defaultValue="posts" className="w-full">
                 <TabsList className="grid w-full grid-cols-3">
                   <TabsTrigger value="posts" data-testid="tab-posts">
                     <MessageSquare className="w-4 h-4 mr-2" />
-                    Posts
+                    {t('pages:friendship.tabPosts', 'Posts')}
                   </TabsTrigger>
                   <TabsTrigger value="media" data-testid="tab-media">
                     <ImageIcon className="w-4 h-4 mr-2" />
-                    Media
+                    {t('pages:friendship.tabMedia', 'Media')}
                   </TabsTrigger>
                   <TabsTrigger value="location" data-testid="tab-location">
                     <MapPin className="w-4 h-4 mr-2" />
-                    Location
+                    {t('pages:friendship.tabLocation', 'Location')}
                   </TabsTrigger>
                 </TabsList>
 
@@ -487,7 +489,7 @@ export default function FriendshipPage() {
                       data-testid="subtab-all"
                     >
                       <LayoutGrid className="w-3 h-3 mr-1" />
-                      All
+                      {t('pages:friendship.subtabAll', 'All')}
                     </Button>
                     <Button 
                       size="sm" 
@@ -496,7 +498,7 @@ export default function FriendshipPage() {
                       data-testid="subtab-posts"
                     >
                       <MessageSquare className="w-3 h-3 mr-1" />
-                      Posts & Mentions
+                      {t('pages:friendship.subtabPostsMentions', 'Posts & Mentions')}
                     </Button>
                     <Button 
                       size="sm" 
@@ -505,7 +507,7 @@ export default function FriendshipPage() {
                       data-testid="subtab-liked"
                     >
                       <ThumbsUp className="w-3 h-3 mr-1" />
-                      Liked Together
+                      {t('pages:friendship.subtabLikedTogether', 'Liked Together')}
                     </Button>
                   </div>
 
@@ -514,7 +516,7 @@ export default function FriendshipPage() {
                     <div data-testid="shared-posts-list">
                       <h3 className="text-sm font-semibold mb-4 flex items-center gap-2">
                         <MessageSquare className="w-4 h-4 text-primary" />
-                        Posts & Mentions
+                        {t('pages:friendship.postsMentions', 'Posts & Mentions')}
                       </h3>
                       <UnifiedMemoriesFeed
                         posts={sharedData?.sharedPosts || []}
@@ -532,7 +534,7 @@ export default function FriendshipPage() {
                     <div>
                       <h3 className="text-sm font-semibold mb-4 flex items-center gap-2">
                         <ThumbsUp className="w-4 h-4 text-primary" />
-                        Posts You Both Liked
+                        {t('pages:friendship.postsYouBothLiked', 'Posts You Both Liked')}
                       </h3>
                       {sharedData?.sharedLikes && sharedData.sharedLikes.length > 0 ? (
                         <div className="space-y-3">
@@ -540,13 +542,13 @@ export default function FriendshipPage() {
                             <Link key={index} href={`/feed?post=${like.postId}`}>
                               <div className="flex items-center gap-4 p-3 border rounded-lg hover-elevate cursor-pointer" data-testid={`shared-like-${like.postId}`}>
                                 <ThumbsUp className="w-4 h-4 text-primary" />
-                                <p className="text-sm truncate flex-1">{like.postTitle || 'Untitled post'}</p>
+                                <p className="text-sm truncate flex-1">{like.postTitle || t('pages:friendship.untitledPost', 'Untitled post')}</p>
                               </div>
                             </Link>
                           ))}
                         </div>
                       ) : (
-                        <p className="text-center text-muted-foreground py-4 text-sm">No shared likes yet</p>
+                        <p className="text-center text-muted-foreground py-4 text-sm">{t('pages:friendship.noSharedLikesYet', 'No shared likes yet')}</p>
                       )}
                     </div>
                   )}
@@ -556,7 +558,7 @@ export default function FriendshipPage() {
                     <div>
                       <h3 className="text-sm font-semibold mb-4 flex items-center gap-2">
                         <MessageCircle className="w-4 h-4 text-primary" />
-                        Comments on Each Other's Content
+                        {t('pages:friendship.commentsOnEachOther', "Comments on Each Other's Content")}
                       </h3>
                       <div className="space-y-3">
                         {sharedData.sharedComments.slice(0, 5).map((comment) => (
@@ -581,7 +583,7 @@ export default function FriendshipPage() {
                 <TabsContent value="media" className="mt-6">
                   <h3 className="text-sm font-semibold mb-4 flex items-center gap-2">
                     <ImageIcon className="w-4 h-4 text-primary" />
-                    Shared Photos & Videos
+                    {t('pages:friendship.sharedPhotosVideos', 'Shared Photos & Videos')}
                   </h3>
                   {sharedMedia.length > 0 ? (
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -615,8 +617,8 @@ export default function FriendshipPage() {
                   ) : (
                     <div className="text-center py-12">
                       <ImageIcon className="w-12 h-12 mx-auto text-muted-foreground/50 mb-4" />
-                      <p className="text-muted-foreground">No shared media yet</p>
-                      <p className="text-xs text-muted-foreground mt-1">Photos from shared posts will appear here</p>
+                      <p className="text-muted-foreground">{t('pages:friendship.noSharedMediaYet', 'No shared media yet')}</p>
+                      <p className="text-xs text-muted-foreground mt-1">{t('pages:friendship.photosWillAppear', 'Photos from shared posts will appear here')}</p>
                     </div>
                   )}
                 </TabsContent>
@@ -627,7 +629,7 @@ export default function FriendshipPage() {
                   <div>
                     <h3 className="text-sm font-semibold mb-4 flex items-center gap-2">
                       <Calendar className="w-4 h-4 text-primary" />
-                      Shared Events
+                      {t('pages:friendship.sharedEvents', 'Shared Events')}
                     </h3>
                     {sharedData?.sharedEventsDetails && sharedData.sharedEventsDetails.length > 0 ? (
                       <div className="space-y-3">
@@ -648,7 +650,7 @@ export default function FriendshipPage() {
                         ))}
                       </div>
                     ) : (
-                      <p className="text-center text-muted-foreground py-4 text-sm">No shared events yet</p>
+                      <p className="text-center text-muted-foreground py-4 text-sm">{t('pages:friendship.noSharedEventsYet', 'No shared events yet')}</p>
                     )}
                   </div>
 
@@ -656,7 +658,7 @@ export default function FriendshipPage() {
                   <div>
                     <h3 className="text-sm font-semibold mb-4 flex items-center gap-2">
                       <Plane className="w-4 h-4 text-primary" />
-                      Shared Travel
+                      {t('pages:friendship.sharedTravel', 'Shared Travel')}
                     </h3>
                     {sharedData?.sharedTravel && sharedData.sharedTravel.length > 0 ? (
                       <div className="space-y-3">
@@ -667,13 +669,13 @@ export default function FriendshipPage() {
                             </div>
                             <div className="flex-1 min-w-0">
                               <p className="font-semibold">{trip.city || 'Unknown city'}{trip.country ? `, ${trip.country}` : ''}</p>
-                              <p className="text-sm text-muted-foreground">Overlapping travel dates</p>
+                              <p className="text-sm text-muted-foreground">{t('pages:friendship.overlappingTravelDates', 'Overlapping travel dates')}</p>
                             </div>
                           </div>
                         ))}
                       </div>
                     ) : (
-                      <p className="text-center text-muted-foreground py-4 text-sm">No shared travel yet</p>
+                      <p className="text-center text-muted-foreground py-4 text-sm">{t('pages:friendship.noSharedTravelYet', 'No shared travel yet')}</p>
                     )}
                   </div>
 
@@ -681,7 +683,7 @@ export default function FriendshipPage() {
                   <div>
                     <h3 className="text-sm font-semibold mb-4 flex items-center gap-2">
                       <Building2 className="w-4 h-4 text-primary" />
-                      Cities Where You Both Danced
+                      {t('pages:friendship.citiesWhereBothDanced', 'Cities Where You Both Danced')}
                     </h3>
                     {sharedData?.commonCities && sharedData.commonCities.length > 0 ? (
                       <div className="space-y-3">
@@ -692,13 +694,13 @@ export default function FriendshipPage() {
                             </div>
                             <div className="flex-1 min-w-0">
                               <p className="font-semibold">{city.city || 'Unknown city'}{city.country ? `, ${city.country}` : ''}</p>
-                              <p className="text-sm text-muted-foreground">Both danced tango in this city</p>
+                              <p className="text-sm text-muted-foreground">{t('pages:friendship.bothDancedInCity', 'Both danced tango in this city')}</p>
                             </div>
                           </div>
                         ))}
                       </div>
                     ) : (
-                      <p className="text-center text-muted-foreground py-4 text-sm">No common cities yet</p>
+                      <p className="text-center text-muted-foreground py-4 text-sm">{t('pages:friendship.noCommonCitiesYet', 'No common cities yet')}</p>
                     )}
                   </div>
                 </TabsContent>
@@ -713,7 +715,7 @@ export default function FriendshipPage() {
             <CardContent className="p-6">
               <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                 <UserCheck className="w-5 h-5 text-primary" />
-                Mutual Friends ({mutualFriends.length})
+                {t('pages:friendship.mutualFriendsCount', { count: mutualFriends.length, defaultValue: `Mutual Friends (${mutualFriends.length})` })}
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {mutualFriends.map((mutualFriend: any) => (
@@ -752,7 +754,7 @@ export default function FriendshipPage() {
               data-testid="button-send-message"
             >
               <MessageCircle className="w-5 h-5" />
-              Send Message
+              {t('pages:friendship.sendMessage', 'Send Message')}
               <ChevronRight className="w-5 h-5" />
             </Button>
           </Link>
@@ -764,7 +766,7 @@ export default function FriendshipPage() {
               data-testid="button-view-profile"
             >
               <Users className="w-5 h-5" />
-              View Profile
+              {t('pages:friendship.viewProfile', 'View Profile')}
             </Button>
           </Link>
         </div>

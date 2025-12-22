@@ -9,15 +9,17 @@ import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from '@/components/SelfHealingErrorBoundary';
 import { SEO } from "@/components/SEO";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 export default function PrivacySettingsPage() {
+  const { t } = useTranslation(['pages', 'common']);
   return (
     <SelfHealingErrorBoundary pageName="Privacy Settings" fallbackRoute="/settings">
-      <PageLayout title="Privacy Settings" showBreadcrumbs>
+      <PageLayout title={t('pages:privacy.title', 'Privacy Settings')} showBreadcrumbs>
         <>
           <SEO 
-            title="Privacy Settings - Mundo Tango"
-            description="Control your privacy and visibility settings on Mundo Tango"
+            title={t('pages:privacy.seoTitle', 'Privacy Settings - Mundo Tango')}
+            description={t('pages:privacy.seoDescription', 'Control your privacy and visibility settings on Mundo Tango')}
           />
 
           {/* Hero Section - 16:9 */}
@@ -36,15 +38,15 @@ export default function PrivacySettingsPage() {
               >
                 <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm">
                   <Shield className="w-3 h-3 mr-1.5" />
-                  Your Privacy
+                  {t('pages:privacy.yourPrivacy', 'Your Privacy')}
                 </Badge>
                 
                 <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6">
-                  Privacy Settings
+                  {t('pages:privacy.title', 'Privacy Settings')}
                 </h1>
                 
                 <p className="text-xl text-white/80 max-w-2xl mx-auto">
-                  Control who sees your profile, posts, and activity
+                  {t('pages:privacy.heroSubtitle', 'Control who sees your profile, posts, and activity')}
                 </p>
               </motion.div>
             </div>
@@ -64,47 +66,47 @@ export default function PrivacySettingsPage() {
                       <div className="p-2 rounded-lg bg-primary/10">
                         <Eye className="h-5 w-5 text-primary" />
                       </div>
-                      <CardTitle className="text-2xl font-serif">Profile Visibility</CardTitle>
+                      <CardTitle className="text-2xl font-serif">{t('pages:privacy.profileVisibility', 'Profile Visibility')}</CardTitle>
                     </div>
                   </CardHeader>
                   <CardContent className="space-y-6">
                     <div className="space-y-2">
                       <Label htmlFor="profile-visibility" className="text-base font-medium">
-                        Who can see your profile?
+                        {t('pages:privacy.whoCanSeeProfile', 'Who can see your profile?')}
                       </Label>
                       <Select defaultValue="everyone">
                         <SelectTrigger id="profile-visibility" data-testid="select-profile-visibility" className="h-12">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="everyone">Everyone</SelectItem>
-                          <SelectItem value="friends">Friends Only</SelectItem>
-                          <SelectItem value="private">Private</SelectItem>
+                          <SelectItem value="everyone">{t('common:everyone', 'Everyone')}</SelectItem>
+                          <SelectItem value="friends">{t('common:friendsOnly', 'Friends Only')}</SelectItem>
+                          <SelectItem value="private">{t('common:private', 'Private')}</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
 
                     <div className="space-y-2">
                       <Label htmlFor="post-visibility" className="text-base font-medium">
-                        Who can see your posts?
+                        {t('pages:privacy.whoCanSeePosts', 'Who can see your posts?')}
                       </Label>
                       <Select defaultValue="everyone">
                         <SelectTrigger id="post-visibility" data-testid="select-post-visibility" className="h-12">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="everyone">Everyone</SelectItem>
-                          <SelectItem value="friends">Friends Only</SelectItem>
-                          <SelectItem value="private">Only Me</SelectItem>
+                          <SelectItem value="everyone">{t('common:everyone', 'Everyone')}</SelectItem>
+                          <SelectItem value="friends">{t('common:friendsOnly', 'Friends Only')}</SelectItem>
+                          <SelectItem value="private">{t('common:onlyMe', 'Only Me')}</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
 
                     <div className="flex items-center justify-between pt-4 border-t">
                       <div className="space-y-0.5">
-                        <Label htmlFor="show-location" className="text-base font-medium">Show Location</Label>
+                        <Label htmlFor="show-location" className="text-base font-medium">{t('pages:privacy.showLocation', 'Show Location')}</Label>
                         <p className="text-sm text-muted-foreground">
-                          Display your location on your profile
+                          {t('pages:privacy.showLocationDesc', 'Display your location on your profile')}
                         </p>
                       </div>
                       <Switch id="show-location" defaultChecked data-testid="switch-show-location" />
@@ -112,9 +114,9 @@ export default function PrivacySettingsPage() {
 
                     <div className="flex items-center justify-between">
                       <div className="space-y-0.5">
-                        <Label htmlFor="show-online" className="text-base font-medium">Show Online Status</Label>
+                        <Label htmlFor="show-online" className="text-base font-medium">{t('pages:privacy.showOnlineStatus', 'Show Online Status')}</Label>
                         <p className="text-sm text-muted-foreground">
-                          Let others see when you're online
+                          {t('pages:privacy.showOnlineDesc', 'Let others see when you\'re online')}
                         </p>
                       </div>
                       <Switch id="show-online" defaultChecked data-testid="switch-show-online" />
@@ -122,9 +124,9 @@ export default function PrivacySettingsPage() {
 
                     <div className="flex items-center justify-between">
                       <div className="space-y-0.5">
-                        <Label htmlFor="indexing" className="text-base font-medium">Search Engine Indexing</Label>
+                        <Label htmlFor="indexing" className="text-base font-medium">{t('pages:privacy.searchEngineIndexing', 'Search Engine Indexing')}</Label>
                         <p className="text-sm text-muted-foreground">
-                          Allow search engines to index your profile
+                          {t('pages:privacy.searchEngineDesc', 'Allow search engines to index your profile')}
                         </p>
                       </div>
                       <Switch id="indexing" data-testid="switch-indexing" />
@@ -144,12 +146,12 @@ export default function PrivacySettingsPage() {
                       <div className="p-2 rounded-lg bg-primary/10">
                         <Lock className="h-5 w-5 text-primary" />
                       </div>
-                      <CardTitle className="text-2xl font-serif">Data Protection</CardTitle>
+                      <CardTitle className="text-2xl font-serif">{t('pages:privacy.dataProtection', 'Data Protection')}</CardTitle>
                     </div>
                   </CardHeader>
                   <CardContent className="space-y-4 text-muted-foreground leading-relaxed">
-                    <p>Your privacy is protected by industry-standard encryption. We never share your personal data with third parties without your consent.</p>
-                    <p>You can download or delete your data at any time from your account settings.</p>
+                    <p>{t('pages:privacy.dataProtectionDesc1', 'Your privacy is protected by industry-standard encryption. We never share your personal data with third parties without your consent.')}</p>
+                    <p>{t('pages:privacy.dataProtectionDesc2', 'You can download or delete your data at any time from your account settings.')}</p>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -161,7 +163,7 @@ export default function PrivacySettingsPage() {
               >
                 <Button className="w-full gap-2" size="lg" data-testid="button-save">
                   <Shield className="h-4 w-4" />
-                  Save Privacy Settings
+                  {t('pages:privacy.saveSettings', 'Save Privacy Settings')}
                 </Button>
               </motion.div>
             </div>

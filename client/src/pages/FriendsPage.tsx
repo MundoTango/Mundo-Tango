@@ -16,8 +16,10 @@ import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { motion } from "framer-motion";
 import tangoHeroImage from "@assets/optimized/IMG_9144-optimized.jpg";
+import { useTranslation } from "react-i18next";
 
 export default function FriendsPage() {
+  const { t } = useTranslation(['pages', 'common']);
   const [activeTab, setActiveTab] = useState("all");
   const { user } = useAuth();
   const { toast } = useToast();
@@ -64,10 +66,10 @@ export default function FriendsPage() {
 
   return (
     <SelfHealingErrorBoundary pageName="Friends" fallbackRoute="/feed">
-    <PageLayout title="Friends" showBreadcrumbs>
+    <PageLayout title={t('pages:friends.title', 'Friends')} showBreadcrumbs>
       <SEO
-        title="Friends | Mundo Tango"
-        description="Manage your tango network. View friends, accept requests, discover suggestions, and connect with dancers worldwide. Build your tango community."
+        title={t('pages:friends.seoTitle', 'Friends | Mundo Tango')}
+        description={t('pages:friends.seoDescription', 'Manage your tango network. View friends, accept requests, discover suggestions, and connect with dancers worldwide. Build your tango community.')}
       />
 <div className="min-h-screen bg-background">
       {/* Editorial Hero Section */}
@@ -95,15 +97,15 @@ export default function FriendsPage() {
           >
             <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm">
               <Users className="w-3 h-3 mr-1.5" />
-              Your Network
+              {t('pages:friends.yourNetwork', 'Your Network')}
             </Badge>
             
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif font-bold text-white mb-6" data-testid="heading-page-title">
-              Friends
+              {t('pages:friends.heroTitle', 'Friends')}
             </h1>
             
             <p className="text-xl text-white/80 max-w-2xl mx-auto" data-testid="text-hero-subtitle">
-              Connect with dancers from around the world
+              {t('pages:friends.heroSubtitle', 'Connect with dancers from around the world')}
             </p>
           </motion.div>
         </div>
@@ -115,28 +117,28 @@ export default function FriendsPage() {
           <TabsList className="mb-6">
             <TabsTrigger value="all" data-testid="tab-all-friends">
               <Users className="h-4 w-4 mr-2" />
-              All Friends
+              {t('pages:friends.allFriends', 'All Friends')}
               {friends && Array.isArray(friends) && (
                 <Badge variant="secondary" className="ml-2">{friends.length}</Badge>
               )}
             </TabsTrigger>
             <TabsTrigger value="requests" data-testid="tab-requests">
               <UserPlus className="h-4 w-4 mr-2" />
-              Requests
+              {t('pages:friends.requests', 'Requests')}
               {requests && Array.isArray(requests) && requests.length > 0 && (
                 <Badge variant="destructive" className="ml-2">{requests.length}</Badge>
               )}
             </TabsTrigger>
             <TabsTrigger value="suggestions" data-testid="tab-suggestions">
               <UserCheck className="h-4 w-4 mr-2" />
-              Suggestions
+              {t('pages:friends.suggestions', 'Suggestions')}
             </TabsTrigger>
           </TabsList>
 
           {/* All Friends Tab */}
           <TabsContent value="all">
             {friendsLoading ? (
-              <div className="text-center py-12">Loading friends...</div>
+              <div className="text-center py-12">{t('pages:friends.loadingFriends', 'Loading friends...')}</div>
             ) : friends && Array.isArray(friends) && friends.length > 0 ? (
               <div className="grid gap-4 md:grid-cols-2">
                 {friends.map((friend: any) => (
@@ -162,13 +164,13 @@ export default function FriendsPage() {
                           {user && <MutualFriends userId={friend.id} currentUserId={user.id} />}
                           {friend.closenessScore !== undefined && friend.closenessScore !== null && (
                             <Badge variant="outline" className="text-xs" data-testid={`badge-closeness-${friend.id}`}>
-                              Closeness: {friend.closenessScore}
+                              {t('pages:friends.closeness', 'Closeness')}: {friend.closenessScore}
                             </Badge>
                           )}
                         </div>
                       </div>
                       <Button variant="outline" size="sm" data-testid={`button-message-${friend.id}`}>
-                        Message
+                        {t('common:message', 'Message')}
                       </Button>
                     </CardContent>
                   </Card>
@@ -178,7 +180,7 @@ export default function FriendsPage() {
               <Card>
                 <CardContent className="py-12 text-center text-muted-foreground">
                   <Users className="mx-auto h-12 w-12 mb-4 opacity-50" />
-                  <p>No friends yet. Start connecting!</p>
+                  <p>{t('pages:friends.noFriendsYet', 'No friends yet. Start connecting!')}</p>
                 </CardContent>
               </Card>
             )}
@@ -187,7 +189,7 @@ export default function FriendsPage() {
           {/* Friend Requests Tab */}
           <TabsContent value="requests">
             {requestsLoading ? (
-              <div className="text-center py-12">Loading requests...</div>
+              <div className="text-center py-12">{t('pages:friends.loadingRequests', 'Loading requests...')}</div>
             ) : requests && Array.isArray(requests) && requests.length > 0 ? (
               <div className="space-y-4">
                 {requests.map((request: any) => (
@@ -208,7 +210,7 @@ export default function FriendsPage() {
                           onClick={() => acceptRequest.mutate(request.id)}
                           disabled={acceptRequest.isPending}
                         >
-                          Accept
+                          {t('common:accept', 'Accept')}
                         </Button>
                         <Button 
                           variant="outline" 
@@ -217,7 +219,7 @@ export default function FriendsPage() {
                           onClick={() => declineRequest.mutate(request.id)}
                           disabled={declineRequest.isPending}
                         >
-                          Decline
+                          {t('common:decline', 'Decline')}
                         </Button>
                       </div>
                     </CardContent>
@@ -228,7 +230,7 @@ export default function FriendsPage() {
               <Card>
                 <CardContent className="py-12 text-center text-muted-foreground">
                   <UserPlus className="mx-auto h-12 w-12 mb-4 opacity-50" />
-                  <p>No pending friend requests</p>
+                  <p>{t('pages:friends.noPendingRequests', 'No pending friend requests')}</p>
                 </CardContent>
               </Card>
             )}
@@ -237,7 +239,7 @@ export default function FriendsPage() {
           {/* Suggestions Tab */}
           <TabsContent value="suggestions">
             {suggestionsLoading ? (
-              <div className="text-center py-12">Loading suggestions...</div>
+              <div className="text-center py-12">{t('pages:friends.loadingSuggestions', 'Loading suggestions...')}</div>
             ) : suggestions && Array.isArray(suggestions) && suggestions.length > 0 ? (
               <div className="grid gap-4 md:grid-cols-2">
                 {suggestions.map((suggestion: any) => (
@@ -262,7 +264,7 @@ export default function FriendsPage() {
                         onClick={() => sendRequest.mutate(suggestion.id)}
                         disabled={sendRequest.isPending}
                       >
-                        Add Friend
+                        {t('pages:friends.addFriend', 'Add Friend')}
                       </Button>
                     </CardContent>
                   </Card>
@@ -272,7 +274,7 @@ export default function FriendsPage() {
               <Card>
                 <CardContent className="py-12 text-center text-muted-foreground">
                   <UserCheck className="mx-auto h-12 w-12 mb-4 opacity-50" />
-                  <p>No suggestions at the moment</p>
+                  <p>{t('pages:friends.noSuggestions', 'No suggestions at the moment')}</p>
                 </CardContent>
               </Card>
             )}

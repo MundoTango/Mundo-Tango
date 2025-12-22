@@ -10,6 +10,7 @@ import { SEO } from "@/components/SEO";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import { safeDateDistance } from "@/lib/safeDateFormat";
+import { useTranslation } from "react-i18next";
 
 type UserStats = {
   eventsAttended: number;
@@ -33,6 +34,7 @@ type Activity = {
 };
 
 export default function DashboardPage() {
+  const { t } = useTranslation(['pages', 'common']);
   const { user } = useAuth();
 
   // Fetch user stats
@@ -55,25 +57,25 @@ export default function DashboardPage() {
 
   const statsCards = [
     { 
-      label: "Events Attended", 
+      label: t('pages:dashboard.eventsAttended', 'Events Attended'), 
       value: stats?.eventsAttended || 0, 
       icon: Calendar,
       loading: statsLoading
     },
     { 
-      label: "Connections", 
+      label: t('pages:dashboard.connections', 'Connections'), 
       value: stats?.connections || 0, 
       icon: Users,
       loading: statsLoading
     },
     { 
-      label: "Posts Liked", 
+      label: t('pages:dashboard.postsLiked', 'Posts Liked'), 
       value: stats?.postsLiked || 0, 
       icon: Heart,
       loading: statsLoading
     },
     { 
-      label: "Messages", 
+      label: t('pages:dashboard.messages', 'Messages'), 
       value: stats?.messages || 0, 
       icon: MessageCircle,
       loading: statsLoading
@@ -90,26 +92,26 @@ export default function DashboardPage() {
   const formatActivityText = (activity: Activity) => {
     switch (activity.type) {
       case 'post_like':
-        return `Liked a post by ${activity.relatedUser}`;
+        return t('pages:dashboard.likedPost', { user: activity.relatedUser, defaultValue: `Liked a post by ${activity.relatedUser}` });
       case 'event_rsvp':
-        return `RSVPed to ${activity.relatedUser}`;
+        return t('pages:dashboard.rsvpedTo', { event: activity.relatedUser, defaultValue: `RSVPed to ${activity.relatedUser}` });
       case 'comment':
-        return `Commented on ${activity.relatedUser}'s post`;
+        return t('pages:dashboard.commentedOn', { user: activity.relatedUser, defaultValue: `Commented on ${activity.relatedUser}'s post` });
       case 'friendship':
-        return `Connected with ${activity.relatedUser}`;
+        return t('pages:dashboard.connectedWith', { user: activity.relatedUser, defaultValue: `Connected with ${activity.relatedUser}` });
       default:
-        return `Activity with ${activity.relatedUser}`;
+        return t('pages:dashboard.activityWith', { user: activity.relatedUser, defaultValue: `Activity with ${activity.relatedUser}` });
     }
   };
 
   return (
     <SelfHealingErrorBoundary pageName="Dashboard" fallbackRoute="/feed">
       <SEO 
-        title="Your Dashboard"
-        description="Track your tango journey, view stats, and stay connected with upcoming events, connections, and community activity"
+        title={t('pages:dashboard.seoTitle', 'Your Dashboard')}
+        description={t('pages:dashboard.seoDescription', 'Track your tango journey, view stats, and stay connected with upcoming events, connections, and community activity')}
         ogImage="/og-image.png"
       />
-      <PageLayout title="Dashboard" showBreadcrumbs>
+      <PageLayout title={t('pages:dashboard.title', 'Dashboard')} showBreadcrumbs>
         <div className="min-h-screen">
           {/* Hero Section - 16:9 */}
           <section className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">
@@ -127,15 +129,15 @@ export default function DashboardPage() {
               >
                 <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
                   <TrendingUp className="w-3 h-3 mr-1.5" />
-                  Your Activity
+                  {t('pages:dashboard.yourActivity', 'Your Activity')}
                 </Badge>
                 
                 <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6" data-testid="text-page-title">
-                  Your Dashboard
+                  {t('pages:dashboard.heroTitle', 'Your Dashboard')}
                 </h1>
                 
                 <p className="text-xl text-white/80 max-w-2xl mx-auto">
-                  Track your tango journey and stay connected with the community
+                  {t('pages:dashboard.heroSubtitle', 'Track your tango journey and stay connected with the community')}
                 </p>
               </motion.div>
             </div>
@@ -184,7 +186,7 @@ export default function DashboardPage() {
                 <motion.div {...fadeInUp} transition={{ delay: 0.2 }}>
                   <Card className="overflow-hidden h-full">
                     <CardHeader className="border-b">
-                      <CardTitle className="text-2xl font-serif">Upcoming Events</CardTitle>
+                      <CardTitle className="text-2xl font-serif">{t('pages:dashboard.upcomingEvents', 'Upcoming Events')}</CardTitle>
                     </CardHeader>
                     <CardContent className="p-8">
                       {eventsLoading ? (
@@ -217,7 +219,7 @@ export default function DashboardPage() {
                               </div>
                               <Link href={`/events/${event.id}`}>
                                 <Button size="sm" variant="outline" data-testid={`button-view-event-${event.id}`}>
-                                  View
+                                  {t('common:view', 'View')}
                                 </Button>
                               </Link>
                             </motion.div>
@@ -226,16 +228,16 @@ export default function DashboardPage() {
                       ) : (
                         <div className="text-center py-12">
                           <Calendar className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-                          <p className="text-muted-foreground mb-4">No upcoming events</p>
+                          <p className="text-muted-foreground mb-4">{t('pages:dashboard.noUpcomingEvents', 'No upcoming events')}</p>
                           <Link href="/events">
-                            <Button variant="outline">Discover Events</Button>
+                            <Button variant="outline">{t('pages:dashboard.discoverEvents', 'Discover Events')}</Button>
                           </Link>
                         </div>
                       )}
                       {events.length > 0 && (
                         <Link href="/events">
                           <Button className="w-full mt-6 gap-2" data-testid="button-see-all-events">
-                            See All Events
+                            {t('pages:dashboard.seeAllEvents', 'See All Events')}
                             <ChevronRight className="h-4 w-4" />
                           </Button>
                         </Link>
@@ -248,7 +250,7 @@ export default function DashboardPage() {
                 <motion.div {...fadeInUp} transition={{ delay: 0.3 }}>
                   <Card className="overflow-hidden h-full">
                     <CardHeader className="border-b">
-                      <CardTitle className="text-2xl font-serif">Recent Activity</CardTitle>
+                      <CardTitle className="text-2xl font-serif">{t('pages:dashboard.recentActivity', 'Recent Activity')}</CardTitle>
                     </CardHeader>
                     <CardContent className="p-8">
                       {activitiesLoading ? (
@@ -279,16 +281,16 @@ export default function DashboardPage() {
                       ) : (
                         <div className="text-center py-12">
                           <TrendingUp className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-                          <p className="text-muted-foreground mb-4">No recent activity</p>
+                          <p className="text-muted-foreground mb-4">{t('pages:dashboard.noRecentActivity', 'No recent activity')}</p>
                           <Link href="/feed">
-                            <Button variant="outline">Start Exploring</Button>
+                            <Button variant="outline">{t('pages:dashboard.startExploring', 'Start Exploring')}</Button>
                           </Link>
                         </div>
                       )}
                       {activities.length > 0 && (
                         <Link href="/feed">
                           <Button className="w-full mt-6 gap-2" data-testid="button-see-all-activity">
-                            See All Activity
+                            {t('pages:dashboard.seeAllActivity', 'See All Activity')}
                             <ChevronRight className="h-4 w-4" />
                           </Button>
                         </Link>

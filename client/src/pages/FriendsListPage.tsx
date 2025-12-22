@@ -17,6 +17,7 @@ import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { uploadMediaFiles } from "@/lib/mediaUpload";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 interface Friend {
   id: number;
@@ -45,6 +46,7 @@ interface FriendRequest {
 }
 
 export default function FriendsListPage() {
+  const { t } = useTranslation(['pages', 'common']);
   const [searchQuery, setSearchQuery] = useState("");
   const [showRequestDialog, setShowRequestDialog] = useState(false);
   const [selectedUser, setSelectedUser] = useState<Friend | null>(null);
@@ -521,7 +523,7 @@ export default function FriendsListPage() {
 
   return (
     <SelfHealingErrorBoundary pageName="Friends" fallbackRoute="/feed">
-      <PageLayout title="Friends" showBreadcrumbs>
+      <PageLayout title={t('pages:friendsList.title', 'Friends')} showBreadcrumbs>
       {/* Editorial Hero Section - 16:9 */}
       <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">
         <div className="absolute inset-0 bg-cover bg-center" style={{
@@ -538,15 +540,15 @@ export default function FriendsListPage() {
           >
             <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm">
               <Users className="w-3 h-3 mr-1.5" />
-              Your Network
+              {t('pages:friendsList.yourNetwork', 'Your Network')}
             </Badge>
             
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6" data-testid="text-page-title">
-              Tango Friends
+              {t('pages:friendsList.heroTitle', 'Tango Friends')}
             </h1>
             
             <p className="text-xl text-white/80 max-w-2xl mx-auto">
-              Connect with dancers who share your passion for Argentine tango
+              {t('pages:friendsList.heroSubtitle', 'Connect with dancers who share your passion for Argentine tango')}
             </p>
           </motion.div>
         </div>
@@ -562,15 +564,15 @@ export default function FriendsListPage() {
 
       <div className="container max-w-4xl mx-auto p-6 bg-background" data-testid="page-friends">
         <div className="mb-6">
-          <h2 className="text-2xl font-serif font-bold mb-2">Manage Your Connections</h2>
-          <p className="text-muted-foreground">Build and nurture your tango community</p>
+          <h2 className="text-2xl font-serif font-bold mb-2">{t('pages:friendsList.manageConnections', 'Manage Your Connections')}</h2>
+          <p className="text-muted-foreground">{t('pages:friendsList.buildCommunity', 'Build and nurture your tango community')}</p>
         </div>
 
         <div className="mb-6">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search friends..."
+              placeholder={t('pages:friendsList.searchPlaceholder', 'Search friends...')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10 backdrop-blur-sm bg-white/80 dark:bg-slate-900/80"
@@ -583,7 +585,7 @@ export default function FriendsListPage() {
           <TabsList className="grid w-full grid-cols-3 backdrop-blur-lg bg-white/60 dark:bg-slate-900/60">
             <TabsTrigger value="all" data-testid="tab-all-friends">
               <Users className="h-4 w-4 mr-2" />
-              All Friends
+              {t('pages:friendsList.allFriends', 'All Friends')}
               {friends.length > 0 && (
                 <Badge variant="secondary" className="ml-2">
                   {friends.length}
@@ -592,7 +594,7 @@ export default function FriendsListPage() {
             </TabsTrigger>
             <TabsTrigger value="requests" data-testid="tab-requests">
               <Clock className="h-4 w-4 mr-2" />
-              Requests
+              {t('pages:friendsList.requests', 'Requests')}
               {requests.length > 0 && (
                 <Badge className="ml-2 bg-gradient-to-r from-purple-500 to-pink-500">
                   {requests.length}
@@ -601,16 +603,16 @@ export default function FriendsListPage() {
             </TabsTrigger>
             <TabsTrigger value="suggestions" data-testid="tab-suggestions">
               <TrendingUp className="h-4 w-4 mr-2" />
-              Suggestions
+              {t('pages:friendsList.suggestions', 'Suggestions')}
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="all" className="space-y-3 mt-6">
             {loadingFriends ? (
-              <div className="text-center py-12 text-muted-foreground">Loading friends...</div>
+              <div className="text-center py-12 text-muted-foreground">{t('pages:friendsList.loadingFriends', 'Loading friends...')}</div>
             ) : filteredFriends.length === 0 ? (
               <div className="text-center py-12 text-muted-foreground">
-                {searchQuery ? "No friends found" : "No friends yet. Send some requests!"}
+                {searchQuery ? t('pages:friendsList.noFriendsFound', 'No friends found') : t('pages:friendsList.noFriendsYet', 'No friends yet. Send some requests!')}
               </div>
             ) : (
               filteredFriends.map((friend) => <FriendCard key={friend.id} friend={friend} />)
@@ -619,10 +621,10 @@ export default function FriendsListPage() {
 
           <TabsContent value="requests" className="space-y-3 mt-6">
             {loadingRequests ? (
-              <div className="text-center py-12 text-muted-foreground">Loading requests...</div>
+              <div className="text-center py-12 text-muted-foreground">{t('pages:friendsList.loadingRequests', 'Loading requests...')}</div>
             ) : requests.length === 0 ? (
               <div className="text-center py-12 text-muted-foreground">
-                No pending friend requests
+                {t('pages:friendsList.noPendingRequests', 'No pending friend requests')}
               </div>
             ) : (
               requests.map((request) => <RequestCard key={request.id} request={request} />)
@@ -631,10 +633,10 @@ export default function FriendsListPage() {
 
           <TabsContent value="suggestions" className="space-y-3 mt-6">
             {loadingSuggestions ? (
-              <div className="text-center py-12 text-muted-foreground">Loading suggestions...</div>
+              <div className="text-center py-12 text-muted-foreground">{t('pages:friendsList.loadingSuggestions', 'Loading suggestions...')}</div>
             ) : suggestions.length === 0 ? (
               <div className="text-center py-12 text-muted-foreground">
-                No suggestions available
+                {t('pages:friendsList.noSuggestionsAvailable', 'No suggestions available')}
               </div>
             ) : (
               suggestions.map((friend) => (
@@ -657,15 +659,15 @@ export default function FriendsListPage() {
         <DialogContent className="backdrop-blur-xl bg-white/90 dark:bg-slate-900/90">
           <DialogHeader>
             <DialogTitle className="text-xl bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent">
-              Send Friend Request to {selectedUser?.name}
+              {t('pages:friendsList.sendFriendRequestTo', { name: selectedUser?.name, defaultValue: `Send Friend Request to ${selectedUser?.name}` })}
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <Label htmlFor="message">Personal Message *</Label>
+              <Label htmlFor="message">{t('pages:friendsList.personalMessage', 'Personal Message')} *</Label>
               <Textarea
                 id="message"
-                placeholder="Hi! I'd love to connect..."
+                placeholder={t('pages:friendsList.messagePlaceholder', "Hi! I'd love to connect...")}
                 value={requestData.message}
                 onChange={(e) => setRequestData({ ...requestData, message: e.target.value })}
                 className="mt-1"
@@ -682,16 +684,16 @@ export default function FriendsListPage() {
                 }
                 data-testid="checkbox-did-we-dance"
               />
-              <Label htmlFor="didWeDance" className="cursor-pointer">We've met!💃🕺</Label>
+              <Label htmlFor="didWeDance" className="cursor-pointer">{t('pages:friendsList.weveMet', "We've met!")}</Label>
             </div>
 
             {requestData.didWeDance && (
               <div className="space-y-3 p-4 bg-gradient-to-br from-cyan-50 to-blue-50 dark:from-cyan-950/20 dark:to-blue-950/20 rounded-lg border border-cyan-200 dark:border-cyan-800">
                 <div>
-                  <Label htmlFor="danceLocation">Where did we dance?</Label>
+                  <Label htmlFor="danceLocation">{t('pages:friendsList.whereDidWeDance', 'Where did we dance?')}</Label>
                   <Input
                     id="danceLocation"
-                    placeholder="e.g., Salon Canning, Buenos Aires"
+                    placeholder={t('pages:friendsList.locationPlaceholder', 'e.g., Salon Canning, Buenos Aires')}
                     value={requestData.danceLocation}
                     onChange={(e) =>
                       setRequestData({ ...requestData, danceLocation: e.target.value })
@@ -701,7 +703,7 @@ export default function FriendsListPage() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="meetingDate">When did we meet?</Label>
+                  <Label htmlFor="meetingDate">{t('pages:friendsList.whenDidWeMeet', 'When did we meet?')}</Label>
                   <Input
                     id="meetingDate"
                     type="date"
@@ -714,10 +716,10 @@ export default function FriendsListPage() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="danceStory">Share the memory</Label>
+                  <Label htmlFor="danceStory">{t('pages:friendsList.shareTheMemory', 'Share the memory')}</Label>
                   <Textarea
                     id="danceStory"
-                    placeholder="Tell them about your dance together..."
+                    placeholder={t('pages:friendsList.danceStoryPlaceholder', 'Tell them about your dance together...')}
                     value={requestData.danceStory}
                     onChange={(e) =>
                       setRequestData({ ...requestData, danceStory: e.target.value })
@@ -802,7 +804,7 @@ export default function FriendsListPage() {
 
             <div className="flex justify-end gap-2">
               <Button variant="outline" onClick={() => setShowRequestDialog(false)}>
-                Cancel
+                {t('common:cancel', 'Cancel')}
               </Button>
               <Button
                 onClick={submitRequest}
@@ -813,10 +815,10 @@ export default function FriendsListPage() {
                 {isUploading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Uploading...
+                    {t('common:uploading', 'Uploading...')}
                   </>
                 ) : (
-                  "Send Request"
+                  t('pages:friendsList.sendRequest', 'Send Request')
                 )}
               </Button>
             </div>

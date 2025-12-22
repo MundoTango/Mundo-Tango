@@ -8,8 +8,10 @@ import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary"
 import { motion } from "framer-motion";
 import { SEO } from "@/components/SEO";
 import { Link } from "wouter";
+import { useTranslation } from "react-i18next";
 
 export default function PasswordResetPage() {
+  const { t } = useTranslation(['pages', 'common']);
   return (
     <SelfHealingErrorBoundary pageName="Password Reset" fallbackRoute="/login">
       <>

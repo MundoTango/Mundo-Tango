@@ -12,8 +12,10 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 import { Shield, Mail, AlertTriangle, Eye, EyeOff, Trash2, Plus, Check, X } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useTranslation } from "react-i18next";
 
 export default function PrivacyHub() {
+  const { t } = useTranslation(['pages', 'common']);
   const { toast } = useToast();
   const [newEmailLabel, setNewEmailLabel] = useState('');
   const [forwardTo, setForwardTo] = useState('');
@@ -32,8 +34,8 @@ export default function PrivacyHub() {
     },
     onSuccess: () => {
       toast({
-        title: "Virtual Email Created! 🎉",
-        description: "Your new disposable email is ready to use",
+        title: t('pages:privacyHub.emailCreated', 'Virtual Email Created!'),
+        description: t('pages:privacyHub.emailCreatedDesc', 'Your new disposable email is ready to use'),
       });
       queryClient.invalidateQueries({ queryKey: ['/api/privacy/virtual-emails'] });
       setNewEmailLabel('');
@@ -41,7 +43,7 @@ export default function PrivacyHub() {
     },
     onError: (error: any) => {
       toast({
-        title: "Creation Failed",
+        title: t('pages:privacyHub.creationFailed', 'Creation Failed'),
         description: error.message,
         variant: "destructive"
       });
@@ -54,14 +56,14 @@ export default function PrivacyHub() {
     },
     onSuccess: () => {
       toast({
-        title: "Email Deleted",
-        description: "Virtual email has been removed",
+        title: t('pages:privacyHub.emailDeleted', 'Email Deleted'),
+        description: t('pages:privacyHub.emailDeletedDesc', 'Virtual email has been removed'),
       });
       queryClient.invalidateQueries({ queryKey: ['/api/privacy/virtual-emails'] });
     },
     onError: (error: any) => {
       toast({
-        title: "Deletion Failed",
+        title: t('pages:privacyHub.deletionFailed', 'Deletion Failed'),
         description: error.message,
         variant: "destructive"
       });
@@ -77,7 +79,7 @@ export default function PrivacyHub() {
     },
     onError: (error: any) => {
       toast({
-        title: "Toggle Failed",
+        title: t('pages:privacyHub.toggleFailed', 'Toggle Failed'),
         description: error.message,
         variant: "destructive"
       });
@@ -90,17 +92,17 @@ export default function PrivacyHub() {
     },
     onSuccess: (data) => {
       toast({
-        title: data.breaches.length === 0 ? "All Clear! ✅" : "Breaches Found ⚠️",
+        title: data.breaches.length === 0 ? t('pages:privacyHub.allClear', 'All Clear!') : t('pages:privacyHub.breachesFound', 'Breaches Found'),
         description: data.breaches.length === 0 
-          ? "No data breaches detected" 
-          : `Found in ${data.breaches.length} breach${data.breaches.length !== 1 ? 'es' : ''}`,
+          ? t('pages:privacyHub.noBreaches', 'No data breaches detected')
+          : t('pages:privacyHub.foundBreaches', `Found in ${data.breaches.length} breach${data.breaches.length !== 1 ? 'es' : ''}`),
         variant: data.breaches.length === 0 ? "default" : "destructive"
       });
       queryClient.invalidateQueries({ queryKey: ['/api/privacy/security-alerts'] });
     },
     onError: (error: any) => {
       toast({
-        title: "Scan Failed",
+        title: t('pages:privacyHub.scanFailed', 'Scan Failed'),
         description: error.message,
         variant: "destructive"
       });
@@ -110,8 +112,8 @@ export default function PrivacyHub() {
   const handleCreateEmail = () => {
     if (!newEmailLabel.trim()) {
       toast({
-        title: "Label Required",
-        description: "Please provide a label for this email",
+        title: t('pages:privacyHub.labelRequired', 'Label Required'),
+        description: t('pages:privacyHub.labelRequiredDesc', 'Please provide a label for this email'),
         variant: "destructive"
       });
       return;
@@ -124,22 +126,21 @@ export default function PrivacyHub() {
   };
 
   return (
-    <PageLayout title="Privacy & Security Hub" showBreadcrumbs>
+    <PageLayout title={t('pages:privacyHub.title', 'Privacy & Security Hub')} showBreadcrumbs>
       <>
         <SEO
-          title="Privacy & Security Hub - Mundo Tango"
-          description="Manage your privacy with virtual emails and dark web monitoring"
+          title={t('pages:privacyHub.seoTitle', 'Privacy & Security Hub - Mundo Tango')}
+          description={t('pages:privacyHub.seoDescription', 'Manage your privacy with virtual emails and dark web monitoring')}
         />
 
         <div className="container mx-auto max-w-6xl space-y-6 p-6" data-testid="page-privacy-hub">
-          {/* Header */}
           <div className="space-y-2">
             <h1 className="text-3xl font-bold flex items-center gap-2">
               <Shield className="h-8 w-8 text-blue-500" />
-              Privacy & Security Hub
+              {t('pages:privacyHub.title', 'Privacy & Security Hub')}
             </h1>
             <p className="text-muted-foreground">
-              Protect your identity with virtual emails and dark web monitoring
+              {t('pages:privacyHub.subtitle', 'Protect your identity with virtual emails and dark web monitoring')}
             </p>
           </div>
 
@@ -147,34 +148,32 @@ export default function PrivacyHub() {
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="virtual-emails" data-testid="tab-virtual-emails">
                 <Mail className="h-4 w-4 mr-2" />
-                Virtual Emails
+                {t('pages:privacyHub.virtualEmails', 'Virtual Emails')}
               </TabsTrigger>
               <TabsTrigger value="dark-web" data-testid="tab-dark-web">
                 <AlertTriangle className="h-4 w-4 mr-2" />
-                Dark Web Monitoring
+                {t('pages:privacyHub.darkWebMonitoring', 'Dark Web Monitoring')}
               </TabsTrigger>
             </TabsList>
 
-            {/* Virtual Emails Tab */}
             <TabsContent value="virtual-emails" className="space-y-4">
-              {/* Create New Email */}
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Plus className="h-5 w-5 text-blue-500" />
-                    Create Virtual Email
+                    {t('pages:privacyHub.createVirtualEmail', 'Create Virtual Email')}
                   </CardTitle>
                   <CardDescription>
-                    Generate a disposable email address to protect your identity
+                    {t('pages:privacyHub.createEmailDesc', 'Generate a disposable email address to protect your identity')}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="label">Label (e.g., "Newsletter", "Shopping")</Label>
+                      <Label htmlFor="label">{t('pages:privacyHub.labelField', 'Label (e.g., "Newsletter", "Shopping")')}</Label>
                       <Input
                         id="label"
-                        placeholder="Shopping Sites"
+                        placeholder={t('pages:privacyHub.labelPlaceholder', 'Shopping Sites')}
                         value={newEmailLabel}
                         onChange={(e) => setNewEmailLabel(e.target.value)}
                         data-testid="input-email-label"
@@ -182,7 +181,7 @@ export default function PrivacyHub() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="forward-to">Forward To (Optional)</Label>
+                      <Label htmlFor="forward-to">{t('pages:privacyHub.forwardTo', 'Forward To (Optional)')}</Label>
                       <Input
                         id="forward-to"
                         type="email"
@@ -200,24 +199,23 @@ export default function PrivacyHub() {
                     className="w-full"
                     data-testid="button-create-email"
                   >
-                    {createEmailMutation.isPending ? 'Creating...' : 'Create Virtual Email'}
+                    {createEmailMutation.isPending ? t('pages:privacyHub.creating', 'Creating...') : t('pages:privacyHub.createVirtualEmail', 'Create Virtual Email')}
                   </Button>
                 </CardContent>
               </Card>
 
-              {/* Email List */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Your Virtual Emails</CardTitle>
+                  <CardTitle>{t('pages:privacyHub.yourVirtualEmails', 'Your Virtual Emails')}</CardTitle>
                   <CardDescription>
-                    {virtualEmails?.length || 0} virtual email{virtualEmails?.length !== 1 ? 's' : ''}
+                    {virtualEmails?.length || 0} {t('pages:privacyHub.virtualEmailCount', 'virtual email')}{virtualEmails?.length !== 1 ? 's' : ''}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   {virtualEmails?.length === 0 || !virtualEmails ? (
                     <div className="text-center py-8 text-muted-foreground">
                       <Mail className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                      <p>No virtual emails yet. Create your first one above!</p>
+                      <p>{t('pages:privacyHub.noEmails', 'No virtual emails yet. Create your first one above!')}</p>
                     </div>
                   ) : (
                     <div className="space-y-4">
@@ -229,7 +227,7 @@ export default function PrivacyHub() {
                                 <div className="flex items-center gap-2">
                                   <span className="font-semibold">{email.label}</span>
                                   <Badge variant={email.isActive ? 'default' : 'secondary'}>
-                                    {email.isActive ? 'Active' : 'Disabled'}
+                                    {email.isActive ? t('common:active', 'Active') : t('common:disabled', 'Disabled')}
                                   </Badge>
                                 </div>
                                 
@@ -274,17 +272,15 @@ export default function PrivacyHub() {
               </Card>
             </TabsContent>
 
-            {/* Dark Web Monitoring Tab */}
             <TabsContent value="dark-web" className="space-y-4">
-              {/* Scan Controls */}
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Shield className="h-5 w-5 text-red-500" />
-                    Dark Web Scan
+                    {t('pages:privacyHub.darkWebScan', 'Dark Web Scan')}
                   </CardTitle>
                   <CardDescription>
-                    Check if your email has been found in data breaches
+                    {t('pages:privacyHub.darkWebScanDesc', 'Check if your email has been found in data breaches')}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -294,25 +290,24 @@ export default function PrivacyHub() {
                     className="w-full"
                     data-testid="button-scan-dark-web"
                   >
-                    {scanMutation.isPending ? 'Scanning...' : 'Scan for Data Breaches'}
+                    {scanMutation.isPending ? t('pages:privacyHub.scanning', 'Scanning...') : t('pages:privacyHub.scanForBreaches', 'Scan for Data Breaches')}
                   </Button>
                 </CardContent>
               </Card>
 
-              {/* Security Alerts */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Security Alerts</CardTitle>
+                  <CardTitle>{t('pages:privacyHub.securityAlerts', 'Security Alerts')}</CardTitle>
                   <CardDescription>
-                    {securityAlerts?.length || 0} alert{securityAlerts?.length !== 1 ? 's' : ''}
+                    {securityAlerts?.length || 0} {t('pages:privacyHub.alertCount', 'alert')}{securityAlerts?.length !== 1 ? 's' : ''}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   {securityAlerts?.length === 0 || !securityAlerts ? (
                     <div className="text-center py-8 text-muted-foreground">
                       <Shield className="h-12 w-12 mx-auto mb-4 opacity-50 text-green-500" />
-                      <h3 className="font-semibold mb-2">All Clear!</h3>
-                      <p>No security alerts at this time</p>
+                      <h3 className="font-semibold mb-2">{t('pages:privacyHub.allClear', 'All Clear!')}</h3>
+                      <p>{t('pages:privacyHub.noAlerts', 'No security alerts at this time')}</p>
                     </div>
                   ) : (
                     <div className="space-y-4">

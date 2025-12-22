@@ -5,6 +5,7 @@ import { SEO } from "@/components/SEO";
 import { FileText, AlertTriangle, Scale, UserX } from "lucide-react";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
+import { useTranslation } from "react-i18next";
 
 export default function TermsPage() {
   return (

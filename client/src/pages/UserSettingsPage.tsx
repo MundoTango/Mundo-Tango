@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -38,6 +39,7 @@ interface UserSettings {
 }
 
 export default function UserSettingsPage() {
+  const { t } = useTranslation(['pages', 'common']);
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const { user, isLoading: userLoading } = useUser();
@@ -52,11 +54,11 @@ export default function UserSettingsPage() {
     mutationFn: (data: Partial<UserSettings>) =>
       apiRequest("/api/users/me/settings", "PATCH", data),
     onSuccess: () => {
-      toast({ title: "Settings updated successfully" });
+      toast({ title: t('pages:settings.settingsUpdated', 'Settings updated successfully') });
       queryClient.invalidateQueries({ queryKey: ["/api/users/me/settings"] });
     },
     onError: () => {
-      toast({ title: "Failed to update settings", variant: "destructive" });
+      toast({ title: t('pages:settings.updateFailed', 'Failed to update settings'), variant: "destructive" });
     },
   });
 
@@ -70,11 +72,11 @@ export default function UserSettingsPage() {
     mutationFn: (data: typeof passwordForm) =>
       apiRequest("/api/users/me/password", "PATCH", data),
     onSuccess: () => {
-      toast({ title: "Password changed successfully" });
+      toast({ title: t('pages:settings.passwordChanged', 'Password changed successfully') });
       setPasswordForm({ currentPassword: "", newPassword: "", confirmPassword: "" });
     },
     onError: () => {
-      toast({ title: "Failed to change password", variant: "destructive" });
+      toast({ title: t('pages:settings.passwordChangeFailed', 'Failed to change password'), variant: "destructive" });
     },
   });
 
@@ -92,11 +94,11 @@ export default function UserSettingsPage() {
     <SelfHealingErrorBoundary pageName="User Settings" fallbackRoute="/settings">
       <>
         <SEO
-          title="User Settings"
-          description="Manage your account settings, privacy preferences, notifications, and security options."
+          title={t('pages:settings.title', 'User Settings')}
+          description={t('pages:settings.description', 'Manage your account settings, privacy preferences, notifications, and security options.')}
         />
         
-        <PageLayout title="Settings" showBreadcrumbs>
+        <PageLayout title={t('pages:settings.title', 'Settings')} showBreadcrumbs>
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -110,10 +112,10 @@ export default function UserSettingsPage() {
                 transition={{ duration: 0.6, delay: 0.1 }}
               >
                 <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-                  Your Settings
+                  {t('pages:settings.yourSettings', 'Your Settings')}
                 </h2>
                 <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-                  Customize your account, privacy, notifications, and security preferences
+                  {t('pages:settings.customizePreferences', 'Customize your account, privacy, notifications, and security preferences')}
                 </p>
               </motion.div>
 
@@ -121,44 +123,44 @@ export default function UserSettingsPage() {
         <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="account" data-testid="tab-account">
             <User className="h-4 w-4 mr-2" />
-            Account
+            {t('pages:settings.account', 'Account')}
           </TabsTrigger>
           <TabsTrigger value="privacy" data-testid="tab-privacy">
             <Lock className="h-4 w-4 mr-2" />
-            Privacy
+            {t('pages:settings.privacy', 'Privacy')}
           </TabsTrigger>
           <TabsTrigger value="notifications" data-testid="tab-notifications">
             <Bell className="h-4 w-4 mr-2" />
-            Notifications
+            {t('pages:settings.notifications', 'Notifications')}
           </TabsTrigger>
           <TabsTrigger value="preferences" data-testid="tab-preferences">
             <Globe className="h-4 w-4 mr-2" />
-            Preferences
+            {t('pages:settings.preferences', 'Preferences')}
           </TabsTrigger>
           <TabsTrigger value="security" data-testid="tab-security">
             <Shield className="h-4 w-4 mr-2" />
-            Security
+            {t('pages:settings.security', 'Security')}
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="account" className="space-y-4 mt-6">
           <Card>
             <CardHeader>
-              <CardTitle>Account Information</CardTitle>
+              <CardTitle>{t('pages:settings.accountInformation', 'Account Information')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <Label htmlFor="name">Name</Label>
+                <Label htmlFor="name">{t('common:name', 'Name')}</Label>
                 <Input 
                   id="name" 
                   type="text" 
                   defaultValue={user?.name || ""} 
-                  placeholder="Your full name" 
+                  placeholder={t('common:yourFullName', 'Your full name')}
                   data-testid="input-name" 
                 />
               </div>
               <div>
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">{t('common:email', 'Email')}</Label>
                 <Input 
                   id="email" 
                   type="email" 
@@ -167,10 +169,10 @@ export default function UserSettingsPage() {
                   data-testid="input-email" 
                   disabled 
                 />
-                <p className="text-sm text-muted-foreground mt-1">Email cannot be changed</p>
+                <p className="text-sm text-muted-foreground mt-1">{t('pages:settings.emailCannotBeChanged', 'Email cannot be changed')}</p>
               </div>
               <div>
-                <Label htmlFor="username">Username</Label>
+                <Label htmlFor="username">{t('common:username', 'Username')}</Label>
                 <Input 
                   id="username" 
                   defaultValue={user?.username || ""} 
@@ -179,7 +181,7 @@ export default function UserSettingsPage() {
                 />
               </div>
               <div>
-                <Label htmlFor="city">Location</Label>
+                <Label htmlFor="city">{t('common:location', 'Location')}</Label>
                 <Input 
                   id="city" 
                   defaultValue={user?.city && user?.country ? `${user.city}, ${user.country}` : ""} 
@@ -189,9 +191,9 @@ export default function UserSettingsPage() {
               </div>
               <Separator />
               <div className="space-y-4">
-                <h3 className="font-semibold">Tango Experience</h3>
+                <h3 className="font-semibold">{t('pages:settings.tangoExperience', 'Tango Experience')}</h3>
                 <div>
-                  <Label htmlFor="yearsOfDancing">Years of Dancing</Label>
+                  <Label htmlFor="yearsOfDancing">{t('pages:settings.yearsOfDancing', 'Years of Dancing')}</Label>
                   <Input 
                     id="yearsOfDancing" 
                     type="number" 
@@ -203,7 +205,7 @@ export default function UserSettingsPage() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="leaderLevel">Leader Level (0-5)</Label>
+                  <Label htmlFor="leaderLevel">{t('pages:settings.leaderLevel', 'Leader Level (0-5)')}</Label>
                   <div className="flex items-center space-x-4">
                     <Slider
                       id="leaderLevel"
@@ -218,7 +220,7 @@ export default function UserSettingsPage() {
                   </div>
                 </div>
                 <div>
-                  <Label htmlFor="followerLevel">Follower Level (0-5)</Label>
+                  <Label htmlFor="followerLevel">{t('pages:settings.followerLevel', 'Follower Level (0-5)')}</Label>
                   <div className="flex items-center space-x-4">
                     <Slider
                       id="followerLevel"
@@ -233,7 +235,7 @@ export default function UserSettingsPage() {
                   </div>
                 </div>
               </div>
-              <Button data-testid="button-save-account">Save Changes</Button>
+              <Button data-testid="button-save-account">{t('common:saveChanges', 'Save Changes')}</Button>
             </CardContent>
           </Card>
         </TabsContent>
@@ -241,14 +243,14 @@ export default function UserSettingsPage() {
         <TabsContent value="privacy" className="space-y-4 mt-6">
           <Card>
             <CardHeader>
-              <CardTitle>Privacy Settings</CardTitle>
+              <CardTitle>{t('pages:settings.privacySettings', 'Privacy Settings')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label>Profile Visibility</Label>
+                  <Label>{t('pages:settings.profileVisibility', 'Profile Visibility')}</Label>
                   <p className="text-sm text-muted-foreground">
-                    Control who can see your profile
+                    {t('pages:settings.controlWhoCanSee', 'Control who can see your profile')}
                   </p>
                 </div>
                 <select 
@@ -259,17 +261,17 @@ export default function UserSettingsPage() {
                   })}
                   data-testid="select-profile-visibility"
                 >
-                  <option value="public">Public</option>
-                  <option value="friends">Friends Only</option>
-                  <option value="private">Private</option>
+                  <option value="public">{t('common:public', 'Public')}</option>
+                  <option value="friends">{t('common:friendsOnly', 'Friends Only')}</option>
+                  <option value="private">{t('common:private', 'Private')}</option>
                 </select>
               </div>
               <Separator />
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label>Show Email</Label>
+                  <Label>{t('pages:settings.showEmail', 'Show Email')}</Label>
                   <p className="text-sm text-muted-foreground">
-                    Display your email on your profile
+                    {t('pages:settings.displayEmailOnProfile', 'Display your email on your profile')}
                   </p>
                 </div>
                 <Switch
@@ -281,9 +283,9 @@ export default function UserSettingsPage() {
               <Separator />
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label>Show Phone</Label>
+                  <Label>{t('pages:settings.showPhone', 'Show Phone')}</Label>
                   <p className="text-sm text-muted-foreground">
-                    Display your phone number on your profile
+                    {t('pages:settings.displayPhoneOnProfile', 'Display your phone number on your profile')}
                   </p>
                 </div>
                 <Switch
@@ -299,14 +301,14 @@ export default function UserSettingsPage() {
         <TabsContent value="notifications" className="space-y-4 mt-6">
           <Card>
             <CardHeader>
-              <CardTitle>Notification Preferences</CardTitle>
+              <CardTitle>{t('pages:settings.notificationPreferences', 'Notification Preferences')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label>Email Notifications</Label>
+                  <Label>{t('pages:settings.emailNotifications', 'Email Notifications')}</Label>
                   <p className="text-sm text-muted-foreground">
-                    Receive notifications via email
+                    {t('pages:settings.receiveViaEmail', 'Receive notifications via email')}
                   </p>
                 </div>
                 <Switch
@@ -318,9 +320,9 @@ export default function UserSettingsPage() {
               <Separator />
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label>Push Notifications</Label>
+                  <Label>{t('pages:settings.pushNotifications', 'Push Notifications')}</Label>
                   <p className="text-sm text-muted-foreground">
-                    Receive push notifications in browser
+                    {t('pages:settings.receiveViaPush', 'Receive push notifications in browser')}
                   </p>
                 </div>
                 <Switch
@@ -332,9 +334,9 @@ export default function UserSettingsPage() {
               <Separator />
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label>SMS Notifications</Label>
+                  <Label>{t('pages:settings.smsNotifications', 'SMS Notifications')}</Label>
                   <p className="text-sm text-muted-foreground">
-                    Receive notifications via SMS
+                    {t('pages:settings.receiveViaSms', 'Receive notifications via SMS')}
                   </p>
                 </div>
                 <Switch
@@ -350,11 +352,11 @@ export default function UserSettingsPage() {
         <TabsContent value="preferences" className="space-y-4 mt-6">
           <Card>
             <CardHeader>
-              <CardTitle>Language & Region</CardTitle>
+              <CardTitle>{t('pages:settings.languageRegion', 'Language & Region')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <Label htmlFor="language">Language</Label>
+                <Label htmlFor="language">{t('common:language', 'Language')}</Label>
                 <select 
                   id="language"
                   className="w-full border rounded-md px-3 py-2 mt-2"
@@ -370,7 +372,7 @@ export default function UserSettingsPage() {
                 </select>
               </div>
               <div>
-                <Label htmlFor="timezone">Timezone</Label>
+                <Label htmlFor="timezone">{t('common:timezone', 'Timezone')}</Label>
                 <select 
                   id="timezone"
                   className="w-full border rounded-md px-3 py-2 mt-2"
@@ -379,11 +381,11 @@ export default function UserSettingsPage() {
                   data-testid="select-timezone"
                 >
                   <option value="UTC">UTC</option>
-                  <option value="America/New_York">Eastern Time</option>
-                  <option value="America/Chicago">Central Time</option>
-                  <option value="America/Los_Angeles">Pacific Time</option>
-                  <option value="Europe/London">London</option>
-                  <option value="Europe/Paris">Paris</option>
+                  <option value="America/New_York">{t('pages:settings.easternTime', 'Eastern Time')}</option>
+                  <option value="America/Chicago">{t('pages:settings.centralTime', 'Central Time')}</option>
+                  <option value="America/Los_Angeles">{t('pages:settings.pacificTime', 'Pacific Time')}</option>
+                  <option value="Europe/London">{t('pages:settings.london', 'London')}</option>
+                  <option value="Europe/Paris">{t('pages:settings.paris', 'Paris')}</option>
                 </select>
               </div>
             </CardContent>
@@ -393,11 +395,11 @@ export default function UserSettingsPage() {
         <TabsContent value="security" className="space-y-4 mt-6">
           <Card>
             <CardHeader>
-              <CardTitle>Change Password</CardTitle>
+              <CardTitle>{t('pages:settings.changePassword', 'Change Password')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <Label htmlFor="current-password">Current Password</Label>
+                <Label htmlFor="current-password">{t('pages:settings.currentPassword', 'Current Password')}</Label>
                 <Input
                   id="current-password"
                   type="password"
@@ -407,7 +409,7 @@ export default function UserSettingsPage() {
                 />
               </div>
               <div>
-                <Label htmlFor="new-password">New Password</Label>
+                <Label htmlFor="new-password">{t('pages:settings.newPassword', 'New Password')}</Label>
                 <Input
                   id="new-password"
                   type="password"
@@ -417,7 +419,7 @@ export default function UserSettingsPage() {
                 />
               </div>
               <div>
-                <Label htmlFor="confirm-password">Confirm New Password</Label>
+                <Label htmlFor="confirm-password">{t('pages:settings.confirmNewPassword', 'Confirm New Password')}</Label>
                 <Input
                   id="confirm-password"
                   type="password"
@@ -432,28 +434,28 @@ export default function UserSettingsPage() {
                 data-testid="button-change-password"
               >
                 {changePasswordMutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-                Change Password
+                {t('pages:settings.changePassword', 'Change Password')}
               </Button>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader>
-              <CardTitle>Two-Factor Authentication</CardTitle>
+              <CardTitle>{t('pages:settings.twoFactorAuth', 'Two-Factor Authentication')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label>2FA Status</Label>
+                  <Label>{t('pages:settings.twoFaStatus', '2FA Status')}</Label>
                   <p className="text-sm text-muted-foreground">
-                    {settings?.twoFactorEnabled ? "Enabled" : "Disabled"}
+                    {settings?.twoFactorEnabled ? t('common:enabled', 'Enabled') : t('common:disabled', 'Disabled')}
                   </p>
                 </div>
                 {settings?.twoFactorEnabled ? (
-                  <Badge variant="default">Enabled</Badge>
+                  <Badge variant="default">{t('common:enabled', 'Enabled')}</Badge>
                 ) : (
                   <Button variant="outline" data-testid="button-enable-2fa">
-                    Enable 2FA
+                    {t('pages:settings.enable2fa', 'Enable 2FA')}
                   </Button>
                 )}
               </div>

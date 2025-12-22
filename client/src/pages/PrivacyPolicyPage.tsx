@@ -5,6 +5,7 @@ import { Shield, Lock, Eye, Database, Mail } from "lucide-react";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 export default function PrivacyPolicyPage() {
   return (

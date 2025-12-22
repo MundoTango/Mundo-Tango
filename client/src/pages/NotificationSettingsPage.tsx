@@ -11,6 +11,7 @@ import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from '@/components/SelfHealingErrorBoundary';
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 interface NotificationSettings {
   emailNotifications: {
@@ -29,6 +30,7 @@ interface NotificationSettings {
 }
 
 export default function NotificationSettingsPage() {
+  const { t } = useTranslation(['pages', 'common']);
   const { toast } = useToast();
   const [settings, setSettings] = useState<NotificationSettings>({
     emailNotifications: {
@@ -72,18 +74,18 @@ export default function NotificationSettingsPage() {
     setIsSaving(true);
     await new Promise(resolve => setTimeout(resolve, 1000));
     toast({
-      title: "Notification Settings Updated",
-      description: "Your notification preferences have been saved successfully.",
+      title: t('pages:notificationSettings.settingsUpdated', 'Notification Settings Updated'),
+      description: t('pages:notificationSettings.settingsSaved', 'Your notification preferences have been saved successfully.'),
     });
     setIsSaving(false);
   };
 
   return (
-    <PageLayout title="Notification Settings" showBreadcrumbs>
+    <PageLayout title={t('pages:notificationSettings.title', 'Notification Settings')} showBreadcrumbs>
       <SelfHealingErrorBoundary pageName="Notification Settings" fallbackRoute="/settings">
         <SEO
-          title="Notification Settings | Mundo Tango"
-          description="Customize your notification preferences. Choose which push notifications and alerts you receive for events, messages, friend requests, and community updates."
+          title={t('pages:notificationSettings.seoTitle', 'Notification Settings | Mundo Tango')}
+          description={t('pages:notificationSettings.seoDescription', 'Customize your notification preferences. Choose which push notifications and alerts you receive for events, messages, friend requests, and community updates.')}
         />
         <div className="container mx-auto max-w-4xl p-6 space-y-8">
 
@@ -93,9 +95,9 @@ export default function NotificationSettingsPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <h1 className="text-4xl font-serif font-bold mb-3">Notification Settings</h1>
+            <h1 className="text-4xl font-serif font-bold mb-3">{t('pages:notificationSettings.title', 'Notification Settings')}</h1>
             <p className="text-lg text-muted-foreground">
-              Customize how and when you receive notifications
+              {t('pages:notificationSettings.subtitle', 'Customize how and when you receive notifications')}
             </p>
           </motion.div>
 
@@ -109,16 +111,16 @@ export default function NotificationSettingsPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 font-serif">
                   <Bell className="w-5 h-5 text-[#40E0D0]" />
-                  Notification Frequency
+                  {t('pages:notificationSettings.notificationFrequency', 'Notification Frequency')}
                 </CardTitle>
                 <CardDescription>
-                  Choose how often you want to receive notifications
+                  {t('pages:notificationSettings.frequencyDescription', 'Choose how often you want to receive notifications')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="frequency" className="text-base font-semibold">
-                    Delivery Frequency
+                    {t('pages:notificationSettings.deliveryFrequency', 'Delivery Frequency')}
                   </Label>
                   <Select
                     value={settings.frequency}
@@ -130,15 +132,15 @@ export default function NotificationSettingsPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="realtime">Real-time (as they happen)</SelectItem>
-                      <SelectItem value="daily">Daily Digest (once per day)</SelectItem>
-                      <SelectItem value="weekly">Weekly Digest (once per week)</SelectItem>
+                      <SelectItem value="realtime">{t('pages:notificationSettings.realtime', 'Real-time (as they happen)')}</SelectItem>
+                      <SelectItem value="daily">{t('pages:notificationSettings.daily', 'Daily Digest (once per day)')}</SelectItem>
+                      <SelectItem value="weekly">{t('pages:notificationSettings.weekly', 'Weekly Digest (once per week)')}</SelectItem>
                     </SelectContent>
                   </Select>
                   <p className="text-sm text-muted-foreground">
-                    {settings.frequency === 'realtime' && 'Receive notifications immediately as events occur'}
-                    {settings.frequency === 'daily' && 'Get a summary of all notifications once per day'}
-                    {settings.frequency === 'weekly' && 'Get a weekly summary of all your notifications'}
+                    {settings.frequency === 'realtime' && t('pages:notificationSettings.realtimeDescription', 'Receive notifications immediately as events occur')}
+                    {settings.frequency === 'daily' && t('pages:notificationSettings.dailyDescription', 'Get a summary of all notifications once per day')}
+                    {settings.frequency === 'weekly' && t('pages:notificationSettings.weeklyDescription', 'Get a weekly summary of all your notifications')}
                   </p>
                 </div>
               </CardContent>
@@ -155,10 +157,10 @@ export default function NotificationSettingsPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 font-serif">
                   <Mail className="w-5 h-5 text-[#40E0D0]" />
-                  Email Notifications
+                  {t('pages:notificationSettings.emailNotifications', 'Email Notifications')}
                 </CardTitle>
                 <CardDescription>
-                  Manage what you receive via email
+                  {t('pages:notificationSettings.emailDescription', 'Manage what you receive via email')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -166,10 +168,10 @@ export default function NotificationSettingsPage() {
                   <div className="space-y-0.5">
                     <Label htmlFor="email-friend-requests" className="text-base font-semibold flex items-center gap-2">
                       <Users className="w-4 h-4" />
-                      Friend Requests
+                      {t('pages:notificationSettings.friendRequests', 'Friend Requests')}
                     </Label>
                     <p className="text-sm text-muted-foreground">
-                      When someone sends you a friend request
+                      {t('pages:notificationSettings.friendRequestsDescription', 'When someone sends you a friend request')}
                     </p>
                   </div>
                   <Switch
@@ -186,10 +188,10 @@ export default function NotificationSettingsPage() {
                   <div className="space-y-0.5">
                     <Label htmlFor="email-messages" className="text-base font-semibold flex items-center gap-2">
                       <MessageCircle className="w-4 h-4" />
-                      Messages
+                      {t('pages:notificationSettings.messages', 'Messages')}
                     </Label>
                     <p className="text-sm text-muted-foreground">
-                      When you receive a new message
+                      {t('pages:notificationSettings.messagesDescription', 'When you receive a new message')}
                     </p>
                   </div>
                   <Switch
@@ -206,10 +208,10 @@ export default function NotificationSettingsPage() {
                   <div className="space-y-0.5">
                     <Label htmlFor="email-events" className="text-base font-semibold flex items-center gap-2">
                       <Calendar className="w-4 h-4" />
-                      Events
+                      {t('pages:notificationSettings.events', 'Events')}
                     </Label>
                     <p className="text-sm text-muted-foreground">
-                      Event reminders and updates
+                      {t('pages:notificationSettings.eventsDescription', 'Event reminders and updates')}
                     </p>
                   </div>
                   <Switch
@@ -226,10 +228,10 @@ export default function NotificationSettingsPage() {
                   <div className="space-y-0.5">
                     <Label htmlFor="email-comments" className="text-base font-semibold flex items-center gap-2">
                       <MessageCircle className="w-4 h-4" />
-                      Comments
+                      {t('pages:notificationSettings.comments', 'Comments')}
                     </Label>
                     <p className="text-sm text-muted-foreground">
-                      When someone comments on your posts
+                      {t('pages:notificationSettings.commentsDescription', 'When someone comments on your posts')}
                     </p>
                   </div>
                   <Switch
@@ -253,10 +255,10 @@ export default function NotificationSettingsPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 font-serif">
                   <Bell className="w-5 h-5 text-[#40E0D0]" />
-                  Push Notifications
+                  {t('pages:notificationSettings.pushNotifications', 'Push Notifications')}
                 </CardTitle>
                 <CardDescription>
-                  Manage browser and mobile push notifications
+                  {t('pages:notificationSettings.pushDescription', 'Manage browser and mobile push notifications')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -264,10 +266,10 @@ export default function NotificationSettingsPage() {
                   <div className="space-y-0.5">
                     <Label htmlFor="push-friend-requests" className="text-base font-semibold flex items-center gap-2">
                       <Users className="w-4 h-4" />
-                      Friend Requests
+                      {t('pages:notificationSettings.friendRequests', 'Friend Requests')}
                     </Label>
                     <p className="text-sm text-muted-foreground">
-                      Instant alerts for new friend requests
+                      {t('pages:notificationSettings.pushFriendRequestsDescription', 'Instant alerts for new friend requests')}
                     </p>
                   </div>
                   <Switch
@@ -284,10 +286,10 @@ export default function NotificationSettingsPage() {
                   <div className="space-y-0.5">
                     <Label htmlFor="push-messages" className="text-base font-semibold flex items-center gap-2">
                       <MessageCircle className="w-4 h-4" />
-                      Messages
+                      {t('pages:notificationSettings.messages', 'Messages')}
                     </Label>
                     <p className="text-sm text-muted-foreground">
-                      Instant alerts for new messages
+                      {t('pages:notificationSettings.pushMessagesDescription', 'Instant alerts for new messages')}
                     </p>
                   </div>
                   <Switch
@@ -304,10 +306,10 @@ export default function NotificationSettingsPage() {
                   <div className="space-y-0.5">
                     <Label htmlFor="push-events" className="text-base font-semibold flex items-center gap-2">
                       <Calendar className="w-4 h-4" />
-                      Events
+                      {t('pages:notificationSettings.events', 'Events')}
                     </Label>
                     <p className="text-sm text-muted-foreground">
-                      Reminders before events start
+                      {t('pages:notificationSettings.pushEventsDescription', 'Reminders before events start')}
                     </p>
                   </div>
                   <Switch
@@ -324,10 +326,10 @@ export default function NotificationSettingsPage() {
                   <div className="space-y-0.5">
                     <Label htmlFor="push-comments" className="text-base font-semibold flex items-center gap-2">
                       <MessageCircle className="w-4 h-4" />
-                      Comments
+                      {t('pages:notificationSettings.comments', 'Comments')}
                     </Label>
                     <p className="text-sm text-muted-foreground">
-                      Alerts for comments on your posts
+                      {t('pages:notificationSettings.pushCommentsDescription', 'Alerts for comments on your posts')}
                     </p>
                   </div>
                   <Switch
@@ -355,7 +357,7 @@ export default function NotificationSettingsPage() {
               data-testid="button-save-notifications"
             >
               <Save className="w-4 h-4 mr-2" />
-              {isSaving ? 'Saving...' : 'Save Notification Settings'}
+              {isSaving ? t('common:saving', 'Saving...') : t('pages:notificationSettings.saveSettings', 'Save Notification Settings')}
             </Button>
           </motion.div>
         </div>

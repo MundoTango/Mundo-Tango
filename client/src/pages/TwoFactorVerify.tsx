@@ -11,12 +11,14 @@ import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { useLocation } from "wouter";
+import { useTranslation } from "react-i18next";
 
 interface VerifyResponse {
   verified: boolean;
 }
 
 export default function TwoFactorVerify() {
+  const { t } = useTranslation(['pages', 'common']);
   const { toast } = useToast();
   const [, navigate] = useLocation();
   const [token, setToken] = useState("");

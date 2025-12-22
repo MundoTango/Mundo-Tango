@@ -8,6 +8,7 @@ import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary"
 import { motion } from "framer-motion";
 import { UnifiedMemoriesFeed } from "@/components/feed/UnifiedMemoriesFeed";
 import type { PostItemData } from "@/components/feed/PostItem";
+import { useTranslation } from "react-i18next";
 
 interface SavedPostItem {
   id: number;
@@ -27,6 +28,7 @@ interface SavedPostItem {
 }
 
 export default function FavoritesPage() {
+  const { t } = useTranslation(['pages', 'common']);
   const { data, isLoading } = useQuery<SavedPostItem[]>({
     queryKey: ["/api/posts/saved"],
   });
@@ -67,7 +69,7 @@ export default function FavoritesPage() {
 
   return (
     <SelfHealingErrorBoundary pageName="Favorites" fallbackRoute="/discover">
-      <PageLayout title="My Favorites" showBreadcrumbs>
+      <PageLayout title={t('pages:favorites.title', 'My Favorites')} showBreadcrumbs>
         <div className="min-h-screen">
           <section className="relative h-[40vh] md:h-[50vh] w-full overflow-hidden">
             <div className="absolute inset-0 bg-cover bg-center" style={{
@@ -84,15 +86,15 @@ export default function FavoritesPage() {
               >
                 <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
                   <Heart className="w-3 h-3 mr-1.5" />
-                  Saved Posts
+                  {t('pages:favorites.savedPosts', 'Saved Posts')}
                 </Badge>
                 
                 <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6" data-testid="text-page-title">
-                  My Saved Posts
+                  {t('pages:favorites.heroTitle', 'My Saved Posts')}
                 </h1>
                 
                 <p className="text-xl text-white/80 max-w-2xl mx-auto">
-                  Posts you've bookmarked from the community
+                  {t('pages:favorites.heroSubtitle', "Posts you've bookmarked from the community")}
                 </p>
               </motion.div>
             </div>
@@ -103,7 +105,7 @@ export default function FavoritesPage() {
               <motion.div {...fadeInUp}>
                 <Card className="hover-elevate overflow-hidden">
                   <CardHeader className="flex flex-row items-center justify-between gap-4 space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Total Saved</CardTitle>
+                    <CardTitle className="text-sm font-medium">{t('pages:favorites.totalSaved', 'Total Saved')}</CardTitle>
                     <BookmarkCheck className="h-4 w-4 text-muted-foreground" />
                   </CardHeader>
                   <CardContent>
@@ -121,7 +123,7 @@ export default function FavoritesPage() {
                   context={{ type: 'memory' }}
                   showPostCreator={false}
                   showFilters={true}
-                  emptyMessage="No saved posts yet. Start bookmarking posts from the feed!"
+                  emptyMessage={t('pages:favorites.emptyMessage', 'No saved posts yet. Start bookmarking posts from the feed!')}
                   emptyIcon={Heart}
                   data-testid="favorites-feed"
                 />

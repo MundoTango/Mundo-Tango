@@ -8,8 +8,10 @@ import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { motion } from "framer-motion";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useTranslation } from "react-i18next";
 
 export default function FollowersPage() {
+  const { t } = useTranslation(['pages', 'common']);
   const { data: followers, isLoading } = useQuery({
     queryKey: ["/api/followers"],
   });
@@ -23,7 +25,7 @@ export default function FollowersPage() {
 
   return (
     <SelfHealingErrorBoundary pageName="Followers" fallbackRoute="/profile">
-      <PageLayout title="Followers" showBreadcrumbs>
+      <PageLayout title={t('pages:followers.title', 'Followers')} showBreadcrumbs>
         {/* Editorial Hero */}
         <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden mb-12">
           <div className="absolute inset-0 bg-cover bg-center" style={{
@@ -40,15 +42,15 @@ export default function FollowersPage() {
             >
               <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm">
                 <Users className="w-3 h-3 mr-2" />
-                Community
+                {t('pages:followers.community', 'Community')}
               </Badge>
               
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6">
-                Your Followers
+                {t('pages:followers.heroTitle', 'Your Followers')}
               </h1>
               
               <p className="text-xl text-white/90 max-w-2xl mx-auto">
-                Connect with fellow dancers who follow your journey
+                {t('pages:followers.heroSubtitle', 'Connect with fellow dancers who follow your journey')}
               </p>
             </motion.div>
           </div>
@@ -106,7 +108,7 @@ export default function FollowersPage() {
                         </div>
                         <Button variant="outline" size="sm" className="w-full" data-testid={`button-follow-${user.id}`}>
                           <UserPlus className="h-4 w-4 mr-2" />
-                          Follow Back
+                          {t('pages:followers.followBack', 'Follow Back')}
                         </Button>
                       </CardContent>
                     </Card>
@@ -126,9 +128,9 @@ export default function FollowersPage() {
                   </div>
                   <CardContent className="py-12 text-center">
                     <Users className="w-16 h-16 mx-auto mb-6 text-muted-foreground" />
-                    <h3 className="text-3xl font-serif font-bold mb-4">No followers yet</h3>
+                    <h3 className="text-3xl font-serif font-bold mb-4">{t('pages:followers.noFollowersYet', 'No followers yet')}</h3>
                     <p className="text-lg text-muted-foreground">
-                      Share your tango journey to grow your community
+                      {t('pages:followers.shareYourJourney', 'Share your tango journey to grow your community')}
                     </p>
                   </CardContent>
                 </Card>

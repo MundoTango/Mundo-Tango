@@ -22,6 +22,7 @@ import { SiInstagram, SiFacebook, SiYoutube, SiTiktok, SiX, SiLinkedin } from "r
 import { safeDateFormat } from "@/lib/safeDateFormat";
 import { motion } from "framer-motion";
 import { SEO } from "@/components/SEO";
+import { useTranslation } from "react-i18next";
 
 interface SocialLinks {
   instagram?: string;
@@ -70,6 +71,7 @@ const socialPlatforms: { key: keyof SocialLinks; icon: typeof SiInstagram }[] = 
 ];
 
 export default function UserProfilePublicPage() {
+  const { t } = useTranslation(['pages', 'common']);
   const { userId } = useParams();
 
   const { data: profile, isLoading, refetch } = useQuery<UserProfile>({
@@ -98,7 +100,7 @@ export default function UserProfilePublicPage() {
         <div className="flex items-center justify-center min-h-screen">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-            <p className="text-muted-foreground">Loading profile...</p>
+            <p className="text-muted-foreground">{t('pages:userProfile.loadingProfile', 'Loading profile...')}</p>
           </div>
         </div>
       </AppLayout>
@@ -242,11 +244,11 @@ export default function UserProfilePublicPage() {
                       <div className="flex gap-3 flex-wrap">
                         <Button data-testid="button-add-friend">
                           <UserPlus className="h-4 w-4 mr-2" />
-                          Add Friend
+                          {t('pages:userProfile.addFriend', 'Add Friend')}
                         </Button>
                         <Button variant="outline" data-testid="button-message">
                           <MessageCircle className="h-4 w-4 mr-2" />
-                          Message
+                          {t('common:message', 'Message')}
                         </Button>
                         <Button variant="outline" size="icon">
                           <MoreHorizontal className="h-4 w-4" />
@@ -261,9 +263,9 @@ export default function UserProfilePublicPage() {
           {/* Content Tabs */}
           <Tabs defaultValue="posts" className="space-y-6">
             <TabsList className="grid w-full max-w-md grid-cols-3">
-              <TabsTrigger value="posts" data-testid="tab-posts">Posts</TabsTrigger>
-              <TabsTrigger value="events" data-testid="tab-events">Events</TabsTrigger>
-              <TabsTrigger value="about" data-testid="tab-about">About</TabsTrigger>
+              <TabsTrigger value="posts" data-testid="tab-posts">{t('pages:userProfile.posts', 'Posts')}</TabsTrigger>
+              <TabsTrigger value="events" data-testid="tab-events">{t('pages:userProfile.events', 'Events')}</TabsTrigger>
+              <TabsTrigger value="about" data-testid="tab-about">{t('pages:userProfile.about', 'About')}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="posts" className="space-y-4">
@@ -271,7 +273,7 @@ export default function UserProfilePublicPage() {
                 <Card>
                   <CardContent className="p-12 text-center">
                     <MessageCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                    <p className="text-muted-foreground">No posts yet</p>
+                    <p className="text-muted-foreground">{t('pages:userProfile.noPostsYet', 'No posts yet')}</p>
                   </CardContent>
                 </Card>
               ) : (
@@ -300,7 +302,7 @@ export default function UserProfilePublicPage() {
                 <Card>
                   <CardContent className="p-12 text-center">
                     <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                    <p className="text-muted-foreground">No upcoming events</p>
+                    <p className="text-muted-foreground">{t('pages:userProfile.noUpcomingEvents', 'No upcoming events')}</p>
                   </CardContent>
                 </Card>
               ) : (
@@ -329,24 +331,24 @@ export default function UserProfilePublicPage() {
             <TabsContent value="about">
               <Card>
                 <CardHeader>
-                  <CardTitle>About {normalizedProfile.name}</CardTitle>
+                  <CardTitle>{t('pages:userProfile.aboutUser', { name: normalizedProfile.name, defaultValue: `About ${normalizedProfile.name}` })}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   {normalizedProfile.bio && (
                     <div>
-                      <h4 className="font-semibold text-foreground mb-2">Bio</h4>
+                      <h4 className="font-semibold text-foreground mb-2">{t('pages:userProfile.bio', 'Bio')}</h4>
                       <p className="text-muted-foreground">{normalizedProfile.bio}</p>
                     </div>
                   )}
                   {normalizedProfile.yearsOfDancing && (
                     <div>
-                      <h4 className="font-semibold text-foreground mb-2">Experience</h4>
-                      <p className="text-muted-foreground">{normalizedProfile.yearsOfDancing} years of tango</p>
+                      <h4 className="font-semibold text-foreground mb-2">{t('pages:userProfile.experience', 'Experience')}</h4>
+                      <p className="text-muted-foreground">{t('pages:userProfile.yearsOfTango', { years: normalizedProfile.yearsOfDancing, defaultValue: `${normalizedProfile.yearsOfDancing} years of tango` })}</p>
                     </div>
                   )}
                   {(normalizedProfile.leaderLevel || normalizedProfile.followerLevel) && (
                     <div>
-                      <h4 className="font-semibold text-foreground mb-3">Dance Levels</h4>
+                      <h4 className="font-semibold text-foreground mb-3">{t('pages:userProfile.danceLevels', 'Dance Levels')}</h4>
                       <div className="grid grid-cols-2 gap-3">
                         {normalizedProfile.leaderLevel && (
                           <div className="p-3 rounded-lg bg-muted">
@@ -365,19 +367,19 @@ export default function UserProfilePublicPage() {
                   )}
                   {normalizedProfile.danceLevel && (
                     <div>
-                      <h4 className="font-semibold text-foreground mb-2">Dance Level</h4>
+                      <h4 className="font-semibold text-foreground mb-2">{t('pages:userProfile.danceLevel', 'Dance Level')}</h4>
                       <Badge>{normalizedProfile.danceLevel}</Badge>
                     </div>
                   )}
                   {normalizedProfile.city && normalizedProfile.country && (
                     <div>
-                      <h4 className="font-semibold text-foreground mb-2">Location</h4>
+                      <h4 className="font-semibold text-foreground mb-2">{t('pages:userProfile.location', 'Location')}</h4>
                       <p className="text-muted-foreground">{normalizedProfile.city}, {normalizedProfile.country}</p>
                     </div>
                   )}
                   {normalizedProfile.socialLinks && Object.keys(normalizedProfile.socialLinks).length > 0 && (
                     <div>
-                      <h4 className="font-semibold text-foreground mb-3">Social Media</h4>
+                      <h4 className="font-semibold text-foreground mb-3">{t('pages:userProfile.socialMedia', 'Social Media')}</h4>
                       <div className="flex gap-4">
                         {socialPlatforms.map((platform) => {
                           const url = normalizedProfile.socialLinks?.[platform.key];
@@ -393,7 +395,7 @@ export default function UserProfilePublicPage() {
                     </div>
                   )}
                   <div>
-                    <h4 className="font-semibold text-foreground mb-2">Member Since</h4>
+                    <h4 className="font-semibold text-foreground mb-2">{t('pages:userProfile.memberSince', 'Member Since')}</h4>
                     <p className="text-muted-foreground">{safeDateFormat(normalizedProfile.joinedAt, 'MMMM d, yyyy', 'recently')}</p>
                   </div>
                 </CardContent>

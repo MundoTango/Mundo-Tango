@@ -11,6 +11,7 @@ import { SelfHealingErrorBoundary } from '@/components/SelfHealingErrorBoundary'
 import { SEO } from "@/components/SEO";
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 const notificationIcons: Record<string, any> = {
   like: Heart,
@@ -22,6 +23,7 @@ const notificationIcons: Record<string, any> = {
 };
 
 export default function NotificationsPage() {
+  const { t } = useTranslation(['pages', 'common']);
   const queryClient = useQueryClient();
   const [filterType, setFilterType] = useState<"all" | "unread" | "read">("all");
 
@@ -69,12 +71,12 @@ export default function NotificationsPage() {
     : 0;
 
   return (
-    <PageLayout title="Notifications" showBreadcrumbs>
+    <PageLayout title={t('pages:notifications.title', 'Notifications')} showBreadcrumbs>
       <SelfHealingErrorBoundary pageName="Notifications" fallbackRoute="/feed">
         <>
           <SEO
-            title="Notifications"
-            description="Stay updated with your tango community. View notifications about likes, comments, event updates, and friend requests."
+            title={t('pages:notifications.seoTitle', 'Notifications')}
+            description={t('pages:notifications.seoDescription', 'Stay updated with your tango community. View notifications about likes, comments, event updates, and friend requests.')}
           />
 
           {/* Hero Section */}
@@ -92,15 +94,15 @@ export default function NotificationsPage() {
                 transition={{ duration: 1, ease: "easeOut" }}
               >
                 <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm">
-                  Stay Connected
+                  {t('pages:notifications.stayConnected', 'Stay Connected')}
                 </Badge>
                 
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-white font-bold leading-tight mb-6">
-                  Your Notifications
+                  {t('pages:notifications.heroTitle', 'Your Notifications')}
                 </h1>
                 
                 <p className="text-xl text-white/80 max-w-2xl mx-auto">
-                  Keep track of your community interactions, event updates, and friend requests
+                  {t('pages:notifications.heroSubtitle', 'Keep track of your community interactions, event updates, and friend requests')}
                 </p>
 
                 {unreadCount > 0 && (
@@ -111,7 +113,7 @@ export default function NotificationsPage() {
                     className="mt-8"
                   >
                     <Badge className="text-lg px-6 py-2 bg-primary text-primary-foreground">
-                      {unreadCount} new {unreadCount === 1 ? 'notification' : 'notifications'}
+                      {t('pages:notifications.newNotifications', { count: unreadCount, defaultValue: `${unreadCount} new ${unreadCount === 1 ? 'notification' : 'notifications'}` })}
                     </Badge>
                   </motion.div>
                 )}
@@ -130,12 +132,12 @@ export default function NotificationsPage() {
               <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 <div>
                   <h2 className="text-3xl md:text-4xl font-serif font-bold mb-2">
-                    Activity Feed
+                    {t('pages:notifications.activityFeed', 'Activity Feed')}
                   </h2>
                   <p className="text-muted-foreground">
                     {filteredNotifications.length > 0 
-                      ? `${filteredNotifications.length} ${filteredNotifications.length === 1 ? 'notification' : 'notifications'}`
-                      : 'No notifications to display'
+                      ? t('pages:notifications.notificationCount', { count: filteredNotifications.length, defaultValue: `${filteredNotifications.length} ${filteredNotifications.length === 1 ? 'notification' : 'notifications'}` })
+                      : t('pages:notifications.noNotificationsToDisplay', 'No notifications to display')
                     }
                   </p>
                 </div>
@@ -148,7 +150,7 @@ export default function NotificationsPage() {
                   data-testid="button-mark-all-read"
                 >
                   <CheckCheck className="h-4 w-4" />
-                  Mark all read
+                  {t('pages:notifications.markAllRead', 'Mark all read')}
                 </Button>
               </div>
 
@@ -157,15 +159,15 @@ export default function NotificationsPage() {
                 <TabsList className="grid w-full max-w-md grid-cols-3">
                   <TabsTrigger value="all" data-testid="tab-filter-all">
                     <Filter className="h-4 w-4 mr-2" />
-                    All
+                    {t('common:all', 'All')}
                   </TabsTrigger>
                   <TabsTrigger value="unread" data-testid="tab-filter-unread">
                     <Bell className="h-4 w-4 mr-2" />
-                    Unread {unreadCount > 0 && `(${unreadCount})`}
+                    {t('pages:notifications.unread', 'Unread')} {unreadCount > 0 && `(${unreadCount})`}
                   </TabsTrigger>
                   <TabsTrigger value="read" data-testid="tab-filter-read">
                     <CheckCheck className="h-4 w-4 mr-2" />
-                    Read
+                    {t('pages:notifications.read', 'Read')}
                   </TabsTrigger>
                 </TabsList>
               </Tabs>
@@ -180,7 +182,7 @@ export default function NotificationsPage() {
                   transition={{ duration: 0.5 }}
                 >
                   <Bell className="mx-auto h-12 w-12 mb-4 opacity-50 animate-pulse" />
-                  <p className="text-muted-foreground">Loading notifications...</p>
+                  <p className="text-muted-foreground">{t('pages:notifications.loading', 'Loading notifications...')}</p>
                 </motion.div>
               </div>
             ) : filteredNotifications.length > 0 ? (
@@ -225,7 +227,7 @@ export default function NotificationsPage() {
                               </h3>
                               {!notification.read && (
                                 <Badge variant="default" className="shrink-0" data-testid={`badge-new-${notification.id}`}>
-                                  New
+                                  {t('common:new', 'New')}
                                 </Badge>
                               )}
                             </div>
@@ -250,7 +252,7 @@ export default function NotificationsPage() {
                                     data-testid={`button-mark-read-${notification.id}`}
                                   >
                                     <CheckCheck className="h-4 w-4" />
-                                    Mark read
+                                    {t('pages:notifications.markRead', 'Mark read')}
                                   </Button>
                                 )}
 
@@ -263,7 +265,7 @@ export default function NotificationsPage() {
                                   data-testid={`button-delete-${notification.id}`}
                                 >
                                   <Trash2 className="h-4 w-4" />
-                                  Delete
+                                  {t('common:delete', 'Delete')}
                                 </Button>
                               </div>
                             </div>
@@ -290,17 +292,17 @@ export default function NotificationsPage() {
                       <Bell className="mx-auto h-16 w-16 mb-6 opacity-30" />
                     </motion.div>
                     <h3 className="text-2xl font-serif font-bold mb-3">
-                      {filterType === "unread" ? "All caught up!" : 
-                       filterType === "read" ? "No read notifications" :
-                       "No notifications yet"}
+                      {filterType === "unread" ? t('pages:notifications.allCaughtUp', 'All caught up!') : 
+                       filterType === "read" ? t('pages:notifications.noReadNotifications', 'No read notifications') :
+                       t('pages:notifications.noNotificationsYet', 'No notifications yet')}
                     </h3>
                     <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-                      {filterType === "unread" ? "You've read all your notifications. Great job staying connected!" :
-                       filterType === "read" ? "You haven't read any notifications yet." :
-                       "We'll notify you when there's activity on your account. Start engaging with the community!"}
+                      {filterType === "unread" ? t('pages:notifications.allCaughtUpDescription', "You've read all your notifications. Great job staying connected!") :
+                       filterType === "read" ? t('pages:notifications.noReadNotificationsDescription', "You haven't read any notifications yet.") :
+                       t('pages:notifications.noNotificationsDescription', "We'll notify you when there's activity on your account. Start engaging with the community!")}
                     </p>
                     <Button className="gap-2" data-testid="button-explore-community">
-                      Explore Community
+                      {t('pages:notifications.exploreCommunity', 'Explore Community')}
                       <ChevronRight className="h-4 w-4" />
                     </Button>
                   </CardContent>

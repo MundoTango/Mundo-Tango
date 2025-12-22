@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Download, FileArchive, Clock, CheckCircle, XCircle, Loader2 } from "lucide-react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
+import { useTranslation } from "react-i18next";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -31,6 +32,7 @@ interface DataExportRequest {
 }
 
 export default function DataExport() {
+  const { t } = useTranslation(['pages', 'common']);
   const { toast } = useToast();
 
   const { data: exports, isLoading } = useQuery<DataExportRequest[]>({

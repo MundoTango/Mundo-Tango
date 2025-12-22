@@ -21,6 +21,7 @@ import { PhotoUploadDialog } from "@/components/PhotoUploadDialog";
 import { FriendshipQuestionnaire } from "@/components/friendship/FriendshipQuestionnaire";
 import { FriendRequestReviewModal } from "@/components/friendship/FriendRequestReviewModal";
 import { normalizeRole, getRoleByValue, getRoleLabel, getRoleIcon, getRoleColor } from "@/lib/tangoRoles";
+import { useTranslation } from "react-i18next";
 
 const ProfileTabTravel = lazy(() => import("@/components/profile/ProfileTabTravel"));
 const ProfileTabEvents = lazy(() => import("@/components/profile/ProfileTabEvents"));
@@ -76,6 +77,7 @@ interface Post {
 }
 
 export default function ProfilePage() {
+  const { t } = useTranslation(['pages', 'common']);
   // Support multiple route patterns: /profile/:id and /users/:userId
   const [, profileParams] = useRoute("/profile/:id");
   const [, userParams] = useRoute("/users/:userId");
@@ -447,9 +449,9 @@ export default function ProfilePage() {
             <div className="w-24 h-24 mx-auto rounded-full bg-muted flex items-center justify-center">
               <Users className="w-12 h-12 text-muted-foreground" />
             </div>
-            <h1 className="text-2xl font-bold" data-testid="text-user-not-found-title">User Not Found</h1>
+            <h1 className="text-2xl font-bold" data-testid="text-user-not-found-title">{t('pages:profile.userNotFound', 'User Not Found')}</h1>
             <p className="text-muted-foreground max-w-md" data-testid="text-user-not-found-message">
-              The profile you're looking for doesn't exist or may have been removed.
+              {t('pages:profile.userNotFoundMessage', "The profile you're looking for doesn't exist or may have been removed.")}
             </p>
           </div>
           <div className="flex gap-4">
@@ -458,12 +460,12 @@ export default function ProfilePage() {
               onClick={() => window.history.back()}
               data-testid="button-go-back"
             >
-              Go Back
+              {t('common:goBack', 'Go Back')}
             </Button>
             <Link href="/feed">
               <Button data-testid="button-go-home">
                 <Home className="w-4 h-4 mr-2" />
-                Go to Feed
+                {t('pages:profile.goToFeed', 'Go to Feed')}
               </Button>
             </Link>
           </div>

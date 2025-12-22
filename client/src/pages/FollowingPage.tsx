@@ -8,8 +8,10 @@ import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { motion } from "framer-motion";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useTranslation } from "react-i18next";
 
 export default function FollowingPage() {
+  const { t } = useTranslation(['pages', 'common']);
   const { data: following, isLoading } = useQuery({
     queryKey: ["/api/following"],
   });
@@ -23,7 +25,7 @@ export default function FollowingPage() {
 
   return (
     <SelfHealingErrorBoundary pageName="Following" fallbackRoute="/profile">
-      <PageLayout title="Following" showBreadcrumbs>
+      <PageLayout title={t('pages:following.title', 'Following')} showBreadcrumbs>
         {/* Editorial Hero */}
         <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden mb-12">
           <div className="absolute inset-0 bg-cover bg-center" style={{
@@ -40,15 +42,15 @@ export default function FollowingPage() {
             >
               <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm">
                 <Users className="w-3 h-3 mr-2" />
-                Connections
+                {t('pages:following.connections', 'Connections')}
               </Badge>
               
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6">
-                Following
+                {t('pages:following.heroTitle', 'Following')}
               </h1>
               
               <p className="text-xl text-white/90 max-w-2xl mx-auto">
-                Dancers and artists you're connected with
+                {t('pages:following.heroSubtitle', "Dancers and artists you're connected with")}
               </p>
             </motion.div>
           </div>
@@ -106,7 +108,7 @@ export default function FollowingPage() {
                         </div>
                         <Button variant="outline" size="sm" className="w-full" data-testid={`button-unfollow-${user.id}`}>
                           <UserMinus className="h-4 w-4 mr-2" />
-                          Unfollow
+                          {t('pages:following.unfollow', 'Unfollow')}
                         </Button>
                       </CardContent>
                     </Card>
@@ -126,9 +128,9 @@ export default function FollowingPage() {
                   </div>
                   <CardContent className="py-12 text-center">
                     <Users className="w-16 h-16 mx-auto mb-6 text-muted-foreground" />
-                    <h3 className="text-3xl font-serif font-bold mb-4">Not following anyone yet</h3>
+                    <h3 className="text-3xl font-serif font-bold mb-4">{t('pages:following.notFollowingYet', 'Not following anyone yet')}</h3>
                     <p className="text-lg text-muted-foreground">
-                      Discover dancers to connect with
+                      {t('pages:following.discoverDancers', 'Discover dancers to connect with')}
                     </p>
                   </CardContent>
                 </Card>
