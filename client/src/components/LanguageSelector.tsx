@@ -1,4 +1,4 @@
-import { memo, useEffect, useCallback } from 'react';
+import { memo, useEffect, useCallback, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Globe } from 'lucide-react';
 import {
@@ -96,19 +96,41 @@ function LanguageSelectorComponent() {
   const { i18n } = useTranslation();
   const { user } = useAuth();
   
-  const currentLanguage = languages.find(lang => lang.code === i18n.language) || languages[0];
+  // Track selected language in state for proper re-renders
+  const [selectedLanguage, setSelectedLanguage] = useState(() => {
+    return localStorage.getItem('i18nextLng') || 'en';
+  });
+  
+  // Track if user has made a selection to prevent sync from overriding it
+  const userSelectedRef = useRef(false);
+  // Track the last user ID to detect login/logout
+  const lastUserIdRef = useRef<number | null>(null);
+  
+  const currentLanguage = languages.find(lang => lang.code === selectedLanguage) || languages[0];
 
-  // Sync language from user profile when logged in
+  // Sync language from user profile only on login (not on every profile update)
   useEffect(() => {
-    if (user?.primaryLanguage && user.primaryLanguage !== i18n.language) {
+    // Only sync when user logs in (ID changes from null to a value)
+    const justLoggedIn = user?.id && lastUserIdRef.current !== user.id;
+    lastUserIdRef.current = user?.id ?? null;
+    
+    // Sync from profile only on login and if user hasn't actively selected a language
+    if (justLoggedIn && user?.primaryLanguage && !userSelectedRef.current) {
+      setSelectedLanguage(user.primaryLanguage);
       i18n.changeLanguage(user.primaryLanguage);
       localStorage.setItem('i18nextLng', user.primaryLanguage);
     }
-  }, [user?.primaryLanguage, i18n]);
+  }, [user?.id, user?.primaryLanguage, i18n]);
 
   const handleLanguageChange = useCallback(async (languageCode: string) => {
-    i18n.changeLanguage(languageCode);
+    // Mark that user has made a selection
+    userSelectedRef.current = true;
+    // Update state immediately for UI feedback
+    setSelectedLanguage(languageCode);
+    // Update localStorage
     localStorage.setItem('i18nextLng', languageCode);
+    // Change i18n language
+    await i18n.changeLanguage(languageCode);
     
     // Save to user profile if logged in
     if (user?.id) {
@@ -122,7 +144,7 @@ function LanguageSelectorComponent() {
   }, [i18n, user?.id]);
 
   return (
-    <Select value={i18n.language} onValueChange={handleLanguageChange}>
+    <Select value={selectedLanguage} onValueChange={handleLanguageChange}>
       <SelectTrigger 
         className="w-[180px]" 
         data-testid="button-language-selector"
@@ -160,19 +182,41 @@ function LanguageSelectorButtonComponent() {
   const { i18n } = useTranslation();
   const { user } = useAuth();
   
-  const currentLanguage = languages.find(lang => lang.code === i18n.language) || languages[0];
+  // Track selected language in state for proper re-renders
+  const [selectedLanguage, setSelectedLanguage] = useState(() => {
+    return localStorage.getItem('i18nextLng') || 'en';
+  });
+  
+  // Track if user has made a selection to prevent sync from overriding it
+  const userSelectedRef = useRef(false);
+  // Track the last user ID to detect login/logout
+  const lastUserIdRef = useRef<number | null>(null);
+  
+  const currentLanguage = languages.find(lang => lang.code === selectedLanguage) || languages[0];
 
-  // Sync language from user profile when logged in
+  // Sync language from user profile only on login (not on every profile update)
   useEffect(() => {
-    if (user?.primaryLanguage && user.primaryLanguage !== i18n.language) {
+    // Only sync when user logs in (ID changes from null to a value)
+    const justLoggedIn = user?.id && lastUserIdRef.current !== user.id;
+    lastUserIdRef.current = user?.id ?? null;
+    
+    // Sync from profile only on login and if user hasn't actively selected a language
+    if (justLoggedIn && user?.primaryLanguage && !userSelectedRef.current) {
+      setSelectedLanguage(user.primaryLanguage);
       i18n.changeLanguage(user.primaryLanguage);
       localStorage.setItem('i18nextLng', user.primaryLanguage);
     }
-  }, [user?.primaryLanguage, i18n]);
+  }, [user?.id, user?.primaryLanguage, i18n]);
 
   const handleLanguageChange = useCallback(async (languageCode: string) => {
-    i18n.changeLanguage(languageCode);
+    // Mark that user has made a selection
+    userSelectedRef.current = true;
+    // Update state immediately for UI feedback
+    setSelectedLanguage(languageCode);
+    // Update localStorage
     localStorage.setItem('i18nextLng', languageCode);
+    // Change i18n language
+    await i18n.changeLanguage(languageCode);
     
     // Save to user profile if logged in
     if (user?.id) {
@@ -186,7 +230,7 @@ function LanguageSelectorButtonComponent() {
   }, [i18n, user?.id]);
 
   return (
-    <Select value={i18n.language} onValueChange={handleLanguageChange}>
+    <Select value={selectedLanguage} onValueChange={handleLanguageChange}>
       <SelectTrigger className="w-auto border-0 bg-transparent hover:bg-accent" data-testid="button-language-selector-icon">
         <Globe className="h-5 w-5" />
       </SelectTrigger>
