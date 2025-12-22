@@ -5,11 +5,9 @@ import Backend from 'i18next-http-backend';
 
 const i18nKey = '__i18n_initialized__';
 
-// PERFORMANCE FIX: In development, only load English to reduce overhead
-const isDev = import.meta.env.DEV;
-const devLangs = ['en'];
+// Support all languages in both dev and production for proper i18n testing
 const allLangs = [
-  'en', 'es', 'pt', 'fr', 'de', 'it',
+  'en', 'es-ar', 'es', 'pt', 'fr', 'de', 'it',
   'zh', 'ja', 'ko', 'ru', 'ar', 'hi',
   'nl', 'sv', 'no', 'da', 'fi', 'pl',
   'tr', 'he', 'th', 'vi', 'id', 'ms',
@@ -37,6 +35,12 @@ if (!(window as any)[i18nKey]) {
       
       debug: false, // Disable debug logging for performance
       
+      // Keep exact language code (es-ar) without normalizing to base (es)
+      load: 'currentOnly',
+      
+      // Allow regional variants like es-ar, pt-br to be treated as valid
+      nonExplicitSupportedLngs: false,
+      
       interpolation: {
         escapeValue: false,
       },
@@ -55,7 +59,7 @@ if (!(window as any)[i18nKey]) {
         useSuspense: true,
       },
       
-      supportedLngs: isDev ? devLangs : allLangs,
+      supportedLngs: allLangs,
     });
 }
 
