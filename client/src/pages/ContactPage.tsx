@@ -6,8 +6,10 @@ import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary"
 import { PublicNavbar } from "@/components/PublicNavbar";
 import { motion } from "framer-motion";
 import { Link } from "wouter";
+import { useTranslation } from "react-i18next";
 
 export default function ContactPage() {
+  const { t } = useTranslation(['pages', 'common', 'navigation']);
   const fadeInUp = {
     hidden: { opacity: 0, y: 30 },
     visible: { opacity: 1, y: 0 }
@@ -51,7 +53,7 @@ export default function ContactPage() {
                   className="text-4xl md:text-5xl font-bold text-white"
                   data-testid="text-page-title"
                 >
-                  Contact Us
+                  {t('pages:contact.title', 'Contact Us')}
                 </motion.h1>
 
                 <motion.p
@@ -59,7 +61,7 @@ export default function ContactPage() {
                   className="text-xl text-white/90 max-w-2xl mx-auto"
                   data-testid="text-page-description"
                 >
-                  Have questions or suggestions? We'd love to hear from you.
+                  {t('pages:contact.subtitle', "Have questions or suggestions? We'd love to hear from you.")}
                 </motion.p>
               </div>
             </motion.div>
@@ -80,12 +82,12 @@ export default function ContactPage() {
                   <CardHeader>
                     <CardTitle className="text-2xl font-serif flex items-center justify-center gap-2">
                       <Mail className="h-6 w-6 text-primary" />
-                      Email Us
+                      {t('pages:contact.emailTitle', 'Email Us')}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-6">
                     <p className="text-muted-foreground">
-                      For questions, feedback, partnerships, or support, reach out to us at:
+                      {t('pages:contact.emailDescription', 'For questions, feedback, partnerships, or support, reach out to us at:')}
                     </p>
                     <a 
                       href="mailto:support@mundotango.life" 
@@ -95,7 +97,7 @@ export default function ContactPage() {
                       support@mundotango.life
                     </a>
                     <p className="text-sm text-muted-foreground">
-                      We typically respond within 24-48 hours.
+                      {t('pages:contact.responseTime', 'We typically respond within 24-48 hours.')}
                     </p>
                   </CardContent>
                 </Card>
@@ -103,18 +105,18 @@ export default function ContactPage() {
 
               <motion.div variants={fadeInUp} className="mt-8 text-center">
                 <p className="text-muted-foreground mb-4">
-                  Want to support our mission to connect the global tango community?
+                  {t('pages:contact.supportCta', 'Want to support our mission to connect the global tango community?')}
                 </p>
                 <div className="flex justify-center gap-4 flex-wrap">
                   <Link href="/support">
                     <Button variant="outline" data-testid="button-support">
                       <Heart className="h-4 w-4 mr-2" />
-                      Support Us
+                      {t('common:buttons.support', 'Support Us')}
                     </Button>
                   </Link>
                   <Link href="/volunteer">
                     <Button variant="outline" data-testid="button-volunteer">
-                      Volunteer
+                      {t('navigation:footer.volunteer')}
                     </Button>
                   </Link>
                 </div>

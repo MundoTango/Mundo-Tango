@@ -6,10 +6,12 @@ import { SEO } from "@/components/SEO";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import scottPhoto1 from "@assets/optimized/Skoot_20-optimized.jpg";
 import scottPhoto2 from "@assets/optimized/Skoot_16-optimized.jpg";
 
 export default function AboutPage() {
+  const { t } = useTranslation(['pages', 'common']);
   return (
     <SelfHealingErrorBoundary pageName="About" fallbackRoute="/">
       <PageLayout title="About Mundo Tango" showBreadcrumbs>
@@ -34,15 +36,15 @@ export default function AboutPage() {
             transition={{ duration: 1, ease: "easeOut" }}
           >
             <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
-              About Us
+              {t('pages:about.badge', 'About Us')}
             </Badge>
             
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6" data-testid="text-page-title">
-              About Mundo Tango
+              {t('pages:about.title', 'About Mundo Tango')}
             </h1>
             
             <p className="text-xl text-white/80 max-w-2xl mx-auto" data-testid="text-page-subtitle">
-              Connecting the global tango community, one dance at a time
+              {t('pages:about.subtitle', 'Connecting the global tango community, one dance at a time')}
             </p>
           </motion.div>
         </div>
@@ -62,16 +64,12 @@ export default function AboutPage() {
             <CardHeader>
               <CardTitle className="text-2xl font-serif flex items-center gap-2">
                 <Target className="h-6 w-6 text-primary" />
-                Our Mission
+                {t('pages:about.missionTitle', 'Our Mission')}
               </CardTitle>
             </CardHeader>
           <CardContent>
             <p className="text-muted-foreground">
-              Mundo Tango is dedicated to fostering connections within the global tango
-              community. We believe in the power of dance to bring people together across
-              cultures, languages, and borders. Our platform helps dancers discover events,
-              connect with teachers, find practice partners, and immerse themselves in the
-              rich traditions of Argentine tango.
+              {t('pages:about.missionDescription', 'Mundo Tango is dedicated to fostering connections within the global tango community. We believe in the power of dance to bring people together across cultures, languages, and borders. Our platform helps dancers discover events, connect with teachers, find practice partners, and immerse themselves in the rich traditions of Argentine tango.')}
             </p>
           </CardContent>
         </Card>
@@ -79,7 +77,7 @@ export default function AboutPage() {
 
         {/* Values */}
         <div className="space-y-6">
-          <h2 className="text-4xl md:text-5xl font-serif font-bold" data-testid="text-values-heading">Our Values</h2>
+          <h2 className="text-4xl md:text-5xl font-serif font-bold" data-testid="text-values-heading">{t('pages:about.valuesTitle', 'Our Values')}</h2>
           <div className="grid gap-6 md:grid-cols-2">
             <motion.div
               initial={{ opacity: 0, y: 40 }}
@@ -90,10 +88,9 @@ export default function AboutPage() {
               <Card className="hover-elevate" data-testid="card-value-community">
                 <CardContent className="p-8 space-y-3">
                   <Users className="h-10 w-10 text-primary" />
-                  <h3 className="text-2xl font-serif font-bold">Community First</h3>
+                  <h3 className="text-2xl font-serif font-bold">{t('pages:about.valueCommunityTitle', 'Community First')}</h3>
                 <p className="text-sm text-muted-foreground">
-                  We prioritize authentic connections and meaningful interactions
-                  within our community of dancers, teachers, and organizers.
+                  {t('pages:about.valueCommunityDescription', 'We prioritize authentic connections and meaningful interactions within our community of dancers, teachers, and organizers.')}
                 </p>
               </CardContent>
             </Card>
@@ -108,10 +105,9 @@ export default function AboutPage() {
               <Card className="hover-elevate" data-testid="card-value-global">
                 <CardContent className="p-8 space-y-3">
                   <Globe className="h-10 w-10 text-primary" />
-                  <h3 className="text-2xl font-serif font-bold">Global Reach</h3>
+                  <h3 className="text-2xl font-serif font-bold">{t('pages:about.valueGlobalTitle', 'Global Reach')}</h3>
                 <p className="text-sm text-muted-foreground">
-                  From Buenos Aires to Tokyo, we connect tango communities across
-                  the globe, celebrating diversity and cultural exchange.
+                  {t('pages:about.valueGlobalDescription', 'From Buenos Aires to Tokyo, we connect tango communities across the globe, celebrating diversity and cultural exchange.')}
                 </p>
               </CardContent>
             </Card>
@@ -126,10 +122,9 @@ export default function AboutPage() {
               <Card className="hover-elevate" data-testid="card-value-passion">
                 <CardContent className="p-8 space-y-3">
                   <Heart className="h-10 w-10 text-primary" />
-                  <h3 className="text-2xl font-serif font-bold">Passion for Tango</h3>
+                  <h3 className="text-2xl font-serif font-bold">{t('pages:about.valuePassionTitle', 'Passion for Tango')}</h3>
                 <p className="text-sm text-muted-foreground">
-                  Our love for tango drives everything we do. We're dancers ourselves,
-                  building tools that we wish existed when we started our journey.
+                  {t('pages:about.valuePassionDescription', "Our love for tango drives everything we do. We're dancers ourselves, building tools that we wish existed when we started our journey.")}
                 </p>
               </CardContent>
             </Card>
@@ -144,10 +139,9 @@ export default function AboutPage() {
               <Card className="hover-elevate" data-testid="card-value-growth">
                 <CardContent className="p-8 space-y-3">
                   <Target className="h-10 w-10 text-primary" />
-                  <h3 className="text-2xl font-serif font-bold">Continuous Growth</h3>
+                  <h3 className="text-2xl font-serif font-bold">{t('pages:about.valueGrowthTitle', 'Continuous Growth')}</h3>
                 <p className="text-sm text-muted-foreground">
-                  We believe in supporting dancers at every level, from complete
-                  beginners to professional performers, fostering lifelong learning.
+                  {t('pages:about.valueGrowthDescription', 'We believe in supporting dancers at every level, from complete beginners to professional performers, fostering lifelong learning.')}
                 </p>
               </CardContent>
             </Card>
@@ -166,7 +160,7 @@ export default function AboutPage() {
             <CardHeader>
               <CardTitle className="text-3xl font-serif flex items-center gap-2">
                 <User className="h-6 w-6 text-primary" />
-                Meet the Founder
+                {t('pages:about.founderTitle', 'Meet the Founder')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
