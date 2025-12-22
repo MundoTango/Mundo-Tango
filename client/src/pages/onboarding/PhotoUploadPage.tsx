@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useLocation } from "wouter";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -17,6 +18,7 @@ export default function PhotoUploadPage() {
   const [, navigate] = useLocation();
   const { user } = useAuth();
   const { toast } = useToast();
+  const { t } = useTranslation(['pages', 'common']);
   const [isLoading, setIsLoading] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
@@ -27,7 +29,6 @@ export default function PhotoUploadPage() {
     if (!user) {
       navigate("/login");
     } else if (user.isOnboardingComplete) {
-      // Already onboarded, redirect to volunteer/support page
       navigate("/volunteer");
     }
   }, [user, navigate]);
@@ -35,8 +36,8 @@ export default function PhotoUploadPage() {
   const handleFileSelect = (selectedFile: File) => {
     if (!selectedFile.type.startsWith("image/")) {
       toast({
-        title: "Invalid file",
-        description: "Please select an image file",
+        title: t('pages:onboarding.photo.errors.invalidFile', 'Invalid file'),
+        description: t('pages:onboarding.photo.errors.selectImage', 'Please select an image file'),
         variant: "destructive",
       });
       return;
@@ -44,8 +45,8 @@ export default function PhotoUploadPage() {
 
     if (selectedFile.size > 5 * 1024 * 1024) {
       toast({
-        title: "File too large",
-        description: "Please select an image under 5MB",
+        title: t('pages:onboarding.photo.errors.fileTooLarge', 'File too large'),
+        description: t('pages:onboarding.photo.errors.sizeLimit', 'Please select an image under 5MB'),
         variant: "destructive",
       });
       return;
@@ -116,8 +117,8 @@ export default function PhotoUploadPage() {
       navigate("/onboarding/step-3");
     } catch (error) {
       toast({
-        title: "Upload failed",
-        description: "Failed to upload photo. Please try again.",
+        title: t('pages:onboarding.photo.errors.uploadFailed', 'Upload failed'),
+        description: t('pages:onboarding.photo.errors.tryAgain', 'Failed to upload photo. Please try again.'),
         variant: "destructive",
       });
     } finally {
@@ -141,8 +142,8 @@ export default function PhotoUploadPage() {
       navigate("/onboarding/step-3");
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to skip. Please try again.",
+        title: t('common:errors.error', 'Error'),
+        description: t('pages:onboarding.photo.errors.skipFailed', 'Failed to skip. Please try again.'),
         variant: "destructive",
       });
     }
@@ -150,11 +151,13 @@ export default function PhotoUploadPage() {
 
   return (
     <SelfHealingErrorBoundary pageName="Photo Upload" fallbackRoute="/">
-      <PageLayout title="PhotoUpload" showBreadcrumbs>
+      <PageLayout title={t('pages:onboarding.photo.pageTitle', 'PhotoUpload')} showBreadcrumbs>
         <>
-          <SEO title="Add Profile Photo - Mundo Tango" description="Upload your profile photo" />
+          <SEO 
+            title={t('pages:onboarding.photo.seoTitle', 'Add Profile Photo - Mundo Tango')} 
+            description={t('pages:onboarding.photo.seoDescription', 'Upload your profile photo')} 
+          />
           
-          {/* Hero Section */}
           <div className="relative h-[50vh] w-full overflow-hidden">
             <div 
               className="absolute inset-0 bg-cover bg-center"
@@ -170,21 +173,20 @@ export default function PhotoUploadPage() {
                 transition={{ duration: 1, ease: "easeOut" }}
               >
                 <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-step-2">
-                  Step 2 of 5
+                  {t('pages:onboarding.photo.step', 'Step 2 of 5')}
                 </Badge>
                 
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-white font-bold leading-tight mb-6">
-                  Add Your Profile Photo
+                  {t('pages:onboarding.photo.title', 'Add Your Profile Photo')}
                 </h1>
                 
                 <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto">
-                  Help others recognize you in the community
+                  {t('pages:onboarding.photo.subtitle', 'Help others recognize you in the community')}
                 </p>
               </motion.div>
             </div>
           </div>
 
-          {/* Content Section */}
           <div className="bg-background">
             <div className="container mx-auto max-w-2xl px-6 py-12">
               <motion.div
@@ -198,10 +200,10 @@ export default function PhotoUploadPage() {
                       <div className="p-3 rounded-xl bg-primary/10">
                         <Camera className="h-6 w-6 text-primary" />
                       </div>
-                      <CardTitle className="text-2xl font-serif font-bold">Your Profile Photo</CardTitle>
+                      <CardTitle className="text-2xl font-serif font-bold">{t('pages:onboarding.photo.cardTitle', 'Your Profile Photo')}</CardTitle>
                     </div>
                     <p className="text-muted-foreground">
-                      Help others recognize you (you can skip this step)
+                      {t('pages:onboarding.photo.cardDescription', 'Help others recognize you (you can skip this step)')}
                     </p>
                   </CardHeader>
 
@@ -211,7 +213,7 @@ export default function PhotoUploadPage() {
                         <div className="h-40 w-40 rounded-full border-4 border-primary/10 overflow-hidden">
                           <img 
                             src={preview} 
-                            alt="Profile preview" 
+                            alt={t('pages:onboarding.photo.previewAlt', 'Profile preview')} 
                             className="h-full w-full object-cover"
                           />
                         </div>
@@ -252,24 +254,24 @@ export default function PhotoUploadPage() {
                             </div>
                           </div>
                           <div>
-                            <p className="text-lg font-medium mb-2">Drop your photo here</p>
-                            <p className="text-muted-foreground mb-4">or</p>
+                            <p className="text-lg font-medium mb-2">{t('pages:onboarding.photo.dropHere', 'Drop your photo here')}</p>
+                            <p className="text-muted-foreground mb-4">{t('pages:onboarding.photo.or', 'or')}</p>
                             <Button
                               variant="outline"
                               onClick={() => fileInputRef.current?.click()}
                               data-testid="button-browse"
                             >
                               <ImageIcon className="mr-2 h-4 w-4" />
-                              Browse Files
+                              {t('pages:onboarding.photo.browseFiles', 'Browse Files')}
                             </Button>
                           </div>
-                          <p className="text-sm text-muted-foreground">PNG, JPG up to 5MB</p>
+                          <p className="text-sm text-muted-foreground">{t('pages:onboarding.photo.fileTypes', 'PNG, JPG up to 5MB')}</p>
                         </div>
                       ) : (
                         <div className="space-y-4">
                           <div className="flex items-center justify-center gap-2 text-primary">
                             <Camera className="h-5 w-5" />
-                            <p className="font-medium">Photo selected!</p>
+                            <p className="font-medium">{t('pages:onboarding.photo.photoSelected', 'Photo selected!')}</p>
                           </div>
                           <Button
                             variant="outline"
@@ -280,7 +282,7 @@ export default function PhotoUploadPage() {
                             data-testid="button-remove-photo"
                           >
                             <X className="h-4 w-4 mr-2" />
-                            Remove
+                            {t('common:buttons.remove', 'Remove')}
                           </Button>
                         </div>
                       )}
@@ -294,7 +296,7 @@ export default function PhotoUploadPage() {
                       disabled={isLoading}
                       data-testid="button-back"
                     >
-                      Back
+                      {t('common:buttons.back', 'Back')}
                     </Button>
                     <div className="flex gap-2">
                       <Button
@@ -303,7 +305,7 @@ export default function PhotoUploadPage() {
                         disabled={isLoading}
                         data-testid="button-skip"
                       >
-                        Skip
+                        {t('common:buttons.skip', 'Skip')}
                       </Button>
                       <Button
                         onClick={handleUpload}
@@ -314,11 +316,11 @@ export default function PhotoUploadPage() {
                         {isLoading ? (
                           <>
                             <Loader2 className="h-4 w-4 animate-spin" />
-                            Uploading...
+                            {t('pages:onboarding.photo.uploading', 'Uploading...')}
                           </>
                         ) : (
                           <>
-                            Continue
+                            {t('common:buttons.continue', 'Continue')}
                             <ChevronRight className="h-4 w-4" />
                           </>
                         )}
@@ -327,7 +329,6 @@ export default function PhotoUploadPage() {
                   </CardFooter>
                 </Card>
 
-                {/* Progress Indicator */}
                 <div className="flex justify-center gap-2 mt-8">
                   <div className="h-2 w-12 rounded-full bg-primary"></div>
                   <div className="h-2 w-12 rounded-full bg-primary"></div>

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "wouter";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/SEO";
 import { PageLayout } from "@/components/PageLayout";
@@ -12,14 +13,15 @@ import heroImage from "@assets/stock_images/elegant_professional_29e89c1e.jpg";
 
 export default function WaitlistConfirmationPage() {
   const { user } = useAuth();
+  const { t } = useTranslation(['pages', 'common']);
   const [talentMatchOpen, setTalentMatchOpen] = useState(false);
 
   return (
     <SelfHealingErrorBoundary pageName="WaitlistConfirmation" fallbackRoute="/">
-      <PageLayout title="WaitlistConfirmation" showBreadcrumbs={false}>
+      <PageLayout title={t('pages:onboarding.waitlist.pageTitle', 'WaitlistConfirmation')} showBreadcrumbs={false}>
         <SEO
-          title="You're on the List! - Mundo Tango"
-          description="Welcome to the Mundo Tango community. We're preparing your account and will notify you soon!"
+          title={t('pages:onboarding.waitlist.seoTitle', "You're on the List! - Mundo Tango")}
+          description={t('pages:onboarding.waitlist.seoDescription', "Welcome to the Mundo Tango community. We're preparing your account and will notify you soon!")}
         />
 
         <div className="relative min-h-screen w-full overflow-hidden">
@@ -47,11 +49,11 @@ export default function WaitlistConfirmationPage() {
               </motion.div>
 
               <h1 className="text-4xl md:text-5xl font-serif text-white font-bold mb-4" data-testid="heading-waitlist-success">
-                You're on the List!
+                {t('pages:onboarding.waitlist.title', "You're on the List!")}
               </h1>
 
               <p className="text-xl text-white/80 mb-8" data-testid="text-welcome-message">
-                Welcome to the Mundo Tango community, {user?.name || "Dancer"}!
+                {t('pages:onboarding.waitlist.welcomeMessage', 'Welcome to the Mundo Tango community, {{name}}!', { name: user?.name || t('pages:onboarding.waitlist.defaultName', 'Dancer') })}
               </p>
 
               <motion.div
@@ -64,13 +66,13 @@ export default function WaitlistConfirmationPage() {
                 <div className="flex items-center gap-3 p-4 rounded-lg bg-white/5 border border-white/10 mb-6">
                   <Mail className="w-5 h-5 text-white/70 flex-shrink-0" />
                   <p className="text-sm text-white/80 text-left">
-                    We'll email you at <span className="text-white font-medium">{user?.email}</span> when your account is ready for full access.
+                    {t('pages:onboarding.waitlist.emailNotice', "We'll email you at")} <span className="text-white font-medium">{user?.email}</span> {t('pages:onboarding.waitlist.whenReady', 'when your account is ready for full access.')}
                   </p>
                 </div>
 
                 <div className="space-y-4">
                   <p className="text-sm text-white/60 font-medium uppercase tracking-wide mb-4">
-                    While you wait, help us grow
+                    {t('pages:onboarding.waitlist.whileYouWait', 'While you wait, help us grow')}
                   </p>
                   
                   <Button 
@@ -80,7 +82,7 @@ export default function WaitlistConfirmationPage() {
                     data-testid="button-volunteer-cta"
                   >
                     <HandHeart className="mr-2 h-5 w-5" />
-                    Volunteer with us
+                    {t('pages:onboarding.waitlist.volunteerButton', 'Volunteer with us')}
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
 
@@ -92,7 +94,7 @@ export default function WaitlistConfirmationPage() {
                       data-testid="button-support-cta"
                     >
                       <CreditCard className="mr-2 h-5 w-5" />
-                      Support Mundo Tango
+                      {t('pages:onboarding.waitlist.supportButton', 'Support Mundo Tango')}
                       <ArrowRight className="ml-2 h-5 w-5" />
                     </Button>
                   </Link>
@@ -102,8 +104,8 @@ export default function WaitlistConfirmationPage() {
                   <div className="flex items-start gap-3 text-left">
                     <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
                     <div className="text-sm text-white/70">
-                      <p className="font-medium text-white/90 mb-1">Your profile is complete!</p>
-                      <p>You've finished setting up your Mundo Tango profile. We'll notify you as soon as your account is activated.</p>
+                      <p className="font-medium text-white/90 mb-1">{t('pages:onboarding.waitlist.profileComplete', 'Your profile is complete!')}</p>
+                      <p>{t('pages:onboarding.waitlist.profileCompleteDesc', "You've finished setting up your Mundo Tango profile. We'll notify you as soon as your account is activated.")}</p>
                     </div>
                   </div>
                 </div>

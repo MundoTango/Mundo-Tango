@@ -27,6 +27,7 @@ import {
   Folder,
 } from "lucide-react";
 import { useLocation, Link } from "wouter";
+import { useTranslation } from "react-i18next";
 import {
   Sidebar,
   SidebarContent,
@@ -112,6 +113,7 @@ const settingsItems = [
 ];
 
 export function AdminSidebar() {
+  const { t } = useTranslation(['navigation', 'common']);
   const [location] = useLocation();
   const { user, profile, logout } = useAuth();
   const { isMobile, setOpenMobile } = useSidebar();
@@ -155,13 +157,13 @@ export function AdminSidebar() {
         {/* Admin Header */}
         <SidebarGroup>
           <SidebarGroupLabel className="text-xl font-serif font-bold text-foreground">
-            Admin Center
+            {t('navigation:admin.adminCenter', 'Admin Center')}
           </SidebarGroupLabel>
         </SidebarGroup>
 
         {/* Dashboard & Overview */}
         <SidebarGroup>
-          <SidebarGroupLabel>Dashboard</SidebarGroupLabel>
+          <SidebarGroupLabel>{t('navigation:admin.dashboard', 'Dashboard')}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {dashboardItems.map(renderMenuItem)}
@@ -171,7 +173,7 @@ export function AdminSidebar() {
 
         {/* User Management */}
         <SidebarGroup>
-          <SidebarGroupLabel>User Management</SidebarGroupLabel>
+          <SidebarGroupLabel>{t('navigation:admin.userManagement', 'User Management')}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {userManagementItems.map(renderMenuItem)}
@@ -181,7 +183,7 @@ export function AdminSidebar() {
 
         {/* Content & System */}
         <SidebarGroup>
-          <SidebarGroupLabel>Content & System</SidebarGroupLabel>
+          <SidebarGroupLabel>{t('navigation:admin.contentSystem', 'Content & System')}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {contentItems.map(renderMenuItem)}
@@ -191,7 +193,7 @@ export function AdminSidebar() {
 
         {/* Platform & Infrastructure */}
         <SidebarGroup>
-          <SidebarGroupLabel>Platform</SidebarGroupLabel>
+          <SidebarGroupLabel>{t('navigation:admin.platform', 'Platform')}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {platformItems.map(renderMenuItem)}

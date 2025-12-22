@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -29,6 +30,7 @@ import type { ClosenessVisibility } from "@shared/client-types";
 import { TANGO_ROLES, getBookableRoles } from "@/lib/tangoRoles";
 
 export default function EventCreationPage() {
+  const { t } = useTranslation(['pages', 'common']);
   const [, navigate] = useLocation();
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);

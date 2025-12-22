@@ -1,169 +1,291 @@
 {
-  "landing": {
-    "heroTitle": "Where Tango Lives",
-    "heroSubtitle": "Connect with the global tango community. Discover events, find partners, and grow your journey with passionate tango lovers worldwide.",
-    "joinFree": "Join Free",
-    "watchDemo": "Watch Demo",
-    "members": "Members",
-    "events": "Events",
-    "cities": "Cities",
-    "countries": "Countries",
-    "featuresTitle": "Everything You Need for Your Tango Journey",
-    "featuresSubtitle": "Powerful features designed to connect dancers, discover events, and grow the global tango community.",
-    "howItWorksTitle": "How It Works",
-    "howItWorksSubtitle": "Get started in minutes and join thousands of tango dancers worldwide.",
-    "comingSoonTitle": "Coming Soon",
-    "comingSoonSubtitle": "We're building incredible features to transform your tango experience. Here's what's on the horizon.",
-    "supportCta": "Help us build these features faster by supporting Mundo Tango",
-    "supportMission": "Support Our Mission",
-    "ctaTitle": "Ready to Join the Global Tango Community?",
-    "ctaSubtitle": "Create your free account and start connecting with dancers worldwide.",
-    "features": {
-      "globalMap": {
-        "title": "Global Tango Map",
-        "description": "Discover dancers, events, and communities across the globe. Never feel alone in your tango journey."
-      },
-      "smartMatching": {
-        "title": "Smart Matching",
-        "description": "Connect with dancers who match your level, style, and interests. Smart recommendations that grow with you."
-      },
-      "eventDiscovery": {
-        "title": "Event Discovery",
-        "description": "Find milongas, practicas, festivals, and workshops happening near you or plan your tango travels worldwide."
-      },
-      "housing": {
-        "title": "Housing Marketplace",
-        "description": "Stay with local tango dancers when traveling. Offer your home to visiting dancers. Build friendships through shared spaces."
-      },
-      "networking": {
-        "title": "Professional Networking",
-        "description": "Connect with teachers, organizers, DJs, and performers. Grow your tango career or find the perfect instructor."
-      },
-      "streaming": {
-        "title": "Live Streaming",
-        "description": "Attend virtual milongas, watch live performances, and take online classes from maestros around the world."
-      },
-      "community": {
-        "title": "Community Connections",
-        "description": "Join city-based groups, connect with local dancers, and build lasting friendships in the global tango community."
-      },
-      "multiLanguage": {
-        "title": "Multi-Language Support",
-        "description": "Platform available in English, Spanish, Portuguese, French, Italian, and more. Tango speaks all languages."
-      }
+  "login": {
+    "pageName": "Login",
+    "seo": {
+      "title": "Sign In - Mundo Tango",
+      "description": "Sign in to your Mundo Tango account to connect with the global tango community, discover events, and share your passion for Argentine tango."
     },
-    "steps": {
-      "createProfile": {
-        "title": "Create Your Profile",
-        "description": "Share your tango journey, experience level, preferred roles, and what you're looking for in the community."
-      },
-      "discoverEvents": {
-        "title": "Discover Events & Dancers",
-        "description": "Browse events happening worldwide, find dance partners, and explore communities in cities you plan to visit."
-      },
-      "connect": {
-        "title": "Connect & Collaborate",
-        "description": "Message dancers, join group chats, RSVP to events, and arrange housing stays with verified community members."
-      },
-      "grow": {
-        "title": "Grow Your Tango Journey",
-        "description": "Track your progress, collect memories, build your network, and become part of the global tango family."
-      }
+    "badge": "Welcome Back",
+    "hero": {
+      "heading": "Your Tango Journey Continues",
+      "paragraph": "Sign in to connect with dancers worldwide, discover events, and share your passion"
     },
-    "comingSoon": {
-      "housing": {
-        "title": "Housing Marketplace",
-        "description": "Find tango-friendly accommodations or host traveling dancers. Build connections through shared spaces."
-      },
-      "proTools": {
-        "title": "Professional Tools",
-        "description": "Advanced features for teachers and organizers: student management, event analytics, and booking systems."
-      },
-      "aiMatching": {
-        "title": "Enhanced AI Matching",
-        "description": "Smart algorithms learn your preferences and suggest perfect dance partners based on style, level, and personality."
-      },
-      "groupTravel": {
-        "title": "Group Travel Planning",
-        "description": "Coordinate festival trips with your tango friends. Shared itineraries, housing, and transportation."
-      }
+    "stats": {
+      "dancers": "dancers",
+      "events": "events"
+    },
+    "form": {
+      "email": "Email",
+      "password": "Password",
+      "signIn": "Sign In",
+      "signingIn": "Signing in...",
+      "forgotPassword": "Forgot password?"
+    },
+    "noAccount": "Don't have an account?",
+    "createAccount": "Create one now",
+    "toast": {
+      "successTitle": "Welcome back!",
+      "successDescription": "You've successfully logged in.",
+      "errorTitle": "Login failed",
+      "errorDescription": "Invalid credentials"
     }
   },
-  "footer": {
-    "brandDescription": "Where Tango Meets Community. Connect with dancers worldwide, discover events, and share your passion for Argentine tango.",
-    "quickLinks": "Quick Links",
-    "aboutUs": "About Us",
-    "discoverEvents": "Discover Events",
-    "findTeachers": "Find Teachers",
-    "resources": "Resources",
-    "communityGuidelines": "Community Guidelines",
-    "helpCenter": "Help Center",
-    "legal": "Legal",
-    "termsOfService": "Terms of Service",
-    "privacyPolicy": "Privacy Policy",
-    "contactUs": "Contact Us",
-    "supportUs": "Support Us",
-    "supportDescription": "Help us build the future of tango technology",
-    "donateGoFundMe": "Donate on GoFundMe",
-    "copyright": "Mundo Tango. Built with love for the global tango community."
-  },
   "home": {
-    "title": "Welcome to Mundo Tango",
-    "subtitle": "Connect with the global tango community",
-    "cta": "Get Started"
+    "pageName": "Home",
+    "pageLayoutTitle": "Where Tango Meets Community",
+    "seo": {
+      "title": "Mundo Tango - Connect with the Global Tango Community",
+      "description": "Join thousands of tango dancers worldwide. Discover events, find teachers, connect with dancers, and immerse yourself in the passionate world of Argentine tango."
+    },
+    "hero": {
+      "badge": "Welcome to the Global Tango Community",
+      "heading": "Where Tango Meets Community",
+      "paragraph": "Share memories, find events, and help us build the future of tango tech. Join thousands of passionate dancers connecting worldwide.",
+      "getStarted": "Get Started Free",
+      "volunteer": "Volunteer to Help Build MT"
+    },
+    "howItWorks": {
+      "heading": "How It Works",
+      "description": "Start your tango journey in three simple steps",
+      "step1": {
+        "title": "Create Your Profile",
+        "description": "Join for free and tell us about your tango journey, experience level, and dance preferences"
+      },
+      "step2": {
+        "title": "Discover & Connect",
+        "description": "Find events, teachers, and venues near you. Connect with dancers who share your passion"
+      },
+      "step3": {
+        "title": "Dance & Grow",
+        "description": "Attend events, take lessons, make friends, and become part of the global tango community"
+      }
+    },
+    "features": {
+      "heading": "Everything You Need",
+      "description": "Connect, discover, and grow your tango journey with powerful features",
+      "community": {
+        "badge": "Community",
+        "heading": "Connect with Dancers Worldwide",
+        "description": "Join a vibrant global community of tango enthusiasts. Connect with dancers, teachers, and organizers from Buenos Aires to Tokyo.",
+        "items": {
+          "follow": "Follow dancers and build your network",
+          "groups": "Join groups based on interests and location",
+          "messaging": "Real-time messaging and chat features",
+          "discover": "Discover dancers visiting your city"
+        }
+      },
+      "events": {
+        "badge": "Events",
+        "heading": "Discover Events Everywhere",
+        "description": "Never miss a milonga, festival, or workshop. Our platform connects you to thousands of tango events happening globally.",
+        "items": {
+          "calendar": "Comprehensive event calendar",
+          "rsvp": "RSVP and ticket booking",
+          "notifications": "Event notifications and reminders",
+          "map": "Interactive map of venues"
+        }
+      },
+      "cards": {
+        "liveStreaming": {
+          "title": "Live Streaming",
+          "description": "Watch milongas worldwide in real-time"
+        },
+        "musicLibrary": {
+          "title": "Music Library",
+          "description": "Curated tango playlists and guides"
+        },
+        "verifiedTeachers": {
+          "title": "Verified Teachers",
+          "description": "Learn from certified instructors"
+        },
+        "travelPlanner": {
+          "title": "Travel Planner",
+          "description": "Plan trips and find hosts globally"
+        }
+      }
+    },
+    "testimonials": {
+      "heading": "What Dancers Say",
+      "description": "Join thousands of satisfied dancers worldwide",
+      "items": {
+        "testimonial1": {
+          "name": "Maria Rodriguez",
+          "location": "Buenos Aires, Argentina",
+          "text": "Mundo Tango helped me find my dance family in a new city. The community is warm, welcoming, and truly passionate about tango."
+        },
+        "testimonial2": {
+          "name": "James Chen",
+          "location": "San Francisco, USA",
+          "text": "I've discovered amazing milongas and workshops through this platform. It's become essential to my tango journey."
+        },
+        "testimonial3": {
+          "name": "Elena Volkov",
+          "location": "Moscow, Russia",
+          "text": "The teachers directory helped me find incredible instructors. My dancing has improved tremendously!"
+        }
+      }
+    },
+    "faq": {
+      "heading": "Frequently Asked Questions",
+      "description": "Everything you need to know about Mundo Tango",
+      "items": {
+        "q1": {
+          "question": "What is Mundo Tango?",
+          "answer": "Mundo Tango is a global platform connecting tango dancers, teachers, and organizers. We help you discover events, find dance partners, learn from top instructors, and immerse yourself in the vibrant tango community worldwide."
+        },
+        "q2": {
+          "question": "Is Mundo Tango free to use?",
+          "answer": "Yes! We offer a free tier that includes basic profile creation, event discovery, and messaging. Premium features like unlimited messaging, AI dance partner matching, and priority event notifications are available with our Pro subscription."
+        },
+        "q3": {
+          "question": "How do I find tango events near me?",
+          "answer": "Simply use our Events Calendar or Search features to filter by city, date, and event type. You can discover milongas, festivals, workshops, and practice sessions happening in your area or anywhere in the world."
+        },
+        "q4": {
+          "question": "Can I connect with other dancers?",
+          "answer": "Absolutely! Follow dancers, join groups, send friend requests, and chat with the community. Our platform is designed to foster authentic connections within the tango world."
+        },
+        "q5": {
+          "question": "How do I find tango teachers?",
+          "answer": "Visit our Teachers Directory to browse verified instructors worldwide. Filter by location, specialty, and experience level. Read reviews from other students and book private lessons directly through the platform."
+        },
+        "q6": {
+          "question": "What makes Mundo Tango different?",
+          "answer": "We're built by tango dancers, for tango dancers. Our focus is on authentic community building, quality event curation, and connecting you with the global tango family - not just another social network."
+        }
+      }
+    },
+    "cta": {
+      "heading": "Ready to Join the Community?",
+      "description": "Create your free account today and start connecting with passionate tango dancers worldwide. No credit card required.",
+      "button": "Join Mundo Tango Free",
+      "freeForever": "Free forever",
+      "noCreditCard": "No credit card",
+      "cancelAnytime": "Cancel anytime"
+    }
+  },
+  "feed": {
+    "title": "Feed",
+    "description": "Stay updated with the latest from the tango community",
+    "filters": {
+      "all": "All Posts",
+      "following": "Following",
+      "popular": "Popular",
+      "recent": "Recent"
+    },
+    "createPost": "What's on your mind?",
+    "noPost": "No posts to display"
   },
   "events": {
-    "title": "Tango Events",
-    "subtitle": "Discover milongas, festivals, and workshops",
-    "filterByCity": "Filter by city",
-    "filterByType": "Filter by type",
+    "title": "Events",
+    "description": "Discover tango events near you",
+    "upcoming": "Upcoming Events",
+    "past": "Past Events",
+    "filters": {
+      "all": "All Events",
+      "milongas": "Milongas",
+      "workshops": "Workshops",
+      "festivals": "Festivals",
+      "classes": "Classes"
+    },
     "noEvents": "No events found"
-  },
-  "cities": {
-    "title": "Tango Cities",
-    "subtitle": "Explore tango communities worldwide",
-    "members": "members",
-    "events": "events",
-    "viewCity": "View City"
-  },
-  "groups": {
-    "title": "Tango Groups",
-    "subtitle": "Join local and interest-based communities",
-    "join": "Join Group",
-    "leave": "Leave Group",
-    "members": "Members",
-    "posts": "Posts"
   },
   "profile": {
     "title": "Profile",
+    "description": "View and edit your profile",
     "editProfile": "Edit Profile",
-    "followers": "Followers",
-    "following": "Following",
-    "posts": "Posts",
-    "about": "About"
+    "tabs": {
+      "posts": "Posts",
+      "photos": "Photos",
+      "videos": "Videos",
+      "events": "Events",
+      "friends": "Friends"
+    },
+    "stats": {
+      "posts": "Posts",
+      "followers": "Followers",
+      "following": "Following",
+      "events": "Events Attended"
+    }
   },
-  "login": {
-    "title": "Login",
-    "email": "Email",
-    "password": "Password",
-    "forgotPassword": "Forgot Password?",
-    "noAccount": "Don't have an account?",
-    "signUp": "Sign up"
+  "messages": {
+    "title": "Messages",
+    "description": "Chat with your tango connections",
+    "newMessage": "New Message",
+    "searchConversations": "Search conversations",
+    "noMessages": "No messages yet",
+    "startConversation": "Start a conversation"
   },
-  "signup": {
-    "title": "Create Account",
-    "name": "Name",
-    "email": "Email",
-    "password": "Password",
-    "confirmPassword": "Confirm Password",
-    "hasAccount": "Already have an account?",
-    "login": "Login"
+  "teachers": {
+    "title": "Tango Teachers",
+    "description": "Find and connect with tango teachers",
+    "filters": {
+      "all": "All Teachers",
+      "featured": "Featured",
+      "nearby": "Nearby"
+    },
+    "viewProfile": "View Profile",
+    "bookLesson": "Book a Lesson"
   },
-  "proDiscovery": {
-    "title": "Discover Tango Professionals",
-    "subtitle": "Find teachers, DJs, performers, and more",
-    "search": "Search professionals...",
-    "filterByRole": "Filter by role",
-    "filterByCity": "Filter by city"
+  "venues": {
+    "title": "Tango Venues",
+    "description": "Discover tango venues worldwide",
+    "filters": {
+      "all": "All Venues",
+      "milongas": "Milongas",
+      "schools": "Dance Schools",
+      "theaters": "Theaters"
+    },
+    "getDirections": "Get Directions"
+  },
+  "settings": {
+    "title": "Settings",
+    "description": "Manage your account settings",
+    "sections": {
+      "account": "Account Settings",
+      "profile": "Profile",
+      "privacy": "Privacy",
+      "notifications": "Notifications",
+      "security": "Security",
+      "billing": "Billing",
+      "preferences": "Preferences"
+    }
+  },
+  "lifeCEO": {
+    "title": "Life CEO Dashboard",
+    "description": "Your personal AI assistant for life management",
+    "agents": {
+      "health": "Health Agent",
+      "fitness": "Fitness Agent",
+      "nutrition": "Nutrition Agent",
+      "finance": "Finance Agent",
+      "career": "Career Agent",
+      "productivity": "Productivity Agent",
+      "relationships": "Relationship Agent",
+      "learning": "Learning Agent"
+    }
+  },
+  "marketplace": {
+    "title": "Marketplace",
+    "description": "Buy and sell tango-related items",
+    "categories": {
+      "shoes": "Dance Shoes",
+      "clothing": "Clothing",
+      "music": "Music",
+      "accessories": "Accessories",
+      "other": "Other"
+    }
+  },
+  "admin": {
+    "title": "Admin Dashboard",
+    "description": "Platform administration and management",
+    "sections": {
+      "overview": "Overview",
+      "users": "Users",
+      "content": "Content",
+      "reports": "Reports",
+      "analytics": "Analytics",
+      "settings": "Settings"
+    }
   }
 }

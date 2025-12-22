@@ -1,4 +1,5 @@
 import { Link } from "wouter";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -18,6 +19,7 @@ import featureImage1 from "@assets/stock_images/global_world_map_con_0c38d510.jp
 import featureImage2 from "@assets/optimized/IMG_9422-optimized.jpg";
 
 export default function HomePage() {
+  const { t } = useTranslation(['pages', 'common']);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   const fadeInUp = {
@@ -34,62 +36,120 @@ export default function HomePage() {
 
   const testimonials = [
     {
-      name: "Maria Rodriguez",
-      location: "Buenos Aires, Argentina",
+      name: t('pages:home.testimonials.items.testimonial1.name', 'Maria Rodriguez'),
+      location: t('pages:home.testimonials.items.testimonial1.location', 'Buenos Aires, Argentina'),
       rating: 5,
-      text: "Mundo Tango helped me find my dance family in a new city. The community is warm, welcoming, and truly passionate about tango.",
+      text: t('pages:home.testimonials.items.testimonial1.text', 'Mundo Tango helped me find my dance family in a new city. The community is warm, welcoming, and truly passionate about tango.'),
       image: null
     },
     {
-      name: "James Chen",
-      location: "San Francisco, USA",
+      name: t('pages:home.testimonials.items.testimonial2.name', 'James Chen'),
+      location: t('pages:home.testimonials.items.testimonial2.location', 'San Francisco, USA'),
       rating: 5,
-      text: "I've discovered amazing milongas and workshops through this platform. It's become essential to my tango journey.",
+      text: t('pages:home.testimonials.items.testimonial2.text', "I've discovered amazing milongas and workshops through this platform. It's become essential to my tango journey."),
       image: null
     },
     {
-      name: "Elena Volkov",
-      location: "Moscow, Russia",
+      name: t('pages:home.testimonials.items.testimonial3.name', 'Elena Volkov'),
+      location: t('pages:home.testimonials.items.testimonial3.location', 'Moscow, Russia'),
       rating: 5,
-      text: "The teachers directory helped me find incredible instructors. My dancing has improved tremendously!",
+      text: t('pages:home.testimonials.items.testimonial3.text', 'The teachers directory helped me find incredible instructors. My dancing has improved tremendously!'),
       image: null
     }
   ];
 
   const faqs = [
     {
-      question: "What is Mundo Tango?",
-      answer: "Mundo Tango is a global platform connecting tango dancers, teachers, and organizers. We help you discover events, find dance partners, learn from top instructors, and immerse yourself in the vibrant tango community worldwide."
+      question: t('pages:home.faq.items.q1.question', 'What is Mundo Tango?'),
+      answer: t('pages:home.faq.items.q1.answer', 'Mundo Tango is a global platform connecting tango dancers, teachers, and organizers. We help you discover events, find dance partners, learn from top instructors, and immerse yourself in the vibrant tango community worldwide.')
     },
     {
-      question: "Is Mundo Tango free to use?",
-      answer: "Yes! We offer a free tier that includes basic profile creation, event discovery, and messaging. Premium features like unlimited messaging, AI dance partner matching, and priority event notifications are available with our Pro subscription."
+      question: t('pages:home.faq.items.q2.question', 'Is Mundo Tango free to use?'),
+      answer: t('pages:home.faq.items.q2.answer', 'Yes! We offer a free tier that includes basic profile creation, event discovery, and messaging. Premium features like unlimited messaging, AI dance partner matching, and priority event notifications are available with our Pro subscription.')
     },
     {
-      question: "How do I find tango events near me?",
-      answer: "Simply use our Events Calendar or Search features to filter by city, date, and event type. You can discover milongas, festivals, workshops, and practice sessions happening in your area or anywhere in the world."
+      question: t('pages:home.faq.items.q3.question', 'How do I find tango events near me?'),
+      answer: t('pages:home.faq.items.q3.answer', 'Simply use our Events Calendar or Search features to filter by city, date, and event type. You can discover milongas, festivals, workshops, and practice sessions happening in your area or anywhere in the world.')
     },
     {
-      question: "Can I connect with other dancers?",
-      answer: "Absolutely! Follow dancers, join groups, send friend requests, and chat with the community. Our platform is designed to foster authentic connections within the tango world."
+      question: t('pages:home.faq.items.q4.question', 'Can I connect with other dancers?'),
+      answer: t('pages:home.faq.items.q4.answer', 'Absolutely! Follow dancers, join groups, send friend requests, and chat with the community. Our platform is designed to foster authentic connections within the tango world.')
     },
     {
-      question: "How do I find tango teachers?",
-      answer: "Visit our Teachers Directory to browse verified instructors worldwide. Filter by location, specialty, and experience level. Read reviews from other students and book private lessons directly through the platform."
+      question: t('pages:home.faq.items.q5.question', 'How do I find tango teachers?'),
+      answer: t('pages:home.faq.items.q5.answer', 'Visit our Teachers Directory to browse verified instructors worldwide. Filter by location, specialty, and experience level. Read reviews from other students and book private lessons directly through the platform.')
     },
     {
-      question: "What makes Mundo Tango different?",
-      answer: "We're built by tango dancers, for tango dancers. Our focus is on authentic community building, quality event curation, and connecting you with the global tango family - not just another social network."
+      question: t('pages:home.faq.items.q6.question', 'What makes Mundo Tango different?'),
+      answer: t('pages:home.faq.items.q6.answer', "We're built by tango dancers, for tango dancers. Our focus is on authentic community building, quality event curation, and connecting you with the global tango family - not just another social network.")
     }
   ];
 
+  const howItWorksSteps = [
+    { 
+      num: "1", 
+      icon: Users, 
+      title: t('pages:home.howItWorks.step1.title', 'Create Your Profile'), 
+      desc: t('pages:home.howItWorks.step1.description', 'Join for free and tell us about your tango journey, experience level, and dance preferences')
+    },
+    { 
+      num: "2", 
+      icon: MapPin, 
+      title: t('pages:home.howItWorks.step2.title', 'Discover & Connect'), 
+      desc: t('pages:home.howItWorks.step2.description', 'Find events, teachers, and venues near you. Connect with dancers who share your passion')
+    },
+    { 
+      num: "3", 
+      icon: Heart, 
+      title: t('pages:home.howItWorks.step3.title', 'Dance & Grow'), 
+      desc: t('pages:home.howItWorks.step3.description', 'Attend events, take lessons, make friends, and become part of the global tango community')
+    }
+  ];
+
+  const featureCards = [
+    { 
+      icon: Video, 
+      title: t('pages:home.features.cards.liveStreaming.title', 'Live Streaming'), 
+      desc: t('pages:home.features.cards.liveStreaming.description', 'Watch milongas worldwide in real-time')
+    },
+    { 
+      icon: Music, 
+      title: t('pages:home.features.cards.musicLibrary.title', 'Music Library'), 
+      desc: t('pages:home.features.cards.musicLibrary.description', 'Curated tango playlists and guides')
+    },
+    { 
+      icon: Award, 
+      title: t('pages:home.features.cards.verifiedTeachers.title', 'Verified Teachers'), 
+      desc: t('pages:home.features.cards.verifiedTeachers.description', 'Learn from certified instructors')
+    },
+    { 
+      icon: Globe, 
+      title: t('pages:home.features.cards.travelPlanner.title', 'Travel Planner'), 
+      desc: t('pages:home.features.cards.travelPlanner.description', 'Plan trips and find hosts globally')
+    }
+  ];
+
+  const communityFeatures = [
+    t('pages:home.features.community.items.follow', 'Follow dancers and build your network'),
+    t('pages:home.features.community.items.groups', 'Join groups based on interests and location'),
+    t('pages:home.features.community.items.messaging', 'Real-time messaging and chat features'),
+    t('pages:home.features.community.items.discover', 'Discover dancers visiting your city')
+  ];
+
+  const eventFeatures = [
+    t('pages:home.features.events.items.calendar', 'Comprehensive event calendar'),
+    t('pages:home.features.events.items.rsvp', 'RSVP and ticket booking'),
+    t('pages:home.features.events.items.notifications', 'Event notifications and reminders'),
+    t('pages:home.features.events.items.map', 'Interactive map of venues')
+  ];
+
   return (
-    <SelfHealingErrorBoundary pageName="Home" fallbackRoute="/">
-      <PageLayout title="Where Tango Meets Community" showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName={t('pages:home.pageName', 'Home')} fallbackRoute="/">
+      <PageLayout title={t('pages:home.pageLayoutTitle', 'Where Tango Meets Community')} showBreadcrumbs>
 <PublicLayout>
       <SEO
-        title="Mundo Tango - Connect with the Global Tango Community"
-        description="Join thousands of tango dancers worldwide. Discover events, find teachers, connect with dancers, and immerse yourself in the passionate world of Argentine tango."
+        title={t('pages:home.seo.title', 'Mundo Tango - Connect with the Global Tango Community')}
+        description={t('pages:home.seo.description', 'Join thousands of tango dancers worldwide. Discover events, find teachers, connect with dancers, and immerse yourself in the passionate world of Argentine tango.')}
       />
       <div className="min-h-screen">
       {/* Editorial Hero Section - 16:9 with Dramatic Tango Photography */}
@@ -105,30 +165,29 @@ export default function HomePage() {
             transition={{ duration: 1, ease: "easeOut" }}
           >
             <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
-              Welcome to the Global Tango Community
+              {t('pages:home.hero.badge', 'Welcome to the Global Tango Community')}
             </Badge>
             
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif font-bold text-white mb-6 tracking-tight leading-tight" data-testid="heading-hero">
-              Where Tango Meets Community
+              {t('pages:home.hero.heading', 'Where Tango Meets Community')}
             </h1>
             
             <p className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto mb-8 leading-relaxed">
-              Share memories, find events, and help us build the future of tango tech.
-              Join thousands of passionate dancers connecting worldwide.
+              {t('pages:home.hero.paragraph', 'Share memories, find events, and help us build the future of tango tech. Join thousands of passionate dancers connecting worldwide.')}
             </p>
             
             <div className="flex flex-wrap gap-4 justify-center mb-12">
               <Link href="/register">
                 <Button size="lg" className="gap-2 bg-white/20 border-white/30 backdrop-blur-sm hover-elevate" data-testid="button-get-started">
                   <Sparkles className="h-5 w-5" />
-                  Get Started Free
+                  {t('pages:home.hero.getStarted', 'Get Started Free')}
                   <ChevronRight className="h-5 w-5" />
                 </Button>
               </Link>
               <Link href="/volunteer">
                 <Button size="lg" variant="outline" className="gap-2 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="button-volunteer">
                   <Heart className="h-5 w-5" />
-                  Volunteer to Help Build MT
+                  {t('pages:home.hero.volunteer', 'Volunteer to Help Build MT')}
                 </Button>
               </Link>
             </div>
@@ -141,9 +200,11 @@ export default function HomePage() {
       <section className="py-24 px-6 bg-gradient-to-b from-background to-primary/5">
         <div className="container mx-auto max-w-6xl">
           <motion.div {...fadeInUp} className="mb-16 text-center">
-            <h2 className="mb-6 text-3xl md:text-4xl lg:text-5xl font-serif font-bold">How It Works</h2>
+            <h2 className="mb-6 text-3xl md:text-4xl lg:text-5xl font-serif font-bold">
+              {t('pages:home.howItWorks.heading', 'How It Works')}
+            </h2>
             <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              Start your tango journey in three simple steps
+              {t('pages:home.howItWorks.description', 'Start your tango journey in three simple steps')}
             </p>
           </motion.div>
 
@@ -151,11 +212,7 @@ export default function HomePage() {
             {...staggerContainer}
             className="grid gap-12 md:grid-cols-3"
           >
-            {[
-              { num: "1", icon: Users, title: "Create Your Profile", desc: "Join for free and tell us about your tango journey, experience level, and dance preferences" },
-              { num: "2", icon: MapPin, title: "Discover & Connect", desc: "Find events, teachers, and venues near you. Connect with dancers who share your passion" },
-              { num: "3", icon: Heart, title: "Dance & Grow", desc: "Attend events, take lessons, make friends, and become part of the global tango community" }
-            ].map((step, idx) => (
+            {howItWorksSteps.map((step, idx) => (
               <motion.div key={idx} {...fadeInUp} className="text-center">
                 <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 text-primary backdrop-blur-md border border-primary/20 text-4xl font-serif font-bold">
                   {step.num}
@@ -173,9 +230,11 @@ export default function HomePage() {
       <section className="py-24 px-6" data-testid="section-features">
         <div className="container mx-auto max-w-7xl">
           <motion.div {...fadeInUp} className="mb-20 text-center">
-            <h2 className="mb-6 text-3xl md:text-4xl lg:text-5xl font-serif font-bold">Everything You Need</h2>
+            <h2 className="mb-6 text-3xl md:text-4xl lg:text-5xl font-serif font-bold">
+              {t('pages:home.features.heading', 'Everything You Need')}
+            </h2>
             <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-              Connect, discover, and grow your tango journey with powerful features
+              {t('pages:home.features.description', 'Connect, discover, and grow your tango journey with powerful features')}
             </p>
           </motion.div>
           
@@ -208,18 +267,15 @@ export default function HomePage() {
                 viewport={{ once: true, margin: "-100px" }}
                 transition={{ duration: 0.6 }}
               >
-                <Badge className="mb-4">Community</Badge>
-                <h3 className="text-3xl md:text-4xl font-serif font-bold mb-6">Connect with Dancers Worldwide</h3>
+                <Badge className="mb-4">{t('pages:home.features.community.badge', 'Community')}</Badge>
+                <h3 className="text-3xl md:text-4xl font-serif font-bold mb-6">
+                  {t('pages:home.features.community.heading', 'Connect with Dancers Worldwide')}
+                </h3>
                 <p className="text-lg text-muted-foreground leading-relaxed mb-6">
-                  Join a vibrant global community of tango enthusiasts. Connect with dancers, teachers, and organizers from Buenos Aires to Tokyo.
+                  {t('pages:home.features.community.description', 'Join a vibrant global community of tango enthusiasts. Connect with dancers, teachers, and organizers from Buenos Aires to Tokyo.')}
                 </p>
                 <ul className="space-y-3">
-                  {[
-                    "Follow dancers and build your network",
-                    "Join groups based on interests and location",
-                    "Real-time messaging and chat features",
-                    "Discover dancers visiting your city"
-                  ].map((item, i) => (
+                  {communityFeatures.map((item, i) => (
                     <li key={i} className="flex items-start gap-3">
                       <Check className="h-5 w-5 text-primary shrink-0 mt-1" />
                       <span className="text-base">{item}</span>
@@ -238,18 +294,15 @@ export default function HomePage() {
                 transition={{ duration: 0.6 }}
                 className="order-2 md:order-1"
               >
-                <Badge className="mb-4">Events</Badge>
-                <h3 className="text-3xl md:text-4xl font-serif font-bold mb-6">Discover Events Everywhere</h3>
+                <Badge className="mb-4">{t('pages:home.features.events.badge', 'Events')}</Badge>
+                <h3 className="text-3xl md:text-4xl font-serif font-bold mb-6">
+                  {t('pages:home.features.events.heading', 'Discover Events Everywhere')}
+                </h3>
                 <p className="text-lg text-muted-foreground leading-relaxed mb-6">
-                  Never miss a milonga, festival, or workshop. Our platform connects you to thousands of tango events happening globally.
+                  {t('pages:home.features.events.description', 'Never miss a milonga, festival, or workshop. Our platform connects you to thousands of tango events happening globally.')}
                 </p>
                 <ul className="space-y-3">
-                  {[
-                    "Comprehensive event calendar",
-                    "RSVP and ticket booking",
-                    "Event notifications and reminders",
-                    "Interactive map of venues"
-                  ].map((item, i) => (
+                  {eventFeatures.map((item, i) => (
                     <li key={i} className="flex items-start gap-3">
                       <Check className="h-5 w-5 text-primary shrink-0 mt-1" />
                       <span className="text-base">{item}</span>
@@ -277,12 +330,7 @@ export default function HomePage() {
 
             {/* Additional Features Grid */}
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 pt-12">
-              {[
-                { icon: Video, title: "Live Streaming", desc: "Watch milongas worldwide in real-time" },
-                { icon: Music, title: "Music Library", desc: "Curated tango playlists and guides" },
-                { icon: Award, title: "Verified Teachers", desc: "Learn from certified instructors" },
-                { icon: Globe, title: "Travel Planner", desc: "Plan trips and find hosts globally" }
-              ].map((feature, idx) => (
+              {featureCards.map((feature, idx) => (
                 <motion.div key={idx} {...fadeInUp} transition={{ delay: idx * 0.1 }}>
                   <Card className="h-full hover-elevate">
                     <CardContent className="pt-6 text-center">
@@ -302,9 +350,11 @@ export default function HomePage() {
       <section className="py-24 px-6 bg-gradient-to-br from-primary/5 via-accent/5 to-background">
         <div className="container mx-auto max-w-6xl">
           <motion.div {...fadeInUp} className="mb-20 text-center">
-            <h2 className="mb-6 text-3xl md:text-4xl lg:text-5xl font-serif font-bold">What Dancers Say</h2>
+            <h2 className="mb-6 text-3xl md:text-4xl lg:text-5xl font-serif font-bold">
+              {t('pages:home.testimonials.heading', 'What Dancers Say')}
+            </h2>
             <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              Join thousands of satisfied dancers worldwide
+              {t('pages:home.testimonials.description', 'Join thousands of satisfied dancers worldwide')}
             </p>
           </motion.div>
 
@@ -350,9 +400,11 @@ export default function HomePage() {
       <section className="py-24 px-6">
         <div className="container mx-auto max-w-4xl">
           <motion.div {...fadeInUp} className="mb-16 text-center">
-            <h2 className="mb-6 text-3xl md:text-4xl lg:text-5xl font-serif font-bold">Frequently Asked Questions</h2>
+            <h2 className="mb-6 text-3xl md:text-4xl lg:text-5xl font-serif font-bold">
+              {t('pages:home.faq.heading', 'Frequently Asked Questions')}
+            </h2>
             <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
-              Everything you need to know about Mundo Tango
+              {t('pages:home.faq.description', 'Everything you need to know about Mundo Tango')}
             </p>
           </motion.div>
 
@@ -399,30 +451,31 @@ export default function HomePage() {
           className="container mx-auto max-w-4xl text-center"
         >
           <div className="backdrop-blur-md bg-card/80 p-12 md:p-16 border border-primary/20 rounded-2xl">
-            <h2 className="mb-6 text-3xl md:text-4xl lg:text-5xl font-serif font-bold">Ready to Join the Community?</h2>
+            <h2 className="mb-6 text-3xl md:text-4xl lg:text-5xl font-serif font-bold">
+              {t('pages:home.cta.heading', 'Ready to Join the Community?')}
+            </h2>
             <p className="mb-10 text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              Create your free account today and start connecting with passionate tango dancers worldwide. 
-              No credit card required.
+              {t('pages:home.cta.description', 'Create your free account today and start connecting with passionate tango dancers worldwide. No credit card required.')}
             </p>
             <Link href="/register">
               <Button size="lg" className="gap-2 mb-8 text-lg px-8 py-6" data-testid="button-cta-final">
                 <Sparkles className="h-6 w-6" />
-                Join Mundo Tango Free
+                {t('pages:home.cta.button', 'Join Mundo Tango Free')}
                 <ChevronRight className="h-6 w-6" />
               </Button>
             </Link>
             <div className="flex flex-wrap items-center justify-center gap-8 text-base text-muted-foreground">
               <div className="flex items-center gap-2">
                 <Check className="h-5 w-5 text-primary" />
-                <span>Free forever</span>
+                <span>{t('pages:home.cta.freeForever', 'Free forever')}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Check className="h-5 w-5 text-primary" />
-                <span>No credit card</span>
+                <span>{t('pages:home.cta.noCreditCard', 'No credit card')}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Check className="h-5 w-5 text-primary" />
-                <span>Cancel anytime</span>
+                <span>{t('pages:home.cta.cancelAnytime', 'Cancel anytime')}</span>
               </div>
             </div>
           </div>

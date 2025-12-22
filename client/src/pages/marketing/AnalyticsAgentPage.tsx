@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { SEO } from "@/components/SEO";
 import { BarChart3, TrendingUp, Users, Clock, Globe, Smartphone, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { Link } from "wouter";
@@ -12,11 +13,13 @@ import analyticsImg1 from "@assets/stock_images/milonga_dance_hall,__36c486f2.jp
 import analyticsImg2 from "@assets/stock_images/buenos_aires_argenti_9805cd85.jpg";
 
 export default function AnalyticsAgentPage() {
+  const { t } = useTranslation(['pages', 'common']);
+
   const metrics = [
-    { label: "Total Visitors", value: "52.4K", change: "+18.3%", icon: Users, color: "text-blue-500" },
-    { label: "Page Views", value: "187K", change: "+22.1%", icon: Globe, color: "text-green-500" },
-    { label: "Avg. Session", value: "4m 32s", change: "+12s", icon: Clock, color: "text-purple-500" },
-    { label: "Mobile Traffic", value: "68%", change: "+5%", icon: Smartphone, color: "text-orange-500" }
+    { label: t('pages:analyticsAgent.metrics.visitors', 'Total Visitors'), value: "52.4K", change: "+18.3%", icon: Users, color: "text-blue-500" },
+    { label: t('pages:analyticsAgent.metrics.pageViews', 'Page Views'), value: "187K", change: "+22.1%", icon: Globe, color: "text-green-500" },
+    { label: t('pages:analyticsAgent.metrics.avgSession', 'Avg. Session'), value: "4m 32s", change: "+12s", icon: Clock, color: "text-purple-500" },
+    { label: t('pages:analyticsAgent.metrics.mobileTraffic', 'Mobile Traffic'), value: "68%", change: "+5%", icon: Smartphone, color: "text-orange-500" }
   ];
 
   const topPages = [
@@ -27,19 +30,19 @@ export default function AnalyticsAgentPage() {
   ];
 
   const trafficSources = [
-    { source: "Organic Search", percentage: 42, visitors: 21900, color: "bg-green-500" },
-    { source: "Direct", percentage: 28, visitors: 14600, color: "bg-blue-500" },
-    { source: "Social Media", percentage: 18, visitors: 9400, color: "bg-purple-500" },
-    { source: "Referrals", percentage: 12, visitors: 6270, color: "bg-orange-500" }
+    { source: t('pages:analyticsAgent.sources.organic', 'Organic Search'), percentage: 42, visitors: 21900, color: "bg-green-500" },
+    { source: t('pages:analyticsAgent.sources.direct', 'Direct'), percentage: 28, visitors: 14600, color: "bg-blue-500" },
+    { source: t('pages:analyticsAgent.sources.social', 'Social Media'), percentage: 18, visitors: 9400, color: "bg-purple-500" },
+    { source: t('pages:analyticsAgent.sources.referrals', 'Referrals'), percentage: 12, visitors: 6270, color: "bg-orange-500" }
   ];
 
   return (
     <SelfHealingErrorBoundary pageName="Analytics Agent" fallbackRoute="/platform">
-    <PageLayout title="Analytics Agent" showBreadcrumbs>
+    <PageLayout title={t('pages:analyticsAgent.title', 'Analytics Agent')} showBreadcrumbs>
 <>
       <SEO
-        title="Analytics Agent - Marketing Dashboard"
-        description="Track website analytics, user behavior, and conversion metrics with AI-powered insights."
+        title={t('pages:analyticsAgent.seo.title', 'Analytics Agent - Marketing Dashboard')}
+        description={t('pages:analyticsAgent.seo.description', 'Track website analytics, user behavior, and conversion metrics with AI-powered insights.')}
       />
 
       {/* Hero Section */}
@@ -57,15 +60,15 @@ export default function AnalyticsAgentPage() {
             transition={{ duration: 1, ease: "easeOut" }}
           >
             <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-marketing">
-              Marketing AI
+              {t('pages:analyticsAgent.badge', 'Marketing AI')}
             </Badge>
             
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6">
-              Analytics Agent
+              {t('pages:analyticsAgent.hero.title', 'Analytics Agent')}
             </h1>
             
             <p className="text-xl text-white/80 max-w-2xl mx-auto">
-              Data-driven insights - track performance, understand behavior, and optimize for growth
+              {t('pages:analyticsAgent.hero.subtitle', 'Data-driven insights - track performance, understand behavior, and optimize for growth')}
             </p>
           </motion.div>
         </div>
@@ -75,7 +78,7 @@ export default function AnalyticsAgentPage() {
         {/* Preview Notice */}
         <div className="flex justify-center mb-8">
           <Badge variant="outline" className="text-muted-foreground border-muted-foreground/30">
-            Preview Data - Connect your analytics to see real metrics
+            {t('pages:analyticsAgent.previewNotice', 'Preview Data - Connect your analytics to see real metrics')}
           </Badge>
         </div>
 
@@ -111,7 +114,7 @@ export default function AnalyticsAgentPage() {
           transition={{ duration: 0.6 }}
           className="mb-16"
         >
-          <h2 className="text-3xl md:text-4xl font-serif font-bold mb-8">Traffic Insights</h2>
+          <h2 className="text-3xl md:text-4xl font-serif font-bold mb-8">{t('pages:analyticsAgent.sections.trafficInsights', 'Traffic Insights')}</h2>
           
           <div className="grid gap-8 md:grid-cols-2">
             {/* Top Pages Card with 16:9 Image */}
@@ -119,15 +122,15 @@ export default function AnalyticsAgentPage() {
               <div className="relative aspect-[16/9] overflow-hidden">
                 <motion.img
                   src={analyticsImg1}
-                  alt="Top Pages"
+                  alt={t('pages:analyticsAgent.topPages.title', 'Top Pages')}
                   className="w-full h-full object-cover"
                   whileHover={{ scale: 1.05 }}
                   transition={{ duration: 0.6 }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
                 <div className="absolute bottom-4 left-4 right-4 text-white">
-                  <h3 className="text-2xl font-serif font-bold">Top Pages</h3>
-                  <p className="text-white/80 text-sm mt-1">Most visited destinations</p>
+                  <h3 className="text-2xl font-serif font-bold">{t('pages:analyticsAgent.topPages.title', 'Top Pages')}</h3>
+                  <p className="text-white/80 text-sm mt-1">{t('pages:analyticsAgent.topPages.subtitle', 'Most visited destinations')}</p>
                 </div>
               </div>
               <CardContent className="p-6 space-y-3">
@@ -136,15 +139,15 @@ export default function AnalyticsAgentPage() {
                     <h4 className="font-semibold mb-3">{page.page}</h4>
                     <div className="grid grid-cols-3 gap-2 text-sm">
                       <div>
-                        <p className="text-xs text-muted-foreground">Views</p>
+                        <p className="text-xs text-muted-foreground">{t('pages:analyticsAgent.topPages.views', 'Views')}</p>
                         <p className="font-medium">{page.views.toLocaleString()}</p>
                       </div>
                       <div>
-                        <p className="text-xs text-muted-foreground">Visitors</p>
+                        <p className="text-xs text-muted-foreground">{t('pages:analyticsAgent.topPages.visitors', 'Visitors')}</p>
                         <p className="font-medium">{page.uniqueVisitors.toLocaleString()}</p>
                       </div>
                       <div>
-                        <p className="text-xs text-muted-foreground">Avg. Time</p>
+                        <p className="text-xs text-muted-foreground">{t('pages:analyticsAgent.topPages.avgTime', 'Avg. Time')}</p>
                         <p className="font-medium">{page.avgTime}</p>
                       </div>
                     </div>
@@ -153,7 +156,7 @@ export default function AnalyticsAgentPage() {
                 <Link href="/admin/analytics">
                   <Button className="w-full gap-2" variant="outline" data-testid="button-view-all-pages">
                     <BarChart3 className="w-4 h-4" />
-                    View All Pages
+                    {t('pages:analyticsAgent.cta.viewAllPages', 'View All Pages')}
                   </Button>
                 </Link>
               </CardContent>
@@ -164,15 +167,15 @@ export default function AnalyticsAgentPage() {
               <div className="relative aspect-[16/9] overflow-hidden">
                 <motion.img
                   src={analyticsImg2}
-                  alt="Traffic Sources"
+                  alt={t('pages:analyticsAgent.trafficSources.title', 'Traffic Sources')}
                   className="w-full h-full object-cover"
                   whileHover={{ scale: 1.05 }}
                   transition={{ duration: 0.6 }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
                 <div className="absolute bottom-4 left-4 right-4 text-white">
-                  <h3 className="text-2xl font-serif font-bold">Traffic Sources</h3>
-                  <p className="text-white/80 text-sm mt-1">Where visitors come from</p>
+                  <h3 className="text-2xl font-serif font-bold">{t('pages:analyticsAgent.trafficSources.title', 'Traffic Sources')}</h3>
+                  <p className="text-white/80 text-sm mt-1">{t('pages:analyticsAgent.trafficSources.subtitle', 'Where visitors come from')}</p>
                 </div>
               </div>
               <CardContent className="p-6 space-y-4">
@@ -198,7 +201,7 @@ export default function AnalyticsAgentPage() {
                 <Link href="/admin/analytics/report">
                   <Button className="w-full mt-4 gap-2" data-testid="button-traffic-report">
                     <Sparkles className="w-4 h-4" />
-                    Generate Traffic Report
+                    {t('pages:analyticsAgent.cta.generateReport', 'Generate Traffic Report')}
                   </Button>
                 </Link>
               </CardContent>

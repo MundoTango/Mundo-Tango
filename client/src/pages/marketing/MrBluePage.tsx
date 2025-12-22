@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { Link } from "wouter";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -13,6 +14,8 @@ import {
 } from "lucide-react";
 
 function MrBluePageContent() {
+  const { t } = useTranslation(['pages', 'common']);
+
   const fadeInUp = {
     hidden: { opacity: 0, y: 30 },
     visible: { opacity: 1, y: 0 }
@@ -24,26 +27,35 @@ function MrBluePageContent() {
   };
 
   const features = [
-    { icon: Calendar, title: "Event Discovery", description: "Find milongas, practicas, and festivals anywhere in the world. Mr. Blue knows every event." },
-    { icon: Plane, title: "Travel Planning", description: "Plan your tango trips. Get recommendations for cities, accommodations, and local events." },
-    { icon: Users, title: "Partner Matching", description: "Find dance partners matching your level, style, and schedule. Smart recommendations." },
-    { icon: BookOpen, title: "Learning Paths", description: "Personalized learning recommendations based on your goals and experience level." },
-    { icon: Music, title: "Music Discovery", description: "Explore tango orchestras, discover new music, learn about composers and eras." },
-    { icon: Globe, title: "Local Insights", description: "Get insider tips about tango scenes in any city from locals and frequent visitors." },
+    { icon: Calendar, title: t('pages:mrBlue.features.events.title', 'Event Discovery'), description: t('pages:mrBlue.features.events.desc', 'Find milongas, practicas, and festivals anywhere in the world. Mr. Blue knows every event.') },
+    { icon: Plane, title: t('pages:mrBlue.features.travel.title', 'Travel Planning'), description: t('pages:mrBlue.features.travel.desc', 'Plan your tango trips. Get recommendations for cities, accommodations, and local events.') },
+    { icon: Users, title: t('pages:mrBlue.features.partners.title', 'Partner Matching'), description: t('pages:mrBlue.features.partners.desc', 'Find dance partners matching your level, style, and schedule. Smart recommendations.') },
+    { icon: BookOpen, title: t('pages:mrBlue.features.learning.title', 'Learning Paths'), description: t('pages:mrBlue.features.learning.desc', 'Personalized learning recommendations based on your goals and experience level.') },
+    { icon: Music, title: t('pages:mrBlue.features.music.title', 'Music Discovery'), description: t('pages:mrBlue.features.music.desc', 'Explore tango orchestras, discover new music, learn about composers and eras.') },
+    { icon: Globe, title: t('pages:mrBlue.features.insights.title', 'Local Insights'), description: t('pages:mrBlue.features.insights.desc', 'Get insider tips about tango scenes in any city from locals and frequent visitors.') },
   ];
 
   const conversations = [
-    { user: "What milongas are happening in Buenos Aires this weekend?", ai: "I found 23 milongas this weekend! The most popular are Salon Canning on Saturday (midnight), La Viruta on Friday, and Milonga Parakultural on Sunday. Would you like details on dress codes or how to get there?" },
-    { user: "I'm intermediate level - help me improve my giros", ai: "For intermediate giros, I recommend focusing on: 1) Axis and balance exercises, 2) Forward/back ocho practice, 3) Molinete patterns. I can suggest 3 video tutorials and 2 teachers in your area who specialize in technique." },
-    { user: "Plan a 2-week tango trip to Europe", ai: "For a 2-week European tango trip, I suggest: Week 1 - Berlin (vibrant alternative scene), Week 2 - Paris (classic elegance). I'll map out daily milongas, recommend housing with tango hosts, and connect you with local dancers." },
+    { 
+      user: t('pages:mrBlue.conversations.1.user', 'What milongas are happening in Buenos Aires this weekend?'), 
+      ai: t('pages:mrBlue.conversations.1.ai', "I found 23 milongas this weekend! The most popular are Salon Canning on Saturday (midnight), La Viruta on Friday, and Milonga Parakultural on Sunday. Would you like details on dress codes or how to get there?") 
+    },
+    { 
+      user: t('pages:mrBlue.conversations.2.user', "I'm intermediate level - help me improve my giros"), 
+      ai: t('pages:mrBlue.conversations.2.ai', 'For intermediate giros, I recommend focusing on: 1) Axis and balance exercises, 2) Forward/back ocho practice, 3) Molinete patterns. I can suggest 3 video tutorials and 2 teachers in your area who specialize in technique.') 
+    },
+    { 
+      user: t('pages:mrBlue.conversations.3.user', 'Plan a 2-week tango trip to Europe'), 
+      ai: t('pages:mrBlue.conversations.3.ai', "For a 2-week European tango trip, I suggest: Week 1 - Berlin (vibrant alternative scene), Week 2 - Paris (classic elegance). I'll map out daily milongas, recommend housing with tango hosts, and connect you with local dancers.") 
+    },
   ];
 
   return (
     <div className="min-h-screen bg-background">
       <PublicNavbar />
       <SEO
-        title="Mr. Blue AI - Your Tango Assistant | Mundo Tango"
-        description="Meet Mr. Blue, your AI-powered tango companion. Get event recommendations, travel planning, learning paths, and 24/7 tango guidance."
+        title={t('pages:mrBlue.seo.title', 'Mr. Blue AI - Your Tango Assistant | Mundo Tango')}
+        description={t('pages:mrBlue.seo.description', 'Meet Mr. Blue, your AI-powered tango companion. Get event recommendations, travel planning, learning paths, and 24/7 tango guidance.')}
       />
 
       {/* Hero Section */}
@@ -70,22 +82,21 @@ function MrBluePageContent() {
                 className="text-4xl md:text-5xl font-bold text-white"
                 data-testid="text-hero-headline"
               >
-                Meet Mr. Blue
+                {t('pages:mrBlue.hero.title', 'Meet Mr. Blue')}
               </motion.h1>
 
               <motion.p
                 variants={fadeInUp}
                 className="text-xl text-white/90 max-w-2xl mx-auto"
               >
-                Your AI-powered tango companion. Available 24/7 to help you discover events, 
-                plan travels, find partners, and grow your tango journey.
+                {t('pages:mrBlue.hero.subtitle', 'Your AI-powered tango companion. Available 24/7 to help you discover events, plan travels, find partners, and grow your tango journey.')}
               </motion.p>
 
               <motion.div variants={fadeInUp} className="flex justify-center gap-4">
                 <Link href="/register?redirect=/talent-match">
                   <Button size="lg" className="bg-white text-primary hover:bg-white/90" data-testid="button-try-mrblue">
                     <MessageCircle className="h-5 w-5 mr-2" />
-                    Chat with Mr. Blue
+                    {t('pages:mrBlue.cta.chat', 'Chat with Mr. Blue')}
                   </Button>
                 </Link>
               </motion.div>
@@ -96,15 +107,15 @@ function MrBluePageContent() {
               >
                 <Badge variant="secondary" className="text-sm py-1 px-3">
                   <Zap className="h-3 w-3 mr-1" />
-                  Powered by GPT-4
+                  {t('pages:mrBlue.badges.gpt4', 'Powered by GPT-4')}
                 </Badge>
                 <Badge variant="secondary" className="text-sm py-1 px-3">
                   <Mic className="h-3 w-3 mr-1" />
-                  Voice Enabled
+                  {t('pages:mrBlue.badges.voice', 'Voice Enabled')}
                 </Badge>
                 <Badge variant="secondary" className="text-sm py-1 px-3">
                   <Globe className="h-3 w-3 mr-1" />
-                  68 Languages
+                  {t('pages:mrBlue.badges.languages', '68 Languages')}
                 </Badge>
               </motion.div>
             </div>
@@ -124,10 +135,10 @@ function MrBluePageContent() {
           >
             <div className="text-center max-w-3xl mx-auto space-y-4">
               <motion.h2 variants={fadeInUp} className="text-3xl md:text-4xl font-bold">
-                Everything You Need, One Conversation Away
+                {t('pages:mrBlue.featuresSection.title', 'Everything You Need, One Conversation Away')}
               </motion.h2>
               <motion.p variants={fadeInUp} className="text-lg text-muted-foreground">
-                Mr. Blue knows the global tango world. Ask anything.
+                {t('pages:mrBlue.featuresSection.subtitle', 'Mr. Blue knows the global tango world. Ask anything.')}
               </motion.p>
             </div>
 
@@ -164,10 +175,10 @@ function MrBluePageContent() {
           >
             <div className="text-center max-w-3xl mx-auto space-y-4">
               <motion.h2 variants={fadeInUp} className="text-3xl font-bold">
-                See Mr. Blue in Action
+                {t('pages:mrBlue.conversationsSection.title', 'See Mr. Blue in Action')}
               </motion.h2>
               <motion.p variants={fadeInUp} className="text-muted-foreground">
-                Real conversations, real answers.
+                {t('pages:mrBlue.conversationsSection.subtitle', 'Real conversations, real answers.')}
               </motion.p>
             </div>
 
@@ -210,18 +221,22 @@ function MrBluePageContent() {
                   <motion.div variants={fadeInUp}>
                     <Badge className="mb-4">
                       <Mic className="h-3 w-3 mr-1" />
-                      Voice Enabled
+                      {t('pages:mrBlue.voice.badge', 'Voice Enabled')}
                     </Badge>
                   </motion.div>
                   <motion.h2 variants={fadeInUp} className="text-2xl font-bold">
-                    Talk to Mr. Blue
+                    {t('pages:mrBlue.voice.title', 'Talk to Mr. Blue')}
                   </motion.h2>
                   <motion.p variants={fadeInUp} className="text-muted-foreground">
-                    Don't feel like typing? Use voice input. Mr. Blue understands natural speech 
-                    in 68 languages and responds with crystal-clear voice powered by ElevenLabs.
+                    {t('pages:mrBlue.voice.description', "Don't feel like typing? Use voice input. Mr. Blue understands natural speech in 68 languages and responds with crystal-clear voice powered by ElevenLabs.")}
                   </motion.p>
                   <motion.ul variants={fadeInUp} className="space-y-2">
-                    {["Natural voice input", "Realistic voice responses", "68 languages supported", "Works hands-free"].map((item, i) => (
+                    {[
+                      t('pages:mrBlue.voice.features.input', 'Natural voice input'),
+                      t('pages:mrBlue.voice.features.responses', 'Realistic voice responses'),
+                      t('pages:mrBlue.voice.features.languages', '68 languages supported'),
+                      t('pages:mrBlue.voice.features.handsFree', 'Works hands-free')
+                    ].map((item, i) => (
                       <li key={i} className="flex items-center gap-2 text-sm">
                         <Check className="h-4 w-4 text-primary" />
                         {item}
@@ -254,15 +269,15 @@ function MrBluePageContent() {
             className="text-center max-w-3xl mx-auto space-y-6"
           >
             <motion.h2 variants={fadeInUp} className="text-3xl font-bold text-white">
-              Start Your Conversation
+              {t('pages:mrBlue.finalCta.title', 'Start Your Conversation')}
             </motion.h2>
             <motion.p variants={fadeInUp} className="text-white/90 text-lg">
-              Mr. Blue is ready to help with your tango journey. Free for all members.
+              {t('pages:mrBlue.finalCta.subtitle', 'Mr. Blue is ready to help with your tango journey. Free for all members.')}
             </motion.p>
             <motion.div variants={fadeInUp}>
               <Link href="/register?redirect=/talent-match">
                 <Button size="lg" className="bg-white text-primary hover:bg-white/90" data-testid="button-get-started">
-                  Get Started Free
+                  {t('pages:mrBlue.cta.getStarted', 'Get Started Free')}
                   <ArrowRight className="h-4 w-4 ml-2" />
                 </Button>
               </Link>

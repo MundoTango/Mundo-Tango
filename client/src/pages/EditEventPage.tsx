@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { useLocation, useParams } from "wouter";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -67,6 +68,7 @@ function parsePrice(priceStr: string | number | null | undefined): number {
 }
 
 export default function EditEventPage() {
+  const { t } = useTranslation(['pages', 'common']);
   const { user } = useAuth();
   const params = useParams<{ id: string }>();
   const eventId = params.id;

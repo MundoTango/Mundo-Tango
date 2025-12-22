@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Calendar, Clock, Heart, Share2, BookmarkPlus, ArrowLeft, BookOpen } from "lucide-react";
 import { safeDateFormat } from "@/lib/safeDateFormat";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 interface BlogPost {
   id: number;
@@ -30,6 +31,7 @@ interface BlogPost {
 }
 
 export default function BlogDetailPage() {
+  const { t } = useTranslation(['pages', 'common']);
   const { blogId } = useParams();
 
   const { data: post, isLoading } = useQuery<BlogPost>({
@@ -42,7 +44,7 @@ export default function BlogDetailPage() {
         <div className="flex items-center justify-center min-h-screen">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-            <p className="text-muted-foreground">Loading article...</p>
+            <p className="text-muted-foreground">{t('pages:blogDetail.loading', 'Loading article...')}</p>
           </div>
         </div>
       </AppLayout>
@@ -53,7 +55,7 @@ export default function BlogDetailPage() {
     return (
       <AppLayout>
         <div className="container mx-auto max-w-4xl py-8 px-4">
-          <p className="text-center text-muted-foreground">Article not found</p>
+          <p className="text-center text-muted-foreground">{t('pages:blogDetail.notFound', 'Article not found')}</p>
         </div>
       </AppLayout>
     );
@@ -101,12 +103,12 @@ export default function BlogDetailPage() {
                 <span>•</span>
                 <div className="flex items-center gap-1">
                   <Calendar className="h-4 w-4" />
-                  {safeDateFormat(post.publishedAt, 'MMMM dd, yyyy', 'recently')}
+                  {safeDateFormat(post.publishedAt, 'MMMM dd, yyyy', t('pages:blogDetail.recently', 'recently'))}
                 </div>
                 <span>•</span>
                 <div className="flex items-center gap-1">
                   <Clock className="h-4 w-4" />
-                  {post.readTime} min read
+                  {t('pages:blogDetail.minRead', '{{count}} min read', { count: post.readTime })}
                 </div>
               </div>
             </motion.div>
@@ -117,7 +119,7 @@ export default function BlogDetailPage() {
           <Button variant="outline" asChild className="mb-8" data-testid="button-back">
             <Link href="/blog">
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Blog
+              {t('pages:blogDetail.backToBlog', 'Back to Blog')}
             </Link>
           </Button>
 
@@ -133,17 +135,17 @@ export default function BlogDetailPage() {
                   <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mb-6">
                     <div className="flex items-center gap-2">
                       <Calendar className="h-4 w-4" />
-                      {safeDateFormat(post.publishedAt, 'MMMM dd, yyyy', 'recently')}
+                      {safeDateFormat(post.publishedAt, 'MMMM dd, yyyy', t('pages:blogDetail.recently', 'recently'))}
                     </div>
                     <div className="flex items-center gap-2">
                       <Clock className="h-4 w-4" />
-                      {post.readTime} min read
+                      {t('pages:blogDetail.minRead', '{{count}} min read', { count: post.readTime })}
                     </div>
                     <div className="flex items-center gap-2">
                       <Heart className="h-4 w-4" />
-                      {post.likes.toLocaleString()} likes
+                      {t('pages:blogDetail.likes', '{{count}} likes', { count: post.likes.toLocaleString() })}
                     </div>
-                    <span>{post.views.toLocaleString()} views</span>
+                    <span>{t('pages:blogDetail.views', '{{count}} views', { count: post.views.toLocaleString() })}</span>
                   </div>
 
                   <div className="flex items-center justify-between pb-6 border-b border-border">
@@ -163,11 +165,11 @@ export default function BlogDetailPage() {
                     <div className="flex gap-2">
                       <Button variant="outline" size="sm" data-testid="button-like">
                         <Heart className={`h-4 w-4 mr-2 ${post.isLiked ? 'fill-current' : ''}`} />
-                        Like
+                        {t('pages:blogDetail.like', 'Like')}
                       </Button>
                       <Button variant="outline" size="sm" data-testid="button-save">
                         <BookmarkPlus className="h-4 w-4 mr-2" />
-                        {post.isSaved ? 'Saved' : 'Save'}
+                        {post.isSaved ? t('pages:blogDetail.saved', 'Saved') : t('pages:blogDetail.save', 'Save')}
                       </Button>
                       <Button variant="outline" size="sm" data-testid="button-share">
                         <Share2 className="h-4 w-4" />
@@ -184,7 +186,7 @@ export default function BlogDetailPage() {
 
                 {post.tags.length > 0 && (
                   <div className="mt-8 pt-8 border-t border-border">
-                    <h3 className="font-semibold text-foreground mb-3">Tags</h3>
+                    <h3 className="font-semibold text-foreground mb-3">{t('pages:blogDetail.tags', 'Tags')}</h3>
                     <div className="flex flex-wrap gap-2">
                       {post.tags.map((tag: string, index: number) => (
                         <Badge key={index} variant="outline">

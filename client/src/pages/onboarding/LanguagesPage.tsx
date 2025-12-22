@@ -19,7 +19,7 @@ export default function LanguagesPage() {
   const [, navigate] = useLocation();
   const { user } = useAuth();
   const { toast } = useToast();
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation(['pages', 'common']);
   const [primaryLanguage, setPrimaryLanguage] = useState<string>("");
   const [additionalLanguages, setAdditionalLanguages] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -28,7 +28,6 @@ export default function LanguagesPage() {
     if (!user) {
       navigate("/login");
     } else if (user.isOnboardingComplete) {
-      // Already onboarded, redirect to volunteer/support page
       navigate("/volunteer");
     }
   }, [user, navigate]);
@@ -52,8 +51,8 @@ export default function LanguagesPage() {
   const handleContinue = async () => {
     if (!primaryLanguage) {
       toast({
-        title: "Primary language required",
-        description: "Please select your primary language",
+        title: t('pages:onboarding.languages.errors.required', 'Primary language required'),
+        description: t('pages:onboarding.languages.errors.selectPrimary', 'Please select your primary language'),
         variant: "destructive",
       });
       return;
@@ -82,9 +81,9 @@ export default function LanguagesPage() {
 
       navigate("/onboarding/step-5");
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Failed to save languages";
+      const errorMessage = error instanceof Error ? error.message : t('pages:onboarding.languages.errors.saveFailed', 'Failed to save languages');
       toast({
-        title: "Language Save Failed",
+        title: t('pages:onboarding.languages.errors.saveFailedTitle', 'Language Save Failed'),
         description: errorMessage,
         variant: "destructive",
       });
@@ -97,9 +96,12 @@ export default function LanguagesPage() {
 
   return (
     <SelfHealingErrorBoundary pageName="Languages" fallbackRoute="/">
-      <PageLayout title="Languages" showBreadcrumbs>
+      <PageLayout title={t('pages:onboarding.languages.pageTitle', 'Languages')} showBreadcrumbs>
         <>
-          <SEO title="Your Languages - Mundo Tango" description="Tell us what languages you speak" />
+          <SEO 
+            title={t('pages:onboarding.languages.seoTitle', 'Your Languages - Mundo Tango')} 
+            description={t('pages:onboarding.languages.seoDescription', 'Tell us what languages you speak')} 
+          />
           
           <div className="relative h-[50vh] w-full overflow-hidden">
             <div 
@@ -116,15 +118,15 @@ export default function LanguagesPage() {
                 transition={{ duration: 1, ease: "easeOut" }}
               >
                 <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-step-4">
-                  Step 4 of 5
+                  {t('pages:onboarding.languages.step', 'Step 4 of 5')}
                 </Badge>
                 
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-white font-bold leading-tight mb-6">
-                  What Languages Do You Speak?
+                  {t('pages:onboarding.languages.title', 'What Languages Do You Speak?')}
                 </h1>
                 
                 <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto">
-                  Connect with dancers in your language
+                  {t('pages:onboarding.languages.subtitle', 'Connect with dancers in your language')}
                 </p>
               </motion.div>
             </div>
@@ -143,10 +145,10 @@ export default function LanguagesPage() {
                       <div className="p-3 rounded-xl bg-primary/10">
                         <Languages className="h-6 w-6 text-primary" />
                       </div>
-                      <h2 className="text-2xl md:text-3xl font-serif font-bold">Your Languages</h2>
+                      <h2 className="text-2xl md:text-3xl font-serif font-bold">{t('pages:onboarding.languages.cardTitle', 'Your Languages')}</h2>
                     </div>
                     <p className="text-muted-foreground leading-relaxed">
-                      Select your primary language and any additional languages you speak
+                      {t('pages:onboarding.languages.cardDescription', 'Select your primary language and any additional languages you speak')}
                     </p>
                   </CardHeader>
 
@@ -154,11 +156,11 @@ export default function LanguagesPage() {
                     <div className="space-y-4">
                       <div className="flex items-center gap-2">
                         <Star className="h-5 w-5 text-yellow-500" />
-                        <h3 className="font-semibold">Primary Language</h3>
+                        <h3 className="font-semibold">{t('pages:onboarding.languages.primaryLabel', 'Primary Language')}</h3>
                       </div>
                       <p className="text-sm text-muted-foreground flex items-center gap-1.5">
                         <Globe className="h-4 w-4" />
-                        This will also set your site display language
+                        {t('pages:onboarding.languages.primaryHint', 'This will also set your site display language')}
                       </p>
                       
                       <UnifiedLanguagePicker
@@ -166,7 +168,7 @@ export default function LanguagesPage() {
                         value={primaryLanguage}
                         onChange={handlePrimaryLanguageChange}
                         syncI18n={false}
-                        placeholder="Select your primary language"
+                        placeholder={t('pages:onboarding.languages.primaryPlaceholder', 'Select your primary language')}
                         data-testid="picker-primary-language"
                       />
                       
@@ -183,7 +185,7 @@ export default function LanguagesPage() {
                     <div className="border-t pt-6 space-y-4">
                       <div className="flex items-center gap-2">
                         <Languages className="h-5 w-5 text-muted-foreground" />
-                        <h3 className="font-semibold">Additional Languages (Optional)</h3>
+                        <h3 className="font-semibold">{t('pages:onboarding.languages.additionalLabel', 'Additional Languages (Optional)')}</h3>
                       </div>
                       
                       <UnifiedLanguagePicker
@@ -203,7 +205,7 @@ export default function LanguagesPage() {
                       data-testid="button-back"
                     >
                       <ChevronLeft className="h-4 w-4 mr-2" />
-                      Back
+                      {t('common:buttons.back', 'Back')}
                     </Button>
                     <Button
                       onClick={handleContinue}
@@ -213,11 +215,11 @@ export default function LanguagesPage() {
                       {isLoading ? (
                         <>
                           <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                          Saving...
+                          {t('common:buttons.saving', 'Saving...')}
                         </>
                       ) : (
                         <>
-                          Continue
+                          {t('common:buttons.continue', 'Continue')}
                           <ChevronRight className="h-4 w-4 ml-2" />
                         </>
                       )}
@@ -225,7 +227,6 @@ export default function LanguagesPage() {
                   </CardFooter>
                 </Card>
 
-                {/* Progress Indicator */}
                 <div className="flex justify-center gap-2 mt-8">
                   <div className="h-2 w-12 rounded-full bg-primary"></div>
                   <div className="h-2 w-12 rounded-full bg-primary"></div>

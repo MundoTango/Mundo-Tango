@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useLocation } from "wouter";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -14,10 +15,10 @@ import heroImage from "@assets/stock_images/elegant_professional_f6beef21.jpg";
 export default function WelcomePage() {
   const [, navigate] = useLocation();
   const { user } = useAuth();
+  const { t } = useTranslation(['pages', 'common']);
 
   useEffect(() => {
     if (user && user.isOnboardingComplete) {
-      // Already onboarded, redirect to volunteer/support page
       navigate("/volunteer");
     }
   }, [user, navigate]);
@@ -29,36 +30,35 @@ export default function WelcomePage() {
   const features = [
     {
       icon: MapPin,
-      title: "Choose Your City",
-      description: "Connect with your local tango community"
+      title: t('pages:onboarding.welcome.features.city.title', 'Choose Your City'),
+      description: t('pages:onboarding.welcome.features.city.description', 'Connect with your local tango community')
     },
     {
       icon: Users,
-      title: "Tell Us Your Roles",
-      description: "Dancer, teacher, DJ, organizer, or all of the above?"
+      title: t('pages:onboarding.welcome.features.roles.title', 'Tell Us Your Roles'),
+      description: t('pages:onboarding.welcome.features.roles.description', 'Dancer, teacher, DJ, organizer, or all of the above?')
     },
     {
       icon: Calendar,
-      title: "Discover Events",
-      description: "Find milongas, classes, and festivals near you"
+      title: t('pages:onboarding.welcome.features.events.title', 'Discover Events'),
+      description: t('pages:onboarding.welcome.features.events.description', 'Find milongas, classes, and festivals near you')
     },
     {
       icon: Sparkles,
-      title: "Share Your Journey",
-      description: "Post photos, videos, and connect with dancers worldwide"
+      title: t('pages:onboarding.welcome.features.journey.title', 'Share Your Journey'),
+      description: t('pages:onboarding.welcome.features.journey.description', 'Post photos, videos, and connect with dancers worldwide')
     }
   ];
 
   return (
     <SelfHealingErrorBoundary pageName="OnboardingWelcome" fallbackRoute="/feed">
-      <PageLayout title="Welcome" showBreadcrumbs>
+      <PageLayout title={t('pages:onboarding.welcome.pageTitle', 'Welcome')} showBreadcrumbs>
         <>
       <SEO
-        title="Welcome to Mundo Tango"
-        description="Complete your profile and join the global tango community"
+        title={t('pages:onboarding.welcome.seoTitle', 'Welcome to Mundo Tango')}
+        description={t('pages:onboarding.welcome.seoDescription', 'Complete your profile and join the global tango community')}
       />
 
-      {/* Hero Section */}
       <div className="relative h-[60vh] w-full overflow-hidden">
         <div 
           className="absolute inset-0 bg-cover bg-center"
@@ -74,15 +74,15 @@ export default function WelcomePage() {
             transition={{ duration: 1, ease: "easeOut" }}
           >
             <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-welcome">
-              Onboarding
+              {t('pages:onboarding.welcome.badge', 'Onboarding')}
             </Badge>
             
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6">
-              Welcome to Mundo Tango
+              {t('pages:onboarding.welcome.title', 'Welcome to Mundo Tango')}
             </h1>
             
             <p className="text-xl md:text-2xl text-white/80 max-w-2xl mx-auto mb-8">
-              Your journey into the global tango community starts here
+              {t('pages:onboarding.welcome.subtitle', 'Your journey into the global tango community starts here')}
             </p>
 
             <motion.div
@@ -97,7 +97,7 @@ export default function WelcomePage() {
                 data-testid="button-continue-onboarding"
               >
                 <Sparkles className="h-5 w-5" />
-                Let's Get Started
+                {t('pages:onboarding.welcome.getStarted', "Let's Get Started")}
                 <ChevronRight className="h-5 w-5" />
               </Button>
             </motion.div>
@@ -105,7 +105,6 @@ export default function WelcomePage() {
         </div>
       </div>
 
-      {/* Features Section */}
       <div className="bg-background">
         <div className="container mx-auto max-w-6xl px-6 py-16">
           <motion.div
@@ -115,10 +114,10 @@ export default function WelcomePage() {
             className="text-center mb-12"
           >
             <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">
-              Complete Your Profile in Minutes
+              {t('pages:onboarding.welcome.profileTitle', 'Complete Your Profile in Minutes')}
             </h2>
             <p className="text-lg text-muted-foreground">
-              Four simple steps to join the community
+              {t('pages:onboarding.welcome.profileSubtitle', 'Four simple steps to join the community')}
             </p>
           </motion.div>
 
@@ -159,9 +158,9 @@ export default function WelcomePage() {
             transition={{ delay: 1 }}
           >
             <div className="inline-flex items-center gap-3 text-sm text-muted-foreground">
-              <Badge variant="outline">Step 1 of 4</Badge>
+              <Badge variant="outline">{t('pages:onboarding.welcome.stepIndicator', 'Step 1 of 4')}</Badge>
               <span>•</span>
-              <span>Takes 2-3 minutes</span>
+              <span>{t('pages:onboarding.welcome.duration', 'Takes 2-3 minutes')}</span>
             </div>
           </motion.div>
         </div>

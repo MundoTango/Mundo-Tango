@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useRoute, Link } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -144,6 +145,7 @@ function EventsList({
 }
 
 export default function EventSeriesPage() {
+  const { t } = useTranslation(['pages', 'common']);
   const [, params] = useRoute("/event-series/:id");
   const seriesId = params?.id ? Number(params.id) : null;
   const { user } = useAuth();

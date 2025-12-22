@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useLocation } from "wouter";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -80,6 +81,7 @@ const eventFormSchema = z.object({
 type EventFormValues = z.infer<typeof eventFormSchema>;
 
 export default function CreateEventPage() {
+  const { t } = useTranslation(['pages', 'common']);
   const { user } = useAuth();
   const [, setLocation] = useLocation();
   const { toast } = useToast();

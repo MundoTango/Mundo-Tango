@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "wouter";
 import { useEvents, useEventAttendance, useEventRSVPs, useMyEvents, useUpcomingEvents } from "@/hooks/useEvents";
 import { useAuth } from "@/contexts/AuthContext";
@@ -79,6 +80,7 @@ L.Icon.Default.mergeOptions({
 });
 
 function EventCard({ event, index = 0 }: { event: any; index?: number }) {
+  const { t } = useTranslation(['pages', 'common']);
   const { user } = useAuth();
   const [imgError, setImgError] = useState(false);
   
@@ -150,7 +152,7 @@ function EventCard({ event, index = 0 }: { event: any; index?: number }) {
             )}
             {isFull && (
               <Badge className="bg-red-500 text-white" data-testid={`badge-full-${eventData.id}`}>
-                Full
+                {t('pages:events.full', 'Full')}
               </Badge>
             )}
           </div>
@@ -158,7 +160,7 @@ function EventCard({ event, index = 0 }: { event: any; index?: number }) {
             <h3 
               className="text-2xl font-serif font-bold line-clamp-2 mb-2" 
               data-testid={`text-event-title-${eventData.id}`}
-              dangerouslySetInnerHTML={{ __html: eventData.title || "Untitled Event" }}
+              dangerouslySetInnerHTML={{ __html: eventData.title || t('pages:events.untitledEvent', 'Untitled Event') }}
             />
           </div>
         </div>
@@ -197,7 +199,7 @@ function EventCard({ event, index = 0 }: { event: any; index?: number }) {
           <div className="flex items-center gap-2 text-sm">
             <Users className="h-4 w-4 flex-shrink-0 text-primary" />
             <span data-testid={`text-rsvp-count-${eventData.id}`}>
-              {attendeeCount} {attendeeCount === 1 ? 'person' : 'people'}
+              {attendeeCount} {attendeeCount === 1 ? t('common:person', 'person') : t('common:people', 'people')}
               {eventData.maxAttendees && ` / ${eventData.maxAttendees}`}
             </span>
           </div>
@@ -221,7 +223,7 @@ function EventCard({ event, index = 0 }: { event: any; index?: number }) {
                 })}
                 {eventData.hostLanguages.length > 3 && (
                   <Badge variant="outline" className="text-xs" data-testid={`badge-languages-more-${eventData.id}`}>
-                    +{eventData.hostLanguages.length - 3} more
+                    +{eventData.hostLanguages.length - 3} {t('common:more', 'more')}
                   </Badge>
                 )}
               </div>
@@ -239,7 +241,7 @@ function EventCard({ event, index = 0 }: { event: any; index?: number }) {
 
           <Link href={`/events/${eventData.id}`}>
             <Button variant="outline" className="gap-2" data-testid={`button-view-event-${eventData.id}`}>
-              Details
+              {t('common:details', 'Details')}
               <ChevronRight className="h-4 w-4" />
             </Button>
           </Link>
@@ -252,6 +254,7 @@ function EventCard({ event, index = 0 }: { event: any; index?: number }) {
 type EventTab = "my-events" | "upcoming" | "past" | "discover";
 
 export default function EventsPage() {
+  const { t } = useTranslation(['pages', 'common']);
   const [, navigate] = useLocation();
   const { user } = useAuth();
   const { toast } = useToast();

@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { Link } from "wouter";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -14,6 +15,8 @@ import {
 import { SiReact, SiTypescript, SiTailwindcss, SiPostgresql, SiRedis, SiOpenai, SiStripe } from "react-icons/si";
 
 function OpenSourcePageContent() {
+  const { t } = useTranslation(['pages', 'common']);
+
   const fadeInUp = {
     hidden: { opacity: 0, y: 30 },
     visible: { opacity: 1, y: 0 }
@@ -25,46 +28,46 @@ function OpenSourcePageContent() {
   };
 
   const techStack = [
-    { name: "React", icon: SiReact, category: "Frontend" },
-    { name: "TypeScript", icon: SiTypescript, category: "Language" },
-    { name: "Tailwind CSS", icon: SiTailwindcss, category: "Styling" },
-    { name: "PostgreSQL", icon: SiPostgresql, category: "Database" },
-    { name: "Redis", icon: SiRedis, category: "Cache" },
-    { name: "OpenAI", icon: SiOpenai, category: "AI" },
-    { name: "Stripe", icon: SiStripe, category: "Payments" },
+    { name: "React", icon: SiReact, category: t('pages:openSource.tech.frontend', 'Frontend') },
+    { name: "TypeScript", icon: SiTypescript, category: t('pages:openSource.tech.language', 'Language') },
+    { name: "Tailwind CSS", icon: SiTailwindcss, category: t('pages:openSource.tech.styling', 'Styling') },
+    { name: "PostgreSQL", icon: SiPostgresql, category: t('pages:openSource.tech.database', 'Database') },
+    { name: "Redis", icon: SiRedis, category: t('pages:openSource.tech.cache', 'Cache') },
+    { name: "OpenAI", icon: SiOpenai, category: t('pages:openSource.tech.ai', 'AI') },
+    { name: "Stripe", icon: SiStripe, category: t('pages:openSource.tech.payments', 'Payments') },
   ];
 
   const pillars = [
     {
       icon: Shield,
-      title: "Trust Through Transparency",
-      description: "Every line of code is visible. No hidden trackers, no secret algorithms. You can verify exactly how your data is handled.",
+      title: t('pages:openSource.pillars.transparency.title', 'Trust Through Transparency'),
+      description: t('pages:openSource.pillars.transparency.desc', 'Every line of code is visible. No hidden trackers, no secret algorithms. You can verify exactly how your data is handled.'),
     },
     {
       icon: Lock,
-      title: "Security by Community",
-      description: "Open source means thousands of eyes reviewing our code. Security vulnerabilities are found and fixed faster than any closed system.",
+      title: t('pages:openSource.pillars.security.title', 'Security by Community'),
+      description: t('pages:openSource.pillars.security.desc', 'Open source means thousands of eyes reviewing our code. Security vulnerabilities are found and fixed faster than any closed system.'),
     },
     {
       icon: Users,
-      title: "Community Ownership",
-      description: "The tango community owns this platform. Fork it, improve it, or run your own instance. Your contributions shape the future.",
+      title: t('pages:openSource.pillars.ownership.title', 'Community Ownership'),
+      description: t('pages:openSource.pillars.ownership.desc', 'The tango community owns this platform. Fork it, improve it, or run your own instance. Your contributions shape the future.'),
     },
   ];
 
   const stats = [
-    { value: "61", label: "Technology Layers" },
-    { value: "927+", label: "AI Agents" },
-    { value: "380+", label: "Database Tables" },
-    { value: "MIT", label: "License" },
+    { value: "61", label: t('pages:openSource.stats.layers', 'Technology Layers') },
+    { value: "927+", label: t('pages:openSource.stats.agents', 'AI Agents') },
+    { value: "380+", label: t('pages:openSource.stats.tables', 'Database Tables') },
+    { value: "MIT", label: t('pages:openSource.stats.license', 'License') },
   ];
 
   return (
     <div className="min-h-screen bg-background">
       <PublicNavbar />
       <SEO
-        title="Open Source - Mundo Tango"
-        description="Mundo Tango is built on open source principles. Transparent, secure, community-owned. View our code on GitHub."
+        title={t('pages:openSource.seo.title', 'Open Source - Mundo Tango')}
+        description={t('pages:openSource.seo.description', 'Mundo Tango is built on open source principles. Transparent, secure, community-owned. View our code on GitHub.')}
       />
 
       {/* Hero Section */}
@@ -91,25 +94,24 @@ function OpenSourcePageContent() {
                 className="text-4xl md:text-5xl font-bold text-white"
                 data-testid="text-hero-headline"
               >
-                Built in the Open
+                {t('pages:openSource.hero.title', 'Built in the Open')}
               </motion.h1>
 
               <motion.p
                 variants={fadeInUp}
                 className="text-xl text-white/90 max-w-2xl mx-auto"
               >
-                Mundo Tango is proudly open source. Transparent code, community contributions, 
-                and a commitment to the tango community's ownership of their platform.
+                {t('pages:openSource.hero.subtitle', "Mundo Tango is proudly open source. Transparent code, community contributions, and a commitment to the tango community's ownership of their platform.")}
               </motion.p>
 
               <motion.div variants={fadeInUp} className="flex flex-col items-center gap-4">
                 <div className="text-center">
-                  <p className="text-white/90 mb-2">Mundo Tango is currently in community validation.</p>
-                  <p className="text-white/70 text-sm">Our code repository will be publicly available after stakeholder review and community feedback.</p>
+                  <p className="text-white/90 mb-2">{t('pages:openSource.hero.validation', 'Mundo Tango is currently in community validation.')}</p>
+                  <p className="text-white/70 text-sm">{t('pages:openSource.hero.validationNote', 'Our code repository will be publicly available after stakeholder review and community feedback.')}</p>
                 </div>
                 <Link href="/volunteer">
                   <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10" data-testid="button-contribute">
-                    Join the Validation Community
+                    {t('pages:openSource.cta.joinValidation', 'Join the Validation Community')}
                   </Button>
                 </Link>
               </motion.div>
@@ -142,10 +144,10 @@ function OpenSourcePageContent() {
           >
             <div className="text-center max-w-3xl mx-auto space-y-4">
               <motion.h2 variants={fadeInUp} className="text-3xl md:text-4xl font-bold">
-                Why Open Source Matters
+                {t('pages:openSource.pillarsSection.title', 'Why Open Source Matters')}
               </motion.h2>
               <motion.p variants={fadeInUp} className="text-lg text-muted-foreground">
-                Three pillars that guide our commitment to transparency.
+                {t('pages:openSource.pillarsSection.subtitle', 'Three pillars that guide our commitment to transparency.')}
               </motion.p>
             </div>
 
@@ -182,10 +184,10 @@ function OpenSourcePageContent() {
           >
             <div className="text-center max-w-3xl mx-auto space-y-4">
               <motion.h2 variants={fadeInUp} className="text-3xl font-bold">
-                Built With Modern Technology
+                {t('pages:openSource.techSection.title', 'Built With Modern Technology')}
               </motion.h2>
               <motion.p variants={fadeInUp} className="text-muted-foreground">
-                Enterprise-grade stack, community-driven development.
+                {t('pages:openSource.techSection.subtitle', 'Enterprise-grade stack, community-driven development.')}
               </motion.p>
             </div>
 
@@ -205,7 +207,7 @@ function OpenSourcePageContent() {
             </div>
 
             <motion.div variants={fadeInUp} className="text-center">
-              <p className="text-muted-foreground mb-4">And 30+ more technologies powering Mundo Tango</p>
+              <p className="text-muted-foreground mb-4">{t('pages:openSource.techSection.more', 'And 30+ more technologies powering Mundo Tango')}</p>
             </motion.div>
           </motion.div>
         </div>
@@ -223,18 +225,18 @@ function OpenSourcePageContent() {
           >
             <Card className="p-8">
               <CardHeader className="text-center pb-6">
-                <CardTitle className="text-2xl">How to Contribute</CardTitle>
+                <CardTitle className="text-2xl">{t('pages:openSource.contribute.title', 'How to Contribute')}</CardTitle>
                 <CardDescription>
-                  Join hundreds of contributors building the future of tango
+                  {t('pages:openSource.contribute.subtitle', 'Join hundreds of contributors building the future of tango')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-4">
                   {[
-                    { icon: Code, title: "Code", desc: "Fix bugs, add features, improve performance" },
-                    { icon: Layout, title: "Design", desc: "UI/UX improvements, icons, illustrations" },
-                    { icon: Globe, title: "Translate", desc: "Help us reach dancers in 68 languages" },
-                    { icon: Eye, title: "Review", desc: "Test features, report bugs, provide feedback" },
+                    { icon: Code, title: t('pages:openSource.contribute.code.title', 'Code'), desc: t('pages:openSource.contribute.code.desc', 'Fix bugs, add features, improve performance') },
+                    { icon: Layout, title: t('pages:openSource.contribute.design.title', 'Design'), desc: t('pages:openSource.contribute.design.desc', 'UI/UX improvements, icons, illustrations') },
+                    { icon: Globe, title: t('pages:openSource.contribute.translate.title', 'Translate'), desc: t('pages:openSource.contribute.translate.desc', 'Help us reach dancers in 68 languages') },
+                    { icon: Eye, title: t('pages:openSource.contribute.review.title', 'Review'), desc: t('pages:openSource.contribute.review.desc', 'Test features, report bugs, provide feedback') },
                   ].map((item, index) => (
                     <motion.div 
                       key={index}
@@ -266,19 +268,19 @@ function OpenSourcePageContent() {
             className="text-center max-w-3xl mx-auto space-y-6"
           >
             <motion.h2 variants={fadeInUp} className="text-3xl font-bold text-white">
-              Join the Movement
+              {t('pages:openSource.finalCta.title', 'Join the Movement')}
             </motion.h2>
             <motion.p variants={fadeInUp} className="text-white/90 text-lg">
-              Help build the platform the tango community deserves. Every contribution matters.
+              {t('pages:openSource.finalCta.subtitle', 'Help build the platform the tango community deserves. Every contribution matters.')}
             </motion.p>
             <motion.div variants={fadeInUp} className="flex flex-col items-center gap-4">
               <div className="text-center">
-                <p className="text-white/90">Currently in community validation.</p>
-                <p className="text-white/70 text-sm">Code will be public after stakeholder approval.</p>
+                <p className="text-white/90">{t('pages:openSource.finalCta.validation', 'Currently in community validation.')}</p>
+                <p className="text-white/70 text-sm">{t('pages:openSource.finalCta.validationNote', 'Code will be public after stakeholder approval.')}</p>
               </div>
               <Link href="/volunteer">
                 <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10" data-testid="button-volunteer">
-                  Become a Contributor
+                  {t('pages:openSource.cta.becomeContributor', 'Become a Contributor')}
                 </Button>
               </Link>
             </motion.div>

@@ -245,7 +245,7 @@ export default function LandingPage() {
                 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight"
                 data-testid="text-hero-headline"
               >
-                {t('pages:home.hero.headline')}
+                {t('pages:home.hero.heading', 'Where Tango Meets Community')}
               </motion.h1>
 
               <motion.p
@@ -253,7 +253,7 @@ export default function LandingPage() {
                 className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto"
                 data-testid="text-hero-subheadline"
               >
-                {t('pages:home.hero.subtitle')}
+                {t('pages:home.hero.paragraph', 'Connect with tango dancers worldwide, discover events, and experience the magic of Argentine tango.')}
               </motion.p>
 
               <motion.div
@@ -266,7 +266,7 @@ export default function LandingPage() {
                     className="bg-white text-primary hover:bg-white/90 text-lg px-8 py-6 h-auto font-semibold"
                     data-testid="button-join-free"
                   >
-                    {t('pages:home.hero.cta')}
+                    {t('pages:home.hero.getStarted', 'Get Started Free')}
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </Link>

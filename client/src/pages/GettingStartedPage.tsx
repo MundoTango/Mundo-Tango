@@ -7,58 +7,61 @@ import { SEO } from "@/components/SEO";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { motion } from "framer-motion";
-
-const quickStarts = [
-  {
-    icon: Book,
-    title: "Complete Beginners",
-    description: "Never danced tango before? Start here!",
-    actions: [
-      { label: "Find Beginner Classes", href: "/teachers?level=beginner" },
-      { label: "Watch Video Lessons", href: "/video-lessons" },
-      { label: "Learn Tango Basics", href: "/tutorials" }
-    ]
-  },
-  {
-    icon: Users,
-    title: "New to the Community",
-    description: "Know how to dance but new to Mundo Tango?",
-    actions: [
-      { label: "Set Up Your Profile", href: "/profile/edit" },
-      { label: "Find Local Events", href: "/events" },
-      { label: "Join Groups", href: "/groups" }
-    ]
-  },
-  {
-    icon: Calendar,
-    title: "Event Organizers",
-    description: "Want to list your milonga or class?",
-    actions: [
-      { label: "Create an Event", href: "/events/create" },
-      { label: "Organizer Guide", href: "/user-guide#organizers" },
-      { label: "View Pricing", href: "/pricing" }
-    ]
-  },
-  {
-    icon: Video,
-    title: "Teachers & Professionals",
-    description: "Share your expertise with the community",
-    actions: [
-      { label: "Create Teacher Profile", href: "/profile/edit" },
-      { label: "Upload Video Lessons", href: "/video-lessons/create" },
-      { label: "Teacher Resources", href: "/user-guide#teachers" }
-    ]
-  }
-];
+import { useTranslation } from "react-i18next";
 
 export default function GettingStartedPage() {
+  const { t } = useTranslation(['pages', 'common']);
+
+  const quickStarts = [
+    {
+      icon: Book,
+      title: t('pages:gettingStarted.paths.beginners.title', 'Complete Beginners'),
+      description: t('pages:gettingStarted.paths.beginners.description', 'Never danced tango before? Start here!'),
+      actions: [
+        { label: t('pages:gettingStarted.paths.beginners.actions.findClasses', 'Find Beginner Classes'), href: "/teachers?level=beginner" },
+        { label: t('pages:gettingStarted.paths.beginners.actions.watchVideos', 'Watch Video Lessons'), href: "/video-lessons" },
+        { label: t('pages:gettingStarted.paths.beginners.actions.learnBasics', 'Learn Tango Basics'), href: "/tutorials" }
+      ]
+    },
+    {
+      icon: Users,
+      title: t('pages:gettingStarted.paths.newCommunity.title', 'New to the Community'),
+      description: t('pages:gettingStarted.paths.newCommunity.description', 'Know how to dance but new to Mundo Tango?'),
+      actions: [
+        { label: t('pages:gettingStarted.paths.newCommunity.actions.setupProfile', 'Set Up Your Profile'), href: "/profile/edit" },
+        { label: t('pages:gettingStarted.paths.newCommunity.actions.findEvents', 'Find Local Events'), href: "/events" },
+        { label: t('pages:gettingStarted.paths.newCommunity.actions.joinGroups', 'Join Groups'), href: "/groups" }
+      ]
+    },
+    {
+      icon: Calendar,
+      title: t('pages:gettingStarted.paths.organizers.title', 'Event Organizers'),
+      description: t('pages:gettingStarted.paths.organizers.description', 'Want to list your milonga or class?'),
+      actions: [
+        { label: t('pages:gettingStarted.paths.organizers.actions.createEvent', 'Create an Event'), href: "/events/create" },
+        { label: t('pages:gettingStarted.paths.organizers.actions.organizerGuide', 'Organizer Guide'), href: "/user-guide#organizers" },
+        { label: t('pages:gettingStarted.paths.organizers.actions.viewPricing', 'View Pricing'), href: "/pricing" }
+      ]
+    },
+    {
+      icon: Video,
+      title: t('pages:gettingStarted.paths.teachers.title', 'Teachers & Professionals'),
+      description: t('pages:gettingStarted.paths.teachers.description', 'Share your expertise with the community'),
+      actions: [
+        { label: t('pages:gettingStarted.paths.teachers.actions.createProfile', 'Create Teacher Profile'), href: "/profile/edit" },
+        { label: t('pages:gettingStarted.paths.teachers.actions.uploadVideos', 'Upload Video Lessons'), href: "/video-lessons/create" },
+        { label: t('pages:gettingStarted.paths.teachers.actions.resources', 'Teacher Resources'), href: "/user-guide#teachers" }
+      ]
+    }
+  ];
+
   return (
     <SelfHealingErrorBoundary pageName="Getting Started" fallbackRoute="/">
-      <PageLayout title="Getting Started" showBreadcrumbs>
+      <PageLayout title={t('pages:gettingStarted.pageTitle', 'Getting Started')} showBreadcrumbs>
         <PublicLayout>
           <SEO
-            title="Getting Started - Mundo Tango"
-            description="New to Mundo Tango? Learn how to get started, whether you're a complete beginner, experienced dancer, teacher, or event organizer. Find your path and start dancing."
+            title={t('pages:gettingStarted.seo.title', 'Getting Started - Mundo Tango')}
+            description={t('pages:gettingStarted.seo.description', "New to Mundo Tango? Learn how to get started, whether you're a complete beginner, experienced dancer, teacher, or event organizer. Find your path and start dancing.")}
           />
           
           <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">
@@ -76,15 +79,15 @@ export default function GettingStartedPage() {
               >
                 <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
                   <Sparkles className="w-3 h-3 mr-1.5" />
-                  Getting Started
+                  {t('pages:gettingStarted.badge', 'Getting Started')}
                 </Badge>
                 
                 <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6" data-testid="text-page-title">
-                  Welcome to Mundo Tango
+                  {t('pages:gettingStarted.title', 'Welcome to Mundo Tango')}
                 </h1>
                 
                 <p className="text-xl text-white/80 max-w-2xl mx-auto" data-testid="text-page-subtitle">
-                  Choose your path and start your tango journey today
+                  {t('pages:gettingStarted.subtitle', 'Choose your path and start your tango journey today')}
                 </p>
               </motion.div>
             </div>
@@ -101,11 +104,10 @@ export default function GettingStartedPage() {
                 className="text-center max-w-3xl mx-auto"
               >
                 <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">
-                  Start Your Journey
+                  {t('pages:gettingStarted.journeyTitle', 'Start Your Journey')}
                 </h2>
                 <p className="text-lg text-muted-foreground">
-                  Whether you're taking your first steps or organizing world-class events, 
-                  we have the tools and resources to help you succeed.
+                  {t('pages:gettingStarted.journeyDescription', "Whether you're taking your first steps or organizing world-class events, we have the tools and resources to help you succeed.")}
                 </p>
               </motion.div>
 
@@ -163,7 +165,7 @@ export default function GettingStartedPage() {
               >
                 <Card data-testid="card-resources">
                   <CardHeader>
-                    <CardTitle className="text-2xl font-serif">Popular Resources</CardTitle>
+                    <CardTitle className="text-2xl font-serif">{t('pages:gettingStarted.resources.title', 'Popular Resources')}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="grid gap-4 md:grid-cols-3">
@@ -171,9 +173,9 @@ export default function GettingStartedPage() {
                         <a href="/faq">
                           <Book className="h-6 w-6 text-primary" />
                           <div className="text-left">
-                            <div className="font-semibold">FAQ</div>
+                            <div className="font-semibold">{t('pages:gettingStarted.resources.faq.title', 'FAQ')}</div>
                             <div className="text-xs text-muted-foreground font-normal">
-                              Common questions answered
+                              {t('pages:gettingStarted.resources.faq.description', 'Common questions answered')}
                             </div>
                           </div>
                         </a>
@@ -182,9 +184,9 @@ export default function GettingStartedPage() {
                         <a href="/user-guide">
                           <Video className="h-6 w-6 text-primary" />
                           <div className="text-left">
-                            <div className="font-semibold">User Guide</div>
+                            <div className="font-semibold">{t('pages:gettingStarted.resources.userGuide.title', 'User Guide')}</div>
                             <div className="text-xs text-muted-foreground font-normal">
-                              Complete platform guide
+                              {t('pages:gettingStarted.resources.userGuide.description', 'Complete platform guide')}
                             </div>
                           </div>
                         </a>
@@ -193,9 +195,9 @@ export default function GettingStartedPage() {
                         <a href="/help">
                           <Users className="h-6 w-6 text-primary" />
                           <div className="text-left">
-                            <div className="font-semibold">Help Center</div>
+                            <div className="font-semibold">{t('pages:gettingStarted.resources.helpCenter.title', 'Help Center')}</div>
                             <div className="text-xs text-muted-foreground font-normal">
-                              Get support anytime
+                              {t('pages:gettingStarted.resources.helpCenter.description', 'Get support anytime')}
                             </div>
                           </div>
                         </a>
@@ -214,12 +216,12 @@ export default function GettingStartedPage() {
               >
                 <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20" data-testid="card-cta">
                   <CardContent className="py-12 text-center">
-                    <h3 className="text-3xl font-serif font-bold mb-3">Need Personal Help?</h3>
+                    <h3 className="text-3xl font-serif font-bold mb-3">{t('pages:gettingStarted.cta.title', 'Need Personal Help?')}</h3>
                     <p className="text-muted-foreground mb-6 text-lg max-w-lg mx-auto">
-                      Our support team is here to help you get started
+                      {t('pages:gettingStarted.cta.description', 'Our support team is here to help you get started')}
                     </p>
                     <Button size="lg" asChild data-testid="button-contact">
-                      <a href="/contact">Contact Support</a>
+                      <a href="/contact">{t('pages:gettingStarted.cta.button', 'Contact Support')}</a>
                     </Button>
                   </CardContent>
                 </Card>

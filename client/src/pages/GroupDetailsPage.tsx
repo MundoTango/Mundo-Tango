@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import { useRoute, Link } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -174,6 +175,7 @@ function getEventDate(event: any): Date {
 }
 
 function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: string | null }) {
+  const { t } = useTranslation(['pages', 'common']);
   const { user } = useAuth();
   const { data: myRsvps } = useMyRSVPs();
   const [filters, setFilters] = useState<EventFilterValues>({});

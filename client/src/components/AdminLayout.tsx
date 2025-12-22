@@ -2,6 +2,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AdminSidebar } from "./AdminSidebar";
 import { GlobalTopbar } from "./GlobalTopbar";
 import { Menu } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 /**
  * AdminLayout - Layout component for admin pages
@@ -15,6 +16,7 @@ import { Menu } from "lucide-react";
  * Usage: Wrap admin pages in this layout component
  */
 export function AdminLayout({ children }: { children: React.ReactNode }) {
+  const { t } = useTranslation(['navigation', 'common']);
   const style = {
     "--sidebar-width": "18rem",  // Slightly wider for admin content
     "--sidebar-width-icon": "3rem",

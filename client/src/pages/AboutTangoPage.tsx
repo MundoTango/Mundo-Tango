@@ -5,13 +5,16 @@ import { Button } from "@/components/ui/button";
 import { Music, Heart, Users, Globe } from "lucide-react";
 import { SEO } from "@/components/SEO";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 export default function AboutTangoPage() {
+  const { t } = useTranslation(['pages', 'common']);
+
   return (
     <AppLayout>
       <SEO
-        title="About Argentine Tango - Mundo Tango"
-        description="Discover the passion, elegance, and rich history of Argentine Tango. Learn about its origins, the dance, social experience, and global community."
+        title={t('pages:about.seo.title', 'About Argentine Tango - Mundo Tango')}
+        description={t('pages:about.seo.description', 'Discover the passion, elegance, and rich history of Argentine Tango. Learn about its origins, the dance, social experience, and global community.')}
       />
       
       {/* Hero Section */}
@@ -29,15 +32,15 @@ export default function AboutTangoPage() {
             transition={{ duration: 1, ease: "easeOut" }}
           >
             <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
-              The Dance
+              {t('pages:about.badge', 'The Dance')}
             </Badge>
             
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6" data-testid="text-about-tango-title">
-              About Argentine Tango
+              {t('pages:about.title', 'About Argentine Tango')}
             </h1>
             
             <p className="text-xl text-white/80 max-w-2xl mx-auto" data-testid="text-page-subtitle">
-              Discover the passion, elegance, and rich history of one of the world's most captivating dance forms
+              {t('pages:about.subtitle', "Discover the passion, elegance, and rich history of one of the world's most captivating dance forms")}
             </p>
           </motion.div>
         </div>
@@ -56,15 +59,15 @@ export default function AboutTangoPage() {
               <CardHeader>
                 <CardTitle className="text-3xl font-serif flex items-center gap-2">
                   <Music className="h-6 w-6 text-primary" />
-                  The Origins of Tango
+                  {t('pages:about.origins.title', 'The Origins of Tango')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4 text-muted-foreground p-8">
                 <p>
-                  Argentine Tango emerged in the late 19th century in the working-class neighborhoods of Buenos Aires and Montevideo. Born from a melting pot of European immigrants, African rhythms, and local traditions, tango became a powerful expression of urban life, longing, and passion.
+                  {t('pages:about.origins.paragraph1', 'Argentine Tango emerged in the late 19th century in the working-class neighborhoods of Buenos Aires and Montevideo. Born from a melting pot of European immigrants, African rhythms, and local traditions, tango became a powerful expression of urban life, longing, and passion.')}
                 </p>
                 <p>
-                  What began in the streets and dance halls of La Boca and San Telmo evolved into a sophisticated art form that captivated the world. By the 1920s, tango had spread to Paris and beyond, becoming a global phenomenon that continues to enchant dancers today.
+                  {t('pages:about.origins.paragraph2', 'What began in the streets and dance halls of La Boca and San Telmo evolved into a sophisticated art form that captivated the world. By the 1920s, tango had spread to Paris and beyond, becoming a global phenomenon that continues to enchant dancers today.')}
                 </p>
               </CardContent>
             </Card>
@@ -80,12 +83,12 @@ export default function AboutTangoPage() {
               <CardHeader>
                 <CardTitle className="text-3xl font-serif flex items-center gap-2">
                   <Heart className="h-6 w-6 text-primary" />
-                  The Dance
+                  {t('pages:about.dance.title', 'The Dance')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4 text-muted-foreground p-8">
                 <p>
-                  Tango is an improvised partner dance characterized by close embrace, intricate footwork, and profound connection between dancers. Unlike choreographed ballroom dances, tango is a conversation between partners—a musical dialogue expressed through movement.
+                  {t('pages:about.dance.description', 'Tango is an improvised partner dance characterized by close embrace, intricate footwork, and profound connection between dancers. Unlike choreographed ballroom dances, tango is a conversation between partners—a musical dialogue expressed through movement.')}
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
                   <motion.div
@@ -93,9 +96,9 @@ export default function AboutTangoPage() {
                     className="bg-card p-4 rounded-lg border border-border"
                     data-testid="card-embrace"
                   >
-                    <h4 className="font-semibold font-serif text-foreground mb-2">The Embrace</h4>
+                    <h4 className="font-semibold font-serif text-foreground mb-2">{t('pages:about.dance.embrace.title', 'The Embrace')}</h4>
                     <p className="text-sm">
-                      The connection between partners, ranging from close embrace to open position, creates the foundation for communication and musicality.
+                      {t('pages:about.dance.embrace.description', 'The connection between partners, ranging from close embrace to open position, creates the foundation for communication and musicality.')}
                     </p>
                   </motion.div>
                   <motion.div
@@ -103,9 +106,9 @@ export default function AboutTangoPage() {
                     className="bg-card p-4 rounded-lg border border-border"
                     data-testid="card-walk"
                   >
-                    <h4 className="font-semibold font-serif text-foreground mb-2">The Walk</h4>
+                    <h4 className="font-semibold font-serif text-foreground mb-2">{t('pages:about.dance.walk.title', 'The Walk')}</h4>
                     <p className="text-sm">
-                      The caminata is tango's fundamental element—a simple walk that embodies the dance's essence: connection, intention, and musicality.
+                      {t('pages:about.dance.walk.description', "The caminata is tango's fundamental element—a simple walk that embodies the dance's essence: connection, intention, and musicality.")}
                     </p>
                   </motion.div>
                   <motion.div
@@ -113,9 +116,9 @@ export default function AboutTangoPage() {
                     className="bg-card p-4 rounded-lg border border-border"
                     data-testid="card-improvisation"
                   >
-                    <h4 className="font-semibold font-serif text-foreground mb-2">Improvisation</h4>
+                    <h4 className="font-semibold font-serif text-foreground mb-2">{t('pages:about.dance.improvisation.title', 'Improvisation')}</h4>
                     <p className="text-sm">
-                      Leaders and followers create unique dances in the moment, interpreting music together without predetermined choreography.
+                      {t('pages:about.dance.improvisation.description', 'Leaders and followers create unique dances in the moment, interpreting music together without predetermined choreography.')}
                     </p>
                   </motion.div>
                   <motion.div
@@ -123,9 +126,9 @@ export default function AboutTangoPage() {
                     className="bg-card p-4 rounded-lg border border-border"
                     data-testid="card-musicality"
                   >
-                    <h4 className="font-semibold font-serif text-foreground mb-2">Musicality</h4>
+                    <h4 className="font-semibold font-serif text-foreground mb-2">{t('pages:about.dance.musicality.title', 'Musicality')}</h4>
                     <p className="text-sm">
-                      Dancers express the music's melody, rhythm, and emotion through their movement, creating a visual interpretation of the song.
+                      {t('pages:about.dance.musicality.description', "Dancers express the music's melody, rhythm, and emotion through their movement, creating a visual interpretation of the song.")}
                     </p>
                   </motion.div>
                 </div>
@@ -143,30 +146,30 @@ export default function AboutTangoPage() {
               <CardHeader>
                 <CardTitle className="text-3xl font-serif flex items-center gap-2">
                   <Users className="h-6 w-6 text-primary" />
-                  The Social Experience: Milongas
+                  {t('pages:about.milongas.title', 'The Social Experience: Milongas')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4 text-muted-foreground p-8">
                 <p>
-                  A milonga is a social dance event where tango is danced. These gatherings follow traditional codes and customs that create a respectful, welcoming environment for dancers of all levels.
+                  {t('pages:about.milongas.description', 'A milonga is a social dance event where tango is danced. These gatherings follow traditional codes and customs that create a respectful, welcoming environment for dancers of all levels.')}
                 </p>
                 <div className="space-y-3">
                   <div>
-                    <h4 className="font-semibold font-serif text-foreground mb-1">Cabeceo</h4>
+                    <h4 className="font-semibold font-serif text-foreground mb-1">{t('pages:about.milongas.cabeceo.title', 'Cabeceo')}</h4>
                     <p className="text-sm">
-                      The traditional non-verbal invitation system where dancers use eye contact and a subtle nod to accept or decline dance invitations.
+                      {t('pages:about.milongas.cabeceo.description', 'The traditional non-verbal invitation system where dancers use eye contact and a subtle nod to accept or decline dance invitations.')}
                     </p>
                   </div>
                   <div>
-                    <h4 className="font-semibold font-serif text-foreground mb-1">Tandas & Cortinas</h4>
+                    <h4 className="font-semibold font-serif text-foreground mb-1">{t('pages:about.milongas.tandas.title', 'Tandas & Cortinas')}</h4>
                     <p className="text-sm">
-                      Music is organized in sets (tandas) of 3-4 songs, separated by short musical breaks (cortinas) that signal the end of a dance partnership.
+                      {t('pages:about.milongas.tandas.description', 'Music is organized in sets (tandas) of 3-4 songs, separated by short musical breaks (cortinas) that signal the end of a dance partnership.')}
                     </p>
                   </div>
                   <div>
-                    <h4 className="font-semibold font-serif text-foreground mb-1">Ronda</h4>
+                    <h4 className="font-semibold font-serif text-foreground mb-1">{t('pages:about.milongas.ronda.title', 'Ronda')}</h4>
                     <p className="text-sm">
-                      Dancers move counterclockwise around the dance floor in lanes, respecting the flow and space of others.
+                      {t('pages:about.milongas.ronda.description', 'Dancers move counterclockwise around the dance floor in lanes, respecting the flow and space of others.')}
                     </p>
                   </div>
                 </div>
@@ -184,30 +187,30 @@ export default function AboutTangoPage() {
               <CardHeader>
                 <CardTitle className="text-3xl font-serif flex items-center gap-2">
                   <Globe className="h-6 w-6 text-primary" />
-                  Tango Today
+                  {t('pages:about.today.title', 'Tango Today')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4 text-muted-foreground p-8">
                 <p>
-                  Today, tango thrives as a global community with millions of dancers on every continent. From Buenos Aires to Berlin, Tokyo to Toronto, milongas bring people together through this shared passion.
+                  {t('pages:about.today.paragraph1', 'Today, tango thrives as a global community with millions of dancers on every continent. From Buenos Aires to Berlin, Tokyo to Toronto, milongas bring people together through this shared passion.')}
                 </p>
                 <p>
-                  In 2009, UNESCO declared tango part of the world's Intangible Cultural Heritage, recognizing its significance as a cultural treasure. Whether you're drawn to its elegance, its music, or its profound connection, tango welcomes all who wish to experience its magic.
+                  {t('pages:about.today.paragraph2', "In 2009, UNESCO declared tango part of the world's Intangible Cultural Heritage, recognizing its significance as a cultural treasure. Whether you're drawn to its elegance, its music, or its profound connection, tango welcomes all who wish to experience its magic.")}
                 </p>
                 <div className="bg-primary/5 p-6 rounded-lg border border-primary/20 mt-6">
-                  <h4 className="font-semibold font-serif text-foreground mb-3">Start Your Tango Journey</h4>
+                  <h4 className="font-semibold font-serif text-foreground mb-3">{t('pages:about.today.cta.title', 'Start Your Tango Journey')}</h4>
                   <p className="text-sm mb-4">
-                    Join the Mundo Tango community to find classes, events, and fellow dancers near you.
+                    {t('pages:about.today.cta.description', 'Join the Mundo Tango community to find classes, events, and fellow dancers near you.')}
                   </p>
                   <div className="flex gap-3 flex-wrap">
                     <Button asChild variant="outline" data-testid="button-find-teachers">
-                      <a href="/teachers">Find Teachers</a>
+                      <a href="/teachers">{t('pages:about.today.cta.findTeachers', 'Find Teachers')}</a>
                     </Button>
                     <Button asChild variant="outline" data-testid="button-browse-events">
-                      <a href="/events">Browse Events</a>
+                      <a href="/events">{t('pages:about.today.cta.browseEvents', 'Browse Events')}</a>
                     </Button>
                     <Button asChild variant="outline" data-testid="button-discover-venues">
-                      <a href="/venues">Discover Venues</a>
+                      <a href="/venues">{t('pages:about.today.cta.discoverVenues', 'Discover Venues')}</a>
                     </Button>
                   </div>
                 </div>

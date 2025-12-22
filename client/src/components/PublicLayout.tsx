@@ -1,8 +1,10 @@
 import { PublicNavbar } from "./PublicNavbar";
 import { Link } from "wouter";
 import { Heart, Facebook, Instagram } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export function PublicLayout({ children }: { children: React.ReactNode }) {
+  const { t } = useTranslation(['navigation', 'common']);
   return (
     <div className="min-h-screen flex flex-col">
       <PublicNavbar />

@@ -1,4 +1,5 @@
 import { memo, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Home,
   Calendar,
@@ -58,201 +59,257 @@ import { TANGO_ROLES, type TangoRole, getRoleByValue, normalizeRole } from "@/li
 
 const socialItems = [
   {
-    title: "Memories",
+    titleKey: "sidebar.social.memories",
+    titleFallback: "Memories",
     url: "/feed",
     icon: Home,
-    tooltip: "Your feed and memories",
+    tooltipKey: "sidebar.social.memoriesTooltip",
+    tooltipFallback: "Your feed and memories",
   },
   {
-    title: "Profile",
+    titleKey: "sidebar.social.profile",
+    titleFallback: "Profile",
     url: "/profile",
     icon: UserCircle,
-    tooltip: "View your profile",
+    tooltipKey: "sidebar.social.profileTooltip",
+    tooltipFallback: "View your profile",
   },
 ];
 
 const communityItems = [
   {
-    title: "Community Map",
+    titleKey: "sidebar.community.communityMap",
+    titleFallback: "Community Map",
     url: "/community-world-map",
     icon: Globe,
-    tooltip: "Explore the global tango community",
+    tooltipKey: "sidebar.community.communityMapTooltip",
+    tooltipFallback: "Explore the global tango community",
   },
   {
-    title: "Events",
+    titleKey: "sidebar.community.events",
+    titleFallback: "Events",
     url: "/events",
     icon: Calendar,
-    tooltip: "Browse events - list, calendar, or map view",
+    tooltipKey: "sidebar.community.eventsTooltip",
+    tooltipFallback: "Browse events - list, calendar, or map view",
   },
   {
-    title: "Friends",
+    titleKey: "sidebar.community.friends",
+    titleFallback: "Friends",
     url: "/friends",
     icon: UserPlus,
-    tooltip: "Manage your friends",
+    tooltipKey: "sidebar.community.friendsTooltip",
+    tooltipFallback: "Manage your friends",
   },
   {
-    title: "Messages",
+    titleKey: "sidebar.community.messages",
+    titleFallback: "Messages",
     url: "/messages",
     icon: MessageSquare,
-    tooltip: "Your conversations",
+    tooltipKey: "sidebar.community.messagesTooltip",
+    tooltipFallback: "Your conversations",
   },
   {
-    title: "Leaderboard",
+    titleKey: "sidebar.community.leaderboard",
+    titleFallback: "Leaderboard",
     url: "/leaderboard",
     icon: Trophy,
-    tooltip: "Top contributors",
+    tooltipKey: "sidebar.community.leaderboardTooltip",
+    tooltipFallback: "Top contributors",
   },
 ];
 
 const proDiscoveryItems = [
   {
-    title: "Learning",
+    titleKey: "sidebar.proDiscovery.learning",
+    titleFallback: "Learning",
     url: "/pro/learning",
     icon: GraduationCap,
     color: "#10B981",
-    tooltip: "Classes and workshops",
+    tooltipKey: "sidebar.proDiscovery.learningTooltip",
+    tooltipFallback: "Classes and workshops",
   },
   {
-    title: "Music",
+    titleKey: "sidebar.proDiscovery.music",
+    titleFallback: "Music",
     url: "/pro/music",
     icon: Music,
     color: "#8B5CF6",
-    tooltip: "Tango music and DJs",
+    tooltipKey: "sidebar.proDiscovery.musicTooltip",
+    tooltipFallback: "Tango music and DJs",
   },
   {
-    title: "Media",
+    titleKey: "sidebar.proDiscovery.media",
+    titleFallback: "Media",
     url: "/pro/media",
     icon: Camera,
     color: "#EF4444",
-    tooltip: "Photos and videos",
+    tooltipKey: "sidebar.proDiscovery.mediaTooltip",
+    tooltipFallback: "Photos and videos",
   },
   {
-    title: "Performances",
+    titleKey: "sidebar.proDiscovery.performances",
+    titleFallback: "Performances",
     url: "/pro/performances",
     icon: Drama,
     color: "#F59E0B",
-    tooltip: "Show performances",
+    tooltipKey: "sidebar.proDiscovery.performancesTooltip",
+    tooltipFallback: "Show performances",
   },
   {
-    title: "Venues",
+    titleKey: "sidebar.proDiscovery.venues",
+    titleFallback: "Venues",
     url: "/pro/venues",
     icon: Building2,
     color: "#6B7280",
-    tooltip: "Dance venues",
+    tooltipKey: "sidebar.proDiscovery.venuesTooltip",
+    tooltipFallback: "Dance venues",
   },
   {
-    title: "Organizers",
+    titleKey: "sidebar.proDiscovery.organizers",
+    titleFallback: "Organizers",
     url: "/pro/organizers",
     icon: Calendar,
     color: "#3B82F6",
-    tooltip: "Event organizers",
+    tooltipKey: "sidebar.proDiscovery.organizersTooltip",
+    tooltipFallback: "Event organizers",
   },
   {
-    title: "Stories",
+    titleKey: "sidebar.proDiscovery.stories",
+    titleFallback: "Stories",
     url: "/pro/stories",
     icon: PenLine,
     color: "#14B8A6",
-    tooltip: "Blog and stories",
+    tooltipKey: "sidebar.proDiscovery.storiesTooltip",
+    tooltipFallback: "Blog and stories",
   },
   {
-    title: "Artists",
+    titleKey: "sidebar.proDiscovery.artists",
+    titleFallback: "Artists",
     url: "/pro/artists",
     icon: Palette,
     color: "#EC4899",
-    tooltip: "Visual artists",
+    tooltipKey: "sidebar.proDiscovery.artistsTooltip",
+    tooltipFallback: "Visual artists",
   },
   {
-    title: "Musicians",
+    titleKey: "sidebar.proDiscovery.musicians",
+    titleFallback: "Musicians",
     url: "/pro/musicians",
     icon: Piano,
     color: "#A855F7",
-    tooltip: "Live musicians",
+    tooltipKey: "sidebar.proDiscovery.musiciansTooltip",
+    tooltipFallback: "Live musicians",
   },
   {
-    title: "Fashion",
+    titleKey: "sidebar.proDiscovery.fashion",
+    titleFallback: "Fashion",
     url: "/pro/fashion",
     icon: Shirt,
     color: "#EC4899",
-    tooltip: "Tango fashion",
+    tooltipKey: "sidebar.proDiscovery.fashionTooltip",
+    tooltipFallback: "Tango fashion",
   },
   {
-    title: "Coaches",
+    titleKey: "sidebar.proDiscovery.coaches",
+    titleFallback: "Coaches",
     url: "/pro/coaches",
     icon: Target,
     color: "#10B981",
-    tooltip: "Personal coaches",
+    tooltipKey: "sidebar.proDiscovery.coachesTooltip",
+    tooltipFallback: "Personal coaches",
   },
   {
-    title: "Vendors",
+    titleKey: "sidebar.proDiscovery.vendors",
+    titleFallback: "Vendors",
     url: "/pro/vendors",
     icon: Briefcase,
     color: "#6366F1",
-    tooltip: "Tango vendors",
+    tooltipKey: "sidebar.proDiscovery.vendorsTooltip",
+    tooltipFallback: "Tango vendors",
   },
   {
-    title: "Leaders",
+    titleKey: "sidebar.proDiscovery.leaders",
+    titleFallback: "Leaders",
     url: "/pro/community",
     icon: Globe,
     color: "#40E0D0",
-    tooltip: "Community leaders",
+    tooltipKey: "sidebar.proDiscovery.leadersTooltip",
+    tooltipFallback: "Community leaders",
   },
   {
-    title: "Dancers",
+    titleKey: "sidebar.proDiscovery.dancers",
+    titleFallback: "Dancers",
     url: "/pro/dancers",
     icon: Users,
     color: "#1E90FF",
-    tooltip: "Find dance partners",
+    tooltipKey: "sidebar.proDiscovery.dancersTooltip",
+    tooltipFallback: "Find dance partners",
   },
   {
-    title: "Researchers",
+    titleKey: "sidebar.proDiscovery.researchers",
+    titleFallback: "Researchers",
     url: "/pro/researchers",
     icon: Search,
     color: "#F97316",
-    tooltip: "Tango researchers",
+    tooltipKey: "sidebar.proDiscovery.researchersTooltip",
+    tooltipFallback: "Tango researchers",
   },
   {
-    title: "Historians",
+    titleKey: "sidebar.proDiscovery.historians",
+    titleFallback: "Historians",
     url: "/pro/historians",
     icon: BookOpen,
     color: "#8B5CF6",
-    tooltip: "Tango history experts",
+    tooltipKey: "sidebar.proDiscovery.historiansTooltip",
+    tooltipFallback: "Tango history experts",
   },
   {
-    title: "Taxi Dancers",
+    titleKey: "sidebar.proDiscovery.taxiDancers",
+    titleFallback: "Taxi Dancers",
     url: "/pro/taxi-dancers",
     icon: Handshake,
     color: "#F97316",
-    tooltip: "Professional taxi dancers",
+    tooltipKey: "sidebar.proDiscovery.taxiDancersTooltip",
+    tooltipFallback: "Professional taxi dancers",
   },
   {
-    title: "Talent Match",
+    titleKey: "sidebar.proDiscovery.talentMatch",
+    titleFallback: "Talent Match",
     url: "/talent-match",
     icon: Sparkles,
     color: "#1E90FF",
-    tooltip: "Find the perfect match",
+    tooltipKey: "sidebar.proDiscovery.talentMatchTooltip",
+    tooltipFallback: "Find the perfect match",
   },
   {
-    title: "Marketplace",
+    titleKey: "sidebar.proDiscovery.marketplace",
+    titleFallback: "Marketplace",
     url: "/marketplace",
     icon: ShoppingBag,
     color: "#F59E0B",
-    tooltip: "Browse products and services",
+    tooltipKey: "sidebar.proDiscovery.marketplaceTooltip",
+    tooltipFallback: "Browse products and services",
   },
   {
-    title: "Housing",
+    titleKey: "sidebar.proDiscovery.housing",
+    titleFallback: "Housing",
     url: "/housing",
     icon: HousingIcon,
     color: "#10B981",
-    tooltip: "Find tango-friendly accommodations",
+    tooltipKey: "sidebar.proDiscovery.housingTooltip",
+    tooltipFallback: "Find tango-friendly accommodations",
   },
 ];
 
 const servicesItems = [
   {
-    title: "Life CEO",
+    titleKey: "sidebar.services.lifeCeo",
+    titleFallback: "Life CEO",
     url: "/life-ceo",
     icon: Brain,
-    tooltip: "AI-powered life management",
+    tooltipKey: "sidebar.services.lifeCeoTooltip",
+    tooltipFallback: "AI-powered life management",
   },
 ];
 
@@ -284,6 +341,7 @@ const roleToProDiscoveryMap: Record<string, string> = {
 };
 
 function AppSidebarComponent() {
+  const { t } = useTranslation(['navigation', 'common']);
   const [location] = useLocation();
   const { user, profile, logout } = useAuth();
 
@@ -340,90 +398,120 @@ function AppSidebarComponent() {
     location === url || location.startsWith(url + "/");
 
   const renderIconGridItem = (item: {
-    title: string;
+    titleKey?: string;
+    titleFallback?: string;
+    title?: string;
     url: string;
     icon: React.ElementType;
     color?: string;
-    tooltip: string;
-  }) => (
-    <Tooltip key={item.title}>
-      <TooltipTrigger asChild>
-        <Link to={item.url}>
-          <div
-            className={cn(
-              "flex items-center justify-center p-2 rounded-lg cursor-pointer transition-all duration-200",
-              "hover:bg-[#40E0D0]/20",
-              isActive(item.url) &&
-                "bg-gradient-to-r from-[#40E0D0]/30 to-transparent ring-1 ring-[#40E0D0]/50",
-            )}
-            data-testid={`sidebar-icon-${item.title.toLowerCase().replace(/\s+/g, "-")}`}
-          >
-            <item.icon
-              className="h-8 w-8"
-              style={{
-                color:
-                  item.color ||
-                  (isActive(item.url) ? "#40E0D0" : "#9CA3AF"),
-              }}
-            />
-          </div>
-        </Link>
-      </TooltipTrigger>
-      <TooltipContent
-        side="right"
-        className="bg-slate-900 text-white border-slate-700 z-50"
-      >
-        <p className="font-medium">{item.title}</p>
-        <p className="text-xs text-slate-400">{item.tooltip}</p>
-      </TooltipContent>
-    </Tooltip>
-  );
+    tooltipKey?: string;
+    tooltipFallback?: string;
+    tooltip?: string;
+  }) => {
+    const displayTitle = item.titleKey 
+      ? t(`navigation:${item.titleKey}`, item.titleFallback || item.title || '') 
+      : item.title || '';
+    const displayTooltip = item.tooltipKey 
+      ? t(`navigation:${item.tooltipKey}`, item.tooltipFallback || item.tooltip || '') 
+      : item.tooltip || '';
+    
+    return (
+      <Tooltip key={item.titleKey || item.title}>
+        <TooltipTrigger asChild>
+          <Link to={item.url}>
+            <div
+              className={cn(
+                "flex items-center justify-center p-2 rounded-lg cursor-pointer transition-all duration-200",
+                "hover:bg-[#40E0D0]/20",
+                isActive(item.url) &&
+                  "bg-gradient-to-r from-[#40E0D0]/30 to-transparent ring-1 ring-[#40E0D0]/50",
+              )}
+              data-testid={`sidebar-icon-${displayTitle.toLowerCase().replace(/\s+/g, "-")}`}
+            >
+              <item.icon
+                className="h-8 w-8"
+                style={{
+                  color:
+                    item.color ||
+                    (isActive(item.url) ? "#40E0D0" : "#9CA3AF"),
+                }}
+              />
+            </div>
+          </Link>
+        </TooltipTrigger>
+        <TooltipContent
+          side="right"
+          className="bg-slate-900 text-white border-slate-700 z-50"
+        >
+          <p className="font-medium">{displayTitle}</p>
+          <p className="text-xs text-slate-400">{displayTooltip}</p>
+        </TooltipContent>
+      </Tooltip>
+    );
+  };
 
   const renderSingleItem = (item: {
-    title: string;
+    titleKey?: string;
+    titleFallback?: string;
+    title?: string;
     url: string;
     icon: React.ElementType;
-    tooltip: string;
-  }) => (
-    <Tooltip key={item.title}>
-      <TooltipTrigger asChild>
-        <SidebarMenuItem>
-          <SidebarMenuButton
-            asChild
-            data-active={isActive(item.url)}
-            data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, "-")}`}
-            className={cn(
-              "transition-all duration-200 rounded-lg",
-              isActive(item.url) &&
-                "bg-gradient-to-r from-[#40E0D0]/20 to-transparent border-l-2 border-[#40E0D0]",
-            )}
-            style={isActive(item.url) ? { color: "#40E0D0" } : undefined}
-          >
-            <Link to={item.url}>
-              <>
-                <item.icon className="h-5 w-5 transition-colors duration-200" />
-                <span className="font-medium">{item.title}</span>
-              </>
-            </Link>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
-      </TooltipTrigger>
-      <TooltipContent
-        side="right"
-        className="bg-slate-900 text-white border-slate-700 z-50"
-      >
-        <p className="text-xs text-slate-400">{item.tooltip}</p>
-      </TooltipContent>
-    </Tooltip>
-  );
+    tooltipKey?: string;
+    tooltipFallback?: string;
+    tooltip?: string;
+  }) => {
+    const displayTitle = item.titleKey 
+      ? t(`navigation:${item.titleKey}`, item.titleFallback || item.title || '') 
+      : item.title || '';
+    const displayTooltip = item.tooltipKey 
+      ? t(`navigation:${item.tooltipKey}`, item.tooltipFallback || item.tooltip || '') 
+      : item.tooltip || '';
+    
+    return (
+      <Tooltip key={item.titleKey || item.title}>
+        <TooltipTrigger asChild>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              asChild
+              data-active={isActive(item.url)}
+              data-testid={`sidebar-item-${displayTitle.toLowerCase().replace(/\s+/g, "-")}`}
+              className={cn(
+                "transition-all duration-200 rounded-lg",
+                isActive(item.url) &&
+                  "bg-gradient-to-r from-[#40E0D0]/20 to-transparent border-l-2 border-[#40E0D0]",
+              )}
+              style={isActive(item.url) ? { color: "#40E0D0" } : undefined}
+            >
+              <Link to={item.url}>
+                <>
+                  <item.icon className="h-5 w-5 transition-colors duration-200" />
+                  <span className="font-medium">{displayTitle}</span>
+                </>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </TooltipTrigger>
+        <TooltipContent
+          side="right"
+          className="bg-slate-900 text-white border-slate-700 z-50"
+        >
+          <p className="text-xs text-slate-400">{displayTooltip}</p>
+        </TooltipContent>
+      </Tooltip>
+    );
+  };
 
   const renderIconGrid = (
     items: Array<{
-      title: string;
+      titleKey?: string;
+      titleFallback?: string;
+      title?: string;
       url: string;
       icon: React.ElementType;
       color?: string;
-      tooltip: string;
+      tooltipKey?: string;
+      tooltipFallback?: string;
+      tooltip?: string;
     }>,
   ) => (
     <div className="grid grid-cols-3 gap-2 px-2">
@@ -458,7 +546,7 @@ function AppSidebarComponent() {
 
         <SidebarGroup className="border-b border-white/10 pb-4">
           <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">
-            Social
+            {t('navigation:sidebar.sections.social', 'Social')}
           </SidebarGroupLabel>
           <SidebarGroupContent>
             {renderIconGrid(socialItems)}
@@ -468,7 +556,7 @@ function AppSidebarComponent() {
         <SidebarGroup className="border-b border-white/10 pb-4">
           <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60 flex items-center gap-1">
             <Star className="h-3 w-3" style={{ color: "#FFD700" }} />
-            My Stuff
+            {t('navigation:sidebar.sections.myStuff', 'My Stuff')}
           </SidebarGroupLabel>
           <SidebarGroupContent>
             {myStuffItems.length > 0 ? (
@@ -476,7 +564,7 @@ function AppSidebarComponent() {
             ) : (
               <div className="px-3 py-2 text-xs text-white/50">
                 <Link to="/profile" className="hover:text-[#40E0D0] transition-colors">
-                  Set your city in your profile
+                  {t('navigation:sidebar.setCityInProfile', 'Set your city in your profile')}
                 </Link>
               </div>
             )}
@@ -485,7 +573,7 @@ function AppSidebarComponent() {
 
         <SidebarGroup className="border-b border-white/10 pb-4">
           <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">
-            Community
+            {t('navigation:sidebar.sections.community', 'Community')}
           </SidebarGroupLabel>
           <SidebarGroupContent>
             {renderIconGrid(communityItems)}
@@ -494,7 +582,7 @@ function AppSidebarComponent() {
 
         <SidebarGroup className="border-b border-white/10 pb-4">
           <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">
-            PRO Discovery
+            {t('navigation:sidebar.sections.proDiscovery', 'PRO Discovery')}
           </SidebarGroupLabel>
           <SidebarGroupContent>
             {renderIconGrid(proDiscoveryItems)}
@@ -503,7 +591,7 @@ function AppSidebarComponent() {
 
         <SidebarGroup className="border-b border-white/10 pb-4">
           <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">
-            Services
+            {t('navigation:sidebar.sections.services', 'Services')}
           </SidebarGroupLabel>
           <SidebarGroupContent>
             {renderIconGrid(servicesItems)}
@@ -552,7 +640,7 @@ function AppSidebarComponent() {
           data-testid="button-logout"
         >
           <LogOut className="h-4 w-4 mr-2" />
-          Logout
+          {t('common:logout', 'Logout')}
         </Button>
       </SidebarFooter>
     </Sidebar>

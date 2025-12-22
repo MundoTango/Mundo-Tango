@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,6 +18,7 @@ import tangoHeroImage from "@assets/stock_images/elegant_professional_e4da136e.j
 import { TalentMatchModal } from "@/components/TalentMatchModal";
 
 export default function RegisterPage() {
+  const { t } = useTranslation(['pages', 'common']);
   const [, navigate] = useLocation();
   const [inviteCode, setInviteCode] = useState("");
   const [isCodeValid, setIsCodeValid] = useState(false);
@@ -53,6 +55,13 @@ export default function RegisterPage() {
     staleTime: 5 * 60 * 1000,
   });
 
+  const getPasswordStrengthLabel = (score: number): string => {
+    if (score <= 2) return t('pages:register.passwordStrength.weak', 'Weak');
+    if (score <= 4) return t('pages:register.passwordStrength.medium', 'Medium');
+    if (score <= 5) return t('pages:register.passwordStrength.strong', 'Strong');
+    return t('pages:register.passwordStrength.veryStrong', 'Very Strong');
+  };
+
   const calculatePasswordStrength = (pwd: string): { score: number; label: string; color: string } => {
     let score = 0;
     if (pwd.length >= 8) score++;
@@ -62,10 +71,10 @@ export default function RegisterPage() {
     if (/[0-9]/.test(pwd)) score++;
     if (/[!@#$%^&*]/.test(pwd)) score++;
 
-    if (score <= 2) return { score: 25, label: "Weak", color: "bg-red-500" };
-    if (score <= 4) return { score: 50, label: "Medium", color: "bg-yellow-500" };
-    if (score <= 5) return { score: 75, label: "Strong", color: "bg-green-500" };
-    return { score: 100, label: "Very Strong", color: "bg-green-700" };
+    if (score <= 2) return { score: 25, label: getPasswordStrengthLabel(score), color: "bg-red-500" };
+    if (score <= 4) return { score: 50, label: getPasswordStrengthLabel(score), color: "bg-yellow-500" };
+    if (score <= 5) return { score: 75, label: getPasswordStrengthLabel(score), color: "bg-green-500" };
+    return { score: 100, label: getPasswordStrengthLabel(score), color: "bg-green-700" };
   };
 
   const passwordStrength = password ? calculatePasswordStrength(password) : null;
@@ -134,8 +143,8 @@ export default function RegisterPage() {
 
     if (!termsAccepted) {
       toast({
-        title: "Terms required",
-        description: "Please accept the Terms & Conditions",
+        title: t('pages:register.toast.termsRequired.title', 'Terms required'),
+        description: t('pages:register.toast.termsRequired.description', 'Please accept the Terms & Conditions'),
         variant: "destructive",
       });
       return;
@@ -143,8 +152,8 @@ export default function RegisterPage() {
 
     if (!passwordsMatch) {
       toast({
-        title: "Passwords don't match",
-        description: "Please ensure both passwords are identical",
+        title: t('pages:register.toast.passwordMismatch.title', "Passwords don't match"),
+        description: t('pages:register.toast.passwordMismatch.description', 'Please ensure both passwords are identical'),
         variant: "destructive",
       });
       return;
@@ -152,8 +161,8 @@ export default function RegisterPage() {
 
     if (passwordStrength && passwordStrength.score < 50) {
       toast({
-        title: "Weak password",
-        description: "Please choose a stronger password",
+        title: t('pages:register.toast.weakPassword.title', 'Weak password'),
+        description: t('pages:register.toast.weakPassword.description', 'Please choose a stronger password'),
         variant: "destructive",
       });
       return;
@@ -162,7 +171,6 @@ export default function RegisterPage() {
     setIsLoading(true);
 
     try {
-      // Always register with inviteCode - backend will set waitlist flag based on code validity
       await register({ 
         name, 
         username, 
@@ -170,11 +178,12 @@ export default function RegisterPage() {
         password, 
         inviteCode: inviteCode.trim() || undefined 
       });
-      // Registration successful - AuthContext handles redirect to onboarding
     } catch (error: any) {
       toast({
-        title: isCodeValid ? "Registration failed" : "Couldn't complete signup",
-        description: error.message || "Please try again",
+        title: isCodeValid 
+          ? t('pages:register.toast.registrationFailed.title', 'Registration failed') 
+          : t('pages:register.toast.signupFailed.title', "Couldn't complete signup"),
+        description: error.message || t('pages:register.toast.tryAgain', 'Please try again'),
         variant: "destructive",
       });
     } finally {
@@ -183,11 +192,11 @@ export default function RegisterPage() {
   };
 
   return (
-    <SelfHealingErrorBoundary pageName="Register" fallbackRoute="/login">
+    <SelfHealingErrorBoundary pageName={t('pages:register.pageName', 'Register')} fallbackRoute="/login">
       <PublicLayout>
         <SEO
-          title="Join Mundo Tango - Create Your Account"
-          description="Create your Mundo Tango account and join the global Argentine tango community. Connect with dancers, discover events, and share your passion for tango."
+          title={t('pages:register.seo.title', 'Join Mundo Tango - Create Your Account')}
+          description={t('pages:register.seo.description', 'Create your Mundo Tango account and join the global Argentine tango community. Connect with dancers, discover events, and share your passion for tango.')}
         />
 
         <div className="relative min-h-screen w-full overflow-hidden" data-testid="hero-register">
@@ -205,17 +214,23 @@ export default function RegisterPage() {
               <div className="text-center mb-8">
                 <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-welcome">
                   <Sparkles className="w-3 h-3 mr-1" />
-                  {waitlistSuccess ? "Welcome to the Family" : isCodeValid ? "Begin Your Journey" : "Join the Community"}
+                  {waitlistSuccess 
+                    ? t('pages:register.badge.welcomeFamily', 'Welcome to the Family') 
+                    : isCodeValid 
+                      ? t('pages:register.badge.beginJourney', 'Begin Your Journey') 
+                      : t('pages:register.badge.joinCommunity', 'Join the Community')}
                 </Badge>
                 
                 <h1 className="text-5xl md:text-6xl font-serif font-bold text-white mb-4 tracking-tight leading-tight" data-testid="heading-hero">
-                  {waitlistSuccess ? "You're In!" : "Join Mundo Tango"}
+                  {waitlistSuccess 
+                    ? t('pages:register.hero.youreIn', "You're In!") 
+                    : t('pages:register.hero.joinMundoTango', 'Join Mundo Tango')}
                 </h1>
                 
                 <p className="text-lg text-white/80 max-w-md mx-auto mb-8">
                   {waitlistSuccess 
-                    ? "Welcome to the Mundo Tango community. We're preparing your account and will notify you soon!"
-                    : "Connect with dancers worldwide, discover milongas, and immerse yourself in the passionate world of Argentine tango"}
+                    ? t('pages:register.hero.waitlistDescription', "Welcome to the Mundo Tango community. We're preparing your account and will notify you soon!")
+                    : t('pages:register.hero.description', 'Connect with dancers worldwide, discover milongas, and immerse yourself in the passionate world of Argentine tango')}
                 </p>
 
                 {!waitlistSuccess && (stats?.dancers || stats?.events || stats?.cities) && (
@@ -223,19 +238,19 @@ export default function RegisterPage() {
                     {stats?.dancers && (
                       <div className="flex items-center gap-2">
                         <Users className="w-4 h-4" />
-                        <span>{stats.dancers}+ dancers</span>
+                        <span>{t('pages:register.stats.dancers', '{{count}}+ dancers', { count: stats.dancers })}</span>
                       </div>
                     )}
                     {stats?.events && (
                       <div className="flex items-center gap-2">
                         <Sparkles className="w-4 h-4" />
-                        <span>{stats.events}+ events</span>
+                        <span>{t('pages:register.stats.events', '{{count}}+ events', { count: stats.events })}</span>
                       </div>
                     )}
                     {stats?.cities && (
                       <div className="flex items-center gap-2">
                         <Globe className="w-4 h-4" />
-                        <span>{stats.cities} cities</span>
+                        <span>{t('pages:register.stats.cities', '{{count}} cities', { count: stats.cities })}</span>
                       </div>
                     )}
                   </div>
@@ -254,11 +269,17 @@ export default function RegisterPage() {
                     <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
                       <PartyPopper className="w-10 h-10 text-green-400" />
                     </div>
-                    <h3 className="text-2xl font-semibold text-white mb-2">Welcome, {name || "Dancer"}!</h3>
-                    <p className="text-white/70 mb-8">You're on the list. We'll email you at <span className="text-white font-medium">{email}</span> when your account is ready.</p>
+                    <h3 className="text-2xl font-semibold text-white mb-2">
+                      {t('pages:register.waitlist.welcomeUser', 'Welcome, {{name}}!', { name: name || t('pages:register.waitlist.defaultName', 'Dancer') })}
+                    </h3>
+                    <p className="text-white/70 mb-8">
+                      {t('pages:register.waitlist.onTheList', "You're on the list. We'll email you at")} <span className="text-white font-medium">{email}</span> {t('pages:register.waitlist.whenReady', 'when your account is ready.')}
+                    </p>
                     
                     <div className="space-y-4">
-                      <p className="text-sm text-white/60 font-medium uppercase tracking-wide">While you wait, help us grow</p>
+                      <p className="text-sm text-white/60 font-medium uppercase tracking-wide">
+                        {t('pages:register.waitlist.helpUsGrow', 'While you wait, help us grow')}
+                      </p>
                       <div className="flex flex-col gap-3">
                         <Button 
                           className="w-full bg-white text-black hover:bg-white/90"
@@ -267,7 +288,7 @@ export default function RegisterPage() {
                           data-testid="button-volunteer-cta"
                         >
                           <HandHeart className="mr-2 h-5 w-5" />
-                          Volunteer with us
+                          {t('pages:register.waitlist.volunteerWithUs', 'Volunteer with us')}
                           <ArrowRight className="ml-2 h-5 w-5" />
                         </Button>
                         <Link href="/crowdfunding">
@@ -278,7 +299,7 @@ export default function RegisterPage() {
                             data-testid="button-support-cta"
                           >
                             <CreditCard className="mr-2 h-5 w-5" />
-                            Support Mundo Tango
+                            {t('pages:register.waitlist.supportMundoTango', 'Support Mundo Tango')}
                             <ArrowRight className="ml-2 h-5 w-5" />
                           </Button>
                         </Link>
@@ -305,13 +326,13 @@ export default function RegisterPage() {
                     <div className="space-y-3">
                       <Label htmlFor="inviteCode" className="text-sm font-medium text-white flex items-center gap-2">
                         <KeyRound className="w-4 h-4" />
-                        Have an invite code? (Optional)
+                        {t('pages:register.inviteCode.label', 'Have an invite code? (Optional)')}
                       </Label>
                       <div className="relative">
                         <Input
                           id="inviteCode"
                           type="text"
-                          placeholder="Enter your invite code for immediate access"
+                          placeholder={t('pages:register.inviteCode.placeholder', 'Enter your invite code for immediate access')}
                           value={inviteCode}
                           onChange={(e) => handleCodeChange(e.target.value)}
                           data-testid="input-invite-code"
@@ -327,11 +348,13 @@ export default function RegisterPage() {
                       </div>
                       {isCodeValid && (
                         <p className="text-sm text-green-400 flex items-center gap-1">
-                          <Check className="h-3 w-3" /> Code accepted! Your account will be activated immediately.
+                          <Check className="h-3 w-3" /> {t('pages:register.inviteCode.accepted', 'Code accepted! Your account will be activated immediately.')}
                         </p>
                       )}
                       {inviteCode && !isCodeValid && (
-                        <p className="text-sm text-amber-400/80">No worries! Complete the form below to join our waitlist.</p>
+                        <p className="text-sm text-amber-400/80">
+                          {t('pages:register.inviteCode.noWorries', 'No worries! Complete the form below to join our waitlist.')}
+                        </p>
                       )}
                     </div>
                   </motion.div>
@@ -348,7 +371,7 @@ export default function RegisterPage() {
                       <div className="flex items-center gap-3 p-3 rounded-lg bg-white/5 border border-white/10 mb-6">
                         <Lock className="w-5 h-5 text-white/60 flex-shrink-0" />
                         <p className="text-sm text-white/70">
-                          Registration is currently invite-only. Complete this form to join our waitlist and we'll notify you when your account is ready.
+                          {t('pages:register.form.inviteOnlyNotice', "Registration is currently invite-only. Complete this form to join our waitlist and we'll notify you when your account is ready.")}
                         </p>
                       </div>
                     )}
@@ -356,11 +379,13 @@ export default function RegisterPage() {
                     <div className="space-y-4">
                       <div className="grid md:grid-cols-2 gap-4">
                         <div className="space-y-2">
-                          <Label htmlFor="name" className="text-sm font-medium text-white">Full Name</Label>
+                          <Label htmlFor="name" className="text-sm font-medium text-white">
+                            {t('pages:register.form.fullName', 'Full Name')}
+                          </Label>
                           <Input
                             id="name"
                             type="text"
-                            placeholder="Maria Rodriguez"
+                            placeholder={t('pages:register.form.fullNamePlaceholder', 'Maria Rodriguez')}
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             required
@@ -371,12 +396,14 @@ export default function RegisterPage() {
                         </div>
 
                         <div className="space-y-2">
-                          <Label htmlFor="email" className="text-sm font-medium text-white">Email</Label>
+                          <Label htmlFor="email" className="text-sm font-medium text-white">
+                            {t('pages:register.form.email', 'Email')}
+                          </Label>
                           <div className="relative">
                             <Input
                               id="email"
                               type="email"
-                              placeholder="maria@example.com"
+                              placeholder={t('pages:register.form.emailPlaceholder', 'maria@example.com')}
                               value={email}
                               onChange={(e) => setEmail(e.target.value)}
                               required
@@ -395,21 +422,27 @@ export default function RegisterPage() {
                             )}
                           </div>
                           {emailAvailable === false && (
-                            <p className="text-sm text-red-400">This email is already registered</p>
+                            <p className="text-sm text-red-400">
+                              {t('pages:register.validation.emailTaken', 'This email is already registered')}
+                            </p>
                           )}
                           {emailAvailable === true && (
-                            <p className="text-sm text-green-400">Email available!</p>
+                            <p className="text-sm text-green-400">
+                              {t('pages:register.validation.emailAvailable', 'Email available!')}
+                            </p>
                           )}
                         </div>
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="username" className="text-sm font-medium text-white">Username</Label>
+                        <Label htmlFor="username" className="text-sm font-medium text-white">
+                          {t('pages:register.form.username', 'Username')}
+                        </Label>
                         <div className="relative">
                           <Input
                             id="username"
                             type="text"
-                            placeholder="maria_tango"
+                            placeholder={t('pages:register.form.usernamePlaceholder', 'maria_tango')}
                             value={username}
                             onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, ''))}
                             required
@@ -430,16 +463,22 @@ export default function RegisterPage() {
                           )}
                         </div>
                         {usernameAvailable === false && (
-                          <p className="text-sm text-red-400">Username taken. Try {username}_2025</p>
+                          <p className="text-sm text-red-400">
+                            {t('pages:register.validation.usernameTaken', 'Username taken. Try {{suggestion}}', { suggestion: `${username}_2025` })}
+                          </p>
                         )}
                         {usernameAvailable === true && (
-                          <p className="text-sm text-green-400">Username available!</p>
+                          <p className="text-sm text-green-400">
+                            {t('pages:register.validation.usernameAvailable', 'Username available!')}
+                          </p>
                         )}
                       </div>
 
                       <div className="grid md:grid-cols-2 gap-4">
                         <div className="space-y-2">
-                          <Label htmlFor="password" className="text-sm font-medium text-white">Password</Label>
+                          <Label htmlFor="password" className="text-sm font-medium text-white">
+                            {t('pages:register.form.password', 'Password')}
+                          </Label>
                           <div className="relative">
                             <Input
                               id="password"
@@ -478,7 +517,9 @@ export default function RegisterPage() {
                         </div>
 
                         <div className="space-y-2">
-                          <Label htmlFor="confirmPassword" className="text-sm font-medium text-white">Confirm Password</Label>
+                          <Label htmlFor="confirmPassword" className="text-sm font-medium text-white">
+                            {t('pages:register.form.confirmPassword', 'Confirm Password')}
+                          </Label>
                           <div className="relative">
                             <Input
                               id="confirmPassword"
@@ -502,12 +543,12 @@ export default function RegisterPage() {
                           </div>
                           {passwordsMatch && (
                             <p className="text-sm text-green-400 flex items-center gap-1">
-                              <Check className="h-3 w-3" /> Passwords match
+                              <Check className="h-3 w-3" /> {t('pages:register.validation.passwordsMatch', 'Passwords match')}
                             </p>
                           )}
                           {passwordsDontMatch && (
                             <p className="text-sm text-red-400 flex items-center gap-1">
-                              <X className="h-3 w-3" /> Passwords don't match
+                              <X className="h-3 w-3" /> {t('pages:register.validation.passwordsDontMatch', "Passwords don't match")}
                             </p>
                           )}
                         </div>
@@ -523,12 +564,12 @@ export default function RegisterPage() {
                           className="border-white/30 data-[state=checked]:bg-white data-[state=checked]:text-black"
                         />
                         <label htmlFor="terms" className="text-sm leading-tight cursor-pointer text-white/90">
-                          I accept the{" "}
+                          {t('pages:register.form.acceptTermsPrefix', 'I accept the')}{" "}
                           <Link 
                             href="/terms"
                             className="text-white hover:underline font-medium"
                           >
-                            Terms & Conditions
+                            {t('pages:register.form.termsAndConditions', 'Terms & Conditions')}
                           </Link>
                         </label>
                       </div>
@@ -543,12 +584,16 @@ export default function RegisterPage() {
                         {isLoading ? (
                           <>
                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            {isCodeValid ? "Creating your account..." : "Joining..."}
+                            {isCodeValid 
+                              ? t('pages:register.button.creatingAccount', 'Creating your account...') 
+                              : t('pages:register.button.joining', 'Joining...')}
                           </>
                         ) : (
                           <>
                             <Heart className="mr-2 h-4 w-4" />
-                            {isCodeValid ? "Create Account" : "Join Mundo Tango"}
+                            {isCodeValid 
+                              ? t('pages:register.button.createAccount', 'Create Account') 
+                              : t('pages:register.button.joinMundoTango', 'Join Mundo Tango')}
                           </>
                         )}
                       </Button>
@@ -563,17 +608,16 @@ export default function RegisterPage() {
                 transition={{ duration: 0.8, delay: 0.4 }}
                 className="text-sm text-center text-white/70 mt-6"
               >
-                Already have an account?{" "}
+                {t('pages:register.alreadyHaveAccount', 'Already have an account?')}{" "}
                 <Link 
                   href="/login" 
                   className="text-white hover:underline font-medium" 
                   data-testid="link-login"
                 >
-                  Sign in
+                  {t('pages:register.signIn', 'Sign in')}
                 </Link>
               </motion.p>
 
-              {/* Volunteer CTA Section */}
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -585,12 +629,16 @@ export default function RegisterPage() {
                     <HandHeart className="h-5 w-5 text-primary" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-white">Want to volunteer?</h3>
-                    <p className="text-sm text-white/70">Help build the tango community</p>
+                    <h3 className="font-semibold text-white">
+                      {t('pages:register.volunteer.title', 'Want to volunteer?')}
+                    </h3>
+                    <p className="text-sm text-white/70">
+                      {t('pages:register.volunteer.subtitle', 'Help build the tango community')}
+                    </p>
                   </div>
                 </div>
                 <p className="text-sm text-white/80 mb-4">
-                  Join our volunteer team and use your skills to make an impact. Our AI will match you with the perfect role.
+                  {t('pages:register.volunteer.description', 'Join our volunteer team and use your skills to make an impact. Our AI will match you with the perfect role.')}
                 </p>
                 <Button
                   variant="outline"
@@ -599,14 +647,13 @@ export default function RegisterPage() {
                   data-testid="button-start-talent-match"
                 >
                   <Sparkles className="h-4 w-4 mr-2" />
-                  Start Talent Match
+                  {t('pages:register.volunteer.startTalentMatch', 'Start Talent Match')}
                 </Button>
               </motion.div>
             </motion.div>
           </div>
         </div>
 
-        {/* Talent Match Modal */}
         <TalentMatchModal
           open={talentMatchOpen}
           onOpenChange={setTalentMatchOpen}

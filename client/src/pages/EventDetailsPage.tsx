@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useRoute } from "wouter";
 import { useEvent } from "@/hooks/useEvents";
 import { useQuery } from "@tanstack/react-query";
@@ -52,6 +53,7 @@ interface EventPhoto {
 }
 
 function EventPhotosTab({ eventId }: { eventId: number }) {
+  const { t } = useTranslation(['pages', 'common']);
   const { user } = useAuth();
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -365,6 +367,7 @@ interface EventPermissions {
 }
 
 export default function EventDetailsPage() {
+  const { t } = useTranslation(['pages', 'common']);
   const [, params] = useRoute("/events/:id");
   const [, setLocation] = useLocation();
   const [rsvpStatusState, setRsvpStatusState] = useState<RSVPStatus>(null);

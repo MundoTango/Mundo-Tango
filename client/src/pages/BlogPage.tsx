@@ -10,8 +10,10 @@ import { BookOpen, Calendar, Clock, Search } from "lucide-react";
 import { Link } from "wouter";
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 export default function BlogPage() {
+  const { t } = useTranslation(['pages', 'common']);
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
   
@@ -24,11 +26,24 @@ export default function BlogPage() {
     },
   });
 
+  const categories = ["all", "techniques", "history", "culture", "events", "interviews"];
+  const getCategoryLabel = (category: string) => {
+    const labels: Record<string, string> = {
+      all: t('pages:blog.categories.all', 'All'),
+      techniques: t('pages:blog.categories.techniques', 'Techniques'),
+      history: t('pages:blog.categories.history', 'History'),
+      culture: t('pages:blog.categories.culture', 'Culture'),
+      events: t('pages:blog.categories.events', 'Events'),
+      interviews: t('pages:blog.categories.interviews', 'Interviews')
+    };
+    return labels[category] || category.charAt(0).toUpperCase() + category.slice(1);
+  };
+
   return (
     <AppLayout>
       <SEO
-        title="Tango Blog | Mundo Tango"
-        description="Read stories, tips, and insights from the tango world. Explore techniques, history, culture, events, and interviews from dancers and teachers worldwide."
+        title={t('pages:blog.seo.title', 'Tango Blog | Mundo Tango')}
+        description={t('pages:blog.seo.description', 'Read stories, tips, and insights from the tango world. Explore techniques, history, culture, events, and interviews from dancers and teachers worldwide.')}
       />
       <div className="min-h-screen bg-background">
         {/* Hero Section */}
@@ -47,15 +62,15 @@ export default function BlogPage() {
             >
               <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
                 <BookOpen className="w-3 h-3 mr-1.5" />
-                Editorial
+                {t('pages:blog.badge', 'Editorial')}
               </Badge>
               
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-white font-bold leading-tight mb-4" data-testid="text-page-title">
-                Tango Blog
+                {t('pages:blog.title', 'Tango Blog')}
               </h1>
               
               <p className="text-lg text-white/80 max-w-2xl mx-auto" data-testid="text-page-description">
-                Stories, tips, and insights from the tango world
+                {t('pages:blog.subtitle', 'Stories, tips, and insights from the tango world')}
               </p>
             </motion.div>
           </div>
@@ -73,7 +88,7 @@ export default function BlogPage() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
             <Input
               type="search"
-              placeholder="Search articles..."
+              placeholder={t('pages:blog.searchPlaceholder', 'Search articles...')}
               className="pl-10"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -83,7 +98,7 @@ export default function BlogPage() {
 
           {/* Category Filters */}
           <div className="flex flex-wrap gap-2">
-            {["all", "techniques", "history", "culture", "events", "interviews"].map((category) => (
+            {categories.map((category) => (
               <Button
                 key={category}
                 variant={categoryFilter === category ? "default" : "outline"}
@@ -91,14 +106,14 @@ export default function BlogPage() {
                 size="sm"
                 data-testid={`filter-category-${category}`}
               >
-                {category.charAt(0).toUpperCase() + category.slice(1)}
+                {getCategoryLabel(category)}
               </Button>
             ))}
           </div>
         </motion.div>
 
         {isLoading ? (
-          <div className="text-center py-12">Loading articles...</div>
+          <div className="text-center py-12">{t('pages:blog.loading', 'Loading articles...')}</div>
         ) : posts && Array.isArray(posts) && posts.length > 0 ? (
           <div className="space-y-6">
             {posts
@@ -122,7 +137,7 @@ export default function BlogPage() {
                   <div className={post.image ? "md:col-span-2" : "md:col-span-3"}>
                     <CardHeader>
                       <div className="flex items-center gap-2 mb-2">
-                        {post.published && <Badge variant="secondary">Published</Badge>}
+                        {post.published && <Badge variant="secondary">{t('pages:blog.published', 'Published')}</Badge>}
                       </div>
                       <Link href={`/blog/${post.slug || post.id}`}>
                         <CardTitle className="text-2xl font-serif hover:underline cursor-pointer">
@@ -155,14 +170,14 @@ export default function BlogPage() {
                         {post.views !== undefined && (
                           <div className="flex items-center gap-1">
                             <Clock className="h-4 w-4" />
-                            {post.views} views
+                            {t('pages:blog.views', '{{count}} views', { count: post.views })}
                           </div>
                         )}
                       </div>
 
                       <Link href={`/blog/${post.slug || post.id}`}>
                         <Button variant="outline" data-testid={`button-read-${post.id}`}>
-                          Read More
+                          {t('pages:blog.readMore', 'Read More')}
                         </Button>
                       </Link>
                     </CardContent>
@@ -176,7 +191,7 @@ export default function BlogPage() {
           <Card>
             <CardContent className="py-12 text-center text-muted-foreground">
               <BookOpen className="mx-auto h-12 w-12 mb-4 opacity-50" />
-              <p>No articles found</p>
+              <p>{t('pages:blog.noArticles', 'No articles found')}</p>
             </CardContent>
           </Card>
         )}

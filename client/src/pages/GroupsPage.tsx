@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
@@ -38,6 +39,7 @@ const calculateDistance = (city: string | null): number => {
 };
 
 export default function GroupsPage() {
+  const { t } = useTranslation(['pages', 'common']);
   const { user } = useAuth();
   const [isCreating, setIsCreating] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");

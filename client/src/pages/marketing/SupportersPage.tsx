@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { Link } from "wouter";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -21,6 +22,8 @@ interface Supporter {
 }
 
 function SupportersPageContent() {
+  const { t } = useTranslation(['pages', 'common']);
+
   const fadeInUp = {
     hidden: { opacity: 0, y: 30 },
     visible: { opacity: 1, y: 0 }
@@ -49,28 +52,28 @@ function SupportersPageContent() {
   const tierConfig = {
     gardel: { 
       icon: Crown, 
-      label: "Gardel",
+      label: t('pages:supporters.tiers.gardel', 'Gardel'),
       color: "text-yellow-500",
       bgColor: "bg-yellow-500/10",
       borderColor: "border-yellow-500",
     },
     copes: { 
       icon: Award, 
-      label: "Copes",
+      label: t('pages:supporters.tiers.copes', 'Copes'),
       color: "text-purple-500",
       bgColor: "bg-purple-500/10",
       borderColor: "border-purple-500",
     },
     piazzolla: { 
       icon: Star, 
-      label: "Piazzolla",
+      label: t('pages:supporters.tiers.piazzolla', 'Piazzolla'),
       color: "text-amber-500",
       bgColor: "bg-amber-500/10",
       borderColor: "border-amber-500",
     },
     cachafaz: { 
       icon: Heart, 
-      label: "Cachafaz",
+      label: t('pages:supporters.tiers.cachafaz', 'Cachafaz'),
       color: "text-rose-500",
       bgColor: "bg-rose-500/10",
       borderColor: "border-rose-500",
@@ -92,8 +95,8 @@ function SupportersPageContent() {
     <div className="min-h-screen bg-background">
       <PublicNavbar />
       <SEO
-        title="Our Supporters - Mundo Tango"
-        description="Meet the tango lovers who support Mundo Tango. Gardel, Copes, Piazzolla, and Cachafaz tier supporters making the platform possible."
+        title={t('pages:supporters.seo.title', 'Our Supporters - Mundo Tango')}
+        description={t('pages:supporters.seo.description', 'Meet the tango lovers who support Mundo Tango. Gardel, Copes, Piazzolla, and Cachafaz tier supporters making the platform possible.')}
       />
 
       {/* Hero Section */}
@@ -112,7 +115,7 @@ function SupportersPageContent() {
               <motion.div variants={fadeInUp}>
                 <Badge variant="secondary" className="mb-4">
                   <Users className="h-3 w-3 mr-1" />
-                  Recognition Wall
+                  {t('pages:supporters.badge', 'Recognition Wall')}
                 </Badge>
               </motion.div>
 
@@ -121,14 +124,14 @@ function SupportersPageContent() {
                 className="text-4xl md:text-5xl font-bold text-white"
                 data-testid="text-hero-headline"
               >
-                Our Tango Legends
+                {t('pages:supporters.hero.title', 'Our Tango Legends')}
               </motion.h1>
 
               <motion.p
                 variants={fadeInUp}
                 className="text-xl text-white/90 max-w-2xl mx-auto"
               >
-                Thank you to every supporter who believes in our mission to connect the global tango community.
+                {t('pages:supporters.hero.subtitle', 'Thank you to every supporter who believes in our mission to connect the global tango community.')}
               </motion.p>
 
               {donationStats && donationStats.donorCount > 0 && (
@@ -138,11 +141,11 @@ function SupportersPageContent() {
                 >
                   <div className="text-center">
                     <div className="text-3xl font-bold text-white">{donationStats.totalRaisedFormatted}</div>
-                    <div className="text-sm text-white/80">Total Raised</div>
+                    <div className="text-sm text-white/80">{t('pages:supporters.stats.totalRaised', 'Total Raised')}</div>
                   </div>
                   <div className="text-center">
                     <div className="text-3xl font-bold text-white">{donationStats.donorCount}</div>
-                    <div className="text-sm text-white/80">Supporters</div>
+                    <div className="text-sm text-white/80">{t('pages:supporters.stats.supporters', 'Supporters')}</div>
                   </div>
                 </motion.div>
               )}
@@ -157,7 +160,7 @@ function SupportersPageContent() {
           {isLoading ? (
             <div className="text-center py-12">
               <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full mx-auto" />
-              <p className="mt-4 text-muted-foreground">Loading supporters...</p>
+              <p className="mt-4 text-muted-foreground">{t('pages:supporters.loading', 'Loading supporters...')}</p>
             </div>
           ) : supporters && supporters.length > 0 ? (
             <motion.div
@@ -177,7 +180,7 @@ function SupportersPageContent() {
                   <motion.div key={tier} variants={fadeInUp}>
                     <div className="flex items-center gap-3 mb-6">
                       <Icon className={`h-6 w-6 ${config.color}`} />
-                      <h2 className="text-2xl font-bold">{config.label} Supporters</h2>
+                      <h2 className="text-2xl font-bold">{config.label} {t('pages:supporters.supportersLabel', 'Supporters')}</h2>
                       <Badge variant="outline" className={config.borderColor}>
                         {tierSupporters.length}
                       </Badge>
@@ -212,14 +215,13 @@ function SupportersPageContent() {
           ) : (
             <div className="text-center py-16">
               <Heart className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-xl font-semibold mb-2">Be the First Supporter</h3>
+              <h3 className="text-xl font-semibold mb-2">{t('pages:supporters.empty.title', 'Be the First Supporter')}</h3>
               <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-                Become a founding supporter and help build the platform the tango community deserves.
-                Your name will appear here as a Tango Legend.
+                {t('pages:supporters.empty.description', 'Become a founding supporter and help build the platform the tango community deserves. Your name will appear here as a Tango Legend.')}
               </p>
               <Link href="/support">
                 <Button size="lg" data-testid="button-become-first">
-                  Become a Supporter
+                  {t('pages:supporters.cta.becomeSupporter', 'Become a Supporter')}
                   <Heart className="h-4 w-4 ml-2" />
                 </Button>
               </Link>
@@ -239,15 +241,15 @@ function SupportersPageContent() {
             className="text-center max-w-3xl mx-auto space-y-6"
           >
             <motion.h2 variants={fadeInUp} className="text-3xl font-bold">
-              Join the Wall of Legends
+              {t('pages:supporters.finalCta.title', 'Join the Wall of Legends')}
             </motion.h2>
             <motion.p variants={fadeInUp} className="text-muted-foreground text-lg">
-              Support Mundo Tango and become part of the community that's building the future of tango.
+              {t('pages:supporters.finalCta.subtitle', "Support Mundo Tango and become part of the community that's building the future of tango.")}
             </motion.p>
             <motion.div variants={fadeInUp}>
               <Link href="/support">
                 <Button size="lg" data-testid="button-support-now">
-                  Support Now
+                  {t('pages:supporters.cta.supportNow', 'Support Now')}
                   <Heart className="h-4 w-4 ml-2" />
                 </Button>
               </Link>
