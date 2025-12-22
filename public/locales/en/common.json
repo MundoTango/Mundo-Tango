@@ -46,6 +46,11 @@
   "theme": "Theme",
   "darkMode": "Dark Mode",
   "lightMode": "Light Mode",
+  "email": "Email",
+  "password": "Password",
+  "name": "Name",
+  "submit": "Submit",
+  "joinCommunity": "Join {{count}}+ tango community members worldwide",
   "teachers": "Teachers",
   "djs": "DJs & Musicians",
   "photographers": "Photographers",
@@ -70,8 +75,6 @@
   "all": "All",
   "free": "Free",
   "paid": "Paid",
-  "joinCommunity": "Join our Community",
-  "connectTango": "Connect with tango dancers worldwide",
   "findEvents": "Find events near you",
   "discoverProfessionals": "Discover tango professionals"
 }

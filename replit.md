@@ -72,5 +72,15 @@ The marketing site integrates a Human to Agent Collaboration (H2AC) Volunteer Pr
 - **Real-time:** Supabase Realtime, WebSocket
 - **Payments:** Stripe
 - **UI Libraries:** shadcn/ui, Radix UI, Framer Motion, Leaflet
-- **Internationalization:** i18next
+- **Internationalization:** i18next with 69 language locales, lazy-loaded translations
+
+## Recent Changes (Dec 22, 2024)
+
+### Internationalization Implementation
+- **LandingPage**: Fully internationalized with useTranslation hook, using pages:home.hero.* and common:* keys
+- **PublicNavbar**: All navigation items use translation keys with proper fallbacks
+- **Footer**: Uses navigation:footer.* keys for links, common:* for descriptive text
+- **Translation Files**: Located in client/public/locales/{lng}/ with namespaces: common, navigation, pages, errors
+- **Language Selector**: Supports 69 languages including es-ar (Argentine Rioplatense Spanish)
+- **Pattern**: All t() calls include fallback strings to ensure UI never shows raw keys
 - **Other:** Sentry, Playwright, BullMQ, FFmpeg, fluent-ffmpeg, Wouter, Multer, `@octokit/rest`

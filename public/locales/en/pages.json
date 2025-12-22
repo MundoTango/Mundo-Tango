@@ -1,4 +1,112 @@
 {
+  "landing": {
+    "heroTitle": "Where Tango Lives",
+    "heroSubtitle": "Connect with the global tango community. Discover events, find partners, and grow your journey with passionate tango lovers worldwide.",
+    "joinFree": "Join Free",
+    "watchDemo": "Watch Demo",
+    "members": "Members",
+    "events": "Events",
+    "cities": "Cities",
+    "countries": "Countries",
+    "featuresTitle": "Everything You Need for Your Tango Journey",
+    "featuresSubtitle": "Powerful features designed to connect dancers, discover events, and grow the global tango community.",
+    "howItWorksTitle": "How It Works",
+    "howItWorksSubtitle": "Get started in minutes and join thousands of tango dancers worldwide.",
+    "comingSoonTitle": "Coming Soon",
+    "comingSoonSubtitle": "We're building incredible features to transform your tango experience. Here's what's on the horizon.",
+    "supportCta": "Help us build these features faster by supporting Mundo Tango",
+    "supportMission": "Support Our Mission",
+    "ctaTitle": "Ready to Join the Global Tango Community?",
+    "ctaSubtitle": "Create your free account and start connecting with dancers worldwide.",
+    "features": {
+      "globalMap": {
+        "title": "Global Tango Map",
+        "description": "Discover dancers, events, and communities across the globe. Never feel alone in your tango journey."
+      },
+      "smartMatching": {
+        "title": "Smart Matching",
+        "description": "Connect with dancers who match your level, style, and interests. Smart recommendations that grow with you."
+      },
+      "eventDiscovery": {
+        "title": "Event Discovery",
+        "description": "Find milongas, practicas, festivals, and workshops happening near you or plan your tango travels worldwide."
+      },
+      "housing": {
+        "title": "Housing Marketplace",
+        "description": "Stay with local tango dancers when traveling. Offer your home to visiting dancers. Build friendships through shared spaces."
+      },
+      "networking": {
+        "title": "Professional Networking",
+        "description": "Connect with teachers, organizers, DJs, and performers. Grow your tango career or find the perfect instructor."
+      },
+      "streaming": {
+        "title": "Live Streaming",
+        "description": "Attend virtual milongas, watch live performances, and take online classes from maestros around the world."
+      },
+      "community": {
+        "title": "Community Connections",
+        "description": "Join city-based groups, connect with local dancers, and build lasting friendships in the global tango community."
+      },
+      "multiLanguage": {
+        "title": "Multi-Language Support",
+        "description": "Platform available in English, Spanish, Portuguese, French, Italian, and more. Tango speaks all languages."
+      }
+    },
+    "steps": {
+      "createProfile": {
+        "title": "Create Your Profile",
+        "description": "Share your tango journey, experience level, preferred roles, and what you're looking for in the community."
+      },
+      "discoverEvents": {
+        "title": "Discover Events & Dancers",
+        "description": "Browse events happening worldwide, find dance partners, and explore communities in cities you plan to visit."
+      },
+      "connect": {
+        "title": "Connect & Collaborate",
+        "description": "Message dancers, join group chats, RSVP to events, and arrange housing stays with verified community members."
+      },
+      "grow": {
+        "title": "Grow Your Tango Journey",
+        "description": "Track your progress, collect memories, build your network, and become part of the global tango family."
+      }
+    },
+    "comingSoon": {
+      "housing": {
+        "title": "Housing Marketplace",
+        "description": "Find tango-friendly accommodations or host traveling dancers. Build connections through shared spaces."
+      },
+      "proTools": {
+        "title": "Professional Tools",
+        "description": "Advanced features for teachers and organizers: student management, event analytics, and booking systems."
+      },
+      "aiMatching": {
+        "title": "Enhanced AI Matching",
+        "description": "Smart algorithms learn your preferences and suggest perfect dance partners based on style, level, and personality."
+      },
+      "groupTravel": {
+        "title": "Group Travel Planning",
+        "description": "Coordinate festival trips with your tango friends. Shared itineraries, housing, and transportation."
+      }
+    }
+  },
+  "footer": {
+    "brandDescription": "Where Tango Meets Community. Connect with dancers worldwide, discover events, and share your passion for Argentine tango.",
+    "quickLinks": "Quick Links",
+    "aboutUs": "About Us",
+    "discoverEvents": "Discover Events",
+    "findTeachers": "Find Teachers",
+    "resources": "Resources",
+    "communityGuidelines": "Community Guidelines",
+    "helpCenter": "Help Center",
+    "legal": "Legal",
+    "termsOfService": "Terms of Service",
+    "privacyPolicy": "Privacy Policy",
+    "contactUs": "Contact Us",
+    "supportUs": "Support Us",
+    "supportDescription": "Help us build the future of tango technology",
+    "donateGoFundMe": "Donate on GoFundMe",
+    "copyright": "Mundo Tango. Built with love for the global tango community."
+  },
   "home": {
     "title": "Welcome to Mundo Tango",
     "subtitle": "Connect with the global tango community",

@@ -1,7 +1,9 @@
 import { Link } from "wouter";
+import { useTranslation } from "react-i18next";
 import { Heart, Facebook, Instagram, DollarSign } from "lucide-react";
 
 export function Footer() {
+  const { t } = useTranslation(['navigation', 'common']);
   const currentYear = new Date().getFullYear();
 
   return (
@@ -12,7 +14,7 @@ export function Footer() {
           <div>
             <h3 className="text-lg font-semibold mb-4">Mundo Tango</h3>
             <p className="text-sm text-muted-foreground mb-4">
-              Where Tango Meets Community. Connect with dancers worldwide, discover events, and share your passion for Argentine tango.
+              {t('common:footerTagline', 'Where Tango Meets Community. Connect with dancers worldwide, discover events, and share your passion for Argentine tango.')}
             </p>
             <div className="flex items-center gap-4">
               <a 
@@ -40,33 +42,33 @@ export function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
+            <h3 className="text-lg font-semibold mb-4">{t('common:quickLinks', 'Quick Links')}</h3>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link href="/about">
                   <a className="text-muted-foreground hover:text-primary transition-colors" data-testid="link-about">
-                    About Us
+                    {t('navigation:footer.about')}
                   </a>
                 </Link>
               </li>
               <li>
                 <Link href="/discover">
                   <a className="text-muted-foreground hover:text-primary transition-colors" data-testid="link-discover">
-                    Discover Events
+                    {t('common:discoverEvents', 'Discover Events')}
                   </a>
                 </Link>
               </li>
               <li>
                 <Link href="/teachers">
                   <a className="text-muted-foreground hover:text-primary transition-colors" data-testid="link-teachers">
-                    Find Teachers
+                    {t('common:findTeachers', 'Find Teachers')}
                   </a>
                 </Link>
               </li>
               <li>
                 <Link href="/volunteer">
                   <a className="text-muted-foreground hover:text-primary transition-colors" data-testid="link-volunteer">
-                    Volunteer
+                    {t('navigation:footer.volunteer')}
                   </a>
                 </Link>
               </li>
@@ -75,19 +77,19 @@ export function Footer() {
 
           {/* Resources */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Resources</h3>
+            <h3 className="text-lg font-semibold mb-4">{t('common:resources', 'Resources')}</h3>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link href="/community-guidelines">
                   <a className="text-muted-foreground hover:text-primary transition-colors" data-testid="link-guidelines">
-                    Community Guidelines
+                    {t('navigation:footer.guidelines')}
                   </a>
                 </Link>
               </li>
               <li>
                 <Link href="/help">
                   <a className="text-muted-foreground hover:text-primary transition-colors" data-testid="link-help">
-                    Help Center
+                    {t('navigation:resources.help')}
                   </a>
                 </Link>
               </li>
@@ -96,26 +98,26 @@ export function Footer() {
 
           {/* Legal & Support */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Legal</h3>
+            <h3 className="text-lg font-semibold mb-4">{t('navigation:footer.legal')}</h3>
             <ul className="space-y-2 text-sm mb-6">
               <li>
                 <Link href="/terms">
                   <a className="text-muted-foreground hover:text-primary transition-colors" data-testid="link-terms">
-                    Terms of Service
+                    {t('navigation:footer.terms')}
                   </a>
                 </Link>
               </li>
               <li>
                 <Link href="/privacy">
                   <a className="text-muted-foreground hover:text-primary transition-colors" data-testid="link-privacy">
-                    Privacy Policy
+                    {t('navigation:footer.privacy')}
                   </a>
                 </Link>
               </li>
               <li>
                 <Link href="/contact">
                   <a className="text-muted-foreground hover:text-primary transition-colors" data-testid="link-contact">
-                    Contact Us
+                    {t('navigation:footer.contact')}
                   </a>
                 </Link>
               </li>
@@ -125,10 +127,10 @@ export function Footer() {
             <div className="glass-card p-4 rounded-lg">
               <div className="flex items-center gap-2 mb-2">
                 <Heart className="h-5 w-5 text-primary" />
-                <h4 className="font-semibold text-sm">Support Us</h4>
+                <h4 className="font-semibold text-sm">{t('navigation:footer.support')}</h4>
               </div>
               <p className="text-xs text-muted-foreground mb-3">
-                Help us build the future of tango technology
+                {t('common:supportDescription', 'Help us build the future of tango technology')}
               </p>
               <a 
                 href="https://gofundme.com/mundotango" 
@@ -138,7 +140,7 @@ export function Footer() {
                 data-testid="link-gofundme"
               >
                 <DollarSign className="h-4 w-4" />
-                Donate on GoFundMe
+                {t('common:donateGoFundMe', 'Donate on GoFundMe')}
               </a>
             </div>
           </div>
@@ -147,7 +149,7 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className="mt-12 pt-8 border-t border-border text-center text-sm text-muted-foreground">
           <p>
-            &copy; {currentYear} Mundo Tango. Built with <Heart className="inline h-4 w-4 text-primary" /> for the global tango community.
+            &copy; {currentYear} {t('common:copyright', 'Mundo Tango. Built with love for the global tango community.')}
           </p>
         </div>
       </div>

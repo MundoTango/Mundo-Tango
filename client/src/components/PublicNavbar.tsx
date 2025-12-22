@@ -1,32 +1,34 @@
 import { Link, useLocation } from "wouter";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
-import { Moon, Sun, Globe, ChevronDown, Users, GraduationCap, CalendarCheck, Heart, Bot, Flag, HandHeart, Code, Shuffle } from "lucide-react";
+import { Moon, Sun, ChevronDown, Users, GraduationCap, CalendarCheck, Code, Shuffle } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { LanguageSelectorButton } from "@/components/LanguageSelector";
 
 export function PublicNavbar() {
+  const { t } = useTranslation(['navigation', 'common']);
   const { theme, setTheme } = useTheme();
   const [location] = useLocation();
 
   const navItems = [
-    { label: "Home", path: "/" },
-    { label: "About", path: "/about" },
-    { label: "Contact", path: "/contact" },
-    { label: "Support Us", path: "/support" },
-    { label: "Volunteer", path: "/volunteer" },
-    { label: "Ambassadors", path: "/ambassadors" }
+    { label: t('common:home'), path: "/" },
+    { label: t('navigation:footer.about'), path: "/about" },
+    { label: t('navigation:footer.contact'), path: "/contact" },
+    { label: t('navigation:resources.help'), path: "/support" },
+    { label: t('navigation:footer.volunteer'), path: "/volunteer" },
+    { label: t('common:ambassadors', 'Ambassadors'), path: "/ambassadors" }
   ];
 
   const audienceItems = [
-    { label: "For Dancers", path: "/for-dancers", icon: Users },
-    { label: "For Teachers", path: "/for-teachers", icon: GraduationCap },
-    { label: "For Organizers", path: "/for-organizers", icon: CalendarCheck },
-    { label: "Tango Roles", path: "/tango-roles", icon: Shuffle }
+    { label: t('common:forDancers', 'For Dancers'), path: "/for-dancers", icon: Users },
+    { label: t('common:forTeachers', 'For Teachers'), path: "/for-teachers", icon: GraduationCap },
+    { label: t('common:forOrganizers', 'For Organizers'), path: "/for-organizers", icon: CalendarCheck },
+    { label: t('common:tangoRoles', 'Tango Roles'), path: "/tango-roles", icon: Shuffle }
   ];
 
   const communityItems = [
-    { label: "Open Source", path: "/open-source", icon: Code }
+    { label: t('common:openSource', 'Open Source'), path: "/open-source", icon: Code }
   ];
 
   const isActive = (path: string) => location === path;
@@ -51,7 +53,7 @@ export function PublicNavbar() {
               <Button
                 variant={isActive(item.path) ? "secondary" : "ghost"}
                 className={isActive(item.path) ? "bg-accent" : ""}
-                data-testid={`nav-${item.label.toLowerCase().replace(" ", "-")}`}
+                data-testid={`nav-${item.path.replace('/', '') || 'home'}`}
               >
                 {item.label}
               </Button>
@@ -66,7 +68,7 @@ export function PublicNavbar() {
                 className={audienceItems.some(item => isActive(item.path)) ? "bg-accent" : ""}
                 data-testid="nav-who-its-for"
               >
-                Who It's For
+                {t('common:whoItsFor', "Who It's For")}
                 <ChevronDown className="ml-1 h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
@@ -75,7 +77,7 @@ export function PublicNavbar() {
                 <Link key={item.path} href={item.path}>
                   <DropdownMenuItem 
                     className="cursor-pointer gap-2"
-                    data-testid={`nav-${item.label.toLowerCase().replace(" ", "-")}`}
+                    data-testid={`nav-${item.path.replace('/', '')}`}
                   >
                     <item.icon className="h-4 w-4" />
                     {item.label}
@@ -93,7 +95,7 @@ export function PublicNavbar() {
                 className={communityItems.some(item => isActive(item.path)) ? "bg-accent" : ""}
                 data-testid="nav-community"
               >
-                Community
+                {t('navigation:community.title')}
                 <ChevronDown className="ml-1 h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
@@ -102,7 +104,7 @@ export function PublicNavbar() {
                 <Link key={item.path} href={item.path}>
                   <DropdownMenuItem 
                     className="cursor-pointer gap-2"
-                    data-testid={`nav-${item.label.toLowerCase().replace(/\s+/g, "-")}`}
+                    data-testid={`nav-${item.path.replace('/', '')}`}
                   >
                     <item.icon className="h-4 w-4" />
                     {item.label}
@@ -135,7 +137,7 @@ export function PublicNavbar() {
               className="ocean-gradient text-white font-semibold"
               data-testid="button-nav-login"
             >
-              LOGIN
+              {t('common:buttons.login')}
             </Button>
           </Link>
         </div>
@@ -150,7 +152,7 @@ export function PublicNavbar() {
                 size="sm"
                 variant={isActive(item.path) ? "secondary" : "ghost"}
                 className={isActive(item.path) ? "bg-accent" : ""}
-                data-testid={`nav-mobile-${item.label.toLowerCase().replace(" ", "-")}`}
+                data-testid={`nav-mobile-${item.path.replace('/', '') || 'home'}`}
               >
                 {item.label}
               </Button>
@@ -162,7 +164,7 @@ export function PublicNavbar() {
                 size="sm"
                 variant={isActive(item.path) ? "secondary" : "ghost"}
                 className={isActive(item.path) ? "bg-accent" : ""}
-                data-testid={`nav-mobile-${item.label.toLowerCase().replace(" ", "-")}`}
+                data-testid={`nav-mobile-${item.path.replace('/', '')}`}
               >
                 <item.icon className="h-3 w-3 mr-1" />
                 {item.label}
@@ -175,7 +177,7 @@ export function PublicNavbar() {
                 size="sm"
                 variant={isActive(item.path) ? "secondary" : "ghost"}
                 className={isActive(item.path) ? "bg-accent" : ""}
-                data-testid={`nav-mobile-${item.label.toLowerCase().replace(/\s+/g, "-")}`}
+                data-testid={`nav-mobile-${item.path.replace('/', '')}`}
               >
                 <item.icon className="h-3 w-3 mr-1" />
                 {item.label}

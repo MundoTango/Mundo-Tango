@@ -28,5 +28,18 @@
   "community": "Community",
   "careers": "Careers",
   "press": "Press",
-  "donate": "Donate"
+  "donate": "Donate",
+  "volunteer": "Volunteer",
+  "ambassadors": "Ambassadors",
+  "whoItsFor": "Who It's For",
+  "forDancers": "For Dancers",
+  "forTeachers": "For Teachers",
+  "forOrganizers": "For Organizers",
+  "tangoRoles": "Tango Roles",
+  "openSource": "Open Source",
+  "supportUs": "Support Us",
+  "joinFree": "Join Free",
+  "watchDemo": "Watch Demo",
+  "getStarted": "Get Started",
+  "learnMore": "Learn More"
 }

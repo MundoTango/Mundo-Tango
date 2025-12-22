@@ -1,17 +1,14 @@
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Link } from "wouter";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-  CardDescription,
-  CardFooter,
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
 import { PublicNavbar } from "@/components/PublicNavbar";
 import { DemoModal } from "@/components/marketing/DemoModal";
 import {
@@ -23,7 +20,6 @@ import {
   Video,
   Bot,
   Globe,
-  Check,
   ArrowRight,
   Play,
   UserPlus,
@@ -34,20 +30,17 @@ import {
   Twitter,
   Instagram,
   Youtube,
-  Linkedin,
-  Mail,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 
 export default function LandingPage() {
+  const { t } = useTranslation(['pages', 'navigation', 'common']);
   const [demoModalOpen, setDemoModalOpen] = useState(false);
 
-  // Set page title
   useEffect(() => {
     document.title = "Mundo Tango - Global Tango Community Platform";
 
-    // Add meta tags
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
       metaDescription.setAttribute(
@@ -62,7 +55,6 @@ export default function LandingPage() {
       document.head.appendChild(meta);
     }
 
-    // Add Open Graph tags
     const addOgTag = (property: string, content: string) => {
       let tag = document.querySelector(`meta[property="${property}"]`);
       if (!tag) {
@@ -82,7 +74,6 @@ export default function LandingPage() {
     addOgTag("og:image", "/og-image.jpg");
   }, []);
 
-  // Animation variants
   const fadeInUp = {
     hidden: { opacity: 0, y: 50 },
     visible: { opacity: 1, y: 0 },
@@ -101,51 +92,43 @@ export default function LandingPage() {
   const features = [
     {
       icon: MapPin,
-      title: "Global Tango Map",
-      description:
-        "Discover dancers, events, and communities across the globe. Never feel alone in your tango journey.",
+      title: t('common:globalMap', 'Global Tango Map'),
+      description: t('common:globalMapDesc', 'Discover dancers, events, and communities across the globe. Never feel alone in your tango journey.'),
     },
     {
       icon: Bot,
-      title: "Smart Matching",
-      description:
-        "Connect with dancers who match your level, style, and interests. Smart recommendations that grow with you.",
+      title: t('common:smartMatching', 'Smart Matching'),
+      description: t('common:smartMatchingDesc', 'Connect with dancers who match your level, style, and interests. Smart recommendations that grow with you.'),
     },
     {
       icon: Calendar,
-      title: "Event Discovery",
-      description:
-        "Find milongas, practicas, festivals, and workshops happening near you or plan your tango travels worldwide.",
+      title: t('common:eventDiscovery', 'Event Discovery'),
+      description: t('common:eventDiscoveryDesc', 'Find milongas, practicas, festivals, and workshops happening near you or plan your tango travels worldwide.'),
     },
     {
       icon: Home,
-      title: "Housing Marketplace",
-      description:
-        "Stay with local tango dancers when traveling. Offer your home to visiting dancers. Build friendships through shared spaces.",
+      title: t('common:housingMarketplace', 'Housing Marketplace'),
+      description: t('common:housingMarketplaceDesc', 'Stay with local tango dancers when traveling. Offer your home to visiting dancers. Build friendships through shared spaces.'),
     },
     {
       icon: Briefcase,
-      title: "Professional Networking",
-      description:
-        "Connect with teachers, organizers, DJs, and performers. Grow your tango career or find the perfect instructor.",
+      title: t('common:proNetworking', 'Professional Networking'),
+      description: t('common:proNetworkingDesc', 'Connect with teachers, organizers, DJs, and performers. Grow your tango career or find the perfect instructor.'),
     },
     {
       icon: Video,
-      title: "Live Streaming",
-      description:
-        "Attend virtual milongas, watch live performances, and take online classes from maestros around the world.",
+      title: t('common:liveStreaming', 'Live Streaming'),
+      description: t('common:liveStreamingDesc', 'Attend virtual milongas, watch live performances, and take online classes from maestros around the world.'),
     },
     {
       icon: Users,
-      title: "Community Connections",
-      description:
-        "Join city-based groups, connect with local dancers, and build lasting friendships in the global tango community.",
+      title: t('common:communityConnections', 'Community Connections'),
+      description: t('common:communityConnectionsDesc', 'Join city-based groups, connect with local dancers, and build lasting friendships in the global tango community.'),
     },
     {
       icon: Globe,
-      title: "Multi-Language Support",
-      description:
-        "Platform available in English, Spanish, Portuguese, French, Italian, and more. Tango speaks all languages.",
+      title: t('common:multiLanguage', 'Multi-Language Support'),
+      description: t('common:multiLanguageDesc', 'Platform available in English, Spanish, Portuguese, French, Italian, and more. Tango speaks all languages.'),
     },
   ];
 
@@ -153,34 +136,52 @@ export default function LandingPage() {
     {
       number: 1,
       icon: UserPlus,
-      title: "Create Your Profile",
-      description:
-        "Share your tango journey, experience level, preferred roles, and what you're looking for in the community.",
+      title: t('common:createProfile', 'Create Your Profile'),
+      description: t('common:createProfileDesc', 'Share your tango journey, experience level, preferred roles, and what you\'re looking for in the community.'),
     },
     {
       number: 2,
       icon: Search,
-      title: "Discover Events & Dancers",
-      description:
-        "Browse events happening worldwide, find dance partners, and explore communities in cities you plan to visit.",
+      title: t('common:discoverEventsStep', 'Discover Events & Dancers'),
+      description: t('common:discoverEventsStepDesc', 'Browse events happening worldwide, find dance partners, and explore communities in cities you plan to visit.'),
     },
     {
       number: 3,
       icon: MessageCircle,
-      title: "Connect & Collaborate",
-      description:
-        "Message dancers, join group chats, RSVP to events, and arrange housing stays with verified community members.",
+      title: t('common:connectCollaborate', 'Connect & Collaborate'),
+      description: t('common:connectCollaborateDesc', 'Message dancers, join group chats, RSVP to events, and arrange housing stays with verified community members.'),
     },
     {
       number: 4,
       icon: TrendingUp,
-      title: "Grow Your Tango Journey",
-      description:
-        "Track your progress, collect memories, build your network, and become part of the global tango family.",
+      title: t('common:growJourney', 'Grow Your Tango Journey'),
+      description: t('common:growJourneyDesc', 'Track your progress, collect memories, build your network, and become part of the global tango family.'),
     },
   ];
 
-  // Fetch dynamic stats from API - shows real data only, no fake numbers
+  const comingSoonFeatures = [
+    {
+      icon: Home,
+      title: t('common:comingHousing', 'Housing Marketplace'),
+      description: t('common:comingHousingDesc', 'Find tango-friendly accommodations or host traveling dancers. Build connections through shared spaces.'),
+    },
+    {
+      icon: Briefcase,
+      title: t('common:comingProTools', 'Professional Tools'),
+      description: t('common:comingProToolsDesc', 'Advanced features for teachers and organizers: student management, event analytics, and booking systems.'),
+    },
+    {
+      icon: Bot,
+      title: t('common:comingAI', 'Enhanced AI Matching'),
+      description: t('common:comingAIDesc', 'Smart algorithms learn your preferences and suggest perfect dance partners based on style, level, and personality.'),
+    },
+    {
+      icon: Users,
+      title: t('common:comingGroupTravel', 'Group Travel Planning'),
+      description: t('common:comingGroupTravelDesc', 'Coordinate festival trips with your tango friends. Shared itineraries, housing, and transportation.'),
+    },
+  ];
+
   const { data: publicStats } = useQuery<{
     dancers: number | null;
     teachers: number | null;
@@ -204,19 +205,18 @@ export default function LandingPage() {
     staleTime: 5 * 60 * 1000,
   });
 
-  // Only display stats that have real data (not null)
   const stats = [
     publicStats?.dancers
-      ? { value: `${publicStats.dancers}+`, label: "Members" }
+      ? { value: `${publicStats.dancers}+`, label: t('common:members', 'Members') }
       : null,
     publicStats?.events
-      ? { value: `${publicStats.events}+`, label: "Events" }
+      ? { value: `${publicStats.events}+`, label: t('common:events') }
       : null,
     publicStats?.cities
-      ? { value: publicStats.cities.toString(), label: "Cities" }
+      ? { value: publicStats.cities.toString(), label: t('common:cities') }
       : null,
     publicStats?.countries
-      ? { value: `${publicStats.countries}+`, label: "Countries" }
+      ? { value: `${publicStats.countries}+`, label: t('common:countries', 'Countries') }
       : null,
   ].filter(Boolean) as { value: string; label: string }[];
 
@@ -229,11 +229,9 @@ export default function LandingPage() {
         className="relative min-h-[100vh] flex items-center justify-center overflow-hidden"
         data-testid="section-hero"
       >
-        {/* Background Gradient */}
         <div className="absolute inset-0 ocean-gradient opacity-90" />
         <div className="absolute inset-0 bg-black/20" />
 
-        {/* Content */}
         <div className="relative z-10 container mx-auto px-4 py-20">
           <motion.div
             initial="hidden"
@@ -241,14 +239,13 @@ export default function LandingPage() {
             variants={staggerContainer}
             className="max-w-5xl mx-auto text-center"
           >
-            {/* Glassmorphic Panel */}
             <div className="glass-card rounded-2xl p-8 md:p-12 space-y-8">
               <motion.h1
                 variants={fadeInUp}
                 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight"
                 data-testid="text-hero-headline"
               >
-                Where Tango Lives
+                {t('pages:home.hero.headline')}
               </motion.h1>
 
               <motion.p
@@ -256,16 +253,12 @@ export default function LandingPage() {
                 className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto"
                 data-testid="text-hero-subheadline"
               >
-                Connect with the global tango community. Discover events, find
-                partners, and grow your journey with passionate tango lovers
-                worldwide.
+                {t('pages:home.hero.subtitle')}
               </motion.p>
 
-              {/* CTA Buttons */}
               <motion.div
                 variants={fadeInUp}
                 className="bg-transparent text-white text-lg px-8 py-6 h-auto font-semibold"
-                id="element-1764009472969"
               >
                 <Link href="/register">
                   <Button
@@ -273,7 +266,7 @@ export default function LandingPage() {
                     className="bg-white text-primary hover:bg-white/90 text-lg px-8 py-6 h-auto font-semibold"
                     data-testid="button-join-free"
                   >
-                    Join Free
+                    {t('pages:home.hero.cta')}
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </Link>
@@ -285,12 +278,11 @@ export default function LandingPage() {
                   onClick={() => setDemoModalOpen(true)}
                 >
                   <Play className="mr-2 h-5 w-5" />
-                  Watch Demo
+                  {t('common:watchDemo', 'Watch Demo')}
                 </Button>
               </motion.div>
             </div>
 
-            {/* Stats Bar - Only shows when there's real data */}
             {stats.length > 0 && (
               <motion.div
                 variants={fadeInUp}
@@ -308,7 +300,7 @@ export default function LandingPage() {
                   <div
                     key={index}
                     className="glass-card rounded-xl p-6 text-center"
-                    data-testid={`stat-${stat.label.toLowerCase().replace("/", "-")}`}
+                    data-testid={`stat-${index}`}
                   >
                     <div className="text-3xl md:text-4xl font-bold text-white">
                       {stat.value}
@@ -324,7 +316,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Features Showcase Section */}
+      {/* Features Section */}
       <section className="py-20 md:py-24" data-testid="section-features">
         <div className="container mx-auto px-4">
           <motion.div
@@ -334,25 +326,22 @@ export default function LandingPage() {
             variants={staggerContainer}
             className="space-y-16"
           >
-            {/* Section Header */}
             <div className="text-center max-w-3xl mx-auto space-y-4">
               <motion.h2
                 variants={fadeInUp}
                 className="text-3xl md:text-4xl font-bold ocean-gradient-text"
                 data-testid="text-features-heading"
               >
-                Everything You Need for Your Tango Journey
+                {t('common:featuresTitle', 'Everything You Need for Your Tango Journey')}
               </motion.h2>
               <motion.p
                 variants={fadeInUp}
                 className="text-lg text-muted-foreground"
               >
-                Powerful features designed to connect dancers, discover events,
-                and grow the global tango community.
+                {t('common:featuresSubtitle', 'Powerful features designed to connect dancers, discover events, and grow the global tango community.')}
               </motion.p>
             </div>
 
-            {/* Features Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {features.map((feature, index) => (
                 <motion.div key={index} variants={fadeInUp}>
@@ -392,25 +381,22 @@ export default function LandingPage() {
             variants={staggerContainer}
             className="space-y-16"
           >
-            {/* Section Header */}
             <div className="text-center max-w-3xl mx-auto space-y-4">
               <motion.h2
                 variants={fadeInUp}
                 className="text-3xl md:text-4xl font-bold ocean-gradient-text"
                 data-testid="text-how-it-works-heading"
               >
-                How It Works
+                {t('common:howItWorks', 'How It Works')}
               </motion.h2>
               <motion.p
                 variants={fadeInUp}
                 className="text-lg text-muted-foreground"
               >
-                Get started in minutes and join thousands of tango dancers
-                worldwide.
+                {t('common:howItWorksSubtitle', 'Get started in minutes and join thousands of tango dancers worldwide.')}
               </motion.p>
             </div>
 
-            {/* Steps */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               {steps.map((step, index) => (
                 <motion.div
@@ -420,24 +406,17 @@ export default function LandingPage() {
                   data-testid={`step-${index + 1}`}
                 >
                   <div className="text-center space-y-4">
-                    {/* Number Circle */}
                     <div className="w-16 h-16 rounded-full ocean-gradient mx-auto flex items-center justify-center">
                       <span className="text-2xl font-bold text-white">
                         {step.number}
                       </span>
                     </div>
-
-                    {/* Icon */}
                     <div className="flex justify-center">
                       <step.icon className="h-12 w-12 text-primary" />
                     </div>
-
-                    {/* Content */}
                     <h3 className="text-xl font-semibold">{step.title}</h3>
                     <p className="text-muted-foreground">{step.description}</p>
                   </div>
-
-                  {/* Connecting Line (desktop only) */}
                   {index < steps.length - 1 && (
                     <div className="hidden lg:block absolute top-8 left-[60%] w-[80%] h-0.5 bg-gradient-to-r from-primary to-transparent" />
                   )}
@@ -448,7 +427,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Coming Soon Features Section */}
+      {/* Coming Soon Section */}
       <section
         className="py-20 md:py-24 gradient-hero"
         data-testid="section-coming-soon"
@@ -461,47 +440,24 @@ export default function LandingPage() {
             variants={staggerContainer}
             className="space-y-12"
           >
-            {/* Section Header */}
             <div className="text-center max-w-3xl mx-auto space-y-4">
               <motion.h2
                 variants={fadeInUp}
                 className="text-3xl md:text-4xl font-bold ocean-gradient-text"
                 data-testid="text-coming-soon-heading"
               >
-                Coming Soon
+                {t('common:comingSoon', 'Coming Soon')}
               </motion.h2>
               <motion.p
                 variants={fadeInUp}
                 className="text-lg text-muted-foreground"
               >
-                We're building incredible features to transform your tango experience. Here's what's on the horizon.
+                {t('common:comingSoonSubtitle', "We're building incredible features to transform your tango experience. Here's what's on the horizon.")}
               </motion.p>
             </div>
 
-            {/* Coming Soon Features Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-              {[
-                {
-                  icon: Home,
-                  title: "Housing Marketplace",
-                  description: "Find tango-friendly accommodations or host traveling dancers. Build connections through shared spaces."
-                },
-                {
-                  icon: Briefcase,
-                  title: "Professional Tools",
-                  description: "Advanced features for teachers and organizers: student management, event analytics, and booking systems."
-                },
-                {
-                  icon: Bot,
-                  title: "Enhanced AI Matching",
-                  description: "Smart algorithms learn your preferences and suggest perfect dance partners based on style, level, and personality."
-                },
-                {
-                  icon: Users,
-                  title: "Group Travel Planning",
-                  description: "Coordinate festival trips with your tango friends. Shared itineraries, housing, and transportation."
-                }
-              ].map((feature, index) => (
+              {comingSoonFeatures.map((feature, index) => (
                 <motion.div key={index} variants={fadeInUp}>
                   <Card
                     className="h-full hover-elevate"
@@ -523,13 +479,12 @@ export default function LandingPage() {
               ))}
             </div>
 
-            {/* Support CTA */}
             <motion.div
               variants={fadeInUp}
               className="text-center max-w-2xl mx-auto pt-8"
             >
               <p className="text-muted-foreground mb-4">
-                Help us build these features faster by supporting Mundo Tango
+                {t('common:supportCta', 'Help us build these features faster by supporting Mundo Tango')}
               </p>
               <Link href="/support">
                 <Button
@@ -537,7 +492,7 @@ export default function LandingPage() {
                   className="ocean-gradient text-white"
                   data-testid="button-support-coming-soon"
                 >
-                  Support Our Mission
+                  {t('common:supportMission', 'Support Our Mission')}
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
@@ -551,7 +506,6 @@ export default function LandingPage() {
         className="py-20 md:py-24 relative overflow-hidden"
         data-testid="section-cta"
       >
-        {/* Background */}
         <div className="absolute inset-0 ocean-gradient opacity-90" />
         <div className="absolute inset-0 bg-black/10" />
 
@@ -568,21 +522,20 @@ export default function LandingPage() {
               className="text-3xl md:text-4xl lg:text-5xl font-bold text-white"
               data-testid="text-cta-heading"
             >
-              Ready to Join the Global Tango Community?
+              {t('common:ctaTitle', 'Ready to Join the Global Tango Community?')}
             </motion.h2>
 
             <motion.p variants={fadeInUp} className="text-xl text-white/90">
-              Get started free. No credit card required.
+              {t('common:ctaSubtitle', 'Create your free account and start connecting with dancers worldwide.')}
             </motion.p>
 
-            {/* Email Signup Form */}
             <motion.div
               variants={fadeInUp}
               className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto"
             >
               <Input
                 type="email"
-                placeholder="Enter your email"
+                placeholder={t('common:email', 'Enter your email')}
                 className="bg-white/90 backdrop-blur-sm border-white/20"
                 data-testid="input-email-signup"
               />
@@ -592,15 +545,14 @@ export default function LandingPage() {
                   className="bg-white text-primary hover:bg-white/90 font-semibold w-full sm:w-auto"
                   data-testid="button-join-now"
                 >
-                  Join Now
+                  {t('common:joinNow', 'Join Now')}
                 </Button>
               </Link>
             </motion.div>
 
-            {/* Social Proof */}
             {publicStats?.dancers && (
               <motion.p variants={fadeInUp} className="text-white/80 text-sm">
-                Join {publicStats.dancers}+ tango community members worldwide
+                {t('common:joinCommunity', { count: publicStats.dancers })}
               </motion.p>
             )}
           </motion.div>
@@ -610,12 +562,11 @@ export default function LandingPage() {
       {/* Footer */}
       <footer className="bg-card border-t py-12" data-testid="section-footer">
         <div className="container mx-auto px-4">
-          {/* Scott's Story Banner */}
           <div className="bg-muted/50 rounded-xl p-6 mb-8">
             <div className="flex flex-col md:flex-row gap-6 items-center">
               <div className="flex-1">
                 <h3 className="font-semibold text-lg mb-2">
-                  Built by a Tanguero, For Tangueros
+                  {t('common:builtByTanguero', 'Built by a Tanguero, For Tangueros')}
                 </h3>
                 <p className="text-sm text-muted-foreground">
                   Scott started dancing tango in{" "}
@@ -642,12 +593,12 @@ export default function LandingPage() {
                     size="sm"
                     data-testid="button-about-scott"
                   >
-                    About Scott
+                    {t('navigation:footer.about')}
                   </Button>
                 </Link>
                 <Link href="/support">
                   <Button size="sm" data-testid="button-support-platform">
-                    Support Platform
+                    {t('navigation:footer.support')}
                   </Button>
                 </Link>
               </div>
@@ -655,7 +606,6 @@ export default function LandingPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-5 gap-8 mb-8">
-            {/* Logo & Description */}
             <div className="space-y-4 md:col-span-2">
               <div className="flex items-center gap-2">
                 <div className="w-10 h-10 ocean-gradient rounded-lg flex items-center justify-center">
@@ -666,11 +616,8 @@ export default function LandingPage() {
                 </span>
               </div>
               <p className="text-sm text-muted-foreground">
-                Connecting the global tango community, one dance at a time.{" "}
-                {publicStats?.platformStats?.yearsOfDancing || 18} years of
-                passion, now a platform for all.
+                {t('common:footerTagline', 'Connecting the global tango community, one dance at a time.')}
               </p>
-              {/* Social Icons */}
               <div className="flex gap-3">
                 <Button
                   size="icon"
@@ -703,16 +650,15 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* Quick Links */}
             <div>
-              <h3 className="font-semibold mb-4">Company</h3>
+              <h3 className="font-semibold mb-4">{t('navigation:footer.company')}</h3>
               <ul className="space-y-2 text-sm">
                 <li>
                   <Link
                     href="/about"
                     className="text-muted-foreground hover:text-foreground"
                   >
-                    About
+                    {t('navigation:footer.about')}
                   </Link>
                 </li>
                 <li>
@@ -720,7 +666,7 @@ export default function LandingPage() {
                     href="/for-dancers"
                     className="text-muted-foreground hover:text-foreground"
                   >
-                    For Dancers
+                    {t('common:forDancers', 'For Dancers')}
                   </Link>
                 </li>
                 <li>
@@ -728,7 +674,7 @@ export default function LandingPage() {
                     href="/for-teachers"
                     className="text-muted-foreground hover:text-foreground"
                   >
-                    For Teachers
+                    {t('common:forTeachers', 'For Teachers')}
                   </Link>
                 </li>
                 <li>
@@ -736,46 +682,21 @@ export default function LandingPage() {
                     href="/for-organizers"
                     className="text-muted-foreground hover:text-foreground"
                   >
-                    For Organizers
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/pricing"
-                    className="text-muted-foreground hover:text-foreground"
-                  >
-                    Pricing
+                    {t('common:forOrganizers', 'For Organizers')}
                   </Link>
                 </li>
               </ul>
             </div>
 
-            {/* Community */}
             <div>
-              <h3 className="font-semibold mb-4">Community</h3>
+              <h3 className="font-semibold mb-4">{t('navigation:community.title')}</h3>
               <ul className="space-y-2 text-sm">
                 <li>
                   <Link
                     href="/support"
                     className="text-muted-foreground hover:text-foreground"
                   >
-                    Support Us
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/supporters"
-                    className="text-muted-foreground hover:text-foreground"
-                  >
-                    Our Supporters
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/ambassadors"
-                    className="text-muted-foreground hover:text-foreground"
-                  >
-                    Ambassadors
+                    {t('navigation:footer.support')}
                   </Link>
                 </li>
                 <li>
@@ -783,38 +704,21 @@ export default function LandingPage() {
                     href="/volunteer"
                     className="text-muted-foreground hover:text-foreground"
                   >
-                    Volunteer
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/open-source"
-                    className="text-muted-foreground hover:text-foreground"
-                  >
-                    Open Source
+                    {t('navigation:footer.volunteer')}
                   </Link>
                 </li>
               </ul>
             </div>
 
-            {/* Resources & Legal */}
             <div>
-              <h3 className="font-semibold mb-4">Resources</h3>
+              <h3 className="font-semibold mb-4">{t('navigation:footer.legal')}</h3>
               <ul className="space-y-2 text-sm">
                 <li>
                   <Link
-                    href="/help"
+                    href="/terms"
                     className="text-muted-foreground hover:text-foreground"
                   >
-                    Help Center
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/faq"
-                    className="text-muted-foreground hover:text-foreground"
-                  >
-                    FAQ
+                    {t('navigation:footer.terms')}
                   </Link>
                 </li>
                 <li>
@@ -822,33 +726,23 @@ export default function LandingPage() {
                     href="/privacy"
                     className="text-muted-foreground hover:text-foreground"
                   >
-                    Privacy Policy
+                    {t('navigation:footer.privacy')}
                   </Link>
                 </li>
                 <li>
                   <Link
-                    href="/terms"
+                    href="/contact"
                     className="text-muted-foreground hover:text-foreground"
                   >
-                    Terms of Service
+                    {t('navigation:footer.contact')}
                   </Link>
                 </li>
               </ul>
             </div>
           </div>
 
-          <Separator className="my-8" />
-
-          {/* Bottom Bar */}
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
-            <p>
-              © 2025 Mundo Tango. All rights reserved. Built with love from
-              April 2024.
-            </p>
-            <div className="flex items-center gap-2">
-              <Globe className="h-4 w-4" />
-              <span>Language: English</span>
-            </div>
+          <div className="pt-8 border-t text-center text-sm text-muted-foreground">
+            <p>&copy; {new Date().getFullYear()} {t('common:copyright', 'Mundo Tango. Built with love for the global tango community.')}</p>
           </div>
         </div>
       </footer>
