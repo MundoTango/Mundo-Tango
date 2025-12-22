@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -30,6 +31,7 @@ interface VolunteerStats {
 }
 
 export default function VolunteerRecruitmentPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const { toast } = useToast();
 
   const { data: scenarios = [], isLoading: scenariosLoading } = useQuery<TestScenario[]>({

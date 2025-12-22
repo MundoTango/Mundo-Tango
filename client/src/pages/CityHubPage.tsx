@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useMemo, lazy, Suspense } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useLocation, useRoute } from "wouter";
@@ -40,6 +41,7 @@ interface CityData {
 }
 
 export default function CityHubPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const { user, profile } = useAuth();
   const [location] = useLocation();
   const userCity = profile?.city || user?.city;

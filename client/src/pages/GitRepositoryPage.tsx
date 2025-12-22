@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -31,6 +32,7 @@ interface GitInfo {
 }
 
 export default function GitRepositoryPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const { data: gitInfo, isLoading } = useQuery<GitInfo>({
     queryKey: ["/api/platform/git-info"],
   });

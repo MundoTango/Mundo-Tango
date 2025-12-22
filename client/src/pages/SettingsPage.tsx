@@ -1,9 +1,11 @@
+import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
 import { useLocation } from "wouter";
 import { useAuth } from "@/contexts/AuthContext";
 import { SEO } from "@/components/SEO";
 
 export default function SettingsPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const { profile } = useAuth();
   const [, setLocation] = useLocation();
 

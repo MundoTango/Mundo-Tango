@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useParams, Link } from "wouter";
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
@@ -39,6 +40,7 @@ interface ModerationReport {
 }
 
 export default function AdminContentModerationDetailPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const { reportId } = useParams();
   const { toast } = useToast();
   const [moderationNotes, setModerationNotes] = useState("");

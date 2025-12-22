@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { AppLayout } from "@/components/AppLayout";
@@ -32,6 +33,7 @@ interface NotificationPreferences {
 }
 
 export default function NotificationPreferencesPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const { toast } = useToast();
   
   // Load preferences from backend

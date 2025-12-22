@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -40,6 +41,7 @@ const MAX_PHOTOS = 4;
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
 export default function AvatarDesignerPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const { toast } = useToast();
   const [photos, setPhotos] = useState<UploadedPhoto[]>([]);
   const [characterName, setCharacterName] = useState('');

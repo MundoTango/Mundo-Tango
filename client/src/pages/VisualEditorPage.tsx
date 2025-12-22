@@ -11,6 +11,7 @@
  * - Full autonomous workflow integration
  */
 
+import { useTranslation } from "react-i18next";
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
@@ -77,6 +78,7 @@ type AutonomousTask = {
 };
 
 function VisualEditorPageContent() {
+  const { t } = useTranslation(["pages", "common"]);
   // State
   const [prompt, setPrompt] = useState("");
   const [currentTask, setCurrentTask] = useState<AutonomousTask | null>(null);
@@ -2552,5 +2554,6 @@ Let's get started! What would you like to change?`,
 }
 
 export default function VisualEditorPage() {
+  const { t } = useTranslation(["pages", "common"]);
   return <VisualEditorPageContent />;
 }

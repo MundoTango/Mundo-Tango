@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
@@ -127,6 +128,7 @@ const demoCategories: DemoCategory[] = [
 ];
 
 export default function DemosPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [demoModalOpen, setDemoModalOpen] = useState(false);
 
   return (

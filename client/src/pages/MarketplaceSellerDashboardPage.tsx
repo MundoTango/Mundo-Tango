@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,6 +17,7 @@ import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useAuth } from "@/contexts/AuthContext";
 
 export default function MarketplaceSellerDashboardPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const { user } = useAuth();
   const { toast } = useToast();
   const [isCreateProductOpen, setIsCreateProductOpen] = useState(false);

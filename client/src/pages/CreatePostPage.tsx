@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useLocation } from "wouter";
 import { PostCreator } from "@/components/universal/PostCreator";
 import { SEO } from "@/components/SEO";
@@ -9,6 +10,7 @@ import { motion } from "framer-motion";
 import { Sparkles } from "lucide-react";
 
 export default function CreatePostPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [, setLocation] = useLocation();
   const { toast } = useToast();
 

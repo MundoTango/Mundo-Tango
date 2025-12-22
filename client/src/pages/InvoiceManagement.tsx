@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useParams, useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -18,6 +19,7 @@ import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 
 export default function InvoiceManagement() {
+  const { t } = useTranslation(["pages", "common"]);
   const { invoiceId } = useParams<{ invoiceId: string }>();
   const [, setLocation] = useLocation();
   const { toast } = useToast();

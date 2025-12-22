@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useParams, useLocation, Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -82,6 +83,7 @@ function formatEventDate(startDate: string, endDate?: string | null): string {
 }
 
 export default function ScrapedProfilePage() {
+  const { t } = useTranslation(["pages", "common"]);
   const params = useParams<{ id: string }>();
   const [, setLocation] = useLocation();
   const profileId = params.id;

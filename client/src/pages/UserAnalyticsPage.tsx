@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { useUser } from "@/hooks/use-user";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -5,6 +6,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 import { Activity, Eye, Heart, Calendar, TrendingUp } from "lucide-react";
 
 export default function UserAnalyticsPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const { user } = useUser();
   
   const { data, isLoading } = useQuery({

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -11,6 +12,7 @@ import recruiterImg1 from "@assets/stock_images/business_team_meetin_e7614141.jp
 import recruiterImg2 from "@assets/stock_images/business_team_meetin_c8361ee1.jpg";
 
 export default function RecruiterAgentPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const metrics = [
     { label: "Open Positions", value: "8", change: "+2", icon: Briefcase, color: "text-blue-500" },
     { label: "Active Candidates", value: "147", change: "+23", icon: Users, color: "text-green-500" },

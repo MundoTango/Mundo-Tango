@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -12,6 +13,7 @@ import { useLocation } from "wouter";
 import type { SelectPlatformConnection } from "@shared/client-types";
 
 export default function SocialMediaConnectionsPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [, navigate] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();

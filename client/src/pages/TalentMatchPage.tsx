@@ -1,9 +1,11 @@
+import { useTranslation } from "react-i18next";
 import { SEO } from "@/components/SEO";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { TalentMatchExperience } from "@/components/TalentMatchExperience";
 
 export default function TalentMatchPage() {
+  const { t } = useTranslation(["pages", "common"]);
   return (
     <SelfHealingErrorBoundary pageName="Talent Match" fallbackRoute="/platform">
       <PageLayout title="AI Talent Match" showBreadcrumbs>

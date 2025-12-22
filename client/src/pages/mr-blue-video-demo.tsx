@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -21,6 +22,7 @@ const VIDEO_STATES: { state: VideoState; icon: any; label: string; description: 
 ];
 
 export default function MrBlueVideoDemo() {
+  const { t } = useTranslation(["pages", "common"]);
   const [selectedState, setSelectedState] = useState<VideoState>('idle');
   const [isGenerating, setIsGenerating] = useState(false);
 

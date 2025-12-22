@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -80,6 +81,7 @@ const paths = [
 ];
 
 export default function LearningPathsPage() {
+  const { t } = useTranslation(["pages", "common"]);
   return (
     <SelfHealingErrorBoundary pageName="Learning Paths" fallbackRoute="/">
       <PageLayout title="Learning Paths" showBreadcrumbs>

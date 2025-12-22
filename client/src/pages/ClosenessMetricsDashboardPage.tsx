@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -20,6 +21,7 @@ interface ClosenessMetric {
 }
 
 export default function ClosenessMetricsDashboardPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [timeframe, setTimeframe] = useState('30d');
 
   // Mock data

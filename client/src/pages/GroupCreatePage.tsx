@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { useForm } from "react-hook-form";
@@ -54,6 +55,7 @@ const formSchema = z.object({
 type FormData = z.infer<typeof formSchema>;
 
 export default function GroupCreatePage() {
+  const { t } = useTranslation(["pages", "common"]);
   const { toast } = useToast();
   const [, setLocation] = useLocation();
   const [isGeneratingSlug, setIsGeneratingSlug] = useState(false);

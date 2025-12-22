@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -9,6 +10,7 @@ import { SelfHealingErrorBoundary } from '@/components/SelfHealingErrorBoundary'
 import { motion } from "framer-motion";
 
 export default function HelpPage() {
+  const { t } = useTranslation(["pages", "common"]);
   return (
     <PageLayout title="How Can We Help?" showBreadcrumbs>
 <SelfHealingErrorBoundary pageName="Help Center" fallbackRoute="/">

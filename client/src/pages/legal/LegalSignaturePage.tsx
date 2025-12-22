@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useParams, useLocation } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
@@ -32,6 +33,7 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import DOMPurify from 'dompurify';
 
 export default function LegalSignaturePage() {
+  const { t } = useTranslation(["pages", "common"]);
   const { id } = useParams<{ id: string }>();
   const [, navigate] = useLocation();
   const { toast } = useToast();

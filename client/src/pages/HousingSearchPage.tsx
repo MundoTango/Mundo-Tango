@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { Link } from "wouter";
@@ -17,6 +18,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { UnifiedLocationPicker } from "@/components/input/UnifiedLocationPicker";
 
 export default function HousingSearchPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [checkInDate, setCheckInDate] = useState<Date>();
   const [checkOutDate, setCheckOutDate] = useState<Date>();
   const [searchCriteria, setSearchCriteria] = useState({

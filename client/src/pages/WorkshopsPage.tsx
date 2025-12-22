@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -9,6 +10,7 @@ import { motion } from "framer-motion";
 import { SEO } from "@/components/SEO";
 
 export default function WorkshopsPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const { data: workshops, isLoading } = useQuery({
     queryKey: ["/api/workshops"],
   });

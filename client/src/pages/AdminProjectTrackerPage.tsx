@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -34,6 +35,7 @@ interface Task {
 }
 
 export default function AdminProjectTrackerPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('all');
   const [newTask, setNewTask] = useState({ title: '', description: '' });

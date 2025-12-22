@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useLocation } from "wouter";
 import { useMutation } from "@tanstack/react-query";
@@ -32,6 +33,7 @@ interface ImportResult {
 }
 
 export default function FacebookDataImport() {
+  const { t } = useTranslation(["pages", "common"]);
   const [, navigate] = useLocation();
   const [file, setFile] = useState<File | null>(null);
   const [clearExisting, setClearExisting] = useState(false);

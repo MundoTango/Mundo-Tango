@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -11,6 +12,7 @@ interface MemoryStats {
 }
 
 export function MemoryStatsPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [memoryStats, setMemoryStats] = useState<MemoryStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

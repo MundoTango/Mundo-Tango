@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useParams, Link } from "wouter";
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
@@ -34,6 +35,7 @@ interface RSVP {
 }
 
 export default function EventCheckInPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const { eventId } = useParams();
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { motion } from "framer-motion";
@@ -40,6 +41,7 @@ interface ReviewWithUser extends SelectReview {
 }
 
 export default function ReviewsPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const { toast } = useToast();
   const [filterType, setFilterType] = useState<string>("all");
   const [isCreateOpen, setIsCreateOpen] = useState(false);

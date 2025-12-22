@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -10,6 +11,7 @@ import relationshipHeroImg from "@assets/stock_images/business_team_meetin_061b6
 import relationshipImg1 from "@assets/stock_images/business_team_meetin_2bf5caa8.jpg";
 
 export default function RelationshipAgentPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const recentActivities = [
     { activity: "Date Night: Tango Milonga", date: "2 days ago", quality: "Excellent", impact: "high" },
     { activity: "Deep Conversation", date: "4 days ago", quality: "Good", impact: "medium" },

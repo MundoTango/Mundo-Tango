@@ -8,6 +8,7 @@ import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary"
 import { useTranslation } from "react-i18next";
 
 export default function TermsPage() {
+  const { t } = useTranslation(["pages", "common"]);
   return (
     <SelfHealingErrorBoundary pageName="Terms of Service" fallbackRoute="/">
     <PageLayout title="Terms of Service" showBreadcrumbs>

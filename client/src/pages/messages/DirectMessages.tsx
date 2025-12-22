@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useEffect, useRef } from "react";
 import { useParams, Link } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
@@ -71,6 +72,7 @@ interface Message {
 }
 
 export default function DirectMessages() {
+  const { t } = useTranslation(["pages", "common"]);
   const { userId } = useParams<{ userId: string }>();
   const [message, setMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);

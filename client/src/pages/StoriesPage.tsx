@@ -8,6 +8,7 @@
  * - Story highlights
  */
 
+import { useTranslation } from "react-i18next";
 import { useState } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { queryClient, apiRequest } from '@/lib/queryClient';
@@ -45,6 +46,7 @@ interface StoryGroup {
 }
 
 export default function StoriesPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const { toast } = useToast();
   const [selectedStoryGroup, setSelectedStoryGroup] = useState<StoryGroup | null>(null);
   const [currentStoryIndex, setCurrentStoryIndex] = useState(0);

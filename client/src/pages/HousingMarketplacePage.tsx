@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
@@ -8,6 +9,7 @@ import { MapPin, DollarSign, Users, Heart, Home, Plus } from "lucide-react";
 import { HousingSearchFilters } from "@/components/housing/HousingSearchFilters";
 
 export default function HousingMarketplacePage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [city, setCity] = useState("");
   const [propertyType, setPropertyType] = useState("");
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 500]);

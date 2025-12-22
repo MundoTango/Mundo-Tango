@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
@@ -14,6 +15,7 @@ type SortOption = 'trending' | 'new' | 'ending' | 'funded';
 type CategoryFilter = 'all' | 'event' | 'medical' | 'education' | 'community' | 'travel' | 'equipment';
 
 export default function CrowdfundingDashboardPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [searchQuery, setSearchQuery] = useState("");
   const [category, setCategory] = useState<CategoryFilter>('all');
   const [sortBy, setSortBy] = useState<SortOption>('trending');

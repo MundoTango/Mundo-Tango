@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -52,6 +53,7 @@ interface UserCounts {
 }
 
 export default function AdminUsersPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [activeTab, setActiveTab] = useState<UserTab>("active");

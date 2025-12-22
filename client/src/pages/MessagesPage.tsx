@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
 import { 
@@ -32,6 +33,7 @@ import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary"
 import { ChannelSettingsPanel } from "@/components/messages/ChannelSettingsPanel";
 
 export default function MessagesPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeChannel, setActiveChannel] = useState<'all' | MessageChannel>('all');

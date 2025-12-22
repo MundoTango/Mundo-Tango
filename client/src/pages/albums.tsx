@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Link } from "wouter";
@@ -61,6 +62,7 @@ interface Album {
 }
 
 export default function Albums() {
+  const { t } = useTranslation(["pages", "common"]);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [editingAlbum, setEditingAlbum] = useState<Album | null>(null);
   const [deleteConfirmAlbum, setDeleteConfirmAlbum] = useState<Album | null>(null);

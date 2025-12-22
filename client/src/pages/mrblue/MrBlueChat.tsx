@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Video, Loader2 } from 'lucide-react';
 
@@ -10,6 +11,7 @@ interface Message {
 }
 
 export default function MrBlueChat() {
+  const { t } = useTranslation(["pages", "common"]);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -11,6 +12,7 @@ import onboardingImg1 from "@assets/stock_images/business_team_meetin_061b6626.j
 import onboardingImg2 from "@assets/stock_images/business_team_meetin_6cccf697.jpg";
 
 export default function OnboardingAgentPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const metrics = [
     { label: "Active Onboarding", value: "5", change: "+2", icon: Users, color: "text-blue-500" },
     { label: "Completed", value: "23", change: "+3", icon: CheckCircle, color: "text-green-500" },

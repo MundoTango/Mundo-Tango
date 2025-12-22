@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { AppLayout } from "@/components/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -144,6 +145,7 @@ const videoTutorials = [
 const categories = ["All", "Beginner", "Features", "Account", "Advanced", "Safety", "Video"];
 
 export default function HelpCenterPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [selectedCategory, setSelectedCategory] = useState("All");
 
   const fadeInUp = {

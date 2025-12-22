@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -9,6 +10,7 @@ import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary"
 import heroImage from "@assets/optimized/IMG_9441-optimized.jpg";
 
 export default function HealthAgentPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const stats = [
     { label: "Steps Today", value: "8,450", goal: "10,000", icon: Activity, color: "text-green-500" },
     { label: "Water Intake", value: "6/8", goal: "glasses", icon: Droplets, color: "text-blue-500" },

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useLocation } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,6 +9,7 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { PlusCircle } from "lucide-react";
 
 export default function CrowdfundingCreatePage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [, setLocation] = useLocation();
   const { toast } = useToast();
 

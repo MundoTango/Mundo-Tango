@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -10,6 +11,7 @@ import travelHeroImg from "@assets/stock_images/global_world_map_con_0c38d510.jp
 import travelImg1 from "@assets/stock_images/global_world_map_con_5d0982b5.jpg";
 
 export default function TravelAgentPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const upcomingTrips = [
     { id: 1, destination: "Buenos Aires, Argentina", date: "Dec 15-22, 2025", type: "Tango Festival", status: "Confirmed" },
     { id: 2, destination: "Istanbul, Turkey", date: "Jan 10-17, 2026", type: "Cultural Tour", status: "Planning" }

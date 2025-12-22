@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
@@ -49,6 +50,7 @@ interface Stats {
 }
 
 export default function ClosenessMetrics() {
+  const { t } = useTranslation(["pages", "common"]);
   const { user } = useAuth();
   const [selectedTier, setSelectedTier] = useState<number | null>(null);
 

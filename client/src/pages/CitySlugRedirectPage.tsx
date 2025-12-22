@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useRoute, Redirect, useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Loader2, MapPin, Calendar, Home, Sparkles } from "lucide-react";
@@ -25,6 +26,7 @@ function titleCase(str: string): string {
 }
 
 export default function CitySlugRedirectPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [, params] = useRoute("/city/:citySlug");
   const [, setLocation] = useLocation();
   const citySlug = sanitizeCitySlug(params?.citySlug || "");

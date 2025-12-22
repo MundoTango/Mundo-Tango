@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useParams } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
@@ -21,6 +22,7 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useMutation } from "@tanstack/react-query";
 
 export default function ReputationProfile() {
+  const { t } = useTranslation(["pages", "common"]);
   const { userId: userIdParam } = useParams();
   const userId = parseInt(userIdParam || "0");
   const [selectedRole, setSelectedRole] = useState<string>("all");

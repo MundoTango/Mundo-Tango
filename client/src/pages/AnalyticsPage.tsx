@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -35,6 +36,7 @@ interface AnalyticsData {
 }
 
 export default function AnalyticsPage() {
+  const { t } = useTranslation(["pages", "common"]);
   // Mock data - in real app, this would fetch from analytics_events table
   const { data: analytics, isLoading } = useQuery<AnalyticsData>({
     queryKey: ["/api/platform/analytics"],

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -10,6 +11,7 @@ import creativityHeroImg from "@assets/stock_images/elegant_professional_29e89c1
 import creativityImg1 from "@assets/stock_images/elegant_professional_9405e610.jpg";
 
 export default function CreativityAgentPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const stats = [
     { label: "Projects Created", value: "18", icon: Lightbulb, color: "text-yellow-500" },
     { label: "Ideas Captured", value: "142", icon: Pen, color: "text-blue-500" },

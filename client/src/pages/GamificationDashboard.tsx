@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -9,6 +10,7 @@ import { Leaderboard } from "@/components/gamification/Leaderboard";
 import { AutonomyTimeline } from "@/components/gamification/AutonomyTimeline";
 
 export default function GamificationDashboard() {
+  const { t } = useTranslation(["pages", "common"]);
   const { user } = useUser();
 
   const { data: pointsData } = useQuery({

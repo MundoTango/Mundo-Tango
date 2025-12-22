@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useRef, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -114,6 +115,7 @@ interface ImageItem {
 }
 
 export default function UnifiedInbox() {
+  const { t } = useTranslation(["pages", "common"]);
   const { toast } = useToast();
   const { user } = useAuth();
   const currentUserId = user?.id;

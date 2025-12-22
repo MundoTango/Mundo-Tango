@@ -3,6 +3,7 @@
  * 6 sections: Overview metrics, User growth, Moderation queue, Activity, Health, Top content
  */
 
+import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -13,6 +14,7 @@ import { SelfHealingErrorBoundary } from '@/components/SelfHealingErrorBoundary'
 import { SEO } from "@/components/SEO";
 
 export default function AdminDashboard() {
+  const { t } = useTranslation(["pages", "common"]);
   const { data: stats } = useQuery({ queryKey: ["/api/admin/stats/overview"] });
   const { data: moderationQueue } = useQuery({ queryKey: ["/api/admin/moderation/queue"] });
   const { data: recentActivity } = useQuery({ queryKey: ["/api/admin/activity/recent"] });

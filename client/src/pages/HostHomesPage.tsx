@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -77,6 +78,7 @@ interface FilterState {
 }
 
 function HostHomesPageContent() {
+  const { t } = useTranslation(["pages", "common"]);
   const { toast } = useToast();
   const [showWizard, setShowWizard] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
@@ -1012,6 +1014,7 @@ function HostHomesPageContent() {
 }
 
 export default function HostHomesPage() {
+  const { t } = useTranslation(["pages", "common"]);
   return (
     <SelfHealingErrorBoundary pageName="Housing" fallbackRoute="/">
       <PageLayout title="Tango Host Homes" showBreadcrumbs>

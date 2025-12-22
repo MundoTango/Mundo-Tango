@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
@@ -42,6 +43,7 @@ const tangoRoles = [
 ];
 
 export default function OnboardingPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [, setLocation] = useLocation();
   const [currentStep, setCurrentStep] = useState(1);
   const [location, setLocationValue] = useState("");

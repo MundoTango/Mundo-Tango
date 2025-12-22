@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useLocation } from "wouter";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -12,6 +13,7 @@ import { ArrowLeft, Send, Calendar } from "lucide-react";
 import type { InsertSocialPost } from "@shared/client-types";
 
 export default function SocialMediaComposerPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [, navigate] = useLocation();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<"compose" | "schedule">("compose");

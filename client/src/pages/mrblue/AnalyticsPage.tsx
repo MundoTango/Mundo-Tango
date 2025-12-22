@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -33,6 +34,7 @@ interface AIUsageStats {
 const COLORS = ['hsl(var(--chart-1))', 'hsl(var(--chart-2))', 'hsl(var(--chart-3))', 'hsl(var(--chart-4))'];
 
 export default function AnalyticsPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const { data: stats, isLoading } = useQuery<AIUsageStats>({
     queryKey: ['/api/mrblue/analytics'],
   });

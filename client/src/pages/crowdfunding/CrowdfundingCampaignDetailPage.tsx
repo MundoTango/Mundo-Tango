@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useRoute, Link } from "wouter";
@@ -27,6 +28,7 @@ const categoryColors: Record<string, string> = {
 };
 
 export default function CrowdfundingCampaignDetailPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [, params] = useRoute("/crowdfunding/campaign/:id");
   const campaignId = parseInt(params?.id || "0");
   

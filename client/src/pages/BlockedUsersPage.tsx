@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -8,6 +9,7 @@ import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary"
 import { motion } from "framer-motion";
 
 export default function BlockedUsersPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const blockedUsers = [
     { id: 1, name: "User 1", username: "@user1", avatar: "" },
     { id: 2, name: "User 2", username: "@user2", avatar: "" }

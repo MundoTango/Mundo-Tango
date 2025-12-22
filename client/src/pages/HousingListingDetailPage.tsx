@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useParams, Link } from "wouter";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,6 +17,7 @@ const amenityIcons: Record<string, any> = {
 };
 
 export default function HousingListingDetailPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const { id } = useParams();
   const { toast } = useToast();
 

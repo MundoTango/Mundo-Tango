@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useParams } from "wouter";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -49,6 +50,7 @@ function extractSiteName(url: string, fallbackName?: string): string {
 }
 
 export default function EventDetailPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const { id } = useParams();
   const { toast } = useToast();
   const { user } = useAuth();

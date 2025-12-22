@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useParams, Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,6 +13,7 @@ import { safeDateFormat } from "@/lib/safeDateFormat";
 import { SEO } from "@/components/SEO";
 
 export default function TravelEventCoordinationPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const { eventId } = useParams();
 
   // Mock event data (would come from API)

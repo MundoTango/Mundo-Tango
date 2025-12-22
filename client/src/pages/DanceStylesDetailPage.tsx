@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useParams } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -92,6 +93,7 @@ const danceStyles = {
 };
 
 export default function DanceStylesDetailPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const { styleId } = useParams();
   const style = danceStyles[styleId as keyof typeof danceStyles];
 

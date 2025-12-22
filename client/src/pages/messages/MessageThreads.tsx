@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
@@ -16,6 +17,7 @@ type FilterType = "all" | "direct" | "groups" | "archived";
 type SortType = "recent" | "unread" | "alphabetical";
 
 export default function MessageThreads() {
+  const { t } = useTranslation(["pages", "common"]);
   const [filter, setFilter] = useState<FilterType>("all");
   const [sort, setSort] = useState<SortType>("recent");
   const [search, setSearch] = useState("");

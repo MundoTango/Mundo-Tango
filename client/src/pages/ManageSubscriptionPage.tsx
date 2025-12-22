@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -63,6 +64,7 @@ interface HistoryItem {
 }
 
 export default function ManageSubscriptionPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const { toast } = useToast();
 
   const { data: currentSubscription, isLoading: currentLoading } = useQuery<CurrentSubscription | null>({

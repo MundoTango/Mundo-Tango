@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
@@ -25,6 +26,7 @@ import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 
 export default function BillingHistory() {
+  const { t } = useTranslation(["pages", "common"]);
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
 

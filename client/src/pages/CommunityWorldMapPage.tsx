@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import L from 'leaflet';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -57,6 +58,7 @@ interface MapLayer {
 
 
 export default function CommunityWorldMapPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [, setLocation] = useLocation();
   const [selectedCity, setSelectedCity] = useState<CommunityLocation | null>(null);
   const [mapCenter, setMapCenter] = useState<[number, number]>([20, 0]); // World view centered

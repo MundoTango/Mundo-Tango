@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useParams } from "wouter";
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
@@ -32,6 +33,7 @@ interface Conversation {
 }
 
 export default function MessagesDetailPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const { conversationId } = useParams();
   const { toast } = useToast();
   const [newMessage, setNewMessage] = useState("");

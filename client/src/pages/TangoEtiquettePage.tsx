@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Eye, Hand, Music, Users, Heart, AlertCircle } from "lucide-react";
@@ -53,6 +54,7 @@ const rules = [
 ];
 
 export default function TangoEtiquettePage() {
+  const { t } = useTranslation(["pages", "common"]);
   return (
     <SelfHealingErrorBoundary pageName="Tango Etiquette" fallbackRoute="/">
       <PageLayout title="Tango Etiquette" showBreadcrumbs>

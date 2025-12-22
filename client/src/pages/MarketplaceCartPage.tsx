@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -9,6 +10,7 @@ import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
 export default function MarketplaceCartPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [, navigate] = useLocation();
   const { toast } = useToast();
 

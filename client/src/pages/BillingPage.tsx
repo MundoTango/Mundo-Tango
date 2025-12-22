@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -7,6 +8,7 @@ import { motion } from "framer-motion";
 import { SEO } from "@/components/SEO";
 
 export default function BillingPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const invoices = [
     { id: "INV-001", date: "2025-10-01", amount: "$9.99", status: "Paid" },
     { id: "INV-002", date: "2025-09-01", amount: "$9.99", status: "Paid" },

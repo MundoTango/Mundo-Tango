@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -10,6 +11,7 @@ import financeHeroImg from "@assets/stock_images/data_visualization_t_77d40658.j
 import financeImg1 from "@assets/stock_images/data_visualization_t_9dc4dcbd.jpg";
 
 export default function FinanceAgentPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const summary = [
     { label: "Total Balance", value: "$12,450", change: "+5.2%", icon: Wallet, color: "text-green-500" },
     { label: "Monthly Income", value: "$5,200", change: "+2.1%", icon: TrendingUp, color: "text-blue-500" },

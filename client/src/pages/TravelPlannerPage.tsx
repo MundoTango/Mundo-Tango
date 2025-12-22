@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -49,6 +50,7 @@ interface TravelPlan {
 }
 
 export default function TravelPlannerPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("packages");
   const [tripData, setTripData] = useState({

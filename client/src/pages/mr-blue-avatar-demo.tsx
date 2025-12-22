@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -72,6 +73,7 @@ const AVATAR_STATES: StateConfig[] = [
 ];
 
 export default function MrBlueAvatarDemo() {
+  const { t } = useTranslation(["pages", "common"]);
   const [selectedState, setSelectedState] = useState<AvatarState>('idle');
   const [audioLevel, setAudioLevel] = useState(0);
   const [enableControls, setEnableControls] = useState(false);

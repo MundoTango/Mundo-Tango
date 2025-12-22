@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { History, MapPin, Music, Users } from "lucide-react";
@@ -41,6 +42,7 @@ const timeline = [
 ];
 
 export default function TangoHistoryPage() {
+  const { t } = useTranslation(["pages", "common"]);
   return (
     <SelfHealingErrorBoundary pageName="Tango History" fallbackRoute="/">
       <PageLayout title="Tango History" showBreadcrumbs>

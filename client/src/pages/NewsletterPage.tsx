@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,6 +12,7 @@ import { SEO } from "@/components/SEO";
 import { motion } from "framer-motion";
 
 export default function NewsletterPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [subscribed, setSubscribed] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Heart, Music, Users, Sparkles } from "lucide-react";
@@ -31,6 +32,7 @@ const aspects = [
 ];
 
 export default function TangoCulturePage() {
+  const { t } = useTranslation(["pages", "common"]);
   return (
     <SelfHealingErrorBoundary pageName="Tango Culture" fallbackRoute="/">
       <PageLayout title="Tango Culture" showBreadcrumbs>

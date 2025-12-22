@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -64,6 +65,7 @@ const statusColors = {
 };
 
 export default function ESACommunicationsPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [searchQuery, setSearchQuery] = useState("");
   
   const { data: stats, isLoading: statsLoading } = useQuery<CommunicationStats>({

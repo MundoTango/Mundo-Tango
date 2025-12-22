@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -10,6 +11,7 @@ import entertainmentHeroImg from "@assets/stock_images/elegant_professional_0956
 import entertainmentImg1 from "@assets/stock_images/elegant_professional_e4da136e.jpg";
 
 export default function EntertainmentAgentPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const stats = [
     { label: "Movies Watched", value: "24", icon: Film, color: "text-purple-500" },
     { label: "Music Hours", value: "47h", icon: Music, color: "text-pink-500" },

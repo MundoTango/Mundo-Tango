@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -36,6 +37,7 @@ const tourSteps = [
 ];
 
 export default function WelcomeTourPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [currentStep, setCurrentStep] = useState(0);
 
   return (

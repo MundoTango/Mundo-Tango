@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -23,6 +24,7 @@ interface AISettings {
 }
 
 export default function SettingsPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const { toast } = useToast();
 
   const { data: settings, isLoading } = useQuery<AISettings>({

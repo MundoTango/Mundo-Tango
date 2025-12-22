@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -9,6 +10,7 @@ import { SEO } from "@/components/SEO";
 import { motion } from "framer-motion";
 
 export default function NotFound() {
+  const { t } = useTranslation(["pages", "common"]);
   return (
     <SelfHealingErrorBoundary pageName="NotFound" fallbackRoute="/">
       <PageLayout title="404 Page Not Found" showBreadcrumbs>

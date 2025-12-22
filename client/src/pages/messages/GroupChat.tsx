@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useEffect, useRef } from "react";
 import { useParams } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
@@ -15,6 +16,7 @@ import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 
 export default function GroupChat() {
+  const { t } = useTranslation(["pages", "common"]);
   const { groupId } = useParams<{ groupId: string }>();
   const [message, setMessage] = useState("");
   const [showMembers, setShowMembers] = useState(false);

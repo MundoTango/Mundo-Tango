@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, lazy, Suspense } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -38,6 +39,7 @@ interface CodeGeneration {
 }
 
 export default function VibecodingPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const { toast } = useToast();
   const [prompt, setPrompt] = useState('');
   const [generations, setGenerations] = useState<CodeGeneration[]>([]);

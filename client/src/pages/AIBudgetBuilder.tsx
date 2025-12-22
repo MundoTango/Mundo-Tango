@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from 'react';
 import { PageLayout } from '@/components/PageLayout';
 import { SEO } from '@/components/SEO';
@@ -11,6 +12,7 @@ import { DollarSign, TrendingUp, TrendingDown, PieChart, Lightbulb, Check, X } f
 import { Progress } from '@/components/ui/progress';
 
 export default function AIBudgetBuilder() {
+  const { t } = useTranslation(["pages", "common"]);
   const { toast } = useToast();
   const [months, setMonths] = useState(6);
 

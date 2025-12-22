@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useRoute } from "wouter";
@@ -39,6 +40,7 @@ interface HousingListing {
 }
 
 export default function HostHomePage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [, params] = useRoute("/housing/host/:id");
   const listingId = params?.id ? parseInt(params.id) : null;
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number | null>(null);

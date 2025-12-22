@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -25,6 +26,7 @@ interface Invoice {
 }
 
 export default function PaymentHistory() {
+  const { t } = useTranslation(["pages", "common"]);
   const { data: invoicesData, isLoading } = useQuery({
     queryKey: ['/api/billing/invoices'],
   });

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,6 +10,7 @@ import { Package, Download, Star, RefreshCw } from "lucide-react";
 import { safeDateDistance } from "@/lib/safeDateFormat";
 
 export default function MarketplaceOrdersPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [statusFilter, setStatusFilter] = useState<string>("all");
 
   // Fetch orders - using mock data for now

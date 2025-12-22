@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
@@ -27,6 +28,7 @@ interface EmailPreferencesData {
 }
 
 export default function EmailPreferences() {
+  const { t } = useTranslation(["pages", "common"]);
   const { toast } = useToast();
 
   const { data: prefs, isLoading } = useQuery<EmailPreferencesData>({

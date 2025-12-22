@@ -1,8 +1,10 @@
+import { useTranslation } from "react-i18next";
 import { useRoute, Redirect } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 
 export default function CityGroupRedirectPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [, params] = useRoute("/groups/city/:cityName");
   const cityName = decodeURIComponent(params?.cityName || "");
   

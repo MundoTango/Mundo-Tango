@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -35,6 +36,7 @@ interface ModerationStats {
 }
 
 export default function ContentModerationPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [activeTab, setActiveTab] = useState("pending");
   const { toast } = useToast();
 

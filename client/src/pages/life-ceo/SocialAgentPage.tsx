@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -12,6 +13,7 @@ import socialHeroImg from "@assets/stock_images/business_team_meetin_3dea7a0d.jp
 import socialImg1 from "@assets/stock_images/business_team_meetin_5006ca1f.jpg";
 
 export default function SocialAgentPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [upcomingEvents] = useState([
     { id: 1, name: "Weekly Milonga", date: "Tonight 8pm", location: "La Catedral", attendees: 45 },
     { id: 2, name: "Tango Workshop", date: "Sat 3pm", location: "Studio Alma", attendees: 12 },

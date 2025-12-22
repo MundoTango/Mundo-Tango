@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Link } from "wouter";
@@ -21,6 +22,7 @@ const professionalCategories = [
 ];
 
 export default function ProfessionalGroupsPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [searchQuery, setSearchQuery] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
   const { toast } = useToast();

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,6 +15,7 @@ import { motion } from "framer-motion";
 import marketplaceHeroImage from "@assets/stock_images/business_team_meetin_caa5de6b.jpg";
 
 export default function MarketplacePage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [activeTab, setActiveTab] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
 

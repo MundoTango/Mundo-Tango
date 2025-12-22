@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -75,6 +76,7 @@ const TRIGGER_TYPES = [
 ];
 
 export default function Automations() {
+  const { t } = useTranslation(["pages", "common"]);
   const { toast } = useToast();
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [editingAutomation, setEditingAutomation] = useState<any>(null);

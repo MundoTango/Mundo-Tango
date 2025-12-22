@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { apiRequest, queryClient } from '@/lib/queryClient';
@@ -28,6 +29,7 @@ interface VideoGeneration {
 }
 
 export default function VideoStudio() {
+  const { t } = useTranslation(["pages", "common"]);
   const { toast } = useToast();
   
   // Text-to-video form

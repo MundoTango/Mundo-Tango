@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -7,6 +8,7 @@ import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary"
 import { motion } from "framer-motion";
 
 export default function BlockedContentPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const blockedContent = [
     { id: 1, type: "Post", author: "User 1", reason: "Spam" },
     { id: 2, type: "Comment", author: "User 2", reason: "Inappropriate" }

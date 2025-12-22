@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -35,6 +36,7 @@ interface TaskStats {
 }
 
 export default function AgentTasksPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const { data: tasks = [], isLoading } = useQuery<AgentTask[]>({
     queryKey: ["/api/platform/esa/tasks"],
   });

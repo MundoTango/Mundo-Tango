@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -49,6 +50,7 @@ interface RecentActivity {
 }
 
 export default function AdminDashboardPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const { data: platformHealth, isLoading: loadingStats } = useQuery({
     queryKey: ["/api/admin/platform/health"],
   });

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
@@ -40,6 +41,7 @@ const priorityConfig: Record<TaskPriority, { label: string; color: string }> = {
 };
 
 export default function MyTasksPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [activeTab, setActiveTab] = useState<"all" | "active" | "completed">("active");
   const { toast } = useToast();
 

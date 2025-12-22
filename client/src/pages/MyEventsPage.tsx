@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
@@ -34,6 +35,7 @@ interface EventWithRSVP {
 }
 
 export default function MyEventsPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const { user } = useAuth();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<"attending" | "created">("attending");

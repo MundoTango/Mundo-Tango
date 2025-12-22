@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -34,6 +35,7 @@ interface ReputationData {
 }
 
 export default function ProfessionalReputationPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const { user } = useAuth();
 
   // Mock data

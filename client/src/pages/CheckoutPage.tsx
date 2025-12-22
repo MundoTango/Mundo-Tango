@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -21,6 +22,7 @@ interface BillingAddress {
 }
 
 export default function CheckoutPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [billingAddress, setBillingAddress] = useState<BillingAddress | null>(null);
   return (
     <SelfHealingErrorBoundary pageName="Checkout" fallbackRoute="/pricing">

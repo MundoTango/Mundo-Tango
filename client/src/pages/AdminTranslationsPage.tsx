@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -38,6 +39,7 @@ const LANGUAGES = [
 ];
 
 export default function AdminTranslationsPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [selectedLanguage, setSelectedLanguage] = useState('es');
   const [searchQuery, setSearchQuery] = useState('');
 

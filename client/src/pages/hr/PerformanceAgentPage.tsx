@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -11,6 +12,7 @@ import performanceImg1 from "@assets/stock_images/business_team_meetin_3dea7a0d.
 import performanceImg2 from "@assets/stock_images/business_team_meetin_5006ca1f.jpg";
 
 export default function PerformanceAgentPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const metrics = [
     { label: "Team Performance", value: "87%", change: "+5%", icon: Target, color: "text-blue-500" },
     { label: "Goals on Track", value: "24/28", change: "+3", icon: TrendingUp, color: "text-green-500" },

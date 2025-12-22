@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useParams, Link } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { AppLayout } from "@/components/AppLayout";
@@ -32,6 +33,7 @@ interface MarketplaceItem {
 }
 
 export default function MarketplaceItemDetailPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const { itemId } = useParams();
   const { toast } = useToast();
 

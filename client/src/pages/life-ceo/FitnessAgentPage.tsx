@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -9,6 +10,7 @@ import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary"
 import heroImage from "@assets/optimized/IMG_9474-optimized.jpg";
 
 export default function FitnessAgentPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const stats = [
     { label: "Active Calories", value: "2,450", icon: Flame, color: "text-orange-500" },
     { label: "Workout Streak", value: "14 days", icon: Trophy, color: "text-yellow-500" },

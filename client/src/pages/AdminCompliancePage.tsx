@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -40,6 +41,7 @@ interface DataRequest {
 }
 
 export default function AdminCompliancePage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [activeTab, setActiveTab] = useState('overview');
 
   // Mock data - in production from API

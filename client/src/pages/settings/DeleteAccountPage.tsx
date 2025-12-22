@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,6 +22,7 @@ import {
 } from "@/components/ui/dialog";
 
 export default function DeleteAccountPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const { toast } = useToast();
   const [password, setPassword] = useState("");
   const [confirmations, setConfirmations] = useState({

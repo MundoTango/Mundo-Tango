@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -12,6 +13,7 @@ import { SEO } from "@/components/SEO";
 import leaderboardHeroImg from "@assets/stock_images/professional_abstrac_720ae5d7.jpg";
 
 export default function LeaderboardPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [activeTab, setActiveTab] = useState("points");
 
   const { data: leaderboard, isLoading } = useQuery({

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -7,6 +8,7 @@ import { Users, Activity, TrendingUp, AlertCircle } from "lucide-react";
 const COLORS = ["hsl(var(--primary))", "hsl(var(--secondary))", "hsl(var(--accent))", "hsl(var(--muted))"];
 
 export default function AnalyticsDashboardPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const { data, isLoading } = useQuery({
     queryKey: ["/api/analytics/dashboard"],
   });

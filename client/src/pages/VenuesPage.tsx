@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
@@ -13,6 +14,7 @@ import { motion } from "framer-motion";
 import { UnifiedLocationPicker, extractCityCountry } from "@/components/input/UnifiedLocationPicker";
 
 export default function VenuesPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [searchQuery, setSearchQuery] = useState("");
   const [cityFilter, setCityFilter] = useState("");
   const [venueTypeFilter, setVenueTypeFilter] = useState("all");

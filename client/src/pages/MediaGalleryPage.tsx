@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
@@ -11,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { LazyVideo } from "@/components/LazyVideo";
 
 export default function MediaGalleryPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [activeTab, setActiveTab] = useState("all");
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 

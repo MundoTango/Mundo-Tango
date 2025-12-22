@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { useRoute, useLocation } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
@@ -102,6 +103,7 @@ function CheckoutForm({ plan, onSuccess }: { plan: Plan; onSuccess: () => void }
 }
 
 export default function Checkout() {
+  const { t } = useTranslation(["pages", "common"]);
   const [, params] = useRoute('/checkout/:planId');
   const [, setLocation] = useLocation();
   const { toast } = useToast();

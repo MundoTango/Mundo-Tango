@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useLocation } from "wouter";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -140,6 +141,7 @@ const STEPS = [
 ];
 
 export default function CreateListingPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [, navigate] = useLocation();
   const [currentStep, setCurrentStep] = useState(1);
   const [createdListingId, setCreatedListingId] = useState<number | null>(null);

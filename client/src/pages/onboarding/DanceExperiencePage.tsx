@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useEffect, useMemo } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
@@ -290,6 +291,7 @@ const HOBBIES_WITH_SUBCATEGORIES: HobbyCategory[] = [
 ];
 
 export default function DanceExperiencePage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [, navigate] = useLocation();
   const { user, refreshCurrentUser } = useAuth();
   const { toast } = useToast();

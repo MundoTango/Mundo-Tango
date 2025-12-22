@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -52,6 +53,7 @@ interface DailyInsight {
 }
 
 export default function LifeCeoDashboard() {
+  const { t } = useTranslation(["pages", "common"]);
   const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
   const [chatMessage, setChatMessage] = useState("");
   const [chatHistory, setChatHistory] = useState<Array<{ role: string; content: string }>>([]);

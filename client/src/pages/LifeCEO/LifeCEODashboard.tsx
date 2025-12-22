@@ -3,6 +3,7 @@
  * Main dashboard showing all 16 agents + current goals/tasks
  */
 
+import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -64,6 +65,7 @@ interface Task {
 }
 
 export default function LifeCEODashboard() {
+  const { t } = useTranslation(["pages", "common"]);
   const { data: goals = [] } = useQuery<Goal[]>({ queryKey: ["/api/life-ceo/goals"] });
   const { data: tasks = [] } = useQuery<Task[]>({ queryKey: ["/api/life-ceo/tasks"] });
 

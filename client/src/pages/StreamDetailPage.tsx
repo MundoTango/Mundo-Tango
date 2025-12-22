@@ -12,6 +12,7 @@
  * - Dark mode optimized
  */
 
+import { useTranslation } from "react-i18next";
 import { useParams, Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { motion, useInView } from "framer-motion";
@@ -31,6 +32,7 @@ import {
 } from "lucide-react";
 
 export default function StreamDetailPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const { id } = useParams();
   const { user } = useAuth();
   

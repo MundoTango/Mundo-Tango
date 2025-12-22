@@ -8,6 +8,7 @@ import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 
 export default function PrivacyPolicyPage() {
+  const { t } = useTranslation(["pages", "common"]);
   return (
     <SelfHealingErrorBoundary pageName="Privacy Policy" fallbackRoute="/">
     <PageLayout title="Privacy Policy" showBreadcrumbs>

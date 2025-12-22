@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DeployButton } from "@/components/platform/DeployButton";
@@ -14,6 +15,7 @@ import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from '@/components/SelfHealingErrorBoundary';
 
 export default function Platform() {
+  const { t } = useTranslation(["pages", "common"]);
   const [activeTab, setActiveTab] = useState("deploy");
 
   return (

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useParams, useLocation, Link } from "wouter";
@@ -70,6 +71,7 @@ interface Activity {
 }
 
 export default function FriendDetailPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const { friendId } = useParams();
   const [, navigate] = useLocation();
   const { user } = useAuth();

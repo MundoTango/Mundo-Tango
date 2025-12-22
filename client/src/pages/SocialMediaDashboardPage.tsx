@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { PlatformConnectionCard } from "@/components/social/PlatformConnectionCard";
@@ -9,6 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import type { SelectPlatformConnection, SelectSocialPost } from "@shared/client-types";
 
 export default function SocialMediaDashboardPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const { data: connections, isLoading: connectionsLoading } = useQuery<SelectPlatformConnection[]>({
     queryKey: ["/api/social/connections"],
   });

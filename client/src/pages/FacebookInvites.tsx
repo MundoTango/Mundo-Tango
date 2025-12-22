@@ -3,6 +3,7 @@
  * Manage Facebook Messenger invitations with AI-powered generation
  */
 
+import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -38,6 +39,7 @@ interface Invitation {
 }
 
 export default function FacebookInvites() {
+  const { t } = useTranslation(["pages", "common"]);
   // Fetch progress/stats
   const { data: progressData, isLoading: progressLoading } = useQuery<{
     stats: InviteStats;

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -18,6 +19,7 @@ import { AIDecisionCard } from "@/components/financial/AIDecisionCard";
 import type { SelectFinancialPortfolio, SelectFinancialTrade, SelectFinancialAIDecision } from "@shared/client-types";
 
 export default function FinancialTradingPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [selectedPortfolio, setSelectedPortfolio] = useState<number | null>(null);
 
   const { data: portfolios, isLoading: portfoliosLoading } = useQuery<SelectFinancialPortfolio[]>({

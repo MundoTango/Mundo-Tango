@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useParams, Link } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
@@ -14,6 +15,7 @@ import { useToast } from "@/hooks/use-toast";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 
 export default function MarketplaceProductDetailPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const { id } = useParams();
   const { toast } = useToast();
   const [quantity, setQuantity] = useState(1);

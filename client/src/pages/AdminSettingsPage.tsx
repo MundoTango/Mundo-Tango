@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,6 +14,7 @@ import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary"
 import { SEO } from "@/components/SEO";
 
 export default function AdminSettingsPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const { toast } = useToast();
   const [settings, setSettings] = useState({
     siteName: "Mundo Tango",

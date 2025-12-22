@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useRef, useEffect } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
@@ -25,6 +26,7 @@ interface Message {
 }
 
 export default function MrBlueChatPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [location] = useLocation();
   const { toast } = useToast();
   const scrollRef = useRef<HTMLDivElement>(null);

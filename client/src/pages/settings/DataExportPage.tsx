@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -23,6 +24,7 @@ interface DataExportRequest {
 }
 
 export default function DataExportPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const { toast } = useToast();
   const [selectedFormat, setSelectedFormat] = useState<string>("json");
 

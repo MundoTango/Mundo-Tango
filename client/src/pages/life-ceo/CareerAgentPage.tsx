@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -10,6 +11,7 @@ import careerHeroImg from "@assets/stock_images/professional_office__0fd5582e.jp
 import careerImg1 from "@assets/stock_images/professional_office__3f3e5cfe.jpg";
 
 export default function CareerAgentPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const metrics = [
     { label: "Skills Mastered", value: "12", icon: Award, color: "text-yellow-500" },
     { label: "Hours Learning", value: "45", icon: Clock, color: "text-blue-500" },

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -28,6 +29,7 @@ interface TeacherData {
 }
 
 export default function TeacherDetailPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const params = useParams<{ id: string }>();
   const teacherId = params.id;
 

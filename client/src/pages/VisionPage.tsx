@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Eye, Telescope, Sparkles, Globe2, Rocket, TrendingUp } from "lucide-react";
@@ -8,6 +9,7 @@ import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary"
 import { motion } from "framer-motion";
 
 export default function VisionPage() {
+  const { t } = useTranslation(["pages", "common"]);
   return (
     <SelfHealingErrorBoundary pageName="Vision" fallbackRoute="/">
       <PageLayout title="Our Vision" showBreadcrumbs>

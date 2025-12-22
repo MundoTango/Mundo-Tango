@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useParams, useLocation } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
@@ -16,6 +17,7 @@ import { loadStripe } from "@stripe/stripe-js";
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY || "");
 
 export default function PaymentIntegration() {
+  const { t } = useTranslation(["pages", "common"]);
   const { planId } = useParams<{ planId: string }>();
   const [, setLocation] = useLocation();
   const { toast } = useToast();

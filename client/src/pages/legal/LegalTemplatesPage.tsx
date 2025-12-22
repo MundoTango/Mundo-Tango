@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
@@ -16,6 +17,7 @@ import { Search, Plus, FileText, Star } from "lucide-react";
 import { TemplateCard } from "@/components/legal/TemplateCard";
 
 export default function LegalTemplatesPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("popular");
   const [selectedCategory, setSelectedCategory] = useState("all");

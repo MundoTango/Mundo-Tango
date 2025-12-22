@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useLocation } from "wouter";
 import { useForm } from "react-hook-form";
@@ -40,6 +41,7 @@ const tripPlannerSchema = z.object({
 type TripPlannerForm = z.infer<typeof tripPlannerSchema>;
 
 export default function TravelTripPlannerPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [, navigate] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();

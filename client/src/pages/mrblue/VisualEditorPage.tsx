@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -38,6 +39,7 @@ interface Change {
 }
 
 export default function VisualEditorPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const { toast } = useToast();
   const [selectionMode, setSelectionMode] = useState(false);
   const [selectedElement, setSelectedElement] = useState<SelectedElement | null>(null);

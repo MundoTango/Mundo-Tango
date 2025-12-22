@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
@@ -48,6 +49,7 @@ const faqs = [
 ];
 
 export default function SubscriptionPlans() {
+  const { t } = useTranslation(["pages", "common"]);
   const [billingCycle, setBillingCycle] = useState<"monthly" | "annual">("monthly");
 
   const { data: plans, isLoading } = useQuery({

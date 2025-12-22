@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -17,6 +18,7 @@ import { useLocation } from "wouter";
 import type { SelectFinancialPortfolio, SelectFinancialAsset, SelectFinancialTrade } from "@shared/client-types";
 
 export default function FinancialDashboardPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [, navigate] = useLocation();
 
   const { data: portfolios, isLoading: portfoliosLoading } = useQuery<SelectFinancialPortfolio[]>({

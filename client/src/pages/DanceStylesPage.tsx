@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Music, Heart, Zap, Clock, ChevronRight } from "lucide-react";
@@ -66,6 +67,7 @@ const danceStyles = [
 ];
 
 export default function DanceStylesPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const fadeInUp = {
     initial: { opacity: 0, y: 40 },
     whileInView: { opacity: 1, y: 0 },

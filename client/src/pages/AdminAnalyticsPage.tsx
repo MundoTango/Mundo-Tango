@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,6 +11,7 @@ import { safeDateDistance } from "@/lib/safeDateFormat";
 import { SEO } from "@/components/SEO";
 
 export default function AdminAnalyticsPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [timeframe, setTimeframe] = useState("7d");
 
   const { data: userGrowth = [] } = useQuery<Array<{ date: string; count: number }>>({

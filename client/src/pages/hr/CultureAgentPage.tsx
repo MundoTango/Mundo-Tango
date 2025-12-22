@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -11,6 +12,7 @@ import cultureImg1 from "@assets/stock_images/business_team_meetin_eee3879e.jpg"
 import cultureImg2 from "@assets/stock_images/business_team_meetin_e7614141.jpg";
 
 export default function CultureAgentPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const metrics = [
     { label: "Culture Score", value: "8.5/10", change: "+0.7", icon: Heart, color: "text-pink-500" },
     { label: "Team Morale", value: "87%", change: "+5%", icon: Users, color: "text-blue-500" },

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -21,6 +22,7 @@ interface FlaggedContent {
 }
 
 export default function AdminModerationPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [statusFilter, setStatusFilter] = useState("pending");
   const { toast } = useToast();
 

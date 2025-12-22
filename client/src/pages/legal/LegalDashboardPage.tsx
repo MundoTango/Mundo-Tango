@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
@@ -23,6 +24,7 @@ import { DocumentCard } from "@/components/legal/DocumentCard";
 import { SignatureStatusBadge } from "@/components/legal/SignatureStatusBadge";
 
 export default function LegalDashboardPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [searchQuery, setSearchQuery] = useState("");
 
   // Fetch dashboard stats

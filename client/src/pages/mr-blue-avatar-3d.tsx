@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -38,6 +39,7 @@ const emotionButtons: Array<{
 ];
 
 export default function MrBlueAvatar3DPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [emotion, setEmotion] = useState<EmotionType>("idle");
   const [autoDetect, setAutoDetect] = useState(false);
 

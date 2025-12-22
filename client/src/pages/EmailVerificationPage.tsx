@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Mail, CheckCircle, RefreshCw } from "lucide-react";
@@ -8,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { SEO } from "@/components/SEO";
 
 export default function EmailVerificationPage() {
+  const { t } = useTranslation(["pages", "common"]);
   return (
     <SelfHealingErrorBoundary pageName="Email Verification" fallbackRoute="/login">
       <PageLayout title="Verify Your Email" showBreadcrumbs>

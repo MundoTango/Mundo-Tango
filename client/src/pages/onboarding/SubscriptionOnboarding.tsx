@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
@@ -784,6 +785,7 @@ function PaymentStep({
 }
 
 export default function SubscriptionOnboarding() {
+  const { t } = useTranslation(["pages", "common"]);
   const [, setLocation] = useLocation();
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedPlanId, setSelectedPlanId] = useState<string>('');

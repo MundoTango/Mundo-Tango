@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -8,6 +9,7 @@ import { CheckCircle, Home, User, Briefcase } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function VolunteerThankYouPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [, setLocation] = useLocation();
 
   return (

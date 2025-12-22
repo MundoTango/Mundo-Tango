@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useParams, Link, useLocation } from "wouter";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -29,6 +30,7 @@ const expenseSchema = z.object({
 type ExpenseForm = z.infer<typeof expenseSchema>;
 
 export default function TravelExpensesPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const { id } = useParams();
   const [, navigate] = useLocation();
   const { toast } = useToast();

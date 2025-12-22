@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -12,6 +13,7 @@ import wellnessHeroImg from "@assets/stock_images/elegant_professional_f6beef21.
 import wellnessImg1 from "@assets/stock_images/elegant_professional_0956f754.jpg";
 
 export default function WellnessAgentPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [todayMood] = useState<"great" | "good" | "okay" | "low">("good");
   const [meditationStreak] = useState(7);
   

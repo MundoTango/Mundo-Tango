@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useParams } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -26,6 +27,7 @@ interface Teacher {
 }
 
 export default function TeacherProfilePage() {
+  const { t } = useTranslation(["pages", "common"]);
   const { teacherId } = useParams();
 
   const { data: teacher, isLoading } = useQuery<Teacher>({

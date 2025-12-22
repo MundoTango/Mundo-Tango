@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -41,6 +42,7 @@ interface Agent {
 }
 
 export default function ESADashboardPage() {
+  const { t } = useTranslation(["pages", "common"]);
   // Fetch agent stats from backend API
   const { data: stats, isLoading: statsLoading } = useQuery<AgentStats>({
     queryKey: ["/api/platform/esa/stats"],

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -56,6 +57,7 @@ interface PendingRequest {
 }
 
 export default function GodLevelDashboard() {
+  const { t } = useTranslation(["pages", "common"]);
   const { user } = useUser();
   const { toast } = useToast();
   const [showRequestModal, setShowRequestModal] = useState(false);

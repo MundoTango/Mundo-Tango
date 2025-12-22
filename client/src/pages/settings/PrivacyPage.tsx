@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -31,6 +32,7 @@ interface PrivacySettings {
 }
 
 export default function PrivacyPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const { toast } = useToast();
   const [, setLocation] = useLocation();
   const [showExportDialog, setShowExportDialog] = useState(false);

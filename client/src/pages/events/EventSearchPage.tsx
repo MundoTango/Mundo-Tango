@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
@@ -39,6 +40,7 @@ interface SearchResponse {
 }
 
 export default function EventSearchPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [, setLocation] = useLocation();
   const [filters, setFilters] = useState<EventFilterValues>({
     priceMin: 0,

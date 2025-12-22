@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Link } from "wouter";
@@ -14,6 +15,7 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 
 export default function CrowdfundingMyPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [selectedCampaign, setSelectedCampaign] = useState<any>(null);
   const [showWithdrawal, setShowWithdrawal] = useState(false);
   const { toast } = useToast();

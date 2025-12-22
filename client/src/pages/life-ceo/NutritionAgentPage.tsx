@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -9,6 +10,7 @@ import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary"
 import nutritionHeroImage from "@assets/stock_images/elegant_professional_0956f754.jpg";
 
 export default function NutritionAgentPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const stats = [
     { label: "Calories Today", value: "1,850", goal: "2,000", icon: Flame, color: "text-orange-500" },
     { label: "Protein", value: "85g", goal: "100g", icon: Apple, color: "text-green-500" },

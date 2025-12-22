@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -62,6 +63,7 @@ const channelConfig = {
 };
 
 export default function ChannelConnections() {
+  const { t } = useTranslation(["pages", "common"]);
   const { toast } = useToast();
   const [disconnectChannel, setDisconnectChannel] = useState<string | null>(null);
 

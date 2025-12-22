@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
@@ -14,6 +15,7 @@ import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary"
 import { toCitySlug } from "@/lib/utils";
 
 export default function SearchPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [query, setQuery] = useState("");
   const [activeTab, setActiveTab] = useState("all");
 

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
 import { Link } from "wouter";
 import { Card, CardContent } from "@/components/ui/card";
@@ -8,6 +9,7 @@ import { motion } from "framer-motion";
 import { SEO } from "@/components/SEO";
 
 export default function CheckoutSuccessPage() {
+  const { t } = useTranslation(["pages", "common"]);
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const sessionId = params.get('session_id');

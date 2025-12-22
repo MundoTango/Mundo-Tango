@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useParams, Link, useLocation } from "wouter";
@@ -68,6 +69,7 @@ interface Media {
 }
 
 export default function AlbumDetail() {
+  const { t } = useTranslation(["pages", "common"]);
   const params = useParams();
   const [, navigate] = useLocation();
   const albumId = params.id ? parseInt(params.id) : null;

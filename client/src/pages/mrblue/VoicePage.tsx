@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useRef, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,6 +7,7 @@ import { Mic, MicOff, Volume2, VolumeX, Radio, Hand } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 export default function VoicePage() {
+  const { t } = useTranslation(["pages", "common"]);
   const { toast } = useToast();
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState('');

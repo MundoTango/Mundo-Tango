@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -88,6 +89,7 @@ interface ScrapedEventsResponse {
 }
 
 export default function AdminScrapingPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [activeTab, setActiveTab] = useState('scrapers');
   const [statusFilter, setStatusFilter] = useState('pending');
   const [cityFilter, setCityFilter] = useState('all');

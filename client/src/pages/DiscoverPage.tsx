@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -14,6 +15,7 @@ import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from '@/components/SelfHealingErrorBoundary';
 
 export default function DiscoverPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [searchQuery, setSearchQuery] = useState("");
 
   const fadeInUp = {

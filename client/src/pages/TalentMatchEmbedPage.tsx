@@ -1,8 +1,10 @@
+import { useTranslation } from "react-i18next";
 import { SEO } from "@/components/SEO";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { TalentMatchExperience } from "@/components/TalentMatchExperience";
 
 export default function TalentMatchEmbedPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const handleClose = () => {
     // Navigate parent window to marketing home page
     if (window.parent !== window) {

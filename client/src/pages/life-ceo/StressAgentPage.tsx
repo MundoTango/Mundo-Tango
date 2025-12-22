@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -10,6 +11,7 @@ import stressHeroImg from "@assets/stock_images/elegant_professional_9405e610.jp
 import stressImg1 from "@assets/stock_images/elegant_professional_e4da136e.jpg";
 
 export default function StressAgentPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const techniques = [
     { name: "4-7-8 Breathing", duration: "5 min", effectiveness: "High", practiced: true },
     { name: "Progressive Muscle Relaxation", duration: "15 min", effectiveness: "High", practiced: false },

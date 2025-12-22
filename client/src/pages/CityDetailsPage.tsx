@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useMemo, useEffect } from "react";
 import { useRoute, Link } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
@@ -412,6 +413,7 @@ function CityOverviewTab({ city }: { city: CityData }) {
 }
 
 export default function CityDetailsPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [, params] = useRoute("/cities/:citySlug");
   const citySlug = params?.citySlug || "";
   const [activeTab, setActiveTab] = useState("discussion");

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -19,6 +20,7 @@ const PROVIDER_LOGOS: Record<string, string> = {
 };
 
 export default function FinancialAccountsPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 

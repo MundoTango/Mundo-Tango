@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -33,6 +34,7 @@ interface AuditLog {
 }
 
 export default function SecuritySettingsPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const { toast } = useToast();
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
 

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useRef, useEffect, useCallback, Fragment, useMemo, lazy, Suspense } from "react";
 import { usePosts, useCreatePost, useToggleLike, useComments, useCreateComment, useUpdateComment, useDeleteComment } from "@/hooks/usePosts";
 import { useAuth } from "@/contexts/AuthContext";
@@ -91,6 +92,7 @@ const RECOMMENDATION_CATEGORIES = [
 ];
 
 export default function FeedPage() {
+  const { t } = useTranslation(["pages", "common"]);
   // Feed algorithm state (Features 12-13)
   const [feedType, setFeedType] = useState<"following" | "discover">("following");
   const [filter, setFilter] = useState<"all" | "friends" | "public" | "saved" | "my-posts" | "mentions">("all");

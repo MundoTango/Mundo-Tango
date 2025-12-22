@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useEffect, useState, useMemo } from "react";
 import { useLocation, Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
@@ -43,6 +44,7 @@ interface Professional {
 }
 
 export function PROGroupPublicPage({ roleSlug, title, description, icon: Icon, color }: PROGroupPublicPageProps) {
+  const { t } = useTranslation(["pages", "common"]);
   const [, navigate] = useLocation();
   const { user, profile } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
@@ -389,6 +391,7 @@ export function PROGroupPublicPage({ roleSlug, title, description, icon: Icon, c
 }
 
 export function LearningPage() {
+  const { t } = useTranslation(["pages", "common"]);
   return (
     <PROGroupPublicPage
       roleSlug="teacher"
@@ -401,6 +404,7 @@ export function LearningPage() {
 }
 
 export function MusicPage() {
+  const { t } = useTranslation(["pages", "common"]);
   return (
     <PROGroupPublicPage
       roleSlug="dj"
@@ -413,6 +417,7 @@ export function MusicPage() {
 }
 
 export function MediaGalleryPage() {
+  const { t } = useTranslation(["pages", "common"]);
   return (
     <PROGroupPublicPage
       roleSlug="photographer"
@@ -425,6 +430,7 @@ export function MediaGalleryPage() {
 }
 
 export function PerformancesPage() {
+  const { t } = useTranslation(["pages", "common"]);
   return (
     <PROGroupPublicPage
       roleSlug="performer"
@@ -437,6 +443,7 @@ export function PerformancesPage() {
 }
 
 export function VenuesPage() {
+  const { t } = useTranslation(["pages", "common"]);
   return (
     <PROGroupPublicPage
       roleSlug="venue-owner"
@@ -449,6 +456,7 @@ export function VenuesPage() {
 }
 
 export function OrganizersPage() {
+  const { t } = useTranslation(["pages", "common"]);
   return (
     <PROGroupPublicPage
       roleSlug="organizer"
@@ -461,6 +469,7 @@ export function OrganizersPage() {
 }
 
 export function StoriesBlogPage() {
+  const { t } = useTranslation(["pages", "common"]);
   return (
     <PROGroupPublicPage
       roleSlug="journalist"
@@ -473,6 +482,7 @@ export function StoriesBlogPage() {
 }
 
 export function ArtistsPage() {
+  const { t } = useTranslation(["pages", "common"]);
   return (
     <PROGroupPublicPage
       roleSlug="artist"
@@ -485,6 +495,7 @@ export function ArtistsPage() {
 }
 
 export function MusiciansPage() {
+  const { t } = useTranslation(["pages", "common"]);
   return (
     <PROGroupPublicPage
       roleSlug="musician"
@@ -497,6 +508,7 @@ export function MusiciansPage() {
 }
 
 export function ClothingDesignersPage() {
+  const { t } = useTranslation(["pages", "common"]);
   return (
     <PROGroupPublicPage
       roleSlug="clothing-designer"
@@ -509,6 +521,7 @@ export function ClothingDesignersPage() {
 }
 
 export function HistoriansPage() {
+  const { t } = useTranslation(["pages", "common"]);
   return (
     <PROGroupPublicPage
       roleSlug="historian"
@@ -521,6 +534,7 @@ export function HistoriansPage() {
 }
 
 export function CoachesPage() {
+  const { t } = useTranslation(["pages", "common"]);
   return (
     <PROGroupPublicPage
       roleSlug="coach"
@@ -533,6 +547,7 @@ export function CoachesPage() {
 }
 
 export function HostsMCsPage() {
+  const { t } = useTranslation(["pages", "common"]);
   return (
     <PROGroupPublicPage
       roleSlug="mc"
@@ -545,6 +560,7 @@ export function HostsMCsPage() {
 }
 
 export function VendorsPage() {
+  const { t } = useTranslation(["pages", "common"]);
   return (
     <PROGroupPublicPage
       roleSlug="business"
@@ -557,6 +573,7 @@ export function VendorsPage() {
 }
 
 export function CommunityBuildersPage() {
+  const { t } = useTranslation(["pages", "common"]);
   return (
     <PROGroupPublicPage
       roleSlug="community-builder"
@@ -569,6 +586,7 @@ export function CommunityBuildersPage() {
 }
 
 export function TaxiDancersPage() {
+  const { t } = useTranslation(["pages", "common"]);
   return (
     <PROGroupPublicPage
       roleSlug="taxi-dancer"
@@ -581,6 +599,7 @@ export function TaxiDancersPage() {
 }
 
 export function DancersPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [, navigate] = useLocation();
   const { user, profile } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
@@ -874,6 +893,7 @@ export function DancersPage() {
 }
 
 export function ResearchersPage() {
+  const { t } = useTranslation(["pages", "common"]);
   return (
     <PROGroupPublicPage
       roleSlug="researcher"

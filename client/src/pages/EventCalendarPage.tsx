@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
@@ -28,6 +29,7 @@ const eventTypeColors: Record<string, string> = {
 };
 
 export default function EventCalendarPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [date, setDate] = useState(new Date());
   const [view, setView] = useState<"calendar" | "list">("calendar");
   const month = date.getMonth() + 1;

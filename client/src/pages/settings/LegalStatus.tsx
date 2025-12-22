@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -30,6 +31,7 @@ interface LegalHistory {
 }
 
 export default function LegalStatus() {
+  const { t } = useTranslation(["pages", "common"]);
   const { data: status, isLoading: statusLoading } = useQuery<LegalStatus>({
     queryKey: ['/api/onboarding/legal/status']
   });

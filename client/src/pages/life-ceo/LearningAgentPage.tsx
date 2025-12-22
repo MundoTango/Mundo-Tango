@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -12,6 +13,7 @@ import learningHeroImg from "@assets/stock_images/coding_programming_d_381cb129.
 import learningImg1 from "@assets/stock_images/data_visualization_t_03b1d852.jpg";
 
 export default function LearningAgentPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [activeCourses] = useState([
     { id: 1, title: "Advanced Tango Technique", progress: 65, lessons: 12, completed: 8 },
     { id: 2, title: "Argentine Tango History", progress: 30, lessons: 8, completed: 2 },

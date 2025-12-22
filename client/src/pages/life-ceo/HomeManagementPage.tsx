@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -9,6 +10,7 @@ import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary"
 import heroImage from "@assets/optimized/IMG_9171-optimized.jpg";
 
 export default function HomeManagementPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const maintenance = [
     { task: "Change AC filter", due: "in 5 days", priority: "medium", status: "pending" },
     { task: "Water heater inspection", due: "in 12 days", priority: "low", status: "pending" },

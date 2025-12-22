@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
@@ -38,6 +39,7 @@ const portfolioFormSchema = z.object({
 type PortfolioFormData = z.infer<typeof portfolioFormSchema>;
 
 export default function FinancialPortfoliosPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [createOpen, setCreateOpen] = useState(false);
   const [filterType, setFilterType] = useState<string>('all');
   const { toast } = useToast();

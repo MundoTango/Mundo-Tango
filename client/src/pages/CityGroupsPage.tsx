@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Link, useSearch } from "wouter";
@@ -14,6 +15,7 @@ import { getCityImageUrl } from "@/lib/cityImageMap";
 import { toCitySlug } from "@/lib/utils";
 
 export default function CityGroupsPage() {
+  const { t } = useTranslation(["pages", "common"]);
   // Read city from URL query parameter
   const searchString = useSearch();
   const urlParams = new URLSearchParams(searchString);

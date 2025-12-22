@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -33,6 +34,7 @@ interface MonitoringData {
 }
 
 export default function MonitoringPage() {
+  const { t } = useTranslation(["pages", "common"]);
   // Mock data - in real app, this would fetch from monitoring service
   const { data: monitoring, isLoading } = useQuery<MonitoringData>({
     queryKey: ["/api/platform/monitoring"],

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,6 +14,7 @@ import { Link } from "wouter";
 import { safeDateFormat } from "@/lib/safeDateFormat";
 
 export default function CalendarPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
   const { data: events, isLoading } = useQuery({

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Link } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -17,6 +18,7 @@ import aiHeroImage from "@assets/stock_images/artificial_intellige_82dfd841.jpg"
 import dataVizImage from "@assets/stock_images/data_visualization_t_03b1d852.jpg";
 
 export default function LifeCEODashboardPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const agents = [
     { id: "health", name: "Health Agent", icon: Heart, color: "text-red-500", gradient: "from-red-500/20 to-pink-500/20", tasks: 3, status: "active", description: "Wellness & vitality tracking" },
     { id: "finance", name: "Finance Agent", icon: DollarSign, color: "text-emerald-500", gradient: "from-emerald-500/20 to-teal-500/20", tasks: 5, status: "active", description: "Wealth management & budgeting" },

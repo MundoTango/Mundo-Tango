@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { motion } from "framer-motion";
@@ -42,6 +43,7 @@ interface CurrentSubscription {
 }
 
 export default function SubscriptionsPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [billingInterval, setBillingInterval] = useState<"monthly" | "annual">("monthly");
   const { toast } = useToast();
 

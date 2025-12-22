@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -115,6 +116,7 @@ function AddPaymentMethodForm({ onSuccess, onCancel }: { onSuccess: () => void; 
 }
 
 export default function PaymentMethods() {
+  const { t } = useTranslation(["pages", "common"]);
   const { toast } = useToast();
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [showAddDialog, setShowAddDialog] = useState(false);

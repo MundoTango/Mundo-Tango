@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -72,6 +73,7 @@ const priorityColors = {
 };
 
 export default function ESATasksPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const { data: stats, isLoading: statsLoading } = useQuery<TaskStats>({
     queryKey: ["/api/platform/esa/tasks/stats"],
   });

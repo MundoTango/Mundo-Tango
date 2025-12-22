@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
@@ -36,6 +37,7 @@ const resumeSchema = z.object({
 type ResumeFormData = z.infer<typeof resumeSchema>;
 
 export default function TangoResume() {
+  const { t } = useTranslation(["pages", "common"]);
   const { user } = useUser();
   const { toast } = useToast();
   const [isEditing, setIsEditing] = useState(false);

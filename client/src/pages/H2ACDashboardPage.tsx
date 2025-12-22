@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Link } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -17,6 +18,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 
 export default function H2ACDashboardPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("overview");
 

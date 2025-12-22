@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { SEO } from '@/components/SEO';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -8,6 +9,7 @@ import { CostTrackingWidget } from '@/components/premium/CostTrackingWidget';
 import { Sparkles, Crown, Zap } from 'lucide-react';
 
 export default function PremiumFeaturesPage() {
+  const { t } = useTranslation(["pages", "common"]);
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
       <SEO

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useParams, useLocation, Link } from "wouter";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -18,6 +19,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
 export default function TravelItineraryPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const { id } = useParams();
   const [, navigate] = useLocation();
   const { toast } = useToast();

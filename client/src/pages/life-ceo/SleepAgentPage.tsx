@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -10,6 +11,7 @@ import sleepHeroImg from "@assets/stock_images/elegant_professional_0956f754.jpg
 import sleepImg1 from "@assets/stock_images/elegant_professional_29e89c1e.jpg";
 
 export default function SleepAgentPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const weekData = [
     { day: "Mon", hours: 7.0, quality: 75 },
     { day: "Tue", hours: 7.5, quality: 82 },

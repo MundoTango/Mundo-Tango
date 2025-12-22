@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useEffect, useState } from 'react';
 import { useLocation } from 'wouter';
 import { supabase } from '@/lib/supabase';
@@ -9,6 +10,7 @@ import { Button } from '@/components/ui/button';
 type CallbackState = 'processing' | 'exchanging' | 'success' | 'error';
 
 export default function FacebookCallbackPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [, setLocation] = useLocation();
   const [state, setState] = useState<CallbackState>('processing');
   const [error, setError] = useState<string | null>(null);

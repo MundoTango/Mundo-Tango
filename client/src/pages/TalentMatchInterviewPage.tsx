@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
@@ -30,6 +31,7 @@ const TOTAL_RESUME_QUESTIONS = 2;
 const TOTAL_WORK_QUESTIONS = 2;
 
 export default function TalentMatchInterviewPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();

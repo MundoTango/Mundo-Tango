@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -54,6 +55,7 @@ const recommendationTypeColors = {
 };
 
 export default function RecommendationsPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const { data: recommendations = [], isLoading, refetch } = useQuery<Recommendation[]>({
     queryKey: ["/api/recommendations"],
   });

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Users, Linkedin, Mail } from "lucide-react";
@@ -60,6 +61,7 @@ const team = [
 ];
 
 export default function TeamPage() {
+  const { t } = useTranslation(["pages", "common"]);
   return (
     <SelfHealingErrorBoundary pageName="Team" fallbackRoute="/">
       <PageLayout title="Our Team" showBreadcrumbs>

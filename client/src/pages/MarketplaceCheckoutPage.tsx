@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { CheckoutWizard, CheckoutData } from "@/components/marketplace/CheckoutWizard";
 import { OrderSummary } from "@/components/marketplace/OrderSummary";
@@ -7,6 +8,7 @@ import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 
 export default function MarketplaceCheckoutPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const { toast } = useToast();
   const [, navigate] = useLocation();
 

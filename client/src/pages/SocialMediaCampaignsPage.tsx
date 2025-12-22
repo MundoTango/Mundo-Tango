@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
@@ -23,6 +24,7 @@ import { SiFacebook, SiInstagram, SiLinkedin, SiX } from "react-icons/si";
 import type { SelectSocialCampaign, InsertSocialCampaign } from "@shared/client-types";
 
 export default function SocialMediaCampaignsPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [, navigate] = useLocation();
   const { toast } = useToast();
   const [isCreateOpen, setIsCreateOpen] = useState(false);

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
@@ -11,6 +12,7 @@ import { AppLayout } from "@/components/AppLayout";
 import { motion } from "framer-motion";
 
 export default function MusicLibraryPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const [activeTab, setActiveTab] = useState("tango");
   const [searchQuery, setSearchQuery] = useState("");
   const [currentlyPlaying, setCurrentlyPlaying] = useState<any>(null);

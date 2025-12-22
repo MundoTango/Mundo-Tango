@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useParams, Link } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { motion } from "framer-motion";
@@ -37,6 +38,7 @@ interface GroupMember {
 }
 
 export default function GroupsDetailPage() {
+  const { t } = useTranslation(["pages", "common"]);
   const { groupId } = useParams();
   const { user } = useAuth();
   const { toast } = useToast();

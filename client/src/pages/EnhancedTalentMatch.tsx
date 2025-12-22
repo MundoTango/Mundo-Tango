@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from 'react';
 import { PageLayout } from '@/components/PageLayout';
 import { SEO } from '@/components/SEO';
@@ -16,6 +17,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 
 export default function EnhancedTalentMatch() {
+  const { t } = useTranslation(["pages", "common"]);
   const { toast } = useToast();
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<any[]>([]);
