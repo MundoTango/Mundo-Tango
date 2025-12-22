@@ -48,6 +48,18 @@ console.log("✅ [DEBUG] All server/index.ts imports completed!");
 const app = express();
 
 // ============================================================================
+// AUTOSCALE MODE CONFIGURATION
+// ============================================================================
+// When AUTOSCALE_MODE=true, background workers/schedulers are disabled
+// This allows the app to run on Autoscale deployments without long-running processes
+const AUTOSCALE_MODE = process.env.AUTOSCALE_MODE === 'true';
+if (AUTOSCALE_MODE) {
+  console.log("🚀 AUTOSCALE_MODE enabled - Background workers disabled for Autoscale deployment");
+} else {
+  console.log("📦 Reserved VM mode - All background workers enabled");
+}
+
+// ============================================================================
 // SENTRY INITIALIZATION - DISABLED (CSP FIX)
 // ============================================================================
 // initializeSentry(app);
@@ -203,47 +215,60 @@ app.use((req, res, next) => {
   }, async () => {
     log(`serving on port ${port}`);
     
-    startPreviewExpirationChecker();
-    initStoryExpirationJob();
-    initScrapingScheduler();
-    
-    // MB.MD v9.9.3: Initialize Self-Healing and Content Services
-    try {
-      log('🧠 Initializing MB.MD Intelligence Services...');
-      await recursiveContextService.initialize();
-      await facelessContentService.initialize();
-      log('✅ MB.MD Intelligence Services initialized');
-    } catch (error) {
-      logger.error('❌ MB.MD Intelligence initialization failed:', error);
-    }
-    
-    // MB.MD v9.9.3: Initialize BullMQ Workers (with Redis fallback)
-    try {
-      log('🔧 Initializing BullMQ Workers...');
-      const { initializeRedis } = await import('./workers/redis-fallback');
-      await initializeRedis();
-      
-      await import('./workers/eventWorker');
-      await import('./workers/housingWorker');
-      await import('./workers/lifeCeoWorker');
-      log('[BullMQ Workers] ✅ Initialized 3 core workers');
-    } catch (error) {
-      logger.error('❌ BullMQ Worker initialization failed:', error);
-    }
-    
-    // PHASE 0A: Initialize Policy Monitoring System (requires Redis)
-    // SKIP in development if Redis is not available to avoid ECONNREFUSED spam
-    if (process.env.REDIS_URL) {
-      try {
-        log('🔍 Initializing Policy Monitoring System...');
-        await PolicyMonitoringJobs.initialize();
-        log('✅ Policy Monitoring System initialized successfully');
-      } catch (error) {
-        logger.error('❌ Failed to initialize Policy Monitoring System:', error);
-      }
+    // ========================================================================
+    // BACKGROUND WORKERS - DISABLED IN AUTOSCALE MODE
+    // ========================================================================
+    if (AUTOSCALE_MODE) {
+      log('⏭️  Skipping background workers (AUTOSCALE_MODE=true)');
+      log('   - Preview expiration checker: disabled');
+      log('   - Story expiration job: disabled');
+      log('   - Scraping scheduler: disabled');
+      log('   - MB.MD Intelligence Services: disabled');
+      log('   - BullMQ Workers: disabled');
+      log('   - Policy Monitoring System: disabled');
     } else {
-      log('ℹ️  Policy Monitoring System disabled (Redis not configured)');
-      log('   Set REDIS_URL environment variable to enable monitoring workers');
+      // Start background schedulers (Reserved VM mode only)
+      startPreviewExpirationChecker();
+      initStoryExpirationJob();
+      initScrapingScheduler();
+      
+      // MB.MD v9.9.3: Initialize Self-Healing and Content Services
+      try {
+        log('🧠 Initializing MB.MD Intelligence Services...');
+        await recursiveContextService.initialize();
+        await facelessContentService.initialize();
+        log('✅ MB.MD Intelligence Services initialized');
+      } catch (error) {
+        logger.error('❌ MB.MD Intelligence initialization failed:', error);
+      }
+      
+      // MB.MD v9.9.3: Initialize BullMQ Workers (with Redis fallback)
+      try {
+        log('🔧 Initializing BullMQ Workers...');
+        const { initializeRedis } = await import('./workers/redis-fallback');
+        await initializeRedis();
+        
+        await import('./workers/eventWorker');
+        await import('./workers/housingWorker');
+        await import('./workers/lifeCeoWorker');
+        log('[BullMQ Workers] ✅ Initialized 3 core workers');
+      } catch (error) {
+        logger.error('❌ BullMQ Worker initialization failed:', error);
+      }
+      
+      // PHASE 0A: Initialize Policy Monitoring System (requires Redis)
+      if (process.env.REDIS_URL) {
+        try {
+          log('🔍 Initializing Policy Monitoring System...');
+          await PolicyMonitoringJobs.initialize();
+          log('✅ Policy Monitoring System initialized successfully');
+        } catch (error) {
+          logger.error('❌ Failed to initialize Policy Monitoring System:', error);
+        }
+      } else {
+        log('ℹ️  Policy Monitoring System disabled (Redis not configured)');
+        log('   Set REDIS_URL environment variable to enable monitoring workers');
+      }
     }
   });
 })();

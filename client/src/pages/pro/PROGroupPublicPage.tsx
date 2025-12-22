@@ -16,6 +16,8 @@ import {
   Piano, Shirt, BookOpen, Target, Mic, Globe, Heart, Eye, User, MessageSquare
 } from "lucide-react";
 import { TANGO_ROLES, getRoleByValue, type TangoRole } from "@/lib/tangoRoles";
+import { PostCreator } from "@/components/universal/PostCreator";
+import { GroupPostFeed } from "@/components/groups/GroupPostFeed";
 
 interface PROGroupPublicPageProps {
   roleSlug: string;
@@ -149,32 +151,34 @@ export function PROGroupPublicPage({ roleSlug, title, description, icon: Icon, c
         </div>
 
         <Tabs defaultValue="discover" className="space-y-6">
-          <TabsList className="bg-background/50 border border-white/10">
-            <TabsTrigger value="discover" data-testid="tab-discover">
-              Discover Professionals
-            </TabsTrigger>
-            <TabsTrigger value="featured" data-testid="tab-featured">
-              Featured
-            </TabsTrigger>
-            <TabsTrigger value="upcoming" data-testid="tab-upcoming">
-              Upcoming Events
-            </TabsTrigger>
-            {isMember && (
-              <TabsTrigger 
-                value="discussion" 
-                data-testid="tab-discussion"
-                className="relative"
-                style={{
-                  background: `${color}15`,
-                  borderColor: color,
-                  color: color,
-                }}
-              >
-                <MessageSquare className="w-4 h-4 mr-2" />
-                Discussion
+          <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
+            <TabsList className="bg-background/50 border border-white/10 w-max md:w-auto">
+              <TabsTrigger value="discover" data-testid="tab-discover" className="whitespace-nowrap">
+                Discover Professionals
               </TabsTrigger>
-            )}
-          </TabsList>
+              <TabsTrigger value="featured" data-testid="tab-featured" className="whitespace-nowrap">
+                Featured
+              </TabsTrigger>
+              <TabsTrigger value="upcoming" data-testid="tab-upcoming" className="whitespace-nowrap">
+                Upcoming Events
+              </TabsTrigger>
+              {isMember && (
+                <TabsTrigger 
+                  value="discussion" 
+                  data-testid="tab-discussion"
+                  className="relative whitespace-nowrap"
+                  style={{
+                    background: `${color}15`,
+                    borderColor: color,
+                    color: color,
+                  }}
+                >
+                  <MessageSquare className="w-4 h-4 mr-2" />
+                  Discussion
+                </TabsTrigger>
+              )}
+            </TabsList>
+          </div>
 
           <TabsContent value="discover" className="space-y-6">
             <div className="flex flex-col md:flex-row gap-4">
@@ -350,24 +354,32 @@ export function PROGroupPublicPage({ roleSlug, title, description, icon: Icon, c
 
           {isMember && groupInfo?.id && (
             <TabsContent value="discussion" className="space-y-6">
+              {/* Discussion Header */}
               <Card className="bg-background/50 border-white/10">
-                <CardContent className="p-12 text-center">
-                  <MessageSquare className="w-12 h-12 mx-auto mb-4 opacity-50" style={{ color }} />
-                  <h3 className="text-lg font-semibold mb-2">{title} Discussion</h3>
-                  <p className="text-muted-foreground mb-4">
-                    Share experiences, ask questions, and connect with fellow {title.toLowerCase()}s
-                  </p>
-                  <Button 
-                    onClick={() => navigate(`/memories?proGroup=${groupInfo.id}`)}
-                    style={{ background: color }}
-                    className="text-white"
-                    data-testid="button-view-discussions"
-                  >
-                    View Discussions
-                    <ArrowRight className="w-4 h-4 ml-2" />
-                  </Button>
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <MessageSquare className="w-6 h-6" style={{ color }} />
+                    <div>
+                      <h3 className="text-lg font-semibold">{title} Discussion</h3>
+                      <p className="text-sm text-muted-foreground">
+                        Share experiences, ask questions, and connect with fellow {title.toLowerCase()}s
+                      </p>
+                    </div>
+                  </div>
+                  
+                  {/* Post Creator */}
+                  <PostCreator 
+                    context={{ type: 'group', id: String(groupInfo.id), name: `${title} Community` }}
+                    className="mt-4"
+                  />
                 </CardContent>
               </Card>
+              
+              {/* Posts Feed */}
+              <GroupPostFeed 
+                groupId={groupInfo.id} 
+                groupName={`${title} Community`}
+              />
             </TabsContent>
           )}
         </Tabs>
