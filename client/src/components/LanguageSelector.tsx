@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Globe } from 'lucide-react';
 import {
@@ -9,6 +9,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/contexts/AuthContext';
+import { apiRequest, queryClient } from '@/lib/queryClient';
 
 interface Language {
   code: string;
@@ -91,13 +93,32 @@ const languages: Language[] = [
 
 function LanguageSelectorComponent() {
   const { i18n } = useTranslation();
+  const { user } = useAuth();
   
   const currentLanguage = languages.find(lang => lang.code === i18n.language) || languages[0];
 
-  const handleLanguageChange = (languageCode: string) => {
+  // Sync language from user profile when logged in
+  useEffect(() => {
+    if (user?.primaryLanguage && user.primaryLanguage !== i18n.language) {
+      i18n.changeLanguage(user.primaryLanguage);
+      localStorage.setItem('i18nextLng', user.primaryLanguage);
+    }
+  }, [user?.primaryLanguage, i18n]);
+
+  const handleLanguageChange = useCallback(async (languageCode: string) => {
     i18n.changeLanguage(languageCode);
     localStorage.setItem('i18nextLng', languageCode);
-  };
+    
+    // Save to user profile if logged in
+    if (user?.id) {
+      try {
+        await apiRequest('PATCH', '/api/users/profile', { primaryLanguage: languageCode });
+        queryClient.invalidateQueries({ queryKey: ['/api/auth/me'] });
+      } catch (error) {
+        console.error('Failed to save language preference:', error);
+      }
+    }
+  }, [i18n, user?.id]);
 
   return (
     <Select value={i18n.language} onValueChange={handleLanguageChange}>
@@ -136,11 +157,35 @@ export const LanguageSelector = memo(LanguageSelectorComponent);
 
 function LanguageSelectorButtonComponent() {
   const { i18n } = useTranslation();
+  const { user } = useAuth();
   
   const currentLanguage = languages.find(lang => lang.code === i18n.language) || languages[0];
 
+  // Sync language from user profile when logged in
+  useEffect(() => {
+    if (user?.primaryLanguage && user.primaryLanguage !== i18n.language) {
+      i18n.changeLanguage(user.primaryLanguage);
+      localStorage.setItem('i18nextLng', user.primaryLanguage);
+    }
+  }, [user?.primaryLanguage, i18n]);
+
+  const handleLanguageChange = useCallback(async (languageCode: string) => {
+    i18n.changeLanguage(languageCode);
+    localStorage.setItem('i18nextLng', languageCode);
+    
+    // Save to user profile if logged in
+    if (user?.id) {
+      try {
+        await apiRequest('PATCH', '/api/users/profile', { primaryLanguage: languageCode });
+        queryClient.invalidateQueries({ queryKey: ['/api/auth/me'] });
+      } catch (error) {
+        console.error('Failed to save language preference:', error);
+      }
+    }
+  }, [i18n, user?.id]);
+
   return (
-    <Select value={i18n.language} onValueChange={(code) => i18n.changeLanguage(code)}>
+    <Select value={i18n.language} onValueChange={handleLanguageChange}>
       <SelectTrigger className="w-auto border-0 bg-transparent hover:bg-accent" data-testid="button-language-selector-icon">
         <Globe className="h-5 w-5" />
       </SelectTrigger>

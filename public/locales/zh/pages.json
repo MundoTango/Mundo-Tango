@@ -1,0 +1,61 @@
+{
+  "home": {
+    "title": "欢迎来到 Mundo Tango",
+    "subtitle": "与全球探戈社区连接",
+    "cta": "开始使用"
+  },
+  "events": {
+    "title": "探戈活动",
+    "subtitle": "发现米隆加、节日和工作坊",
+    "filterByCity": "按城市筛选",
+    "filterByType": "按类型筛选",
+    "noEvents": "未找到活动"
+  },
+  "cities": {
+    "title": "探戈城市",
+    "subtitle": "探索世界各地的探戈社区",
+    "members": "成员",
+    "events": "活动",
+    "viewCity": "查看城市"
+  },
+  "groups": {
+    "title": "探戈群组",
+    "subtitle": "加入本地和兴趣社区",
+    "join": "加入群组",
+    "leave": "离开群组",
+    "members": "成员",
+    "posts": "帖子"
+  },
+  "profile": {
+    "title": "个人资料",
+    "editProfile": "编辑资料",
+    "followers": "粉丝",
+    "following": "关注",
+    "posts": "帖子",
+    "about": "关于"
+  },
+  "login": {
+    "title": "登录",
+    "email": "邮箱",
+    "password": "密码",
+    "forgotPassword": "忘记密码？",
+    "noAccount": "没有账号？",
+    "signUp": "注册"
+  },
+  "signup": {
+    "title": "创建账号",
+    "name": "姓名",
+    "email": "邮箱",
+    "password": "密码",
+    "confirmPassword": "确认密码",
+    "hasAccount": "已有账号？",
+    "login": "登录"
+  },
+  "proDiscovery": {
+    "title": "发现探戈专业人士",
+    "subtitle": "寻找老师、DJ、表演者等",
+    "search": "搜索专业人士...",
+    "filterByRole": "按角色筛选",
+    "filterByCity": "按城市筛选"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "generic": "Qualcosa è andato storto. Per favore riprova.",
+  "network": "Errore di rete. Verifica la tua connessione.",
+  "notFound": "Pagina non trovata",
+  "unauthorized": "Devi accedere per visualizzare questa pagina",
+  "forbidden": "Non hai il permesso di accedere a questa pagina",
+  "validation": {
+    "required": "Questo campo è obbligatorio",
+    "email": "Inserisci un indirizzo email valido",
+    "password": "La password deve contenere almeno 8 caratteri",
+    "passwordMatch": "Le password non corrispondono",
+    "username": "Il nome utente può contenere solo lettere, numeri e underscore"
+  },
+  "auth": {
+    "invalidCredentials": "Email o password non validi",
+    "emailInUse": "Questa email è già registrata",
+    "usernameInUse": "Questo nome utente è già in uso",
+    "accountDisabled": "Il tuo account è stato disabilitato"
+  },
+  "upload": {
+    "fileTooLarge": "Il file è troppo grande. La dimensione massima è 10MB",
+    "invalidType": "Tipo di file non valido",
+    "uploadFailed": "Caricamento fallito. Per favore riprova"
+  }
+}

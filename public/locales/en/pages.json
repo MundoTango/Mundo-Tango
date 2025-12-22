@@ -1,0 +1,61 @@
+{
+  "home": {
+    "title": "Welcome to Mundo Tango",
+    "subtitle": "Connect with the global tango community",
+    "cta": "Get Started"
+  },
+  "events": {
+    "title": "Tango Events",
+    "subtitle": "Discover milongas, festivals, and workshops",
+    "filterByCity": "Filter by city",
+    "filterByType": "Filter by type",
+    "noEvents": "No events found"
+  },
+  "cities": {
+    "title": "Tango Cities",
+    "subtitle": "Explore tango communities worldwide",
+    "members": "members",
+    "events": "events",
+    "viewCity": "View City"
+  },
+  "groups": {
+    "title": "Tango Groups",
+    "subtitle": "Join local and interest-based communities",
+    "join": "Join Group",
+    "leave": "Leave Group",
+    "members": "Members",
+    "posts": "Posts"
+  },
+  "profile": {
+    "title": "Profile",
+    "editProfile": "Edit Profile",
+    "followers": "Followers",
+    "following": "Following",
+    "posts": "Posts",
+    "about": "About"
+  },
+  "login": {
+    "title": "Login",
+    "email": "Email",
+    "password": "Password",
+    "forgotPassword": "Forgot Password?",
+    "noAccount": "Don't have an account?",
+    "signUp": "Sign up"
+  },
+  "signup": {
+    "title": "Create Account",
+    "name": "Name",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "hasAccount": "Already have an account?",
+    "login": "Login"
+  },
+  "proDiscovery": {
+    "title": "Discover Tango Professionals",
+    "subtitle": "Find teachers, DJs, performers, and more",
+    "search": "Search professionals...",
+    "filterByRole": "Filter by role",
+    "filterByCity": "Filter by city"
+  }
+}

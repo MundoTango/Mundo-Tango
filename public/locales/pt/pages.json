@@ -1,0 +1,61 @@
+{
+  "home": {
+    "title": "Bem-vindo ao Mundo Tango",
+    "subtitle": "Conecte-se com a comunidade global do tango",
+    "cta": "Começar"
+  },
+  "events": {
+    "title": "Eventos de Tango",
+    "subtitle": "Descubra milongas, festivais e workshops",
+    "filterByCity": "Filtrar por cidade",
+    "filterByType": "Filtrar por tipo",
+    "noEvents": "Nenhum evento encontrado"
+  },
+  "cities": {
+    "title": "Cidades de Tango",
+    "subtitle": "Explore comunidades de tango pelo mundo",
+    "members": "membros",
+    "events": "eventos",
+    "viewCity": "Ver Cidade"
+  },
+  "groups": {
+    "title": "Grupos de Tango",
+    "subtitle": "Junte-se a comunidades locais e de interesse",
+    "join": "Entrar no Grupo",
+    "leave": "Sair do Grupo",
+    "members": "Membros",
+    "posts": "Publicações"
+  },
+  "profile": {
+    "title": "Perfil",
+    "editProfile": "Editar Perfil",
+    "followers": "Seguidores",
+    "following": "Seguindo",
+    "posts": "Publicações",
+    "about": "Sobre"
+  },
+  "login": {
+    "title": "Entrar",
+    "email": "Email",
+    "password": "Senha",
+    "forgotPassword": "Esqueceu a senha?",
+    "noAccount": "Não tem uma conta?",
+    "signUp": "Cadastre-se"
+  },
+  "signup": {
+    "title": "Criar Conta",
+    "name": "Nome",
+    "email": "Email",
+    "password": "Senha",
+    "confirmPassword": "Confirmar Senha",
+    "hasAccount": "Já tem uma conta?",
+    "login": "Entrar"
+  },
+  "proDiscovery": {
+    "title": "Descubra Profissionais do Tango",
+    "subtitle": "Encontre professores, DJs, artistas e mais",
+    "search": "Buscar profissionais...",
+    "filterByRole": "Filtrar por função",
+    "filterByCity": "Filtrar por cidade"
+  }
+}

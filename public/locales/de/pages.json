@@ -1,0 +1,61 @@
+{
+  "home": {
+    "title": "Willkommen bei Mundo Tango",
+    "subtitle": "Verbinde dich mit der weltweiten Tango-Community",
+    "cta": "Loslegen"
+  },
+  "events": {
+    "title": "Tango-Veranstaltungen",
+    "subtitle": "Entdecke Milongas, Festivals und Workshops",
+    "filterByCity": "Nach Stadt filtern",
+    "filterByType": "Nach Typ filtern",
+    "noEvents": "Keine Veranstaltungen gefunden"
+  },
+  "cities": {
+    "title": "Tango-Städte",
+    "subtitle": "Erkunde Tango-Communities weltweit",
+    "members": "Mitglieder",
+    "events": "Veranstaltungen",
+    "viewCity": "Stadt ansehen"
+  },
+  "groups": {
+    "title": "Tango-Gruppen",
+    "subtitle": "Tritt lokalen und thematischen Communities bei",
+    "join": "Gruppe beitreten",
+    "leave": "Gruppe verlassen",
+    "members": "Mitglieder",
+    "posts": "Beiträge"
+  },
+  "profile": {
+    "title": "Profil",
+    "editProfile": "Profil bearbeiten",
+    "followers": "Follower",
+    "following": "Folgend",
+    "posts": "Beiträge",
+    "about": "Über"
+  },
+  "login": {
+    "title": "Anmelden",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "forgotPassword": "Passwort vergessen?",
+    "noAccount": "Kein Konto?",
+    "signUp": "Registrieren"
+  },
+  "signup": {
+    "title": "Konto erstellen",
+    "name": "Name",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "confirmPassword": "Passwort bestätigen",
+    "hasAccount": "Bereits ein Konto?",
+    "login": "Anmelden"
+  },
+  "proDiscovery": {
+    "title": "Entdecke Tango-Profis",
+    "subtitle": "Finde Lehrer, DJs, Künstler und mehr",
+    "search": "Profis suchen...",
+    "filterByRole": "Nach Rolle filtern",
+    "filterByCity": "Nach Stadt filtern"
+  }
+}

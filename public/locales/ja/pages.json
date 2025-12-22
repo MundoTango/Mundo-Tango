@@ -1,0 +1,61 @@
+{
+  "home": {
+    "title": "Mundo Tangoへようこそ",
+    "subtitle": "世界中のタンゴコミュニティとつながろう",
+    "cta": "始める"
+  },
+  "events": {
+    "title": "タンゴイベント",
+    "subtitle": "ミロンガ、フェスティバル、ワークショップを発見",
+    "filterByCity": "都市で絞り込む",
+    "filterByType": "タイプで絞り込む",
+    "noEvents": "イベントが見つかりません"
+  },
+  "cities": {
+    "title": "タンゴ都市",
+    "subtitle": "世界中のタンゴコミュニティを探索",
+    "members": "メンバー",
+    "events": "イベント",
+    "viewCity": "都市を見る"
+  },
+  "groups": {
+    "title": "タンゴグループ",
+    "subtitle": "ローカル・テーマ別コミュニティに参加",
+    "join": "グループに参加",
+    "leave": "グループを離れる",
+    "members": "メンバー",
+    "posts": "投稿"
+  },
+  "profile": {
+    "title": "プロフィール",
+    "editProfile": "プロフィールを編集",
+    "followers": "フォロワー",
+    "following": "フォロー中",
+    "posts": "投稿",
+    "about": "について"
+  },
+  "login": {
+    "title": "ログイン",
+    "email": "メールアドレス",
+    "password": "パスワード",
+    "forgotPassword": "パスワードをお忘れですか？",
+    "noAccount": "アカウントをお持ちでないですか？",
+    "signUp": "新規登録"
+  },
+  "signup": {
+    "title": "アカウント作成",
+    "name": "名前",
+    "email": "メールアドレス",
+    "password": "パスワード",
+    "confirmPassword": "パスワード確認",
+    "hasAccount": "すでにアカウントをお持ちですか？",
+    "login": "ログイン"
+  },
+  "proDiscovery": {
+    "title": "タンゴプロフェッショナルを発見",
+    "subtitle": "講師、DJ、パフォーマーなどを探す",
+    "search": "プロフェッショナルを検索...",
+    "filterByRole": "役割で絞り込む",
+    "filterByCity": "都市で絞り込む"
+  }
+}

@@ -23,6 +23,7 @@ interface ExpressUser {
   tangoRoles?: string[];
   termsAccepted?: boolean;
   waitlist?: boolean;
+  primaryLanguage?: string | null;
 }
 
 interface Profile {

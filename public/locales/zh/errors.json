@@ -1,0 +1,25 @@
+{
+  "generic": "出现错误，请重试。",
+  "network": "网络错误，请检查您的连接。",
+  "notFound": "页面未找到",
+  "unauthorized": "您需要登录才能访问此页面",
+  "forbidden": "您没有权限访问此页面",
+  "validation": {
+    "required": "此字段为必填项",
+    "email": "请输入有效的邮箱地址",
+    "password": "密码必须至少8个字符",
+    "passwordMatch": "密码不匹配",
+    "username": "用户名只能包含字母、数字和下划线"
+  },
+  "auth": {
+    "invalidCredentials": "邮箱或密码无效",
+    "emailInUse": "此邮箱已注册",
+    "usernameInUse": "此用户名已被使用",
+    "accountDisabled": "您的账号已被禁用"
+  },
+  "upload": {
+    "fileTooLarge": "文件太大。最大大小为10MB",
+    "invalidType": "文件类型无效",
+    "uploadFailed": "上传失败，请重试"
+  }
+}
