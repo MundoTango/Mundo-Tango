@@ -25,35 +25,59 @@ export default function VolunteerPage() {
       icon: Code,
       title: t('pages:volunteer.roles.development.title', 'Software Development'),
       description: t('pages:volunteer.roles.development.description', 'Build features, fix bugs, and help scale our platform'),
-      skills: ["React", "Node.js", "TypeScript", "PostgreSQL"],
+      skills: [
+        t('pages:volunteer.skills.react', 'React'), 
+        t('pages:volunteer.skills.nodejs', 'Node.js'), 
+        t('pages:volunteer.skills.typescript', 'TypeScript'), 
+        t('pages:volunteer.skills.postgresql', 'PostgreSQL')
+      ],
       commitment: t('pages:volunteer.commitment.510hours', '5-10 hours/week')
     },
     {
       icon: Palette,
       title: t('pages:volunteer.roles.design.title', 'Design & UX'),
       description: t('pages:volunteer.roles.design.description', 'Create beautiful interfaces and improve user experience'),
-      skills: ["Figma", "UI/UX", "Branding", "Illustrations"],
+      skills: [
+        t('pages:volunteer.skills.figma', 'Figma'), 
+        t('pages:volunteer.skills.uiux', 'UI/UX'), 
+        t('pages:volunteer.skills.branding', 'Branding'), 
+        t('pages:volunteer.skills.illustrations', 'Illustrations')
+      ],
       commitment: t('pages:volunteer.commitment.37hours', '3-7 hours/week')
     },
     {
       icon: Megaphone,
       title: t('pages:volunteer.roles.marketing.title', 'Marketing & Growth'),
       description: t('pages:volunteer.roles.marketing.description', 'Spread the word and grow our community worldwide'),
-      skills: ["Social Media", "Content", "SEO", "Analytics"],
+      skills: [
+        t('pages:volunteer.skills.socialMedia', 'Social Media'), 
+        t('pages:volunteer.skills.content', 'Content'), 
+        t('pages:volunteer.skills.seo', 'SEO'), 
+        t('pages:volunteer.skills.analytics', 'Analytics')
+      ],
       commitment: t('pages:volunteer.commitment.48hours', '4-8 hours/week')
     },
     {
       icon: FileText,
       title: t('pages:volunteer.roles.content.title', 'Content Creation'),
       description: t('pages:volunteer.roles.content.description', 'Write articles, create videos, and curate resources'),
-      skills: ["Writing", "Video", "Photography", "Translation"],
+      skills: [
+        t('pages:volunteer.skills.writing', 'Writing'), 
+        t('pages:volunteer.skills.video', 'Video'), 
+        t('pages:volunteer.skills.photography', 'Photography'), 
+        t('pages:volunteer.skills.translation', 'Translation')
+      ],
       commitment: t('pages:volunteer.commitment.26hours', '2-6 hours/week')
     },
     {
       icon: Users,
       title: t('pages:volunteer.roles.community.title', 'Community Management'),
       description: t('pages:volunteer.roles.community.description', 'Support users, moderate content, and foster engagement'),
-      skills: ["Communication", "Empathy", "Organization"],
+      skills: [
+        t('pages:volunteer.skills.communication', 'Communication'), 
+        t('pages:volunteer.skills.empathy', 'Empathy'), 
+        t('pages:volunteer.skills.organization', 'Organization')
+      ],
       commitment: t('pages:volunteer.commitment.510hours', '5-10 hours/week')
     }
   ];
@@ -68,11 +92,11 @@ export default function VolunteerPage() {
   ];
 
   return (
-    <SelfHealingErrorBoundary pageName="Volunteer Page" fallbackRoute="/">
+    <SelfHealingErrorBoundary pageName={t('pages:volunteer.pageName', 'Volunteer Page')} fallbackRoute="/">
       <>
         <SEO
-          title="Volunteer with Mundo Tango"
-          description="Join our volunteer team and help create the future of tango technology. Share your skills, grow your experience, and make an impact."
+          title={t('pages:volunteer.seo.title', 'Volunteer with Mundo Tango')}
+          description={t('pages:volunteer.seo.description', 'Join our volunteer team and help create the future of tango technology. Share your skills, grow your experience, and make an impact.')}
         />
 
         <div className="min-h-screen">
