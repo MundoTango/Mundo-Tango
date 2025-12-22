@@ -13,30 +13,30 @@ import travelImg1 from "@assets/stock_images/global_world_map_con_5d0982b5.jpg";
 export default function TravelAgentPage() {
   const { t } = useTranslation(["pages", "common"]);
   const upcomingTrips = [
-    { id: 1, destination: "Buenos Aires, Argentina", date: "Dec 15-22, 2025", type: "Tango Festival", status: "Confirmed" },
-    { id: 2, destination: "Istanbul, Turkey", date: "Jan 10-17, 2026", type: "Cultural Tour", status: "Planning" }
+    { id: 1, destination: t('pages:lifeceo.travel.destinations.buenosAires', 'Buenos Aires, Argentina'), date: "Dec 15-22, 2025", type: t('pages:lifeceo.travel.type.tangoFestival', 'Tango Festival'), status: t('pages:lifeceo.travel.status.confirmed', 'Confirmed') },
+    { id: 2, destination: t('pages:lifeceo.travel.destinations.istanbul', 'Istanbul, Turkey'), date: "Jan 10-17, 2026", type: t('pages:lifeceo.travel.type.culturalTour', 'Cultural Tour'), status: t('pages:lifeceo.travel.status.planning', 'Planning') }
   ];
 
   const recommendations = [
-    { city: "Paris, France", reason: "Tango workshops every weekend", price: "$850" },
-    { city: "Tokyo, Japan", reason: "Growing tango community", price: "$1,200" },
-    { city: "Berlin, Germany", reason: "Major tango festival in March", price: "$680" }
+    { city: t('pages:lifeceo.travel.cities.paris', 'Paris, France'), reason: t('pages:lifeceo.travel.reasons.tangoWorkshops', 'Tango workshops every weekend'), price: "$850" },
+    { city: t('pages:lifeceo.travel.cities.tokyo', 'Tokyo, Japan'), reason: t('pages:lifeceo.travel.reasons.growingCommunity', 'Growing tango community'), price: "$1,200" },
+    { city: t('pages:lifeceo.travel.cities.berlin', 'Berlin, Germany'), reason: t('pages:lifeceo.travel.reasons.majorFestival', 'Major tango festival in March'), price: "$680" }
   ];
 
   const metrics = [
-    { label: "Trips Planned", value: "2", icon: Briefcase, color: "text-cyan-500" },
-    { label: "Countries", value: "12", icon: MapPin, color: "text-green-500" },
-    { label: "Next Trip", value: "45d", icon: Calendar, color: "text-orange-500" },
-    { label: "Budget Used", value: "68%", icon: DollarSign, color: "text-purple-500" }
+    { label: t('pages:lifeceo.travel.metrics.tripsPlanned', 'Trips Planned'), value: "2", icon: Briefcase, color: "text-cyan-500" },
+    { label: t('pages:lifeceo.travel.metrics.countries', 'Countries'), value: "12", icon: MapPin, color: "text-green-500" },
+    { label: t('pages:lifeceo.travel.metrics.nextTrip', 'Next Trip'), value: "45d", icon: Calendar, color: "text-orange-500" },
+    { label: t('pages:lifeceo.travel.metrics.budgetUsed', 'Budget Used'), value: "68%", icon: DollarSign, color: "text-purple-500" }
   ];
 
   return (
     <SelfHealingErrorBoundary pageName="Travel Agent" fallbackRoute="/life-ceo">
-      <PageLayout title="Travel Agent" showBreadcrumbs>
+      <PageLayout title={t('pages:lifeceo.travel.title', 'Travel Agent')} showBreadcrumbs>
         <>
           <SEO
-            title="Travel Agent - Life CEO"
-            description="Plan trips, find tango events worldwide, and manage travel logistics with your AI travel agent."
+            title={t('pages:lifeceo.travel.seoTitle', 'Travel Agent - Life CEO')}
+            description={t('pages:lifeceo.travel.seoDescription', 'Plan trips, find tango events worldwide, and manage travel logistics with your AI travel agent.')}
           />
 
           {/* Editorial Hero Section - 16:9 */}
@@ -52,15 +52,15 @@ export default function TravelAgentPage() {
                 transition={{ duration: 1, ease: "easeOut" }}
               >
                 <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
-                  Global Experiences
+                  {t('pages:lifeceo.travel.badge', 'Global Experiences')}
                 </Badge>
                 
                 <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif font-bold text-white mb-6 tracking-tight" data-testid="heading-hero">
-                  Travel Agent
+                  {t('pages:lifeceo.travel.heroTitle', 'Travel Agent')}
                 </h1>
                 
                 <p className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto leading-relaxed">
-                  Your personal travel planner
+                  {t('pages:lifeceo.travel.heroSubtitle', 'Your personal travel planner')}
                 </p>
               </motion.div>
             </div>
@@ -96,9 +96,9 @@ export default function TravelAgentPage() {
               transition={{ duration: 0.6 }}
               className="mb-12"
             >
-              <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">Travel Dashboard</h2>
+              <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">{t('pages:lifeceo.travel.sectionTitle', 'Travel Dashboard')}</h2>
               <p className="text-lg text-muted-foreground">
-                Explore the world through tango
+                {t('pages:lifeceo.travel.sectionSubtitle', 'Explore the world through tango')}
               </p>
             </motion.div>
 
@@ -114,15 +114,15 @@ export default function TravelAgentPage() {
                   <div className="relative aspect-[16/9] overflow-hidden">
                     <motion.img
                       src={travelImg1}
-                      alt="Upcoming Trips"
+                      alt={t('pages:lifeceo.travel.upcomingTripsAlt', 'Upcoming Trips')}
                       className="w-full h-full object-cover"
                       whileHover={{ scale: 1.05 }}
                       transition={{ duration: 0.6 }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
                     <div className="absolute bottom-4 left-4 right-4 text-white">
-                      <h3 className="text-2xl font-serif font-bold">Upcoming Trips</h3>
-                      <p className="text-white/80 text-sm mt-1">Your travel itinerary</p>
+                      <h3 className="text-2xl font-serif font-bold">{t('pages:lifeceo.travel.upcomingTrips', 'Upcoming Trips')}</h3>
+                      <p className="text-white/80 text-sm mt-1">{t('pages:lifeceo.travel.upcomingTripsSubtitle', 'Your travel itinerary')}</p>
                     </div>
                   </div>
                   <CardContent className="p-8 space-y-4">
@@ -138,7 +138,7 @@ export default function TravelAgentPage() {
                             <h3 className="font-semibold">{trip.destination}</h3>
                           </div>
                           <Badge className={
-                            trip.status === "Confirmed" ? "bg-green-500" : "bg-orange-500"
+                            trip.status === t('pages:lifeceo.travel.status.confirmed', 'Confirmed') ? "bg-green-500" : "bg-orange-500"
                           }>
                             {trip.status}
                           </Badge>
@@ -154,7 +154,7 @@ export default function TravelAgentPage() {
                       </div>
                     ))}
                     <Button className="w-full" variant="outline" data-testid="button-plan-trip">
-                      + Plan New Trip
+                      {t('pages:lifeceo.travel.planNewTrip', '+ Plan New Trip')}
                     </Button>
                   </CardContent>
                 </Card>
@@ -171,7 +171,7 @@ export default function TravelAgentPage() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-2xl font-serif">
                       <Plane className="h-6 w-6 text-cyan-500" />
-                      AI Travel Recommendations
+                      {t('pages:lifeceo.travel.aiRecommendations', 'AI Travel Recommendations')}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
@@ -191,11 +191,11 @@ export default function TravelAgentPage() {
                               <DollarSign className="h-3 w-3 text-muted-foreground" />
                               <span className="font-bold">{rec.price}</span>
                             </div>
-                            <p className="text-xs text-muted-foreground">avg. flight</p>
+                            <p className="text-xs text-muted-foreground">{t('pages:lifeceo.travel.avgFlight', 'avg. flight')}</p>
                           </div>
                         </div>
                         <Button size="sm" variant="outline" className="w-full mt-2" data-testid={`button-explore-${idx}`}>
-                          Explore Details
+                          {t('pages:lifeceo.travel.exploreDetails', 'Explore Details')}
                         </Button>
                       </div>
                     ))}
@@ -204,9 +204,9 @@ export default function TravelAgentPage() {
                       <div className="flex items-start gap-3">
                         <Plane className="h-5 w-5 text-blue-500 mt-0.5" />
                         <div>
-                          <p className="text-sm font-medium mb-1">Travel Tip</p>
+                          <p className="text-sm font-medium mb-1">{t('pages:lifeceo.travel.travelTip', 'Travel Tip')}</p>
                           <p className="text-sm text-muted-foreground">
-                            Book flights 6-8 weeks in advance for the best rates on international travel.
+                            {t('pages:lifeceo.travel.travelTipMessage', 'Book flights 6-8 weeks in advance for the best rates on international travel.')}
                           </p>
                         </div>
                       </div>
@@ -214,7 +214,7 @@ export default function TravelAgentPage() {
 
                     <Button className="w-full gap-2" data-testid="button-explore-destinations">
                       <MapPin className="w-4 h-4" />
-                      Explore All Destinations
+                      {t('pages:lifeceo.travel.exploreAllDestinations', 'Explore All Destinations')}
                     </Button>
                   </CardContent>
                 </Card>

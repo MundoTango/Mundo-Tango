@@ -64,14 +64,14 @@ export default function BillingDashboard() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/billing/subscription'] });
       toast({
-        title: "Subscription Updated",
-        description: "Your subscription has been successfully updated.",
+        title: t('pages:settings.billing.subscriptionUpdated', 'Subscription Updated'),
+        description: t('pages:settings.billing.subscriptionUpdatedDesc', 'Your subscription has been successfully updated.'),
       });
     },
     onError: (error: any) => {
       toast({
-        title: "Update Failed",
-        description: error.message || "Failed to update subscription",
+        title: t('pages:settings.billing.updateFailed', 'Update Failed'),
+        description: error.message || t('pages:settings.billing.failedToUpdateSubscription', 'Failed to update subscription'),
         variant: "destructive",
       });
     },
@@ -85,14 +85,14 @@ export default function BillingDashboard() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/billing/subscription'] });
       toast({
-        title: "Subscription Canceled",
-        description: "Your subscription has been canceled.",
+        title: t('pages:settings.billing.subscriptionCanceled', 'Subscription Canceled'),
+        description: t('pages:settings.billing.subscriptionCanceledDesc', 'Your subscription has been canceled.'),
       });
     },
     onError: (error: any) => {
       toast({
-        title: "Cancellation Failed",
-        description: error.message || "Failed to cancel subscription",
+        title: t('pages:settings.billing.cancellationFailed', 'Cancellation Failed'),
+        description: error.message || t('pages:settings.billing.failedToCancelSubscription', 'Failed to cancel subscription'),
         variant: "destructive",
       });
     },
@@ -110,8 +110,8 @@ export default function BillingDashboard() {
     },
     onError: (error: any) => {
       toast({
-        title: "Error",
-        description: error.message || "Failed to open customer portal",
+        title: t('pages:settings.billing.error', 'Error'),
+        description: error.message || t('pages:settings.billing.failedToOpenPortal', 'Failed to open customer portal'),
         variant: "destructive",
       });
     },
@@ -167,21 +167,21 @@ export default function BillingDashboard() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold text-foreground" data-testid="heading-billing">
-                Billing & Subscription
+                {t('pages:settings.billing.title', 'Billing & Subscription')}
               </h1>
               <p className="text-muted-foreground mt-2">
-                Manage your subscription and billing information
+                {t('pages:settings.billing.subtitle', 'Manage your subscription and billing information')}
               </p>
             </div>
             <div className="flex gap-3">
               <Link href="/settings/billing/history">
                 <Button variant="outline" data-testid="button-payment-history">
-                  Payment History
+                  {t('pages:settings.billing.paymentHistory', 'Payment History')}
                 </Button>
               </Link>
               <Link href="/settings/billing/payment-methods">
                 <Button variant="outline" data-testid="button-payment-methods">
-                  Payment Methods
+                  {t('pages:settings.billing.paymentMethods', 'Payment Methods')}
                 </Button>
               </Link>
             </div>
@@ -197,17 +197,17 @@ export default function BillingDashboard() {
                       {getPlanIcon(currentTier)}
                     </div>
                     <div>
-                      <CardTitle className="text-xl">Current Plan: {currentTier.charAt(0).toUpperCase() + currentTier.slice(1)}</CardTitle>
+                      <CardTitle className="text-xl">{t('pages:settings.billing.currentPlan', 'Current Plan')}: {currentTier.charAt(0).toUpperCase() + currentTier.slice(1)}</CardTitle>
                       <CardDescription>
                         {currentSubscription.cancelAtPeriodEnd ? (
                           <span className="text-destructive flex items-center gap-1">
                             <XCircle className="w-4 h-4" />
-                            Cancels on {new Date(currentSubscription.currentPeriodEnd * 1000).toLocaleDateString()}
+                            {t('pages:settings.billing.cancelsOn', 'Cancels on')} {new Date(currentSubscription.currentPeriodEnd * 1000).toLocaleDateString()}
                           </span>
                         ) : (
                           <span className="flex items-center gap-1">
                             <CheckCircle2 className="w-4 h-4 text-primary" />
-                            Renews on {new Date(currentSubscription.currentPeriodEnd * 1000).toLocaleDateString()}
+                            {t('pages:settings.billing.renewsOn', 'Renews on')} {new Date(currentSubscription.currentPeriodEnd * 1000).toLocaleDateString()}
                           </span>
                         )}
                       </CardDescription>
@@ -221,7 +221,7 @@ export default function BillingDashboard() {
                       data-testid="button-manage-billing"
                     >
                       <ExternalLink className="w-4 h-4 mr-2" />
-                      Manage Billing
+                      {t('pages:settings.billing.manageBilling', 'Manage Billing')}
                     </Button>
                     {!currentSubscription.cancelAtPeriodEnd && currentTier !== 'free' && (
                       <Button 
@@ -230,7 +230,7 @@ export default function BillingDashboard() {
                         disabled={cancelSubscriptionMutation.isPending}
                         data-testid="button-cancel-subscription"
                       >
-                        Cancel Subscription
+                        {t('pages:settings.billing.cancelSubscription', 'Cancel Subscription')}
                       </Button>
                     )}
                   </div>
@@ -243,7 +243,7 @@ export default function BillingDashboard() {
         {/* Billing Period Toggle */}
         <div className="flex items-center justify-center gap-4 p-4 bg-card rounded-lg border">
           <Label htmlFor="billing-period" className={billingPeriod === 'monthly' ? 'font-semibold' : 'text-muted-foreground'}>
-            Monthly
+            {t('pages:settings.billing.monthly', 'Monthly')}
           </Label>
           <Switch
             id="billing-period"
@@ -252,8 +252,8 @@ export default function BillingDashboard() {
             data-testid="switch-billing-period"
           />
           <Label htmlFor="billing-period" className={billingPeriod === 'yearly' ? 'font-semibold' : 'text-muted-foreground'}>
-            Yearly
-            <Badge variant="secondary" className="ml-2">Save 20%</Badge>
+            {t('pages:settings.billing.yearly', 'Yearly')}
+            <Badge variant="secondary" className="ml-2">{t('pages:settings.billing.save20', 'Save 20%')}</Badge>
           </Label>
         </div>
 
@@ -274,7 +274,7 @@ export default function BillingDashboard() {
                 {isCurrentPlan && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2">
                     <Badge className="bg-primary text-primary-foreground" data-testid={`badge-current-${plan.id}`}>
-                      Current Plan
+                      {t('pages:settings.billing.currentPlanBadge', 'Current Plan')}
                     </Badge>
                   </div>
                 )}
@@ -291,7 +291,7 @@ export default function BillingDashboard() {
                       ${displayPrice}
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      per {billingPeriod === 'yearly' ? 'year' : 'month'}
+                      {t('pages:settings.billing.per', 'per')} {billingPeriod === 'yearly' ? t('pages:settings.billing.year', 'year') : t('pages:settings.billing.month', 'month')}
                     </p>
                   </div>
                 </CardHeader>
@@ -316,7 +316,7 @@ export default function BillingDashboard() {
                     onClick={() => handleUpgrade(plan.id)}
                     data-testid={`button-select-${plan.id}`}
                   >
-                    {isCurrentPlan ? 'Current Plan' : plan.price === 0 ? 'Downgrade' : 'Upgrade'}
+                    {isCurrentPlan ? t('pages:settings.billing.currentPlanButton', 'Current Plan') : plan.price === 0 ? t('pages:settings.billing.downgrade', 'Downgrade') : t('pages:settings.billing.upgrade', 'Upgrade')}
                   </Button>
                 </CardFooter>
               </Card>
@@ -329,9 +329,9 @@ export default function BillingDashboard() {
           <Card className="hover-elevate">
             <CardHeader>
               <Shield className="w-8 h-8 text-primary mb-2" />
-              <CardTitle>Secure Payments</CardTitle>
+              <CardTitle>{t('pages:settings.billing.securePayments', 'Secure Payments')}</CardTitle>
               <CardDescription>
-                All payments are processed securely through Stripe with industry-standard encryption
+                {t('pages:settings.billing.securePaymentsDesc', 'All payments are processed securely through Stripe with industry-standard encryption')}
               </CardDescription>
             </CardHeader>
           </Card>
@@ -339,9 +339,9 @@ export default function BillingDashboard() {
           <Card className="hover-elevate">
             <CardHeader>
               <Sparkles className="w-8 h-8 text-primary mb-2" />
-              <CardTitle>Flexible Plans</CardTitle>
+              <CardTitle>{t('pages:settings.billing.flexiblePlans', 'Flexible Plans')}</CardTitle>
               <CardDescription>
-                Upgrade, downgrade, or cancel anytime. No long-term commitments required
+                {t('pages:settings.billing.flexiblePlansDesc', 'Upgrade, downgrade, or cancel anytime. No long-term commitments required')}
               </CardDescription>
             </CardHeader>
           </Card>
@@ -349,9 +349,9 @@ export default function BillingDashboard() {
           <Card className="hover-elevate">
             <CardHeader>
               <Crown className="w-8 h-8 text-primary mb-2" />
-              <CardTitle>Premium Support</CardTitle>
+              <CardTitle>{t('pages:settings.billing.premiumSupport', 'Premium Support')}</CardTitle>
               <CardDescription>
-                Get priority support and early access to new features with paid plans
+                {t('pages:settings.billing.premiumSupportDesc', 'Get priority support and early access to new features with paid plans')}
               </CardDescription>
             </CardHeader>
           </Card>

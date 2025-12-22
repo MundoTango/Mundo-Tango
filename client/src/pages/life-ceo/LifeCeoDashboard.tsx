@@ -97,8 +97,8 @@ export default function LifeCeoDashboard() {
   return (
     <>
       <SEO 
-        title="Life CEO"
-        description="Personal AI team of 16 specialized agents helping you excel in health, finance, career, relationships, learning, and all life domains"
+        title={t('pages:lifeceo.dashboard.seoTitle', 'Life CEO')}
+        description={t('pages:lifeceo.dashboard.seoDescription', 'Personal AI team of 16 specialized agents helping you excel in health, finance, career, relationships, learning, and all life domains')}
         ogImage="/og-image.png"
       />
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-950 dark:via-blue-950 dark:to-indigo-950">
@@ -109,11 +109,11 @@ export default function LifeCeoDashboard() {
               <Target className="h-8 w-8 text-white" />
             </div>
             <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent">
-              Life CEO
+              {t('pages:lifeceo.dashboard.title', 'Life CEO')}
             </h1>
           </div>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Your personal AI team of 16 specialized agents to help you excel in every area of life
+            {t('pages:lifeceo.dashboard.subtitle', 'Your personal AI team of 16 specialized agents to help you excel in every area of life')}
           </p>
         </div>
 
@@ -121,15 +121,15 @@ export default function LifeCeoDashboard() {
           <TabsList className="grid w-full grid-cols-3 max-w-md mx-auto">
             <TabsTrigger value="agents" data-testid="tab-agents">
               <Sparkles className="h-4 w-4 mr-2" />
-              Agents
+              {t('pages:lifeceo.dashboard.tabs.agents', 'Agents')}
             </TabsTrigger>
             <TabsTrigger value="insights" data-testid="tab-insights">
               <TrendingUp className="h-4 w-4 mr-2" />
-              Daily Insights
+              {t('pages:lifeceo.dashboard.tabs.dailyInsights', 'Daily Insights')}
             </TabsTrigger>
             <TabsTrigger value="chat" data-testid="tab-chat">
               <MessageSquare className="h-4 w-4 mr-2" />
-              Chat
+              {t('pages:lifeceo.dashboard.tabs.chat', 'Chat')}
             </TabsTrigger>
           </TabsList>
 
@@ -222,7 +222,7 @@ export default function LifeCeoDashboard() {
                     <CardContent className="flex flex-col items-center justify-center py-12">
                       <Calendar className="h-12 w-12 text-muted-foreground mb-4" />
                       <p className="text-muted-foreground text-center">
-                        No daily insights yet. Start chatting with agents to build personalized recommendations!
+                        {t('pages:lifeceo.dashboard.noInsights', 'No daily insights yet. Start chatting with agents to build personalized recommendations!')}
                       </p>
                     </CardContent>
                   </Card>
@@ -261,9 +261,9 @@ export default function LifeCeoDashboard() {
               <Card>
                 <CardContent className="flex flex-col items-center justify-center py-16">
                   <MessageSquare className="h-16 w-16 text-muted-foreground mb-4" />
-                  <p className="text-xl font-medium text-center mb-2">Select an Agent to Chat</p>
+                  <p className="text-xl font-medium text-center mb-2">{t('pages:lifeceo.dashboard.chat.selectAgent', 'Select an Agent to Chat')}</p>
                   <p className="text-muted-foreground text-center max-w-md">
-                    Choose one of the 16 specialized agents from the Agents tab to start a personalized conversation
+                    {t('pages:lifeceo.dashboard.chat.selectAgentDescription', 'Choose one of the 16 specialized agents from the Agents tab to start a personalized conversation')}
                   </p>
                   <Button
                     className="mt-6"
@@ -273,7 +273,7 @@ export default function LifeCeoDashboard() {
                     }}
                     data-testid="button-select-agent"
                   >
-                    Browse Agents
+                    {t('pages:lifeceo.dashboard.chat.browseAgents', 'Browse Agents')}
                   </Button>
                 </CardContent>
               </Card>
@@ -313,7 +313,7 @@ export default function LifeCeoDashboard() {
                         }}
                         data-testid="button-close-chat"
                       >
-                        Change Agent
+                        {t('pages:lifeceo.dashboard.chat.changeAgent', 'Change Agent')}
                       </Button>
                     </div>
                   </CardHeader>
@@ -323,7 +323,7 @@ export default function LifeCeoDashboard() {
                       {chatHistory.length === 0 ? (
                         <div className="text-center py-12">
                           <p className="text-muted-foreground">
-                            Start a conversation with {selectedAgent.name}
+                            {t('pages:lifeceo.dashboard.chat.startConversation', 'Start a conversation with {{agentName}}', { agentName: selectedAgent.name })}
                           </p>
                         </div>
                       ) : (
@@ -356,7 +356,7 @@ export default function LifeCeoDashboard() {
                     <div className="flex gap-2">
                       <input
                         type="text"
-                        placeholder={`Ask ${selectedAgent.name} anything...`}
+                        placeholder={t('pages:lifeceo.dashboard.chat.inputPlaceholder', 'Ask {{agentName}} anything...', { agentName: selectedAgent.name })}
                         value={chatMessage}
                         onChange={(e) => setChatMessage(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
@@ -368,7 +368,7 @@ export default function LifeCeoDashboard() {
                         disabled={!chatMessage.trim()}
                         data-testid="button-send-message"
                       >
-                        Send
+                        {t('pages:lifeceo.dashboard.chat.send', 'Send')}
                       </Button>
                     </div>
                   </CardContent>
@@ -376,7 +376,7 @@ export default function LifeCeoDashboard() {
 
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-base">Agent Capabilities</CardTitle>
+                    <CardTitle className="text-base">{t('pages:lifeceo.dashboard.chat.agentCapabilities', 'Agent Capabilities')}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-2">

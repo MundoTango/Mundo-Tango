@@ -13,27 +13,27 @@ import careerImg1 from "@assets/stock_images/professional_office__3f3e5cfe.jpg";
 export default function CareerAgentPage() {
   const { t } = useTranslation(["pages", "common"]);
   const metrics = [
-    { label: "Skills Mastered", value: "12", icon: Award, color: "text-yellow-500" },
-    { label: "Hours Learning", value: "45", icon: Clock, color: "text-blue-500" },
-    { label: "Network Growth", value: "+28", icon: Users, color: "text-green-500" },
-    { label: "Career Goals", value: "3/5", icon: Target, color: "text-purple-500" }
+    { label: t('pages:lifeceo.career.metrics.skillsMastered', 'Skills Mastered'), value: "12", icon: Award, color: "text-yellow-500" },
+    { label: t('pages:lifeceo.career.metrics.hoursLearning', 'Hours Learning'), value: "45", icon: Clock, color: "text-blue-500" },
+    { label: t('pages:lifeceo.career.metrics.networkGrowth', 'Network Growth'), value: "+28", icon: Users, color: "text-green-500" },
+    { label: t('pages:lifeceo.career.metrics.careerGoals', 'Career Goals'), value: "3/5", icon: Target, color: "text-purple-500" }
   ];
 
   const goals = [
-    { title: "Learn React Advanced Patterns", progress: 75, status: "In Progress" },
-    { title: "Complete AWS Certification", progress: 40, status: "In Progress" },
-    { title: "Contribute to Open Source", progress: 100, status: "Completed" },
-    { title: "Attend Tech Conference", progress: 0, status: "Planned" },
-    { title: "Build Portfolio Website", progress: 100, status: "Completed" }
+    { title: t('pages:lifeceo.career.goals.reactPatterns', 'Learn React Advanced Patterns'), progress: 75, status: t('pages:lifeceo.career.status.inProgress', 'In Progress') },
+    { title: t('pages:lifeceo.career.goals.awsCertification', 'Complete AWS Certification'), progress: 40, status: t('pages:lifeceo.career.status.inProgress', 'In Progress') },
+    { title: t('pages:lifeceo.career.goals.openSource', 'Contribute to Open Source'), progress: 100, status: t('pages:lifeceo.career.status.completed', 'Completed') },
+    { title: t('pages:lifeceo.career.goals.techConference', 'Attend Tech Conference'), progress: 0, status: t('pages:lifeceo.career.status.planned', 'Planned') },
+    { title: t('pages:lifeceo.career.goals.portfolio', 'Build Portfolio Website'), progress: 100, status: t('pages:lifeceo.career.status.completed', 'Completed') }
   ];
 
   return (
     <SelfHealingErrorBoundary pageName="Career Agent" fallbackRoute="/life-ceo">
-      <PageLayout title="Career Agent" showBreadcrumbs>
+      <PageLayout title={t('pages:lifeceo.career.title', 'Career Agent')} showBreadcrumbs>
         <>
           <SEO
-            title="Career Agent - Life CEO"
-            description="Track your professional development, skills, and career goals with your AI career agent."
+            title={t('pages:lifeceo.career.seoTitle', 'Career Agent - Life CEO')}
+            description={t('pages:lifeceo.career.seoDescription', 'Track your professional development, skills, and career goals with your AI career agent.')}
           />
 
           {/* Editorial Hero Section - 16:9 */}
@@ -49,15 +49,15 @@ export default function CareerAgentPage() {
                 transition={{ duration: 1, ease: "easeOut" }}
               >
                 <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
-                  Professional Development
+                  {t('pages:lifeceo.career.badge', 'Professional Development')}
                 </Badge>
                 
                 <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif font-bold text-white mb-6 tracking-tight" data-testid="heading-hero">
-                  Career Agent
+                  {t('pages:lifeceo.career.heroTitle', 'Career Agent')}
                 </h1>
                 
                 <p className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto leading-relaxed">
-                  Your AI-powered professional growth companion
+                  {t('pages:lifeceo.career.heroSubtitle', 'Your AI-powered professional growth companion')}
                 </p>
               </motion.div>
             </div>
@@ -93,9 +93,9 @@ export default function CareerAgentPage() {
               transition={{ duration: 0.6 }}
               className="mb-12"
             >
-              <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">Career Development</h2>
+              <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">{t('pages:lifeceo.career.sectionTitle', 'Career Development')}</h2>
               <p className="text-lg text-muted-foreground">
-                Track progress and get AI-powered insights for your professional journey
+                {t('pages:lifeceo.career.sectionSubtitle', 'Track progress and get AI-powered insights for your professional journey')}
               </p>
             </motion.div>
 
@@ -111,15 +111,15 @@ export default function CareerAgentPage() {
                   <div className="relative aspect-[16/9] overflow-hidden">
                     <motion.img
                       src={careerImg1}
-                      alt="Career Goals"
+                      alt={t('pages:lifeceo.career.goalsAlt', 'Career Goals')}
                       className="w-full h-full object-cover"
                       whileHover={{ scale: 1.05 }}
                       transition={{ duration: 0.6 }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
                     <div className="absolute bottom-4 left-4 right-4 text-white">
-                      <h3 className="text-2xl font-serif font-bold">Career Goals</h3>
-                      <p className="text-white/80 text-sm mt-1">Your path to professional excellence</p>
+                      <h3 className="text-2xl font-serif font-bold">{t('pages:lifeceo.career.goalsTitle', 'Career Goals')}</h3>
+                      <p className="text-white/80 text-sm mt-1">{t('pages:lifeceo.career.goalsSubtitle', 'Your path to professional excellence')}</p>
                     </div>
                   </div>
                   <CardContent className="p-8 space-y-4">
@@ -128,8 +128,8 @@ export default function CareerAgentPage() {
                         <div className="flex items-center justify-between">
                           <span className="text-sm font-medium">{goal.title}</span>
                           <Badge className={
-                            goal.status === "Completed" ? "bg-green-500"
-                            : goal.status === "In Progress" ? "bg-blue-500"
+                            goal.status === t('pages:lifeceo.career.status.completed', 'Completed') ? "bg-green-500"
+                            : goal.status === t('pages:lifeceo.career.status.inProgress', 'In Progress') ? "bg-blue-500"
                             : ""
                           }>
                             {goal.status}
@@ -141,12 +141,12 @@ export default function CareerAgentPage() {
                             style={{ width: `${goal.progress}%` }}
                           />
                         </div>
-                        <p className="text-xs text-muted-foreground">{goal.progress}% complete</p>
+                        <p className="text-xs text-muted-foreground">{t('pages:lifeceo.career.progressLabel', '{{progress}}% complete', { progress: goal.progress })}</p>
                       </div>
                     ))}
                     <Button className="w-full gap-2" variant="outline" data-testid="button-add-goal">
                       <Target className="w-4 h-4" />
-                      Add Career Goal
+                      {t('pages:lifeceo.career.addGoal', 'Add Career Goal')}
                     </Button>
                   </CardContent>
                 </Card>
@@ -163,7 +163,7 @@ export default function CareerAgentPage() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-2xl font-serif">
                       <TrendingUp className="h-6 w-6 text-green-500" />
-                      AI Career Insights
+                      {t('pages:lifeceo.career.insights.title', 'AI Career Insights')}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
@@ -171,9 +171,9 @@ export default function CareerAgentPage() {
                       <div className="flex items-start gap-3">
                         <FileText className="h-5 w-5 text-blue-500 mt-0.5" />
                         <div>
-                          <p className="text-sm font-medium mb-1">Resume Update Suggested</p>
+                          <p className="text-sm font-medium mb-1">{t('pages:lifeceo.career.insights.resumeTitle', 'Resume Update Suggested')}</p>
                           <p className="text-sm text-muted-foreground">
-                            Add your recent AWS certification completion to stand out.
+                            {t('pages:lifeceo.career.insights.resumeMessage', 'Add your recent AWS certification completion to stand out.')}
                           </p>
                         </div>
                       </div>
@@ -183,9 +183,9 @@ export default function CareerAgentPage() {
                       <div className="flex items-start gap-3">
                         <Users className="h-5 w-5 text-purple-500 mt-0.5" />
                         <div>
-                          <p className="text-sm font-medium mb-1">Networking Opportunity</p>
+                          <p className="text-sm font-medium mb-1">{t('pages:lifeceo.career.insights.networkingTitle', 'Networking Opportunity')}</p>
                           <p className="text-sm text-muted-foreground">
-                            3 people from your target companies posted on LinkedIn this week.
+                            {t('pages:lifeceo.career.insights.networkingMessage', '3 people from your target companies posted on LinkedIn this week.')}
                           </p>
                         </div>
                       </div>
@@ -195,9 +195,9 @@ export default function CareerAgentPage() {
                       <div className="flex items-start gap-3">
                         <Award className="h-5 w-5 text-green-500 mt-0.5" />
                         <div>
-                          <p className="text-sm font-medium mb-1">Skill Milestone!</p>
+                          <p className="text-sm font-medium mb-1">{t('pages:lifeceo.career.insights.milestoneTitle', 'Skill Milestone!')}</p>
                           <p className="text-sm text-muted-foreground">
-                            You've completed 45 hours of learning this month - your best yet!
+                            {t('pages:lifeceo.career.insights.milestoneMessage', "You've completed 45 hours of learning this month - your best yet!")}
                           </p>
                         </div>
                       </div>
@@ -207,9 +207,9 @@ export default function CareerAgentPage() {
                       <div className="flex items-start gap-3">
                         <Target className="h-5 w-5 text-orange-500 mt-0.5" />
                         <div>
-                          <p className="text-sm font-medium mb-1">Focus Recommendation</p>
+                          <p className="text-sm font-medium mb-1">{t('pages:lifeceo.career.insights.focusTitle', 'Focus Recommendation')}</p>
                           <p className="text-sm text-muted-foreground">
-                            TypeScript skills are in high demand. Consider prioritizing this next.
+                            {t('pages:lifeceo.career.insights.focusMessage', 'TypeScript skills are in high demand. Consider prioritizing this next.')}
                           </p>
                         </div>
                       </div>
@@ -217,7 +217,7 @@ export default function CareerAgentPage() {
 
                     <Button className="w-full gap-2" data-testid="button-view-opportunities">
                       <Briefcase className="w-4 h-4" />
-                      View Job Opportunities
+                      {t('pages:lifeceo.career.viewOpportunities', 'View Job Opportunities')}
                     </Button>
                   </CardContent>
                 </Card>

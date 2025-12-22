@@ -50,15 +50,15 @@ export default function DeleteAccountPage() {
       apiRequest('POST', '/api/settings/delete-account', { password }),
     onSuccess: () => {
       toast({
-        title: "Account deletion requested",
-        description: "Your account deletion request has been submitted.",
+        title: t('pages:settings.deleteAccount.deletionRequested', 'Account deletion requested'),
+        description: t('pages:settings.deleteAccount.deletionRequestedDesc', 'Your account deletion request has been submitted.'),
       });
       setShowConfirmDialog(false);
     },
     onError: (error: any) => {
       toast({
-        title: "Error",
-        description: error.message || "Failed to delete account. Please try again.",
+        title: t('pages:settings.deleteAccount.error', 'Error'),
+        description: error.message || t('pages:settings.deleteAccount.failedToDelete', 'Failed to delete account. Please try again.'),
         variant: "destructive",
       });
     },
@@ -67,16 +67,16 @@ export default function DeleteAccountPage() {
   const handleDeleteClick = () => {
     if (!allConfirmed) {
       toast({
-        title: "Confirmations required",
-        description: "Please check all confirmation boxes before proceeding.",
+        title: t('pages:settings.deleteAccount.confirmationsRequired', 'Confirmations required'),
+        description: t('pages:settings.deleteAccount.checkAllBoxes', 'Please check all confirmation boxes before proceeding.'),
         variant: "destructive",
       });
       return;
     }
     if (!password) {
       toast({
-        title: "Password required",
-        description: "Please enter your password to confirm account deletion.",
+        title: t('pages:settings.deleteAccount.passwordRequired', 'Password required'),
+        description: t('pages:settings.deleteAccount.enterPassword', 'Please enter your password to confirm account deletion.'),
         variant: "destructive",
       });
       return;
@@ -91,34 +91,34 @@ export default function DeleteAccountPage() {
   };
 
   const dataWillBeDeleted = [
-    "All your posts, comments, and reactions",
-    "Private messages and conversations",
-    "Event RSVPs and created events",
-    "Photos, videos, and media uploads",
-    "Profile information and settings",
-    "Friends, followers, and connections",
-    "Marketplace listings and transactions",
-    "Learning progress and achievements",
+    t('pages:settings.deleteAccount.dataPostsComments', 'All your posts, comments, and reactions'),
+    t('pages:settings.deleteAccount.dataMessages', 'Private messages and conversations'),
+    t('pages:settings.deleteAccount.dataEvents', 'Event RSVPs and created events'),
+    t('pages:settings.deleteAccount.dataMedia', 'Photos, videos, and media uploads'),
+    t('pages:settings.deleteAccount.dataProfile', 'Profile information and settings'),
+    t('pages:settings.deleteAccount.dataConnections', 'Friends, followers, and connections'),
+    t('pages:settings.deleteAccount.dataMarketplace', 'Marketplace listings and transactions'),
+    t('pages:settings.deleteAccount.dataLearning', 'Learning progress and achievements'),
   ];
 
   return (
     <SelfHealingErrorBoundary pageName="Delete Account" fallbackRoute="/settings">
-      <PageLayout title="Delete Account" showBreadcrumbs>
+      <PageLayout title={t('pages:settings.deleteAccount.pageTitle', 'Delete Account')} showBreadcrumbs>
         <>
           <SEO 
-            title="Delete Account"
-            description="Permanently delete your account in compliance with GDPR Article 17 - Right to Erasure."
+            title={t('pages:settings.deleteAccount.seoTitle', 'Delete Account')}
+            description={t('pages:settings.deleteAccount.seoDescription', 'Permanently delete your account in compliance with GDPR Article 17 - Right to Erasure.')}
           />
           <div className="max-w-3xl mx-auto p-6 space-y-8">
             <div className="space-y-2">
               <div className="flex items-center gap-3">
                 <AlertTriangle className="h-8 w-8 text-red-500" />
                 <h1 className="text-4xl font-serif font-bold text-red-500" data-testid="heading-delete-account">
-                  Delete Your Account
+                  {t('pages:settings.deleteAccount.title', 'Delete Your Account')}
                 </h1>
               </div>
               <p className="text-muted-foreground">
-                Exercise your right to erasure under GDPR Article 17
+                {t('pages:settings.deleteAccount.subtitle', 'Exercise your right to erasure under GDPR Article 17')}
               </p>
             </div>
 
@@ -127,21 +127,21 @@ export default function DeleteAccountPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 font-serif text-red-500">
                   <Shield className="h-5 w-5" />
-                  Important Information
+                  {t('pages:settings.deleteAccount.importantInfo', 'Important Information')}
                 </CardTitle>
                 <CardDescription>
-                  Please read carefully before proceeding
+                  {t('pages:settings.deleteAccount.readCarefully', 'Please read carefully before proceeding')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="p-4 rounded-lg bg-red-500/10 border border-red-500/20">
                   <p className="text-sm font-medium text-red-500">
-                    ⚠️ This action is permanent and cannot be undone
+                    {t('pages:settings.deleteAccount.permanentWarning', '⚠️ This action is permanent and cannot be undone')}
                   </p>
                 </div>
 
                 <div className="space-y-3">
-                  <h3 className="font-semibold">What will be deleted:</h3>
+                  <h3 className="font-semibold">{t('pages:settings.deleteAccount.whatWillBeDeleted', 'What will be deleted:')}</h3>
                   <ul className="space-y-2">
                     {dataWillBeDeleted.map((item, index) => (
                       <li key={index} className="flex items-start gap-2 text-sm">
@@ -154,7 +154,7 @@ export default function DeleteAccountPage() {
 
                 <div className="p-4 rounded-lg backdrop-blur-sm bg-white/5 dark:bg-black/5 border border-white/10 dark:border-white/5">
                   <p className="text-sm text-muted-foreground">
-                    <strong>Note:</strong> Some data may be retained for legal or security purposes as outlined in our Privacy Policy and Terms of Service. This includes transaction records, security logs, and data required for legal compliance.
+                    <strong>{t('pages:settings.deleteAccount.note', 'Note')}:</strong> {t('pages:settings.deleteAccount.retentionNote', 'Some data may be retained for legal or security purposes as outlined in our Privacy Policy and Terms of Service. This includes transaction records, security logs, and data required for legal compliance.')}
                   </p>
                 </div>
               </CardContent>
@@ -163,9 +163,9 @@ export default function DeleteAccountPage() {
             {/* Confirmation Card */}
             <Card className="backdrop-blur-md bg-white/10 dark:bg-black/10 border-white/20 dark:border-white/10">
               <CardHeader>
-                <CardTitle className="font-serif">Confirm Account Deletion</CardTitle>
+                <CardTitle className="font-serif">{t('pages:settings.deleteAccount.confirmDeletion', 'Confirm Account Deletion')}</CardTitle>
                 <CardDescription>
-                  Please confirm you understand the consequences
+                  {t('pages:settings.deleteAccount.confirmUnderstand', 'Please confirm you understand the consequences')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -181,7 +181,7 @@ export default function DeleteAccountPage() {
                       data-testid="checkbox-understand"
                     />
                     <Label htmlFor="understand" className="text-sm font-normal cursor-pointer leading-relaxed">
-                      I understand that deleting my account is permanent and cannot be reversed
+                      {t('pages:settings.deleteAccount.understandPermanent', 'I understand that deleting my account is permanent and cannot be reversed')}
                     </Label>
                   </div>
                   <div className="flex items-start gap-3">
@@ -194,7 +194,7 @@ export default function DeleteAccountPage() {
                       data-testid="checkbox-irreversible"
                     />
                     <Label htmlFor="irreversible" className="text-sm font-normal cursor-pointer leading-relaxed">
-                      I acknowledge that all my data, content, and connections will be permanently deleted
+                      {t('pages:settings.deleteAccount.acknowledgeDataLoss', 'I acknowledge that all my data, content, and connections will be permanently deleted')}
                     </Label>
                   </div>
                   <div className="flex items-start gap-3">
@@ -207,25 +207,25 @@ export default function DeleteAccountPage() {
                       data-testid="checkbox-data-loss"
                     />
                     <Label htmlFor="dataLoss" className="text-sm font-normal cursor-pointer leading-relaxed">
-                      I have downloaded any data I wish to keep and accept the permanent loss of all remaining data
+                      {t('pages:settings.deleteAccount.downloadedData', 'I have downloaded any data I wish to keep and accept the permanent loss of all remaining data')}
                     </Label>
                   </div>
                 </div>
 
                 {/* Password Confirmation */}
                 <div className="space-y-2">
-                  <Label htmlFor="password" className="font-medium">Confirm your password</Label>
+                  <Label htmlFor="password" className="font-medium">{t('pages:settings.deleteAccount.confirmPassword', 'Confirm your password')}</Label>
                   <Input
                     id="password"
                     type="password"
-                    placeholder="Enter your password"
+                    placeholder={t('pages:settings.deleteAccount.enterPasswordPlaceholder', 'Enter your password')}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     disabled={!allConfirmed}
                     data-testid="input-password"
                   />
                   <p className="text-xs text-muted-foreground">
-                    Enter your current password to verify your identity
+                    {t('pages:settings.deleteAccount.verifyIdentity', 'Enter your current password to verify your identity')}
                   </p>
                 </div>
 
@@ -239,7 +239,7 @@ export default function DeleteAccountPage() {
                   data-testid="button-delete-account"
                 >
                   <Trash2 className="h-4 w-4 mr-2" />
-                  Permanently Delete Account
+                  {t('pages:settings.deleteAccount.permanentlyDelete', 'Permanently Delete Account')}
                 </Button>
               </CardContent>
             </Card>
@@ -251,21 +251,21 @@ export default function DeleteAccountPage() {
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2 text-red-500">
                   <AlertTriangle className="h-5 w-5" />
-                  Final Confirmation
+                  {t('pages:settings.deleteAccount.finalConfirmation', 'Final Confirmation')}
                 </DialogTitle>
                 <DialogDescription>
-                  This is your last chance to cancel. Are you absolutely sure you want to delete your account?
+                  {t('pages:settings.deleteAccount.lastChance', 'This is your last chance to cancel. Are you absolutely sure you want to delete your account?')}
                 </DialogDescription>
               </DialogHeader>
               <div className="py-4">
                 <div className="p-4 rounded-lg bg-red-500/10 border border-red-500/20 text-center">
                   {countdown > 0 ? (
                     <p className="text-sm font-medium text-red-500">
-                      Please wait {countdown} second{countdown !== 1 ? 's' : ''} before confirming...
+                      {t('pages:settings.deleteAccount.pleaseWait', 'Please wait {{count}} second before confirming...', { count: countdown })}
                     </p>
                   ) : (
                     <p className="text-sm font-medium text-red-500">
-                      You can now confirm the deletion
+                      {t('pages:settings.deleteAccount.canConfirm', 'You can now confirm the deletion')}
                     </p>
                   )}
                 </div>
@@ -277,7 +277,7 @@ export default function DeleteAccountPage() {
                   disabled={deleteAccountMutation.isPending}
                   data-testid="button-cancel-delete"
                 >
-                  Cancel
+                  {t('pages:settings.deleteAccount.cancel', 'Cancel')}
                 </Button>
                 <Button
                   variant="destructive"
@@ -285,7 +285,7 @@ export default function DeleteAccountPage() {
                   disabled={!canDelete || deleteAccountMutation.isPending}
                   data-testid="button-confirm-delete"
                 >
-                  {deleteAccountMutation.isPending ? "Deleting..." : "Delete My Account"}
+                  {deleteAccountMutation.isPending ? t('pages:settings.deleteAccount.deleting', 'Deleting...') : t('pages:settings.deleteAccount.deleteMyAccount', 'Delete My Account')}
                 </Button>
               </DialogFooter>
             </DialogContent>

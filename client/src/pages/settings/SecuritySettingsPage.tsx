@@ -52,21 +52,21 @@ export default function SecuritySettingsPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/settings/sessions'] });
       toast({
-        title: "Session revoked",
-        description: "The session has been successfully logged out.",
+        title: t('pages:settings.security.sessionRevoked', 'Session revoked'),
+        description: t('pages:settings.security.sessionRevokedDesc', 'The session has been successfully logged out.'),
       });
     },
     onError: () => {
       toast({
-        title: "Error",
-        description: "Failed to revoke session. Please try again.",
+        title: t('pages:settings.security.error', 'Error'),
+        description: t('pages:settings.security.failedToRevokeSession', 'Failed to revoke session. Please try again.'),
         variant: "destructive",
       });
     },
   });
 
   const handleRevokeSession = (sessionId: string) => {
-    if (confirm("Are you sure you want to log out this session?")) {
+    if (confirm(t('pages:settings.security.confirmRevokeSession', 'Are you sure you want to log out this session?'))) {
       revokeSessionMutation.mutate(sessionId);
     }
   };
@@ -74,28 +74,28 @@ export default function SecuritySettingsPage() {
   const handleToggle2FA = (checked: boolean) => {
     setTwoFactorEnabled(checked);
     toast({
-      title: checked ? "2FA Enabled" : "2FA Disabled",
+      title: checked ? t('pages:settings.security.twoFaEnabled', '2FA Enabled') : t('pages:settings.security.twoFaDisabled', '2FA Disabled'),
       description: checked 
-        ? "Two-factor authentication has been enabled for your account." 
-        : "Two-factor authentication has been disabled.",
+        ? t('pages:settings.security.twoFaEnabledDesc', 'Two-factor authentication has been enabled for your account.')
+        : t('pages:settings.security.twoFaDisabledDesc', 'Two-factor authentication has been disabled.'),
     });
   };
 
   return (
     <SelfHealingErrorBoundary pageName="Security Settings" fallbackRoute="/settings">
-      <PageLayout title="Security Settings" showBreadcrumbs>
+      <PageLayout title={t('pages:settings.security.pageTitle', 'Security Settings')} showBreadcrumbs>
         <>
           <SEO 
-            title="Security Settings"
-            description="Manage your account security settings, active sessions, and two-factor authentication."
+            title={t('pages:settings.security.seoTitle', 'Security Settings')}
+            description={t('pages:settings.security.seoDescription', 'Manage your account security settings, active sessions, and two-factor authentication.')}
           />
           <div className="max-w-5xl mx-auto p-6 space-y-8">
             <div>
               <h1 className="text-4xl font-serif font-bold bg-gradient-to-r from-[#40E0D0] via-[#1E90FF] to-[#9370DB] bg-clip-text text-transparent mb-2" data-testid="heading-security-settings">
-                Security Settings
+                {t('pages:settings.security.title', 'Security Settings')}
               </h1>
               <p className="text-muted-foreground">
-                Protect your account and manage security preferences
+                {t('pages:settings.security.subtitle', 'Protect your account and manage security preferences')}
               </p>
             </div>
 
@@ -104,15 +104,15 @@ export default function SecuritySettingsPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 font-serif">
                   <Smartphone className="h-5 w-5 text-[#40E0D0]" />
-                  Active Sessions
+                  {t('pages:settings.security.activeSessions', 'Active Sessions')}
                 </CardTitle>
                 <CardDescription>
-                  Manage devices and locations where you're logged in
+                  {t('pages:settings.security.activeSessionsDesc', "Manage devices and locations where you're logged in")}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 {sessionsLoading ? (
-                  <p className="text-sm text-muted-foreground">Loading sessions...</p>
+                  <p className="text-sm text-muted-foreground">{t('pages:settings.security.loadingSessions', 'Loading sessions...')}</p>
                 ) : sessions && sessions.length > 0 ? (
                   sessions.map((session) => (
                     <div key={session.id}>
@@ -122,7 +122,7 @@ export default function SecuritySettingsPage() {
                             <p className="font-medium" data-testid={`text-session-device-${session.id}`}>{session.device}</p>
                             {session.current && (
                               <Badge variant="default" className="text-xs" data-testid="badge-current-session">
-                                Current
+                                {t('pages:settings.security.current', 'Current')}
                               </Badge>
                             )}
                           </div>
@@ -139,7 +139,7 @@ export default function SecuritySettingsPage() {
                               </span>
                             </div>
                           </div>
-                          <p className="text-xs text-muted-foreground">IP: {session.ipAddress}</p>
+                          <p className="text-xs text-muted-foreground">{t('pages:settings.security.ip', 'IP')}: {session.ipAddress}</p>
                         </div>
                         {!session.current && (
                           <Button
@@ -149,7 +149,7 @@ export default function SecuritySettingsPage() {
                             disabled={revokeSessionMutation.isPending}
                             data-testid={`button-revoke-session-${session.id}`}
                           >
-                            Revoke
+                            {t('pages:settings.security.revoke', 'Revoke')}
                           </Button>
                         )}
                       </div>
@@ -157,7 +157,7 @@ export default function SecuritySettingsPage() {
                     </div>
                   ))
                 ) : (
-                  <p className="text-sm text-muted-foreground">No active sessions found.</p>
+                  <p className="text-sm text-muted-foreground">{t('pages:settings.security.noActiveSessions', 'No active sessions found.')}</p>
                 )}
               </CardContent>
             </Card>
@@ -167,18 +167,18 @@ export default function SecuritySettingsPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 font-serif">
                   <Shield className="h-5 w-5 text-[#40E0D0]" />
-                  Two-Factor Authentication
+                  {t('pages:settings.security.twoFactorAuth', 'Two-Factor Authentication')}
                 </CardTitle>
                 <CardDescription>
-                  Add an extra layer of security to your account
+                  {t('pages:settings.security.twoFactorAuthDesc', 'Add an extra layer of security to your account')}
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label htmlFor="2fa-toggle" className="font-medium">Enable 2FA</Label>
+                    <Label htmlFor="2fa-toggle" className="font-medium">{t('pages:settings.security.enable2fa', 'Enable 2FA')}</Label>
                     <p className="text-sm text-muted-foreground">
-                      Require a verification code in addition to your password
+                      {t('pages:settings.security.enable2faDesc', 'Require a verification code in addition to your password')}
                     </p>
                   </div>
                   <Switch
@@ -196,15 +196,15 @@ export default function SecuritySettingsPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 font-serif">
                   <AlertTriangle className="h-5 w-5 text-[#40E0D0]" />
-                  Security Audit Log
+                  {t('pages:settings.security.securityAuditLog', 'Security Audit Log')}
                 </CardTitle>
                 <CardDescription>
-                  Recent security events on your account
+                  {t('pages:settings.security.securityAuditLogDesc', 'Recent security events on your account')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 {logsLoading ? (
-                  <p className="text-sm text-muted-foreground">Loading audit logs...</p>
+                  <p className="text-sm text-muted-foreground">{t('pages:settings.security.loadingLogs', 'Loading audit logs...')}</p>
                 ) : auditLogs && auditLogs.length > 0 ? (
                   auditLogs.map((log) => (
                     <div key={log.id}>
@@ -234,7 +234,7 @@ export default function SecuritySettingsPage() {
                     </div>
                   ))
                 ) : (
-                  <p className="text-sm text-muted-foreground">No security events found.</p>
+                  <p className="text-sm text-muted-foreground">{t('pages:settings.security.noSecurityEvents', 'No security events found.')}</p>
                 )}
               </CardContent>
             </Card>

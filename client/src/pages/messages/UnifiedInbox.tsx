@@ -492,7 +492,7 @@ function MessageReactionBar({
         <div className="w-80 border-r flex flex-col bg-card">
         {/* Header */}
         <div className="p-4 flex items-center justify-between border-b">
-          <h1 className="text-2xl font-bold">Chats</h1>
+          <h1 className="text-2xl font-bold">{t('pages:messages.inbox.title', 'Chats')}</h1>
           <div className="flex items-center gap-1">
             <Tooltip>
               <TooltipTrigger asChild>
@@ -500,7 +500,7 @@ function MessageReactionBar({
                   <MoreHorizontal className="h-5 w-5" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>Options</TooltipContent>
+              <TooltipContent>{t('pages:messages.inbox.options', 'Options')}</TooltipContent>
             </Tooltip>
             <Dialog open={showCompose} onOpenChange={setShowCompose}>
               <DialogTrigger asChild>
@@ -510,11 +510,11 @@ function MessageReactionBar({
                       <Edit3 className="h-5 w-5" />
                     </Button>
                   </TooltipTrigger>
-                  <TooltipContent>New message</TooltipContent>
+                  <TooltipContent>{t('pages:messages.inbox.newMessage', 'New message')}</TooltipContent>
                 </Tooltip>
               </DialogTrigger>
               <DialogContent className="max-w-md p-0">
-                <DialogTitle className="sr-only">New Message</DialogTitle>
+                <DialogTitle className="sr-only">{t('pages:messages.inbox.newMessageTitle', 'New Message')}</DialogTitle>
                 <ComposeMessage 
                   onClose={() => setShowCompose(false)} 
                   onSendSuccess={(data) => {
@@ -572,7 +572,7 @@ function MessageReactionBar({
           )}>
             <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search Messenger"
+              placeholder={t('pages:messages.inbox.searchPlaceholder', 'Search Messenger')}
               className="pl-10 pr-4 h-10 rounded-full bg-muted border-0"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}

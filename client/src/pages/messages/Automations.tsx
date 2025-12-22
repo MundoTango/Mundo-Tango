@@ -200,7 +200,7 @@ export default function Automations() {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Automation Name</FormLabel>
+              <FormLabel>{t('pages:messages.automations.formName', 'Automation Name')}</FormLabel>
               <FormControl>
                 <Input placeholder="e.g., Welcome Message" {...field} data-testid="input-automation-name" />
               </FormControl>
@@ -214,7 +214,7 @@ export default function Automations() {
           name="channel"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Channel</FormLabel>
+              <FormLabel>{t('pages:messages.automations.formChannel', 'Channel')}</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value} data-testid="select-channel">
                 <FormControl>
                   <SelectTrigger>
@@ -239,7 +239,7 @@ export default function Automations() {
           name="automationType"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Automation Type</FormLabel>
+              <FormLabel>{t('pages:messages.automations.formType', 'Automation Type')}</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value} data-testid="select-automation-type">
                 <FormControl>
                   <SelectTrigger>
@@ -267,7 +267,7 @@ export default function Automations() {
           name="trigger.type"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Trigger</FormLabel>
+              <FormLabel>{t('pages:messages.automations.formTrigger', 'Trigger')}</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value} data-testid="select-trigger-type">
                 <FormControl>
                   <SelectTrigger>
@@ -283,7 +283,7 @@ export default function Automations() {
                 </SelectContent>
               </Select>
               <FormDescription>
-                When should this automation run?
+                {t('pages:messages.automations.formTriggerDesc', 'When should this automation run?')}
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -296,12 +296,12 @@ export default function Automations() {
             name="trigger.condition"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Keyword</FormLabel>
+                <FormLabel>{t('pages:messages.automations.formKeyword', 'Keyword')}</FormLabel>
                 <FormControl>
                   <Input placeholder="Enter keyword to match" {...field} data-testid="input-trigger-condition" />
                 </FormControl>
                 <FormDescription>
-                  The automation will trigger when this keyword is found in the message
+                  {t('pages:messages.automations.formKeywordDesc', 'The automation will trigger when this keyword is found in the message')}
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -315,7 +315,7 @@ export default function Automations() {
             name="templateId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Template</FormLabel>
+                <FormLabel>{t('pages:messages.automations.formTemplate', 'Template')}</FormLabel>
                 <Select
                   onValueChange={(value) => field.onChange(Number(value))}
                   defaultValue={field.value?.toString()}
@@ -346,7 +346,7 @@ export default function Automations() {
             name="action.message"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Auto-Reply Message</FormLabel>
+                <FormLabel>{t('pages:messages.automations.formAutoReply', 'Auto-Reply Message')}</FormLabel>
                 <FormControl>
                   <Textarea
                     placeholder="Enter your auto-reply message..."
@@ -367,9 +367,9 @@ export default function Automations() {
           render={({ field }) => (
             <FormItem className="flex items-center justify-between rounded-lg border p-4">
               <div className="space-y-0.5">
-                <FormLabel className="text-base">Enable Automation</FormLabel>
+                <FormLabel className="text-base">{t('pages:messages.automations.enableAutomation', 'Enable Automation')}</FormLabel>
                 <FormDescription>
-                  Start running this automation immediately
+                  {t('pages:messages.automations.enableAutomationDesc', 'Start running this automation immediately')}
                 </FormDescription>
               </div>
               <FormControl>
@@ -394,14 +394,14 @@ export default function Automations() {
             }}
             data-testid="button-cancel-automation"
           >
-            Cancel
+            {t('pages:messages.automations.cancel', 'Cancel')}
           </Button>
           <Button
             type="submit"
             disabled={createMutation.isPending || updateMutation.isPending}
             data-testid="button-save-automation"
           >
-            {editingAutomation ? "Update" : "Create"} Automation
+            {editingAutomation ? t('pages:messages.automations.updateAutomation', 'Update Automation') : t('pages:messages.automations.createAutomation', 'Create Automation')}
           </Button>
         </div>
       </form>
@@ -412,9 +412,9 @@ export default function Automations() {
     <div className="container max-w-6xl py-8">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold mb-2">Message Automations</h1>
+          <h1 className="text-3xl font-bold mb-2">{t('pages:messages.automations.title', 'Message Automations')}</h1>
           <p className="text-muted-foreground">
-            Automate your messaging workflow with rules and triggers
+            {t('pages:messages.automations.subtitle', 'Automate your messaging workflow with rules and triggers')}
           </p>
         </div>
         <Dialog open={isCreateOpen || !!editingAutomation} onOpenChange={(open) => {
@@ -427,13 +427,13 @@ export default function Automations() {
           <DialogTrigger asChild>
             <Button data-testid="button-create-automation">
               <Plus className="mr-2 h-4 w-4" />
-              Create Automation
+              {t('pages:messages.automations.createButton', 'Create Automation')}
             </Button>
           </DialogTrigger>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>
-                {editingAutomation ? "Edit Automation" : "Create New Automation"}
+                {editingAutomation ? t('pages:messages.automations.editTitle', 'Edit Automation') : t('pages:messages.automations.createTitle', 'Create New Automation')}
               </DialogTitle>
             </DialogHeader>
             <AutomationForm />
@@ -443,7 +443,7 @@ export default function Automations() {
 
       {isLoading ? (
         <div className="text-center py-12">
-          <div className="text-muted-foreground">Loading automations...</div>
+          <div className="text-muted-foreground">{t('pages:messages.automations.loading', 'Loading automations...')}</div>
         </div>
       ) : automations && automations.length > 0 ? (
         <div className="grid gap-6">
@@ -455,7 +455,7 @@ export default function Automations() {
                     <div className="flex items-center gap-3 mb-2">
                       <CardTitle>{automation.name}</CardTitle>
                       <Badge variant={automation.isActive ? "default" : "secondary"}>
-                        {automation.isActive ? "Active" : "Inactive"}
+                        {automation.isActive ? t('pages:messages.automations.active', 'Active') : t('pages:messages.automations.inactive', 'Inactive')}
                       </Badge>
                       <Badge variant="outline">
                         {AUTOMATION_TYPES.find(t => t.value === automation.automationType)?.label}
@@ -494,19 +494,19 @@ export default function Automations() {
               <CardContent>
                 <div className="grid grid-cols-3 gap-4 text-sm">
                   <div>
-                    <div className="text-muted-foreground mb-1">Total Runs</div>
+                    <div className="text-muted-foreground mb-1">{t('pages:messages.automations.totalRuns', 'Total Runs')}</div>
                     <div className="font-medium">{automation.runCount || 0}</div>
                   </div>
                   <div>
-                    <div className="text-muted-foreground mb-1">Last Run</div>
+                    <div className="text-muted-foreground mb-1">{t('pages:messages.automations.lastRun', 'Last Run')}</div>
                     <div className="font-medium">
                       {automation.lastRunAt
                         ? format(new Date(automation.lastRunAt), "MMM d, h:mm a")
-                        : "Never"}
+                        : t('pages:messages.automations.never', 'Never')}
                     </div>
                   </div>
                   <div>
-                    <div className="text-muted-foreground mb-1">Created</div>
+                    <div className="text-muted-foreground mb-1">{t('pages:messages.automations.created', 'Created')}</div>
                     <div className="font-medium">
                       {format(new Date(automation.createdAt), "MMM d, yyyy")}
                     </div>
@@ -520,9 +520,9 @@ export default function Automations() {
         <Card className="p-12">
           <div className="text-center">
             <Zap className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">No automations yet</h3>
+            <h3 className="text-lg font-semibold mb-2">{t('pages:messages.automations.noAutomations', 'No automations yet')}</h3>
             <p className="text-muted-foreground mb-4">
-              Create your first automation to streamline your messaging workflow
+              {t('pages:messages.automations.noAutomationsDesc', 'Create your first automation to streamline your messaging workflow')}
             </p>
             <Button onClick={() => setIsCreateOpen(true)} data-testid="button-create-first-automation">
               <Plus className="mr-2 h-4 w-4" />
@@ -536,18 +536,18 @@ export default function Automations() {
       <AlertDialog open={!!deletingAutomation} onOpenChange={() => setDeletingAutomation(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Automation</AlertDialogTitle>
+            <AlertDialogTitle>{t('pages:messages.automations.deleteTitle', 'Delete Automation')}</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete this automation? This action cannot be undone.
+              {t('pages:messages.automations.deleteConfirm', 'Are you sure you want to delete this automation? This action cannot be undone.')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel data-testid="button-cancel-delete-automation">Cancel</AlertDialogCancel>
+            <AlertDialogCancel data-testid="button-cancel-delete-automation">{t('pages:messages.automations.cancel', 'Cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => deletingAutomation && deleteMutation.mutate(deletingAutomation)}
               data-testid="button-confirm-delete-automation"
             >
-              Delete
+              {t('pages:messages.automations.delete', 'Delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

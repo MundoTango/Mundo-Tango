@@ -14,35 +14,34 @@ import wellnessImg1 from "@assets/stock_images/elegant_professional_0956f754.jpg
 
 export default function WellnessAgentPage() {
   const { t } = useTranslation(["pages", "common"]);
-  const [todayMood] = useState<"great" | "good" | "okay" | "low">("good");
   const [meditationStreak] = useState(7);
   
   const [activities] = useState([
-    { id: 1, type: "meditation", title: "Morning Mindfulness", duration: "10 min", completed: true },
-    { id: 2, type: "exercise", title: "Tango Practice", duration: "45 min", completed: true },
-    { id: 3, type: "meditation", title: "Evening Relaxation", duration: "15 min", completed: false }
+    { id: 1, type: "meditation", title: t('pages:lifeceo.wellness.activities.morningMindfulness', 'Morning Mindfulness'), duration: t('pages:lifeceo.wellness.duration.10min', '10 min'), completed: true },
+    { id: 2, type: "exercise", title: t('pages:lifeceo.wellness.activities.tangoPractice', 'Tango Practice'), duration: t('pages:lifeceo.wellness.duration.45min', '45 min'), completed: true },
+    { id: 3, type: "meditation", title: t('pages:lifeceo.wellness.activities.eveningRelaxation', 'Evening Relaxation'), duration: t('pages:lifeceo.wellness.duration.15min', '15 min'), completed: false }
   ]);
 
   const [insights] = useState([
-    "Your meditation streak is at an all-time high!",
-    "Consider adding a 5-minute breathing exercise before practice",
-    "Sleep quality improved by 15% this week"
+    t('pages:lifeceo.wellness.insights.streakHigh', 'Your meditation streak is at an all-time high!'),
+    t('pages:lifeceo.wellness.insights.breathingExercise', 'Consider adding a 5-minute breathing exercise before practice'),
+    t('pages:lifeceo.wellness.insights.sleepImproved', 'Sleep quality improved by 15% this week')
   ]);
 
   const metrics = [
-    { label: "Meditation", value: "245m", icon: Brain, color: "text-purple-500" },
-    { label: "Wellness Score", value: "78", icon: Activity, color: "text-green-500" },
-    { label: "Sleep Avg", value: "7.2h", icon: Moon, color: "text-blue-500" },
-    { label: "Stress Level", value: "Low", icon: Smile, color: "text-orange-500" }
+    { label: t('pages:lifeceo.wellness.metrics.meditation', 'Meditation'), value: "245m", icon: Brain, color: "text-purple-500" },
+    { label: t('pages:lifeceo.wellness.metrics.wellnessScore', 'Wellness Score'), value: "78", icon: Activity, color: "text-green-500" },
+    { label: t('pages:lifeceo.wellness.metrics.sleepAvg', 'Sleep Avg'), value: "7.2h", icon: Moon, color: "text-blue-500" },
+    { label: t('pages:lifeceo.wellness.metrics.stressLevel', 'Stress Level'), value: t('pages:lifeceo.wellness.metrics.low', 'Low'), icon: Smile, color: "text-orange-500" }
   ];
 
   return (
     <SelfHealingErrorBoundary pageName="Wellness Agent" fallbackRoute="/life-ceo">
-      <PageLayout title="Wellness Agent" showBreadcrumbs>
+      <PageLayout title={t('pages:lifeceo.wellness.title', 'Wellness Agent')} showBreadcrumbs>
         <>
           <SEO
-            title="Wellness Agent - Life CEO"
-            description="Track your mental and physical wellness with AI-powered insights and mindfulness tools"
+            title={t('pages:lifeceo.wellness.seoTitle', 'Wellness Agent - Life CEO')}
+            description={t('pages:lifeceo.wellness.seoDescription', 'Track your mental and physical wellness with AI-powered insights and mindfulness tools')}
           />
 
           {/* Editorial Hero Section - 16:9 */}
@@ -58,15 +57,15 @@ export default function WellnessAgentPage() {
                 transition={{ duration: 1, ease: "easeOut" }}
               >
                 <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
-                  Holistic Health
+                  {t('pages:lifeceo.wellness.badge', 'Holistic Health')}
                 </Badge>
                 
                 <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif font-bold text-white mb-6 tracking-tight" data-testid="heading-hero">
-                  Wellness Agent
+                  {t('pages:lifeceo.wellness.heroTitle', 'Wellness Agent')}
                 </h1>
                 
                 <p className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto leading-relaxed">
-                  Your holistic health companion
+                  {t('pages:lifeceo.wellness.heroSubtitle', 'Your holistic health companion')}
                 </p>
               </motion.div>
             </div>
@@ -102,9 +101,9 @@ export default function WellnessAgentPage() {
               transition={{ duration: 0.6 }}
               className="mb-12"
             >
-              <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">Wellness Journey</h2>
+              <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">{t('pages:lifeceo.wellness.sectionTitle', 'Wellness Journey')}</h2>
               <p className="text-lg text-muted-foreground">
-                Balance mind, body, and spirit
+                {t('pages:lifeceo.wellness.sectionSubtitle', 'Balance mind, body, and spirit')}
               </p>
             </motion.div>
 
@@ -120,15 +119,15 @@ export default function WellnessAgentPage() {
                   <div className="relative aspect-[16/9] overflow-hidden">
                     <motion.img
                       src={wellnessImg1}
-                      alt="Today's Wellness Activities"
+                      alt={t('pages:lifeceo.wellness.todayActivitiesAlt', "Today's Wellness Activities")}
                       className="w-full h-full object-cover"
                       whileHover={{ scale: 1.05 }}
                       transition={{ duration: 0.6 }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
                     <div className="absolute bottom-4 left-4 right-4 text-white">
-                      <h3 className="text-2xl font-serif font-bold">Today's Activities</h3>
-                      <p className="text-white/80 text-sm mt-1">Your daily wellness routine</p>
+                      <h3 className="text-2xl font-serif font-bold">{t('pages:lifeceo.wellness.todayActivities', "Today's Activities")}</h3>
+                      <p className="text-white/80 text-sm mt-1">{t('pages:lifeceo.wellness.todayActivitiesSubtitle', 'Your daily wellness routine')}</p>
                     </div>
                   </div>
                   <CardContent className="p-8 space-y-3">
@@ -154,7 +153,7 @@ export default function WellnessAgentPage() {
                           </div>
                           {!activity.completed && (
                             <Button size="sm" data-testid={`button-start-${activity.id}`}>
-                              Start
+                              {t('pages:lifeceo.wellness.start', 'Start')}
                             </Button>
                           )}
                         </div>
@@ -163,7 +162,7 @@ export default function WellnessAgentPage() {
 
                     <Button className="w-full gap-2" variant="outline" data-testid="button-add-activity">
                       <Activity className="h-4 w-4" />
-                      Add Custom Activity
+                      {t('pages:lifeceo.wellness.addCustomActivity', 'Add Custom Activity')}
                     </Button>
                   </CardContent>
                 </Card>
@@ -180,25 +179,25 @@ export default function WellnessAgentPage() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-2xl font-serif">
                       <Brain className="h-6 w-6 text-primary" />
-                      Mindfulness Journey
+                      {t('pages:lifeceo.wellness.mindfulnessJourney', 'Mindfulness Journey')}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="text-center p-6 bg-primary/5 rounded-lg">
                       <p className="text-5xl font-serif font-bold mb-2">{meditationStreak}</p>
-                      <p className="text-sm text-muted-foreground">Day Meditation Streak</p>
+                      <p className="text-sm text-muted-foreground">{t('pages:lifeceo.wellness.dayMeditationStreak', 'Day Meditation Streak')}</p>
                     </div>
 
                     <div className="space-y-2">
                       <div className="flex items-center justify-between text-sm">
-                        <span>Weekly Goal Progress</span>
+                        <span>{t('pages:lifeceo.wellness.weeklyGoalProgress', 'Weekly Goal Progress')}</span>
                         <span className="font-semibold">85/100 min</span>
                       </div>
                       <Progress value={85} className="h-2" />
                     </div>
 
                     <div className="space-y-3 pt-4">
-                      <h4 className="font-semibold">Wellness Insights</h4>
+                      <h4 className="font-semibold">{t('pages:lifeceo.wellness.wellnessInsights', 'Wellness Insights')}</h4>
                       {insights.map((insight, idx) => (
                         <div
                           key={idx}
@@ -215,16 +214,16 @@ export default function WellnessAgentPage() {
 
                     <Button className="w-full gap-2" data-testid="button-meditate-now">
                       <Brain className="h-4 w-4" />
-                      Meditate Now
+                      {t('pages:lifeceo.wellness.meditateNow', 'Meditate Now')}
                     </Button>
 
                     <div className="p-4 rounded-lg bg-green-500/5 border border-green-500/20">
                       <div className="flex items-start gap-3">
                         <Heart className="h-5 w-5 text-green-500 mt-0.5" />
                         <div>
-                          <p className="text-sm font-medium mb-1">Health Milestone</p>
+                          <p className="text-sm font-medium mb-1">{t('pages:lifeceo.wellness.healthMilestone', 'Health Milestone')}</p>
                           <p className="text-sm text-muted-foreground">
-                            You've improved your overall wellness score by 18% this month!
+                            {t('pages:lifeceo.wellness.healthMilestoneMessage', "You've improved your overall wellness score by 18% this month!")}
                           </p>
                         </div>
                       </div>

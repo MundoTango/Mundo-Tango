@@ -15,37 +15,37 @@ import socialImg1 from "@assets/stock_images/business_team_meetin_5006ca1f.jpg";
 export default function SocialAgentPage() {
   const { t } = useTranslation(["pages", "common"]);
   const [upcomingEvents] = useState([
-    { id: 1, name: "Weekly Milonga", date: "Tonight 8pm", location: "La Catedral", attendees: 45 },
-    { id: 2, name: "Tango Workshop", date: "Sat 3pm", location: "Studio Alma", attendees: 12 },
-    { id: 3, name: "Practice Session", date: "Sun 6pm", location: "Community Center", attendees: 8 }
+    { id: 1, name: t('pages:lifeceo.social.events.weeklyMilonga', 'Weekly Milonga'), date: t('pages:lifeceo.social.date.tonight8pm', 'Tonight 8pm'), location: "La Catedral", attendees: 45 },
+    { id: 2, name: t('pages:lifeceo.social.events.tangoWorkshop', 'Tango Workshop'), date: t('pages:lifeceo.social.date.sat3pm', 'Sat 3pm'), location: "Studio Alma", attendees: 12 },
+    { id: 3, name: t('pages:lifeceo.social.events.practiceSession', 'Practice Session'), date: t('pages:lifeceo.social.date.sun6pm', 'Sun 6pm'), location: "Community Center", attendees: 8 }
   ]);
 
   const [connections] = useState([
-    { id: 1, name: "Sofia Martinez", role: "Advanced Dancer", status: "Active now" },
-    { id: 2, name: "Carlos Rodriguez", role: "Teacher", status: "Online" },
-    { id: 3, name: "Ana Lopez", role: "DJ", status: "Offline" }
+    { id: 1, name: "Sofia Martinez", role: t('pages:lifeceo.social.role.advancedDancer', 'Advanced Dancer'), status: t('pages:lifeceo.social.status.activeNow', 'Active now') },
+    { id: 2, name: "Carlos Rodriguez", role: t('pages:lifeceo.social.role.teacher', 'Teacher'), status: t('pages:lifeceo.social.status.online', 'Online') },
+    { id: 3, name: "Ana Lopez", role: "DJ", status: t('pages:lifeceo.social.status.offline', 'Offline') }
   ]);
 
   const [suggestions] = useState([
-    { id: 4, name: "Diego Santos", role: "Beginner", mutualConnections: 5 },
-    { id: 5, name: "Isabella Garcia", role: "Intermediate", mutualConnections: 3 },
-    { id: 6, name: "Miguel Torres", role: "Organizer", mutualConnections: 8 }
+    { id: 4, name: "Diego Santos", role: t('pages:lifeceo.social.role.beginner', 'Beginner'), mutualConnections: 5 },
+    { id: 5, name: "Isabella Garcia", role: t('pages:lifeceo.social.role.intermediate', 'Intermediate'), mutualConnections: 3 },
+    { id: 6, name: "Miguel Torres", role: t('pages:lifeceo.social.role.organizer', 'Organizer'), mutualConnections: 8 }
   ]);
 
   const metrics = [
-    { label: "Connections", value: "47", icon: Users, color: "text-blue-500" },
-    { label: "Events Joined", value: "23", icon: Calendar, color: "text-green-500" },
-    { label: "Upcoming", value: "3", icon: TrendingUp, color: "text-orange-500" },
-    { label: "New Messages", value: "12", icon: MessageCircle, color: "text-purple-500" }
+    { label: t('pages:lifeceo.social.metrics.connections', 'Connections'), value: "47", icon: Users, color: "text-blue-500" },
+    { label: t('pages:lifeceo.social.metrics.eventsJoined', 'Events Joined'), value: "23", icon: Calendar, color: "text-green-500" },
+    { label: t('pages:lifeceo.social.metrics.upcoming', 'Upcoming'), value: "3", icon: TrendingUp, color: "text-orange-500" },
+    { label: t('pages:lifeceo.social.metrics.newMessages', 'New Messages'), value: "12", icon: MessageCircle, color: "text-purple-500" }
   ];
 
   return (
     <SelfHealingErrorBoundary pageName="Social Agent" fallbackRoute="/life-ceo">
-      <PageLayout title="Social Agent" showBreadcrumbs>
+      <PageLayout title={t('pages:lifeceo.social.title', 'Social Agent')} showBreadcrumbs>
         <>
           <SEO
-            title="Social Agent - Life CEO"
-            description="Manage your tango social connections and discover events with AI recommendations"
+            title={t('pages:lifeceo.social.seoTitle', 'Social Agent - Life CEO')}
+            description={t('pages:lifeceo.social.seoDescription', 'Manage your tango social connections and discover events with AI recommendations')}
           />
 
           {/* Editorial Hero Section - 16:9 */}
@@ -61,15 +61,15 @@ export default function SocialAgentPage() {
                 transition={{ duration: 1, ease: "easeOut" }}
               >
                 <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
-                  Community Connection
+                  {t('pages:lifeceo.social.badge', 'Community Connection')}
                 </Badge>
                 
                 <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif font-bold text-white mb-6 tracking-tight" data-testid="heading-hero">
-                  Social Agent
+                  {t('pages:lifeceo.social.heroTitle', 'Social Agent')}
                 </h1>
                 
                 <p className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto leading-relaxed">
-                  Your tango community connection manager
+                  {t('pages:lifeceo.social.heroSubtitle', 'Your tango community connection manager')}
                 </p>
               </motion.div>
             </div>
@@ -105,9 +105,9 @@ export default function SocialAgentPage() {
               transition={{ duration: 0.6 }}
               className="mb-12"
             >
-              <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">Your Social Network</h2>
+              <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">{t('pages:lifeceo.social.sectionTitle', 'Your Social Network')}</h2>
               <p className="text-lg text-muted-foreground">
-                Stay connected with the tango community
+                {t('pages:lifeceo.social.sectionSubtitle', 'Stay connected with the tango community')}
               </p>
             </motion.div>
 
@@ -123,15 +123,15 @@ export default function SocialAgentPage() {
                   <div className="relative aspect-[16/9] overflow-hidden">
                     <motion.img
                       src={socialImg1}
-                      alt="Upcoming Events"
+                      alt={t('pages:lifeceo.social.upcomingEventsAlt', 'Upcoming Events')}
                       className="w-full h-full object-cover"
                       whileHover={{ scale: 1.05 }}
                       transition={{ duration: 0.6 }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
                     <div className="absolute bottom-4 left-4 right-4 text-white">
-                      <h3 className="text-2xl font-serif font-bold">Upcoming Events</h3>
-                      <p className="text-white/80 text-sm mt-1">Your social calendar</p>
+                      <h3 className="text-2xl font-serif font-bold">{t('pages:lifeceo.social.upcomingEvents', 'Upcoming Events')}</h3>
+                      <p className="text-white/80 text-sm mt-1">{t('pages:lifeceo.social.upcomingEventsSubtitle', 'Your social calendar')}</p>
                     </div>
                   </div>
                   <CardContent className="p-8 space-y-3">
@@ -154,17 +154,17 @@ export default function SocialAgentPage() {
                           </span>
                           <span className="flex items-center gap-1">
                             <Users className="h-3 w-3" />
-                            {event.attendees} going
+                            {t('pages:lifeceo.social.going', '{{count}} going', { count: event.attendees })}
                           </span>
                         </div>
                         <Button className="w-full mt-3" size="sm" data-testid={`button-view-event-${event.id}`}>
-                          View Details
+                          {t('pages:lifeceo.social.viewDetails', 'View Details')}
                         </Button>
                       </div>
                     ))}
 
                     <Button className="w-full" variant="outline" data-testid="button-discover-events">
-                      Discover More Events
+                      {t('pages:lifeceo.social.discoverMoreEvents', 'Discover More Events')}
                     </Button>
                   </CardContent>
                 </Card>
@@ -181,7 +181,7 @@ export default function SocialAgentPage() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-2xl font-serif">
                       <Users className="h-6 w-6 text-primary" />
-                      Recent Connections
+                      {t('pages:lifeceo.social.recentConnections', 'Recent Connections')}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
@@ -209,7 +209,7 @@ export default function SocialAgentPage() {
                     <div className="pt-4 border-t">
                       <h4 className="font-semibold mb-3 flex items-center gap-2">
                         <Heart className="h-5 w-5 text-primary" />
-                        People You May Know
+                        {t('pages:lifeceo.social.peopleYouMayKnow', 'People You May Know')}
                       </h4>
                       <div className="space-y-2">
                         {suggestions.map((suggestion) => (
@@ -228,12 +228,12 @@ export default function SocialAgentPage() {
                                 <div>
                                   <p className="font-medium text-sm">{suggestion.name}</p>
                                   <p className="text-xs text-muted-foreground">
-                                    {suggestion.mutualConnections} mutual connections
+                                    {t('pages:lifeceo.social.mutualConnections', '{{count}} mutual connections', { count: suggestion.mutualConnections })}
                                   </p>
                                 </div>
                               </div>
                               <Button size="sm" data-testid={`button-connect-${suggestion.id}`}>
-                                Connect
+                                {t('pages:lifeceo.social.connect', 'Connect')}
                               </Button>
                             </div>
                           </div>

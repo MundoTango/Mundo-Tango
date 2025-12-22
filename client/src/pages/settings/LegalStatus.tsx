@@ -62,10 +62,10 @@ export default function LegalStatus() {
           </div>
           <div>
             <h1 className="text-3xl font-bold tracking-tight" data-testid="heading-legal-status">
-              Legal Agreements
+              {t('pages:settings.legalStatus.title', 'Legal Agreements')}
             </h1>
             <p className="text-muted-foreground">
-              View your acceptance status and history
+              {t('pages:settings.legalStatus.subtitle', 'View your acceptance status and history')}
             </p>
           </div>
         </div>
@@ -76,10 +76,10 @@ export default function LegalStatus() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <CheckCircle2 className="w-5 h-5" />
-            Current Status
+            {t('pages:settings.legalStatus.currentStatus', 'Current Status')}
           </CardTitle>
           <CardDescription>
-            Your current legal agreement acceptance status
+            {t('pages:settings.legalStatus.currentStatusDesc', 'Your current legal agreement acceptance status')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -87,21 +87,21 @@ export default function LegalStatus() {
             <Alert variant="destructive" data-testid="alert-not-accepted">
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>
-                You have not accepted the legal agreements yet.
+                {t('pages:settings.legalStatus.notAccepted', 'You have not accepted the legal agreements yet.')}
               </AlertDescription>
             </Alert>
           ) : needsUpdate ? (
             <Alert data-testid="alert-needs-update">
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>
-                New versions of our legal agreements are available. Please review and accept them.
+                {t('pages:settings.legalStatus.needsUpdate', 'New versions of our legal agreements are available. Please review and accept them.')}
               </AlertDescription>
             </Alert>
           ) : (
             <Alert className="border-green-500/50 bg-green-500/10" data-testid="alert-up-to-date">
               <CheckCircle2 className="h-4 w-4 text-green-600" />
               <AlertDescription className="text-green-600">
-                Your legal agreements are up to date
+                {t('pages:settings.legalStatus.upToDate', 'Your legal agreements are up to date')}
               </AlertDescription>
             </Alert>
           )}
@@ -109,37 +109,37 @@ export default function LegalStatus() {
           <div className="grid gap-4 md:grid-cols-3">
             <div className="space-y-2" data-testid="status-privacy-policy">
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Privacy Policy</span>
+                <span className="text-sm font-medium">{t('pages:settings.legalStatus.privacyPolicy', 'Privacy Policy')}</span>
                 <Badge variant={status?.versions?.privacy === currentVersions.privacy ? 'default' : 'secondary'}>
                   v{status?.versions?.privacy || 'N/A'}
                 </Badge>
               </div>
               <p className="text-xs text-muted-foreground">
-                Current: v{currentVersions.privacy}
+                {t('pages:settings.legalStatus.current', 'Current')}: v{currentVersions.privacy}
               </p>
             </div>
 
             <div className="space-y-2" data-testid="status-terms-of-service">
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Terms of Service</span>
+                <span className="text-sm font-medium">{t('pages:settings.legalStatus.termsOfService', 'Terms of Service')}</span>
                 <Badge variant={status?.versions?.tos === currentVersions.tos ? 'default' : 'secondary'}>
                   v{status?.versions?.tos || 'N/A'}
                 </Badge>
               </div>
               <p className="text-xs text-muted-foreground">
-                Current: v{currentVersions.tos}
+                {t('pages:settings.legalStatus.current', 'Current')}: v{currentVersions.tos}
               </p>
             </div>
 
             <div className="space-y-2" data-testid="status-code-of-conduct">
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Code of Conduct</span>
+                <span className="text-sm font-medium">{t('pages:settings.legalStatus.codeOfConduct', 'Code of Conduct')}</span>
                 <Badge variant={status?.versions?.coc === currentVersions.coc ? 'default' : 'secondary'}>
                   v{status?.versions?.coc || 'N/A'}
                 </Badge>
               </div>
               <p className="text-xs text-muted-foreground">
-                Current: v{currentVersions.coc}
+                {t('pages:settings.legalStatus.current', 'Current')}: v{currentVersions.coc}
               </p>
             </div>
           </div>
@@ -147,13 +147,13 @@ export default function LegalStatus() {
           {status?.lastAccepted && (
             <div className="flex items-center gap-2 text-sm text-muted-foreground" data-testid="text-last-accepted">
               <Clock className="w-4 h-4" />
-              Last accepted on {format(new Date(status.lastAccepted), 'PPP')}
+              {t('pages:settings.legalStatus.lastAcceptedOn', 'Last accepted on')} {format(new Date(status.lastAccepted), 'PPP')}
             </div>
           )}
 
           {needsUpdate && (
             <Button asChild className="w-full" data-testid="button-review-updates">
-              <a href="/onboarding/legal">Review and Accept Updates</a>
+              <a href="/onboarding/legal">{t('pages:settings.legalStatus.reviewAndAccept', 'Review and Accept Updates')}</a>
             </Button>
           )}
         </CardContent>
@@ -164,29 +164,29 @@ export default function LegalStatus() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <FileText className="w-5 h-5" />
-            Legal Documents
+            {t('pages:settings.legalStatus.legalDocuments', 'Legal Documents')}
           </CardTitle>
           <CardDescription>
-            Access our legal documents
+            {t('pages:settings.legalStatus.accessDocuments', 'Access our legal documents')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
           <Button variant="outline" className="w-full justify-start" asChild data-testid="link-view-privacy-policy">
             <a href="/privacy-policy" target="_blank">
               <FileText className="w-4 h-4 mr-2" />
-              Privacy Policy (v{currentVersions.privacy})
+              {t('pages:settings.legalStatus.privacyPolicyLink', 'Privacy Policy')} (v{currentVersions.privacy})
             </a>
           </Button>
           <Button variant="outline" className="w-full justify-start" asChild data-testid="link-view-terms-of-service">
             <a href="/terms" target="_blank">
               <FileText className="w-4 h-4 mr-2" />
-              Terms of Service (v{currentVersions.tos})
+              {t('pages:settings.legalStatus.termsOfServiceLink', 'Terms of Service')} (v{currentVersions.tos})
             </a>
           </Button>
           <Button variant="outline" className="w-full justify-start" asChild data-testid="link-view-code-of-conduct">
             <a href="/community-guidelines" target="_blank">
               <FileText className="w-4 h-4 mr-2" />
-              Code of Conduct (v{currentVersions.coc})
+              {t('pages:settings.legalStatus.codeOfConductLink', 'Code of Conduct')} (v{currentVersions.coc})
             </a>
           </Button>
         </CardContent>
@@ -197,16 +197,16 @@ export default function LegalStatus() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Calendar className="w-5 h-5" />
-            Acceptance History
+            {t('pages:settings.legalStatus.acceptanceHistory', 'Acceptance History')}
           </CardTitle>
           <CardDescription>
-            Complete history of your legal agreement acceptances
+            {t('pages:settings.legalStatus.acceptanceHistoryDesc', 'Complete history of your legal agreement acceptances')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           {!history || history.length === 0 ? (
             <p className="text-sm text-muted-foreground text-center py-8" data-testid="text-no-history">
-              No acceptance history found
+              {t('pages:settings.legalStatus.noHistory', 'No acceptance history found')}
             </p>
           ) : (
             <div className="space-y-4">
@@ -218,7 +218,7 @@ export default function LegalStatus() {
                       <div className="flex items-center gap-2">
                         <CheckCircle2 className="w-4 h-4 text-green-600" />
                         <span className="font-medium">
-                          Accepted on {format(new Date(record.acceptedAt), 'PPP')}
+                          {t('pages:settings.legalStatus.acceptedOn', 'Accepted on')} {format(new Date(record.acceptedAt), 'PPP')}
                         </span>
                       </div>
                       <Badge variant="outline">
@@ -227,20 +227,20 @@ export default function LegalStatus() {
                     </div>
                     <div className="grid grid-cols-3 gap-4 text-sm">
                       <div>
-                        <span className="text-muted-foreground">Privacy:</span>{' '}
+                        <span className="text-muted-foreground">{t('pages:settings.legalStatus.privacy', 'Privacy')}:</span>{' '}
                         <span className="font-medium">v{record.privacyPolicyVersion}</span>
                       </div>
                       <div>
-                        <span className="text-muted-foreground">ToS:</span>{' '}
+                        <span className="text-muted-foreground">{t('pages:settings.legalStatus.tos', 'ToS')}:</span>{' '}
                         <span className="font-medium">v{record.tosVersion}</span>
                       </div>
                       <div>
-                        <span className="text-muted-foreground">CoC:</span>{' '}
+                        <span className="text-muted-foreground">{t('pages:settings.legalStatus.coc', 'CoC')}:</span>{' '}
                         <span className="font-medium">v{record.cocVersion}</span>
                       </div>
                     </div>
                     <div className="text-xs text-muted-foreground">
-                      IP: {record.ipAddress}
+                      {t('pages:settings.legalStatus.ip', 'IP')}: {record.ipAddress}
                     </div>
                   </div>
                 </div>

@@ -12,15 +12,15 @@ import heroImage from "@assets/optimized/IMG_9171-optimized.jpg";
 export default function HomeManagementPage() {
   const { t } = useTranslation(["pages", "common"]);
   const maintenance = [
-    { task: "Change AC filter", due: "in 5 days", priority: "medium", status: "pending" },
-    { task: "Water heater inspection", due: "in 12 days", priority: "low", status: "pending" },
-    { task: "Garden maintenance", due: "Overdue by 2 days", priority: "high", status: "overdue" }
+    { task: t('pages:lifeceo.home.maintenance.changeAcFilter', 'Change AC filter'), due: t('pages:lifeceo.home.due.in5days', 'in 5 days'), priority: "medium", status: "pending" },
+    { task: t('pages:lifeceo.home.maintenance.waterHeater', 'Water heater inspection'), due: t('pages:lifeceo.home.due.in12days', 'in 12 days'), priority: "low", status: "pending" },
+    { task: t('pages:lifeceo.home.maintenance.garden', 'Garden maintenance'), due: t('pages:lifeceo.home.due.overdue2days', 'Overdue by 2 days'), priority: "high", status: "overdue" }
   ];
 
   const shopping = [
-    { item: "Groceries", category: "Food", needed: "Weekly restock" },
-    { item: "Light bulbs", category: "Hardware", needed: "Living room × 2" },
-    { item: "Cleaning supplies", category: "Household", needed: "Monthly restock" }
+    { item: t('pages:lifeceo.home.shopping.groceries', 'Groceries'), category: t('pages:lifeceo.home.category.food', 'Food'), needed: t('pages:lifeceo.home.needed.weeklyRestock', 'Weekly restock') },
+    { item: t('pages:lifeceo.home.shopping.lightBulbs', 'Light bulbs'), category: t('pages:lifeceo.home.category.hardware', 'Hardware'), needed: t('pages:lifeceo.home.needed.livingRoom', 'Living room × 2') },
+    { item: t('pages:lifeceo.home.shopping.cleaningSupplies', 'Cleaning supplies'), category: t('pages:lifeceo.home.category.household', 'Household'), needed: t('pages:lifeceo.home.needed.monthlyRestock', 'Monthly restock') }
   ];
 
   const fadeInUp = {
@@ -32,11 +32,11 @@ export default function HomeManagementPage() {
 
   return (
     <SelfHealingErrorBoundary pageName="LifeCEOHomeManagement" fallbackRoute="/life-ceo">
-      <PageLayout title="Home Management" showBreadcrumbs>
+      <PageLayout title={t('pages:lifeceo.home.title', 'Home Management')} showBreadcrumbs>
         <>
       <SEO
-        title="Home Management - Life CEO"
-        description="Track home maintenance, shopping lists, and household tasks with your AI home agent."
+        title={t('pages:lifeceo.home.seoTitle', 'Home Management - Life CEO')}
+        description={t('pages:lifeceo.home.seoDescription', 'Track home maintenance, shopping lists, and household tasks with your AI home agent.')}
       />
 
       <div className="min-h-screen">
@@ -57,15 +57,15 @@ export default function HomeManagementPage() {
               </div>
               
               <Badge variant="outline" className="mb-4 text-white border-white/30 bg-white/10 backdrop-blur-sm">
-                Life CEO · Home
+                {t('pages:lifeceo.home.badge', 'Life CEO · Home')}
               </Badge>
               
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-white mb-4 tracking-tight">
-                Home Management
+                {t('pages:lifeceo.home.heroTitle', 'Home Management')}
               </h1>
               
               <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto leading-relaxed">
-                Your smart home assistant for maintenance and organization
+                {t('pages:lifeceo.home.heroSubtitle', 'Your smart home assistant for maintenance and organization')}
               </p>
             </motion.div>
           </div>
@@ -79,7 +79,7 @@ export default function HomeManagementPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Wrench className="h-5 w-5 text-primary" />
-                  Maintenance Schedule
+                  {t('pages:lifeceo.home.maintenanceSchedule', 'Maintenance Schedule')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
@@ -100,7 +100,7 @@ export default function HomeManagementPage() {
                         item.priority === "medium" ? "bg-orange-500/10 text-orange-500" :
                         "bg-blue-500/10 text-blue-500"
                       }`}>
-                        {item.priority}
+                        {t(`pages:lifeceo.home.priority.${item.priority}`, item.priority)}
                       </span>
                     </div>
                     <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
@@ -118,12 +118,12 @@ export default function HomeManagementPage() {
                     </div>
                     <Button size="sm" variant="outline" className="w-full" data-testid={`button-complete-${idx}`}>
                       <CheckCircle2 className="h-3 w-3 mr-2" />
-                      Mark Complete
+                      {t('pages:lifeceo.home.markComplete', 'Mark Complete')}
                     </Button>
                   </div>
                 ))}
                 <Button className="w-full" variant="outline" data-testid="button-add-maintenance">
-                  + Add Maintenance Task
+                  {t('pages:lifeceo.home.addMaintenanceTask', '+ Add Maintenance Task')}
                 </Button>
               </CardContent>
             </Card>
@@ -133,7 +133,7 @@ export default function HomeManagementPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <ShoppingCart className="h-5 w-5 text-primary" />
-                  Shopping List
+                  {t('pages:lifeceo.home.shoppingList', 'Shopping List')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
@@ -151,12 +151,12 @@ export default function HomeManagementPage() {
                     </div>
                     <p className="text-sm text-muted-foreground mb-3">{item.needed}</p>
                     <Button size="sm" variant="outline" className="w-full" data-testid={`button-buy-${idx}`}>
-                      Add to Cart
+                      {t('pages:lifeceo.home.addToCart', 'Add to Cart')}
                     </Button>
                   </div>
                 ))}
                 <Button className="w-full" variant="outline" data-testid="button-add-item">
-                  + Add Item
+                  {t('pages:lifeceo.home.addItem', '+ Add Item')}
                 </Button>
               </CardContent>
             </Card>

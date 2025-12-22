@@ -459,8 +459,8 @@ export default function EventsPage() {
     <SelfHealingErrorBoundary pageName="Events" fallbackRoute="/feed">
       <>
         <SEO
-          title="Discover Events"
-          description="Find tango events, milongas, and workshops near you. Join the global tango community and discover authentic Argentine tango experiences worldwide."
+          title={t('pages:events.seoTitle', 'Discover Events')}
+          description={t('pages:events.seoDescription', 'Find tango events, milongas, and workshops near you. Join the global tango community and discover authentic Argentine tango experiences worldwide.')}
         />
         
         {/* Hero Section */}
@@ -478,15 +478,15 @@ export default function EventsPage() {
               transition={{ duration: 1, ease: "easeOut" }}
             >
               <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm">
-                Events & Milongas
+                {t('pages:events.badge', 'Events & Milongas')}
               </Badge>
               
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6">
-                Discover Tango Events
+                {t('pages:events.heroTitle', 'Discover Tango Events')}
               </h1>
               
               <p className="text-xl text-white/80 max-w-2xl mx-auto mb-8">
-                Find milongas, workshops, and performances near you. Join the global tango community.
+                {t('pages:events.heroSubtitle', 'Find milongas, workshops, and performances near you. Join the global tango community.')}
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 items-center justify-center flex-wrap">
@@ -497,7 +497,7 @@ export default function EventsPage() {
                   onClick={() => navigate("/events/create")}
                 >
                   <Plus className="h-5 w-5" />
-                  Create Event
+                  {t('pages:events.createEvent', 'Create Event')}
                   <ChevronRight className="h-5 w-5" />
                 </Button>
                 
@@ -557,8 +557,8 @@ export default function EventsPage() {
                     data-testid="tab-my-events"
                   >
                     <Check className="h-4 w-4" />
-                    <span className="hidden sm:inline">My Events</span>
-                    <span className="sm:hidden">Mine</span>
+                    <span className="hidden sm:inline">{t('pages:events.tabs.myEvents', 'My Events')}</span>
+                    <span className="sm:hidden">{t('pages:events.tabs.mine', 'Mine')}</span>
                   </TabsTrigger>
                   <TabsTrigger 
                     value="upcoming" 
@@ -567,8 +567,8 @@ export default function EventsPage() {
                     data-testid="tab-upcoming"
                   >
                     <CalendarIcon className="h-4 w-4" />
-                    <span className="hidden sm:inline">Upcoming</span>
-                    <span className="sm:hidden">Soon</span>
+                    <span className="hidden sm:inline">{t('pages:events.tabs.upcoming', 'Upcoming')}</span>
+                    <span className="sm:hidden">{t('pages:events.tabs.soon', 'Soon')}</span>
                   </TabsTrigger>
                   <TabsTrigger 
                     value="past" 
@@ -576,8 +576,8 @@ export default function EventsPage() {
                     data-testid="tab-past"
                   >
                     <Clock className="h-4 w-4" />
-                    <span className="hidden sm:inline">Past</span>
-                    <span className="sm:hidden">Past</span>
+                    <span className="hidden sm:inline">{t('pages:events.tabs.past', 'Past')}</span>
+                    <span className="sm:hidden">{t('pages:events.tabs.past', 'Past')}</span>
                   </TabsTrigger>
                   <TabsTrigger 
                     value="discover" 
@@ -585,8 +585,8 @@ export default function EventsPage() {
                     data-testid="tab-discover"
                   >
                     <Search className="h-4 w-4" />
-                    <span className="hidden sm:inline">Discover</span>
-                    <span className="sm:hidden">Find</span>
+                    <span className="hidden sm:inline">{t('pages:events.tabs.discover', 'Discover')}</span>
+                    <span className="sm:hidden">{t('pages:events.tabs.find', 'Find')}</span>
                   </TabsTrigger>
                 </TabsList>
               </div>
@@ -594,10 +594,10 @@ export default function EventsPage() {
 
             {/* Tab Descriptions */}
             <div className="text-sm text-muted-foreground">
-              {activeTab === "my-events" && "Events you've RSVP'd to"}
-              {activeTab === "upcoming" && `Events in your city${upcomingData?.filters?.joinedCities?.length ? ` and ${upcomingData.filters.joinedCities.length} followed cities` : ""}`}
-              {activeTab === "past" && "Browse historical events and past milongas"}
-              {activeTab === "discover" && "Explore all events worldwide"}
+              {activeTab === "my-events" && t('pages:events.tabDescriptions.myEvents', "Events you've RSVP'd to")}
+              {activeTab === "upcoming" && t('pages:events.tabDescriptions.upcoming', { count: upcomingData?.filters?.joinedCities?.length || 0, defaultValue: `Events in your city${upcomingData?.filters?.joinedCities?.length ? ` and ${upcomingData.filters.joinedCities.length} followed cities` : ""}` })}
+              {activeTab === "past" && t('pages:events.tabDescriptions.past', 'Browse historical events and past milongas')}
+              {activeTab === "discover" && t('pages:events.tabDescriptions.discover', 'Explore all events worldwide')}
             </div>
 
             {/* Compact Chip-Based Filters - Only show for Discover tab */}
@@ -623,13 +623,13 @@ export default function EventsPage() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="date" data-testid="option-sort-date">
-                        Soonest
+                        {t('pages:events.sort.soonest', 'Soonest')}
                       </SelectItem>
                       <SelectItem value="relevance" data-testid="option-sort-relevance">
-                        Relevance
+                        {t('pages:events.sort.relevance', 'Relevance')}
                       </SelectItem>
                       <SelectItem value="price" data-testid="option-sort-price">
-                        Price
+                        {t('pages:events.sort.price', 'Price')}
                       </SelectItem>
                     </SelectContent>
                   </Select>
@@ -643,15 +643,15 @@ export default function EventsPage() {
                 <TabsList>
                   <TabsTrigger value="list" data-testid="tab-list-view">
                     <List className="h-4 w-4 mr-2" />
-                    List
+                    {t('pages:events.views.list', 'List')}
                   </TabsTrigger>
                   <TabsTrigger value="calendar" data-testid="tab-calendar-view">
                     <CalendarIcon className="h-4 w-4 mr-2" />
-                    Calendar
+                    {t('pages:events.views.calendar', 'Calendar')}
                   </TabsTrigger>
                   <TabsTrigger value="map" data-testid="tab-map-view">
                     <MapIconLucide className="h-4 w-4 mr-2" />
-                    Map
+                    {t('pages:events.views.map', 'Map')}
                   </TabsTrigger>
                 </TabsList>
               </Tabs>
@@ -721,7 +721,7 @@ export default function EventsPage() {
                                 data-testid="button-prev-page"
                               >
                                 <ChevronLeft className="h-4 w-4 mr-1" />
-                                Previous
+                                {t('common:previous', 'Previous')}
                               </Button>
                               
                               <div className="flex gap-1">
@@ -758,7 +758,7 @@ export default function EventsPage() {
                                 disabled={page === pagination.totalPages}
                                 data-testid="button-next-page"
                               >
-                                Next
+                                {t('common:next', 'Next')}
                                 <ChevronRight className="h-4 w-4 ml-1" />
                               </Button>
                             </div>
@@ -773,13 +773,13 @@ export default function EventsPage() {
                               <CalendarIcon className="h-8 w-8 text-muted-foreground" aria-hidden="true" />
                             </div>
                             <div className="space-y-2">
-                              <h3 className="text-xl font-semibold">No Events Found</h3>
+                              <h3 className="text-xl font-semibold">{t('pages:events.noEventsFound', 'No Events Found')}</h3>
                               <p className="text-muted-foreground max-w-sm mx-auto">
                                 {activeTab === "my-events" 
-                                  ? "You haven't RSVP'd to any events yet. Explore upcoming events to find milongas near you!"
+                                  ? t('pages:events.noEventsMyEvents', "You haven't RSVP'd to any events yet. Explore upcoming events to find milongas near you!")
                                   : activeTab === "upcoming"
-                                  ? "No upcoming events in your area. Try changing your location or check back later."
-                                  : "Try adjusting your filters or search query to find more events."}
+                                  ? t('pages:events.noEventsUpcoming', 'No upcoming events in your area. Try changing your location or check back later.')
+                                  : t('pages:events.noEventsDiscover', 'Try adjusting your filters or search query to find more events.')}
                               </p>
                             </div>
                             <div className="flex gap-3 mt-4">
@@ -789,12 +789,12 @@ export default function EventsPage() {
                                   onClick={() => { setFilters({}); setPage(1); }}
                                   data-testid="button-clear-filters-empty"
                                 >
-                                  Clear Filters
+                                  {t('pages:events.clearFilters', 'Clear Filters')}
                                 </Button>
                               )}
                               <Button onClick={() => navigate("/events/create")} data-testid="button-create-event-empty">
                                 <Plus className="h-4 w-4 mr-2" />
-                                Create Event
+                                {t('pages:events.createEvent', 'Create Event')}
                               </Button>
                             </div>
                           </div>

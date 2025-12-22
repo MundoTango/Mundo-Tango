@@ -412,23 +412,23 @@ export default function DanceExperiencePage() {
       
       if (isWaitlist) {
         toast({
-          title: "You're on the list!",
-          description: "We'll notify you when your account is ready.",
+          title: t('pages:onboarding.hobbies.success.waitlistTitle', "You're on the list!"),
+          description: t('pages:onboarding.hobbies.success.waitlistDesc', "We'll notify you when your account is ready."),
         });
         setTimeout(() => {
           navigate("/waitlist-confirmation");
         }, 1500);
       } else {
         toast({
-          title: "Welcome to Mundo Tango!",
-          description: "Your profile is complete. Let's explore!",
+          title: t('pages:onboarding.hobbies.success.completeTitle', 'Welcome to Mundo Tango!'),
+          description: t('pages:onboarding.hobbies.success.completeDesc', "Your profile is complete. Let's explore!"),
         });
         navigate("/feed");
       }
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to save. Please try again.",
+        title: t('common:errors.error', 'Error'),
+        description: t('pages:onboarding.hobbies.errors.saveFailed', 'Failed to save. Please try again.'),
         variant: "destructive",
       });
     } finally {
@@ -438,9 +438,9 @@ export default function DanceExperiencePage() {
 
   return (
     <SelfHealingErrorBoundary pageName="OtherHobbies" fallbackRoute="/">
-      <PageLayout title="OtherHobbies" showBreadcrumbs>
+      <PageLayout title={t('pages:onboarding.hobbies.pageTitle', 'OtherHobbies')} showBreadcrumbs>
         <>
-          <SEO title="Your Hobbies - Mundo Tango" description="Tell us about your other interests" />
+          <SEO title={t('pages:onboarding.hobbies.seoTitle', 'Your Hobbies - Mundo Tango')} description={t('pages:onboarding.hobbies.seoDescription', 'Tell us about your other interests')} />
           
           <div className="relative h-[50vh] w-full overflow-hidden">
             <div 
@@ -457,15 +457,15 @@ export default function DanceExperiencePage() {
                 transition={{ duration: 1, ease: "easeOut" }}
               >
                 <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-step-5">
-                  Step 5 of 5 - Final Step!
+                  {t('pages:onboarding.hobbies.step', 'Step 5 of 5 - Final Step!')}
                 </Badge>
                 
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-white font-bold leading-tight mb-6">
-                  What Else Do You Love?
+                  {t('pages:onboarding.hobbies.title', 'What Else Do You Love?')}
                 </h1>
                 
                 <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto">
-                  Beyond tango, what are your other passions?
+                  {t('pages:onboarding.hobbies.subtitle', 'Beyond tango, what are your other passions?')}
                 </p>
               </motion.div>
             </div>
@@ -484,10 +484,10 @@ export default function DanceExperiencePage() {
                       <div className="p-3 rounded-xl bg-primary/10">
                         <Palette className="h-6 w-6 text-primary" />
                       </div>
-                      <h2 className="text-2xl md:text-3xl font-serif font-bold">Other Hobbies</h2>
+                      <h2 className="text-2xl md:text-3xl font-serif font-bold">{t('pages:onboarding.hobbies.cardTitle', 'Other Hobbies')}</h2>
                     </div>
                     <p className="text-muted-foreground leading-relaxed">
-                      Share your interests to connect with like-minded dancers (optional)
+                      {t('pages:onboarding.hobbies.cardDescription', 'Share your interests to connect with like-minded dancers (optional)')}
                     </p>
                   </CardHeader>
 
@@ -495,7 +495,7 @@ export default function DanceExperiencePage() {
                     <div className="relative">
                       <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input
-                        placeholder="Search hobbies..."
+                        placeholder={t('pages:onboarding.hobbies.searchPlaceholder', 'Search hobbies...')}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="pl-10"
@@ -513,7 +513,7 @@ export default function DanceExperiencePage() {
 
                     {filteredCategories.length === 0 ? (
                       <div className="text-center py-8 text-muted-foreground">
-                        No hobbies found matching "{searchQuery}"
+                        {t('pages:onboarding.hobbies.noResults', 'No hobbies found matching "{{query}}"', { query: searchQuery })}
                       </div>
                     ) : (
                       <Accordion
@@ -596,7 +596,7 @@ export default function DanceExperiencePage() {
                                   onClick={() => toggleCategory(category.id)}
                                   data-testid={`toggle-all-${category.id}`}
                                 >
-                                  {selectionCount === totalCount ? "Deselect All" : "Select All"}
+                                  {selectionCount === totalCount ? t('pages:onboarding.hobbies.deselectAll', 'Deselect All') : t('pages:onboarding.hobbies.selectAll', 'Select All')}
                                 </Button>
                               </AccordionContent>
                             </AccordionItem>
@@ -613,7 +613,7 @@ export default function DanceExperiencePage() {
                           animate={{ opacity: 1, height: "auto" }}
                           exit={{ opacity: 0, height: 0 }}
                         >
-                          <p className="text-sm font-medium mb-3">Selected hobbies ({selectedHobbies.length}):</p>
+                          <p className="text-sm font-medium mb-3">{t('pages:onboarding.hobbies.selectedCount', 'Selected hobbies ({{count}}):', { count: selectedHobbies.length })}</p>
                           <div className="flex flex-wrap gap-2">
                             {getSelectedLabels().map((item) => (
                               <Badge 
@@ -633,8 +633,7 @@ export default function DanceExperiencePage() {
 
                     <div className="bg-muted/50 rounded-lg p-4">
                       <p className="text-sm text-muted-foreground">
-                        This helps you connect with dancers who share similar interests outside of tango.
-                        You can skip this step or update your hobbies anytime from your profile.
+                        {t('pages:onboarding.hobbies.helpText', 'This helps you connect with dancers who share similar interests outside of tango. You can skip this step or update your hobbies anytime from your profile.')}
                       </p>
                     </div>
                   </CardContent>
@@ -646,7 +645,7 @@ export default function DanceExperiencePage() {
                       data-testid="button-back"
                     >
                       <ChevronLeft className="h-4 w-4 mr-2" />
-                      Back
+                      {t('common:buttons.back', 'Back')}
                     </Button>
                     <Button
                       onClick={handleComplete}
@@ -657,12 +656,12 @@ export default function DanceExperiencePage() {
                       {isLoading ? (
                         <>
                           <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                          Finishing...
+                          {t('pages:onboarding.hobbies.finishing', 'Finishing...')}
                         </>
                       ) : (
                         <>
                           <Sparkles className="h-4 w-4 mr-2" />
-                          Complete Setup
+                          {t('pages:onboarding.hobbies.completeSetup', 'Complete Setup')}
                           <ChevronRight className="h-4 w-4 ml-2" />
                         </>
                       )}

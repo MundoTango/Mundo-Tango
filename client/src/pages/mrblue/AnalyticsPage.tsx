@@ -50,29 +50,29 @@ export default function AnalyticsPage() {
   return (
     <div className="container mx-auto py-8 space-y-6" data-testid="page-ai-analytics">
       <div>
-        <h1 className="text-3xl font-bold">AI Usage Analytics</h1>
+        <h1 className="text-3xl font-bold">{t('pages:mrblue.analytics.title', 'AI Usage Analytics')}</h1>
         <p className="text-muted-foreground mt-2">
-          Track token usage, costs, and performance metrics
+          {t('pages:mrblue.analytics.subtitle', 'Track token usage, costs, and performance metrics')}
         </p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card data-testid="card-total-tokens">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Tokens</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('pages:mrblue.analytics.totalTokens', 'Total Tokens')}</CardTitle>
             <Zap className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.totalTokens.toLocaleString()}</div>
             <p className="text-xs text-muted-foreground mt-1">
-              This month
+              {t('pages:mrblue.analytics.thisMonth', 'This month')}
             </p>
           </CardContent>
         </Card>
 
         <Card data-testid="card-total-cost">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Cost</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('pages:mrblue.analytics.totalCost', 'Total Cost')}</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -85,26 +85,26 @@ export default function AnalyticsPage() {
 
         <Card data-testid="card-queries-count">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Queries</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('pages:mrblue.analytics.queries', 'Queries')}</CardTitle>
             <MessageSquare className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.queriesCount.toLocaleString()}</div>
             <p className="text-xs text-muted-foreground mt-1">
-              Total conversations
+              {t('pages:mrblue.analytics.totalConversations', 'Total conversations')}
             </p>
           </CardContent>
         </Card>
 
         <Card data-testid="card-response-time">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Avg Response Time</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('pages:mrblue.analytics.avgResponseTime', 'Avg Response Time')}</CardTitle>
             <Cpu className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.averageResponseTime}ms</div>
             <p className="text-xs text-muted-foreground mt-1">
-              Average latency
+              {t('pages:mrblue.analytics.avgLatency', 'Average latency')}
             </p>
           </CardContent>
         </Card>
@@ -112,17 +112,17 @@ export default function AnalyticsPage() {
 
       <Tabs defaultValue="usage" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="usage" data-testid="tab-usage">Usage Trends</TabsTrigger>
-          <TabsTrigger value="models" data-testid="tab-models">Model Breakdown</TabsTrigger>
-          <TabsTrigger value="queries" data-testid="tab-queries">Query Types</TabsTrigger>
-          <TabsTrigger value="optimization" data-testid="tab-optimization">Optimization</TabsTrigger>
+          <TabsTrigger value="usage" data-testid="tab-usage">{t('pages:mrblue.analytics.tabUsage', 'Usage Trends')}</TabsTrigger>
+          <TabsTrigger value="models" data-testid="tab-models">{t('pages:mrblue.analytics.tabModels', 'Model Breakdown')}</TabsTrigger>
+          <TabsTrigger value="queries" data-testid="tab-queries">{t('pages:mrblue.analytics.tabQueries', 'Query Types')}</TabsTrigger>
+          <TabsTrigger value="optimization" data-testid="tab-optimization">{t('pages:mrblue.analytics.tabOptimization', 'Optimization')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="usage" className="space-y-4">
           <Card data-testid="card-daily-usage">
             <CardHeader>
-              <CardTitle>Daily Usage & Cost</CardTitle>
-              <CardDescription>Token consumption and associated costs over time</CardDescription>
+              <CardTitle>{t('pages:mrblue.analytics.dailyUsage', 'Daily Usage & Cost')}</CardTitle>
+              <CardDescription>{t('pages:mrblue.analytics.dailyUsageDesc', 'Token consumption and associated costs over time')}</CardDescription>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
@@ -145,8 +145,8 @@ export default function AnalyticsPage() {
           <div className="grid gap-4 md:grid-cols-2">
             <Card data-testid="card-model-usage-chart">
               <CardHeader>
-                <CardTitle>Usage by Model</CardTitle>
-                <CardDescription>Token distribution across AI models</CardDescription>
+                <CardTitle>{t('pages:mrblue.analytics.usageByModel', 'Usage by Model')}</CardTitle>
+                <CardDescription>{t('pages:mrblue.analytics.usageByModelDesc', 'Token distribution across AI models')}</CardDescription>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
@@ -173,8 +173,8 @@ export default function AnalyticsPage() {
 
             <Card data-testid="card-model-breakdown-table">
               <CardHeader>
-                <CardTitle>Model Breakdown</CardTitle>
-                <CardDescription>Detailed usage and cost per model</CardDescription>
+                <CardTitle>{t('pages:mrblue.analytics.modelBreakdown', 'Model Breakdown')}</CardTitle>
+                <CardDescription>{t('pages:mrblue.analytics.modelBreakdownDesc', 'Detailed usage and cost per model')}</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
@@ -203,8 +203,8 @@ export default function AnalyticsPage() {
         <TabsContent value="queries" className="space-y-4">
           <Card data-testid="card-query-types">
             <CardHeader>
-              <CardTitle>Query Types Distribution</CardTitle>
-              <CardDescription>Breakdown of query categories</CardDescription>
+              <CardTitle>{t('pages:mrblue.analytics.queryTypes', 'Query Types Distribution')}</CardTitle>
+              <CardDescription>{t('pages:mrblue.analytics.queryTypesDesc', 'Breakdown of query categories')}</CardDescription>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
@@ -225,9 +225,9 @@ export default function AnalyticsPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <TrendingUp className="h-5 w-5" />
-                Optimization Suggestions
+                {t('pages:mrblue.analytics.optimizationSuggestions', 'Optimization Suggestions')}
               </CardTitle>
-              <CardDescription>Ways to reduce costs and improve performance</CardDescription>
+              <CardDescription>{t('pages:mrblue.analytics.optimizationDesc', 'Ways to reduce costs and improve performance')}</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">

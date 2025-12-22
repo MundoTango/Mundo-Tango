@@ -12,16 +12,16 @@ import heroImage from "@assets/optimized/IMG_9441-optimized.jpg";
 export default function HealthAgentPage() {
   const { t } = useTranslation(["pages", "common"]);
   const stats = [
-    { label: "Steps Today", value: "8,450", goal: "10,000", icon: Activity, color: "text-green-500" },
-    { label: "Water Intake", value: "6/8", goal: "glasses", icon: Droplets, color: "text-blue-500" },
-    { label: "Sleep", value: "7.5h", goal: "8h", icon: Moon, color: "text-purple-500" },
-    { label: "Calories", value: "1,850", goal: "2,000", icon: Apple, color: "text-orange-500" }
+    { label: t('pages:lifeceo.health.stats.stepsToday', 'Steps Today'), value: "8,450", goal: "10,000", icon: Activity, color: "text-green-500" },
+    { label: t('pages:lifeceo.health.stats.waterIntake', 'Water Intake'), value: "6/8", goal: t('pages:lifeceo.health.stats.glasses', 'glasses'), icon: Droplets, color: "text-blue-500" },
+    { label: t('pages:lifeceo.health.stats.sleep', 'Sleep'), value: "7.5h", goal: "8h", icon: Moon, color: "text-purple-500" },
+    { label: t('pages:lifeceo.health.stats.calories', 'Calories'), value: "1,850", goal: "2,000", icon: Apple, color: "text-orange-500" }
   ];
 
   const workouts = [
-    { name: "Morning Cardio", duration: "45min", calories: 320, completed: true },
-    { name: "Yoga Session", duration: "30min", calories: 150, completed: true },
-    { name: "Evening Gym", duration: "60min", calories: 450, completed: false }
+    { name: t('pages:lifeceo.health.workouts.morningCardio', 'Morning Cardio'), duration: "45min", calories: 320, completed: true },
+    { name: t('pages:lifeceo.health.workouts.yogaSession', 'Yoga Session'), duration: "30min", calories: 150, completed: true },
+    { name: t('pages:lifeceo.health.workouts.eveningGym', 'Evening Gym'), duration: "60min", calories: 450, completed: false }
   ];
 
   const fadeInUp = {
@@ -33,10 +33,10 @@ export default function HealthAgentPage() {
 
   return (
     <SelfHealingErrorBoundary pageName="Health Agent" fallbackRoute="/platform">
-    <PageLayout title="Health Agent" showBreadcrumbs>
+    <PageLayout title={t('pages:lifeceo.health.title', 'Health Agent')} showBreadcrumbs>
       <SEO
-        title="Health Agent - Life CEO"
-        description="Track your fitness, nutrition, sleep, and overall wellness with your AI health agent."
+        title={t('pages:lifeceo.health.seoTitle', 'Health Agent - Life CEO')}
+        description={t('pages:lifeceo.health.seoDescription', 'Track your fitness, nutrition, sleep, and overall wellness with your AI health agent.')}
       />
 
       <div className="min-h-screen">
@@ -57,15 +57,15 @@ export default function HealthAgentPage() {
               </div>
               
               <Badge variant="outline" className="mb-4 text-white border-white/30 bg-white/10 backdrop-blur-sm">
-                Life CEO · Health
+                {t('pages:lifeceo.health.badge', 'Life CEO · Health')}
               </Badge>
               
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-white mb-4 tracking-tight">
-                Health Agent
+                {t('pages:lifeceo.health.heroTitle', 'Health Agent')}
               </h1>
               
               <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto leading-relaxed">
-                Your 24/7 wellness companion for optimal tango performance
+                {t('pages:lifeceo.health.heroSubtitle', 'Your 24/7 wellness companion for optimal tango performance')}
               </p>
             </motion.div>
           </div>
@@ -90,7 +90,7 @@ export default function HealthAgentPage() {
                     </div>
                     <p className="text-sm text-muted-foreground">{stat.label}</p>
                     <p className="text-2xl font-bold">{stat.value}</p>
-                    <p className="text-xs text-muted-foreground">Goal: {stat.goal}</p>
+                    <p className="text-xs text-muted-foreground">{t('pages:lifeceo.health.goal', 'Goal')}: {stat.goal}</p>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -103,7 +103,7 @@ export default function HealthAgentPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Dumbbell className="h-5 w-5 text-primary" />
-                  Today's Workouts
+                  {t('pages:lifeceo.health.todayWorkouts', "Today's Workouts")}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
@@ -115,18 +115,18 @@ export default function HealthAgentPage() {
                     <div className="flex items-center justify-between mb-2">
                       <h3 className="font-semibold">{workout.name}</h3>
                       {workout.completed && (
-                        <span className="text-xs text-green-500 font-medium">✓ Completed</span>
+                        <span className="text-xs text-green-500 font-medium">{t('pages:lifeceo.health.completed', '✓ Completed')}</span>
                       )}
                     </div>
                     <div className="flex gap-4 text-sm text-muted-foreground">
                       <span>{workout.duration}</span>
                       <span>•</span>
-                      <span>{workout.calories} cal</span>
+                      <span>{t('pages:lifeceo.health.calories', '{{calories}} cal', { calories: workout.calories })}</span>
                     </div>
                   </div>
                 ))}
                 <Button className="w-full" variant="outline" data-testid="button-add-workout">
-                  + Add Workout
+                  {t('pages:lifeceo.health.addWorkout', '+ Add Workout')}
                 </Button>
               </CardContent>
             </Card>
@@ -136,26 +136,26 @@ export default function HealthAgentPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Heart className="h-5 w-5 text-red-500" />
-                  AI Health Insights
+                  {t('pages:lifeceo.health.insights.title', 'AI Health Insights')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="p-4 rounded-lg bg-blue-500/5 border border-blue-500/20">
-                  <p className="text-sm font-medium mb-1">💧 Hydration Alert</p>
+                  <p className="text-sm font-medium mb-1">{t('pages:lifeceo.health.insights.hydrationTitle', 'Hydration Alert')}</p>
                   <p className="text-sm text-muted-foreground">
-                    You're 2 glasses behind your water goal. Drink up!
+                    {t('pages:lifeceo.health.insights.hydrationMessage', "You're 2 glasses behind your water goal. Drink up!")}
                   </p>
                 </div>
                 <div className="p-4 rounded-lg bg-purple-500/5 border border-purple-500/20">
-                  <p className="text-sm font-medium mb-1">😴 Sleep Recommendation</p>
+                  <p className="text-sm font-medium mb-1">{t('pages:lifeceo.health.insights.sleepTitle', 'Sleep Recommendation')}</p>
                   <p className="text-sm text-muted-foreground">
-                    Try going to bed 30 minutes earlier for optimal recovery.
+                    {t('pages:lifeceo.health.insights.sleepMessage', 'Try going to bed 30 minutes earlier for optimal recovery.')}
                   </p>
                 </div>
                 <div className="p-4 rounded-lg bg-green-500/5 border border-green-500/20">
-                  <p className="text-sm font-medium mb-1">🎯 Great Progress!</p>
+                  <p className="text-sm font-medium mb-1">{t('pages:lifeceo.health.insights.progressTitle', 'Great Progress!')}</p>
                   <p className="text-sm text-muted-foreground">
-                    You've completed 85% of your weekly workout goals.
+                    {t('pages:lifeceo.health.insights.progressMessage', "You've completed 85% of your weekly workout goals.")}
                   </p>
                 </div>
               </CardContent>

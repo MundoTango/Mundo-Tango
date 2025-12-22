@@ -41,14 +41,14 @@ export default function EmailPreferences() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/user/email-preferences'] });
       toast({
-        title: "Preferences updated",
-        description: "Your email preferences have been saved successfully.",
+        title: t('pages:settings.emailPreferences.preferencesUpdated', 'Preferences updated'),
+        description: t('pages:settings.emailPreferences.preferencesUpdatedDesc', 'Your email preferences have been saved successfully.'),
       });
     },
     onError: () => {
       toast({
-        title: "Error",
-        description: "Failed to update email preferences. Please try again.",
+        title: t('pages:settings.emailPreferences.error', 'Error'),
+        description: t('pages:settings.emailPreferences.failedToUpdate', 'Failed to update email preferences. Please try again.'),
         variant: "destructive",
       });
     },
@@ -60,19 +60,19 @@ export default function EmailPreferences() {
 
   return (
     <SelfHealingErrorBoundary pageName="Email Preferences" fallbackRoute="/settings">
-      <PageLayout title="Email Preferences" showBreadcrumbs>
+      <PageLayout title={t('pages:settings.emailPreferences.pageTitle', 'Email Preferences')} showBreadcrumbs>
         <>
           <SEO 
-            title="Email Preferences"
-            description="Manage your email notification preferences and control what emails you receive from Mundo Tango."
+            title={t('pages:settings.emailPreferences.seoTitle', 'Email Preferences')}
+            description={t('pages:settings.emailPreferences.seoDescription', 'Manage your email notification preferences and control what emails you receive from Mundo Tango.')}
           />
           <div className="max-w-5xl mx-auto p-6 space-y-8">
             <div>
               <h1 className="text-4xl font-serif font-bold bg-gradient-to-r from-[#40E0D0] via-[#1E90FF] to-[#9370DB] bg-clip-text text-transparent mb-2" data-testid="heading-email-preferences">
-                Email Preferences
+                {t('pages:settings.emailPreferences.title', 'Email Preferences')}
               </h1>
               <p className="text-muted-foreground">
-                Control which emails you receive from Mundo Tango
+                {t('pages:settings.emailPreferences.subtitle', 'Control which emails you receive from Mundo Tango')}
               </p>
             </div>
 
@@ -81,17 +81,17 @@ export default function EmailPreferences() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 font-serif">
                   <Mail className="h-5 w-5 text-[#40E0D0]" />
-                  Email Notifications
+                  {t('pages:settings.emailPreferences.emailNotifications', 'Email Notifications')}
                 </CardTitle>
                 <CardDescription>
-                  Master control for all email notifications
+                  {t('pages:settings.emailPreferences.masterControl', 'Master control for all email notifications')}
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <PreferenceToggle
                   icon={<Mail className="h-5 w-5 text-[#40E0D0]" />}
-                  label="All Email Notifications"
-                  description="Master toggle for all email notifications. When disabled, you won't receive any emails."
+                  label={t('pages:settings.emailPreferences.allNotifications', 'All Email Notifications')}
+                  description={t('pages:settings.emailPreferences.allNotificationsDesc', "Master toggle for all email notifications. When disabled, you won't receive any emails.")}
                   checked={prefs?.emailsEnabled ?? true}
                   onChange={(v) => togglePreference('emailsEnabled', v)}
                   testId="toggle-emails-enabled"
@@ -103,16 +103,16 @@ export default function EmailPreferences() {
             {/* Notification Types */}
             <Card className="backdrop-blur-md bg-white/10 dark:bg-black/10 border-white/20 dark:border-white/10">
               <CardHeader>
-                <CardTitle className="font-serif">Notification Types</CardTitle>
+                <CardTitle className="font-serif">{t('pages:settings.emailPreferences.notificationTypes', 'Notification Types')}</CardTitle>
                 <CardDescription>
-                  Choose which types of emails you want to receive
+                  {t('pages:settings.emailPreferences.chooseTypes', 'Choose which types of emails you want to receive')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <PreferenceToggle
                   icon={<Calendar className="h-5 w-5 text-[#1E90FF]" />}
-                  label="Event Reminders"
-                  description="Get reminded 1 day before your upcoming events"
+                  label={t('pages:settings.emailPreferences.eventReminders', 'Event Reminders')}
+                  description={t('pages:settings.emailPreferences.eventRemindersDesc', 'Get reminded 1 day before your upcoming events')}
                   checked={prefs?.eventReminders ?? true}
                   onChange={(v) => togglePreference('eventReminders', v)}
                   testId="toggle-event-reminders"
@@ -123,8 +123,8 @@ export default function EmailPreferences() {
 
                 <PreferenceToggle
                   icon={<MessageSquare className="h-5 w-5 text-[#40E0D0]" />}
-                  label="New Messages"
-                  description="Notifications when you receive new messages"
+                  label={t('pages:settings.emailPreferences.newMessages', 'New Messages')}
+                  description={t('pages:settings.emailPreferences.newMessagesDesc', 'Notifications when you receive new messages')}
                   checked={prefs?.newMessages ?? true}
                   onChange={(v) => togglePreference('newMessages', v)}
                   testId="toggle-new-messages"
@@ -135,8 +135,8 @@ export default function EmailPreferences() {
 
                 <PreferenceToggle
                   icon={<Bell className="h-5 w-5 text-[#9370DB]" />}
-                  label="Friend Requests"
-                  description="Notifications when someone wants to connect with you"
+                  label={t('pages:settings.emailPreferences.friendRequests', 'Friend Requests')}
+                  description={t('pages:settings.emailPreferences.friendRequestsDesc', 'Notifications when someone wants to connect with you')}
                   checked={prefs?.friendRequests ?? true}
                   onChange={(v) => togglePreference('friendRequests', v)}
                   testId="toggle-friend-requests"
@@ -147,8 +147,8 @@ export default function EmailPreferences() {
 
                 <PreferenceToggle
                   icon={<Bell className="h-5 w-5 text-[#FFD700]" />}
-                  label="Post Reactions"
-                  description="Notifications when someone reacts to your posts"
+                  label={t('pages:settings.emailPreferences.postReactions', 'Post Reactions')}
+                  description={t('pages:settings.emailPreferences.postReactionsDesc', 'Notifications when someone reacts to your posts')}
                   checked={prefs?.postReactions ?? false}
                   onChange={(v) => togglePreference('postReactions', v)}
                   testId="toggle-post-reactions"
@@ -159,8 +159,8 @@ export default function EmailPreferences() {
 
                 <PreferenceToggle
                   icon={<Home className="h-5 w-5 text-[#40E0D0]" />}
-                  label="Housing Bookings"
-                  description="Booking confirmations and updates for your housing reservations"
+                  label={t('pages:settings.emailPreferences.housingBookings', 'Housing Bookings')}
+                  description={t('pages:settings.emailPreferences.housingBookingsDesc', 'Booking confirmations and updates for your housing reservations')}
                   checked={prefs?.housingBookings ?? true}
                   onChange={(v) => togglePreference('housingBookings', v)}
                   testId="toggle-housing-bookings"
@@ -171,8 +171,8 @@ export default function EmailPreferences() {
 
                 <PreferenceToggle
                   icon={<CreditCard className="h-5 w-5 text-[#1E90FF]" />}
-                  label="Subscription Updates"
-                  description="Billing and subscription renewal notifications"
+                  label={t('pages:settings.emailPreferences.subscriptionUpdates', 'Subscription Updates')}
+                  description={t('pages:settings.emailPreferences.subscriptionUpdatesDesc', 'Billing and subscription renewal notifications')}
                   checked={prefs?.subscriptionUpdates ?? true}
                   onChange={(v) => togglePreference('subscriptionUpdates', v)}
                   testId="toggle-subscription-updates"
@@ -183,8 +183,8 @@ export default function EmailPreferences() {
 
                 <PreferenceToggle
                   icon={<BarChart3 className="h-5 w-5 text-[#9370DB]" />}
-                  label="Weekly Digest"
-                  description="Weekly summary of activity and updates in your community"
+                  label={t('pages:settings.emailPreferences.weeklyDigest', 'Weekly Digest')}
+                  description={t('pages:settings.emailPreferences.weeklyDigestDesc', 'Weekly summary of activity and updates in your community')}
                   checked={prefs?.weeklyDigest ?? true}
                   onChange={(v) => togglePreference('weeklyDigest', v)}
                   testId="toggle-weekly-digest"
@@ -196,17 +196,17 @@ export default function EmailPreferences() {
             {/* Rate Limit Info */}
             <Card className="backdrop-blur-md bg-white/10 dark:bg-black/10 border-white/20 dark:border-white/10">
               <CardHeader>
-                <CardTitle className="font-serif">Email Policy</CardTitle>
+                <CardTitle className="font-serif">{t('pages:settings.emailPreferences.emailPolicy', 'Email Policy')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
                 <p className="text-sm text-muted-foreground">
-                  📊 Rate limit: Maximum 5 emails per day to prevent inbox overload
+                  {t('pages:settings.emailPreferences.rateLimit', '📊 Rate limit: Maximum 5 emails per day to prevent inbox overload')}
                 </p>
                 <p className="text-sm text-muted-foreground">
-                  🔕 You can unsubscribe from individual email types using the toggles above
+                  {t('pages:settings.emailPreferences.unsubscribeNote', '🔕 You can unsubscribe from individual email types using the toggles above')}
                 </p>
                 <p className="text-sm text-muted-foreground">
-                  ✉️ All transactional emails are sent from notifications@mundotango.life
+                  {t('pages:settings.emailPreferences.senderNote', '✉️ All transactional emails are sent from notifications@mundotango.life')}
                 </p>
               </CardContent>
             </Card>

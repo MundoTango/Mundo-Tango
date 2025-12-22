@@ -15,31 +15,31 @@ import learningImg1 from "@assets/stock_images/data_visualization_t_03b1d852.jpg
 export default function LearningAgentPage() {
   const { t } = useTranslation(["pages", "common"]);
   const [activeCourses] = useState([
-    { id: 1, title: "Advanced Tango Technique", progress: 65, lessons: 12, completed: 8 },
-    { id: 2, title: "Argentine Tango History", progress: 30, lessons: 8, completed: 2 },
-    { id: 3, title: "Music Theory for Dancers", progress: 85, lessons: 10, completed: 9 }
+    { id: 1, title: t('pages:lifeceo.learning.courses.advancedTango', 'Advanced Tango Technique'), progress: 65, lessons: 12, completed: 8 },
+    { id: 2, title: t('pages:lifeceo.learning.courses.tangoHistory', 'Argentine Tango History'), progress: 30, lessons: 8, completed: 2 },
+    { id: 3, title: t('pages:lifeceo.learning.courses.musicTheory', 'Music Theory for Dancers'), progress: 85, lessons: 10, completed: 9 }
   ]);
 
   const [recommendations] = useState([
-    { id: 4, title: "Milonga Fundamentals", instructor: "Carlos Rodriguez", duration: "4 weeks" },
-    { id: 5, title: "Tango Musicality Masterclass", instructor: "Maria Santos", duration: "6 weeks" },
-    { id: 6, title: "Social Dancing Etiquette", instructor: "Ana Lopez", duration: "2 weeks" }
+    { id: 4, title: t('pages:lifeceo.learning.recommendations.milonga', 'Milonga Fundamentals'), instructor: "Carlos Rodriguez", duration: t('pages:lifeceo.learning.duration.4weeks', '4 weeks') },
+    { id: 5, title: t('pages:lifeceo.learning.recommendations.musicality', 'Tango Musicality Masterclass'), instructor: "Maria Santos", duration: t('pages:lifeceo.learning.duration.6weeks', '6 weeks') },
+    { id: 6, title: t('pages:lifeceo.learning.recommendations.etiquette', 'Social Dancing Etiquette'), instructor: "Ana Lopez", duration: t('pages:lifeceo.learning.duration.2weeks', '2 weeks') }
   ]);
 
   const metrics = [
-    { label: "Total Hours", value: "47", icon: Clock, color: "text-blue-500" },
-    { label: "Completed", value: "5", icon: CheckCircle2, color: "text-green-500" },
-    { label: "Streak Days", value: "12", icon: TrendingUp, color: "text-orange-500" },
-    { label: "Certificates", value: "3", icon: Award, color: "text-yellow-500" }
+    { label: t('pages:lifeceo.learning.metrics.totalHours', 'Total Hours'), value: "47", icon: Clock, color: "text-blue-500" },
+    { label: t('pages:lifeceo.learning.metrics.completed', 'Completed'), value: "5", icon: CheckCircle2, color: "text-green-500" },
+    { label: t('pages:lifeceo.learning.metrics.streakDays', 'Streak Days'), value: "12", icon: TrendingUp, color: "text-orange-500" },
+    { label: t('pages:lifeceo.learning.metrics.certificates', 'Certificates'), value: "3", icon: Award, color: "text-yellow-500" }
   ];
 
   return (
     <SelfHealingErrorBoundary pageName="Learning Agent" fallbackRoute="/life-ceo">
-      <PageLayout title="Learning Agent" showBreadcrumbs>
+      <PageLayout title={t('pages:lifeceo.learning.title', 'Learning Agent')} showBreadcrumbs>
         <>
           <SEO
-            title="Learning Agent - Life CEO"
-            description="Track your tango learning journey with AI-powered course recommendations and progress tracking"
+            title={t('pages:lifeceo.learning.seoTitle', 'Learning Agent - Life CEO')}
+            description={t('pages:lifeceo.learning.seoDescription', 'Track your tango learning journey with AI-powered course recommendations and progress tracking')}
           />
 
           {/* Editorial Hero Section - 16:9 */}
@@ -55,15 +55,15 @@ export default function LearningAgentPage() {
                 transition={{ duration: 1, ease: "easeOut" }}
               >
                 <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
-                  Continuous Education
+                  {t('pages:lifeceo.learning.badge', 'Continuous Education')}
                 </Badge>
                 
                 <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif font-bold text-white mb-6 tracking-tight" data-testid="heading-hero">
-                  Learning Agent
+                  {t('pages:lifeceo.learning.heroTitle', 'Learning Agent')}
                 </h1>
                 
                 <p className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto leading-relaxed">
-                  Your personalized tango education assistant
+                  {t('pages:lifeceo.learning.heroSubtitle', 'Your personalized tango education assistant')}
                 </p>
               </motion.div>
             </div>
@@ -99,9 +99,9 @@ export default function LearningAgentPage() {
               transition={{ duration: 0.6 }}
               className="mb-12"
             >
-              <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">Learning Journey</h2>
+              <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">{t('pages:lifeceo.learning.sectionTitle', 'Learning Journey')}</h2>
               <p className="text-lg text-muted-foreground">
-                Track your courses and discover new skills to master
+                {t('pages:lifeceo.learning.sectionSubtitle', 'Track your courses and discover new skills to master')}
               </p>
             </motion.div>
 
@@ -117,15 +117,15 @@ export default function LearningAgentPage() {
                   <div className="relative aspect-[16/9] overflow-hidden">
                     <motion.img
                       src={learningImg1}
-                      alt="Active Courses"
+                      alt={t('pages:lifeceo.learning.activeCoursesAlt', 'Active Courses')}
                       className="w-full h-full object-cover"
                       whileHover={{ scale: 1.05 }}
                       transition={{ duration: 0.6 }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
                     <div className="absolute bottom-4 left-4 right-4 text-white">
-                      <h3 className="text-2xl font-serif font-bold">Active Courses</h3>
-                      <p className="text-white/80 text-sm mt-1">Your current learning path</p>
+                      <h3 className="text-2xl font-serif font-bold">{t('pages:lifeceo.learning.activeCourses', 'Active Courses')}</h3>
+                      <p className="text-white/80 text-sm mt-1">{t('pages:lifeceo.learning.activeCoursesSubtitle', 'Your current learning path')}</p>
                     </div>
                   </div>
                   <CardContent className="p-8 space-y-4">
@@ -134,14 +134,14 @@ export default function LearningAgentPage() {
                         <div className="flex items-center justify-between">
                           <span className="text-sm font-medium">{course.title}</span>
                           <span className="text-xs text-muted-foreground">
-                            {course.completed}/{course.lessons} lessons
+                            {t('pages:lifeceo.learning.lessonsProgress', '{{completed}}/{{total}} lessons', { completed: course.completed, total: course.lessons })}
                           </span>
                         </div>
                         <Progress value={course.progress} className="h-2" />
                         <div className="flex items-center justify-between text-sm">
-                          <span className="text-muted-foreground">{course.progress}% complete</span>
+                          <span className="text-muted-foreground">{t('pages:lifeceo.learning.percentComplete', '{{progress}}% complete', { progress: course.progress })}</span>
                           <Button size="sm" variant="ghost" data-testid={`button-continue-${course.id}`}>
-                            Continue →
+                            {t('pages:lifeceo.learning.continue', 'Continue →')}
                           </Button>
                         </div>
                       </div>
@@ -161,7 +161,7 @@ export default function LearningAgentPage() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-2xl font-serif">
                       <PlayCircle className="h-6 w-6 text-primary" />
-                      Recommended Courses
+                      {t('pages:lifeceo.learning.recommendedCourses', 'Recommended Courses')}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
@@ -171,14 +171,14 @@ export default function LearningAgentPage() {
                           <div>
                             <h3 className="font-semibold mb-1">{rec.title}</h3>
                             <p className="text-sm text-muted-foreground">
-                              Instructor: {rec.instructor}
+                              {t('pages:lifeceo.learning.instructor', 'Instructor')}: {rec.instructor}
                             </p>
                           </div>
                         </div>
                         <div className="flex items-center justify-between mt-3">
                           <span className="text-xs text-muted-foreground">{rec.duration}</span>
                           <Button size="sm" data-testid={`button-enroll-${rec.id}`}>
-                            Enroll Now
+                            {t('pages:lifeceo.learning.enrollNow', 'Enroll Now')}
                           </Button>
                         </div>
                       </div>
@@ -188,9 +188,9 @@ export default function LearningAgentPage() {
                       <div className="flex items-start gap-3">
                         <Award className="h-5 w-5 text-green-500 mt-0.5" />
                         <div>
-                          <p className="text-sm font-medium mb-1">Achievement Unlocked!</p>
+                          <p className="text-sm font-medium mb-1">{t('pages:lifeceo.learning.achievement', 'Achievement Unlocked!')}</p>
                           <p className="text-sm text-muted-foreground">
-                            You've maintained a 12-day learning streak. Keep it up!
+                            {t('pages:lifeceo.learning.achievementMessage', "You've maintained a 12-day learning streak. Keep it up!")}
                           </p>
                         </div>
                       </div>
@@ -198,7 +198,7 @@ export default function LearningAgentPage() {
 
                     <Button className="w-full gap-2" data-testid="button-browse-courses">
                       <BookOpen className="w-4 h-4" />
-                      Browse All Courses
+                      {t('pages:lifeceo.learning.browseAllCourses', 'Browse All Courses')}
                     </Button>
                   </CardContent>
                 </Card>

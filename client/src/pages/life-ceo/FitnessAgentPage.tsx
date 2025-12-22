@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { SEO } from "@/components/SEO";
-import { Dumbbell, Activity, Trophy, Flame, TrendingUp, Target, Check } from "lucide-react";
+import { Dumbbell, Activity, Trophy, Flame, TrendingUp, Target, Check, PartyPopper } from "lucide-react";
 import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
@@ -12,22 +12,22 @@ import heroImage from "@assets/optimized/IMG_9474-optimized.jpg";
 export default function FitnessAgentPage() {
   const { t } = useTranslation(["pages", "common"]);
   const stats = [
-    { label: "Active Calories", value: "2,450", icon: Flame, color: "text-orange-500" },
-    { label: "Workout Streak", value: "14 days", icon: Trophy, color: "text-yellow-500" },
-    { label: "Exercise Time", value: "320 min", icon: Activity, color: "text-green-500" },
-    { label: "Fitness Score", value: "85%", icon: Target, color: "text-blue-500" }
+    { label: t('pages:lifeceo.fitness.stats.activeCalories', 'Active Calories'), value: "2,450", icon: Flame, color: "text-orange-500" },
+    { label: t('pages:lifeceo.fitness.stats.workoutStreak', 'Workout Streak'), value: t('pages:lifeceo.fitness.stats.days', '14 days'), icon: Trophy, color: "text-yellow-500" },
+    { label: t('pages:lifeceo.fitness.stats.exerciseTime', 'Exercise Time'), value: t('pages:lifeceo.fitness.stats.minutes', '320 min'), icon: Activity, color: "text-green-500" },
+    { label: t('pages:lifeceo.fitness.stats.fitnessScore', 'Fitness Score'), value: "85%", icon: Target, color: "text-blue-500" }
   ];
 
   const todayWorkouts = [
-    { name: "Tango Practice", duration: "60 min", calories: 450, type: "Dance", completed: true },
-    { name: "Core Strength", duration: "20 min", calories: 180, type: "Strength", completed: true },
-    { name: "Evening Stretch", duration: "15 min", calories: 60, type: "Flexibility", completed: false }
+    { name: t('pages:lifeceo.fitness.workouts.tangoPractice', 'Tango Practice'), duration: t('pages:lifeceo.fitness.duration.60min', '60 min'), calories: 450, type: t('pages:lifeceo.fitness.type.dance', 'Dance'), completed: true },
+    { name: t('pages:lifeceo.fitness.workouts.coreStrength', 'Core Strength'), duration: t('pages:lifeceo.fitness.duration.20min', '20 min'), calories: 180, type: t('pages:lifeceo.fitness.type.strength', 'Strength'), completed: true },
+    { name: t('pages:lifeceo.fitness.workouts.eveningStretch', 'Evening Stretch'), duration: t('pages:lifeceo.fitness.duration.15min', '15 min'), calories: 60, type: t('pages:lifeceo.fitness.type.flexibility', 'Flexibility'), completed: false }
   ];
 
   const weeklyGoals = [
-    { goal: "Dance 4 times", current: 3, target: 4, percentage: 75 },
-    { goal: "Strength training 3x", current: 2, target: 3, percentage: 67 },
-    { goal: "Active 5 days", current: 5, target: 5, percentage: 100 }
+    { goal: t('pages:lifeceo.fitness.goals.dance4', 'Dance 4 times'), current: 3, target: 4, percentage: 75 },
+    { goal: t('pages:lifeceo.fitness.goals.strength3', 'Strength training 3x'), current: 2, target: 3, percentage: 67 },
+    { goal: t('pages:lifeceo.fitness.goals.active5', 'Active 5 days'), current: 5, target: 5, percentage: 100 }
   ];
 
   const fadeInUp = {
@@ -39,10 +39,10 @@ export default function FitnessAgentPage() {
 
   return (
     <SelfHealingErrorBoundary pageName="Fitness Agent" fallbackRoute="/platform">
-      <PageLayout title="Fitness Agent" showBreadcrumbs>
+      <PageLayout title={t('pages:lifeceo.fitness.title', 'Fitness Agent')} showBreadcrumbs>
         <SEO
-          title="Fitness Agent - Life CEO"
-          description="Track your tango fitness, workouts, and achieve your physical goals with AI coaching."
+          title={t('pages:lifeceo.fitness.seoTitle', 'Fitness Agent - Life CEO')}
+          description={t('pages:lifeceo.fitness.seoDescription', 'Track your tango fitness, workouts, and achieve your physical goals with AI coaching.')}
         />
 
         <div className="min-h-screen">
@@ -63,15 +63,15 @@ export default function FitnessAgentPage() {
               </div>
               
               <Badge variant="outline" className="mb-4 text-white border-white/30 bg-white/10 backdrop-blur-sm">
-                Life CEO · Fitness
+                {t('pages:lifeceo.fitness.badge', 'Life CEO · Fitness')}
               </Badge>
               
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-white mb-4 tracking-tight">
-                Fitness Agent
+                {t('pages:lifeceo.fitness.heroTitle', 'Fitness Agent')}
               </h1>
               
               <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto leading-relaxed">
-                Your AI fitness trainer for tango performance and wellness
+                {t('pages:lifeceo.fitness.heroSubtitle', 'Your AI fitness trainer for tango performance and wellness')}
               </p>
             </motion.div>
           </div>
@@ -81,7 +81,7 @@ export default function FitnessAgentPage() {
 
           {/* Stats Grid */}
           <motion.div {...fadeInUp} className="mb-20">
-            <h2 className="text-2xl md:text-3xl lg:text-4xl font-serif font-bold mb-12 text-center">Your Fitness Dashboard</h2>
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-serif font-bold mb-12 text-center">{t('pages:lifeceo.fitness.dashboardTitle', 'Your Fitness Dashboard')}</h2>
             <div className="grid gap-6 md:grid-cols-4">
               {stats.map((stat, idx) => (
                 <motion.div
@@ -115,7 +115,7 @@ export default function FitnessAgentPage() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-3 text-xl md:text-2xl font-serif font-bold">
                     <Activity className="h-6 w-6 text-primary" />
-                    Today's Workouts
+                    {t('pages:lifeceo.fitness.todayWorkouts', "Today's Workouts")}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -136,19 +136,19 @@ export default function FitnessAgentPage() {
                         {workout.completed && (
                           <div className="flex items-center gap-1 text-green-500">
                             <Check className="h-4 w-4" />
-                            <span className="text-sm font-medium">Done</span>
+                            <span className="text-sm font-medium">{t('pages:lifeceo.fitness.done', 'Done')}</span>
                           </div>
                         )}
                       </div>
                       <div className="flex gap-4 text-sm text-muted-foreground">
                         <span>{workout.duration}</span>
                         <span>•</span>
-                        <span>{workout.calories} cal</span>
+                        <span>{t('pages:lifeceo.fitness.calories', '{{calories}} cal', { calories: workout.calories })}</span>
                       </div>
                     </div>
                   ))}
                   <Button className="w-full mt-4" size="lg" variant="outline" data-testid="button-add-workout">
-                    + Log Workout
+                    {t('pages:lifeceo.fitness.logWorkout', '+ Log Workout')}
                   </Button>
                 </CardContent>
               </Card>
@@ -160,7 +160,7 @@ export default function FitnessAgentPage() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-3 text-xl md:text-2xl font-serif font-bold">
                     <Trophy className="h-6 w-6 text-yellow-500" />
-                    Weekly Goals
+                    {t('pages:lifeceo.fitness.weeklyGoals', 'Weekly Goals')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -186,13 +186,13 @@ export default function FitnessAgentPage() {
                     </div>
                     {item.percentage === 100 && (
                       <p className="text-xs text-green-500 mt-1 flex items-center gap-1">
-                        <PartyPopper className="w-3 h-3" /> Goal achieved!
+                        <PartyPopper className="w-3 h-3" /> {t('pages:lifeceo.fitness.goalAchieved', 'Goal achieved!')}
                       </p>
                     )}
                   </div>
                 ))}
                 <Button className="w-full" data-testid="button-set-goals">
-                  Set New Goals
+                  {t('pages:lifeceo.fitness.setNewGoals', 'Set New Goals')}
                 </Button>
               </CardContent>
             </Card>

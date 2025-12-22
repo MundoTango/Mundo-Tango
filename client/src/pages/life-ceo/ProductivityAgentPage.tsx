@@ -14,28 +14,28 @@ import productivityImg1 from "@assets/stock_images/professional_abstrac_0be569f5
 export default function ProductivityAgentPage() {
   const { t } = useTranslation(["pages", "common"]);
   const todayTasks = [
-    { id: 1, text: "Review pull requests", completed: true, priority: "high" },
-    { id: 2, text: "Write project documentation", completed: true, priority: "medium" },
-    { id: 3, text: "Team standup meeting", completed: true, priority: "high" },
-    { id: 4, text: "Update Jira tickets", completed: false, priority: "medium" },
-    { id: 5, text: "Code review session", completed: false, priority: "high" },
-    { id: 6, text: "Respond to emails", completed: false, priority: "low" }
+    { id: 1, text: t('pages:lifeceo.productivity.tasks.reviewPRs', 'Review pull requests'), completed: true, priority: "high" },
+    { id: 2, text: t('pages:lifeceo.productivity.tasks.writeDocs', 'Write project documentation'), completed: true, priority: "medium" },
+    { id: 3, text: t('pages:lifeceo.productivity.tasks.standup', 'Team standup meeting'), completed: true, priority: "high" },
+    { id: 4, text: t('pages:lifeceo.productivity.tasks.jira', 'Update Jira tickets'), completed: false, priority: "medium" },
+    { id: 5, text: t('pages:lifeceo.productivity.tasks.codeReview', 'Code review session'), completed: false, priority: "high" },
+    { id: 6, text: t('pages:lifeceo.productivity.tasks.emails', 'Respond to emails'), completed: false, priority: "low" }
   ];
 
   const metrics = [
-    { label: "Tasks Done", value: "8/10", icon: CheckCircle2, color: "text-green-500" },
-    { label: "Focus Time", value: "4.5h", icon: Clock, color: "text-blue-500" },
-    { label: "Score", value: "87%", icon: TrendingUp, color: "text-purple-500" },
-    { label: "Streak", value: "12d", icon: Target, color: "text-orange-500" }
+    { label: t('pages:lifeceo.productivity.metrics.tasksDone', 'Tasks Done'), value: "8/10", icon: CheckCircle2, color: "text-green-500" },
+    { label: t('pages:lifeceo.productivity.metrics.focusTime', 'Focus Time'), value: "4.5h", icon: Clock, color: "text-blue-500" },
+    { label: t('pages:lifeceo.productivity.metrics.score', 'Score'), value: "87%", icon: TrendingUp, color: "text-purple-500" },
+    { label: t('pages:lifeceo.productivity.metrics.streak', 'Streak'), value: "12d", icon: Target, color: "text-orange-500" }
   ];
 
   return (
     <SelfHealingErrorBoundary pageName="Productivity Agent" fallbackRoute="/life-ceo">
-      <PageLayout title="Productivity Agent" showBreadcrumbs>
+      <PageLayout title={t('pages:lifeceo.productivity.title', 'Productivity Agent')} showBreadcrumbs>
         <>
           <SEO
-            title="Productivity Agent - Life CEO"
-            description="Manage tasks, track time, and boost productivity with your AI productivity agent."
+            title={t('pages:lifeceo.productivity.seoTitle', 'Productivity Agent - Life CEO')}
+            description={t('pages:lifeceo.productivity.seoDescription', 'Manage tasks, track time, and boost productivity with your AI productivity agent.')}
           />
 
           {/* Editorial Hero Section - 16:9 */}
@@ -51,15 +51,15 @@ export default function ProductivityAgentPage() {
                 transition={{ duration: 1, ease: "easeOut" }}
               >
                 <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
-                  Task Management
+                  {t('pages:lifeceo.productivity.badge', 'Task Management')}
                 </Badge>
                 
                 <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif font-bold text-white mb-6 tracking-tight" data-testid="heading-hero">
-                  Productivity Agent
+                  {t('pages:lifeceo.productivity.heroTitle', 'Productivity Agent')}
                 </h1>
                 
                 <p className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto leading-relaxed">
-                  Your AI-powered task manager
+                  {t('pages:lifeceo.productivity.heroSubtitle', 'Your AI-powered task manager')}
                 </p>
               </motion.div>
             </div>
@@ -95,9 +95,9 @@ export default function ProductivityAgentPage() {
               transition={{ duration: 0.6 }}
               className="mb-12"
             >
-              <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">Daily Progress</h2>
+              <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">{t('pages:lifeceo.productivity.sectionTitle', 'Daily Progress')}</h2>
               <p className="text-lg text-muted-foreground">
-                Stay on top of your tasks and maximize your focus time
+                {t('pages:lifeceo.productivity.sectionSubtitle', 'Stay on top of your tasks and maximize your focus time')}
               </p>
             </motion.div>
 
@@ -113,15 +113,15 @@ export default function ProductivityAgentPage() {
                   <div className="relative aspect-[16/9] overflow-hidden">
                     <motion.img
                       src={productivityImg1}
-                      alt="Today's Tasks"
+                      alt={t('pages:lifeceo.productivity.todayTasksAlt', "Today's Tasks")}
                       className="w-full h-full object-cover"
                       whileHover={{ scale: 1.05 }}
                       transition={{ duration: 0.6 }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
                     <div className="absolute bottom-4 left-4 right-4 text-white">
-                      <h3 className="text-2xl font-serif font-bold">Today's Tasks</h3>
-                      <p className="text-white/80 text-sm mt-1">Your daily action plan</p>
+                      <h3 className="text-2xl font-serif font-bold">{t('pages:lifeceo.productivity.todayTasks', "Today's Tasks")}</h3>
+                      <p className="text-white/80 text-sm mt-1">{t('pages:lifeceo.productivity.todayTasksSubtitle', 'Your daily action plan')}</p>
                     </div>
                   </div>
                   <CardContent className="p-8 space-y-3">
@@ -141,12 +141,12 @@ export default function ProductivityAgentPage() {
                           task.priority === "medium" ? "bg-orange-500" :
                           "bg-blue-500"
                         }>
-                          {task.priority}
+                          {t(`pages:lifeceo.productivity.priority.${task.priority}`, task.priority)}
                         </Badge>
                       </div>
                     ))}
                     <Button className="w-full" variant="outline" data-testid="button-add-task">
-                      + Add Task
+                      {t('pages:lifeceo.productivity.addTask', '+ Add Task')}
                     </Button>
                   </CardContent>
                 </Card>
@@ -163,7 +163,7 @@ export default function ProductivityAgentPage() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-2xl font-serif">
                       <TrendingUp className="h-6 w-6 text-green-500" />
-                      AI Productivity Insights
+                      {t('pages:lifeceo.productivity.insights.title', 'AI Productivity Insights')}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
@@ -171,9 +171,9 @@ export default function ProductivityAgentPage() {
                       <div className="flex items-start gap-3">
                         <Target className="h-5 w-5 text-green-500 mt-0.5" />
                         <div>
-                          <p className="text-sm font-medium mb-1">Peak Performance</p>
+                          <p className="text-sm font-medium mb-1">{t('pages:lifeceo.productivity.insights.peakTitle', 'Peak Performance')}</p>
                           <p className="text-sm text-muted-foreground">
-                            You're most productive between 9-11 AM. Schedule complex tasks then.
+                            {t('pages:lifeceo.productivity.insights.peakMessage', "You're most productive between 9-11 AM. Schedule complex tasks then.")}
                           </p>
                         </div>
                       </div>
@@ -183,9 +183,9 @@ export default function ProductivityAgentPage() {
                       <div className="flex items-start gap-3">
                         <Clock className="h-5 w-5 text-blue-500 mt-0.5" />
                         <div>
-                          <p className="text-sm font-medium mb-1">Time Optimization</p>
+                          <p className="text-sm font-medium mb-1">{t('pages:lifeceo.productivity.insights.timeTitle', 'Time Optimization')}</p>
                           <p className="text-sm text-muted-foreground">
-                            Consider batching similar tasks together to reduce context switching.
+                            {t('pages:lifeceo.productivity.insights.timeMessage', 'Consider batching similar tasks together to reduce context switching.')}
                           </p>
                         </div>
                       </div>
@@ -195,9 +195,9 @@ export default function ProductivityAgentPage() {
                       <div className="flex items-start gap-3">
                         <TrendingUp className="h-5 w-5 text-purple-500 mt-0.5" />
                         <div>
-                          <p className="text-sm font-medium mb-1">Weekly Trend</p>
+                          <p className="text-sm font-medium mb-1">{t('pages:lifeceo.productivity.insights.trendTitle', 'Weekly Trend')}</p>
                           <p className="text-sm text-muted-foreground">
-                            Your productivity is up 15% compared to last week. Keep it up!
+                            {t('pages:lifeceo.productivity.insights.trendMessage', 'Your productivity is up 15% compared to last week. Keep it up!')}
                           </p>
                         </div>
                       </div>
@@ -207,9 +207,9 @@ export default function ProductivityAgentPage() {
                       <div className="flex items-start gap-3">
                         <ListTodo className="h-5 w-5 text-orange-500 mt-0.5" />
                         <div>
-                          <p className="text-sm font-medium mb-1">Reminder</p>
+                          <p className="text-sm font-medium mb-1">{t('pages:lifeceo.productivity.insights.reminderTitle', 'Reminder')}</p>
                           <p className="text-sm text-muted-foreground">
-                            Don't forget to take breaks every 90 minutes for optimal focus.
+                            {t('pages:lifeceo.productivity.insights.reminderMessage', "Don't forget to take breaks every 90 minutes for optimal focus.")}
                           </p>
                         </div>
                       </div>
@@ -217,7 +217,7 @@ export default function ProductivityAgentPage() {
 
                     <Button className="w-full gap-2" data-testid="button-view-analytics">
                       <Calendar className="w-4 h-4" />
-                      View Weekly Analytics
+                      {t('pages:lifeceo.productivity.viewAnalytics', 'View Weekly Analytics')}
                     </Button>
                   </CardContent>
                 </Card>

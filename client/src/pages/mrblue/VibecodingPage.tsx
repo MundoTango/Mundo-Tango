@@ -101,9 +101,9 @@ export default function VibecodingPage() {
   return (
     <div className="container mx-auto py-8 space-y-6" data-testid="page-vibecoding">
       <div>
-        <h1 className="text-3xl font-bold">Mr Blue Vibecoding</h1>
+        <h1 className="text-3xl font-bold">{t('pages:mrblue.vibecoding.title', 'Mr Blue Vibecoding')}</h1>
         <p className="text-muted-foreground mt-2">
-          AI-powered code generation from natural language
+          {t('pages:mrblue.vibecoding.subtitle', 'AI-powered code generation from natural language')}
         </p>
       </div>
 
@@ -112,7 +112,7 @@ export default function VibecodingPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Folder className="h-5 w-5" />
-              File Explorer
+              {t('pages:mrblue.vibecoding.fileExplorer', 'File Explorer')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -145,7 +145,7 @@ export default function VibecodingPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Sparkles className="h-5 w-5" />
-                Natural Language Prompt
+                {t('pages:mrblue.vibecoding.naturalLanguagePrompt', 'Natural Language Prompt')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -156,7 +156,7 @@ export default function VibecodingPage() {
                 </Badge>
               )}
               <Textarea
-                placeholder="Describe what you want to code... (e.g., 'Create a new component that displays user stats with a chart')"
+                placeholder={t('pages:mrblue.vibecoding.promptPlaceholder', "Describe what you want to code... (e.g., 'Create a new component that displays user stats with a chart')")}
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
                 rows={4}
@@ -168,7 +168,7 @@ export default function VibecodingPage() {
                 data-testid="button-generate"
               >
                 <Code className="h-4 w-4 mr-2" />
-                {generateCodeMutation.isPending ? 'Generating...' : 'Generate Code'}
+                {generateCodeMutation.isPending ? t('pages:mrblue.vibecoding.generating', 'Generating...') : t('pages:mrblue.vibecoding.generateCode', 'Generate Code')}
               </Button>
             </CardContent>
           </Card>
@@ -177,7 +177,7 @@ export default function VibecodingPage() {
             <Card data-testid="card-generated-code">
               <CardHeader>
                 <div className="flex items-center justify-between">
-                  <CardTitle>Generated Code</CardTitle>
+                  <CardTitle>{t('pages:mrblue.vibecoding.generatedCode', 'Generated Code')}</CardTitle>
                   <div className="flex gap-2">
                     <Button
                       size="sm"
@@ -187,7 +187,7 @@ export default function VibecodingPage() {
                       data-testid="button-apply-code"
                     >
                       <Check className="h-4 w-4 mr-2" />
-                      {currentGeneration.applied ? 'Applied' : 'Apply'}
+                      {currentGeneration.applied ? t('pages:mrblue.vibecoding.applied', 'Applied') : t('pages:mrblue.vibecoding.apply', 'Apply')}
                     </Button>
                     <Button
                       size="sm"
@@ -196,7 +196,7 @@ export default function VibecodingPage() {
                       data-testid="button-reject-code"
                     >
                       <X className="h-4 w-4 mr-2" />
-                      Reject
+                      {t('pages:mrblue.vibecoding.reject', 'Reject')}
                     </Button>
                   </div>
                 </div>
@@ -204,8 +204,8 @@ export default function VibecodingPage() {
               <CardContent>
                 <Tabs defaultValue="code">
                   <TabsList>
-                    <TabsTrigger value="code" data-testid="tab-code">Code</TabsTrigger>
-                    <TabsTrigger value="prompt" data-testid="tab-prompt">Prompt</TabsTrigger>
+                    <TabsTrigger value="code" data-testid="tab-code">{t('pages:mrblue.vibecoding.tabCode', 'Code')}</TabsTrigger>
+                    <TabsTrigger value="prompt" data-testid="tab-prompt">{t('pages:mrblue.vibecoding.tabPrompt', 'Prompt')}</TabsTrigger>
                   </TabsList>
                   <TabsContent value="code" className="mt-4">
                     <div className="rounded-lg overflow-hidden">
@@ -232,7 +232,7 @@ export default function VibecodingPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <History className="h-5 w-5" />
-                  Iteration History ({generations.length - 1})
+                  {t('pages:mrblue.vibecoding.iterationHistory', 'Iteration History')} ({generations.length - 1})
                 </CardTitle>
               </CardHeader>
               <CardContent>

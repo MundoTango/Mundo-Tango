@@ -99,19 +99,19 @@ export default function ContextMemoryPage() {
     <div className="container mx-auto py-8 space-y-6" data-testid="page-context-memory">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Context Memory Manager</h1>
+          <h1 className="text-3xl font-bold">{t('pages:mrblue.context.title', 'Context Memory Manager')}</h1>
           <p className="text-muted-foreground mt-2">
-            Manage Mr Blue's knowledge base and conversation history
+            {t('pages:mrblue.context.subtitle', "Manage Mr Blue's knowledge base and conversation history")}
           </p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={exportContext} data-testid="button-export">
             <Download className="h-4 w-4 mr-2" />
-            Export
+            {t('pages:mrblue.context.export', 'Export')}
           </Button>
           <Button variant="outline" data-testid="button-import">
             <Upload className="h-4 w-4 mr-2" />
-            Import
+            {t('pages:mrblue.context.import', 'Import')}
           </Button>
         </div>
       </div>
@@ -120,25 +120,25 @@ export default function ContextMemoryPage() {
         <TabsList>
           <TabsTrigger value="knowledge" data-testid="tab-knowledge">
             <Database className="h-4 w-4 mr-2" />
-            Knowledge Base
+            {t('pages:mrblue.context.knowledgeBase', 'Knowledge Base')}
           </TabsTrigger>
           <TabsTrigger value="conversations" data-testid="tab-conversations">
             <MessageSquare className="h-4 w-4 mr-2" />
-            Conversation History
+            {t('pages:mrblue.context.conversationHistory', 'Conversation History')}
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="knowledge" className="space-y-4">
           <Card data-testid="card-search-filter">
             <CardHeader>
-              <CardTitle>Search & Filter</CardTitle>
+              <CardTitle>{t('pages:mrblue.context.searchFilter', 'Search & Filter')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
-                    placeholder="Search context..."
+                    placeholder={t('pages:mrblue.context.searchPlaceholder', 'Search context...')}
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     className="pl-10"
@@ -169,9 +169,9 @@ export default function ContextMemoryPage() {
                 <div>
                   <CardTitle>
                     <Brain className="h-5 w-5 inline mr-2" />
-                    Stored Context ({contextItems?.length || 0})
+                    {t('pages:mrblue.context.storedContext', 'Stored Context')} ({contextItems?.length || 0})
                   </CardTitle>
-                  <CardDescription>RAG knowledge base and learned preferences</CardDescription>
+                  <CardDescription>{t('pages:mrblue.context.storedContextDesc', 'RAG knowledge base and learned preferences')}</CardDescription>
                 </div>
                 {selectedCategory !== 'all' && (
                   <Button
@@ -181,7 +181,7 @@ export default function ContextMemoryPage() {
                     data-testid="button-clear-category"
                   >
                     <Trash2 className="h-4 w-4 mr-2" />
-                    Clear {selectedCategory}
+                    {t('pages:mrblue.context.clear', 'Clear')} {selectedCategory}
                   </Button>
                 )}
               </div>
@@ -209,7 +209,7 @@ export default function ContextMemoryPage() {
                           </div>
                           <p className="text-sm">{item.content}</p>
                           <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
-                            <span>Source: {item.source}</span>
+                            <span>{t('pages:mrblue.context.source', 'Source')}: {item.source}</span>
                             <span>{formatDistanceToNow(new Date(item.timestamp), { addSuffix: true })}</span>
                           </div>
                         </div>
@@ -235,9 +235,9 @@ export default function ContextMemoryPage() {
             <CardHeader>
               <CardTitle>
                 <MessageSquare className="h-5 w-5 inline mr-2" />
-                Recent Conversations ({conversations?.length || 0})
+                {t('pages:mrblue.context.recentConversations', 'Recent Conversations')} ({conversations?.length || 0})
               </CardTitle>
-              <CardDescription>Your conversation history with Mr Blue</CardDescription>
+              <CardDescription>{t('pages:mrblue.context.recentConversationsDesc', 'Your conversation history with Mr Blue')}</CardDescription>
             </CardHeader>
             <CardContent>
               {conversationsLoading ? (

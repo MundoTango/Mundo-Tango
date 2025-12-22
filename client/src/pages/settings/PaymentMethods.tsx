@@ -40,6 +40,7 @@ interface PaymentMethod {
 }
 
 function AddPaymentMethodForm({ onSuccess, onCancel }: { onSuccess: () => void; onCancel: () => void }) {
+  const { t } = useTranslation(["pages", "common"]);
   const stripe = useStripe();
   const elements = useElements();
   const { toast } = useToast();
@@ -61,7 +62,7 @@ function AddPaymentMethodForm({ onSuccess, onCancel }: { onSuccess: () => void; 
 
       if (error) {
         toast({
-          title: "Error",
+          title: t('pages:settings.paymentMethods.error', 'Error'),
           description: error.message,
           variant: "destructive",
         });
@@ -74,15 +75,15 @@ function AddPaymentMethodForm({ onSuccess, onCancel }: { onSuccess: () => void; 
       });
 
       toast({
-        title: "Payment Method Added",
-        description: "Your payment method has been successfully added.",
+        title: t('pages:settings.paymentMethods.paymentMethodAdded', 'Payment Method Added'),
+        description: t('pages:settings.paymentMethods.paymentMethodAddedDesc', 'Your payment method has been successfully added.'),
       });
 
       onSuccess();
     } catch (error: any) {
       toast({
-        title: "Error",
-        description: error.message || "Failed to add payment method",
+        title: t('pages:settings.paymentMethods.error', 'Error'),
+        description: error.message || t('pages:settings.paymentMethods.failedToAdd', 'Failed to add payment method'),
         variant: "destructive",
       });
     } finally {
@@ -100,7 +101,7 @@ function AddPaymentMethodForm({ onSuccess, onCancel }: { onSuccess: () => void; 
           className="flex-1"
           data-testid="button-save-payment-method"
         >
-          {isProcessing ? 'Processing...' : 'Add Payment Method'}
+          {isProcessing ? t('pages:settings.paymentMethods.processing', 'Processing...') : t('pages:settings.paymentMethods.addPaymentMethod', 'Add Payment Method')}
         </Button>
         <Button 
           type="button" 
@@ -108,7 +109,7 @@ function AddPaymentMethodForm({ onSuccess, onCancel }: { onSuccess: () => void; 
           onClick={onCancel}
           data-testid="button-cancel-add"
         >
-          Cancel
+          {t('pages:settings.paymentMethods.cancel', 'Cancel')}
         </Button>
       </div>
     </form>
@@ -135,14 +136,14 @@ export default function PaymentMethods() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/billing/payment-methods'] });
       toast({
-        title: "Default Payment Method Updated",
-        description: "Your default payment method has been updated.",
+        title: t('pages:settings.paymentMethods.defaultUpdated', 'Default Payment Method Updated'),
+        description: t('pages:settings.paymentMethods.defaultUpdatedDesc', 'Your default payment method has been updated.'),
       });
     },
     onError: (error: any) => {
       toast({
-        title: "Update Failed",
-        description: error.message || "Failed to update default payment method",
+        title: t('pages:settings.paymentMethods.updateFailed', 'Update Failed'),
+        description: error.message || t('pages:settings.paymentMethods.failedToUpdateDefault', 'Failed to update default payment method'),
         variant: "destructive",
       });
     },
@@ -156,15 +157,15 @@ export default function PaymentMethods() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/billing/payment-methods'] });
       toast({
-        title: "Payment Method Deleted",
-        description: "The payment method has been removed.",
+        title: t('pages:settings.paymentMethods.paymentMethodDeleted', 'Payment Method Deleted'),
+        description: t('pages:settings.paymentMethods.paymentMethodDeletedDesc', 'The payment method has been removed.'),
       });
       setDeleteConfirmId(null);
     },
     onError: (error: any) => {
       toast({
-        title: "Delete Failed",
-        description: error.message || "Failed to delete payment method",
+        title: t('pages:settings.paymentMethods.deleteFailed', 'Delete Failed'),
+        description: error.message || t('pages:settings.paymentMethods.failedToDelete', 'Failed to delete payment method'),
         variant: "destructive",
       });
     },
@@ -201,10 +202,10 @@ export default function PaymentMethods() {
             </Link>
             <div>
               <h1 className="text-3xl font-bold text-foreground" data-testid="heading-payment-methods">
-                Payment Methods
+                {t('pages:settings.paymentMethods.title', 'Payment Methods')}
               </h1>
               <p className="text-muted-foreground mt-1">
-                Manage your saved payment methods
+                {t('pages:settings.paymentMethods.subtitle', 'Manage your saved payment methods')}
               </p>
             </div>
           </div>
@@ -213,7 +214,7 @@ export default function PaymentMethods() {
             data-testid="button-add-payment-method"
           >
             <Plus className="w-4 h-4 mr-2" />
-            Add Payment Method
+            {t('pages:settings.paymentMethods.addPaymentMethod', 'Add Payment Method')}
           </Button>
         </div>
 
@@ -223,13 +224,13 @@ export default function PaymentMethods() {
             <Card>
               <CardContent className="text-center py-12" data-testid="empty-state">
                 <CreditCard className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">No Payment Methods</h3>
+                <h3 className="text-lg font-semibold mb-2">{t('pages:settings.paymentMethods.noPaymentMethods', 'No Payment Methods')}</h3>
                 <p className="text-muted-foreground mb-4">
-                  Add a payment method to subscribe to paid plans
+                  {t('pages:settings.paymentMethods.noPaymentMethodsDesc', 'Add a payment method to subscribe to paid plans')}
                 </p>
                 <Button onClick={() => setShowAddDialog(true)} data-testid="button-add-first">
                   <Plus className="w-4 h-4 mr-2" />
-                  Add Payment Method
+                  {t('pages:settings.paymentMethods.addPaymentMethod', 'Add Payment Method')}
                 </Button>
               </CardContent>
             </Card>
@@ -249,12 +250,12 @@ export default function PaymentMethods() {
                         {method.isDefault && (
                           <Badge variant="secondary" data-testid={`badge-default-${method.id}`}>
                             <Star className="w-3 h-3 mr-1 fill-current" />
-                            Default
+                            {t('pages:settings.paymentMethods.default', 'Default')}
                           </Badge>
                         )}
                       </div>
                       <p className="text-sm text-muted-foreground">
-                        Expires {method.expMonth.toString().padStart(2, '0')}/{method.expYear}
+                        {t('pages:settings.paymentMethods.expires', 'Expires')} {method.expMonth.toString().padStart(2, '0')}/{method.expYear}
                       </p>
                     </div>
                   </div>
@@ -268,7 +269,7 @@ export default function PaymentMethods() {
                         disabled={setDefaultMutation.isPending}
                         data-testid={`button-set-default-${method.id}`}
                       >
-                        Set as Default
+                        {t('pages:settings.paymentMethods.setAsDefault', 'Set as Default')}
                       </Button>
                     )}
                     <Button
@@ -292,9 +293,9 @@ export default function PaymentMethods() {
       <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
         <DialogContent className="max-w-md" data-testid="dialog-add-payment-method">
           <DialogHeader>
-            <DialogTitle>Add Payment Method</DialogTitle>
+            <DialogTitle>{t('pages:settings.paymentMethods.addPaymentMethod', 'Add Payment Method')}</DialogTitle>
             <DialogDescription>
-              Add a new credit or debit card to your account
+              {t('pages:settings.paymentMethods.addNewCard', 'Add a new credit or debit card to your account')}
             </DialogDescription>
           </DialogHeader>
           <Elements stripe={stripePromise}>
@@ -313,19 +314,19 @@ export default function PaymentMethods() {
       <AlertDialog open={!!deleteConfirmId} onOpenChange={() => setDeleteConfirmId(null)}>
         <AlertDialogContent data-testid="dialog-delete-confirm">
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Payment Method</AlertDialogTitle>
+            <AlertDialogTitle>{t('pages:settings.paymentMethods.deletePaymentMethod', 'Delete Payment Method')}</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete this payment method? This action cannot be undone.
+              {t('pages:settings.paymentMethods.deleteConfirmation', 'Are you sure you want to delete this payment method? This action cannot be undone.')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel data-testid="button-cancel-delete">Cancel</AlertDialogCancel>
+            <AlertDialogCancel data-testid="button-cancel-delete">{t('pages:settings.paymentMethods.cancel', 'Cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => deleteConfirmId && deleteMutation.mutate(deleteConfirmId)}
               data-testid="button-confirm-delete"
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              Delete
+              {t('pages:settings.paymentMethods.delete', 'Delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

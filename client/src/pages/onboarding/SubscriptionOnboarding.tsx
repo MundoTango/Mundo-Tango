@@ -97,7 +97,7 @@ function CountdownTimer({ endTime }: { endTime: number }) {
   );
 }
 
-function SocialProof() {
+function SocialProof({ t }: { t: (key: string, fallback: string) => string }) {
   return (
     <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground" data-testid="social-proof">
       <div className="flex -space-x-2">
@@ -109,20 +109,20 @@ function SocialProof() {
         ))}
       </div>
       <span>
-        <span className="font-semibold text-foreground">523 people</span> upgraded this week
+        <span className="font-semibold text-foreground">{t('pages:onboarding.subscription.socialProof.count', '523 people')}</span> {t('pages:onboarding.subscription.socialProof.upgraded', 'upgraded this week')}
       </span>
     </div>
   );
 }
 
-function StepIndicator({ currentStep, totalSteps }: { currentStep: number; totalSteps: number }) {
+function StepIndicator({ currentStep, totalSteps, t }: { currentStep: number; totalSteps: number; t: (key: string, fallback: string, options?: any) => string }) {
   const progress = ((currentStep + 1) / totalSteps) * 100;
 
   return (
     <div className="space-y-3" data-testid="step-indicator">
       <div className="flex justify-between text-sm text-muted-foreground">
-        <span>Step {currentStep + 1} of {totalSteps}</span>
-        <span>{Math.round(progress)}% complete</span>
+        <span>{t('pages:onboarding.subscription.stepIndicator', 'Step {{current}} of {{total}}', { current: currentStep + 1, total: totalSteps })}</span>
+        <span>{t('pages:onboarding.subscription.percentComplete', '{{percent}}% complete', { percent: Math.round(progress) })}</span>
       </div>
       <Progress value={progress} className="h-2" data-testid="progress-bar" />
       <div className="flex justify-between gap-2">
@@ -140,20 +140,19 @@ function StepIndicator({ currentStep, totalSteps }: { currentStep: number; total
   );
 }
 
-function WelcomeStep({ onNext }: { onNext: () => void }) {
+function WelcomeStep({ onNext, t }: { onNext: () => void; t: (key: string, fallback: string) => string }) {
   return (
     <div className="space-y-8 text-center" data-testid="step-welcome">
       <div className="space-y-4">
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary">
           <Sparkles className="w-5 h-5" />
-          <span className="font-semibold">Limited Time Offer</span>
+          <span className="font-semibold">{t('pages:onboarding.subscription.welcome.limitedOffer', 'Limited Time Offer')}</span>
         </div>
         <h1 className="text-4xl lg:text-5xl font-bold text-foreground">
-          Welcome to Premium Tango
+          {t('pages:onboarding.subscription.welcome.title', 'Welcome to Premium Tango')}
         </h1>
         <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-          Join thousands of dancers who've elevated their tango journey with exclusive features,
-          AI-powered matching, and unlimited access to global events.
+          {t('pages:onboarding.subscription.welcome.subtitle', "Join thousands of dancers who've elevated their tango journey with exclusive features, AI-powered matching, and unlimited access to global events.")}
         </p>
       </div>
 
@@ -163,9 +162,9 @@ function WelcomeStep({ onNext }: { onNext: () => void }) {
             <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
               <Users className="w-6 h-6 text-primary" />
             </div>
-            <h3 className="font-semibold text-lg">Connect Globally</h3>
+            <h3 className="font-semibold text-lg">{t('pages:onboarding.subscription.welcome.features.connect.title', 'Connect Globally')}</h3>
             <p className="text-sm text-muted-foreground">
-              Advanced matching algorithm connects you with perfect dance partners worldwide
+              {t('pages:onboarding.subscription.welcome.features.connect.description', 'Advanced matching algorithm connects you with perfect dance partners worldwide')}
             </p>
           </CardContent>
         </Card>
@@ -175,9 +174,9 @@ function WelcomeStep({ onNext }: { onNext: () => void }) {
             <div className="w-12 h-12 rounded-full bg-secondary/10 flex items-center justify-center mx-auto">
               <TrendingUp className="w-6 h-6 text-secondary" />
             </div>
-            <h3 className="font-semibold text-lg">Grow Your Skills</h3>
+            <h3 className="font-semibold text-lg">{t('pages:onboarding.subscription.welcome.features.grow.title', 'Grow Your Skills')}</h3>
             <p className="text-sm text-muted-foreground">
-              Access exclusive workshops, tutorials, and personalized learning paths
+              {t('pages:onboarding.subscription.welcome.features.grow.description', 'Access exclusive workshops, tutorials, and personalized learning paths')}
             </p>
           </CardContent>
         </Card>
@@ -187,9 +186,9 @@ function WelcomeStep({ onNext }: { onNext: () => void }) {
             <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center mx-auto">
               <Crown className="w-6 h-6 text-accent" />
             </div>
-            <h3 className="font-semibold text-lg">Premium Access</h3>
+            <h3 className="font-semibold text-lg">{t('pages:onboarding.subscription.welcome.features.premium.title', 'Premium Access')}</h3>
             <p className="text-sm text-muted-foreground">
-              Unlimited event creation, priority support, and early feature access
+              {t('pages:onboarding.subscription.welcome.features.premium.description', 'Unlimited event creation, priority support, and early feature access')}
             </p>
           </CardContent>
         </Card>
@@ -223,10 +222,10 @@ function WelcomeStep({ onNext }: { onNext: () => void }) {
           onClick={onNext}
           data-testid="button-get-started"
         >
-          Get Started
+          {t('pages:onboarding.subscription.welcome.getStarted', 'Get Started')}
           <ArrowRight className="w-5 h-5 ml-2" />
         </Button>
-        <SocialProof />
+        <SocialProof t={t} />
       </div>
     </div>
   );
@@ -238,12 +237,14 @@ function PlanSelectionStep({
   onSelectPlan,
   onNext,
   onBack,
+  t,
 }: {
   plans: Plan[];
   selectedPlanId: string;
   onSelectPlan: (planId: string) => void;
   onNext: () => void;
   onBack: () => void;
+  t: (key: string, fallback: string) => string;
 }) {
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('monthly');
   const offerEndTime = Date.now() + 15 * 60 * 1000;
@@ -271,19 +272,19 @@ function PlanSelectionStep({
     <div className="space-y-8" data-testid="step-plan-selection">
       <div className="text-center space-y-4">
         <div className="flex items-center justify-center gap-4">
-          <h2 className="text-3xl lg:text-4xl font-bold">Choose Your Plan</h2>
+          <h2 className="text-3xl lg:text-4xl font-bold">{t('pages:onboarding.subscription.plans.title', 'Choose Your Plan')}</h2>
           <Badge variant="destructive" className="text-sm">
             <CountdownTimer endTime={offerEndTime} />
           </Badge>
         </div>
         <p className="text-lg text-muted-foreground">
-          Special offer ends soon! Save 20% with yearly billing
+          {t('pages:onboarding.subscription.plans.subtitle', 'Special offer ends soon! Save 20% with yearly billing')}
         </p>
       </div>
 
       <div className="flex items-center justify-center gap-3">
         <Label htmlFor="billing-toggle" className={billingPeriod === 'monthly' ? 'font-semibold' : ''}>
-          Monthly
+          {t('pages:onboarding.subscription.plans.monthly', 'Monthly')}
         </Label>
         <Switch
           id="billing-toggle"
@@ -292,8 +293,8 @@ function PlanSelectionStep({
           data-testid="switch-billing-period"
         />
         <Label htmlFor="billing-toggle" className={billingPeriod === 'yearly' ? 'font-semibold' : ''}>
-          Yearly
-          <Badge variant="secondary" className="ml-2">Save 20%</Badge>
+          {t('pages:onboarding.subscription.plans.yearly', 'Yearly')}
+          <Badge variant="secondary" className="ml-2">{t('pages:onboarding.subscription.plans.save20', 'Save 20%')}</Badge>
         </Label>
       </div>
 
@@ -317,7 +318,7 @@ function PlanSelectionStep({
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2">
                   <Badge className="bg-primary text-primary-foreground px-4 py-1">
                     <Award className="w-3 h-3 mr-1" />
-                    Most Popular
+                    {t('pages:onboarding.subscription.plans.mostPopular', 'Most Popular')}
                   </Badge>
                 </div>
               )}
@@ -344,7 +345,7 @@ function PlanSelectionStep({
                         )}
                       </div>
                     ) : (
-                      <div className="text-3xl font-bold">Free</div>
+                      <div className="text-3xl font-bold">{t('pages:onboarding.subscription.plans.free', 'Free')}</div>
                     )}
                   </div>
                 </div>
@@ -365,11 +366,11 @@ function PlanSelectionStep({
                   className="w-full"
                   data-testid={`button-select-${plan.id}`}
                 >
-                  {isSelected ? 'Selected' : 'Select Plan'}
+                  {isSelected ? t('pages:onboarding.subscription.plans.selected', 'Selected') : t('pages:onboarding.subscription.plans.selectPlan', 'Select Plan')}
                 </Button>
                 {plan.id === 'basic' && (
                   <p className="text-xs text-center text-muted-foreground">
-                    14-day free trial, no credit card required
+                    {t('pages:onboarding.subscription.plans.freeTrial', '14-day free trial, no credit card required')}
                   </p>
                 )}
               </CardContent>
@@ -380,13 +381,13 @@ function PlanSelectionStep({
 
       <div className="flex items-center justify-center gap-3 text-sm text-muted-foreground">
         <Shield className="w-5 h-5 text-primary" />
-        <span>30-day money-back guarantee • Cancel anytime</span>
+        <span>{t('pages:onboarding.subscription.plans.guarantee', '30-day money-back guarantee • Cancel anytime')}</span>
       </div>
 
       <div className="flex gap-4 justify-center">
         <Button variant="outline" onClick={onBack} data-testid="button-back">
           <ArrowLeft className="w-4 h-4 mr-2" />
-          Back
+          {t('common:buttons.back', 'Back')}
         </Button>
         <Button
           size="lg"
@@ -394,7 +395,7 @@ function PlanSelectionStep({
           disabled={!selectedPlanId}
           data-testid="button-continue-plan"
         >
-          Continue
+          {t('common:buttons.continue', 'Continue')}
           <ArrowRight className="w-5 h-5 ml-2" />
         </Button>
       </div>
@@ -406,10 +407,12 @@ function ProfileCompletionStep({
   onNext,
   onBack,
   onSkip,
+  t,
 }: {
   onNext: () => void;
   onBack: () => void;
   onSkip: () => void;
+  t: (key: string, fallback: string, options?: any) => string;
 }) {
   const [formData, setFormData] = useState({
     firstName: '',
@@ -432,13 +435,13 @@ function ProfileCompletionStep({
   return (
     <div className="max-w-2xl mx-auto space-y-8" data-testid="step-profile-completion">
       <div className="text-center space-y-4">
-        <h2 className="text-3xl font-bold">Complete Your Profile</h2>
+        <h2 className="text-3xl font-bold">{t('pages:onboarding.subscription.profile.title', 'Complete Your Profile')}</h2>
         <p className="text-lg text-muted-foreground">
-          Help us personalize your experience (optional)
+          {t('pages:onboarding.subscription.profile.subtitle', 'Help us personalize your experience (optional)')}
         </p>
         <div className="space-y-2">
           <div className="flex justify-between text-sm text-muted-foreground">
-            <span>Profile Completion</span>
+            <span>{t('pages:onboarding.subscription.profile.completion', 'Profile Completion')}</span>
             <span className="font-semibold">{completionPercentage}%</span>
           </div>
           <Progress value={completionPercentage} className="h-2" data-testid="profile-progress" />
@@ -450,29 +453,29 @@ function ProfileCompletionStep({
           <CardContent className="pt-6 space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="firstName">First Name</Label>
+                <Label htmlFor="firstName">{t('pages:onboarding.subscription.profile.firstName', 'First Name')}</Label>
                 <Input
                   id="firstName"
                   value={formData.firstName}
                   onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                  placeholder="Maria"
+                  placeholder={t('pages:onboarding.subscription.profile.firstNamePlaceholder', 'Maria')}
                   data-testid="input-first-name"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="lastName">Last Name</Label>
+                <Label htmlFor="lastName">{t('pages:onboarding.subscription.profile.lastName', 'Last Name')}</Label>
                 <Input
                   id="lastName"
                   value={formData.lastName}
                   onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                  placeholder="Garcia"
+                  placeholder={t('pages:onboarding.subscription.profile.lastNamePlaceholder', 'Garcia')}
                   data-testid="input-last-name"
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="location">Location</Label>
+              <Label htmlFor="location">{t('pages:onboarding.subscription.profile.location', 'Location')}</Label>
               <UnifiedLocationPicker
                 mode="city"
                 value={formData.location}
@@ -484,7 +487,7 @@ function ProfileCompletionStep({
                     country: parsed?.country || ''
                   });
                 }}
-                placeholder="Search for your city..."
+                placeholder={t('pages:onboarding.subscription.profile.locationPlaceholder', 'Search for your city...')}
               />
               {formData.city && formData.country && (
                 <div className="flex items-center gap-2 p-3 rounded-lg bg-primary/10 border border-primary/20 mt-2">
@@ -495,7 +498,7 @@ function ProfileCompletionStep({
             </div>
 
             <div className="space-y-2">
-              <Label>Tango Roles (select all that apply)</Label>
+              <Label>{t('pages:onboarding.subscription.profile.tangoRoles', 'Tango Roles (select all that apply)')}</Label>
               <div className="flex flex-wrap gap-2">
                 {['Leader', 'Follower', 'Both'].map((role) => (
                   <Button
@@ -513,7 +516,7 @@ function ProfileCompletionStep({
                     }}
                     data-testid={`button-role-${role.toLowerCase()}`}
                   >
-                    {role}
+                    {t(`pages:onboarding.subscription.profile.role${role}`, role)}
                   </Button>
                 ))}
               </div>
@@ -524,13 +527,13 @@ function ProfileCompletionStep({
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Button variant="outline" onClick={onBack} type="button" data-testid="button-back">
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back
+            {t('common:buttons.back', 'Back')}
           </Button>
           <Button variant="ghost" onClick={onSkip} type="button" data-testid="button-skip">
-            Skip for Now
+            {t('pages:onboarding.subscription.profile.skipForNow', 'Skip for Now')}
           </Button>
           <Button size="lg" type="submit" data-testid="button-continue-profile">
-            Continue
+            {t('common:buttons.continue', 'Continue')}
             <ArrowRight className="w-5 h-5 ml-2" />
           </Button>
         </div>
@@ -542,9 +545,11 @@ function ProfileCompletionStep({
 function PaymentStepForm({
   plan,
   onSuccess,
+  t,
 }: {
   plan: Plan;
   onSuccess: () => void;
+  t: (key: string, fallback: string, options?: any) => string;
 }) {
   const stripe = useStripe();
   const elements = useElements();
@@ -570,7 +575,7 @@ function PaymentStepForm({
 
       if (error) {
         toast({
-          title: "Payment Failed",
+          title: t('pages:onboarding.subscription.payment.errors.paymentFailed', 'Payment Failed'),
           description: error.message,
           variant: "destructive",
         });
@@ -579,8 +584,8 @@ function PaymentStepForm({
       }
     } catch (error: any) {
       toast({
-        title: "Error",
-        description: error.message || "Something went wrong",
+        title: t('common:errors.error', 'Error'),
+        description: error.message || t('common:errors.somethingWentWrong', 'Something went wrong'),
         variant: "destructive",
       });
     } finally {
@@ -593,7 +598,7 @@ function PaymentStepForm({
       <div className="space-y-4">
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <Lock className="w-4 h-4" />
-          <span>Secure payment powered by Stripe</span>
+          <span>{t('pages:onboarding.subscription.payment.securePayment', 'Secure payment powered by Stripe')}</span>
         </div>
         <PaymentElement />
       </div>
@@ -606,12 +611,11 @@ function PaymentStepForm({
           disabled={!stripe || isProcessing}
           data-testid="button-complete-payment"
         >
-          {isProcessing ? 'Processing...' : `Subscribe to ${plan.name} - $${plan.price}/${plan.interval}`}
+          {isProcessing ? t('pages:onboarding.subscription.payment.processing', 'Processing...') : t('pages:onboarding.subscription.payment.subscribeTo', 'Subscribe to {{plan}} - ${{price}}/{{interval}}', { plan: plan.name, price: plan.price, interval: plan.interval })}
         </Button>
         
         <p className="text-xs text-center text-muted-foreground">
-          By confirming your subscription, you allow Mundo Tango to charge your card for this payment
-          and future payments in accordance with their terms.
+          {t('pages:onboarding.subscription.payment.termsNotice', 'By confirming your subscription, you allow Mundo Tango to charge your card for this payment and future payments in accordance with their terms.')}
         </p>
       </div>
     </form>
@@ -622,10 +626,12 @@ function PaymentStep({
   plan,
   onBack,
   onSuccess,
+  t,
 }: {
   plan: Plan | null;
   onBack: () => void;
   onSuccess: () => void;
+  t: (key: string, fallback: string, options?: any) => string;
 }) {
   const [clientSecret, setClientSecret] = useState<string>('');
   const { toast } = useToast();
@@ -647,8 +653,8 @@ function PaymentStep({
     },
     onError: (error: any) => {
       toast({
-        title: "Error",
-        description: error.message || "Failed to create subscription",
+        title: t('common:errors.error', 'Error'),
+        description: error.message || t('pages:onboarding.subscription.payment.errors.createFailed', 'Failed to create subscription'),
         variant: "destructive",
       });
     },
@@ -664,9 +670,9 @@ function PaymentStep({
     return (
       <div className="text-center" data-testid="no-plan-selected">
         <AlertCircle className="w-12 h-12 text-destructive mx-auto mb-4" />
-        <p className="text-muted-foreground">No plan selected. Please go back and select a plan.</p>
+        <p className="text-muted-foreground">{t('pages:onboarding.subscription.payment.noPlanSelected', 'No plan selected. Please go back and select a plan.')}</p>
         <Button onClick={onBack} className="mt-4" data-testid="button-back">
-          Go Back
+          {t('pages:onboarding.subscription.payment.goBack', 'Go Back')}
         </Button>
       </div>
     );
@@ -680,8 +686,8 @@ function PaymentStep({
     return (
       <div className="text-center space-y-4" data-testid="free-plan-selected">
         <CheckCircle2 className="w-16 h-16 text-primary mx-auto" />
-        <h3 className="text-2xl font-bold">Welcome to Mundo Tango!</h3>
-        <p className="text-muted-foreground">You're all set with the Free plan.</p>
+        <h3 className="text-2xl font-bold">{t('pages:onboarding.subscription.payment.welcomeFree', 'Welcome to Mundo Tango!')}</h3>
+        <p className="text-muted-foreground">{t('pages:onboarding.subscription.payment.allSetFree', "You're all set with the Free plan.")}</p>
       </div>
     );
   }
@@ -690,7 +696,7 @@ function PaymentStep({
     return (
       <div className="text-center" data-testid="loading-payment">
         <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4" />
-        <p className="text-muted-foreground">Preparing your subscription...</p>
+        <p className="text-muted-foreground">{t('pages:onboarding.subscription.payment.preparing', 'Preparing your subscription...')}</p>
       </div>
     );
   }
@@ -698,29 +704,29 @@ function PaymentStep({
   return (
     <div className="max-w-2xl mx-auto space-y-8" data-testid="step-payment">
       <div className="text-center space-y-4">
-        <h2 className="text-3xl font-bold">Complete Your Subscription</h2>
+        <h2 className="text-3xl font-bold">{t('pages:onboarding.subscription.payment.title', 'Complete Your Subscription')}</h2>
         <p className="text-lg text-muted-foreground">
-          Secure payment for {plan.name} plan
+          {t('pages:onboarding.subscription.payment.subtitle', 'Secure payment for {{plan}} plan', { plan: plan.name })}
         </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
-            <CardTitle>Payment Summary</CardTitle>
+            <CardTitle>{t('pages:onboarding.subscription.payment.summary', 'Payment Summary')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex justify-between">
-              <span>Plan</span>
+              <span>{t('pages:onboarding.subscription.payment.planLabel', 'Plan')}</span>
               <span className="font-semibold">{plan.name}</span>
             </div>
             <div className="flex justify-between">
-              <span>Billing</span>
+              <span>{t('pages:onboarding.subscription.payment.billingLabel', 'Billing')}</span>
               <span className="font-semibold">{plan.interval}ly</span>
             </div>
             <Separator />
             <div className="flex justify-between text-lg font-bold">
-              <span>Total</span>
+              <span>{t('pages:onboarding.subscription.payment.totalLabel', 'Total')}</span>
               <span>${plan.price}/{plan.interval}</span>
             </div>
 
@@ -728,10 +734,10 @@ function PaymentStep({
               <div className="p-3 bg-primary/10 rounded-lg space-y-1">
                 <p className="font-semibold text-sm flex items-center gap-2">
                   <Sparkles className="w-4 h-4" />
-                  14-Day Free Trial
+                  {t('pages:onboarding.subscription.payment.freeTrialTitle', '14-Day Free Trial')}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  No charge today. Cancel anytime during trial.
+                  {t('pages:onboarding.subscription.payment.freeTrialDesc', 'No charge today. Cancel anytime during trial.')}
                 </p>
               </div>
             )}
@@ -739,15 +745,15 @@ function PaymentStep({
             <div className="space-y-2 text-sm">
               <div className="flex items-start gap-2">
                 <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
-                <span>30-day money-back guarantee</span>
+                <span>{t('pages:onboarding.subscription.payment.guarantee30Day', '30-day money-back guarantee')}</span>
               </div>
               <div className="flex items-start gap-2">
                 <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
-                <span>Cancel anytime</span>
+                <span>{t('pages:onboarding.subscription.payment.cancelAnytime', 'Cancel anytime')}</span>
               </div>
               <div className="flex items-start gap-2">
                 <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
-                <span>Instant access to all features</span>
+                <span>{t('pages:onboarding.subscription.payment.instantAccess', 'Instant access to all features')}</span>
               </div>
             </div>
           </CardContent>
@@ -755,8 +761,8 @@ function PaymentStep({
 
         <Card>
           <CardHeader>
-            <CardTitle>Payment Information</CardTitle>
-            <CardDescription>Enter your payment details</CardDescription>
+            <CardTitle>{t('pages:onboarding.subscription.payment.paymentInfo', 'Payment Information')}</CardTitle>
+            <CardDescription>{t('pages:onboarding.subscription.payment.enterDetails', 'Enter your payment details')}</CardDescription>
           </CardHeader>
           <CardContent>
             <Elements
@@ -768,7 +774,7 @@ function PaymentStep({
                 },
               }}
             >
-              <PaymentStepForm plan={plan} onSuccess={onSuccess} />
+              <PaymentStepForm plan={plan} onSuccess={onSuccess} t={t} />
             </Elements>
           </CardContent>
         </Card>
@@ -777,7 +783,7 @@ function PaymentStep({
       <div className="flex justify-center">
         <Button variant="outline" onClick={onBack} data-testid="button-back">
           <ArrowLeft className="w-4 h-4 mr-2" />
-          Back
+          {t('common:buttons.back', 'Back')}
         </Button>
       </div>
     </div>
@@ -824,10 +830,9 @@ export default function SubscriptionOnboarding() {
     },
     onSuccess: () => {
       toast({
-        title: "Welcome to Mundo Tango!",
-        description: "Your subscription is now active.",
+        title: t('pages:onboarding.subscription.complete.title', 'Welcome to Mundo Tango!'),
+        description: t('pages:onboarding.subscription.complete.description', 'Your subscription is now active.'),
       });
-      // After onboarding, redirect to volunteer/support page
       setLocation('/volunteer');
     },
   });
@@ -873,9 +878,9 @@ export default function SubscriptionOnboarding() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 py-12 px-4" data-testid="subscription-onboarding">
       <div className="max-w-7xl mx-auto space-y-8">
-        {currentStep > 0 && <StepIndicator currentStep={currentStep} totalSteps={totalSteps} />}
+        {currentStep > 0 && <StepIndicator currentStep={currentStep} totalSteps={totalSteps} t={t} />}
 
-        {currentStep === 0 && <WelcomeStep onNext={handleNext} />}
+        {currentStep === 0 && <WelcomeStep onNext={handleNext} t={t} />}
 
         {currentStep === 1 && (
           <PlanSelectionStep
@@ -884,15 +889,16 @@ export default function SubscriptionOnboarding() {
             onSelectPlan={setSelectedPlanId}
             onNext={handleNext}
             onBack={handleBack}
+            t={t}
           />
         )}
 
         {currentStep === 2 && (
-          <ProfileCompletionStep onNext={handleNext} onBack={handleBack} onSkip={handleSkip} />
+          <ProfileCompletionStep onNext={handleNext} onBack={handleBack} onSkip={handleSkip} t={t} />
         )}
 
         {currentStep === 3 && (
-          <PaymentStep plan={selectedPlan} onBack={handleBack} onSuccess={handlePaymentSuccess} />
+          <PaymentStep plan={selectedPlan} onBack={handleBack} onSuccess={handlePaymentSuccess} t={t} />
         )}
       </div>
 
@@ -909,15 +915,15 @@ export default function SubscriptionOnboarding() {
               <X className="w-4 h-4" />
             </Button>
             <CardHeader>
-              <CardTitle className="text-2xl">Wait! Before You Go...</CardTitle>
+              <CardTitle className="text-2xl">{t('pages:onboarding.subscription.exitIntent.title', 'Wait! Before You Go...')}</CardTitle>
               <CardDescription>
-                Get an exclusive 20% discount on your first year!
+                {t('pages:onboarding.subscription.exitIntent.subtitle', 'Get an exclusive 20% discount on your first year!')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="p-4 bg-primary/10 rounded-lg text-center">
-                <p className="text-3xl font-bold text-primary">20% OFF</p>
-                <p className="text-sm text-muted-foreground">Applied at checkout</p>
+                <p className="text-3xl font-bold text-primary">{t('pages:onboarding.subscription.exitIntent.discount', '20% OFF')}</p>
+                <p className="text-sm text-muted-foreground">{t('pages:onboarding.subscription.exitIntent.applied', 'Applied at checkout')}</p>
               </div>
               <div className="space-y-2">
                 <Button
@@ -928,7 +934,7 @@ export default function SubscriptionOnboarding() {
                   }}
                   data-testid="button-claim-offer"
                 >
-                  Claim My Discount
+                  {t('pages:onboarding.subscription.exitIntent.claimDiscount', 'Claim My Discount')}
                 </Button>
                 <Button
                   variant="ghost"
@@ -936,7 +942,7 @@ export default function SubscriptionOnboarding() {
                   onClick={() => setShowExitIntent(false)}
                   data-testid="button-continue-browsing"
                 >
-                  Continue Browsing
+                  {t('pages:onboarding.subscription.exitIntent.continueBrowsing', 'Continue Browsing')}
                 </Button>
               </div>
             </CardContent>

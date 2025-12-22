@@ -196,7 +196,7 @@ export default function DirectMessages() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <p className="text-muted-foreground">Loading conversation...</p>
+        <p className="text-muted-foreground">{t('pages:messages.direct.loadingConversation', 'Loading conversation...')}</p>
       </div>
     );
   }
@@ -220,7 +220,7 @@ export default function DirectMessages() {
               <div>
                 <h2 className="font-semibold" data-testid="text-recipient-name">{user?.name || "User"}</h2>
                 {isTyping && (
-                  <p className="text-xs text-muted-foreground">typing...</p>
+                  <p className="text-xs text-muted-foreground">{t('pages:messages.direct.typing', 'typing...')}</p>
                 )}
               </div>
             </div>
@@ -250,7 +250,7 @@ export default function DirectMessages() {
               </Avatar>
               <h3 className="text-lg font-semibold mb-1">{user?.name}</h3>
               <p className="text-muted-foreground text-sm">
-                Start a conversation with {user?.name}
+                {t('pages:messages.direct.startConversation', 'Start a conversation with {{name}}', { name: user?.name })}
               </p>
             </div>
           )}
@@ -433,7 +433,7 @@ export default function DirectMessages() {
                 data-testid="button-attach-image"
               >
                 <ImageIcon className="h-4 w-4" />
-                Photo or Video
+                {t('pages:messages.direct.photoOrVideo', 'Photo or Video')}
               </Button>
               <Button
                 variant="ghost"
@@ -448,7 +448,7 @@ export default function DirectMessages() {
                 data-testid="button-attach-file"
               >
                 <Paperclip className="h-4 w-4" />
-                Document
+                {t('pages:messages.direct.document', 'Document')}
               </Button>
             </PopoverContent>
           </Popover>
@@ -458,7 +458,7 @@ export default function DirectMessages() {
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder="Type a message..."
+              placeholder={t('pages:messages.direct.typePlaceholder', 'Type a message...')}
               className="min-h-[2.5rem]"
               data-testid="input-message"
             />

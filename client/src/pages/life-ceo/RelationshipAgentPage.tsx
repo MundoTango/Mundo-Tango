@@ -13,37 +13,37 @@ import relationshipImg1 from "@assets/stock_images/business_team_meetin_2bf5caa8
 export default function RelationshipAgentPage() {
   const { t } = useTranslation(["pages", "common"]);
   const recentActivities = [
-    { activity: "Date Night: Tango Milonga", date: "2 days ago", quality: "Excellent", impact: "high" },
-    { activity: "Deep Conversation", date: "4 days ago", quality: "Good", impact: "medium" },
-    { activity: "Weekend Trip", date: "1 week ago", quality: "Excellent", impact: "high" }
+    { activity: t('pages:lifeceo.relationship.activities.dateNight', 'Date Night: Tango Milonga'), date: t('pages:lifeceo.relationship.date.2daysAgo', '2 days ago'), quality: t('pages:lifeceo.relationship.quality.excellent', 'Excellent'), impact: "high" },
+    { activity: t('pages:lifeceo.relationship.activities.deepConversation', 'Deep Conversation'), date: t('pages:lifeceo.relationship.date.4daysAgo', '4 days ago'), quality: t('pages:lifeceo.relationship.quality.good', 'Good'), impact: "medium" },
+    { activity: t('pages:lifeceo.relationship.activities.weekendTrip', 'Weekend Trip'), date: t('pages:lifeceo.relationship.date.1weekAgo', '1 week ago'), quality: t('pages:lifeceo.relationship.quality.excellent', 'Excellent'), impact: "high" }
   ];
 
   const insights = [
-    { title: "Quality Time Trend", message: "You've spent 20% more quality time together this month. Keep it up!", type: "positive" },
-    { title: "Communication Tip", message: "Try practicing active listening during conversations this week.", type: "suggestion" },
-    { title: "Shared Activities", message: "Dancing together has strengthened your bond by 15%.", type: "positive" }
+    { title: t('pages:lifeceo.relationship.insights.qualityTimeTrend', 'Quality Time Trend'), message: t('pages:lifeceo.relationship.insights.qualityTimeMessage', "You've spent 20% more quality time together this month. Keep it up!"), type: "positive" },
+    { title: t('pages:lifeceo.relationship.insights.communicationTip', 'Communication Tip'), message: t('pages:lifeceo.relationship.insights.communicationMessage', 'Try practicing active listening during conversations this week.'), type: "suggestion" },
+    { title: t('pages:lifeceo.relationship.insights.sharedActivities', 'Shared Activities'), message: t('pages:lifeceo.relationship.insights.sharedActivitiesMessage', 'Dancing together has strengthened your bond by 15%.'), type: "positive" }
   ];
 
   const suggestions = [
-    { activity: "Tango Class Together", category: "Shared Hobby", time: "2 hours" },
-    { activity: "Couples Meditation", category: "Mindfulness", time: "20 min" },
-    { activity: "Cook a Meal Together", category: "Quality Time", time: "1 hour" }
+    { activity: t('pages:lifeceo.relationship.suggestions.tangoClass', 'Tango Class Together'), category: t('pages:lifeceo.relationship.category.sharedHobby', 'Shared Hobby'), time: t('pages:lifeceo.relationship.time.2hours', '2 hours') },
+    { activity: t('pages:lifeceo.relationship.suggestions.couplesMeditation', 'Couples Meditation'), category: t('pages:lifeceo.relationship.category.mindfulness', 'Mindfulness'), time: t('pages:lifeceo.relationship.time.20min', '20 min') },
+    { activity: t('pages:lifeceo.relationship.suggestions.cookMeal', 'Cook a Meal Together'), category: t('pages:lifeceo.relationship.category.qualityTime', 'Quality Time'), time: t('pages:lifeceo.relationship.time.1hour', '1 hour') }
   ];
 
   const metrics = [
-    { label: "Connection Score", value: "87%", icon: Heart, color: "text-pink-500" },
-    { label: "Quality Time", value: "12h", icon: Calendar, color: "text-blue-500" },
-    { label: "Communication", value: "Strong", icon: MessageCircle, color: "text-green-500" },
-    { label: "Health", value: "8.5/10", icon: Sparkles, color: "text-purple-500" }
+    { label: t('pages:lifeceo.relationship.metrics.connectionScore', 'Connection Score'), value: "87%", icon: Heart, color: "text-pink-500" },
+    { label: t('pages:lifeceo.relationship.metrics.qualityTime', 'Quality Time'), value: "12h", icon: Calendar, color: "text-blue-500" },
+    { label: t('pages:lifeceo.relationship.metrics.communication', 'Communication'), value: t('pages:lifeceo.relationship.metrics.strong', 'Strong'), icon: MessageCircle, color: "text-green-500" },
+    { label: t('pages:lifeceo.relationship.metrics.health', 'Health'), value: "8.5/10", icon: Sparkles, color: "text-purple-500" }
   ];
 
   return (
     <SelfHealingErrorBoundary pageName="Relationship Agent" fallbackRoute="/life-ceo">
-      <PageLayout title="Relationship Agent" showBreadcrumbs>
+      <PageLayout title={t('pages:lifeceo.relationship.title', 'Relationship Agent')} showBreadcrumbs>
         <>
           <SEO
-            title="Relationship Agent - Life CEO"
-            description="Strengthen your relationships with AI-powered insights, communication tools, and quality time tracking."
+            title={t('pages:lifeceo.relationship.seoTitle', 'Relationship Agent - Life CEO')}
+            description={t('pages:lifeceo.relationship.seoDescription', 'Strengthen your relationships with AI-powered insights, communication tools, and quality time tracking.')}
           />
 
           {/* Editorial Hero Section - 16:9 */}
@@ -59,15 +59,15 @@ export default function RelationshipAgentPage() {
                 transition={{ duration: 1, ease: "easeOut" }}
               >
                 <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
-                  Personal Connections
+                  {t('pages:lifeceo.relationship.badge', 'Personal Connections')}
                 </Badge>
                 
                 <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif font-bold text-white mb-6 tracking-tight" data-testid="heading-hero">
-                  Relationship Agent
+                  {t('pages:lifeceo.relationship.heroTitle', 'Relationship Agent')}
                 </h1>
                 
                 <p className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto leading-relaxed">
-                  Your AI relationship counselor
+                  {t('pages:lifeceo.relationship.heroSubtitle', 'Your AI relationship counselor')}
                 </p>
               </motion.div>
             </div>
@@ -106,9 +106,9 @@ export default function RelationshipAgentPage() {
               transition={{ duration: 0.6 }}
               className="mb-12"
             >
-              <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">Connection Insights</h2>
+              <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">{t('pages:lifeceo.relationship.sectionTitle', 'Connection Insights')}</h2>
               <p className="text-lg text-muted-foreground">
-                Build stronger bonds through meaningful interactions
+                {t('pages:lifeceo.relationship.sectionSubtitle', 'Build stronger bonds through meaningful interactions')}
               </p>
             </motion.div>
 
@@ -124,15 +124,15 @@ export default function RelationshipAgentPage() {
                   <div className="relative aspect-[16/9] overflow-hidden">
                     <motion.img
                       src={relationshipImg1}
-                      alt="Shared Moments"
+                      alt={t('pages:lifeceo.relationship.sharedMomentsAlt', 'Shared Moments')}
                       className="w-full h-full object-cover"
                       whileHover={{ scale: 1.05 }}
                       transition={{ duration: 0.6 }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
                     <div className="absolute bottom-4 left-4 right-4 text-white">
-                      <h3 className="text-2xl font-serif font-bold">Shared Moments</h3>
-                      <p className="text-white/80 text-sm mt-1">Quality time together</p>
+                      <h3 className="text-2xl font-serif font-bold">{t('pages:lifeceo.relationship.sharedMoments', 'Shared Moments')}</h3>
+                      <p className="text-white/80 text-sm mt-1">{t('pages:lifeceo.relationship.sharedMomentsSubtitle', 'Quality time together')}</p>
                     </div>
                   </div>
                   <CardContent className="p-8 space-y-3">
@@ -148,7 +148,7 @@ export default function RelationshipAgentPage() {
                         <div className="flex items-center justify-between mb-2">
                           <h3 className="font-semibold">{item.activity}</h3>
                           <Badge className={
-                            item.quality === "Excellent" ? "bg-green-500" : "bg-blue-500"
+                            item.quality === t('pages:lifeceo.relationship.quality.excellent', 'Excellent') ? "bg-green-500" : "bg-blue-500"
                           }>
                             {item.quality}
                           </Badge>
@@ -157,7 +157,7 @@ export default function RelationshipAgentPage() {
                       </div>
                     ))}
                     <Button className="w-full" variant="outline" data-testid="button-log-activity">
-                      + Log Shared Activity
+                      {t('pages:lifeceo.relationship.logActivity', '+ Log Shared Activity')}
                     </Button>
                   </CardContent>
                 </Card>
@@ -174,7 +174,7 @@ export default function RelationshipAgentPage() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-2xl font-serif">
                       <Sparkles className="h-6 w-6 text-purple-500" />
-                      AI Relationship Insights
+                      {t('pages:lifeceo.relationship.aiInsights', 'AI Relationship Insights')}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
@@ -202,7 +202,7 @@ export default function RelationshipAgentPage() {
                     ))}
 
                     <div className="grid gap-3 mt-6">
-                      <h4 className="font-semibold">Suggested Activities</h4>
+                      <h4 className="font-semibold">{t('pages:lifeceo.relationship.suggestedActivities', 'Suggested Activities')}</h4>
                       {suggestions.map((suggestion, idx) => (
                         <div key={idx} className="p-3 rounded-lg border hover-elevate cursor-pointer">
                           <div className="flex items-center justify-between">
@@ -211,7 +211,7 @@ export default function RelationshipAgentPage() {
                               <p className="text-xs text-muted-foreground">{suggestion.category} • {suggestion.time}</p>
                             </div>
                             <Button size="sm" data-testid={`button-plan-${idx}`}>
-                              Plan
+                              {t('pages:lifeceo.relationship.plan', 'Plan')}
                             </Button>
                           </div>
                         </div>
@@ -220,7 +220,7 @@ export default function RelationshipAgentPage() {
 
                     <Button className="w-full gap-2" data-testid="button-view-all">
                       <Users className="w-4 h-4" />
-                      View All Suggestions
+                      {t('pages:lifeceo.relationship.viewAllSuggestions', 'View All Suggestions')}
                     </Button>
                   </CardContent>
                 </Card>

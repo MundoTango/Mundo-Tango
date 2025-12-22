@@ -13,31 +13,31 @@ import creativityImg1 from "@assets/stock_images/elegant_professional_9405e610.j
 export default function CreativityAgentPage() {
   const { t } = useTranslation(["pages", "common"]);
   const stats = [
-    { label: "Projects Created", value: "18", icon: Lightbulb, color: "text-yellow-500" },
-    { label: "Ideas Captured", value: "142", icon: Pen, color: "text-blue-500" },
-    { label: "Photos Taken", value: "356", icon: Camera, color: "text-purple-500" },
-    { label: "Inspiration Score", value: "92%", icon: Sparkles, color: "text-pink-500" }
+    { label: t('pages:lifeceo.creativity.stats.projectsCreated', 'Projects Created'), value: "18", icon: Lightbulb, color: "text-yellow-500" },
+    { label: t('pages:lifeceo.creativity.stats.ideasCaptured', 'Ideas Captured'), value: "142", icon: Pen, color: "text-blue-500" },
+    { label: t('pages:lifeceo.creativity.stats.photosTaken', 'Photos Taken'), value: "356", icon: Camera, color: "text-purple-500" },
+    { label: t('pages:lifeceo.creativity.stats.inspirationScore', 'Inspiration Score'), value: "92%", icon: Sparkles, color: "text-pink-500" }
   ];
 
   const activeProjects = [
-    { title: "Tango Choreography Composition", progress: 65, type: "Dance", lastUpdated: "Today" },
-    { title: "Photography Portfolio: Milongas", progress: 40, type: "Photography", lastUpdated: "Yesterday" },
-    { title: "Tango Poetry Collection", progress: 85, type: "Writing", lastUpdated: "2 days ago" }
+    { title: t('pages:lifeceo.creativity.projects.tangoChoreography', 'Tango Choreography Composition'), progress: 65, type: t('pages:lifeceo.creativity.type.dance', 'Dance'), lastUpdated: t('pages:lifeceo.creativity.date.today', 'Today') },
+    { title: t('pages:lifeceo.creativity.projects.photographyPortfolio', 'Photography Portfolio: Milongas'), progress: 40, type: t('pages:lifeceo.creativity.type.photography', 'Photography'), lastUpdated: t('pages:lifeceo.creativity.date.yesterday', 'Yesterday') },
+    { title: t('pages:lifeceo.creativity.projects.tangoPoetry', 'Tango Poetry Collection'), progress: 85, type: t('pages:lifeceo.creativity.type.writing', 'Writing'), lastUpdated: t('pages:lifeceo.creativity.date.2daysAgo', '2 days ago') }
   ];
 
   const inspirations = [
-    { text: "Create a dance sequence inspired by ocean waves", category: "Choreography", saved: true },
-    { text: "Capture the emotion of embrace in black & white", category: "Photography", saved: false },
-    { text: "Write about the silence between tango steps", category: "Writing", saved: true }
+    { text: t('pages:lifeceo.creativity.inspirations.oceanWaves', 'Create a dance sequence inspired by ocean waves'), category: t('pages:lifeceo.creativity.category.choreography', 'Choreography'), saved: true },
+    { text: t('pages:lifeceo.creativity.inspirations.embrace', 'Capture the emotion of embrace in black & white'), category: t('pages:lifeceo.creativity.category.photography', 'Photography'), saved: false },
+    { text: t('pages:lifeceo.creativity.inspirations.silence', 'Write about the silence between tango steps'), category: t('pages:lifeceo.creativity.category.writing', 'Writing'), saved: true }
   ];
 
   return (
     <SelfHealingErrorBoundary pageName="Creativity Agent" fallbackRoute="/life-ceo">
-      <PageLayout title="Creativity Agent" showBreadcrumbs>
+      <PageLayout title={t('pages:lifeceo.creativity.title', 'Creativity Agent')} showBreadcrumbs>
         <>
           <SEO
-            title="Creativity Agent - Life CEO"
-            description="Unleash your creative potential with AI-powered inspiration and project management."
+            title={t('pages:lifeceo.creativity.seoTitle', 'Creativity Agent - Life CEO')}
+            description={t('pages:lifeceo.creativity.seoDescription', 'Unleash your creative potential with AI-powered inspiration and project management.')}
           />
 
           {/* Editorial Hero Section - 16:9 */}
@@ -53,15 +53,15 @@ export default function CreativityAgentPage() {
                 transition={{ duration: 1, ease: "easeOut" }}
               >
                 <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
-                  Artistic Expression
+                  {t('pages:lifeceo.creativity.badge', 'Artistic Expression')}
                 </Badge>
                 
                 <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif font-bold text-white mb-6 tracking-tight" data-testid="heading-hero">
-                  Creativity Agent
+                  {t('pages:lifeceo.creativity.heroTitle', 'Creativity Agent')}
                 </h1>
                 
                 <p className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto leading-relaxed">
-                  Your AI creative companion for inspiration and artistic projects
+                  {t('pages:lifeceo.creativity.heroSubtitle', 'Your AI creative companion for inspiration and artistic projects')}
                 </p>
               </motion.div>
             </div>
@@ -100,9 +100,9 @@ export default function CreativityAgentPage() {
               transition={{ duration: 0.6 }}
               className="mb-12"
             >
-              <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">Creative Projects</h2>
+              <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">{t('pages:lifeceo.creativity.sectionTitle', 'Creative Projects')}</h2>
               <p className="text-lg text-muted-foreground">
-                Bring your artistic visions to life with AI-powered guidance
+                {t('pages:lifeceo.creativity.sectionSubtitle', 'Bring your artistic visions to life with AI-powered guidance')}
               </p>
             </motion.div>
 
@@ -118,15 +118,15 @@ export default function CreativityAgentPage() {
                   <div className="relative aspect-[16/9] overflow-hidden">
                     <motion.img
                       src={creativityImg1}
-                      alt="Active Projects"
+                      alt={t('pages:lifeceo.creativity.activeProjectsAlt', 'Active Projects')}
                       className="w-full h-full object-cover"
                       whileHover={{ scale: 1.05 }}
                       transition={{ duration: 0.6 }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
                     <div className="absolute bottom-4 left-4 right-4 text-white">
-                      <h3 className="text-2xl font-serif font-bold">Active Projects</h3>
-                      <p className="text-white/80 text-sm mt-1">Your creative endeavors in progress</p>
+                      <h3 className="text-2xl font-serif font-bold">{t('pages:lifeceo.creativity.activeProjects', 'Active Projects')}</h3>
+                      <p className="text-white/80 text-sm mt-1">{t('pages:lifeceo.creativity.activeProjectsSubtitle', 'Your creative endeavors in progress')}</p>
                     </div>
                   </div>
                   <CardContent className="p-8 space-y-4">
@@ -138,7 +138,7 @@ export default function CreativityAgentPage() {
                             <div className="flex gap-2 text-xs text-muted-foreground">
                               <span>{project.type}</span>
                               <span>•</span>
-                              <span>Updated {project.lastUpdated}</span>
+                              <span>{t('pages:lifeceo.creativity.updated', 'Updated {{date}}', { date: project.lastUpdated })}</span>
                             </div>
                           </div>
                           <span className="text-sm font-medium">{project.progress}%</span>
@@ -153,7 +153,7 @@ export default function CreativityAgentPage() {
                     ))}
                     <Button className="w-full gap-2" data-testid="button-new-project">
                       <Lightbulb className="w-4 h-4" />
-                      Start New Project
+                      {t('pages:lifeceo.creativity.startNewProject', 'Start New Project')}
                     </Button>
                   </CardContent>
                 </Card>
@@ -170,7 +170,7 @@ export default function CreativityAgentPage() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-2xl font-serif">
                       <Sparkles className="h-6 w-6 text-purple-500" />
-                      AI Creative Prompts
+                      {t('pages:lifeceo.creativity.aiCreativePrompts', 'AI Creative Prompts')}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
@@ -188,14 +188,14 @@ export default function CreativityAgentPage() {
                         <div className="flex items-center justify-between">
                           <Badge variant="outline">{inspiration.category}</Badge>
                           <Button size="sm" variant="ghost" data-testid={`button-save-${idx}`}>
-                            {inspiration.saved ? "Saved ✓" : "Save"}
+                            {inspiration.saved ? t('pages:lifeceo.creativity.saved', 'Saved ✓') : t('pages:lifeceo.creativity.save', 'Save')}
                           </Button>
                         </div>
                       </div>
                     ))}
                     <Button className="w-full gap-2" variant="outline" data-testid="button-generate-inspiration">
                       <Sparkles className="w-4 h-4" />
-                      Generate More Ideas
+                      {t('pages:lifeceo.creativity.generateMoreIdeas', 'Generate More Ideas')}
                     </Button>
                   </CardContent>
                 </Card>

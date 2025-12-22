@@ -47,14 +47,14 @@ export default function PrivacyPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/settings/privacy'] });
       toast({
-        title: "Privacy settings updated",
-        description: "Your preferences have been saved successfully.",
+        title: t('pages:settings.privacy.settingsUpdated', 'Privacy settings updated'),
+        description: t('pages:settings.privacy.settingsUpdatedDesc', 'Your preferences have been saved successfully.'),
       });
     },
     onError: () => {
       toast({
-        title: "Error",
-        description: "Failed to update privacy settings. Please try again.",
+        title: t('pages:settings.privacy.error', 'Error'),
+        description: t('pages:settings.privacy.failedToUpdate', 'Failed to update privacy settings. Please try again.'),
         variant: "destructive",
       });
     },
@@ -76,19 +76,19 @@ export default function PrivacyPage() {
 
   return (
     <SelfHealingErrorBoundary pageName="Privacy & Data" fallbackRoute="/settings">
-      <PageLayout title="Privacy & Data" showBreadcrumbs>
+      <PageLayout title={t('pages:settings.privacy.pageTitle', 'Privacy & Data')} showBreadcrumbs>
         <>
           <SEO 
-            title="Privacy & Data Settings"
-            description="Control your privacy settings, data sharing preferences, and manage connected applications."
+            title={t('pages:settings.privacy.seoTitle', 'Privacy & Data Settings')}
+            description={t('pages:settings.privacy.seoDescription', 'Control your privacy settings, data sharing preferences, and manage connected applications.')}
           />
           <div className="max-w-5xl mx-auto p-6 space-y-8">
             <div>
               <h1 className="text-4xl font-serif font-bold bg-gradient-to-r from-[#40E0D0] via-[#1E90FF] to-[#9370DB] bg-clip-text text-transparent mb-2" data-testid="heading-privacy-settings">
-                Privacy & Data
+                {t('pages:settings.privacy.title', 'Privacy & Data')}
               </h1>
               <p className="text-muted-foreground">
-                Manage your data and privacy preferences
+                {t('pages:settings.privacy.subtitle', 'Manage your data and privacy preferences')}
               </p>
             </div>
 
@@ -97,15 +97,15 @@ export default function PrivacyPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 font-serif">
                   <Download className="h-5 w-5 text-[#40E0D0]" />
-                  Download Your Data
+                  {t('pages:settings.privacy.downloadYourData', 'Download Your Data')}
                 </CardTitle>
                 <CardDescription>
-                  Request a copy of your personal data (GDPR Article 20)
+                  {t('pages:settings.privacy.downloadDataDesc', 'Request a copy of your personal data (GDPR Article 20)')}
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground mb-4">
-                  You can download a copy of all your data including posts, messages, profile information, and more.
+                  {t('pages:settings.privacy.downloadDataInfo', 'You can download a copy of all your data including posts, messages, profile information, and more.')}
                 </p>
                 <Button
                   onClick={() => setShowExportDialog(true)}
@@ -113,7 +113,7 @@ export default function PrivacyPage() {
                   data-testid="button-request-export"
                 >
                   <Download className="h-4 w-4 mr-2" />
-                  Request Data Export
+                  {t('pages:settings.privacy.requestDataExport', 'Request Data Export')}
                 </Button>
               </CardContent>
             </Card>
@@ -123,25 +123,25 @@ export default function PrivacyPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 font-serif">
                   <Shield className="h-5 w-5 text-[#40E0D0]" />
-                  Data Usage Consent
+                  {t('pages:settings.privacy.dataUsageConsent', 'Data Usage Consent')}
                 </CardTitle>
                 <CardDescription>
-                  Control how we use your data
+                  {t('pages:settings.privacy.dataUsageConsentDesc', 'Control how we use your data')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 {isLoading ? (
-                  <p className="text-sm text-muted-foreground">Loading settings...</p>
+                  <p className="text-sm text-muted-foreground">{t('pages:settings.privacy.loadingSettings', 'Loading settings...')}</p>
                 ) : (
                   <>
                     <div className="flex items-center justify-between">
                       <div className="space-y-0.5">
                         <Label htmlFor="marketing-emails" className="flex items-center gap-2 font-medium">
                           <Mail className="h-4 w-4" />
-                          Marketing Emails
+                          {t('pages:settings.privacy.marketingEmails', 'Marketing Emails')}
                         </Label>
                         <p className="text-sm text-muted-foreground">
-                          Receive promotional emails and newsletters
+                          {t('pages:settings.privacy.marketingEmailsDesc', 'Receive promotional emails and newsletters')}
                         </p>
                       </div>
                       <Switch
@@ -157,10 +157,10 @@ export default function PrivacyPage() {
                       <div className="space-y-0.5">
                         <Label htmlFor="analytics" className="flex items-center gap-2 font-medium">
                           <BarChart3 className="h-4 w-4" />
-                          Analytics
+                          {t('pages:settings.privacy.analytics', 'Analytics')}
                         </Label>
                         <p className="text-sm text-muted-foreground">
-                          Help us improve by sharing anonymous usage data
+                          {t('pages:settings.privacy.analyticsDesc', 'Help us improve by sharing anonymous usage data')}
                         </p>
                       </div>
                       <Switch
@@ -176,10 +176,10 @@ export default function PrivacyPage() {
                       <div className="space-y-0.5">
                         <Label htmlFor="third-party" className="flex items-center gap-2 font-medium">
                           <Share2 className="h-4 w-4" />
-                          Third-Party Sharing
+                          {t('pages:settings.privacy.thirdPartySharing', 'Third-Party Sharing')}
                         </Label>
                         <p className="text-sm text-muted-foreground">
-                          Allow data sharing with trusted partners
+                          {t('pages:settings.privacy.thirdPartySharingDesc', 'Allow data sharing with trusted partners')}
                         </p>
                       </div>
                       <Switch
@@ -200,10 +200,10 @@ export default function PrivacyPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 font-serif">
                   <LinkIcon className="h-5 w-5 text-[#40E0D0]" />
-                  Connected Apps
+                  {t('pages:settings.privacy.connectedApps', 'Connected Apps')}
                 </CardTitle>
                 <CardDescription>
-                  Manage third-party applications with access to your account
+                  {t('pages:settings.privacy.connectedAppsDesc', 'Manage third-party applications with access to your account')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -214,7 +214,7 @@ export default function PrivacyPage() {
                         <div className="space-y-0.5">
                           <p className="font-medium" data-testid={`text-app-name-${app.id}`}>{app.name}</p>
                           <p className="text-sm text-muted-foreground">
-                            Connected {new Date(app.connectedDate).toLocaleDateString()}
+                            {t('pages:settings.privacy.connected', 'Connected')} {new Date(app.connectedDate).toLocaleDateString()}
                           </p>
                         </div>
                         <Button
@@ -222,14 +222,14 @@ export default function PrivacyPage() {
                           size="sm"
                           data-testid={`button-revoke-app-${app.id}`}
                         >
-                          Revoke Access
+                          {t('pages:settings.privacy.revokeAccess', 'Revoke Access')}
                         </Button>
                       </div>
                       {app.id !== mockConnectedApps[mockConnectedApps.length - 1].id && <Separator className="mt-4" />}
                     </div>
                   ))
                 ) : (
-                  <p className="text-sm text-muted-foreground">No connected apps</p>
+                  <p className="text-sm text-muted-foreground">{t('pages:settings.privacy.noConnectedApps', 'No connected apps')}</p>
                 )}
               </CardContent>
             </Card>
@@ -239,22 +239,22 @@ export default function PrivacyPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 font-serif">
                   <Eye className="h-5 w-5 text-[#40E0D0]" />
-                  Privacy Settings
+                  {t('pages:settings.privacy.privacySettings', 'Privacy Settings')}
                 </CardTitle>
                 <CardDescription>
-                  Control your profile visibility and activity
+                  {t('pages:settings.privacy.privacySettingsDesc', 'Control your profile visibility and activity')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 {isLoading ? (
-                  <p className="text-sm text-muted-foreground">Loading settings...</p>
+                  <p className="text-sm text-muted-foreground">{t('pages:settings.privacy.loadingSettings', 'Loading settings...')}</p>
                 ) : (
                   <>
                     <div className="flex items-center justify-between">
                       <div className="space-y-0.5">
-                        <Label htmlFor="searchable" className="font-medium">Searchable Profile</Label>
+                        <Label htmlFor="searchable" className="font-medium">{t('pages:settings.privacy.searchableProfile', 'Searchable Profile')}</Label>
                         <p className="text-sm text-muted-foreground">
-                          Allow others to find your profile in search
+                          {t('pages:settings.privacy.searchableProfileDesc', 'Allow others to find your profile in search')}
                         </p>
                       </div>
                       <Switch
@@ -268,9 +268,9 @@ export default function PrivacyPage() {
                     <Separator />
                     <div className="flex items-center justify-between">
                       <div className="space-y-0.5">
-                        <Label htmlFor="show-activity" className="font-medium">Show Activity</Label>
+                        <Label htmlFor="show-activity" className="font-medium">{t('pages:settings.privacy.showActivity', 'Show Activity')}</Label>
                         <p className="text-sm text-muted-foreground">
-                          Display your recent activity to others
+                          {t('pages:settings.privacy.showActivityDesc', 'Display your recent activity to others')}
                         </p>
                       </div>
                       <Switch
@@ -291,17 +291,17 @@ export default function PrivacyPage() {
           <Dialog open={showExportDialog} onOpenChange={setShowExportDialog}>
             <DialogContent className="backdrop-blur-md bg-white/95 dark:bg-black/95">
               <DialogHeader>
-                <DialogTitle>Request Data Export</DialogTitle>
+                <DialogTitle>{t('pages:settings.privacy.requestDataExportTitle', 'Request Data Export')}</DialogTitle>
                 <DialogDescription>
-                  You will be redirected to the Data Export page where you can choose the format and request your data.
+                  {t('pages:settings.privacy.requestDataExportDesc', 'You will be redirected to the Data Export page where you can choose the format and request your data.')}
                 </DialogDescription>
               </DialogHeader>
               <DialogFooter>
                 <Button variant="outline" onClick={() => setShowExportDialog(false)} data-testid="button-cancel-export">
-                  Cancel
+                  {t('pages:settings.privacy.cancel', 'Cancel')}
                 </Button>
                 <Button onClick={handleRequestExport} data-testid="button-confirm-export">
-                  Continue
+                  {t('pages:settings.privacy.continue', 'Continue')}
                 </Button>
               </DialogFooter>
             </DialogContent>

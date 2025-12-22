@@ -70,7 +70,7 @@ export default function MessageThreads() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <p className="text-muted-foreground">Loading threads...</p>
+        <p className="text-muted-foreground">{t('pages:messages.threads.loading', 'Loading threads...')}</p>
       </div>
     );
   }
@@ -80,7 +80,7 @@ export default function MessageThreads() {
       {/* Header */}
       <div className="border-b px-6 py-4 bg-card">
         <div className="flex items-center justify-between mb-4">
-          <h1 className="text-2xl font-bold">Message Threads</h1>
+          <h1 className="text-2xl font-bold">{t('pages:messages.threads.title', 'Message Threads')}</h1>
           <div className="flex items-center gap-2">
             {selectedThreads.length > 0 && (
               <>
@@ -91,7 +91,7 @@ export default function MessageThreads() {
                   data-testid="button-bulk-archive"
                 >
                   <Archive className="h-4 w-4 mr-2" />
-                  Archive ({selectedThreads.length})
+                  {t('pages:messages.threads.archive', 'Archive')} ({selectedThreads.length})
                 </Button>
                 <Button
                   variant="ghost"
@@ -100,7 +100,7 @@ export default function MessageThreads() {
                   data-testid="button-bulk-delete"
                 >
                   <Trash2 className="h-4 w-4 mr-2" />
-                  Delete ({selectedThreads.length})
+                  {t('pages:messages.threads.delete', 'Delete')} ({selectedThreads.length})
                 </Button>
               </>
             )}
@@ -111,7 +111,7 @@ export default function MessageThreads() {
         <div className="relative mb-4">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search conversations..."
+            placeholder={t('pages:messages.threads.searchPlaceholder', 'Search conversations...')}
             className="pl-10"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -123,10 +123,10 @@ export default function MessageThreads() {
         <div className="flex items-center justify-between gap-4">
           <Tabs value={filter} onValueChange={(v) => setFilter(v as FilterType)}>
             <TabsList>
-              <TabsTrigger value="all" data-testid="filter-all">All</TabsTrigger>
-              <TabsTrigger value="direct" data-testid="filter-direct">Direct</TabsTrigger>
-              <TabsTrigger value="groups" data-testid="filter-groups">Groups</TabsTrigger>
-              <TabsTrigger value="archived" data-testid="filter-archived">Archived</TabsTrigger>
+              <TabsTrigger value="all" data-testid="filter-all">{t('pages:messages.threads.filterAll', 'All')}</TabsTrigger>
+              <TabsTrigger value="direct" data-testid="filter-direct">{t('pages:messages.threads.filterDirect', 'Direct')}</TabsTrigger>
+              <TabsTrigger value="groups" data-testid="filter-groups">{t('pages:messages.threads.filterGroups', 'Groups')}</TabsTrigger>
+              <TabsTrigger value="archived" data-testid="filter-archived">{t('pages:messages.threads.filterArchived', 'Archived')}</TabsTrigger>
             </TabsList>
           </Tabs>
 
@@ -138,7 +138,7 @@ export default function MessageThreads() {
               data-testid="button-sort"
             >
               <Filter className="h-4 w-4 mr-2" />
-              Sort: {sort}
+              {t('pages:messages.threads.sort', 'Sort')}: {sort}
             </Button>
           </div>
         </div>
@@ -148,7 +148,7 @@ export default function MessageThreads() {
       <ScrollArea className="flex-1">
         {sortedConversations.length === 0 ? (
           <div className="p-8 text-center">
-            <p className="text-muted-foreground">No conversations found</p>
+            <p className="text-muted-foreground">{t('pages:messages.threads.noConversations', 'No conversations found')}</p>
           </div>
         ) : (
           <div className="divide-y">
@@ -203,14 +203,14 @@ export default function MessageThreads() {
                         "text-sm truncate",
                         conv.isRead ? "text-muted-foreground" : "text-foreground"
                       )}>
-                        {conv.lastMessage || "No messages yet"}
+                        {conv.lastMessage || t('pages:messages.threads.noMessages', 'No messages yet')}
                       </p>
                       <div className="flex items-center gap-2 mt-2">
                         {conv.type === "group" && (
-                          <Badge variant="secondary">Group</Badge>
+                          <Badge variant="secondary">{t('pages:messages.threads.group', 'Group')}</Badge>
                         )}
                         {!conv.isRead && (
-                          <Badge variant="default">Unread</Badge>
+                          <Badge variant="default">{t('pages:messages.threads.unread', 'Unread')}</Badge>
                         )}
                       </div>
                     </Link>

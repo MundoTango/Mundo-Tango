@@ -193,7 +193,7 @@ export default function OnboardingPage() {
               Step {currentStep + 1} of {steps.length}
             </Badge>
             <Button variant="ghost" size="sm" onClick={handleSkip} data-testid="button-skip">
-              Skip Tour
+              {t('pages:mrblue.onboarding.skipTour', 'Skip Tour')}
             </Button>
           </div>
           <Progress value={progress} className="mb-4" data-testid="progress-bar" />
@@ -233,17 +233,17 @@ export default function OnboardingPage() {
                 data-testid="button-back"
               >
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                Back
+                {t('pages:mrblue.onboarding.back', 'Back')}
               </Button>
               <Button onClick={handleNext} data-testid="button-next">
                 {currentStep === steps.length - 1 ? (
                   <>
                     <CheckCircle className="h-4 w-4 mr-2" />
-                    Complete
+                    {t('pages:mrblue.onboarding.complete', 'Complete')}
                   </>
                 ) : (
                   <>
-                    Next
+                    {t('pages:mrblue.onboarding.next', 'Next')}
                     <ArrowRight className="h-4 w-4 ml-2" />
                   </>
                 )}

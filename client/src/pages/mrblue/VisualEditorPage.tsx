@@ -154,9 +154,9 @@ export default function VisualEditorPage() {
     <div className="h-screen flex flex-col" data-testid="page-visual-editor">
       <div className="border-b p-4 flex items-center justify-between bg-background">
         <div>
-          <h1 className="text-2xl font-bold">Mr Blue Visual Editor</h1>
+          <h1 className="text-2xl font-bold">{t('pages:mrblue.visualEditor.title', 'Mr Blue Visual Editor')}</h1>
           <p className="text-sm text-muted-foreground">
-            Point, click, and edit your UI visually
+            {t('pages:mrblue.visualEditor.subtitle', 'Point, click, and edit your UI visually')}
           </p>
         </div>
         <div className="flex gap-2">
@@ -166,7 +166,7 @@ export default function VisualEditorPage() {
             data-testid="button-clarification"
           >
             <HelpCircle className="h-4 w-4 mr-2" />
-            Ask for Clarification
+            {t('pages:mrblue.visualEditor.askClarification', 'Ask for Clarification')}
           </Button>
           <Button
             variant={selectionMode ? 'default' : 'outline'}
@@ -174,7 +174,7 @@ export default function VisualEditorPage() {
             data-testid="button-selection-mode"
           >
             <MousePointer2 className="h-4 w-4 mr-2" />
-            {selectionMode ? 'Exit Selection' : 'Select Element'}
+            {selectionMode ? t('pages:mrblue.visualEditor.exitSelection', 'Exit Selection') : t('pages:mrblue.visualEditor.selectElement', 'Select Element')}
           </Button>
           <Button
             variant="outline"
@@ -194,7 +194,7 @@ export default function VisualEditorPage() {
           </Button>
           <Button variant="outline" data-testid="button-preview">
             <Eye className="h-4 w-4 mr-2" />
-            Preview
+            {t('pages:mrblue.visualEditor.preview', 'Preview')}
           </Button>
           <Button 
             data-testid="button-save-changes"
@@ -202,7 +202,7 @@ export default function VisualEditorPage() {
             disabled={saveChangesMutation.isPending}
           >
             <Save className="h-4 w-4 mr-2" />
-            {saveChangesMutation.isPending ? 'Saving...' : 'Save Changes'}
+            {saveChangesMutation.isPending ? t('pages:mrblue.visualEditor.saving', 'Saving...') : t('pages:mrblue.visualEditor.saveChanges', 'Save Changes')}
           </Button>
         </div>
       </div>
@@ -211,47 +211,47 @@ export default function VisualEditorPage() {
         <TabsList className="w-full justify-start rounded-none border-b overflow-x-auto">
           <TabsTrigger value="editor" data-testid="tab-editor">
             <MousePointer2 className="h-4 w-4 mr-2" />
-            Visual Editor
+            {t('pages:mrblue.visualEditor.tabEditor', 'Visual Editor')}
           </TabsTrigger>
           <TabsTrigger value="workflow" data-testid="tab-workflow">
             <Workflow className="h-4 w-4 mr-2" />
-            Workflow Builder
+            {t('pages:mrblue.visualEditor.tabWorkflow', 'Workflow Builder')}
           </TabsTrigger>
           <TabsTrigger value="page-generator" data-testid="tab-page-generator">
             <Sparkles className="h-4 w-4 mr-2" />
-            AI Page Generator
+            {t('pages:mrblue.visualEditor.tabPageGenerator', 'AI Page Generator')}
           </TabsTrigger>
           <TabsTrigger value="page-audit" data-testid="tab-page-audit">
             <Search className="h-4 w-4 mr-2" />
-            Page Audit
+            {t('pages:mrblue.visualEditor.tabPageAudit', 'Page Audit')}
           </TabsTrigger>
           <TabsTrigger value="git-commit" data-testid="tab-git-commit">
             <GitCommit className="h-4 w-4 mr-2" />
-            Git Commit
+            {t('pages:mrblue.visualEditor.tabGitCommit', 'Git Commit')}
           </TabsTrigger>
           <TabsTrigger value="preferences" data-testid="tab-preferences">
             <Brain className="h-4 w-4 mr-2" />
-            Preferences
+            {t('pages:mrblue.visualEditor.tabPreferences', 'Preferences')}
           </TabsTrigger>
           <TabsTrigger value="code-quality" data-testid="tab-code-quality">
             <Code className="h-4 w-4 mr-2" />
-            Code Quality
+            {t('pages:mrblue.visualEditor.tabCodeQuality', 'Code Quality')}
           </TabsTrigger>
           <TabsTrigger value="task-breakdown" data-testid="tab-task-breakdown">
             <ListTodo className="h-4 w-4 mr-2" />
-            Task Breakdown
+            {t('pages:mrblue.visualEditor.tabTaskBreakdown', 'Task Breakdown')}
           </TabsTrigger>
           <TabsTrigger value="agent-events" data-testid="tab-agent-events">
             <Radio className="h-4 w-4 mr-2" />
-            Agent Events
+            {t('pages:mrblue.visualEditor.tabAgentEvents', 'Agent Events')}
           </TabsTrigger>
           <TabsTrigger value="learning" data-testid="tab-learning">
             <TrendingUp className="h-4 w-4 mr-2" />
-            Learning
+            {t('pages:mrblue.visualEditor.tabLearning', 'Learning')}
           </TabsTrigger>
           <TabsTrigger value="dependencies" data-testid="tab-dependencies">
             <Network className="h-4 w-4 mr-2" />
-            Dependencies
+            {t('pages:mrblue.visualEditor.tabDependencies', 'Dependencies')}
           </TabsTrigger>
         </TabsList>
 
@@ -259,7 +259,7 @@ export default function VisualEditorPage() {
           <div className="flex-1 p-6 overflow-auto bg-muted/30">
             <Card className="max-w-4xl mx-auto" data-testid="card-preview">
               <CardHeader>
-                <CardTitle>Live Preview</CardTitle>
+                <CardTitle>{t('pages:mrblue.visualEditor.livePreview', 'Live Preview')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -273,9 +273,9 @@ export default function VisualEditorPage() {
                     })}
                     data-testid="preview-card-1"
                   >
-                    <h3 className="font-semibold mb-2">Sample Card</h3>
+                    <h3 className="font-semibold mb-2">{t('pages:mrblue.visualEditor.sampleCard', 'Sample Card')}</h3>
                     <p className="text-sm text-muted-foreground">
-                      Click to select this element when in selection mode
+                      {t('pages:mrblue.visualEditor.sampleCardDesc', 'Click to select this element when in selection mode')}
                     </p>
                   </div>
 
@@ -294,11 +294,11 @@ export default function VisualEditorPage() {
               <TabsList className="w-full justify-start rounded-none border-b">
                 <TabsTrigger value="properties" data-testid="tab-properties">
                   <Settings className="h-4 w-4 mr-2" />
-                  Properties
+                  {t('pages:mrblue.visualEditor.tabProperties', 'Properties')}
                 </TabsTrigger>
                 <TabsTrigger value="changes" data-testid="tab-changes">
                   <GitBranch className="h-4 w-4 mr-2" />
-                  Changes
+                  {t('pages:mrblue.visualEditor.tabChanges', 'Changes')}
                 </TabsTrigger>
               </TabsList>
 
@@ -306,17 +306,17 @@ export default function VisualEditorPage() {
                 {selectedElement ? (
                   <>
                     <div className="space-y-2">
-                      <Label>Element Type</Label>
+                      <Label>{t('pages:mrblue.visualEditor.elementType', 'Element Type')}</Label>
                       <Input value={selectedElement.type} disabled data-testid="input-element-type" />
                     </div>
 
                     <div className="space-y-2">
-                      <Label>Element ID</Label>
+                      <Label>{t('pages:mrblue.visualEditor.elementId', 'Element ID')}</Label>
                       <Input value={selectedElement.id} disabled data-testid="input-element-id" />
                     </div>
 
                     <div className="space-y-2">
-                      <Label>Class Name</Label>
+                      <Label>{t('pages:mrblue.visualEditor.className', 'Class Name')}</Label>
                       <Input
                         value={selectedElement.className}
                         onChange={(e) => handlePropertyChange('className', e.target.value)}
@@ -325,7 +325,7 @@ export default function VisualEditorPage() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label>Text Content</Label>
+                      <Label>{t('pages:mrblue.visualEditor.textContent', 'Text Content')}</Label>
                       <Input
                         value={selectedElement.textContent}
                         onChange={(e) => handlePropertyChange('textContent', e.target.value)}
@@ -336,7 +336,7 @@ export default function VisualEditorPage() {
                 ) : (
                   <div className="text-center py-8 text-muted-foreground">
                     <MousePointer2 className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                    <p>Select an element to view and edit its properties</p>
+                    <p>{t('pages:mrblue.visualEditor.selectElementHint', 'Select an element to view and edit its properties')}</p>
                   </div>
                 )}
               </TabsContent>
@@ -345,7 +345,7 @@ export default function VisualEditorPage() {
                 <div className="space-y-2">
                   {changes.length === 0 ? (
                     <div className="text-center py-8 text-muted-foreground">
-                      <p className="text-sm">No changes yet</p>
+                      <p className="text-sm">{t('pages:mrblue.visualEditor.noChanges', 'No changes yet')}</p>
                     </div>
                   ) : (
                     changes.reverse().map((change) => (

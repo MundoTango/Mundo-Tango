@@ -56,10 +56,10 @@ export default function PaymentHistory() {
 
   const getStatusBadge = (status: string) => {
     const statusConfig: Record<string, { variant: any; label: string }> = {
-      paid: { variant: 'default', label: 'Paid' },
-      open: { variant: 'secondary', label: 'Pending' },
-      void: { variant: 'outline', label: 'Void' },
-      uncollectible: { variant: 'destructive', label: 'Failed' },
+      paid: { variant: 'default', label: t('pages:settings.paymentHistory.statusPaid', 'Paid') },
+      open: { variant: 'secondary', label: t('pages:settings.paymentHistory.statusPending', 'Pending') },
+      void: { variant: 'outline', label: t('pages:settings.paymentHistory.statusVoid', 'Void') },
+      uncollectible: { variant: 'destructive', label: t('pages:settings.paymentHistory.statusFailed', 'Failed') },
     };
 
     const config = statusConfig[status] || { variant: 'outline', label: status };
@@ -87,10 +87,10 @@ export default function PaymentHistory() {
             </Link>
             <div>
               <h1 className="text-3xl font-bold text-foreground" data-testid="heading-payment-history">
-                Payment History
+                {t('pages:settings.paymentHistory.title', 'Payment History')}
               </h1>
               <p className="text-muted-foreground mt-1">
-                View and download your invoices
+                {t('pages:settings.paymentHistory.subtitle', 'View and download your invoices')}
               </p>
             </div>
           </div>
@@ -100,9 +100,9 @@ export default function PaymentHistory() {
         {defaultPaymentMethod && (
           <Card data-testid="card-default-payment-method">
             <CardHeader>
-              <CardTitle className="text-lg">Payment Method on File</CardTitle>
+              <CardTitle className="text-lg">{t('pages:settings.paymentHistory.paymentMethodOnFile', 'Payment Method on File')}</CardTitle>
               <CardDescription>
-                This is the default payment method used for subscriptions
+                {t('pages:settings.paymentHistory.defaultPaymentDesc', 'This is the default payment method used for subscriptions')}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -116,13 +116,13 @@ export default function PaymentHistory() {
                       {defaultPaymentMethod.brand} •••• {defaultPaymentMethod.last4}
                     </p>
                     <p className="text-sm text-muted-foreground">
-                      Expires {defaultPaymentMethod.expMonth}/{defaultPaymentMethod.expYear}
+                      {t('pages:settings.paymentHistory.expires', 'Expires')} {defaultPaymentMethod.expMonth}/{defaultPaymentMethod.expYear}
                     </p>
                   </div>
                 </div>
                 <Link href="/settings/billing/payment-methods">
                   <Button variant="outline" data-testid="button-manage-methods">
-                    Manage Payment Methods
+                    {t('pages:settings.paymentHistory.managePaymentMethods', 'Manage Payment Methods')}
                   </Button>
                 </Link>
               </div>
@@ -133,11 +133,11 @@ export default function PaymentHistory() {
         {/* Invoices Table */}
         <Card>
           <CardHeader>
-            <CardTitle>Invoices</CardTitle>
+            <CardTitle>{t('pages:settings.paymentHistory.invoices', 'Invoices')}</CardTitle>
             <CardDescription>
               {invoices.length === 0 
-                ? "No invoices yet" 
-                : `${invoices.length} invoice${invoices.length > 1 ? 's' : ''} found`
+                ? t('pages:settings.paymentHistory.noInvoicesYet', 'No invoices yet')
+                : t('pages:settings.paymentHistory.invoicesFound', '{{count}} invoice(s) found', { count: invoices.length })
               }
             </CardDescription>
           </CardHeader>
@@ -145,13 +145,13 @@ export default function PaymentHistory() {
             {invoices.length === 0 ? (
               <div className="text-center py-12" data-testid="empty-state">
                 <FileText className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">No Invoices Yet</h3>
+                <h3 className="text-lg font-semibold mb-2">{t('pages:settings.paymentHistory.noInvoices', 'No Invoices Yet')}</h3>
                 <p className="text-muted-foreground mb-4">
-                  Your payment history will appear here once you subscribe to a paid plan
+                  {t('pages:settings.paymentHistory.noInvoicesDesc', 'Your payment history will appear here once you subscribe to a paid plan')}
                 </p>
                 <Link href="/settings/billing">
                   <Button data-testid="button-view-plans">
-                    View Plans
+                    {t('pages:settings.paymentHistory.viewPlans', 'View Plans')}
                   </Button>
                 </Link>
               </div>
@@ -160,11 +160,11 @@ export default function PaymentHistory() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Invoice</TableHead>
-                      <TableHead>Date</TableHead>
-                      <TableHead>Amount</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
+                      <TableHead>{t('pages:settings.paymentHistory.invoice', 'Invoice')}</TableHead>
+                      <TableHead>{t('pages:settings.paymentHistory.date', 'Date')}</TableHead>
+                      <TableHead>{t('pages:settings.paymentHistory.amount', 'Amount')}</TableHead>
+                      <TableHead>{t('pages:settings.paymentHistory.status', 'Status')}</TableHead>
+                      <TableHead className="text-right">{t('pages:settings.paymentHistory.actions', 'Actions')}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -196,7 +196,7 @@ export default function PaymentHistory() {
                                   data-testid={`button-download-${invoice.id}`}
                                 >
                                   <Download className="w-4 h-4 mr-2" />
-                                  PDF
+                                  {t('pages:settings.paymentHistory.pdf', 'PDF')}
                                 </Button>
                               </a>
                             )}
@@ -212,7 +212,7 @@ export default function PaymentHistory() {
                                   data-testid={`button-view-${invoice.id}`}
                                 >
                                   <ExternalLink className="w-4 h-4 mr-2" />
-                                  View
+                                  {t('pages:settings.paymentHistory.view', 'View')}
                                 </Button>
                               </a>
                             )}

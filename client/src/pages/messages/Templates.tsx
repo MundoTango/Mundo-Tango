@@ -182,7 +182,7 @@ export default function Templates() {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Template Name</FormLabel>
+              <FormLabel>{t('pages:messages.templates.formName', 'Template Name')}</FormLabel>
               <FormControl>
                 <Input placeholder="e.g., Event Invitation" {...field} data-testid="input-template-name" />
               </FormControl>
@@ -196,9 +196,9 @@ export default function Templates() {
           name="channels"
           render={() => (
             <FormItem>
-              <FormLabel>Channels</FormLabel>
+              <FormLabel>{t('pages:messages.templates.formChannels', 'Channels')}</FormLabel>
               <FormDescription>
-                Select which channels this template can be used for
+                {t('pages:messages.templates.formChannelsDesc', 'Select which channels this template can be used for')}
               </FormDescription>
               <div className="space-y-2">
                 {CHANNEL_OPTIONS.map((channel) => (
@@ -237,11 +237,11 @@ export default function Templates() {
           name="subject"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Subject (Optional)</FormLabel>
+              <FormLabel>{t('pages:messages.templates.formSubject', 'Subject (Optional)')}</FormLabel>
               <FormControl>
                 <Input placeholder="Message subject" {...field} data-testid="input-template-subject" />
               </FormControl>
-              <FormDescription>For email channels (Gmail, MT Messages)</FormDescription>
+              <FormDescription>{t('pages:messages.templates.formSubjectDesc', 'For email channels (Gmail, MT Messages)')}</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -252,7 +252,7 @@ export default function Templates() {
           name="body"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Message Body</FormLabel>
+              <FormLabel>{t('pages:messages.templates.formBody', 'Message Body')}</FormLabel>
               <FormControl>
                 <Textarea
                   placeholder="Write your template message here..."
@@ -270,7 +270,7 @@ export default function Templates() {
         />
 
         <div>
-          <div className="text-sm font-medium mb-2">Insert Variables</div>
+          <div className="text-sm font-medium mb-2">{t('pages:messages.templates.insertVariables', 'Insert Variables')}</div>
           <div className="flex flex-wrap gap-2">
             {TEMPLATE_VARIABLES.map((variable) => (
               <Button
@@ -300,9 +300,9 @@ export default function Templates() {
                 />
               </FormControl>
               <div className="space-y-1 leading-none">
-                <FormLabel>Make this template public</FormLabel>
+                <FormLabel>{t('pages:messages.templates.makePublic', 'Make this template public')}</FormLabel>
                 <FormDescription>
-                  Public templates can be used by other team members
+                  {t('pages:messages.templates.makePublicDesc', 'Public templates can be used by other team members')}
                 </FormDescription>
               </div>
             </FormItem>
@@ -320,14 +320,14 @@ export default function Templates() {
             }}
             data-testid="button-cancel-template"
           >
-            Cancel
+            {t('pages:messages.templates.cancel', 'Cancel')}
           </Button>
           <Button
             type="submit"
             disabled={createMutation.isPending || updateMutation.isPending}
             data-testid="button-save-template"
           >
-            {editingTemplate ? "Update" : "Create"} Template
+            {editingTemplate ? t('pages:messages.templates.updateTemplate', 'Update Template') : t('pages:messages.templates.createTemplate', 'Create Template')}
           </Button>
         </div>
       </form>
@@ -338,9 +338,9 @@ export default function Templates() {
     <div className="container max-w-6xl py-8">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold mb-2">Message Templates</h1>
+          <h1 className="text-3xl font-bold mb-2">{t('pages:messages.templates.title', 'Message Templates')}</h1>
           <p className="text-muted-foreground">
-            Create and manage reusable message templates
+            {t('pages:messages.templates.subtitle', 'Create and manage reusable message templates')}
           </p>
         </div>
         <Dialog open={isCreateOpen || !!editingTemplate} onOpenChange={(open) => {
@@ -353,13 +353,13 @@ export default function Templates() {
           <DialogTrigger asChild>
             <Button data-testid="button-create-template">
               <Plus className="mr-2 h-4 w-4" />
-              Create Template
+              {t('pages:messages.templates.createButton', 'Create Template')}
             </Button>
           </DialogTrigger>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>
-                {editingTemplate ? "Edit Template" : "Create New Template"}
+                {editingTemplate ? t('pages:messages.templates.editTitle', 'Edit Template') : t('pages:messages.templates.createTitle', 'Create New Template')}
               </DialogTitle>
             </DialogHeader>
             <TemplateForm />
@@ -369,7 +369,7 @@ export default function Templates() {
 
       {isLoading ? (
         <div className="text-center py-12">
-          <div className="text-muted-foreground">Loading templates...</div>
+          <div className="text-muted-foreground">{t('pages:messages.templates.loading', 'Loading templates...')}</div>
         </div>
       ) : templates && templates.length > 0 ? (
         <div className="grid gap-6">
@@ -421,14 +421,14 @@ export default function Templates() {
               <CardContent>
                 <div className="space-y-4">
                   <div>
-                    <div className="text-sm text-muted-foreground mb-2">Message Preview</div>
+                    <div className="text-sm text-muted-foreground mb-2">{t('pages:messages.templates.messagePreview', 'Message Preview')}</div>
                     <div className="text-sm bg-muted p-4 rounded-md line-clamp-3">
                       {template.body}
                     </div>
                   </div>
                   <div className="flex items-center gap-4 text-sm">
                     <div>
-                      <span className="text-muted-foreground">Channels: </span>
+                      <span className="text-muted-foreground">{t('pages:messages.templates.channels', 'Channels')}: </span>
                       {template.channels?.map((channel: string, i: number) => (
                         <Badge key={i} variant="outline" className="ml-1">
                           {CHANNEL_OPTIONS.find(c => c.value === channel)?.label}
@@ -436,7 +436,7 @@ export default function Templates() {
                       ))}
                     </div>
                     <div className="text-muted-foreground">
-                      Used {template.usageCount || 0} times
+                      {t('pages:messages.templates.usedTimes', 'Used {{count}} times', { count: template.usageCount || 0 })}
                     </div>
                   </div>
                 </div>
@@ -448,9 +448,9 @@ export default function Templates() {
         <Card className="p-12">
           <div className="text-center">
             <Copy className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">No templates yet</h3>
+            <h3 className="text-lg font-semibold mb-2">{t('pages:messages.templates.noTemplates', 'No templates yet')}</h3>
             <p className="text-muted-foreground mb-4">
-              Create your first message template to save time composing messages
+              {t('pages:messages.templates.noTemplatesDesc', 'Create your first message template to save time composing messages')}
             </p>
             <Button onClick={() => setIsCreateOpen(true)} data-testid="button-create-first-template">
               <Plus className="mr-2 h-4 w-4" />
@@ -469,18 +469,18 @@ export default function Templates() {
           <div className="space-y-4">
             {previewTemplate?.subject && (
               <div>
-                <div className="text-sm font-medium mb-1">Subject</div>
+                <div className="text-sm font-medium mb-1">{t('pages:messages.templates.subject', 'Subject')}</div>
                 <div className="text-sm text-muted-foreground">{previewTemplate.subject}</div>
               </div>
             )}
             <div>
-              <div className="text-sm font-medium mb-1">Message Body</div>
+              <div className="text-sm font-medium mb-1">{t('pages:messages.templates.messageBody', 'Message Body')}</div>
               <div className="text-sm bg-muted p-4 rounded-md whitespace-pre-wrap">
                 {previewTemplate?.body}
               </div>
             </div>
             <div>
-              <div className="text-sm font-medium mb-1">Available Variables</div>
+              <div className="text-sm font-medium mb-1">{t('pages:messages.templates.availableVariables', 'Available Variables')}</div>
               <div className="flex flex-wrap gap-2">
                 {TEMPLATE_VARIABLES.map((variable) => (
                   <Badge key={variable.key} variant="outline">
@@ -497,18 +497,18 @@ export default function Templates() {
       <AlertDialog open={!!deletingTemplate} onOpenChange={() => setDeletingTemplate(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Template</AlertDialogTitle>
+            <AlertDialogTitle>{t('pages:messages.templates.deleteTitle', 'Delete Template')}</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete this template? This action cannot be undone.
+              {t('pages:messages.templates.deleteConfirm', 'Are you sure you want to delete this template? This action cannot be undone.')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel data-testid="button-cancel-delete">Cancel</AlertDialogCancel>
+            <AlertDialogCancel data-testid="button-cancel-delete">{t('pages:messages.templates.cancel', 'Cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => deletingTemplate && deleteMutation.mutate(deletingTemplate)}
               data-testid="button-confirm-delete"
             >
-              Delete
+              {t('pages:messages.templates.delete', 'Delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

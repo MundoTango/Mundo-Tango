@@ -67,7 +67,7 @@ export default function GroupChat() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <p className="text-muted-foreground">Loading group chat...</p>
+        <p className="text-muted-foreground">{t('pages:messages.group.loadingChat', 'Loading group chat...')}</p>
       </div>
     );
   }
@@ -88,7 +88,7 @@ export default function GroupChat() {
             <div>
               <h2 className="font-semibold" data-testid="text-group-name">{group?.name}</h2>
               <p className="text-xs text-muted-foreground">
-                {members?.length || 0} members
+                {t('pages:messages.group.membersCount', '{{count}} members', { count: members?.length || 0 })}
               </p>
             </div>
           </div>
@@ -162,7 +162,7 @@ export default function GroupChat() {
                   handleSend();
                 }
               }}
-              placeholder="Type a message... (Use @ to mention)"
+              placeholder={t('pages:messages.group.typePlaceholder', 'Type a message... (Use @ to mention)')}
               className="flex-1"
               data-testid="input-message"
             />
@@ -183,7 +183,7 @@ export default function GroupChat() {
         <div className="w-80 border-l bg-sidebar flex flex-col">
           <div className="p-4 border-b">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="font-semibold">Members ({members?.length || 0})</h3>
+              <h3 className="font-semibold">{t('pages:messages.group.membersTitle', 'Members')} ({members?.length || 0})</h3>
               <Button variant="ghost" size="sm" data-testid="button-add-member">
                 <UserPlus className="h-4 w-4" />
               </Button>
@@ -216,7 +216,7 @@ export default function GroupChat() {
           <div className="p-4 border-t">
             <Button variant="destructive" className="w-full" data-testid="button-leave-group">
               <LogOut className="mr-2 h-4 w-4" />
-              Leave Group
+              {t('pages:messages.group.leaveGroup', 'Leave Group')}
             </Button>
           </div>
         </div>

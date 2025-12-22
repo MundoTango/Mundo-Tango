@@ -239,29 +239,29 @@ export default function GroupsPage() {
               <div className="flex flex-col items-center gap-1 p-2 bg-muted/50 rounded-lg">
                 <Users className="w-4 h-4 text-cyan-500" />
                 <div className="font-semibold text-center">{(group.memberCount || 0).toLocaleString()}</div>
-                <div className="text-xs text-muted-foreground text-center">Members</div>
+                <div className="text-xs text-muted-foreground text-center">{t('pages:groups.cardLabels.members', 'Members')}</div>
               </div>
               <div className="flex flex-col items-center gap-1 p-2 bg-muted/50 rounded-lg">
                 <CalendarIcon className="w-4 h-4 text-blue-500" />
                 <div className="font-semibold text-center">{group.eventCount || 0}</div>
-                <div className="text-xs text-muted-foreground text-center">Events</div>
+                <div className="text-xs text-muted-foreground text-center">{t('pages:groups.cardLabels.events', 'Events')}</div>
               </div>
               <div className="flex flex-col items-center gap-1 p-2 bg-muted/50 rounded-lg">
                 <Sparkles className="w-4 h-4 text-purple-500" />
                 <div className="font-semibold text-center">{group.recommendationCount || 0}</div>
-                <div className="text-xs text-muted-foreground text-center">Recs</div>
+                <div className="text-xs text-muted-foreground text-center">{t('pages:groups.cardLabels.recs', 'Recs')}</div>
               </div>
               <div className="flex flex-col items-center gap-1 p-2 bg-muted/50 rounded-lg">
                 <Home className="w-4 h-4 text-amber-500" />
                 <div className="font-semibold text-center">{group.housingCount || 0}</div>
-                <div className="text-xs text-muted-foreground text-center">Housing</div>
+                <div className="text-xs text-muted-foreground text-center">{t('pages:groups.cardLabels.housing', 'Housing')}</div>
               </div>
             </div>
 
             <Link href={`/groups/${group.id}`} className="w-full">
               <Button className="w-full gap-2" data-testid={`button-view-group-${group.id}`}>
                 <ChevronRight className="w-4 h-4" />
-                {isMember ? "View Details" : "Join"}
+                {isMember ? t('pages:groups.viewDetails', 'View Details') : t('pages:groups.join', 'Join')}
               </Button>
             </Link>
           </div>
@@ -296,12 +296,12 @@ export default function GroupsPage() {
           <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
             <div className="flex items-center gap-3 mb-4">
               <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-sm">
-                Professional
+                {t('pages:groups.professional', 'Professional')}
               </Badge>
               {group.isFeatured && (
                 <div className="flex items-center gap-1 text-sm bg-white/20 px-2 py-1 rounded-full backdrop-blur-sm">
                   <Star className="w-3 h-3 fill-white" />
-                  <span>Featured</span>
+                  <span>{t('pages:groups.featured', 'Featured')}</span>
                 </div>
               )}
             </div>
@@ -318,7 +318,7 @@ export default function GroupsPage() {
             <div className="flex items-center gap-2">
               <Users className="w-5 h-5 text-primary" />
               <span className="font-semibold">{(group.memberCount || 0).toLocaleString()}</span>
-              <span className="text-muted-foreground">members</span>
+              <span className="text-muted-foreground">{t('pages:groups.members', 'members')}</span>
             </div>
             <div className="flex items-center gap-2">
               <Globe className="w-5 h-5 text-cyan-500" />
@@ -329,7 +329,7 @@ export default function GroupsPage() {
           <Link href={`/groups/${group.id}`}>
             <Button size="lg" className="gap-2" data-testid={`button-view-group-${group.id}`}>
               <ChevronRight className="w-5 h-5" />
-              {isMember ? "View Details" : "Join Community"}
+              {isMember ? t('pages:groups.viewDetails', 'View Details') : t('pages:groups.joinCommunity', 'Join Community')}
               <ChevronRight className="w-4 h-4" />
             </Button>
           </Link>
@@ -345,8 +345,8 @@ export default function GroupsPage() {
       <PageLayout title="Tango Groups" showBreadcrumbs>
         <>
           <SEO 
-            title="Tango Groups - Global Communities"
-            description="Connect with tango communities worldwide. Join city groups, professional networks, and build lasting friendships in the global tango community."
+            title={t('pages:groups.seoTitle', 'Tango Groups - Global Communities')}
+            description={t('pages:groups.seoDescription', 'Connect with tango communities worldwide. Join city groups, professional networks, and build lasting friendships in the global tango community.')}
           />
 
           {/* Hero Section */}
@@ -368,15 +368,15 @@ export default function GroupsPage() {
                 className="max-w-4xl"
               >
                 <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm">
-                  Global Tango Communities
+                  {t('pages:groups.badge', 'Global Tango Communities')}
                 </Badge>
                 
                 <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6">
-                  Find Your Community
+                  {t('pages:groups.heroTitle', 'Find Your Community')}
                 </h1>
                 
                 <p className="text-xl text-white/80 max-w-2xl mx-auto">
-                  Connect with local dancers, join professional networks, and build lasting friendships worldwide
+                  {t('pages:groups.heroSubtitle', 'Connect with local dancers, join professional networks, and build lasting friendships worldwide')}
                 </p>
               </motion.div>
             </div>
@@ -394,7 +394,7 @@ export default function GroupsPage() {
                     <Input
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      placeholder="Search groups, cities, interests..."
+                      placeholder={t('pages:groups.searchPlaceholder', 'Search groups, cities, interests...')}
                       className="pl-12 h-12 text-base"
                       data-testid="input-search-groups"
                     />
@@ -405,15 +405,15 @@ export default function GroupsPage() {
                     <TabsList className="grid w-full grid-cols-3 mb-8">
                       <TabsTrigger value="my-groups" className="text-base">
                         <Star className="w-4 h-4 mr-2" />
-                        My Groups
+                        {t('pages:groups.tabs.myGroups', 'My Groups')}
                       </TabsTrigger>
                       <TabsTrigger value="cities" className="text-base">
                         <Building2 className="w-4 h-4 mr-2" />
-                        Cities
+                        {t('pages:groups.tabs.cities', 'Cities')}
                       </TabsTrigger>
                       <TabsTrigger value="professional" className="text-base">
                         <Globe className="w-4 h-4 mr-2" />
-                        Professional
+                        {t('pages:groups.tabs.professional', 'Professional')}
                       </TabsTrigger>
                     </TabsList>
 
@@ -421,9 +421,9 @@ export default function GroupsPage() {
                     <TabsContent value="my-groups" className="space-y-8">
                       <div className="flex items-center justify-between mb-6">
                         <div>
-                          <h2 className="text-3xl font-serif font-bold">My Groups</h2>
+                          <h2 className="text-3xl font-serif font-bold">{t('pages:groups.myGroupsTitle', 'My Groups')}</h2>
                           <p className="text-muted-foreground mt-2">
-                            Organized by your current city, tango history, and professional roles
+                            {t('pages:groups.myGroupsDescription', 'Organized by your current city, tango history, and professional roles')}
                           </p>
                         </div>
                       </div>
@@ -441,7 +441,7 @@ export default function GroupsPage() {
                             <section>
                               <div className="flex items-center gap-2 mb-4">
                                 <Home className="w-5 h-5 text-primary" />
-                                <h3 className="text-xl font-semibold">Current City</h3>
+                                <h3 className="text-xl font-semibold">{t('pages:groups.sections.currentCity', 'Current City')}</h3>
                                 <Badge variant="default" className="ml-2">
                                   {myGroupsData?.userProfile?.currentCity || 'Your City'}
                                 </Badge>
@@ -461,7 +461,7 @@ export default function GroupsPage() {
                             <section>
                               <div className="flex items-center gap-2 mb-4">
                                 <MapPin className="w-5 h-5 text-cyan-500" />
-                                <h3 className="text-xl font-semibold">Previous Tango Cities</h3>
+                                <h3 className="text-xl font-semibold">{t('pages:groups.sections.previousCities', 'Previous Tango Cities')}</h3>
                               </div>
                               <div className="grid md:grid-cols-2 gap-6">
                                 {groupedMyGroups.previous.map((group) => (
@@ -487,7 +487,7 @@ export default function GroupsPage() {
                             <section>
                               <div className="flex items-center gap-2 mb-4">
                                 <Award className="w-5 h-5 text-purple-500" />
-                                <h3 className="text-xl font-semibold">Your Professional Networks</h3>
+                                <h3 className="text-xl font-semibold">{t('pages:groups.sections.professionalNetworks', 'Your Professional Networks')}</h3>
                               </div>
                               <div className="grid md:grid-cols-2 gap-6">
                                 {groupedMyGroups.professional.map((group) => (
@@ -512,7 +512,7 @@ export default function GroupsPage() {
                             <section>
                               <div className="flex items-center gap-2 mb-4">
                                 <Users className="w-5 h-5 text-muted-foreground" />
-                                <h3 className="text-xl font-semibold">Other Groups</h3>
+                                <h3 className="text-xl font-semibold">{t('pages:groups.sections.otherGroups', 'Other Groups')}</h3>
                               </div>
                               <div className="grid md:grid-cols-2 gap-6">
                                 {groupedMyGroups.other.map((group) => renderCityCard(group))}
@@ -523,16 +523,16 @@ export default function GroupsPage() {
                       ) : (
                         <Card className="p-8 text-center border-dashed">
                           <Users className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-                          <h3 className="text-lg font-semibold mb-2">Join More Communities</h3>
+                          <h3 className="text-lg font-semibold mb-2">{t('pages:groups.joinMore', 'Join More Communities')}</h3>
                           <p className="text-sm text-muted-foreground mb-4">
-                            Explore Cities and Professional groups to expand your network
+                            {t('pages:groups.joinMoreDescription', 'Explore Cities and Professional groups to expand your network')}
                           </p>
                           <div className="flex gap-3 justify-center">
                             <Button variant="outline" onClick={() => setActiveTab("cities")}>
-                              Browse Cities
+                              {t('pages:groups.browseCities', 'Browse Cities')}
                             </Button>
                             <Button onClick={() => setActiveTab("professional")}>
-                              Professional Groups
+                              {t('pages:groups.professionalGroups', 'Professional Groups')}
                             </Button>
                           </div>
                         </Card>
@@ -542,9 +542,9 @@ export default function GroupsPage() {
                     {/* CITIES Tab */}
                     <TabsContent value="cities" className="space-y-8">
                       <div className="mb-6">
-                        <h2 className="text-3xl font-serif font-bold">Tango Cities Worldwide</h2>
+                        <h2 className="text-3xl font-serif font-bold">{t('pages:groups.tangoCitiesTitle', 'Tango Cities Worldwide')}</h2>
                         <p className="text-muted-foreground mt-2">
-                          Connect with dancers in cities around the globe
+                          {t('pages:groups.tangoCitiesDescription', 'Connect with dancers in cities around the globe')}
                         </p>
                       </div>
 
@@ -561,9 +561,9 @@ export default function GroupsPage() {
                       ) : (
                         <Card className="p-8 text-center">
                           <MapPin className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-                          <h3 className="text-lg font-semibold mb-2">No City Groups Yet</h3>
+                          <h3 className="text-lg font-semibold mb-2">{t('pages:groups.noCityGroups', 'No City Groups Yet')}</h3>
                           <p className="text-sm text-muted-foreground mb-4">
-                            City groups will appear here as they're created
+                            {t('pages:groups.noCityGroupsDescription', "City groups will appear here as they're created")}
                           </p>
                         </Card>
                       )}
@@ -573,14 +573,14 @@ export default function GroupsPage() {
                     <TabsContent value="professional" className="space-y-8">
                       <div className="flex items-center justify-between mb-6">
                         <div>
-                          <h2 className="text-3xl font-serif font-bold">Professional Communities</h2>
+                          <h2 className="text-3xl font-serif font-bold">{t('pages:groups.professionalTitle', 'Professional Communities')}</h2>
                           <p className="text-muted-foreground mt-2">
-                            Networks for teachers, DJs, organizers, and performers
+                            {t('pages:groups.professionalDescription', 'Networks for teachers, DJs, organizers, and performers')}
                           </p>
                         </div>
                         <Button className="gap-2" onClick={() => setIsCreating(true)}>
                           <Plus className="w-4 h-4" />
-                          Request New Group
+                          {t('pages:groups.requestNewGroup', 'Request New Group')}
                         </Button>
                       </div>
 
@@ -597,13 +597,13 @@ export default function GroupsPage() {
                       ) : (
                         <Card className="p-8 text-center">
                           <Award className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-                          <h3 className="text-lg font-semibold mb-2">No Professional Groups Yet</h3>
+                          <h3 className="text-lg font-semibold mb-2">{t('pages:groups.noProGroups', 'No Professional Groups Yet')}</h3>
                           <p className="text-sm text-muted-foreground mb-4">
-                            Professional communities will appear here
+                            {t('pages:groups.noProGroupsDescription', 'Professional communities will appear here')}
                           </p>
                           <Button onClick={() => setIsCreating(true)}>
                             <Plus className="w-4 h-4 mr-2" />
-                            Create First Group
+                            {t('pages:groups.createFirstGroup', 'Create First Group')}
                           </Button>
                         </Card>
                       )}
@@ -614,22 +614,22 @@ export default function GroupsPage() {
                 {/* Sidebar */}
                 <div className="w-96 space-y-6 sticky top-8 self-start hidden lg:block">
                   <Card className="p-6">
-                    <h3 className="font-semibold mb-4">Quick Stats</h3>
+                    <h3 className="font-semibold mb-4">{t('pages:groups.quickStats', 'Quick Stats')}</h3>
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
-                        <span className="text-sm text-muted-foreground">Total Groups</span>
+                        <span className="text-sm text-muted-foreground">{t('pages:groups.stats.totalGroups', 'Total Groups')}</span>
                         <span className="font-bold">{enrichedGroups.length}</span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-sm text-muted-foreground">City Groups</span>
+                        <span className="text-sm text-muted-foreground">{t('pages:groups.stats.cityGroups', 'City Groups')}</span>
                         <span className="font-bold">{cityGroups.length}</span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-sm text-muted-foreground">Professional</span>
+                        <span className="text-sm text-muted-foreground">{t('pages:groups.stats.professional', 'Professional')}</span>
                         <span className="font-bold">{professionalGroups.length}</span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-sm text-muted-foreground">My Groups</span>
+                        <span className="text-sm text-muted-foreground">{t('pages:groups.stats.myGroups', 'My Groups')}</span>
                         <span className="font-bold">{myGroups.length}</span>
                       </div>
                     </div>
@@ -638,13 +638,13 @@ export default function GroupsPage() {
                   {/* Create Group CTA */}
                   {!isCreating && (
                     <Card className="p-6 bg-gradient-to-br from-primary/10 to-secondary/10 border-primary/20">
-                      <h3 className="font-semibold mb-2">Start a Community</h3>
+                      <h3 className="font-semibold mb-2">{t('pages:groups.startCommunity', 'Start a Community')}</h3>
                       <p className="text-sm text-muted-foreground mb-4">
-                        Create your own group and bring dancers together
+                        {t('pages:groups.startCommunityDescription', 'Create your own group and bring dancers together')}
                       </p>
                       <Button className="w-full" onClick={() => setIsCreating(true)} data-testid="button-create-group">
                         <Plus className="w-4 h-4 mr-2" />
-                        Create Group
+                        {t('pages:groups.createGroup', 'Create Group')}
                       </Button>
                     </Card>
                   )}

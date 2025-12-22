@@ -144,15 +144,15 @@ export default function ChannelConnections() {
   return (
     <div className="container max-w-5xl py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Channel Connections</h1>
+        <h1 className="text-3xl font-bold mb-2">{t('pages:messages.channels.title', 'Channel Connections')}</h1>
         <p className="text-muted-foreground">
-          Connect and manage your messaging channels
+          {t('pages:messages.channels.subtitle', 'Connect and manage your messaging channels')}
         </p>
       </div>
 
       {isLoading ? (
         <div className="text-center py-12">
-          <div className="text-muted-foreground">Loading channels...</div>
+          <div className="text-muted-foreground">{t('pages:messages.channels.loading', 'Loading channels...')}</div>
         </div>
       ) : (
         <div className="grid gap-6">
@@ -178,12 +178,12 @@ export default function ChannelConnections() {
                           {isConnected ? (
                             <Badge variant="default" className="gap-1" data-testid={`badge-status-${key}`}>
                               <CheckCircle2 className="h-3 w-3" />
-                              Connected
+                              {t('pages:messages.channels.connected', 'Connected')}
                             </Badge>
                           ) : (
                             <Badge variant="secondary" className="gap-1" data-testid={`badge-status-${key}`}>
                               <XCircle className="h-3 w-3" />
-                              Not Connected
+                              {t('pages:messages.channels.notConnected', 'Not Connected')}
                             </Badge>
                           )}
                         </CardTitle>
@@ -200,17 +200,17 @@ export default function ChannelConnections() {
                     <div className="space-y-4">
                       <div className="grid grid-cols-2 gap-4 text-sm">
                         <div>
-                          <div className="text-muted-foreground">Account</div>
+                          <div className="text-muted-foreground">{t('pages:messages.channels.account', 'Account')}</div>
                           <div className="font-medium" data-testid={`text-account-${key}`}>
                             {connection.accountName || connection.accountId}
                           </div>
                         </div>
                         <div>
-                          <div className="text-muted-foreground">Last Sync</div>
+                          <div className="text-muted-foreground">{t('pages:messages.channels.lastSync', 'Last Sync')}</div>
                           <div className="font-medium" data-testid={`text-lastsync-${key}`}>
                             {connection.lastSyncAt
                               ? format(new Date(connection.lastSyncAt), "MMM d, h:mm a")
-                              : "Never"}
+                              : t('pages:messages.channels.never', 'Never')}
                           </div>
                         </div>
                       </div>
@@ -224,7 +224,7 @@ export default function ChannelConnections() {
                           data-testid={`button-sync-${key}`}
                         >
                           <RefreshCw className={`mr-2 h-4 w-4 ${syncMutation.isPending ? "animate-spin" : ""}`} />
-                          Sync Now
+                          {t('pages:messages.channels.syncNow', 'Sync Now')}
                         </Button>
                         
                         {config.canDisconnect && (
@@ -235,7 +235,7 @@ export default function ChannelConnections() {
                             data-testid={`button-disconnect-${key}`}
                           >
                             <Unplug className="mr-2 h-4 w-4" />
-                            Disconnect
+                            {t('pages:messages.channels.disconnect', 'Disconnect')}
                           </Button>
                         )}
                       </div>
@@ -247,7 +247,7 @@ export default function ChannelConnections() {
                         disabled={connectMutation.isPending}
                         data-testid={`button-connect-${key}`}
                       >
-                        Connect {config.label}
+                        {t('pages:messages.channels.connect', 'Connect')} {config.label}
                       </Button>
                     </div>
                   )}
@@ -261,18 +261,18 @@ export default function ChannelConnections() {
       <AlertDialog open={!!disconnectChannel} onOpenChange={() => setDisconnectChannel(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Disconnect Channel</AlertDialogTitle>
+            <AlertDialogTitle>{t('pages:messages.channels.disconnectTitle', 'Disconnect Channel')}</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to disconnect this channel? You will no longer receive messages from this source.
+              {t('pages:messages.channels.disconnectConfirm', 'Are you sure you want to disconnect this channel? You will no longer receive messages from this source.')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel data-testid="button-cancel-disconnect">Cancel</AlertDialogCancel>
+            <AlertDialogCancel data-testid="button-cancel-disconnect">{t('pages:messages.channels.cancel', 'Cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => disconnectChannel && disconnectMutation.mutate(disconnectChannel)}
               data-testid="button-confirm-disconnect"
             >
-              Disconnect
+              {t('pages:messages.channels.disconnect', 'Disconnect')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

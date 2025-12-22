@@ -118,12 +118,12 @@ export default function ProfilePage() {
       return res.json();
     },
     onSuccess: () => {
-      toast({ title: "Success", description: "Profile photo updated!" });
+      toast({ title: t('common:success', 'Success'), description: t('pages:profile.photoUpdated', 'Profile photo updated!') });
       queryClient.invalidateQueries({ queryKey: ["user", profileIdentifier] });
       setUploadingPhoto(false);
     },
     onError: () => {
-      toast({ title: "Error", description: "Failed to upload photo", variant: "destructive" });
+      toast({ title: t('common:error', 'Error'), description: t('pages:profile.photoUploadFailed', 'Failed to upload photo'), variant: "destructive" });
       setUploadingPhoto(false);
     }
   });
@@ -144,12 +144,12 @@ export default function ProfilePage() {
       return res.json();
     },
     onSuccess: () => {
-      toast({ title: "Success", description: "Cover photo updated!" });
+      toast({ title: t('common:success', 'Success'), description: t('pages:profile.coverUpdated', 'Cover photo updated!') });
       queryClient.invalidateQueries({ queryKey: ["user", profileIdentifier] });
       setUploadingCover(false);
     },
     onError: () => {
-      toast({ title: "Error", description: "Failed to upload cover photo", variant: "destructive" });
+      toast({ title: t('common:error', 'Error'), description: t('pages:profile.coverUploadFailed', 'Failed to upload cover photo'), variant: "destructive" });
       setUploadingCover(false);
     }
   });
@@ -383,15 +383,15 @@ export default function ProfilePage() {
       await queryClient.refetchQueries({ queryKey: ['/api/friends/status', user?.id] });
       setFriendshipQuestionnaireOpen(false);
       toast({
-        title: "Friend request sent!",
-        description: `Request sent to ${user?.name}`,
+        title: t('pages:profile.friendRequestSent', 'Friend request sent!'),
+        description: t('pages:profile.requestSentTo', { name: user?.name, defaultValue: `Request sent to ${user?.name}` }),
       });
     },
     onError: (error: any) => {
       toast({
         variant: "destructive",
-        title: "Failed to send request",
-        description: error.message || "Something went wrong",
+        title: t('pages:profile.failedToSendRequest', 'Failed to send request'),
+        description: error.message || t('common:somethingWentWrong', 'Something went wrong'),
       });
     },
   });
@@ -406,15 +406,15 @@ export default function ProfilePage() {
       await queryClient.invalidateQueries({ queryKey: ['/api/friends/status', user?.id] });
       await queryClient.refetchQueries({ queryKey: ['/api/friends/status', user?.id] });
       toast({
-        title: "Friend removed",
-        description: `Removed ${user?.name} from friends`,
+        title: t('pages:profile.friendRemoved', 'Friend removed'),
+        description: t('pages:profile.removedFromFriends', { name: user?.name, defaultValue: `Removed ${user?.name} from friends` }),
       });
     },
     onError: (error: any) => {
       toast({
         variant: "destructive",
-        title: "Failed to remove friend",
-        description: error.message || "Something went wrong",
+        title: t('pages:profile.failedToRemoveFriend', 'Failed to remove friend'),
+        description: error.message || t('common:somethingWentWrong', 'Something went wrong'),
       });
     },
   });
@@ -559,10 +559,10 @@ export default function ProfilePage() {
                       data-testid="button-view-public-profile"
                     >
                       <Eye className="h-3 w-3" />
-                      View Public Profile
+                      {t('pages:profile.viewPublicProfile', 'View Public Profile')}
                     </Button>
                   </TooltipTrigger>
-                  <TooltipContent>See how your profile looks to others</TooltipContent>
+                  <TooltipContent>{t('pages:profile.seeHowProfileLooks', 'See how your profile looks to others')}</TooltipContent>
                 </Tooltip>
               )}
             </div>
@@ -577,7 +577,7 @@ export default function ProfilePage() {
                 {user.role === 'super_admin' && (
                   <Badge className="bg-primary text-white border-0 text-xs" data-testid="badge-verified">
                     <CheckCircle className="w-2 h-2 mr-1" />
-                    Verified
+                    {t('pages:profile.verified', 'Verified')}
                   </Badge>
                 )}
               </div>
@@ -627,16 +627,16 @@ export default function ProfilePage() {
                   <div className="flex items-center gap-1">
                     <Award className="w-3 h-3 text-primary" />
                     <span className="font-semibold">
-                      {user.yearsOfDancing} {user.yearsOfDancing === 1 ? 'year' : 'years'} of tango experience
+                      {t('pages:profile.yearsOfExperience', { count: user.yearsOfDancing, defaultValue: `${user.yearsOfDancing} ${user.yearsOfDancing === 1 ? 'year' : 'years'} of tango experience` })}
                     </span>
                   </div>
                   {(user.leaderLevel || user.followerLevel) && (
                     <div className="mt-1 flex gap-3 text-xs text-muted-foreground">
                       {user.leaderLevel && user.leaderLevel > 0 && (
-                        <span data-testid="text-leader-level">Leader: Level {user.leaderLevel}</span>
+                        <span data-testid="text-leader-level">{t('pages:profile.leaderLevel', { level: user.leaderLevel, defaultValue: `Leader: Level ${user.leaderLevel}` })}</span>
                       )}
                       {user.followerLevel && user.followerLevel > 0 && (
-                        <span data-testid="text-follower-level">Follower: Level {user.followerLevel}</span>
+                        <span data-testid="text-follower-level">{t('pages:profile.followerLevel', { level: user.followerLevel, defaultValue: `Follower: Level ${user.followerLevel}` })}</span>
                       )}
                     </div>
                   )}
@@ -805,7 +805,7 @@ export default function ProfilePage() {
             {/* Left Column - Feed */}
             <div className="lg:col-span-2">
               <h2 className="text-3xl md:text-4xl font-serif font-bold mb-8" data-testid="text-posts-title">
-                {isOwnProfile ? 'Your Posts' : 'Posts'}
+                {isOwnProfile ? t('pages:profile.yourPosts', 'Your Posts') : t('pages:profile.posts', 'Posts')}
               </h2>
               <ProfileTabFeed posts={posts} isLoading={postsLoading} isOwnProfile={isOwnProfile} userId={user.id} isPublicView={isPublicView} />
             </div>
@@ -818,7 +818,7 @@ export default function ProfilePage() {
                   <CardHeader className="pb-3">
                     <div className="flex items-center gap-2">
                       <Plane className="w-5 h-5 text-primary" />
-                      <h3 className="font-semibold text-lg">Upcoming Travel</h3>
+                      <h3 className="font-semibold text-lg">{t('pages:profile.upcomingTravel', 'Upcoming Travel')}</h3>
                     </div>
                   </CardHeader>
                   <CardContent>
@@ -861,7 +861,7 @@ export default function ProfilePage() {
                 <CardHeader className="pb-3">
                   <div className="flex items-center gap-2">
                     <Camera className="w-5 h-5 text-primary" />
-                    <h3 className="font-semibold text-lg">Face Photos</h3>
+                    <h3 className="font-semibold text-lg">{t('pages:profile.facePhotos', 'Face Photos')}</h3>
                     {facePhotos.length > 0 && (
                       <Badge variant="secondary" className="ml-auto text-xs">
                         {facePhotos.length}/6
@@ -871,8 +871,8 @@ export default function ProfilePage() {
                   {facePhotos.length === 0 && (
                     <p className="text-xs text-muted-foreground mt-1">
                       {isOwnProfile 
-                        ? "Add face photos to your profile - people dance better when they know you!"
-                        : "No face photos uploaded yet."
+                        ? t('pages:profile.addFacePhotos', 'Add face photos to your profile - people dance better when they know you!')
+                        : t('pages:profile.noFacePhotos', 'No face photos uploaded yet.')
                       }
                     </p>
                   )}
@@ -913,7 +913,7 @@ export default function ProfilePage() {
                       onClick={() => setActiveTab('photos')}
                       data-testid="button-upload-photos"
                     >
-                      {facePhotos.length === 0 ? 'Upload Photos' : 'Manage Photos'}
+                      {facePhotos.length === 0 ? t('pages:profile.uploadPhotos', 'Upload Photos') : t('pages:profile.managePhotos', 'Manage Photos')}
                     </Button>
                   )}
                 </CardContent>

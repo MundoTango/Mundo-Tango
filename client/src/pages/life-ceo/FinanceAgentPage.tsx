@@ -13,26 +13,26 @@ import financeImg1 from "@assets/stock_images/data_visualization_t_9dc4dcbd.jpg"
 export default function FinanceAgentPage() {
   const { t } = useTranslation(["pages", "common"]);
   const summary = [
-    { label: "Total Balance", value: "$12,450", change: "+5.2%", icon: Wallet, color: "text-green-500" },
-    { label: "Monthly Income", value: "$5,200", change: "+2.1%", icon: TrendingUp, color: "text-blue-500" },
-    { label: "Monthly Expenses", value: "$3,150", change: "-1.8%", icon: TrendingDown, color: "text-orange-500" },
-    { label: "Savings Goal", value: "78%", change: "+12%", icon: PiggyBank, color: "text-purple-500" }
+    { label: t('pages:lifeceo.finance.summary.totalBalance', 'Total Balance'), value: "$12,450", change: "+5.2%", icon: Wallet, color: "text-green-500" },
+    { label: t('pages:lifeceo.finance.summary.monthlyIncome', 'Monthly Income'), value: "$5,200", change: "+2.1%", icon: TrendingUp, color: "text-blue-500" },
+    { label: t('pages:lifeceo.finance.summary.monthlyExpenses', 'Monthly Expenses'), value: "$3,150", change: "-1.8%", icon: TrendingDown, color: "text-orange-500" },
+    { label: t('pages:lifeceo.finance.summary.savingsGoal', 'Savings Goal'), value: "78%", change: "+12%", icon: PiggyBank, color: "text-purple-500" }
   ];
 
   const recentTransactions = [
-    { name: "Grocery Store", amount: -85.50, category: "Food", date: "Today" },
-    { name: "Salary Deposit", amount: 5200.00, category: "Income", date: "Yesterday" },
-    { name: "Electric Bill", amount: -120.00, category: "Utilities", date: "2 days ago" },
-    { name: "Netflix", amount: -15.99, category: "Entertainment", date: "3 days ago" }
+    { name: t('pages:lifeceo.finance.transactions.groceryStore', 'Grocery Store'), amount: -85.50, category: t('pages:lifeceo.finance.category.food', 'Food'), date: t('pages:lifeceo.finance.date.today', 'Today') },
+    { name: t('pages:lifeceo.finance.transactions.salaryDeposit', 'Salary Deposit'), amount: 5200.00, category: t('pages:lifeceo.finance.category.income', 'Income'), date: t('pages:lifeceo.finance.date.yesterday', 'Yesterday') },
+    { name: t('pages:lifeceo.finance.transactions.electricBill', 'Electric Bill'), amount: -120.00, category: t('pages:lifeceo.finance.category.utilities', 'Utilities'), date: t('pages:lifeceo.finance.date.2daysAgo', '2 days ago') },
+    { name: "Netflix", amount: -15.99, category: t('pages:lifeceo.finance.category.entertainment', 'Entertainment'), date: t('pages:lifeceo.finance.date.3daysAgo', '3 days ago') }
   ];
 
   return (
     <SelfHealingErrorBoundary pageName="Finance Agent" fallbackRoute="/life-ceo">
-      <PageLayout title="Finance Agent" showBreadcrumbs>
+      <PageLayout title={t('pages:lifeceo.finance.title', 'Finance Agent')} showBreadcrumbs>
         <>
           <SEO
-            title="Finance Agent - Life CEO"
-            description="Manage your budget, track expenses, and achieve financial goals with your AI finance agent."
+            title={t('pages:lifeceo.finance.seoTitle', 'Finance Agent - Life CEO')}
+            description={t('pages:lifeceo.finance.seoDescription', 'Manage your budget, track expenses, and achieve financial goals with your AI finance agent.')}
           />
 
           {/* Editorial Hero Section - 16:9 */}
@@ -48,15 +48,15 @@ export default function FinanceAgentPage() {
                 transition={{ duration: 1, ease: "easeOut" }}
               >
                 <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
-                  Wealth Management
+                  {t('pages:lifeceo.finance.badge', 'Wealth Management')}
                 </Badge>
                 
                 <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif font-bold text-white mb-6 tracking-tight" data-testid="heading-hero">
-                  Finance Agent
+                  {t('pages:lifeceo.finance.heroTitle', 'Finance Agent')}
                 </h1>
                 
                 <p className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto leading-relaxed">
-                  Your personal financial advisor for budgeting and wealth building
+                  {t('pages:lifeceo.finance.heroSubtitle', 'Your personal financial advisor for budgeting and wealth building')}
                 </p>
               </motion.div>
             </div>
@@ -95,9 +95,9 @@ export default function FinanceAgentPage() {
               transition={{ duration: 0.6 }}
               className="mb-12"
             >
-              <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">Financial Overview</h2>
+              <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">{t('pages:lifeceo.finance.sectionTitle', 'Financial Overview')}</h2>
               <p className="text-lg text-muted-foreground">
-                Track transactions and manage your budget with AI insights
+                {t('pages:lifeceo.finance.sectionSubtitle', 'Track transactions and manage your budget with AI insights')}
               </p>
             </motion.div>
 
@@ -113,15 +113,15 @@ export default function FinanceAgentPage() {
                   <div className="relative aspect-[16/9] overflow-hidden">
                     <motion.img
                       src={financeImg1}
-                      alt="Recent Transactions"
+                      alt={t('pages:lifeceo.finance.recentTransactionsAlt', 'Recent Transactions')}
                       className="w-full h-full object-cover"
                       whileHover={{ scale: 1.05 }}
                       transition={{ duration: 0.6 }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
                     <div className="absolute bottom-4 left-4 right-4 text-white">
-                      <h3 className="text-2xl font-serif font-bold">Recent Transactions</h3>
-                      <p className="text-white/80 text-sm mt-1">Your latest financial activity</p>
+                      <h3 className="text-2xl font-serif font-bold">{t('pages:lifeceo.finance.recentTransactions', 'Recent Transactions')}</h3>
+                      <p className="text-white/80 text-sm mt-1">{t('pages:lifeceo.finance.recentTransactionsSubtitle', 'Your latest financial activity')}</p>
                     </div>
                   </div>
                   <CardContent className="p-8 space-y-3">
@@ -142,7 +142,7 @@ export default function FinanceAgentPage() {
                     ))}
                     <Button className="w-full gap-2" variant="outline" data-testid="button-add-transaction">
                       <CreditCard className="w-4 h-4" />
-                      Add Transaction
+                      {t('pages:lifeceo.finance.addTransaction', 'Add Transaction')}
                     </Button>
                   </CardContent>
                 </Card>
@@ -159,13 +159,13 @@ export default function FinanceAgentPage() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-2xl font-serif">
                       <Target className="h-6 w-6 text-purple-500" />
-                      Budget Goals
+                      {t('pages:lifeceo.finance.budgetGoals', 'Budget Goals')}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div>
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm font-medium">Food & Dining</span>
+                        <span className="text-sm font-medium">{t('pages:lifeceo.finance.budget.foodDining', 'Food & Dining')}</span>
                         <span className="text-sm text-muted-foreground">$420 / $500</span>
                       </div>
                       <div className="h-2 bg-muted rounded-full overflow-hidden">
@@ -175,7 +175,7 @@ export default function FinanceAgentPage() {
 
                     <div>
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm font-medium">Transportation</span>
+                        <span className="text-sm font-medium">{t('pages:lifeceo.finance.budget.transportation', 'Transportation')}</span>
                         <span className="text-sm text-muted-foreground">$180 / $300</span>
                       </div>
                       <div className="h-2 bg-muted rounded-full overflow-hidden">
@@ -185,18 +185,18 @@ export default function FinanceAgentPage() {
 
                     <div>
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm font-medium">Entertainment</span>
+                        <span className="text-sm font-medium">{t('pages:lifeceo.finance.budget.entertainment', 'Entertainment')}</span>
                         <span className="text-sm text-muted-foreground">$250 / $200</span>
                       </div>
                       <div className="h-2 bg-muted rounded-full overflow-hidden">
                         <div className="h-full bg-red-500" style={{ width: "100%" }} />
                       </div>
-                      <p className="text-xs text-red-500 mt-1">⚠️ Over budget by $50</p>
+                      <p className="text-xs text-red-500 mt-1">{t('pages:lifeceo.finance.overBudget', '⚠️ Over budget by $50')}</p>
                     </div>
 
                     <div>
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm font-medium">Savings</span>
+                        <span className="text-sm font-medium">{t('pages:lifeceo.finance.budget.savings', 'Savings')}</span>
                         <span className="text-sm text-muted-foreground">$1,550 / $2,000</span>
                       </div>
                       <div className="h-2 bg-muted rounded-full overflow-hidden">
@@ -206,7 +206,7 @@ export default function FinanceAgentPage() {
 
                     <Button className="w-full gap-2" data-testid="button-set-budget">
                       <DollarSign className="w-4 h-4" />
-                      Set Monthly Budget
+                      {t('pages:lifeceo.finance.setMonthlyBudget', 'Set Monthly Budget')}
                     </Button>
                   </CardContent>
                 </Card>

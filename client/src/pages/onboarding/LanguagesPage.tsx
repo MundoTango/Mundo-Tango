@@ -16,11 +16,10 @@ import heroImage from "@assets/stock_images/elegant_professional_29e89c1e.jpg";
 import { UnifiedLanguagePicker, getLanguageByCode, getLanguageByName } from "@/components/input/UnifiedLanguagePicker";
 
 export default function LanguagesPage() {
-  const { t } = useTranslation(["pages", "common"]);
+  const { t, i18n } = useTranslation(['pages', 'common']);
   const [, navigate] = useLocation();
   const { user } = useAuth();
   const { toast } = useToast();
-  const { t, i18n } = useTranslation(['pages', 'common']);
   const [primaryLanguage, setPrimaryLanguage] = useState<string>("");
   const [additionalLanguages, setAdditionalLanguages] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);

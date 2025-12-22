@@ -13,35 +13,35 @@ import sleepImg1 from "@assets/stock_images/elegant_professional_29e89c1e.jpg";
 export default function SleepAgentPage() {
   const { t } = useTranslation(["pages", "common"]);
   const weekData = [
-    { day: "Mon", hours: 7.0, quality: 75 },
-    { day: "Tue", hours: 7.5, quality: 82 },
-    { day: "Wed", hours: 6.5, quality: 68 },
-    { day: "Thu", hours: 8.0, quality: 90 },
-    { day: "Fri", hours: 7.2, quality: 80 },
-    { day: "Sat", hours: 8.5, quality: 92 },
-    { day: "Sun", hours: 7.5, quality: 85 }
+    { day: t('pages:lifeceo.sleep.days.mon', 'Mon'), hours: 7.0, quality: 75 },
+    { day: t('pages:lifeceo.sleep.days.tue', 'Tue'), hours: 7.5, quality: 82 },
+    { day: t('pages:lifeceo.sleep.days.wed', 'Wed'), hours: 6.5, quality: 68 },
+    { day: t('pages:lifeceo.sleep.days.thu', 'Thu'), hours: 8.0, quality: 90 },
+    { day: t('pages:lifeceo.sleep.days.fri', 'Fri'), hours: 7.2, quality: 80 },
+    { day: t('pages:lifeceo.sleep.days.sat', 'Sat'), hours: 8.5, quality: 92 },
+    { day: t('pages:lifeceo.sleep.days.sun', 'Sun'), hours: 7.5, quality: 85 }
   ];
 
   const insights = [
-    { title: "Bedtime Consistency", message: "You've maintained a consistent bedtime for 5 days. Great job!", type: "positive" },
-    { title: "Deep Sleep", message: "Your deep sleep was 15% higher last night. Recovery is improving!", type: "positive" },
-    { title: "Screen Time", message: "Reduce screen time 1 hour before bed to improve sleep quality.", type: "suggestion" }
+    { title: t('pages:lifeceo.sleep.insights.bedtimeTitle', 'Bedtime Consistency'), message: t('pages:lifeceo.sleep.insights.bedtimeMessage', "You've maintained a consistent bedtime for 5 days. Great job!"), type: "positive" },
+    { title: t('pages:lifeceo.sleep.insights.deepSleepTitle', 'Deep Sleep'), message: t('pages:lifeceo.sleep.insights.deepSleepMessage', 'Your deep sleep was 15% higher last night. Recovery is improving!'), type: "positive" },
+    { title: t('pages:lifeceo.sleep.insights.screenTimeTitle', 'Screen Time'), message: t('pages:lifeceo.sleep.insights.screenTimeMessage', 'Reduce screen time 1 hour before bed to improve sleep quality.'), type: "suggestion" }
   ];
 
   const metrics = [
-    { label: "Last Night", value: "7.5h", icon: Moon, color: "text-indigo-500" },
-    { label: "Sleep Quality", value: "85%", icon: Stars, color: "text-purple-500" },
-    { label: "Avg This Week", value: "7.2h", icon: Clock, color: "text-blue-500" },
-    { label: "Recovery Score", value: "82%", icon: Battery, color: "text-green-500" }
+    { label: t('pages:lifeceo.sleep.metrics.lastNight', 'Last Night'), value: "7.5h", icon: Moon, color: "text-indigo-500" },
+    { label: t('pages:lifeceo.sleep.metrics.sleepQuality', 'Sleep Quality'), value: "85%", icon: Stars, color: "text-purple-500" },
+    { label: t('pages:lifeceo.sleep.metrics.avgThisWeek', 'Avg This Week'), value: "7.2h", icon: Clock, color: "text-blue-500" },
+    { label: t('pages:lifeceo.sleep.metrics.recoveryScore', 'Recovery Score'), value: "82%", icon: Battery, color: "text-green-500" }
   ];
 
   return (
     <SelfHealingErrorBoundary pageName="Sleep Agent" fallbackRoute="/life-ceo">
-      <PageLayout title="Sleep Agent" showBreadcrumbs>
+      <PageLayout title={t('pages:lifeceo.sleep.title', 'Sleep Agent')} showBreadcrumbs>
         <>
           <SEO
-            title="Sleep Agent - Life CEO"
-            description="Track your sleep patterns, quality, and optimize your rest with AI-powered insights."
+            title={t('pages:lifeceo.sleep.seoTitle', 'Sleep Agent - Life CEO')}
+            description={t('pages:lifeceo.sleep.seoDescription', 'Track your sleep patterns, quality, and optimize your rest with AI-powered insights.')}
           />
 
           {/* Editorial Hero Section - 16:9 */}
@@ -57,15 +57,15 @@ export default function SleepAgentPage() {
                 transition={{ duration: 1, ease: "easeOut" }}
               >
                 <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
-                  Sleep Optimization
+                  {t('pages:lifeceo.sleep.badge', 'Sleep Optimization')}
                 </Badge>
                 
                 <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif font-bold text-white mb-6 tracking-tight" data-testid="heading-hero">
-                  Sleep Agent
+                  {t('pages:lifeceo.sleep.heroTitle', 'Sleep Agent')}
                 </h1>
                 
                 <p className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto leading-relaxed">
-                  Your AI sleep coach
+                  {t('pages:lifeceo.sleep.heroSubtitle', 'Your AI sleep coach')}
                 </p>
               </motion.div>
             </div>
@@ -104,9 +104,9 @@ export default function SleepAgentPage() {
               transition={{ duration: 0.6 }}
               className="mb-12"
             >
-              <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">Sleep Analytics</h2>
+              <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">{t('pages:lifeceo.sleep.sectionTitle', 'Sleep Analytics')}</h2>
               <p className="text-lg text-muted-foreground">
-                Track patterns and optimize your recovery
+                {t('pages:lifeceo.sleep.sectionSubtitle', 'Track patterns and optimize your recovery')}
               </p>
             </motion.div>
 
@@ -122,15 +122,15 @@ export default function SleepAgentPage() {
                   <div className="relative aspect-[16/9] overflow-hidden">
                     <motion.img
                       src={sleepImg1}
-                      alt="This Week's Sleep"
+                      alt={t('pages:lifeceo.sleep.thisWeekAlt', "This Week's Sleep")}
                       className="w-full h-full object-cover"
                       whileHover={{ scale: 1.05 }}
                       transition={{ duration: 0.6 }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
                     <div className="absolute bottom-4 left-4 right-4 text-white">
-                      <h3 className="text-2xl font-serif font-bold">This Week's Sleep</h3>
-                      <p className="text-white/80 text-sm mt-1">Your nightly patterns</p>
+                      <h3 className="text-2xl font-serif font-bold">{t('pages:lifeceo.sleep.thisWeek', "This Week's Sleep")}</h3>
+                      <p className="text-white/80 text-sm mt-1">{t('pages:lifeceo.sleep.thisWeekSubtitle', 'Your nightly patterns')}</p>
                     </div>
                   </div>
                   <CardContent className="p-8 space-y-4">
@@ -152,7 +152,7 @@ export default function SleepAgentPage() {
                       </div>
                     ))}
                     <Button className="w-full" variant="outline" data-testid="button-log-sleep">
-                      Log Sleep Manually
+                      {t('pages:lifeceo.sleep.logManually', 'Log Sleep Manually')}
                     </Button>
                   </CardContent>
                 </Card>
@@ -169,7 +169,7 @@ export default function SleepAgentPage() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-2xl font-serif">
                       <Stars className="h-6 w-6 text-purple-500" />
-                      AI Sleep Insights
+                      {t('pages:lifeceo.sleep.aiInsights', 'AI Sleep Insights')}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
@@ -200,9 +200,9 @@ export default function SleepAgentPage() {
                       <div className="flex items-start gap-3">
                         <Battery className="h-5 w-5 text-purple-500 mt-0.5" />
                         <div>
-                          <p className="text-sm font-medium mb-1">Recovery Optimization</p>
+                          <p className="text-sm font-medium mb-1">{t('pages:lifeceo.sleep.recoveryOptimization', 'Recovery Optimization')}</p>
                           <p className="text-sm text-muted-foreground">
-                            Your body recovers best between 10 PM - 6 AM. Adjust your schedule accordingly.
+                            {t('pages:lifeceo.sleep.recoveryMessage', 'Your body recovers best between 10 PM - 6 AM. Adjust your schedule accordingly.')}
                           </p>
                         </div>
                       </div>
@@ -210,7 +210,7 @@ export default function SleepAgentPage() {
 
                     <Button className="w-full gap-2" data-testid="button-sleep-schedule">
                       <Clock className="w-4 h-4" />
-                      Set Sleep Schedule
+                      {t('pages:lifeceo.sleep.setSleepSchedule', 'Set Sleep Schedule')}
                     </Button>
                   </CardContent>
                 </Card>

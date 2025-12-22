@@ -105,9 +105,9 @@ export default function VoicePage() {
     <div className="container mx-auto py-8 space-y-6" data-testid="page-mr-blue-voice">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Mr Blue Voice</h1>
+          <h1 className="text-3xl font-bold">{t('pages:mrblue.voice.title', 'Mr Blue Voice')}</h1>
           <p className="text-muted-foreground mt-2">
-            Voice conversation with AI assistant
+            {t('pages:mrblue.voice.subtitle', 'Voice conversation with AI assistant')}
           </p>
         </div>
         <div className="flex gap-2">
@@ -117,7 +117,7 @@ export default function VoicePage() {
             data-testid="button-push-to-talk"
           >
             <Hand className="h-4 w-4 mr-2" />
-            Push to Talk
+            {t('pages:mrblue.voice.pushToTalk', 'Push to Talk')}
           </Button>
           <Button
             variant={mode === 'hands-free' ? 'default' : 'outline'}
@@ -125,7 +125,7 @@ export default function VoicePage() {
             data-testid="button-hands-free"
           >
             <Radio className="h-4 w-4 mr-2" />
-            Hands-Free
+            {t('pages:mrblue.voice.handsFree', 'Hands-Free')}
           </Button>
         </div>
       </div>
@@ -134,12 +134,12 @@ export default function VoicePage() {
         <Card className="lg:col-span-2" data-testid="card-conversation">
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle>Conversation</CardTitle>
+              <CardTitle>{t('pages:mrblue.voice.conversation', 'Conversation')}</CardTitle>
               <div className="flex gap-2">
                 {isListening && (
                   <Badge variant="default" className="animate-pulse" data-testid="badge-listening">
                     <Mic className="h-3 w-3 mr-1" />
-                    Listening...
+                    {t('pages:mrblue.voice.listening', 'Listening...')}
                   </Badge>
                 )}
                 {isSpeaking && (

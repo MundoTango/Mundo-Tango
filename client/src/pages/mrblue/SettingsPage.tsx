@@ -63,14 +63,14 @@ export default function SettingsPage() {
     <div className="container mx-auto py-8 space-y-6" data-testid="page-ai-settings">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">AI Assistant Settings</h1>
+          <h1 className="text-3xl font-bold">{t('pages:mrblue.settings.title', 'AI Assistant Settings')}</h1>
           <p className="text-muted-foreground mt-2">
-            Customize Mr Blue's personality and behavior
+            {t('pages:mrblue.settings.subtitle', "Customize Mr Blue's personality and behavior")}
           </p>
         </div>
         <Button onClick={handleSave} data-testid="button-save-settings">
           <Save className="h-4 w-4 mr-2" />
-          Save Changes
+          {t('pages:mrblue.settings.saveChanges', 'Save Changes')}
         </Button>
       </div>
 
@@ -79,13 +79,13 @@ export default function SettingsPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Settings className="h-5 w-5" />
-              Personality
+              {t('pages:mrblue.settings.personality', 'Personality')}
             </CardTitle>
-            <CardDescription>How Mr Blue communicates with you</CardDescription>
+            <CardDescription>{t('pages:mrblue.settings.personalityDesc', 'How Mr Blue communicates with you')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label>Communication Style</Label>
+              <Label>{t('pages:mrblue.settings.communicationStyle', 'Communication Style')}</Label>
               <Select
                 value={formData.personality ?? settings?.personality}
                 onValueChange={(value: any) => setFormData({ ...formData, personality: value })}
@@ -94,15 +94,15 @@ export default function SettingsPage() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="casual">Casual & Friendly</SelectItem>
-                  <SelectItem value="formal">Formal & Professional</SelectItem>
-                  <SelectItem value="technical">Technical & Precise</SelectItem>
+                  <SelectItem value="casual">{t('pages:mrblue.settings.casual', 'Casual & Friendly')}</SelectItem>
+                  <SelectItem value="formal">{t('pages:mrblue.settings.formal', 'Formal & Professional')}</SelectItem>
+                  <SelectItem value="technical">{t('pages:mrblue.settings.technical', 'Technical & Precise')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div className="space-y-2">
-              <Label>Response Temperature: {formData.temperature ?? settings?.temperature ?? 0.7}</Label>
+              <Label>{t('pages:mrblue.settings.responseTemperature', 'Response Temperature')}: {formData.temperature ?? settings?.temperature ?? 0.7}</Label>
               <Slider
                 value={[formData.temperature ?? settings?.temperature ?? 0.7]}
                 onValueChange={([value]) => setFormData({ ...formData, temperature: value })}
@@ -112,7 +112,7 @@ export default function SettingsPage() {
                 data-testid="slider-temperature"
               />
               <p className="text-xs text-muted-foreground">
-                Lower = more focused, Higher = more creative
+                {t('pages:mrblue.settings.temperatureDesc', 'Lower = more focused, Higher = more creative')}
               </p>
             </div>
           </CardContent>
@@ -122,13 +122,13 @@ export default function SettingsPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Volume2 className="h-5 w-5" />
-              Voice
+              {t('pages:mrblue.settings.voice', 'Voice')}
             </CardTitle>
-            <CardDescription>Voice settings for audio interactions</CardDescription>
+            <CardDescription>{t('pages:mrblue.settings.voiceDesc', 'Voice settings for audio interactions')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label>Voice Selection</Label>
+              <Label>{t('pages:mrblue.settings.voiceSelection', 'Voice Selection')}</Label>
               <Select
                 value={formData.voiceId ?? settings?.voiceId}
                 onValueChange={(value) => setFormData({ ...formData, voiceId: value })}
@@ -151,13 +151,13 @@ export default function SettingsPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Globe className="h-5 w-5" />
-              Language
+              {t('pages:mrblue.settings.language', 'Language')}
             </CardTitle>
-            <CardDescription>Preferred language for responses</CardDescription>
+            <CardDescription>{t('pages:mrblue.settings.languageDesc', 'Preferred language for responses')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label>Language Preference</Label>
+              <Label>{t('pages:mrblue.settings.languagePreference', 'Language Preference')}</Label>
               <Select
                 value={formData.language ?? settings?.language}
                 onValueChange={(value) => setFormData({ ...formData, language: value })}
@@ -181,16 +181,16 @@ export default function SettingsPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Database className="h-5 w-5" />
-              Context Memory
+              {t('pages:mrblue.settings.contextMemory', 'Context Memory')}
             </CardTitle>
-            <CardDescription>How Mr Blue remembers your conversations</CardDescription>
+            <CardDescription>{t('pages:mrblue.settings.contextMemoryDesc', 'How Mr Blue remembers your conversations')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label>Enable Context Memory</Label>
+                <Label>{t('pages:mrblue.settings.enableContextMemory', 'Enable Context Memory')}</Label>
                 <p className="text-sm text-muted-foreground">
-                  Remember past conversations
+                  {t('pages:mrblue.settings.rememberConversations', 'Remember past conversations')}
                 </p>
               </div>
               <Switch
@@ -201,7 +201,7 @@ export default function SettingsPage() {
             </div>
 
             <div className="space-y-2">
-              <Label>Max Context Length</Label>
+              <Label>{t('pages:mrblue.settings.maxContextLength', 'Max Context Length')}</Label>
               <Select
                 value={String(formData.maxContextLength ?? settings?.maxContextLength)}
                 onValueChange={(value) => setFormData({ ...formData, maxContextLength: parseInt(value) })}
@@ -220,9 +220,9 @@ export default function SettingsPage() {
 
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label>Auto-save Conversations</Label>
+                <Label>{t('pages:mrblue.settings.autoSaveConversations', 'Auto-save Conversations')}</Label>
                 <p className="text-sm text-muted-foreground">
-                  Automatically save chat history
+                  {t('pages:mrblue.settings.autoSaveDesc', 'Automatically save chat history')}
                 </p>
               </div>
               <Switch
@@ -238,16 +238,16 @@ export default function SettingsPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Lock className="h-5 w-5" />
-              Privacy & Data
+              {t('pages:mrblue.settings.privacyData', 'Privacy & Data')}
             </CardTitle>
-            <CardDescription>Control your data and privacy preferences</CardDescription>
+            <CardDescription>{t('pages:mrblue.settings.privacyDataDesc', 'Control your data and privacy preferences')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label>Privacy Mode</Label>
+                <Label>{t('pages:mrblue.settings.privacyMode', 'Privacy Mode')}</Label>
                 <p className="text-sm text-muted-foreground">
-                  Don't store any conversation data
+                  {t('pages:mrblue.settings.privacyModeDesc', "Don't store any conversation data")}
                 </p>
               </div>
               <Switch
@@ -259,9 +259,9 @@ export default function SettingsPage() {
 
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label>Training Data Opt-in</Label>
+                <Label>{t('pages:mrblue.settings.trainingOptIn', 'Training Data Opt-in')}</Label>
                 <p className="text-sm text-muted-foreground">
-                  Allow anonymized data to improve Mr Blue
+                  {t('pages:mrblue.settings.trainingOptInDesc', 'Allow anonymized data to improve Mr Blue')}
                 </p>
               </div>
               <Switch

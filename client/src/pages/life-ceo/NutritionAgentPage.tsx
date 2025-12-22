@@ -12,32 +12,32 @@ import nutritionHeroImage from "@assets/stock_images/elegant_professional_0956f7
 export default function NutritionAgentPage() {
   const { t } = useTranslation(["pages", "common"]);
   const stats = [
-    { label: "Calories Today", value: "1,850", goal: "2,000", icon: Flame, color: "text-orange-500" },
-    { label: "Protein", value: "85g", goal: "100g", icon: Apple, color: "text-green-500" },
-    { label: "Water Intake", value: "6/8", goal: "glasses", icon: Droplets, color: "text-blue-500" },
-    { label: "Nutrition Score", value: "82%", goal: "target", icon: Target, color: "text-purple-500" }
+    { label: t('pages:lifeceo.nutrition.stats.caloriesToday', 'Calories Today'), value: "1,850", goal: "2,000", icon: Flame, color: "text-orange-500" },
+    { label: t('pages:lifeceo.nutrition.stats.protein', 'Protein'), value: "85g", goal: "100g", icon: Apple, color: "text-green-500" },
+    { label: t('pages:lifeceo.nutrition.stats.waterIntake', 'Water Intake'), value: "6/8", goal: t('pages:lifeceo.nutrition.stats.glasses', 'glasses'), icon: Droplets, color: "text-blue-500" },
+    { label: t('pages:lifeceo.nutrition.stats.nutritionScore', 'Nutrition Score'), value: "82%", goal: t('pages:lifeceo.nutrition.stats.target', 'target'), icon: Target, color: "text-purple-500" }
   ];
 
   const todayMeals = [
-    { meal: "Breakfast", items: "Oatmeal, Berries, Almonds", calories: 420, time: "8:00 AM", logged: true },
-    { meal: "Lunch", items: "Grilled Chicken Salad, Quinoa", calories: 650, time: "1:00 PM", logged: true },
-    { meal: "Snack", items: "Greek Yogurt, Honey", calories: 180, time: "4:00 PM", logged: true },
-    { meal: "Dinner", items: "Salmon, Vegetables, Brown Rice", calories: 600, time: "7:30 PM", logged: false }
+    { meal: t('pages:lifeceo.nutrition.meals.breakfast', 'Breakfast'), items: t('pages:lifeceo.nutrition.items.breakfast', 'Oatmeal, Berries, Almonds'), calories: 420, time: "8:00 AM", logged: true },
+    { meal: t('pages:lifeceo.nutrition.meals.lunch', 'Lunch'), items: t('pages:lifeceo.nutrition.items.lunch', 'Grilled Chicken Salad, Quinoa'), calories: 650, time: "1:00 PM", logged: true },
+    { meal: t('pages:lifeceo.nutrition.meals.snack', 'Snack'), items: t('pages:lifeceo.nutrition.items.snack', 'Greek Yogurt, Honey'), calories: 180, time: "4:00 PM", logged: true },
+    { meal: t('pages:lifeceo.nutrition.meals.dinner', 'Dinner'), items: t('pages:lifeceo.nutrition.items.dinner', 'Salmon, Vegetables, Brown Rice'), calories: 600, time: "7:30 PM", logged: false }
   ];
 
   const recommendations = [
-    { tip: "You're 15g short on protein. Try adding nuts or lean meat to your next meal.", category: "Protein", priority: "high" },
-    { tip: "Drink 2 more glasses of water to meet your hydration goal.", category: "Hydration", priority: "medium" },
-    { tip: "Great job staying within your calorie target today!", category: "Calories", priority: "low" }
+    { tip: t('pages:lifeceo.nutrition.tips.protein', "You're 15g short on protein. Try adding nuts or lean meat to your next meal."), category: t('pages:lifeceo.nutrition.category.protein', 'Protein'), priority: "high" },
+    { tip: t('pages:lifeceo.nutrition.tips.hydration', 'Drink 2 more glasses of water to meet your hydration goal.'), category: t('pages:lifeceo.nutrition.category.hydration', 'Hydration'), priority: "medium" },
+    { tip: t('pages:lifeceo.nutrition.tips.calories', 'Great job staying within your calorie target today!'), category: t('pages:lifeceo.nutrition.category.calories', 'Calories'), priority: "low" }
   ];
 
   return (
     <SelfHealingErrorBoundary pageName="NutritionAgentPage" fallbackRoute="/life-ceo">
-    <PageLayout title="Nutrition Agent" showBreadcrumbs>
+    <PageLayout title={t('pages:lifeceo.nutrition.title', 'Nutrition Agent')} showBreadcrumbs>
 <>
       <SEO
-        title="Nutrition Agent - Life CEO"
-        description="Track your meals, calories, and nutrition goals with AI-powered dietary insights."
+        title={t('pages:lifeceo.nutrition.seoTitle', 'Nutrition Agent - Life CEO')}
+        description={t('pages:lifeceo.nutrition.seoDescription', 'Track your meals, calories, and nutrition goals with AI-powered dietary insights.')}
       />
 
       {/* 16:9 Editorial Hero */}
@@ -54,15 +54,15 @@ export default function NutritionAgentPage() {
         >
           <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm">
             <Apple className="w-3 h-3 mr-1" />
-            Nutrition Agent
+            {t('pages:lifeceo.nutrition.badge', 'Nutrition Agent')}
           </Badge>
           
           <h1 className="text-5xl md:text-7xl font-serif font-bold text-white mb-6 tracking-tight leading-tight max-w-4xl">
-            Fuel Your Body, Elevate Your Dance
+            {t('pages:lifeceo.nutrition.heroTitle', 'Fuel Your Body, Elevate Your Dance')}
           </h1>
           
           <p className="text-xl text-white/90 max-w-2xl">
-            Track meals, optimize nutrition, and achieve your wellness goals with AI-powered insights
+            {t('pages:lifeceo.nutrition.heroSubtitle', 'Track meals, optimize nutrition, and achieve your wellness goals with AI-powered insights')}
           </p>
         </motion.div>
       </div>
@@ -87,7 +87,7 @@ export default function NutritionAgentPage() {
                     </div>
                     <p className="text-sm text-muted-foreground">{stat.label}</p>
                     <p className="text-2xl font-bold">{stat.value}</p>
-                    <p className="text-xs text-muted-foreground">Goal: {stat.goal}</p>
+                    <p className="text-xs text-muted-foreground">{t('pages:lifeceo.nutrition.goal', 'Goal')}: {stat.goal}</p>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -100,7 +100,7 @@ export default function NutritionAgentPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Utensils className="h-5 w-5 text-primary" />
-                  Today's Meals
+                  {t('pages:lifeceo.nutrition.todayMeals', "Today's Meals")}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
@@ -119,9 +119,9 @@ export default function NutritionAgentPage() {
                         <p className="text-xs text-muted-foreground">{entry.time}</p>
                       </div>
                       <div className="text-right">
-                        <p className="text-sm font-medium">{entry.calories} cal</p>
+                        <p className="text-sm font-medium">{t('pages:lifeceo.nutrition.calories', '{{calories}} cal', { calories: entry.calories })}</p>
                         {entry.logged && (
-                          <span className="text-xs text-green-500">✓ Logged</span>
+                          <span className="text-xs text-green-500">{t('pages:lifeceo.nutrition.logged', '✓ Logged')}</span>
                         )}
                       </div>
                     </div>
@@ -129,7 +129,7 @@ export default function NutritionAgentPage() {
                   </div>
                 ))}
                 <Button className="w-full" variant="outline" data-testid="button-log-meal">
-                  + Log Meal
+                  {t('pages:lifeceo.nutrition.logMeal', '+ Log Meal')}
                 </Button>
               </CardContent>
             </Card>
@@ -139,7 +139,7 @@ export default function NutritionAgentPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Target className="h-5 w-5 text-purple-500" />
-                  AI Nutrition Insights
+                  {t('pages:lifeceo.nutrition.insights.title', 'AI Nutrition Insights')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
@@ -163,14 +163,14 @@ export default function NutritionAgentPage() {
                             ? "bg-blue-500/20 text-blue-500"
                             : "bg-green-500/20 text-green-500"
                       }`}>
-                        {rec.priority}
+                        {t(`pages:lifeceo.nutrition.priority.${rec.priority}`, rec.priority)}
                       </span>
                     </div>
                     <p className="text-sm">{rec.tip}</p>
                   </div>
                 ))}
                 <Button className="w-full" data-testid="button-meal-plan">
-                  Generate Meal Plan
+                  {t('pages:lifeceo.nutrition.generateMealPlan', 'Generate Meal Plan')}
                 </Button>
               </CardContent>
             </Card>

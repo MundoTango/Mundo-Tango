@@ -129,10 +129,10 @@ export default function MrBlueChat() {
           </div>
           <div>
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-              Mr Blue
+              {t('pages:mrblue.chat.title', 'Mr Blue')}
             </h2>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              Your AI Assistant
+              {t('pages:mrblue.chat.subtitle', 'Your AI Assistant')}
             </p>
           </div>
         </div>
@@ -142,8 +142,8 @@ export default function MrBlueChat() {
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.length === 0 && (
           <div className="text-center text-gray-500 dark:text-gray-400 mt-8">
-            <p className="text-lg font-medium">Welcome to Mr Blue!</p>
-            <p className="text-sm mt-2">Send a message to get started.</p>
+            <p className="text-lg font-medium">{t('pages:mrblue.chat.welcome', 'Welcome to Mr Blue!')}</p>
+            <p className="text-sm mt-2">{t('pages:mrblue.chat.getStarted', 'Send a message to get started.')}</p>
           </div>
         )}
 
@@ -203,7 +203,7 @@ export default function MrBlueChat() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder="Type your message..."
+            placeholder={t('pages:mrblue.chat.placeholder', 'Type your message...')}
             className="flex-1 resize-none rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[44px] max-h-[120px]"
             rows={1}
           />
@@ -222,7 +222,7 @@ export default function MrBlueChat() {
             onClick={() => generateVideo(input)}
             disabled={!input.trim() || isGeneratingVideo}
             className="bg-purple-500 text-white rounded-lg p-3 hover:bg-purple-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            title="Generate Video"
+            title={t('pages:mrblue.chat.generateVideo', 'Generate Video')}
           >
             {isGeneratingVideo ? (
               <Loader2 className="w-5 h-5 animate-spin" />
