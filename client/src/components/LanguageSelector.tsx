@@ -112,7 +112,7 @@ function LanguageSelectorComponent() {
     // Save to user profile if logged in
     if (user?.id) {
       try {
-        await apiRequest('PATCH', '/api/users/profile', { primaryLanguage: languageCode });
+        await apiRequest('PATCH', '/api/users/me', { primaryLanguage: languageCode });
         queryClient.invalidateQueries({ queryKey: ['/api/auth/me'] });
       } catch (error) {
         console.error('Failed to save language preference:', error);
@@ -176,7 +176,7 @@ function LanguageSelectorButtonComponent() {
     // Save to user profile if logged in
     if (user?.id) {
       try {
-        await apiRequest('PATCH', '/api/users/profile', { primaryLanguage: languageCode });
+        await apiRequest('PATCH', '/api/users/me', { primaryLanguage: languageCode });
         queryClient.invalidateQueries({ queryKey: ['/api/auth/me'] });
       } catch (error) {
         console.error('Failed to save language preference:', error);
